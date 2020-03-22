@@ -11,7 +11,19 @@ def extractfrom(target, listObject):
 def fixedList(listObject):
 	return listObject[0:len(listObject)]
 	
-	
+#对卡牌的费用机制的改变	
+#主要参考贴（冰封王座BB还在的时候）：https://www.diyiyou.com/lscs/news/194867.html
+#
+#费用的计算方式是对于一张牌，不考虑基础费用而是把费用光环和费用赋值一视同仁，根据其执行顺序来决定倒数第二步的费用，最终如果一张牌有自己赋值或者费用修改的能力，则这个能力在最后处理。
+#
+#BB给出的机制例子中：AV娜上场之后，热情的探险者抽一张牌，抽到融核巨人之后的结算顺序是：
+#	AV的变1光环首先生效，然后探险者的费用赋值把那张牌的费用拉回5，然后融核巨人再根据自己的血量进行减费用。
+#确实可以解释当前娜迦沙漠女巫与费用光环和大帝减费的问题。
+#1：对方场上一个木乃伊，我方一个沙漠女巫，对方一个木乃伊，然后分别是-1光环，赋值为5，-1光环，法术的费用变成4费
+#2：对方场上一个木乃伊，我方一个沙漠女巫，对方一个木乃伊，然后大帝。结算结果是-1光环，赋值为5，-1光环，-1赋值。结果是3费
+#3.对方场上一个木乃伊，我方一个沙漠女巫，对方一个木乃伊，然后大帝，然后第一个木乃伊被连续杀死，光环消失。结算是赋值为5，-1光环，-1费用变化。最终那张法术的费用为3.
+#4.对方场上一个木乃伊，我方一个沙漠女巫，对方一个木乃伊，然后大帝，第二个木乃伊被连续杀死，则那个法术-1光环，赋值为5，-1费用变化，最终费用为4.（已经验证是确实如此）
+#5。对方场上一个木乃伊，我方一个沙漠女巫，对方一个木乃伊，然后大帝，第一个木乃伊被连续杀死，则那个法术会经历赋值为5，-1光环，-1费用变化，变为3费（注意第一个木乃伊第一次死亡的时候会复生出一个新的带光环的木乃伊，然后把费用变成2费，但是再杀死那个复生出来的木乃伊之后，费用就是正确的3费。）
 class ManaHandler:
 	def __init__(self, Game):
 		self.Game = Game
@@ -20,6 +32,7 @@ class ManaHandler:
 		self.manasLocked = {1:0, 2:0}
 		self.manasOverloaded = {1:0, 2:0}
 		self.manas_UpperLimit = {1:10, 2:10}
+		self.manas_withheld = {1:0, 2:0}
 		#CardAuras不再是放置所有费用修改效果的列表，而改为存放不直接寄存于随从上的费用光环。
 		#对于卡牌的费用修改效果，每张卡牌自己处理。
 		self.CardAuras, self.CardAuras_Backup = [], []
@@ -86,9 +99,7 @@ class ManaHandler:
 		if subject.cardType == "Spell":
 			if self.status[ID]["Spells Cost Health Instead"] > 0:
 				objtoTakeDamage = self.Game.DamageHandler.damageTransfer(self.Game.heroes[ID])
-				targetSurvival = objtoTakeDamage.damageRequest(None, mana)
-				if targetSurvival > 0:
-					damageActual, survival = objtoTakeDamage.takesDamage(None, mana)
+				objtoTakeDamage.takesDamage(None, mana)
 			else:
 				self.manas[ID] -= mana
 		else:
@@ -107,7 +118,7 @@ class ManaHandler:
 		self.manasUpper[ID] = min(self.manas_UpperLimit[ID], self.manasUpper[ID])
 		self.manasLocked[ID] = self.manasOverloaded[ID]
 		self.manasOverloaded[ID] = 0
-		self.manas[ID] = max(0, self.manasUpper[ID] - self.manasLocked[ID])
+		self.manas[ID] = max(0, self.manasUpper[ID] - self.manasLocked[ID] - self.manas_withheld[ID])
 		self.Game.sendSignal("OverloadStatusCheck", ID, None, None, 0, "")
 		#卡牌的费用光环加载
 		for aura in self.CardAuras_Backup:
@@ -149,8 +160,6 @@ class ManaHandler:
 			
 	def calcMana_Single(self, card):
 		card.mana = type(card).mana
-		if card.manaModifications != []:
-			print("Card %s carries manaMods:"%card.name, card.manaModifications)
 		for manaMod in card.manaModifications:
 			manaMod.handleMana()
 		#随从的改变自己法力值的效果在此结算。如果卡牌有回响，则其法力值不能减少至0
@@ -178,18 +187,16 @@ class ManaModification:
 		
 	def handleMana(self):
 		if self.changeby != 0:
-			print(self, " changes the mana of card %s by"%self.card, self.changeby)
 			self.card.mana += self.changeby
 			if self.card.mana < self.lowerbound: #用于召唤传送门的随从减费不小于1的限制。
 				self.card.mana = self.lowerbound
 		elif self.changeto >= 0:
-			print(self, " changes the mana of card %s to"%self.card, self.changeto)
 			self.card.mana = self.changeto
 			
 	def applies(self):
-		print(self.card, "'s mana is changed by %d or changed to"%self.changeby, self.changeto)
 		self.card.manaModifications.append(self) #需要让卡牌自己也带有一个检测的光环，离开手牌或者牌库中需要清除。
-		self.card.Game.ManaHandler.calcMana_Single(self.card)
+		if self.card in self.card.Game.Hand_Deck.hands[self.card.ID]:
+			self.card.Game.ManaHandler.calcMana_Single(self.card)
 		
 	def getsRemoved(self):
 		extractfrom(self, self.card.manaModifications)
@@ -423,16 +430,12 @@ class DamageHandler:
 		self.Game = Game
 		self.ShellfighterExists = {1: 0, 2: 0}
 		self.RamshieldExists = {1: 0, 2: 0}
-	
+		
 	def isActiveShellfighter(self, target):
-		if target.name == "Snapjaw Shellfighter" and target.silenced == False:
-			return True
-		return False
+		return target.name == "Snapjaw Shellfighter" and target.silenced == False
 		
 	def isActiveBolfRamshield(self, target):
-		if target.name == "Bolf Ramshield" and target.silenced == False:
-			return True
-		return False
+		return target.name == "Bolf Ramshield" and target.silenced == False
 		
 	#Will return the leftmost Shellfighter in the chain or the minion itself.
 	def leftmostShellfighter(self, minion):
@@ -464,7 +467,8 @@ class DamageHandler:
 		return Shellfighter_Right
 		
 	#Return the correct minion to take damage.
-	#Untested: Immune minions when taking potential damage, they won't transfer the damage.
+	#已经测试过Immune的随从在受伤时不会转移给钳嘴龟盾卫
+	#已经测试过圣盾随从在受伤时会转移转移给钳嘴龟盾卫，圣盾似乎只阻挡最后的伤害判定，不负责伤害目标转移
 	def damageTransfer_InitiallyonMinion(self, minion):
 		if minion.cardType == "Permanent":
 			return minion
@@ -538,10 +542,12 @@ class CounterHandler:
 		self.healthRestoredThisGame = {1: 0, 2: 0}
 		self.cardsDiscardedThisGame = {1:[], 2:[]}
 		self.createdCardsPlayedThisGame = {1:0, 2:0}
+		self.spellsCastonFriendliesThisGame = {1:[], 2:[]}
 		
 		self.numSpellsPlayedThisTurn = {1: 0, 2: 0}
 		self.numMinionsPlayedThisTurn = {1: 0, 2: 0}
 		self.minionsDiedThisTurn = {1:[], 2:[]}
+		self.numCardsPlayedThisTurn = {1:0, 2:0} #Specifically for Combo. Because even Countered spells can trigger Combos
 		self.cardsPlayedThisTurn = {1: {"Indices": [], "ManasPaid": []},
 									2: {"Indices": [], "ManasPaid": []}} #For Combo and Secret.
 		self.damageonHeroThisTurn = {1:0, 2:0}
@@ -549,7 +555,7 @@ class CounterHandler:
 		self.numElementalsPlayedLastTurn = {1:0, 2:0}
 		self.spellsPlayedLastTurn = {1:[], 2:[]}
 		self.cardsPlayedLastTurn = {1:[], 2:[]}
-		
+		self.heroAttackTimesThisTurn = {1:0, 2:0}
 		self.primaryGalakronds = {1: None, 2: None}
 		self.invocationCounts = {1:0, 2:0} #For Galakrond
 		self.hasPlayedQuestThisGame = {1:False, 2:False}
@@ -560,19 +566,20 @@ class CounterHandler:
 		self.numElementalsPlayedLastTurn[self.Game.turn] = 0
 		self.cardsPlayedLastTurn[self.Game.turn] = [] + self.cardsPlayedThisTurn[self.Game.turn]["Indices"]
 		for index in self.cardsPlayedThisTurn[self.Game.turn]["Indices"]:
-			if "-Elemental-" in index:
+			if "~Elemental~" in index:
 				self.numElementalsPlayedLastTurn[self.Game.turn] += 1
 		self.spellsPlayedLastTurn[self.Game.turn] = []
 		for index in self.cardsPlayedThisTurn[self.Game.turn]["Indices"]:
-			if "-Spell-" in index:
+			if "~Spell~" in index:
 				self.spellsPlayedLastTurn[self.Game.turn].append(index)
 		self.cardsPlayedThisTurn = {1:{"Indices": [], "ManasPaid": []},
 									2:{"Indices": [], "ManasPaid": []}}
+		self.numCardsPlayedThisTurn = {1:0, 2:0}
 		self.numMinionsPlayedThisTurn = {1:0, 2:0}
 		self.numSpellsPlayedThisTurn = {1:0, 2:0}
 		self.damageonHeroThisTurn = {1:0, 2:0}
 		self.minionsDiedThisTurn = {1:[], 2:[]}
-		
+		self.heroAttackTimesThisTurn = {1:0, 2:0}
 		
 def whenEffective():
 	self.Game.options = [xx, xx, xx]
@@ -632,6 +639,8 @@ class DiscoverHandler:
 			discover_branch[key+initiator.name+"_chooses_"+option.name+";"] = game
 			
 	def startDiscover(self, initiator):
+		if self.Game.GUI != None:
+			self.Game.GUI.update(promptforDiscover=True)
 		print("The discover options for %s:"%initiator.name)
 		for i in range(len(self.Game.options)):
 			option = self.Game.options[i]

@@ -9,38 +9,16 @@ def concatenateDicts(dict1, dict2):
 			dict1[key] = concatenateDicts(dict1[key], dict2[key])
 	return dict1
 	
-cardPool, MinionswithRace, MinionsofCost = {}, {}, {}
-ClassCards, NeutralMinions, LegendaryMinions = {}, {}, {}
+cardPool = {}
 #之后的版本更新需要重写这些update，从而不让新版本覆盖老版本的dict
-cardPool.update(Basic_indices)
-cardPool.update(Classic_indices)
-cardPool.update(Witchwood_indices)
-cardPool.update(Boomsday_indices)
-cardPool.update(Rumble_indices)
-cardPool.update(Shadows_indices)
+cardPool.update(Basic_Indices)
+cardPool.update(Classic_Indices)
+cardPool.update(Shadows_Indices)
 cardPool.update(Uldum_Indices)
 cardPool.update(Dragons_Indices)
 cardPool.update(Galakrond_Indices)
-
-MinionswithRace = concatenateDicts(MinionswithRace, MinionswithRace_BasicClassic)
-MinionswithRace = concatenateDicts(MinionswithRace, MinionswithRace_YearRaven)
-MinionswithRace = concatenateDicts(MinionswithRace, MinionswithRace_YearDragon)
-
-MinionsofCost = concatenateDicts(MinionsofCost, MinionsofCost_BasicClassic)
-MinionsofCost = concatenateDicts(MinionsofCost, MinionsofCost_YearRaven)
-MinionsofCost = concatenateDicts(MinionsofCost, MinionsofCost_YearDragon)
-
-ClassCards = concatenateDicts(ClassCards, ClassCards_BasicClassic)
-ClassCards = concatenateDicts(ClassCards, ClassCards_YearRaven)
-ClassCards = concatenateDicts(ClassCards, ClassCards_YearDragons)
-#NeutralMinions和LegendaryMinions只有一层字典，没有必要使用concatenateDicts
-NeutralMinions.update(NeutralMinions_BasicClassic)
-NeutralMinions.update(NeutralMinions_YearRaven)
-NeutralMinions.update(NeutralMinions_YearDragon)
-
-LegendaryMinions.update(LegendaryMinions_BasicClassic)
-LegendaryMinions.update(LegendaryMinions_YearRaven)
-LegendaryMinions.update(LegendaryMinions_YearDragon)
+cardPool.update(DemonHunterInit_Indices)
+cardPool.update(Outlands_Indices)
 
 class PoolManager:
 	def __init__(self):
@@ -51,7 +29,7 @@ Game.cardPool = cardPool
 Game.MinionswithRace = MinionswithRace
 Game.MinionsofCost = MinionsofCost
 Game.ClassCards = ClassCards
-Game.LegendaryMinions = LegendaryMinions_BasicClassic
+Game.LegendaryMinions = LegendaryMinions
 Game.NeutralMinions = NeutralMinions
 
 RNGPools = {}
@@ -82,13 +60,13 @@ with open(filename1, "r") as input_file, open(filename2, "w") as out_file:
 						
 	out_file.write("from Basic import *\n")
 	out_file.write("from Classic import *\n")
-	out_file.write("from Witchwood import *\n")
-	out_file.write("from Boomsday import *\n")
-	out_file.write("from Rumble import *\n")
 	out_file.write("from Shadows import *\n")
 	out_file.write("from Uldum import *\n")
 	out_file.write("from Dragons import *\n")
 	out_file.write("from Galakrond import *\n")
+	out_file.write("from DemonHunterInitiate import *\n")
+	out_file.write("from Outlands import *\n")
+	
 	#把cardPool写入python里面
 	out_file.write("cardPool = {\n")
 	for index, obj in cardPool.items():
@@ -97,8 +75,8 @@ with open(filename1, "r") as input_file, open(filename2, "w") as out_file:
 	
 	#把MinionswithRace写入python里面
 	out_file.write("MinionswithRace = {\n")
-	for race, dict in MinionswithRace.items():
-		out_file.write("\t\t\t'%s': {\n"%race)
+	for Class, dict in MinionswithRace.items():
+		out_file.write("\t\t\t'%s': {\n"%Class)
 		for index, obj in dict.items(): #value is dict
 			out_file.write('\t\t\t\t"%s": %s,\n'%(index, obj.__name__))
 		out_file.write("\t\t\t},\n")
@@ -112,6 +90,15 @@ with open(filename1, "r") as input_file, open(filename2, "w") as out_file:
 			out_file.write('\t\t\t"%s": %s,\n'%(index, obj.__name__))
 		out_file.write("\t\t\t},\n")
 	out_file.write("\t\t}\n")
+	
+	#把ClassCards写入python里面
+	out_file.write("ClassCards = {\n")
+	for race, dict in ClassCards.items():
+		out_file.write("\t\t\t'%s': {\n"%race)
+		for index, obj in dict.items(): #value is dict
+			out_file.write('\t\t\t\t"%s": %s,\n'%(index, obj.__name__))
+		out_file.write("\t\t\t},\n")
+	out_file.write("\t\t\t}\n\n")
 	
 	#把NeutralMinions写入python里面
 	out_file.write("NeutralMinions = {\n")

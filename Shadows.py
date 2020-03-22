@@ -4,7 +4,6 @@ from VariousHandlers import *
 
 from Basic import TheCoin
 from Classic import PatientAssassin
-from Boomsday import Bomb
 
 import numpy as np
 import copy
@@ -27,21 +26,25 @@ def classforDiscover(initiator):
 	elif initiator.Class != "Neutral": #如果玩家职业是中立，但卡牌职业不是中立，则发现以那个卡牌的职业进行
 		return initiator.Class
 	else: #如果玩家职业和卡牌职业都是中立，则随机选取一个职业进行发现。
-		return np.random.choice(["Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"])
+		return np.random.choice(Classes)
 		
+		
+Classes = ["Demon Hunter", "Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"]
+ClassesandNeutral = ["Demon Hunter", "Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior", "Neutral"]
+
 """Mana 1 cards"""
 class PotionVendor(Minion):
 	Class, race, name = "Neutral", "", "Potion Vendor"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Neutral~Minion~1~1~1~None~Potion Vendor~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Restore 2 Health to all friendly characters"
+	requireTarget, keyWord, description = False, "", "Battlecry: Restore 2 Health to all friendly characters"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		heal = 2 * (2 ** self.countHealDouble())
 		targets = [self.Game.heroes[self.ID]] + self.Game.minions[self.ID]
 		heals = [heal for i in range(len(targets))]
 		print("Potion Vendor's battlecry restores %d health to all friendly characters"%heal)
-		self.dealsAOE([], [], targets, heals)
+		self.restoresAOE(targets, heals)
 		return None
 		
 		
@@ -49,7 +52,7 @@ class Toxfin(Minion):
 	Class, race, name = "Neutral", "Murloc", "Toxfin"
 	mana, attack, health = 1, 1, 2
 	index = "Shadows~Neutral~Minion~1~1~2~Murloc~Toxfin~Battlecry"
-	needTarget, keyWord, description = True, "", "Battlecry: Give a friendly Murloc Poisonous"
+	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly Murloc Poisonous"
 	
 	def targetExists(self, choice=0):
 		return self.selectableFriendlyMinionExists()
@@ -64,7 +67,7 @@ class Toxfin(Minion):
 				self.effectViable = True
 				break
 				
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Toxfin's battlecry gives friendly Murloc %s Poisonous."%target.name)
 			target.getsKeyword("Poisonous")
@@ -75,25 +78,25 @@ class DragonicLackey(Minion):
 	Class, race, name = "Neutral", "", "Dragonic Lackey"
 	mana, attack, health = 1, 1, 1
 	index = "Dragons~Neutral~Minion~1~1~1~None~Dragonic Lackey~Battlecry~Uncollectible"
-	needTarget, keyWord, description = False, "", "Battlecry: Discover a Dragon"
+	requireTarget, keyWord, description = False, "", "Battlecry: Discover a Dragon"
 	poolIdentifier = "Dragons as Druid"
 	@classmethod
 	def generatePool(cls, Game):
 		classes, lists, neutralCards = [], [], []
-		classCards = {"Neutral": [], "Druid":[], "Mage":[], "Hunter":[], "Paladin":[],
+		classCards = {"Neutral": [], "Demon Hunter":[], "Druid":[], "Mage":[], "Hunter":[], "Paladin":[],
 						"Priest":[], "Rogue":[], "Shaman":[], "Warlock":[], "Warrior":[]}
 		for key, value in Game.MinionswithRace["Dragon"].items():
 			classCards[key.split('~')[1]].append(value)
 			
-		for Class in ["Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"]:
+		for Class in Classes:
 			classes.append("Dragons as "+Class)
 			lists.append(classCards[Class]+classCards["Neutral"])
 		return classes, lists #返回的包含“Class Cards except Hunter”等identifier的列表和其他职业卡表
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.Hand_Deck.handNotFull(self.ID) and self.ID == self.Game.turn:
 			key = "Dragons as "+classforDiscover(self)
-			if comment == "InvokedbyOthers":
+			if "InvokedbyOthers" in comment:
 				print("Dragonic Lackey's battlecry adds a random Dragon to player's hand")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
@@ -113,12 +116,12 @@ class EtherealLackey(Minion):
 	Class, race, name = "Neutral", "", "Ethereal Lackey"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Neutral~Minion~1~1~1~None~Ethereal Lackey~Battlecry~Uncollectible"
-	needTarget, keyWord, description = False, "", "Battlecry: Discover a spell"
+	requireTarget, keyWord, description = False, "", "Battlecry: Discover a spell"
 	poolIdentifier = "Druid Spells"
 	@classmethod
 	def generatePool(cls, Game):
 		classes, lists = [], []
-		for Class in ["Druid", "Mage", "Hunter", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"]:
+		for Class in Classes:
 			classes.append(Class+" Spells")
 			spellsinClass = []
 			for key, value in Game.ClassCards[Class].items():
@@ -127,10 +130,10 @@ class EtherealLackey(Minion):
 			lists.append(spellsinClass)
 		return classes, lists
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.ID == self.Game.turn and self.Game.Hand_Deck.handNotFull(self.ID):
 			key = classforDiscover(self)+" Spells"
-			if comment == "InvokedbyOthers":
+			if "InvokedbyOthers" in comment:
 				print("Ethereal Lackey's battlecry adds a random %s spell to player's hand"%Class)
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
@@ -150,13 +153,13 @@ class FacelessLackey(Minion):
 	Class, race, name = "Neutral", "", "Faceless Lackey"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Neutral~Minion~1~1~1~None~Faceless Lackey~Battlecry~Uncollectible"
-	needTarget, keyWord, description = False, "", "Battlecry: Summon a 2-Cost minion"
+	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 2-Cost minion"
 	poolIdentifier = "2-Cost Minions"
 	@classmethod
 	def generatePool(cls, Game):
 		return "2-Cost Minions", list(Game.MinionsofCost[2].values())
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Faceless Lackey's battlecry summons a random 2-Cost minions.")
 		minion = np.random.choice(self.Game.RNGPools["2-Cost Minions"])
 		self.Game.summonMinion(minion(self.Game, self.ID), self.position+1, self.ID)
@@ -166,7 +169,7 @@ class GoblinLackey(Minion):
 	Class, race, name = "Neutral", "", "Goblin Lackey"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Neutral~Minion~1~1~1~None~Goblin Lackey~Battlecry~Uncollectible"
-	needTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion +1 Attack and Rush"
+	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion +1 Attack and Rush"
 	
 	def targetExists(self, choice=0):
 		return self.selectableFriendlyMinionExists()
@@ -174,7 +177,7 @@ class GoblinLackey(Minion):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.ID == self.ID and target != self and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print(self.name, " is played and gives friendly minion %s +2 attack and Rush."%target.name)
 			target.buffDebuff(1, 0)
@@ -185,15 +188,9 @@ class KoboldLackey(Minion):
 	Class, race, name = "Neutral", "", "Kobold Lackey"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Neutral~Minion~1~1~1~None~Kobold Lackey~Battlecry~Uncollectible"
-	needTarget, keyWord, description = True, "", "Battlecry: Deal 2 damage"
+	requireTarget, keyWord, description = True, "", "Battlecry: Deal 2 damage"
 	
-	def targetExists(self, choice=0):
-		return self.selectableMinionExists()
-		
-	def targetCorrect(self, target, choice=0):
-		return target.cardType == "Minion" and target != self and target.onBoard
-		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Kobold Lackey's battlecry deals 2 damage to ", target.name)
 			self.dealsDamage(target, 2)
@@ -203,7 +200,7 @@ class TitanicLackey(Minion):
 	Class, race, name = "Neutral", "", "Titanic Lackey"
 	mana, attack, health = 1, 1, 1
 	index = "Uldum~Neutral~Minion~1~1~1~None~Titanic Lackey~Battlecry~Uncollectible"
-	needTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion +2 Health"
+	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion +2 Health"
 	
 	def targetExists(self, choice=0):
 		return self.selectableFriendlyMinionExists(choice)
@@ -211,7 +208,7 @@ class TitanicLackey(Minion):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.ID == self.ID and target != self and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Titanic Lackey's battlecry gives friendly minion %s +2 Health and Taunt"%target.name)
 			target.buffDebuff(0, 2)
@@ -222,7 +219,7 @@ class WitchyLackey(Minion):
 	Class, race, name = "Neutral", "", "Witchy Lackey"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Neutral~Minion~1~1~1~None~Witchy Lackey~Battlecry~Uncollectible"
-	needTarget, keyWord, description = True, "", "Battlecry: Transform a friendly minion into one that costs (1) more"
+	requireTarget, keyWord, description = True, "", "Battlecry: Transform a friendly minion into one that costs (1) more"
 	poolIdentifier = "1-Cost Minions"
 	@classmethod
 	def generatePool(cls, Game):
@@ -238,7 +235,7 @@ class WitchyLackey(Minion):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.ID == self.ID and target != self and target.onBoard
 	#不知道如果目标随从被返回我方手牌会有什么结算，可能是在手牌中被进化
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Witchy Lackey's battlecry transforms friendly minion %s into one that costs 1 more."%target.name)
 			#The target has changed and needs to be tracked.
@@ -251,16 +248,16 @@ class ArcaneServant(Minion):
 	Class, race, name = "Neutral", "Elemental", "Arcane Servant"
 	mana, attack, health = 2, 2, 3
 	index = "Shadows~Neutral~Minion~2~2~3~Elemental~Arcane Servant"
-	needTarget, keyWord, description = False, "", ""
+	requireTarget, keyWord, description = False, "", ""
 	
 	
 class DalaranLibrarian(Minion):
 	Class, race, name = "Neutral", "", "Dalaran Librarian"
 	mana, attack, health = 2, 2, 3
 	index = "Shadows~Neutral~Minion~2~2~3~None~Dalaran Librarian~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Silences adjacent minions"
+	requireTarget, keyWord, description = False, "", "Battlecry: Silences adjacent minions"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.onBoard:
 			adjacentMinions, distribution = self.Game.findAdjacentMinions(self)
 			if adjacentMinions != []:
@@ -274,8 +271,8 @@ class EvilCableRat(Minion):
 	Class, race, name = "Neutral", "Beast", "Evil Cable Rat"
 	mana, attack, health = 2, 1, 1
 	index = "Shadows~Neutral~Minion~2~1~1~Beast~Evil Cable Rat~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Add a Lackey to your hand"
-	def whenEffective(self, target=None, comment="", choice=0):
+	requireTarget, keyWord, description = False, "", "Battlecry: Add a Lackey to your hand"
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Evil Cable Rat's battlecry adds a random Lackey to player's hand.")
 		lackey = np.random.choice(Lackeys)(self.Game, self.ID)
 		self.Game.Hand_Deck.addCardtoHand(lackey, self.ID)
@@ -286,7 +283,7 @@ class HenchClanHogsteed(Minion):
 	Class, race, name = "Neutral", "Beast", "Hench-Clan Hogsteed"
 	mana, attack, health = 2, 2, 1
 	index = "Shadows~Neutral~Minion~2~2~1~Beast~Hench-Clan Hogsteed~Rush~Deathrattle"
-	needTarget, keyWord, description = False, "Rush", "Rush. Deathrattle: Summon a 1/1 Murloc"
+	requireTarget, keyWord, description = False, "Rush", "Rush. Deathrattle: Summon a 1/1 Murloc"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [SummonaHenchClanSquire(self)]
@@ -300,21 +297,21 @@ class HenchClanSquire(Minion):
 	Class, race, name = "Neutral", "Murloc", "Hench-Clan Squire"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Neutral~Minion~1~1~1~Murloc~Hench-Clan Squire~Uncollectible"
-	needTarget, keyWord, description = False, "", ""
+	requireTarget, keyWord, description = False, "", ""
 	
 	
 class ManaReservoir(Minion):
 	Class, race, name = "Neutral", "Elemental", "Mana Reservoir"
 	mana, attack, health = 2, 0, 6
 	index = "Shadows~Neutral~Minion~2~0~6~Elemental~Mana Reservoir~Spell Damage"
-	needTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1"
+	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1"
 	
 	
 class SpellbookBinder(Minion):
 	Class, race, name = "Neutral", "", "Spellbook Binder"
 	mana, attack, health = 2, 2, 3
 	index = "Shadows~Neutral~Minion~2~2~3~None~Spellbook Binder~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: If you have Spell Damage, draw a card"
+	requireTarget, keyWord, description = False, "", "Battlecry: If you have Spell Damage, draw a card"
 	
 	def effectCanTrigger(self):
 		self.effectViable = False
@@ -326,7 +323,7 @@ class SpellbookBinder(Minion):
 					self.effectViable = True
 					break
 					
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		haveSpellDamage = False
 		if self.Game.playerStatus[self.ID]["Spell Damage"] > 0:
 			haveSpellDamage = True
@@ -346,29 +343,29 @@ class SunreaverSpy(Minion):
 	Class, race, name = "Neutral", "", "Sunreaver Spy"
 	mana, attack, health = 2, 2, 3
 	index = "Shadows~Neutral~Minion~2~2~3~None~Sunreaver Spy~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: If you control a Secret, gain +1/+1"
+	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Secret, gain +1/+1"
 	
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.SecretHandler.secrets[self.ID] != []
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.SecretHandler.secrets[self.ID] != []:
 			print("Sunreaver Spy's battlecry lets minion gain +1/+1.")
 			self.buffDebuff(1, 1)
 		return None
 		
 class ZayleShadowCloak(Minion):
-	Class, race, name = "Neutral", "", "Zayle. Shadow Cloak"
+	Class, race, name = "Neutral", "", "Zayle, Shadow Cloak"
 	mana, attack, health = 2, 3, 2
-	index = "Shadows~Neutral~Minion~2~3~2~None~Zayle. Shadow Cloak~Legendary"
-	needTarget, keyWord, description = False, "", "You start the game with one of Zayle's EVIL Decks!"
+	index = "Shadows~Neutral~Minion~2~3~2~None~Zayle, Shadow Cloak~Legendary"
+	requireTarget, keyWord, description = False, "", "You start the game with one of Zayle's EVIL Decks!"
 	
 """Mana 3 cards"""
 class ArcaneWatcher(Minion):
 	Class, race, name = "Neutral", "", "Arcane Watcher"
 	mana, attack, health = 3, 5, 6
 	index = "Shadows~Neutral~Minion~3~5~6~None~Arcane Watcher"
-	needTarget, keyWord, description = False, "", "Can't attack unless you have Spell Damage"
+	requireTarget, keyWord, description = False, "", "Can't attack unless you have Spell Damage"
 	
 	def haveSpellDamage(self):
 		if self.Game.playerStatus[self.ID]["Spell Damage"] > 0:
@@ -397,7 +394,7 @@ class FacelessRager(Minion):
 	Class, race, name = "Neutral", "", "Faceless Rager"
 	mana, attack, health = 3, 5, 1
 	index = "Shadows~Neutral~Minion~3~5~1~None~Faceless Rager~Battlecry"
-	needTarget, keyWord, description = True, "", "Battlecry: Copy a friendly minion's Health"
+	requireTarget, keyWord, description = True, "", "Battlecry: Copy a friendly minion's Health"
 	
 	def targetExists(self, choice=0):
 		return self.selectableFriendlyMinionExists()
@@ -405,7 +402,7 @@ class FacelessRager(Minion):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.ID == self.ID and target != self and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Faceless Rager's battlecry lets minion copy friendly minion %s's health"%target.name)
 			self.statReset(False, target.health)
@@ -416,9 +413,9 @@ class FlightMaster(Minion):
 	Class, race, name = "Neutral", "", "Flight Master"
 	mana, attack, health = 3, 3, 4
 	index = "Shadows~Neutral~Minion~3~3~4~None~Flight Master~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Summon a 2/2 Gryphon for each player"
+	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 2/2 Gryphon for each player"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Flight Master's battlecry summons a 2/2 Gryphon for each player.")
 		self.Game.summonMinion(Gryphon(self.Game, self.ID), self.position+1, self.ID)
 		self.Game.summonMinion(Gryphon(self.Game, self.ID), -1, 3-self.ID)
@@ -428,21 +425,21 @@ class Gryphon(Minion):
 	Class, race, name = "Neutral", "Beast", "Gryphon"
 	mana, attack, health = 2, 2, 2
 	index = "Shadows~Neutral~Minion~2~2~2~Beast~Gryphon~Uncollectible"
-	needTarget, keyWord, description = False, "", ""
+	requireTarget, keyWord, description = False, "", ""
 	
 	
 class HenchClanSneak(Minion):
 	Class, race, name = "Neutral", "", "Hench-Clan Sneak"
 	mana, attack, health = 3, 3, 3
 	index = "Shadows~Neutral~Minion~3~3~3~None~Hench-Clan Sneak~Stealth"
-	needTarget, keyWord, description = False, "Stealth", "Stealth"
+	requireTarget, keyWord, description = False, "Stealth", "Stealth"
 	
 	
 class MagicCarpet(Minion):
 	Class, race, name = "Neutral", "", "Magic Carpet"
 	mana, attack, health = 3, 1, 6
 	index = "Shadows~Neutral~Minion~3~1~6~None~Magic Carpet"
-	needTarget, keyWord, description = False, "", "After you play a 1-Cost minion, give it +1 Attack and Rush"
+	requireTarget, keyWord, description = False, "", "After you play a 1-Cost minion, give it +1 Attack and Rush"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggersonBoard = [Trigger_MagicCarpet(self)]
@@ -464,9 +461,9 @@ class SpellwardJeweler(Minion):
 	Class, race, name = "Neutral", "", "Spellward Jeweler"
 	mana, attack, health = 3, 3, 4
 	index = "Shadows~Neutral~Minion~3~3~4~None~Spellward Jeweler~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Your hero can't be targeted by spells or Hero Powers until your next turn"
+	requireTarget, keyWord, description = False, "", "Battlecry: Your hero can't be targeted by spells or Hero Powers until your next turn"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print(self.name, " is played and player can't be targeted by Spells or hero powers until next turn.")
 		self.Game.playerStatus[self.ID]["Evasive"] += 1
 		self.Game.playerStatus[self.ID]["EvasiveTillYourNextTurn"] += 1
@@ -477,7 +474,7 @@ class ArchmageVargoth(Minion):
 	Class, race, name = "Neutral", "", "Archmage Vargoth"
 	mana, attack, health = 4, 2, 6
 	index = "Shadows~Neutral~Minion~4~2~6~None~Archmage Vargoth~Legendary"
-	needTarget, keyWord, description = False, "", "At the end of your turn, cast a spell you've cast this turn (targets chosen randomly)"
+	requireTarget, keyWord, description = False, "", "At the end of your turn, cast a spell you've cast this turn (targets chosen randomly)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggersonBoard = [Trigger_ArchmageVargoth(self)]
@@ -504,9 +501,9 @@ class Hecklebot(Minion):
 	Class, race, name = "Neutral", "Mech", "Hecklebot"
 	mana, attack, health = 4, 3, 8
 	index = "Shadows~Neutral~Minion~4~3~8~Mech~Hecklebot~Taunt~Battlecry"
-	needTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Your opponent summons a minion from their deck"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Your opponent summons a minion from their deck"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.spaceonBoard(3-self.ID) > 0:
 			minions = []
 			for card in self.Game.Hand_Deck.decks[3-self.ID]:
@@ -523,9 +520,9 @@ class HenchClanHag(Minion):
 	Class, race, name = "Neutral", "", "Hench-Clan Hag"
 	mana, attack, health = 4, 3, 3
 	index = "Shadows~Neutral~Minion~4~3~3~None~Hench-Clan Hag~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Summon two 1/1 Amalgams with all minions types"
+	requireTarget, keyWord, description = False, "", "Battlecry: Summon two 1/1 Amalgams with all minions types"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Hench-Clan Hag's battlecry summons two 1/1 Amalgams with all minion types.")
 		pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 		self.Game.summonMinion([Amalgam(self.Game, self.ID) for i in range(2)], pos, self.ID)
@@ -535,16 +532,16 @@ class Amalgam(Minion):
 	Class, race, name = "Neutral", "Elemental, Mech, Demon, Murloc, Dragon, Beast, Pirate, Totem", "Amalgam"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Neutral~Minion~1~1~1~Beast~Murloc~Pirate~Mech~Totem~Demon~Elemental~Dragon~Amalgam~Uncollectible"
-	needTarget, keyWord, description = False, "", "This is an Elemental, Mech, Demon, Murloc, Dragon, Beast, Pirate and Totem"
+	requireTarget, keyWord, description = False, "", "This is an Elemental, Mech, Demon, Murloc, Dragon, Beast, Pirate and Totem"
 	
 	
 class PortalKeeper(Minion):
 	Class, race, name = "Neutral", "Demon", "Portal Keeper"
 	mana, attack, health = 4, 5, 2
 	index = "Shadows~Neutral~Minion~4~5~2~Demon~Portal Keeper~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Shuffle 3 Portals into your deck. When drawn, summon a 2/2 Demon with Rush"
+	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle 3 Portals into your deck. When drawn, summon a 2/2 Demon with Rush"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Portal Keeper's battlecry shuffles 3 Portals into player's deck.")
 		portals = [FelhoundPortal(self.Game, self.ID) for i in range(3)]
 		self.Game.Hand_Deck.shuffleCardintoDeck(portals, self.ID)
@@ -552,10 +549,10 @@ class PortalKeeper(Minion):
 		
 class FelhoundPortal(Spell):
 	Class, name = "Neutral", "Felhound Portal"
-	needTarget, mana = False, 2
+	requireTarget, mana = False, 2
 	index = "Shadows~Neutral~Spell~2~Felhound Portal~Casts When Drawn~Uncollectible"
 	description = "Casts When Drawn. Summon a 2/2 Felhound with Rush"
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Felhound Portal is cast and summons a 2/2 Felhound with Rush.")
 		self.Game.summonMinion(Felhound(self.Game, self.ID), -1, self.ID)
 		return None
@@ -564,14 +561,14 @@ class Felhound(Minion):
 	Class, race, name = "Neutral", "Demon", "Felhound"
 	mana, attack, health = 2, 2, 2
 	index = "Shadows~Neutral~Minion~2~2~2~Demon~Felhound~Rush~Uncollectible"
-	needTarget, keyWord, description = False, "Rush", "Rush"
+	requireTarget, keyWord, description = False, "Rush", "Rush"
 	
 	
 class ProudDefender(Minion):
 	Class, race, name = "Neutral", "Demon", "Felhound"
 	mana, attack, health = 4, 2, 6
 	index = "Shadows~Neutral~Minion~4~2~6~None~Proud Defender~Taunt"
-	needTarget, keyWord, description = False, "Taunt", "Taunt. Has +2 Attack while you have no other minions"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt. Has +2 Attack while you have no other minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.appearResponse = [self.checkBoard]
@@ -618,7 +615,7 @@ class SoldierofFortune(Minion):
 	Class, race, name = "Neutral", "Elemental", "Soldier of Fortune"
 	mana, attack, health = 4, 5, 6
 	index = "Shadows~Neutral~Minion~4~5~6~Elemental~Soldier of Fortune"
-	needTarget, keyWord, description = False, "", "Whenever this minion attacks, give your opponent a coin"
+	requireTarget, keyWord, description = False, "", "Whenever this minion attacks, give your opponent a coin"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggersonBoard = [Trigger_SoldierofFortune(self)]
@@ -639,9 +636,9 @@ class TravelingHealer(Minion):
 	Class, race, name = "Neutral", "", "Traveling Healer"
 	mana, attack, health = 4, 3, 2
 	index = "Shadows~Neutral~Minion~4~3~2~None~Traveling Healer~Battlecry~Divine Shield"
-	needTarget, keyWord, description = True, "Divine Shield", "Divine Shield. Battlecry: Restore 3 Health."
+	requireTarget, keyWord, description = True, "Divine Shield", "Divine Shield. Battlecry: Restore 3 Health."
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			heal = 3 * (2 ** self.countHealDouble())
 			self.restoresHealth(target, heal)
@@ -652,9 +649,9 @@ class VioletSpellsword(Minion):
 	Class, race, name = "Neutral", "", "Violet Spellsword"
 	mana, attack, health = 4, 1, 6
 	index = "Shadows~Neutral~Minion~4~1~6~None~Violet Spellsword~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Gain +1 Attack for each spell in your hand"
+	requireTarget, keyWord, description = False, "", "Battlecry: Gain +1 Attack for each spell in your hand"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		numSpells = 0
 		for card in self.Game.Hand_Deck.hands[self.ID]:
 			if card.cardType == "Spell":
@@ -669,7 +666,7 @@ class AzeriteElemental(Minion):
 	Class, race, name = "Neutral", "Elemental", "Azerite Elemental"
 	mana, attack, health = 5, 2, 7
 	index = "Shadows~Neutral~Minion~5~2~7~Elemental~Azerite Elemental"
-	needTarget, keyWord, description = False, "", "At the start of your turn, gain Spell Damage +2"
+	requireTarget, keyWord, description = False, "", "At the start of your turn, gain Spell Damage +2"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggersonBoard = [Trigger_AzeriteElemental(self)]
@@ -691,9 +688,9 @@ class BaristaLinchen(Minion):
 	Class, race, name = "Neutral", "", "Barista Linchen"
 	mana, attack, health = 5, 4, 5
 	index = "Shadows~Neutral~Minion~5~4~5~None~Barista Linchen~Battlecry~Legendary"
-	needTarget, keyWord, description = False, "", "Battlecry: Add a copy of each of your other Battlecry minions to your hand"
+	requireTarget, keyWord, description = False, "", "Battlecry: Add a copy of each of your other Battlecry minions to your hand"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		battlecryMinions = []
 		for minion in self.Game.minions[self.ID]:
 			if "~Battlecry" in minion.index:
@@ -709,14 +706,14 @@ class DalaranCrusader(Minion):
 	Class, race, name = "Neutral", "", "Dalaran Crusader"
 	mana, attack, health = 5, 5, 4
 	index = "Shadows~Neutral~Minion~5~5~4~None~Dalaran Crusader~Divine Shield"
-	needTarget, keyWord, description = False, "Divine Shield", "Divine Shield"
+	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield"
 	
 	
 class RecurringVillain(Minion):
 	Class, race, name = "Neutral", "", "Recurring Villain"
 	mana, attack, health = 5, 3, 6
 	index = "Shadows~Neutral~Minion~5~3~6~None~Recurring Villain~Deathrattle"
-	needTarget, keyWord, description = False, "", "Deathrattle: If this minion has 4 or more Attack, resummon it"
+	requireTarget, keyWord, description = False, "", "Deathrattle: If this minion has 4 or more Attack, resummon it"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [ResummonifAttackGreaterthan3(self)]
@@ -735,7 +732,7 @@ class SunreaverWarmage(Minion):
 	Class, race, name = "Neutral", "", "Sunreaver Warmage"
 	mana, attack, health = 5, 4, 4
 	index = "Shadows~Neutral~Minion~5~4~4~None~Sunreaver Warmage~Battlecry"
-	needTarget, keyWord, description = True, "", "Battlecry: If you're holding a spell costs (5) or more, deal 4 damage"
+	requireTarget, keyWord, description = True, "", "Battlecry: If you're holding a spell costs (5) or more, deal 4 damage"
 	
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Hand_Deck.holdingSpellwith5CostorMore(self.ID)
@@ -743,10 +740,10 @@ class SunreaverWarmage(Minion):
 	def returnTrue(self, choice=0):
 		return self.Game.Hand_Deck.holdingSpellwith5CostorMore(self.ID)
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None and self.Game.Hand_Deck.holdingSpellwith5CostorMore(self.ID):
 			print("Sunreaver Warmage's battlecry deals 4 damage to target", target.name)
-			target.takesDamage(self, 4)
+			self.dealsDamage(target, 4)
 		return target
 		
 """Mana 6 cards"""
@@ -754,12 +751,12 @@ class EccentricScribe(Minion):
 	Class, race, name = "Neutral", "", "Eccentric Scribe"
 	mana, attack, health = 6, 6, 4
 	index = "Shadows~Neutral~Minion~6~6~4~None~Eccentric Scribe~Deathrattle"
-	needTarget, keyWord, description = False, "", "Deathrattle: Summon four 1/1 Vengeful Scrolls"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Summon four 1/1 Vengeful Scrolls"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [Summon4VengefulScrolls(self)]
 		
-def Summon4VengefulScrolls(Deathrattle_Minion):
+class Summon4VengefulScrolls(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		pos = (self.entity.position, "totheRight") if self.entity in self.entity.Game.minions[self.entity.ID] else (-1, "totheRightEnd")
 		print("Deathrattle: Summon four 1/1 Vengeful Scrolls triggers.")
@@ -769,16 +766,16 @@ class VengefulScroll(Minion):
 	Class, race, name = "Neutral", "", "Vengeful Scroll"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Neutral~Minion~1~1~1~None~Vengeful Scroll~Uncollectible"
-	needTarget, keyWord, description = False, "", ""
+	requireTarget, keyWord, description = False, "", ""
 	
 	
 class MadSummoner(Minion):
 	Class, race, name = "Neutral", "Demon", "Mad Summoner"
 	mana, attack, health = 6, 4, 4
 	index = "Shadows~Neutral~Minion~6~4~4~Demon~Mad Summoner~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Fill each player's board with 1/1 Imps"
+	requireTarget, keyWord, description = False, "", "Battlecry: Fill each player's board with 1/1 Imps"
 	#假设是轮流为我方和对方召唤两个小鬼
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Mad Summoner's battlecry fills the Board with 1/1 Imps.")
 		while True:
 			friendlyBoardNotFull, enemyBoardNotFull = True, True
@@ -799,16 +796,16 @@ class Imp_Shadows(Minion):
 	Class, race, name = "Neutral", "Demon", "Imp"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Neutral~Minion~1~1~1~Demon~Imp~Uncollectible"
-	needTarget, keyWord, description = False, "", ""
+	requireTarget, keyWord, description = False, "", ""
 	
 	
 class PortalOverfiend(Minion):
 	Class, race, name = "Neutral", "Demon", "Portal Overfiend"
 	mana, attack, health = 6, 5, 6
 	index = "Shadows~Neutral~Minion~6~5~6~Demon~Portal Overfiend~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Shuffle 3 Portals into your deck. When drawn, summon a 2/2 Demon with Rush"
+	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle 3 Portals into your deck. When drawn, summon a 2/2 Demon with Rush"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Portal Overfiend's battlecry shuffles 3 Portals into player's deck.")
 		portals = [FelhoundPortal(self.Game, self.ID) for i in range(3)]
 		self.Game.Hand_Deck.shuffleCardintoDeck(portals, self.ID)
@@ -819,7 +816,7 @@ class Safeguard(Minion):
 	Class, race, name = "Neutral", "Mech", "Safeguard"
 	mana, attack, health = 6, 4, 5
 	index = "Shadows~Neutral~Minion~6~4~5~Mech~Safeguard~Taunt~Deathrattle"
-	needTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Summon a 0/5 Vault Safe with Taunt"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Summon a 0/5 Vault Safe with Taunt"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [SummonaVaultSafe(self)]
@@ -833,16 +830,16 @@ class VaultSafe(Minion):
 	Class, race, name = "Neutral", "Mech", "Vault Safe"
 	mana, attack, health = 2, 0, 5
 	index = "Shadows~Neutral~Minion~2~0~5~Mech~Vault Safe~Taunt~Uncollectible"
-	needTarget, keyWord, description = False, "Taunt", "Taunt"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	
 	
 class UnseenSaboteur(Minion):
 	Class, race, name = "Neutral", "", "Unseen Saboteur"
 	mana, attack, health = 6, 5, 6
 	index = "Shadows~Neutral~Minion~6~5~6~None~Unseen Saboteur~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Your opponent casts a random spell from their hand (targets chosen randomly)"
+	requireTarget, keyWord, description = False, "", "Battlecry: Your opponent casts a random spell from their hand (targets chosen randomly)"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Unseen Saboteur's battlecry lets opponent cast a random spell from hand with random target.")
 		spellsinHand = []
 		for card in self.Game.Hand_Deck.hands[3-self.ID]:
@@ -860,19 +857,19 @@ class VioletWarden(Minion):
 	Class, race, name = "Neutral", "", "Violet Warden"
 	mana, attack, health = 6, 4, 7
 	index = "Shadows~Neutral~Minion~6~4~7~None~Violet Warden~Taunt~Spell Damage"
-	needTarget, keyWord, description = False, "Taunt,Spell Damage", "Taunt, Spell Damage +1"
+	requireTarget, keyWord, description = False, "Taunt,Spell Damage", "Taunt, Spell Damage +1"
 	
 """Mana 7 cards"""
 class ChefNomi(Minion):
 	Class, race, name = "Neutral", "", "Chef Nomi"
 	mana, attack, health = 7, 6, 6
 	index = "Shadows~Neutral~Minion~7~6~6~None~Chef Nomi~Battlecry~Legendary"
-	needTarget, keyWord, description = False, "", "Battlecry: If your deck is empty, summon six 6/6 Greasefire Elementals"
+	requireTarget, keyWord, description = False, "", "Battlecry: If your deck is empty, summon six 6/6 Greasefire Elementals"
 	
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Hand_Deck.decks[self.ID] == []
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.Hand_Deck.decks[self.ID] == []:
 			print("Chef Nomi's battlecry fills the player's board with 6/6 Greasefire Elementals.")
 			if self.onBoard:
@@ -885,14 +882,14 @@ class GreasefireElemental(Minion):
 	Class, race, name = "Neutral", "Elemental", "Greasefire Elemental"
 	mana, attack, health = 6, 6, 6
 	index = "Shadows~Neutral~Minion~6~6~6~Elemental~Greasefire Elemental~Uncollectible"
-	needTarget, keyWord, description = False, "", ""
+	requireTarget, keyWord, description = False, "", ""
 	
 	
 class ExoticMountseller(Minion):
 	Class, race, name = "Neutral", "", "Exotic Mountseller"
 	mana, attack, health = 7, 5, 8
 	index = "Shadows~Neutral~Minion~7~5~8~None~Exotic Mountseller"
-	needTarget, keyWord, description = False, "", "Whenever you cast a spell, summon a random 3-Cost Beast"
+	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, summon a random 3-Cost Beast"
 	poolIdentifier = "3-Cost Beasts"
 	@classmethod
 	def generatePool(cls, Game):
@@ -923,7 +920,7 @@ class TunnelBlaster(Minion):
 	Class, race, name = "Neutral", "", "Tunnel Blaster"
 	mana, attack, health = 7, 3, 8
 	index = "Shadows~Neutral~Minion~7~3~8~None~Tunnel Blaster~Taunt~Deathrattle"
-	needTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Deal 3 damage to all minions"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Deal 3 damage to all minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [Deal3DamagetoAllMinions(self)]
@@ -940,7 +937,7 @@ class UnderbellyOoze(Minion):
 	Class, race, name = "Neutral", "", "Underbelly Ooze"
 	mana, attack, health = 7, 3, 5
 	index = "Shadows~Neutral~Minion~7~3~5~None~Underbelly Ooze"
-	needTarget, keyWord, description = False, "", "After this minion survives damage, summon a copy of it"
+	requireTarget, keyWord, description = False, "", "After this minion survives damage, summon a copy of it"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggersonBoard = [Trigger_UnderbellyOoze(self)]
@@ -962,7 +959,7 @@ class Batterhead(Minion):
 	Class, race, name = "Neutral", "", "Batterhead"
 	mana, attack, health = 8, 3, 12
 	index = "Shadows~Neutral~Minion~8~3~12~None~Batterhead~Rush"
-	needTarget, keyWord, description = False, "Rush", "Rush. After this attacks and kills a minion, it may attack again"
+	requireTarget, keyWord, description = False, "Rush", "Rush. After this attacks and kills a minion, it may attack again"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggersonBoard = [Trigger_Batterhead(self)]
@@ -972,7 +969,7 @@ class Trigger_Batterhead(TriggeronBoard):
 		self.blank_init(entity, ["MinionAttackedMinion"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and self.entity.health > 0 and self.entity.dead == False and (target.health < 1 or target.dead == True)
+		return self.entity.onBoard and subject == self.entity and self.entity.health > 0 and self.entity.dead == False and (target.health < 1 or target.dead == True)
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		print("After %s attacks and kills a minion %s, it gains an extra attack chance."%(self.entity.name, target.name))
@@ -983,9 +980,9 @@ class HeroicInnkeeper(Minion):
 	Class, race, name = "Neutral", "", "Heroic Innkeeper"
 	mana, attack, health = 8, 4, 4
 	index = "Shadows~Neutral~Minion~8~4~4~None~Heroic Innkeeper~Taunt~Battlecry"
-	needTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Gain +2/+2 for each other friendly minion"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Gain +2/+2 for each other friendly minion"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.onBoard or self.inHand:
 			targets = self.minionsonBoard(self.ID)
 			extractfrom(self, targets)
@@ -999,9 +996,9 @@ class JepettoJoybuzz(Minion):
 	Class, race, name = "Neutral", "", "Jepetto Joybuzz"
 	mana, attack, health = 8, 6, 6
 	index = "Shadows~Neutral~Minion~8~6~6~None~Jepetto Joybuzz~Battlecry~Legendary"
-	needTarget, keyWord, description = False, "", "Battlecry: Draw 2 minions from your deck. Set their Attack, Health, and Cost to 1"
+	requireTarget, keyWord, description = False, "", "Battlecry: Draw 2 minions from your deck. Set their Attack, Health, and Cost to 1"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Jepetto Joybuzz's battlecry draws 2 minions from player's deck and sets their Attack, Health and Cost to 1")
 		for i in range(2):
 			minionsinDeck = []
@@ -1010,11 +1007,9 @@ class JepettoJoybuzz(Minion):
 					minionsinDeck.append(card)
 					
 			if minionsinDeck != []:
-				card, mana = self.Game.Hand_Deck.drawCard(minionsinDeck)
+				card, mana = self.Game.Hand_Deck.drawCard(self.ID, np.random.choice(minionsinDeck))
 				if card != None:
-					card.mana = 1
-					
-		self.Game.ManaHandler.calcMana_All()
+					ManaModification(card, changeby=0, changeto=1).applies()
 		return None
 		
 		
@@ -1022,7 +1017,7 @@ class WhirlwindTempest(Minion):
 	Class, race, name = "Neutral", "Elemental", "Whirlwind Tempest"
 	mana, attack, health = 8, 6, 6
 	index = "Shadows~Neutral~Minion~8~6~6~Elemental~Whirlwind Tempest"
-	needTarget, keyWord, description = False, "", "Your Windfury minions have Mega Windfury"
+	requireTarget, keyWord, description = False, "", "Your Windfury minions have Mega Windfury"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.auras["Has Aura"] = HasAura_Dealer(self, self.applicable, "Mega Windfury")
@@ -1035,19 +1030,19 @@ class BurlyShovelfist(Minion):
 	Class, race, name = "Neutral", "", "Burly Shovelfist"
 	mana, attack, health = 9, 9, 9
 	index = "Shadows~Neutral~Minion~9~9~9~None~Burly Shovelfist~Rush"
-	needTarget, keyWord, description = False, "Rush", "Rush"
+	requireTarget, keyWord, description = False, "Rush", "Rush"
 	
 	
 class ArchivistElysiana(Minion):
 	Class, race, name = "Neutral", "", "Archivist Elysiana"
 	mana, attack, health = 9, 7, 7
 	index = "Shadows~Neutral~Minion~9~7~7~None~Archivist Elysiana~Battlecry~Legendary"
-	needTarget, keyWord, description = False, "", "Battlecry: Discover 5 cards. Replace your deck with 2 copies of each"
+	requireTarget, keyWord, description = False, "", "Battlecry: Discover 5 cards. Replace your deck with 2 copies of each"
 	poolIdentifier = "Cards as Druid"
 	@classmethod
 	def generatePool(cls, Game):
 		classes, lists, neutralCards = [], [], list(Game.NeutralMinions.values())
-		for Class in ["Druid", "Mage", "Hunter", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"]:
+		for Class in Classes:
 			classes.append("Cards as "+Class)
 			lists.append(list(Game.ClassCards[Class].values())+neutralCards)
 		return classes, lists
@@ -1056,10 +1051,10 @@ class ArchivistElysiana(Minion):
 		self.blank_init(Game, ID)
 		self.newDeck = []
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		key = "Cards as "+classforDiscover(self)
 		self.newDeck = []
-		if comment == "InvokedbyOthers":
+		if "InvokedbyOthers" in comment:
 			for i in range(5):
 				newCard = np.random.choice(self.Game.RNGPools[key])
 				self.newDeck.append(newCard(self.Game, self.ID))
@@ -1086,7 +1081,7 @@ class BigBadArchmage(Minion):
 	Class, race, name = "Neutral", "", "Big Bad Archmage"
 	mana, attack, health = 10, 6, 6
 	index = "Shadows~Neutral~Minion~10~6~6~None~Big Bad Archmage"
-	needTarget, keyWord, description = False, "", "At the end of your turn, summon a random 6-Cost minion"
+	requireTarget, keyWord, description = False, "", "At the end of your turn, summon a random 6-Cost minion"
 	poolIdentifier = "6-Cost Minions"
 	@classmethod
 	def generatePool(cls, Game):
@@ -1113,7 +1108,7 @@ class Acornbearer(Minion):
 	Class, race, name = "Druid", "", "Acornbearer"
 	mana, attack, health = 1, 2, 1
 	index = "Shadows~Druid~Minion~1~2~1~None~Acornbearer~Deathrattle"
-	needTarget, keyWord, description = False, "", "Deathrattle: Add two 1/1 Squirrels to your hand"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Add two 1/1 Squirrels to your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [AddTwoSquirrelstoHand(self)]
@@ -1127,12 +1122,12 @@ class Squirrel(Minion):
 	Class, race, name = "Neutral", "Beast", "Squirrel"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Druid~Minion~1~1~1~Beast~Squirrel~Uncollectible"
-	needTarget, keyWord, description = False, "", ""
+	requireTarget, keyWord, description = False, "", ""
 	
 	
 class CrystalPower(Spell):
 	Class, name = "Druid", "Crystal Power"
-	needTarget, mana = True, 1
+	requireTarget, mana = True, 1
 	index = "Shadows~Druid~Spell~1~Crystal Power~Choose One"
 	description = "Choose One - Deal 2 damage to a minion; or Restore 5 Health"
 	def __init__(self, Game, ID):
@@ -1140,14 +1135,14 @@ class CrystalPower(Spell):
 		self.chooseOne = 1
 		self.options = [PiercingThorns_Option(self), HealingBlossom_Option(self)]
 		
-	#available() only needs to check selectableCharacerExists
+	#available() only needs to check selectableCharacterExists
 	def targetCorrect(self, target, choice=0):
 		if choice == "ChooseBoth" or choice == 1:
 			return (target.cardType == "Minion" or target.cardType == "Hero") and target.onBoard
 		else:
 			return target.cardType == "Minion" and target.onBoard
 			
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			#When Choosing Both, it deals damage first and then heals
 			if (choice == "ChooseBoth" or choice == 0) and target.cardType == "Minion":
@@ -1165,7 +1160,7 @@ class PiercingThorns_Option:
 		self.spell = spell
 		self.name = "Piercing Thorns"
 		self.description = "2 damage to minion"
-		self.index = "Shadows~Druid~1~Spell~Piercing Thorns~Uncollectible"
+		self.index = "Shadows~Druid~Spell~1~Piercing Thorns~Uncollectible"
 		
 	def available(self):
 		return self.spell.selectableMinionExists()
@@ -1178,15 +1173,17 @@ class HealingBlossom_Option:
 		self.spell = spell
 		self.name = "Healing Blossom"
 		self.description = "Heal 5"
-		self.index = "Shadows~Druid~1~Spell~Healing Blossom~Uncollectible"
-		#available() is the generic method for all targeting spells
+		self.index = "Shadows~Druid~Spell~1~Healing Blossom~Uncollectible"
+		
+	def available(self):
+		return self.spell.selectableCharacterExists()
 		
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
 		
 class PiercingThorns(Spell):
 	Class, name = "Druid", "Piercing Thorns"
-	needTarget, mana = True, 1
+	requireTarget, mana = True, 1
 	index = "Shadows~Druid~Spell~1~Piercing Thorns~Uncollectible"
 	description = "Deal 2 damage to a minion"
 	
@@ -1196,7 +1193,7 @@ class PiercingThorns(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			print("Piercing Thorns is cast and deals %d damage to"%damage, target.name)
@@ -1205,11 +1202,11 @@ class PiercingThorns(Spell):
 		
 class HealingBlossom(Spell):
 	Class, name = "Druid", "Healing Blossom"
-	needTarget, mana = True, 1
+	requireTarget, mana = True, 1
 	index = "Shadows~Druid~Spell~1~Healing Blossom~Uncollectible"
 	description = "Restores 5 Health"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			heal = 5 * (2 ** self.countHealDouble())
 			print("Healing Blossom is cast and restores %d health to"%heal, target.name)
@@ -1219,7 +1216,7 @@ class HealingBlossom(Spell):
 		
 class CrystalsongPortal(Spell):
 	Class, name = "Druid", "Crystalsong Portal"
-	needTarget, mana = False, 2
+	requireTarget, mana = False, 2
 	index = "Shadows~Druid~Spell~2~Crystalsong Portal"
 	description = "Discover a Druid minion. If your hand has no minions, keep all 3"
 	poolIdentifier = "Druid Minions"
@@ -1239,7 +1236,7 @@ class CrystalsongPortal(Spell):
 				return "Discover"
 		return "Random"
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.Hand_Deck.handNotFull(self.ID):
 			handHasMinion = False
 			for card in self.Game.Hand_Deck.hands[self.ID]:
@@ -1251,7 +1248,7 @@ class CrystalsongPortal(Spell):
 				minions = np.random.choice(self.Game.RNGPools["Druid Minions"], 3, replace=False)
 				self.Game.Hand_Deck.addCardtoHand(minions, self.ID, "CreateUsingType")
 			else:
-				if comment == "CastbyOthers":
+				if "CastbyOthers" in comment:
 					print("Crystalsong Portal is cast and adds a random Druid minion to player's hand")
 					minion = np.random.choice(self.Game.RNGPools["Druid Minions"])
 					self.Game.Hand_Deck.addCardtoHand(minion, self.ID, "CreateUsingType")
@@ -1264,20 +1261,20 @@ class CrystalsongPortal(Spell):
 		return None
 		
 	def discoverDecided(self, option):
-		rint("Minion ", option.name, " is put into player's hand.")
+		print("Minion ", option.name, " is put into player's hand.")
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
 		
 class DreamwayGuardians(Spell):
 	Class, name = "Druid", "Dreamway Guardians"
-	needTarget, mana = False, 2
+	requireTarget, mana = False, 2
 	index = "Shadows~Druid~Spell~2~Dreamway Guardians"
 	description = "Summon two 1/2 Dryads with Lifesteal"
 	def available(self):
 		return self.Game.spaceonBoard(self.ID) > 0
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Dreamway Guardians is played and summons two 1/2 Dryads with Lifesteal.")
 		self.Game.summonMinion([Dryad(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
 		return None
@@ -1286,14 +1283,14 @@ class Dryad(Minion):
 	Class, race, name = "Druid", "", "Dryad"
 	mana, attack, health = 1, 1, 2
 	index = "Shadows~Druid~Minion~1~1~2~None~Dryad~Lifesteal~Uncollectible"
-	needTarget, keyWord, description = False, "Lifesteal", "Lifesteal"
+	requireTarget, keyWord, description = False, "Lifesteal", "Lifesteal"
 	
 	
 class KeeperStalladris(Minion):
 	Class, race, name = "Druid", "", "Keeper Stalladris"
 	mana, attack, health = 2, 2, 3
 	index = "Shadows~Druid~Minion~2~2~3~None~Keeper Stalladris~Legendary"
-	needTarget, keyWord, description = False, "", "After you cast a Choose One spell, add copies of both choices to your hand"
+	requireTarget, keyWord, description = False, "", "After you cast a Choose One spell, add copies of both choices to your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggersonBoard = [Trigger_KeeperStalladris(self)]
@@ -1315,7 +1312,7 @@ class Lifeweaver(Minion):
 	Class, race, name = "Druid", "", "Lifeweaver"
 	mana, attack, health = 3, 2, 5
 	index = "Shadows~Druid~Minion~3~2~5~None~Lifeweaver"
-	needTarget, keyWord, description = False, "", "Whenever you restore Health, add a random Druid spell to your hand"
+	requireTarget, keyWord, description = False, "", "Whenever you restore Health, add a random Druid spell to your hand"
 	poolIdentifier = "Druid Spells"
 	@classmethod
 	def generatePool(cls, Game):
@@ -1345,13 +1342,13 @@ class CrystalStag(Minion):
 	Class, race, name = "Druid", "Beast", "Crystal Stag"
 	mana, attack, health = 5, 4, 4
 	index = "Shadows~Druid~Minion~5~4~4~Beast~Crystal Stag~Rush~Battlecry"
-	needTarget, keyWord, description = False, "Rush", "Rush. Battlecry: If you've restored 5 Health this game, summon a copy of this"
+	requireTarget, keyWord, description = False, "Rush", "Rush. Battlecry: If you've restored 5 Health this game, summon a copy of this"
 	
 	def effectCanTrigger(self):
-		self.effectViable = self.Game.healthRestored[self.ID] > 4
+		self.effectViable = self.Game.CounterHandler.healthRestoredThisGame[self.ID] > 4
 		
-	def whenEffective(self, target=None, comment="", choice=0):
-		if self.Game.healthRestored[self.ID] > 4:
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
+		if self.Game.CounterHandler.healthRestoredThisGame[self.ID] > 4:
 			print("Crystal Stag's battlecry summons a copy of itself.")
 			Copy = self.selfCopy(self.ID)
 			self.Game.summonMinion(Copy, self.position+1, self.ID)
@@ -1360,7 +1357,7 @@ class CrystalStag(Minion):
 		
 class BlessingoftheAncients(Spell):
 	Class, name = "Druid", "Blessing of the Ancients"
-	needTarget, mana = False, 3
+	requireTarget, mana = False, 3
 	index = "Shadows~Druid~Spell~3~Blessing of the Ancients~Twinspell"
 	description = "Twinspell. Give your minions +1/+1"
 	def __init__(self, Game, ID):
@@ -1368,7 +1365,7 @@ class BlessingoftheAncients(Spell):
 		self.twinSpell = 1
 		self.twinSpellCopy = blessingoftheancients
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Twinspell Blessing of the Ancients is played and gives all friendly minions +1/+1.")
 		for minion in self.Game.minionsonBoard(self.ID):
 			minion.buffDebuff(1, 1)
@@ -1376,11 +1373,11 @@ class BlessingoftheAncients(Spell):
 		
 class blessingoftheancients(Spell):
 	Class, name = "Druid", "Blessing of the Ancients"
-	needTarget, mana = False, 3
+	requireTarget, mana = False, 3
 	index = "Shadows~Druid~Spell~3~Blessing of the Ancients~Uncollectible"
 	description = "Give your minions +1/+1"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Blessing of the Ancients is played and gives all friendly minions +1/+1.")
 		for minion in self.Game.minionsonBoard(self.ID):
 			minion.buffDebuff(1, 1)
@@ -1390,8 +1387,8 @@ class blessingoftheancients(Spell):
 class Lucentbark(Minion):
 	Class, race, name = "Druid", "", "Lucentbark"
 	mana, attack, health = 8, 4, 8
-	index = "Shadows~Druid~Minion~8~4~8~None~Lucentbark~Taunt~Deathrattle_Legendary"
-	needTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Go dormant. Restore 5 Health to awaken this minion"
+	index = "Shadows~Druid~Minion~8~4~8~None~Lucentbark~Taunt~Deathrattle~Legendary"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Go dormant. Restore 5 Health to awaken this minion"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [BecomeSpiritofLucentbark(self)]
@@ -1407,10 +1404,12 @@ class BecomeSpiritofLucentbark(Deathrattle_Minion):
 		
 class SpiritofLucentbark(Permanent):
 	Class, name = "Druid", "Spirit of Lucentbark"
+	description = "Restore 5 Health to awaken"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.healthRestored = 0
+		self.progress = 0
 		self.triggersonBoard = [Trigger_SpiritofLucentbark(self)]
+		self.originalMinion = Lucentbark
 		
 class Trigger_SpiritofLucentbark(TriggeronBoard):
 	def __init__(self, entity):
@@ -1421,15 +1420,15 @@ class Trigger_SpiritofLucentbark(TriggeronBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		print("Player restores %d Health, and %s's counter records it."%(number, self.entity.name))
-		self.entity.healthRestored += number
-		if self.entity.healthRestored > 4:
+		self.entity.progress += number
+		if self.entity.progress > 4:
 			print("Spirit of Lucentbark transforms into Lucentbark")
 			self.entity.Game.transform(self.entity, Lucentbark(self.entity.Game, self.entity.ID))
 			
 			
 class TheForestsAid(Spell):
 	Class, name = "Druid", "The Forest's Aid"
-	needTarget, mana = False, 8
+	requireTarget, mana = False, 8
 	index = "Shadows~Druid~Spell~8~The Forest's Aid~Twinspell"
 	description = "Twinspell. Summon five 2/2 Treants"
 	def __init__(self, Game, ID):
@@ -1437,26 +1436,32 @@ class TheForestsAid(Spell):
 		self.twinSpell = 1
 		self.twinSpellCopy = theforestsaid
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Twinspell The Forest's Aid is played and summons five 2/2 Treants.")
-		self.Game.summonMinion([Treant(self.Game, self.ID) for i in range(5)], (-1, "totheRightEnd"), self.ID)
+		self.Game.summonMinion([Treant_Shadows(self.Game, self.ID) for i in range(5)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
 class theforestsaid(Spell):
 	Class, name = "Druid", "The Forest's Aid"
-	needTarget, mana = False, 8
+	requireTarget, mana = False, 8
 	index = "Shadows~Druid~Spell~8~The Forest's Aid~Uncollectible"
 	description = "Summon five 2/2 Treants"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("The Forest's Aid is played and summons five 2/2 Treants.")
-		self.Game.summonMinion([Treant(self.Game, self.ID) for i in range(5)], (-1, "totheRightEnd"), self.ID)
+		self.Game.summonMinion([Treant_Shadows(self.Game, self.ID) for i in range(5)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
+class Treant_Shadows(Minion):
+	Class, race, name = "Druid", "", "Treant"
+	mana, attack, health = 2, 2, 2
+	index = "Shadows~Druid~Minion~2~2~2~None~Treant~Uncollectible"
+	requireTarget, keyWord, description = False, "", ""
+	
 """Hunter cards"""
 class RapidFire(Spell):
 	Class, name = "Hunter", "Rapid Fire"
-	needTarget, mana = True, 1
+	requireTarget, mana = True, 1
 	index = "Shadows~Hunter~Spell~1~Rapid Fire~Twinspell"
 	description = "Twinspell. Deal 1 damage"
 	def __init__(self, Game, ID):
@@ -1464,7 +1469,7 @@ class RapidFire(Spell):
 		self.twinSpell = 1
 		self.twinSpellCopy = rapidfire
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			print("Twinspell Rapid Fire is cast and deals %d damage to "%damage, target.name)
@@ -1473,11 +1478,11 @@ class RapidFire(Spell):
 		
 class rapidfire(Spell):
 	Class, name = "Hunter", "Rapid Fire"
-	needTarget, mana = True, 1
+	requireTarget, mana = True, 1
 	index = "Shadows~Hunter~Spell~1~Rapid Fire~Uncollectible"
 	description = "Deal 1 damage"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			print("Rapid Fire is cast and deals %d damage to "%damage, target.name)
@@ -1489,7 +1494,7 @@ class Shimmerfly(Minion):
 	Class, race, name = "Hunter", "Beast", "Shimmerfly"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Hunter~Minion~1~1~1~Beast~Shimmerfly~Deathrattle"
-	needTarget, keyWord, description = False, "", "Deathrattle: Add a random Hunter spell to your hand"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Add a random Hunter spell to your hand"
 	poolIdentifier = "Hunter Spells"
 	@classmethod
 	def generatePool(cls, Game):
@@ -1512,14 +1517,14 @@ class AddaHunterSpelltoHand(Deathrattle_Minion):
 			
 class NineLives(Spell):
 	Class, name = "Hunter", "Nine Lives"
-	needTarget, mana = False, 3
+	requireTarget, mana = False, 3
 	index = "Shadows~Hunter~Spell~3~Nine Lives"
 	description = "Discover a friendly Deathrattle minion that died this game. Also trigger its Deathrattle"
 	
 	def randomorDiscover(self):
 		return "Discover"
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.Hand_Deck.handNotFull(self.ID):
 			deathrattleMinions, deathrattleIndices = [], []
 			for index in self.Game.CounterHandler.minionsDiedThisGame[self.ID]:
@@ -1527,19 +1532,25 @@ class NineLives(Spell):
 					deathrattleMinions.append(index)
 					
 			if deathrattleMinions != []:
-				if comment == "CastbyOthers":
-					print("Nine Lives is cast and adds a random friendly Deathrattle minion that died this game")
-					minion = self.Game.cardPool[np.random.choice(deathrattleMinions)](self.Game, self.ID)
+				if len(deathrattleMinions) == 1:
+					print("There is only one friendly Deathrattle minion that died this game, and Nine Lives adds it to player's hand and triggers its deathrattles")
+					minion = self.Game.cardPool[deathrattleMinions[0]](self.Game, self.ID)
 					self.Game.Hand_Deck.addCardtoHand(minion, self.ID)
-					print("Nine Lives triggers the Deathrattle of the minion %s added to hand"%minion.name)
 					for trigger in minion.deathrattles:
 						trigger.trigger("DeathrattleTriggers", self.ID, None, minion, minion.attack, "")
 				else:
-					print("Nine Lives is cast and lets player discover adds a random friendly Deathrattle minion that died this game")
-					minions = np.random.choice(deathrattleMinions, 3, replace=False)
-					self.Game.options = [self.Game.cardPool[minion](self.Game, self.ID) for minion in minions]
-					self.Game.DiscoverHandler.startDiscover(self)
-					
+					if "CastbyOthers" in comment:
+						print("Nine Lives is cast and adds a random friendly Deathrattle minion that died this game")
+						minion = self.Game.cardPool[np.random.choice(deathrattleMinions)](self.Game, self.ID)
+						self.Game.Hand_Deck.addCardtoHand(minion, self.ID)
+						print("Nine Lives triggers the Deathrattle of the minion %s added to hand"%minion.name)
+						for trigger in minion.deathrattles:
+							trigger.trigger("DeathrattleTriggers", self.ID, None, minion, minion.attack, "")
+					else:
+						print("Nine Lives is cast and lets player discover adds a random friendly Deathrattle minion that died this game")
+						minions = np.random.choice(deathrattleMinions, min(3, len(deathrattleMinions)), replace=False)
+						self.Game.options = [self.Game.cardPool[minion](self.Game, self.ID) for minion in minions]
+						self.Game.DiscoverHandler.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option):
@@ -1554,7 +1565,7 @@ class Ursatron(Minion):
 	Class, race, name = "Hunter", "Mech", "Ursatron"
 	mana, attack, health = 3, 3, 3
 	index = "Shadows~Hunter~Minion~3~3~3~Mech~Ursatron~Deathrattle"
-	needTarget, keyWord, description = False, "", "Deathrattle: Draw a Mech from your deck"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Draw a Mech from your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [DrawaMech(self)]
@@ -1573,14 +1584,14 @@ class DrawaMech(Deathrattle_Minion):
 			
 class MarkedShot(Spell):
 	Class, name = "Hunter", "Marked Shot"
-	needTarget, mana = True, 4
+	requireTarget, mana = True, 4
 	index = "Shadows~Hunter~Spell~4~Marked Shot"
 	description = "Deal 4 damage to a minion. Discover a Spell"
 	poolIdentifier = "Hunter Spells"
 	@classmethod
 	def generatePool(cls, Game):
 		classes, lists = [], []
-		for Class in ["Druid", "Mage", "Hunter", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"]:
+		for Class in Classes:
 			classes.append(Class+" Spells")
 			spellsinClass = []
 			for key, value in Game.ClassCards[Class].items():
@@ -1598,14 +1609,14 @@ class MarkedShot(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			print("Marked Shot is cast and deals %d damage to"%damage, target.name)
 			self.dealsDamage(target, damage)
 			if self.Game.Hand_Deck.handNotFull(self.ID):
 				key = classforDiscover(self)+" Spells"
-				if comment == "CastbyOthers":
+				if "CastbyOthers" in comment:
 					print("Marked Shot is cast and adds a random spell to player's hand")
 					self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 				else:
@@ -1624,11 +1635,11 @@ class MarkedShot(Spell):
 		
 class HuntingParty(Spell):
 	Class, name = "Hunter", "Hunting Party"
-	needTarget, mana = False, 5
+	requireTarget, mana = False, 5
 	index = "Shadows~Hunter~Spell~5~Hunting Party"
 	description = "Copy all Beasts in your hand"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Hunting Party is cast and copies all Beasts in player's hand.")
 		if self.Game.Hand_Deck.handNotFull(self.ID):
 			copies = []
@@ -1643,8 +1654,8 @@ class HuntingParty(Spell):
 class Oblivitron(Minion):
 	Class, race, name = "Hunter", "Mech", "Oblivitron"
 	mana, attack, health = 6, 3, 4
-	index = "Shadows~Hunter~Minion~6~3~4~Mech~Oblivitron~Deathrattle_Legendary"
-	needTarget, keyWord, description = False, "", "Deathrattle: Summon a Mech from your hand and trigger its Deathrattle"
+	index = "Shadows~Hunter~Minion~6~3~4~Mech~Oblivitron~Deathrattle~Legendary"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Summon a Mech from your hand and trigger its Deathrattle"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [SummonMechfromHandandTriggeritsDeathrattle(self)]
@@ -1667,7 +1678,7 @@ class SummonMechfromHandandTriggeritsDeathrattle(Deathrattle_Minion):
 				
 class UnleashtheBeast(Spell):
 	Class, name = "Hunter", "Unleash the Beast"
-	needTarget, mana = False, 6
+	requireTarget, mana = False, 6
 	index = "Shadows~Hunter~Spell~6~Unleash the Beast~Twinspell"
 	description = "Twinspell. Summon a 5/5 Wyvern with Rush"
 	def __init__(self, Game, ID):
@@ -1675,18 +1686,18 @@ class UnleashtheBeast(Spell):
 		self.twinSpell = 1
 		self.twinSpellCopy = unleashthebeast
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Twinspell Unleash the Beast is cast and summons a 5/5 Wyvern.")
 		self.Game.summonMinion(Wyvern(self.Game, self.ID), -1, self.ID)
 		return None
 		
 class unleashthebeast(Spell):
 	Class, name = "Hunter", "Unleash the Beast"
-	needTarget, mana = False, 6
+	requireTarget, mana = False, 6
 	index = "Shadows~Hunter~Spell~6~Unleash the Beast~Uncollectible"
 	description = "Summon a 5/5 Wyvern with Rush"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Unleash the Beast is cast and summons a 5/5 Wyvern.")
 		self.Game.summonMinion(Wyvern(self.Game, self.ID), -1, self.ID)
 		return None
@@ -1695,16 +1706,16 @@ class Wyvern(Minion):
 	Class, race, name = "Hunter", "Beast", "Wyvern"
 	mana, attack, health = 5, 5, 5
 	index = "Shadows~Hunter~Minion~5~5~5~Beast~Wyvern~Rush~Uncollectible"
-	needTarget, keyWord, description = False, "Rush", "Rush"
+	requireTarget, keyWord, description = False, "Rush", "Rush"
 	
 	
 class VereesaWindrunner(Minion):
 	Class, race, name = "Hunter", "", "Vereesa Windrunner"
 	mana, attack, health = 7, 5, 6
 	index = "Shadows~Hunter~Minion~7~5~6~None~Vereesa Windrunner~Battlecry~Legendary"
-	needTarget, keyWord, description = False, "", "Battlecry: Equip Thori'dal, the Stars' Fury"
+	requireTarget, keyWord, description = False, "", "Battlecry: Equip Thori'dal, the Stars' Fury"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Vereesa Windrunner's battlecry equips Thori'dal, the Stars' Fury.")
 		self.Game.equipWeapon(ThoridaltheStarsFury(self.Game, self.ID))
 		return None
@@ -1727,35 +1738,21 @@ class Trigger_ThoridaltheStarsFury(TriggeronBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		print("After player attacks, Thori'dal, the Stars' Fury gives gives player Spell Damage +2 this turn.")
 		self.entity.Game.playerStatus[self.entity.ID]["Spell Damage"] += 2
-		trigger = Trigger_ThoridaltheStarsFury_TurnEnds(self.entity)
-		trigger.ID = self.entity.ID
-		trigger.connect()
+		self.Game.turnEndTrigger.append(SpellDamagePlus2Disappears(self.Game, self.ID))
 		
-class Trigger_ThoridaltheStarsFury_TurnEnds(TriggeronBoard):
-	def __init__(self, entity):
-		self.blank_init(entity, ["TurnEnds"])
-		self.ID = 1
+class SpellDamagePlus2Disappears:
+	def __init__(self, Game, ID):
+		self.Game, self.ID = Game, ID
 		
-	def connect(self):
-		for signal in self.signals:
-			self.entity.Game.triggersonBoard[self.ID].append((self, signal))
-			
-	def disconnect(self):
-		for signal in self.signals:
-			extractfrom((self, signal), self.entity.Game.triggersonBoard[self.ID])
-			
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return True
-		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.playerStatus[self.ID]["Spell Damage"] -= 2
-		self.entity.Game.playerStatus[self.ID]["Spell Damage"] = max(0, self.entity.Game.playerStatus[self.ID]["Spell Damage"])
-		self.disconnect()
+	def turnEndTrigger(self):
+		print("At the end of turn, Thori'dal, the Stars' Fury's effect expires and player no longer has Spell Damage +2")
+		self.Game.playerStatus[self.ID]["Spell Damage"] -= 2
+		extractfrom(self, self.Game.turnEndTrigger)
 		
 """Mage cards"""
 class RayofFrost(Spell):
 	Class, name = "Mage", "Ray of Frost"
-	needTarget, mana = True, 1
+	requireTarget, mana = True, 1
 	index = "Shadows~Mage~Spell~1~Ray of Frost~Twinspell"
 	description = "Twinspell. Freeze a minion. If it's already Frozen, deal 2 damage to it"
 	def __init__(self, Game, ID):
@@ -1769,7 +1766,7 @@ class RayofFrost(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			if target.status["Frozen"]:
 				damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1782,7 +1779,7 @@ class RayofFrost(Spell):
 		
 class rayoffrost(Spell):
 	Class, name = "Mage", "Ray of Frost"
-	needTarget, mana = True, 1
+	requireTarget, mana = True, 1
 	index = "Shadows~Mage~Spell~1~Ray of Frost~Uncollectible"
 	description = "Freeze a minion. If it's already Frozen, deal 2 damage to it"
 	
@@ -1792,7 +1789,7 @@ class rayoffrost(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			if target.status["Frozen"]:
 				damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1814,7 +1811,7 @@ class Khadgar(Minion):
 	Class, race, name = "Mage", "", "Khadgar"
 	mana, attack, health = 2, 2, 2
 	index = "Shadows~Mage~Minion~2~2~2~None~Khadgar~Legendary"
-	needTarget, keyWord, description = False, "", "Your cards that summon minions summon twice as many"
+	requireTarget, keyWord, description = False, "", "Your cards that summon minions summon twice as many"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.appearResponse = [self.activateAura]
@@ -1827,15 +1824,14 @@ class Khadgar(Minion):
 		
 	def deactivateAura(self):
 		print("Khadgar's aura is removed. Player %d's cards' summoning effects no longer summon twice as many."%self.ID)
-		if self.Game.playerStatus[self.ID]["Double Summoning by Cards"] > 0:
-			self.Game.playerStatus[self.ID]["Double Summoning by Cards"] -= 1
-			
-			
+		self.Game.playerStatus[self.ID]["Double Summoning by Cards"] -= 1
+		
+		
 class MagicDartFrog(Minion):
 	Class, race, name = "Mage", "Beast", "Magic Dart Frog"
 	mana, attack, health = 2, 1, 3
 	index = "Shadows~Mage~Minion~2~1~3~Beast~Magic Dart Frog"
-	needTarget, keyWord, description = False, "", "After you cast a spell, deal 1 damage to a random enemy minion"
+	requireTarget, keyWord, description = False, "", "After you cast a spell, deal 1 damage to a random enemy minion"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggersonBoard = [Trigger_MagicDartFrog(self)]
@@ -1859,7 +1855,7 @@ class MessengerRaven(Minion):
 	Class, race, name = "Mage", "Beast", "Messenger Raven"
 	mana, attack, health = 3, 3, 2
 	index = "Shadows~Mage~Minion~3~3~2~Beast~Messenger Raven~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Discover a Mage minion"
+	requireTarget, keyWord, description = False, "", "Battlecry: Discover a Mage minion"
 	poolIdentifier = "Mage Minions"
 	@classmethod
 	def generatePool(cls, Game):
@@ -1872,9 +1868,9 @@ class MessengerRaven(Minion):
 	def randomorDiscover(self):
 		return "Discover"
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.ID == self.Game.turn and self.Game.Hand_Deck.handNotFull(self.ID):
-			if comment == "InvokedbyOthers":
+			if "InvokedbyOthers" in comment:
 				print("Messenger Raven's battlecry adds random Mage minion to player's hand.")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools["Mage Minions"]), self.ID, "CreateUsingType")
 			else:
@@ -1893,7 +1889,7 @@ class MessengerRaven(Minion):
 		
 class MagicTrick(Spell):
 	Class, name = "Mage", "Magic Trick"
-	needTarget, mana = False, 1
+	requireTarget, mana = False, 1
 	index = "Shadows~Mage~Spell~1~Magic Trick"
 	description = "Discover a spell that costs (3) or less"
 	poolIdentifier = "Spells 3-Cost or less as Mage"
@@ -1901,7 +1897,7 @@ class MagicTrick(Spell):
 	def generatePool(cls, Game):
 		classes, lists = [], []
 		#职业为中立时，随机挑选一个职业进行发现
-		for Class in ["Druid", "Mage", "Hunter", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"]:
+		for Class in Classes:
 			classes.append("Spells 3-Cost or less as " + Class)
 			spells = []
 			for key, value in Game.ClassCards[Class].items():
@@ -1912,10 +1908,10 @@ class MagicTrick(Spell):
 			
 		return classes, lists #返回的包含“Class Cards except Hunter”等identifier的列表和其他职业卡表
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.Hand_Deck.handNotFull(self.ID):
 			key = "Spells 3-Cost or less as "+classforDiscover(self)
-			if comment == "CastbyOthers":
+			if "CastbyOthers" in comment:
 				print("Magic Trick adds a random spell that costs 3 or less to player's hand.")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
@@ -1934,7 +1930,7 @@ class MagicTrick(Spell):
 		
 class ConjurersCalling(Spell):
 	Class, name = "Mage", "Conjurer's Calling"
-	needTarget, mana = True, 4
+	requireTarget, mana = True, 4
 	index = "Shadows~Mage~Spell~4~Conjurer's Calling~Twinspell"
 	description = "Twinspell. Destroy a minion. Summon 2 minions of the same Cost to replace it"
 	poolIdentifier = "1-Cost Minions"
@@ -1960,7 +1956,7 @@ class ConjurersCalling(Spell):
 	#例如，自爆绵羊在生效前是场上第3个随从，强制死亡并结算所有死亡情况之后，在场上的第3个位置召唤两个随从（即第2个随从的右边）
 	#如果位置溢出，则直接召唤到场上的最右边。
 	#当与风潮配合而生效两次的时候，第一次召唤随从是在原来的位置，之后的召唤是在最右边。说明第二次生效时目标已经被初始化，失去了原有的位置信息。
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			cost = type(target).mana
 			key = "%d-Cost Minions"%cost
@@ -1983,7 +1979,7 @@ class ConjurersCalling(Spell):
 		
 class conjurerscalling(Spell):
 	Class, name = "Mage", "Conjurer's Calling"
-	needTarget, mana = True, 4
+	requireTarget, mana = True, 4
 	index = "Shadows~Mage~Spell~4~Conjurer's Calling~Uncollectible"
 	description = "Destroy a minion. Summon 2 minions of the same Cost to replace it"
 	
@@ -1993,18 +1989,18 @@ class conjurerscalling(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			cost = type(target).mana
 			key = "%d-Cost Minions"%cost
-			print("Conjurer's Calling is cast, destroys minion %s and summons two minions with the same cost"%target.name, mana)
+			print("Twinspell Conjurer's Calling is cast, destroys minion %s and summons two minions with the same cost"%target.name, cost)
 			targetID, position = target.ID, target.position
 			self.Game.destroyMinion(target) #如果随从在手牌中则将其丢弃
 			#强制死亡需要在此插入死亡结算，并让随从离场
 			self.Game.gathertheDead()
 			minions = np.random.choice(self.Game.RNGPools[key], 2, replace=True)
 			if position == 0:
-				pos = (-1, "totheRight")
+				pos = (-1, "totheRight") #Summon to the leftmost
 			#如果目标之前是第4个(position=3)，则场上最后只要有3个随从或者以下，就会召唤到最右边。
 			#如果目标不在场上或者是第二次生效时已经死亡等被初始化，则position=-2会让新召唤的随从在场上最右边。
 			elif position < 0 or position >= len(self.Game.minionsonBoard(targetID)):
@@ -2019,7 +2015,7 @@ class KirinTorTricaster(Minion):
 	Class, race, name = "Mage", "", "Kirin Tor Tricaster"
 	mana, attack, health = 4, 3, 3
 	index = "Shadows~Mage~Minion~4~3~3~None~Kirin Tor Tricaster"
-	needTarget, keyWord, description = False, "", "Spell Damage +3. Your spells cost (1) more"
+	requireTarget, keyWord, description = False, "", "Spell Damage +3. Your spells cost (1) more"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.keyWords["Spell Damage"] = 3
@@ -2033,7 +2029,7 @@ class ManaCyclone(Minion):
 	Class, race, name = "Mage", "Elemental", "Mana Cyclone"
 	mana, attack, health = 2, 2, 2
 	index = "Shadows~Mage~Minion~2~2~2~Elemental~Mana Cyclone~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: For each spell you've cast this turn, add a random Mage spell to your hand"
+	requireTarget, keyWord, description = False, "", "Battlecry: For each spell you've cast this turn, add a random Mage spell to your hand"
 	poolIdentifier = "Mage Spells"
 	@classmethod
 	def generatePool(cls, Game):
@@ -2043,36 +2039,36 @@ class ManaCyclone(Minion):
 				mageSpells.append(value)
 		return "Mage Spells", mageSpells
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Mana Cyclone's battlecry adds a random Mage spell into player's hand for each spell played this turn.")
-		spells = np.random.choice(self.Game.RNGPools["Mage Spells"], len(self.Game.numSpellsPlayedThisTurn[self.ID]), replace=True)
+		spells = np.random.choice(self.Game.RNGPools["Mage Spells"], self.Game.CounterHandler.numSpellsPlayedThisTurn[self.ID], replace=True)
 		self.Game.Hand_Deck.addCardtoHand(spells, self.ID, "CreateUsingType")
 		return None
 		
 		
 class PowerofCreation(Spell):
 	Class, name = "Mage", "Power of Creation"
-	needTarget, mana = False, 8
+	requireTarget, mana = False, 8
 	index = "Shadows~Mage~Spell~8~Power of Creation"
 	description = "Discover a 6-Cost minion. Summon two copies of it"
 	poolIdentifier = "6-Cost Minions as Mage"
 	@classmethod
 	def generatePool(cls, Game):
 		classes, lists, neutralCards = [], [], []
-		classCards = {"Neutral": [], "Druid":[], "Mage":[], "Hunter":[], "Paladin":[],
+		classCards = {"Neutral": [], "Demon Hunter":[], "Druid":[], "Mage":[], "Hunter":[], "Paladin":[],
 						"Priest":[], "Rogue":[], "Shaman":[], "Warlock":[], "Warrior":[]}
 		for key, value in Game.MinionsofCost[6].items():
 			classCards[key.split('~')[1]].append(value)
 			
-		for Class in ["Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"]:
+		for Class in Classes:
 			classes.append("6-Cost Minions as "+Class)
 			lists.append(classCards[Class]+classCards["Neutral"])
 		return classes, lists #返回的包含“Class Cards except Hunter”等identifier的列表和其他职业卡表
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Power of Creation is cast, player discovers a 6-Cost minion and summon two copies of it.")
 		key = "6-Cost Minions as "+classforDiscover(self)
-		if comment == "CastbyOthers":
+		if "CastbyOthers" in comment:
 			print("Power of Creation summons two copies of a random 6-Cost minion.")
 			minion = np.random.choice(self.Game.RNGPools[key])
 			self.Game.summonMinion([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
@@ -2093,12 +2089,12 @@ class Kalecgos(Minion):
 	Class, race, name = "Mage", "Dragon", "Kalecgos"
 	mana, attack, health = 10, 4, 12
 	index = "Shadows~Mage~Minion~10~4~12~Dragon~Kalecgos~Legendary"
-	needTarget, keyWord, description = False, "", "Your first spell costs (0) each turn. Battlecry: Discover a spell"
+	requireTarget, keyWord, description = False, "", "Your first spell costs (0) each turn. Battlecry: Discover a spell"
 	poolIdentifier = "Mage Spells"
 	@classmethod
 	def generatePool(cls, Game):
 		classes, lists = [], []
-		for Class in ["Druid", "Mage", "Hunter", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"]:
+		for Class in Classes:
 			classes.append(Class+" Spells")
 			spellsinClass = []
 			for key, value in Game.ClassCards[Class].items():
@@ -2116,10 +2112,10 @@ class Kalecgos(Minion):
 		self.disappearResponse = [self.deactivateAura]
 		self.silenceResponse = [self.deactivateAura]
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.ID == self.Game.turn and self.Game.Hand_Deck.handNotFull(self.ID):
 			key = classforDiscover(self)+" Spells"
-			if comment == "InvokedbyOthers":
+			if "InvokedbyOthers" in comment:
 				print("Kalecgos' battlecry adds a random spell to player's hand")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
@@ -2147,6 +2143,7 @@ class Kalecgos(Minion):
 		print("Kalecgos's mana aura is removed. Player's first spell each turn no longer costs (0).")
 		self.auras["Mana Aura"].auraDisappears()
 		
+#法术反制实际上不会消耗卡雷苟斯的光环，但是会消耗暮陨者艾维娜的光环，但是在此统一为会消耗。卡雷苟斯的光环显然是程序员自己没有参考之前的同类型光环然后自己写的。
 class Trigger_Kalecgos(TriggeronBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts", "TurnEnds", "ManaCostPaid"])
@@ -2170,7 +2167,7 @@ class Trigger_Kalecgos(TriggeronBoard):
 			
 class NeverSurrender(Secret):
 	Class, name = "Paladin", "Never Surrender!"
-	needTarget, mana = False, 1
+	requireTarget, mana = False, 1
 	index = "Shadows~Paladin~Spell~1~Never Surrender!~~Secret"
 	description = "Whenever your opponent casts a spell, give your minions +2 Health"
 	def __init__(self, Game, ID):
@@ -2192,7 +2189,7 @@ class Trigger_NeverSurrender(SecretTrigger):
 			
 class LightforgedBlessing(Spell):
 	Class, name = "Paladin", "Lightforged Blessing"
-	needTarget, mana = True, 2
+	requireTarget, mana = True, 2
 	index = "Shadows~Paladin~Spell~2~Lightforged Blessing~Twinspell"
 	description = "Twinspell. Give a friendly minion Lifesteal"
 	def __init__(self, Game, ID):
@@ -2206,7 +2203,7 @@ class LightforgedBlessing(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.ID == self.ID and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Twinspell Lightforged Blessing is cast and gives a friendly minion Lifesteal.")
 			target.getsKeyword("Lifesteal")
@@ -2214,7 +2211,7 @@ class LightforgedBlessing(Spell):
 		
 class lightforgedblessing(Spell):
 	Class, name = "Paladin", "Lightforged Blessing"
-	needTarget, mana = True, 2
+	requireTarget, mana = True, 2
 	index = "Shadows~Paladin~Spell~2~Lightforged Blessing~Uncollectible"
 	description = "Give a friendly minion Lifesteal"
 	
@@ -2224,7 +2221,7 @@ class lightforgedblessing(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.ID == self.ID and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Lightforged Blessing is cast and gives a friendly minion Lifesteal.")
 			target.getsKeyword("Lifesteal")
@@ -2235,7 +2232,7 @@ class BronzeHerald(Minion):
 	Class, race, name = "Paladin", "Dragon", "Bronze Herald"
 	mana, attack, health = 3, 3, 2
 	index = "Shadows~Paladin~Minion~3~3~2~Dragon~Bronze Herald~Deathrattle"
-	needTarget, keyWord, description = False, "", "Deathrattle: Add two 4/4 Dragons to your hand"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Add two 4/4 Dragons to your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [AddTwoBronzeDragonstoHand(self)]
@@ -2249,12 +2246,12 @@ class BronzeDragon(Minion):
 	Class, race, name = "Paladin", "Dragon", "Bronze Dragon"
 	mana, attack, health = 4, 4, 4
 	index = "Shadows~Paladin~Minion~4~4~4~Dragon~Bronze Dragon~Uncollectible"
-	needTarget, keyWord, description = False, "", ""
+	requireTarget, keyWord, description = False, "", ""
 	
 	
 class DesperateMeasures(Spell):
 	Class, name = "Paladin", "Desperate Measures"
-	needTarget, mana = False, 1
+	requireTarget, mana = False, 1
 	index = "Shadows~Paladin~Spell~1~Desperate Measures~Twinspell"
 	description = "Twinspell. Cast a random Paladin Secrets"
 	poolIdentifier = "Paladin Secrets"
@@ -2271,7 +2268,7 @@ class DesperateMeasures(Spell):
 		self.twinSpell = 1
 		self.twinSpellCopy = desperatemeasures
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Twinspell Desperate Measures is cast and casts a random Paladin Secret.")
 		secrets = []
 		for value in self.Game.RNGPools["Paladin Secrets"]:
@@ -2284,11 +2281,11 @@ class DesperateMeasures(Spell):
 		
 class desperatemeasures(Spell):
 	Class, name = "Paladin", "Desperate Measures"
-	needTarget, mana = False, 1
+	requireTarget, mana = False, 1
 	index = "Shadows~Paladin~Spell~1~Desperate Measures~Uncollectible"
 	description = "Cast a random Paladin Secrets"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Desperate Measures is cast and casts a random Paladin Secret.")
 		secrets = []
 		for value in self.Game.RNGPools["Paladin Secrets"]:
@@ -2304,8 +2301,10 @@ class MysteriousBlade(Weapon):
 	Class, name, description = "Paladin", "Mysterious Blade", "Battlecry: If you control a Secret, gain +1 Attack"
 	mana, attack, durability = 2, 2, 2
 	index = "Shadows~Paladin~Weapon~2~2~2~Mysterious Blade~Battlecry"
-	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def effectCanTrigger(self):
+		self.effectViable = self.Game.SecretHandler.secrets[self.ID] != []
+		
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.SecretHandler.secrets[self.ID] != []:
 			print("Mysterious Blade's battlecry gives weapon +1 attack.")
 			self.gainStat(1, 0)
@@ -2314,10 +2313,10 @@ class MysteriousBlade(Weapon):
 		
 class CalltoAdventure(Spell):
 	Class, name = "Paladin", "Call to Adventure"
-	needTarget, mana = False, 3
+	requireTarget, mana = False, 3
 	index = "Shadows~Paladin~Spell~3~Call to Adventure"
 	description = "Draw the lowest Cost minion from your deck. Give it +2/+2"
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Call to Adventure is cast. Player draws the lowest Cost card from deck, and it gains +2/+2.")
 		minionsinDeck = []
 		lowestCost = np.inf
@@ -2341,9 +2340,9 @@ class DragonSpeaker(Minion):
 	Class, race, name = "Paladin", "", "Dragon Speaker"
 	mana, attack, health = 5, 3, 5
 	index = "Shadows~Paladin~Minion~5~3~5~None~Dragon Speaker~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Give all Dragons in your hand +3/+3"
+	requireTarget, keyWord, description = False, "", "Battlecry: Give all Dragons in your hand +3/+3"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Dragon Speaker's battlecry gives all Dragons in player's hand +3/+3.")
 		for card in self.Game.Hand_Deck.hands[self.ID]:
 			if card.cardType == "Minion" and "Dragon" in card.race:
@@ -2354,10 +2353,10 @@ class DragonSpeaker(Minion):
 #Attackchances won't be consumed. If it survives, it can attack again. triggers["DealsDamage"] functions can trigger.
 class Duel(Spell):
 	Class, name = "Paladin", "Duel!"
-	needTarget, mana = False, 5
+	requireTarget, mana = False, 5
 	index = "Shadows~Paladin~Spell~5~Duel!"
 	description = "Summon a minion from each player's deck. They fight"
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Duel! is cast and summons a minion from each player's deck. They fight.")
 		minionsinEnemyDeck = []
 		for card in self.Game.Hand_Deck.decks[3-self.ID]:
@@ -2390,7 +2389,7 @@ class CommanderRhyssa(Minion):
 	Class, race, name = "Paladin", "", "Commander Rhyssa"
 	mana, attack, health = 3, 4, 3
 	index = "Shadows~Paladin~Minion~3~4~3~None~Commander Rhyssa~Legendary"
-	needTarget, keyWord, description = False, "", "Your Secrets trigger twice"
+	requireTarget, keyWord, description = False, "", "Your Secrets trigger twice"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.appearResponse = [self.activateAura]
@@ -2411,13 +2410,13 @@ class Nozari(Minion):
 	Class, race, name = "Paladin", "Dragon", "Nozari"
 	mana, attack, health = 10, 4, 12
 	index = "Shadows~Paladin~Minion~10~4~12~Dragon~Nozari~Battlecry~Legendary"
-	needTarget, keyWord, description = False, "", "Battlecry: Restore both heroes to full Health"
+	requireTarget, keyWord, description = False, "", "Battlecry: Restore both heroes to full Health"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Nozari's battlecry restores all health to both players.")
 		heal1 = self.Game.heroes[1].health_upper * (2 ** self.countHealDouble())
 		heal2 = self.Game.heroes[2].health_upper * (2 ** self.countHealDouble())
-		self.dealsAOE([], [], [self.Game.heroes[1], self.Game.heroes[2]], [heal1, heal2])
+		self.restoresAOE([self.Game.heroes[1], self.Game.heroes[2]], [heal1, heal2])
 		return None
 		
 """Priest cards"""
@@ -2425,7 +2424,7 @@ class EvilConscriper(Minion):
 	Class, race, name = "Priest", "", "EVIL Conscripter"
 	mana, attack, health = 2, 2, 2
 	index = "Shadows~Priest~Minion~2~2~2~None~EVIL Conscripter~Deathrattle"
-	needTarget, keyWord, description = False, "", "Deathrattle: Add a Lackey to your hand"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Add a Lackey to your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [AddaRandomLackeytoHand(self)]
@@ -2440,24 +2439,24 @@ class HenchClanShadequill(Minion):
 	Class, race, name = "Priest", "", "Hench-Clan Shadequill"
 	mana, attack, health = 4, 4, 7
 	index = "Shadows~Priest~Minion~4~4~7~None~Hench-Clan Shadequill~Deathrattle"
-	needTarget, keyWord, description = False, "", "Deathrattle: Restore 5 Health to the enemy hero"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Restore 5 Health to the enemy hero"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [Restore5HealthtoEnemyHero(self)]
 		
 class Restore5HealthtoEnemyHero(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		heal = 5 * (2 ** self.countHealDouble())
+		heal = 5 * (2 ** self.entity.countHealDouble())
 		print("Deathrattle: Restore %d health to enemy hero triggers to player's hand triggers."%heal)
 		self.entity.restoresHealth(self.entity.Game.heroes[3-self.entity.ID], heal)
 		
 #If the target minion is killed due to Teacher/Juggler combo, summon a fresh new minion without enchantment.
 class UnsleepingSoul(Spell):
 	Class, name = "Priest", "Unsleeping Soul"
-	needTarget, mana = True, 4
+	requireTarget, mana = True, 4
 	index = "Shadows~Priest~Spell~4~Unsleeping Soul"
 	description = "Silence a minion, then summon a copy of it"
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Unsleeping Soul is cast, Silences friendly minion %s and summons a copy of it."%target.name)
 			target.getsSilenced()
@@ -2468,7 +2467,7 @@ class UnsleepingSoul(Spell):
 		
 class ForbiddenWords(Spell):
 	Class, name = "Priest", "Forbidden Words"
-	needTarget, mana = True, 0
+	requireTarget, mana = True, 0
 	index = "Shadows~Priest~Spell~0~Forbidden Words"
 	description = "Spell all your Mana. Destroy a minion with that much Attack or less"
 	
@@ -2478,7 +2477,7 @@ class ForbiddenWords(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.attack <= self.Game.ManaHandler.manas[self.ID] and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		#假设如果没有指定目标则不会消耗法力值
 		if target != None:
 			print("Forbidden Words is cast, spends all of player's mana and destroys minion ", target.name)
@@ -2492,7 +2491,7 @@ class ConvincingInfiltrator(Minion):
 	Class, race, name = "Priest", "", "Convincing Infiltrator"
 	mana, attack, health = 5, 2, 6
 	index = "Shadows~Priest~Minion~5~2~6~None~Convincing Infiltrator~Taunt~Deathrattle"
-	needTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Destroy a random enemy minion"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Destroy a random enemy minion"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [DestroyaRandomEnemyMinion(self)]
@@ -2511,13 +2510,13 @@ class DestroyaRandomEnemyMinion(Deathrattle_Minion):
 			
 class MassResurrection(Spell):
 	Class, name = "Priest", "Mass Resurrection"
-	needTarget, mana = False, 9
+	requireTarget, mana = False, 9
 	index = "Shadows~Priest~Spell~9~Mass Resurrection"
 	
 	def available(self):
 		return self.Game.spaceonBoard(self.ID) > 0
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Mass Resurrection is cast and summons 3 friendly minions that died this turn.")
 		numMinionsDied = len(self.Game.CounterHandler.minionsDiedThisGame[self.ID])
 		numSummon = min(3, self.Game.spaceonBoard(self.ID), numMinionsDied)
@@ -2529,7 +2528,7 @@ class MassResurrection(Spell):
 #Upgrades at the end of turn.
 class LazulsScheme(Spell):
 	Class, name = "Priest", "Lazul's Scheme"
-	needTarget, mana = True, 0
+	requireTarget, mana = True, 0
 	index = "Shadows~Priest~Spell~0~Lazul's Scheme"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -2542,7 +2541,7 @@ class LazulsScheme(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Lazul's Scheme is cast and reduces minion %s's attack by %d until player's next turn."%(target.name, self.progress))
 			timePoint = "StartofTurn 1" if self.ID == 1 else "StartofTurn 2"
@@ -2565,22 +2564,24 @@ class ShadowFigure(Minion):
 	Class, race, name = "Priest", "", "Shadow Figure"
 	mana, attack, health = 2, 2, 2
 	index = "Shadows~Priest~Minion~2~2~2~None~Shadow Figure~Battlecry"
-	needTarget, keyWord, description = True, "", "Battlecry: Transform into a 2/2 copy of a friendly Deathrattle minion"
+	requireTarget, keyWord, description = True, "", "Battlecry: Transform into a 2/2 copy of a friendly Deathrattle minion"
 	
-	def effectCanTrigger(self):
+	def targetExists(self, choice=0):
 		return self.selectableFriendlyMinionExists()
 		
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target != self and target.ID == self.ID and target.deathrattles != [] and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def effectCanTrigger(self):
+		self.effectViable = self.targetExists()
+		
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		#目前只有打随从从手牌打出或者被沙德沃克调用可以触发随从的战吼。这些手段都要涉及self.Game.minionPlayed
 		#如果self.Game.minionPlayed不再等于自己，说明这个随从的已经触发了变形而不会再继续变形。
 		if target != None and self.dead == False and self.Game.minionPlayed == self: #战吼触发时自己不能死亡。
 			if self.onBoard or self.inHand:
 				if target.onBoard:
-					Copy = target.selfCopy(self.ID)
-					Copy = statReset(2, 2)
+					Copy = target.selfCopy(self.ID, 2, 2)
 					print("Shadow Figure's battlecry transforms minion into a copy of ", target.name)
 				else: #target not on board. This Shadow Figure becomes a base copy of it.
 					Copy = type(target)(self.Game, self.ID)
@@ -2594,7 +2595,7 @@ class MadameLazul(Minion):
 	Class, race, name = "Priest", "", "Madame Lazul"
 	mana, attack, health = 3, 3, 2
 	index = "Shadows~Priest~Minion~3~3~2~None~Madame Lazul~Battlecry~Legendary"
-	needTarget, keyWord, description = False, "", "Battlecry: Discover a copy of a card in your opponent's hand"
+	requireTarget, keyWord, description = False, "", "Battlecry: Discover a copy of a card in your opponent's hand"
 	#不知道如果手牌中有多个同类型的随从，但是接受了不同的buff等效果，是否会发现不同的类型
 	#def randomorDiscover(self):
 	#	if self.Game.Hand_Deck.hands[3-self.ID] < 2:
@@ -2602,14 +2603,14 @@ class MadameLazul(Minion):
 	#	else:
 	#		return "Discover"
 	#		
-	#def whenEffective(self, target=None, comment="", choice=0):
+	#def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 	#	if self.Game.Hand_Deck.hands[3-self.ID] != [] and self.Game.Hand_Deck.handNotFull(self.ID):
 	#		if len(self.Game.Hand_Deck.hands[3-self.ID]) == 1:
 	#			print("Opponent only has one card in hand, Madame Lazul's battlecry copies it")
 	#			Copy = self.Game.Hand_Deck.hands[3-self.ID][0].selfCopy(self.ID)
 	#			self.Game.Hand_Deck.addCardtoHand(Copy, self.ID)
 	#		else:
-	#			if comment == "InvokedbyOthers":
+	#			if "InvokedbyOthers" in comment:
 	#				print("Madame Lazul's battlecry adds a copy of a random card in opponent's hand to player's hand.")
 	#				Copy = np.random.choice(self.Game.Hand_Deck.hands[3-self.ID]).selfCopy(self.ID)
 	#				self.Game.Hand_Deck.addCardtoHand(Copy, self.ID)
@@ -2622,7 +2623,7 @@ class CatrinaMuerte(Minion):
 	Class, race, name = "Priest", "", "Catrina Muerte"
 	mana, attack, health = 8, 6, 8
 	index = "Shadows~Priest~Minion~8~6~8~None~Catrina Muerte~Legendary"
-	needTarget, keyWord, description = False, "", "At the end of your turn, summon a friendly minion that died this game"
+	requireTarget, keyWord, description = False, "", "At the end of your turn, summon a friendly minion that died this game"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggersonBoard = [Trigger_CatrinaMuerte(self)]
@@ -2644,10 +2645,10 @@ class Trigger_CatrinaMuerte(TriggeronBoard):
 """Rogue cards"""
 class DaringEscape(Spell):
 	Class, name = "Rogue", "Daring Escape"
-	needTarget, mana = False, 1
+	requireTarget, mana = False, 1
 	index = "Shadows~Rogue~Spell~1~Daring Escape"
 	description = "Return all friendly minions to your hand"
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Daring Escape is cast and returns all friendly minions to player's hand.")
 		for minion in self.Game.minionsonBoard(self.ID):
 			self.Game.returnMiniontoHand(minion)
@@ -2658,14 +2659,14 @@ class EVILMiscreant(Minion):
 	Class, race, name = "Rogue", "", "EVIL Miscreant"
 	mana, attack, health = 3, 1, 4
 	index = "Shadows~Rogue~Minion~3~1~4~None~EVIL Miscreant~Combo"
-	needTarget, keyWord, description = False, "", "Combo: Add two 1/1 Lackeys to your hand"
+	requireTarget, keyWord, description = False, "", "Combo: Add two 1/1 Lackeys to your hand"
 	
 	def effectCanTrigger(self):
-		self.effectViable = self.Game.CounterHandler.cardsPlayedThisTurn[self.ID]["Indices"] != []
+		self.effectViable = self.Game.CounterHandler.numCardsPlayedThisTurn[self.ID] > 0
 		
 	#Will only be invoked if self.effectCanTrigger() returns True in self.played()
-	def whenEffective(self, target=None, comment="", choice=0):
-		if self.Game.CounterHandler.cardsPlayedThisTurn[self.ID]["Indices"] != []:
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
+		if self.Game.CounterHandler.numCardsPlayedThisTurn[self.ID] > 0:
 			print("EVIL Miscreant's Combo triggers and adds two Lackeys to player's hand.")
 			self.Game.Hand_Deck.addCardtoHand(np.random.choice(Lackeys, 2, replace=False), self.ID, "CreateUsingType")
 		return None
@@ -2675,28 +2676,28 @@ class HenchClanBurglar(Minion):
 	Class, race, name = "Rogue", "", "Hench-Clan Burglar"
 	mana, attack, health = 4, 4, 3
 	index = "Shadows~Rogue~Minion~4~4~3~None~Hench-Clan Burglar~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Discover a spell from another class"
+	requireTarget, keyWord, description = False, "", "Battlecry: Discover a spell from another class"
 	poolIdentifier = "Spells except Rogue"
 	@classmethod
 	def generatePool(cls, Game):
 		classes, lists = [], []
-		for Class in ["Druid", "Mage", "Hunter", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior", "Neutral"]:
+		for Class in ClassesandNeutral:
 			classes.append("Spells except "+Class)
-			Classes = ["Druid", "Mage", "Hunter", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"]
-			extractfrom(Class, Classes)
+			classPool = copy.deepcopy(Classes)
+			extractfrom(Class, classPool)
 			spells = []
-			for ele in Classes:
+			for ele in classPool:
 				for key, value in Game.ClassCards[ele].items():
 					if "~Spell~" in key:
 						spells.append(value)
 			lists.append(spells)
 		return classes, lists
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.ID == self.Game.turn:
 			Class = self.Game.heroes[self.ID].Class
 			key = "Spells except "+Class
-			if comment == "InvokedbyOthers":
+			if "InvokedbyOthers" in comment:
 				print("Hench-Clan Burglar's battlecry adds a random spell from another class to player's hand")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
@@ -2714,7 +2715,7 @@ class HenchClanBurglar(Minion):
 		
 class TogwagglesScheme(Spell):
 	Class, name = "Rogue", "Togwaggle's Scheme"
-	needTarget, mana = True, 1
+	requireTarget, mana = True, 1
 	index = "Shadows~Rogue~Spell~1~Togwaggle's Scheme"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -2727,7 +2728,7 @@ class TogwagglesScheme(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.ID == self.ID and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Togwaggle's Scheme is cast and shuffles %d copies of a friendly minion to player's hand.")
 			for i in range(self.progress):
@@ -2740,7 +2741,7 @@ class UnderbellyFence(Minion):
 	Class, race, name = "Rogue", "", "Underbelly Fence"
 	mana, attack, health = 2, 2, 3
 	index = "Shadows~Rogue~Minion~2~2~3~None~Underbelly Fence~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: If you're holding a card from another class, gain +1/+1 and Rush"
+	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a card from another class, gain +1/+1 and Rush"
 	
 	def effectCanTrigger(self):
 		if self.inHand:
@@ -2749,7 +2750,7 @@ class UnderbellyFence(Minion):
 			self.effectViable = self.Game.Hand_Deck.holdingCardfromAnotherClass(self.ID)
 			
 	#Will only be invoked if self.effectCanTrigger() returns True in self.played()
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.inHand and self.Game.Hand_Deck.holdingCardfromAnotherClass(self.ID, self):
 			print("Underbelly Fence's battlecry gives minion +1/+1 and Rush.")
 			self.buffDebuff(1, 1)
@@ -2763,7 +2764,7 @@ class UnderbellyFence(Minion):
 		
 class Vendetta(Spell):
 	Class, name = "Rogue", "Vendetta"
-	needTarget, mana = True, 4
+	requireTarget, mana = True, 4
 	index = "Shadows~Rogue~Spell~4~Vendetta"
 	description = "Deal 4 damage to a minion. Costs (0) if you're holding a card from another class"
 	def __init__(self, Game, ID):
@@ -2780,7 +2781,7 @@ class Vendetta(Spell):
 		if self.inHand and self.Game.Hand_Deck.holdingCardfromAnotherClass(self.ID):
 			self.mana = 0
 			
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			print("Vendetta is cast and deals %d damage to minion "%damage, target.name)
@@ -2821,7 +2822,7 @@ class ReturnaFriendlyMiniontoHand(Deathrattle_Weapon):
 			
 class UnidentifiedContract(Spell):
 	Class, name = "Rogue", "Unidentified Contract"
-	needTarget, mana = True, 6
+	requireTarget, mana = True, 6
 	index = "Shadows~Rogue~Spell~6~Unidentified Contract"
 	description = "Destroy a minion. Gain a bonus effect in your hand"
 	def entersHand(self):
@@ -2838,7 +2839,7 @@ class UnidentifiedContract(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Unidentified Contract is cast and destroys minion", target.name)
 			target.dead = True
@@ -2846,7 +2847,7 @@ class UnidentifiedContract(Spell):
 		
 class AssassinsContract(Spell):
 	Class, name = "Rogue", "Assassin's Contract"
-	needTarget, mana = True, 6
+	requireTarget, mana = True, 6
 	index = "Shadows~Rogue~Spell~6~Assassin's Contract~Uncollectible"
 	description = "Destroy a minion. Summon a 1/1 Patient Assassin"
 	
@@ -2856,7 +2857,7 @@ class AssassinsContract(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Assassin's Contract is cast and destroys minion", target.name)
 			target.dead = True
@@ -2866,7 +2867,7 @@ class AssassinsContract(Spell):
 		
 class LucrativeContract(Spell):
 	Class, name = "Rogue", "Lucrative Contract"
-	needTarget, mana = True, 6
+	requireTarget, mana = True, 6
 	index = "Shadows~Rogue~Spell~6~Lucrative Contract~Uncollectible"
 	description = "Destroy a minion. Add two Coins to your hand"
 	
@@ -2876,7 +2877,7 @@ class LucrativeContract(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Lucrative Contract is cast and destroys minion", target.name)
 			target.dead = True
@@ -2886,9 +2887,9 @@ class LucrativeContract(Spell):
 		
 class RecruitmentContract(Spell):
 	Class, name = "Rogue", "Recruitment Contract"
-	needTarget, mana = True, 6
+	requireTarget, mana = True, 6
 	index = "Shadows~Rogue~Spell~6~Recruitment Contract~Uncollectible"
-	description = "Destroy a minion. Add two Coins to your hand"
+	description = "Destroy a minion. Add a copy of it to your hand"
 	
 	def available(self):
 		return self.selectableMinionExists()
@@ -2896,7 +2897,7 @@ class RecruitmentContract(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Recruitment Contract is cast and destroys minion", target.name)
 			target.dead = True
@@ -2906,9 +2907,9 @@ class RecruitmentContract(Spell):
 		
 class TurncoatContract(Spell):
 	Class, name = "Rogue", "Turncoat Contract"
-	needTarget, mana = True, 6
+	requireTarget, mana = True, 6
 	index = "Shadows~Rogue~Spell~6~Turncoat Contract~Uncollectible"
-	description = "Destroy a minion. Add two Coins to your hand"
+	description = "Destroy a minion. It deals damage to adjacent minions"
 	
 	def available(self):
 		return self.selectableMinionExists()
@@ -2916,7 +2917,7 @@ class TurncoatContract(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Turncoat Contract is cast and destroys minion", target.name)
 			target.dead = True
@@ -2928,17 +2929,17 @@ class TurncoatContract(Spell):
 		return target
 		
 		
-class GoldenKobold(Minion):
+class GoldenKobold_Shadows(Minion):
 	Class, race, name = "Neutral", "", "Golden Kobold"
 	mana, attack, health = 3, 6, 6
-	index = "Kobolds~Neutral~Minion~3~6~6~None~Golden Kobold~Taunt~Battlecry~Legendary~Uncollectible"
-	needTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Replace your hand with Legendary minions"
+	index = "Shadows~Neutral~Minion~3~6~6~None~Golden Kobold~Taunt~Battlecry~Legendary~Uncollectible"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Replace your hand with Legendary minions"
 	poolIdentifier = "Legendary Minions"
 	@classmethod
 	def generatePool(cls, Game):
 		return "Legendary Minions", list(Game.LegendaryMinions.values())
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Golden Kobold's battlecry replaces player's hand with Legendary minions")
 		minions = list(self.Game.LegendaryMinions.values())
 		handSize = len(self.Game.Hand_Deck.hands[self.ID])
@@ -2947,13 +2948,13 @@ class GoldenKobold(Minion):
 		self.Game.Hand_Deck.addCardtoHand(minionstoHand, self.ID, "CreateUsingType")
 		return None
 		
-class TolinsGoblet(Spell):
+class TolinsGoblet_Shadows(Spell):
 	Class, name = "Neutral", "Tolin's Goblet"
-	needTarget, mana = False, 3
+	requireTarget, mana = False, 3
 	index = "Shadows~Neutral~Spell~3~Tolin's Goblet~Uncollectible"
 	description = "Draw a card. Fill your hand with copies of it"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Tolin's Goblet lets player draw a card and fills their hand with copies of it")
 		card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 		if card != None and self.Game.Hand_Deck.handNotFull(self.ID):
@@ -2961,13 +2962,13 @@ class TolinsGoblet(Spell):
 			self.Game.Hand_Deck.addCardtoHand(copies, self.ID)
 		return None
 		
-class WondrousWand(Spell):
+class WondrousWand_Shadows(Spell):
 	Class, name = "Neutral", "Wondrous Wand"
-	needTarget, mana = False, 3
-	index = "Kobolds~Neutral~Spell~3~Wondrous Wand~Uncollectible"
+	requireTarget, mana = False, 3
+	index = "Shadows~Neutral~Spell~3~Wondrous Wand~Uncollectible"
 	description = "Draw 3 cards. Reduce their costs to (0)"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("WondrousWand lets player draw 3 cards and reduces their costs to (0)")
 		for i in range(3):
 			card, mana = self.Game.Hand_Deck.drawCard(self.ID)
@@ -2976,32 +2977,35 @@ class WondrousWand(Spell):
 				self.Game.ManaHandler.calcMana_Single(card)
 		return None
 		
-class ZarogsCrown(Spell):
+class ZarogsCrown_Shadows(Spell):
 	Class, name = "Neutral", "Zarog's Crown"
-	needTarget, mana = False, 3
-	index = "Kobolds~Neutral~Spell~3~Zarog's Crown~Uncollectible"
+	requireTarget, mana = False, 3
+	index = "Shadows~Neutral~Spell~3~Zarog's Crown~Uncollectible"
 	description = "Discover a Legendary minion. Summon two copies of it"
-	
-	def whenEffective(self, target=None, comment="", choice=0):
-		if self.Game.spaceonBoard(self.ID) > 0:
-			Class = self.Game.heroes[self.ID].Class
+	poolIdentifier = "Legendary Minions as Rogue"
+	@classmethod
+	def generatePool(cls, Game):
+		classes, lists = [], []
+		for Class in Classes:
+			classes.append("Legendary Minions as "+Class)
 			legendaryMinions = []
-			if Class == "Neutral":
-				for key, value in self.entity.Game.LegendaryMinions.items():
-					if "~%d~"%Class in key: #Neutral Legendary minions
-						legendaryMinions.append(value)
-			else:
-				for key, value in self.entity.Game.LegendaryMinions.items():
-					if "~Neutral~" in key or "~%d~"%Class in key: #Neutral and class Legendary minions
-						legendaryMinions.append(value)
-						
-			if comment == "CastbyOthers":
+			for key, value in Game.LegendaryMinions.items():
+				if "~%s~"%Class in key or "~Neutral~" in key:
+					legendaryMinions.append(value)
+					
+			lists.append(legendaryMinions)
+		return classes, lists
+		
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
+		if self.Game.spaceonBoard(self.ID) > 0:
+			key = "Legendary Minions as " + classforDiscover(self)
+			if "CastbyOthers" in comment:
 				print("Zarog's Crown summons two copies of a random Legendary minion")
-				minion = np.random.choice(legendaryMinions)(self.Game, self.ID)
-				self.Game.summonMinion([minion, type(minion)(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+				minion = np.random.choice(self.Game.RNGPools[key])
+				self.Game.summonMinion([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
 			else:
 				print("Zarog's Crown lets playersummons two copies of a random Legendary minion")
-				minions = np.random.choice(legendaryMinions, 3, replace=False)
+				minions = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
 				self.Game.options = [minion(self.Game, self.ID) for minion in minions]
 				self.Game.DiscoverHandler.startDiscover(self)
 		return None
@@ -3010,13 +3014,13 @@ class ZarogsCrown(Spell):
 		print("Zarog's Crown summons two copies of Legendary minion", option.name)
 		self.Game.summonMinion([option, type(option)(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
 		
-FantasticTreasures = [GoldenKobold, TolinsGoblet, WondrousWand, ZarogsCrown]
+FantasticTreasures = [GoldenKobold_Shadows, TolinsGoblet_Shadows, WondrousWand_Shadows, ZarogsCrown_Shadows]
 
 class HeistbaronTogwaggle(Minion):
 	Class, race, name = "Rogue", "", "Heistbaron Togwaggle"
 	mana, attack, health = 6, 5, 5
 	index = "Shadows~Rogue~Minion~6~5~5~None~Heistbaron Togwaggle~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: If you control a Lackey, choose a fantastic treasure"
+	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Lackey, choose a fantastic treasure"
 	
 	def effectCanTrigger(self):
 		self.effectViable = False
@@ -3026,7 +3030,7 @@ class HeistbaronTogwaggle(Minion):
 				break
 				
 	#Will only be invoked if self.effectCanTrigger() returns True in self.played()
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		controlsLackey = False
 		for minion in self.Game.minionsonBoard(self.ID):
 			if type(minion) in Lackeys:
@@ -3034,8 +3038,13 @@ class HeistbaronTogwaggle(Minion):
 				break
 				
 		if controlsLackey and self.ID == self.Game.turn and self.Game.Hand_Deck.handNotFull(self.ID):
-			print("Heistbaron Togwaggle's battlecry lets player choose a fantastic treasure.")
-			
+			if "InvokedbyOthers" in comment:
+				print("Heistbaron Togwaggle's battlecry gives player a fantastic treasure")
+				self.Game.Hand_Deck.addCardtoHand(np.random.choice(FantasticTreasures), self.ID, "CreateUsingType")
+			else:
+				print("Heistbaron Togwaggle's battlecry lets player choose a fantastic treasure.")
+				self.Game.options = [treasure(self.Game, self.ID) for treasure in FantasticTreasures]
+				self.Game.DiscoverHandler.startDiscover(self)
 		return None
 	
 	def discoverDecided(self, option):
@@ -3047,7 +3056,7 @@ class TakNozwhisker(Minion):
 	Class, race, name = "Rogue", "", "Tak Nozwhisker"
 	mana, attack, health = 7, 6, 6
 	index = "Shadows~Rogue~Minion~7~6~6~None~Tak Nozwhisker"
-	needTarget, keyWord, description = False, "", "Whenever you shuffle a card into your deck, add a copy to your hand"
+	requireTarget, keyWord, description = False, "", "Whenever you shuffle a card into your deck, add a copy to your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggersonBoard = [Trigger_TakNozwhisker(self)]
@@ -3076,7 +3085,7 @@ class Trigger_TakNozwhisker(TriggeronBoard):
 """Shaman cards"""
 class Mutate(Spell):
 	Class, name = "Shaman", "Mutate"
-	needTarget, mana = True, 0
+	requireTarget, mana = True, 0
 	index = "Shadows~Shaman~Spell~0~Mutate"
 	description = "Transf a friendly minion to a random one that costs (1) more"
 	poolIdentifier = "1-Cost Minions"
@@ -3094,7 +3103,7 @@ class Mutate(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target.ID == self.ID and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Mutate is cast and transforms friendly minion %s to one that costs 1 more."%target.name)
 			target = self.Game.mutate(target, 1)
@@ -3103,14 +3112,14 @@ class Mutate(Spell):
 		
 class SludgeSlurper(Minion):
 	Class, race, name = "Shaman", "Murloc", "Sludge Slurper"
-	mana, attack, health = 1, 1, 1
-	index = "Shadows~Shaman~Minion~1~1~1~Murloc~Sludge Slurper~Battlecry~Overload"
-	needTarget, keyWord, description = False, "", "Battlecry: Add a Lackey to your hand. Overload: (1)"
+	mana, attack, health = 1, 2, 1
+	index = "Shadows~Shaman~Minion~1~2~1~Murloc~Sludge Slurper~Battlecry~Overload"
+	requireTarget, keyWord, description = False, "", "Battlecry: Add a Lackey to your hand. Overload: (1)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.overload = 1
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Sludge Slurper battlecry adds a Lackey to player's hand.")
 		self.Game.Hand_Deck.addCardtoHand(np.random.choice(Lackeys), self.ID, "CreateUsingType")
 		return None
@@ -3118,15 +3127,15 @@ class SludgeSlurper(Minion):
 		
 class SouloftheMurloc(Spell):
 	Class, name = "Shaman", "Soul of the Murloc"
-	needTarget, mana = False, 2
+	requireTarget, mana = False, 2
 	index = "Shadows~Shaman~Spell~2~Soul of the Murloc"
 	description = "Give your minions 'Deathrattle: Summon a 1/1 Murloc'"
 	def available(self):
 		return self.Game.minionsonBoard(self.ID) != []
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Soul of the Murloc is cast and gives all friendly minions Deathrattle: Summon a 1/1 Murloc.")
-		for minion in self.Game.minionsonBoard[self.ID]:
+		for minion in self.Game.minionsonBoard(self.ID):
 			trigger = SummonaMurlocScout(minion)
 			minion.deathrattles.append(trigger)
 			trigger.connect()
@@ -3142,7 +3151,7 @@ class UnderbellyAngler(Minion):
 	Class, race, name = "Shaman", "Murloc", "Underbelly Angler"
 	mana, attack, health = 2, 2, 3
 	index = "Shadows~Shaman~Minion~2~2~3~Murloc~Underbelly Angler"
-	needTarget, keyWord, description = False, "", "After you play a Murloc, add a random Murloc to your hand"
+	requireTarget, keyWord, description = False, "", "After you play a Murloc, add a random Murloc to your hand"
 	poolIdentifier = "Murlocs"
 	@classmethod
 	def generatePool(cls, Game):
@@ -3157,7 +3166,7 @@ class Trigger_UnderbellyAngler(TriggeronBoard):
 		self.blank_init(entity, ["MinionBeenSummoned"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity
+		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and "Murloc" in subject.race
 	#Assume if Murloc gets controlled by the enemy, this won't trigger
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		print("After player plays Murloc %s, %s adds a random Murloc to player's hand."%(subject.name, self.entity.name))
@@ -3167,7 +3176,7 @@ class Trigger_UnderbellyAngler(TriggeronBoard):
 		
 class HagathasScheme(Spell):
 	Class, name = "Shaman", "Hagatha's Scheme"
-	needTarget, mana = False, 5
+	requireTarget, mana = False, 5
 	index = "Shadows~Shaman~Spell~5~Hagatha's Scheme"
 	description = "Deal 1 damage to all minions. (Upgrades each turn)!"
 	def __init__(self, Game, ID):
@@ -3175,11 +3184,11 @@ class HagathasScheme(Spell):
 		self.progress = 1
 		self.triggersinHand = [Trigger_Upgrade(self)]
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		damage = (self.progress + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		print("Hagatha's Scheme is cast and deals %d damage to all minions."%damage)
 		targets = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
-		self.dealsDamage(targets, [damage for minion in targets])
+		self.dealsAOE(targets, [damage for minion in targets])
 		return None
 		
 		
@@ -3187,26 +3196,26 @@ class WalkingFountain(Minion):
 	Class, race, name = "Shaman", "Elemental", "Walking Fountain"
 	mana, attack, health = 8, 4, 8
 	index = "Shadows~Shaman~Minion~8~4~8~Elemental~Walking Fountain~Rush~Lifesteal~Windfury"
-	needTarget, keyWord, description = False, "Rush,Windfury,Lifesteal", "Rush, Windfury, Lifesteal"
+	requireTarget, keyWord, description = False, "Rush,Windfury,Lifesteal", "Rush, Windfury, Lifesteal"
 	
 	
 class WitchsBrew(Spell):
 	Class, name = "Shaman", "Witch's Brew"
-	needTarget, mana = True, 2
+	requireTarget, mana = True, 2
 	index = "Shadows~Shaman~Spell~2~Witch's Brew"
 	description = "Restore 4 Health. Repeatable this turn"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			heal = 4 * (2 ** self.countHealDouble())
-			print("Witch's Brew is cast and restores %d health to "%damage, target.name)
+			print("Witch's Brew is cast and restores %d health to "%heal, target.name)
 			self.restoresHealth(target, heal)
 			
 		print("Witch's Brew adds another Witch's Brew to player's hand, which disappears at the end of turn.")
 		echo = WitchsBrew(self.Game, self.ID)
 		trigger = Trigger_Echo(echo)
 		echo.triggersinHand.append(trigger)
-		trigger.connect()
+		self.Game.Hand_Deck.addCardtoHand(echo, self.ID)
 		return target
 		
 		
@@ -3214,12 +3223,12 @@ class Muckmorpher(Minion):
 	Class, race, name = "Shaman", "", "Muckmorpher"
 	mana, attack, health = 5, 4, 4
 	index = "Shadows~Shaman~Minion~5~4~4~None~Muckmorpher~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Transform in to a 4/4 copy of a different minion in your deck"
+	requireTarget, keyWord, description = False, "", "Battlecry: Transform in to a 4/4 copy of a different minion in your deck"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		#目前只有打随从从手牌打出或者被沙德沃克调用可以触发随从的战吼。这些手段都要涉及self.Game.minionPlayed
 		#如果self.Game.minionPlayed不再等于自己，说明这个随从的已经触发了变形而不会再继续变形。
-		if target != None and self.dead == False and self.Game.minionPlayed == self: #战吼触发时自己不能死亡。
+		if self.dead == False and self.Game.minionPlayed == self: #战吼触发时自己不能死亡。
 			if self.onBoard or self.inHand:
 				print("Muckmorpher's battlecry transforms the minion into a 4/4 copy of a minion in player's deck.")
 				minionsinDeck = []
@@ -3238,7 +3247,7 @@ class Scargil(Minion):
 	Class, race, name = "Shaman", "Murloc", "Scargil"
 	mana, attack, health = 4, 4, 4
 	index = "Shadows~Shaman~Minion~4~4~4~Murloc~Scargil~Legendary"
-	needTarget, keyWord, description = False, "", "Your Murlocs cost (1)"
+	requireTarget, keyWord, description = False, "", "Your Murlocs cost (1)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.auras["Mana Aura"] = ManaAura_Dealer(self, self.manaAuraApplicable, changeby=0, changeto=1)
@@ -3249,9 +3258,9 @@ class Scargil(Minion):
 		
 class SwampqueenHagatha(Minion):
 	Class, race, name = "Shaman", "", "Swampqueen Hagatha"
-	mana, attack, health = 7, 5, 5
+	mana, attack, health = 1, 5, 5
 	index = "Shadows~Shaman~Minion~7~5~5~None~Swampqueen Hagatha~Battlecry~Legendary"
-	needTarget, keyWord, description = False, "", "Battlecry: Add a 5/5 Horror to your hand. Teach it two Shaman spells"
+	requireTarget, keyWord, description = False, "", "Battlecry: Add a 5/5 Horror to your hand. Teach it two Shaman spells"
 	poolIdentifier = "Shaman Spells"
 	@classmethod
 	def generatePool(cls, Game):
@@ -3259,7 +3268,7 @@ class SwampqueenHagatha(Minion):
 		for key, value in Game.ClassCards["Shaman"].items():
 			if "~Spell~" in key:
 				shamanSpells.append(value)
-				if value.needTarget:
+				if value.requireTarget:
 					targetingShamanSpells.append(value)
 				else:
 					nontargetingShamanSpells.append(value)
@@ -3270,13 +3279,13 @@ class SwampqueenHagatha(Minion):
 		self.firstSpellneedsTarget = False
 		self.spell1, self.spell2 = None, None
 	#有可能发现两个相同的非指向性法术。
-	def whenEffective(self, target=None, comment="", choice=0):
-		self.spell1, self.spell2 = False, None, None
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
+		self.spell1, self.spell2 = None, None
 		if self.ID == self.Game.turn and self.Game.Hand_Deck.handNotFull(self.ID):
 			print("Swampqueen Hagatha's battlecry lets player create a 5/5 Horror and teach it two Shaman Spells.")
-			if comment == "InvokedbyOthers":
+			if "InvokedbyOthers" in comment:
 				spell1 = np.random.choice(self.Game.RNGPools["Shaman Spells"])
-				if spell1.needTarget:
+				if spell1.requireTarget:
 					spell2 = np.random.choice(self.Game.RNGPools["Non-targeting Shaman Spells"])
 				else: #If the first spell is not a targeting spell, then the 2nd has no restrictions
 					spell2 = np.random.choice(self.Game.RNGPools["Shaman Spells"])
@@ -3284,7 +3293,7 @@ class SwampqueenHagatha(Minion):
 				spells = np.random.choice(self.Game.RNGPools["Shaman Spells"], 3, replace=False)
 				self.Game.options = [spell(self.Game, self.ID) for spell in spells]
 				self.Game.DiscoverHandler.startDiscover(self)
-				key = "Non-targeting Shaman Spells" if self.spell1.needTarget else "Shaman Spells"
+				key = "Non-targeting Shaman Spells" if self.spell1.requireTarget else "Shaman Spells"
 				spells = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
 				self.Game.options = [spell(self.Game, self.ID) for spell in spells]
 				self.Game.DiscoverHandler.startDiscover(self)
@@ -3292,10 +3301,10 @@ class SwampqueenHagatha(Minion):
 				self.spell1, self.spell2 = None, None
 			#The 2 spells are both class types, whether they come from Discover or random
 			spell1ClassName, spell2ClassName = spell1.__name__, spell2.__name__
-			needTarget = spell1.needTarget or spell2.needTarget
+			requireTarget = spell1.requireTarget or spell2.requireTarget
 			newIndex = "Shadows~Shaman~5~5~5~Minion~None~Drustvar Horror_%s_%s~Battlecry~Uncollectible"%(spell1.name, spell2.name)
 			subclass = type("DrustvarHorror~"+spell1ClassName+spell2ClassName, (DrustvarHorror, ), 
-							{"needTarget": needTarget, "learnedSpell1": spell1, "learnedSpell2":spell2,
+							{"requireTarget": requireTarget, "learnedSpell1": spell1, "learnedSpell2":spell2,
 							"index": newIndex
 							}
 							)
@@ -3314,31 +3323,38 @@ class DrustvarHorror(Minion):
 	Class, race, name = "Shaman", "", "Drustvar Horror"
 	mana, attack, health = 5, 5, 5
 	index = "Shadows~Shaman~Minion~5~5~5~None~Drustvar Horror~Battlecry~Uncollectible"
-	needTarget, keyWord, description = True, "", "Battlecry: Cast (0) and (1)"
+	requireTarget, keyWord, description = True, "", "Battlecry: Cast (0) and (1)"
 	learnedSpell1, learnedSpell2 = None, None
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.learnedSpell1 = type(self).learnedSpell1
-		self.learnedSpell2 = type(self).learnedSpell2
+		self.learnedSpell1 = type(self).learnedSpell1(self.Game, self.ID)
+		self.learnedSpell2 = type(self).learnedSpell2(self.Game, self.ID)
+		self.description = "Battlecry: Cast %s and %s"%(self.learnedSpell1.name, self.learnedSpell2.name)
 		
 	#无指向的法术的available一般都会返回True，不返回True的时候一般是场上没有格子了，但是这种情况本来就不能打出随从，不会影响判定。
 	#有指向的法术的available会真正决定可指向目标是否存在。
-	def targetExists(self, choice=0):
+	def targetExists(self, choice=0): #假设可以指向魔免随从
+		#这里调用携带的法术类的available函数的同时需要向其传导self，从而让其知道self.selectableCharacterExists用的是什么实例的方法
+		self.learnedSpell1.ID, self.learnedSpell2.ID = self.ID, self.ID
 		return self.learnedSpell1.available() and self.learnedSpell2.available()
 		
 	def targetCorrect(self, target, choice=0):
-		if self.learnedSpell1.needTarget(choice):
-			return self.learnedSpell1.targetCorrect(target, choice)
-		if self.learnedSpell2.needTarget(choice):
-			return self.learnedSpell2.targetCorrect(target, choice)
+		if self == target:
+			return False
+		self.learnedSpell1.ID, self.learnedSpell2.ID = self.ID, self.ID
+		if self.learnedSpell1.needTarget():
+			return self.learnedSpell1.targetCorrect(target)
+		if self.learnedSpell2.needTarget():
+			return self.learnedSpell2.targetCorrect(target)
 		return True
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Drustvar Horror's battlecry casts the FIRST spell %s it learned on"%self.learnedSpell1.name, target)
 		#不知道施放的法术是否会触发发现，还是直接随机选取一个发生选项
 		#假设是随机选取一个选项。
-		self.learnedSpell1(self.Game, self.ID).cast(target)
-		self.learnedSpell2(self.Game, self.ID).cast(target)
+		comment = "CastbyOthers,withNoTarget" if target == None else "CastbyOthers"
+		self.learnedSpell1.cast(target, comment)
+		self.learnedSpell2.cast(target, comment)
 		return target
 		
 """Warlock cards"""
@@ -3346,7 +3362,7 @@ class EVILGenius(Minion):
 	Class, race, name = "Warlock", "", "EVIL Genius"
 	mana, attack, health = 2, 2, 2
 	index = "Shadows~Warlock~Minion~2~2~2~None~EVIL Genius~Battlecry"
-	needTarget, keyWord, description = True, "", "Battlecry: Destroy a friendly minion to add 2 random Lackeys to your hand"
+	requireTarget, keyWord, description = True, "", "Battlecry: Destroy a friendly minion to add 2 random Lackeys to your hand"
 	def targetExists(self, choice=0):
 		return self.selectableFriendlyMinionExists()
 		
@@ -3356,7 +3372,7 @@ class EVILGenius(Minion):
 	def effectCanTrigger(self):
 		self.effectViable = self.targetExists()
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("EVIL Genius's battlecry destroys friendly minion %s and adds two lackeys to player's hand."%target.name)
 			target.dead = True
@@ -3366,7 +3382,7 @@ class EVILGenius(Minion):
 		
 class RafaamsScheme(Spell):
 	Class, name = "Warlock", "Rafaam's Scheme"
-	needTarget, mana = False, 3
+	requireTarget, mana = False, 3
 	index = "Shadows~Warlock~Spell~3~Rafaam's Scheme"
 	description = "Summon 1 1/1 Imp(Upgrades each turn!)"
 	def __init__(self, Game, ID):
@@ -3374,7 +3390,7 @@ class RafaamsScheme(Spell):
 		self.progress = 1
 		self.triggersinHand = [Trigger_Upgrade(self)]
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Rafaam's Scheme is cast and summons %d Imps."%self.progress)
 		self.Game.summonMinion([Imp_Shadows(self.Game, self.ID) for i in range(self.progress)], (-1, "totheRightEnd"), self.ID)
 		return None
@@ -3384,7 +3400,7 @@ class AranasiBroodmother(Minion):
 	Class, race, name = "Warlock", "Demon", "Aranasi Broodmother"
 	mana, attack, health = 6, 4, 6
 	index = "Shadows~Warlock~Minion~6~4~6~Demon~Aranasi Broodmother~Taunt~Triggers when Drawn"
-	needTarget, keyWord, description = False, "Taunt", "Taunt. When you draw this, restore 4 Health to your hero"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt. When you draw this, restore 4 Health to your hero"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggers["Drawn"] = [self.restore4HealthtoHero]
@@ -3400,10 +3416,10 @@ class AranasiBroodmother(Minion):
 #说明这个动作是把手牌中所有牌初始化洗回去
 class PlotTwist(Spell):
 	Class, name = "Warlock", "Plot Twist"
-	needTarget, mana = False, 2
+	requireTarget, mana = False, 2
 	index = "Shadows~Warlock~Spell~2~Plot Twist"
 	description = "Shuffle your hand into your deck. Draw that many cards"
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Plot Twist is cast and shuffles all of player's hand into deck. Then draw that many cards.")
 		handSize = len(self.Game.Hand_Deck.hands[self.ID])
 		cardstoShuffle, mana, isRightmostCardinHand = self.Game.Hand_Deck.extractfromHand(None, True, self.ID) #Extract all cards.
@@ -3411,24 +3427,22 @@ class PlotTwist(Spell):
 		for card in cardstoShuffle:
 			for trigger in card.triggersonBoard + card.triggersinHand + card.triggersinDeck:
 				trigger.disconnect()
-			identity = target.identity
+			identity = card.identity
 			card.__init__(self.Game, self.ID)
 			card.identity = identity
 		
-		temp = self.Game.Hand_Deck.hands[self.ID]
-		self.Game.Hand_Deck.hands[self.ID] = []
-		self.Game.Hand_Deck.shuffleCardintoDeck(temp, self.ID) #Initiated by self.
+		self.Game.Hand_Deck.shuffleCardintoDeck(cardstoShuffle, self.ID) #Initiated by self.
 		for i in range(handSize):
-			self.drawCard(self.ID)
+			self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
 		
 class Impferno(Spell):
 	Class, name = "Warlock", "Impferno"
-	needTarget, mana = False, 3
+	requireTarget, mana = False, 3
 	index = "Shadows~Warlock~Spell~3~ImpfernoTwist"
-	
-	def whenEffective(self, target=None, comment="", choice=0):
+	description = "Give your Demons +1 Attack. Deal 1 damage to all enemy minions"
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		print("Impferno is cast, gives all friendly Demons +1 attack and deals %d damage to enemy minions."%damage)
 		for minion in self.Game.minionsonBoard(self.ID):
@@ -3444,7 +3458,7 @@ class EagerUnderling(Minion):
 	Class, race, name = "Warlock", "", "Eager Underling"
 	mana, attack, health = 4, 2, 2
 	index = "Shadows~Warlock~Minion~4~2~2~None~Eager Underling~Deathrattle"
-	needTarget, keyWord, description = False, "", "Deathrattle: Give two random friendly minions +2/+2"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Give two random friendly minions +2/+2"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [GiveTwoRandomFriendlyMinionsPlus2Plus2(self)]
@@ -3463,10 +3477,10 @@ class GiveTwoRandomFriendlyMinionsPlus2Plus2(Deathrattle_Weapon):
 			
 class DarkestHour(Spell):
 	Class, name = "Warlock", "Darkest Hour"
-	needTarget, mana = False, 6
+	requireTarget, mana = False, 6
 	index = "Shadows~Warlock~Spell~6~Darkest Hour"
 	description = "Destroy all friendly minions. For each one, summon a random minion from your deck"
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Darkest Hour is cast, destroys all friendly minions and summons equal number of minions from deck.")
 		boardSize = len(self.Game.minionsonBoard(self.ID))
 		for minion in self.Game.minionsonBoard:
@@ -3489,7 +3503,7 @@ class JumboImp(Minion):
 	Class, race, name = "Warlock", "Demon", "Jumbo Imp"
 	mana, attack, health = 10, 8, 8
 	index = "Shadows~Warlock~Minion~10~8~8~Demon~Jumbo Imp"
-	needTarget, keyWord, description = False, "", "Costs (1) less whenever a friendly minion dies while this is in your hand"
+	requireTarget, keyWord, description = False, "", "Costs (1) less whenever a friendly minion dies while this is in your hand"
 	#def __init__(self, Game, ID):
 	#	self.blank_init(Game, ID)
 	#	self.triggersinHand = [Trigger_JumboImp(self)]
@@ -3517,13 +3531,13 @@ class ArchVillainRafaam(Minion):
 	Class, race, name = "Warlock", "", "Arch-Villain Rafaam"
 	mana, attack, health = 7, 7, 8
 	index = "Shadows~Warlock~Minion~7~7~8~None~Arch-Villain Rafaam~Taunt~Battlecry~Legendary"
-	needTarget, keyWord, description = False, "Taunt", "Battlecry: Replace your hand and deck with Legendary minions"
+	requireTarget, keyWord, description = False, "Taunt", "Battlecry: Replace your hand and deck with Legendary minions"
 	poolIdentifier = "Legendary Minions"
 	@classmethod
 	def generatePool(cls, Game):
 		return "Legendary Minions", list(Game.LegendaryMinions.values())
 	#不知道拉法姆的替换手牌、牌库和迦拉克隆会有什么互动。假设不影响主迦拉克隆。
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Arch-Villain Rafaam's battlecry replaces player's hand and deck with random Legendary minions.")
 		handSize = len(self.Game.Hand_Deck.hands[self.ID])
 		self.Game.Hand_Deck.extractfromHand(None, True, self.ID)
@@ -3543,7 +3557,7 @@ class FelLordBetrug(Minion):
 	Class, race, name = "Warlock", "Demon", "Fel Lord Betrug"
 	mana, attack, health = 8, 5, 7
 	index = "Shadows~Warlock~Minion~8~5~7~Demon~Fel Lord Betrug~Legendary"
-	needTarget, keyWord, description = False, "", "Whenever you draw a minion, summon a copy with Rush that dies at end of turn"
+	requireTarget, keyWord, description = False, "", "Whenever you draw a minion, summon a copy with Rush that dies at end of turn"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggersonBoard = [Trigger_FelLordBetrug(self)]
@@ -3556,7 +3570,7 @@ class Trigger_FelLordBetrug(TriggeronBoard):
 		return self.entity.onBoard and target[0].cardType == "Minion" and target[0].ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Whenever player draws minion %s, %s summons a copy of it that has Rush and dies at the end of turn."%(target.name, self.entity.name))
+		print("Whenever player draws minion %s, %s summons a copy of it that has Rush and dies at the end of turn."%(target[0].name, self.entity.name))
 		minion = target[0].selfCopy(self.entity.ID)
 		minion.keyWords["Rush"] = 1
 		minion.triggersonBoard.append(Trigger_DieatEndofTurn(minion))
@@ -3577,10 +3591,16 @@ class Trigger_DieatEndofTurn(TriggeronBoard):
 """Warrior cards"""
 class ImproveMorale(Spell):
 	Class, name = "Warrior", "Improve Morale"
-	needTarget, mana = True, 1
+	requireTarget, mana = True, 1
 	index = "Shadows~Warrior~Spell~1~Improve Morale"
 	description = "Deal 1 damage to a minion. If it survives, add a Lackey to your hand"
-	def whenEffective(self, target=None, comment="", choice=0):
+	def available(self):
+		return self.selectableMinionExists()
+		
+	def targetCorrect(self, target, choice=0):
+		return target.cardType == "Minion" and target.onBoard
+		
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			print("Improve Morale is cast and deals %d damage to minion "%damage, target.name)
@@ -3595,7 +3615,7 @@ class ViciousScraphound(Minion):
 	Class, race, name = "Warrior", "Mech", "Vicious Scraphound"
 	mana, attack, health = 2, 2, 2
 	index = "Shadows~Warrior~Minion~2~2~2~Mech~Vicious Scraphound"
-	needTarget, keyWord, description = False, "", "Whenever this minion deals damage, gain that much Armor"
+	requireTarget, keyWord, description = False, "", "Whenever this minion deals damage, gain that much Armor"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.triggersonBoard = [Trigger_ViciousScraphound(self)]
@@ -3614,7 +3634,7 @@ class Trigger_ViciousScraphound(TriggeronBoard):
 		
 class DrBoomsScheme(Spell):
 	Class, name = "Warrior", "Dr. Boom's Scheme"
-	needTarget, mana = False, 4
+	requireTarget, mana = False, 4
 	index = "Shadows~Warrior~Spell~4~Dr. Boom's Scheme"
 	description = "Gain 1 Armor. (Upgrades each turn!)"
 	def __init__(self, Game, ID):
@@ -3622,7 +3642,7 @@ class DrBoomsScheme(Spell):
 		self.progress = 1
 		self.triggersinHand = [Trigger_Upgrade(self)]
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Dr. Boom's Scheme is cast and player gains %d Armor."%self.progress)
 		self.Game.heroes[self.ID].gainsArmor(self.progress)
 		return None
@@ -3630,35 +3650,46 @@ class DrBoomsScheme(Spell):
 		
 class SweepingStrike(Spell):
 	Class, name = "Warrior", "Sweeping Strike"
-	needTarget, mana = True, 2
+	requireTarget, mana = True, 2
 	index = "Shadows~Warrior~Spell~2~Sweeping Strike"
 	description = "Give a minion 'Also damages minions next to whoever this attacks'"
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			print("Sweeping Strike is cast and gives minion %s 'Also damage adjacent minions to whoever this attacks'."%target.name)
 			target.marks["Attack Adjacent Minions"] += 1
 		return target
 		
 		
+class Bomb_Shadows(Spell):
+	Class, name = "Neutral", "Bomb"
+	requireTarget, mana = False, 5
+	index = "Shadows~Neutral~Spell~5~Bomb~Casts When Drawn~Uncollectible"
+	description = "Casts When Drawn. Deal 5 damage to your hero"
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
+		damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		print("Bomb is cast and deals %d damage to player."%damage)
+		self.dealsDamage(self.Game.heroes[self.ID], damage)
+		return None
+		
 class ClockworkGoblin(Minion):
 	Class, race, name = "Warrior", "Mech", "Clockwork Goblin"
 	mana, attack, health = 3, 3, 3
 	index = "Shadows~Warrior~Minion~3~3~3~Mech~Clockwork Goblin~Battlecry"
-	needTarget, keyWord, description = False, "", "Battlecry: Shuffle a Bomb in to your opponent's deck. When drawn, it explodes for 5 damage"
+	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle a Bomb in to your opponent's deck. When drawn, it explodes for 5 damage"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Clockwork Goblin's battlecry shuffles a Bomb into opponents deck. When its drawn, it deals 5 damage to enemy hero.")
-		self.Game.Hand_Deck.shuffleCardintoDeck(Bomb(self.Game, 3-self.ID), self.ID)
+		self.Game.Hand_Deck.shuffleCardintoDeck(Bomb_Shadows(self.Game, 3-self.ID), self.ID)
 		return None
 		
 		
 class DimensionalRipper(Spell):
 	Class, name = "Warrior", "Dimensional Ripper"
-	needTarget, mana = False, 10
+	requireTarget, mana = False, 10
 	index = "Shadows~Warrior~Spell~10~Dimensional Ripper"
 	description = "Summon 2 copies of a minion in your deck"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Dimensional Ripper is cast and summons two copies of a minion in player's deck.")
 		if self.Game.spaceonBoard(self.ID) > 0:
 			minionsinDeck = []
@@ -3677,21 +3708,21 @@ class OmegaDevastator(Minion):
 	Class, race, name = "Warrior", "Mech", "Omega Devastator"
 	mana, attack, health = 4, 4, 5
 	index = "Shadows~Warrior~Minion~4~4~5~Mech~Omega Devastator~Battlecry"
-	needTarget, keyWord, description = True, "", "Battlecry: If you have 10 Mana Crystals, deal 10 damage to a minion"
+	requireTarget, keyWord, description = True, "", "Battlecry: If you have 10 Mana Crystals, deal 10 damage to a minion"
 	
 	def returnTrue(self, choice=0):
 		return self.Game.ManaHandler.manasUpper[self.ID] >= 10
 		
 	def effectCanTrigger(self):
-		return self.Game.ManaHandler.manasUpper[self.ID] >= 10 and self.targetExists()
+		self.effectViable = self.Game.ManaHandler.manasUpper[self.ID] >= 10 and self.targetExists()
 		
 	def targetExists(self, choice=0):
 		return self.selectableMinionExists()
 		
-	def targetCorrect(self, target):
+	def targetCorrect(self, target, choice=0):
 		return target.cardType == "Minion" and target != self and target.onBoard
 		
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None and self.Game.ManaHandler.manasUpper[self.ID] >= 10:
 			print("Omega Devastator's battlecry deals 10 damage to minion ", target.name)
 			self.dealsDamage(target, 10)
@@ -3716,14 +3747,14 @@ class Trigger_Wrenchcalibur(TriggeronBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		print("After hero attacks, Wrenchcalibur triggers and shuffles a Bomb in to opponent's deck")
-		self.entity.Game.Hand_Deck.shuffleCardintoDeck(Bomb(self.entity.Game, 3-self.entity.ID), self.entity.ID)
+		self.entity.Game.Hand_Deck.shuffleCardintoDeck(Bomb_Shadows(self.entity.Game, 3-self.entity.ID), self.entity.ID)
 		
 		
 class BlastmasterBoom(Minion):
 	Class, race, name = "Warrior", "", "Blastmaster Boom"
 	mana, attack, health = 7, 7, 7
-	index = "Shadows~Warrior~Minion~7~7~7~Mech~Blastmaster Boom~Battlecry~Legendary"
-	needTarget, keyWord, description = False, "", "Battlecry: Summon two 1/1 Boom Bots for each Bomb in your opponent's deck"
+	index = "Shadows~Warrior~Minion~7~7~7~None~Blastmaster Boom~Battlecry~Legendary"
+	requireTarget, keyWord, description = False, "", "Battlecry: Summon two 1/1 Boom Bots for each Bomb in your opponent's deck"
 	
 	def effectCanTrigger(self):
 		self.effectViable = False
@@ -3731,7 +3762,7 @@ class BlastmasterBoom(Minion):
 			if card.name == "Bomb":
 				self.effectViable = True
 				
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		numBombsinDeck = 0
 		for card in self.Game.Hand_Deck.decks[3-self.ID]:
 			if card.name == "Bomb":
@@ -3746,8 +3777,8 @@ class BlastmasterBoom(Minion):
 class BoomBot_Shadows(Minion):
 	Class, race, name = "Neutral", "Mech", "Boom Bot"
 	mana, attack, health = 1, 1, 1
-	index = "Shadows~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle_Uncollectible"
-	needTarget, keyWord, description = False, "", "Deathrattle: Deal 1~4 damage to a random enemy"
+	index = "Shadows~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Deal 1~4 damage to a random enemy"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [Deal1to4DamagetoaRandomEnemy(self)]
@@ -3755,21 +3786,19 @@ class BoomBot_Shadows(Minion):
 class Deal1to4DamagetoaRandomEnemy(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		print("Deathrattle: Deal 1~4 damage to a random enemy triggers.")
-		targets = [self.entity.Game.heroes[3-self.entity.ID]]
-		for minion in self.entity.Game.minionsonBoard(3-self.entity.ID):
-			if minion.health > 0 and minion.dead == False:
-				targets.append(minion)
-				
-		self.entity.dealsDamage(np.random.choice(targets), np.random.randint(1, 5))
+		target = np.random.choice(self.entity.Game.livingObjtoTakeRandomDamage(3-self.entity.ID))
+		damage = np.random.randint(1, 5)
+		print("Deathrattle deals %d damage to"%damage, target.name)
+		self.entity.dealsDamage(target, damage)
 		
 		
 class TheBoomReaver(Minion):
 	Class, race, name = "Warrior", "Mech", "The Boom Reaver"
 	mana, attack, health = 10, 7, 9
 	index = "Shadows~Warrior~Minion~10~7~9~Mech~The Boom Reaver~Battlecry~Legendary"
-	needTarget, keyWord, description = False, "", "Battlecry: Summon a copy of a minion in your deck. Give it Rush"
+	requireTarget, keyWord, description = False, "", "Battlecry: Summon a copy of a minion in your deck. Give it Rush"
 	
-	def whenEffective(self, target=None, comment="", choice=0):
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("The Boom Reaver's battlecry summons a copy of minion in player's deck and gives it Rush.")
 		if self.Game.spaceonBoard(self.ID) > 0:
 			minionsinDeck = []

@@ -604,7 +604,6 @@ class SecretTrigger(TriggeronBoard):
 		
 	def connect(self):
 		for signal in self.signals:
-			print("Secret %s now registers trigger"%self.entity, self, signal)
 			self.entity.Game.triggersonBoard[self.entity.ID].append((self, signal))
 			
 	def disconnect(self):

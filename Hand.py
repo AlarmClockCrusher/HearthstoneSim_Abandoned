@@ -21,7 +21,7 @@ class Hand_Deck:
 		self.decks = {1:[], 2:[]}
 		self.noCards = {1:0, 2:0}
 		self.handUpperLimit = {1: 10, 2: 10}
-		self.initialDecks = {1: WarriorDeck, 2: MageDeck}
+		self.initialDecks = {1: DruidDeck, 2: HunterDeck}
 		self.startingDeckIdentities = {1:[], 2:[]}
 		self.startingHandIdentities = {1:[], 2:[]}
 		self.initializeDecks()
@@ -69,10 +69,10 @@ class Hand_Deck:
 				for num in range(1, len(indicesCards[ID])+1):
 					cardstoReplace.append(self.Game.mulligans[ID].pop(indicesCards[ID][-num]))
 				#调用手牌中没有被替代的卡的entersHand()
+				print("Cards that start in hands:", self.Game.mulligans[ID])
 				for card in self.Game.mulligans[ID]:
-					card = card.entersHand()
-				self.hands[ID] = self.Game.mulligans[ID]
-				
+					self.hands[ID].append(card.entersHand())
+					
 				for i in range(len(indicesCards[ID])):
 					self.drawCard(ID)
 				self.decks[ID] += cardstoReplace
@@ -111,6 +111,12 @@ class Hand_Deck:
 				record.append(type(card))
 			else:
 				print("The record is ", record)
+				return False
+		return True
+		
+	def noMinionsinDeck(self, ID):
+		for card in self.decks[ID]:
+			if card.cardType == "Minion":
 				return False
 		return True
 		
@@ -156,9 +162,7 @@ class Hand_Deck:
 				self.noCards[ID] += 1 #如果在疲劳状态有卡洗入牌库，则疲劳值不会减少，在下次疲劳时，仍会从当前的非零疲劳值开始。
 				damage = self.noCards[ID]
 				objtoTakeDamage = self.Game.DamageHandler.damageTransfer(self.Game.heroes[ID])
-				targetSurvival = objtoTakeDamage.damageRequest(None, damage)
-				if targetSurvival > 0:
-					damageActual, survival = objtoTakeDamage.takesDamage(None, damage) #疲劳伤害没有来源
+				objtoTakeDamage.takesDamage(None, damage) #疲劳伤害没有来源
 				return (None, 0)
 			else:
 				card = self.decks[ID].pop()
@@ -224,6 +228,7 @@ class Hand_Deck:
 				if index == -1:
 					self.hands[ID].append(obj)
 				else:
+					print("Inserting card into posinHand:", index)
 					self.hands[ID].insert(index, obj)
 				#Process the card's entersHand() method.
 				print(obj.name, " is added into player %d's hand."%ID)
@@ -263,7 +268,7 @@ class Hand_Deck:
 	#All the cards shuffled will be into the same deck. If necessary, invoke this function for each deck.
 	#PlotTwist把手牌洗入牌库的时候，手牌中buff的随从两次被抽上来时buff没有了。
 	#假设洗入牌库这个动作会把一张牌初始化
-	def shuffleCardintoDeck(self, obj, InitiatorID):
+	def shuffleCardintoDeck(self, obj, initiatorID):
 		if type(obj) == type([]) or type(obj) == type(np.array([])):
 			ID = obj[0].ID
 			for card in obj:
@@ -274,7 +279,7 @@ class Hand_Deck:
 			self.decks[ID].append(obj)
 			obj.entersDeck()
 			
-		self.Game.sendSignal("CardShuffled", InitiatorID, None, obj, 0, "")
+		self.Game.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
 		np.random.shuffle(self.decks[ID])
 		
 	def discardCard(self, ID, card=None, discardAll=False):
@@ -317,19 +322,19 @@ class Hand_Deck:
 			for card in temp:
 				card.leavesHand()
 				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
-			return temp, 0, False
+			return temp, 0, -2 #-2 means the positioninHand doesn't have real meaning.
 		else:
 			if type(card) != type([]) and type(card) != type(np.array([])): #Extracting a single card from hand.
 				#Need to keep track of the card's location in hand.
 				for i in range(len(self.hands[card.ID])):
 					if self.hands[card.ID][i] == card:
 						index, cost = i, card.mana
-						isRightmostCardinHand = True if i == len(self.hands[card.ID]) - 1 else False
 						break
+				positioninHand = index if index < len(self.hands[card.ID]) -1 else -1
 				card = self.hands[card.ID].pop(index)
 				card.leavesHand()
 				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
-				return card, cost, isRightmostCardinHand
+				return card, cost, positioninHand
 			else: #Extracting multiple cards from hand.
 				ID = card[0].ID #Will only invoke this function for one side. If necessary, invoke once for each hand.
 				cards = []
@@ -339,7 +344,7 @@ class Hand_Deck:
 						result.leavesHand()
 						cards.append(result)
 						self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
-				return cards, 0, False
+				return cards, 0, -2
 				
 	def extractfromDeck(self, card, all=False, ID=0):
 		if all: #For replacing the entire deck or throwing it away.
@@ -371,20 +376,55 @@ class Hand_Deck:
 		else:
 			return None
 			
-DruidDeck = [Cenarius, PoweroftheWild, WardruidLoti, FlobbidinousFloop, UntappedPotential, YseraUnleashed, Swipe, Swipe, Starfall, Starfall, Nourish, Nourish, Innervate, Innervate, Wrath, Wrath, CrystalMerchant, CrystalMerchant, HiddenOasis, HiddenOasis, WorthyExpedition, WorthyExpedition, AnubisathDefender, AnubisathDefender, OasisSurger, OasisSurger, RisingWinds, RisingWinds, SteelBeetle, SteelBeetle, ]
+			
+			
+DemonHunterDeck = [ShadowhoofSlayer, ChaosStrike, AldrachiWarblades, CoordinatedStrike, SatyrOverseer, SoulCleave, ChaosNova, GlaiveboundAdept, Blur, TwinSlice, 
+				Battlefiend, ConsumeMagic, ManaBurn, UrzulHorror, BladeDance, FeastofSouls, Umberwing, EyeBeam, WrathscaleNaga, IllidariFelblade, 
+				RagingFelscreamer, SoulSplit, CommandtheIllidari, WrathspikeBrute, Flamereaper, HulkingOverfiend, EyeBeam, FuriousFelfin, SpectralSight, KaynSunfury, 
+				ImprisonedAntaen, Metamorphosis, SkullofGuldan, WarglaivesofAzzinoth, PitCommander, ]
+#DemonHunterDeck = [ShadowhoofSlayer, ChaosStrike, AldrachiWarblades, CoordinatedStrike, SatyrOverseer, SoulCleave, ChaosNova, GlaiveboundAdept, Blur, TwinSlice, Battlefiend, ConsumeMagic, ManaBurn, UrzulHorror, BladeDance, FeastofSouls, Umberwing, EyeBeam, WrathscaleNaga, IllidariFelblade, RagingFelscreamer, SoulSplit, CommandtheIllidari, WrathspikeBrute, Flamereaper, HulkingOverfiend, FuriousFelfin, SpectralSight, ImprisonedAntaen, Metamorphosis, SkullofGuldan, WarglaivesofAzzinoth, PitCommander,]
 
-HunterDeck = [LeeroyJenkins, CultMaster, BoommasterFlark, Zilliax, HalazzitheLynx, UnsealtheVault, BoneWraith, FacelessCorruptor, Veranus, SN1PSN4P, Tracking, Tracking, UnleashtheHounds, UnleashtheHounds, Springpaw, Springpaw, HenchClanHogsteed, HenchClanHogsteed, DesertSpear, DesertSpear, QuestingExplorer, QuestingExplorer, SwarmofLocusts, SwarmofLocusts, DivingGryphon, DivingGryphon, CleartheWay, CleartheWay, LicensedAdventurer, LicensedAdventurer, ]
-
-MageDeck = [Doomsayer, Blizzard, ArcaneIntellect, Alexstrasza, FrostNova, MountainGiant, TwilightDrake, ArcaneKeysmith, BookofSpecters, StargazerLuna, LunasPocketGalaxy, Zilliax, FiretreeWitchdoctor, ConjurersCalling, RayofFrost, PowerofCreation, Kalecgos, KhartutDefender, ZephrystheGreat, TortollanPilgrim, RenotheRelicologist, BoneWraith, Siamat, ArcaneBreath, Dragoncaster, DragonqueenAlexstrasza, EscapedManasaber, TheAmazingReno, MalygosAspectofMagic, SN1PSN4P, ]
-
-PaladinDeck = [LeeroyJenkins, BlessingofKings, Zilliax, SN1PSN4P, TruesilverChampion, TruesilverChampion, ReplicatingMenace, ReplicatingMenace, Mecharoo, Mecharoo, GlowTron, GlowTron, Galvanizer, Galvanizer, Crystology, Crystology, AnnoyoModule, AnnoyoModule, Wargear, Wargear, MicroMummy, MicroMummy, SkyClaw, SkyClaw, HotAirBalloon, HotAirBalloon, GoboglideTech, GoboglideTech, Shotbot, Shotbot, ]
-
-PriestDeck = [WildPyromancer, Silence, AcolyteofPain, ExtraArms, TopsyTurvy, BwonsamditheDead, HighPriestAmet, DarkProphecy, InnerFire, InnerFire, PowerWordShield, PowerWordShield, InjuredBlademaster, InjuredBlademaster, DivineSpirit, DivineSpirit, CircleofHealing, CircleofHealing, NorthshireCleric, NorthshireCleric, Lightwarden, Lightwarden, Psychopomp, Psychopomp, InjuredTolvir, InjuredTolvir, BeamingSidekick, BeamingSidekick, NefersetRitualist, NefersetRitualist, ]
-
-RogueDeck = [Backstab, EdwinVanCleef, Shadowstep, Sap, LeeroyJenkins, Eviscerate, SI7Agent, Zilliax, EVILMiscreant, HeistbaronTogwaggle, UnderbellyFence, Vendetta, ZephrystheGreat, BoneWraith, Siamat, PharaohCat, DragonsHoard, PraiseGalakrond, BloodsailFlybooter, FlikSkyshiv, ShieldofGalakrond, DevotedManiac, SealFate, FacelessCorruptor, DragonqueenAlexstrasza, KronxDragonhoof, EscapedManasaber, BoompistolBully, SN1PSN4P, GalakrondtheNightmare, ]
-
-ShamanDeck = [EarthShock, EarthenMight, Shudderwock, ElectraStormsurge, HauntingVisions, Zentimo, KronxDragonhoof, GalakrondtheTempest, Hex, Hex, FarSight, FarSight, TotemicSmash, TotemicSmash, SpiritoftheFrog, SpiritoftheFrog, Mutate, Mutate, MoguFleshshaper, MoguFleshshaper, DragonsPack, DragonsPack, CorruptElementalist, CorruptElementalist, ShieldofGalakrond, ShieldofGalakrond, DevotedManiac, DevotedManiac, InvocationofFrost, InvocationofFrost, ]
-
-WarlockDeck = [Alexstrasza, LordGodfrey, Zilliax, ZephrystheGreat, DragonqueenAlexstrasza, KronxDragonhoof, SN1PSN4P, GalakrondtheWretched, SacrificialPact, SacrificialPact, MortalCoil, MortalCoil, PlagueofFlames, PlagueofFlames, CrazedNetherwing, CrazedNetherwing, DragonblightCultist, DragonblightCultist, VeiledWorshipper, VeiledWorshipper, DarkSkies, DarkSkies, NetherBreath, NetherBreath, ShieldofGalakrond, ShieldofGalakrond, DevotedManiac, DevotedManiac, BadLuckAlbatross, BadLuckAlbatross, ]
-
-WarriorDeck = [BattleRage, LeeroyJenkins, KronxDragonhoof, BombWrangler, SN1PSN4P, GalakrondtheUnbreakable, InnerRage, InnerRage, Armorsmith, Armorsmith, AcolyteofPain, AcolyteofPain, TownCrier, TownCrier, EterniumRover, EterniumRover, BloodswornMercenary, BloodswornMercenary, ScionofRuin, ScionofRuin, RitualChopper, RitualChopper, ShieldofGalakrond, ShieldofGalakrond, DevotedManiac, DevotedManiac, Awaken, Awaken, RiskySkipper, RiskySkipper, ]
+DruidDeck = [Wrath, CrystalsongPortal, Overflow, CrystalPower,
+				BlessingoftheAncients, Lucentbark, TheForestsAid,
+				Aeroponics, WingedGuardian, FungalFortunes, ArchsporeMsshifn, ImprisonedSatyr, 
+				]
+				
+HunterDeck = [UnsealtheVault, ExplosiveTrap, Misdirection, SnakeTrap, Snipe, Flare, ScavengingHyena, DeadlyShot, EaglehornBow, 
+				UnleashtheHounds, ExplosiveShot, SavannahHighmane, GladiatorsLongbow, KingCrush, RapidFire, Shimmerfly, NineLives, Ursatron, MarkedShot, 
+				HuntingParty, Oblivitron, UnleashtheBeast, VereesaWindrunner, PressurePlate, DesertSpear, HuntersPack, HyenaAlpha, RamkahenWildtamer, SwarmofLocusts, 
+				ScarletWebweaver, WildBloodstinger, DinotamerBrann, CleartheWay, DwarvenSharpshooter, ToxicReinforcement, CorrosiveBreath, PhaseStalker, DivingGryphon, 
+				PrimordialExplorer, Stormhammer, Dragonbane, Veranus, FreshScent, ChopshopCopter, RotnestDrake, ScavengersIngenuity, ZixorApexPredator, MaievShadowsong
+				]
+MageDeck = [RaidtheSkyTemple, IceBarrier, Spellbender, RayofFrost, MagicDartFrog, MessengerRaven, MagicTrick, 
+				ConjurersCalling, KirinTorTricaster, ManaCyclone, PowerofCreation, Kalecgos, AncientMysteries, FlameWard, ArcaneFlakmage, DuneSculptor, ]
+				
+PaladinDeck = [MakingMummies, SacredSacrifice, Redemption, NeverSurrender, LightforgedBlessing, BronzeHerald, DesperateMeasures, MysteriousBlade, 
+				Duel, CommanderRhyssa, AncestralGuardian, TiptheScales, RighteousCause, 
+				NozdormutheTimeless, AmberWatcher, Scalelord,]
+				
+PriestDeck = [ShadowWordDeath, ShadowWordPain, MindControl, 
+				InnerFire, ScarletSubjugator, Thoughtsteal, ShadowMadness, 
+				ShadowWordRuin, CabalShadowPriest, TempleEnforcer, NatalieSeline, EvilConscriper, ForbiddenWords,
+				LazulsScheme, ShadowFigure, MadameLazul, CatrinaMuerte, HolyRipple, 
+				WretchedReclaimer, Psychopomp, PlagueofDeath, WhisperofEVIL, Chronobreaker, 
+				MurozondtheInfinite, ClericofScales]
+				
+RogueDeck = [EVILMiscreant, UnidentifiedContract, HeistbaronTogwaggle, TakNozwhisker,
+				SahketSapper, ShadowofDeath, AnkatheBuried, DragonsHoard, Stowaway, Waxadred, CandleBreath, 
+				Waxmancy, ShadowSculptor, Akama, AkamaPrime,
+				]
+				
+ShamanDeck = [CorrupttheWaters, SludgeSlurper, SludgeSlurper, SludgeSlurper, SludgeSlurper, HagathasScheme, WalkingFountain, WitchsBrew, TotemicSurge, EVILTotem, PlagueofMurlocs, WeaponizedWasp, StormsWrath, StormsWrath,
+				SplittingAxe, Earthquake, MoguFleshshaper, SurgingTempest, Squallhunter, LightningBreath, CumuloMaximus, 
+				Nithogg, TheFistofRaden, BogstrokClacker, LadyVashj, BoggspineKnuckles, Torrent, TheLurkerBelow,
+				]
+				
+WarlockDeck = [SupremeArcheology, SacrificialPact, LordJaraxxus, EVILGenius, PlotTwist, PlotTwist, PlotTwist, PlotTwist, PlotTwist, Impferno, 
+				EagerUnderling, DarkestHour, JumboImp, ArchVillainRafaam, FelLordBetrug, PlagueofFlames, SinisterDeal, ExpiredMerchant, EVILRecruiter, NefersetThrasher, 
+				Impbalming, DiseasedVulture, Riftcleaver, DarkPharaohTekahn, RainofFire, NetherBreath, CrazedNetherwing, AbyssalSummoner, ValdrisFelgorge, 
+				ZzerakutheWarped, FiendishServant, TwistedKnowledge, ChaosGazer, ShadowCouncil, ImprisonedScrapImp, TheDarkPortal,]
+WarriorDeck = [HacktheSystem, ZephrystheGreat, ZephrystheGreat, Gorehowl, GrommashHellscream, ImproveMorale, ViciousScraphound, DrBoomsScheme, SweepingStrike, ClockworkGoblin, 
+				DimensionalRipper, OmegaDevastator, Wrenchcalibur, BlastmasterBoom, TheBoomReaver, IntotheFray, FrightenedFlunky, BloodswornMercenary, LivewireLance, RestlessMummy, 
+				PlagueofWrath, Armagedillo, ArmoredGoon, TombWarden, SkyRaider, Ancharr, EVILQuartermaster, RammingSpeed, Skybarge, MoltenBreath, 
+				DeathwingMadAspect, BoomSquad, RiskySkipper, BombWrangler, BulwarkofAzzinoth, WarmaulChallenger, KargathBladefist, MaievShadowsong,
+				]
