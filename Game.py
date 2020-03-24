@@ -51,7 +51,7 @@ class Game:
 		self.GUI = GUI
 		
 	def initialize(self, cardPool, MinionsofCost, MinionswithRace, RNGPools):
-		self.heroes = {1:Illidan(self, 1), 2:Anduin(self, 2)}
+		self.heroes = {1:Rexxar(self, 1), 2:Illidan(self, 2)}
 		self.heroPowers = {1:self.heroes[1].heroPower, 2:self.heroes[2].heroPower}
 		self.heroes[1].onBoard, self.heroes[2].onBoard = True, True
 		#Multipole weapons can coexitst at minions in lists. The newly equipped weapons are added to the lists
