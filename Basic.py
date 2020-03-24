@@ -819,6 +819,31 @@ class ChaosStrike(Spell):
 		return None
 		
 		
+class SightlessWatcher(Minion):
+	Class, race, name = "Demon Hunter", "Demon", "Sightless Watcher"
+	mana, attack, health = 2, 3, 2
+	index = "Basic~Demon Hunter~Minion~2~3~2~Demon~Sightless Watcher~Battlecry"
+	requireTarget, keyWord, description = False, "", "Battlecry: Look at 3 cards in your deck. Choose one to put on top"
+	
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
+		if len(self.Game.Hand_Deck.decks[self.ID]) > 1: #卡组数小于2张时没有作用
+			if "InvokedbyOthers" in comment :
+				print("Sightless Watcher's battlecry puts a random card in player's deck on top of the deck")
+				index = np.random.randint(len(self.Game.Hand_Deck.decks[self.ID]))
+				self.Game.Hand_Deck.decks[self.ID].append(self.Game.Hand_Deck.decks[self.ID].pop(index))
+			else:
+				print("Sightless Watcher's battlecry lets player look at 3 cards in the deck and put one on top")
+				numCardsLeft = len(self.Game.Hand_Deck.decks[self.ID])
+				self.Game.options = np.random.choice(self.Game.Hand_Deck.decks[self.ID], min(3, numCardsLeft), replace=False)
+				self.Game.DiscoverHandler.startDiscover(self)
+		return None
+		
+	def discoverDecided(self, option):
+		print("Card %s in player's deck will be put on top"%option.name)
+		index = self.Game.Hand_Deck.decks[self.ID].index(option)
+		self.Game.Hand_Deck.decks[self.ID].append(self.Game.Hand_Deck.decks[self.ID].pop(index))
+		
+		
 class AldrachiWarblades(Weapon):
 	Class, name, description = "Demon Hunter", "Aldrachi Warblades", "Lifesteal"
 	mana, attack, durability = 3, 2, 3
@@ -835,11 +860,11 @@ class CoordinatedStrike(Spell):
 	description = "Summon three 1/1 Illidari with Rush"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Coordinated Strike is cast and summons three 1/1 Illidari with Rush")
-		self.Game.summonMinion([Illidari_Basic(self.Game, self.ID) for i in range(3)], (-1, "totheRightEnd"), self.ID)
+		self.Game.summonMinion([IllidariInitiate(self.Game, self.ID) for i in range(3)], (-1, "totheRightEnd"), self.ID)
 		return None
 #不知道它们实际叫什么
-class Illidari_Basic(Minion):
-	Class, race, name = "Demon Hunter", "", "Illidari"
+class IllidariInitiate(Minion):
+	Class, race, name = "Demon Hunter", "", "Illidari Initiate"
 	mana, attack, health = 1, 1, 1
 	index = "Basic~Demon Hunter~Minion~1~1~1~None~Illidari~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
@@ -928,6 +953,17 @@ class GlaiveboundAdept(Minion):
 			print("Glaivebound Adept's battlecry deals 4 damage to target", target.name)
 			self.dealsDamage(target, 4)
 		return target
+		
+		
+class InnerDemon(Spell):
+	Class, name = "Demon Hunter", "Inner Demon"
+	requireTarget, mana = False, 8
+	index = "Basic~Demon Hunter~Spell~8~Inner Demon"
+	description = "Give your hero +8 Attack this turn"
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
+		print("Inner Demon is cast and gives player +8 Attack this turn")
+		self.Game.heroes[self.ID].gainTempAttack(8)
+		return None
 		
 """Druid cards"""
 class Innervate(Spell):

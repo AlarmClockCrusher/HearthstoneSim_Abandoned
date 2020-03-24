@@ -215,6 +215,29 @@ class Felwing(Minion):
 	
 	
 """Mana 3 cards"""
+class AltruistheOutcast(Minion):
+	Class, race, name = "Demon Hunter", "", "Altruis the Outcast"
+	mana, attack, health = 3, 3, 2
+	index = "Shadows~Demon Hunter~Minion~3~3~2~None~Altruis the Outcast~Legendary"
+	requireTarget, keyWord, description = False, "", "After you play the left- or right-most card in your hand, deal 1 damage to all enemies"
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.triggersonBoard = [Trigger_AltruistheOutcast(self)]
+		
+class Trigger_AltruistheOutcast(TriggeronBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionBeenPlayed", "SpellBeenPlayed", "WeaponBeenPlayed", "HeroCardBeenPlayed"])
+		
+	#The comment passed is the position of card in hand when they are played.
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and (comment == -1 or comment == 0)
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		print("After player plays the left- or right-most card in hand, %s deals 1 damage to all enemies"%self.entity.name)
+		targets = [self.entity.Game.heroes[3-self.entity.ID]] + self.entity.Game.minionsonBoard(3-self.entity.ID)
+		self.entity.dealsAOE(targets, [1 for enemy in targets])
+		
+		
 class EyeBeam(Spell):
 	Class, name = "Demon Hunter", "Eye Beam"
 	requireTarget, mana = True, 3
@@ -354,11 +377,11 @@ class CommandtheIllidari(Spell):
 	description = "Summon six 1/1 Illidari with Rush"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Command the Illidari is cast and summons six 1/1 Illidari with Rush")
-		self.Game.summonMinion([Illidari_Shadows(self.Game, self.ID) for i in range(6)], (-1, "totheRightEnd"), self.ID)
+		self.Game.summonMinion([IllidariInitiate_Shadows(self.Game, self.ID) for i in range(6)], (-1, "totheRightEnd"), self.ID)
 		return None
 #不知道它们实际叫什么
-class Illidari_Shadows(Minion):
-	Class, race, name = "Demon Hunter", "", "Illidari"
+class IllidariInitiate_Shadows(Minion):
+	Class, race, name = "Demon Hunter", "", "Illidari Initiate"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Demon Hunter~Minion~1~1~1~None~Illidari~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
@@ -413,3 +436,59 @@ class Trigger_HulkingOverfiend(TriggeronBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		print("After %s attacks and kills a minion %s, it gains an extra attack chance."%(self.entity.name, target.name))
 		self.entity.attChances_extra += 1
+		
+		
+class Nethrandamus(Minion):
+	Class, race, name = "Demon Hunter", "Dragon", "Nethrandamus"
+	mana, attack, health = 9, 8, 8
+	index = "Shadows~Demon Hunter~Minion~9~8~8~Dragon~Nethrandamus~Battlecry~Legendary"
+	requireTarget, keyWord, description = False, "", "Battlecry: Summon two random 0-Cost minions. (Upgrades each time a friendly minion dies!)"
+	poolIdentifier = "0-Cost Minions"
+	@classmethod
+	def generatePool(cls, Game):
+		costs, lists = [], []
+		for cost in Game.MinionsofCost.keys():
+			costs.append("%d-Cost Minions"%cost)
+			lists.append(list(Game.MinionsofCost[cost].values()))
+		return costs, lists
+		
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.triggersinHand = [Trigger_Nethrandamus_Hand(self)]
+		self.triggersinDeck = [Trigger_Nethrandamus_Deck(self)]
+		self.progress = 0
+		
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
+		print("Nethrandamus' battlecry summons two random %d-Cost minions."%self.progress)
+		#假设法术伤害过高，超出了费用范围，则取最高的可选费用
+		cost, availableCosts = self.progress, list(self.Game.MinionsofCost.keys())
+		while True:
+			if cost not in availableCosts:
+				cost -= 1
+			else:
+				break
+		key = "%d-Cost Minions"%cost
+		minions = np.random.choice(self.Game.RNGPools[key], 2, replace=True)
+		pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
+		self.Game.summonMinion([minion(self.Game, self.ID) for minion in minions], pos, self.ID)
+		return None
+		
+class Trigger_Nethrandamus_Hand(TriggerinHand):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionDies"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.inHand and target.ID == self.entity.ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.entity.progress += 1
+		
+class Trigger_Nethrandamus_Deck(TriggerinDeck):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionDies"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.inDeck and target.ID == self.entity.ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.entity.progress += 1
