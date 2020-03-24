@@ -21,7 +21,7 @@ class Hand_Deck:
 		self.decks = {1:[], 2:[]}
 		self.noCards = {1:0, 2:0}
 		self.handUpperLimit = {1: 10, 2: 10}
-		self.initialDecks = {1: DemonHunterDeck, 2: PriestDeck}
+		self.initialDecks = {1: DragonHunter, 2: ZooDemonHunter}
 		self.startingDeckIdentities = {1:[], 2:[]}
 		self.startingHandIdentities = {1:[], 2:[]}
 		self.initializeDecks()
@@ -383,7 +383,12 @@ DemonHunterDeck = [ShadowhoofSlayer, ChaosStrike, AldrachiWarblades, Coordinated
 				RagingFelscreamer, SoulSplit, CommandtheIllidari, WrathspikeBrute, Flamereaper, HulkingOverfiend, UrzulHorror, EyeBeam, FuriousFelfin, SpectralSight, 
 				KaynSunfury, ImprisonedAntaen, Metamorphosis, SkullofGuldan, WarglaivesofAzzinoth, PitCommander,
 				MoargArtificer, TeronGorefiend, MaievShadowsong, Magtheridon, Alar, KaelthasSunstrider]
-
+                
+ZooDemonHunter = [ShadowhoofSlayer, ShadowhoofSlayer, Battlefiend, Battlefiend, TwinSlice, ManaBurn, UrzulHorror, FuriousFelfin,
+                FuriousFelfin, FrenziedFelwing, FrenziedFelwing, GlaiveboundAdept, GlaiveboundAdept, Metamorphosis, Umberwing, Umberwing, SeaGiant,
+                DireWolfAlpha, DireWolfAlpha, KnifeJuggler, KnifeJuggler, WarglaivesofAzzinoth, FeastofSouls, FeastofSouls, WrathscaleNaga, WrathscaleNaga,
+                CoordinatedStrike, CoordinatedStrike, CommandtheIllidari, CommandtheIllidari]
+                
 DruidDeck = [FungalFortunes, ArchsporeMsshifn, MarshHydra, YsielWindsinger, ImprisonedSatyr, Germination, Cenarius, PoweroftheWild, UntappedPotential, YseraUnleashed, Swipe, Swipe, Starfall, Starfall, Nourish, Nourish, Innervate, Innervate, Wrath, Wrath, CrystalMerchant, CrystalMerchant, HiddenOasis, HiddenOasis, WorthyExpedition, WorthyExpedition, AnubisathDefender, AnubisathDefender, OasisSurger, OasisSurger, RisingWinds, RisingWinds, SteelBeetle, SteelBeetle, 
 			MoargArtificer, TeronGorefiend, MaievShadowsong, Magtheridon, Alar, KaelthasSunstrider]
 				
@@ -393,7 +398,13 @@ HunterDeck = [RapidFire, Shimmerfly, NineLives, Ursatron, MarkedShot,
 				Stormhammer, Dragonbane, Veranus, FreshScent, ChopshopCopter, RotnestDrake, ScavengersIngenuity, AugmentedPocupine, ZixorApexPredator, MokNathalLion, 
 				NagrandSlam,
 				MoargArtificer, TeronGorefiend, MaievShadowsong, Magtheridon, Alar, KaelthasSunstrider]
-
+                
+DragonHunter = [FreezingTrap, Dragonbane, SnakeTrap, SnakeTrap, FaerieDragon, FaerieDragon, Tracking, MaievShadowsong,
+                CorrosiveBreath, CorrosiveBreath, Stormhammer, Stormhammer, BlazingBattlemage, BlazingBattlemage, PhaseStalker,
+                PhaseStalker, DwarvenSharpshooter, DwarvenSharpshooter, PrimordialExplorer, PrimordialExplorer, BigOlWhelp, BigOlWhelp,
+                EvasiveFeywing, EvasiveFeywing, Scalerider, Scalerider, FrenziedFelwing, FrenziedFelwing, RotnestDrake, RotnestDrake, 
+                ]
+                
 MageDeck = [RayofFrost, Khadgar, MagicDartFrog, MessengerRaven, MagicTrick, 
 				ConjurersCalling, KirinTorTricaster, ManaCyclone, PowerofCreation, Kalecgos, AncientMysteries, FlameWard, CloudPrince, ArcaneFlakmage, DuneSculptor, 
 				NagaSandWitch, TortollanPilgrim, RenotheRelicologist, PuzzleBoxofYoggSaron, ArcaneBreath, ElementalAllies, LearnDraconic, VioletSpellwing, Chenvaala, AzureExplorer, 
