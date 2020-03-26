@@ -92,8 +92,8 @@ class GUI:
 		for i in range(len(self.Game.Hand_Deck.hands[2])):
 			self.posHands[2].append((0.023*X+(X/13)*i, 0.06*Y, 0.05*X, 0.086*Y))
 		self.drawHands()
-		pygame.draw.line(self.display, red, (0.0235*X+(X/13)*10, 0.99*Y), (0.0235*X+(X/13)*10, 0.92*Y), 4)
-		pygame.draw.line(self.display, red, (0.0235*X+(X/13)*10, 0.06*Y), (0.0235*X+(X/13)*10, 0.14*Y), 4)
+		pygame.draw.line(self.display, red, (0.0232*X+(X/13)*10, 0.99*Y), (0.0235*X+(X/13)*10, 0.92*Y), 4)
+		pygame.draw.line(self.display, red, (0.0232*X+(X/13)*10, 0.06*Y), (0.0235*X+(X/13)*10, 0.14*Y), 4)
 		self.drawManasHandsDecksSecretsQuests()
 		self.drawHeroPowers()
 		self.drawWeapon()
@@ -280,19 +280,19 @@ class GUI:
 		self.displayText("Locked: %d"%self.Game.ManaHandler.manasLocked[2], color2, (X-0.0875*X, 0.31*Y), int(0.025*X))
 		
 		for i in range(len(self.Game.SecretHandler.secrets[1])):
-			self.displayText(self.Game.SecretHandler.secrets[1][i].name, color2, (0.75*X, Y-0.18*Y-i*0.023*Y), int(0.019*X))
+			self.displayText(self.Game.SecretHandler.secrets[1][i].name, color2, (0.75*X, Y-0.18*Y-i*0.028*Y), int(0.022*X))
 			
 		for i in range(len(self.Game.SecretHandler.secrets[2])):
-			self.displayText(self.Game.SecretHandler.secrets[2][i].name, color1, (0.75*X, 0.17*Y+i*0.023*Y), int(0.019*X))
+			self.displayText(self.Game.SecretHandler.secrets[2][i].name, color1, (0.75*X, 0.17*Y+i*0.028*Y), int(0.022*X))
 			
 		if self.Game.SecretHandler.mainQuests[1] != []:
-			self.displayText(self.Game.SecretHandler.mainQuests[1][0].name+": "+str(self.Game.SecretHandler.mainQuests[1][0].progress), black, (0.20*X, Y-0.19*Y), int(0.02*X))
+			self.displayText(self.Game.SecretHandler.mainQuests[1][0].name+": "+str(self.Game.SecretHandler.mainQuests[1][0].progress), blue, (0.20*X, Y-0.185*Y), int(0.025*X))
 		for i in range(len(self.Game.SecretHandler.sideQuests[1])):
-			self.displayText(self.Game.SecretHandler.sideQuests[1][i].name+": "+str(self.Game.SecretHandler.sideQuests[1][i].progress), black, (0.15*X, Y-0.20*Y-i*0.029*Y), int(0.02*X))
+			self.displayText(self.Game.SecretHandler.sideQuests[1][i].name+": "+str(self.Game.SecretHandler.sideQuests[1][i].progress), black, (0.15*X, Y-0.22*Y-i*0.028*Y), int(0.02*X))
 		if self.Game.SecretHandler.mainQuests[2] != []:
-			self.displayText(self.Game.SecretHandler.mainQuests[2][0].name+": "+str(self.Game.SecretHandler.mainQuests[2][0].progress), black, (0.20*X, 0.19*Y), int(0.02*X))
+			self.displayText(self.Game.SecretHandler.mainQuests[2][0].name+": "+str(self.Game.SecretHandler.mainQuests[2][0].progress), blue, (0.20*X, 0.185*Y), int(0.025*X))
 		for i in range(len(self.Game.SecretHandler.sideQuests[2])):
-			self.displayText(self.Game.SecretHandler.sideQuests[2][i].name+": "+str(self.Game.SecretHandler.sideQuests[2][i].progress), black, (0.15*X, 0.2*Y+i*0.029*Y), int(0.02*X))
+			self.displayText(self.Game.SecretHandler.sideQuests[2][i].name+": "+str(self.Game.SecretHandler.sideQuests[2][i].progress), black, (0.15*X, 0.22*Y+i*0.028*Y), int(0.02*X))
 			
 			
 	def drawChooseOne(self):
@@ -525,7 +525,7 @@ class GUI:
 						print("Selected ", item[0], item[1])
 						#Decide if the subject selected is viable. If not, cancel the selection.
 						if "inHand" in item[0]: #选择了手牌中的卡
-							if item[1].mana > self.Game.ManaHandler.manas[ID]:
+							if self.Game.ManaHandler.costAffordable(item[1]) == False:
 								print("No enough mana to play card")
 								self.cancelSelection()
 							else: #除了法力值不足，然后是指向性法术没有合适目标和随从没有位置使用
@@ -547,7 +547,7 @@ class GUI:
 						#不需目标的英雄技能当即使用。需要目标的进入目标选择界面。
 						elif "Hero Power" in item[0]:
 							#英雄技能会自己判定是否可以使用。
-							if item[1].available() == False:
+							if self.Game.ManaHandler.costAffordable(item[1]) == False or item[1].available() == False:
 								print("Hero Power not available.")
 								self.cancelSelection()
 							else:

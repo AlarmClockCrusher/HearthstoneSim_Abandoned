@@ -1233,14 +1233,13 @@ class CrystalsongPortal(Spell):
 				druidMinions.append(value)
 		return "Druid Minions", druidMinions
 		
-	def randomorDiscover(self):
-		handHasMinion = False
+	def effectCanTrigger(self):
+		self.effectViable = True
 		for card in self.Game.Hand_Deck.hands[self.ID]:
 			if card.cardType == "Minion":
-				handHasMinion = True
-				return "Discover"
-		return "Random"
-		
+				self.effectViable = False
+				break
+				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.Hand_Deck.handNotFull(self.ID):
 			handHasMinion = False
@@ -1266,7 +1265,7 @@ class CrystalsongPortal(Spell):
 		return None
 		
 	def discoverDecided(self, option):
-		print("Minion ", option.name, " is put into player's hand.")
+		print("Druid Minion ", option.name, " is put into player's hand.")
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -3268,7 +3267,7 @@ class Scargil(Minion):
 		
 class SwampqueenHagatha(Minion):
 	Class, race, name = "Shaman", "", "Swampqueen Hagatha"
-	mana, attack, health = 1, 5, 5
+	mana, attack, health = 7, 5, 5
 	index = "Shadows~Shaman~Minion~7~5~5~None~Swampqueen Hagatha~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a 5/5 Horror to your hand. Teach it two Shaman spells"
 	poolIdentifier = "Shaman Spells"
@@ -3409,7 +3408,7 @@ class RafaamsScheme(Spell):
 class AranasiBroodmother(Minion):
 	Class, race, name = "Warlock", "Demon", "Aranasi Broodmother"
 	mana, attack, health = 6, 4, 6
-	index = "Shadows~Warlock~Minion~6~4~6~Demon~Aranasi Broodmother~Taunt~Triggers when Drawn"
+	index = "Shadows~Warlock~Minion~6~4~6~Demon~Aranasi Broodmother~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. When you draw this, restore 4 Health to your hero"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3493,19 +3492,19 @@ class DarkestHour(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Darkest Hour is cast, destroys all friendly minions and summons equal number of minions from deck.")
 		boardSize = len(self.Game.minionsonBoard(self.ID))
-		for minion in self.Game.minionsonBoard:
+		for minion in self.Game.minionsonBoard(self.ID):
 			minion.dead = True
 		#对于所有友方随从强制死亡，并令其离场，因为召唤的随从是在场上右边，不用记录死亡随从的位置
 		self.Game.gathertheDead()
-		minionsinDeck = []
-		for card in self.Game.Hand_Deck.decks[self.ID]:
-			if card.cardType == "Minion":
-				minionsinDeck.append(card)
-				
-		numSummon = min(boardSize, len(minionsinDeck))
-		if numSummon > 0:
-			self.Game.summonMinion(np.random.choice(minionsinDeck, numSummon, replace=False), (-1, "totheRightEnd"), self.ID)
-			
+		for i in range(boardSize):
+			if self.Game.spaceonBoard(self.ID) > 0:
+				minionsinDeck = []
+				for card in self.Game.Hand_Deck.decks[self.ID]:
+					if card.cardType == "Minion":
+						minionsinDeck.append(card)
+				if minionsinDeck != []:
+					minion = np.random.choice(minionsinDeck)
+					self.Game.summonfromDeck(minion, -1, self.ID)
 		return None
 		
 #For now, assume the mana change is on the mana and shuffling this card back into deck won't change its counter.
@@ -3514,29 +3513,27 @@ class JumboImp(Minion):
 	mana, attack, health = 10, 8, 8
 	index = "Shadows~Warlock~Minion~10~8~8~Demon~Jumbo Imp"
 	requireTarget, keyWord, description = False, "", "Costs (1) less whenever a friendly minion dies while this is in your hand"
-	#def __init__(self, Game, ID):
-	#	self.blank_init(Game, ID)
-	#	self.triggersinHand = [Trigger_JumboImp(self)]
-	##不知道这种减费是自己的基础费用减少还是最后结算费用的selfManaChange
-	#def selfManaChange(self):
-	#	numYourTreantsDiedThisGame = 0
-	#	for index in self.Game.CounterHandler.minionsDiedThisGame[self.ID]:
-	#		numYourTreantsDiedThisGame += 1
-	#			
-	#	self.mana -= numYourTreantsDiedThisGame
-	#	self.mana = max(self.mana, 0)
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.triggersinHand = [Trigger_JumboImp(self)]
+		self.friendlyDemonsDied = 0
+		
+	def selfManaChange(self):
+		self.mana -= self.friendlyDemonsDied
+		self.mana = max(self.mana, 0)
 		
 class Trigger_JumboImp(TriggerinHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDies"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.inHand and target.name == "Treant"
+		return self.entity.inHand and target.ID == self.entity.ID and "Demon" in target.race
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.entity.friendlyDemonsDied += 1
 		self.entity.Game.ManaHandler.calcMana_Single(self.entity)
 		
-			
+		
 class ArchVillainRafaam(Minion):
 	Class, race, name = "Warlock", "", "Arch-Villain Rafaam"
 	mana, attack, health = 7, 7, 8

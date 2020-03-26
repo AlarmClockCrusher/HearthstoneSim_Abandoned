@@ -150,13 +150,20 @@ class Game:
 				
 		return targets, distribution
 		
-	def livingObjtoTakeRandomDamage(self, ID):
+	def livingObjtoTakeRandomDamage(self, ID, target=None):
 		objs = []
-		if self.heroes[ID].health > 0 and self.heroes[ID].dead == False:
-			objs.append(self.heroes[ID])
-		for minion in self.minionsonBoard(ID):
-			if minion.health > 0 and minion.dead == False:
-				objs.append(minion)
+		if target == None:
+			if self.heroes[ID].health > 0 and self.heroes[ID].dead == False:
+				objs.append(self.heroes[ID])
+			for minion in self.minionsonBoard(ID):
+				if minion.health > 0 and minion.dead == False:
+					objs.append(minion)
+		else:
+			if self.heroes[ID].health > 0 and self.heroes[ID].dead == False and self.heroes[ID] != target:
+				objs.append(self.heroes[ID])
+			for minion in self.minionsonBoard(ID):
+				if minion.health > 0 and minion.dead == False and minion != target:
+					objs.append(minion)
 		return objs
 		
 	#There probably won't be board size limit changing effects.
@@ -367,7 +374,7 @@ class Game:
 							return False
 					return True
 					
-	#一次只从一方的手牌中召唤随从。没有列表，从手牌中召唤多个随从都是循环数次检索，然后单个召唤入场的。
+	#一次只从一方的手牌中召唤一个随从。没有列表，从手牌中召唤多个随从都是循环数次检索，然后单个召唤入场的。
 	def summonfromHand(self, subject, position, initiatorID, comment="SummoningCanbeDoubled"):
 		if self.spaceonBoard(subject.ID) > 0:
 			return self.summonMinion(self.Hand_Deck.extractfromHand(subject)[0], position, initiatorID, comment)
@@ -709,6 +716,8 @@ class Game:
 					rebornMinions.append(objtoDie)
 				objtoDie.deathResolution(attackwhenDies, triggersAllowed_WhenDies, triggersAllowed_AfterDied)
 				self.removeMinionorWeapon(objtoDie) #结算完一个随从的亡语之后将其移除。
+				objtoDie.__init__(self, objtoDie.ID)
+				objtoDie.dead = True
 				self.deathList[0].pop(0)
 				self.deathList[1].pop(0)
 			#当一轮死亡结算结束之后，召唤这次死亡结算中死亡的复生随从
@@ -847,10 +856,11 @@ class Game:
 			self.sendSignal(signal, self.turn, subject, target, 0, "")
 			#如果此时攻击者，攻击目标或者任意英雄濒死或离场所，则攻击取消，跳过伤害和攻击后步骤。
 			battleContinues = True
-			if subject.onBoard == False or subject.health < 1 or subject.dead:
+			#如果目标随从变成了休眠物，则攻击会取消，但是不知道是否会浪费攻击机会。假设会浪费
+			if (subject.cardType != "Minion" and subject.cardType != "Hero") or subject.onBoard == False or subject.health < 1 or subject.dead:
 				print("The attacker is not onBoard/alive anymore. Battle interrupted")
 				battleContinues = False
-			elif target.onBoard == False or target.health < 1 or target.dead:
+			elif (target.cardType != "Minion" and target.cardType != "Hero") or target.onBoard == False or target.health < 1 or target.dead:
 				print("The target is not onBoard/alive anymore. Battle interrupted. The attacker's attack chance is still wasted.")
 				battleContinues = False
 				if consumeAttackChance: #If this attack is canceled, the attack time still increases.

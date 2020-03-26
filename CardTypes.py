@@ -892,8 +892,6 @@ class Minion(Card):
 		#移除随从注册了的亡语扳机
 		for trigger in self.deathrattles:
 			trigger.disconnect()
-		if self in self.Game.minions[self.ID]:
-			self.__init__(self.Game, self.ID)
 		self.Game.sendSignal("MinionDied", self.Game.turn, None, self, 0, "", 0, triggersAllowed_AfterDied)
 		#MinionDeathResolutionFinished
 		
@@ -1948,7 +1946,6 @@ class Hero(Card):
 				else:
 					self.health -= damage - self.armor
 					self.armor = 0
-				print("Hero %s takes %d damage"%(self.name, damage))
 				self.Game.CounterHandler.damageonHeroThisTurn[self.ID] += damage
 				if sendDamageSignal:
 					self.Game.sendSignal("HeroTakesDamage", self.ID, subject, self, damage, "")
@@ -2145,7 +2142,7 @@ class Weapon(Card):
 	def gainStat(self, attack, durability):
 		self.attack += attack
 		self.durability += durability
-		if self.Game.turn == self.ID:
+		if self.Game.turn == self.ID and self.onBoard:
 			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare + max(0, self.attack)
 			
 	"""Handle the weapon being played/equipped."""

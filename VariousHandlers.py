@@ -59,24 +59,41 @@ class ManaHandler:
 		self.manasOverloaded[ID] = 0
 		self.Game.sendSignal("OverloadStatusCheck", ID, None, None, 0, "")
 		
+	def setManaCrystal(self, num, ID):
+		self.manasUpper[ID] = num
+		if self.manas[ID] > num:
+			self.manas[ID] = num
+		self.Game.sendSignal("EmptyManaCrystalCheck", ID, None, None, 0, "")
+		
 	def gainManaCrystal(self, num, ID):
 		self.manas[ID] += num
 		self.manas[ID] = min(self.manas_UpperLimit[ID], self.manas[ID])
 		self.manasUpper[ID] += num
 		self.manasUpper[ID] = min(self.manas_UpperLimit[ID], self.manasUpper[ID])
+		self.Game.sendSignal("EmptyManaCrystalCheck", ID, None, None, 0, "")
 		
 	def gainEmptyManaCrystal(self, num, ID):
 		if self.manasUpper[ID] + num <= self.manas_UpperLimit[ID]:
 			self.manasUpper[ID] += num
+			self.Game.sendSignal("EmptyManaCrystalCheck", ID, None, None, 0, "")
 			return True
-		else:
+		else: #只要获得的空水晶量高于目前缺少的空水晶量，即返回False
 			self.manasUpper[ID] = self.manas_UpperLimit[ID]
+			self.Game.sendSignal("EmptyManaCrystalCheck", ID, None, None, 0, "")
 			return False
+			
+	def restoreManaCrystal(self, num, ID, restoreAll=False):
+		if restoreAll:
+			self.manas[ID] = self.manasUpper[ID] - self.manasLocked[ID]
+		else:
+			self.manas[ID] += num
+			self.manas[ID] = min(self.manas[ID], self.manasUpper[ID] - self.manasLocked[ID])
 			
 	def destroyManaCrystal(self, num, ID):
 		self.manasUpper[ID] -= num
 		self.manasUpper[ID] = max(0, self.manasUpper[ID])
 		self.manas[ID] = min(self.manas[ID], self.manasUpper[ID])
+		self.Game.sendSignal("EmptyManaCrystalCheck", ID, None, None, 0, "")
 		
 	def costAffordable(self, subject):
 		ID = subject.ID
@@ -114,8 +131,7 @@ class ManaHandler:
 	#Overloaded manas will becomes the newly locked mana.
 	def turnStarts(self):
 		ID = self.Game.turn
-		self.manasUpper[ID] += 1
-		self.manasUpper[ID] = min(self.manas_UpperLimit[ID], self.manasUpper[ID])
+		self.gainEmptyManaCrystal(1, ID)
 		self.manasLocked[ID] = self.manasOverloaded[ID]
 		self.manasOverloaded[ID] = 0
 		self.manas[ID] = max(0, self.manasUpper[ID] - self.manasLocked[ID] - self.manas_withheld[ID])
@@ -201,9 +217,9 @@ class ManaModification:
 			
 	def applies(self):
 		self.card.manaModifications.append(self) #需要让卡牌自己也带有一个检测的光环，离开手牌或者牌库中需要清除。
-		if self.card in self.card.Game.Hand_Deck.hands[self.card.ID]:
+		if self.card in self.card.Game.Hand_Deck.hands[self.card.ID] or self.card in self.card.Game.Hand_Deck.decks[self.card.ID]:
 			self.card.Game.ManaHandler.calcMana_Single(self.card)
-		
+			
 	def getsRemoved(self):
 		extractfrom(self, self.card.manaModifications)
 		if self.source != None:
@@ -654,7 +670,7 @@ class DiscoverHandler:
 			if hasattr(option, "cardType") == False:
 				print(i+1, " Choice %s:"%option.name, option.description)
 			elif option.cardType == "Minion":
-				print(i+1, " Minion %s: Mana %d	Att %d	Health %d	Race%s."%(option.name, option.mana, option.attack_Enchant, option.health_Enchant, option.race))
+				print(i+1, " Minion %s: \t\tMana %d	Att %d	Health %d	Race%s."%(option.name, option.mana, option.attack_Enchant, option.health_Enchant, option.race))
 				keyWords = []
 				for key, value in option.keyWords.items():
 					if value > 0:
@@ -662,10 +678,10 @@ class DiscoverHandler:
 				print("\tMinion has keyWords: ", keyWords)
 				print("\tMinion description: ", option.description)
 			elif option.cardType == "Spell":
-				print(i+1, " Spell %s: Mana %d"%(option.name, option.mana))
+				print(i+1, " Spell %s: \t\tMana %d"%(option.name, option.mana))
 				print("\tSpell description: ", option.description)
 			elif option.cardType == "Weapon":
-				print(i+1, " Weapon %s: Mana %d	Att %d	Durability %d."%(option.name, option.mana, option.attack, option.durability))
+				print(i+1, " Weapon %s: \t\tMana %d	Att %d	Durability %d."%(option.name, option.mana, option.attack, option.durability))
 				keyWords = []
 				for key, value in option.keyWords.items():
 					if value > 0:
@@ -673,7 +689,7 @@ class DiscoverHandler:
 				print("\tWeapon has keyWords: ", keyWords)
 				print("\tWeapon description: ", option.description)
 			elif option.cardType == "Hero":
-				print(i+1, "Hero Card %s: Mana %d	"%(option.name, option.mana))
+				print(i+1, "Hero Card %s: \t\tMana %d	"%(option.name, option.mana))
 				print("\tHero Card description: ", option.description)
 			elif option.cardType == "Hero Power":
 				print(i+1, "Hero Power %s: Mana %d"%(option.name, option.mana))
@@ -684,12 +700,13 @@ class DiscoverHandler:
 				
 		while True:
 			choice = input("Type the index of the option for discover: ")
-			choice = (int)(choice)
-			if choice not in [i + 1 for i in range(len(self.Game.options))]:
-				print("Type a valid index to continue.")
-			else:
-				break
-				
+			if choice == '1' or choice == '2' or choice == '3' or choice == '4':
+				choice = (int)(choice)
+				if choice not in [i + 1 for i in range(len(self.Game.options))]:
+					print("Type a valid index to continue.")
+				else:
+					break
+					
 		option = self.Game.options[choice-1]
 		print("The discover option is ", option.name)
 		initiator.discoverDecided(option)

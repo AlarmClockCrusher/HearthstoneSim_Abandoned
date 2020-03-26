@@ -1056,7 +1056,7 @@ class WildGrowth(Spell):
 	index = "Basic~Druid~Spell~3~Wild Growth"
 	description = "Gain an empty Mana Crystal"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Wild Growth gives player an empty mana.")
+		print("Wild Growth gives player an empty Mana Crystal.")
 		if self.Game.ManaHandler.gainEmptyManaCrystal(1, self.ID) == False:
 			print("Player's mana at upper limit already. Wild Growth gives player an Excess Mana instead.")
 			self.Game.Hand_Deck.addCardtoHand(ExcessMana(self.Game, self.ID), self.ID)

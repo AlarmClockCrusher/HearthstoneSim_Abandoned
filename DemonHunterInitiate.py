@@ -454,13 +454,12 @@ class Nethrandamus(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersinHand = [Trigger_Nethrandamus_Hand(self)]
-		self.triggersinDeck = [Trigger_Nethrandamus_Deck(self)]
+		self.triggersinHand = [Trigger_Nethrandamus(self)] #只有在手牌中才会升级
 		self.progress = 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Nethrandamus' battlecry summons two random %d-Cost minions."%self.progress)
-		#假设法术伤害过高，超出了费用范围，则取最高的可选费用
+		#假设计数过高，超出了费用范围，则取最高的可选费用
 		cost, availableCosts = self.progress, list(self.Game.MinionsofCost.keys())
 		while True:
 			if cost not in availableCosts:
@@ -473,22 +472,12 @@ class Nethrandamus(Minion):
 		self.Game.summonMinion([minion(self.Game, self.ID) for minion in minions], pos, self.ID)
 		return None
 		
-class Trigger_Nethrandamus_Hand(TriggerinHand):
+class Trigger_Nethrandamus(TriggerinHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDies"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and target.ID == self.entity.ID
-		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.progress += 1
-		
-class Trigger_Nethrandamus_Deck(TriggerinDeck):
-	def __init__(self, entity):
-		self.blank_init(entity, ["MinionDies"])
-		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.inDeck and target.ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.progress += 1

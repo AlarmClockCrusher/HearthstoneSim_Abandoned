@@ -875,17 +875,20 @@ class FacelessCorruptor(Minion):
 	Class, race, name = "Neutral", "", "Faceless Corruptor"
 	mana, attack, health = 5, 4, 4
 	index = "Dragons~Neutral~Minion~5~4~4~None~Faceless Corruptor~Rush~Battlecry"
-	requireTarget, keyWord, description = False, "Rush", "Rush. Battlecry: Transform one of your friendly minions into a copy of this"
+	requireTarget, keyWord, description = True, "Rush", "Rush. Battlecry: Transform one of your friendly minions into a copy of this"
 	
+	def targetExists(self, choice=0):
+		return self.selectableFriendlyMinionExists()
+		
+	def targetCorrect(self, target, choice=0):
+		return target.cardType == "Minion" and target.ID == self.ID and target != self and target.onBoard
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		friendlies = self.Game.minionsonBoard(self.ID)
-		extractfrom(self, friendlies)
-		if friendlies != []:
-			minion = np.random.choice(friendlies)
-			print("Faceless Corruptor's battlecry transforms random friendly %s into a copy of the minion"%minion.name)
-			if self.onBoard or self.inHand:
-				self.Game.transform(minion, self.selfCopy(self.ID))
-		return None
+		if target != None and (self.onBoard or self.inHand):
+			print("Faceless Corruptor's battlecry transforms friendly minion %s into a copy of the minion"%target.name)
+			Copy = self.selfCopy(self.ID)
+			self.Game.transform(target, Copy)
+		return Copy
 		
 		
 class KoboldStickyfinger(Minion):
@@ -2566,8 +2569,8 @@ class NozdormutheTimeless(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Nozdormu the Timeless's battlecry sets both players' mana crystals to 10.")
-		self.Game.ManaHandler.manasUpper[1] = 10
-		self.Game.ManaHandler.manasUpper[2] = 10
+		self.Game.ManaHandler.setManaCrystal(10, 1)
+		self.Game.ManaHandler.setManaCrystal(10, 2)
 		return None
 		
 		

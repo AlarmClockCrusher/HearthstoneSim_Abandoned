@@ -483,13 +483,11 @@ class MadBomber(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Mad Bomber's battlecry deals 3 damage randomly split among other characters.")
 		for i in range(3):
-			targets = [self.Game.heroes[1], self.Game.heroes[2]]
-			for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2):
-				if minion.health > 0 and minion.dead == False and minion != self:
-					targets.append(minion)
-			target = np.random.choice(targets)
-			print("Mad Bomber's battlecry deals 1 damage to", target.name)
-			self.dealsDamage(target, 1)
+			targets = self.Game.livingObjtoTakeRandomDamage(1, self) + self.Game.livingObjtoTakeRandomDamage(2, self)
+			if targets != []:
+				target = np.random.choice(targets)
+				print("Mad Bomber's battlecry deals 1 damage to", target.name)
+				self.dealsDamage(target, 1)
 		return None
 		
 		
@@ -1734,7 +1732,7 @@ class HighInquisitorWhitemane(Minion):
 		if numSummon > 0:
 			indices = np.random.choice(self.Game.CounterHandler.minionsDiedThisTurn[self.ID], numSummon, replace=False)
 			pos = (self.position, "totheRight") if self in self.Game.minions[self.ID] else (-1, "totheRightEnd")
-			self.Game.summonMinion([self.Game.cardPool[index](self.Game, self.ID) for index in indices], (self.position, "totheRight"), self.ID)		
+			self.Game.summonMinion([self.Game.cardPool[index](self.Game, self.ID) for index in indices], pos, self.ID)
 		return None
 		
 		
@@ -1912,7 +1910,7 @@ class YseraAwakens(Spell):
 		print("Ysera Awakens is cast and deals %d damage to all characters except Ysera."%damage)
 		targets = [self.Game.heroes[1], self.Game.heroes[2]]
 		for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2):
-			if minion.name != "Ysera" or minion.name != "Ysera, Unleashed":
+			if minion.name != "Ysera" and minion.name != "Ysera, Unleashed":
 				targets.append(minion)
 				
 		self.dealsAOE(targets, [damage for obj in targets])
@@ -2668,7 +2666,7 @@ class AncientofWar(Minion):
 		if choice == "ChooseBoth" or choice == 0:
 			print("Ancient of War gains +5 attack.")
 			self.buffDebuff(5, 0)
-		if self.Game.playerStatus[self.ID]["Choose Both"] > 0 or comment == 1:
+		if choice == "ChooseBoth" or comment == 1:
 			print("Ancient of War gains +5 health and Taunt.")
 			self.buffDebuff(0, 5)
 			self.getsKeyword("Taunt")
@@ -2780,7 +2778,7 @@ class BestialWrath(Spell):
 		if target != None and (target.inHand or target.onBoard):
 			#Assume the Immune status of the minion will vanish in hand at the end of turn, too.
 			print("Bestial Wrath is cast and gives %s +2 attack and Immune this turn.")
-			target.status["Immune"] = 1
+			target.status["Immune"] += 1
 			target.buffDebuff(2, 0, "EndofTurn")
 		return target
 		
@@ -3911,8 +3909,11 @@ class Trigger_ShadowMadness(TriggeronBoard):
 		print("At the end of turn, temporarily controlled minion %s is returned to the other side."%self.entity.name)
 		#Game的minionSwitchSide方法会自行移除所有的此类扳机。
 		self.entity.Game.minionSwitchSide(self.entity, activity="Return")
-		
-		
+		for trigger in self.entity.triggersonBoard:
+			if type(trigger) == Trigger_ShadowMadness:
+				trigger.disconnect()
+				
+				
 class Lightspawn(Minion):
 	Class, race, name = "Priest", "", "Lightspawn"
 	mana, attack, health = 4, 0, 5
