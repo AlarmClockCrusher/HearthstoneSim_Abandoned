@@ -12,37 +12,6 @@ def extractfrom(target, listObject):
 def fixedList(listObject):
 	return listObject[0:len(listObject)]
 	
-def copyListDict(obj, recipientMinion):
-	if isinstance(obj, list):
-		objCopy = []
-		for element in obj:
-			#check if they're basic types, like int, str, bool, NoneType, 
-			if isinstance(element, (type(None), int, float, str, bool)):
-				#Have tested that basic types can be appended and altering the original won't mess with the content in the list.
-				objCopy.append(element)
-			#随从的列表中不会引用游戏
-			elif callable(element): #If the element is a function
-				print("The element to copy is ", element)
-				objCopy.append(copy.deepcopy(element))
-			elif type(element) == list or type(element) == dict: #If the element is a list or dict, just recursively use this function.
-				objCopy.append(copyListDict(element, recipientMinion))
-			else: #If the element is a self-defined class. All of them have selfCopy methods.
-				print("Copying self-defined obj", element)
-				objCopy.append(element.selfCopy(recipientMinion))
-	else:
-		objCopy = {}
-		for key, value in obj.items():
-			if isinstance(value, (type(None), int, float, str, bool)):
-				objCopy[key] = value
-			#随从的列表中不会引用游戏
-			elif callable(value):
-				objCopy[key] = copy.deepcopy(element)
-			elif type(value) == list or type(value) == dict:
-				objCopy[key] = (copyListDict(value, recipientMinion))
-			else:
-				objCopy[key] = value.selfCopy(recipientMinion)
-				
-	return objCopy
 	
 	
 class Card:
@@ -445,6 +414,41 @@ class Card:
 			mod.applies()
 		return Copy
 		
+	def copyListDict(self, obj, recipientMinion):
+		if isinstance(obj, list):
+			objCopy = []
+			for element in obj:
+				#check if they're basic types, like int, str, bool, NoneType, 
+				if isinstance(element, (type(None), int, float, str, bool)):
+					#Have tested that basic types can be appended and altering the original won't mess with the content in the list.
+					objCopy.append(element)
+				elif callable(element): #If the element is a function
+					print("The element to copy is ", element)
+					objCopy.append(copy.deepcopy(element))
+				elif type(element) == list or type(element) == dict: #If the element is a list or dict, just recursively use this function.
+					objCopy.append(copyListDict(element, recipientMinion))
+				elif type(element) == type(self.Game): #Only shallow copies the Game.
+					Copy.__dict__[key] = element
+				else: #If the element is a self-defined class. All of them have selfCopy methods.
+					print("Copying self-defined obj", element)
+					objCopy.append(element.selfCopy(recipientMinion))
+		else:
+			objCopy = {}
+			for key, value in obj.items():
+				if isinstance(value, (type(None), int, float, str, bool)):
+					objCopy[key] = value
+				#随从的列表中不会引用游戏
+				elif callable(value):
+					objCopy[key] = copy.deepcopy(element)
+				elif type(value) == list or type(value) == dict:
+					objCopy[key] = (copyListDict(value, recipientMinion))
+				elif type(value) == type(self.Game):
+					objCopy[key] = value
+				else:
+					objCopy[key] = value.selfCopy(recipientMinion)
+					
+		return objCopy
+		
 		
 		
 class Permanent(Card):
@@ -522,7 +526,7 @@ class Permanent(Card):
 	def takesDamage(self, subject, damage, sendDamageSignal=True):
 		return 0
 		
-	def statusPrint(self):
+	def STATUSPRINT(self):
 		print("Permanent: %s.\nDescription:"%self.name, self.description)
 		if self.triggersonBoard != []:
 			print("\tPermanent's triggersonBoard")
@@ -702,8 +706,8 @@ class Minion(Card):
 			self.newonthisSide = False
 			self.attTimes, self.attChances_extra = 0, 0
 			
-	def statusPrint(self):
-		print("Minion: %s. Race: %s\nDescription:"%(self.name, self.race), self.description)
+	def STATUSPRINT(self):
+		print("Minion: %s. ID: %d Race: %s\nDescription:"%(self.name, self.ID, self.race), self.description)
 		#print("Minion ID:", self.ID)
 		#print("Minion onBoard: ", self.onBoard, " inHand: ", self.inHand, " in deck: ", self.inDeck)
 		#print(self.name, "is new on this side: ", self.newonthisSide, " and is temporarily controlled ", self.status["Temp Controlled"])
@@ -789,7 +793,7 @@ class Minion(Card):
 				self.decideAttChances_base()
 				if keyWord == "Charge":
 					self.Game.sendSignal("MinionChargeKeywordChange", self.Game.turn, self, None, 0, "")
-				self.statusPrint()
+				self.STATUSPRINT()
 				
 	#当随从失去关键字的时候不可能有解冻情况发生。
 	def losesKeyword(self, keyWord):
@@ -806,7 +810,7 @@ class Minion(Card):
 				self.decideAttChances_base()
 				if keyWord == "Charge":
 					self.Game.sendSignal("MinionChargeKeywordChange", self.Game.turn, self, None, 0, "")
-				self.statusPrint()
+				self.STATUSPRINT()
 				
 	def afterSwitchSide(self, activity):
 		self.newonthisSide = True
@@ -815,7 +819,7 @@ class Minion(Card):
 			self.status["Temp Controlled"] = 1
 		else: #activity == "Permanent" or "Return"
 			self.status["Temp Controlled"] = 0
-		self.statusPrint()
+		self.STATUSPRINT()
 		
 	#Whether the minion can select the attack target or not.
 	def canAttack(self):
@@ -1141,7 +1145,7 @@ class Minion(Card):
 				pass
 			#用于auras，stat_AuraAffected，keyWords_AuraAffected和manaModifications等
 			elif type(value) == list or type(value) == dict: #If the attribute is a list or dictionary, use the method defined at the start of py
-				Copy.__dict__[key] = copyListDict(value, Copy)
+				Copy.__dict__[key] = self.copyListDict(value, Copy)
 			elif type(value) == type(self.Game): #Only shallow copies the Game.
 				Copy.__dict__[key] = self.Game
 			else: #The attribute is a self-defined class. They will all have selfCopy methods
@@ -1295,7 +1299,7 @@ class Spell(Card):
 		self.triggers = {"Discarded": []}
 		self.effectViable, self.evanescent = False, False
 		
-	def statusPrint(self):
+	def STATUSPRINT(self):
 		print("Spell: %s. Description:"%self.name, self.description)
 		#print("Spell inHand: ", self.inHand, " inDeck:", self.inDeck)
 		if self.manaModifications != []:
@@ -1633,7 +1637,7 @@ class HeroPower(Card):
 						}
 		self.triggersonBoard = []
 		
-	def statusPrint(self):
+	def STATUSPRINT(self):
 		print("Hero Power: %s. Description:"%self.name, self.description)
 		print("Chances to use_base: %d. Chances to use_extra"%self.heroPowerChances_base, self.heroPowerChances_extra)
 		if self.manaModifications != []:
@@ -1806,9 +1810,9 @@ class Hero(Card):
 		self.evanescent = False
 		
 	"""Handle hero's attacks, attack chances, attack chances and frozen status."""
-	def statusPrint(self):
+	def STATUSPRINT(self):
 		#print("Hero name: ", self.name, " onBoard: ", self.onBoard, " inHand: ", self.inHand, " inDeck: ", self.inDeck)
-		print("Hero ", self.name, ": Attacked times : %d.	Base attack chances left: %d.	Extra attack chances left: "%(self.attTimes, self.attChances_base), self.attChances_extra)
+		print("Hero %d"%self.ID, self.name, ": Attacked times : %d.	Base attack chances left: %d.	Extra attack chances left: "%(self.attTimes, self.attChances_base), self.attChances_extra)
 		if self.manaModifications != []:
 			print("\tCarries mana modification:")
 			for manaMod in self.manaModifications:
@@ -2051,7 +2055,7 @@ class Weapon(Card):
 		self.auras = {}
 		self.evanescent = True
 		
-	def statusPrint(self):
+	def STATUSPRINT(self):
 		print("Weapon: %s. Description:"%self.name, self.description)
 		#print("Weapon onBoard: ", self.onBoard, " inHand: ", self.inHand, " inDeck:", self.inDeck)
 		if self.manaModifications != []:

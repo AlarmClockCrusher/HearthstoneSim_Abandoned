@@ -2,6 +2,7 @@ from VariousHandlers import *
 from Triggers_Auras import Trigger_Echo
 from Hand import *
 
+import tkinter as tk
 import numpy as np
 import copy
 
@@ -19,12 +20,18 @@ def fixedList(listObject):
 def belongstoClass(string, Class):
 	return Class in string
 	
-#def classofIndex(index):
-#	Class = index.split('~')[1]
-#	if len(Class) > 7: #术士职业的string是7个字母
-#		return Class.split('~')
-#	else:
-#		return Class
+def PRINT(obj, string):
+	if hasattr(obj, "GUI"):
+		GUI = obj.GUI
+	elif hasattr(obj, "Game"):
+		GUI = obj.Game.GUI
+	elif hasattr(obj, "entity"):
+		GUI = obj.entity.Game.GUI
+		
+	if GUI != None:
+		GUI.printInfo(string)
+	else:
+		print(self, string)
 		
 playerStatusDict = {"Immune": 0, "ImmuneTillYourNextTurn": 0, "ImmuneTillEndofTurn": 0,
 				"Evasive": 0, "EvasiveTillYourNextTurn": 0,
@@ -50,8 +57,8 @@ class Game:
 		self.mainPlayerID = np.random.randint(2) + 1
 		self.GUI = GUI
 		
-	def initialize(self, cardPool, MinionsofCost, MinionswithRace, RNGPools):
-		self.heroes = {1:Illidan(self, 1), 2:Anduin(self, 2)}
+	def initialize(self, cardPool, MinionsofCost, MinionswithRace, RNGPools, hero1=None, hero2=None, deck1=[], deck2=[]):
+		self.heroes = {1:(Illidan if hero1 == None else hero1)(self, 1), 2:(Anduin if hero2 == None else hero2)(self, 2)}
 		self.heroPowers = {1:self.heroes[1].heroPower, 2:self.heroes[2].heroPower}
 		self.heroes[1].onBoard, self.heroes[2].onBoard = True, True
 		#Multipole weapons can coexitst at minions in lists. The newly equipped weapons are added to the lists
@@ -78,10 +85,10 @@ class Game:
 		#登记了的扳机，这些扳机的触发依次遵循主玩家的场上、手牌和牌库。然后是副玩家的场上、手牌和牌库。
 		self.triggersonBoard, self.triggersinHand, self.triggersinDeck = {1:[], 2:[]}, {1:[], 2:[]}, {1:[], 2:[]}
 		self.cardPool, self.MinionsofCost, self.RNGPools = cardPool, MinionsofCost, RNGPools
-		self.Hand_Deck = Hand_Deck(self)
+		self.Hand_Deck = Hand_Deck(self, deck1, deck2)
 		
 	def endGame(self, comment):
-		print(comment)
+		PRINT(self, comment)
 		exit()
 		
 	def minionsAlive(self, ID, target=None):
@@ -180,17 +187,17 @@ class Game:
 		self.skipDeathCalc = False
 		canPlayMinion = False
 		if self.ManaHandler.costAffordable(minion) == False:
-			print("Not enough mana to play the minion", minion)	
+			PRINT(self, "Not enough mana to play the minion {}".format(minion))
 		elif self.spaceonBoard(ID) < 1:
-			print("The board is full and no minion can be played.")
+			PRINT(self, "The board is full and no minion can be played.")
 		else:
 			if minion.selectionLegit(target, choice):
 				canPlayMinion = True
 			else:
-				print("Invalid selection to play minion %s, targeting"%minion.name, target, " with choice ", choice)
+				PRINT(self, "Invalid selection to play minion {}, targeting {}, with choice {}".format(minion.name, target, choice))
 				
 		if canPlayMinion:
-			print("	   *********\nHandling play minion %s with target "%minion.name, target, ", with choice: ", choice, "\n	   *********")
+			PRINT(self, "	   *********\nHandling play minion {} with target {}, with choice: {}\n	   *********".format(minion.name, target, choice))
 			#打出随从到所有结算完结为一个序列，序列完成之前不会进行胜负裁定。
 			#打出随从产生的序列分为 
 				#1）使用阶段： 支付费用，随从进入战场（处理位置和刚刚召唤等），抉择变形类随从立刻提前变形，黑暗之主也在此时变形。
@@ -318,7 +325,7 @@ class Game:
 			self.sendSignal("MinionBeenSummoned", self.turn, subject, None, 0, "")
 			return True
 		else:
-			print("The board is full and no minion can be summoned")
+			PRINT(self, "The board is full and no minion can be summoned")
 			return False
 			
 	#只能为同一方召唤随从，如有需要，则多次引用这个函数即可。subject不能是空的
@@ -399,15 +406,15 @@ class Game:
 			newMinion.sequence = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
 			self.minions[ID].insert(pos, newMinion)
 			self.rearrangePosition()
-			print(target.name, " has been transformed into ", newMinion.name)
+			PRINT(self, "{} has been transformed into {}".format(target.name, newMinion.name))
 			newMinion.appears()
 		elif target in self.Hand_Deck.hands[target.ID]:
-			print("Minion %s in hand is transformed into"%target.name, newMinion.name)
+			PRINT(self, "Minion {} in hand is transformed into {}".format(target.name, newMinion.name))
 			if self.minionPlayed == target:
 				self.minionPlayed = newMinion
 			self.Hand_Deck.replaceCardinHand(target, newMinion)
 		elif target in self.Hand_Deck.decks[target.ID]:
-			print("Minion %s is deck and can't be transformed")
+			PRINT(self, "Minion %s is deck and can't be transformed")
 			
 	def mutate(self, target, manaChange):
 		cost = type(target).mana + manaChange
@@ -473,7 +480,7 @@ class Game:
 				#如onBoard为False,则disappears已被调用过了。主要适用于触发死亡扳机中的区域移动效果
 				self.removeMinionorWeapon(target)
 				target.__init__(self, ID)
-				print(target.name, "has been reset after returned to owner's hand. All enchantments lost.")
+				PRINT(self, "%s has been reset after returned to owner's hand. All enchantments lost."%target.name)
 				target.identity[0], target.identity[1] = identity[0], identity[1]
 				if manaModification != None:
 					manaModification.applies()
@@ -481,7 +488,7 @@ class Game:
 				return target
 			else: #让还在场上的活着的随从返回一个满了的手牌只会让其死亡
 				if target.onBoard:
-					print(target.name, " dies because player's hand is full.")
+					PRINT(self, "%s dies because player's hand is full."%target.name)
 					self.destroy(target)
 				return None #如果随从这时已死亡，则满手牌下不会有任何事情发生。
 		elif target.inDeck: #如果目标阶段已经在牌库中了，将一个基础复制置入其手牌。
@@ -503,7 +510,7 @@ class Game:
 			#如onBoard为False，则disappears已被调用过了。主要适用于触发死亡扳机中的区域移动效果
 			self.removeMinionorWeapon(target)
 			target.__init__(self, ID) #永恒祭司的亡语会备份一套enchantment，在调用该函数之后将初始化过的本体重新增益
-			print(target.name, "has been reset after returned to deck %d. All enchantments lost"%ID)
+			PRINT(self, "%s has been reset after returned to deck %d. All enchantments lost"%(target.name, ID))
 			target.identity[0], target.identity[1] = identity[0], identity[1]
 			self.Hand_Deck.shuffleCardintoDeck(target, initiatorID)
 			return target
@@ -529,7 +536,7 @@ class Game:
 			self.Hand_Deck.addCardtoHand(card, 3-card.ID)
 		elif target.onBoard: #If the minion is on board.
 			if self.spaceonBoard(3-target.ID) < 1:
-				print(target.name, " dies because there is no available spots for it.")
+				PRINT(self, "%s dies because there is no available spots for it."%target.name)
 				target.dead = True
 			else:
 				target.disappears(keepDeathrattlesRegistered=False) #随从控制权的变更会注销其死亡扳机，随从会在另一方重新注册其所有死亡扳机
@@ -669,7 +676,7 @@ class Game:
 			self.tempDeathList[1] = []
 			for i in range(len(order)):
 				self.tempDeathList[1].append(temp[order[i]])
-			print("The new dead minions/weapons to resolve death/destruction are ", self.tempDeathList[0])
+			PRINT(self, "The new dead minions/weapons to resolve death/destruction are {}".format(self.tempDeathList[0]))
 			#If there is no current deathrattles queued, start the deathrattle calc process.
 			if self.deathList == [[], []]:
 				self.deathList = self.tempDeathList
@@ -699,16 +706,16 @@ class Game:
 				break
 			triggersAllowed_WhenDies = self.triggersAllowed("MinionDies") + self.triggersAllowed("WeaponDestroyed")
 			triggersAllowed_AfterDied = self.triggersAllowed("MinionDied")
-			print("The dead/destroyed characters to handle are:")
+			PRINT(self, "The dead/destroyed characters to handle are:")
 			for i in range(len(self.deathList[0])):
-				print("\tCharacter:", self.deathList[0][i].name, "  Attack when dies:", self.deathList[1][i])
+				PRINT(self, "\tCharacter: {}	Attack when dies: {}".format(self.deathList[0][i].name, self.deathList[1][i]))
 			while self.deathList != [[], []]:
 				self.resolvingDeath = True
 				#print("Death triggers allowed are", triggersAllowed_WhenDies, triggersAllowed_AfterDied)
 				objtoDie, attackwhenDies = self.deathList[0][0], self.deathList[1][0]
 				#For now, assume Tirion Fordring's deathrattle equipping Ashbringer won't trigger player's weapon's deathrattles right away.
 				#weapons with regard to deathrattle triggering is handled the same way as minions.
-				print("Now handling the death/destruction of", objtoDie.name)
+				PRINT(self, "Now handling the death/destruction of {}".format(objtoDie.name))
 				#一个亡语随从另附一个亡语时，两个亡语会连续触发，之后才会去结算其他随从的亡语。
 				#当死灵机械师与其他 亡语随从一同死亡的时候， 不会让那些亡语触发两次，即死灵机械师、瑞文戴尔需要活着才能有光环
 				#场上有憎恶时，憎恶如果死亡，触发的第一次AOE杀死死灵机械师，则第二次亡语照常触发。所以亡语会在第一次触发开始时判定是否会多次触发
@@ -722,7 +729,7 @@ class Game:
 				self.deathList[1].pop(0)
 			#当一轮死亡结算结束之后，召唤这次死亡结算中死亡的复生随从
 			for rebornMinion in rebornMinions:
-				print("Minion %s died with Reborn. Now a copy with only 1 Health is summoned"%rebornMinion.name)
+				PRINT(self, "Minion %s died with Reborn. Now a copy with only 1 Health is summoned"%rebornMinion.name)
 				miniontoSummon = type(rebornMinion)(self, rebornMinion.ID)
 				miniontoSummon.keyWords["Reborn"], miniontoSummon.health = 0, 1 #不需要特殊的身材处理，激怒等直接在随从的appears()函数中处理。
 				self.summonMinion(miniontoSummon, rebornMinion.position+1, rebornMinion.ID)
@@ -736,10 +743,10 @@ class Game:
 		if decideWinner:
 			hero1Dead, hero2Dead = False, False
 			if self.heroes[1].dead or self.heroes[1].health <= 0:
-				print("----------------Player 1 dies----------------")
+				PRINT(self, "----------------Player 1 dies----------------")
 				hero1Dead = True
 			if self.heroes[2].dead or self.heroes[2].health <= 0:
-				print("----------------Player 2 dies----------------")
+				PRINT(self, "----------------Player 2 dies----------------")
 				hero2Dead = True
 			if hero1Dead:
 				if hero2Dead:
@@ -759,7 +766,7 @@ class Game:
 	The deaths of minions will be handled at the end of triggering, which is then followed by drawing card.
 	"""	
 	def switchTurn(self):
-		print("----------------------------------------\nThe turn ends for hero %d\n----------------------------------------"%self.turn)
+		PRINT(self, "----------------------------------------\nThe turn ends for hero %d\n----------------------------------------"%self.turn)
 		for minion in self.minions[self.turn] + self.minions[3-self.turn]: #Include the Permanents.
 			minion.turnEnds(self.turn) #Handle minions' attTimes and attChances
 		for card in self.Hand_Deck.hands[self.turn]	+ self.Hand_Deck.hands[3-self.turn]:
@@ -780,7 +787,7 @@ class Game:
 		self.ManaHandler.turnEnds()
 		
 		self.turn = 3 - self.turn #Changes the turn to another hero.
-		print("----------------------------------------\nA new turn starts for hero %d\n----------------------------------------"%self.turn)
+		PRINT(self, "----------------------------------------\nA new turn starts for hero %d\n----------------------------------------"%self.turn)
 		self.ManaHandler.turnStarts()
 		for obj in self.turnStartTrigger: #This is for temp effects.
 			if obj.ID == self.turn:
@@ -806,9 +813,9 @@ class Game:
 			
 	def battleRequest(self, subject, target, verifySelectable=True, consumeAttackChance=True, resolveDeath=True, resetRedirectionTriggers=True):
 		if verifySelectable and subject.canAttackTarget(target) == False:
-			print("Battle not allowed between attacker %s and target%s"%(subject.name, target.name))
+			PRINT(self, "Battle not allowed between attacker %s and target%s"%(subject.name, target.name))
 		else:
-			print("			**********\nHandling battle request between %s and %s\n				***********"%(subject.name, target.name))
+			PRINT(self, "			**********\nHandling battle request between %s and %s\n				***********"%(subject.name, target.name))
 		#战斗阶段：
 			#攻击前步骤： 触发攻击前扳机，列队结算，如爆炸陷阱，冰冻陷阱，误导
 				#如果扳机结算完毕后，被攻击者发生了变化，则再次进行攻击前步骤的扳机触发。重复此步骤直到被攻击者没有变化为止。
@@ -833,7 +840,7 @@ class Game:
 			#在此，奥秘和健忘扳机会在此触发。需要记住初始的目标，然后可能会有诸多扳机可以对此初始信号响应。
 			targetHolder = [target, target] #第一个target是每轮要触发的扳机会对应的原始随从，目标重导向扳机会改变第二个
 			signal = subject.cardType + "Attacks" + targetHolder[0].cardType
-			print("Battle starts between attacker %s and target"%subject.name, targetHolder[0].name)
+			PRINT(self, "Battle starts between attacker {} and target {}".format(subject.name, targetHolder[0].name))
 			self.sendSignal(signal, self.turn, subject, targetHolder, 0, "1stPre-attack")
 			#第一轮攻击前步骤结束之后，Game的记录的target如果相对于初始目标发生了变化，则再来一轮攻击前步骤，直到目标不再改变为止。
 			#例如，对手有游荡怪物、误导和毒蛇陷阱，则攻击英雄这个信号可以按扳机入场顺序触发误导和游荡怪物，改变了攻击目标。之后的额外攻击前步骤中毒蛇陷阱才会触发。
@@ -858,15 +865,15 @@ class Game:
 			battleContinues = True
 			#如果目标随从变成了休眠物，则攻击会取消，但是不知道是否会浪费攻击机会。假设会浪费
 			if (subject.cardType != "Minion" and subject.cardType != "Hero") or subject.onBoard == False or subject.health < 1 or subject.dead:
-				print("The attacker is not onBoard/alive anymore. Battle interrupted")
+				PRINT(self, "The attacker is not onBoard/alive anymore. Battle interrupted")
 				battleContinues = False
 			elif (target.cardType != "Minion" and target.cardType != "Hero") or target.onBoard == False or target.health < 1 or target.dead:
-				print("The target is not onBoard/alive anymore. Battle interrupted. The attacker's attack chance is still wasted.")
+				PRINT(self, "The target is not onBoard/alive anymore. Battle interrupted. The attacker's attack chance is still wasted.")
 				battleContinues = False
 				if consumeAttackChance: #If this attack is canceled, the attack time still increases.
 					subject.attTimes += 1
 			elif self.heroes[1].health < 1 or self.heroes[1].dead or self.heroes[2].health < 1 or self.heroes[2].dead:
-				print("At least one of the players is dying, battle interrupted. But the attacker still wastes an attack chance.")
+				PRINT(self, "At least one of the players is dying, battle interrupted. But the attacker still wastes an attack chance.")
 				battleContinues = False
 				if consumeAttackChance: #If this attack is canceled, the attack time still increases.
 					subject.attTimes += 1
@@ -896,15 +903,15 @@ class Game:
 		canPlaySpell = False
 		#古加尔的费用光环需要玩家的血量加护甲大于法术的当前费用或者免疫状态下才能使用
 		if self.ManaHandler.costAffordable(spell) == False:
-			print("Not enough mana/health to play the spell", spell, ", which costs %d"%spell.mana)
+			PRINT(self, "Not enough mana/health to play the spell {}, which costs {}".format(spell, spell.mana))
 		else:
 			if spell.available() and spell.selectionLegit(target, choice): #Non targeting spells.
 				canPlaySpell = True
 			else:
-				print("Invalid selection to play spell %s, with choice "%spell.name, choice)
+				PRINT(self, "Invalid selection to play spell {}, with choice {}".format(spell.name, choice))
 				
 		if canPlaySpell:
-			print("	   *********\nHandling play spell %s with target "%spell.name, target, ", with choice: ", choice, "\n	   *********")
+			PRINT(self, "	   *********\nHandling play spell {} with target {}, with choice: {}\n	   *********".format(spell.name, target, choice))
 			#使用阶段：
 				#支付费用，相关费用状态移除，包括血色绽放，墨水大师，卡雷苟斯以及暮陨者艾维娜。
 				#奥秘和普通法术会进入不同的区域。法术反制触发的话会提前终止整个序列。
@@ -933,7 +940,7 @@ class Game:
 			#很特殊的是，连击机制仍然可以通过被反制的法术触发。所以需要一个本回合打出过几张牌的计数器
 			#https://www.bilibili.com/video/av51236298?zw
 			if self.SecretHandler.isSecretDeployedAlready(Counterspell, 3-self.turn):
-				print("Player's spell %s played is Countered by Counterspell"%spell.name)
+				PRINT(self, "Player's spell %s played is Countered by Counterspell"%spell.name)
 				self.sendSignal("TriggerCounterspell", spell.ID, spell, target, 0, "")
 				self.CounterHandler.numCardsPlayedThisTurn[self.turn] += 1 #即使被法术反制取消掉，仍然会触发连击
 			else:
@@ -964,11 +971,11 @@ class Game:
 	def playWeapon(self, weapon, target):
 		ID = weapon.ID
 		if self.ManaHandler.costAffordable(weapon) == False:
-			print("Not enough mana to play the weapon", weapon)
+			PRINT(self, "Not enough mana to play the weapon {}".format(weapon))
 		else:
-			print("	   *********")
-			print("Handling play weapon %s with target "%weapon.name, target)
-			print("	   *********")
+			PRINT(self, "	   *********")
+			PRINT(self, "Handling play weapon {} with target {}".format(weapon.name, target))
+			PRINT(self, "	   *********")
 		#使用阶段
 			#卡牌从手中离开，支付费用，费用状态移除，但是目前没有根据武器费用支付而产生响应的效果。
 			#武器进场，此时武器自身的扳机已经可以开始触发。如公正之剑可以通过触发的伊利丹召唤的元素来触发，并给予召唤的元素buff
@@ -1021,9 +1028,9 @@ class Game:
 	def playHero(self, heroCard, choice=0):
 		ID = heroCard.ID
 		if self.ManaHandler.costAffordable(heroCard) == False:
-			print("Not enough mana to play the hero card ", heroCard)
+			PRINT(self, "Not enough mana to play the hero card {}".format(heroCard))
 		else:
-			print("	   *********\nHandling play hero card %s\n	   *********"%heroCard.name)
+			PRINT(self, "	   *********\nHandling play hero card %s\n	   *********"%heroCard.name)
 			#使用阶段
 				#支付费用，费用状态移除
 				#英雄牌进入战场

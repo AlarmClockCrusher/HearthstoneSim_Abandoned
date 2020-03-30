@@ -101,7 +101,7 @@ class Galakrond_Hero(Hero):
 		self.heroPower.replaceHeroPower()
 		self.Game.sendSignal("HeroReplaced", self.ID, None, self, 0, "")
 		
-	def played(self, choice=0, mana=0): #英雄牌使用不存在触发发现的情况
+	def played(self, target=None, choice=0, mana=0): #英雄牌使用不存在触发发现的情况
 		self.health = self.Game.heroes[self.ID].health
 		self.health_upper = self.Game.heroes[self.ID].health_upper
 		self.armor = self.Game.heroes[self.ID].armor
@@ -187,10 +187,10 @@ class Trigger_HotAirBalloon(TriggeronBoard):
 		self.entity.buffDebuff(0, 1)
 		
 		
-class DragonicLackey(Minion):
-	Class, race, name = "Neutral", "", "Dragonic Lackey"
+class DraconicLackey(Minion):
+	Class, race, name = "Neutral", "", "Draconic Lackey"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Neutral~Minion~1~1~1~None~Dragonic Lackey~Battlecry~Uncollectible"
+	index = "Dragons~Neutral~Minion~1~1~1~None~Draconic Lackey~Battlecry~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a Dragon"
 	poolIdentifier = "Dragons as Druid"
 	@classmethod
@@ -210,12 +210,12 @@ class DragonicLackey(Minion):
 		if self.Game.Hand_Deck.handNotFull(self.ID) and self.ID == self.Game.turn:
 			key = "Dragons as "+classforDiscover(self)
 			if "InvokedbyOthers" in comment:
-				print("Dragonic Lackey's battlecry adds a random Dragon to player's hand")
+				print("Draconic Lackey's battlecry adds a random Dragon to player's hand")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
 				dragons = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
 				self.Game.options = [dragon(self.Game, self.ID) for dragon in dragons]
-				print("Dragonic Lackey's battlecry lets player discover a Dragon")
+				print("Draconic Lackey's battlecry lets player discover a Dragon")
 				self.Game.DiscoverHandler.startDiscover(self)
 				
 		return None
@@ -225,7 +225,7 @@ class DragonicLackey(Minion):
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
-Lackeys = [DragonicLackey, EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey]
+Lackeys = [DraconicLackey, EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey]
 
 """Mana 2 cards"""
 class EvasiveChimaera(Minion):
@@ -1264,16 +1264,16 @@ class Trigger_SecuretheDeck(QuestTrigger):
 			self.entity.Game.Hand_Deck.addCardtoHand([Claw, Claw, Claw], self.entity.ID, "CreateUsingType")
 			
 			
-class StrengthinNumber(Quest):
-	Class, name = "Druid", "Strength in Number"
+class StrengthinNumbers(Quest):
+	Class, name = "Druid", "Strength in Numbers"
 	requireTarget, mana = False, 1
-	index = "Dragons~Druid~Spell~1~Strength in Number~~Quest"
+	index = "Dragons~Druid~Spell~1~Strength in Numbers~~Quest"
 	description = "Sidequest: Spend 10 Mana on minions. Rewards: Summon a minion from your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_StrengthinNumber(self)]
+		self.triggersonBoard = [Trigger_StrengthinNumbers(self)]
 		
-class Trigger_StrengthinNumber(QuestTrigger):
+class Trigger_StrengthinNumbers(QuestTrigger):
 	def __init__(self, entity):
 		#假设众多势众是使用后扳机
 		self.blank_init(entity, ["MinionBeenPlayed"])
@@ -1283,7 +1283,7 @@ class Trigger_StrengthinNumber(QuestTrigger):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.progress += number
-		print("Player plays minion %s and Quest Strength in Number progresses by %d. Current progress:"%(subject.name, number), self.entity.progress)
+		print("Player plays minion %s and Quest Strength in Numbers progresses by %d. Current progress:"%(subject.name, number), self.entity.progress)
 		if self.entity.progress > 9:
 			print("Player has spent at least 10 Mana on playing minions and gains Reward: Summon a minion from your deck")
 			self.disconnect()
@@ -1297,10 +1297,10 @@ class Trigger_StrengthinNumber(QuestTrigger):
 				self.entity.Game.summonfromDeck(np.random.choice(minionsinDeck), -1, self.entity.ID)
 				
 				
-class Treenforcement(Spell):
-	Class, name = "Druid", "Treenforcement"
+class Treenforcements(Spell):
+	Class, name = "Druid", "Treenforcements"
 	requireTarget, mana = True, 1
-	index = "Dragons~Druid~Spell~1~Treenforcement~Choose One"
+	index = "Dragons~Druid~Spell~1~Treenforcements~Choose One"
 	description = "Choose One - Give a minion +2 Health and Taunt; or Summon a 2/2 Taunt"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -1323,11 +1323,11 @@ class Treenforcement(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if choice == "ChooseBoth" or choice == 0:
 			if target != None:
-				print("Treenforcement gives minion %s +2 Health and Taunt"%target.name)
+				print("Treenforcements gives minion %s +2 Health and Taunt"%target.name)
 				target.buffDebuff(0, 2)
 				target.getsKeyword("Taunt")
 		if choice == "ChooseBoth" or choice == 1:
-			print("Treenforcement summons a 2/2 Treant")
+			print("Treenforcements summons a 2/2 Treant")
 			self.Game.summonMinion(Treant_Dragons(self.Game, self.ID), -1, self.ID)
 		return target
 		
@@ -1635,10 +1635,10 @@ class DwarvenSharpshooter(Minion):
 			self.Game.playerStatus[self.ID]["Hunter Hero Powers Can Target Minions"] -= 1
 			
 			
-class ToxicReinforcement(Quest):
-	Class, name = "Hunter", "Toxic Reinforcement"
+class ToxicReinforcements(Quest):
+	Class, name = "Hunter", "Toxic Reinforcements"
 	requireTarget, mana = False, 1
-	index = "Dragons~Hunter~Spell~1~Toxic Reinforcement~~Quest"
+	index = "Dragons~Hunter~Spell~1~Toxic Reinforcements~~Quest"
 	description = "Sidequest: Use your Hero Power three times. Reward: Summon three 1/1 Leper Gnomes"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -1653,7 +1653,7 @@ class Trigger_ToxicReinforcement(QuestTrigger):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.progress += 1
-		print("After player uses Hero Power, Quest Toxic Reinforcement progresses by 1. Current progress:", self.entity.progress)
+		print("After player uses Hero Power, Quest Toxic Reinforcements progresses by 1. Current progress:", self.entity.progress)
 		if self.entity.progress > 2:
 			print("Player used Hero Power for the third time and gains Reward: Summon three 1/1 Leper Gnomes")
 			self.disconnect()
@@ -2618,13 +2618,13 @@ class LightforgedCrusader(Minion):
 		
 		
 """Priest cards"""
-class WhisperofEVIL(Spell):
-	Class, name = "Priest", "Whisper of EVIL"
+class WhispersofEVIL(Spell):
+	Class, name = "Priest", "Whispers of EVIL"
 	requireTarget, mana = False, 0
-	index = "Dragons~Priest~Spell~0~Whisper of EVIL"
+	index = "Dragons~Priest~Spell~0~Whispers of EVIL"
 	description = "Add a Lackey to your hand"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Whisper of EVIL adds a Lackey to player's hand")
+		print("Whispers of EVIL adds a Lackey to player's hand")
 		self.Game.Hand_Deck.addCardtoHand(np.random.choice(Lackeys), self.ID, "CreateUsingType")
 		return None
 		
@@ -3763,11 +3763,11 @@ class AbyssalSummoner(Minion):
 		print("Abyssal Summoner's battlecry summons a Demon with Taunt and stats equal to player's hand size")
 		handSize = len(self.Game.Hand_Deck.hands[self.ID])
 		if handSize == 1:
-			self.Game.summonMinion(AbyssalDestroyer1(self.Game, self.ID), self.position+1, self.ID)
+			self.Game.summonMinion(AbyssalDestroyer_1(self.Game, self.ID), self.position+1, self.ID)
 		elif handSize > 1:
 			cost = min(handSize, 10)
 			newIndex = "Dragons~Warlock~%d~%d~%d~Minion~Demon~Abyssal Destroyer~Taunt~Uncollectible"%(cost, handSize, handSize)
-			subclass = type("AbyssalDestroyer"+str(handSize), (AbyssalDestroyer1, ),
+			subclass = type("AbyssalDestroyer"+str(handSize), (AbyssalDestroyer_1, ),
 							{"mana": cost, "attack": handSize, "health": handSize,
 							"index": newIndex}
 							)
@@ -3775,7 +3775,7 @@ class AbyssalSummoner(Minion):
 			self.Game.summonMinion(subclass(self.Game, self.ID), self.position+1, self.ID)
 		return None
 		
-class AbyssalDestroyer1(Minion):
+class AbyssalDestroyer_1(Minion):
 	Class, race, name = "Warlock", "Demon", "Abyssal Destroyer"
 	mana, attack, health = 1, 1, 1
 	index = "Dragons~Warlock~Minion~1~1~1~Demon~Abyssal Destroyer~Taunt~Uncollectible"
@@ -3936,15 +3936,15 @@ class Awaken(Spell):
 		return None
 		
 		
-class Ancharr(Weapon):
-	Class, name, description = "Warrior", "Ancharr", "After your hero attacks, draw a Pirate from your deck"
+class Ancharrr(Weapon):
+	Class, name, description = "Warrior", "Ancharrr", "After your hero attacks, draw a Pirate from your deck"
 	mana, attack, durability = 3, 2, 2
-	index = "Dragons~Warrior~Weapon~3~2~2~Ancharr~Legendary"
+	index = "Dragons~Warrior~Weapon~3~2~2~Ancharrr~Legendary"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Ancharr(self)]
+		self.triggersonBoard = [Trigger_Ancharrr(self)]
 		
-class Trigger_Ancharr(TriggeronBoard):
+class Trigger_Ancharrr(TriggeronBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["BattleFinished"])
 		
@@ -3952,7 +3952,7 @@ class Trigger_Ancharr(TriggeronBoard):
 		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("After player attacks, Ancharr lets player draw a Pirate from the deck")
+		print("After player attacks, Ancharrr lets player draw a Pirate from the deck")
 		piratesinDeck = []
 		for card in self.entity.Game.Hand_Deck.decks[self.entity.ID]:
 			if card.cardType == "Minion" and "Pirate" in card.race:

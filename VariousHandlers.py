@@ -1,4 +1,5 @@
 import numpy as np
+import tkinter as tk
 
 def extractfrom(target, listObject):
 	temp = None
@@ -11,6 +12,19 @@ def extractfrom(target, listObject):
 def fixedList(listObject):
 	return listObject[0:len(listObject)]
 	
+def PRINT(obj, string):
+	if hasattr(obj, "GUI"):
+		GUI = obj.GUI
+	elif hasattr(obj, "Game"):
+		GUI = obj.Game.GUI
+	elif hasattr(obj, "entity"):
+		GUI = obj.entity.Game.GUI
+		
+	if GUI != None:
+		GUI.printInfo(string)
+	else:
+		print(self, string)
+		
 #对卡牌的费用机制的改变	
 #主要参考贴（冰封王座BB还在的时候）：https://www.diyiyou.com/lscs/news/194867.html
 #
@@ -663,75 +677,65 @@ class DiscoverHandler:
 			
 	def startDiscover(self, initiator):
 		if self.Game.GUI != None:
-			self.Game.GUI.update(promptforDiscover=True)
-		print("The discover options for %s:"%initiator.name)
-		for i in range(len(self.Game.options)):
-			option = self.Game.options[i]
-			if hasattr(option, "cardType") == False:
-				print(i+1, " Choice %s:"%option.name, option.description)
-			elif option.cardType == "Minion":
-				print(i+1, " Minion %s: \t\tMana %d	Att %d	Health %d	Race%s."%(option.name, option.mana, option.attack_Enchant, option.health_Enchant, option.race))
-				keyWords = []
-				for key, value in option.keyWords.items():
-					if value > 0:
-						keyWords.append(key)
-				print("\tMinion has keyWords: ", keyWords)
-				print("\tMinion description: ", option.description)
-			elif option.cardType == "Spell":
-				print(i+1, " Spell %s: \t\tMana %d"%(option.name, option.mana))
-				print("\tSpell description: ", option.description)
-			elif option.cardType == "Weapon":
-				print(i+1, " Weapon %s: \t\tMana %d	Att %d	Durability %d."%(option.name, option.mana, option.attack, option.durability))
-				keyWords = []
-				for key, value in option.keyWords.items():
-					if value > 0:
-						keyWords.append(key)
-				print("\tWeapon has keyWords: ", keyWords)
-				print("\tWeapon description: ", option.description)
-			elif option.cardType == "Hero":
-				print(i+1, "Hero Card %s: \t\tMana %d	"%(option.name, option.mana))
-				print("\tHero Card description: ", option.description)
-			elif option.cardType == "Hero Power":
-				print(i+1, "Hero Power %s: Mana %d"%(option.name, option.mana))
-				print("\tHero Power description: ", option.description)
-			else: #Choice cards. Not actual card types, but just a simple object with name and description.
-				print(i+1, "Choice:", option.name)
-				print("\tChoice description: ", option.description)
-				
-		while True:
-			choice = input("Type the index of the option for discover: ")
-			if choice == '1' or choice == '2' or choice == '3' or choice == '4':
-				choice = (int)(choice)
-				if choice not in [i + 1 for i in range(len(self.Game.options))]:
-					print("Type a valid index to continue.")
-				else:
-					break
-					
-		option = self.Game.options[choice-1]
-		print("The discover option is ", option.name)
-		initiator.discoverDecided(option)
-		self.Game.options = []
+			self.initiator = initiator
+			self.Game.GUI.update()
+			self.Game.GUI.waitforDiscover()
+			#option = self.Game.options[choice-1]
+			#print("The discover option is ", option.name)
+			#initiator.discoverDecided(option)
+			self.initiator, self.Game.options = None, []
+		#print("The discover options for %s:"%initiator.name)
+		#for i in range(len(self.Game.options)):
+		#	option = self.Game.options[i]
+		#	if hasattr(option, "cardType") == False:
+		#		print(i+1, " Choice %s:"%option.name, option.description)
+		#	elif option.cardType == "Minion":
+		#		print(i+1, " Minion %s: \t\tMana %d	Att %d	Health %d	Race%s."%(option.name, option.mana, option.attack_Enchant, option.health_Enchant, option.race))
+		#		keyWords = []
+		#		for key, value in option.keyWords.items():
+		#			if value > 0:
+		#				keyWords.append(key)
+		#		print("\tMinion has keyWords: ", keyWords)
+		#		print("\tMinion description: ", option.description)
+		#	elif option.cardType == "Spell":
+		#		print(i+1, " Spell %s: \t\tMana %d"%(option.name, option.mana))
+		#		print("\tSpell description: ", option.description)
+		#	elif option.cardType == "Weapon":
+		#		print(i+1, " Weapon %s: \t\tMana %d	Att %d	Durability %d."%(option.name, option.mana, option.attack, option.durability))
+		#		keyWords = []
+		#		for key, value in option.keyWords.items():
+		#			if value > 0:
+		#				keyWords.append(key)
+		#		print("\tWeapon has keyWords: ", keyWords)
+		#		print("\tWeapon description: ", option.description)
+		#	elif option.cardType == "Hero":
+		#		print(i+1, "Hero Card %s: \t\tMana %d	"%(option.name, option.mana))
+		#		print("\tHero Card description: ", option.description)
+		#	elif option.cardType == "Hero Power":
+		#		print(i+1, "Hero Power %s: Mana %d"%(option.name, option.mana))
+		#		print("\tHero Power description: ", option.description)
+		#	else: #Choice cards. Not actual card types, but just a simple object with name and description.
+		#		print(i+1, "Choice:", option.name)
+		#		print("\tChoice description: ", option.description)
+		#		
+		#while True:
+		#	choice = input("Type the index of the option for discover: ")
+		#	if choice == '1' or choice == '2' or choice == '3' or choice == '4':
+		#		choice = (int)(choice)
+		#		if choice not in [i + 1 for i in range(len(self.Game.options))]:
+		#			print("Type a valid index to continue.")
+		#		else:
+		#			break
+		#			
+		#option = self.Game.options[choice-1]
+		#print("The discover option is ", option.name)
+		#initiator.discoverDecided(option)
+		#self.Game.options = []
 		
 	def typeCardName(self, initiator):
 		if self.Game.GUI != None:
-			self.Game.GUI.update(promptforDiscover=True)
-		while True:
-			cardName = input("Type the name of the card you wish:  ")
-			if cardName in self.Game.RNGPools["Basic and Classic Card Index"].keys():
-				card = self.Game.RNGPools["Basic and Classic Card Index"][cardName](self.Game, initiator.ID)
-				self.Game.Hand_Deck.addCardtoHand(card, initiator.ID)
-				break
-			else:
-				print("Input has NO match with a Basic or Classic card. Do you want to see card names in a certain class?")
-				searchinIndex = input("y/n to show class card names or search by name: ")
-				if searchinIndex == 'y' or searchinIndex == 'Y' or searchinIndex == 'Yes' or searchinIndex == 'yes':
-					className = input("Class to choose from: Druid, Hunter, Mage, Paladin, Priest, Rogue, Shaman, Warlock, Warrior\n")
-					if className not in ["Druid", "Mage", "Hunter", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior", "Neutral"]:
-						print("Class input wrong. Returning to search by name")
-					else:
-						print("Showing %s cards"%className)
-						for value in self.Game.RNGPools["Basic and Classic %s Cards"%className]:
-							print(value.name, ":  ", value.mana, "  ", value.description)
-						print("Returning to search by card name")
-				else:
-					print("Returning to search by card name")
+			self.initiator = initiator
+			PRINT(self, "Start to type the name of a card you want")
+			self.Game.GUI.update()
+			self.Game.GUI.wishforaCard(initiator)
+			

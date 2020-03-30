@@ -121,10 +121,10 @@ class Murmy(Minion):
 	requireTarget, keyWord, description = False, "Reborn", "Reborn"
 	
 	
-class DragonicLackey(Minion):
-	Class, race, name = "Neutral", "", "Dragonic Lackey"
+class DraconicLackey(Minion):
+	Class, race, name = "Neutral", "", "Draconic Lackey"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Neutral~Minion~1~1~1~None~Dragonic Lackey~Battlecry~Uncollectible"
+	index = "Dragons~Neutral~Minion~1~1~1~None~Draconic Lackey~Battlecry~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a Dragon"
 	poolIdentifier = "Dragons as Druid"
 	@classmethod
@@ -144,12 +144,12 @@ class DragonicLackey(Minion):
 		if self.Game.Hand_Deck.handNotFull(self.ID) and self.ID == self.Game.turn:
 			key = "Dragons as "+classforDiscover(self)
 			if "InvokedbyOthers" in comment:
-				print("Dragonic Lackey's battlecry adds a random Dragon to player's hand")
+				print("Draconic Lackey's battlecry adds a random Dragon to player's hand")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
 				dragons = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
 				self.Game.options = [dragon(self.Game, self.ID) for dragon in dragons]
-				print("Dragonic Lackey's battlecry lets player discover a Dragon")
+				print("Draconic Lackey's battlecry lets player discover a Dragon")
 				self.Game.DiscoverHandler.startDiscover(self)
 				
 		return None
@@ -178,7 +178,7 @@ class TitanicLackey(Minion):
 			target.getsKeyword("Taunt")
 		return target
 		
-Lackeys = [DragonicLackey, EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey]
+Lackeys = [DraconicLackey, EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey]
 
 """Mana 2 cards"""
 class BugCollector(Minion):
@@ -199,16 +199,16 @@ class Locust(Minion):
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	
 	
-class DwarvenArcheologist(Minion):
-	Class, race, name = "Neutral", "", "Dwarven Archeologist"
+class DwarvenArchaeologist(Minion):
+	Class, race, name = "Neutral", "", "Dwarven Archaeologist"
 	mana, attack, health = 2, 2, 3
-	index = "Uldum~Neutral~Minion~2~2~3~None~Dwarven Archeologist"
+	index = "Uldum~Neutral~Minion~2~2~3~None~Dwarven Archaeologist"
 	requireTarget, keyWord, description = False, "", "After you Discover a card, reduce its cost by (1)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_DwarvenArcheologist(self)]
+		self.triggersonBoard = [Trigger_DwarvenArchaeologist(self)]
 		
-class Trigger_DwarvenArcheologist(TriggeronBoard):
+class Trigger_DwarvenArchaeologist(TriggeronBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["DiscoveredCardPutintoHand"])
 		
@@ -1798,7 +1798,7 @@ class Trigger_ArcaneFlakmage(TriggeronBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
-	#Assume Secret Keeper and trigger while dying.
+	#Assume Secretkeeper and trigger while dying.
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and "~~Secret" in subject.index
 		
@@ -1830,7 +1830,7 @@ class Trigger_DuneSculptor(TriggeronBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
 		
-	#Assume Secret Keeper and trigger while dying.
+	#Assume Secretkeeper and trigger while dying.
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID
 		
@@ -3016,16 +3016,16 @@ class SinisterDeal(Spell):
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
 		
-class SupremeArcheology(Quest):
-	Class, name = "Warlock", "Supreme Archeology"
+class SupremeArchaeology(Quest):
+	Class, name = "Warlock", "Supreme Archaeology"
 	requireTarget, mana = False, 1
-	index = "Uldum~Warlock~Spell~1~Supreme Archeology~~Quest~Legendary"
+	index = "Uldum~Warlock~Spell~1~Supreme Archaeology~~Quest~Legendary"
 	description = "Quest: Draw 20 cards. Reward: Tome of Origination"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_SupremeArcheology(self)]
+		self.triggersonBoard = [Trigger_SupremeArchaeology(self)]
 		
-class Trigger_SupremeArcheology(QuestTrigger):
+class Trigger_SupremeArchaeology(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["CardDrawn"])
 		
@@ -3034,7 +3034,7 @@ class Trigger_SupremeArcheology(QuestTrigger):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.progress += 1
-		print("Player draws a card. Quest Supreme Archeologist progresses by 1. Current progress:", self.entity.progress)
+		print("Player draws a card. Quest Supreme Archaeologist progresses by 1. Current progress:", self.entity.progress)
 		if self.entity.progress > 19:
 			print("Player draws the 20th card and gains Reward: Tome of Origination.")
 			self.disconnect()

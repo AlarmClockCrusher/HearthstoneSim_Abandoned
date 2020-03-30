@@ -156,7 +156,7 @@ class EtherealAugmerchant(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		#需要随从在场并且还是随从形态
 		if target != None and (target.onBoard or target.inHand):
-			print("Guardian Augmerchant's battlecry deals 1 damage to minion %s and gives it Spell Damage +1"%target.name)
+			print("Ethereal Augmerchant's battlecry deals 1 damage to minion %s and gives it Spell Damage +1"%target.name)
 			self.dealsDamage(target, 1)
 			target.getsKeyword("Spell Damage")
 		return target
@@ -215,7 +215,7 @@ class RocketAugmerchant(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None and (target.onBoard or target.inHand):
-			print("Guardian Augmerchant's battlecry deals 1 damage to minion %s and gives it Divine Shield"%target.name)
+			print("Rocket Augmerchant's battlecry deals 1 damage to minion %s and gives it Divine Shield"%target.name)
 			self.dealsDamage(target, 1)
 			target.getsKeyword("Rush")
 		return target
@@ -406,7 +406,7 @@ class TeronGorefiend(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Destroy all friendly minions. Deathrattle: Resummon all of them with +1/+1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [ResummonDestroyedMinion(self)]
+		self.deathrattles = [ResummonDestroyedMinionwithPlus1Plus1(self)]
 	#不知道两次触发战吼时亡语是否会记录两份，假设会
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Teron Gorefiend's battlecry destroys all friendly minions.")
@@ -417,11 +417,11 @@ class TeronGorefiend(Minion):
 				minionsDestroyed.append(type(minion))
 		if minionsDestroyed != []:
 			for trigger in self.deathrattles:
-				if type(trigger) == ResummonDestroyedMinion:
+				if type(trigger) == ResummonDestroyedMinionwithPlus1Plus1:
 					trigger.minionsDestroyed += minionsDestroyed
 		return None
 		
-class ResummonDestroyedMinion(Deathrattle_Minion):
+class ResummonDestroyedMinionwithPlus1Plus1(Deathrattle_Minion):
 	def __init__(self, entity):
 		self.blank_init(entity)
 		self.minionsDestroyed = []
@@ -430,7 +430,14 @@ class ResummonDestroyedMinion(Deathrattle_Minion):
 		if self.minionsDestroyed != []:
 			print("Deathrattle: Resummon all destroyed minions with +1/+1 triggers")
 			pos = (self.entity.position, "totheRight") if self.entity in self.entity.Game.minions[self.entity.ID] else (-1, "totheRightEnd")
-			self.entity.Game.summonMinion([minion(self.entity.Game, self.entity.ID) for minion in self.minionsDestroyed], pos, self.entity.ID)
+			minions = [minion(self.entity.Game, self.entity.ID) for minion in self.minionsDestroyed]
+			#假设给予+1/+1是在召唤之前
+			for minion in minions:
+				minion.attack += 1
+				minion.attack_Enchant += 1
+				minion.health += 1
+				minion.health_Enchant += 1
+			self.entity.Game.summonMinion(minions, pos, self.entity.ID)
 			
 	def selfCopy(self, recipientMinion):
 		trigger = type(self)(recipientMinion)
@@ -1095,16 +1102,16 @@ class Trigger_WarglaivesofAzzinoth(TriggeronBoard):
 		self.entity.Game.heroes[self.entity.ID].attChances_extra +=1
 		
 		
-class FluffyShivarra(Minion):
-	Class, race, name = "Demon Hunter", "Demon", "Fluffy Shivarra"
+class PriestessofFury(Minion):
+	Class, race, name = "Demon Hunter", "Demon", "Priestess of Fury"
 	mana, attack, health = 7, 6, 7
-	index = "Outlands~Demon Hunter~Minion~7~6~7~Demon~Fluffy Shivarra"
+	index = "Outlands~Demon Hunter~Minion~7~6~7~Demon~Priestess of Fury"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, deal 6 damage randomly split among all enemies"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_FluffyShivarra(self)]
+		self.triggersonBoard = [Trigger_PriestessofFury(self)]
 		
-class Trigger_FluffyShivarra(TriggeronBoard):
+class Trigger_PriestessofFury(TriggeronBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -1251,37 +1258,37 @@ class MsshifnPrime(Minion):
 		self.blank_init(Game, ID)
 		self.chooseOne = 1
 		# 0: Give other minion +2/+2; 1:Summon two Treants with Taunt.
-		self.options = [FungalGiantTaunt_Option(self), FungalGiantRush_Option(self)]
+		self.options = [FungalGiant_Taunt(self), FungalGiant_Rush(self)]
 		
 	#如果有全选光环，只有一个9/9，其同时拥有突袭和嘲讽
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if choice == 0:
 			print("Msshi'fn Prime summons a 9/9 Fungal Giant with Taunt")
-			self.Game.summonMinion(FungalGiant_Taunt(self.Game, self.ID), self.position+1, self.ID)
+			self.Game.summonMinion(FungalGuardian(self.Game, self.ID), self.position+1, self.ID)
 		elif choice == 1:
 			print("Msshi'fn Prime summons a 9/9 Fungal Giant with Rush")
-			self.Game.summonMinion(FungalGiant_Rush(self.Game, self.ID), self.position+1, self.ID)
+			self.Game.summonMinion(FungalBruiser(self.Game, self.ID), self.position+1, self.ID)
 		elif choice == "ChooseBoth":
 			print("Msshi'fn Prime summons a 9/9 Fungal Giant with Taunt and Rush")
-			self.Game.summonMinion(FungalGiant_Both(self.Game, self.ID), self.position+1, self.ID)
+			self.Game.summonMinion(FungalGargantuan(self.Game, self.ID), self.position+1, self.ID)
 		return None
 		
-class FungalGiant_Taunt(Minion):
-	Class, race, name = "Druid", "", "Fungal Giant"
+class FungalGuardian(Minion):
+	Class, race, name = "Druid", "", "Fungal Guardian"
 	mana, attack, health = 9, 9, 9
-	index = "Outlands~Druid~Minion~9~9~9~None~Fungal Giant~Taunt~Uncollectible"
+	index = "Outlands~Druid~Minion~9~9~9~None~Fungal Guardian~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	
-class FungalGiant_Rush(Minion):
-	Class, race, name = "Druid", "", "Fungal Giant"
+class FungalBruiser(Minion):
+	Class, race, name = "Druid", "", "Fungal Bruiser"
 	mana, attack, health = 9, 9, 9
-	index = "Outlands~Druid~Minion~9~9~9~None~Fungal Giant~Rush~Uncollectible"
+	index = "Outlands~Druid~Minion~9~9~9~None~Fungal Bruiser~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	
-class FungalGiant_Both(Minion):
-	Class, race, name = "Druid", "", "Fungal Giant"
+class FungalGargantuan(Minion):
+	Class, race, name = "Druid", "", "Fungal Gargantuan"
 	mana, attack, health = 9, 9, 9
-	index = "Outlands~Druid~Minion~9~9~9~None~Fungal Giant~Taunt~Rush~Uncollectible"
+	index = "Outlands~Druid~Minion~9~9~9~None~Fungal Gargantuan~Taunt~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt,Rush", "Taunt, Rush"
 	
 class FungalGiantTaunt_Option:
@@ -1550,10 +1557,10 @@ class ScavengersIngenuity(Spell):
 		return None
 		
 		
-class AugmentedPocupine(Minion):
-	Class, race, name = "Hunter", "Beast", "Augmented Pocupine"
+class AugmentedPorcupine(Minion):
+	Class, race, name = "Hunter", "Beast", "Augmented Porcupine"
 	mana, attack, health = 3, 2, 4
-	index = "Outlands~Hunter~Minion~3~2~4~Beast~Augmented Pocupine~Deathrattle"
+	index = "Outlands~Hunter~Minion~3~2~4~Beast~Augmented Porcupine~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Deals this minion's Attack damage randomly split among all enemies"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -2251,13 +2258,13 @@ class LibramofHope(Spell):
 			heal = 8 * (2 ** self.countHealDouble())
 			print("Libram of Hope is cast, restores %d Health to %s and summons an 8/8 Guardian with Taunt and Divine Shield"%(heal, target.name))
 			self.restoresHealth(target, heal)
-			self.Game.summonMinion(Guardian(self.Game, self.ID), -1, self.ID)
+			self.Game.summonMinion(AncientGuardian(self.Game, self.ID), -1, self.ID)
 		return target
 		
-class Guardian(Minion):
-	Class, race, name = "Paladin", "", "Guardian"
+class AncientGuardian(Minion):
+	Class, race, name = "Paladin", "", "Ancient Guardian"
 	mana, attack, health = 8, 8, 8
-	index = "Outlands~Paladin~Minion~8~8~8~None~Guardian~Taunt~Divine Shield~Uncollectible"
+	index = "Outlands~Paladin~Minion~8~8~8~None~Ancient Guardian~Taunt~Divine Shield~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt,Divine Shield", "Taunt, Divine Shield"
 	
 """Priest cards"""
@@ -2444,10 +2451,10 @@ class PsycheSplit(Spell):
 		return target
 		
 		
-class SkeletonDragon(Minion):
-	Class, race, name = "Priest", "Dragon", "Skeleton Dragon"
+class SkeletalDragon(Minion):
+	Class, race, name = "Priest", "Dragon", "Skeletal Dragon"
 	mana, attack, health = 7, 4, 9
-	index = "Outlands~Priest~Minion~7~4~9~Dragon~Skeleton Dragon~Taunt"
+	index = "Outlands~Priest~Minion~7~4~9~Dragon~Skeletal Dragon~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. At the end of your turn, add a Dragon to your hand"
 	poolIdentifier = "Dragons"
 	@classmethod
@@ -2456,9 +2463,9 @@ class SkeletonDragon(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_SkeletonDragon(self)]
+		self.triggersonBoard = [Trigger_SkeletalDragon(self)]
 		
-class Trigger_SkeletonDragon(TriggeronBoard):
+class Trigger_SkeletalDragon(TriggeronBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -2718,14 +2725,14 @@ class AkamaPrime(Minion):
 				self.decideAttChances_base()
 				if keyWord == "Charge":
 					self.Game.sendSignal("MinionChargeKeywordChange", self.Game.turn, self, None, 0, "")
-				self.statusPrint()
+				self.STATUSPRINT()
 				
 				
 class GreyheartSage(Minion):
 	Class, race, name = "Rogue", "", "Greyheart Sage"
 	mana, attack, health = 3, 3, 3
 	index = "Outlands~Rogue~Minion~3~3~3~None~Greyheart Sage~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Secret, return a minion to its owner's hand. It costs (2) more"
+	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Stealth minion, draw 2 cards"
 	def effectCanTrigger(self):
 		self.effectViable = False
 		for minion in self.Game.minionsonBoard(self.ID):
@@ -3299,7 +3306,12 @@ class SummonaDreadlordwithLifesteal(Deathrattle_Minion):
 		print("Deathrattle: Summon a 5/5 Dreadlord with Lifesteal triggers")
 		self.entity.Game.summonMinion(DesperateDreadlord(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)\
 		
-		
+class DesperateDreadlord(Minion):
+	Class, race, name = "Warlock", "Demon", "Desperate Dreadlord"
+	mana, attack, health = 5, 5, 5
+	index = "Outlands~Warlock~Minion~5~5~5~Demon~Desperate Dreadlord~Lifesteal~Uncollectible"
+	requireTarget, keyWord, description = False, "Lifesteal", "Lifesteal"
+	
 """Warrior cards"""
 class ImprisonedGanarg(Minion_Dormantfor2turns):
 	Class, race, name = "Warrior", "Demon", "Imprisoned Gan'arg"

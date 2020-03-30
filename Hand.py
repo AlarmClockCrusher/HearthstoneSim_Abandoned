@@ -15,13 +15,14 @@ def fixedList(listObject):
 	
 	
 class Hand_Deck:
-	def __init__(self, Game):
+	def __init__(self, Game, deck1=[], deck2=[]): #通过卡组列表加载卡组
 		self.Game = Game
 		self.hands = {1:[], 2:[]}
 		self.decks = {1:[], 2:[]}
 		self.noCards = {1:0, 2:0}
 		self.handUpperLimit = {1: 10, 2: 10}
-		self.initialDecks = {1: DemonHunterDeck, 2: PriestDeck}
+		self.initialDecks = {1: Experiment1 if deck1 == [] else deck1,
+							2: Experiment2 if deck1 == [] else deck2}
 		self.startingDeckIdentities = {1:[], 2:[]}
 		self.startingHandIdentities = {1:[], 2:[]}
 		self.initializeDecks()
@@ -99,7 +100,8 @@ class Hand_Deck:
 				if "Start of Game" in card.index:
 					card.startofGame()
 					
-					
+		self.drawCard(1)
+		
 	def handNotFull(self, ID):
 		if len(self.hands[ID]) < self.handUpperLimit[ID]:
 			return True
@@ -386,19 +388,19 @@ DemonHunterDeck = [ShadowhoofSlayer, ChaosStrike, SightlessWatcher, AldrachiWarb
 				Blur, TwinSlice, Battlefiend, ConsumeMagic, ManaBurn, UrzulHorror, BladeDance, FeastofSouls, Umberwing, EyeBeam, 
 				WrathscaleNaga, IllidariFelblade, RagingFelscreamer, SoulSplit, CommandtheIllidari, WrathspikeBrute, Flamereaper, HulkingOverfiend, UrzulHorror, AltruistheOutcast, 
 				EyeBeam, Nethrandamus, CrimsonSigilRunner, FuriousFelfin, ImmolationAura, Netherwalker, SpectralSight, AshtongueBattlelord, FelSummoner, KaynSunfury, 
-				ImprisonedAntaen, Metamorphosis, SkullofGuldan, WarglaivesofAzzinoth, FluffyShivarra, CoilfangWarlord, PitCommander,]
+				ImprisonedAntaen, Metamorphosis, SkullofGuldan, WarglaivesofAzzinoth, PriestessofFury, CoilfangWarlord, PitCommander,]
 				
 DruidDeck = [Acornbearer, CrystalPower, CrystalsongPortal, DreamwayGuardians, KeeperStalladris, 
 				Lifeweaver, CrystalStag, BlessingoftheAncients, Lucentbark, TheForestsAid, WorthyExpedition, CrystalMerchant, BEEEES, GardenGnome, AnubisathDefender, 
-				ElisetheEnlightened, OasisSurger, HiddenOasis, Overflow, Embiggen, SecuretheDeck, StrengthinNumber, Treenforcement, BreathofDreams, Shrubadier, 
+				ElisetheEnlightened, OasisSurger, HiddenOasis, Overflow, Embiggen, SecuretheDeck, StrengthinNumbers, Treenforcements, BreathofDreams, Shrubadier, 
 				Aeroponics, EmeraldExplorer, GorutheMightree, YseraUnleashed, RisingWinds, SteelBeetle, WingedGuardian, FungalFortunes, Ironbark, ArchsporeMsshifn, 
 				Bogbeam, ImprisonedSatyr, Germination, Overgrowth, GlowflySwarm, MarshHydra, YsielWindsinger]
 				
 HunterDeck = [RapidFire, Shimmerfly, NineLives, Ursatron, MarkedShot, 
 				HuntingParty, Oblivitron, UnleashtheBeast, VereesaWindrunner, PressurePlate, DesertSpear, HuntersPack, HyenaAlpha, RamkahenWildtamer, SwarmofLocusts, 
-				ScarletWebweaver, WildBloodstinger, DinotamerBrann, CleartheWay, DwarvenSharpshooter, ToxicReinforcement, CorrosiveBreath, PhaseStalker, DivingGryphon, PrimordialExplorer, 
+				ScarletWebweaver, WildBloodstinger, DinotamerBrann, CleartheWay, DwarvenSharpshooter, ToxicReinforcements, CorrosiveBreath, PhaseStalker, DivingGryphon, PrimordialExplorer, 
 				Stormhammer, Dragonbane, Veranus, FreshScent, ChopshopCopter, RotnestDrake, Helboar, ImprisonedFelmaw, PackTactics, ScavengersIngenuity, 
-				AugmentedPocupine, ZixorApexPredator, MokNathalLion, ScrapShot, BeastmasterLeoroxx, NagrandSlam]
+				AugmentedPorcupine, ZixorApexPredator, MokNathalLion, ScrapShot, BeastmasterLeoroxx, NagrandSlam]
 
 MageDeck = [RayofFrost, Khadgar, MagicDartFrog, MessengerRaven, MagicTrick, 
 				ConjurersCalling, KirinTorTricaster, ManaCyclone, PowerofCreation, Kalecgos, AncientMysteries, FlameWard, CloudPrince, ArcaneFlakmage, DuneSculptor, 
@@ -415,11 +417,11 @@ PaladinDeck = [NeverSurrender, LightforgedBlessing, BronzeHerald, DesperateMeasu
 				
 PriestDeck = [PowerWordShield, HolySmite, MindVision, PsychicConjurer, Radiance, ShadowWordDeath, ShadowWordPain, HolyNova, PowerInfusion, MindControl, 
 				CircleofHealing, Silence, InnerFire, ScarletSubjugator, KulTiranChaplain, Lightwell, Thoughtsteal, ShadowMadness, Lightspawn, MassDispel, 
-				Mindgames, ShadowWordRuin, CabalShadowPriest, TempleEnforcer, NatalieSeline, EvilConscriper, HenchClanShadequill, UnsleepingSoul, ForbiddenWords, ConvincingInfiltrator, 
-				MassResurrection, LazulsScheme, ShadowFigure, MadameLazul, CatrinaMuerte, EmbalmingRitual, Penance, SandhoofWaterbearer, Grandmummy, HolyRipple, 
-				WretchedReclaimer, Psychopomp, HighPriestAmet, PlagueofDeath, WhisperofEVIL, EnvoyofLazul, BreathoftheInfinite, MindflayerKaahrj, GraveRune, Chronobreaker, 
+				Mindgames, ShadowWordRuin, CabalShadowPriest, TempleEnforcer, NatalieSeline, EVILConscripter, HenchClanShadequill, UnsleepingSoul, ForbiddenWords, ConvincingInfiltrator, 
+				MassResurrection, LazulsScheme, ShadowyFigure, MadameLazul, CatrinaMuerte, EmbalmingRitual, Penance, SandhoofWaterbearer, Grandmummy, HolyRipple, 
+				WretchedReclaimer, Psychopomp, HighPriestAmet, PlagueofDeath, WhispersofEVIL, EnvoyofLazul, BreathoftheInfinite, MindflayerKaahrj, GraveRune, Chronobreaker, 
 				MurozondtheInfinite, AeonReaver, ClericofScales, DarkProphecy, ImprisonedHomunculus, ReliquaryofSouls, Renew, DragonmawSentinel, SethekkVeilweaver, Apotheosis, 
-				DragonmawOverseer, PsycheSplit, SkeletonDragon, SoulMirror ]
+				DragonmawOverseer, PsycheSplit, SkeletalDragon, SoulMirror ]
 				
 RogueDeck = [DaringEscape, EVILMiscreant, HenchClanBurglar, TogwagglesScheme, UnderbellyFence, 
 				Vendetta, WagglePick, UnidentifiedContract, HeistbaronTogwaggle, TakNozwhisker, PharaohCat, PlagueofMadness, CleverDisguise, WhirlkickMaster, HookedScimitar, 
@@ -439,12 +441,14 @@ WarlockDeck = [EVILGenius, RafaamsScheme, AranasiBroodmother, PlotTwist, Impfern
 				ZzerakutheWarped, FiendishServant, TwistedKnowledge, ChaosGazer, ShadowCouncil, UnstableFelbolt, ImprisonedScrapImp, KanrethadEbonlocke, Darkglare, NightshadeMatron, 
 				TheDarkPortal, HandofGuldan, KelidantheBreaker, EnhancedDreadlord,]
 
-WarriorDeck = [ImproveMorale, ViciousScraphound, DrBoomsScheme, SweepingStrike, ClockworkGoblin, 
+WarriorDeck = [ImproveMorale, ViciousScraphound, DrBoomsScheme, SweepingStrikes, ClockworkGoblin, 
 				DimensionalRipper, OmegaDevastator, Wrenchcalibur, BlastmasterBoom, TheBoomReaver, IntotheFray, FrightenedFlunky, BloodswornMercenary, LivewireLance, RestlessMummy, 
-				PlagueofWrath, Armagedillo, ArmoredGoon, TombWarden, SkyRaider, Ancharr, EVILQuartermaster, RammingSpeed, Skybarge, MoltenBreath, 
+				PlagueofWrath, Armagedillo, ArmoredGoon, TombWarden, SkyRaider, Ancharrr, EVILQuartermaster, RammingSpeed, Skybarge, MoltenBreath, 
 				DeathwingMadAspect, BoomSquad, RiskySkipper, BombWrangler, ImprisonedGanarg, SwordandBoard, CorsairCache, Bladestorm, BonechewerRaider, BulwarkofAzzinoth, 
 				WarmaulChallenger, KargathBladefist, ScrapGolem, BloodboilBrute]
 
-Experiment1 = [PressurePlate, PackTactics, Misdirection, UnsealtheVault, CleartheWay, CleartheWay, CleartheWay, ToxicReinforcement, ToxicReinforcement, ElementalAllies, ElementalAllies, LearnDraconic, SecuretheDeck]
+Experiment1 = [EVILQuartermaster, RammingSpeed, Skybarge, MoltenBreath, 
+				DeathwingMadAspect, BoomSquad, ZephrystheGreat]
 
-Experiment2 = [PressurePlate, PackTactics, Misdirection, UnsealtheVault, CleartheWay, CleartheWay, CleartheWay, ToxicReinforcement, ToxicReinforcement, ElementalAllies, ElementalAllies, LearnDraconic, SecuretheDeck]
+Experiment2 = [EVILQuartermaster, RammingSpeed, Skybarge, MoltenBreath, 
+				DeathwingMadAspect, BoomSquad, ZephrystheGreat]

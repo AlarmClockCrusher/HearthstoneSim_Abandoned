@@ -74,10 +74,10 @@ class Toxfin(Minion):
 		return target
 		
 		
-class DragonicLackey(Minion):
-	Class, race, name = "Neutral", "", "Dragonic Lackey"
+class DraconicLackey(Minion):
+	Class, race, name = "Neutral", "", "Draconic Lackey"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Neutral~Minion~1~1~1~None~Dragonic Lackey~Battlecry~Uncollectible"
+	index = "Dragons~Neutral~Minion~1~1~1~None~Draconic Lackey~Battlecry~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a Dragon"
 	poolIdentifier = "Dragons as Druid"
 	@classmethod
@@ -97,12 +97,12 @@ class DragonicLackey(Minion):
 		if self.Game.Hand_Deck.handNotFull(self.ID) and self.ID == self.Game.turn:
 			key = "Dragons as "+classforDiscover(self)
 			if "InvokedbyOthers" in comment:
-				print("Dragonic Lackey's battlecry adds a random Dragon to player's hand")
+				print("Draconic Lackey's battlecry adds a random Dragon to player's hand")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
 				dragons = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
 				self.Game.options = [dragon(self.Game, self.ID) for dragon in dragons]
-				print("Dragonic Lackey's battlecry lets player discover a Dragon")
+				print("Draconic Lackey's battlecry lets player discover a Dragon")
 				self.Game.DiscoverHandler.startDiscover(self)
 				
 		return None
@@ -242,7 +242,7 @@ class WitchyLackey(Minion):
 			target = self.Game.mutate(target, 1)
 		return target
 		
-Lackeys = [DragonicLackey, EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey]
+Lackeys = [DraconicLackey, EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey]
 """Mana 2 cards"""
 class ArcaneServant(Minion):
 	Class, race, name = "Neutral", "Elemental", "Arcane Servant"
@@ -267,13 +267,13 @@ class DalaranLibrarian(Minion):
 		return None
 		
 		
-class EvilCableRat(Minion):
-	Class, race, name = "Neutral", "Beast", "Evil Cable Rat"
+class EVILCableRat(Minion):
+	Class, race, name = "Neutral", "Beast", "EVIL Cable Rat"
 	mana, attack, health = 2, 1, 1
-	index = "Shadows~Neutral~Minion~2~1~1~Beast~Evil Cable Rat~Battlecry"
+	index = "Shadows~Neutral~Minion~2~1~1~Beast~EVIL Cable Rat~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a Lackey to your hand"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Evil Cable Rat's battlecry adds a random Lackey to player's hand.")
+		print("EVIL Cable Rat's battlecry adds a random Lackey to player's hand.")
 		lackey = np.random.choice(Lackeys)(self.Game, self.ID)
 		self.Game.Hand_Deck.addCardtoHand(lackey, self.ID)
 		return None
@@ -456,7 +456,7 @@ class Trigger_MagicCarpet(TriggeronBoard):
 		return self.entity.onBoard and subject != self.entity and subject.ID == self.entity.ID and number == 1
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("A 1-Cost friendly minion %s is played and %s gives it Poisonous."%(subject.name, self.entity.name))
+		print("A 1-Cost friendly minion %s is played and %s gives it +1 Attack and Rush."%(subject.name, self.entity.name))
 		subject.getsKeyword("Rush")
 		subject.buffDebuff(1, 0)
 		
@@ -688,10 +688,10 @@ class Trigger_AzeriteElemental(TriggeronBoard):
 		self.entity.getsKeyword("Spell Damage")
 		
 		
-class BaristaLinchen(Minion):
-	Class, race, name = "Neutral", "", "Barista Linchen"
+class BaristaLynchen(Minion):
+	Class, race, name = "Neutral", "", "Barista Lynchen"
 	mana, attack, health = 5, 4, 5
-	index = "Shadows~Neutral~Minion~5~4~5~None~Barista Linchen~Battlecry~Legendary"
+	index = "Shadows~Neutral~Minion~5~4~5~None~Barista Lynchen~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a copy of each of your other Battlecry minions to your hand"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
@@ -700,7 +700,7 @@ class BaristaLinchen(Minion):
 			if "~Battlecry" in minion.index and minion != self:
 				battlecryMinions.append(minion)
 		if battlecryMinions != []:
-			print("Barista Linchen's battlecry adds copies of all other friendly Battlecry minions to player's hand.")
+			print("Barista Lynchen's battlecry adds copies of all other friendly Battlecry minions to player's hand.")
 			for minion in battlecryMinions:
 				self.Game.Hand_Deck.addCardtoHand(type(minion)(self.Game, self.ID), self.ID)
 		return None
@@ -1280,13 +1280,13 @@ class DreamwayGuardians(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		print("Dreamway Guardians is played and summons two 1/2 Dryads with Lifesteal.")
-		self.Game.summonMinion([Dryad(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
+		self.Game.summonMinion([CrystalDryad(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
-class Dryad(Minion):
-	Class, race, name = "Druid", "", "Dryad"
+class CrystalDryad(Minion):
+	Class, race, name = "Druid", "", "Crystal Dryad"
 	mana, attack, health = 1, 1, 2
-	index = "Shadows~Druid~Minion~1~1~2~None~Dryad~Lifesteal~Uncollectible"
+	index = "Shadows~Druid~Minion~1~1~2~None~Crystal Dryad~Lifesteal~Uncollectible"
 	requireTarget, keyWord, description = False, "Lifesteal", "Lifesteal"
 	
 	
@@ -1584,6 +1584,33 @@ class DrawaMech(Deathrattle_Minion):
 				
 		if mechs != []:
 			self.entity.Game.Hand_Deck.drawCard(self.entity.ID, np.random.choice(mechs))
+			
+			
+class ArcaneFletcher(Minion):
+	Class, race, name = "Hunter", "", "Arcane Fletcher"
+	mana, attack, health = 4, 3, 3
+	index = "Shadows~Hunter~Minion~4~3~3~None~Arcane Fletcher"
+	requireTarget, keyWord, description = False, "", "Whenever you play a 1-Cost minion, draw a spell from your deck"
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.triggersonBoard = [Trigger_ArcaneFletcher(self)]
+		
+class Trigger_ArcaneFletcher(TriggeronBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionPlayed"])
+	#The number here is the mana used to play the minion
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and subject != self.entity and subject.ID == self.entity.ID and number == 1
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		print("A 1-Cost friendly minion %s is played and %s lets player draw a spell from the deck."%(subject.name, self.entity.name))
+		spellsinDeck = []
+		for card in self.entity.Game.Hand_Deck.decks[self.entity.ID]:
+			if card.cardType == "Spell":
+				spellsinClass.append(card)
+		if spellsinDeck != []:
+			spell = np.random.choice(spellsinDeck)
+			self.entity.Game.Hand_Deck.drawCard(self.entity.ID, spell)
 			
 			
 class MarkedShot(Spell):
@@ -2424,7 +2451,7 @@ class Nozari(Minion):
 		return None
 		
 """Priest cards"""
-class EvilConscriper(Minion):
+class EVILConscripter(Minion):
 	Class, race, name = "Priest", "", "EVIL Conscripter"
 	mana, attack, health = 2, 2, 2
 	index = "Shadows~Priest~Minion~2~2~2~None~EVIL Conscripter~Deathrattle"
@@ -2569,10 +2596,10 @@ class Trigger_Upgrade(TriggerinHand):
 		self.entity.progress += 1
 		
 		
-class ShadowFigure(Minion):
-	Class, race, name = "Priest", "", "Shadow Figure"
+class ShadowyFigure(Minion):
+	Class, race, name = "Priest", "", "Shadowy Figure"
 	mana, attack, health = 2, 2, 2
-	index = "Shadows~Priest~Minion~2~2~2~None~Shadow Figure~Battlecry"
+	index = "Shadows~Priest~Minion~2~2~2~None~Shadowy Figure~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Transform into a 2/2 copy of a friendly Deathrattle minion"
 	
 	def targetExists(self, choice=0):
@@ -2591,11 +2618,11 @@ class ShadowFigure(Minion):
 			if self.onBoard or self.inHand:
 				if target.onBoard:
 					Copy = target.selfCopy(self.ID, 2, 2)
-					print("Shadow Figure's battlecry transforms minion into a copy of ", target.name)
-				else: #target not on board. This Shadow Figure becomes a base copy of it.
+					print("Shadowy Figure's battlecry transforms minion into a copy of ", target.name)
+				else: #target not on board. This Shadowy Figure becomes a base copy of it.
 					Copy = type(target)(self.Game, self.ID)
 					Copy.statReset(2, 2)
-					print("Shadow Figure's battlecry transforms minion into a base copy of ", target.name)
+					print("Shadowy Figure's battlecry transforms minion into a base copy of ", target.name)
 				self.Game.transform(self, Copy)
 		return target
 		
@@ -3042,7 +3069,7 @@ class HeistbaronTogwaggle(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		controlsLackey = False
 		for minion in self.Game.minionsonBoard(self.ID):
-			if type(minion) in Lackeys:
+			if minion.name.endswith("Lackey"):
 				controlsLackey = True
 				break
 				
@@ -3655,14 +3682,14 @@ class DrBoomsScheme(Spell):
 		return None
 		
 		
-class SweepingStrike(Spell):
-	Class, name = "Warrior", "Sweeping Strike"
+class SweepingStrikes(Spell):
+	Class, name = "Warrior", "Sweeping Strikes"
 	requireTarget, mana = True, 2
-	index = "Shadows~Warrior~Spell~2~Sweeping Strike"
+	index = "Shadows~Warrior~Spell~2~Sweeping Strikes"
 	description = "Give a minion 'Also damages minions next to whoever this attacks'"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Sweeping Strike is cast and gives minion %s 'Also damage adjacent minions to whoever this attacks'."%target.name)
+			print("Sweeping Strikes is cast and gives minion %s 'Also damage adjacent minions to whoever this attacks'."%target.name)
 			target.marks["Attack Adjacent Minions"] += 1
 		return target
 		
