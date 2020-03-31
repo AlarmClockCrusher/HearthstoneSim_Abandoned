@@ -1007,7 +1007,7 @@ class BoomSquad(Spell):
 		return None
 		
 	def discoverDecided(self, option):
-		PRINT(self, "Card", option.name, " is put into player's hand.")
+		PRINT(self, "Card %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
