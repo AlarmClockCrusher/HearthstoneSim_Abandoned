@@ -1,0 +1,279 @@
+TAG	TEXT	COMMENT
+FB_BUILDABRAWL001	¡Elige tu primera pelea de taberna!	
+FB_BUILDABRAWL002	¡Elige tu segunda pelea de taberna!	
+FB_ELO_GREATERSPIRITS	¡Elige un bonus superior!	
+FB_ELO_SPIRITS	¡Elige un bonus!	
+GALAKROND_ONCE	<b>Convoca</b> una vez para mejorarlo.	
+GALAKROND_TWICE	<b>Convoca</b> dos veces para mejorarlo.	
+GAMEPLAY_AI_OPPONENT_NAME	El tabernero	
+GAMEPLAY_AMETHYST_SPELLSTONE_1	<i>(Recibe daño de tus cartas para mejorarla).</i>	
+GAMEPLAY_AMETHYST_SPELLSTONE_2	<i>(Recibe daño de tus cartas para mejorarla).</i>	
+GAMEPLAY_AMETHYST_SPELLSTONE_3	<i>(Recibe daño de tus cartas para mejorarla).</i>	
+GAMEPLAY_BACON_ALTERNATE_PLAYER_NAME	Con {0}	0=character hero name
+GAMEPLAY_BACON_BUY_TUTORIAL	Arrastra para comprar.	
+GAMEPLAY_BACON_COIN_TUTORIAL_1	Comprar esbirros <b>siempre</b> cuesta 3 monedas de oro.	
+GAMEPLAY_BACON_COIN_TUTORIAL_2	No conservarás el oro que no uses.	
+GAMEPLAY_BACON_COMBAT_BODY_TUTORIAL	Tus esbirros que sobrevivan al combate te ayudarán a infligir más daño.\n\nCuanto mayor sea el nivel de taberna, ¡mayor será el daño!	
+GAMEPLAY_BACON_COMBAT_BUTTON_TUTORIAL	¡Vale!	
+GAMEPLAY_BACON_COMBAT_END_TURN_BUTTON_TEXT	Combate	
+GAMEPLAY_BACON_COMBAT_PHASE_NAME	Combate	
+GAMEPLAY_BACON_COMBAT_TITLE_TUTORIAL	Daño en combate	
+GAMEPLAY_BACON_CONFIRM_BUTTON_TUTORIAL	¡Vale!	
+GAMEPLAY_BACON_DRAGBUY_BODY_TUTORIAL	Arrastra a los esbirros\nhasta tu héroe para comprarlos\npor <b>3 de oro</b>.\n\n¡Recluta un ejército para derrotar a tus enemigos!	
+GAMEPLAY_BACON_DRAGBUY_BUTTON_TUTORIAL	Comprar	
+GAMEPLAY_BACON_DRAGBUY_TITLE_TUTORIAL	¡Compra esbirros!	
+GAMEPLAY_BACON_DRAGBUY_TRIPLE_TUTORIAL	¡Compra esto para obtener un triple!	
+GAMEPLAY_BACON_DRAGBUY_TUTORIAL	Arrástralo hasta tu héroe.	
+GAMEPLAY_BACON_DRAGSELL_BODY_TUTORIAL	Arrastra esbirros hasta Bob para venderlos.\n\n¡Liberarás espacio y obtendrás 1 de oro!	
+GAMEPLAY_BACON_DRAGSELL_BUTTON_TUTORIAL	Vender	
+GAMEPLAY_BACON_DRAGSELL_TITLE_TUTORIAL	¡Vende esbirros!	
+GAMEPLAY_BACON_DRAGSELL_TUTORIAL	Arrastra un esbirro hasta aquí para venderlo.	
+GAMEPLAY_BACON_ENEMY_MINION_TUTORIAL	Elige a un esbirro.	
+GAMEPLAY_BACON_FREEZE_TUTORIAL	Congela esbirros para volver a verlos el turno siguiente.	
+GAMEPLAY_BACON_MINION_MOVE_TUTORIAL	Arrastra a la derecha para reorganizar.	
+GAMEPLAY_BACON_MINION_UPGRADE_TAVERN_TUTORIAL	¡Mejora la taberna!	
+GAMEPLAY_BACON_MULLIGAN_CHOOSE_HERO_BANNER	Elige a un héroe	
+GAMEPLAY_BACON_MULLIGAN_WAITING_BANNER	{0}/8 jugadores listos	0=number of players ready
+GAMEPLAY_BACON_MULLIGAN_WAITING_BANNER_SUBTITLE	Tiempo restante	
+GAMEPLAY_BACON_PLAY_MINION_TUTORIAL	¡Juégalo!	
+GAMEPLAY_BACON_RECENT_COMBATS	Combates recientes	
+GAMEPLAY_BACON_RECENT_UPGRADE	Mejora más reciente	
+GAMEPLAY_BACON_RECRUIT_REMINDER_TUTORIAL	Elige a un esbirro.	
+GAMEPLAY_BACON_RECRUIT_REMINDER_TUTORIAL_2	Compra un esbirro.	
+GAMEPLAY_BACON_REFRESH_TUTORIAL	Saca nuevos reclutas.	
+GAMEPLAY_BACON_REFRESH_UPGRADE_TUTORIAL	¡Conoce mejores reclutas!	
+GAMEPLAY_BACON_SHOP_END_TURN_BUTTON_TEXT	Reclutar	
+GAMEPLAY_BACON_SHOP_PHASE_NAME	Reclutamiento	
+GAMEPLAY_BACON_TAVERN_TIER	Nivel de taberna	
+GAMEPLAY_BACON_TEXT_EMOTE_GREETINGS	Saludo	
+GAMEPLAY_BACON_TEXT_EMOTE_INVALID	…	
+GAMEPLAY_BACON_TEXT_EMOTE_OOPS	Ay	
+GAMEPLAY_BACON_TEXT_EMOTE_SORRY	Perdón	
+GAMEPLAY_BACON_TEXT_EMOTE_THANKS	Gracias	
+GAMEPLAY_BACON_TEXT_EMOTE_THREATEN	¡¡!!	
+GAMEPLAY_BACON_TEXT_EMOTE_WELL_PLAYED	Bien jugado	
+GAMEPLAY_BACON_TEXT_EMOTE_WOW	Guau	
+GAMEPLAY_BACON_TRIPLE_BODY_TUTORIAL	Cuando tienes 3 copias del mismo esbirro, se combinan para formar una copia dorada más poderosa.\n\n¡Juégala para lograr una recompensa!	
+GAMEPLAY_BACON_TRIPLE_BUTTON_TUTORIAL	Combinar	
+GAMEPLAY_BACON_TRIPLE_TITLE_TUTORIAL	¡Mejora triple!	
+GAMEPLAY_BACON_TRIPLES_ICON	Triples	
+GAMEPLAY_BACON_WIN_STREAK_ICON	Racha de victorias	
+GAMEPLAY_BURNED_CARDS_HISTORY_TEXT	Intentar robar una carta con la mano llena provoca que se destruya esa carta.	
+GAMEPLAY_BURNED_CARDS_TITLE	Cartas quemadas	
+GAMEPLAY_CHOOSE_ONE	Elige una	will be displayed for card choices e.g. tracking
+GAMEPLAY_CHOOSE_ONE_ADAPT_ALL_MINIONS	Elige una para todos tus esbirros:	
+GAMEPLAY_CHOOSE_ONE_ADAPT_ALL_MURLOCS	Elige una para todos tus múrlocs:	
+GAMEPLAY_CHOOSE_ONE_ADAPT_ALL_RECRUITS	Elige una para todos tus reclutas:	
+GAMEPLAY_CHOOSE_ONE_HERO_POWER	Elige uno	will be displayed for choosing a Hero Power e.g. Sir Finley Mrrgglton
+GAMEPLAY_COIN_TOSS_LOST	Tienes una carta más	
+GAMEPLAY_COIN_TOSS_WON	Tú juegas primero	
+GAMEPLAY_COPY_DEATHRATTLE	Último aliento copiado de {0}.	
+GAMEPLAY_DIAMOND_SPELLSTONE_1	<i>(Lanza 4 hechizos para mejorarlo).</i>	
+GAMEPLAY_DIAMOND_SPELLSTONE_2	<i>(Lanza 3 hechizos más para mejorarlo).</i>	
+GAMEPLAY_DIAMOND_SPELLSTONE_3	<i>(Lanza 2 hechizos más para mejorarlo).</i>	
+GAMEPLAY_DIAMOND_SPELLSTONE_4	<i>(Lanza 1 hechizo más para mejorarlo).</i>	
+GAMEPLAY_DISCONNECT_BODY	Partida completada y grabada. Reinicia Hearthstone para continuar.	
+GAMEPLAY_DISCONNECT_BODY_RESET	Partida completada y grabada. Restaurando la conexión con los servidores de Hearthstone.	
+GAMEPLAY_DISCONNECT_HEADER	Desconectado	
+GAMEPLAY_DISCOVER_JUGGERNAUT	Elige a qué capitán enfrentarte...	
+GAMEPLAY_DISCOVER_MYSTERY	¿Qué ha elegido tu oponente?	
+GAMEPLAY_DISCOVER_OVERRIDE_EXPLORER_RETRAINING	Elegir un nuevo poder de héroe	
+GAMEPLAY_DISCOVER_OVERRIDE_FRIENDLY_SMITH	Añadir al mazo y obtener +2/+2	
+GAMEPLAY_DISCOVER_OVERRIDE_HIRING_REPLACEMENTS	Reemplazar con	
+GAMEPLAY_DISCOVER_OVERRIDE_KINDLE	Eliminar del mazo	
+GAMEPLAY_DISCOVER_OVERRIDE_PARTY_OF_FOUR	Elegir un tipo de esbirro enemigo	
+GAMEPLAY_DISCOVER_OVERRIDE_RECRUIT_A_VETERAN	Añadir al mazo	
+GAMEPLAY_DISCOVER_OVERRIDE_RIDDLE_OF_THE_SPHINX	Adivinar	
+GAMEPLAY_DISCOVER_OVERRIDE_STUDY_BREAK	Añadir al mazo y meter en la mano inicial	
+GAMEPLAY_DISCOVER_OVERRIDE_THE_UPPER_HAND	Elegir uno para reducir el coste	
+GAMEPLAY_DONE_TURN	HECHO	
+GAMEPLAY_EMOTE_LABEL_DISABLED_EMOTES	...	
+GAMEPLAY_EMOTE_LABEL_FIREWORKS	Guau	
+GAMEPLAY_EMOTE_LABEL_GREETINGS	Saludo	
+GAMEPLAY_EMOTE_LABEL_OOPS	Ay	
+GAMEPLAY_EMOTE_LABEL_SORRY	Perdón	
+GAMEPLAY_EMOTE_LABEL_THANKS	Gracias	
+GAMEPLAY_EMOTE_LABEL_THREATEN	Amenaza	
+GAMEPLAY_EMOTE_LABEL_WELL_PLAYED	Bien jugado	
+GAMEPLAY_EMOTE_LABEL_WOW	Guau	
+GAMEPLAY_EMOTE_SQUELCH	Silenciar	
+GAMEPLAY_EMOTE_UNSQUELCH	No silenciar	
+GAMEPLAY_END_OF_GAME_DEFEAT	¡Derrota!	
+GAMEPLAY_END_OF_GAME_DEFEAT_MAYBE	¿Derrota?	
+GAMEPLAY_END_OF_GAME_PLACE_1	¡1er puesto!	
+GAMEPLAY_END_OF_GAME_PLACE_2	¡2.º puesto!	
+GAMEPLAY_END_OF_GAME_PLACE_3	¡3er puesto!	
+GAMEPLAY_END_OF_GAME_PLACE_4	¡4.º puesto!	
+GAMEPLAY_END_OF_GAME_PLACE_5	5.º puesto	
+GAMEPLAY_END_OF_GAME_PLACE_6	6.º puesto	
+GAMEPLAY_END_OF_GAME_PLACE_7	7.º puesto	
+GAMEPLAY_END_OF_GAME_PLACE_8	8.º puesto	
+GAMEPLAY_END_OF_GAME_RATING	Clasificación	
+GAMEPLAY_END_OF_GAME_TIE_ESCAPED	¡Has escapado!	
+GAMEPLAY_END_OF_GAME_VICTORY	¡Victoria!	
+GAMEPLAY_END_OF_GAME_VICTORY_MAYBE	¿Victoria?	
+GAMEPLAY_END_TURN	LISTO	
+GAMEPLAY_END_TURN_BUTTON_COUNTDOWN	{0} s	0 = An integer of the number of seconds left in the turn.
+GAMEPLAY_ENEMY_TURN	ESPERANDO	
+GAMEPLAY_ERROR_PLAY_REJECTED	¡Demasiado tarde! Tu turno ha terminado.	
+GAMEPLAY_FATIGUE_HISTORY_TEXT	Intentar robar cartas de un mazo vacío inflige daño creciente a tu héroe.	
+GAMEPLAY_FATIGUE_TEXT	¡Se han acabado las cartas! Recibe {0} p. de daño.	
+GAMEPLAY_FATIGUE_TITLE	Fatiga	
+GAMEPLAY_GOLDHERO_WINS	victorias	
+GAMEPLAY_HIDDEN_PLAYER_NAME	Tú	
+GAMEPLAY_HISTORY_CREATED_BY	Creada por\n{0}	0=name of a card
+GAMEPLAY_JASPER_SPELLSTONE_1	<i>(Obtén 3 p. de armadura para mejorarlo).</i>	
+GAMEPLAY_JASPER_SPELLSTONE_2	<i>(Obtén 2 p. de armadura más para mejorarlo).</i>	
+GAMEPLAY_JASPER_SPELLSTONE_3	<i>(Obtén 1 p. de armadura más para mejorarlo).</i>	
+GAMEPLAY_LOOT_526d_DARKNESS_1	¡Cuando tu oponente\nrobe 3 velas, este esbirro se despertará!	
+GAMEPLAY_LOOT_526d_DARKNESS_2	¡Cuando tu oponente\nrobe 2 velas más,\neste esbirro se despertará!	
+GAMEPLAY_LOOT_526d_DARKNESS_3	¡Cuando tu oponente\nrobe 1 vela más,\neste esbirro se despertará!	
+GAMEPLAY_MANA_COUNTER	{0}/{1}	0=unused mana 1=current total mana
+GAMEPLAY_MISSING_OPPONENT_NAME	Tu oponente	
+GAMEPLAY_MOBILE_BATTLECRY_CANCELED	Grito de batalla cancelado.	
+GAMEPLAY_MOBILE_TARGETING_CANCELED	Selección de objetivo cancelada.	
+GAMEPLAY_MULLIGAN_REPLACE	SUSTITUIDA	
+GAMEPLAY_MULLIGAN_STARTING_HAND	Mano inicial	
+GAMEPLAY_MULLIGAN_SUBTITLE	¿Quieres cambiar alguna carta?	
+GAMEPLAY_MULLIGAN_WAITING	El oponente está decidiendo...	
+GAMEPLAY_NEXT_TURN	TURNO EXTRA	
+GAMEPLAY_ONYX_SPELLSTONE_1	<i>(Juega 3 cartas con <b>Último aliento</b> para mejorarlo).</i>	
+GAMEPLAY_ONYX_SPELLSTONE_2	<i>(Juega 2 cartas más con <b>Último aliento</b> para mejorarlo).</i>	
+GAMEPLAY_ONYX_SPELLSTONE_3	<i>(Juega 1 carta más con <b>Último aliento</b> para mejorarlo).</i>	
+GAMEPLAY_PEARL_SPELLSTONE_1	<i>(Restaura 3 p. de salud para mejorarla).</i>	
+GAMEPLAY_PEARL_SPELLSTONE_2	<i>(Restaura 2 p. de salud más para mejorarla).</i>	
+GAMEPLAY_PEARL_SPELLSTONE_3	<i>(Restaura 1 p. de salud más para mejorarla).</i>	
+GAMEPLAY_PlayErrors_REQ_ATTACK_GREATER_THAN_0	Un personaje sin valor de ataque no puede atacar	
+GAMEPLAY_PlayErrors_REQ_ATTACKER_CAN_ATTACK	Ese personaje no puede atacar	
+GAMEPLAY_PlayErrors_REQ_ATTACKER_NOT_FROZEN	Los personajes congelados no pueden atacar	
+GAMEPLAY_PlayErrors_REQ_BOUGHT_MINION_THIS_TURN	Aún no has comprado esbirros en este turno	
+GAMEPLAY_PlayErrors_REQ_CAN_BE_ATTACKED	No se puede atacar a ese personaje	
+GAMEPLAY_PlayErrors_REQ_CAN_BE_TARGETED_BY_BATTLECRIES	No puede ser objetivo de gritos de batalla	
+GAMEPLAY_PlayErrors_REQ_CAN_BE_TARGETED_BY_COMBOS	No puede ser objetivo de combos.	
+GAMEPLAY_PlayErrors_REQ_CAN_BE_TARGETED_BY_HERO_POWERS	No puede ser objetivo de poderes de héroe	
+GAMEPLAY_PlayErrors_REQ_CAN_BE_TARGETED_BY_OPPONENTS	Ese personaje no puede ser el objetivo	
+GAMEPLAY_PlayErrors_REQ_CAN_BE_TARGETED_BY_SPELLS	No puede ser objetivo de hechizos	
+GAMEPLAY_PlayErrors_REQ_CANNOT_PLAY_THIS	No puedes jugar eso	
+GAMEPLAY_PlayErrors_REQ_CHARGE_TARGET	Elige a un personaje con Cargar	
+GAMEPLAY_PlayErrors_REQ_DAMAGED_TARGET	Elige a un personaje dañado	
+GAMEPLAY_PlayErrors_REQ_DRAG_TO_PLAY	Debes apuntar a un objetivo	
+GAMEPLAY_PlayErrors_REQ_ENCHANTED_TARGET	Elige a un personaje encantado	
+GAMEPLAY_PlayErrors_REQ_ENEMY_TARGET	Elige a un enemigo	
+GAMEPLAY_PlayErrors_REQ_ENEMY_TARGET_NOT_IMMUNE	Ese personaje es inmune	
+GAMEPLAY_PlayErrors_REQ_ENEMY_WEAPON_EQUIPPED	Tu enemigo debe tener un arma	
+GAMEPLAY_PlayErrors_REQ_ENOUGH_COIN	Falta oro	
+GAMEPLAY_PlayErrors_REQ_ENOUGH_HEALTH	Te falta salud	
+GAMEPLAY_PlayErrors_REQ_ENOUGH_MANA	Te falta maná	
+GAMEPLAY_PlayErrors_REQ_ENTIRE_ENTOURAGE_NOT_IN_PLAY	Ya tienes un tótem de cada	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_DEATHRATTLE_MINION_DIED_THIS_GAME	No ha muerto ningún esbirro amistoso con Último aliento en esta partida	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_MINION_DIED_THIS_GAME	No ha muerto ningún esbirro amistoso en esta partida	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_MINION_DIED_THIS_TURN	No han muerto esbirros amistosos en este turno	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_MINION_OF_RACE_DIED_THIS_TURN	No ha muerto ningún esbirro amistoso válido en este turno	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_MINION_OF_RACE_IN_HAND	No tienes esbirros válidos en tu mano	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_MINIONS_OF_RACE_DIED_THIS_GAME	No ha muerto ningún esbirro amistoso válido en esta partida	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_REBORN_MINION_DIED_THIS_GAME	No ha muerto ningún esbirro amistoso con Renacer en esta partida	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_TARGET	Elige a un personaje amistoso	
+GAMEPLAY_PlayErrors_REQ_FROZEN_TARGET	Elige a un personaje congelado	
+GAMEPLAY_PlayErrors_REQ_HAND_NOT_FULL	Tu mano está llena	
+GAMEPLAY_PlayErrors_REQ_HERO_OR_MINION_TARGET	El objetivo debe ser un personaje	
+GAMEPLAY_PlayErrors_REQ_HERO_TARGET	El objetivo debe ser un héroe	
+GAMEPLAY_PlayErrors_REQ_LEGENDARY_TARGET	El objetivo debe ser un esbirro legendario	
+GAMEPLAY_PlayErrors_REQ_MAX_QUESTS	Solo puedes tener {0} |4(misión, misiones)	
+GAMEPLAY_PlayErrors_REQ_MAX_SECRETS	Solo puedes tener {0} |4(secreto,secretos)	
+GAMEPLAY_PlayErrors_REQ_MINIMUM_ENEMY_MINIONS	El enemigo debe tener al menos {0} |4(esbirro,esbirros)	
+GAMEPLAY_PlayErrors_REQ_MINIMUM_TOTAL_MINIONS	Debe haber al menos {0} |4(esbirro,esbirros) en el campo de batalla	
+GAMEPLAY_PlayErrors_REQ_MINION_CAP	No puedes tener más esbirros	
+GAMEPLAY_PlayErrors_REQ_MINION_CAP_IF_TARGET_AVAILABLE	No puedes tener más esbirros	
+GAMEPLAY_PlayErrors_REQ_MINION_DIED_THIS_GAME	No han muerto esbirros en esta partida	
+GAMEPLAY_PlayErrors_REQ_MINION_OR_ENEMY_HERO	Elige a un esbirro o al héroe enemigo	
+GAMEPLAY_PlayErrors_REQ_MINION_SLOT_OR_MANA_CRYSTAL_SLOT	No puedes tener más esbirros ni\ncristales de maná	
+GAMEPLAY_PlayErrors_REQ_MINION_TARGET	Elige a un esbirro	
+GAMEPLAY_PlayErrors_REQ_MUST_PLAY_OTHER_CARD_FIRST	Primero debes jugar una carta	
+GAMEPLAY_PlayErrors_REQ_MUST_TARGET_TAUNTER	El objetivo debe ser un esbirro con Provocar.	
+GAMEPLAY_PlayErrors_REQ_NONSELF_TARGET	El esbirro no puede ser su propio objetivo	
+GAMEPLAY_PlayErrors_REQ_NONSTEALTH_ENEMY_TARGET	No se puede seleccionar como objetivo ni atacar a los personajes en sigilo	
+GAMEPLAY_PlayErrors_REQ_NOT_DISABLED_HERO_POWER	Tu poder de héroe está anulado.	
+GAMEPLAY_PlayErrors_REQ_NOT_EXHAUSTED_ACTIVATE	Ese personaje ya ha atacado	
+GAMEPLAY_PlayErrors_REQ_NOT_EXHAUSTED_HERO_POWER	Los poderes de héroe solo se pueden usar una vez por turno	
+GAMEPLAY_PlayErrors_REQ_NOT_MINION_JUST_PLAYED	Los esbirros no pueden atacar en el turno \nen el que entran	
+GAMEPLAY_PlayErrors_REQ_NUM_MINION_SLOTS	¡Tienes demasiados esbirros para jugar esa carta!	
+GAMEPLAY_PlayErrors_REQ_OPPONENT_PLAYED_CARDS_THIS_GAME	Tu oponente no ha jugado ninguna carta	
+GAMEPLAY_PlayErrors_REQ_SECRET_ZONE_CAP	Solo puedes tener {0} secretos o misiones	
+GAMEPLAY_PlayErrors_REQ_SOLD_MINION_THIS_TURN	Aún no has vendido esbirros en este turno	
+GAMEPLAY_PlayErrors_REQ_STEALTHED_TARGET	Elige a un personaje en sigilo	
+GAMEPLAY_PlayErrors_REQ_SUBCARD_IS_PLAYABLE	Ninguna opción es válida	
+GAMEPLAY_PlayErrors_REQ_TARGET_ATTACKED_THIS_TURN	El objetivo debe ser un personaje que ya haya atacado	
+GAMEPLAY_PlayErrors_REQ_TARGET_EXACT_COST	Elige a un esbirro con un coste de {0}	
+GAMEPLAY_PlayErrors_REQ_TARGET_FOR_COMBO	Eso no se puede jugar sin objetivo	
+GAMEPLAY_PlayErrors_REQ_TARGET_FOR_NO_COMBO	Eso no se puede jugar sin objetivo	
+GAMEPLAY_PlayErrors_REQ_TARGET_IF_AVAILABE_AND_ELEMENTAL_PLAYED_LAST_TURN	Eso no se puede jugar sin objetivo	
+GAMEPLAY_PlayErrors_REQ_TARGET_IF_AVAILABLE	Eso no se puede jugar sin objetivo	
+GAMEPLAY_PlayErrors_REQ_TARGET_IF_AVAILABLE_AND_DRAGON_IN_HAND	Eso no se puede jugar sin objetivo	
+GAMEPLAY_PlayErrors_REQ_TARGET_IF_AVAILABLE_AND_MINIMUM_FRIENDLY_MINIONS	Eso no se puede jugar sin objetivo	
+GAMEPLAY_PlayErrors_REQ_TARGET_IF_AVAILABLE_AND_MINIMUM_FRIENDLY_SECRETS	Eso no se puede jugar sin objetivo	
+GAMEPLAY_PlayErrors_REQ_TARGET_MAGNET	Hay un esbirro que debe ser el objetivo	
+GAMEPLAY_PlayErrors_REQ_TARGET_MAX_ATTACK	Elige a un personaje con {0} p. de ataque o menos	
+GAMEPLAY_PlayErrors_REQ_TARGET_MIN_ATTACK	Elige a un personaje con {0} p. de ataque o más	
+GAMEPLAY_PlayErrors_REQ_TARGET_NON_TRIPLED_MINION	Ese esbirro ya es dorado.	
+GAMEPLAY_PlayErrors_REQ_TARGET_NOT_DAMAGEABLE_ONLY_BY_WEAPONS	Este personaje solo puede recibir daño de armas	
+GAMEPLAY_PlayErrors_REQ_TARGET_NOT_VAMPIRE	Ese esbirro ya es un vampiro	
+GAMEPLAY_PlayErrors_REQ_TARGET_TAUNTER_CHARACTER	Se interpone un personaje con Provocar.	
+GAMEPLAY_PlayErrors_REQ_TARGET_TAUNTER_MINION	Se interpone un esbirro con Provocar.	
+GAMEPLAY_PlayErrors_REQ_TARGET_TO_ATTACK	No hay objetivos para atacar	
+GAMEPLAY_PlayErrors_REQ_TARGET_TO_PLAY	Eso no se puede jugar sin objetivo	
+GAMEPLAY_PlayErrors_REQ_TARGET_WITH_BATTLECRY	Selecciona un personaje con grito de batalla	
+GAMEPLAY_PlayErrors_REQ_TARGET_WITH_DEATHRATTLE	Selecciona un personaje con último aliento	
+GAMEPLAY_PlayErrors_REQ_TARGET_WITH_RACE	No es la raza correcta	
+GAMEPLAY_PlayErrors_REQ_UNDAMAGED_TARGET	El objetivo debe ser un personaje que no haya recibido daño.	
+GAMEPLAY_PlayErrors_REQ_UNIQUE_SECRET	Esta carta ya está en juego	
+GAMEPLAY_PlayErrors_REQ_WEAPON_EQUIPPED	Debes tener un arma	
+GAMEPLAY_RESTART_PUZZLES	CARGANDO PUZLE...	
+GAMEPLAY_RUBY_SPELLSTONE_1	<i>(Juega 2 elementales para mejorarlo).</i>	
+GAMEPLAY_RUBY_SPELLSTONE_2	<i>(Juega 1 elemental más para mejorarlo).</i>	
+GAMEPLAY_SAPPHIRE_SPELLSTONE_1	<i>(<b>Sobrecarga</b> 3 cristales de maná para mejorarlo).</i>	
+GAMEPLAY_SAPPHIRE_SPELLSTONE_2	<i>(<b>Sobrecarga</b> 2 cristales de maná más para mejorarlo).</i>	
+GAMEPLAY_SAPPHIRE_SPELLSTONE_3	<i>(<b>Sobrecarga</b> 1 cristal de maná más para mejorarlo).</i>	
+GAMEPLAY_SCORE_SCREEN_TITLE_CONGRATS	¡Enhorabuena!	
+GAMEPLAY_SECRET_BANNER_TITLE	¡Secreto!	
+GAMEPLAY_SECRET_DESC	Esto está oculto hasta que suceda una acción secreta... ¡Mantente alerta!	
+GAMEPLAY_SECRET_NAME	Secreto	
+GAMEPLAY_SECRET_NAME_HUNTER	Secreto de cazador	
+GAMEPLAY_SECRET_NAME_MAGE	Secreto de mago	
+GAMEPLAY_SECRET_NAME_PALADIN	Secreto de paladín	
+GAMEPLAY_SECRET_NAME_ROGUE	Secreto de pícaro	
+GAMEPLAY_SPECTATOR_DISCONNECT_BODY	Te has desconectado. Reinicia Hearthstone para continuar. Puede que tengas que reiniciar el modo Espectador.	
+GAMEPLAY_SPECTATOR_DISCONNECT_BODY_RESET	Te has desconectado. Restaurando la conexión. Puede que tengas que reiniciar el modo Espectador.	
+GAMEPLAY_TOOLTIP_BACON_GOLD	Gasta oro para comprar esbirros.	
+GAMEPLAY_TOOLTIP_DECK_DESCRIPTION	Tienes {0} |4(carta,cartas) en el mazo.	
+GAMEPLAY_TOOLTIP_DECK_HEADLINE	Mazo	
+GAMEPLAY_TOOLTIP_ENEMYDECK_DESC	El mazo de tu oponente contiene {0} |4(carta,cartas).	
+GAMEPLAY_TOOLTIP_ENEMYDECK_HEADLINE	Mazo del enemigo	
+GAMEPLAY_TOOLTIP_ENEMYHAND_DESC	La mano de tu enemigo contiene {0} |4(carta,cartas).	0= number of cards in hand.
+GAMEPLAY_TOOLTIP_ENEMYHAND_DESC_SINGLE	La mano de tu enemigo contiene {0} |4(carta,cartas).	0= number of cards in hand.
+GAMEPLAY_TOOLTIP_ENEMYHAND_DESC_TUT	La mano de tu enemigo. Los jugadores roban una carta cada turno.	
+GAMEPLAY_TOOLTIP_ENEMYHAND_HEADLINE	Mano del enemigo	
+GAMEPLAY_TOOLTIP_FATIGUE_DECK_DESCRIPTION	¡Te has quedado sin cartas! A partir de ahora recibirás daño cada vez que intentes robar cartas.	
+GAMEPLAY_TOOLTIP_FATIGUE_DECK_HEADLINE	Fatiga	
+GAMEPLAY_TOOLTIP_FATIGUE_ENEMYDECK_DESCRIPTION	¡Tu oponente se ha quedado sin cartas! A partir de ahora recibirá daño cada vez que intente robar cartas.	
+GAMEPLAY_TOOLTIP_FATIGUE_ENEMYDECK_HEADLINE	Fatiga	
+GAMEPLAY_TOOLTIP_HAND_DESCRIPTION	Tienes {0} |4(carta,cartas) en tu mano.	
+GAMEPLAY_TOOLTIP_HAND_FULL_DESCRIPTION	¡Tienes {0} |4(carta,cartas) en tu mano! Tu mano está llena.	
+GAMEPLAY_TOOLTIP_HAND_FULL_HEADLINE	Mano llena	
+GAMEPLAY_TOOLTIP_HAND_HEADLINE	Mano	
+GAMEPLAY_TOOLTIP_MANA_COIN_DESCRIPTION	Gasta tus piezas de oro en cartas para manipular tu mazo.	
+GAMEPLAY_TOOLTIP_MANA_COIN_HEADLINE	Piezas de oro	
+GAMEPLAY_TOOLTIP_MANA_DESCRIPTION	Al comienzo de tu turno, obtendrás un cristal nuevo y se llenarán los que estén vacíos.	
+GAMEPLAY_TOOLTIP_MANA_HEADLINE	Cristales de maná	
+GAMEPLAY_TOOLTIP_MANA_OVERLOAD_DESCRIPTION	Has jugado una carta con Sobrecarga en el turno anterior.	
+GAMEPLAY_TOOLTIP_MANA_OVERLOAD_HEADLINE	Cristales de maná bloqueados	
+GAMEPLAY_TOT_109t_STASIS_DRAGON_1	Se despierta con <b>Embestir</b> tras dos turnos.	
+GAMEPLAY_TOT_109t_STASIS_DRAGON_2	Se despierta con <b>Embestir</b> en un turno.	
+GAMEPLAY_TRLA_TROLL_SHRINE_1	Turnos hasta\nque reviva: 3.	
+GAMEPLAY_TRLA_TROLL_SHRINE_2	Turnos hasta\nque reviva: 2.	
+GAMEPLAY_TRLA_TROLL_SHRINE_3	Turnos hasta\nque reviva: 1.	
+GAMEPLAY_UNDATAKAH1	{0}	
+GAMEPLAY_UNDATAKAH2	{0} y {1}	
+GAMEPLAY_UNDATAKAH3	{0}, {1} y {2}	
+GAMEPLAY_UNKNOWN_CREATED_BY	otra carta	
+GAMEPLAY_WIN_REWARD_PROGRESS	Victorias: {0}/{1}	
+GAMEPLAY_YOUR_TURN	Tu turno	
