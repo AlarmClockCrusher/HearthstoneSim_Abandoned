@@ -650,7 +650,7 @@ class ClericofScales(Minion):
 		return None
 		
 	def discoverDecided(self, option):
-		PRINT(self, "Spell ", option.name, " is drawn.")
+		PRINT(self, "Spell %s is drawn."%option.name)
 		self.Game.Hand_Deck.drawCard(self.ID, option)
 		
 		
@@ -690,7 +690,7 @@ class DarkProphecy(Spell):
 		return None
 		
 	def discoverDecided(self, option):
-		PRINT(self, "Minion", option.name, " to summon and give +3 Health is chosen.")
+		PRINT(self, "Minion %s to summon and give +3 Health is chosen."%option.name)
 		option.buffDebuff(0, 3)
 		self.Game.summonMinion(option, -1, self.ID)
 		
@@ -752,7 +752,7 @@ class Waxmancy(Spell):
 		return None
 		
 	def discoverDecided(self, option):
-		PRINT(self, "Minion", option.name, " to summon and give +3 Health is chosen.")
+		PRINT(self, "Battlecry minion %s is added to hand and costs (2) less."%option.name)
 		ManaModification(option, changeby=-2, changeto=-1).applies()
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
@@ -908,7 +908,7 @@ class TwistedKnowledge(Spell):
 		return None
 		
 	def discoverDecided(self, option):
-		PRINT(self, "Warlock card", option.name, " is put into player's hand.")
+		PRINT(self, "Warlock card %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		

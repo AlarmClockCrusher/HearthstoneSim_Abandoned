@@ -65,7 +65,6 @@ class TriggerinHand:
 		self.temp = False
 		
 	def connect(self):
-		PRINT(self.minion, "TriggerinHand {} connects".format(self))
 		for signal in self.signals:
 			self.entity.Game.triggersinHand[self.entity.ID].append((self, signal))
 			

@@ -1790,7 +1790,7 @@ class FontofPower(Spell):
 		return None
 		
 	def discoverDecided(self, option):
-		PRINT(self, "Mage Minion ", option.name, " is put into player's hand.")
+		PRINT(self, "Mage Minion %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -1818,7 +1818,7 @@ class ApexisSmuggler(Minion):
 		self.triggersonBoard = [Trigger_ApexisSmuggler(self)]
 		
 	def discoverDecided(self, option):
-		PRINT(self, "Spell", option.name, " is put into player's hand")
+		PRINT(self, "Spell %s is put into player's hand"%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -2345,7 +2345,7 @@ class Renew(Spell):
 		return target
 		
 	def discoverDecided(self, option):
-		PRINT(self, "Spell ", option.name, " is put into player's hand.")
+		PRINT(self, "Spell %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -2679,7 +2679,7 @@ class ShadowjewelerHanar(Minion):
 		self.triggersonBoard = [Trigger_ShadowjewelerHanar(self)]
 		
 	def discoverDecided(self, option):
-		PRINT(self, "Secret", option.name, " is put into player's hand")
+		PRINT(self, "Secret %s is put into player's hand"%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -2878,7 +2878,7 @@ class Marshspawn(Minion):
 		return None
 		
 	def discoverDecided(self, option):
-		PRINT(self, "Spell ", option.name, " is put into player's hand.")
+		PRINT(self, "Spell %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
