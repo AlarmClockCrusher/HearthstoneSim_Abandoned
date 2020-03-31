@@ -545,7 +545,14 @@ class GUI:
 			self.output.insert(tk.END, string)
 			self.output.see("end")
 		except:
-			print("IUnput is not a single string")
+			self.output.insert(tk.END, "|||||||||||||")
+			self.output.insert(tk.END, "|||||||||||||")
+			self.output.insert(tk.END, "|||||||||||||")
+			self.output.insert(tk.END, "PRINT options is wrong. Continue nonetheless")
+			self.output.insert(tk.END, "|||||||||||||")
+			self.output.insert(tk.END, "|||||||||||||")
+			self.output.insert(tk.END, "|||||||||||||")
+			self.output.see("end")
 		
 	def cancelSelection(self):
 		if self.UI != 3: #只有非发现状态下才能取消选择
