@@ -9,7 +9,19 @@ def extractfrom(target, listObject):
 def fixedList(listObject):
 	return listObject[0:len(listObject)]
 	
-	
+def PRINT(obj, string):
+	if hasattr(obj, "GUI"):
+		GUI = obj.GUI
+	elif hasattr(obj, "Game"):
+		GUI = obj.Game.GUI
+	elif hasattr(obj, "entity"):
+		GUI = obj.entity.Game.GUI
+		
+	if GUI != None:
+		GUI.printInfo(string)
+	else:
+		print(string)
+		
 #对于随从的场上扳机，其被复制的时候所有暂时和非暂时的扳机都会被复制。
 #但是随从返回其额外效果的时候，只有其非暂时场上扳机才会被返回（永恒祭司），暂时扳机需要舍弃。
 class TriggeronBoard:
@@ -53,7 +65,7 @@ class TriggerinHand:
 		self.temp = False
 		
 	def connect(self):
-		print("TriggerinHand", self, " connects")
+		PRINT(self.minion, "TriggerinHand {} connects".format(self))
 		for signal in self.signals:
 			self.entity.Game.triggersinHand[self.entity.ID].append((self, signal))
 			
@@ -120,7 +132,7 @@ class BuffAura_Receiver:
 		self.receiver.stat_AuraAffected[1] += self.healthChange
 		self.receiver.stat_AuraAffected[2].append(self)
 		self.source.auraAffected.append((self.receiver, self))
-		print("Minion %s gains buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
+		PRINT(self.minion, "Minion %s gains buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
 	#Cleanse the aura_Receiver from the receiver and delete the (receiver, aura_Receiver) from source aura's list.
 	def effectClear(self):
 		self.receiver.statChange(-self.attackChange, -self.healthChange)
@@ -128,7 +140,7 @@ class BuffAura_Receiver:
 		self.receiver.stat_AuraAffected[1] -= self.healthChange
 		extractfrom(self, self.receiver.stat_AuraAffected[2])
 		extractfrom((self.receiver, self), self.source.auraAffected)
-		print("Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
+		PRINT(self.minion, "Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
 	#Invoke when the receiver is copied and because the aura_Dealer won't have reference to this copied receiver,
 	#remove this copied aura_Receiver from copied receiver's stat_AuraAffected[2].
 	def effectDiscard(self):
@@ -136,7 +148,7 @@ class BuffAura_Receiver:
 		self.receiver.stat_AuraAffected[0] -= self.attackChange
 		self.receiver.stat_AuraAffected[1] -= self.healthChange
 		extractfrom(self, self.receiver.stat_AuraAffected[2])
-		print("Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
+		PRINT(self.minion, "Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
 		
 	def selfCopy(self, recipientMinion): #The recipient of the aura is the same minion when copying it.
 		#Source won't change. 
@@ -173,12 +185,12 @@ class BuffAura_Dealer_Adjacent:
 		
 	def applies(self, subject):
 		if self.applicable(subject) and subject != self.minion:
-			print("Minion %s gains the %d/%d aura from %s"%(subject.name, self.attack, self.health, self.minion))
+			PRINT(self.minion, "Minion %s gains the %d/%d aura from %s"%(subject.name, self.attack, self.health, self.minion))
 			aura_Receiver = BuffAura_Receiver(subject, self, self.attack, self.health)
 			aura_Receiver.effectStart()
 			
 	def auraAppears(self):
-		print(self.minion.name + "appears and starts its buff aura", self)
+		PRINT(self.minion, "{} appears and starts its buff aura {}".format(self.minion.name, self))
 		for minion in self.minion.Game.findAdjacentMinions(self.minion)[0]:
 			self.applies(minion)
 			
@@ -191,7 +203,7 @@ class BuffAura_Dealer_Adjacent:
 		
 	#When the aura object is no longer referenced, it vanishes automatically.
 	def auraDisappears(self):
-		print(self.minion.name, " disappears and removes its effect.")
+		PRINT(self.minion, "%s disappears and removes its effect."%self.minion.name)
 		for minion, aura_Receiver in fixedList(self.auraAffected):
 			aura_Receiver.effectClear()
 			
@@ -232,12 +244,12 @@ class BuffAura_Dealer_All:
 		
 	def applies(self, subject):
 		if self.applicable(subject) and subject != self.minion:
-			print("Minion %s gains the %d/%d aura from %s"%(subject.name, self.attack, self.health, self.minion))
+			PRINT(self.minion, "Minion %s gains the %d/%d aura from %s"%(subject.name, self.attack, self.health, self.minion))
 			aura_Receiver = BuffAura_Receiver(subject, self, self.attack, self.health)
 			aura_Receiver.effectStart()
 			
 	def auraAppears(self):
-		print(self.minion.name + "appears and starts its buff aura", self)
+		PRINT(self.minion, "{} appears and starts its buff aura {}".format(self.minion.name, self))
 		for minion in self.minion.Game.minionsonBoard(self.minion.ID):
 			self.applies(minion)
 			
@@ -247,7 +259,7 @@ class BuffAura_Dealer_All:
 		
 	#When the aura object is no longer referenced, it vanishes automatically.
 	def auraDisappears(self):
-		print(self.minion.name, " disappears and removes its effect.")
+		PRINT(self.minion, "%s disappears and removes its effect."%self.minion.name)
 		for minion, aura_Receiver in fixedList(self.auraAffected):
 			aura_Receiver.effectClear()
 			
@@ -285,7 +297,7 @@ class WarsongCommander_Aura:
 	def applies(self, signal, subject):
 		if signal == "MinionAppears":
 			if subject.keyWords["Charge"] > 0:
-				print("Minion %s gains the +1 Attack aura from Warsong Commander"%subject.name)
+				PRINT(self.minion, "Minion %s gains the +1 Attack aura from Warsong Commander"%subject.name)
 				aura_Receiver = BuffAura_Receiver(subject, self, 1, 0)
 				aura_Receiver.effectStart()
 		else: #signal == "MinionChargeKeywordChange"
@@ -305,7 +317,7 @@ class WarsongCommander_Aura:
 						break
 						
 	def auraAppears(self):
-		print(self.minion.name + "appears and starts its buff aura", self)
+		PRINT(self.minion, "{} appears and starts its buff aura {}".format(self.minion.name, self))
 		for minion in self.minion.Game.minionsonBoard(self.minion.ID):
 			self.applies("MinionAppears", minion) #The signal here is a placeholder and directs the function to first-time aura applicatioin
 			
@@ -316,7 +328,7 @@ class WarsongCommander_Aura:
 		
 	#When the aura object is no longer referenced, it vanishes automatically.
 	def auraDisappears(self):
-		print(self.minion.name, " disappears and removes its effect.")
+		PRINT(self, "%s disappears and removes its effect."%self.minion.name)
 		for minion, aura_Receiver in fixedList(self.auraAffected):
 			aura_Receiver.effectClear()
 			
@@ -340,7 +352,7 @@ class HasAura_Receiver:
 		self.receiver.getsKeyword(self.keyWord)
 		self.receiver.keyWords_AuraAffected["Auras"].append(self)
 		self.source.auraAffected.append((self.receiver, self))
-		print("Minion %s gains %s from Aura "%(self.receiver.name, self.source))
+		PRINT(self.minion, "Minion {} gains {} from Aura {}".format(self.receiver.name, self.keyWord, self.source))
 	#The aura on the receiver is cleared and the source will remove this receiver and aura_Receiver from it's list.
 	def effectClear(self):
 		if self.receiver.keyWords_AuraAffected[self.keyWord] > 0:
@@ -386,12 +398,12 @@ class HasAura_Dealer:
 		
 	def applies(self, subject):
 		if self.applicable(subject):
-			print("Minion %s gains keyWord %s from %s"%(subject.name, self.keyWord, self.minion))
+			PRINT(self.minion, "Minion %s gains keyWord %s from %s"%(subject.name, self.keyWord, self.minion))
 			aura_Receiver = HasAura_Receiver(subject, self, self.keyWord)
 			aura_Receiver.effectStart()
 			
 	def auraAppears(self):
-		print(self.minion.name,"appears and starts it's aura", self)
+		PRINT(self.minion, "{} appears and starts it's aura {}".format(self.minion.name, self))
 		for minion in self.minion.Game.minionsonBoard(self.minion.ID):
 			self.applies(minion)
 			
@@ -399,7 +411,7 @@ class HasAura_Dealer:
 		self.minion.Game.triggersonBoard[self.minion.ID].append((self, "MinionAppears"))
 		
 	def auraDisappears(self):
-		print("Aura", self, "disappears and removes its effect.")
+		PRINT(self.minion, "Aura {} disappears and removes its effect.".format(self))
 		for minion, aura_Receiver in fixedList(self.auraAffected):
 			aura_Receiver.effectClear()
 			
@@ -435,7 +447,7 @@ class MechsHaveRush:
 			aura_Receiver.effectStart()
 			
 	def auraAppears(self):
-		print("Dr. Boom. Mad Genius' aura starts it's effect.")
+		PRINT(self, "Dr. Boom. Mad Genius' aura starts it's effect.")
 		for minion in self.Game.minionsonBoard(self.ID):
 			self.applies(minion)
 			
@@ -494,7 +506,7 @@ class WeaponBuffAura_SpitefulSmith:
 		self.applies(subject)
 		
 	def applies(self, subject):
-		print("Weapon gains +2 attack from ", self.minion)
+		PRINT(self.minion, "Weapon gains +2 attack from %s"%self.minion.name)
 		aura_Receiver = WeaponBuffAura_Receiver(subject, self)
 		aura_Receiver.effectStart()
 		
@@ -509,7 +521,7 @@ class WeaponBuffAura_SpitefulSmith:
 			self.minion.Game.triggersonBoard[self.minion.ID].append((self, "WeaponEquipped"))
 			
 	def auraDisappears(self):
-		print("WeaponBuffAura_Dealer is shut down. Now remove its effect on weapons, if any.")
+		PRINT(self.minion, "WeaponBuffAura_Dealer is shut down. Now remove its effect on weapons, if any.")
 		for weapon, aura_Receiver in fixedList(self.auraAffected):
 			aura_Receiver.effectClear()
 			
@@ -641,7 +653,7 @@ class Trigger_Echo(TriggerinHand):
 		return self.entity.inHand #Echo disappearing should trigger at the end of any turn
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("At the end of turn, Echo card %s disappears."%self.entity.name)
+		PRINT(self, "At the end of turn, Echo card %s disappears."%self.entity.name)
 		self.entity.Game.Hand_Deck.extractfromHand(self.entity)
 		
 		
@@ -655,7 +667,7 @@ class Trigger_WorgenShift_FromHuman(TriggerinHand):
 		return self.entity.inHand and ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("At the end of turn, Spellshifter transforms for into a worgen")
+		PRINT(self, "At the end of turn, %s transforms for into a worgen"%self.entity.name)
 		worgen = self.worgenType(self.entity.Game, self.entity.ID)
 		worgen.statReset(self.entity.health_Enchant, self.entity.attack_Enchant)
 		worgen.identity = self.entity.identity
@@ -675,7 +687,7 @@ class Trigger_WorgenShift_FromWorgen(TriggerinHand):
 		return self.entity.inHand and ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("At the end of turn, Spellshifter transforms for into a worgen")
+		PRINT(self, "At the end of turn, %s transforms for into a worgen"%self.entity.name)
 		human = self.humanType(self.entity.Game, self.entity.ID)
 		human.statReset(self.entity.health_Enchant, self.entity.attack_Enchant)
 		human.identity = self.entity.identity
@@ -696,7 +708,7 @@ class QuestTrigger(TriggeronBoard):
 		
 	def connect(self):
 		for signal in self.signals:
-			print("Quest %s now registers trigger"%self.entity, self, signal)
+			PRINT(self, "Quest {} now registers trigger {}".format(self.entity, (self, signal)))
 			self.entity.Game.triggersonBoard[self.entity.ID].append((self, signal))
 			
 	def disconnect(self):

@@ -25,7 +25,7 @@ def PRINT(obj, string):
 	if GUI != None:
 		GUI.printInfo(string)
 	else:
-		print(self, string)
+		print(string)
 		
 class SearingTotem(Minion):
 	Class, race, name = "Shaman", "Totem", "Searing Totem"
@@ -188,7 +188,7 @@ class Reinforce(HeroPower):
 	mana, name, requireTarget = 2, "Reinforce", False
 	index = "Paladin~Hero Power~2~Reinforce"
 	description = "Summon a 1/1 Silver Hand Recruit"
-	def available(self, choice=0):
+	def available(self):
 		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
 			return False
 		if self.Game.spaceonBoard(self.ID) < 1:
@@ -205,7 +205,7 @@ class TheSilverHand(HeroPower):
 	mana, name, requireTarget = 2, "The Silver Hand", False
 	index = "Paladin~Hero Power~2~The Silver Hand"
 	description = "Summon two 1/1 Silver Hand Recruits"
-	def available(self, choice=0):
+	def available(self):
 		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
 			return False
 		if self.Game.spaceonBoard(self.ID) < 1:
@@ -221,7 +221,7 @@ class TotemicCall(HeroPower):
 	mana, name, requireTarget = 2, "Totemic Call", False
 	index = "Shaman~Hero Power~2~Totemic Call"
 	description = "Summon a random totem"
-	def available(self, choice=0):
+	def available(self):
 		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
 			return False
 		if self.Game.spaceonBoard(self.ID) < 1 or self.viableTotems() == []:
@@ -246,7 +246,7 @@ class TotemicSlam(HeroPower):
 	mana, name, requireTarget = 2, "Totemic Slam", False
 	index = "Shaman~Hero Power~2~Totemic Call"
 	description = "Summon a totem of your choice"
-	def available(self, choice=0):
+	def available(self):
 		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
 			return False
 		if self.Game.spaceonBoard(self.ID) < 1:
@@ -728,7 +728,7 @@ class Trigger_GurubashiBerserker(TriggeronBoard):
 		return target == self.entity and self.entity.onBoard
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self, self.entity.name, "takes Damage and gains +3 Attack.")
+		PRINT(self, "%s takes Damage and gains +3 Attack."%self.entity.name)
 		self.entity.buffDebuff(3, 0)
 		
 		
@@ -876,7 +876,7 @@ class CoordinatedStrike(Spell):
 		PRINT(self, "Coordinated Strike is cast and summons three 1/1 Illidari with Rush")
 		self.Game.summonMinion([IllidariInitiate(self.Game, self.ID) for i in range(3)], (-1, "totheRightEnd"), self.ID)
 		return None
-#不知道它们实际叫什么
+		
 class IllidariInitiate(Minion):
 	Class, race, name = "Demon Hunter", "", "Illidari Initiate"
 	mana, attack, health = 1, 1, 1
@@ -1192,6 +1192,7 @@ class Tracking(Spell):
 		return None
 		
 	def discoverDecided(self, option):
+		PRINT(self, "Tracking lets player draw card %s from the top 3 cards in deck"%option.name)
 		cardtoDraw = extractfrom(option, self.Game.options)
 		self.Game.Hand_Deck.drawCard(self.ID, cardtoDraw)
 		self.Game.Hand_Deck.extractfromDeck(self.Game.options)
@@ -1517,7 +1518,7 @@ class Trigger_WaterElemental(TriggeronBoard):
 		return subject == self.entity
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self, self.entity.name+" deals damage to %s and freezes it."%target.name)
+		PRINT(self, "%s deals damage to %s and freezes it."%(self.entity.name, target.name))
 		target.getsFrozen()
 		
 		
@@ -1669,7 +1670,7 @@ class Trigger_TruesilverChampion(TriggeronBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		heal = 2 * (2 ** self.entity.countHealDouble())
-		PRINT(self, self.entity.name+" restores %d Health the hero when it attacks."%heal)
+		PRINT(self, "%s restores %d Health the hero when it attacks."%(self.entity.name, heal))
 		self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], heal)
 		
 		

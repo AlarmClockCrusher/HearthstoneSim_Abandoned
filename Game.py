@@ -605,7 +605,6 @@ class Game:
 			for triggerID in [mainPlayerID, 3-mainPlayerID]:
 			#场上扳机先触发
 				triggersinPlay = []
-				#print("TriggersonBoard are ", self.triggersonBoard[triggerID])
 				for trigger, sig in self.triggersonBoard[triggerID]:
 					#只有满足扳机条件的扳机才会被触发。
 					if sig == signal and trigger.canTrigger(signal, ID, subject, target, number, comment, choice):
@@ -711,7 +710,6 @@ class Game:
 				PRINT(self, "\tCharacter: {}	Attack when dies: {}".format(self.deathList[0][i].name, self.deathList[1][i]))
 			while self.deathList != [[], []]:
 				self.resolvingDeath = True
-				#print("Death triggers allowed are", triggersAllowed_WhenDies, triggersAllowed_AfterDied)
 				objtoDie, attackwhenDies = self.deathList[0][0], self.deathList[1][0]
 				#For now, assume Tirion Fordring's deathrattle equipping Ashbringer won't trigger player's weapon's deathrattles right away.
 				#weapons with regard to deathrattle triggering is handled the same way as minions.
@@ -887,7 +885,6 @@ class Game:
 					self.CounterHandler.heroAttackTimesThisTurn[subject.ID] += 1
 			#重置蜡烛弓，角斗士的长弓，以及傻子和市长的triggeredDuringBattle标识。
 			if resetRedirectionTriggers: #这个选项目前只有让一个随从连续攻击其他目标时才会选择关闭，不会与角斗士的长弓冲突
-				#print("Sending signal 'BattleFinished'")
 				self.sendSignal("BattleFinished", self.turn, subject, None, 0, "")
 			#战斗阶段结束，处理亡语，此时可以处理胜负问题。
 			if resolveDeath:

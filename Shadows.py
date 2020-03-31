@@ -28,6 +28,19 @@ def classforDiscover(initiator):
 	else: #如果玩家职业和卡牌职业都是中立，则随机选取一个职业进行发现。
 		return np.random.choice(Classes)
 		
+def PRINT(obj, string):
+	if hasattr(obj, "GUI"):
+		GUI = obj.GUI
+	elif hasattr(obj, "Game"):
+		GUI = obj.Game.GUI
+	elif hasattr(obj, "entity"):
+		GUI = obj.entity.Game.GUI
+		
+	if GUI != None:
+		GUI.printInfo(string)
+	else:
+		print(string)
+		
 		
 Classes = ["Demon Hunter", "Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"]
 ClassesandNeutral = ["Demon Hunter", "Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior", "Neutral"]
@@ -43,7 +56,7 @@ class PotionVendor(Minion):
 		heal = 2 * (2 ** self.countHealDouble())
 		targets = [self.Game.heroes[self.ID]] + self.Game.minions[self.ID]
 		heals = [heal for i in range(len(targets))]
-		print("Potion Vendor's battlecry restores %d health to all friendly characters"%heal)
+		PRINT(self, "Potion Vendor's battlecry restores %d health to all friendly characters"%heal)
 		self.restoresAOE(targets, heals)
 		return None
 		
@@ -69,7 +82,7 @@ class Toxfin(Minion):
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Toxfin's battlecry gives friendly Murloc %s Poisonous."%target.name)
+			PRINT(self, "Toxfin's battlecry gives friendly Murloc %s Poisonous."%target.name)
 			target.getsKeyword("Poisonous")
 		return target
 		
@@ -97,18 +110,18 @@ class DraconicLackey(Minion):
 		if self.Game.Hand_Deck.handNotFull(self.ID) and self.ID == self.Game.turn:
 			key = "Dragons as "+classforDiscover(self)
 			if "InvokedbyOthers" in comment:
-				print("Draconic Lackey's battlecry adds a random Dragon to player's hand")
+				PRINT(self, "Draconic Lackey's battlecry adds a random Dragon to player's hand")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
 				dragons = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
 				self.Game.options = [dragon(self.Game, self.ID) for dragon in dragons]
-				print("Draconic Lackey's battlecry lets player discover a Dragon")
+				PRINT(self, "Draconic Lackey's battlecry lets player discover a Dragon")
 				self.Game.DiscoverHandler.startDiscover(self)
 				
 		return None
 		
 	def discoverDecided(self, option):
-		print("Dragon ", option.name, " is put into player's hand.")
+		PRINT(self, "Dragon %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -134,18 +147,18 @@ class EtherealLackey(Minion):
 		if self.ID == self.Game.turn and self.Game.Hand_Deck.handNotFull(self.ID):
 			key = classforDiscover(self)+" Spells"
 			if "InvokedbyOthers" in comment:
-				print("Ethereal Lackey's battlecry adds a random %s spell to player's hand"%Class)
+				PRINT(self, "Ethereal Lackey's battlecry adds a random %s spell to player's hand"%Class)
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
 				spells = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
 				self.Game.options = [spell(self.Game, self.ID) for spell in spells]
-				print("Ethereal Lackey's battlecry lets player discover a spell")
+				PRINT(self, "Ethereal Lackey's battlecry lets player discover a spell")
 				self.Game.DiscoverHandler.startDiscover(self)
 				
 		return None
 		
 	def discoverDecided(self, option):
-		print("Spell ", option.name, " is put into player's hand.")
+		PRINT(self, "Spell %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -160,7 +173,7 @@ class FacelessLackey(Minion):
 		return "2-Cost Minions", list(Game.MinionsofCost[2].values())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Faceless Lackey's battlecry summons a random 2-Cost minions.")
+		PRINT(self, "Faceless Lackey's battlecry summons a random 2-Cost minions.")
 		minion = np.random.choice(self.Game.RNGPools["2-Cost Minions"])
 		self.Game.summonMinion(minion(self.Game, self.ID), self.position+1, self.ID)
 		return None
@@ -179,7 +192,7 @@ class GoblinLackey(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print(self.name, " is played and gives friendly minion %s +2 attack and Rush."%target.name)
+			PRINT(self, "Goblin Lackey's battlecry gives friendly minion %s +2 attack and Rush."%target.name)
 			target.buffDebuff(1, 0)
 			target.getsKeyword("Rush")
 		return target
@@ -192,7 +205,7 @@ class KoboldLackey(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Kobold Lackey's battlecry deals 2 damage to ", target.name)
+			PRINT(self, "Kobold Lackey's battlecry deals 2 damage to %s"%target.name)
 			self.dealsDamage(target, 2)
 		return target
 		
@@ -210,7 +223,7 @@ class TitanicLackey(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Titanic Lackey's battlecry gives friendly minion %s +2 Health and Taunt"%target.name)
+			PRINT(self, "Titanic Lackey's battlecry gives friendly minion %s +2 Health and Taunt"%target.name)
 			target.buffDebuff(0, 2)
 			target.getsKeyword("Taunt")
 		return target
@@ -237,7 +250,7 @@ class WitchyLackey(Minion):
 	#不知道如果目标随从被返回我方手牌会有什么结算，可能是在手牌中被进化
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Witchy Lackey's battlecry transforms friendly minion %s into one that costs 1 more."%target.name)
+			PRINT(self, "Witchy Lackey's battlecry transforms friendly minion %s into one that costs 1 more."%target.name)
 			#The target has changed and needs to be tracked.
 			target = self.Game.mutate(target, 1)
 		return target
@@ -261,7 +274,7 @@ class DalaranLibrarian(Minion):
 		if self.onBoard:
 			adjacentMinions, distribution = self.Game.findAdjacentMinions(self)
 			if adjacentMinions != []:
-				print("Dalaran Librarian's battlecry Silences adjacent minions.")
+				PRINT(self, "Dalaran Librarian's battlecry Silences adjacent minions.")
 				for minion in adjacentMinions:
 					minion.getsSilenced()
 		return None
@@ -273,7 +286,7 @@ class EVILCableRat(Minion):
 	index = "Shadows~Neutral~Minion~2~1~1~Beast~EVIL Cable Rat~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a Lackey to your hand"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("EVIL Cable Rat's battlecry adds a random Lackey to player's hand.")
+		PRINT(self, "EVIL Cable Rat's battlecry adds a random Lackey to player's hand.")
 		lackey = np.random.choice(Lackeys)(self.Game, self.ID)
 		self.Game.Hand_Deck.addCardtoHand(lackey, self.ID)
 		return None
@@ -290,7 +303,7 @@ class HenchClanHogsteed(Minion):
 		
 class SummonaHenchClanSquire(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Deathrattle: Summon a 1/1 Murloc triggers.")
+		PRINT(self, "Deathrattle: Summon a 1/1 Murloc triggers.")
 		self.entity.Game.summonMinion(HenchClanSquire(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		
 class HenchClanSquire(Minion):
@@ -334,7 +347,7 @@ class SpellbookBinder(Minion):
 					break
 					
 		if haveSpellDamage:
-			print("Spellbook Binder's battlecry lets player draws a cards.")
+			PRINT(self, "Spellbook Binder's battlecry lets player draws a cards.")
 			self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
@@ -350,7 +363,7 @@ class SunreaverSpy(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.SecretHandler.secrets[self.ID] != []:
-			print("Sunreaver Spy's battlecry lets minion gain +1/+1.")
+			PRINT(self, "Sunreaver Spy's battlecry lets minion gain +1/+1.")
 			self.buffDebuff(1, 1)
 		return None
 		
@@ -408,7 +421,7 @@ class FacelessRager(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Faceless Rager's battlecry lets minion copy friendly minion %s's health"%target.name)
+			PRINT(self, "Faceless Rager's battlecry lets minion copy friendly minion %s's health"%target.name)
 			self.statReset(False, target.health)
 		return target
 		
@@ -420,7 +433,7 @@ class FlightMaster(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 2/2 Gryphon for each player"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Flight Master's battlecry summons a 2/2 Gryphon for each player.")
+		PRINT(self, "Flight Master's battlecry summons a 2/2 Gryphon for each player.")
 		self.Game.summonMinion(Gryphon(self.Game, self.ID), self.position+1, self.ID)
 		self.Game.summonMinion(Gryphon(self.Game, 3-self.ID), -1, 3-self.ID)
 		return None
@@ -456,7 +469,7 @@ class Trigger_MagicCarpet(TriggeronBoard):
 		return self.entity.onBoard and subject != self.entity and subject.ID == self.entity.ID and number == 1
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("A 1-Cost friendly minion %s is played and %s gives it +1 Attack and Rush."%(subject.name, self.entity.name))
+		PRINT(self, "A 1-Cost friendly minion %s is played and %s gives it +1 Attack and Rush."%(subject.name, self.entity.name))
 		subject.getsKeyword("Rush")
 		subject.buffDebuff(1, 0)
 		
@@ -468,7 +481,7 @@ class SpellwardJeweler(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Your hero can't be targeted by spells or Hero Powers until your next turn"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print(self.name, " is played and player can't be targeted by Spells or hero powers until next turn.")
+		PRINT(self, self.name, " is played and player can't be targeted by Spells or hero powers until next turn.")
 		self.Game.playerStatus[self.ID]["Evasive"] += 1
 		self.Game.playerStatus[self.ID]["EvasiveTillYourNextTurn"] += 1
 		return None
@@ -497,7 +510,7 @@ class Trigger_ArchmageVargoth(TriggeronBoard):
 				spells.append(self.entity.Game.cardPool[index])
 		if spells != []:
 			spell = np.random.choice(spells)(self.entity.Game, self.entity.ID)
-			print("At the end of turn, %s casts spell %s that player has cast this turn."%(self.entity.name, spell.name))
+			PRINT(self, "At the end of turn, %s casts spell %s that player has cast this turn."%(self.entity.name, spell.name))
 			spell.cast()
 			
 			
@@ -514,7 +527,7 @@ class Hecklebot(Minion):
 				if card.cardType == "Minion":
 					minions.append(card)
 					
-			print("Hecklebot's battlecry lets opponent summon a minion from deck.")
+			PRINT(self, "Hecklebot's battlecry lets opponent summon a minion from deck.")
 			if minions != []:
 				self.Game.summonfromDeck(np.random.choice(minions), -1, self.ID)
 		return None
@@ -527,7 +540,7 @@ class HenchClanHag(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon two 1/1 Amalgams with all minions types"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Hench-Clan Hag's battlecry summons two 1/1 Amalgams with all minion types.")
+		PRINT(self, "Hench-Clan Hag's battlecry summons two 1/1 Amalgams with all minion types.")
 		pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 		self.Game.summonMinion([Amalgam(self.Game, self.ID) for i in range(2)], pos, self.ID)
 		return None
@@ -546,7 +559,7 @@ class PortalKeeper(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle 3 Portals into your deck. When drawn, summon a 2/2 Demon with Rush"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Portal Keeper's battlecry shuffles 3 Portals into player's deck.")
+		PRINT(self, "Portal Keeper's battlecry shuffles 3 Portals into player's deck.")
 		portals = [FelhoundPortal(self.Game, self.ID) for i in range(3)]
 		self.Game.Hand_Deck.shuffleCardintoDeck(portals, self.ID)
 		return None
@@ -557,7 +570,7 @@ class FelhoundPortal(Spell):
 	index = "Shadows~Neutral~Spell~2~Felhound Portal~Casts When Drawn~Uncollectible"
 	description = "Casts When Drawn. Summon a 2/2 Felhound with Rush"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Felhound Portal is cast and summons a 2/2 Felhound with Rush.")
+		PRINT(self, "Felhound Portal is cast and summons a 2/2 Felhound with Rush.")
 		self.Game.summonMinion(Felhound(self.Game, self.ID), -1, self.ID)
 		return None
 		
@@ -588,11 +601,11 @@ class ProudDefender(Minion):
 					noOtherFriendlyMinions = False
 					break
 			if noOtherFriendlyMinions and self.activated == False:
-				print("Proud Defender gains +2 Attack because there's no other friendly minion")
+				PRINT(self, "Proud Defender gains +2 Attack because there's no other friendly minion")
 				self.statChange(2, 0)
 				self.activated = True
 			elif noOtherFriendlyMinions == False and self.activated:
-				print("Proud Defender loses +2 Attack because there are other friendly minions")
+				PRINT(self, "Proud Defender loses +2 Attack because there are other friendly minions")
 				self.statChange(-2, 0)
 				self.activated = False
 				
@@ -611,7 +624,7 @@ class Trigger_ProudDefender(TriggeronBoard):
 			return self.entity.onBoard and target.ID == self.entity.ID and target != self.entity
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("%s checks board due to board change."%self.entity.name)
+		PRINT(self, "%s checks board due to board change."%self.entity.name)
 		self.entity.checkBoard()
 		
 		
@@ -632,7 +645,7 @@ class Trigger_SoldierofFortune(TriggeronBoard):
 		return self.entity.onBoard and subject == self.entity
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Whenever it attacks, %s gives opponent a Coin."%self.entity.name)
+		PRINT(self, "Whenever it attacks, %s gives opponent a Coin."%self.entity.name)
 		self.entity.Game.Hand_Deck.addCardtoHand(TheCoin(self.entity.Game, 3-self.entity.ID), 3-self.entity.ID)
 		
 		
@@ -661,7 +674,7 @@ class VioletSpellsword(Minion):
 			if card.cardType == "Spell":
 				numSpells += 1
 				
-		print("Violet Spellward's battlecry lets the minion gain +1 health for every card in player's hand")
+		PRINT(self, "Violet Spellward's battlecry lets the minion gain +1 health for every card in player's hand")
 		self.buffDebuff(numSpells, 0)
 		return None
 		
@@ -683,7 +696,7 @@ class Trigger_AzeriteElemental(TriggeronBoard):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("At the start of turn, %s gains Spell Damage +2"%self.entity.name)
+		PRINT(self, "At the start of turn, %s gains Spell Damage +2"%self.entity.name)
 		self.entity.getsKeyword("Spell Damage")
 		self.entity.getsKeyword("Spell Damage")
 		
@@ -700,7 +713,7 @@ class BaristaLynchen(Minion):
 			if "~Battlecry" in minion.index and minion != self:
 				battlecryMinions.append(minion)
 		if battlecryMinions != []:
-			print("Barista Lynchen's battlecry adds copies of all other friendly Battlecry minions to player's hand.")
+			PRINT(self, "Barista Lynchen's battlecry adds copies of all other friendly Battlecry minions to player's hand.")
 			for minion in battlecryMinions:
 				self.Game.Hand_Deck.addCardtoHand(type(minion)(self.Game, self.ID), self.ID)
 		return None
@@ -727,7 +740,7 @@ class ResummonifAttackGreaterthan3(Deathrattle_Minion):
 		return target == self.entity and number > 3
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Deathrattle: Resummon the minion %s triggers."%self.entity.name)
+		PRINT(self, "Deathrattle: Resummon the minion %s triggers."%self.entity.name)
 		newMinion = type(self.entity)(self.entity.Game, self.entity.ID)
 		self.entity.Game.summonMinion(newMinion, self.entity.position+1, self.entity.ID)
 		
@@ -746,7 +759,7 @@ class SunreaverWarmage(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None and self.Game.Hand_Deck.holdingSpellwith5CostorMore(self.ID):
-			print("Sunreaver Warmage's battlecry deals 4 damage to target", target.name)
+			PRINT(self, "Sunreaver Warmage's battlecry deals 4 damage to target %s"%target.name)
 			self.dealsDamage(target, 4)
 		return target
 		
@@ -763,7 +776,7 @@ class EccentricScribe(Minion):
 class Summon4VengefulScrolls(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		pos = (self.entity.position, "totheRight") if self.entity in self.entity.Game.minions[self.entity.ID] else (-1, "totheRightEnd")
-		print("Deathrattle: Summon four 1/1 Vengeful Scrolls triggers.")
+		PRINT(self, "Deathrattle: Summon four 1/1 Vengeful Scrolls triggers.")
 		self.entity.Game.summonMinion([VengefulScroll(self.entity.Game, self.entity.ID) for i in range(4)], pos, self.entity.ID)
 		
 class VengefulScroll(Minion):
@@ -780,7 +793,7 @@ class MadSummoner(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Fill each player's board with 1/1 Imps"
 	#假设是轮流为我方和对方召唤两个小鬼
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Mad Summoner's battlecry fills the Board with 1/1 Imps.")
+		PRINT(self, "Mad Summoner's battlecry fills the Board with 1/1 Imps.")
 		while True:
 			friendlyBoardNotFull, enemyBoardNotFull = True, True
 			if self.Game.spaceonBoard(self.ID) > 0:
@@ -810,7 +823,7 @@ class PortalOverfiend(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle 3 Portals into your deck. When drawn, summon a 2/2 Demon with Rush"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Portal Overfiend's battlecry shuffles 3 Portals into player's deck.")
+		PRINT(self, "Portal Overfiend's battlecry shuffles 3 Portals into player's deck.")
 		portals = [FelhoundPortal(self.Game, self.ID) for i in range(3)]
 		self.Game.Hand_Deck.shuffleCardintoDeck(portals, self.ID)
 		return None
@@ -827,7 +840,7 @@ class Safeguard(Minion):
 		
 class SummonaVaultSafe(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Deathrattle: Summon a 0/5 Vault Safe triggers.")
+		PRINT(self, "Deathrattle: Summon a 0/5 Vault Safe triggers.")
 		self.entity.Game.summonMinion(VaultSafe(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		
 class VaultSafe(Minion):
@@ -844,7 +857,7 @@ class UnseenSaboteur(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Your opponent casts a random spell from their hand (targets chosen randomly)"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Unseen Saboteur's battlecry lets opponent cast a random spell from hand with random target.")
+		PRINT(self, "Unseen Saboteur's battlecry lets opponent cast a random spell from hand with random target.")
 		spellsinHand = []
 		for card in self.Game.Hand_Deck.hands[3-self.ID]:
 			if card.cardType == "Spell":
@@ -875,7 +888,7 @@ class ChefNomi(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.Hand_Deck.decks[self.ID] == []:
-			print("Chef Nomi's battlecry fills the player's board with 6/6 Greasefire Elementals.")
+			PRINT(self, "Chef Nomi's battlecry fills the player's board with 6/6 Greasefire Elementals.")
 			if self.onBoard:
 				self.Game.summonMinion([GreasefireElemental(self.Game, self.ID) for i in range(6)], (self.position, "leftandRight"), self.ID)
 			else:
@@ -915,7 +928,7 @@ class Trigger_ExoticMountseller(TriggeronBoard):
 		return self.entity.onBoard and subject.ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Player casts a spell and %s summons a random 3-Cost Beast."%self.entity.name)
+		PRINT(self, "Player casts a spell and %s summons a random 3-Cost Beast."%self.entity.name)
 		beast = np.random.choice(self.entity.Game.RNGPools["3-Cost Beasts"])(self.entity.Game, self.entity.ID)
 		self.entity.Game.summonMinion(beast, self.entity.position+1, self.entity.ID)
 		
@@ -933,7 +946,7 @@ class Deal3DamagetoAllMinions(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		targets = self.entity.Game.minionsonBoard(1) + self.entity.Game.minionsonBoard(2)
 		damages = [3 for obj in targets]
-		print("Deathrattle: Deal 3 damage to all minions triggers.")
+		PRINT(self, "Deathrattle: Deal 3 damage to all minions triggers.")
 		self.entity.dealsAOE(targets, damages)
 		
 		
@@ -954,7 +967,7 @@ class Trigger_UnderbellyOoze(TriggeronBoard):
 		return self.entity.onBoard and target == self.entity and self.entity.health > 0 and self.entity.dead == False
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("%s survives damage and summon a copy of itself."%self.entity.name)
+		PRINT(self, "%s survives damage and summon a copy of itself."%self.entity.name)
 		Copy = self.entity.selfCopy(self.entity.ID)
 		self.entity.Game.summonMinion(Copy, self.entity.position+1, self.entity.ID)
 		
@@ -976,7 +989,7 @@ class Trigger_Batterhead(TriggeronBoard):
 		return self.entity.onBoard and subject == self.entity and self.entity.health > 0 and self.entity.dead == False and (target.health < 1 or target.dead == True)
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("After %s attacks and kills a minion %s, it gains an extra attack chance."%(self.entity.name, target.name))
+		PRINT(self, "After %s attacks and kills a minion %s, it gains an extra attack chance."%(self.entity.name, target.name))
 		self.entity.attChances_extra += 1
 		
 		
@@ -991,7 +1004,7 @@ class HeroicInnkeeper(Minion):
 			targets = self.Game.minionsonBoard(self.ID)
 			extractfrom(self, targets)
 			buff = 2 * len(targets)
-		print("Heroic Innkeeper's battlecry gives minion +2/+2 for each other friendly minion.")
+		PRINT(self, "Heroic Innkeeper's battlecry gives minion +2/+2 for each other friendly minion.")
 		self.buffDebuff(buff, buff)
 		return None
 		
@@ -1003,7 +1016,7 @@ class JepettoJoybuzz(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Draw 2 minions from your deck. Set their Attack, Health, and Cost to 1"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Jepetto Joybuzz's battlecry draws 2 minions from player's deck and sets their Attack, Health and Cost to 1")
+		PRINT(self, "Jepetto Joybuzz's battlecry draws 2 minions from player's deck and sets their Attack, Health and Cost to 1")
 		for i in range(2):
 			minionsinDeck = []
 			for card in self.Game.Hand_Deck.decks[self.ID]:
@@ -1077,7 +1090,7 @@ class ArchivistElysiana(Minion):
 		return None
 		
 	def discoverDecided(self, option):
-		print("Two copies of %s added to the deck replacement."%option.name)
+		PRINT(self, "Two copies of %s added to the deck replacement."%option.name)
 		self.newDeck.append(option)
 		self.newDeck.append(type(option)(self.Game, self.ID))
 		
@@ -1104,7 +1117,7 @@ class Trigger_BigBadArchmage(TriggeronBoard):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("At the end of turn, %s summons a 6-Cost minion."%self.entity.name)
+		PRINT(self, "At the end of turn, %s summons a 6-Cost minion."%self.entity.name)
 		minion = np.random.choice(self.entity.Game.RNGPools["6-Cost Minions"])(self.entity.Game, self.entity.ID)
 		self.entity.Game.summonMinion(minion, self.entity.position+1, self.entity.ID)
 		
@@ -1120,7 +1133,7 @@ class Acornbearer(Minion):
 		
 class AddTwoSquirrelstoHand(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Deathrattle: Summon a 2/1 Damaged Golem triggers.")
+		PRINT(self, "Deathrattle: Summon a 2/1 Damaged Golem triggers.")
 		self.entity.Game.Hand_Deck.addCardtoHand([Squirrel, Squirrel], self.entity.ID, "CreateUsingType")
 		
 class Squirrel(Minion):
@@ -1139,6 +1152,9 @@ class CrystalPower(Spell):
 		self.blank_init(Game, ID)
 		self.chooseOne = 1
 		self.options = [PiercingThorns_Option(self), HealingBlossom_Option(self)]
+		
+	def available(self):
+		return self.selectableCharacterExists(1)
 		
 	#available() only needs to check selectableCharacterExists
 	def targetCorrect(self, target, choice=0):
@@ -1168,7 +1184,7 @@ class PiercingThorns_Option:
 		self.index = "Shadows~Druid~Spell~1~Piercing Thorns~Uncollectible"
 		
 	def available(self):
-		return self.spell.selectableMinionExists()
+		return self.spell.selectableMinionExists(0)
 		
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
@@ -1181,7 +1197,7 @@ class HealingBlossom_Option:
 		self.index = "Shadows~Druid~Spell~1~Healing Blossom~Uncollectible"
 		
 	def available(self):
-		return self.spell.selectableCharacterExists()
+		return self.spell.selectableCharacterExists(1)
 		
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
@@ -1201,7 +1217,7 @@ class PiercingThorns(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			print("Piercing Thorns is cast and deals %d damage to"%damage, target.name)
+			PRINT(self, "Piercing Thorns is cast and deals %d damage to %s"%(damage, target.name))
 			self.dealsDamage(target, damage)
 		return target
 		
@@ -1214,7 +1230,7 @@ class HealingBlossom(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			heal = 5 * (2 ** self.countHealDouble())
-			print("Healing Blossom is cast and restores %d health to"%heal, target.name)
+			PRINT(self, "Healing Blossom is cast and restores %d health to %s"%(heal, target.name))
 			self.restoresHealth(target, heal)
 		return target
 		
@@ -1248,16 +1264,16 @@ class CrystalsongPortal(Spell):
 					handHasMinion = True
 					break
 			if handHasMinion == False:
-				print("Crystalsong Portal is cast and adds all 3 Druid minions to player's hand.")
+				PRINT(self, "Crystalsong Portal is cast and adds all 3 Druid minions to player's hand.")
 				minions = np.random.choice(self.Game.RNGPools["Druid Minions"], 3, replace=False)
 				self.Game.Hand_Deck.addCardtoHand(minions, self.ID, "CreateUsingType")
 			else:
 				if "CastbyOthers" in comment:
-					print("Crystalsong Portal is cast and adds a random Druid minion to player's hand")
+					PRINT(self, "Crystalsong Portal is cast and adds a random Druid minion to player's hand")
 					minion = np.random.choice(self.Game.RNGPools["Druid Minions"])
 					self.Game.Hand_Deck.addCardtoHand(minion, self.ID, "CreateUsingType")
 				else:
-					print("Crystalsong Portal is cast and lets player discover a Druid Minion.")
+					PRINT(self, "Crystalsong Portal is cast and lets player discover a Druid Minion.")
 					minions = np.random.choice(self.Game.RNGPools["Druid Minions"], 3, replace=False)
 					self.Game.options = [minion(self.Game, self.ID) for minion in minions]
 					self.Game.DiscoverHandler.startDiscover(self)
@@ -1265,7 +1281,7 @@ class CrystalsongPortal(Spell):
 		return None
 		
 	def discoverDecided(self, option):
-		print("Druid Minion ", option.name, " is put into player's hand.")
+		PRINT(self, "Druid Minion %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -1279,7 +1295,7 @@ class DreamwayGuardians(Spell):
 		return self.Game.spaceonBoard(self.ID) > 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Dreamway Guardians is played and summons two 1/2 Dryads with Lifesteal.")
+		PRINT(self, "Dreamway Guardians is played and summons two 1/2 Dryads with Lifesteal.")
 		self.Game.summonMinion([CrystalDryad(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
@@ -1307,7 +1323,7 @@ class Trigger_KeeperStalladris(TriggeronBoard):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject.chooseOne > 0
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("After player casts spell %s, %s adds copies of both choices to player's hand."%(subject.name, self.entity.name))
+		PRINT(self, "After player casts spell %s, %s adds copies of both choices to player's hand."%(subject.name, self.entity.name))
 		for option in subject.options:
 			self.entity.Game.Hand_Deck.addCardtoHand(option.index, self.entity.ID, "CreateUsingIndex")
 			
@@ -1338,7 +1354,7 @@ class Trigger_Lifeweaver(TriggeronBoard):
 		return self.entity.onBoard and subject.ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Player restores Health, and %s adds a random Druid spell to player's hand."%self.entity.name)
+		PRINT(self, "Player restores Health, and %s adds a random Druid spell to player's hand."%self.entity.name)
 		self.entity.Game.Hand_Deck.addCardtoHand(np.random.choice(self.entity.Game.RNGPools["Druid Spells"]), self.entity.ID, "CreateUsingType")
 		
 		
@@ -1353,7 +1369,7 @@ class CrystalStag(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.CounterHandler.healthRestoredThisGame[self.ID] > 4:
-			print("Crystal Stag's battlecry summons a copy of itself.")
+			PRINT(self, "Crystal Stag's battlecry summons a copy of itself.")
 			Copy = self.selfCopy(self.ID)
 			self.Game.summonMinion(Copy, self.position+1, self.ID)
 		return None
@@ -1370,7 +1386,7 @@ class BlessingoftheAncients(Spell):
 		self.twinSpellCopy = blessingoftheancients
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Twinspell Blessing of the Ancients is played and gives all friendly minions +1/+1.")
+		PRINT(self, "Twinspell Blessing of the Ancients is played and gives all friendly minions +1/+1.")
 		for minion in self.Game.minionsonBoard(self.ID):
 			minion.buffDebuff(1, 1)
 		return None
@@ -1382,7 +1398,7 @@ class blessingoftheancients(Spell):
 	description = "Give your minions +1/+1"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Blessing of the Ancients is played and gives all friendly minions +1/+1.")
+		PRINT(self, "Blessing of the Ancients is played and gives all friendly minions +1/+1.")
 		for minion in self.Game.minionsonBoard(self.ID):
 			minion.buffDebuff(1, 1)
 		return None
@@ -1402,7 +1418,7 @@ class BecomeSpiritofLucentbark(Deathrattle_Minion):
 		return target == self.entity and self.entity.Game.spaceonBoard(self.entity.ID) > 0
 	#这个变形亡语只能触发一次。
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Deathrattle: Turn into Spirit of Lucentbark triggers")
+		PRINT(self, "Deathrattle: Turn into Spirit of Lucentbark triggers")
 		permanent = SpiritofLucentbark(self.entity.Game, self.entity.ID)
 		self.entity.Game.transform(self.entity, permanent)
 		
@@ -1423,10 +1439,10 @@ class Trigger_SpiritofLucentbark(TriggeronBoard):
 		return self.entity.onBoard and subject.ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Player restores %d Health, and %s's counter records it."%(number, self.entity.name))
+		PRINT(self, "Player restores %d Health, and %s's counter records it."%(number, self.entity.name))
 		self.entity.progress += number
 		if self.entity.progress > 4:
-			print("Spirit of Lucentbark transforms into Lucentbark")
+			PRINT(self, "Spirit of Lucentbark transforms into Lucentbark")
 			self.entity.Game.transform(self.entity, Lucentbark(self.entity.Game, self.entity.ID))
 			
 			
@@ -1441,7 +1457,7 @@ class TheForestsAid(Spell):
 		self.twinSpellCopy = theforestsaid
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Twinspell The Forest's Aid is played and summons five 2/2 Treants.")
+		PRINT(self, "Twinspell The Forest's Aid is played and summons five 2/2 Treants.")
 		self.Game.summonMinion([Treant_Shadows(self.Game, self.ID) for i in range(5)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
@@ -1452,7 +1468,7 @@ class theforestsaid(Spell):
 	description = "Summon five 2/2 Treants"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("The Forest's Aid is played and summons five 2/2 Treants.")
+		PRINT(self, "The Forest's Aid is played and summons five 2/2 Treants.")
 		self.Game.summonMinion([Treant_Shadows(self.Game, self.ID) for i in range(5)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
@@ -1476,7 +1492,7 @@ class RapidFire(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			print("Twinspell Rapid Fire is cast and deals %d damage to "%damage, target.name)
+			PRINT(self, "Twinspell Rapid Fire is cast and deals %d damage to %s"%(damage, target.name))
 			self.dealsDamage(target, damage)
 		return target
 		
@@ -1489,7 +1505,7 @@ class rapidfire(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			print("Rapid Fire is cast and deals %d damage to "%damage, target.name)
+			PRINT(self, "Rapid Fire is cast and deals %d damage to %s"%(damage, target.name))
 			self.dealsDamage(target, damage)
 		return target
 			
@@ -1515,7 +1531,7 @@ class Shimmerfly(Minion):
 class AddaHunterSpelltoHand(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.entity.Game.Hand_Deck.handNotFull(self.entity.ID):
-			print("Deathrattle: Summon a random Hunter spell to your hand triggers.")
+			PRINT(self, "Deathrattle: Summon a random Hunter spell to your hand triggers.")
 			self.entity.Game.Hand_Deck.addCardtoHand(np.random.choice(self.entity.Game.RNGPools["Hunter Spells"]), self.entity.ID, "CreateUsingType")
 			
 			
@@ -1537,28 +1553,28 @@ class NineLives(Spell):
 					
 			if deathrattleMinions != []:
 				if len(deathrattleMinions) == 1:
-					print("There is only one friendly Deathrattle minion that died this game, and Nine Lives adds it to player's hand and triggers its deathrattles")
+					PRINT(self, "There is only one friendly Deathrattle minion that died this game, and Nine Lives adds it to player's hand and triggers its deathrattles")
 					minion = self.Game.cardPool[deathrattleMinions[0]](self.Game, self.ID)
 					self.Game.Hand_Deck.addCardtoHand(minion, self.ID)
 					for trigger in minion.deathrattles:
 						trigger.trigger("DeathrattleTriggers", self.ID, None, minion, minion.attack, "")
 				else:
 					if "CastbyOthers" in comment:
-						print("Nine Lives is cast and adds a random friendly Deathrattle minion that died this game")
+						PRINT(self, "Nine Lives is cast and adds a random friendly Deathrattle minion that died this game")
 						minion = self.Game.cardPool[np.random.choice(deathrattleMinions)](self.Game, self.ID)
 						self.Game.Hand_Deck.addCardtoHand(minion, self.ID)
-						print("Nine Lives triggers the Deathrattle of the minion %s added to hand"%minion.name)
+						PRINT(self, "Nine Lives triggers the Deathrattle of the minion %s added to hand"%minion.name)
 						for trigger in minion.deathrattles:
 							trigger.trigger("DeathrattleTriggers", self.ID, None, minion, minion.attack, "")
 					else:
-						print("Nine Lives is cast and lets player discover adds a random friendly Deathrattle minion that died this game")
+						PRINT(self, "Nine Lives is cast and lets player discover adds a random friendly Deathrattle minion that died this game")
 						minions = np.random.choice(deathrattleMinions, min(3, len(deathrattleMinions)), replace=False)
 						self.Game.options = [self.Game.cardPool[minion](self.Game, self.ID) for minion in minions]
 						self.Game.DiscoverHandler.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option):
-		print("Deathrattle minion ", option.name, " is put into player's hand.")
+		PRINT(self, "Deathrattle minion %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		for trigger in option.deathrattles:
@@ -1576,7 +1592,7 @@ class Ursatron(Minion):
 		
 class DrawaMech(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Deathrattle: Draw a Mech from your deck triggers")
+		PRINT(self, "Deathrattle: Draw a Mech from your deck triggers")
 		mechs = []
 		for card in self.entity.Game.Hand_Deck.decks[self.entity.ID]:
 			if card.cardType == "Minion" and "Mech" in card.race:
@@ -1603,7 +1619,7 @@ class Trigger_ArcaneFletcher(TriggeronBoard):
 		return self.entity.onBoard and subject != self.entity and subject.ID == self.entity.ID and number == 1
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("A 1-Cost friendly minion %s is played and %s lets player draw a spell from the deck."%(subject.name, self.entity.name))
+		PRINT(self, "A 1-Cost friendly minion %s is played and %s lets player draw a spell from the deck."%(subject.name, self.entity.name))
 		spellsinDeck = []
 		for card in self.entity.Game.Hand_Deck.decks[self.entity.ID]:
 			if card.cardType == "Spell":
@@ -1643,15 +1659,15 @@ class MarkedShot(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			print("Marked Shot is cast and deals %d damage to"%damage, target.name)
+			PRINT(self, "Marked Shot is cast and deals %d damage to %s"%(damage, target.name))
 			self.dealsDamage(target, damage)
 			if self.Game.Hand_Deck.handNotFull(self.ID):
 				key = classforDiscover(self)+" Spells"
 				if "CastbyOthers" in comment:
-					print("Marked Shot is cast and adds a random spell to player's hand")
+					PRINT(self, "Marked Shot is cast and adds a random spell to player's hand")
 					self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 				else:
-					print("Marked Shot lets player discover a spell")
+					PRINT(self, "Marked Shot lets player discover a spell")
 					spells = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
 					self.Game.options = [spell(self.Game, self.ID) for spell in spells]
 					self.Game.DiscoverHandler.startDiscover(self)
@@ -1659,7 +1675,7 @@ class MarkedShot(Spell):
 		return target
 		
 	def discoverDecided(self, option):
-		print("Spell ", option.name, " is put into player's hand.")
+		PRINT(self, "Spell %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -1671,7 +1687,7 @@ class HuntingParty(Spell):
 	description = "Copy all Beasts in your hand"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Hunting Party is cast and copies all Beasts in player's hand.")
+		PRINT(self, "Hunting Party is cast and copies all Beasts in player's hand.")
 		if self.Game.Hand_Deck.handNotFull(self.ID):
 			copies = []
 			for card in self.Game.Hand_Deck.hands[self.ID]:
@@ -1693,7 +1709,7 @@ class Oblivitron(Minion):
 		
 class SummonMechfromHandandTriggeritsDeathrattle(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Deathrattle: Summon a Mech from your hand and trigger its Deathrattle triggers")
+		PRINT(self, "Deathrattle: Summon a Mech from your hand and trigger its Deathrattle triggers")
 		mechs = []
 		for card in self.entity.Game.Hand_Deck.hands[self.entity.ID]:
 			if "~Mech~" in card.index:
@@ -1718,7 +1734,7 @@ class UnleashtheBeast(Spell):
 		self.twinSpellCopy = unleashthebeast
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Twinspell Unleash the Beast is cast and summons a 5/5 Wyvern.")
+		PRINT(self, "Twinspell Unleash the Beast is cast and summons a 5/5 Wyvern.")
 		self.Game.summonMinion(Wyvern(self.Game, self.ID), -1, self.ID)
 		return None
 		
@@ -1729,7 +1745,7 @@ class unleashthebeast(Spell):
 	description = "Summon a 5/5 Wyvern with Rush"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Unleash the Beast is cast and summons a 5/5 Wyvern.")
+		PRINT(self, "Unleash the Beast is cast and summons a 5/5 Wyvern.")
 		self.Game.summonMinion(Wyvern(self.Game, self.ID), -1, self.ID)
 		return None
 		
@@ -1747,7 +1763,7 @@ class VereesaWindrunner(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Equip Thori'dal, the Stars' Fury"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Vereesa Windrunner's battlecry equips Thori'dal, the Stars' Fury.")
+		PRINT(self, "Vereesa Windrunner's battlecry equips Thori'dal, the Stars' Fury.")
 		self.Game.equipWeapon(ThoridaltheStarsFury(self.Game, self.ID))
 		return None
 		
@@ -1767,7 +1783,7 @@ class Trigger_ThoridaltheStarsFury(TriggeronBoard):
 		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("After player attacks, Thori'dal, the Stars' Fury gives gives player Spell Damage +2 this turn.")
+		PRINT(self, "After player attacks, Thori'dal, the Stars' Fury gives gives player Spell Damage +2 this turn.")
 		self.entity.Game.playerStatus[self.entity.ID]["Spell Damage"] += 2
 		self.Game.turnEndTrigger.append(SpellDamagePlus2Disappears(self.Game, self.ID))
 		
@@ -1776,7 +1792,7 @@ class SpellDamagePlus2Disappears:
 		self.Game, self.ID = Game, ID
 		
 	def turnEndTrigger(self):
-		print("At the end of turn, Thori'dal, the Stars' Fury's effect expires and player no longer has Spell Damage +2")
+		PRINT(self, "At the end of turn, Thori'dal, the Stars' Fury's effect expires and player no longer has Spell Damage +2")
 		self.Game.playerStatus[self.ID]["Spell Damage"] -= 2
 		extractfrom(self, self.Game.turnEndTrigger)
 		
@@ -1801,10 +1817,10 @@ class RayofFrost(Spell):
 		if target != None:
 			if target.status["Frozen"]:
 				damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-				print("Twinspell Ray of Frost is cast and deals %d damage to the already Frozen minion"%damage, target.name)
+				PRINT(self, "Twinspell Ray of Frost is cast and deals %d damage to the already Frozen minion %s"%(damage, target.name))
 				self.dealsDamage(target, damage)
 			else:
-				print("Twinspell Ray of Frost is cast and Freezes minion", target.name)
+				PRINT(self, "Twinspell Ray of Frost is cast and Freezes minion %s"%target.name)
 				target.getsFrozen()
 		return target
 		
@@ -1824,10 +1840,10 @@ class rayoffrost(Spell):
 		if target != None:
 			if target.status["Frozen"]:
 				damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-				print("Ray of Frost is cast and deals %d damage to the already Frozen minion"%damage, target.name)
+				PRINT(self, "Ray of Frost is cast and deals %d damage to the already Frozen minion %s"%(damage, target.name))
 				self.dealsDamage(target, damage)
 			else:
-				print("Ray of Frost is cast and Freezes minion", target.name)
+				PRINT(self, "Ray of Frost is cast and Freezes minion %s"%target.name)
 				target.getsFrozen()
 		return target
 		
@@ -1850,11 +1866,11 @@ class Khadgar(Minion):
 		self.silenceResponse = [self.deactivateAura]
 		
 	def activateAura(self):
-		print("Khadgar's aura is registered. Player %d's cards' summoning effects now summon twice as many."%self.ID)
+		PRINT(self, "Khadgar's aura is registered. Player %d's cards' summoning effects now summon twice as many."%self.ID)
 		self.Game.playerStatus[self.ID]["Double Summoning by Cards"] += 1
 		
 	def deactivateAura(self):
-		print("Khadgar's aura is removed. Player %d's cards' summoning effects no longer summon twice as many."%self.ID)
+		PRINT(self, "Khadgar's aura is removed. Player %d's cards' summoning effects no longer summon twice as many."%self.ID)
 		self.Game.playerStatus[self.ID]["Double Summoning by Cards"] -= 1
 		
 		
@@ -1878,7 +1894,7 @@ class Trigger_MagicDartFrog(TriggeronBoard):
 		targets = self.entity.Game.minionsAlive(3-self.entity.ID)
 		if targets != []:
 			target = np.random.choice(targets)
-			print("After player casts a spell, %s deals 1 damage to a random enemy minion."%self.entity.name)
+			PRINT(self, "After player casts a spell, %s deals 1 damage to a random enemy minion."%self.entity.name)
 			self.entity.dealsDamage(target, 1)
 			
 			
@@ -1902,10 +1918,10 @@ class MessengerRaven(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.ID == self.Game.turn and self.Game.Hand_Deck.handNotFull(self.ID):
 			if "InvokedbyOthers" in comment:
-				print("Messenger Raven's battlecry adds random Mage minion to player's hand.")
+				PRINT(self, "Messenger Raven's battlecry adds random Mage minion to player's hand.")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools["Mage Minions"]), self.ID, "CreateUsingType")
 			else:
-				print("Messenger Raven's battlecry lets player discover a Mage minion.")
+				PRINT(self, "Messenger Raven's battlecry lets player discover a Mage minion.")
 				minions = np.random.choice(self.Game.RNGPools["Mage Minions"], 3, replace=False)
 				self.Game.options = [minion(self.Game, self.ID) for minion in minions]
 				self.Game.DiscoverHandler.startDiscover(self)
@@ -1913,7 +1929,7 @@ class MessengerRaven(Minion):
 		return None
 		
 	def discoverDecided(self, option):
-		print("Mage minion ", option.name, " is put into player's hand.")
+		PRINT(self, "Mage minion %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -1943,10 +1959,10 @@ class MagicTrick(Spell):
 		if self.Game.Hand_Deck.handNotFull(self.ID):
 			key = "Spells 3-Cost or less as "+classforDiscover(self)
 			if "CastbyOthers" in comment:
-				print("Magic Trick adds a random spell that costs 3 or less to player's hand.")
+				PRINT(self, "Magic Trick adds a random spell that costs 3 or less to player's hand.")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
-				print("Magic Trick lets player discover a spell that cost 3 or less.")
+				PRINT(self, "Magic Trick lets player discover a spell that cost 3 or less.")
 				spells = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
 				self.Game.options = [spell(self.Game, self.ID) for spell in spells]
 				self.Game.DiscoverHandler.startDiscover(self)
@@ -1954,7 +1970,7 @@ class MagicTrick(Spell):
 		return None
 		
 	def discoverDecided(self, option):
-		print("Spell ", option.name, " is put into player's hand.")
+		PRINT(self, "Spell %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -1991,7 +2007,7 @@ class ConjurersCalling(Spell):
 		if target != None:
 			cost = type(target).mana
 			key = "%d-Cost Minions"%cost
-			print("Twinspell Conjurer's Calling is cast, destroys minion %s and summons two minions with the same cost"%target.name, cost)
+			PRINT(self, "Twinspell Conjurer's Calling is cast, destroys minion %s and summons two minions with the same cost"%target.name, cost)
 			targetID, position = target.ID, target.position
 			self.Game.destroyMinion(target) #如果随从在手牌中则将其丢弃
 			#强制死亡需要在此插入死亡结算，并让随从离场
@@ -2024,7 +2040,7 @@ class conjurerscalling(Spell):
 		if target != None:
 			cost = type(target).mana
 			key = "%d-Cost Minions"%cost
-			print("Twinspell Conjurer's Calling is cast, destroys minion %s and summons two minions with the same cost"%target.name, cost)
+			PRINT(self, "Twinspell Conjurer's Calling is cast, destroys minion %s and summons two minions with the same cost"%target.name, cost)
 			targetID, position = target.ID, target.position
 			self.Game.destroyMinion(target) #如果随从在手牌中则将其丢弃
 			#强制死亡需要在此插入死亡结算，并让随从离场
@@ -2071,7 +2087,7 @@ class ManaCyclone(Minion):
 		return "Mage Spells", mageSpells
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Mana Cyclone's battlecry adds a random Mage spell into player's hand for each spell played this turn.")
+		PRINT(self, "Mana Cyclone's battlecry adds a random Mage spell into player's hand for each spell played this turn.")
 		spells = np.random.choice(self.Game.RNGPools["Mage Spells"], self.Game.CounterHandler.numSpellsPlayedThisTurn[self.ID], replace=True)
 		self.Game.Hand_Deck.addCardtoHand(spells, self.ID, "CreateUsingType")
 		return None
@@ -2097,22 +2113,22 @@ class PowerofCreation(Spell):
 		return classes, lists #返回的包含“Class Cards except Hunter”等identifier的列表和其他职业卡表
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Power of Creation is cast, player discovers a 6-Cost minion and summon two copies of it.")
+		PRINT(self, "Power of Creation is cast, player discovers a 6-Cost minion and summon two copies of it.")
 		key = "6-Cost Minions as "+classforDiscover(self)
-		if "CastbyOthers" in comment:
-			print("Power of Creation summons two copies of a random 6-Cost minion.")
-			minion = np.random.choice(self.Game.RNGPools[key])
-			self.Game.summonMinion([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
-		else:
-			minions = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
-			self.Game.options = [minion(self.Game, self.ID) for minion in minions]
-			print("Power of creation lets player discover a 6-Cost minion to summon two copies.")
-			self.Game.DiscoverHandler.startDiscover(self)
-			
+		if self.Game.spaceonBoard(self.ID) > 0:
+			if "CastbyOthers" in comment:
+				PRINT(self, "Power of Creation summons two copies of a random 6-Cost minion.")
+				minion = np.random.choice(self.Game.RNGPools[key])
+				self.Game.summonMinion([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
+			else:
+				minions = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
+				self.Game.options = [minion(self.Game, self.ID) for minion in minions]
+				PRINT(self, "Power of creation lets player discover a 6-Cost minion to summon two copies.")
+				self.Game.DiscoverHandler.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option):
-		print("Power of Creation summons two copies of discovered 6-Cost minion ", option.name)
+		PRINT(self, "Power of Creation summons two copies of discovered 6-Cost minion %s"%option.name)
 		self.Game.summonMinion([option, type(option)(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
 		
 		
@@ -2147,10 +2163,10 @@ class Kalecgos(Minion):
 		if self.ID == self.Game.turn and self.Game.Hand_Deck.handNotFull(self.ID):
 			key = classforDiscover(self)+" Spells"
 			if "InvokedbyOthers" in comment:
-				print("Kalecgos' battlecry adds a random spell to player's hand")
+				PRINT(self, "Kalecgos' battlecry adds a random spell to player's hand")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
-				print("Kalecgos's battlecry lets player discover a spell")
+				PRINT(self, "Kalecgos's battlecry lets player discover a spell")
 				spells = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
 				self.Game.options = [spell(self.Game, self.ID) for spell in spells]
 				self.Game.DiscoverHandler.startDiscover(self)
@@ -2158,7 +2174,7 @@ class Kalecgos(Minion):
 		return None
 		
 	def discoverDecided(self, option):
-		print("Spell ", option.name, " is put into player's hand.")
+		PRINT(self, "Spell %s is put into player's hand."%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -2167,11 +2183,11 @@ class Kalecgos(Minion):
 		
 	def checkAuraCorrectness(self): #负责光环在随从登场时无条件启动之后的检测。如果光环的启动条件并没有达成，则关掉光环
 		if self.Game.turn != self.ID or self.Game.CounterHandler.numSpellsPlayedThisTurn[self.ID] != 0:
-			print("Kalecgos's mana aura is incorrectly activated. It will be shut down")
+			PRINT(self, "Kalecgos's mana aura is incorrectly activated. It will be shut down")
 			self.auras["Mana Aura"].auraDisappears()
 			
 	def deactivateAura(self):
-		print("Kalecgos's mana aura is removed. Player's first spell each turn no longer costs (0).")
+		PRINT(self, "Kalecgos's mana aura is removed. Player's first spell each turn no longer costs (0).")
 		self.auras["Mana Aura"].auraDisappears()
 		
 #法术反制实际上不会消耗卡雷苟斯的光环，但是会消耗暮陨者艾维娜的光环，但是在此统一为会消耗。卡雷苟斯的光环显然是程序员自己没有参考之前的同类型光环然后自己写的。
@@ -2188,7 +2204,7 @@ class Trigger_Kalecgos(TriggeronBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		if "Turn" in signal: #回合开始结束时总会强制关闭然后启动一次光环。这样，即使回合开始或者结束发生了随从的控制变更等情况，依然可以保证光环的正确
-			print("At the start/end of turn, %s attempts to restarts the mana aura and reduces the cost of the first card to (0)."%self.entity.name)
+			PRINT(self, "At the start/end of turn, %s attempts to restarts the mana aura and reduces the cost of the first card to (0)."%self.entity.name)
 			self.entity.auras["Mana Aura"].auraDisappears()
 			self.entity.auras["Mana Aura"].auraAppears()
 			self.entity.checkAuraCorrectness()
@@ -2213,7 +2229,7 @@ class Trigger_NeverSurrender(SecretTrigger):
 		return self.entity.ID != self.entity.Game.turn and subject.ID != self.entity.ID and self.entity.Game.minionsonBoard(self.entity.ID) != []
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("When the opponent casts a spell, Secret Never Surrender! is triggered and gives friendly minions +2 Health.")
+		PRINT(self, "When the opponent casts a spell, Secret Never Surrender! is triggered and gives friendly minions +2 Health.")
 		for minion in self.entity.Game.minionsonBoard(self.entity.ID):
 			minion.buffDebuff(0, 2)
 			
@@ -2236,7 +2252,7 @@ class LightforgedBlessing(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Twinspell Lightforged Blessing is cast and gives a friendly minion Lifesteal.")
+			PRINT(self, "Twinspell Lightforged Blessing is cast and gives a friendly minion Lifesteal.")
 			target.getsKeyword("Lifesteal")
 		return target
 		
@@ -2254,7 +2270,7 @@ class lightforgedblessing(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Lightforged Blessing is cast and gives a friendly minion Lifesteal.")
+			PRINT(self, "Lightforged Blessing is cast and gives a friendly minion Lifesteal.")
 			target.getsKeyword("Lifesteal")
 		return target
 		
@@ -2270,7 +2286,7 @@ class BronzeHerald(Minion):
 		
 class AddTwoBronzeDragonstoHand(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Deathrattle: Add Two 4/4 Bronze Dragons to hand triggers.")
+		PRINT(self, "Deathrattle: Add Two 4/4 Bronze Dragons to hand triggers.")
 		self.entity.Game.Hand_Deck.addCardtoHand([BronzeDragon, BronzeDragon], self.entity.ID, "CreateUsingType")
 		
 class BronzeDragon(Minion):
@@ -2300,7 +2316,7 @@ class DesperateMeasures(Spell):
 		self.twinSpellCopy = desperatemeasures
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Twinspell Desperate Measures is cast and casts a random Paladin Secret.")
+		PRINT(self, "Twinspell Desperate Measures is cast and casts a random Paladin Secret.")
 		secrets = []
 		for value in self.Game.RNGPools["Paladin Secrets"]:
 			if self.Game.SecretHandler.isSecretDeployedAlready(value, self.ID) == False:
@@ -2317,7 +2333,7 @@ class desperatemeasures(Spell):
 	description = "Cast a random Paladin Secrets"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Desperate Measures is cast and casts a random Paladin Secret.")
+		PRINT(self, "Desperate Measures is cast and casts a random Paladin Secret.")
 		secrets = []
 		for value in self.Game.RNGPools["Paladin Secrets"]:
 			if self.Game.SecretHandler.isSecretDeployedAlready(value, self.ID) == False:
@@ -2337,7 +2353,7 @@ class MysteriousBlade(Weapon):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.SecretHandler.secrets[self.ID] != []:
-			print("Mysterious Blade's battlecry gives weapon +1 attack.")
+			PRINT(self, "Mysterious Blade's battlecry gives weapon +1 attack.")
 			self.gainStat(1, 0)
 		return None
 		
@@ -2348,7 +2364,7 @@ class CalltoAdventure(Spell):
 	index = "Shadows~Paladin~Spell~3~Call to Adventure"
 	description = "Draw the lowest Cost minion from your deck. Give it +2/+2"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Call to Adventure is cast. Player draws the lowest Cost card from deck, and it gains +2/+2.")
+		PRINT(self, "Call to Adventure is cast. Player draws the lowest Cost card from deck, and it gains +2/+2.")
 		minionsinDeck = []
 		lowestCost = np.inf
 		for card in self.Game.Hand_Deck.decks[self.ID]:
@@ -2374,7 +2390,7 @@ class DragonSpeaker(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Give all Dragons in your hand +3/+3"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Dragon Speaker's battlecry gives all Dragons in player's hand +3/+3.")
+		PRINT(self, "Dragon Speaker's battlecry gives all Dragons in player's hand +3/+3.")
 		for card in self.Game.Hand_Deck.hands[self.ID]:
 			if card.cardType == "Minion" and "Dragon" in card.race:
 				card.buffDebuff(3, 3)
@@ -2388,7 +2404,7 @@ class Duel(Spell):
 	index = "Shadows~Paladin~Spell~5~Duel!"
 	description = "Summon a minion from each player's deck. They fight"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Duel! is cast and summons a minion from each player's deck. They fight.")
+		PRINT(self, "Duel! is cast and summons a minion from each player's deck. They fight.")
 		minionsinEnemyDeck = []
 		for card in self.Game.Hand_Deck.decks[3-self.ID]:
 			if card.cardType == "Minion":
@@ -2428,11 +2444,11 @@ class CommanderRhyssa(Minion):
 		self.silenceResponse = [self.deactivateAura]
 		
 	def activateAura(self):
-		print("Commander Rhyssa's aura is registered. Player %d's Secrets now trigger twice."%self.ID)
+		PRINT(self, "Commander Rhyssa's aura is registered. Player %d's Secrets now trigger twice."%self.ID)
 		self.Game.playerStatus[self.ID]["Secret Trigger Twice"] += 1
 		
 	def deactivateAura(self):
-		print("Commander Rhyssa's aura is removed. Player %d's Secrets no longer trigger twice."%self.ID)
+		PRINT(self, "Commander Rhyssa's aura is removed. Player %d's Secrets no longer trigger twice."%self.ID)
 		if self.Game.playerStatus[self.ID]["Secret Trigger Twice"] > 0:
 			self.Game.playerStatus[self.ID]["Secret Trigger Twice"] -= 1
 			
@@ -2444,7 +2460,7 @@ class Nozari(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Restore both heroes to full Health"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Nozari's battlecry restores all health to both players.")
+		PRINT(self, "Nozari's battlecry restores all health to both players.")
 		heal1 = self.Game.heroes[1].health_upper * (2 ** self.countHealDouble())
 		heal2 = self.Game.heroes[2].health_upper * (2 ** self.countHealDouble())
 		self.restoresAOE([self.Game.heroes[1], self.Game.heroes[2]], [heal1, heal2])
@@ -2462,7 +2478,7 @@ class EVILConscripter(Minion):
 		
 class AddaRandomLackeytoHand(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Deathrattle: Add A random Lackey to player's hand triggers.")
+		PRINT(self, "Deathrattle: Add A random Lackey to player's hand triggers.")
 		self.entity.Game.Hand_Deck.addCardtoHand(np.random.choice(Lackeys), self.entity.ID, "CreateUsingType")
 		
 		
@@ -2478,7 +2494,7 @@ class HenchClanShadequill(Minion):
 class Restore5HealthtoEnemyHero(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		heal = 5 * (2 ** self.entity.countHealDouble())
-		print("Deathrattle: Restore %d health to enemy hero triggers to player's hand triggers."%heal)
+		PRINT(self, "Deathrattle: Restore %d health to enemy hero triggers to player's hand triggers."%heal)
 		self.entity.restoresHealth(self.entity.Game.heroes[3-self.entity.ID], heal)
 		
 #If the target minion is killed due to Teacher/Juggler combo, summon a fresh new minion without enchantment.
@@ -2495,7 +2511,7 @@ class UnsleepingSoul(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Unsleeping Soul is cast, silences friendly minion %s and summons a copy of it."%target.name)
+			PRINT(self, "Unsleeping Soul is cast, silences friendly minion %s and summons a copy of it."%target.name)
 			target.getsSilenced()
 			self.Game.summonMinion(target.selfCopy(target.ID), target.position+1, self.ID)
 		return target
@@ -2516,7 +2532,7 @@ class ForbiddenWords(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		#假设如果没有指定目标则不会消耗法力值
 		if target != None:
-			print("Forbidden Words is cast, spends all of player's mana and destroys minion ", target.name)
+			PRINT(self, "Forbidden Words is cast, spends all of player's mana and destroys minion %s"%target.name)
 			self.Game.CounterHandler.manaSpentonSpells[self.ID] += self.Game.ManaHandler.manas[self.ID]
 			self.Game.ManaHandler.manas[self.ID] = 0
 			target.dead = True
@@ -2534,7 +2550,7 @@ class ConvincingInfiltrator(Minion):
 		
 class DestroyaRandomEnemyMinion(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Deathrattle: Destroy a random enemy minion triggers.")
+		PRINT(self, "Deathrattle: Destroy a random enemy minion triggers.")
 		minions = []
 		for minion in self.entity.Game.minionsonBoard(3-self.entity.ID):
 			if minion.dead == False:
@@ -2553,7 +2569,7 @@ class MassResurrection(Spell):
 		return self.Game.spaceonBoard(self.ID) > 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Mass Resurrection is cast and summons 3 friendly minions that died this turn.")
+		PRINT(self, "Mass Resurrection is cast and summons 3 friendly minions that died this turn.")
 		numMinionsDied = len(self.Game.CounterHandler.minionsDiedThisGame[self.ID])
 		numSummon = min(3, self.Game.spaceonBoard(self.ID), numMinionsDied)
 		if numSummon > 0:
@@ -2579,7 +2595,7 @@ class LazulsScheme(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Lazul's Scheme is cast and reduces minion %s's attack by %d until player's next turn."%(target.name, self.progress))
+			PRINT(self, "Lazul's Scheme is cast and reduces minion %s's attack by %d until player's next turn."%(target.name, self.progress))
 			timePoint = "StartofTurn 1" if self.ID == 1 else "StartofTurn 2"
 			target.buffDebuff(-self.progress, 0, timePoint)
 		return target
@@ -2592,7 +2608,7 @@ class Trigger_Upgrade(TriggerinHand):
 		return self.entity.inHand and ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("At the end of turn, %s upgrades"%self.entity.name)
+		PRINT(self, "At the end of turn, %s upgrades"%self.entity.name)
 		self.entity.progress += 1
 		
 		
@@ -2618,11 +2634,11 @@ class ShadowyFigure(Minion):
 			if self.onBoard or self.inHand:
 				if target.onBoard:
 					Copy = target.selfCopy(self.ID, 2, 2)
-					print("Shadowy Figure's battlecry transforms minion into a copy of ", target.name)
+					PRINT(self, "Shadowy Figure's battlecry transforms minion into a copy of %s"%target.name)
 				else: #target not on board. This Shadowy Figure becomes a base copy of it.
 					Copy = type(target)(self.Game, self.ID)
 					Copy.statReset(2, 2)
-					print("Shadowy Figure's battlecry transforms minion into a base copy of ", target.name)
+					PRINT(self, "Shadowy Figure's battlecry transforms minion into a base copy of %s"%target.name)
 				self.Game.transform(self, Copy)
 		return target
 		
@@ -2642,16 +2658,16 @@ class MadameLazul(Minion):
 	#def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 	#	if self.Game.Hand_Deck.hands[3-self.ID] != [] and self.Game.Hand_Deck.handNotFull(self.ID):
 	#		if len(self.Game.Hand_Deck.hands[3-self.ID]) == 1:
-	#			print("Opponent only has one card in hand, Madame Lazul's battlecry copies it")
+	#			PRINT(self, "Opponent only has one card in hand, Madame Lazul's battlecry copies it")
 	#			Copy = self.Game.Hand_Deck.hands[3-self.ID][0].selfCopy(self.ID)
 	#			self.Game.Hand_Deck.addCardtoHand(Copy, self.ID)
 	#		else:
 	#			if "InvokedbyOthers" in comment:
-	#				print("Madame Lazul's battlecry adds a copy of a random card in opponent's hand to player's hand.")
+	#				PRINT(self, "Madame Lazul's battlecry adds a copy of a random card in opponent's hand to player's hand.")
 	#				Copy = np.random.choice(self.Game.Hand_Deck.hands[3-self.ID]).selfCopy(self.ID)
 	#				self.Game.Hand_Deck.addCardtoHand(Copy, self.ID)
 	#			else:
-	#				print("Madame Lazul's battlecry lets player discover a copy of card in opponent's hand.")
+	#				PRINT(self, "Madame Lazul's battlecry lets player discover a copy of card in opponent's hand.")
 	#				num = 
 	#	return None
 	
@@ -2672,7 +2688,7 @@ class Trigger_CatrinaMuerte(TriggeronBoard):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("At the end of turn, %s summons a friendly minion that died this game."%self.entity.name)
+		PRINT(self, "At the end of turn, %s summons a friendly minion that died this game."%self.entity.name)
 		if self.entity.Game.CounterHandler.minionsDiedThisGame[self.entity.ID] != []:
 			minion = np.random.choice(self.entity.Game.CounterHandler.minionsDiedThisGame[self.entity.ID])
 			minion = self.entity.Game.cardPool[minion](self.entity.Game, self.entity.ID)
@@ -2685,7 +2701,7 @@ class DaringEscape(Spell):
 	index = "Shadows~Rogue~Spell~1~Daring Escape"
 	description = "Return all friendly minions to your hand"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Daring Escape is cast and returns all friendly minions to player's hand.")
+		PRINT(self, "Daring Escape is cast and returns all friendly minions to player's hand.")
 		for minion in self.Game.minionsonBoard(self.ID):
 			self.Game.returnMiniontoHand(minion)
 		return None
@@ -2703,7 +2719,7 @@ class EVILMiscreant(Minion):
 	#Will only be invoked if self.effectCanTrigger() returns True in self.played()
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.CounterHandler.numCardsPlayedThisTurn[self.ID] > 0:
-			print("EVIL Miscreant's Combo triggers and adds two Lackeys to player's hand.")
+			PRINT(self, "EVIL Miscreant's Combo triggers and adds two Lackeys to player's hand.")
 			self.Game.Hand_Deck.addCardtoHand(np.random.choice(Lackeys, 2, replace=False), self.ID, "CreateUsingType")
 		return None
 		
@@ -2734,17 +2750,17 @@ class HenchClanBurglar(Minion):
 			Class = self.Game.heroes[self.ID].Class
 			key = "Spells except "+Class
 			if "InvokedbyOthers" in comment:
-				print("Hench-Clan Burglar's battlecry adds a random spell from another class to player's hand")
+				PRINT(self, "Hench-Clan Burglar's battlecry adds a random spell from another class to player's hand")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
 			else:
-				print("Hench-Clan Burglar's battlecry lets player Discover a spell from another class")
+				PRINT(self, "Hench-Clan Burglar's battlecry lets player Discover a spell from another class")
 				spells = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
 				self.Game.options = [spell(self.Game, self.ID) for spell in spells]
 				self.Game.DiscoverHandler.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option):
-		print("Spell", option.name, "is added to player's hand")
+		PRINT(self, "Spell %s is added to player's hand"%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
@@ -2766,7 +2782,7 @@ class TogwagglesScheme(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Togwaggle's Scheme is cast and shuffles %d copies of a friendly minion to player's hand.")
+			PRINT(self, "Togwaggle's Scheme is cast and shuffles %d copies of a friendly minion to player's hand.")
 			for i in range(self.progress):
 				Copy = type(target)(self.Game, self.ID)
 				self.Game.Hand_Deck.shuffleCardintoDeck(Copy, initiatorID=self.ID)
@@ -2788,11 +2804,11 @@ class UnderbellyFence(Minion):
 	#Will only be invoked if self.effectCanTrigger() returns True in self.played()
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.inHand and self.Game.Hand_Deck.holdingCardfromAnotherClass(self.ID, self):
-			print("Underbelly Fence's battlecry gives minion +1/+1 and Rush.")
+			PRINT(self, "Underbelly Fence's battlecry gives minion +1/+1 and Rush.")
 			self.buffDebuff(1, 1)
 			self.getsKeyword("Rush")
 		elif self.onBoard and self.Game.Hand_Deck.holdingCardfromAnotherClass(self.ID):
-			print("Underbelly Fence's battlecry gives minion +1/+1 and Rush.")
+			PRINT(self, "Underbelly Fence's battlecry gives minion +1/+1 and Rush.")
 			self.buffDebuff(1, 1)
 			self.getsKeyword("Rush")
 		return None
@@ -2820,7 +2836,7 @@ class Vendetta(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			print("Vendetta is cast and deals %d damage to minion "%damage, target.name)
+			PRINT(self, "Vendetta is cast and deals %d damage to minion %s"%(damage, target.name))
 			self.dealsDamage(target, damage)
 		return target
 		
@@ -2849,7 +2865,7 @@ class WagglePick(Weapon):
 class ReturnaFriendlyMiniontoHand(Deathrattle_Weapon):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.entity.Game.minionsonBoard(self.entity.ID) != []:
-			print("Deathrattle: Return a random friendly minion to your hand triggers")
+			PRINT(self, "Deathrattle: Return a random friendly minion to your hand triggers")
 			miniontoReturn = np.random.choice(self.entity.Game.minionsonBoard(self.entity.ID))
 			#假设那张随从在进入手牌前接受-2费效果。可以被娜迦海巫覆盖。
 			manaMod = ManaModification(miniontoReturn, changeby=-2, changeto=-1)
@@ -2877,7 +2893,7 @@ class UnidentifiedContract(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Unidentified Contract is cast and destroys minion", target.name)
+			PRINT(self, "Unidentified Contract is cast and destroys minion %s"%target.name)
 			target.dead = True
 		return target
 		
@@ -2895,9 +2911,9 @@ class AssassinsContract(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Assassin's Contract is cast and destroys minion", target.name)
+			PRINT(self, "Assassin's Contract is cast and destroys minion %s"%target.name)
 			target.dead = True
-		print("Assassin's Contract also summons a 1/1 Patient Assassin")
+		PRINT(self, "Assassin's Contract also summons a 1/1 Patient Assassin")
 		self.Game.summonMinion(PatientAssassin(self.Game, self.ID), -1, self.ID)
 		return target
 		
@@ -2915,9 +2931,9 @@ class LucrativeContract(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Lucrative Contract is cast and destroys minion", target.name)
+			PRINT(self, "Lucrative Contract is cast and destroys minion %s"%target.name)
 			target.dead = True
-		print("Lucrative Contract also adds two Coins to player's hand")
+		PRINT(self, "Lucrative Contract also adds two Coins to player's hand")
 		self.Game.Hand_Deck.addCardtoHand([TheCoin, TheCoin], self.ID, "CreateUsingType")
 		return target
 		
@@ -2935,9 +2951,9 @@ class RecruitmentContract(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Recruitment Contract is cast and destroys minion", target.name)
+			PRINT(self, "Recruitment Contract is cast and destroys minion %s"%target.name)
 			target.dead = True
-		print("Recruitment Contract also adds a copy of the minion to player's hand")
+		PRINT(self, "Recruitment Contract also adds a copy of the minion to player's hand")
 		self.Game.Hand_Deck.addCardtoHand(type(target), self.ID, "CreateUsingType")
 		return target
 		
@@ -2955,10 +2971,10 @@ class TurncoatContract(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Turncoat Contract is cast and destroys minion", target.name)
+			PRINT(self, "Turncoat Contract is cast and destroys minion %s"%target.name)
 			target.dead = True
 		if target.onBoard:
-			print("Turncoat Contract also lets the minion deal its damage to adjacent minions")
+			PRINT(self, "Turncoat Contract also lets the minion deal its damage to adjacent minions")
 			adjacentMinions, distribution = self.Game.findAdjacentMinions(target)
 			if adjacentMinions != []:
 				target.dealsAOE(adjacentMinions, [target.attack for minion in adjacentMinions])
@@ -2976,7 +2992,7 @@ class GoldenKobold_Shadows(Minion):
 		return "Legendary Minions", list(Game.LegendaryMinions.values())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Golden Kobold's battlecry replaces player's hand with Legendary minions")
+		PRINT(self, "Golden Kobold's battlecry replaces player's hand with Legendary minions")
 		minions = list(self.Game.LegendaryMinions.values())
 		handSize = len(self.Game.Hand_Deck.hands[self.ID])
 		self.Game.Hand_Deck.extractfromHand(None, True, self.ID)
@@ -2991,7 +3007,7 @@ class TolinsGoblet_Shadows(Spell):
 	description = "Draw a card. Fill your hand with copies of it"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Tolin's Goblet lets player draw a card and fills their hand with copies of it")
+		PRINT(self, "Tolin's Goblet lets player draw a card and fills their hand with copies of it")
 		card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 		if card != None and self.Game.Hand_Deck.handNotFull(self.ID):
 			copies = [card.selfCopy(self.ID) for i in self.Game.Hand_Deck.spaceinHand(self.ID)]
@@ -3005,7 +3021,7 @@ class WondrousWand_Shadows(Spell):
 	description = "Draw 3 cards. Reduce their costs to (0)"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("WondrousWand lets player draw 3 cards and reduces their costs to (0)")
+		PRINT(self, "WondrousWand lets player draw 3 cards and reduces their costs to (0)")
 		for i in range(3):
 			card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 			if card != None:
@@ -3036,18 +3052,18 @@ class ZarogsCrown_Shadows(Spell):
 		if self.Game.spaceonBoard(self.ID) > 0:
 			key = "Legendary Minions as " + classforDiscover(self)
 			if "CastbyOthers" in comment:
-				print("Zarog's Crown summons two copies of a random Legendary minion")
+				PRINT(self, "Zarog's Crown summons two copies of a random Legendary minion")
 				minion = np.random.choice(self.Game.RNGPools[key])
 				self.Game.summonMinion([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
 			else:
-				print("Zarog's Crown lets playersummons two copies of a random Legendary minion")
+				PRINT(self, "Zarog's Crown lets playersummons two copies of a random Legendary minion")
 				minions = np.random.choice(self.Game.RNGPools[key], 3, replace=False)
 				self.Game.options = [minion(self.Game, self.ID) for minion in minions]
 				self.Game.DiscoverHandler.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option):
-		print("Zarog's Crown summons two copies of Legendary minion", option.name)
+		PRINT(self, "Zarog's Crown summons two copies of Legendary minion %s"%option.name)
 		self.Game.summonMinion([option, type(option)(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
 		
 FantasticTreasures = [GoldenKobold_Shadows, TolinsGoblet_Shadows, WondrousWand_Shadows, ZarogsCrown_Shadows]
@@ -3075,16 +3091,16 @@ class HeistbaronTogwaggle(Minion):
 				
 		if controlsLackey and self.ID == self.Game.turn and self.Game.Hand_Deck.handNotFull(self.ID):
 			if "InvokedbyOthers" in comment:
-				print("Heistbaron Togwaggle's battlecry gives player a fantastic treasure")
+				PRINT(self, "Heistbaron Togwaggle's battlecry gives player a fantastic treasure")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(FantasticTreasures), self.ID, "CreateUsingType")
 			else:
-				print("Heistbaron Togwaggle's battlecry lets player choose a fantastic treasure.")
+				PRINT(self, "Heistbaron Togwaggle's battlecry lets player choose a fantastic treasure.")
 				self.Game.options = [treasure(self.Game, self.ID) for treasure in FantasticTreasures]
 				self.Game.DiscoverHandler.startDiscover(self)
 		return None
 	
 	def discoverDecided(self, option):
-		print("Treasure", option.name, "is added to player's hand")
+		PRINT(self, "Treasure %s is added to player's hand"%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		
 		
@@ -3106,7 +3122,7 @@ class Trigger_TakNozwhisker(TriggeronBoard):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Player shuffles cards into deck and %s adds a copy to player's hand for each"%self.entity.name)
+		PRINT(self, "Player shuffles cards into deck and %s adds a copy to player's hand for each"%self.entity.name)
 		if type(target) == type([]) or type(target) == type(np.array([])):
 			for card in obj:
 				if self.entity.Game.Hand_Deck.handNotFull(self.entity.ID):
@@ -3141,7 +3157,7 @@ class Mutate(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Mutate is cast and transforms friendly minion %s to one that costs 1 more."%target.name)
+			PRINT(self, "Mutate is cast and transforms friendly minion %s to one that costs 1 more."%target.name)
 			target = self.Game.mutate(target, 1)
 		return target
 		
@@ -3156,7 +3172,7 @@ class SludgeSlurper(Minion):
 		self.overload = 1
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Sludge Slurper battlecry adds a Lackey to player's hand.")
+		PRINT(self, "Sludge Slurper battlecry adds a Lackey to player's hand.")
 		self.Game.Hand_Deck.addCardtoHand(np.random.choice(Lackeys), self.ID, "CreateUsingType")
 		return None
 		
@@ -3170,7 +3186,7 @@ class SouloftheMurloc(Spell):
 		return self.Game.minionsonBoard(self.ID) != []
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Soul of the Murloc is cast and gives all friendly minions Deathrattle: Summon a 1/1 Murloc.")
+		PRINT(self, "Soul of the Murloc is cast and gives all friendly minions Deathrattle: Summon a 1/1 Murloc.")
 		for minion in self.Game.minionsonBoard(self.ID):
 			trigger = SummonaMurlocScout(minion)
 			minion.deathrattles.append(trigger)
@@ -3179,7 +3195,7 @@ class SouloftheMurloc(Spell):
 		
 class SummonaMurlocScout(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Deathrattle: Summon a 1/1 Murloc triggers")
+		PRINT(self, "Deathrattle: Summon a 1/1 Murloc triggers")
 		self.entity.Game.summonMinion(MurlocScout(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		
 		
@@ -3205,7 +3221,7 @@ class Trigger_UnderbellyAngler(TriggeronBoard):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and "Murloc" in subject.race
 	#Assume if Murloc gets controlled by the enemy, this won't trigger
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("After player plays Murloc %s, %s adds a random Murloc to player's hand."%(subject.name, self.entity.name))
+		PRINT(self, "After player plays Murloc %s, %s adds a random Murloc to player's hand."%(subject.name, self.entity.name))
 		murloc = np.random.choice(self.entity.Game.RNGPools["Murlocs"])(self.entity.Game, self.entity.ID)
 		self.entity.Game.Hand_Deck.addCardtoHand(murloc, self.entity.ID)
 		
@@ -3222,7 +3238,7 @@ class HagathasScheme(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		damage = (self.progress + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		print("Hagatha's Scheme is cast and deals %d damage to all minions."%damage)
+		PRINT(self, "Hagatha's Scheme is cast and deals %d damage to all minions."%damage)
 		targets = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
 		self.dealsAOE(targets, [damage for minion in targets])
 		return None
@@ -3244,10 +3260,10 @@ class WitchsBrew(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			heal = 4 * (2 ** self.countHealDouble())
-			print("Witch's Brew is cast and restores %d health to "%heal, target.name)
+			PRINT(self, "Witch's Brew is cast and restores %d health to %s"%(heal, target.name))
 			self.restoresHealth(target, heal)
 			
-		print("Witch's Brew adds another Witch's Brew to player's hand, which disappears at the end of turn.")
+		PRINT(self, "Witch's Brew adds another Witch's Brew to player's hand, which disappears at the end of turn.")
 		echo = WitchsBrew(self.Game, self.ID)
 		trigger = Trigger_Echo(echo)
 		echo.triggersinHand.append(trigger)
@@ -3266,7 +3282,7 @@ class Muckmorpher(Minion):
 		#如果self.Game.minionPlayed不再等于自己，说明这个随从的已经触发了变形而不会再继续变形。
 		if self.dead == False and self.Game.minionPlayed == self: #战吼触发时自己不能死亡。
 			if self.onBoard or self.inHand:
-				print("Muckmorpher's battlecry transforms the minion into a 4/4 copy of a minion in player's deck.")
+				PRINT(self, "Muckmorpher's battlecry transforms the minion into a 4/4 copy of a minion in player's deck.")
 				minionsinDeck = []
 				for card in self.Game.Hand_Deck.decks[self.ID]:
 					if card.cardType == "Minion":
@@ -3274,7 +3290,7 @@ class Muckmorpher(Minion):
 				if minionsinDeck != []:
 					Copy = type(np.random.choice(minionsinDeck))(self.Game, self.ID)
 					Copy.statReset(4, 4)
-					print("Muckmorpher's battlecry transforms the minion into a 4/4 copy of", Copy.name)
+					PRINT(self, "Muckmorpher's battlecry transforms the minion into a 4/4 copy of %s"%Copy.name)
 					self.Game.transform(self, Copy)
 		return None
 		
@@ -3318,7 +3334,7 @@ class SwampqueenHagatha(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		self.spell1, self.spell2 = None, None
 		if self.ID == self.Game.turn and self.Game.Hand_Deck.handNotFull(self.ID):
-			print("Swampqueen Hagatha's battlecry lets player create a 5/5 Horror and teach it two Shaman Spells.")
+			PRINT(self, "Swampqueen Hagatha's battlecry lets player create a 5/5 Horror and teach it two Shaman Spells.")
 			if "InvokedbyOthers" in comment:
 				spell1 = np.random.choice(self.Game.RNGPools["Shaman Spells"])
 				if spell1.requireTarget:
@@ -3339,7 +3355,7 @@ class SwampqueenHagatha(Minion):
 			spell1ClassName, spell2ClassName = spell1.__name__, spell2.__name__
 			requireTarget = spell1.requireTarget or spell2.requireTarget
 			newIndex = "Shadows~Shaman~5~5~5~Minion~None~Drustvar Horror_%s_%s~Battlecry~Uncollectible"%(spell1.name, spell2.name)
-			subclass = type("DrustvarHorror~"+spell1ClassName+spell2ClassName, (DrustvarHorror, ), 
+			subclass = type("DrustvarHorror~"+spell1ClassName+spell2ClassName, (DrustvarHorror_Mutable, ), 
 							{"requireTarget": requireTarget, "learnedSpell1": spell1, "learnedSpell2":spell2,
 							"index": newIndex
 							}
@@ -3355,7 +3371,7 @@ class SwampqueenHagatha(Minion):
 		else:
 			self.spell2 = type(option)
 			
-class DrustvarHorror(Minion):
+class DrustvarHorror_Mutable(Minion):
 	Class, race, name = "Shaman", "", "Drustvar Horror"
 	mana, attack, health = 5, 5, 5
 	index = "Shadows~Shaman~Minion~5~5~5~None~Drustvar Horror~Battlecry~Uncollectible"
@@ -3385,7 +3401,7 @@ class DrustvarHorror(Minion):
 		return True
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Drustvar Horror's battlecry casts the FIRST spell %s it learned on"%self.learnedSpell1.name, target)
+		PRINT(self, "Drustvar Horror's battlecry casts the FIRST spell %s it learned on %s"%(self.learnedSpell1.name, target))
 		#不知道施放的法术是否会触发发现，还是直接随机选取一个发生选项
 		#假设是随机选取一个选项。
 		comment = "CastbyOthers,withNoTarget" if target == None else "CastbyOthers"
@@ -3410,7 +3426,7 @@ class EVILGenius(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("EVIL Genius's battlecry destroys friendly minion %s and adds two lackeys to player's hand."%target.name)
+			PRINT(self, "EVIL Genius's battlecry destroys friendly minion %s and adds two lackeys to player's hand."%target.name)
 			target.dead = True
 			self.Game.Hand_Deck.addCardtoHand(np.random.choice(Lackeys, 2, replace=False), self.ID, "CreateUsingType")
 		return target
@@ -3427,7 +3443,7 @@ class RafaamsScheme(Spell):
 		self.triggersinHand = [Trigger_Upgrade(self)]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Rafaam's Scheme is cast and summons %d Imps."%self.progress)
+		PRINT(self, "Rafaam's Scheme is cast and summons %d Imps."%self.progress)
 		self.Game.summonMinion([Imp_Shadows(self.Game, self.ID) for i in range(self.progress)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
@@ -3443,7 +3459,7 @@ class AranasiBroodmother(Minion):
 		
 	def restore4HealthtoHero(self):
 		heal = 4 * (2 ** self.countHealDouble())
-		print("Aranasi Broodmother is drawn and restores %d Health to player"%heal)
+		PRINT(self, "Aranasi Broodmother is drawn and restores %d Health to player"%heal)
 		self.restoresHealth(self.Game.heroes[self.ID], heal)
 		
 #把随从洗回牌库会消除其上的身材buff（+2、+2的飞刀杂耍者的buff消失）
@@ -3456,7 +3472,7 @@ class PlotTwist(Spell):
 	index = "Shadows~Warlock~Spell~2~Plot Twist"
 	description = "Shuffle your hand into your deck. Draw that many cards"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Plot Twist is cast and shuffles all of player's hand into deck. Then draw that many cards.")
+		PRINT(self, "Plot Twist is cast and shuffles all of player's hand into deck. Then draw that many cards.")
 		handSize = len(self.Game.Hand_Deck.hands[self.ID])
 		cardstoShuffle, mana, isRightmostCardinHand = self.Game.Hand_Deck.extractfromHand(None, True, self.ID) #Extract all cards.
 		#Remove all the temp effects on cards in hand, e.g, TheSoularium and the echo trigger
@@ -3480,7 +3496,7 @@ class Impferno(Spell):
 	description = "Give your Demons +1 Attack. Deal 1 damage to all enemy minions"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		print("Impferno is cast, gives all friendly Demons +1 attack and deals %d damage to enemy minions."%damage)
+		PRINT(self, "Impferno is cast, gives all friendly Demons +1 attack and deals %d damage to enemy minions."%damage)
 		for minion in self.Game.minionsonBoard(self.ID):
 			if "Demon" in minion.race:
 				minion.buffDebuff(1, 1)
@@ -3502,7 +3518,7 @@ class EagerUnderling(Minion):
 class GiveTwoRandomFriendlyMinionsPlus2Plus2(Deathrattle_Weapon):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		friendlyMinions = self.Game.minionsonBoard(self.entity.ID)
-		print("Deathrattle: Give Two Random Friendly Minions +2/+2 triggers.")
+		PRINT(self, "Deathrattle: Give Two Random Friendly Minions +2/+2 triggers.")
 		if len(friendlyMinions) > 1:
 			minionstoBuff = np.random.choice(friendlyMinions, 2, replace=False)
 			minionstoBuff[0].buffDebuff(2, 2)
@@ -3517,7 +3533,7 @@ class DarkestHour(Spell):
 	index = "Shadows~Warlock~Spell~6~Darkest Hour"
 	description = "Destroy all friendly minions. For each one, summon a random minion from your deck"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Darkest Hour is cast, destroys all friendly minions and summons equal number of minions from deck.")
+		PRINT(self, "Darkest Hour is cast, destroys all friendly minions and summons equal number of minions from deck.")
 		boardSize = len(self.Game.minionsonBoard(self.ID))
 		for minion in self.Game.minionsonBoard(self.ID):
 			minion.dead = True
@@ -3572,7 +3588,7 @@ class ArchVillainRafaam(Minion):
 		return "Legendary Minions", list(Game.LegendaryMinions.values())
 	#不知道拉法姆的替换手牌、牌库和迦拉克隆会有什么互动。假设不影响主迦拉克隆。
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Arch-Villain Rafaam's battlecry replaces player's hand and deck with random Legendary minions.")
+		PRINT(self, "Arch-Villain Rafaam's battlecry replaces player's hand and deck with random Legendary minions.")
 		handSize = len(self.Game.Hand_Deck.hands[self.ID])
 		self.Game.Hand_Deck.extractfromHand(None, True, self.ID)
 		deckSize = len(self.Game.Hand_Deck.decks[self.ID])
@@ -3604,7 +3620,7 @@ class Trigger_FelLordBetrug(TriggeronBoard):
 		return self.entity.onBoard and target[0].cardType == "Minion" and target[0].ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Whenever player draws minion %s, %s summons a copy of it that has Rush and dies at the end of turn."%(target[0].name, self.entity.name))
+		PRINT(self, "Whenever player draws minion %s, %s summons a copy of it that has Rush and dies at the end of turn."%(target[0].name, self.entity.name))
 		minion = target[0].selfCopy(self.entity.ID)
 		minion.keyWords["Rush"] = 1
 		minion.triggersonBoard.append(Trigger_DieatEndofTurn(minion))
@@ -3619,7 +3635,7 @@ class Trigger_DieatEndofTurn(TriggeronBoard):
 		return self.entity.onBoard #Even if the current turn is not the minion's owner's turn
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("At the end of turn, minion %s affected by FelLord Betrug dies."%self.entity.name)
+		PRINT(self, "At the end of turn, minion %s affected by FelLord Betrug dies."%self.entity.name)
 		self.entity.dead = True
 		
 """Warrior cards"""
@@ -3637,10 +3653,10 @@ class ImproveMorale(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			print("Improve Morale is cast and deals %d damage to minion "%damage, target.name)
+			PRINT(self, "Improve Morale is cast and deals %d damage to minion %s"%(damage, target.name))
 			self.dealsDamage(target, damage)
 			if target.health > 0 and target.dead == False:
-				print("The target survives Improve Morale, a Lackey is added to player's hand.")
+				PRINT(self, "The target survives Improve Morale, a Lackey is added to player's hand.")
 				self.Game.Hand_Deck.addCardtoHand(np.random.choice(Lackeys), self.ID, "CreateUsingType")
 		return target
 		
@@ -3662,7 +3678,7 @@ class Trigger_ViciousScraphound(TriggeronBoard):
 		return subject == self.entity
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print(self.entity.name, "deals damage to %s and player gains 2 Armor."%target.name)
+		PRINT(self, "%s deals damage to %s and player gains 2 Armor."%(self.entity.name, target.name))
 		self.entity.Game.heroes[self.entity.ID].gainsArmor(number)
 		
 		
@@ -3677,7 +3693,7 @@ class DrBoomsScheme(Spell):
 		self.triggersinHand = [Trigger_Upgrade(self)]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Dr. Boom's Scheme is cast and player gains %d Armor."%self.progress)
+		PRINT(self, "Dr. Boom's Scheme is cast and player gains %d Armor."%self.progress)
 		self.Game.heroes[self.ID].gainsArmor(self.progress)
 		return None
 		
@@ -3689,7 +3705,7 @@ class SweepingStrikes(Spell):
 	description = "Give a minion 'Also damages minions next to whoever this attacks'"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			print("Sweeping Strikes is cast and gives minion %s 'Also damage adjacent minions to whoever this attacks'."%target.name)
+			PRINT(self, "Sweeping Strikes is cast and gives minion %s 'Also damage adjacent minions to whoever this attacks'."%target.name)
 			target.marks["Attack Adjacent Minions"] += 1
 		return target
 		
@@ -3701,7 +3717,7 @@ class Bomb_Shadows(Spell):
 	description = "Casts When Drawn. Deal 5 damage to your hero"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		print("Bomb is cast and deals %d damage to player."%damage)
+		PRINT(self, "Bomb is cast and deals %d damage to player."%damage)
 		self.dealsDamage(self.Game.heroes[self.ID], damage)
 		return None
 		
@@ -3712,7 +3728,7 @@ class ClockworkGoblin(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle a Bomb in to your opponent's deck. When drawn, it explodes for 5 damage"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Clockwork Goblin's battlecry shuffles a Bomb into opponents deck. When its drawn, it deals 5 damage to enemy hero.")
+		PRINT(self, "Clockwork Goblin's battlecry shuffles a Bomb into opponents deck. When its drawn, it deals 5 damage to enemy hero.")
 		self.Game.Hand_Deck.shuffleCardintoDeck(Bomb_Shadows(self.Game, 3-self.ID), self.ID)
 		return None
 		
@@ -3724,7 +3740,7 @@ class DimensionalRipper(Spell):
 	description = "Summon 2 copies of a minion in your deck"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("Dimensional Ripper is cast and summons two copies of a minion in player's deck.")
+		PRINT(self, "Dimensional Ripper is cast and summons two copies of a minion in player's deck.")
 		if self.Game.spaceonBoard(self.ID) > 0:
 			minionsinDeck = []
 			for card in self.Game.Hand_Deck.hands[self.ID]:
@@ -3758,7 +3774,7 @@ class OmegaDevastator(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None and self.Game.ManaHandler.manasUpper[self.ID] >= 10:
-			print("Omega Devastator's battlecry deals 10 damage to minion ", target.name)
+			PRINT(self, "Omega Devastator's battlecry deals 10 damage to minion %s"%target.name)
 			self.dealsDamage(target, 10)
 		return target
 		
@@ -3780,7 +3796,7 @@ class Trigger_Wrenchcalibur(TriggeronBoard):
 		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("After hero attacks, Wrenchcalibur triggers and shuffles a Bomb in to opponent's deck")
+		PRINT(self, "After hero attacks, Wrenchcalibur triggers and shuffles a Bomb in to opponent's deck")
 		self.entity.Game.Hand_Deck.shuffleCardintoDeck(Bomb_Shadows(self.entity.Game, 3-self.entity.ID), self.entity.ID)
 		
 		
@@ -3803,7 +3819,7 @@ class BlastmasterBoom(Minion):
 				numBombsinDeck += 1
 				
 		numSummon = min(8, 2 * numBombsinDeck)
-		print("Blastmaster Boom's battlecry summons two 1/1 Boom Bots for each Bomb in opponent's deck.")
+		PRINT(self, "Blastmaster Boom's battlecry summons two 1/1 Boom Bots for each Bomb in opponent's deck.")
 		pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 		self.Game.summonMinion([BoomBot_Shadows(self.Game, self.ID) for i in range(numSummon)], pos, self.ID)
 		return None
@@ -3819,13 +3835,14 @@ class BoomBot_Shadows(Minion):
 		
 class Deal1to4DamagetoaRandomEnemy(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Deathrattle: Deal 1~4 damage to a random enemy triggers.")
-		target = np.random.choice(self.entity.Game.livingObjtoTakeRandomDamage(3-self.entity.ID))
-		damage = np.random.randint(1, 5)
-		print("Deathrattle deals %d damage to"%damage, target.name)
-		self.entity.dealsDamage(target, damage)
-		
-		
+		PRINT(self, "Deathrattle: Deal 1~4 damage to a random enemy triggers.")
+		targets = self.entity.Game.livingObjtoTakeRandomDamage(3-self.entity.ID)
+		if targets != []:
+			target, damage = np.random.choice(targets), np.random.randint(1, 5)
+			PRINT(self, "Deathrattle deals %d damage to %s"%(damage, target.name))
+			self.entity.dealsDamage(target, damage)
+			
+			
 class TheBoomReaver(Minion):
 	Class, race, name = "Warrior", "Mech", "The Boom Reaver"
 	mana, attack, health = 10, 7, 9
@@ -3833,7 +3850,7 @@ class TheBoomReaver(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a copy of a minion in your deck. Give it Rush"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		print("The Boom Reaver's battlecry summons a copy of minion in player's deck and gives it Rush.")
+		PRINT(self, "The Boom Reaver's battlecry summons a copy of minion in player's deck and gives it Rush.")
 		if self.Game.spaceonBoard(self.ID) > 0:
 			minionsinDeck = []
 			for card in self.Game.Hand_Deck.decks[self.ID]:

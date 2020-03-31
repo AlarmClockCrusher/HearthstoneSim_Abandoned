@@ -159,7 +159,6 @@ class ManaHandler:
 		self.calcMana_All()
 		#英雄技能的费用光环加载
 		for aura in self.PowerAuras_Backup:
-			print("Power Auras", self.PowerAuras_Backup)
 			if aura.ID == self.Game.turn:
 				tempAura = extractfrom(aura, self.PowerAuras_Backup)
 				self.PowerAuras.append(tempAura)
@@ -168,18 +167,11 @@ class ManaHandler:
 		
 	#Manas locked at this turn doesn't disappear when turn ends. It goes away at the start of next turn.
 	def turnEnds(self):
-		print("Card Mana Auras:", self.CardAuras)
-		for aura in self.CardAuras:
+		for aura in self.CardAuras + self.PowerAuras:
 			if hasattr(aura, "temporary") and aura.temporary:
-				print(aura, " expires at the end of turn.")
+				PRINT(self, "{} expires at the end of turn.".format(aura))
 				aura.auraDisappears()
 		self.calcMana_All()
-		
-		print("Power Mana Auras:", self.PowerAuras)
-		for aura in self.PowerAuras:
-			if hasattr(aura, "temporary") and aura.temporary:
-				print(aura, " expires at the end of turn.")
-				aura.auraDisappears()
 		self.calcMana_Powers()
 		
 	def calcMana_All(self, comment="HandOnly"):
@@ -273,13 +265,13 @@ class ManaAura_Dealer:
 		
 	def applies(self, target): #This target is NOT holder.
 		if self.applicable(target):
-			print("Card %s gains the Changeby %d/Changeto %d mana change from "%(target.name, self.changeby, self.changeto), self.minion)
+			PRINT(self.minion, "Card %s gains the Changeby %d/Changeto %d mana change from %s"%(target.name, self.changeby, self.changeto, self.minion.name))
 			manaMod = ManaModification(target, self.changeby, self.changeto, self, self.lowerbound)
 			manaMod.applies()
 			self.auraAffected.append((target, manaMod))
 			
 	def auraAppears(self):
-		print(self.minion.name + "appears and starts its mana aura", self)
+		PRINT(self.minion, "{} appears and starts its mana aura {}".format(self.minion.name, self))
 		for card in self.minion.Game.Hand_Deck.hands[1] + self.minion.Game.Hand_Deck.hands[2]:
 			self.applies(card)
 			
@@ -290,7 +282,7 @@ class ManaAura_Dealer:
 		
 	#When the aura object is no longer referenced, it vanishes automatically.
 	def auraDisappears(self):
-		print(self.minion.name, " removes its effect.")
+		PRINT(self.minion, "%s removes its effect."%self.minion.name)
 		for minion, manaMod in fixedList(self.auraAffected):
 			manaMod.getsRemoved()
 			
@@ -330,7 +322,7 @@ class TempManaEffect:
 			
 	def applies(self, subject):
 		if self.applicable(subject):
-			print("Card %s gains the Changeby %d/Changeto %d mana change from "%(subject.name, self.changeby, self.changeto), self.Game)
+			PRINT(self, "Card {} gains the Changeby {}/Changeto {} mana change from {}"%(subject.name, self.changeby, self.changeto, self.Game))
 			manaMod = ManaModification(subject, self.changeby, self.changeto, self)
 			manaMod.applies()
 			self.auraAffected.append((subject, manaMod))
@@ -380,7 +372,7 @@ class TempManaEffect_Power:
 			
 	def applies(self, subject):
 		if self.applicable(subject):
-			print("Hero Power %s gains the Changeby %d/Changeto %d mana change from "%(subject.name, self.changeby, self.changeto), self.Game)
+			PRINT(self, "Hero Power {} gains the Changeby {}/Changeto {} mana change from {}"%(subject.name, self.changeby, self.changeto, self))
 			manaMod = ManaModification(subject, self.changeby, self.changeto, self)
 			manaMod.applies()
 			self.auraAffected.append((subject, manaMod))
@@ -618,41 +610,6 @@ class CounterHandler:
 		self.minionsDiedThisTurn = {1:[], 2:[]}
 		self.heroAttackTimesThisTurn = {1:0, 2:0}
 		
-def whenEffective():
-	self.Game.options = [xx, xx, xx]
-	self.Game.DiscoverHandler.startDiscover(initiator=self)
-	
-#class DiscoverHandler:
-#	def __init__(self, Game):
-#		self.Game = Game
-#		self.initiator = None
-#		self.discoveredOption = None
-#		self.threadEvent = None
-#		
-#	def accessGUIDiscover(self):
-#		print("Entering the discover UI.")
-#		if self.Game.GUI != None:
-#			self.Game.GUI.enterDiscover()
-#			
-#	def startDiscover(self, initiator):
-#		self.initiator = initiator
-#		self.threadEvent = threading.Event()
-#		thread  = threading.Thread(target=self.accessGUIDiscover)
-#		print("Start thread ", self.threadEvent)
-#		thread.start()
-#		#The GUI will discover the option and invoke the threadEvent.set()
-#		#The threadEvent.set() can make the threadEvent.wait(timeout=5) return True in the loop and carry on the Game running.
-#		while True:
-#			if self.threadEvent.wait(timeout=20):
-#				break
-#			else:
-#				print("20 seconds passed. Discover still not decided.")
-#				
-#		self.threadEvent = None
-#		self.initiator.discoverDecided(self.discoveredOption)
-#		self.Game.options = []
-#		self.Game.option = None
-#		self.initiator = None
 		
 class DiscoverHandler:
 	def __init__(self, Game):
@@ -680,57 +637,7 @@ class DiscoverHandler:
 			self.initiator = initiator
 			self.Game.GUI.update()
 			self.Game.GUI.waitforDiscover()
-			#option = self.Game.options[choice-1]
-			#print("The discover option is ", option.name)
-			#initiator.discoverDecided(option)
 			self.initiator, self.Game.options = None, []
-		#print("The discover options for %s:"%initiator.name)
-		#for i in range(len(self.Game.options)):
-		#	option = self.Game.options[i]
-		#	if hasattr(option, "cardType") == False:
-		#		print(i+1, " Choice %s:"%option.name, option.description)
-		#	elif option.cardType == "Minion":
-		#		print(i+1, " Minion %s: \t\tMana %d	Att %d	Health %d	Race%s."%(option.name, option.mana, option.attack_Enchant, option.health_Enchant, option.race))
-		#		keyWords = []
-		#		for key, value in option.keyWords.items():
-		#			if value > 0:
-		#				keyWords.append(key)
-		#		print("\tMinion has keyWords: ", keyWords)
-		#		print("\tMinion description: ", option.description)
-		#	elif option.cardType == "Spell":
-		#		print(i+1, " Spell %s: \t\tMana %d"%(option.name, option.mana))
-		#		print("\tSpell description: ", option.description)
-		#	elif option.cardType == "Weapon":
-		#		print(i+1, " Weapon %s: \t\tMana %d	Att %d	Durability %d."%(option.name, option.mana, option.attack, option.durability))
-		#		keyWords = []
-		#		for key, value in option.keyWords.items():
-		#			if value > 0:
-		#				keyWords.append(key)
-		#		print("\tWeapon has keyWords: ", keyWords)
-		#		print("\tWeapon description: ", option.description)
-		#	elif option.cardType == "Hero":
-		#		print(i+1, "Hero Card %s: \t\tMana %d	"%(option.name, option.mana))
-		#		print("\tHero Card description: ", option.description)
-		#	elif option.cardType == "Hero Power":
-		#		print(i+1, "Hero Power %s: Mana %d"%(option.name, option.mana))
-		#		print("\tHero Power description: ", option.description)
-		#	else: #Choice cards. Not actual card types, but just a simple object with name and description.
-		#		print(i+1, "Choice:", option.name)
-		#		print("\tChoice description: ", option.description)
-		#		
-		#while True:
-		#	choice = input("Type the index of the option for discover: ")
-		#	if choice == '1' or choice == '2' or choice == '3' or choice == '4':
-		#		choice = (int)(choice)
-		#		if choice not in [i + 1 for i in range(len(self.Game.options))]:
-		#			print("Type a valid index to continue.")
-		#		else:
-		#			break
-		#			
-		#option = self.Game.options[choice-1]
-		#print("The discover option is ", option.name)
-		#initiator.discoverDecided(option)
-		#self.Game.options = []
 		
 	def typeCardName(self, initiator):
 		if self.Game.GUI != None:
@@ -738,4 +645,4 @@ class DiscoverHandler:
 			PRINT(self, "Start to type the name of a card you want")
 			self.Game.GUI.update()
 			self.Game.GUI.wishforaCard(initiator)
-			
+			self.Game.options = []

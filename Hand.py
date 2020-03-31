@@ -13,7 +13,20 @@ def extractfrom(target, listObject):
 def fixedList(listObject):
 	return listObject[0:len(listObject)]
 	
-	
+def PRINT(obj, string):
+	if hasattr(obj, "GUI"):
+		GUI = obj.GUI
+	elif hasattr(obj, "Game"):
+		GUI = obj.Game.GUI
+	elif hasattr(obj, "entity"):
+		GUI = obj.entity.Game.GUI
+		
+	if GUI != None:
+		GUI.printInfo(string)
+	else:
+		print(self, string)
+		
+		
 class Hand_Deck:
 	def __init__(self, Game, deck1=[], deck2=[]): #通过卡组列表加载卡组
 		self.Game = Game
@@ -50,7 +63,7 @@ class Hand_Deck:
 		mulliganSize = {1:3, 2:4}
 		for ID in range(1, 3):
 			for card in self.decks[ID]:
-				if card.description.startswith("Quest: "):
+				if card.description.startswith("Quest"):
 					mainQuests[ID].append(card)
 			numQueststoDraw = min(len(mainQuests[ID]), mulliganSize[ID])
 			if numQueststoDraw > 0:
@@ -62,7 +75,8 @@ class Hand_Deck:
 				
 	def mulligan(self, indicesCards1, indicesCards2):
 		indicesCards = {1:indicesCards1, 2:indicesCards2}
-		print("Player 1's cards to replace are", indicesCards[1], "Player 2's cards to replace are", indicesCards[2])
+		PRINT(self, "Player 1's cards to replace are {}".format(indicesCards[1]))
+		PRINT(self, "Player 2's cards to replace are {}".format(indicesCards[2]))
 		for ID in range(1, 3):
 			cardstoReplace = []
 			#self.Game.mulligans is the cards currently in players' hands.
@@ -70,7 +84,7 @@ class Hand_Deck:
 				for num in range(1, len(indicesCards[ID])+1):
 					cardstoReplace.append(self.Game.mulligans[ID].pop(indicesCards[ID][-num]))
 				#调用手牌中没有被替代的卡的entersHand()
-				print("Cards that start in hands:", self.Game.mulligans[ID])
+				PRINT(self, "Cards that start in hands: {}".format(self.Game.mulligans[ID]))
 				for card in self.Game.mulligans[ID]:
 					self.hands[ID].append(card.entersHand())
 					
@@ -88,7 +102,7 @@ class Hand_Deck:
 			for card in self.hands[ID]:
 				self.startingHandIdentities[ID].append(card.identity)
 				
-			print("Player's starting hand:", self.hands[ID])
+			PRINT(self, "Player's starting hand: {}".format(self.hands[ID]))
 			for card in self.hands[1] + self.hands[2]:
 				card.effectCanTrigger()
 				card.checkEvanescent()
@@ -116,7 +130,6 @@ class Hand_Deck:
 			if type(card) not in record:
 				record.append(type(card))
 			else:
-				print("The record is ", record)
 				return False
 		return True
 		
@@ -162,9 +175,9 @@ class Hand_Deck:
 	#Damage taken due to running out of card will keep increasing. Refilling the deck won't reset the damage you take next time you draw from empty deck
 	def drawCard(self, ID, card=None):
 		if card == None: #Draw from top of the deck.
-			print("Hero %d draws from the top of the deck"%ID)
+			PRINT(self, "Hero %d draws from the top of the deck"%ID)
 			if self.decks[ID] == []: #No cards left in deck.
-				print("Hero%d's"%ID + "deck is empty and will take damage")
+				PRINT(self, "Hero%d's deck is empty and will take damage"%ID)
 				self.noCards[ID] += 1 #如果在疲劳状态有卡洗入牌库，则疲劳值不会减少，在下次疲劳时，仍会从当前的非零疲劳值开始。
 				damage = self.noCards[ID]
 				objtoTakeDamage = self.Game.DamageHandler.damageTransfer(self.Game.heroes[ID])
@@ -174,7 +187,7 @@ class Hand_Deck:
 				card = self.decks[ID].pop()
 				mana = card.mana
 		else:
-			print("Hero %d draws %s from the deck"%(ID, card.name))
+			PRINT(self, "Hero %d draws %s from the deck"%(ID, card.name))
 			card = extractfrom(card, self.decks[ID])
 			mana = card.mana
 		card.leavesDeck()
@@ -182,13 +195,13 @@ class Hand_Deck:
 			cardTracker = [card] #把这张卡放入一个列表，然后抽牌扳机可以对这个列表进行处理同时传递给其他抽牌扳机
 			self.Game.sendSignal("CardDrawn", ID, None, cardTracker, mana, "")
 			if cardTracker[0].cardType == "Spell" and "Casts When Drawn" in cardTracker[0].index:
-				print(cardTracker[0].name, " is drawn and cast.")
+				PRINT(self, "%s is drawn and cast."%cardTracker[0].name)
 				cardTracker[0].whenEffective()
 				self.drawCard(ID)
 				cardTracker[0].afterDrawingCard()
 			else: #抽到的牌可以加入手牌。
 				if cardTracker[0].cardType == "Minion" and cardTracker[0].triggers["Drawn"] != []:
-					print(cardTracker[0].name, " is drawn and triggers its effect.")
+					PRINT(self, "%s is drawn and triggers its effect."%cardTracker[0].name)
 					for func in cardTracker[0].triggers["Drawn"]:
 						func()
 				cardTracker[0] = cardTracker[0].entersHand()
@@ -197,7 +210,7 @@ class Hand_Deck:
 				self.Game.ManaHandler.calcMana_All()
 			return (cardTracker[0], mana)
 		else:
-			print("Player's hand is full. The drawn card %s is milled"%card.name)
+			PRINT(self, "Player's hand is full. The drawn card %s is milled"%card.name)
 			return (None, 0)
 			
 	#Will force the ID of the card to change.
@@ -217,10 +230,10 @@ class Hand_Deck:
 						self.hands[ID].append(card)
 					else:
 						self.hands[ID].insert(index, card)
-					print(card.name, " is put into player %d's hand."%ID)
+					PRINT(self, "%s is put into player %d's hand."%(card.name, ID))
 					self.Game.sendSignal("CardEntersHand", ID, None, [card], 0, comment)
 				else:
-					print("Player's hand is full. Can't add more cards.")
+					PRINT(self, "Player's hand is full. Can't add more cards.")
 					break
 		else: #If the obj is a single card/index/type.
 			if self.handNotFull(ID):
@@ -234,13 +247,13 @@ class Hand_Deck:
 				if index == -1:
 					self.hands[ID].append(obj)
 				else:
-					print("Inserting card into posinHand:", index)
+					PRINT(self, "Inserting card into posinHand: %d"%index)
 					self.hands[ID].insert(index, obj)
 				#Process the card's entersHand() method.
-				print(obj.name, " is added into player %d's hand."%ID)
+				PRINT(self, "%s is added into player %d's hand."%(obj.name, ID))
 				self.Game.sendSignal("CardEntersHand", ID, None, [obj], 0, comment)					
 			else:
-				print("Player's hand is full. Can't add more cards.")
+				PRINT(self, "Player's hand is full. Can't add more cards.")
 				
 		self.Game.ManaHandler.calcMana_All()
 		
@@ -293,7 +306,7 @@ class Hand_Deck:
 			if self.hands[ID] != []:
 				cards, cost, isRightmostCardinHand = self.extractfromHand(None, all=True, ID=ID)
 				for card in cards:
-					print("Card %s in player's hand is discarded:"%card.name)
+					PRINT(self, "Card %s in player's hand is discarded:"%card.name)
 					for func in card.triggers["Discarded"]:
 						func()
 					self.Game.CounterHandler.cardsDiscardedThisGame[ID].append(card.index)
@@ -304,7 +317,7 @@ class Hand_Deck:
 				if self.hands[ID] != []:
 					card = np.random.choice(self.hands[ID])
 					card, cost, isRightmostCardinHand = self.extractfromHand(card)
-					print("Card %s in player's hand is discarded:"%card.name)
+					PRINT(self, "Card %s in player's hand is discarded:"%card.name)
 					for func in card.triggers["Discarded"]:
 						func()
 					self.Game.ManaHandler.calcMana_All()
@@ -313,7 +326,7 @@ class Hand_Deck:
 					self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
 			else: #Discard a chosen card.
 				card, cost, isRightmostCardinHand = self.extractfromHand(card)
-				print("Card %s in player's hand is discarded:"%card.name)
+				PRINT(self, "Card %s in player's hand is discarded:"%card.name)
 				for func in card.triggers["Discarded"]:
 					func()
 				self.Game.ManaHandler.calcMana_All()
@@ -377,7 +390,7 @@ class Hand_Deck:
 		if self.decks[ID] != []:
 			card = self.decks[ID].pop(0)
 			card.leavesDeck()
-			print("The top card %s in player %d's deck is removed"%(card.name, ID))
+			PRINT(self, "The top card %s in player %d's deck is removed"%(card.name, ID))
 			return card
 		else:
 			return None
@@ -447,8 +460,8 @@ WarriorDeck = [ImproveMorale, ViciousScraphound, DrBoomsScheme, SweepingStrikes,
 				DeathwingMadAspect, BoomSquad, RiskySkipper, BombWrangler, ImprisonedGanarg, SwordandBoard, CorsairCache, Bladestorm, BonechewerRaider, BulwarkofAzzinoth, 
 				WarmaulChallenger, KargathBladefist, ScrapGolem, BloodboilBrute]
 
-Experiment1 = [EVILQuartermaster, RammingSpeed, Skybarge, MoltenBreath, 
-				DeathwingMadAspect, BoomSquad, ZephrystheGreat]
+Experiment1 = [Siamat, Siamat, CrystalPower, FieryWarAxe,  Skybarge, MoltenBreath, 
+				AldrachiWarblades, ZephrystheGreat]
 
-Experiment2 = [EVILQuartermaster, RammingSpeed, Skybarge, MoltenBreath, 
-				DeathwingMadAspect, BoomSquad, ZephrystheGreat]
+Experiment2 = [Siamat, Siamat, CrystalPower, FieryWarAxe,  Skybarge, MoltenBreath, 
+				AldrachiWarblades, ZephrystheGreat]
