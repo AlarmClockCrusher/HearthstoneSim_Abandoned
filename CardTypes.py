@@ -25,7 +25,40 @@ def PRINT(obj, string, *args):
 	else:
 		print(string)
 		
-		
+def copyListDict(obj, recipientMinion):
+	if isinstance(obj, list):
+		objCopy = []
+		for element in obj:
+			#check if they're basic types, like int, str, bool, NoneType, 
+			if isinstance(element, (type(None), int, float, str, bool)):
+				#Have tested that basic types can be appended and altering the original won't mess with the content in the list.
+				objCopy.append(element)
+			#随从的列表中不会引用游戏
+			elif callable(element): #If the element is a function
+				print("The element to copy is ", element)
+				objCopy.append(copy.deepcopy(element))
+			elif type(element) == list or type(element) == dict: #If the element is a list or dict, just recursively use this function.
+				objCopy.append(copyListDict(element, recipientMinion))
+			else: #If the element is a self-defined class. All of them have selfCopy methods.
+				print("Copying self-defined obj", element)
+				objCopy.append(element.selfCopy(recipientMinion))
+	else:
+		objCopy = {}
+		for key, value in obj.items():
+			if isinstance(value, (type(None), int, float, str, bool)):
+				objCopy[key] = value
+			#随从的列表中不会引用游戏
+			elif callable(value):
+				objCopy[key] = copy.deepcopy(element)
+			elif type(value) == list or type(value) == dict:
+				objCopy[key] = (copyListDict(value, recipientMinion))
+			else:
+				objCopy[key] = value.selfCopy(recipientMinion)
+				
+	return objCopy
+	
+	
+	
 class Card:
 	#For Choose One cards.
 	def needTarget(self, choice=0):
