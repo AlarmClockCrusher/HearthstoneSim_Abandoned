@@ -15,7 +15,7 @@ def extractfrom(target, listObject):
 def fixedList(listObject):
 	return listObject[0:len(listObject)]
 	
-def PRINT(obj, string):
+def PRINT(obj, string, *args):
 	if hasattr(obj, "GUI"):
 		GUI = obj.GUI
 	elif hasattr(obj, "Game"):

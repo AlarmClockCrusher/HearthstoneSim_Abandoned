@@ -12,7 +12,7 @@ def extractfrom(target, listObject):
 def fixedList(listObject):
 	return listObject[0:len(listObject)]
 	
-def PRINT(obj, string):
+def PRINT(obj, string, *args):
 	if hasattr(obj, "GUI"):
 		GUI = obj.GUI
 	elif hasattr(obj, "Game"):
@@ -549,7 +549,7 @@ class Permanent(Card):
 		if self.triggersonBoard != []:
 			PRINT(self, "\tPermanent's triggersonBoard")
 			for trigger in self.triggersonBoard:
-				PRINT(self, "\t", type(trigger))
+				PRINT(self, "\t{}".format(type(trigger)))
 		if self.auras != {}:
 			PRINT(self, "\tPermanent's aura:")
 			for key, value in self.auras.items():
@@ -755,11 +755,11 @@ class Minion(Card):
 		if self.triggersinHand != []:
 			PRINT(self, "\tMinion's triggersinHand")
 			for trigger in self.triggersinHand:
-				PRINT(self, "\t", type(trigger))
+				PRINT(self, "\t{}".format(type(trigger)))
 		if self.triggersinDeck != []:
 			PRINT(self, "\tMinion's triggersinDeck")
 			for trigger in self.triggersinDeck:
-				PRINT(self, "\t", type(trigger))
+				PRINT(self, "\t{}".format(type(trigger)))
 		if self.auras != {}:
 			PRINT(self, "Minion's aura")
 			for key, value in self.auras.items():
@@ -771,7 +771,7 @@ class Minion(Card):
 		if self.deathrattles != []:
 			PRINT(self, "\tMinion's Deathrattles:")
 			for trigger in self.deathrattles:
-				PRINT(self, "\t", type(trigger))
+				PRINT(self, "\t{}".format(type(trigger)))
 		if hasattr(self, "progress"):
 			PRINT(self, "\tMinion's progress is currently: %d"%self.progress)
 			

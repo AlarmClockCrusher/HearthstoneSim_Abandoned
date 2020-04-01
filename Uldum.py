@@ -27,7 +27,7 @@ def classforDiscover(initiator):
 	else: #如果玩家职业和卡牌职业都是中立，则随机选取一个职业进行发现。
 		return np.random.choice(Classes)
 		
-def PRINT(obj, string):
+def PRINT(obj, string, *args):
 	if hasattr(obj, "GUI"):
 		GUI = obj.GUI
 	elif hasattr(obj, "Game"):
@@ -1112,11 +1112,11 @@ class Trigger_UntappedPotential(QuestTrigger):
 				PRINT(self, "Player ends turn with unspent mana for the 4th time and gains Reward: Orissian Tear.")
 				self.disconnect()
 				extractfrom(self.entity, self.entity.Game.SecretHandler.mainQuests[self.entity.ID])
-				OrissianTear(self.entity.Game, self.entity.ID).replaceHeroPower()
+				OssirianTear(self.entity.Game, self.entity.ID).replaceHeroPower()
 				
-class OrissianTear(HeroPower):
-	mana, name, requireTarget = 0, "Orissian Tear", False
-	index = "Druid~Hero Power~0~Orissian Tear"
+class OssirianTear(HeroPower):
+	mana, name, requireTarget = 0, "Ossirian Tear", False
+	index = "Druid~Hero Power~0~Ossirian Tear"
 	description = "Passive Hero Power. Your Choose One cards have both effects combined"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)

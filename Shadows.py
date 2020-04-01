@@ -28,7 +28,7 @@ def classforDiscover(initiator):
 	else: #如果玩家职业和卡牌职业都是中立，则随机选取一个职业进行发现。
 		return np.random.choice(Classes)
 		
-def PRINT(obj, string):
+def PRINT(obj, string, *args):
 	if hasattr(obj, "GUI"):
 		GUI = obj.GUI
 	elif hasattr(obj, "Game"):

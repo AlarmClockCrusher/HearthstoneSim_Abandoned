@@ -606,12 +606,15 @@ class GUI:
 				for i in range(len(self.Game.Hand_Deck.hands[1])):
 					self.posHands[1].append((0.043*X+(X/13)*i, Y - 0.07*Y))
 				for i in range(len(self.Game.Hand_Deck.hands[2])):
-					self.posHands[2].append((0.043*X+(X/13)*i, 0.10*Y))
+					self.posHands[2].append((0.043*X+(X/13)*i, 0.11*Y))
 					
-				btnTurnEnd = TurnEndButton(relief=tk.FLAT, master=self.GamePanel, text="Turn End", bg="green", fg="white", width=15, height=3, font=("Yahei", 13, "bold"))
+				btnTurnEnd = TurnEndButton(relief=tk.FLAT, master=self.GamePanel, text="Turn End", bg="green", fg="white", width=12, height=2, font=("Yahei", 13, "bold"))
 				btnTurnEnd.Game, btnTurnEnd.GUI, btnTurnEnd.colorOrig = self.Game, self, "green"
 				btnTurnEnd.configure(command=btnTurnEnd.respond)
-				btnTurnEnd.place(relx=0.94, rely=0.5, anchor='c')
+				if self.Game.turn == 1:
+					btnTurnEnd.place(relx=0.94, rely=0.55, anchor='c')
+				else:
+					btnTurnEnd.place(relx=0.94, rely=0.45, anchor='c')
 				self.buttonsDrawn.append(btnTurnEnd)
 				self.drawHands()
 				self.drawMinions()

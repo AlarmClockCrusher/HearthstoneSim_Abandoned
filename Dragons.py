@@ -18,7 +18,7 @@ def fixedList(listObject):
 	return listObject[0:len(listObject)]
 	
 	
-def PRINT(obj, string):
+def PRINT(obj, string, *args):
 	if hasattr(obj, "GUI"):
 		GUI = obj.GUI
 	elif hasattr(obj, "Game"):
@@ -74,32 +74,32 @@ def invokeGalakrond(Game, ID):
 		elif "Warrior" in Class:
 			PRINT(Game, "On Invocation, Galakrond gives player +3 Attach this turn")
 			Game.heroes[ID].gainTempAttack(3)
-		#invocation counter increases and upgrade the galakronds
-		Game.CounterHandler.invocationCounts[ID] += 1
-		for card in fixedList(Game.Hand_Deck.hands[ID]):
-			if "Galakrond." in card.name:
-				upgrade = card.upgradedGalakrond
-				isPrimaryGalakrond = (card == primaryGalakrond)
-				if hasattr(card, "progress"):
-					card.progress += 1
-					PRINT(Game, "%s's Invocation progress is now %d"%(card.name, card.progress))
-					if upgrade != None and card.progress > 1:
-						Game.Hand_Deck.replaceCardinHand(card, upgrade(Game, ID))
-						if isPrimaryGalakrond:
-							Game.CounterHandler.primaryGalakronds[ID] = upgrade
-		for card in fixedList(Game.Hand_Deck.decks[ID]):
-			if "Galakrond." in card.name:
-				upgrade = card.upgradedGalakrond
-				isPrimaryGalakrond = (card == primaryGalakrond)
-				if hasattr(card, "progress"):
-					card.progress += 1
-					PRINT(Game, "%s's Invocation progress is now %d"%(card.name, card.progress))
-					if upgrade != None and card.progress > 1:
-						Game.Hand_Deck.replaceCardinDeck(card, upgrade(Game, ID))
-						if isPrimaryGalakrond:
-							Game.CounterHandler.primaryGalakronds[ID] = upgrade
-							
-							
+	#invocation counter increases and upgrade the galakronds
+	Game.CounterHandler.invocationCounts[ID] += 1
+	for card in fixedList(Game.Hand_Deck.hands[ID]):
+		if "Galakrond, " in card.name:
+			upgrade = card.upgradedGalakrond
+			isPrimaryGalakrond = (card == primaryGalakrond)
+			if hasattr(card, "progress"):
+				card.progress += 1
+				PRINT(Game, "%s's Invocation progress is now %d"%(card.name, card.progress))
+				if upgrade != None and card.progress > 1:
+					Game.Hand_Deck.replaceCardinHand(card, upgrade(Game, ID))
+					if isPrimaryGalakrond:
+						Game.CounterHandler.primaryGalakronds[ID] = upgrade
+	for card in fixedList(Game.Hand_Deck.decks[ID]):
+		if "Galakrond, " in card.name:
+			upgrade = card.upgradedGalakrond
+			isPrimaryGalakrond = (card == primaryGalakrond)
+			if hasattr(card, "progress"):
+				card.progress += 1
+				PRINT(Game, "%s's Invocation progress is now %d"%(card.name, card.progress))
+				if upgrade != None and card.progress > 1:
+					Game.Hand_Deck.replaceCardinDeck(card, upgrade(Game, ID))
+					if isPrimaryGalakrond:
+						Game.CounterHandler.primaryGalakronds[ID] = upgrade
+						
+						
 class Galakrond_Hero(Hero):
 	def entersHand(self):
 		self.onBoard, self.inHand, self.inDeck = False, True, False
@@ -3051,12 +3051,7 @@ class SealFate(Spell):
 	requireTarget, mana = True, 3
 	index = "Dragons~Rogue~Spell~3~Seal Fate"
 	description = "Deal 3 damage to an undamaged character. Invoke Galakrond"
-	def available(self):
-		return self.selectableMinionExists()
-		
-	def targetCorrect(self, target, choice=0):
-		return target.cardType == "Minion" and target.health == target.health_upper and target.onBoard
-		
+	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())

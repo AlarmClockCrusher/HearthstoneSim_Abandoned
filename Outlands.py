@@ -26,7 +26,7 @@ def classforDiscover(initiator):
 	else: #如果玩家职业和卡牌职业都是中立，则随机选取一个职业进行发现。
 		return np.random.choice(Classes)
 		
-def PRINT(obj, string):
+def PRINT(obj, string, *args):
 	if hasattr(obj, "GUI"):
 		GUI = obj.GUI
 	elif hasattr(obj, "Game"):
@@ -62,7 +62,7 @@ class Minion_Dormantfor2turns(Minion):
 		if self.firstTimeonBoard: #用activated来标记随从能否出现在场上而不休眠，第一次出现时，activated为False
 			#假设第一次出现时，会进入休眠状态，生成的Permanent不保存这个初始随从
 			PRINT(self, "%a starts as a Permanent"%self.name)
-			self.Game.transform(self, ImprisonedDormantForm(self.Game, self.ID, type(self)))
+			self.Game.transform(self, ImprisonedDormantForm(self.Game, self.ID, self))
 		else: #只有不是第一次出现在场上时才会执行这些函数
 			for value in self.auras.values():
 				value.auraAppears()
@@ -105,7 +105,7 @@ class Trigger_ImprisonedDormantForm(TriggeronBoard):
 		if self.entity.progress > 1:
 			PRINT(self, "%s awakens and triggers its effect"%self.entity.name)
 			#假设唤醒的Imprisoned Vanilla可以携带buff
-			originalMinion = self.entity.originalMinion(self.entity.Game, self.entity.ID)
+			originalMinion = self.entity.originalMinion
 			originalMinion.firstTimeonBoard = False
 			self.entity.Game.transform(self.entity, originalMinion)
 			if hasattr(originalMinion, "awakenEffect"):

@@ -13,7 +13,7 @@ def extractfrom(target, listObject):
 def fixedList(listObject):
 	return listObject[0:len(listObject)]
 	
-def PRINT(obj, string):
+def PRINT(obj, string, *args):
 	if hasattr(obj, "GUI"):
 		GUI = obj.GUI
 	elif hasattr(obj, "Game"):
@@ -460,8 +460,10 @@ WarriorDeck = [ImproveMorale, ViciousScraphound, DrBoomsScheme, SweepingStrikes,
 				DeathwingMadAspect, BoomSquad, RiskySkipper, BombWrangler, ImprisonedGanarg, SwordandBoard, CorsairCache, Bladestorm, BonechewerRaider, BulwarkofAzzinoth, 
 				WarmaulChallenger, KargathBladefist, ScrapGolem, BloodboilBrute]
 
-Experiment1 = [BoomSquad, BoomSquad, BoomSquad, Magtheridon, Magtheridon, ImprisonedFelmaw, ImprisonedFelmaw, KronxDragonhoof, KronxDragonhoof, GalakrondtheUnspeakable, DevotedManiac, Siamat, Siamat, CrystalPower, FieryWarAxe,  Skybarge, MoltenBreath, 
-				DevotedManiac, AldrachiWarblades, ZephrystheGreat]
+Experiment1 = [DevotedManiac, EtherealLackey, EtherealLackey, BoomSquad, AldrachiWarblades, ZephrystheGreat,
+				Magtheridon, KronxDragonhoof, GalakrondtheUnspeakable, Siamat, CrystalPower, FieryWarAxe,  Skybarge, MoltenBreath, 
+				]
 
-Experiment2 = [BoomSquad, BoomSquad, BoomSquad, Magtheridon, Magtheridon, ImprisonedFelmaw, ImprisonedFelmaw, KronxDragonhoof, KronxDragonhoof, GalakrondtheUnspeakable, DevotedManiac, Siamat, Siamat, CrystalPower, FieryWarAxe,  Skybarge, MoltenBreath, 
-				DevotedManiac, AldrachiWarblades, ZephrystheGreat]
+Experiment2 = [DevotedManiac, EtherealLackey, EtherealLackey, BoomSquad, AldrachiWarblades, ZephrystheGreat,
+				Magtheridon, KronxDragonhoof, GalakrondtheUnspeakable, Siamat, CrystalPower, FieryWarAxe,  Skybarge, MoltenBreath, 
+				]
