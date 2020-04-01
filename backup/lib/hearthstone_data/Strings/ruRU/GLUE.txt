@@ -1,0 +1,1888 @@
+TAG	TEXT	COMMENT
+GLUE_2X_GOLD_EVENT_BANNER_HEADLINE	Дополнительное золото!	
+GLUE_ADVENTURE	Приключения	
+GLUE_ADVENTURE_ADVENTUREBOOK_DAL_FIRST_TIME_FLOW	Эту главу мы вам дарим!	
+GLUE_ADVENTURE_ADVENTUREBOOK_DAL_FIRST_TIME_FLOW_HEADER	Открыть	
+GLUE_ADVENTURE_ADVENTUREBOOK_DAL_PREPURCHASETIMELOCK_BUTTON	Предзаказ	
+GLUE_ADVENTURE_ADVENTUREBOOK_DAL_UNLOCK_CHAPTER1	Попробуйте свои силы в первой главе!	
+GLUE_ADVENTURE_BONUS_CHALLENGE_LABEL	Последнее испытание	
+GLUE_ADVENTURE_BOSS_HEADER	Информация о боссе	
+GLUE_ADVENTURE_BOT_BOOM_BOARD_CLEAR_TOOLTIP	Вначале пройдите блок <b>«Очистка стола»</b>.	
+GLUE_ADVENTURE_BOT_BOOM_LETHAL_TOOLTIP	Вначале пройдите блок <b>«Смерть»</b>.	
+GLUE_ADVENTURE_BOT_BOOM_MIRROR_TOOLTIP	Вначале пройдите блок <b>«Отражение»</b>.	
+GLUE_ADVENTURE_BOT_BOOM_SURVIVAL_TOOLTIP	Вначале пройдите блок <b>«Выживание»</b>.	
+GLUE_ADVENTURE_BOT_BOOM_TOOLTIP_HEADER	Недоступно	
+GLUE_ADVENTURE_BOT_INTRO_BANNER_TEXT	Буморатория открыта!	
+GLUE_ADVENTURE_BOT_WING_BOARD_CLEAR	Очистка стола	
+GLUE_ADVENTURE_BOT_WING_LETHAL	Смерть	
+GLUE_ADVENTURE_BOT_WING_MIRROR	Отражение	
+GLUE_ADVENTURE_BOT_WING_SURVIVAL	Выживание	
+GLUE_ADVENTURE_CARDBACKPAGE_DAL_EVILCARD_NAME_HEROIC	Дело в шляпе!	
+GLUE_ADVENTURE_CARDBACKPAGE_DAL_EVILCARD_NAME_NORMAL	Награда теней	
+GLUE_ADVENTURE_CARDBACKPAGE_DRG_EVILCARD_NAME_EVIL	Книга ЗЛА	
+GLUE_ADVENTURE_CARDBACKPAGE_DRG_EVILCARD_NAME_GOOD	Книга исследователей	
+GLUE_ADVENTURE_CARDBACKPAGE_ULD_EVILCARD_NAME_HEROIC	Расхитители гробниц	
+GLUE_ADVENTURE_CARDBACKPAGE_ULD_EVILCARD_NAME_NORMAL	Титаническая задача	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DAL_CHAPTER1	Глава I: «Банк Даларана»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DAL_CHAPTER2	Глава II: «Аметистовая крепость»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DAL_CHAPTER3	Глава III: «Улицы Даларана»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DAL_CHAPTER4	Глава IV: «Клоака»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DAL_CHAPTER5	Глава V: «Цитадель Кирин-Тора»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DRG_CHAPTER1	Глава I: «Битва на ледяном берегу»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DRG_CHAPTER2	Глава II: «Схватка в храме Драконьего Покоя»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DRG_CHAPTER3	Глава III: «Воздушный бой над Драконьим Погостом»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DRG_CHAPTER4	Глава IV: «Разборка в Даларане»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_ULD_CHAPTER1	Глава I: «Затерянный город»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_ULD_CHAPTER2	Глава II: «Раскаленные пески»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_ULD_CHAPTER3	Глава III: «Гробница Хартута»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_ULD_CHAPTER4	Глава IV: «Чертоги Созидания»	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_ULD_CHAPTER5	Глава V: «Внутреннее святилище»	
+GLUE_ADVENTURE_CHAPTER_TITLE_DAL_CHAPTER1	I. Банк Даларана	
+GLUE_ADVENTURE_CHAPTER_TITLE_DAL_CHAPTER2	II. Аметистовая крепость	
+GLUE_ADVENTURE_CHAPTER_TITLE_DAL_CHAPTER3	III. Улицы Даларана	
+GLUE_ADVENTURE_CHAPTER_TITLE_DAL_CHAPTER4	IV. Клоака	
+GLUE_ADVENTURE_CHAPTER_TITLE_DAL_CHAPTER5	V. Цитадель Кирин-Тора	
+GLUE_ADVENTURE_CHAPTER_TITLE_DRG_CHAPTER1	I: «Битва на ледяном берегу»	
+GLUE_ADVENTURE_CHAPTER_TITLE_DRG_CHAPTER2	II: «Схватка в храме Драконьего Покоя»	
+GLUE_ADVENTURE_CHAPTER_TITLE_DRG_CHAPTER3	III: «Воздушный бой над Драконьим Погостом»	
+GLUE_ADVENTURE_CHAPTER_TITLE_DRG_CHAPTER4	IV: «Разборка в Даларане»	
+GLUE_ADVENTURE_CHAPTER_TITLE_ULD_CHAPTER1	I. Затерянный город	
+GLUE_ADVENTURE_CHAPTER_TITLE_ULD_CHAPTER2	II. Раскаленные пески	
+GLUE_ADVENTURE_CHAPTER_TITLE_ULD_CHAPTER3	III. Гробница Хартута	
+GLUE_ADVENTURE_CHAPTER_TITLE_ULD_CHAPTER4	IV. Чертоги Созидания	
+GLUE_ADVENTURE_CHAPTER_TITLE_ULD_CHAPTER5	V. Внутреннее святилище	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DAL_CHAPTER1	Проникните в банк Даларана\nи выкрадите оттуда ценные артефакты.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DAL_CHAPTER2	Победите охранников магической тюрьмы\nи освободите томящихся в ней чудовищ.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DAL_CHAPTER3	Одержите верх над даларанскими торговцами\nи захватите центр города.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DAL_CHAPTER4	Победите обитателей подземных тоннелей, чтобы подвесить к городу ракеты доктора Бума.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DAL_CHAPTER5	Сразитесь с магическими лидерами Кирин-Тора\nи подчините город Лиге ЗЛА!	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_EVIL_CHAPTER1	Лига исследователей прибыла в Нордскол, но силы Лиги ЗЛА готовы оказать им холодный прием!	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_EVIL_CHAPTER2	Проникните в святыню драконов и узнайте, где находятся останки Галакронда.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_EVIL_CHAPTER3	В небе вокруг Даларана идет ожесточенный бой, но силы Лиги ЗЛА сделают все, чтобы удержать город.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_EVIL_CHAPTER4	Твердыня Лиги ЗЛА в Даларане осаждена, но у Рафаама есть план, как переломить ситуацию.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_GOOD_CHAPTER1	Лига исследователей прибыла в Нордскол, но на берегу их ждет ожесточенное сопротивление.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_GOOD_CHAPTER2	Наши герои обратились за помощью к драконам — и раскрыли новые козни Лиги ЗЛА.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_GOOD_CHAPTER3	Драконы выступили против Лиги ЗЛА, развернувшей мощное контрнаступление в воздухе!	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_GOOD_CHAPTER4	Наши герои спешат отвоевать город... Но план Рафаама близится к завершению!	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_ULD_CHAPTER1	Исследуйте улицы затерянного города тол'виров в попытке остановить кару мурлочью.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_ULD_CHAPTER2	Пересеките коварные пески Ульдума наперегонки с безумием.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_ULD_CHAPTER3	В извилистых лабиринтах гробницы Хартута вам предстоит победить саму смерть.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_ULD_CHAPTER4	Сразите гигантских стражей этих священных залов и победите кару гневную.	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_ULD_CHAPTER5	Все четыре героя собрались вместе, чтобы сразиться с обретшим силу Теканом, повелителем кары огненной.	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_DAL_CHAPTER1	Поворот: горы монет	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_DAL_CHAPTER2	Поворот: существа в тюрьме	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_DAL_CHAPTER3	Поворот: людные улицы	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_DAL_CHAPTER4	Поворот: атака и здоровье наоборот	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_DAL_CHAPTER5	Поворот: четыре дополнительных босса	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_ULD_CHAPTER1	Поворот: мурлоки, кругом мурлоки!	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_ULD_CHAPTER2	Поворот: атаки в конце хода	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_ULD_CHAPTER3	Поворот: погребение существ	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_ULD_CHAPTER4	Поворот: исступление существ	
+GLUE_ADVENTURE_CHAPTERUNLOCKED_POPUP_TITLE	Глава открыта!	
+GLUE_ADVENTURE_CHEST_POPUP_DRG	Победите боссов главы, чтобы получить награды!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_ANOMALY_MODE_BUTTON_LOCKED_TOOLTIP_BODY	В течение всего похода действует случайный эффект. Приобретите все главы, чтобы открыть этот режим!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_ANOMALY_MODE_BUTTON_LOCKED_TOOLTIP_HEADER	Режим аномалии (н/д)	
+GLUE_ADVENTURE_DUNGEON_CRAWL_ANOMALY_MODE_BUTTON_TOOLTIP_HEADER	Режим аномалии	
+GLUE_ADVENTURE_DUNGEON_CRAWL_ANOMALY_MODE_PANEL_DESCRIPTION	В течение похода действует случайный эффект.	
+GLUE_ADVENTURE_DUNGEON_CRAWL_ANOMALY_MODE_UNAVAILABLE_TOOLTIP_BODY	Недоступно для этой главы.	
+GLUE_ADVENTURE_DUNGEON_CRAWL_BOSS_HERO_POWER_TOOLTIP	Наведите указатель мыши, чтобы увидеть силу героя босса.	
+GLUE_ADVENTURE_DUNGEON_CRAWL_BOSS_HERO_POWER_TOOLTIP_PHONE	Нажмите и удерживайте, чтобы увидеть силу героя босса.	
+GLUE_ADVENTURE_DUNGEON_CRAWL_BOSS_WINS	Побеждено боссов	
+GLUE_ADVENTURE_DUNGEON_CRAWL_BOSS_WINS_AS_CLASS	Побеждено боссов ({0})	0 = Class name
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHALLENGE_COUNT	Испытания: {0}/{1}	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_DECK	Выберите начальную колоду	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_HERO_POWER	Выберите силу героя	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_LOOT	Выберите добычу!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_SHRINE	Выберите первого идола.	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_TEAMMATE	Выберите союзника!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_TREASURE	Выберите сокровище!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_TREASURE_SATCHEL	Выберите фирменное сокровище!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_DEFEATED_COUNT	Побеждено: {0}/{1}	
+GLUE_ADVENTURE_DUNGEON_CRAWL_ENTER_TAVERN	Зайти	
+GLUE_ADVENTURE_DUNGEON_CRAWL_FINAL_CHALLENGE_BANNER_BUTTON	Вперед!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_HERO_INFO	О герое	
+GLUE_ADVENTURE_DUNGEON_CRAWL_INTRO_BANNER_BUTTON	Это я!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_INTRO_BANNER_GIL_HEADER	Требуются охотники на монстров!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_INTRO_BANNER_HEADER	Требуются искатели приключений!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_INTRO_BANNER_TRL_HEADER	Требуются герои!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_MONSTERS_DEFEATED	Монстров побеждено	
+GLUE_ADVENTURE_DUNGEON_CRAWL_MONSTERS_DEFEATED_AS_CLASS	Монстров побеждено ({0})	0 = Class name
+GLUE_ADVENTURE_DUNGEON_CRAWL_RUMBLE_RUN_WINS	Завершено игрищ	
+GLUE_ADVENTURE_DUNGEON_CRAWL_RUN_WINS	Походов завершено	
+GLUE_ADVENTURE_DUNGEON_CRAWL_SHRINE_TUTORIAL_BODY	Идолы начинают матч на поле.\n\nОни очень сильны и вместо смерти впадают в спячку.	
+GLUE_ADVENTURE_DUNGEON_CRAWL_SHRINE_TUTORIAL_HEADER	Идолы	
+GLUE_ADVENTURE_DUNGEON_CRAWL_SPECIAL_ENCOUNTER	Передышка в таверне	
+GLUE_ADVENTURE_DUNGEON_CRAWL_TEAMS_DEFEATED	Побеждено команд	
+GLUE_ADVENTURE_DUNGEON_CRAWL_UPGRADE_SHRINE	Пора улучшить идола!	
+GLUE_ADVENTURE_HEROIC_UNLOCK_REQUIREMENT	Завершите прохождение этой главы в обычном режиме, чтобы открыть героический режим.	
+GLUE_ADVENTURE_ICC_FROZEN_THRONE_WING_LOCKED	Завершите верхний ярус!	
+GLUE_ADVENTURE_ICC_LOWER_CITADEL_DIFFICULTY_WARNING	Помните: существа Короля-лича могут оказаться сильнее ваших прежних противников!	
+GLUE_ADVENTURE_ICC_LOWER_CITADEL_WING_LOCKED	Завершите пролог!	
+GLUE_ADVENTURE_ICC_UPPER_REACHES_WING_LOCKED	Завершите Нижний ярус!	
+GLUE_ADVENTURE_KAR_WING_INVITATION	Медив ждет вас на волшебной вечеринке!	
+GLUE_ADVENTURE_KAR_WING_LOCKED	Требуется\nпредыдущий этаж	
+GLUE_ADVENTURE_KAR_WING_LOCKED_PURCHASE	Для покупки требуется предыдущий этаж	
+GLUE_ADVENTURE_KAR_WING_PARLOR_LOCKED	Вначале пройдите пролог!	
+GLUE_ADVENTURE_LABEL_COMING_SOON	Скоро!	
+GLUE_ADVENTURE_LABEL_SHOP_CLOSED	Закрыто	
+GLUE_ADVENTURE_LOCKED	Недоступен	
+GLUE_ADVENTURE_LOCKED_CHAPTER	Глава недоступна	
+GLUE_ADVENTURE_LOCKED_HEROICMODE	Пройдите эту главу в обычном режиме.	
+GLUE_ADVENTURE_LOCKED_SPECIFICCHAPTER	Откройте главу I Лиги исследователей	
+GLUE_ADVENTURE_LOE_STAFF_DISAPPEARED	Спасибо за посох!\n- Рафаам.	
+GLUE_ADVENTURE_LOE_STAFF_NAME	Посох Созидания	
+GLUE_ADVENTURE_LOE_STAFF_RESERVED	Зарезервировано для\nПосоха Созидания	
+GLUE_ADVENTURE_LOE_WING4_LOCKED	Требуется пройти\nвсе прочие крылья	
+GLUE_ADVENTURE_LOE_WING4_LOCKED_PURCHASE	Для приобретения пройдите\nвсе прочие крылья	
+GLUE_ADVENTURE_MODE_CLASS_CHALLENGE_CHOOSE	Выберите испытание	
+GLUE_ADVENTURE_MORE_CARDS	других карт	// full text appears as "+6 more cards"
+GLUE_ADVENTURE_NEW_MODE_UNLOCKED_POPUP_TEXT	Доступен новый режим	
+GLUE_ADVENTURE_NUM_BOSSES_DEFEATED	{0}/{1}	
+GLUE_ADVENTURE_NUM_CARDS_COLLECTED	{0}/{1}	
+GLUE_ADVENTURE_NUM_CHAPTERS_OWNED	{0} |4(глава открыта,главы открыты,глав открыто)	
+GLUE_ADVENTURE_PURCHASE_REWARD_POPUP_DRG	Получите карты сразу, открыв эту главу!	
+GLUE_ADVENTURE_READY_TO_OPEN	Можно открыть!	
+GLUE_ADVENTURE_REWARD_ADVENTURE_TITLE	Награда за приключение!	
+GLUE_ADVENTURE_REWARD_DESCRIPTION_HEROIC	Пройдите кампанию в героическом режиме, чтобы получить эту рубашку!	
+GLUE_ADVENTURE_REWARD_DESCRIPTION_NORMAL	Пройдите все главы, чтобы получить эти награды!	
+GLUE_ADVENTURE_REWARD_DESCRIPTION_STATS	В героическом режиме доступны дополнительные награды!	
+GLUE_ADVENTURE_REWARD_PAGE_CHAPTER_REWARD_CHAPTER5_PACKS	Победите босса этой главы, чтобы получить 3 комплекта карт!	
+GLUE_ADVENTURE_REWARD_PAGE_CHAPTER_REWARD_PACKS	Победите 5-го босса этой главы, чтобы получить 3 комплекта карт!	
+GLUE_ADVENTURE_REWARD_PAGE_GOLDENPACK	Золотой комплект карт	
+GLUE_ADVENTURE_REWARD_PAGE_STATISTIC_BOSSES	Побеждено боссов	
+GLUE_ADVENTURE_REWARD_PAGE_STATISTIC_CARDS	Собрано карт	
+GLUE_ADVENTURE_REWARD_PAGE_TITLE	Награда	
+GLUE_ADVENTURE_REWARD_PAGE_TITLE_HEROIC	Героическая награда	
+GLUE_ADVENTURE_REWARD_PAGE_TITLE_PROGRESS	Прогресс в приключении	
+GLUE_ADVENTURE_REWARDS_PREVIEW_HEADER	• {0}: награды •	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_TITLE_BOOK	Приобретите все приключение!	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_WHATSINSIDE_ANOMALYBANNER	Откройте режим аномалии, в котором вы будете начинать каждую главу со случайным эффектом.	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_WHATSINSIDE_CHAPTERSBANNER_TIMELOCK_FALSE	Откройте все главы!	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_WHATSINSIDE_CHAPTERSBANNER_TIMELOCK_TRUE	Проходите все главы по мере их выхода@	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_WHATSINSIDE_HEROESBANNER_TIMELOCK_FALSE	Откройте всех героев приключения!	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_WHATSINSIDE_HEROESBANNER_TIMELOCK_TRUE	Играйте за всех героев приключения по мере их выхода@	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_WHATSINSIDEBUTTON	Что включено?	
+GLUE_ADVENTURE_STORE_CHAPTER_DAL_TITLE_CHAPTER1	Открыть главу I	
+GLUE_ADVENTURE_STORE_CHAPTER_DAL_TITLE_CHAPTER2	Открыть главу II	
+GLUE_ADVENTURE_STORE_CHAPTER_DAL_TITLE_CHAPTER3	Открыть главу III	
+GLUE_ADVENTURE_STORE_CHAPTER_DAL_TITLE_CHAPTER4	Открыть главу IV	
+GLUE_ADVENTURE_STORE_CHAPTER_DAL_TITLE_CHAPTER5	Открыть главу V	
+GLUE_ADVENTURE_STORE_CHAPTERNUMERAL_DAL_CHAPTER1	I	
+GLUE_ADVENTURE_STORE_CHAPTERNUMERAL_DAL_CHAPTER2	II	
+GLUE_ADVENTURE_STORE_CHAPTERNUMERAL_DAL_CHAPTER3	III	
+GLUE_ADVENTURE_STORE_CHAPTERNUMERAL_DAL_CHAPTER4	IV	
+GLUE_ADVENTURE_STORE_CHAPTERNUMERAL_DAL_CHAPTER5	V	
+GLUE_ADVENTURE_STORE_CHOOSESTORE_DAL_TITLE	Открыть	
+GLUE_ADVENTURE_STORE_CHOOSESTORE_UNLOCK_FULLBOOK	Открыть\nвсе приключение	
+GLUE_ADVENTURE_STORE_WHATSINSIDE_ANOMALY	Сразу откройте режим аномалии, в котором вы будете начинать каждую главу со случайным эффектом.	
+GLUE_ADVENTURE_STORE_WHATSINSIDE_RELEASED_CHAPTERS	Откройте все главы	
+GLUE_ADVENTURE_STORE_WHATSINSIDE_RELEASED_HEROES	Откройте всех героев приключения	
+GLUE_ADVENTURE_STORE_WHATSINSIDE_REWARDS_TITLE	Награды при покупке	
+GLUE_ADVENTURE_STORE_WHATSINSIDE_TIMELOCKED_CHAPTERS	Проходите все главы по мере их выхода	
+GLUE_ADVENTURE_STORE_WHATSINSIDE_TIMELOCKED_HEROES	Играйте за всех героев приключения по мере их выхода	
+GLUE_ADVENTURE_STORYMODE_DUNGEONCRAWL_CHAPTER_GAMEPLAYLOCKED	Требуется пройти\nВСЕ предыдущие главы	
+GLUE_ADVENTURE_STORYMODE_DUNGEONCRAWL_HEROICMODE_LOCKED	Требуется завершить прохождение\nэтой главы в обычном режиме	
+GLUE_ADVENTURE_STORYMODE_TITLE	Даларан	
+GLUE_ADVENTURE_STORYMODE_TITLE_DRG	Пробуждение Галакронда	
+GLUE_ADVENTURE_STORYMODE_TITLE_ULD	Ульдум	
+GLUE_ADVENTURE_STORYMODE_UNLOCK_PREVIOUSCHAPTER	Требуется получить доступ\nк предыдущей главе.	
+GLUE_ADVENTURE_TIMELOCKED_CHAPTER	Откроется на неделе	
+GLUE_ADVENTURE_UNLOCK	Открыть	
+GLUE_ADVENTURE_UNLOCK_PREVIOUSCHAPTER	Открывайте главы по порядку или купите приключение целиком.	
+GLUE_ADVENTURE_UNLOCKALL	Купить все	
+GLUE_ADVENTURE_WING_PURCHASED	Приобретено	
+GLUE_ALERT_POPUP_HEADER	Сообщение дня	
+GLUE_ARCANE_ORBS_CAP_BODY	Максимальное количество чародейских сфер не может превышать {0}.	
+GLUE_ARCANE_ORBS_CAP_HEADER	Слишком много чародейских сфер!	
+GLUE_ARENA_1ST_TIME_DESC	Обычно за вход на Арену требуется заплатить, но первое посещение – за счет заведения!	"on the house" is a phrase that means "free" in English.
+GLUE_ARENA_1ST_TIME_HEADER	Арена	
+GLUE_ARENA_DECK	Колода Арены	
+GLUE_ARENA_DECK_TOOLTIP	Это ваша колода Арены. Эти карты не являются частью вашей коллекции.	
+GLUE_ARENA_DECK_TOOLTIP_HEADER	Колода Арены	
+GLUE_ARENA_LABEL_SEASON_ENDING_DAYS	До конца события: {0} |4(день,дня,дней)	
+GLUE_ARENA_LABEL_SEASON_ENDING_HOURS	До конца события: {0} |4(час,часа,часов)	
+GLUE_ARENA_LABEL_SEASON_ENDING_MINUTES	До конца события: {0} |4(минута,минуты,минут)	
+GLUE_ARENA_LABEL_SEASON_ENDING_OVER_1_MONTH	До конца события: более 1 месяца.	
+GLUE_ARENA_LABEL_SEASON_ENDING_SECONDS	До конца события: {0} |4(секунда,секунды,секунд)	
+GLUE_ARENA_LABEL_SEASON_ENDING_WEEKS	До конца события: {0} |4(неделя,недели,недель)	
+GLUE_ARENA_POPUP_COMING_SOON_HEADER_DAYS	Начнется через {0} |4(день,дня,дней)	
+GLUE_ARENA_POPUP_COMING_SOON_HEADER_HOURS	Начнется через {0} |4(час,часа,часов)	
+GLUE_ARENA_POPUP_COMING_SOON_HEADER_MONTHS	Начнется через {0} |4(месяц,месяца,месяцев)	
+GLUE_ARENA_POPUP_COMING_SOON_HEADER_WEEKS	Начнется через {0} |4(неделю,недели,недель)	
+GLUE_ARENA_POPUP_ENDING_SOON_HEADER_DAYS	Завершится через {0} |4(день,дня,дней)	
+GLUE_ARENA_POPUP_ENDING_SOON_HEADER_HOURS	Завершится через {0} |4(час,часа,часов)	
+GLUE_ARENA_POPUP_ENDING_SOON_HEADER_MONTHS	Завершится через {0} |4(месяц,месяца,месяцев)	
+GLUE_ARENA_POPUP_ENDING_SOON_HEADER_WEEKS	Завершится через {0} |4(неделю,недели,недель)	
+GLUE_ARENA_SIGNUPS_CLOSED	Бои на этой арене скоро закончатся. Регистрация закрыта.	
+GLUE_ARENA_VIEW_DECK	Колода	
+GLUE_BACON	Поля сражений	
+GLUE_BACON_BONUS	Бонус	
+GLUE_BACON_BONUS_1	Подробная статистика	
+GLUE_BACON_BONUS_2	Выбор из трех героев в каждом матче	
+GLUE_BACON_BONUS_3	Визуальные эффекты эмоций	
+GLUE_BACON_BONUS_FULL_STATS	Статистика	
+GLUE_BACON_BONUS_RULE_1	Получайте бонусы за комплекты дополнения <color=#DC5AFF>«Натиск драконов»</color>!	
+GLUE_BACON_BONUS_RULE_2	Бонусы действуют до выхода следующего дополнения.	
+GLUE_BACON_BONUS_TAG	После бета-тестирования	
+GLUE_BACON_FIRST_PLACE_LABEL	1-е место	
+GLUE_BACON_FOOTER	Добро пожаловать на поля сражений! Восемь командиров выставят свои армии, но только один уйдет с короной!	
+GLUE_BACON_INFO_POPUP_COMBAT	ФАЗА БОЯ	
+GLUE_BACON_INFO_POPUP_COMBAT_TIPS	<color=#C900FF>• Слева направо:</color> ваше крайнее левое существо атакует первым.\n<color=#C900FF>• Случайные цели:</color> существа атакуют случайных противников (если нет целей с провокацией).\n<color=#C900FF>• Усиления:</color> все усиления, полученные в фазе боя, являются временными.\n<color=#C900FF>• Победа:</color> когда вы побеждаете в сражении, ваш герой и существа наносят урон, равный уровню их таверны.	
+GLUE_BACON_INFO_POPUP_PAGE	Страница	
+GLUE_BACON_INFO_POPUP_PLAY_TUTORIAL	Пройти обучение	
+GLUE_BACON_INFO_POPUP_RECRUIT	ФАЗА ВЕРБОВКИ	
+GLUE_BACON_INFO_POPUP_RECRUIT_TIPS	<color=#C900FF>• Вербовка:</color> перетаскивайте существ к герою, чтобы вербовать их за 3 золотых.\n<color=#C900FF>• Продажа:</color> перетаскивайте существ к Бобу, чтобы продавать их за 1 золотой.\n<color=#C900FF>• Триплеты:</color> соберите три копии существа, чтобы улучшить его и получить приз.\n<color=#C900FF>• Перестроение:</color> перетаскивайте существ, чтобы изменить порядок, в котором они атакуют.\n<color=#C900FF>• Рост:</color> усиления, полученные во время вербовки, действуют до конца матча.\n<color=#C900FF>• Уровень таверны:</color> улучшайте таверну, чтобы в ней появлялись более мощные существа.\n	Every other Tier increases the number of shop minions.\n 
+GLUE_BACON_INFO_POPUP_SUMMARY	Сразитесь против семерых оппонентов. Последний оставшийся в живых игрок побеждает.	
+GLUE_BACON_INFO_POPUP_TITLE	Правила полей сражений	
+GLUE_BACON_LOW_MEMORY_BODY	Режим «Поля сражений» лучше всего работает на устройствах с 2 ГБ ОЗУ или больше. Возможно, ваше устройство не отвечает минимальным требованиям. По завершении этапа бета-тестирования мы постараемся оптимизировать работу этого режима на вашем устройстве.	
+GLUE_BACON_LOW_MEMORY_HEADER	Внимание	
+GLUE_BACON_RATING_LABEL	Рейтинг	
+GLUE_BACON_STATS_LABEL_BIGGEST_MINION	Крупнейшее существо	
+GLUE_BACON_STATS_LABEL_DAMAGE_ONE_MINION	{0}: нанесенный урон	
+GLUE_BACON_STATS_LABEL_DAMAGE_ONE_TURN	Урон за ход	
+GLUE_BACON_STATS_LABEL_FIRST_PLACE	Первые места	Place Finishes
+GLUE_BACON_STATS_LABEL_GAME_PLAYED	Матч	
+GLUE_BACON_STATS_LABEL_GAMES_PLAYED	Сыграно матчей	
+GLUE_BACON_STATS_LABEL_LAST_5_ROSTERS	Последние 5 составов	
+GLUE_BACON_STATS_LABEL_MINIONS_DESTROYED	Уничтожено существ	
+GLUE_BACON_STATS_LABEL_MOST_PURCHASED_MINIONS	Часто вербуемые существа	
+GLUE_BACON_STATS_LABEL_PLAYERS_ELIMINATED	Побеждено игроков	
+GLUE_BACON_STATS_LABEL_TIME_PLAYED	Время в игре	
+GLUE_BACON_STATS_LABEL_TOP_5_HEROES_GAMES	5 самых популярных героев	
+GLUE_BACON_STATS_LABEL_TOP_5_HEROES_WINS	5 самых результативных героев	
+GLUE_BACON_STATS_LABEL_TRIPLES	Создано триплетов	
+GLUE_BACON_STATS_LABEL_UPGRADES	Улучшения таверны	
+GLUE_BACON_STATS_LABEL_WIN	Победа 	
+GLUE_BACON_STATS_LABEL_WIN_STREAK	Лучшая серия	
+GLUE_BACON_STATS_LABEL_WINS	Победы	
+GLUE_BACON_STATS_PAGE	После бета-тестирования здесь появится полная статистика!	
+GLUE_BACON_STATS_VALUE_BIGGEST_MINION	{0}/{1}	Attack followed by Health
+GLUE_BACON_STATS_VALUE_HOURS_PLAYED	{0} ч.	
+GLUE_BACON_STATS_VALUE_MINUTES_PLAYED	{0} мин.	
+GLUE_BACON_TOP_4_LABEL	В четверке	
+GLUE_BASIC_DECK_WARNING_BODY	Конечно, вы можете играть в стандартном формате и стартовой колодой, но вы добьетесь большего, если соберете свою колоду!	
+GLUE_BASIC_DECK_WARNING_HEADER	Стартовая колода	
+GLUE_BASIC_SET_PROGRESS	Базовых карт: {0}/{1}	0=number of owned cards,1=total number of basic cards
+GLUE_BASIC_SET_PROGRESS_PHONE	{0}/{1}	0=number of owned cards,1=total number of basic cards
+GLUE_BLIZZCON2013_ARENA	Добро пожаловать на Арену! Если вы выиграете достаточно партий, вы получите приз!	
+GLUE_BLIZZCON2013_ARENA_5_WINS	Вы получили звание «Ветеран Арены»! Продолжайте играть! Посмотрим, сколько еще вам удастся продержаться!	
+GLUE_BLIZZCON2013_ARENA_GRAND_PRIZE	УРААА! Вы получили звание «Чемпион Арены». Покажите это сообщение распорядителям BlizzCon, и вы получите ГЛАВНЫЙ ПРИЗ!	
+GLUE_BLIZZCON2013_ARENA_NO_PRIZE	Спасибо за игру! У вас отлично получается! Ждем вас снова!	
+GLUE_BLIZZCON2013_ARENA_PRIZE	Поздравляем, вы выиграли приз! Покажите это сообщение распорядителям BlizzCon.	
+GLUE_BOT_LOADING_BAR_TASK_1	Ставим таймеры...	
+GLUE_BOT_LOADING_BAR_TASK_10	Развиваем теории...	
+GLUE_BOT_LOADING_BAR_TASK_11	Заводим бумботов...	
+GLUE_BOT_LOADING_BAR_TASK_12	Начинаем отсчет...	
+GLUE_BOT_LOADING_BAR_TASK_13	Исследуем...	
+GLUE_BOT_LOADING_BAR_TASK_14	Запускаем реакцию...	
+GLUE_BOT_LOADING_BAR_TASK_15	Хлюпаем охлюп...	
+GLUE_BOT_LOADING_BAR_TASK_16	Синтезируем...	
+GLUE_BOT_LOADING_BAR_TASK_17	Анализируем...	
+GLUE_BOT_LOADING_BAR_TASK_18	Разводим хаос...	
+GLUE_BOT_LOADING_BAR_TASK_19	Чертим схемы...	
+GLUE_BOT_LOADING_BAR_TASK_2	Намагничиваем...	
+GLUE_BOT_LOADING_BAR_TASK_20	Жмем красную кнопку...	
+GLUE_BOT_LOADING_BAR_TASK_3	Сталкиваем частицы...	
+GLUE_BOT_LOADING_BAR_TASK_4	Зажигаем горелку...	
+GLUE_BOT_LOADING_BAR_TASK_5	Включаем роботов...	
+GLUE_BOT_LOADING_BAR_TASK_6	Искажаем данные...	
+GLUE_BOT_LOADING_BAR_TASK_7	Умничаем...	
+GLUE_BOT_LOADING_BAR_TASK_8	Ищем антиматерию...	
+GLUE_BOT_LOADING_BAR_TASK_9	Строим гипотезы...	
+GLUE_BRAWL	Потасовка	
+GLUE_BRAWL_FRIEND	Вызвать друга на потасовку	
+GLUE_BRAWL_PATRON	Завсегдатай потасовок	
+GLUE_BRAWLISEUM_FREE_TICKET_BODY	Обычно за вход в «Потасовочный цех» требуется заплатить, но первое посещение – за счет заведения!	
+GLUE_BRAWLISEUM_NO_WINS_REWARD_PACK_TEXT	Поздравляем!	
+GLUE_BRAWLISEUM_RETIRE_CONFIRM_DESC	Отступив, вы завершите ваше выступление в потасовке. Вы уверены?	
+GLUE_BRAWLISEUM_REWARDS_NOTICE_DESC	Награда за последний «Потасовочный цех».	
+GLUE_BRAWLISEUM_REWARDS_WIN_BANNER_TEXT	{0} |4(победа,победы,побед)!	
+GLUE_BRAWLISEUM_SESSION_ERROR	Ошибка получения данных потасовки.	
+GLUE_BRAWLISEUM_SESSION_ERROR_TITLE	Неполадки в потасовке	
+GLUE_BRAWLISEUM_TITLE	Потасовочный цех	
+GLUE_BRM_LOADING_BAR_TASK_1	Порабощаем дворфов...	
+GLUE_BRM_LOADING_BAR_TASK_10	Готовим ловушку Рагнаросу...	
+GLUE_BRM_LOADING_BAR_TASK_11	Противостоим Нефариану...	
+GLUE_BRM_LOADING_BAR_TASK_12	Растим черного дракона...	
+GLUE_BRM_LOADING_BAR_TASK_13	Поджигаем кое-что...	
+GLUE_BRM_LOADING_BAR_TASK_14	Похищаем хороших драконов...	
+GLUE_BRM_LOADING_BAR_TASK_15	Размечаем территорию...	
+GLUE_BRM_LOADING_BAR_TASK_16	Подогреваем лаву...	
+GLUE_BRM_LOADING_BAR_TASK_17	Буйствуем на фестивале...	
+GLUE_BRM_LOADING_BAR_TASK_18	Приглашаем именитых гостей...	
+GLUE_BRM_LOADING_BAR_TASK_2	Учимся изображать мертвых...	
+GLUE_BRM_LOADING_BAR_TASK_3	Портим положительных героев...	
+GLUE_BRM_LOADING_BAR_TASK_4	Мучаем Валестраза...	
+GLUE_BRM_LOADING_BAR_TASK_5	Манипулируем смертными...	
+GLUE_BRM_LOADING_BAR_TASK_6	Планируем захват мира...	
+GLUE_BRM_LOADING_BAR_TASK_7	Делаем подлости...	
+GLUE_BRM_LOADING_BAR_TASK_8	Непрерывно бранимся...	
+GLUE_BRM_LOADING_BAR_TASK_9	Оскорбляем друг друга...	
+GLUE_BUTTON_TAKE	Взять	
+GLUE_CANNOT_FIND_BATTLENET_CLIENT	Hearthstone не может обнаружить приложение Blizzard. Пожалуйста, посетите сайт www.battle.net и переустановите приложение.	
+GLUE_CANNOT_RUN_BATTLENET_CLIENT	Для игры в Hearthstone необходимо приложение Blizzard, но запустить его не удается. Пожалуйста, посетите сайт www.battle.net и переустановите приложение.	
+GLUE_CARD_NERF_BODY	\nСледующие карты были изменены:\n{0}	0=card names
+GLUE_CARD_NERF_HEADER	Изменения!	
+GLUE_CARD_REPLACEMENT_CARDS_ADDED	В базовый набор добавлены следующие карты:	
+GLUE_CARD_REPLACEMENT_CARDS_REMOVED	Из базового набора изъяты следующие карты:	
+GLUE_CARD_REPLACEMENT_DUST_FOOTER	У вас есть некоторые из перечисленных карт,\nпоэтому примите от нас этот особый подарок!	
+GLUE_CARD_REPLACEMENT_DUST_HEADER	Пыль в подарок!	
+GLUE_CARDS_ADDED	Мы добавили в классический набор {0} |4(новую карту,новые карты,новых карт)!	
+GLUE_CARDS_UPDATED	Эти карты были изменены.	
+GLUE_CHECKOUT_ERROR_GENERIC_FAILURE	Что-то пошло не так. Повторите попытку позднее.	
+GLUE_CHECKOUT_ERROR_INSUFFICIENT_FUNDS	У вас недостаточно средств для оплаты этой покупки.	
+GLUE_CHECKOUT_ERROR_PRODUCT_UNAVAILABLE	Этот продукт сейчас недоступен.	
+GLUE_CHINA_STORE_BOOSTER_GIFT	赠礼：\n{0}包卡牌包	
+GLUE_CHINA_STORE_BOOSTER_GIFT_PLUS_BONUS	赠礼：\n{0}+{1}包卡牌包	
+GLUE_CHINA_STORE_BOOSTER_GIFT_PREORDER_BONUS	赠礼：\n{0}包卡牌包\n外加20包奖励卡牌包	
+GLUE_CHINA_STORE_DUST_PLUS_BONUS	{0}+{1}	0=base_quantity,1=bonus_quantity
+GLUE_CHINA_STORE_DUST_PLUS_BONUS_DETAILED	限时优惠！额外获得{0}点奥术之尘和{1}包奖励卡牌包	0 = num bonus dust, 1 = num bonus packs
+GLUE_CHINA_STORE_MAMMOTH_BUNDLE_GIFT_1	赠礼：	
+GLUE_CHINA_STORE_MAMMOTH_BUNDLE_GIFT_2	30包卡牌包	
+GLUE_CHINA_STORE_WELCOME_BUNDLE_GIFT_1	赠礼：\n\n10包卡牌包	
+GLUE_CHINA_STORE_WELCOME_BUNDLE_GIFT_2	1张传说卡牌	
+GLUE_CHOOSE	Выбрать	
+GLUE_CHOOSE_OPPONENT	Выберите противника	
+GLUE_CHOOSE_YOUR_DECK	Выберите колоду	
+GLUE_CHOOSE_YOUR_HERO	Выберите героя	
+GLUE_CLASS_DESCRIPTION_DRUID	Меняйте стратегии, чтобы находить ответ в любой ситуации и быстрее аккумулируйте ману, чтобы сокрушить противников.	
+GLUE_CLASS_DESCRIPTION_HUNTER	Расставляйте ловушки для ничего не подозревающих противников и призывайте могучих зверей, чтобы они сражались за вас.	
+GLUE_CLASS_DESCRIPTION_MAGE	Испепеляйте или замораживайте врагов могущественными заклинаниями или используйте «Секреты», чтобы озадачить их.	
+GLUE_CLASS_DESCRIPTION_PALADIN	Преумножайте силу ваших существ и жестоко карайте врагов за убийство каждого союзника.	
+GLUE_CLASS_DESCRIPTION_PRIEST	Воспользуйтесь силой Света, чтобы исцелять союзников, или прибегните к темной магии, чтобы подчинять себе противников.	
+GLUE_CLASS_DESCRIPTION_ROGUE	Обрушьте на противника смертоносную комбинацию ударов, вооружитесь до зубов и призовите на свою сторону существ, умеющих маскироваться.	
+GLUE_CLASS_DESCRIPTION_SHAMAN	Покорите могущественные стихии своей воле, но не забывайте, что ваша власть над ними имеет свою цену...	
+GLUE_CLASS_DESCRIPTION_WARLOCK	Жертвуйте всех и вся в погоне за демонической силой.	
+GLUE_CLASS_DESCRIPTION_WARRIOR	Сокрушите противников могучим оружием, и пусть жажда крови питает вашу всевозрастающую силу.	
+GLUE_CLOUD_STORAGE_CONTEXT_BODY_01	Сейчас игра запросит у вас разрешение на доступ к вашей учетной записи Google Drive.\n\nC вашего согласия, ваш игровой прогресс будет сохраняться в Google Drive, и вы сможете восстановить его, даже если лишитесь доступа к данному устройству.	
+GLUE_CLOUD_STORAGE_CONTEXT_BODY_02	Сейчас игра запросит у вас разрешение на доступ к вашей учетной записи Google Drive.\n\nHearthstone проверит, сохранен ли игровой прогресс на вашем Google Drive.	
+GLUE_CLOUD_STORAGE_CONTEXT_HEADER	Приветствуем!	
+GLUE_COLLECTION_ADD_TO_DECK	Добавить в колоду	
+GLUE_COLLECTION_ALL	ВСЕ	
+GLUE_COLLECTION_ALL_CARDS	Все карты	
+GLUE_COLLECTION_ALL_SETS	Все наборы	
+GLUE_COLLECTION_ALL_STANDARD_CARDS	Стандартные карты	
+GLUE_COLLECTION_ARTIST	Художник: {0}	0=artist name
+GLUE_COLLECTION_CARD_COUNT	x{0}	
+GLUE_COLLECTION_CARD_COUNT_LARGE	x9+	
+GLUE_COLLECTION_CARD_CRAFTING_EVENT_NOT_ACTIVE	Эту карту нельзя создать или распылить. Выйдите из игры и войдите снова, чтобы получить назад потраченную пыль.	
+GLUE_COLLECTION_CARD_NEW	Новинка!	
+GLUE_COLLECTION_CARD_PERMISSION_ERROR	Эту карту нельзя создать или распылить. Выйдите из игры и войдите снова, чтобы получить назад потраченную пыль.	
+GLUE_COLLECTION_CARD_SOULBOUND	Эту карту нельзя создать или распылить. Выйдите из игры и войдите снова, чтобы получить назад потраченную пыль.	
+GLUE_COLLECTION_CARD_UNKNOWN_ERROR	Произошла непредвиденная ошибка (id={0}).	
+GLUE_COLLECTION_CARD_VALUE_CHANGED_ERROR	Что-то пошло не так. Попробуйте еще раз.	
+GLUE_COLLECTION_CONVERT_DECK_BODY	При смене режима игры этой колодой на стандартный из нее будет удалено несколько карт ({0}). Вы хотите продолжить?	
+GLUE_COLLECTION_CONVERT_DECK_HEADER	Смена режима колоды	
+GLUE_COLLECTION_CRAFTING_DISENCHANT_BUTTON_TEXT	Распылить лишние карты	
+GLUE_COLLECTION_CRAFTING_EXPLANATION	Выберите карту для создания.\nНа создание карт расходуется чародейная пыль. Если вам нужна пыль, распылите карты.\nСтоимость карты зависит от ее редкости.	
+GLUE_COLLECTION_CRAFTING_FILTERS	Фильтры	
+GLUE_COLLECTION_CRAFTING_MODE	Создание карт	
+GLUE_COLLECTION_CRAFTING_MODE_SHORT	Создать	
+GLUE_COLLECTION_CRAFTING_SHOW_ONLY_GOLDEN	Только золотые карты	
+GLUE_COLLECTION_CRAFTING_SHOW_SOULBOUND_CARDS	Включить карты, которые нельзя создать	
+GLUE_COLLECTION_CUSTOM_DECKNAME_TEMPLATE	{0}{1}	0=class name, 1=incrementer
+GLUE_COLLECTION_DECK	Колода	
+GLUE_COLLECTION_DECK_COMPELTE_BUTTON	Завершить колоду	
+GLUE_COLLECTION_DECK_COMPLETE_POPUP_CANCEL	Нет	
+GLUE_COLLECTION_DECK_COMPLETE_POPUP_CONFIRM	Да	
+GLUE_COLLECTION_DECK_COMPLETE_POPUP_HEADER	Завершить колоду	
+GLUE_COLLECTION_DECK_COPIED_TOAST	Колода скопирована!	
+GLUE_COLLECTION_DECK_COPY	Копировать	
+GLUE_COLLECTION_DECK_COPY_COMMENT_HEADER_CLASS	Класс: {0}	
+GLUE_COLLECTION_DECK_COPY_COMMENT_HEADER_DECK_ARENA	Колода Арены	
+GLUE_COLLECTION_DECK_COPY_COMMENT_HEADER_FORMAT	Формат: {0}	
+GLUE_COLLECTION_DECK_COPY_TOOLTIP_FORMAT	Некоторые карты в вашей колоде не подходят для этого формата.	
+GLUE_COLLECTION_DECK_COPY_TOOLTIP_HEADLINE	Копировать колоду	
+GLUE_COLLECTION_DECK_COPY_TOOLTIP_INCOMPLETE	Вы можете скопировать только полную колоду.	
+GLUE_COLLECTION_DECK_COPY_TOOLTIP_UNPLAYABLE	В вашей колоде есть карты, которыми нельзя играть.	
+GLUE_COLLECTION_DECK_DELETE	Удалить	
+GLUE_COLLECTION_DECK_FINISH_FOR_ME	Да	
+GLUE_COLLECTION_DECK_FORMAT_STANDARD	Стандартный	
+GLUE_COLLECTION_DECK_FORMAT_WILD	Вольный	
+GLUE_COLLECTION_DECK_GENERIC_INVALID_MESSAGE	Некоторые карты в вашей колоде не подходят для этого формата.	
+GLUE_COLLECTION_DECK_HELP_BUTTON	Получить совет	
+GLUE_COLLECTION_DECK_HELPER_REPLACE_CARD	Заменить эту карту	
+GLUE_COLLECTION_DECK_HELPER_REPLACE_INVALID_CARD	Заменить карту вольного формата	
+GLUE_COLLECTION_DECK_HELPER_REPLACE_INVALID_CARD_NPR	Требуется 25-й ранг	
+GLUE_COLLECTION_DECK_HERO_NOT_UNLOCKED	Герой, колода которого находится в буфере обмена, еще не открыт.	
+GLUE_COLLECTION_DECK_INCOMPLETE_LABEL	Завершить	
+GLUE_COLLECTION_DECK_INCOMPLETE_LABEL_TOUCH	Нажмите для завершения	
+GLUE_COLLECTION_DECK_INCOMPLETE_POPUP_HEADER	Неполная колода	
+GLUE_COLLECTION_DECK_INCOMPLETE_POPUP_TEXT	Вам не хватает {0} |4(карты,карт,карт) для полной колоды.\nЗавершить колоду автоматически?	
+GLUE_COLLECTION_DECK_INCOMPLETE_POPUP_TEXT_NPR	Для использования {0} |4(карты,карт,карт) требуется 25-й ранг.\nЗавершить колоду автоматически?	
+GLUE_COLLECTION_DECK_INFO_HERO_POWER_TOOLTIP	Сила героя	
+GLUE_COLLECTION_DECK_INFO_MANA_TOOLTIP	Карты/Затраты маны	
+GLUE_COLLECTION_DECK_INFO_TITLE	{0} Информация	
+GLUE_COLLECTION_DECK_INVALID_POPUP_HEADER	Неверный формат	
+GLUE_COLLECTION_DECK_MISSING_CARDS_INDICATOR	{0}/{1}	
+GLUE_COLLECTION_DECK_OVERWRITE_BODY	Заменить текущую колоду той, которая находится в буфере обмена?	
+GLUE_COLLECTION_DECK_OVERWRITE_HEADER	Заменить колоду	
+GLUE_COLLECTION_DECK_PASTE	Вставить	
+GLUE_COLLECTION_DECK_PASTE_COMMENT_ARENA_WARNING	Эта колода была скопирована на арене. Она может не подойти для игры в других режимах.	
+GLUE_COLLECTION_DECK_PASTE_COMMENT_INSTRUCTIONS	Чтобы использовать эту колоду, скопируйте ее в буфер обмена и создайте новую колоду в Hearthstone.	
+GLUE_COLLECTION_DECK_PASTE_INVALID_CLASS_BODY	Колода, которую вы пытаетесь копировать, относится к другому классу.	
+GLUE_COLLECTION_DECK_PASTE_POPUP_HEADER	Вставить колоду	
+GLUE_COLLECTION_DECK_PASTE_TOOLTIP_CLASS_NO_MATCH	Ваша скопированная колода относится к другому классу.	
+GLUE_COLLECTION_DECK_PASTE_TOOLTIP_HEADLINE	Вставить колоду	
+GLUE_COLLECTION_DECK_PASTE_TOOLTIP_INVALID	Ваша скопированная колода не подходит для этого режима игры.	
+GLUE_COLLECTION_DECK_PASTE_TOOLTIP_WILD_LOCKED	Чтобы создать эту колоду, у вас должна быть карта вольного формата.	
+GLUE_COLLECTION_DECK_RENAME	Название	
+GLUE_COLLECTION_DECK_RULE_FINISH_AUTOMATICALLY	Завершить колоду автоматически?	
+GLUE_COLLECTION_DECK_RULE_INVALID_CARDS	{0} |4(ваша карта не подходит,ваши карты не подходят,ваших карт не подходят) для этого формата.	
+GLUE_COLLECTION_DECK_RULE_INVALID_CARDS_NPR	У вас есть {0} |4(карты,карт,карт), для использования |4(которой,которых,которых) требуется 25-й ранг.	
+GLUE_COLLECTION_DECK_RULE_INVALID_CLASS_CARD	В вашей колоде {0} |4(карта,карты,карт) другого класса.	
+GLUE_COLLECTION_DECK_RULE_MISSING_CARDS	До полной колоды не хватает {0} |4(карты,карты,карт).	
+GLUE_COLLECTION_DECK_RULE_NOT_ENOUGH_CARDS	Вам требуется еще {0} |4(карта,карты,карт) для завершения колоды этого класса. Создайте дополнительные карты или соберите колоду другого класса.	
+GLUE_COLLECTION_DECK_RULE_TOO_MANY_CARDS	В вашей колоде на {0} |4(карту,карты,карт) больше, чем нужно.	
+GLUE_COLLECTION_DECK_SAVE_ANYWAY	Нет	
+GLUE_COLLECTION_DECK_TEMPLATE_HELP_BUTTON	Заменить карты	
+GLUE_COLLECTION_DECK_TEMPLATE_LOW_CARD_WARNING	Ой-ой!	
+GLUE_COLLECTION_DECK_TEMPLATE_LOW_CARD_WARNING_CANCEL	Стоп!	
+GLUE_COLLECTION_DECK_TEMPLATE_LOW_CARD_WARNING_CONFIRM	Да	
+GLUE_COLLECTION_DECK_TEMPLATE_LOW_CARD_WARNING_MESSAGE	У вас не хватает множества карт для этой колоды. Вы уверены, что не хотите составить колоду по классическому шаблону?	
+GLUE_COLLECTION_DECK_TEMPLATE_REPLACE	Изменить колоду	
+GLUE_COLLECTION_DECK_TEMPLATE_REPLACE_MESSAGE	Текущая колода будет удалена и заменена шаблонной. Вы уверены, что хотите продолжить?	
+GLUE_COLLECTION_DECK_TEMPLATE_SELECT_A_DECK	Выберите шаблон, чтобы узнать больше!	
+GLUE_COLLECTION_DECK_VALID_PASTE_BODY	Вы хотите создать новую колоду с помощью колоды, которая находится в буфере обмена?	
+GLUE_COLLECTION_DECK_VALID_PASTE_HEADER	Создать колоду	
+GLUE_COLLECTION_DECK_WILD_LABEL	Конвертировать	
+GLUE_COLLECTION_DECK_WILD_LABEL_TOUCH	Нажмите для конвертации	
+GLUE_COLLECTION_DECK_WILD_NOT_UNLOCKED	У вас в буфере обмена вольная колода, но вы еще не открыли вольный режим.	
+GLUE_COLLECTION_DECK_WILD_POPUP_HEADER	Вольная колода	
+GLUE_COLLECTION_DECK_WILD_POPUP_TEXT	Это вольная колода. Конвертировать ее автоматически в стандартную?	
+GLUE_COLLECTION_DELETE_CONFIRM_DESC	Вы уверены, что хотите удалить эту колоду?	
+GLUE_COLLECTION_DELETE_CONFIRM_HEADER	Удалить	
+GLUE_COLLECTION_DELETE_UNAVAILABLE_DESC	Вы не можете удалить колоду, пока не откроете все 9 классов.	
+GLUE_COLLECTION_EMPTY_PAGE	Страница 0	
+GLUE_COLLECTION_ERROR_HEADER	Ошибка в коллекции!	
+GLUE_COLLECTION_FEATURED_CARDS	Измененные карты	
+GLUE_COLLECTION_FSG_BRAWL_DECKNAME	Колода Fireside	
+GLUE_COLLECTION_GENERIC_ERROR	При обработке вашего запроса произошел системный сбой. Пожалуйста, повторите запрос позднее.	
+GLUE_COLLECTION_GOLDEN_CARDS	Золотые карты	
+GLUE_COLLECTION_HOME_PAGE	Общие сведения	
+GLUE_COLLECTION_INCLUDE_PREMIUMS	Включая золотые	
+GLUE_COLLECTION_LOCK_CARD_BANNED	Недоступна	
+GLUE_COLLECTION_LOCK_CARD_INVALID_CLASS	Это карта другого класса	
+GLUE_COLLECTION_LOCK_CARD_NOT_PLAYABLE	Еще не вышла	
+GLUE_COLLECTION_LOCK_MAX_DECK_COPIES	Лимит колоды: {0}	
+GLUE_COLLECTION_LOCK_NO_MORE_INSTANCES	Все копии использованы	
+GLUE_COLLECTION_MANAGER_CARD_BACKS_TITLE	Рубашки	
+GLUE_COLLECTION_MANAGER_FAVORITE_BUTTON	По умолчанию	
+GLUE_COLLECTION_MANAGER_FAVORITE_CARD_BACK	По умолчанию	
+GLUE_COLLECTION_MANAGER_FAVORITE_DEFAULT_TEXT	{0} по умолчанию	
+GLUE_COLLECTION_MANAGER_HELP_ME	Мне нужна помощь	
+GLUE_COLLECTION_MANAGER_HERO_SKINS_TITLE	Герои	
+GLUE_COLLECTION_MANAGER_MANA_FILTER_PROMPT_BODY_EVEN_CARDS	Показать только карты с четной стоимостью?	
+GLUE_COLLECTION_MANAGER_MANA_FILTER_PROMPT_BODY_ODD_CARDS	Показать только карты с нечетной стоимостью?	
+GLUE_COLLECTION_MANAGER_MANA_FILTER_PROMPT_HEADER	Стоимость	
+GLUE_COLLECTION_MANAGER_MANA_TAB_FIRST_CLICK	Щелкните еще раз для отключения фильтра.	
+GLUE_COLLECTION_MANAGER_ON_ADD_FULL_DECK_ERROR_TEXT	Ваша колода заполнена. Сначала удалите карту!	
+GLUE_COLLECTION_MANAGER_SEARCH_ARTIST	художник	
+GLUE_COLLECTION_MANAGER_SEARCH_ATTACK	атака	
+GLUE_COLLECTION_MANAGER_SEARCH_EVEN_ATTACK	чет	Search term to filter cards in CollectionManager to cards with even attack value. Example attack:even
+GLUE_COLLECTION_MANAGER_SEARCH_EVEN_CARDS	чет	Search term to filter cards in CollectionManager to cards that player owns an even number of. Example: owned:even
+GLUE_COLLECTION_MANAGER_SEARCH_EVEN_HEALTH	чет	Search term to filter cards in CollectionManager to cards with even health value. Example health:even
+GLUE_COLLECTION_MANAGER_SEARCH_EVEN_MANA	чет	Search term to filter cards in CollectionManager to cards with even mana cost. Example: mana:even
+GLUE_COLLECTION_MANAGER_SEARCH_EXTRA	лишние	
+GLUE_COLLECTION_MANAGER_SEARCH_GOLDEN	золотые	
+GLUE_COLLECTION_MANAGER_SEARCH_HAS	и	
+GLUE_COLLECTION_MANAGER_SEARCH_HEALTH	здоровье	
+GLUE_COLLECTION_MANAGER_SEARCH_MANA	мана	
+GLUE_COLLECTION_MANAGER_SEARCH_MISSING	недостающие	
+GLUE_COLLECTION_MANAGER_SEARCH_NEW	новые	
+GLUE_COLLECTION_MANAGER_SEARCH_ODD_ATTACK	нечет	Search term to filter cards in CollectionManager to cards with odd attack value. Example attack:odd
+GLUE_COLLECTION_MANAGER_SEARCH_ODD_CARDS	нечет	Search term to filter cards in CollectionManager to cards that player owns an odd number of. Example: owned:odd
+GLUE_COLLECTION_MANAGER_SEARCH_ODD_HEALTH	нечет	Search term to filter cards in CollectionManager to cards with odd health value. Example health:odd
+GLUE_COLLECTION_MANAGER_SEARCH_ODD_MANA	нечет	Search term to filter cards in CollectionManager to cards with odd mana cost. Example: mana:odd
+GLUE_COLLECTION_MANAGER_SEARCH_OWNED	есть	
+GLUE_COLLECTION_MANAGER_SEARCH_RARITY	редкость	
+GLUE_COLLECTION_MANAGER_SEARCH_TYPE	тип	
+GLUE_COLLECTION_MANAGER_WHIZBANG_DEFAULT_DECK_NAME	Невероятный Чудастер	
+GLUE_COLLECTION_MANAGER_WHIZBANG_POPUP_BODY	Создайте в коллекции новую колоду для класса «{0}» и используйте рецепт «{1}»!	0 = deck class, 1 = deck name
+GLUE_COLLECTION_MANAGER_WHIZBANG_POPUP_HEADER	Как вам колода?	
+GLUE_COLLECTION_MANAGER_WHIZBANG_WARNING_BODY	Добавив Чудастера, вы удалите другие карты из колоды. Продолжить?	
+GLUE_COLLECTION_MANAGER_WHIZBANG_WARNING_HEADER	Чудастер?	
+GLUE_COLLECTION_MINE	Мои карты	
+GLUE_COLLECTION_MULTIPLIER	x	used to show you how many copies of a card you own, e.g. x2
+GLUE_COLLECTION_MY_DECKS	Мои колоды	
+GLUE_COLLECTION_MY_PACKS	Мои комплекты	
+GLUE_COLLECTION_NEW_CARD_CALLOUT	{0}	0=number of new cards for this class
+GLUE_COLLECTION_NEW_DECK	Новая колода	
+GLUE_COLLECTION_NO_MATCHES	Совпадений не найдено.	
+GLUE_COLLECTION_NO_RESULTS	Ничего не нашлось	
+GLUE_COLLECTION_NO_RESULTS_BUT_CRAFTABLE	У вас нет этой карты	
+GLUE_COLLECTION_NO_RESULTS_BUT_CRAFTABLE_HINT	Хотите ее создать?	
+GLUE_COLLECTION_NO_RESULTS_IN_CURRENT_SET	Нет результатов в этом наборе	
+GLUE_COLLECTION_NO_RESULTS_IN_CURRENT_SET_HINT	Но есть в других наборах!	
+GLUE_COLLECTION_NO_RESULTS_IN_SELECTED_COST	Нет результатов с такой стоимостью	
+GLUE_COLLECTION_NO_RESULTS_IN_SELECTED_COST_HINT	Но есть с другой стоимостью!	
+GLUE_COLLECTION_NO_RESULTS_IN_STANDARD	Посмотрите в вольных наборах!	
+GLUE_COLLECTION_PAGE_NUM	Страница {0}	
+GLUE_COLLECTION_PLUS	+	
+GLUE_COLLECTION_RECENT_CARDS	Недавно полученные карты	
+GLUE_COLLECTION_RECENTLY_NERFED	<color=#971c1cff>Эта карта недавно была изменена, поэтому при ее распылении вы получите другое количество чародейной пыли.</color>	
+GLUE_COLLECTION_SEARCH	Поиск	
+GLUE_COLLECTION_SET_FILTER_WILD_SET_BODY	Будут выделены карты, недоступные в стандартном режиме. Продолжить?	
+GLUE_COLLECTION_SET_FILTER_WILD_SET_HEADER	Карты вольного формата	
+GLUE_COLLECTION_SHOW_ALL_CARDS	Показать все карты	
+GLUE_COLLECTION_STANDARD_SETS	Стандартные наборы	
+GLUE_COLLECTION_TAVERN_BRAWL_DECKNAME	Колода для потасовки	
+GLUE_COLLECTION_TO_STANDARD	Сменить на стандартный	
+GLUE_COLLECTION_TO_WILD	Сменить на вольный	
+GLUE_COLLECTION_TUTORIAL_REPLACE_WILD_CARDS	Заменить карты вольного формата стандартными.	
+GLUE_COLLECTION_TUTORIAL_REPLACE_WILD_CARDS_NPR	Замените недействительные карты (отмечены красным).	
+GLUE_COLLECTION_TUTORIAL_TEMPLATE_REMINDER	Попробуйте другие шаблонные колоды.	
+GLUE_COLLECTION_TUTORIAL_TEMPLATE_REPLACE_1	У вас не хватает карт! Мы поможем вам найти замену.	
+GLUE_COLLECTION_TUTORIAL_TEMPLATE_REPLACE_2	Заменить недостающие карты.	
+GLUE_COLLECTION_TUTORIAL_TEMPLATE_WELCOME	Ты можешь создать колоду по готовому рецепту или подобрать карты с нуля.	
+GLUE_COLLECTION_TUTORIAL02	Переверните страницу для просмотра карт	
+GLUE_COLLECTION_TUTORIAL03	Распылите лишние карты!	
+GLUE_COLLECTION_TUTORIAL04	Выберите «ВСЕ» карты, чтобы посмотреть, какие карты вы можете создать.	"ALL" is the same as GLUE_COLLECTION_ALL.
+GLUE_COLLECTION_TUTORIAL05	Превратить эту карту в чародейную пыль.	
+GLUE_COLLECTION_TUTORIAL06	Использовать пыль для создания этой карты.	
+GLUE_COLLECTION_TUTORIAL07	Вы можете изменять эту колоду.	
+GLUE_COLLECTION_TUTORIAL08	Чтобы убрать карту, перетащите ее.	
+GLUE_COLLECTION_TUTORIAL09	Теперь вы можете удалять колоды.	
+GLUE_COLLECTION_TUTORIAL10	Редактируйте свои колоды или создайте новую!	
+GLUE_COLLECTION_TUTORIAL11	У тебя не осталось места для новых колод. Удали какую-нибудь или переделай в стандартную.	
+GLUE_COLLECTION_TUTORIAL12	Превратить вольную колоду в стандартную можно здесь.	
+GLUE_COLLECTION_TUTORIAL13	В стандартном формате можно использовать только новейшие карты.	
+GLUE_COLLECTION_TUTORIAL14	Вы можете превратить свои вольные колоды в стандартные.	
+GLUE_COLLECTION_TUTORIAL15	Попробуйте превратить колоду в стандартную.	
+GLUE_COLLECTION_TUTORIAL16	Теперь вы готовы к игре в стандартном режиме!	
+GLUE_COLLECTION_TUTORIAL17	Карты вольного формата скрыты.	
+GLUE_COLLECTION_WILD_SETS	Вольные наборы	
+GLUE_CRAFTING_ARCANEDUST	Чародейная пыль	
+GLUE_CRAFTING_ARCANEDUST_DESCRIPTION	Распыляйте ненужные карты и получайте чародейную пыль, которую можно использовать для создания нужных вам карт.	
+GLUE_CRAFTING_CREATE	Создать	
+GLUE_CRAFTING_DISENCHANT	Распылить	
+GLUE_CRAFTING_DISENCHANT_CONFIRM_DESC	Если вы распылите эту карту, следующие колоды будут недоступны:	
+GLUE_CRAFTING_DISENCHANT_CONFIRM_HEADER	Распылить	
+GLUE_CRAFTING_DISENCHANT_CONFIRM2_DESC	Если вы распылите эту карту, у вас будет меньше копий, чем доступно для использования в колоде.	
+GLUE_CRAFTING_EVENT_NOT_ACTIVE_DESCRIPTION	Карты из набора «{0}» пока что нельзя создать или распылить.	
+GLUE_CRAFTING_EVENT_NOT_ACTIVE_TITLE	Еще не вышла	
+GLUE_CRAFTING_SOULBOUND	Нельзя создать	
+GLUE_CRAFTING_SOULBOUND_BASIC_DESC	Базовые карты нельзя распылить или создать.	
+GLUE_CRAFTING_SOULBOUND_DESC	Эту карту нельзя создать или распылить.	
+GLUE_CRAFTING_SOULBOUND_FEATURED_DESC	Только в течение особого события!	
+GLUE_CRAFTING_SOULBOUND_OFFLINE_DESC	Находясь вне сети, вы не можете создавать и распылять карты.	
+GLUE_CRAFTING_SOULBOUND_REWARD_DESC	Награды за выполнение заданий нельзя создать или распылить.	
+GLUE_CRAFTING_TITLE	Создание карт	
+GLUE_CRAFTING_UNDO	Отменить	
+GLUE_CRAFTING_WILD_CARD_DESC	Это карта вольного формата. Вы уверены?	
+GLUE_CRAFTING_WILD_CARD_FIRST_WILD_DESC	Этой картой нельзя играть в стандартном формате. Вы уверены?	
+GLUE_CRAFTING_WILD_CARD_HEADER	Карты вольного формата	
+GLUE_CRAFTING_WILD_CARD_INTRO_DESC	В играх вольного формата можно использовать любые карты!	
+GLUE_CRAFTING_WILD_CARD_TAVERN_BRAWL_DESC	Эта карта запрещена в текущей «Потасовке». Вы уверены?	
+GLUE_CRAFTING_WILD_CARD_TAVERN_BRAWL_HEADER	Неподходящие карты	
+GLUE_CRAFTING_WILD_CARD_WARNING_CANCEL	Ой! Нет!	
+GLUE_CRAFTING_WILD_CARD_WARNING_CONFIRM	Да	
+GLUE_CREATE_DECK	Создать колоду	
+GLUE_CREATE_STANDARD_DECK	Создать стандартную колоду	
+GLUE_CREATE_WILD_DECK	Создать вольную колоду	
+GLUE_DAL_LOADING_BAR_TASK_1	Злодейски хихикаем...	
+GLUE_DAL_LOADING_BAR_TASK_10	Ни в чем не раскаиваемся...	
+GLUE_DAL_LOADING_BAR_TASK_11	Задираем жителей...	
+GLUE_DAL_LOADING_BAR_TASK_12	Безобразия нарушаем...	
+GLUE_DAL_LOADING_BAR_TASK_13	Беспечно бедокурим...	
+GLUE_DAL_LOADING_BAR_TASK_14	Творим зло...	
+GLUE_DAL_LOADING_BAR_TASK_15	Точим зуб...	
+GLUE_DAL_LOADING_BAR_TASK_16	Заламываем руки...	
+GLUE_DAL_LOADING_BAR_TASK_17	Ругаем подручных...	
+GLUE_DAL_LOADING_BAR_TASK_18	Громко бахвалимся...	
+GLUE_DAL_LOADING_BAR_TASK_19	Все разносим...	
+GLUE_DAL_LOADING_BAR_TASK_2	Грозим кулаком...	
+GLUE_DAL_LOADING_BAR_TASK_20	Ищем прихвостней...	
+GLUE_DAL_LOADING_BAR_TASK_3	Поносим героев...	
+GLUE_DAL_LOADING_BAR_TASK_4	Крадемся в ночи...	
+GLUE_DAL_LOADING_BAR_TASK_5	Сеем хаос...	
+GLUE_DAL_LOADING_BAR_TASK_6	Удираем от расправы...	
+GLUE_DAL_LOADING_BAR_TASK_7	Пафосно занудствуем...	
+GLUE_DAL_LOADING_BAR_TASK_8	Проучиваем врагов...	
+GLUE_DAL_LOADING_BAR_TASK_9	Хрустим костяшками...	
+GLUE_DECK_SHARE_BUTTON_BORROW_DECKS	Скопировать колоды	
+GLUE_DECK_SHARE_BUTTON_SHOW_MY_DECKS	Показать мои колоды	
+GLUE_DECK_SHARE_BUTTON_SHOW_OPPONENT_DECKS	Показать колоды противника	
+GLUE_DECK_SHARE_TOOLTIP_BODY_REQUEST	Попросить скопировать колоду у игрока {0}.	0=friend's name
+GLUE_DECK_SHARE_TOOLTIP_HEADER	Поделиться колодами	
+GLUE_DECK_TEMPLATE_CHOOSE_DECK	{0}: шаблоны	0=name of class (e.g. Shaman)
+GLUE_DECK_TEMPLATE_CURRENT_DECK	Текущая колода	
+GLUE_DECK_TEMPLATE_CUSTOM_DECK	Ваша колода	
+GLUE_DECK_TEMPLATE_CUSTOM_DECK_DESCRIPTION	Составьте собственную колоду!	
+GLUE_DECK_TRAY_CARD_COUNT_LABEL	Карты	
+GLUE_DECK_TRAY_COUNT	{0}/{1}	
+GLUE_DECK_TRAY_DECK_COUNT_LABEL	Колоды	
+GLUE_DECK_TRAY_GALAKROND_PROMPT_DESC	Вы добавили в колоду карту с «Воззванием». Для ее полноценной работы требуется Галакронд. Добавить его в колоду?	
+GLUE_DECK_TRAY_GALAKROND_PROMPT_TITLE	Добавить Галакронда в колоду?	
+GLUE_DECK_TRAY_HEROES_UNLOCKED_COUNT_LABEL	Открыто	
+GLUE_DEVICE_PERFORMANCE_WARNING	Это устройство не соответствует минимальным требованиям, необходимым для запуска Hearthstone. Вы можете столкнуться с графическими неполадками или проблемами с быстродействием игры.\n\nНажмите кнопку «Поддержка», чтобы получить дополнительные сведения.	
+GLUE_DEVICE_PERFORMANCE_WARNING_TITLE	Производительность устройства	
+GLUE_DISABLED_WILD_DECK_DESC	Эту колоду нельзя использовать в стандартном формате. Переключитесь в вольный формат, либо превратите колоду в стандартную.	
+GLUE_DISABLED_WILD_DECK_HEADER	Вольные колоды	
+GLUE_DONT_SHOW_ME_THIS_AGAIN	Не показывать больше	
+GLUE_DRAFT_HERO_INSTRUCTIONS	Выберите героя	
+GLUE_DRAFT_HERO_POWER_INSTRUCTIONS_DETAIL	Вы получите силу героя этого класса и сможете собрать колоду из карт обоих классов.	
+GLUE_DRAFT_HERO_POWER_INSTRUCTIONS_TITLE	Выберите дополнительный класс	
+GLUE_DRAFT_INSTRUCTIONS	Выберите карту	
+GLUE_DRAFT_LOSSES_LABEL	Поражения:	
+GLUE_DRAFT_MATCH_PROG	Прогресс на Арене	
+GLUE_DRAFT_PLAY_BUTTON	ИГРАТЬ	
+GLUE_DRAFT_REMOVE_GOLDENS_DIALOG_BODY	Отключить золотые карты в этом выступлении на арене?	
+GLUE_DRAFT_REMOVE_GOLDENS_DIALOG_TITLE	Отключить золотые карты	
+GLUE_DRAFT_RETIRE_BUTTON	ОТСТУПИТЬ	
+GLUE_DRAFT_WINS_LABEL	Победы	
+GLUE_DRG_LOADING_BAR_TASK_1	Идем на взлет	
+GLUE_DRG_LOADING_BAR_TASK_10	Следим за тылом	
+GLUE_DRG_LOADING_BAR_TASK_11	Совершаем облет	
+GLUE_DRG_LOADING_BAR_TASK_12	Переходим на ракеты	
+GLUE_DRG_LOADING_BAR_TASK_13	Расширяем горизонты	
+GLUE_DRG_LOADING_BAR_TASK_14	Седлаем драконов	
+GLUE_DRG_LOADING_BAR_TASK_15	Кормим грифонов	
+GLUE_DRG_LOADING_BAR_TASK_16	Бомбардировка	
+GLUE_DRG_LOADING_BAR_TASK_17	Возносим хвалу Галакронду	
+GLUE_DRG_LOADING_BAR_TASK_18	Лезем на храм Драконьего Покоя	
+GLUE_DRG_LOADING_BAR_TASK_19	Отвязываем дирижабли	
+GLUE_DRG_LOADING_BAR_TASK_2	Высиживаем яйца	
+GLUE_DRG_LOADING_BAR_TASK_20	Летим строем	
+GLUE_DRG_LOADING_BAR_TASK_3	Сбрасываем балласт	
+GLUE_DRG_LOADING_BAR_TASK_4	Вощим крылья	
+GLUE_DRG_LOADING_BAR_TASK_5	Завязываем узлы	
+GLUE_DRG_LOADING_BAR_TASK_6	Огненное дыхание	
+GLUE_DRG_LOADING_BAR_TASK_7	Складываем парашюты	
+GLUE_DRG_LOADING_BAR_TASK_8	Заряжаем пушки	
+GLUE_DRG_LOADING_BAR_TASK_9	Играем с дракончиками	
+GLUE_EDIT	Редактировать	
+GLUE_EDIT_DECK	Редактировать колоду	
+GLUE_ERROR_DECK_RULESET_RULE_VIOLATION	Выбранная колода не подходит для этого формата игры.	
+GLUE_FAKE_QUEST_FIRST_DESCRIPTION	Добро пожаловать в опасный район...	
+GLUE_FAKE_QUEST_FIRST_NAME	Добро пожаловать в Прибамбасск!	
+GLUE_FAKE_QUEST_FIRST_REWARD	0 золотых	
+GLUE_FIRE_FESTIVAL_BANNER_TITLE	Добро пожаловать на Огненный Солнцеворот!	
+GLUE_FIRE_FESTIVAL_DOUBLE_GOLD_BAG_TEXT	x2	
+GLUE_FIRESIDE_BRAWL_FLAG	Fireside	
+GLUE_FIRESIDE_GATHERING_ADD_MORE_ACCESS_POINTS	Добавить еще	
+GLUE_FIRESIDE_GATHERING_APPEAR_ONLINE_PROMPT	Вы не можете присоединиться к Fireside Gathering, если ваш статус отображается как «Не в сети».\nХотите сменить статус на «В сети»?	
+GLUE_FIRESIDE_GATHERING_BETA_TITLE	Fireside Gatherings <color=#c01c1cff><size=23>BETA</size></color>	Here we can use size and color tags and when necessary, add the BETA label while we are doing slow rollout of the feature.
+GLUE_FIRESIDE_GATHERING_BRAWL	Fireside-потасовка	
+GLUE_FIRESIDE_GATHERING_BRAWL_UNAVAILABLE	Fireside-потасовка недоступна	
+GLUE_FIRESIDE_GATHERING_BRAWLS_BUTTON	Потасовки Fireside	
+GLUE_FIRESIDE_GATHERING_CHOOSE_OPPONENT	Выберите противника	
+GLUE_FIRESIDE_GATHERING_CONNECT_TO_WIFI_BODY	Подключитесь к сети Wi-Fi, связанной с этим событием Fireside Gathering, или пропустите этот шаг, если доступных сетей Wi-Fi нет.	
+GLUE_FIRESIDE_GATHERING_CONNECT_TO_WIFI_NO_WIFI_BUTTON	Нет сети Wi-Fi	
+GLUE_FIRESIDE_GATHERING_CONNECT_TO_WIFI_SSID_CONFIRM_BODY	Не та сеть? Прежде чем продолжать, подключите ваше устройство к нужной сети.	
+GLUE_FIRESIDE_GATHERING_CONNECT_TO_WIFI_SSID_CONFIRM_TITLE	Вы подключены к сети:	
+GLUE_FIRESIDE_GATHERING_CONNECT_TO_WIFI_TITLE	Пожалуйста, подключитесь к сети Wi-Fi.	
+GLUE_FIRESIDE_GATHERING_CONNECT_TO_WIFI_USE_WIFI_BUTTON	Далее	
+GLUE_FIRESIDE_GATHERING_DESCRIPTION_TEXT	Добро пожаловать!\nПора познакомиться с новым другом и сыграть!	
+GLUE_FIRESIDE_GATHERING_DUELS_BUTTON	Дружеские дуэли	
+GLUE_FIRESIDE_GATHERING_FIND_EVENT_BODY	Собирайтесь вместе и играйте в Hearthstone с другими игроками в локальных событиях. Игра использует ваши геоданные и информацию о доступных сетях Wi-Fi, чтобы найти события Fireside Gathering рядом с вами.	
+GLUE_FIRESIDE_GATHERING_FOOTER_EMPTY_FIRST_LINE	Похоже, в таверне все спят.	
+GLUE_FIRESIDE_GATHERING_FOOTER_EMPTY_SECOND_LINE	Здесь перечислены только те игроки, которые готовы играть и еще не начали матч. Попробуйте заглянуть к нам попозже!	
+GLUE_FIRESIDE_GATHERING_FOOTER_PARTIAL_FIRST_LINE	Кого-то не хватает?	
+GLUE_FIRESIDE_GATHERING_FOOTER_PARTIAL_SECOND_LINE	В этом списке перечислены только те игроки, которые готовы играть и еще не начали матч. Попробуйте заглянуть к нам попозже!	
+GLUE_FIRESIDE_GATHERING_INKEEPER_CONNECT_TO_WIFI_BODY	Подключитесь к сети Wi-Fi, которую вы хотите задействовать для этого события Fireside Gathering, или пропустите этот шаг, если доступных сетей Wi-Fi нет.	
+GLUE_FIRESIDE_GATHERING_INKEEPER_SETUP	Открываем ящики...	
+GLUE_FIRESIDE_GATHERING_INKEEPER_SETUP_FAILED_BODY	Удостоверьтесь, что вы подключены к сети Wi-Fi или у вас включены геоданные, после чего перейдите к списку друзей и повторите попытку.	
+GLUE_FIRESIDE_GATHERING_INKEEPER_SETUP_FAILED_TITLE	Ошибка при задании параметров	
+GLUE_FIRESIDE_GATHERING_INKEEPER_SIGN_SUCCESS_NOTE	Ваша таверна открыта!	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_CLICK_TO_SETUP	Щелкните здесь, чтобы задать параметры!	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_CLICK_TO_SETUP_PHONE	Нажмите здесь, чтобы задать параметры!	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_CLICK_TO_SETUP_TITLE	Ваше предстоящее событие	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_CONNECT_TO_WIFI_SSID_CONFIRM_TITLE	Использовать это подключение для вашего Fireside Gathering?	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_LOBBY_ARRIVE	Добро пожаловать на Fireside Gathering!	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_SETUP_BODY	Приветствуем, хозяин таверны {0}! Вы готовы организовать Fireside Gathering?	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_TOOLTIP	Когда будете готовы, задайте параметры события здесь!	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_TURN_ON_GPS_BODY	Опубликуйте ваше местоположение в следующем окне, чтобы игроки могли найти ваше событие Fireside Gathering и поучаствовать в нем!	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_TURN_ON_WIFI_BODY	Включите Wi-Fi в следующем окне, чтобы другие игроки могли найти ваше событие Fireside Gathering и поучаствовать в нем!	
+GLUE_FIRESIDE_GATHERING_NETWORK_CONFIRM_BODY	Прежде чем продолжить, убедитесь, что вы подключены к нужной сети Wi-Fi.	
+GLUE_FIRESIDE_GATHERING_NETWORK_CONFIRM_TITLE	Событие Fireside Gathering будет создано для используемой в данный момент сети Wi-Fi.	
+GLUE_FIRESIDE_GATHERING_NO_WIFI_SUCCESS	Поздравляем! Настройка параметров вашей таверны завершена. Вы в любое время можете обновить их в списке друзей и добавить доступ к сети Wi-Fi!	
+GLUE_FIRESIDE_GATHERING_OFFICIAL_FIRESIDE_DESCRIPTION	Это официальная Fireside-потасовка.	
+GLUE_FIRESIDE_GATHERING_OPPONENT_OFFLINE	Этот игрок больше не в сети.	
+GLUE_FIRESIDE_GATHERING_OPPONENT_UNAVAILABLE	Этот игрок больше не доступен.	
+GLUE_FIRESIDE_GATHERING_PLAY_FSG_BRAWL	Особая потасовка, доступная только в рамках событий Fireside Gathering.	
+GLUE_FIRESIDE_GATHERING_PLAY_REGULAR_BRAWL	Играть обычную потасовку	
+GLUE_FIRESIDE_GATHERING_RETURN_TO_SCENE_HERE	Назад к Fireside	
+GLUE_FIRESIDE_GATHERING_SCAN_NO_GPS_OR_WIFI	Эта функция доступна только для устройств с возможностью использования GPS или Wi-Fi.	
+GLUE_FIRESIDE_GATHERING_SEARCH_FAILURE_BODY	Нажмите кнопку «Подробнее», чтобы найти локальные события Fireside Gathering или организовать свое собственное!	
+GLUE_FIRESIDE_GATHERING_SEARCH_FAILURE_BODY_PHONE	Нажмите «Подробнее», чтобы найти локальные события Fireside Gathering или организовать свое собственное!	
+GLUE_FIRESIDE_GATHERING_SEARCH_FAILURE_TITLE	Здесь не проводятся события Fireside Gathering	
+GLUE_FIRESIDE_GATHERING_SEARCHING	Поиск...	
+GLUE_FIRESIDE_GATHERING_TITLE	Fireside Gatherings	
+GLUE_FIRESIDE_GATHERING_TURN_ON_GPS_BODY	Включив геоданные, вы сможете найти события Fireside Gathering рядом с вами. Активируйте эту возможность в следующем окне.	
+GLUE_FIRESIDE_GATHERING_TURN_ON_GPS_TITLE	Включить геоданные	
+GLUE_FIRESIDE_GATHERING_TURN_ON_WIFI_BODY	Включив Wi-Fi, вы сможете найти события Fireside Gathering рядом с вами. Сделать это можно в следующем окне.	
+GLUE_FIRESIDE_GATHERING_TURN_ON_WIFI_TITLE	Включить Wi-Fi	
+GLUE_FIRESIDE_GATHERING_UPDATING_LOCATION	Обновление моего местоположения	
+GLUE_FIRESIDE_GATHERING_UPDATING_LOCATION_FAILED_BODY	Перед сканированием включите геоданные в настройках устройства.	
+GLUE_FIRESIDE_GATHERING_UPDATING_LOCATION_FAILED_TITLE	Ошибка геолокации	
+GLUE_FIRESIDE_GATHERING_UPDATING_LOCATION_SUCCESS	Местоположение обновлено	
+GLUE_FIRESIDE_GATHERING_WIFI_ACCESS_POINT_SEARCH_BODY	Обойдите место проведения события, чтобы найти другие точки доступа.	
+GLUE_FIRESIDE_GATHERING_WIFI_ACCESS_POINT_SEARCH_TITLE	Найдена точка доступа	
+GLUE_FIRESIDE_GATHERING_WIFI_ACCESS_POINTS_SEARCH_TITLE	Найдены точки доступа	
+GLUE_FIRESIDE_GATHERING_WIFI_SETUP_COMPLETE	Настройка завершена!	
+GLUE_FIRESIDE_GATHERING_WIFI_SUCCESS	У вас есть несколько беспроводных точек доступа? Нажмите кнопку «Добавить еще», чтобы включить их все и улучшить покрытие сети Wi-Fi.	
+GLUE_FIRESIDE_GATHERING_WIFI_SUCCESS_PHONE	У вас есть несколько беспроводных точек доступа? Коснитесь кнопки «Добавить еще», чтобы включить их все и улучшить покрытие сети Wi-Fi.	
+GLUE_FORGE	Арена	
+GLUE_FORGE_EXTRA_PRIZE_LABEL	{0} |4(победа,победы,побед)	0 = number of wins required to earn this prize
+GLUE_FORGE_MANATIP_DESC	Карты в вашей колоде, отсортированные по затратам маны.	
+GLUE_FORGE_MANATIP_HEADER	Кривая маны	
+GLUE_FORGE_RETIRE_WARNING_DESC	На этом ваше выступление на Арене закончится, но вам все равно полагаются призы в зависимости от полученного ключа.	
+GLUE_FORGE_RETIRE_WARNING_HEADER	Подождите!	
+GLUE_FORGE_STORE_ADMISSION	Доступ на Арену	
+GLUE_FORGE_STORE_DETAILS1	Соберите колоду из случайных карт и попробуйте победить как можно больше противников на Арене!	
+GLUE_FORGE_STORE_DETAILS2	Чем дольше вы продержитесь на Арене, тем более ценным будет ваш выигрыш!	
+GLUE_FORGE_STORE_HEADLINE	Добро пожаловать на Арену!	
+GLUE_FRIEND_LIST_ADD_FRIENDS	Добавить друзей	
+GLUE_FRIEND_LIST_FIND_FSG	Найти мероприятие	
+GLUE_FRIEND_LIST_REFER_FRIENDS	Пригласить друзей	
+GLUE_FRIEND_LIST_REMOVE_FRIENDS	Удалить друзей	
+GLUE_FROST_FESTIVAL_FREE_ARENA_WIN_DESC	Ахун дарит одну победу без боя каждому, кто начнет сражаться на арене в ходе Ледяного Снеговорота! Смог бы так Рагнарос? Вряд ли.	
+GLUE_FROST_FESTIVAL_FREE_ARENA_WIN_HEADLINE	Я ДАРУЮ ПОБЕДУ	
+GLUE_FROSTMOURNE_REWARD_BODY	Победите Короля-лича героями всех классов, чтобы получить в награду принца Артаса. Осталось:	
+GLUE_FROSTMOURNE_REWARD_HEADER	Новый герой-паладин	
+GLUE_FROSTMOURNE_WING_INCOMPLETE_REWARD_BODY	Победите Короля-лича героями всех классов, чтобы получить в награду принца Артаса!	
+GLUE_FSG_BRAWL_PLAY_SUBTITLE	Откройте ваш список друзей и предложите им сразиться с вами на вашем Fireside Gathering!	
+GLUE_FSG_BRAWL_PLAY_TITLE	Готовы к потасовке?	
+GLUE_FSG_FOUND	Найдено событие Fireside Gathering!	
+GLUE_FSG_HAPPENING_HERE_TEXT	Здесь проводится событие Fireside Gathering!\n Хотите поучаствовать?	
+GLUE_FSG_NEARBY_TOOLTIP	Идет событие Fireside Gathering!	
+GLUE_FSG_NOT_FOUND	Не найдено	
+GLUE_FSG_NOT_FOUND_BODY	Похоже, в этом месте Fireside Gathering сейчас не проводится. Хотите поискать события рядом с вами?	
+GLUE_FSG_NOT_NOW	Позже	
+GLUE_FSG_PATRON_COUNT	{0} |4(игрок,игрока,игроков)	
+GLUE_FSG_STARTING_DAYS	Начало через {0} |4(день,дня,дней)	
+GLUE_FSG_STARTING_HOURS	Начало через {0} |4(час,часа,часов)	
+GLUE_FSG_STARTING_MINUTES	Начало через {0} |4(минуту,минуты,минут)	
+GLUE_FSG_STARTING_OVER_1_MONTH	До начала более месяца	
+GLUE_FSG_STARTING_SECONDS	Начало через {0} |4(секунду,секунды,секунд)	
+GLUE_FSG_STARTING_WEEKS	Начало через {0} |4(неделю,недели,недель)	
+GLUE_GAME_MODES	Режимы	
+GLUE_GAME_MODES_POPUP_BACON_DESC	Сразитесь против семи оппонентов.	
+GLUE_GAME_MODES_POPUP_BETA	БЕТА	
+GLUE_GAME_MODES_POPUP_EARLY_ACCESS	Ранний доступ	
+GLUE_GAME_MODES_POPUP_FORGE_DESC	Соберите колоду из 30 карт в режиме драфта.	
+GLUE_GAME_MODES_POPUP_HEADER	Выберите режим	
+GLUE_GENERIC_RANDOM_CARD_SCROLL_DESC	Вы получили карту «{0}» из пакета!	This is meant to replace the above welcome bundle strings until we have the tech to show custom strings per reward.
+GLUE_GENERIC_RANDOM_CARD_SCROLL_TITLE	Это легендарная карта!	This is meant to replace the above welcome bundle strings until we have the tech to show custom strings per reward.
+GLUE_GHOST_CARD_MISSING_DESCRIPTION	У вас нет этой карты.\nЩелкните, чтобы подобрать ей замену.	
+GLUE_GHOST_CARD_MISSING_DESCRIPTION_TOUCH	У вас нет этой карты.\nНажмите, чтобы подобрать ей замену.	
+GLUE_GHOST_CARD_MISSING_TITLE	Нет карты	
+GLUE_GHOST_CARD_NOT_VALID_DESCRIPTION	В стандартных колодах нельзя использовать карты вольного формата.\nЩелкните, чтобы подобрать замену.	
+GLUE_GHOST_CARD_NOT_VALID_DESCRIPTION_TOUCH	В стандартных колодах нельзя использовать карты вольного формата.\nНажмите, чтобы подобрать замену.	
+GLUE_GHOST_CARD_NOT_VALID_TITLE	Карта вольного формата	
+GLUE_GIL_LOADING_BAR_TASK_1	Зажигаем фонари...	
+GLUE_GIL_LOADING_BAR_TASK_10	Наводим порчу...	
+GLUE_GIL_LOADING_BAR_TASK_11	Точим когти...	
+GLUE_GIL_LOADING_BAR_TASK_12	Разливаем слизь...	
+GLUE_GIL_LOADING_BAR_TASK_13	Околдовываем...	
+GLUE_GIL_LOADING_BAR_TASK_14	Замышляем недоброе...	
+GLUE_GIL_LOADING_BAR_TASK_15	Ищем фамилиаров...	
+GLUE_GIL_LOADING_BAR_TASK_16	Злобно хихикаем...	
+GLUE_GIL_LOADING_BAR_TASK_17	Рыщем во тьме...	
+GLUE_GIL_LOADING_BAR_TASK_18	Пугающе скрипим...	
+GLUE_GIL_LOADING_BAR_TASK_2	Давим тыквы...	
+GLUE_GIL_LOADING_BAR_TASK_3	Издаем зловещие звуки...	
+GLUE_GIL_LOADING_BAR_TASK_4	Ловим привидений...	
+GLUE_GIL_LOADING_BAR_TASK_5	Скрежещем цепями...	
+GLUE_GIL_LOADING_BAR_TASK_6	Помешиваем зелья...	
+GLUE_GIL_LOADING_BAR_TASK_7	Призываем духов...	
+GLUE_GIL_LOADING_BAR_TASK_8	Воем на луну...	
+GLUE_GIL_LOADING_BAR_TASK_9	Подбираемся к вам...	
+GLUE_GOLD_CAP_BODY	У вас не может быть более {0} золота.	
+GLUE_GOLD_CAP_HEADER	{0} золота!	
+GLUE_GOONS_CLASS_NAMES	Охотник, паладин, воин	
+GLUE_HALL_Of_FAME_BODY	Некоторые карты перешли в вольный формат, и их больше нельзя использовать в стандартной игре.	
+GLUE_HALL_OF_FAME_CARD_LIST	Эти карты перешли в вольный формат.	
+GLUE_HALL_OF_FAME_DUST_COMPENSATION	У вас есть некоторые из перечисленных карт,\nпоэтому примите от нас этот особый подарок!	
+GLUE_HALL_Of_FAME_SIGN	Зал славы	
+GLUE_HERO_HEROSELECT_NEW	НОВИНКА!	
+GLUE_HERO_LOCKED_DESC	Победите этого героя, чтобы открыть доступ к нему.	
+GLUE_HERO_LOCKED_NAME	Недоступен	
+GLUE_HEROIC_BRAWL_CONTINUE	Все ясно!	Heroic brawl intro dialogue continue button text
+GLUE_HEROIC_BRAWL_DECK	Героическая потасовка	
+GLUE_HEROIC_BRAWL_INTRO	Потасовка этой недели предназначена только для самых опытных игроков.\nМногое будет зависеть от вас!	
+GLUE_HEROIC_BRAWL_MAX_LOSSES	3 поражения	
+GLUE_HEROIC_BRAWL_MAX_WINS	12 побед	
+GLUE_HEROIC_BRAWL_MIN_WINS	0 побед	
+GLUE_HEROIC_BRAWL_NO_WINS_REWARD_PACK_TEXT	Комплект карт в награду!	
+GLUE_HEROIC_BRAWL_PLAY_CONFIRMATION	Вы не сможете снова внести\nизменения в вашу колоду\nв этой потасовке.\nВы точно довольны своей колодой?	
+GLUE_HEROIC_BRAWL_PLAY_CONFIRMATION_CANCEL	Нет, погодите!	
+GLUE_HEROIC_BRAWL_PLAY_CONFIRMATION_OK	Да!!!	
+GLUE_HEROIC_BRAWL_PLAY_CONFIRMATION_TITLE	Зафиксировать колоду?	
+GLUE_HEROIC_BRAWL_REWARDS_DESCRIPTION	Награды ждут победителей! Чем больше побед вы одержите, тем больше наград получите.\nЗа 12 побед вы получите максимальную награду. После 3 поражений ваше выступление завершится.	
+GLUE_HEROIC_BRAWL_REWARDS_NOTICE_DESC	Награда за вашу последнюю героическую потасовку.	
+GLUE_HEROIC_BRAWL_REWARDS_WIN_BANNER_TEXT	{0} |4(победа,победы,побед)!	
+GLUE_HEROIC_BRAWL_RULES_TITLE	Правила	
+GLUE_HEROIC_BRAWL_SESSION_ERROR	Ошибка получения данных героической потасовки.	
+GLUE_HEROIC_BRAWL_SESSION_ERROR_TITLE	Неполадки в героической потасовке	
+GLUE_HEROIC_BRAWL_SESSION_LIMIT_ALERT_DESCRIPTION_FINAL	Это ваша последняя героическая потасовка! Удачи!	
+GLUE_HEROIC_BRAWL_SESSION_LIMIT_ALERT_DESCRIPTION_NORMAL	Вы можете принять участие еще в {0} |4(героической потасовке,героических потасовках,героических потасовках).	
+GLUE_HEROIC_BRAWL_SESSION_LIMIT_ALERT_LIMIT_HIT	Вы приняли участие в максимально возможном количестве героических потасовок.	
+GLUE_HEROIC_BRAWL_SESSION_LIMIT_ALERT_LIMIT_RAISED	Хозяин таверны поднял лимит! Теперь вы можете принять участие еще в {0} |4(героической потасовке,героических потасовках,героических потасовках).	
+GLUE_HEROIC_BRAWL_SESSION_LIMIT_ALERT_TITLE	Героическая потасовка	
+GLUE_HEROIC_BRAWL_SIGNUPS_CLOSED	Эта потасовка скоро завершится. Регистрация закрыта.	
+GLUE_HEROIC_BRAWL_SIGNUPS_CLOSED_TITLE	Закрыто	
+GLUE_HEROIC_BRAWL_TITLE	<size=50>Героическая</size>\nпотасовка	
+GLUE_HEROIC_WARNING	Внимание! Героический режим крайне сложен и подходит лишь подготовленным бойцам. Сражайтесь в нем на свой страх и риск!	
+GLUE_HEROIC_WARNING_TITLE	Внимание!	
+GLUE_ICC_LOADING_BAR_TASK_1	Убираем иней...	
+GLUE_ICC_LOADING_BAR_TASK_10	Заключаем пакт...	
+GLUE_ICC_LOADING_BAR_TASK_11	Поднимаем зомби...	
+GLUE_ICC_LOADING_BAR_TASK_12	Делаем шипы...	
+GLUE_ICC_LOADING_BAR_TASK_13	Вырезаем руны...	
+GLUE_ICC_LOADING_BAR_TASK_14	Грозим мечом...	
+GLUE_ICC_LOADING_BAR_TASK_15	Ставим суровый голос...	
+GLUE_ICC_LOADING_BAR_TASK_16	Играем с Псартасом...	
+GLUE_ICC_LOADING_BAR_TASK_17	Гладим пингвинов...	
+GLUE_ICC_LOADING_BAR_TASK_18	Призываем вурдалаков...	
+GLUE_ICC_LOADING_BAR_TASK_19	Угрожаем героям...	
+GLUE_ICC_LOADING_BAR_TASK_2	Разгребаем снег...	
+GLUE_ICC_LOADING_BAR_TASK_3	Отмыкаем склепы...	
+GLUE_ICC_LOADING_BAR_TASK_4	Леденим троны...	
+GLUE_ICC_LOADING_BAR_TASK_5	Видим лишь тьму...	
+GLUE_ICC_LOADING_BAR_TASK_6	Чистим слизепроводы...	
+GLUE_ICC_LOADING_BAR_TASK_7	Прохлаждаемся...	
+GLUE_ICC_LOADING_BAR_TASK_8	Укладываем лед...	
+GLUE_ICC_LOADING_BAR_TASK_9	Готовим рейд...	
+GLUE_INCOMPLETE_DECK_DESC	Необходимо завершить создание этой колоды.	
+GLUE_INCOMPLETE_DECK_HEADER	Неполная колода	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_DRUID	Ух ты, это же легендарная карта друида! В самый раз для классической колоды! Давай составим ее?	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_HUNTER	Ух ты, это же легендарная карта охотника! В самый раз для классической колоды! Давай составим ее?	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_MAGE	Ух ты, это же легендарная карта мага! В самый раз для классической колоды! Давай составим ее?	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_PALADIN	Ух ты, это же легендарная карта паладина! В самый раз для классической колоды! Давай составим ее?	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_PRIEST	Ух ты, это же легендарная карта жреца! В самый раз для классической колоды! Давай составим ее?	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_ROGUE	Ух ты, это же легендарная карта разбойника! В самый раз для классической колоды! Давай составим ее?	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_SHAMAN	Ух ты, это же легендарная карта шамана! В самый раз для классической колоды! Давай составим ее?	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_WARLOCK	Ух ты, это же легендарная карта чернокнижника! В самый раз для классической колоды! Давай составим ее?	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_WARRIOR	Ух ты, это же легендарная карта воина! В самый раз для классической колоды! Давай составим ее?	
+GLUE_INNKEEPERS_SPECIAL_CONFIRM_POPUP_HEADER	Открыть браузер	
+GLUE_INNKEEPERS_SPECIAL_CONFIRM_POPUP_MESSAGE	Это содержимое будет открыто в вашем веб-браузере. Вы согласны?	
+GLUE_INNKEEPERS_SPECIAL_LEARN_MORE	Подробнее	
+GLUE_KABAL_CLASS_NAMES	Маг, жрец, чернокнижник	
+GLUE_KARA_LOADING_BAR_TASK_1	Натираем посуду...	
+GLUE_KARA_LOADING_BAR_TASK_10	Набираем воду...	
+GLUE_KARA_LOADING_BAR_TASK_11	Ищем гостей...	
+GLUE_KARA_LOADING_BAR_TASK_12	Убираемся на кухне...	
+GLUE_KARA_LOADING_BAR_TASK_13	Прогоняем бесов...	
+GLUE_KARA_LOADING_BAR_TASK_14	Расставляем софиты...	
+GLUE_KARA_LOADING_BAR_TASK_15	Готовим «Ме-див»...	
+GLUE_KARA_LOADING_BAR_TASK_16	Проверяем звук...	
+GLUE_KARA_LOADING_BAR_TASK_17	Гоним Малчезара...	
+GLUE_KARA_LOADING_BAR_TASK_18	Полируем танцпол...	
+GLUE_KARA_LOADING_BAR_TASK_2	Надуваем шарики...	
+GLUE_KARA_LOADING_BAR_TASK_3	Разливаем напитки...	
+GLUE_KARA_LOADING_BAR_TASK_4	Растапливаем шоколад...	
+GLUE_KARA_LOADING_BAR_TASK_5	Расставляем фигуры...	
+GLUE_KARA_LOADING_BAR_TASK_6	Смотримся в зеркало...	
+GLUE_KARA_LOADING_BAR_TASK_7	Заколдовываем метлу...	
+GLUE_KARA_LOADING_BAR_TASK_8	Делаем селфи с Ромуло...	
+GLUE_KARA_LOADING_BAR_TASK_9	Опускаем диско-шар...	
+GLUE_KARA_PROLOGUE_LOADING	Ждем почтового ворона...	
+GLUE_LEAGUE_PROMOTE_SELF_CONFIRMATION_CANCEL	Отмена	
+GLUE_LEAGUE_PROMOTE_SELF_CONFIRMATION_CONFIRM	Перейти	
+GLUE_LEAGUE_PROMOTE_SELF_CONFIRMATION_DESCRIPTION	Если вы сразу перейдете к 25-му рангу, вам придется\nиграть с более опытными противниками.\nА еще вы не получите промежуточные награды!	
+GLUE_LEAGUE_PROMOTE_SELF_CONFIRMATION_TITLE	Вы уверены?	
+GLUE_LEGENDARY_QUEST_REROLL_BODY	Заменить легендарное задание на обычное? Если оно было частью цепочки заданий, вы потеряете всю цепочку.	
+GLUE_LEGENDARY_QUEST_REROLL_TITLE	Заменить?	
+GLUE_LOADING	Идет загрузка...	
+GLUE_LOADING_BAR_TASK_1	Перемешиваем карты...	
+GLUE_LOADING_BAR_TASK_10	Морально готовимся...	
+GLUE_LOADING_BAR_TASK_11	Размещаем героев...	
+GLUE_LOADING_BAR_TASK_12	Подмигиваем трактирщику...	
+GLUE_LOADING_BAR_TASK_13	Крапим карты...	
+GLUE_LOADING_BAR_TASK_14	Затягиваем болты...	
+GLUE_LOADING_BAR_TASK_15	Разносим напитки...	
+GLUE_LOADING_BAR_TASK_16	Ищем свободный стол...	
+GLUE_LOADING_BAR_TASK_17	Выпрямляем карты...	
+GLUE_LOADING_BAR_TASK_18	Подкупаем стражей...	
+GLUE_LOADING_BAR_TASK_19	Платим музыкантам...	
+GLUE_LOADING_BAR_TASK_2	Полируем кристаллы маны...	
+GLUE_LOADING_BAR_TASK_3	Красим полоску загрузки...	
+GLUE_LOADING_BAR_TASK_4	Подметаем прах существ...	
+GLUE_LOADING_BAR_TASK_5	Устанавливаем новый запал...	
+GLUE_LOADING_BAR_TASK_6	Собираем зрителей...	
+GLUE_LOADING_BAR_TASK_7	Кормим мурлоков...	
+GLUE_LOADING_BAR_TASK_8	Смазываем главную кнопку...	
+GLUE_LOADING_BAR_TASK_9	Протираем стол...	
+GLUE_LOADINGSCREEN_APK_UPDATE_FROM_APP_STORE	Перейдите в магазин, чтобы начать загрузку.	
+GLUE_LOADINGSCREEN_APK_UPDATE_FROM_WEBSITE	Перейдите на сайт Hearthstone, чтобы начать загрузку.	
+GLUE_LOADINGSCREEN_BUTTON_CANCEL	Подождите.	
+GLUE_LOADINGSCREEN_BUTTON_CELLULAR	Использовать мобильное подключение	
+GLUE_LOADINGSCREEN_BUTTON_RETRY	Повторить попытку	
+GLUE_LOADINGSCREEN_BUTTON_SETTINGS	Настройки	
+GLUE_LOADINGSCREEN_BUTTON_WAIT	Подождать Wi-Fi	
+GLUE_LOADINGSCREEN_BUTTON_YES	Да	
+GLUE_LOADINGSCREEN_CHECKING_UNITY_1	Проверка версии	
+GLUE_LOADINGSCREEN_CHECKING_UNITY_2	Поиск обновлений	
+GLUE_LOADINGSCREEN_DOWNLOAD_DONE	Загрузка завершена	
+GLUE_LOADINGSCREEN_DOWNLOAD_DONE_TICKER	Hearthstone - загрузка завершена	
+GLUE_LOADINGSCREEN_DOWNLOAD_STOP	Загрузка остановлена	
+GLUE_LOADINGSCREEN_DOWNLOADING	Загружено {0}/{1} МБ	0=megabytes so far, 1=total download megabytes
+GLUE_LOADINGSCREEN_DOWNLOADING_TICKER	Hearthstone - идет загрузка	
+GLUE_LOADINGSCREEN_ERROR_APK_INSTALL	Не удалось установить приложение. Пожалуйста, удалите и повторно установите Hearthstone.	
+GLUE_LOADINGSCREEN_ERROR_CHECK_SETTINGS	Не удалось подключиться к интернету. Проверьте настройки сети.	
+GLUE_LOADINGSCREEN_ERROR_CLIENT_CONFIG_MESSAGE	Не удалось обнаружить файл конфигурации. Пожалуйста, удалите и повторно установите Hearthstone.	
+GLUE_LOADINGSCREEN_ERROR_CONNECTION_MESSAGE	Не удалось загрузить дополнительные файлы. Пожалуйста, убедитесь, что устройство подключено к Интернету.	
+GLUE_LOADINGSCREEN_ERROR_COPY_ASSETS_MESSAGE	Не удалось скопировать данные. Пожалуйста, освободите место на устройстве.	
+GLUE_LOADINGSCREEN_ERROR_DISK_SPACE	Недостаточно памяти на устройстве для установки Hearthstone. Пожалуйста, освободите память устройства.	
+GLUE_LOADINGSCREEN_ERROR_DOWNLOADING_MESSAGE	Пожалуйста, удалите и заново загрузите Hearthstone.	
+GLUE_LOADINGSCREEN_ERROR_DOWNLOADING_TITLE	Ошибка загрузки	
+GLUE_LOADINGSCREEN_ERROR_FILESYSTEM_MESSAGE	На вашем устройстве недостаточно свободного места для установки Hearthstone. Если вы используете карту памяти формата SD, убедитесь, что у вас есть разрешение на запись.	
+GLUE_LOADINGSCREEN_ERROR_GENERIC	Приложение Hearthstone прекратило свою работу. Пожалуйста, удалите и повторно установите Hearthstone.	
+GLUE_LOADINGSCREEN_ERROR_GET_EXTERNAL_FILES	Не удалось подключиться к внешнему носителю. Пожалуйста, разрешите доступ к внешнему носителю. Если доступ уже разрешен, перезагрузите устройство.	
+GLUE_LOADINGSCREEN_ERROR_INSTALLING_TITLE	Ошибка установки	
+GLUE_LOADINGSCREEN_ERROR_NEEDS_DATA	Установите подключение по Wi-Fi и попробуйте загрузить необходимые данные снова.	
+GLUE_LOADINGSCREEN_ERROR_UPDATE	Не удалось загрузить обновление. Пожалуйста, проверьте подключение к Интернету.	
+GLUE_LOADINGSCREEN_ERROR_UPDATE_CONFLICT	Не удалось загрузить обновление. Пожалуйста, перезапустите Hearthstone.	
+GLUE_LOADINGSCREEN_ERROR_VERSION	Не удалось загрузить сведения о версии. Пожалуйста, проверьте подключение к Интернету.	
+GLUE_LOADINGSCREEN_MISMATCHED_VERSION	Несовпадение версий	
+GLUE_LOADINGSCREEN_OPEN_APP_STORE	Открыть	
+GLUE_LOADINGSCREEN_PROGRESS_0	Проверка версии	
+GLUE_LOADINGSCREEN_PROGRESS_1	Данные могут загружаться в фоновом режиме.	
+GLUE_LOADINGSCREEN_PROGRESS_2	Можно переключаться между приложениями!	
+GLUE_LOADINGSCREEN_PROGRESS_3	Разжигаем камин...	
+GLUE_LOADINGSCREEN_PROGRESS_4	Распаковываем ящики...	
+GLUE_LOADINGSCREEN_PROGRESS_5	Расставляем мебель...	
+GLUE_LOADINGSCREEN_PROGRESS_6	Это может занять какое-то время.	
+GLUE_LOADINGSCREEN_PROGRESS_IMPEDED	Медленное подключение!	
+GLUE_LOADINGSCREEN_PROGRESS_TEXT	Осталось {0} (скорость: {1}/сек.)	0=remaining data size 1=downloading speed
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_1	Дождитесь окончания загрузки.	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_2	Загрузка необходимых данных...	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_3	Распаковываем ящики...	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_4	Переключение остановит обновление.	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_5	Не переключайтесь! Так процесс пойдет быстрее.	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_6	Для игры требуется обновление.	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_7	Идет загрузка...	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_8	Это может занять какое-то время.	
+GLUE_LOADINGSCREEN_RESUME	Загрузка приостановлена.	Resume?
+GLUE_LOADINGSCREEN_SDCARD	Перенос файлов на внешний носитель	
+GLUE_LOADINGSCREEN_SDCARD_DIALOG	Вы хотите сохранить ваши данные Hearthstone на SD-карте? В этой конфигурации Hearthstone может работать медленнее.	
+GLUE_LOADINGSCREEN_UPDATE_HEADER	Загрузка	
+GLUE_LOADINGSCREEN_UPDATE_WIFI_RECONNECTED	Установлено подключение по Wi-Fi. Загрузка данных возобновлена.	
+GLUE_LOADINGSCREEN_UPDATE_WIFI_WARNING	Отсутствует подключение по Wi-Fi. Вы уверены, что хотите использовать мобильное подключение для загрузки данных?	
+GLUE_LOADINGSCREEN_WARNING_CELLULAR	Требуется загрузить {0} данных. Вы уверены, что хотите использовать мобильное подключение?	0=data size
+GLUE_LOCKED_DECK_TOOLTIP	В эту колоду нельзя вносить изменения.	
+GLUE_LOCKED_DECK_TOOLTIP_TITLE	Нельзя изменить	
+GLUE_LOE_LOADING_BAR_TASK_1	Прячем артефакты...	
+GLUE_LOE_LOADING_BAR_TASK_10	Просеиваем песок...	
+GLUE_LOE_LOADING_BAR_TASK_11	Высаживаем джунгли...	
+GLUE_LOE_LOADING_BAR_TASK_12	Разламываем Посох...	
+GLUE_LOE_LOADING_BAR_TASK_13	Чиним вагонетку...	
+GLUE_LOE_LOADING_BAR_TASK_14	Копаем шахты...	
+GLUE_LOE_LOADING_BAR_TASK_15	Полируем броню...	
+GLUE_LOE_LOADING_BAR_TASK_16	Расписываем скарабеев...	
+GLUE_LOE_LOADING_BAR_TASK_17	Раскапываем зло...	
+GLUE_LOE_LOADING_BAR_TASK_18	Готовим музей к открытию...	
+GLUE_LOE_LOADING_BAR_TASK_2	Рисуем карты сокровищ...	
+GLUE_LOE_LOADING_BAR_TASK_3	Заталкиваем джинна в лампу...	
+GLUE_LOE_LOADING_BAR_TASK_4	Устанавливаем ловушки...	
+GLUE_LOE_LOADING_BAR_TASK_5	Будим троггов...	
+GLUE_LOE_LOADING_BAR_TASK_6	Бланшируем мурлоков...	
+GLUE_LOE_LOADING_BAR_TASK_7	Возводим пирамиды...	
+GLUE_LOE_LOADING_BAR_TASK_8	Подклеиваем мумии...	
+GLUE_LOE_LOADING_BAR_TASK_9	Собираем скелетозавра...	
+GLUE_LOOT_LOADING_BAR_TASK_1	Прячем сокровища...	
+GLUE_LOOT_LOADING_BAR_TASK_10	Собираем группу...	
+GLUE_LOOT_LOADING_BAR_TASK_11	Копаем тоннели...	
+GLUE_LOOT_LOADING_BAR_TASK_12	Распихиваем ловушки...	
+GLUE_LOOT_LOADING_BAR_TASK_13	Убегаем от драконов...	
+GLUE_LOOT_LOADING_BAR_TASK_14	Кормим фурболгов...	
+GLUE_LOOT_LOADING_BAR_TASK_15	Швыряем огненные глыбы...	
+GLUE_LOOT_LOADING_BAR_TASK_16	Обчищаем сундуки...	
+GLUE_LOOT_LOADING_BAR_TASK_17	Жалуемся на разбойников...	
+GLUE_LOOT_LOADING_BAR_TASK_18	Улучшаем снаряжение...	
+GLUE_LOOT_LOADING_BAR_TASK_2	Ищем ловушки...	
+GLUE_LOOT_LOADING_BAR_TASK_3	Бросаем на инициативу...	
+GLUE_LOOT_LOADING_BAR_TASK_4	Зажигаем свечи...	
+GLUE_LOOT_LOADING_BAR_TASK_5	Вощим усы...	
+GLUE_LOOT_LOADING_BAR_TASK_6	Рисуем карты...	
+GLUE_LOOT_LOADING_BAR_TASK_7	Распознаем добычу...	
+GLUE_LOOT_LOADING_BAR_TASK_8	Сгребаем золото...	
+GLUE_LOOT_LOADING_BAR_TASK_9	Даем чаевые барду...	
+GLUE_LOSSES	Поражения	
+GLUE_LOTUS_CLASS_NAMES	Друид, разбойник, шаман	
+GLUE_MASS_DISENCHANT_BUTTON_TEXT	Распылить	
+GLUE_MASS_DISENCHANT_DETAILS	В вашей колоде может быть не более 2 копий каждой карты (и не больше 1 копии каждой легендарной карты). Распылите лишние и получите чародейную пыль!	
+GLUE_MASS_DISENCHANT_DETAILS_HEADLINE	Распылите лишние карты и получите чародейную пыль.	
+GLUE_MASS_DISENCHANT_HEADLINE	Массовое распыление	
+GLUE_MASS_DISENCHANT_HEADLINE_PHONE	Массовое\nраспыление	
+GLUE_MASS_DISENCHANT_NUM_GOLDEN_CARDS	{0} |4(золотая карта,золотые карты,золотых карт)	0=number of golden cards
+GLUE_MASS_DISENCHANT_PREMIUM_TITLE	Золотая {0}	0=rarity
+GLUE_MASS_DISENCHANT_SUB_HEADLINE_TEXT	Вы уничтожите:	
+GLUE_MASS_DISENCHANT_TOTAL_AMOUNT	{0:####0}	0=total amount with commas and no decimals
+GLUE_MATCHMAKER_FINDING_OPPONENT	Поиск противника	
+GLUE_MATCHMAKER_FINDING_OPPONENTS	Поиск оппонентов	
+GLUE_MATCHMAKER_PERFECT_OPPONENT	Ваш противник	
+GLUE_MATCHMAKER_PERFECT_OPPONENTS	Ваши противники	
+GLUE_MINSPEC_ERROR	Нам очень жаль, но Hearthstone не может быть запущен, поскольку ваше устройство не отвечает минимальным системным требованиям.\n\nНажмите кнопку «Поддержка», чтобы получить дополнительные сведения.	
+GLUE_MINSPEC_WARNING	Используемое вами устройство не отвечает минимальным требованиям для игры в Hearthstone, что может повлиять на скорость его работы.\n\nНажмите «OK», чтобы продолжить, или «Поддержка», чтобы получить дополнительные сведения.	
+GLUE_MOBILE_EXISTING_ACCOUNT_CONVERSATION	Добро пожаловать в мою таверну!	
+GLUE_MOBILE_EXISTING_ACCOUNT_NEW	Впервые	
+GLUE_MOBILE_EXISTING_ACCOUNT_POPUP	Вы здесь впервые, или у вас уже есть учетная запись?	
+GLUE_MOBILE_EXISTING_ACCOUNT_RETURNING	Войти!	
+GLUE_MOBILE_REGION_SELECT_FRIENDS	ДРУЗЕЙ	
+GLUE_MOBILE_REGION_SELECT_PROGRESS	ПРОГРЕСС	
+GLUE_MOBILE_REGION_SELECT_PURCHASES	ПОКУПКИ	
+GLUE_MOBILE_REGION_SELECT_TOOLTIP	Выберите игровой регион.	
+GLUE_MOBILE_REGION_SELECT_TOOLTIP_HEADER	Выбор региона	
+GLUE_MOBILE_REGION_SELECT_WARNING	<size=100>Все свое не взять с собой!</size>\nКогда вы меняете регион, ваш игровой прогресс (включая ваших персонажей, карты и рейтинг) не переносится. Это также затрагивает:	
+GLUE_MOBILE_REGION_SELECT_WARNING_HEADER	Выбор региона	
+GLUE_MOBILE_SPLASH_SCREEN_BREAKING_NEWS	Срочные новости	
+GLUE_MOBILE_SPLASH_SCREEN_LOGIN	Вход	
+GLUE_MOBILE_STORE_AMAZON_PAYMENT_INFO_DETAILS_ANDROID	Внутриигровые покупки совершаются с помощью вашей учетной записи Amazon. Для совершения внутриигровых покупок за реальные деньги требуется наличие учетной записи Blizzard.	
+GLUE_MOBILE_STORE_PAYMENT_INFO_DETAILS_ANDROID	Внутриигровые покупки совершаются с помощью вашей учетной записи Google Play. Для совершения внутриигровых покупок за реальные деньги требуется наличие учетной записи Blizzard.	
+GLUE_MOBILE_STORE_PAYMENT_INFO_DETAILS_APPLE	Внутриигровые покупки совершаются с помощью вашего Apple ID. Для совершения внутриигровых покупок за реальные деньги требуется наличие учетной записи Blizzard.	
+GLUE_MOBILE_STORE_PAYMENT_INFO_URL_DETAILS	Нажмите «{0}», чтобы узнать больше о вероятности получить карту определенной редкости и о покупках в Hearthstone.	
+GLUE_MOBILE_TOOLTIP_BUTTON_STORE_DESC	Купить комплекты за золото или настоящие деньги.	
+GLUE_MY_COLLECTION	Моя коллекция	
+GLUE_MY_COLLECTION_PHONE	Коллекция	
+GLUE_NAXX_LOADING_BAR_TASK_1	Тренируем зловещий хохот...	
+GLUE_NAXX_LOADING_BAR_TASK_10	Кипятим слизь...	
+GLUE_NAXX_LOADING_BAR_TASK_11	Ищем фальшивую монетку...	
+GLUE_NAXX_LOADING_BAR_TASK_12	Приглушаем свет...	
+GLUE_NAXX_LOADING_BAR_TASK_13	Задуваем свечи...	
+GLUE_NAXX_LOADING_BAR_TASK_14	Морально готовимся...	
+GLUE_NAXX_LOADING_BAR_TASK_15	Сшиваем поганищ...	
+GLUE_NAXX_LOADING_BAR_TASK_16	Ставим эксперименты...	
+GLUE_NAXX_LOADING_BAR_TASK_17	Выгоняем незваных гостей...	
+GLUE_NAXX_LOADING_BAR_TASK_18	Гладим кота Кел'Тузада...	
+GLUE_NAXX_LOADING_BAR_TASK_2	Развешиваем паутину...	
+GLUE_NAXX_LOADING_BAR_TASK_3	Пополняем запасы слизи...	
+GLUE_NAXX_LOADING_BAR_TASK_4	Раскладываем кости...	
+GLUE_NAXX_LOADING_BAR_TASK_5	Разучиваем злобные шутки...	
+GLUE_NAXX_LOADING_BAR_TASK_6	Распрыскиваем вонючие пары...	
+GLUE_NAXX_LOADING_BAR_TASK_7	Смазываем цепи...	
+GLUE_NAXX_LOADING_BAR_TASK_8	Избавляемся от лишних зомби...	
+GLUE_NAXX_LOADING_BAR_TASK_9	Прячем пауков...	
+GLUE_NEARBY_PLAYERS_DISABLE	Отключите, чтобы ближайшие к вам игроки не могли обнаружить вас (при этом вы их тоже не увидите).	
+GLUE_NEARBY_PLAYERS_ENABLE	Позволяет вам видеть ближайших игроков, а им – вас!	
+GLUE_NEGATIVE_CURRENCY	<color=#ff3232ff>{0}</color>	
+GLUE_NEW_PLAYER_AVAILABLE_AT_RANK_25	C 25-го ранга.	
+GLUE_NEW_PLAYER_PROMOTION_CHEST_DESC	Поздравляем!\nТеперь вы – завсегдатай таверны!\nВас ждут более сильные противники!	
+GLUE_NEW_PLAYER_PROMOTION_CHEST_DESC_HUB	Награды за достижение 25-го ранга	
+GLUE_NEW_PLAYER_PROMOTION_CHEST_HEADER	{0}-й ранг!	
+GLUE_NEW_PLAYER_SET_ROTATION_POPUP_BODY	В игру добавлены новые карты! Для использования некоторых старых карт может понадобиться 25-й ранг.	
+GLUE_NEW_PLAYER_SET_ROTATION_POPUP_HEADER	С возвращением!	
+GLUE_NINJA	Ниндзя	
+GLUE_NUM_CHAPTERS_COMPLETED	Пройдено глав: {0}/{1}	
+GLUE_OFFLINE_DECK_ERROR_BODY	Не удалось создать колоду, так как вы находитесь не в сети. Пожалуйста, подключитесь повторно и попробуйте снова.	
+GLUE_OFFLINE_FEATURE_DISABLED_BODY	Возможность недоступна без подключения к сети.	
+GLUE_OFFLINE_FEATURE_DISABLED_HEADER	Не в сети	
+GLUE_OFFLINE_SAVE_DECK_BODY	Ваша колода сохранена на текущем устройстве до повторного подключения к сети.	
+GLUE_OFFLINE_SAVE_DECK_HEADER	Сохранено	
+GLUE_OPEN_PACKS	Открыть комплекты	
+GLUE_OPEN_PACKS_PHONE	Комплекты	
+GLUE_OUTSTANDING_DRAFT_TICKET_DIALOG_DESC	У вас есть дополнительный пропуск на арену! В этот раз вам не придется беспокоиться о входной плате.	
+GLUE_OUTSTANDING_DRAFT_TICKET_DIALOG_HEADER	Добро пожаловать на Арену!	
+GLUE_PACK_OPENING_ALL_CLASSES	Все классы	
+GLUE_PACK_OPENING_BOOSTER_COUNT	{0}	0=number of owned boosters
+GLUE_PACK_OPENING_HEADER	Открыть комплекты	
+GLUE_PACK_OPENING_TOOLTIP	카드 팩을 개봉함으로써, 귀하는 카드 팩의 청약철회가 불가하다는 사실을 인지하고 이에 동의합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_PATCHING_ERROR	Во время загрузки обновления Hearthstone произошла ошибка. Пожалуйста, попробуйте еще раз.	
+GLUE_PATCHING_LABEL	Загружено {0}/{1} |4(файл,файла,файлов)	
+GLUE_PICK_A_CARD	Выберите карту	
+GLUE_PICK_A_REGION	Выберите регион	
+GLUE_PICK_A_REPLACEMENT	Выберите карту на замену	
+GLUE_PLAY_STANDARD	Стандартная игра	
+GLUE_PLAY_WILD	Вольная игра	
+GLUE_PLAYERS_NEARBY	Ближайшие игроки	
+GLUE_PRACTICE	Тренировка	
+GLUE_PRACTICE_HINT	Режим тренировки	
+GLUE_PUSH_NOTIFICATION_CONTEXT_BODY	Вы хотите получать уведомления о наших последних новинках?	
+GLUE_PUSH_NOTIFICATION_CONTEXT_CANCEL	Нет	
+GLUE_PUSH_NOTIFICATION_CONTEXT_CONFIRM	Конечно!	
+GLUE_PUSH_NOTIFICATION_CONTEXT_HEADER	Push-уведомления	
+GLUE_PUSH_NOTIFICATION_EXTENDED_CONTEXT_BODY	Кажется, у вас отключены уведомления Hearthstone. Включите уведомления приложения в настройках вашего устройства!	
+GLUE_QUEST_FINISHED_DAILY	Вы завершили все доступные ежедневные задания.	
+GLUE_QUEST_LOG_ARENA	Арена	
+GLUE_QUEST_LOG_BEST_FORGE_RECORD_HEADLINE	Лучший ключ на Арене	
+GLUE_QUEST_LOG_CHEST_TOOLTIP_BODY	Вы сможете открыть сундук в конце сезона.\nПовышайте ранг, чтобы получить больше сокровищ!	
+GLUE_QUEST_LOG_CHEST_TOOLTIP_BODY_NO_CHEST	Достигните 20-го ранга, и вы получите сундук с сокровищами в конце сезона!	
+GLUE_QUEST_LOG_CHEST_TOOLTIP_BODY_NO_CHEST_REVAMP	Выиграйте еще {0} |4(матч,матча,матчей), чтобы получить сезонный сундук!	
+GLUE_QUEST_LOG_CHEST_TOOLTIP_HEADER	Сундук {0}-го ранга	0=Rank number of chest
+GLUE_QUEST_LOG_CLASS_LOCKED	Н/Д	
+GLUE_QUEST_LOG_CURRENT_CHEST	Рейтинговый сундук	
+GLUE_QUEST_LOG_HEADLINE	Журнал заданий	
+GLUE_QUEST_LOG_HERO_LEVELS	Уровни героев	
+GLUE_QUEST_LOG_NO_CHEST	У вас пока нет сундука!	
+GLUE_QUEST_LOG_NO_QUESTS	У вас нет заданий. Откройте новых героев в режиме тренировки!	
+GLUE_QUEST_LOG_NO_QUESTS_DAILIES_UNLOCKED	У вас нет заданий. Новые появятся завтра!	
+GLUE_QUEST_LOG_PHONE_BUTTON	Задания	
+GLUE_QUEST_LOG_PLAY_MODE	Режим игры	
+GLUE_QUEST_LOG_PROGRESS	Выиграйте еще {0} |4(матч,матча,матчей).	Ranked Revamp, newline is due to small chest in quest log
+GLUE_QUEST_LOG_TOTAL_LEVELS	<color=#c4b47c>Суммарный уровень:</color> {0}	
+GLUE_QUEST_LOG_TOTAL_WINS_HEADLINE	Всего побед	
+GLUE_QUEST_LOG_WINS_HEADLINE	Победы в режиме игры	
+GLUE_QUEST_NOTIFICATION_CAPTION	Большинство заданий можно выполнить, только играя против другого игрока.	
+GLUE_QUEST_NOTIFICATION_CAPTION_FRIEND_WEEK		Set this string to blank to make it not show up, even when Friend Week is active.
+GLUE_QUEST_NOTIFICATION_HEADER	Задания на сегодня	
+GLUE_QUEST_NOTIFICATION_HEADER_NEW_ONLY	Новое задание!	
+GLUE_RAF_COPY_COMPLETE	Скопировано в буфер обмена	
+GLUE_RAF_ERROR_BODY	Функция приглашения друга недоступна. Пожалуйста, повторите попытку позже.	
+GLUE_RAF_ERROR_HEADER	Пригласить друга	
+GLUE_RAF_HERO_FRAME_TEXT	Получите в подарок нового героя шамана Моргла, когда приглашенный вами друг начнет играть в Hearthstone и достигнет 20-го уровня!\n(Приняв ваше приглашение, ваш друг получит комплект карт.)	
+GLUE_RAF_HERO_FRAME_TITLE	Пригласить друга	
+GLUE_RAF_HERO_TOOLTIP_HERO	Оракул Моргл	
+GLUE_RAF_HERO_TOOLTIP_REDEEMED_TITLE	Вы получили нового героя, шамана Моргла. Вы можете найти его в своей коллекции.	
+GLUE_RAF_HERO_TOOLTIP_TITLE	Получите нового героя шамана Моргла, когда приглашенный вами друг достигнет 20-го уровня!	
+GLUE_RAF_INFO_BODY	Вы получите героя-шамана оракула Моргла, когда сумма уровней любых классов на учетной записи одного из приглашенных вами друзей достигнет 20. Игроков, уже достигших суммарного 20-го уровня, пригласить нельзя.\n\nТакже вы получите классический комплект карт за каждого из четверых следующих приглашенных вами друзей, достигших суммарного 20-го уровня.\n\nДополнительную информацию вы можете найти на сайте игры.	
+GLUE_RAF_INFO_GOT_IT_BUTTON	Понятно!	
+GLUE_RAF_INFO_HEADLINE	Как это работает	
+GLUE_RAF_INFO_MORE_INFO_BUTTON	Подробнее	
+GLUE_RAF_PACK_TOOLTIP_REDEEMED_TITLE	Вы получили классический комплект карт.	
+GLUE_RAF_PACK_TOOLTIP_TITLE	Получите комплект карт, когда приглашенный вами друг заработает 20 уровней!	
+GLUE_RAF_PROGRESS_FRAME_LOCKED_BAR_NAME	В ожидании друга	
+GLUE_RAF_PROGRESS_FRAME_LOCKED_BAR_STATE	Недоступно	
+GLUE_RAF_PROGRESS_FRAME_PROGRESS_TITLE	Пригласить друга – прогресс	
+GLUE_RAF_PROGRESS_FRAME_RECRUIT_COUNT	+{0} |4(друг,друга,друзей)	
+GLUE_RAF_PROGRESS_FRAME_REWARDS_TITLE	Награды	
+GLUE_RAF_RECRUIT_BAR_TOOLTIP_DESC	Вы получите награды, когда сумма уровней любых классов на учетных записях приглашенных вами друзей достигнет 20.	
+GLUE_RAF_RECRUIT_BAR_TOOLTIP_HEADLINE	Уровень игрока	
+GLUE_RAF_RECRUIT_BUTTON	Пригласить друзей	
+GLUE_RAF_TOOLTIP_DESC	Пригласите друзей, чтобы вместе играть в Hearthstone!	
+GLUE_RAF_TOOLTIP_HEADLINE	Пригласить друга	
+GLUE_RAF_TOOLTIP_LOCKED_DESC	Вы сможете воспользоваться функцией «Пригласить друга» после того, как пройдете вступительные задания.	
+GLUE_RAF_URL_BUTTON	Копировать	
+GLUE_RAF_URL_TITLE	Поделитесь этой ссылкой со своими друзьями!	
+GLUE_RDM_HIGH_COST	Тебе нужно несколько карт с высокой стоимостью, чтобы добить противника.	
+GLUE_RDM_LOW_COST	Сперва тебе нужны дешевые карты, которые можно разыграть в начале игры.	
+GLUE_RDM_MEDIUM_COST	Тебе нужно несколько промежуточных по стоимости карт, чтобы сдерживать натиск противника.	
+GLUE_RDM_MORE_SPELLS	Тебе нужно добавить чуть больше заклинаний.	
+GLUE_RDM_MORE_WEAPONS	Не хочешь добавить в колоду немного оружия?	
+GLUE_RDM_NO_SPECIFICS	У тебя получается неплохая колода! Может быть, тебе захочется добавить в нее эти карты?	
+GLUE_RDM_TEMPLATE_REPLACE	Вот подходящая замена для карты\n«{0}»!	0=card names
+GLUE_RECONNECT_GAME_TYPE_ARENA	Арена	
+GLUE_RECONNECT_GAME_TYPE_BRM	Черная гора	
+GLUE_RECONNECT_GAME_TYPE_FRIENDLY	Вызов	
+GLUE_RECONNECT_GAME_TYPE_NAXXRAMAS	Наксрамас	
+GLUE_RECONNECT_GAME_TYPE_PRACTICE	Тренировка	
+GLUE_RECONNECT_GAME_TYPE_RANKED	Рейтинговый матч	
+GLUE_RECONNECT_GAME_TYPE_TAVERN_BRAWL	Потасовка	
+GLUE_RECONNECT_GAME_TYPE_TUTORIAL	Обучение	
+GLUE_RECONNECT_GAME_TYPE_UNRANKED	Нерейтинговый матч	
+GLUE_RECONNECT_HELPER_ACCESS_DISABLED_BODY	Убедитесь, что ваше устройство подключено к Интернету, и повторите попытку.	
+GLUE_RECONNECT_HELPER_ACCESS_DISABLED_HEADER	Нет подключения к Интернету.	
+GLUE_RECONNECT_HELPER_BAD_VERSION_HEADER	Доступна новая версия	
+GLUE_RECONNECT_HELPER_BAD_VERSION_LAUNCHER_BODY	Перезапустите Hearthstone, чтобы начать обновление.	
+GLUE_RECONNECT_HELPER_BAD_VERSION_RESET_BODY	Чтобы продолжить, нужно обновить игру.	
+GLUE_RECONNECT_HELPER_BODY	Чтобы продолжить, вам нужно снова подключиться к игре, но и вне сети у вас по-прежнему есть доступ к коллекции.	
+GLUE_RECONNECT_HELPER_CANCEL	Отмена	
+GLUE_RECONNECT_HELPER_CONFIRM	Подключиться снова	
+GLUE_RECONNECT_HELPER_EXIT_GAME	Выход	
+GLUE_RECONNECT_HELPER_FAILED_BODY	Проверьте подключение к Интернету и повторите попытку.	
+GLUE_RECONNECT_HELPER_FAILED_HEADER	Не удалось подключиться повторно	
+GLUE_RECONNECT_HELPER_HEADER	Вы сейчас не в сети	
+GLUE_RECONNECT_HELPER_IN_PROGRESS	Повторное подключение...	
+GLUE_RECONNECT_HELPER_LONG_TIME	Возможно, придется подождать еще немного...\nПожалуйста, проверьте подключение к Интернету.	
+GLUE_RECONNECT_HELPER_TITLE	Подключиться снова	
+GLUE_RECONNECT_HELPER_UPDATE	Обновить	
+GLUE_RECONNECT_RESULT_DISCONNECT	Вы проиграли последнюю игру в режиме «{0}» по причине разрыва соединения.	0=one of GLOBAL_RECONNECT_GAME_TYPE_*
+GLUE_RECONNECT_RESULT_HEADER	Результат игры	
+GLUE_RECONNECT_RESULT_LOSE	Вы проиграли последнюю игру в режиме «{0}».	0=one of GLOBAL_RECONNECT_GAME_TYPE_*
+GLUE_RECONNECT_RESULT_TIE	Вы сыграли вничью в последней игре в режиме «{0}».	0=one of GLOBAL_RECONNECT_GAME_TYPE_*
+GLUE_RECONNECT_RESULT_WIN	Вы победили в последней игре в режиме «{0}».	0=one of GLOBAL_RECONNECT_GAME_TYPE_*
+GLUE_REQUIRED_CLIENT_STATIC_ASSETS_ERROR_MESSAGE	Не удалось загрузить дополнительные данные клиента.	This happens when an error occurred trying to download required assets from the server.
+GLUE_RETURNING_PLAYER_WELCOME_DESC	У нас есть новые задания и награды, которые помогут вам заново освоиться в игре!	Text for Returning Player welcome banner.
+GLUE_RETURNING_PLAYER_WELCOME_TITLE	С возвращением!	Title for Returning Player welcome banner.
+GLUE_RETURNINGPLAYER_QUESTDESCRIPTION	Победите всех трех претендентов, чтобы получить награду!	
+GLUE_RETURNINGPLAYER_QUESTTITLE	Возвращение героя	
+GLUE_RETURNINGPLAYER_RETIRE_BUTTON_TEXT	Пропустить	
+GLUE_RETURNINGPLAYERPOPUP_MESSAGE	Если вы пропустите испытание хозяина таверны, то не сможете вернуться и завершить задание, чтобы получить 3 бесплатных комплекта карт.	
+GLUE_RETURNINGPLAYERPOPUP_TITLE	Вы уверены?	
+GLUE_ROTATED_SETS_DIALOG	Карты из следующих наборов перешли в вольный формат!	
+GLUE_SET_ROTATION_CURRENT_YEAR	Год Ворона	
+GLUE_SET_ROTATION_NEXT_YEAR	Год Дракона	
+GLUE_SHOP_BOOSTER_SKU_BUTTON	{0} |4(комплект,комплекта,комплектов)	
+GLUE_SHOP_CONVERT_TO_ARCANE_ORBS_HEADER	Convert Runestones to Arcane Orbs	
+GLUE_SHOP_DESCRIPTION_HEADER	{0} включает:	
+GLUE_SHOP_GET_MORE_RUNESTONES	У вас недостаточно рунических камней для совершения этой покупки. Хотите приобрести еще?	
+GLUE_SHOP_GET_MORE_RUNESTONES_HEADER	Недостаточно рунических камней!	
+GLUE_SHOP_LANDING_ADVENTURE_BANNER	ПРИКЛЮЧЕНИЕ	
+GLUE_SHOP_NOT_ENOUGH_RUNESTONES	Not enough Runestones	
+GLUE_SHOP_PRICE_ARCANE_ORBS	{0} |4(чародейская сфера,чародейские сферы,чародейских сфер)	
+GLUE_SHOP_PRICE_FREE	Бесплатно!	
+GLUE_SHOP_PRICE_RUNESTONES	{0} |4(рунический камень,рунических камня,рунических камней)	
+GLUE_SHOP_RIBBON_GREATEST_NEWPLAYERS	Оптимальный вариант для новичков	
+GLUE_SHOP_RIBBON_LATEST_ADVENTURE	Новейшее приключение	
+GLUE_SHOP_RIBBON_PREPURCHASE_BUNDLE	Предзаказ пакета	
+GLUE_SHOP_RUNESTONE_SKU_BUTTON	{0} |4(рунический камень,рунических камня,рунических камней)	
+GLUE_SHOP_RUNESTONES_DETAILS_HEADER	Рунические камни можно обменять на:	
+GLUE_SHOP_SECTION_HEADER_TIERB	Ограниченное\nпредложение!	
+GLUE_SHOP_SECTION_HEADER_TIERC	Комплекты\nкарт	
+GLUE_SHOP_SECTION_HEADER_TIERD	Приключения	
+GLUE_SHOP_VC_CONVERSION_AUTO_CONVERT	Преобразовывать недостающие сферы автоматически	
+GLUE_SHOP_VC_CONVERSION_GET_MORE	Получить еще	
+GLUE_SHOP_WILD_CARDS_DISCLAIMER	•  Только для вольного формата – эти карты нельзя использовать в стандартном формате.	
+GLUE_SHOW_CUSTOM_DECKS	Ваши колоды	
+GLUE_SHOW_PRECON_DECKS	Стартовые колоды	
+GLUE_SIDEQUEST_PROGRESS_BANNER	Прогресс: {0}/{1}	0=Current Progress, 1=Completion Requirement
+GLUE_SINGLE_CARD_ADDED	Мы добавили в классический набор 1 новую карту!	
+GLUE_SINGLE_CARD_UPDATED	Эта карта изменилась.	
+GLUE_SPECIAL_QUEST_NOTIFICATION_HEADER	Особое задание!	
+GLUE_SPECTATOR_LOADING_BAR_TASK_1	Ищем в толпе друга...	
+GLUE_SPECTATOR_LOADING_BAR_TASK_2	Готовим попкорн...	
+GLUE_SPECTATOR_LOADING_BAR_TASK_3	Протираем бинокль...	
+GLUE_SPECTATOR_LOADING_BAR_TASK_4	Пробираемся сквозь толпу...	
+GLUE_SPECTATOR_LOADING_BAR_TASK_5	Ищем хорошее место...	
+GLUE_SPECTATOR_LOADING_BAR_TASK_6	Пьем лимонад...	
+GLUE_SPINNER_1	Легкий противник	
+GLUE_SPINNER_10	Чудной чернокнижник	
+GLUE_SPINNER_11	Разудалый разбойник	
+GLUE_SPINNER_12	Ворчливый воин	
+GLUE_SPINNER_13	Драчливый друид	
+GLUE_SPINNER_14	Шальной шаман	
+GLUE_SPINNER_15	Печальный паладин	
+GLUE_SPINNER_16	Обидчивый охотник	
+GLUE_SPINNER_17	Жеманный жрец	
+GLUE_SPINNER_18	Худший игрок	
+GLUE_SPINNER_19	Ваш бывший сосед	
+GLUE_SPINNER_2	Ваш худший кошмар	
+GLUE_SPINNER_20	Чемпион StarCraft	
+GLUE_SPINNER_21	Грустный клоун	
+GLUE_SPINNER_22	Ваш глава гильдии	
+GLUE_SPINNER_23	Инопланетянин	
+GLUE_SPINNER_24	Конь в вакууме	
+GLUE_SPINNER_25	Обманщик Обманщиков	
+GLUE_SPINNER_26	Неторопливый игрок	
+GLUE_SPINNER_27	Донатер	
+GLUE_SPINNER_28	Эльф 80-го уровня	
+GLUE_SPINNER_29	Кофеман	
+GLUE_SPINNER_3	Макаронный монстр	
+GLUE_SPINNER_30	Водитель маршрутки	
+GLUE_SPINNER_31	Разработчик Blizzard	
+GLUE_SPINNER_32	Мастер	
+GLUE_SPINNER_33	Игрок алмазной лиги	
+GLUE_SPINNER_34	Новичок	
+GLUE_SPINNER_35	Роковой рыцарь смерти	
+GLUE_SPINNER_36	Медитирующий монах	
+GLUE_SPINNER_37	Гамон	
+GLUE_SPINNER_4	Мурлок	
+GLUE_SPINNER_5	Толстый тролль	
+GLUE_SPINNER_6	Актер из того фильма	
+GLUE_SPINNER_7	Дробитель	
+GLUE_SPINNER_8	Великий комбинатор	
+GLUE_SPINNER_9	Молчаливый маг	
+GLUE_SPINNER_PLURAL_1	Совиная лига	
+GLUE_SPINNER_PLURAL_10	Разработчики Hearthstone	
+GLUE_SPINNER_PLURAL_11	Орда	
+GLUE_SPINNER_PLURAL_12	Альянс	
+GLUE_SPINNER_PLURAL_13	Древние боги	
+GLUE_SPINNER_PLURAL_14	Иллидари	
+GLUE_SPINNER_PLURAL_15	Сестры Ветрокрылые	
+GLUE_SPINNER_PLURAL_16	Любители шахмат	
+GLUE_SPINNER_PLURAL_17	Семь дворфов	
+GLUE_SPINNER_PLURAL_18	Великолепная семерка	
+GLUE_SPINNER_PLURAL_19	Свора мурлоков	
+GLUE_SPINNER_PLURAL_2	Крысиный принц	
+GLUE_SPINNER_PLURAL_20	Семь гномов-психопатов	
+GLUE_SPINNER_PLURAL_21	Лига ЗЛА	
+GLUE_SPINNER_PLURAL_22	Лига исследователей	
+GLUE_SPINNER_PLURAL_23	Галакронд и его друзья	
+GLUE_SPINNER_PLURAL_24	Ограбляторы	
+GLUE_SPINNER_PLURAL_25	Безумные гении	
+GLUE_SPINNER_PLURAL_26	Незнакомцы из кафе	
+GLUE_SPINNER_PLURAL_27	Гениальные дети	
+GLUE_SPINNER_PLURAL_28	Военные стратеги	
+GLUE_SPINNER_PLURAL_29	Ваши лучшие друзья	
+GLUE_SPINNER_PLURAL_3	Неизвестные игроки	
+GLUE_SPINNER_PLURAL_30	Приятели бармена Боба	
+GLUE_SPINNER_PLURAL_31	Голодные игроки	
+GLUE_SPINNER_PLURAL_32	Кружок физкультурников	
+GLUE_SPINNER_PLURAL_4	Командные тактики	
+GLUE_SPINNER_PLURAL_5	Любители бекона	
+GLUE_SPINNER_PLURAL_6	Повелители демонов	
+GLUE_SPINNER_PLURAL_7	Смотрители зоопарков	
+GLUE_SPINNER_PLURAL_8	Инженеры-механики	
+GLUE_SPINNER_PLURAL_9	Мурлоки-провидцы	
+GLUE_SPLASH_QUEUE_TEXT	Свободное место появится через:	
+GLUE_SPLASH_QUEUE_TITLE	Все столы заняты!	
+GLUE_STANDARD_COMING_SOON_BODY	Стандартный формат изменится! Вы играли в стандартном формате, включающем базовый и классический наборы карт, а также наборы за последние 2 года. Вы получите доступ к вольному формату, включающему все карты!	
+GLUE_STANDARD_COMING_SOON_HEADER	Скоро	
+GLUE_START_CLICK	Щелкните, чтобы начать игру.	
+GLUE_START_PRESS	Нажмите кнопку «Начать игру»	
+GLUE_START_TOUCH	Нажмите, чтобы начать игру.	
+GLUE_STARTING_GAME	Начало игры	
+GLUE_STORE_ADVENTURE_BUTTON_UNAVAILABLE_DESCRIPTION	Этот товар сейчас недоступен.	
+GLUE_STORE_ADVENTURE_BUTTON_UNAVAILABLE_HEADLINE	Недоступно!	
+GLUE_STORE_ADVENTURE_LEAVING_SOON	Скоро станет недоступно!	
+GLUE_STORE_ADVENTURE_LOCKED_HEROES_NOT_PURCHASABLE_TEXT	Вы должны открыть все 9 классов,\nпрежде чем сможете купить это приключение.\n\nПобедите каждого героя хотя бы раз!	
+GLUE_STORE_ADVENTURE_LOCKED_HEROES_NOT_PURCHASABLE_TITLE	Еще рано!	
+GLUE_STORE_AUTH_FAIL_HEADLINE	Покупка не завершена	
+GLUE_STORE_AUTH_SUCCESS_HEADLINE	Спасибо за покупку!	
+GLUE_STORE_AUTH_WAITING	Ожидание авторизации	
+GLUE_STORE_AUTH_ZERO_COST_FAIL_HEADLINE	Нет доступа	
+GLUE_STORE_AUTH_ZERO_COST_SUCCESS_HEADLINE	Доступ получен!	
+GLUE_STORE_AUTH_ZERO_COST_WAITING	Первый вход в некрополь	
+GLUE_STORE_BNET_BALANCE	Кошелек Blizzard	
+GLUE_STORE_BONUS_PACKS	Получите {0} |4(дополнительный комплект,дополнительных комплекта,дополнительных комплектов) в течение акции!	0 = number of bonus packs
+GLUE_STORE_BOT_PREORDER_DATE	В середине августа*!	
+GLUE_STORE_BOT_PREORDER_DUST_DATE	卡牌包可以在八月中旬\n打开！	
+GLUE_STORE_BRM_PREORDER_DATE	Откроется в апреле!	
+GLUE_STORE_BUY_TEXT	КУПИТЬ	this is what you see when you initiate the purchase
+GLUE_STORE_CC_EXPIRY_DETAILS	Информация о вашей кредитной карте устарела.	
+GLUE_STORE_CHALLENGE_CVV_MESSAGE	Пожалуйста, введите проверочный код карты (CVV):\n\nЕсли вы не знаете, где найти проверочный код карты, нажмите кнопку «{0}».	
+GLUE_STORE_CHALLENGE_HEADLINE	Внимание!	
+GLUE_STORE_CHALLENGE_PWD_MESSAGE	Введите пароль вашей учетной записи Blizzard:	
+GLUE_STORE_CHALLENGE_PWD_RETRY_MESSAGE	Неправильный пароль. Пожалуйста, повторите попытку.	
+GLUE_STORE_CHANGE_PAYMENT_BUTTON_TEXT	Изменить способ оплаты по умолчанию	
+GLUE_STORE_CHINA_DISCLAIMER_DETAILS	如果您希望获得某一张特定卡牌，请按如下步骤操作：\n1）购买并打开一定数量*的扩展包，看其中是否含有该特定卡牌；\n2）如果没有，请在“我的收藏”中使用“分解”功能分解这些您不需要的卡牌，获得奥术之尘；\n3）在“我的收藏”中选择“制作模式”，消耗奥术之尘“制作”那张特定卡牌。\n*每个扩展包至少可分解出40奥术之尘，合成1张白/蓝/紫/橙色稀有度的卡牌分别消耗40/100/400/1600奥术之尘，即至多购买1/2.5/10/40个扩展包，您就可通过上述方式获得任意特定的白/蓝/紫/橙色卡牌。	
+GLUE_STORE_CHINA_DISCLAIMER_HEADLINE	注意	
+GLUE_STORE_CHOOSE_ADVENTURE	Выберите приключение	
+GLUE_STORE_CHOOSE_HERO	Выберите героя	
+GLUE_STORE_CHOOSE_PACK	Выберите комплект	
+GLUE_STORE_CLOSED_BUTTON_TEXT	Магазин\nзакрыт	
+GLUE_STORE_CURRENCY_CHANGED_DESC	Мы изменили валюту, которая используется в магазине Blizzard в вашей стране. Возможны дополнительные налоги.	
+GLUE_STORE_CURRENCY_CHANGED_HEADER	Новая валюта	
+GLUE_STORE_DAL_PREORDER_DATE	В середине апреля*!	
+GLUE_STORE_DAL_PREORDER_DUST_DATE	卡牌包可以在四月中旬\n打开！	
+GLUE_STORE_DISABLED	Магазин временно недоступен. Зайдите к нам позже!	
+GLUE_STORE_DISCLAIMER_WARNING	你将要花费战网点数或游戏金币进行购买！	
+GLUE_STORE_DONE_WITH_BAM_HEADLINE	Попробуйте еще раз	
+GLUE_STORE_DONE_WITH_BAM_MESSAGE	Когда вы добавите способ оплаты на сайте Blizzard, пожалуйста, повторите попытку.	
+GLUE_STORE_DRG_PREORDER_DATE	Выйдет в декабре*!	
+GLUE_STORE_DRG_PREORDER_DUST_DATE	Комплекты, доступные\nв декабре*!	
+GLUE_STORE_DUNGEON_BUTTON_COST_OWNED_TEXT	(приобретено)	
+GLUE_STORE_DUNGEON_BUTTON_COST_TEXT	({0} |4(крыло,крыла,крыльев) {1})	0=number of wings,1=cost
+GLUE_STORE_DUNGEON_BUTTON_PREORDER_TEXT	Предзаказ приключения	
+GLUE_STORE_DUNGEON_BUTTON_TEXT	Все приключение	
+GLUE_STORE_DUNGEON_BUTTON_TEXT_PURCHASED	Уже приобретено	
+GLUE_STORE_DUST_BUTTON_PREORDER_TEXT	{0}点奥术之尘和特殊的卡牌背面图案	0=number of dust
+GLUE_STORE_EULA_AND_TOS_DETAILS	Наше Пользовательское соглашение и ЛСКП можно найти на сайте Blizzard.	
+GLUE_STORE_EULA_AND_TOS_HEADLINE	Пользовательское соглашение	
+GLUE_STORE_EULA_AND_TOS_URL_DETAILS	Нажав на «{0}», вы перейдете на страницу, содержащую Пользовательское соглашение и ЛСКП на сайте Blizzard.	
+GLUE_STORE_EXPANSION_LEAVING_SOON	Скоро станет недоступно!	
+GLUE_STORE_FAIL_BNET_ID	Неверный адрес электронной почты.	
+GLUE_STORE_FAIL_CHALLENGE_ID_FAILED_VERIFICATION	Неверный код подтверждения покупки.	
+GLUE_STORE_FAIL_CHALLENGE_TIMEOUT	Превышено время ожидания для совершения покупки. Пожалуйста, повторите попытку.	
+GLUE_STORE_FAIL_DATABASE	Внутренняя ошибка данных.	
+GLUE_STORE_FAIL_DETAILS_ERROR_CODE	(Код ошибки: «{0}»)	
+GLUE_STORE_FAIL_GENERAL	При обработке вашего платежа произошла ошибка.	
+GLUE_STORE_FAIL_GOLD_GENERIC	Не удалось совершить покупку за золото. Пожалуйста, попробуйте позднее.	
+GLUE_STORE_FAIL_IN_PROGRESS	Пожалуйста, дождитесь завершения предыдущей транзакции и попробуйте снова совершить оплату.	
+GLUE_STORE_FAIL_LICENSE	Обнаружена двойная лицензия.	
+GLUE_STORE_FAIL_NO_ACTIVE_BPAY	Внутренняя ошибка: информация об оплате отсутствует в базе данных.	
+GLUE_STORE_FAIL_NO_BATTLEPAY	Транзакция не может быть завершена. Пожалуйста, повторите попытку через некоторое время.	
+GLUE_STORE_FAIL_NOT_ENOUGH_ARCANE_ORBS	У вас недостаточно чародейских сфер для совершения этой покупки.	
+GLUE_STORE_FAIL_NOT_ENOUGH_GOLD	У вас недостаточно золота для совершения этой покупки.	
+GLUE_STORE_FAIL_NOT_ENOUGH_RUNESTONES	У вас недостаточно рунических камней для совершения этой покупки.	
+GLUE_STORE_FAIL_PARENTAL_CONTROL	Возможность совершения покупок на данной учетной записи ограничена на правах родительского контроля.	
+GLUE_STORE_FAIL_PRODUCT_ALREADY_OWNED	У вас уже есть это.	
+GLUE_STORE_FAIL_PRODUCT_NA	Этот товар сейчас недоступен. Пожалуйста, выберите что-нибудь другое.	
+GLUE_STORE_FAIL_PRODUCT_UNIQUENESS_VIOLATED	Мы обнаружили, что данный товар был приобретен дважды. Пожалуйста, свяжитесь со службой поддержки для решения этого вопроса.	
+GLUE_STORE_FAIL_PRODUCT_UNIQUENESS_VIOLATED_URL	Нажав «{0}», вы перейдете на сайт Blizzard.	
+GLUE_STORE_FAIL_PURCHASE_BAN	Доступ к магазину заблокирован для данной учетной записи. Если вы считаете, что произошла ошибка, обратитесь в службу поддержки.	
+GLUE_STORE_FAIL_QUANTITY	Неверное количество выбранного товара. Пожалуйста, измените количество и повторите попытку.	
+GLUE_STORE_FAIL_REGION_IS_DOWN	Магазин временно недоступен. Зайдите к нам позже!	
+GLUE_STORE_FAIL_SPENDING_LIMIT	Эта покупка превышает ваш лимит по тратам. Но вы все еще можете сделать покупку за золото!	
+GLUE_STORE_FAIL_THIRD_PARTY_BAD_RECEIPT	Не удалось осуществить покупку с помощью мобильного платежа.	
+GLUE_STORE_FAIL_THROTTLED	В настоящий момент мы не можем завершить эту операцию. Пожалуйста, повторите попытку позднее.	
+GLUE_STORE_FORGOT_PWD_DETAILS	Вы несколько раз ввели неверный пароль или закрыли окно ввода пароля. Возможно, вы его забыли?	
+GLUE_STORE_FORGOT_PWD_HEADLINE	Забыли пароль?	
+GLUE_STORE_FORGOT_PWD_URL_DETAILS	Нажав «{0}», вы перейдете на сайт Blizzard, где сможете сбросить пароль.	
+GLUE_STORE_GENERIC_BP_FAIL_DETAILS	При обработке вашего платежа произошла ошибка. Пожалуйста, выберите другой способ оплаты или свяжитесь со службой поддержки вашего поставщика платежных услуг.	
+GLUE_STORE_GENERIC_BP_FAIL_HEADLINE	Покупка не завершена	
+GLUE_STORE_GENERIC_BP_FAIL_RETRY_CONTACT_CS_IF_PERSISTS_DETAILS	Во время оформления покупки произошла ошибка. Пожалуйста, повторите попытку позднее.	
+GLUE_STORE_GENERIC_BP_FAIL_RETRY_CONTACT_CS_IF_PERSISTS_URL_DETAILS	Нажмите «{0}», чтобы перейти на страницу учетной записи Blizzard.	
+GLUE_STORE_GENERIC_BP_FAIL_URL_DETAILS	Нажав кнопку «{0}», вы перейдете на сайт Blizzard, где сможете обновить информацию о способе оплаты.	
+GLUE_STORE_GIL_PREORDER_DATE	В середине апреля*!	
+GLUE_STORE_GIL_PREORDER_DUST_DATE	Комплекты станут доступны\nв середине апреля*!	
+GLUE_STORE_GOLD_BUTTON_TOOLTIP_HEADLINE	Купить за золото	
+GLUE_STORE_GOLD_QTY_CHANGE_DESC	У вас есть много золота! Если вы хотите купить сразу несколько комплектов, дважды щелкните по надписи «1 комплект за 100 золота», чтобы изменить количество, которое вы хотите приобрести.	
+GLUE_STORE_GOLD_QTY_CHANGE_DESC_TOUCH	У вас есть много золота! Если вы хотите купить сразу несколько комплектов, дважды нажмите «1 комплект за 100 золота», чтобы изменить количество, которое вы хотите приобрести.	
+GLUE_STORE_GOLD_QTY_CHANGE_HEADER	Комплекты за золото	
+GLUE_STORE_GORO_PREORDER_DATE	В середине апреля*!	
+GLUE_STORE_HEADLINE	Магазин	
+GLUE_STORE_HEALUP_BOOSTER_DESC	Требуется учетная запись	
+GLUE_STORE_HERO_BUTTON_COST_OWNED_TEXT	(приобретено)	
+GLUE_STORE_HERO_BUTTON_TEXT_PURCHASED	Уже приобретено	
+GLUE_STORE_HERO_PREVIEW	Предпросмотр	
+GLUE_STORE_HEROES_PURCHASED	Приобретено	
+GLUE_STORE_ICC_PREORDER_DATE	В середине августа*!	
+GLUE_STORE_ICC_PREORDER_DUST_DATE	卡牌包可以在八月中旬打开！	
+GLUE_STORE_INFO_BUTTON_TEXT	i	
+GLUE_STORE_KOREAN_DISCLAIMER_DETAILS	특정 카드를 원하신다면 아래와 같이 ‘마력 추출’ 기능을 통해 100%의 확률로 제작할 수 있습니다.\n   1) 카드 팩을 구매하고 개봉하여 원하는 카드가 있는지 확인합니다.\n   2) 원하는 카드가 없다면 “내 카드” 메뉴에서 필요하지 않은 카드를 선택하고 “마력 추출” 기능을 사용하세요. 이 기능을 사용하면 해당 카드를 제거하고 “신비한 가루”를 획득합니다.\n   3) “내 카드” 메뉴의 “제작하기” 기능으로 “신비한 가루”를 사용하여 원하는 카드를 제작합니다.\n카드 팩 하나당 최소 40개의 “신비한 가루”를 얻을 수 있습니다. 일반/희귀/영웅/전설 카드를 제작하려면 각각 40/100/400/1600개의 “신비한 가루”가 필요합니다. 즉, 카드 팩을 1/3/10/40개 구매하면 반드시 일반/희귀/영웅/전설 카드 하나를 제작할 수 있습니다.	
+GLUE_STORE_KOREAN_DISCLAIMER_HEADLINE	주의!	
+GLUE_STORE_KOREAN_PRODUCT_DETAILS_ADVENTURE	본 묶음 상품은 구매 후 환불되지 않으며, 구매 즉시 모든 지구 이용이 가능합니다.	
+GLUE_STORE_KOREAN_PRODUCT_DETAILS_EXPERT_PACK	이용기간 : 서비스 종료 시까지. 본 상품은 구매 후 7일 이내에 청약철회가 가능합니다. 다만, 1개의 카드팩이라도 개봉한 경우에는 청약철회가 불가능합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_STORE_KOREAN_PRODUCT_DETAILS_FIRST_PURCHASE_BUNDLE	이용기간: 서비스 종료 시까지. 본 상품은 구매 후 즉시 임의 직업의 오리지널 전설 카드가 귀하의 카드에 추가되므로 구매 후 환불이 불가능합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_STORE_KOREAN_PRODUCT_DETAILS_PACKS_PREORDER	사전 구매 상품은 실제 상품 출시 전까지 환불이 가능합니다.	
+GLUE_STORE_LAUNCH_PROMO	ОСОБАЯ АКЦИЯ!	
+GLUE_STORE_LEAVING_SOON	Скоро станет\nнедоступно!	
+GLUE_STORE_LEAVING_SOON_LEARN_MORE	Подробнее	
+GLUE_STORE_LIMITED_TIME_OFFER	Специальное предложение!	
+GLUE_STORE_LOOT_PREORDER_DATE	Выйдет в середине декабря*!	
+GLUE_STORE_LOOT_PREORDER_DUST_DATE	Комплекты станут доступны\nв середине декабря*!	
+GLUE_STORE_MODE_ADVENTURE	Приключения	
+GLUE_STORE_MODE_CARDS	Карты	
+GLUE_STORE_MODE_HEROES	Герои	
+GLUE_STORE_MODE_NAME_DUST	奥术之尘	
+GLUE_STORE_MONEY_BUTTON_TOOLTIP_HEADLINE	Купить	
+GLUE_STORE_MSG_PREORDER_DATE	Выйдет в начале декабря!	
+GLUE_STORE_NO_PAYMENT_DETAILS	Вы не выбрали способ оплаты по умолчанию. Пожалуйста, посетите для этого сайт Blizzard, после чего повторите попытку.	
+GLUE_STORE_NO_PAYMENT_HEADLINE	Внимание!	
+GLUE_STORE_NO_PAYMENT_URL_DETAILS	Нажав «{0}», вы перейдете на сайт Blizzard.	
+GLUE_STORE_OG_PREORDER_DATE	Этой весной*!	
+GLUE_STORE_OPEN_BUTTON_TEXT	Магазин	
+GLUE_STORE_PACK_BUTTON_COST_OWNED_TEXT	(приобретено)	
+GLUE_STORE_PACK_BUTTON_TEXT_PURCHASED	Уже приобретено	
+GLUE_STORE_PACKBUY_BEST_VALUE	Выгодное предложение	
+GLUE_STORE_PACKBUY_LIMITED_TIME	Время действия ограничено	
+GLUE_STORE_PACKBUY_SUGGESTION	Лучший выбор!	
+GLUE_STORE_PACKS_BUTTON_PREORDER_TEXT	Предзаказ {0} |4(комплекта,комплектов,комплектов)	0=number of packs
+GLUE_STORE_PACKS_LATEST_EXPANSION	Свежее дополнение	
+GLUE_STORE_PACKS_PREORDER_TEXT	Предзаказ	
+GLUE_STORE_PAYMENT_INFO_DETAILS	Для совершения внутриигровых покупок за реальные деньги требуется учетная запись Blizzard.\n\nВНИМАНИЕ! В случае платежного инцидента или возврата платежа учетная запись Hearthstone может быть временно заблокирована до решения проблемы или возврата денежных средств.	
+GLUE_STORE_PAYMENT_INFO_HEADLINE	Информация	
+GLUE_STORE_PAYMENT_INFO_URL_DETAILS	Нажмите «{0}», чтобы узнать больше о вероятности получить карту определенной редкости и о покупках в Hearthstone.	
+GLUE_STORE_PRE_PURCHASE_HAS_ENDED	Предзаказ данного продукта более невозможен.	
+GLUE_STORE_PREORDER	ПРЕДЗАКАЗ!	
+GLUE_STORE_PREORDER_EXCLUSIVE	ТОЛЬКО ЗА ПРЕДЗАКАЗ!	
+GLUE_STORE_PRODUCT_DETAILS_BRM_PART_1	{0}: сойдитесь в смертельном бою с ужасными боссами!	0=wing name
+GLUE_STORE_PRODUCT_DETAILS_BRM_PART_2	Получите новые карты Черной горы, среди которых – 1 легендарная!	
+GLUE_STORE_PRODUCT_DETAILS_DALA_PART_1	{0}: сойдитесь в смертельном бою с его ужасными боссами!	0=wing name
+GLUE_STORE_PRODUCT_DETAILS_DALA_PART_2	Откройте доступ к новой главе с уникальными испытаниями и новыми героями!	
+GLUE_STORE_PRODUCT_DETAILS_DUST	•  购买奥术之尘赠送系列卡牌包\n•  每包卡牌包内含5张{0}《炉石传说》卡牌，其中至少1张为稀有或更高品质\n•  奥术之尘可用于在“我的收藏”中制作卡牌	0=pack type
+GLUE_STORE_PRODUCT_DETAILS_FIRST_PURCHASE_BUNDLE	•  10 классических комплектов и 1 случайный легендарный дракон из классического набора.\n•  Каждый комплект содержит 5 карт; минимум 1 карта будет редкой или лучше.	
+GLUE_STORE_PRODUCT_DETAILS_FIRST_PURCHASE_BUNDLE_DUST	•  购买10点奥术之尘赠送10包经典卡牌包和1张随机经典传说龙牌\n•  每包卡牌包内含5张卡牌，其中至少1张为稀有或更高品质\n•  奥术之尘可用于在“我的收藏”中制作卡牌	
+GLUE_STORE_PRODUCT_DETAILS_GIL_CN_DUST_PRESALE	•  购买50点奥术之尘和1张特殊的卡牌背面图案赠送50包系列卡牌包和20包奖励卡牌包\n•  每包卡牌包内含5张卡牌，其中至少1张为稀有或更高品质\n *卡牌包可以在2018年4月30日前打开\n•  奥术之尘可用于在“我的收藏”中制作卡牌	
+GLUE_STORE_PRODUCT_DETAILS_GIL_PACK_PRESALE	•  50 комплектов и особую рубашку.\n•  20 дополнительных комплектов в подарок.\n•  Каждый комплект содержит 5 карт; минимум 1 карта будет редкой или лучше.\n•  *Доступ к комплектам будет открыт не позднее 30 апреля 2018 г.	
+GLUE_STORE_PRODUCT_DETAILS_GORO_PACK_PRESALE	•  50 комплектов и особую рубашку.\n•  Каждый комплект содержит 5 карт; минимум 1 карта будет редкой или лучше.\n•  *Доступ к комплектам будет открыт не позднее 30 апреля 2017 г.	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_DUST	奥术之尘：	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_FIRST_PURCHASE_BUNDLE	В стартовый пакет входит:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_GIL_PACK_PRESALE	«Ведьмин лес» (предзаказ) включает:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_GORO_PACK_PRESALE	«Экспедиция в Ун'Горо» (предзаказ) включает:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_ICC_PACK_PRESALE	«Рыцари Ледяного Трона» (предзаказ) включают в себя:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_LOOT_PACK_PRESALE	«Кобольды и катакомбы» (предзаказ) включает:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_MAMMOTH_BUNDLE	В пакет года Мамонта входит:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_OG_PACK_PRESALE	«Пробуждение древних богов» (предзаказ) включает в себя:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_PACK	Каждый комплект содержит:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_TGT_PACK_PRESALE	Большой турнир (предзаказ) включает в себя:	
+GLUE_STORE_PRODUCT_DETAILS_ICC_CN_DUST_PRESALE	•  购买50点奥术之尘和1张特殊的卡牌背面图案赠送50包系列卡牌包\n•  每包卡牌包内含5张卡牌，其中至少1张为稀有或更高品质\n *卡牌包可以在2017年8月31日前打开\n•  奥术之尘可用于在“我的收藏”中制作卡牌	
+GLUE_STORE_PRODUCT_DETAILS_ICC_PACK_PRESALE	•  50 комплектов и особую рубашку.\n•  Каждый комплект содержит 5 карт; минимум 1 карта будет редкой или лучше.\n•  *Доступ к комплектам будет открыт не позднее 31 августа 2017 г.	
+GLUE_STORE_PRODUCT_DETAILS_KARA_PART_1	{0}: сойдитесь в смертельном бою с его ужасными боссами!	0=wing name
+GLUE_STORE_PRODUCT_DETAILS_KARA_PART_2	Получите новые карты Каражана, среди которых есть и легендарные!	
+GLUE_STORE_PRODUCT_DETAILS_LOE_PART_1	{0}: сойдитесь в смертельном бою с ужасными боссами!	0=wing name
+GLUE_STORE_PRODUCT_DETAILS_LOE_PART_2	Получите новые карты Лиги исследователей, среди которых есть легендарные!	
+GLUE_STORE_PRODUCT_DETAILS_LOOT_CN_DUST_PRESALE	•  购买50点奥术之尘和1张特殊的卡牌背面图案赠送50包系列卡牌包\n•  每包卡牌包内含5张卡牌，其中至少1张为稀有或更高品质\n *卡牌包可以在2017年12月31日前打开\n•  奥术之尘可用于在“我的收藏”中制作卡牌	
+GLUE_STORE_PRODUCT_DETAILS_LOOT_PACK_PRESALE	•  50 комплектов и особую рубашку.\n•  Каждый комплект содержит 5 карт; минимум 1 карта будет редкой или лучше.\n•  *Доступ к комплектам будет открыт не позднее 31 декабря 2017 г.	
+GLUE_STORE_PRODUCT_DETAILS_MAMMOTH_BUNDLE	• 10 комплектов «Экспедиции в Ун'Горо».\n• 10 комплектов «Рыцарей Ледяного Трона».\n• 10 комплектов «Кобольдов и катакомб».\n• Каждый комплект содержит 5 карт; минимум 1 карта будет редкой или лучше.	
+GLUE_STORE_PRODUCT_DETAILS_MAMMOTH_BUNDLE_DUST	购买30点奥术之尘赠送\n•  10包“勇闯安戈洛”卡牌包\n•  10包“冰封王座的骑士”卡牌包\n•  10包“狗头人与地下世界”卡牌包\n•  每包卡牌包内含5张卡牌，其中至少1张为稀有或更高品质\n•  奥术之尘可用于在“我的收藏”中制作卡牌	
+GLUE_STORE_PRODUCT_DETAILS_NAXX_PART_1	{0}: сойдитесь в смертельном бою с его ужасными боссами!	0=wing name
+GLUE_STORE_PRODUCT_DETAILS_NAXX_PART_2	Получите новые карты Наксрамаса, среди которых – 1 легендарная!	
+GLUE_STORE_PRODUCT_DETAILS_OG_PACK_PRESALE	•  50 комплектов и особую рубашку.\n•  Каждый комплект содержит 5 карт; минимум 1 карта будет редкой или лучше.\n•  *Доступ к комплектам будет открыт не позднее 31 мая 2016 г.	
+GLUE_STORE_PRODUCT_DETAILS_PACK	• 5 карт из набора «{0}».\n• Минимум 1 карта будет редкой или лучше.	0=pack type
+GLUE_STORE_PRODUCT_DETAILS_TGT_PACK_PRESALE	•  50 комплектов и особая рубашка.\n•  Каждый комплект содержит 5 карт; минимум 1 карта будет редкой или лучше.\n•  Комплекты «Большого турнира» можно будет открыть в августе!	
+GLUE_STORE_PRODUCT_EVENT_HAS_ENDED	Этот продукт больше не доступен.	
+GLUE_STORE_PRODUCT_NAME_BRM_PRESALE_BUNDLE	Черная гора (предзаказ)	
+GLUE_STORE_PRODUCT_NAME_BRM_WING_BUNDLE	Приключение «Черная гора» ({0} |4(крыло,крыла,крыльев))	
+GLUE_STORE_PRODUCT_NAME_DALA_WING_BUNDLE	Приключение «Даларан» ({0} |4(крыло,крыла,крыльев))	
+GLUE_STORE_PRODUCT_NAME_DUST	{0}个奥术之尘和赠送的{1}包{2}卡牌包	0=quantity of dust,1=quantity of packs,2=pack type
+GLUE_STORE_PRODUCT_NAME_FIRST_PURCHASE_BUNDLE	Стартовый пакет	
+GLUE_STORE_PRODUCT_NAME_FORGE_TICKET	Доступ на Арену	
+GLUE_STORE_PRODUCT_NAME_GIL_PRESALE_BUNDLE	Ведьмин лес (предзаказ)	
+GLUE_STORE_PRODUCT_NAME_GORO_PRESALE_BUNDLE	Экспедиция в Ун'Горо (предзаказ)	
+GLUE_STORE_PRODUCT_NAME_ICC_PRESALE_BUNDLE	«Рыцари Ледяного Трона» (предзаказ)	
+GLUE_STORE_PRODUCT_NAME_KARA_PRESALE_BUNDLE	«Вечеринка в Каражание»: особая акция	
+GLUE_STORE_PRODUCT_NAME_KARA_WING_BUNDLE	Приключение «Вечеринка в Каражане» ({0} |4(крыло,крыла,крыльев))	
+GLUE_STORE_PRODUCT_NAME_LOE_WING_BUNDLE	Приключение «Лига исследователей» ({0} |4(крыло,крыла,крыльев))	
+GLUE_STORE_PRODUCT_NAME_LOOT_PRESALE_BUNDLE	Кобольды и катакомбы (предзаказ)	
+GLUE_STORE_PRODUCT_NAME_MAMMOTH_BUNDLE	Пакет года Мамонта	
+GLUE_STORE_PRODUCT_NAME_MOBILE_UNKNOWN	Покупка с помощью мобильного платежа	
+GLUE_STORE_PRODUCT_NAME_NAXX_WING_BUNDLE	Приключение «Наксрамас» ({0} |4(крыло,крыла,крыльев))	
+GLUE_STORE_PRODUCT_NAME_OG_PRESALE_BUNDLE	Пробуждение древних богов (предзаказ)	
+GLUE_STORE_PRODUCT_NAME_PACK	{0} |4(комплект,комплекта,комплектов) «{1}»	0=quantity,1=pack type
+GLUE_STORE_PRODUCT_NAME_TGT_PRESALE_BUNDLE	Большой турнир (предзаказ)	
+GLUE_STORE_PRODUCT_NAME_ULD_PRESALE_BUNDLE	«Гробницы ужаса» (предзаказ)	
+GLUE_STORE_PRODUCT_NAME_ULD_WING_BUNDLE	Приключение «Гробницы ужаса» ({0} |4(крыло,крыла,крыльев))	
+GLUE_STORE_PRODUCT_NOT_AVAILABLE_HEADER	Недоступно	
+GLUE_STORE_PRODUCT_NOT_AVAILABLE_TEXT	Этот товар сейчас недоступен.	
+GLUE_STORE_PRODUCT_NOT_AVAILABLE_TEXT_HAS_ENDED	Этот товар больше не доступен.	
+GLUE_STORE_PRODUCT_NOT_AVAILABLE_TEXT_NOT_YET_STARTED	Этот товар пока недоступен.	
+GLUE_STORE_PRODUCT_PRICE	({0})	0=price
+GLUE_STORE_PRODUCT_PRICE_NA	Недоступно	
+GLUE_STORE_PURCHASE_LOCK_DESCRIPTION	С вашей учетной записи была совершена попытка покупки в {0}. Пожалуйста, запустите игру на том устройстве, с которого вы пытались совершить покупку в последний раз.\n\nЕсли эта неполадка не будет устранена, обратитесь в службу поддержки.	0=one of GLOBAL_STORE_MOBILE_NAME_*
+GLUE_STORE_PURCHASE_LOCK_HEADER	Ошибка при приобретении	
+GLUE_STORE_QUANTITY_DUST	{0}个奥术之尘	
+GLUE_STORE_QUANTITY_DUST_BUNDLE	{0}点奥术之尘以及更多	
+GLUE_STORE_QUANTITY_HEADLINE	Изменить количество	
+GLUE_STORE_QUANTITY_MESSAGE	Сколько комплектов вы хотите приобрести за золото? Количество не должно превышать {0}.	
+GLUE_STORE_QUANTITY_PACK	{0} |4(комплект,комплекта,комплектов)	
+GLUE_STORE_QUANTITY_PACK_BUNDLE	{0} |4(комплект,комплекта,комплектов) и не только!	
+GLUE_STORE_QUANTITY_PACK_PLUS_BONUS	{0}+{1}	0=base_quantity,1=bonus_quantity
+GLUE_STORE_RANDOM_CLASS_LEGENDARY	Легендарная карта класса	
+GLUE_STORE_RANDOM_DRAGON_LEGENDARY	Случайный легендарный дракон (классич.)	
+GLUE_STORE_RANDOM_LEGENDARY	Случайная легендарная карта	
+GLUE_STORE_READ_TOS_BUTTON_TEXT	Прочитать Условия продажи	
+GLUE_STORE_SPECIAL_OFFER	Специальное предложение!	
+GLUE_STORE_SUBMIT_CHALLENGE_BUTTON_TEXT	Купить	
+GLUE_STORE_SUMMARY_CHARGE_DETAILS	Способ оплаты: {0}	
+GLUE_STORE_SUMMARY_HEADLINE	Ваш заказ	
+GLUE_STORE_SUMMARY_ITEM_ORDERED	{0} x {1}	0=item quantity, 1=item name (one of GLUE_STORE_PRODUCT_NAME_*)
+GLUE_STORE_SUMMARY_ITEMS_ORDERED_HEADLINE	Заказанные товары	
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_ADVENTURE_BUNDLE	본 묶음 상품은 구매 후 환불되지 않으며, 구매 즉시 모든 지구 이용이 가능합니다.	
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_ADVENTURE_SINGLE	본 상품은 구매 후 환불되지 않으며, 구매 즉시 해당 지구에 내용이 적용됩니다	
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_CONFIRM	본 거래와 관련된 조건과 약관을 확인하며 이에 동의합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_EXPERT_PACK	이용기간 : 서비스 종료 시까지. 본 상품은 구매 후 7일 이내에 청약철회가 가능합니다. 다만, 1개의 카드팩이라도 개봉한 경우에는 청약철회가 불가능합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_FIRST_PURCHASE_BUNDLE	이용기간: 서비스 종료 시까지. 본 상품은 구매 후 즉시 임의 직업의 오리지널 전설 카드가 귀하의 카드에 추가되므로 구매 후 환불이 불가능합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_FORGE_TICKET	투기장 입장료는 구매 후 환불되지 않으며, 구매 즉시 투기장에 입장합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_HERO	본 상품은 구매 후 환불되지 않으며, 구매 즉시 이용이 가능합니다.	
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_PACK_PREORDER	사전 구매 상품은 실제 상품 출시 전까지 환불이 가능합니다.	
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_TAVERN_BRAWL_TICKET	영웅 난이도 난투 입장료는 구매 후 환불되지 않으며, 구매 즉시 영웅 난이도 난투에 입장합니다.\n서비스 제공기간: 해당 영웅 난이도 난투 만료시까지.\n만료 시 승리한 횟수에 따라 보상이 차등 지급되므로 만료 시간을 확인하시기 바랍니다.	
+GLUE_STORE_SUMMARY_PAY_NOW_TEXT	Оплатить	this is what you see when you confirm the purchase
+GLUE_STORE_SUMMARY_PRICE_HEADLINE	Цена	
+GLUE_STORE_SUMMARY_TAX_DISCLAIMER	Включая НДС.	
+GLUE_STORE_SUMMARY_TAX_DISCLAIMER_USD	Без учета налогов.	
+GLUE_STORE_SUMMARY_TOS_AGREEMENT	Нажав кнопку «{0}», вы подтверждаете, что ознакомились и согласились с Условиями продажи. Вы можете изменить способ оплаты по умолчанию или ознакомиться с Условиями продажи, нажав кнопку «{1}».	0=GLUE_STORE_SUMMARY_PAY_NOW_TEXT,1=GLUE_STORE_TERMS_OF_SALE_BUTTON_TEXT
+GLUE_STORE_SUMMARY_TOS_AGREEMENT_EU	Нажав кнопку «{0}», вы соглашаетесь с Условиями продажи и моментальной доставкой вашего заказа. Вы не сможете отменить заказ после того, как начнется его доставка. Вы можете изменить способ оплаты по умолчанию или ознакомиться с Условиями продажи, нажав кнопку «{1}».	0=GLUE_STORE_SUMMARY_PAY_NOW_TEXT,1=GLUE_STORE_TERMS_OF_SALE_BUTTON_TEXT
+GLUE_STORE_TERMS_OF_SALE_BUTTON_TEXT	?	
+GLUE_STORE_TGT_PREORDER_DATE	Уже в августе!	
+GLUE_STORE_THIS_WEEK_ONLY	ТОЛЬКО НА ЭТОЙ НЕДЕЛЕ!	
+GLUE_STORE_TRL_PREORDER_DATE	Выйдет в середине декабря*!	
+GLUE_STORE_TRL_PREORDER_DUST_DATE	卡牌包可以在十二月中旬\n打开！	
+GLUE_STORE_ULD_PREORDER_DATE	В августе*!	
+GLUE_STORE_ULD_PREORDER_DUST_DATE	卡牌包可以在八月打开！	
+GLUE_STORE_VC_BUTTON_TOOLTIP_HEADLINE	Приобрести	
+GLUE_TAVERN_BRAWL_HAS_ENDED_HEADER	Турнир завершен	
+GLUE_TAVERN_BRAWL_HAS_ENDED_TEXT	Текущая «Потасовка» закончилась. Не пропустите, скоро начнется новая!	
+GLUE_TAVERN_BRAWL_LABEL_ENDING_DAYS	Осталось: {0} |4(день,дня,дней)	
+GLUE_TAVERN_BRAWL_LABEL_ENDING_HOURS	Осталось: {0} |4(час,часа,часов)	
+GLUE_TAVERN_BRAWL_LABEL_ENDING_MINUTES	Осталось: {0} мин.	
+GLUE_TAVERN_BRAWL_LABEL_ENDING_OVER_1_MONTH	Осталось >1 месяца	
+GLUE_TAVERN_BRAWL_LABEL_ENDING_SECONDS	Осталось: {0} сек.	
+GLUE_TAVERN_BRAWL_LABEL_ENDING_WEEKS	Осталось: {0} |4(неделя,недели,недель)	
+GLUE_TAVERN_BRAWL_RETIRE	Отступить	
+GLUE_TAVERN_BRAWL_RETIRE_CONFIRM_DESC	Отступив, вы завершите ваше выступление в героической потасовке. Вы уверены?	
+GLUE_TAVERN_BRAWL_RETIRE_CONFIRM_HEADER	Отступить	
+GLUE_TAVERN_BRAWL_RETURNS_DAYS	Начало через\n<size=70>{0}</size>\n|4(день,дня,дней)	
+GLUE_TAVERN_BRAWL_RETURNS_HOURS	Начало через\n<size=70>{0}</size>\n|4(час,часа,часов)	
+GLUE_TAVERN_BRAWL_RETURNS_LESS_THAN_1_HOUR	Начало через\n<size=70>< 1 </size>ч.	
+GLUE_TAVERN_BRAWL_RETURNS_OVER_1_MONTH	Начало через\n<size=70>1+</size>\nмесяц	
+GLUE_TAVERN_BRAWL_RETURNS_UNKNOWN	Закрыто на\n\n\nремонт	the extra blank lines are there because of the background image filigree on the left and right of the number in "Back in X days" of the other strings. this string shows up when there is no future Tavern Brawl and has the same background filigree.
+GLUE_TAVERN_BRAWL_RETURNS_UNKNOWN_SINGLE_LINE	Закрыто на ремонт	
+GLUE_TAVERN_BRAWL_RETURNS_WEEKS	Начало через\n<size=70>{0}</size>\n|4(неделю,недели,недель)	
+GLUE_TAVERN_BRAWL_REWARD_DESC	Выиграйте комплект карт за первую победу на этой неделе!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_CARDBACK	Выиграйте рубашку для карт за первую победу на этой неделе!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_CARDBACK_QUOTA	Выиграйте рубашку для карт за {1} |4(победу,победы,побед) на этой неделе!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_FINISH	Выиграйте комплект карт за первое участие в потасовке на этой неделе!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_FINISH_CARDBACK	Выиграйте рубашку для карт за первое участие в потасовке на этой неделе!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_FINISH_MULTIPLE_PACKS	Получите {0} |4(комплект,комплекта,комплектов) карт за первое участие в потасовке на этой неделе!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_FINISH_QUOTA	Выиграйте комплект карт за участие в {1} |4(потасовке,потасовках,потасовках) на этой неделе!	{0} is always # of rewards/packs while {1} is how many game finishes.
+GLUE_TAVERN_BRAWL_REWARD_DESC_FINISH_QUOTA_CARDBACK	Выиграйте рубашку для карт за участие в {1} |4(потасовке,потасовках,потасовках) на этой неделе!	{0} is always # of rewards while {1} is how many game finishes.
+GLUE_TAVERN_BRAWL_REWARD_DESC_FINISH_QUOTA_MULTIPLE_PACKS	Выиграйте {0} |4(комплект,комплекта,комплектов) карт за участие в {1} |4(потасовке,потасовках,потасовках) на этой неделе!	{0} is always # of rewards/packs while {1} is how many game finishes.
+GLUE_TAVERN_BRAWL_REWARD_DESC_MULTIPLE_PACKS	Получите {0} |4(комплект,комплекта,комплектов) карт за вашу первую победу на этой неделе!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_QUOTA	Выиграйте комплект карт за {1} |4(победу,победы,побед) на этой неделе!	the zeroth parameter {0} is always # of rewards/packs while {1} is how many wins.
+GLUE_TAVERN_BRAWL_REWARD_DESC_QUOTA_MULTIPLE_PACKS	Выиграйте {0} |4(комплект,комплекта,комплектов) карт за {1} |4(победу,победы,побед) на побед на этой неделе!	{0} is always # of rewards/packs while {1} is how many wins.
+GLUE_TEMPORARY_ACCOUNT_DIALOG_BODY_01	Создав учетную запись, вы сможете сохранить свой прогресс, а также получите бесплатный комплект карт!	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_BODY_02	Создайте учетную запись, чтобы совершать покупки! Она также поможет вам сохранить достигнутый прогресс.	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_BODY_03	Создайте учетную запись, чтобы сохранить свой прогресс. В награду вы получите бесплатный комплект карт!	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_BODY_04	Прекрасно! А теперь сохраните свой прогресс, создав новую учетную запись!	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_BODY_05	Поздравляем! А теперь сохраните свой прогресс, создав новую учетную запись!	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_BODY_06	Чудесно! А теперь сохраните свой прогресс, создав новую учетную запись!	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_HEADER_01	Требуется учетная запись	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_HEADER_02	Хотите создать учетную запись?	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_HEADER_03	Не пора ли создать учетную запись?	
+GLUE_TEMPORARY_ACCOUNT_FRIENDS_LIST_BODY	Играть в Hearthstone веселей с друзьями!\n(требуется учетная запись)	
+GLUE_TEMPORARY_ACCOUNT_FRIENDS_LIST_HEADER	Играйте со своими друзьями	
+GLUE_TEMPORARY_ACCOUNT_GAME_MENU_BODY	• Сохранение вашей коллекции\n• Сохранение игрового прогресса\n• Бесплатный комплект карт\n• Общение и игра с друзьями\n• Имя игрока на ваш вкус\n• Возможность игры на других платформах	
+GLUE_TEMPORARY_ACCOUNT_SIGN_UP	Регистрация	
+GLUE_TEMPORARY_ACCOUNT_SWITCH_ACCOUNT_HEADER	Учетные записи	
+GLUE_TEXTURE_COMPRESSION_WARNING	Данная сборка не содержит подходящий для используемой вами платформы формат текстур. Производительность не будет оптимальной.	--TEMP-- This should be in Chinese
+GLUE_TEXTURE_COMPRESSION_WARNING_TITLE	Предупреждение о сжатии текстур	--TEMP-- This should be in Chinese
+GLUE_THE_CLOCK_BANNER_NEW_WAY	Новый формат игры:	
+GLUE_THE_CLOCK_BANNER_STANDARD	«Стандартный»	
+GLUE_THE_CLOCK_BANNER_YEAR	Год Дракона	
+GLUE_THE_CLOCK_DETAILS	Список карт стандартного формата меняется каждый год.	
+GLUE_THE_CLOCK_DETAILS_STANDARD	В играх стандартного формата можно использовать только новые карты.	
+GLUE_TIP_ADVENTURE_0	Соберите особую колоду, которая поможет вам одолеть самых сложных боссов.	
+GLUE_TIP_ADVENTURE_1	Не позволяйте сильным боссам одолеть вас. Соберите колоду, которая поможет вам победить их.	
+GLUE_TIP_ADVENTURE_2	Если вам не удается победить босса, возможно, стоит заменить некоторые карты в колоде.	
+GLUE_TIP_ADVENTURE_3	Подготовьтесь к бою! Соберите колоду, которая поможет вам одолеть выбранного босса.	
+GLUE_TIP_ADVENTURE_BOT_0	Вы в любой момент можете сбросить головоломку.\nЭкспериментируйте!	
+GLUE_TIP_ADVENTURE_BOT_1	Не каждая карта используется в каждом решении.	
+GLUE_TIP_ADVENTURE_BOT_2	Не сдавайтесь. Ищите необычные способы взаимодействия между картами.	
+GLUE_TIP_ADVENTURE_BOT_3	Иногда порядок разыгрывания карт\nсильно влияет на результат.	
+GLUE_TIP_ADVENTURE_BOT_4	Не бойтесь наносить урон собственным существам.\nДоктор Бум не возражает.	
+GLUE_TIP_ADVENTURE_BOT_5	Некоторые карты встречаются только в головоломках «Проекта Бумного дня».	
+GLUE_TIP_ADVENTURE_BOT_6	В головоломках типа «Отражение» нужно зеркально\nвоссоздать порядок и здоровье существ.	
+GLUE_TIP_ADVENTURE_BOT_7	Доктор Бум в вас верит!\nНо если вы его разочаруете, вам крышка.	
+GLUE_TIP_ADVENTURE_BOT_8	Пройдите предыдущий блок, чтобы открыть\nболее сложные головоломки доктора Бума!	
+GLUE_TIP_ADVENTURE_BOT_9	Внимание! Взрыв-боты взрывоопасны!\nКак, впрочем, и все остальное в лаборатории.	
+GLUE_TIP_ADVENTURE_DAL_1	На этот раз злодей — это вы! Используйте нечестные приемы и злые колоды.	
+GLUE_TIP_ADVENTURE_DAL_10	При проигрыше вам придется начинать поход заново.	
+GLUE_TIP_ADVENTURE_DAL_11	Сокровища с пассивными эффектами действуют постоянно и в течение всего похода.	
+GLUE_TIP_ADVENTURE_DAL_12	Подстраивайте свою колоду под найденные сокровища. Так она станет гораздо сильнее!	
+GLUE_TIP_ADVENTURE_DAL_13	Если ничто другое не помогло... всегда есть пролетайка.	
+GLUE_TIP_ADVENTURE_DAL_14	Одержите победу во всех пяти главах, чтобы получить рубашку для карт.	
+GLUE_TIP_ADVENTURE_DAL_15	Получите доступ ко всем пяти главам, чтобы открыть режим аномалии.	
+GLUE_TIP_ADVENTURE_DAL_16	Героический режим под силу только\nотъявленным преступникам. Все бои в нем сложнее!	
+GLUE_TIP_ADVENTURE_DAL_17	Во время передышки в таверне вы можете отредактировать колоду для похода.	
+GLUE_TIP_ADVENTURE_DAL_18	Лига ЗЛА ВСЕГДА добивается своего! Просто иногда\nдля этого требуется несколько попыток.	
+GLUE_TIP_ADVENTURE_DAL_19	Кирин-Тор — элитное объединение самых могущественных магов на свете.	
+GLUE_TIP_ADVENTURE_DAL_2	Выполняйте задачи, чтобы открыть доступ к дополнительным силам героев.	
+GLUE_TIP_ADVENTURE_DAL_20	В Лиге ЗЛА собрались отборные\nзлодеи со всего Азерота.	
+GLUE_TIP_ADVENTURE_DAL_21	Искатели приключений и жители Даларана попробуют разрушить ваши коварные планы!	
+GLUE_TIP_ADVENTURE_DAL_3	Одерживая победы в боях, вы сможете получить доступ к новым начальным колодам.	
+GLUE_TIP_ADVENTURE_DAL_4	Хочется чего-то непредсказуемого? Вас ждет режим аномалии!	
+GLUE_TIP_ADVENTURE_DAL_5	По мере захвата города бои становятся все сложнее.	
+GLUE_TIP_ADVENTURE_DAL_6	В каждой главе вас ждет необычный поворот —\nлюдные улицы или дополнительные боссы.	
+GLUE_TIP_ADVENTURE_DAL_7	Соберите универсальную колоду, ведь в каждом бою вам понадобится своя стратегия.	
+GLUE_TIP_ADVENTURE_DAL_8	После получения нового героя его можно использовать в любой главе.	
+GLUE_TIP_ADVENTURE_DAL_9	Некоторые герои лучше других справляются с необычными поворотами в отдельных главах.	
+GLUE_TIP_ADVENTURE_DRG_1	Играйте с готовыми колодами в обычном режиме и собирайте свои колоды для героического.	
+GLUE_TIP_ADVENTURE_DRG_10	Драконы собираются над Далараном. Грядет величайшая воздушная битва в истории Азерота.	
+GLUE_TIP_ADVENTURE_DRG_11	Не забывайте пользоваться особыми силами героя в обычном режиме.	
+GLUE_TIP_ADVENTURE_DRG_2	Испытайте себя в героическом режиме. Вам придется самостоятельно создавать колоды.	
+GLUE_TIP_ADVENTURE_DRG_3	Лига ЗЛА хочет найти останки Галакронда... и вернуть его к жизни!	
+GLUE_TIP_ADVENTURE_DRG_4	Без союзников-драконов Лига исследователей не сможет разрушить коварные планы Лиги ЗЛА.	
+GLUE_TIP_ADVENTURE_DRG_5	10 000 лет назад всем драконьим стаям пришлось объединиться, чтобы одолеть Галакронда.	
+GLUE_TIP_ADVENTURE_DRG_6	В храме Драконьего Покоя издавна собирались представители пяти драконьих стай.	
+GLUE_TIP_ADVENTURE_DRG_7	Рафаам принес последнюю кару в Нордскол, чтобы с ее помощью воскресить Галакронда.	
+GLUE_TIP_ADVENTURE_DRG_8	Вас ждут две отдельные кампании — для Лиги исследователей и Лиги ЗЛА.	
+GLUE_TIP_ADVENTURE_DRG_9	Пройдите кампанию за обе Лиги, чтобы узнать, как все было на самом деле!	
+GLUE_TIP_ADVENTURE_GIL_0	Чем дальше вы зайдете в Ведьмин лес, тем сложнее будут бои.	
+GLUE_TIP_ADVENTURE_GIL_1	У каждого охотника на монстров есть свой заклятый враг.	
+GLUE_TIP_ADVENTURE_GIL_10	Когда кажется, что все пропало... Вам поможет «Рикошет».	
+GLUE_TIP_ADVENTURE_GIL_2	Никогда не знаешь, что за монстр притаился за углом. Лучше собрать колоду посильнее!	
+GLUE_TIP_ADVENTURE_GIL_3	При победе над некоторыми монстрами можно получить уникальные сокровища.	
+GLUE_TIP_ADVENTURE_GIL_4	Вам НИКОГДА не выковать легендарный Кель'делар. И уж точно не здесь.	
+GLUE_TIP_ADVENTURE_GIL_5	Сокровища с пассивными эффектами действуют постоянно и в течение всего похода.	
+GLUE_TIP_ADVENTURE_GIL_6	Подстраивайте свою колоду под найденные сокровища. Так она станет гораздо сильнее!	
+GLUE_TIP_ADVENTURE_GIL_7	Каждый охотник на монстров будет покорять Ведьмин лес по-своему.	
+GLUE_TIP_ADVENTURE_GIL_8	Где же прячется Хагата? Чтобы ее найти, всем четырем охотникам на монстров нужно действовать сообща!	
+GLUE_TIP_ADVENTURE_GIL_9	В Ведьмином лесу вас ждет больше 40 разных монстров.	
+GLUE_TIP_ADVENTURE_LOOT_0	Чем глубже вы забираетесь в подземелье, тем сложнее бои.	
+GLUE_TIP_ADVENTURE_LOOT_1	В конце подземелья вы встретите одного из пяти ужасных боссов.	
+GLUE_TIP_ADVENTURE_LOOT_10	Когда кажется, что все пропало... Вас выручит палка-сжигалка.	
+GLUE_TIP_ADVENTURE_LOOT_2	Никогда не знаешь, что за босс притаился за углом. Лучше собрать колоду посильнее!	
+GLUE_TIP_ADVENTURE_LOOT_3	Некоторые противники встречаются реже остальных... Но и награда за них лучше!	
+GLUE_TIP_ADVENTURE_LOOT_4	Вам НИКОГДА не выковать легендарный Кель'делар. Не-а.	
+GLUE_TIP_ADVENTURE_LOOT_5	Сокровища с пассивными эффектами действуют постоянно и в течение всего похода.	
+GLUE_TIP_ADVENTURE_LOOT_6	Подстраивайте свою колоду под найденные сокровища. Так она станет гораздо сильнее!	
+GLUE_TIP_ADVENTURE_LOOT_7	У каждого из девяти классов есть уникальное снаряжение для походов в подземелья.	
+GLUE_TIP_ADVENTURE_LOOT_8	Завершите поход в подземелье каждым из девяти классов, чтобы получить уникальную рубашку для карт!	
+GLUE_TIP_ADVENTURE_LOOT_9	Амулет господства добавляет существ в вашу колоду. Используйте его с умом!	
+GLUE_TIP_ADVENTURE_TRL_0	Каждый ваш новый соперник\nбудет сильнее предыдущего.	
+GLUE_TIP_ADVENTURE_TRL_1	Ознакомьтесь с сильными и слабыми\nсторонами своих соперников!	
+GLUE_TIP_ADVENTURE_TRL_2	Оберегайте своего идола.\nБез него вы станете гораздо слабее.	
+GLUE_TIP_ADVENTURE_TRL_3	Некоторые напарники\nначинают матч уже у вас в руке.	
+GLUE_TIP_ADVENTURE_TRL_4	Когда ваш идол впадает в спячку,\nиграйте от обороны. Главное – продержаться.	
+GLUE_TIP_ADVENTURE_TRL_5	Потеря идола сильно ослабит вашего противника.\nВыбивайте его в первую очередь!	
+GLUE_TIP_ADVENTURE_TRL_6	У каждой команды есть три уникальных идола\nи шесть уникальных соратников.	
+GLUE_TIP_ADVENTURE_TRL_7	Собирайте универсальные колоды!\nВерность одной стратегии может сыграть против вас.	
+GLUE_TIP_ADVENTURE_TRL_8	Выбирайте напарников, хорошо сочетающихся с вашим идолом...\nили компенсирующих его слабые стороны!	
+GLUE_TIP_ADVENTURE_TRL_9	В случае поражения вам придется\nначинать Игрища с начала.	
+GLUE_TIP_ADVENTURE_ULD_1	Победите ульдумских повелителей кар и спасите мир!	
+GLUE_TIP_ADVENTURE_ULD_10	После получения нового героя его можно использовать в любой главе.	
+GLUE_TIP_ADVENTURE_ULD_11	При проигрыше вам придется начинать поход заново.	
+GLUE_TIP_ADVENTURE_ULD_12	Сокровища с пассивными эффектами действуют постоянно и в течение всего похода.	
+GLUE_TIP_ADVENTURE_ULD_13	Подстраивайте свою колоду под найденные сокровища. Так она станет гораздо сильнее!	
+GLUE_TIP_ADVENTURE_ULD_14	В безвыходных ситуациях остается только использовать камень возвращения. И сейчас как раз такая!	
+GLUE_TIP_ADVENTURE_ULD_15	Пройдите финал и получите рубашку.\nА потом еще одну_— за героический режим!	
+GLUE_TIP_ADVENTURE_ULD_16	Получите доступ ко всем четырем главам, чтобы открыть режим аномалии.	
+GLUE_TIP_ADVENTURE_ULD_17	Героический режим предназначен для бывалых\nисследователей. Все бои в нем сложнее!	
+GLUE_TIP_ADVENTURE_ULD_18	Во время передышки можно подправить\nсвою колоду для похода.	
+GLUE_TIP_ADVENTURE_ULD_19	Повелители кар — крупные создания. Очень крупные.\nВыматывайте их на протяжении нескольких боев!	
+GLUE_TIP_ADVENTURE_ULD_2	Каждый из ваших героев может собрать колоду с картами сразу двух классов. Пробуйте новые сочетания!	
+GLUE_TIP_ADVENTURE_ULD_20	Нашим героям просто необходимо нарушить планы Рафаама...\nДело за малым: понять, в чем они заключаются.	
+GLUE_TIP_ADVENTURE_ULD_21	Наши герои сразятся с древними стражами,\nобитателями песков... и агентами ЗЛА.	
+GLUE_TIP_ADVENTURE_ULD_22	В Чертогах Созидания таится сила, способная\nсоздавать — или разрушать! — целые миры.	
+GLUE_TIP_ADVENTURE_ULD_23	Рафаам даровал Текану власть над карой огненной.	
+GLUE_TIP_ADVENTURE_ULD_3	Выполняйте задачи, чтобы открыть больше начальных сокровищ для героев.	
+GLUE_TIP_ADVENTURE_ULD_4	Одерживая победы в боях, вы сможете получить доступ к новым начальным колодам.	
+GLUE_TIP_ADVENTURE_ULD_5	Хочется чего-то непредсказуемого? Вас ждет режим аномалии!	
+GLUE_TIP_ADVENTURE_ULD_6	Чем дальше вы продвинетесь в прохождении главы, тем сложнее будут бои.	
+GLUE_TIP_ADVENTURE_ULD_7	В конце каждой главы поджидает повелитель кары —\nвнушительный противник с огромным запасом здоровья.	
+GLUE_TIP_ADVENTURE_ULD_8	В каждой главе есть внезапный поворот, подстроенный повелителями кар.	
+GLUE_TIP_ADVENTURE_ULD_9	Соберите универсальную колоду, ведь в каждом бою вам понадобится своя стратегия.	
+GLUE_TIP_BACON_0	Получив триплет, вы также раскапываете существо из таверны на 1 уровень выше.	
+GLUE_TIP_BACON_1	Существа атакуют слева направо, выбирая случайные цели,\nесли у противника нет существ с провокацией.	
+GLUE_TIP_BACON_10	Серии побед отмечаются на табло символом «В ударе».	
+GLUE_TIP_BACON_11	Постоянно действуют только усиления, полученные в таверне.\nУсиления, полученные в бою, рассеиваются после битвы.	
+GLUE_TIP_BACON_12	Если ваши оппоненты приобретут много копий одного существа, вам оно будет попадаться реже.	
+GLUE_TIP_BACON_13	Проданные существа возвращаются в таверну, где вы снова можете их завербовать.	
+GLUE_TIP_BACON_14	Если вы потратите все золото на повышение уровня таверны, ваша армия может оказаться слишком слабой.	
+GLUE_TIP_BACON_15	Если не повышать уровень таверны, ваша армия станет слишком слабой, и вы можете проиграть.	
+GLUE_TIP_BACON_16	Мурлоки сильнее на ранних этапах игры, механизмы — на поздних.	
+GLUE_TIP_BACON_17	Если у вас остался 1 золотой, обновите таверну. Существо можно заморозить до следующего хода!	
+GLUE_TIP_BACON_18	Когда сражаются 8 игроков, быть в четверке лучших — это победа! \nТот, кто займет первое место, получит корону!	
+GLUE_TIP_BACON_19	Игроки вербуют существ из общего для всех набора.	
+GLUE_TIP_BACON_2	Оборотень Зерус может превратиться в любое существо из таверны любого уровня!	
+GLUE_TIP_BACON_20	Когда оппонент проигрывает сражение, его существа возвращаются в общий набор.	
+GLUE_TIP_BACON_3	Когда вы побеждаете, ваш герой и существа наносят урон, равный уровню их таверны.	
+GLUE_TIP_BACON_4	Каждый ход стоимость улучшения таверны снижается на 1.	
+GLUE_TIP_BACON_5	Есть только шесть копий существ из таверны 6-го уровня.\n Завербованные существа становятся недоступными для всех!	
+GLUE_TIP_BACON_6	Заморозьте существо, чтобы завербовать его на следующий ход. Повторите действие, чтобы отменить заморозку.	
+GLUE_TIP_BACON_7	Три золотых существа не объединяются в еще более мощный триплет.	
+GLUE_TIP_BACON_8	Ваш следующий оппонент виден на табло. Готовьтесь к сражению!	
+GLUE_TIP_BACON_9	Если в матче останется нечетное количество игроков, Кел'Тузад воскресит существ выбывшего оппонента и вступит в бой.	
+GLUE_TIP_DEFAULT_0	Вы можете приобрести дополнительные комплекты в магазине.	
+GLUE_TIP_DEFAULT_1	Чтобы изменить название колоды, щелкните по вашему герою во время редактирования колоды.	
+GLUE_TIP_DEFAULT_1_TOUCH	Чтобы изменить название колоды, нажмите на вашего героя во время редактирования колоды.	
+GLUE_TIP_DEFAULT_10	На Арене вы можете собрать колоду из случайных карт, а также выиграть призы!	
+GLUE_TIP_DEFAULT_11	Вы получаете базовые карты при повышении уровня героя. Их нельзя распылить или создать.	
+GLUE_TIP_DEFAULT_12	Распылив золотые карты, можно получить много чародейной пыли!	
+GLUE_TIP_DEFAULT_13	Воспользуйтесь поиском по вашей коллекции, чтобы найти все карты со способностью «Провокация».	
+GLUE_TIP_DEFAULT_14	Базовые карты можно получить, повышая уровень героя. Классические карты можно найти только в классических комплектах.	
+GLUE_TIP_DEFAULT_15	Матчи с другими игроками принесут вам дополнительный опыт.	
+GLUE_TIP_DEFAULT_16	Щелкните правой кнопкой по герою противника, чтобы отключить сообщения.	
+GLUE_TIP_DEFAULT_16_TOUCH	Нажмите на героя противника, чтобы отключить сообщения.	
+GLUE_TIP_DEFAULT_17	Одержав 500 побед за один класс в рейтинговых играх или на Арене, вы получите золотого героя этого класса.	
+GLUE_TIP_DEFAULT_18	Кнопка в левом нижнем углу предназначена для добавления друзей в список друзей.	
+GLUE_TIP_DEFAULT_18_PHONE	С помощью кнопки в верхнем левом углу вы можете добавить игроков в список друзей.	
+GLUE_TIP_DEFAULT_19	В рейтинговых играх существует 50 различных рангов, а также особый ранг – «Легенда».	
+GLUE_TIP_DEFAULT_2	Щелкните правой кнопкой по вашему герою, чтобы выбрать эмоцию.	
+GLUE_TIP_DEFAULT_2_TOUCH	Нажмите на вашего героя, чтобы выбрать эмоцию.	
+GLUE_TIP_DEFAULT_20	Нажмите кнопку с изображением глаза в списке друзей, чтобы посмотреть, как играет ваш друг!	
+GLUE_TIP_DEFAULT_21	Играйте на телефоне, планшете или компьютере. Пользуйтесь единой коллекцией на всех устройствах!	
+GLUE_TIP_DEFAULT_22	Вы можете приобрести нового героя для своего любимого класса во внутриигровом магазине.	
+GLUE_TIP_DEFAULT_23	В стандартном формате используются базовые и классические карты, а также карты из наборов, вышедших за 2 последних года.	
+GLUE_TIP_DEFAULT_24	Щелкните по вашему герою во время редактирования колоды, чтобы переключиться между стандартным и вольным форматами.	
+GLUE_TIP_DEFAULT_24_TOUCH	Нажмите на вашего героя во время редактирования колоды, чтобы переключиться между стандартным и вольным режимами.	
+GLUE_TIP_DEFAULT_25	Сейчас год Дракона! Каждый год тематика будет меняться.	
+GLUE_TIP_DEFAULT_26	Чтобы выбрать отображаемые наборы, щелкните по кнопке фильтра в нижней левой части экрана во время просмотра вашей коллекции.	
+GLUE_TIP_DEFAULT_26_TOUCH	Чтобы выбрать отображаемый набор, нажмите кнопку фильтра в нижней левой части экрана во время просмотра вашей коллекции.	
+GLUE_TIP_DEFAULT_27	Карты из каждого нового набора можно использовать и в вольном, и в стандартном форматах.	
+GLUE_TIP_DEFAULT_28	Вольный формат так назван не случайно! В нем можно использовать любые карты!	
+GLUE_TIP_DEFAULT_29	В стандартном формате постоянно появляются новые стратегии и меняются старые.	
+GLUE_TIP_DEFAULT_3	Если вам нужна помощь в составлении колоды, обратите внимание на кнопку «Получить совет».	
+GLUE_TIP_DEFAULT_30	Со временем будут выходить новые шаблоны для колод.	
+GLUE_TIP_DEFAULT_31	В стандартном формате используются новейшие наборы карт, так что вам не придется осваивать все старые карты.	
+GLUE_TIP_DEFAULT_32	Теперь вы можете выполнять задания, играя со своими друзьями.	
+GLUE_TIP_DEFAULT_33	Выполняйте задания, соревнуясь с друзьями!	
+GLUE_TIP_DEFAULT_4	Редкость карты можно определить по самоцвету в центре.	
+GLUE_TIP_DEFAULT_5	Цвет и редкость карт: белый – обычная, синий – редкая, фиолетовый – эпическая, оранжевый – легендарная.	
+GLUE_TIP_DEFAULT_6	В каждом комплекте есть одна редкая карта или лучше... но это как минимум!	
+GLUE_TIP_DEFAULT_7	Если у вас закончились задания, завтра вы сможете получить новое.	
+GLUE_TIP_DEFAULT_8	Выиграв в течение сезона 5 рейтинговых матчей, вы получите особую рубашку этого сезона.	
+GLUE_TIP_DEFAULT_8_RANKED_2.0	Достигнув в течение сезона 20-го ранга, вы получите особую рубашку этого сезона.	
+GLUE_TIP_DEFAULT_9	Выполняйте задания, чтобы получить золото, за которое можно приобрести комплекты карт или доступ к Арене.	
+GLUE_TIP_FORGE_0	После третьего поражения вы больше не сможете играть этой колодой на Арене.	
+GLUE_TIP_FORGE_1	С каждой победой на Арене приз становится лучше!	
+GLUE_TIP_FORGE_2	Не обязательно играть все матчи на Арене в один день.	
+GLUE_TIP_HEROICBRAWL_0	Для этой потасовки очень важно подобрать игроков одного уровня.\nВремя ожидания может быть больше обычного.	
+GLUE_TIP_PLAY_0	Игра подберет вам подходящего по уровню противника.	
+GLUE_TIP_PLAY_1	Каждый ваш выигрыш и проигрыш учитывается при подборе подходящих противников.	
+GLUE_TIP_PLAY_2	У каждого класса есть 5 различных базовых карт, которые можно получить, повышая уровень героя.	
+GLUE_TIP_PLAY_3	Выполняйте задания, чтобы получить золото, за которое можно приобрести комплекты карт или доступ к Арене.	
+GLUE_TIP_PLAY_4	В рейтинговых играх существует 50 различных рангов, а также особый ранг – «Легенда».	
+GLUE_TIP_PLAY_5	В каждой колоде может быть две копии каждой карты, но только одна копия легендарной карты.	
+GLUE_TIP_PLAY_6	Арена – это отличный способ выиграть призы в небольшом состязании!	
+GLUE_TIP_PLAY_7	Не обязательно играть все матчи на Арене в один день.	
+GLUE_TIP_PLAY_8	Выиграв в течение сезона 5 рейтинговых матчей, вы получите особую рубашку этого сезона.	
+GLUE_TIP_PLAY_8_RANKED_2.0	Достигнув в течение сезона 20-го ранга, вы получите особую рубашку этого сезона.	
+GLUE_TIP_PRACTICE_0	Вы можете открыть доступ к героям, побеждая их в режиме тренировки.	
+GLUE_TIP_PRACTICE_1	Тренировка – это только подготовка к настоящей Игре!	
+GLUE_TIP_PRACTICE_2	Игра подберет вам подходящего по уровню противника.	
+GLUE_TIP_PRACTICE_3	Вы можете собирать свои колоды в меню «Моя коллекция».	
+GLUE_TIP_PRACTICE_4	У каждого класса есть 5 различных базовых карт, которые можно получить, повышая уровень героя.	
+GLUE_TIP_PRACTICE_5	Выполняйте задания в режиме игры, чтобы зарабатывать золото!	
+GLUE_TIP_PRACTICE_6	Атаковать героя или существо противника? Правильный ответ может стать ключом к победе.	
+GLUE_TIP_PRACTICE_7	После 10-го уровня вы будете зарабатывать больше опыта, сражаясь против других игроков.	
+GLUE_TIP_TAVERNBRAWL_0	Каждую неделю – новые, сумасшедшие правила для потасовки!	
+GLUE_TIP_TAVERNBRAWL_1	После любой потасовки нужно прибраться в таверне. Если двери закрыты — попробуйте зайти через часик!	
+GLUE_TIP_TAVERNBRAWL_2		This tip was removed. Translators: please leave this blank. Blank tips are skipped over. For devs: when adding new tips later, feel free to use this slot (and update this comment).
+GLUE_TIP_TAVERNBRAWL_3	Получить комплект карт за победу можно лишь раз в неделю. Сражайтесь ради веселья!	
+GLUE_TIP_TAVERNBRAWL_4	Иногда вы будете играть готовой колодой, а иногда вам придется собрать колоду самостоятельно.	
+GLUE_TIP_TAVERNBRAWL_5	Некоторые правила потасовки могут повторяться!	
+GLUE_TIP_TAVERNBRAWL_6	Пока действует «Потасовка», вы можете бросить вызов другу и пригласить его сразиться с вами.	
+GLUE_TIP_TAVERNBRAWL_7	В режиме «Потасовка» можно выполнять ежедневные задания!	
+GLUE_TIP_TAVERNBRAWL_8	Как и в режиме «Игра», вы будете получать 10 золотых монет за каждые три победы в потасовке.	
+GLUE_TOOLTIP_ALTERNATE_WINS_DESC	Одержите {0} побед за этот класс в рейтинговых матчах или на Арене, чтобы получить прославленного героя!	
+GLUE_TOOLTIP_BOOSTER_CURRENCY_DESCRIPTION	За чародейские сферы можно покупать комплекты карт.	
+GLUE_TOOLTIP_BOOSTER_CURRENCY_HEADER	Чародейские сферы	
+GLUE_TOOLTIP_BUTTON_ADVENTURE_DESC	Отправьтесь в новые приключения и отточите навыки игры против ИИ.	
+GLUE_TOOLTIP_BUTTON_ADVENTURE_HEADLINE	Приключения	
+GLUE_TOOLTIP_BUTTON_BACON_DESC_EARLY_ACCESS	Поля сражений открыты в режиме раннего доступа.\nЧтобы получить доступ, сделайте предзаказ любого пакета дополнения «Натиск драконов».	
+GLUE_TOOLTIP_BUTTON_BACON_HEADLINE	Поля сражений	
+GLUE_TOOLTIP_BUTTON_COLLECTION_DESC	Просматривайте карты и составляйте колоды.	
+GLUE_TOOLTIP_BUTTON_COLLECTION_HEADLINE	Моя коллекция	
+GLUE_TOOLTIP_BUTTON_DISABLED_DESC	Эта возможность временно недоступна.	
+GLUE_TOOLTIP_BUTTON_FORGE_HEADLINE	Арена	
+GLUE_TOOLTIP_BUTTON_FORGE_NOT_UNLOCKED	Этот режим будет доступен, когда вы достигнете 10-го уровня каждым классом.	
+GLUE_TOOLTIP_BUTTON_GAME_MODES_DESC	Попробуйте новые режимы игры.	
+GLUE_TOOLTIP_BUTTON_GAME_MODES_HEADLINE	Режимы игры	
+GLUE_TOOLTIP_BUTTON_PACKOPEN_DESC	Откройте доступные комплекты, чтобы добавить карты в свою коллекцию.	
+GLUE_TOOLTIP_BUTTON_PACKOPEN_HEADLINE	Открыть комплекты	
+GLUE_TOOLTIP_BUTTON_QUESTLOG_DESC	Посмотрите текущий прогресс.	
+GLUE_TOOLTIP_BUTTON_QUESTLOG_HEADLINE	Журнал заданий	
+GLUE_TOOLTIP_BUTTON_STORE_DESC	Купить комплекты за золото или настоящие деньги.	
+GLUE_TOOLTIP_BUTTON_STORE_HEADLINE	Магазин	
+GLUE_TOOLTIP_BUTTON_TAVERN_BRAWL_DESC	Новое испытание каждую неделю!	
+GLUE_TOOLTIP_BUTTON_TAVERN_BRAWL_HEADLINE	Потасовка в таверне	
+GLUE_TOOLTIP_BUTTON_TAVERN_BRAWL_NOT_UNLOCKED	Этот режим будет доступен, когда вы достигнете 20-го уровня каким-либо классом.	
+GLUE_TOOLTIP_BUTTON_TOURNAMENT_DESC	Играйте против равных вам по силе противников.	
+GLUE_TOOLTIP_BUTTON_TOURNAMENT_HEADLINE	Игра	
+GLUE_TOOLTIP_CASUAL_BUTTON	Найдите равного вам по силам соперника и играйте ради удовольствия!	
+GLUE_TOOLTIP_DOWNLOAD_DESCRIPTION	Hearthstone обновляется, пока вы играете!	
+GLUE_TOOLTIP_DOWNLOAD_HEADER	Загрузка	
+GLUE_TOOLTIP_GOLD_DESCRIPTION	За золото вы можете приобрести комплекты карт или доступ к Арене.	
+GLUE_TOOLTIP_GOLD_HEADER	Золото	
+GLUE_TOOLTIP_GOLDEN_WINS_DESC	Одержите 500 побед за этот класс в рейтинговых матчах или на Арене, чтобы получить золотого классического героя!	
+GLUE_TOOLTIP_GOLDEN_WINS_HEADER	Всего побед	
+GLUE_TOOLTIP_HOW_TO_UNLOCK_DECKS	Откройте эту колоду, победив других героев в любом режиме.	
+GLUE_TOOLTIP_RANKED_BUTTON	Повысьте свой рейтинг, сражаясь с другими игроками!	
+GLUE_TOOLTIP_VIRTUAL_CURRENCY_DESCRIPTION	За рунические камни можно покупать чародейские сферы, героев, приключения и пропуски на арену.	
+GLUE_TOOLTIP_VIRTUAL_CURRENCY_HEADER	Рунические камни	
+GLUE_TOURNAMENT	Игра	
+GLUE_TOURNAMENT_CASUAL	Обычная	
+GLUE_TOURNAMENT_CASUAL_WILD	Вольная – обычная	
+GLUE_TOURNAMENT_RANKED	Рейтинг	
+GLUE_TOURNAMENT_RANKED_WILD	Вольная – рейтинг	
+GLUE_TOURNAMENT_STANDARD_DESC	Можно использовать только базовый и классический набор, а также карты, вышедшие в течение 2 последних лет.	
+GLUE_TOURNAMENT_SWITCH_TO_STANDARD	Попробуйте перейти в стандартный режим!	
+GLUE_TOURNAMENT_SWITCH_TO_WILD	Здесь можно сменить формат колоды на вольный.	
+GLUE_TOURNAMENT_UNRANKED_DESC	Для нерейтинговых игр существует отдельная система подбора противников. За победу в этих играх вы не получите медали.	
+GLUE_TOURNAMENT_UNRANKED_MODE	Игра без рейтинга	
+GLUE_TOURNAMENT_WILD_DESC	Можно использовать любые карты.	
+GLUE_TRL_LOADING_BAR_TASK_1	Пускаем волну...	
+GLUE_TRL_LOADING_BAR_TASK_10	Зажигаем петарды...	
+GLUE_TRL_LOADING_BAR_TASK_11	Начищаем клыки...	
+GLUE_TRL_LOADING_BAR_TASK_12	Наносим боевой раскрас...	
+GLUE_TRL_LOADING_BAR_TASK_13	Барыжим билетами...	
+GLUE_TRL_LOADING_BAR_TASK_14	Едим нездоровую пищу...	
+GLUE_TRL_LOADING_BAR_TASK_15	Притопываем...	
+GLUE_TRL_LOADING_BAR_TASK_16	Качаем железо...	
+GLUE_TRL_LOADING_BAR_TASK_17	Разогреваемся...	
+GLUE_TRL_LOADING_BAR_TASK_18	Тыкаем пальцем...	
+GLUE_TRL_LOADING_BAR_TASK_2	Точим клинки...	
+GLUE_TRL_LOADING_BAR_TASK_3	Воем под бой барабанов...	
+GLUE_TRL_LOADING_BAR_TASK_4	Треплем языком...	
+GLUE_TRL_LOADING_BAR_TASK_5	Поигрываем мускулами...	
+GLUE_TRL_LOADING_BAR_TASK_6	Раздаем автографы...	
+GLUE_TRL_LOADING_BAR_TASK_7	Бросаемся стульями...	
+GLUE_TRL_LOADING_BAR_TASK_8	Крауд-серфим...	
+GLUE_TRL_LOADING_BAR_TASK_9	Разносим все...	
+GLUE_ULD_LOADING_BAR_TASK_1	Копаем ямы...	
+GLUE_ULD_LOADING_BAR_TASK_10	Расшифровываем письмена...	
+GLUE_ULD_LOADING_BAR_TASK_11	Зажигаем факелы...	
+GLUE_ULD_LOADING_BAR_TASK_12	Учим верблюдов манерам...	
+GLUE_ULD_LOADING_BAR_TASK_13	ААА, ПЕСЧАНАЯ АКУЛА!!!	
+GLUE_ULD_LOADING_BAR_TASK_14	Расставляем ловушки...	
+GLUE_ULD_LOADING_BAR_TASK_15	Экономим воду...	
+GLUE_ULD_LOADING_BAR_TASK_16	Рыскаем у обелисков...	
+GLUE_ULD_LOADING_BAR_TASK_17	Сверяемся с картой...	
+GLUE_ULD_LOADING_BAR_TASK_18	Саркофажничаем...	
+GLUE_ULD_LOADING_BAR_TASK_19	Закапываем сокровища...	
+GLUE_ULD_LOADING_BAR_TASK_2	Раскапываем руины...	
+GLUE_ULD_LOADING_BAR_TASK_20	Катаем папирус...	
+GLUE_ULD_LOADING_BAR_TASK_3	Обертываем мумии...	
+GLUE_ULD_LOADING_BAR_TASK_4	Щелкаем кнутом...	
+GLUE_ULD_LOADING_BAR_TASK_5	Пускаем песок в глаза...	
+GLUE_ULD_LOADING_BAR_TASK_6	Озадачиваем сфинксов...	
+GLUE_ULD_LOADING_BAR_TASK_7	Спасаем мир...	
+GLUE_ULD_LOADING_BAR_TASK_8	Скарабейничаем...	
+GLUE_ULD_LOADING_BAR_TASK_9	Возводим пирамиды...	
+GLUE_UNRELIABLE_GPU_WARNING	Это устройство использует графическое оборудование, не поддерживаемое игрой. Вы можете столкнуться с графическими неполадками или проблемами с быстродействием игры.\n\nНажмите кнопку «Поддержка», чтобы получить дополнительные сведения.	
+GLUE_UNRELIABLE_GPU_WARNING_TITLE	Графическое устройство	
+GLUE_VIEW_DECK	Колода	
+GLUE_WEB_PURCHASE_BUTTON	Понятно!	
+GLUE_WEB_PURCHASE_DESC	Покупка завершена!\nПисьмо с подробной информацией выслано вам на электронную почту.	
+GLUE_WEB_PURCHASE_TITLE	Онлайн-покупка	
+GLUE_WELCOME_BUNDLE_RANDOM_CARD_SCROLL_DESC	Вы получили карту «{0}» из стартового пакета!	
+GLUE_WELCOME_BUNDLE_RANDOM_CARD_SCROLL_TITLE	Легендарная карта из стартового пакета!	
+GLUE_WIN_STREAK	Серия побед: {0} подряд	0=number of wins
+GLUE_WINS	Победы	header for number of wins
+GLUE_WOODEN_BANNER_TITLE_FRIEND_WEEK	Поединок друзей!	
+VO_BOSS_CHO_Male_Ogre_INTRO_QL_GOONS2_01	ЭТО НАША ТЕРРИТОРИЯ!	
+VO_FIRE_FESTIVAL_RAGNAROS_FESTIVAL	ФЕСТИВАЛЬ ИМЕНИ МЕНЯ НАСТУПИЛ!	
