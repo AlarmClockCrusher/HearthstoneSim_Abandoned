@@ -2303,15 +2303,12 @@ class MortalCoil(Spell):
 	#If the target is None due to Mayor Noggenfogger's randomization, nothing happens.
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			if target.onBoard or target.inHand:
-				damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-				PRINT(self, "Mortal Coil deals %d damage to minion %s"%(damage, target.name))
-				if self.dealsDamage(target, damage)[1] > 1:
-					PRINT(self, "Mortal Coil kills the target and lets player draw a card.")
-					self.Game.Hand_Deck.drawCard(self.ID)
-			else: #The minion is dead and removed or shuffled into deck.
-				if target.dead and target.inDeck == False: #The minion is dead already.
-					self.Game.Hand_Deck.drawCard(self.ID)
+			damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+			PRINT(self, "Mortal Coil deals %d damage to minion %s"%(damage, target.name))
+			self.dealsDamage(target, damage)
+			if target.health < 1 or target.dead:
+				PRINT(self, "Mortal Coil kills the target and lets player draw a card.")
+				self.Game.Hand_Deck.drawCard(self.ID)
 		return target
 		
 		
