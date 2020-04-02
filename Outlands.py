@@ -33,7 +33,8 @@ def PRINT(obj, string, *args):
 		GUI = obj.Game.GUI
 	elif hasattr(obj, "entity"):
 		GUI = obj.entity.Game.GUI
-		
+	else:
+		GUI = None
 	if GUI != None:
 		GUI.printInfo(string)
 	else:
@@ -2654,25 +2655,22 @@ class ShadowjewelerHanar(Minion):
 	mana, attack, health = 2, 1, 5
 	index = "Outlands~Rogue~Minion~2~1~5~None~Shadowjeweler Hanar~Legendary"
 	requireTarget, keyWord, description = False, "", "After you play a Secret, Discover a Secret from a different class"
-	poolIdentifier = "Secrets except Rogue"
+	poolIdentifier = "Rogue Secrets"
 	@classmethod
 	def generatePool(cls, Game):
 		classes, lists = [], []
-		secrets, secrets_except = {}, {}
-		for Class in Classes: #拿到所有职业的奥秘字典
+		secrets = {}
+		for Class in Classes:
 			for key, value in Game.ClassCards[Class].items():
 				if "~~Secret" in key:
 					if Class not in secrets.keys():
 						secrets[Class] = [value]
 					else:
 						secrets[Class].append(value)
-		for Class in ClassesandNeutral:
-			objs = []
-			for key, value in secrets.items():
-				if Class != key:
-					objs += value
-			secrets_except["Secrets except "+Class] = objs
-		return list(secrets_except.keys()), list(secrets_except.values())
+		for key, value in secrets.items():
+			classes.append(key+" Secrets")
+			lists.append(value)
+		return classes, lists
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -2691,13 +2689,18 @@ class Trigger_ShadowjewelerHanar(TriggeronBoard):
 		return self.entity.onBoard and subject.ID == self.entity.ID and "~~Secret" in subject.index
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self, "After player plays a Secret, %s lets player Discover a Secret from a different class"%self.entity.name)
-		key = "Secrets except " + subject.Class
-		secrets = np.random.choice(self.entity.Game.RNGPools[key], 3, replace=False)
-		self.entity.Game.options = [secret(self.entity.Game, self.entity.ID) for secret in secrets]
-		self.entity.Game.DiscoverHandler.startDiscover(self.entity)
-		
-		
+		if self.entity.ID == self.entity.Game.turn and self.entity.Game.Hand_Deck.handNotFull(self.entity.ID):
+			PRINT(self, "After player plays a Secret, %s lets player Discover a Secret from a different class"%self.entity.name)
+			ClasseswithSecrets = ["Hunter", "Mage", "Paladin", "Rogue"]
+			extractfrom(subject.Class, ClasseswithSecrets)
+			Classes = np.random.choice(ClasseswithSecrets, 3, replace=False)
+			secrets = []
+			for Class in Classes:
+				secrets.append(np.random.choice(self.entity.Game.RNGPools[Class+" Secrets"]))
+			self.entity.Game.options = [secret(self.entity.Game, self.entity.ID) for secret in secrets]
+			self.entity.Game.DiscoverHandler.startDiscover(self.entity)
+			
+			
 class Akama(Minion):
 	Class, race, name = "Rogue", "", "Akama"
 	mana, attack, health = 3, 3, 4

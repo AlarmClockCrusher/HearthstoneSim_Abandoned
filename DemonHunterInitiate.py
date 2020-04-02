@@ -20,7 +20,8 @@ def PRINT(obj, string, *args):
 		GUI = obj.Game.GUI
 	elif hasattr(obj, "entity"):
 		GUI = obj.entity.Game.GUI
-		
+	else:
+		GUI = None
 	if GUI != None:
 		GUI.printInfo(string)
 	else:

@@ -25,7 +25,8 @@ def PRINT(obj, string, *args):
 		GUI = obj.Game.GUI
 	elif hasattr(obj, "entity"):
 		GUI = obj.entity.Game.GUI
-		
+	else:
+		GUI = None
 	if GUI != None:
 		GUI.printInfo(string)
 	else:
@@ -542,6 +543,10 @@ class BuffAura_DreadRaven:
 		extractfrom((self, "MinionDisappears"), self.minion.Game.triggersonBoard[self.minion.ID])
 		extractfrom((self, "MinionAppears"), self.minion.Game.triggersonBoard[self.minion.ID])
 		
+	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
+		#func that checks if subject is applicable will be the new copy's function
+		return type(self)(recipientMinion)
+		
 		
 class FireHawk(Minion):
 	Class, race, name = "Neutral", "Elemental", "Fire Hawk"
@@ -777,6 +782,10 @@ class BuffAura_WingCommander:
 		self.auraAffected = []
 		extractfrom((self, "CardLeavesHand"), self.minion.Game.triggersonBoard[self.minion.ID])
 		extractfrom((self, "CardEntersHand"), self.minion.Game.triggersonBoard[self.minion.ID])
+		
+	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
+		#func that checks if subject is applicable will be the new copy's function
+		return type(self)(recipientMinion)
 		
 		
 class ZulDrakRitualist(Minion):
@@ -3370,6 +3379,10 @@ class BuffAura_SurgingTempest:
 		self.minion.activated = False
 		extractfrom((self, "OverloadStatusCheck"), self.minion.Game.triggersonBoard[self.minion.ID])
 		
+	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
+		#func that checks if subject is applicable will be the new copy's function
+		return type(self)(recipientMinion)
+		
 		
 class Squallhunter(Minion):
 	Class, race, name = "Shaman", "Dragon", "Squallhunter"
@@ -3699,9 +3712,14 @@ class DarkSkies(Spell):
 	index = "Dragons~Warlock~Spell~3~Dark Skies"
 	description = "Deal 1 damage to a random minion. Repeat for each card in your hand"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		handSize = len(self.Game.Hand_Deck.hands[self.ID])
 		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		PRINT(self, "Dark Skies is cast and deals %d damage to a random minion for %d times"%(damage, handSize))
+		PRINT(self, "Dark Skies is cast and deals %d damage to a random minion. And repeat for each card in player's hand"%(damage, handSize))
+		#在使用这个法术后先打一次，然后检测手牌数。总伤害个数是手牌数+1
+		targets = self.Game.minionsAlive(1) + self.Game.minionsAlive(2)
+		if targets != []:
+			target = np.random.choice(targets)
+			PRINT(self, "Dark Skies deals %d damage to minion %s"%(damage, target.name))
+			self.dealsDamage(target, damage)
 		for i in range(handSize):
 			targets = self.Game.minionsAlive(1) + self.Game.minionsAlive(2)
 			if targets != []:

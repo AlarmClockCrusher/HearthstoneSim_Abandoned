@@ -20,11 +20,12 @@ def PRINT(obj, string, *args):
 		GUI = obj.Game.GUI
 	elif hasattr(obj, "entity"):
 		GUI = obj.entity.Game.GUI
-		
+	else:
+		GUI = None
 	if GUI != None:
 		GUI.printInfo(string)
 	else:
-		print(self, string)
+		print(string)
 		
 		
 class Hand_Deck:
@@ -57,7 +58,7 @@ class Hand_Deck:
 				self.startingDeckIdentities[ID].append(card.identity)	
 			np.random.shuffle(self.decks[ID])
 			
-	def initializeHands(self):
+	def initializeHands(self):#起手要换的牌都已经从牌库中移出到mulligan列表中，
 		#如果卡组有双传说任务，则起手时都会上手
 		mainQuests = {1:[], 2:[]}
 		mulliganSize = {1:3, 2:4}
@@ -74,7 +75,7 @@ class Hand_Deck:
 				self.Game.mulligans[ID].append(self.extractfromDeck(self.decks[ID][-1])[0])
 				
 	def mulligan(self, indicesCards1, indicesCards2):
-		indicesCards = {1:indicesCards1, 2:indicesCards2}
+		indicesCards = {1:indicesCards1, 2:indicesCards2} #indicesCards是要替换的手牌的列表序号，如[1, 3]
 		PRINT(self, "Player 1's cards to replace are {}".format(indicesCards[1]))
 		PRINT(self, "Player 2's cards to replace are {}".format(indicesCards[2]))
 		for ID in range(1, 3):
@@ -82,15 +83,17 @@ class Hand_Deck:
 			#self.Game.mulligans is the cards currently in players' hands.
 			if indicesCards[ID] != []:
 				for num in range(1, len(indicesCards[ID])+1):
+					#起手换牌的列表mulligans中根据要换掉的牌的序号从大到小摘掉，然后在原处补充新手牌
 					cardstoReplace.append(self.Game.mulligans[ID].pop(indicesCards[ID][-num]))
+					newCard = self.extractfromDeck(self.decks[ID][-1])[0]
+					self.Game.mulligans[ID].insert(indicesCards[ID][-num], newCard)
 				#调用手牌中没有被替代的卡的entersHand()
-				PRINT(self, "Cards that start in hands: {}".format(self.Game.mulligans[ID]))
-				for card in self.Game.mulligans[ID]:
+				for card in self.Game.mulligans[ID]: #起手的手牌要entersHand
 					self.hands[ID].append(card.entersHand())
 					
-				for i in range(len(indicesCards[ID])):
-					self.drawCard(ID)
 				self.decks[ID] += cardstoReplace
+				for card in cardstoReplace: #被换进牌库的牌要entersDeck，注册牌库扳机
+					card.entersDeck()
 				np.random.shuffle(self.decks[ID]) #Shuffle the deck after mulligan
 			else: #No card replaced
 				for card in self.Game.mulligans[ID]:
@@ -460,10 +463,8 @@ WarriorDeck = [ImproveMorale, ViciousScraphound, DrBoomsScheme, SweepingStrikes,
 				DeathwingMadAspect, BoomSquad, RiskySkipper, BombWrangler, ImprisonedGanarg, SwordandBoard, CorsairCache, Bladestorm, BonechewerRaider, BulwarkofAzzinoth, 
 				WarmaulChallenger, KargathBladefist, ScrapGolem, BloodboilBrute]
 
-Experiment1 = [DevotedManiac, EtherealLackey, EtherealLackey, BoomSquad, AldrachiWarblades, ZephrystheGreat,
-				Magtheridon, KronxDragonhoof, GalakrondtheUnspeakable, Siamat, CrystalPower, FieryWarAxe,  Skybarge, MoltenBreath, 
+Experiment1 = [ShadowjewelerHanar, ShadowjewelerHanar, ShadowjewelerHanar, Ambush, Ambush, BlackjackStunner, DirtyTricks, Bamboozle, BlackjackStunner
 				]
 
-Experiment2 = [DevotedManiac, EtherealLackey, EtherealLackey, BoomSquad, AldrachiWarblades, ZephrystheGreat,
-				Magtheridon, KronxDragonhoof, GalakrondtheUnspeakable, Siamat, CrystalPower, FieryWarAxe,  Skybarge, MoltenBreath, 
+Experiment2 = [ShadowjewelerHanar, ShadowjewelerHanar, ShadowjewelerHanar, Ambush, Ambush, BlackjackStunner, DirtyTricks, Bamboozle, BlackjackStunner
 				]

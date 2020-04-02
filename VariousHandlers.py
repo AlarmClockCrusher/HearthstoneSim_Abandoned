@@ -19,11 +19,12 @@ def PRINT(obj, string, *args):
 		GUI = obj.Game.GUI
 	elif hasattr(obj, "entity"):
 		GUI = obj.entity.Game.GUI
-		
+	else:
+		GUI = None
 	if GUI != None:
 		GUI.printInfo(string)
 	else:
-		print(self, string)
+		print(string)
 		
 #对卡牌的费用机制的改变	
 #主要参考贴（冰封王座BB还在的时候）：https://www.diyiyou.com/lscs/news/194867.html

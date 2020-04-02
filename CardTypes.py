@@ -19,7 +19,8 @@ def PRINT(obj, string, *args):
 		GUI = obj.Game.GUI
 	elif hasattr(obj, "entity"):
 		GUI = obj.entity.Game.GUI
-		
+	else:
+		GUI = None
 	if GUI != None:
 		GUI.printInfo(string)
 	else:
@@ -215,7 +216,7 @@ class Card:
 		else:
 			choice = 0
 			
-		PRINT(self, "Verifying the validity of selection. Subject %s, target %s with choice %d"%(self.name, target, choice))
+		PRINT(self, "Verifying the validity of selection. Subject {}, target {} with choice {}".format(self.name, target, choice))
 		if target != None: #指明了目标
 			#在指明目标的情况下，只有抉择牌的选项是合理的，选项需要目标，目标对于这个选项正确，且目标可选时，才能返回正确。
 			if self.needTarget(choice) == False:

@@ -34,7 +34,8 @@ def PRINT(obj, string, *args):
 		GUI = obj.Game.GUI
 	elif hasattr(obj, "entity"):
 		GUI = obj.entity.Game.GUI
-		
+	else:
+		GUI = None
 	if GUI != None:
 		GUI.printInfo(string)
 	else:
@@ -854,6 +855,10 @@ class BuffAura_PhalanxCommander:
 		self.auraAffected = []
 		extractfrom((self, "MinionAppears"), self.minion.Game.triggersonBoard[self.minion.ID])
 		extractfrom((self, "MinionTauntKeywordChange"), self.minion.Game.triggersonBoard[self.minion.ID])
+		
+	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
+		#func that checks if subject is applicable will be the new copy's function
+		return type(self)(recipientMinion)
 		
 		
 class WastelandAssassin(Minion):
@@ -2884,19 +2889,19 @@ class BuffAura_Vessina:
 			isOverloaded = self.minion.Game.ManaHandler.manasOverloaded[self.minion.ID] > 0 or self.minion.Game.ManaHandler.manasLocked[self.minion.ID] > 0
 			if isOverloaded == False and self.minion.activated:
 				self.minion.activated = False
-				PRINT(self, "Vessina's Buff Aura: Your other minions have +2 Attack is shut down.")
+				PRINT(self.minion, "Vessina's Buff Aura: Your other minions have +2 Attack is shut down.")
 				for minion, aura_Receiver in fixedList(self.auraAffected):
 					aura_Receiver.effectClear()
 				self.auraAffected = []
 			elif isOverloaded and self.minion.activated == False:
 				self.minion.activated = True
-				PRINT(self, "Vessina's Buff Aura: Your other minions have +2 Attack is activated.")
+				PRINT(self.minion, "Vessina's Buff Aura: Your other minions have +2 Attack is activated.")
 				for minion in self.minion.Game.minionsonBoard(self.minion.ID):
 					self.applies(minion)
 				
 	def applies(self, subject):
 		if subject != self.minion:
-			PRINT(self, "Minion %s gains the %d/%d aura from %s"%(subject.name, 2, 0, self.minion))
+			PRINT(self.minion, "Minion %s gains the %d/%d aura from %s"%(subject.name, 2, 0, self.minion))
 			aura_Receiver = BuffAura_Receiver(subject, self, 2, 0)
 			aura_Receiver.effectStart()
 			
@@ -2904,7 +2909,7 @@ class BuffAura_Vessina:
 		isOverloaded = self.minion.Game.ManaHandler.manasOverloaded[self.minion.ID] > 0 or self.minion.Game.ManaHandler.manasLocked[self.minion.ID] > 0
 		if isOverloaded:
 			self.minion.activated = True
-			PRINT(self, "Vessina's Buff Aura: Your other minions have +2 Attack is activated.")
+			PRINT(self.minion, "Vessina's Buff Aura: Your other minions have +2 Attack is activated.")
 			for minion in self.minion.Game.minionsonBoard(self.minion.ID):
 				self.applies(minion)
 				
@@ -2912,7 +2917,7 @@ class BuffAura_Vessina:
 		self.minion.Game.triggersonBoard[self.minion.ID].append((self, "OverloadStatusCheck"))
 		
 	def auraDisappears(self):
-		PRINT(self, "Vessina's Buff Aura: Your other minions have +2 Attack is shut down.")
+		PRINT(self.minion, "Vessina's Buff Aura: Your other minions have +2 Attack is shut down.")
 		for minion, aura_Receiver in fixedList(self.auraAffected):
 			aura_Receiver.effectClear()
 			
@@ -2920,6 +2925,9 @@ class BuffAura_Vessina:
 		self.minion.activated = False
 		extractfrom((self, "OverloadStatusCheck"), self.minion.Game.triggersonBoard[self.minion.ID])
 		extractfrom((self, "MinionAppears"), self.minion.Game.triggersonBoard[self.minion.ID])
+		
+	def selfCopy(self, recipientMinion):
+		return type(self)(recipientMinion)
 		
 		
 class Earthquake(Spell):

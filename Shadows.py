@@ -35,7 +35,8 @@ def PRINT(obj, string, *args):
 		GUI = obj.Game.GUI
 	elif hasattr(obj, "entity"):
 		GUI = obj.entity.Game.GUI
-		
+	else:
+		GUI = None
 	if GUI != None:
 		GUI.printInfo(string)
 	else:
@@ -1165,15 +1166,24 @@ class CrystalPower(Spell):
 			
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
-			#When Choosing Both, it deals damage first and then heals
-			if (choice == "ChooseBoth" or choice == 0) and target.cardType == "Minion":
-				damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-				self.dealsDamage(target, damage)
-			#If the minion is killed, it won't be healed.
-			if choice == "ChooseBoth" or choice == 1:
-				if target.cardType != "Minion" or target.health > 0:
+			if choice == "ChooseBoth": #如果目标是一个随从，先对其造成伤害，如果目标存活，才能造成治疗
+				if target.cardType == "Minion": #只会对随从造成伤害
+					damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+					PRINT(self, "Crystal Power deals %d damage to %s"%(damage, target.name))
+					self.dealsDamage(target, damage)
+				if target.health > 0 and target.dead == False: #法术造成伤害之后，那个随从必须活着才能接受治疗，不然就打2无论如何都变得没有意义
 					heal = 5 * (2 ** self.countHealDouble())
+					PRINT(self, "Crystal Power restores %d Health to %s"%(heal, target.name))
 					self.restoresHealth(target, heal)
+			elif choice == 0:
+				if target.cardType == "Minion":
+					damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+					PRINT(self, "Crystal Power deals %d damage to %s"%(damage, target.name))
+					self.dealsDamage(target, damage)
+			else: #Choice == 1
+				heal = 5 * (2 ** self.countHealDouble())
+				PRINT(self, "Crystal Power restores %d Health to %s"%(heal, target.name))
+				self.restoresHealth(target, heal)
 		return target
 		
 class PiercingThorns_Option:

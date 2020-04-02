@@ -16,7 +16,8 @@ def PRINT(obj, string, *args):
 		GUI = obj.Game.GUI
 	elif hasattr(obj, "entity"):
 		GUI = obj.entity.Game.GUI
-		
+	else:
+		GUI = None
 	if GUI != None:
 		GUI.printInfo(string)
 	else:
@@ -131,7 +132,7 @@ class BuffAura_Receiver:
 		self.receiver.stat_AuraAffected[1] += self.healthChange
 		self.receiver.stat_AuraAffected[2].append(self)
 		self.source.auraAffected.append((self.receiver, self))
-		PRINT(self.minion, "Minion %s gains buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
+		PRINT(self.receiver, "Minion %s gains buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
 	#Cleanse the aura_Receiver from the receiver and delete the (receiver, aura_Receiver) from source aura's list.
 	def effectClear(self):
 		self.receiver.statChange(-self.attackChange, -self.healthChange)
@@ -139,7 +140,7 @@ class BuffAura_Receiver:
 		self.receiver.stat_AuraAffected[1] -= self.healthChange
 		extractfrom(self, self.receiver.stat_AuraAffected[2])
 		extractfrom((self.receiver, self), self.source.auraAffected)
-		PRINT(self.minion, "Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
+		PRINT(self.receiver, "Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
 	#Invoke when the receiver is copied and because the aura_Dealer won't have reference to this copied receiver,
 	#remove this copied aura_Receiver from copied receiver's stat_AuraAffected[2].
 	def effectDiscard(self):
@@ -147,7 +148,7 @@ class BuffAura_Receiver:
 		self.receiver.stat_AuraAffected[0] -= self.attackChange
 		self.receiver.stat_AuraAffected[1] -= self.healthChange
 		extractfrom(self, self.receiver.stat_AuraAffected[2])
-		PRINT(self.minion, "Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
+		PRINT(self.receiver, "Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
 		
 	def selfCopy(self, recipientMinion): #The recipient of the aura is the same minion when copying it.
 		#Source won't change. 
