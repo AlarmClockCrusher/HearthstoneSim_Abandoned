@@ -352,7 +352,7 @@ class HasAura_Receiver:
 		self.receiver.getsKeyword(self.keyWord)
 		self.receiver.keyWords_AuraAffected["Auras"].append(self)
 		self.source.auraAffected.append((self.receiver, self))
-		PRINT(self.minion, "Minion {} gains {} from Aura {}".format(self.receiver.name, self.keyWord, self.source))
+		PRINT(self.receiver, "Minion {} gains {} from Aura {}".format(self.receiver.name, self.keyWord, self.source))
 	#The aura on the receiver is cleared and the source will remove this receiver and aura_Receiver from it's list.
 	def effectClear(self):
 		if self.receiver.keyWords_AuraAffected[self.keyWord] > 0:

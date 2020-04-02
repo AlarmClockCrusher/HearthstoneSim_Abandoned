@@ -245,17 +245,17 @@ class ManaAura_Dealer:
 	def blank_init(self, minion, func, changeby, changeto, lowerbound):
 		self.minion = minion
 		if func != None:
-			self.applicable = func
+			self.manaAuraApplicable = func
 		self.changeby, self.changeto, self.lowerbound = changeby, changeto, lowerbound
 		self.auraAffected = [] #A list of (minion, aura_Receiver)
 		
-	def applicable(self, target):
+	def manaAuraApplicable(self, target):
 		return True
 		
 	#只要是有满足条件的卡牌进入手牌，就会触发这个光环。target是承载这个牌的列表。
 	#applicable不需要询问一张牌是否在手牌中。光环只会处理在手牌中的卡牌
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.minion.onBoard and self.applicable(target[0])
+		return self.minion.onBoard and self.manaAuraApplicable(target[0])
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):
@@ -265,7 +265,7 @@ class ManaAura_Dealer:
 		self.applies(target[0])
 		
 	def applies(self, target): #This target is NOT holder.
-		if self.applicable(target):
+		if self.manaAuraApplicable(target):
 			PRINT(self.minion, "Card %s gains the Changeby %d/Changeto %d mana change from %s"%(target.name, self.changeby, self.changeto, self.minion.name))
 			manaMod = ManaModification(target, self.changeby, self.changeto, self, self.lowerbound)
 			manaMod.applies()
@@ -292,8 +292,8 @@ class ManaAura_Dealer:
 		self.minion.Game.ManaHandler.calcMana_All()
 		
 	def selfCopy(self, recipient): #The recipient is the entity that deals the Aura.
-		#func that checks if subject is applicable will be the new copy's function
-		return type(self)(recipient, recipient.applicable, self.changeby, self.changeto)
+		#func that checks if subject is manaAuraApplicable will be the new copy's function
+		return type(self)(recipient, recipient.manaAuraApplicable, self.changeby, self.changeto)
 		
 		
 class TempManaEffect:
@@ -344,8 +344,8 @@ class TempManaEffect:
 		extractfrom((self, "ManaCostPaid"), self.Game.triggersonBoard[self.ID])
 		self.Game.ManaHandler.calcMana_All()
 		
-	def selfCopy(self, recipient): #The recipient is the Game that handles the Aura.
-		return type(self)(recipient, self.ID, self.changeby, self.changeto)
+	def selfCopy(self, recipientGame): #The recipient is the Game that handles the Aura.
+		return type(self)(recipientGame, self.ID, self.changeby, self.changeto)
 		
 		
 class TempManaEffect_Power:

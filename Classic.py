@@ -243,11 +243,9 @@ class SouthseaDeckhand_Dealer:
 		
 	def applies(self, subject):
 		if subject.Game.availableWeapon(subject.ID) != None:
-			PRINT(self, "Southsea Deckhand gains Charge due to presence of friendly weapon")
 			aura_Receiver = HasAura_Receiver(subject, self, "Charge")
 			aura_Receiver.effectStart()
 		else:
-			PRINT(self, "Southsea Deckhand loses Charge due to absence of friendly weapon")
 			for minion, aura_Receiver in self.auraAffected:
 				aura_Receiver.effectClear()
 				
@@ -263,6 +261,10 @@ class SouthseaDeckhand_Dealer:
 		self.auraAffected = []
 		extractfrom((self, "WeaponEquipped"), self.minion.Game.triggersonBoard[self.minion.ID])
 		extractfrom((self, "WeaponRemoved"), self.minion.Game.triggersonBoard[self.minion.ID])
+		
+	def selfCopy(self, recipientMinion):
+		return type(self)(recipientMinion)
+		
 		
 class WorgenInfiltrator(Minion):
 	Class, race, name = "Neutral", "", "Worgen Infiltrator"
@@ -4181,7 +4183,7 @@ class Pilfer(Spell):
 		if self.Game.Hand_Deck.handNotFull(self.ID):
 			key = "Class Cards except "+self.Game.heroes[self.ID].Class
 			card = np.random.choice(self.Game.RNGPools[key])
-			self.Game.Hand_Deck.addCardtoHand(cards, self.ID, "CreateUsingType")
+			self.Game.Hand_Deck.addCardtoHand(card, self.ID, "CreateUsingType")
 		return None
 		
 #Betrayal lets target deal damage to adjacent minions.
@@ -5061,7 +5063,7 @@ class ShieldSlam(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			damage = (self.Game.heroes[self.ID].armor + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			PRINT(self, "Shield Slam is cast and deals %d damage to "%(damage, target.name))
+			PRINT(self, "Shield Slam is cast and deals %d damage to %s"%(damage, target.name))
 			self.dealsDamage(target, damage)
 		return target
 		

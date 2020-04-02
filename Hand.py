@@ -337,6 +337,7 @@ class Hand_Deck:
 				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
 				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")					
 				
+	#只能全部拿出手牌中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
 	def extractfromHand(self, card, all=False, ID=0):
 		if all: #Extract the entire hand.
 			temp = self.hands[ID]
@@ -346,28 +347,18 @@ class Hand_Deck:
 				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
 			return temp, 0, -2 #-2 means the positioninHand doesn't have real meaning.
 		else:
-			if type(card) != type([]) and type(card) != type(np.array([])): #Extracting a single card from hand.
-				#Need to keep track of the card's location in hand.
-				for i in range(len(self.hands[card.ID])):
-					if self.hands[card.ID][i] == card:
-						index, cost = i, card.mana
-						break
-				positioninHand = index if index < len(self.hands[card.ID]) -1 else -1
-				card = self.hands[card.ID].pop(index)
-				card.leavesHand()
-				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
-				return card, cost, positioninHand
-			else: #Extracting multiple cards from hand.
-				ID = card[0].ID #Will only invoke this function for one side. If necessary, invoke once for each hand.
-				cards = []
-				for obj in card:
-					result = extractfrom(obj, self.hands[ID])
-					if result != None:
-						result.leavesHand()
-						cards.append(result)
-						self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
-				return cards, 0, -2
-				
+			#Need to keep track of the card's location in hand.
+			for i in range(len(self.hands[card.ID])):
+				if self.hands[card.ID][i] == card:
+					index, cost = i, card.mana
+					break
+			positioninHand = index if index < len(self.hands[card.ID]) -1 else -1
+			card = self.hands[card.ID].pop(index)
+			card.leavesHand()
+			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
+			return card, cost, positioninHand
+			
+	#只能全部拿牌库中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
 	def extractfromDeck(self, card, all=False, ID=0):
 		if all: #For replacing the entire deck or throwing it away.
 			temp = self.decks[ID]
@@ -380,14 +371,6 @@ class Hand_Deck:
 				card = extractfrom(card, self.decks[card.ID])
 				card.leavesDeck()
 				return card, 0, False
-			else: #Extracting multiple cards from hand.
-				ID = card[0].ID
-				cards = []
-				for obj in card:
-					result = extractfrom(obj, self.decks[ID])
-					result.leavesDeck()
-					cards.append(result)
-				return cards, 0, False
 				
 	def removeDeckTopCard(self, ID):
 		if self.decks[ID] != []:
@@ -463,8 +446,8 @@ WarriorDeck = [ImproveMorale, ViciousScraphound, DrBoomsScheme, SweepingStrikes,
 				DeathwingMadAspect, BoomSquad, RiskySkipper, BombWrangler, ImprisonedGanarg, SwordandBoard, CorsairCache, Bladestorm, BonechewerRaider, BulwarkofAzzinoth, 
 				WarmaulChallenger, KargathBladefist, ScrapGolem, BloodboilBrute]
 
-Experiment1 = [ShadowjewelerHanar, ShadowjewelerHanar, ShadowjewelerHanar, Ambush, Ambush, BlackjackStunner, DirtyTricks, Bamboozle, BlackjackStunner
+Experiment1 = [PsycheSplit, PsycheSplit, KaelthasSunstrider, KaelthasSunstrider, SalhetsPride, SalhetsPride, ArgentSquire, SouthseaDeckhand, SouthseaDeckhand, ArgentSquire, FieryWarAxe, FieryWarAxe, SouthseaCaptain, SouthseaCaptain, SkyRaider, SkyRaider, ParachuteBrigand, ParachuteBrigand, ParachuteBrigand
 				]
 
-Experiment2 = [ShadowjewelerHanar, ShadowjewelerHanar, ShadowjewelerHanar, Ambush, Ambush, BlackjackStunner, DirtyTricks, Bamboozle, BlackjackStunner
+Experiment2 = [PsycheSplit, PsycheSplit, KaelthasSunstrider, KaelthasSunstrider, SalhetsPride, SalhetsPride, ArgentSquire, SouthseaDeckhand, SouthseaDeckhand, ArgentSquire, FieryWarAxe, FieryWarAxe, SouthseaCaptain, SouthseaCaptain, SkyRaider, SkyRaider, ParachuteBrigand, ParachuteBrigand, ParachuteBrigand
 				]

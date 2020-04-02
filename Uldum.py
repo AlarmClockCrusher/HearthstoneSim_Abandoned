@@ -613,7 +613,7 @@ class VulperaScoundrel(Minion):
 				self.Game.options.append(MysteryChoice())
 				PRINT(self, "Vulpera Scoundrel's battlecry lets player Discover a spell or a Mystery Choice")
 				self.Game.DiscoverHandler.startDiscover(self)
-			
+				
 		return None
 		
 	def discoverDecided(self, option):
@@ -918,7 +918,7 @@ class Siamat(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Gain 2 of Rush, Taunt, Divine Shield, or Windfury (your choice)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.choices = [SiamatsHeart(), SiamatsShield(), SiamatsSpeed(), SiamatsWind()]
+		self.choices = []
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.ID == self.Game.turn:
@@ -1993,7 +1993,7 @@ class EmperorWraps(HeroPower):
 	def effect(self, target=None, choice=0):
 		if target != None:
 			PRINT(self, "Hero Power Emperor Wraps summons a copy of friendly minion %s"%target.name)
-			self.Game.summonMinion(target.selfCopy(self.ID), -1, self.ID, "")
+			self.Game.summonMinion(target.selfCopy(self.ID, 2, 2), -1, self.ID, "")
 		return 0
 		
 		
@@ -2122,7 +2122,7 @@ class DrawTwo1HealthMinions(Deathrattle_Minion):
 		PRINT(self, "Deathrattle: Draw two 1-Health minions from your deck triggers")
 		for i in range(2):
 			oneHealthMinionsinDeck = []
-			for card in self.entity.Game.Hand_Deck.hands[self.entity.ID]:
+			for card in self.entity.Game.Hand_Deck.decks[self.entity.ID]:
 				if card.cardType == "Minion" and card.health == 1:
 					oneHealthMinionsinDeck.append(card)
 			if oneHealthMinionsinDeck != []:
@@ -2746,6 +2746,9 @@ class BattlecryTriggerTwiceEffectDisappears:
 		self.Game.playerStatus[self.ID]["Battlecry Trigger Twice"] -= 1
 		extractfrom(self, self.Game.turnEndTrigger)
 		
+	def selfCopy(self, recipientGame):
+		return type(self)(recipientGame, self.ID)
+		
 		
 class TotemicSurge(Spell):
 	Class, name = "Shaman", "Totemic Surge"
@@ -3303,9 +3306,9 @@ class YourLackeysareAlways44:
 		#self.Game.triggersonBoard[self.ID].append((self, "CardShuffled")) #Minions entering the deck
 		
 	#Doesn't have auraDisappears func, since this aura is permanent
-	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
+	def selfCopy(self, recipientGame): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
-		return type(self)(recipient, self.ID)
+		return type(self)(recipientGame, self.ID)
 		
 		
 """Warrior cards"""

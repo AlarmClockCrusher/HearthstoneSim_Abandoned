@@ -1579,9 +1579,9 @@ class YourTreantsHavePlus1Plus1:
 		#We want this Trigger_MinionAppears can handle everything including registration and buff and removing.
 		self.Game.triggersonBoard[self.ID].append((self, "MinionAppears"))
 	#Doesn't have auraDisappears func, since this aura is permanent
-	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
+	def selfCopy(self, recipientGame): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
-		return type(self)(recipient, self.ID)
+		return type(self)(recipientGame, self.ID)
 		
 		
 class YseraUnleashed(Minion):

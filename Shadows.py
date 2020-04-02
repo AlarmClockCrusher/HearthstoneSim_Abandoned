@@ -2,7 +2,7 @@ from CardTypes import *
 from Triggers_Auras import *
 from VariousHandlers import *
 
-from Basic import TheCoin
+from Basic import TheCoin, MurlocScout
 from Classic import PatientAssassin
 
 import numpy as np
@@ -1805,6 +1805,10 @@ class SpellDamagePlus2Disappears:
 		PRINT(self, "At the end of turn, Thori'dal, the Stars' Fury's effect expires and player no longer has Spell Damage +2")
 		self.Game.playerStatus[self.ID]["Spell Damage"] -= 2
 		extractfrom(self, self.Game.turnEndTrigger)
+		
+	def selfCopy(self, recipientGame):
+		return type(self)(recipientGame, self.ID)
+		
 		
 """Mage cards"""
 class RayofFrost(Spell):

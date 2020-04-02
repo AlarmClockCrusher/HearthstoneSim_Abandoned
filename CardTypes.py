@@ -1,5 +1,6 @@
 import copy
 import numpy as np
+import inspect
 
 def extractfrom(target, listObject):
 	temp = None
@@ -26,7 +27,7 @@ def PRINT(obj, string, *args):
 	else:
 		print(string)
 		
-def copyListDict(obj, recipientMinion):
+def copyListDictTuple(obj, recipient):
 	if isinstance(obj, list):
 		objCopy = []
 		for element in obj:
@@ -34,28 +35,41 @@ def copyListDict(obj, recipientMinion):
 			if isinstance(element, (type(None), int, float, str, bool)):
 				#Have tested that basic types can be appended and altering the original won't mess with the content in the list.
 				objCopy.append(element)
-			#随从的列表中不会引用游戏
 			elif callable(element): #If the element is a function
-				print("The element to copy is ", element)
-				objCopy.append(copy.deepcopy(element))
-			elif type(element) == list or type(element) == dict: #If the element is a list or dict, just recursively use this function.
-				objCopy.append(copyListDict(element, recipientMinion))
+				func_name = element.__qualname__.split('.')[1]
+				print("The element to copy is ", func_name)
+				objCopy.append(getattr(recipient, func_name))
+			elif inspect.isclass(element):
+				objCopy.append(element)
+			elif type(element) == type(recipient.Game):
+				objCopy.append(recipient.Game)
+			elif type(element) == list or type(element) == dict or type(element) == tuple: #If the element is a list or dict, just recursively use this function.
+				objCopy.append(copyListDictTuple(element, recipient))
 			else: #If the element is a self-defined class. All of them have selfCopy methods.
 				print("Copying self-defined obj", element)
-				objCopy.append(element.selfCopy(recipientMinion))
-	else:
+				objCopy.append(element.selfCopy(recipient))
+	elif isinstance(obj, dict):
 		objCopy = {}
 		for key, value in obj.items():
 			if isinstance(value, (type(None), int, float, str, bool)):
 				objCopy[key] = value
 			#随从的列表中不会引用游戏
 			elif callable(value):
-				objCopy[key] = copy.deepcopy(element)
-			elif type(value) == list or type(value) == dict:
-				objCopy[key] = (copyListDict(value, recipientMinion))
+				func_name = value.__qualname__.split('.')[1]
+				print("The value to copy is ", func_name)
+				objCopy[key] = getattr(recipient, func_name)
+			elif inspect.isclass(value):
+				objCopy[key] = value
+			elif type(value) == type(recipient.Game):
+				objCopy[key] = recipient.Game
+			elif type(value) == list or type(value) == dict or type(value) == tuple:
+				objCopy[key] = (copyListDictTuple(value, recipient))
 			else:
-				objCopy[key] = value.selfCopy(recipientMinion)
-				
+				objCopy[key] = value.selfCopy(recipient)
+	else: #elif isinstance(obj, tuple):
+		tupleTurnedList = list(obj) #tuple因为是immutable的，所以要根据它生成一个列表
+		objCopy = copyListDictTuple(tupleTurnedList, recipient) #复制那个列表
+		objCopy = list(objCopy) #把那个列表转换回tuple
 	return objCopy
 	
 	
@@ -456,8 +470,29 @@ class Card:
 	#Minion has its own selfCopy() method.
 	#For now, copying non-minion/weapon cards can only create copies that don't have any enchantments on it.
 	#The mana of a card can be copied, though.
-	def selfCopy(self, ID):
+	def hardCopy(self, ID):
 		Copy = type(self)(self.Game, ID)
+		for key, value in self.__dict__.items():
+			#Copy the attributes of basic types, or simply types.
+			if isinstance(value, (type, type(None), int, np.int64, float, str, bool)):
+				Copy.__dict__[key] = value
+			#随从实例上带有的函数一经__init__确定不会改变。所以不需要进行复制
+			elif callable(value): #If the attribute is a function
+				pass
+			elif inspect.isclass(value): #如果复制目标是一个类的话
+				Copy.__dict__[key] = value
+			elif value == self.Game: #Only shallow copy the Game.
+				Copy.__dict__[key] = self.Game
+			#用于auras，stat_AuraAffected，keyWords_AuraAffected和manaModifications等
+			elif type(value) == list or type(value) == dict or type(value) == tuple: #If the attribute is a list or dictionary, use the method defined at the start of py
+				Copy.__dict__[key] = copyListDictTuple(value, Copy)
+			else: #The attribute is a self-defined class. They will all have selfCopy methods
+				#A minion can't refernece another minion. The attributes here must be like triggers/deathrattles	
+				Copy.__dict__[key] = value.selfCopy(Copy)
+		return Copy
+		
+	def selfCopy(self, ID):
+		Copy = self.hardCopy(ID)
 		Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
 		#复制一张牌的费用修改情况
 		for manaMod in self.manaModifications:
@@ -465,42 +500,6 @@ class Card:
 			mod.card = Copy
 			mod.applies()
 		return Copy
-		
-	def copyListDict(self, obj, recipientMinion):
-		if isinstance(obj, list):
-			objCopy = []
-			for element in obj:
-				#check if they're basic types, like int, str, bool, NoneType, 
-				if isinstance(element, (type(None), int, float, str, bool)):
-					#Have tested that basic types can be appended and altering the original won't mess with the content in the list.
-					objCopy.append(element)
-				elif callable(element): #If the element is a function
-					PRINT(self, "The element to copy is {}".format(element))
-					objCopy.append(copy.deepcopy(element))
-				elif type(element) == list or type(element) == dict: #If the element is a list or dict, just recursively use this function.
-					objCopy.append(copyListDict(element, recipientMinion))
-				elif type(element) == type(self.Game): #Only shallow copies the Game.
-					Copy.__dict__[key] = element
-				else: #If the element is a self-defined class. All of them have selfCopy methods.
-					PRINT(self, "Copying self-defined obj {}".format(element))
-					objCopy.append(element.selfCopy(recipientMinion))
-		else:
-			objCopy = {}
-			for key, value in obj.items():
-				if isinstance(value, (type(None), int, float, str, bool)):
-					objCopy[key] = value
-				#随从的列表中不会引用游戏
-				elif callable(value):
-					objCopy[key] = copy.deepcopy(element)
-				elif type(value) == list or type(value) == dict:
-					objCopy[key] = (copyListDict(value, recipientMinion))
-				elif type(value) == type(self.Game):
-					objCopy[key] = value
-				else:
-					objCopy[key] = value.selfCopy(recipientMinion)
-					
-		return objCopy
-		
 		
 		
 class Permanent(Card):
@@ -591,7 +590,11 @@ class Permanent(Card):
 		if hasattr(self, "progress"):
 			PRINT(self, "\tPermanent's progress is currently: %d"%self.progress)
 			
-			
+	def selfCopy(self, ID):
+		return self.hardCopy(ID)
+		
+		
+		
 class Minion(Card):
 	Class, race, name = "Neutral", "", "Vanilla"
 	mana, attack, health = 2, 2, 2
@@ -725,6 +728,7 @@ class Minion(Card):
 		size = len(self.tempAttackChanges) #Remove the temp attack changes.
 		for i in range(size):
 			PRINT(self, "Temp Attack change: {}".format(self.tempAttackChanges[size-1-i]))
+			#self.tempAttackChanges[size-1-i]是一个tuple(tempAttackChange, timepoint)
 			if self.tempAttackChanges[size-1-i][1] == "StartofTurn 1" and self.Game.turn == 1:
 				self.statChange(-self.tempAttackChanges[size-1-i][0], 0)
 				self.tempAttackChanges.pop(size-1-i)
@@ -1182,25 +1186,8 @@ class Minion(Card):
 				func()
 				
 	def selfCopy(self, ID, attack=False, health=False, mana=False):
-		Copy = type(self)(self.Game, ID)
-		for key, value in self.__dict__.items():
-			#Copy the attributes of basic types, or simply types.
-			if isinstance(value, (type, type(None), int, np.int64, float, str, bool)):
-				Copy.__dict__[key] = value
-			#随从实例上带有的函数一经__init__确定不会改变。所以不需要进行复制
-			elif callable(value): #If the attribute is a function
-				pass
-			#用于auras，stat_AuraAffected，keyWords_AuraAffected和manaModifications等
-			elif type(value) == list or type(value) == dict: #If the attribute is a list or dictionary, use the method defined at the start of py
-				Copy.__dict__[key] = self.copyListDict(value, Copy)
-			elif type(value) == type(self.Game): #Only shallow copies the Game.
-				Copy.__dict__[key] = self.Game
-			else: #The attribute is a self-defined class. They will all have selfCopy methods
-				#A minion can't refernece another minion. The attributes here must be like triggers/deathrattles	
-				Copy.__dict__[key] = value.selfCopy(Copy)
-				
+		Copy = self.hardCopy(ID)
 		Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
-		Copy.Game, Copy.ID = self.Game, ID
 		#随从的光环和亡语复制完全由各自的selfCopy函数负责。
 		for aura_Receiver in Copy.stat_AuraAffected[2]:
 			aura_Receiver.effectDiscard()
@@ -1218,50 +1205,6 @@ class Minion(Card):
 			Copy.manaModifications = []
 			ManaModification(Copy, changeby=0, changeto=mana)
 		return Copy
-		
-	##在复制一个随从的时候只会复制其身材的非光环部分。包括额外效果和暂时的攻击力增加。
-	##复制随从所有的全部扳机, 全部光环, 去掉光环的身材, 全部triggers方法。
-	#def selfCopy(self, ID, attack=False, health=False, mana=False):
-	#	Copy = copy.deepcopy(self)
-	#	Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
-	#	Copy.Game, Copy.ID = self.Game, ID
-	#	#随从的亡语在被复制的时候也要调用其专有的函数，诸如巫毒娃娃这样的亡语需要考虑其标记的随从，不能任由copy.deepcopy更改
-	#	Copy.deathrattles = [] #此时复制来的亡语还没有被注册，可以直接清除
-	#	for trigger in self.deathrattles:
-	#		Copy.deathrattles.append(trigger.selfCopy(Copy))
-	#	#Any buffAura or hasAura affecting the copied minion won't be replicated.
-	#	#随从的攻击力和生命都承袭原随从，但是需要去掉原随从因为光环而得到的数值。
-	#	#随从攻击力的暂时部分已经被copy在其tempAttackChanges列表中了，会在与原随从相同的时间点消失。
-	#	for aura_Receiver in Copy.stat_AuraAffected[2]:
-	#		aura_Receiver.effectDiscard()
-	#	#随从因为关键字光环获得的buff也要清除。
-	#	for aura_Receiver in Copy.keyWords_AuraAffected["Auras"]:
-	#		aura_Receiver.effectDiscard()
-	#	#随从携带的扳机以及亡语在复制过程中，其entity会和随从本身一同被复制，但是不会直接注册在所属的Game的triggersonBoard中，需要在入场时重新注册
-	#	#Remove the objects in the copy's own aura_Dealers.
-	#	for aura_Dealer in Copy.auras.values():
-	#		aura_Dealer.auraAffected = [] #光环中所记录的(随从与receiver)都已经被复制成不存在目标，需要清除。
-	#	#南海船工之类，除了扳机之外，还有appearResponse，复制之后没有问题。无需特殊处理。
-	#	#该标志用于激怒和圣光楷模等自身状态改变的标识。在复制时将其重置为False，之后随从召唤时根据情况重新启动
-	#	Copy.activated = False
-	#	
-	#	#Make a copy with specified stat.
-	#	if attack != False or health != False:
-	#		Copy.statReset(attack, health)
-	#	#If the card is added from board to hand, the mana is equal to its original mana cost.
-	#	#Appear function will take care of reset onBoard minions' mana to original.
-	#	
-	#	#当一张牌在手牌中被复制时，如果处理其受到的光环效果和费用修改效果会如何？
-	#		#假设其像身材一样，复制时不会复制费用光环的影响。
-	#	#当一张牌被复制时，其费用修改效果会被复制，但是需要把那些被标记为激活状态的效果手动调至关闭状态。
-	#	for manaMod in Copy.manaModifications:
-	#		manaMod.activated = False
-	#	if mana != False:
-	#		for manaMod in Copy.manaModifications:
-	#			manaMod.getsRemoved()
-	#		Copy.manaModifications = []
-	#		ManaModification(Copy, changeby=0, changeto=mana)
-	#	return Copy
 		
 	#破法者因为阿努巴尔潜伏者的亡语被返回手牌，之后被沉默，但是仍然可以触发其战吼
 	#在手牌中时不能接受沉默。已经用紫罗兰老师测试过了，仍然可以触发其扳机，没有沉默标记

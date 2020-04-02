@@ -1269,7 +1269,7 @@ class MsshifnPrime(Minion):
 		self.blank_init(Game, ID)
 		self.chooseOne = 1
 		# 0: Give other minion +2/+2; 1:Summon two Treants with Taunt.
-		self.options = [FungalGiant_Taunt(self), FungalGiant_Rush(self)]
+		self.options = [MsshifnAttac(self), MsshifnProtec(self)]
 		
 	#如果有全选光环，只有一个9/9，其同时拥有突袭和嘲讽
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
@@ -1302,11 +1302,11 @@ class FungalGargantuan(Minion):
 	index = "Outlands~Druid~Minion~9~9~9~None~Fungal Gargantuan~Taunt~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt,Rush", "Taunt, Rush"
 	
-class FungalGiantTaunt_Option:
+class MsshifnAttac:
 	def __init__(self, minion):
 		self.minion = minion
-		self.name = "Demigod's Favor"
-		self.description = "9/9 with Taunt"
+		self.name = "Msshi'fn At'tac"
+		self.description = "Summon a 9/9 with Taunt"
 		
 	def available(self):
 		return self.minion.Game.spaceonBoard(self.minion.ID) > 0
@@ -1314,11 +1314,11 @@ class FungalGiantTaunt_Option:
 	def selfCopy(self, recipientMinion):
 		return type(self)(recipientMinion)
 		
-class FungalGiantRush_Option:
+class MsshifnProtec:
 	def __init__(self, minion):
 		self.minion = minion
-		self.name = "Shan'do's Lesson"
-		self.description = "9/9 with Rush"
+		self.name = "Msshi'fn Pro'tec"
+		self.description = "Summon a 9/9 with Rush"
 		
 	def available(self):
 		return self.minion.Game.spaceonBoard(self.minion.ID) > 0

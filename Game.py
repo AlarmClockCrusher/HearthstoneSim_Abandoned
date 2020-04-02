@@ -6,7 +6,6 @@ import tkinter as tk
 import numpy as np
 import copy
 
-
 def extractfrom(target, listObject):
 	temp = None
 	for i in range(len(listObject)):
@@ -1058,7 +1057,7 @@ class Game:
 			#使用后步骤，触发“每当你使用一张xx牌之后”的扳机，如捕鼠陷阱等。
 			if heroCard.identity not in self.Hand_Deck.startingDeckIdentities[self.turn]:
 				self.CounterHandler.createdCardsPlayedThisGame[self.turn] += 1
-			self.sendSignal("HeroCardBeenPlayed", self.turn, self, None, mana, positioninHand, choice, triggersAllowed)
+			self.sendSignal("HeroCardBeenPlayed", self.turn, heroCard, None, mana, positioninHand, choice, triggersAllowed)
 			#完成阶段结束，处理亡语，可以处理胜负问题。
 			self.gathertheDead(True)
 			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:

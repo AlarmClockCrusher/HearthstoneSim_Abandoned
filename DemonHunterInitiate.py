@@ -162,6 +162,9 @@ class TwoFewerManaEffectRemoved:
 		self.Game.ManaHandler.manas_withheld[self.ID] -= 2
 		extractfrom(self, self.Game.turnStartTrigger)
 		
+	def selfCopy(self, recipientGame):
+		return type(self)(recipientGame, self.ID)
+		
 		
 class UrzulHorror(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Ur'zul Horror"
