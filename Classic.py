@@ -75,19 +75,14 @@ class AngryChicken(Minion):
 	requireTarget, keyWord, description = False, "", "Has +5 Attack while damaged"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
+		self.auras["Enrage"] = BuffAura_Dealer_Enrage(self, 5)
 		self.triggers["StatChanges"] = [self.handleEnrage]
 		self.activated = False
 		
 	def handleEnrage(self):
-		if self.silenced == False and self.onBoard:
-			if self.activated == False and self.health < self.health_upper:
-				self.activated = True
-				self.statChange(5, 0)
-			elif self.activated and self.health >= self.health_upper:
-				self.activated = False
-				self.statChange(-5, 0)
-				
-				
+		self.auras["Enrage"].handleEnrage()
+		
+		
 class BloodsailCorsair(Minion):
 	Class, race, name = "Neutral", "Pirate", "Bloodsail Corsair"
 	mana, attack, health = 1, 1, 2
@@ -95,7 +90,7 @@ class BloodsailCorsair(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Remove 1 Durability from your opponent's weapon"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		weapon = self.Game.availableWeapon(self.ID)
+		weapon = self.Game.availableWeapon(3-self.ID)
 		if weapon != None:
 			PRINT(self, "Bloodsail Corsair's battlecry removes 1 Durability from opponent's weapon.")
 			weapon.loseDurability()
@@ -312,19 +307,14 @@ class AmaniBerserker(Minion):
 	requireTarget, keyWord, description = False, "", "Has +3 Attack while damaged"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
+		self.auras["Enrage"] = BuffAura_Dealer_Enrage(self, 3)
 		self.triggers["StatChanges"] = [self.handleEnrage]
 		self.activated = False
 		
 	def handleEnrage(self):
-		if self.silenced == False and self.onBoard:
-			if self.activated == False and self.health < self.health_upper:
-				self.activated = True
-				self.statChange(3, 0)
-			elif self.activated and self.health >= self.health_upper:
-				self.activated = False
-				self.statChange(-3, 0)
-				
-				
+		self.auras["Enrage"].handleEnrage()
+		
+		
 class AncientWatcher(Minion):
 	Class, race, name = "Neutral", "", "Ancient Watcher"
 	mana, attack, health = 2, 4, 5
@@ -1068,21 +1058,40 @@ class RagingWorgen(Minion):
 	requireTarget, keyWord, description = False, "", "Has +1 Attack and Windfury while damaged"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
+		self.auras["Enrage"] = EnrageAura_RaginWorgen(self)
 		self.triggers["StatChanges"] = [self.handleEnrage]
 		self.activated = False
 		
 	def handleEnrage(self):
-		if self.silenced == False and self.onBoard:
-			if self.activated == False and self.health < self.health_upper:
-				self.activated = True
-				self.statChange(1, 0)
-				self.getsKeyword("Windfury")
-			elif self.activated and self.health >= self.health_upper:
-				self.activated = False
-				self.statChange(-1, 0)
-				self.losesKeyword("Windfury")
-				
-				
+		self.auras["Enrage"].handleEnrage()
+		
+class EnrageAura_RaginWorgen:
+	def __init__(self, minion):
+		self.minion = minion
+		self.auraAffected = [] #A list of (minion, aura_Receiver)
+		
+	def auraAppears(self):
+		pass
+		
+	def auraDisappears(self):
+		pass
+		
+	def handleEnrage(self):
+		if self.minion.onBoard:
+			if self.minion.activated == False and self.minion.health < self.minion.health_upper:
+				self.minion.activated = True
+				BuffAura_Receiver(self.minion, self, 1, 0).effectStart()
+				HasAura_Receiver(self.minion, self, "Windfury").effectStart()
+			elif self.minion.activated and self.minion.health >= self.minion.health_upper:
+				self.minion.activated = False
+				for minion, aura_Receiver in fixedList(self.auraAffected):
+					aura_Receiver.effectClear()
+					
+	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
+		#func that checks if subject is applicable will be the new copy's function
+		return type(self)(recipientMinion)
+		
+		
 class ScarletCrusader(Minion):
 	Class, race, name = "Neutral", "", "Scarlet Crusader"
 	mana, attack, health = 3, 3, 1
@@ -1110,17 +1119,13 @@ class TaurenWarrior(Minion):
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Has +3 attack while damaged"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
+		self.auras["Enrage"] = BuffAura_Dealer_Enrage(self, 3)
 		self.triggers["StatChanges"] = [self.handleEnrage]
 		self.activated = False
 		
 	def handleEnrage(self):
-		if self.silenced == False and self.onBoard:
-			if self.activated == False and self.health < self.health_upper:
-				self.activated = True
-				self.statChange(3, 0)
-			elif self.activated and self.health >= self.health_upper:
-				self.activated = False
-				self.statChange(-3, 0)
+		self.auras["Enrage"].handleEnrage()
+		
 				
 				
 class ThrallmarFarseer(Minion):
@@ -1498,12 +1503,10 @@ class SpitefulSmith(Minion):
 		if self.silenced == False and self.onBoard:
 			if self.activated == False and self.health < self.health_upper:
 				self.activated = True
-				PRINT(self, "Spiteful Smith becomes enraged and starts WeaponBuffAura")
 				#在随从登场之后，当出现激怒之后再次尝试建立光环。应该可以成功。
 				self.auras["Spiteful Smith Aura"].auraAppears()
 			elif self.activated and self.health >= self.health_upper:
 				self.activated = False
-				PRINT(self, "Spiteful Smith is no longer enraged and shuts down WeaponBuffAura")
 				#随从不再处于激怒状态时，取消光环，无论此时有无武器装备。
 				self.auras["Spiteful Smith Aura"].auraDisappears()
 				
@@ -5346,14 +5349,10 @@ class GrommashHellscream(Minion):
 	requireTarget, keyWord, description = False, "Charge", "Charge. Has +6 attack while damaged"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
+		self.auras["Enrage"] = BuffAura_Dealer_Enrage(self, 6)
 		self.triggers["StatChanges"] = [self.handleEnrage]
 		self.activated = False
 		
 	def handleEnrage(self):
-		if self.silenced == False and self.onBoard:
-			if self.activated == False and self.health < self.health_upper:
-				self.activated = True
-				self.statChange(6, 0)
-			elif self.activated and self.health >= self.health_upper:
-				self.activated = False
-				self.statChange(-6, 0)
+		self.auras["Enrage"].handleEnrage()
+		

@@ -446,8 +446,8 @@ WarriorDeck = [ImproveMorale, ViciousScraphound, DrBoomsScheme, SweepingStrikes,
 				DeathwingMadAspect, BoomSquad, RiskySkipper, BombWrangler, ImprisonedGanarg, SwordandBoard, CorsairCache, Bladestorm, BonechewerRaider, BulwarkofAzzinoth, 
 				WarmaulChallenger, KargathBladefist, ScrapGolem, BloodboilBrute]
 
-Experiment1 = [PsycheSplit, PsycheSplit, KaelthasSunstrider, KaelthasSunstrider, SalhetsPride, SalhetsPride, ArgentSquire, SouthseaDeckhand, SouthseaDeckhand, ArgentSquire, FieryWarAxe, FieryWarAxe, SouthseaCaptain, SouthseaCaptain, SkyRaider, SkyRaider, ParachuteBrigand, ParachuteBrigand, ParachuteBrigand
+Experiment1 = [SwampqueenHagatha, SwampqueenHagatha, Overgrowth, Overgrowth, SpitefulSmith, Gorehowl, Gorehowl, FieryWarAxe, BloodswornMercenary, BloodswornMercenary, BloodswornMercenary, TempleBerserker, TempleBerserker, GrommashHellscream, AmaniBerserker, AmaniBerserker, 
 				]
 
-Experiment2 = [PsycheSplit, PsycheSplit, KaelthasSunstrider, KaelthasSunstrider, SalhetsPride, SalhetsPride, ArgentSquire, SouthseaDeckhand, SouthseaDeckhand, ArgentSquire, FieryWarAxe, FieryWarAxe, SouthseaCaptain, SouthseaCaptain, SkyRaider, SkyRaider, ParachuteBrigand, ParachuteBrigand, ParachuteBrigand
+Experiment2 = [SwampqueenHagatha, SwampqueenHagatha, Overgrowth, Overgrowth, RagingWorgen, RagingWorgen, SpitefulSmith, SpitefulSmith, Gorehowl, Gorehowl, FieryWarAxe, BloodswornMercenary, BloodswornMercenary, BloodswornMercenary, TempleBerserker, TempleBerserker, GrommashHellscream, AmaniBerserker, AmaniBerserker, 
 				]

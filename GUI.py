@@ -102,14 +102,14 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			attack, attack_Enchant, health, health_Enchant, health_upper = self.card.attack, self.card.attack_Enchant, self.card.health, self.card.health_Enchant, self.card.health_upper
 			attColor = "green" if attack_Enchant > self.card.attack_0 else "black"
 			lbl_attack = CardLabel(text=str(attack), bg="white", fg=attColor, font=("Yahei", 11, "bold"))
-			lbl_attack.plot(x=x-0.39*CARD_X, y=y+0.42*CARD_X, anchor='c')
+			lbl_attack.plot(x=x-0.39*CARD_X, y=y+0.39*CARD_Y, anchor='c')
 			self.labels.append(lbl_attack)
 			if health >= health_upper:
 				healthColor = "black" if health_Enchant <= self.card.health_0 else "green"
 			else:
 				healthColor = "red"
 			lbl_health = CardLabel(text=str(health), bg="white", fg=healthColor, font=("Yahei", 11, "bold"))
-			lbl_health.plot(x=x+0.39*CARD_X, y=y+0.42*CARD_X, anchor='c')
+			lbl_health.plot(x=x+0.39*CARD_X, y=y+0.39*CARD_Y, anchor='c')
 			self.labels.append(lbl_health)
 			text = ""
 			for key, value in self.card.keyWords.items():

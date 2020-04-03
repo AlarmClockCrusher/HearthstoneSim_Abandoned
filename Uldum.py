@@ -377,19 +377,14 @@ class TempleBerserker(Minion):
 	requireTarget, keyWord, description = False, "Reborn", "Reborn. Has +2 Attack while damaged"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
+		self.auras["Enrage"] = BuffAura_Dealer_Enrage(self, 2)
 		self.triggers["StatChanges"] = [self.handleEnrage]
 		self.activated = False
 		
 	def handleEnrage(self):
-		if self.silenced == False and self.onBoard:
-			if self.activated == False and self.health < self.health_upper:
-				self.activated = True
-				self.statChange(2, 0)
-			elif self.activated and self.health >= self.health_upper:
-				self.activated = False
-				self.statChange(-2, 0)
-				
-				
+		self.auras["Enrage"].handleEnrage()
+		
+		
 class Vilefiend(Minion):
 	Class, race, name = "Neutral", "Demon", "Vilefiend"
 	mana, attack, health = 2, 2, 2

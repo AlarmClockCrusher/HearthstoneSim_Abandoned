@@ -270,6 +270,34 @@ class BuffAura_Dealer_All:
 		#func that checks if subject is applicable will be the new copy's function
 		return type(self)(recipientMinion, recipientMinion.applicable, self.attack, self.health)
 		
+		
+class BuffAura_Dealer_Enrage:
+	def __init__(self, minion, attack):
+		self.minion = minion
+		self.attack = attack
+		self.auraAffected = [] #A list of (minion, aura_Receiver)
+		
+	def auraAppears(self):
+		pass
+		
+	def auraDisappears(self):
+		pass
+		
+	def handleEnrage(self):
+		if self.minion.onBoard:
+			if self.minion.activated == False and self.minion.health < self.minion.health_upper:
+				self.minion.activated = True
+				BuffAura_Receiver(self.minion, self, self.attack, 0).effectStart()
+			elif self.minion.activated and self.minion.health >= self.minion.health_upper:
+				self.minion.activated = False
+				for minion, aura_Receiver in fixedList(self.auraAffected):
+					aura_Receiver.effectClear()
+					
+	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
+		#func that checks if subject is applicable will be the new copy's function
+		return type(self)(recipientMinion, self.attack)
+		
+		
 #战歌指挥官的光环相对普通的buff光环更特殊，因为会涉及到随从获得和失去光环的情况
 class WarsongCommander_Aura:
 	def __init__(self, minion):
@@ -348,7 +376,10 @@ class HasAura_Receiver:
 		self.keyWord = keyWord
 		
 	def effectStart(self):
-		self.receiver.keyWords_AuraAffected[self.keyWord] += 1
+		if self.keyWord in self.receiver.keyWords_AuraAffected:
+			self.receiver.keyWords_AuraAffected[self.keyWord] += 1
+		else:
+			self.receiver.keyWords_AuraAffected[self.keyWord] = 1
 		self.receiver.getsKeyword(self.keyWord)
 		self.receiver.keyWords_AuraAffected["Auras"].append(self)
 		self.source.auraAffected.append((self.receiver, self))
@@ -506,13 +537,13 @@ class WeaponBuffAura_SpitefulSmith:
 		self.applies(subject)
 		
 	def applies(self, subject):
-		PRINT(self.minion, "Weapon gains +2 attack from %s"%self.minion.name)
 		aura_Receiver = WeaponBuffAura_Receiver(subject, self)
 		aura_Receiver.effectStart()
 		
 	def auraAppears(self):
 		#在随从自己登场时，就会尝试开始这个光环，但是如果没有激怒，则无事发生。
 		if self.minion.health < self.minion.health_upper:
+			self.minion.activated = True
 			weapon = self.minion.Game.availableWeapon(self.minion.ID)
 			#这个Aura_Dealer可以由激怒和出场两个方式来控制。
 			if weapon != None and weapon not in self.auraAffected:

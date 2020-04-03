@@ -616,7 +616,7 @@ class Minion(Card):
 			#self.attack_0; self.attack_Enchant; self.attack(affected by buffAura and tempChange)
 			#self.attack_0; self.health_Enchant; self.health, self.health_upper.
 		self.attack_Enchant, self.health_Enchant = self.attack, self.health
-		self.stat_AuraAffected = [0, 0, []] #The list contains all the Aura Objs put on this minion.
+		self.stat_AuraAffected = [0, 0, []] #激怒的攻击力变化直接被记录在第一个元素中，不涉及buffAura_Receiver, The list contains all the Aura Objs put on this minion.
 		self.keyWords_AuraAffected = {"Charge":0, "Rush":0, "Mega Windfury":0,
 										"Auras":[]}
 		self.description = type(self).description
@@ -838,6 +838,7 @@ class Minion(Card):
 		PRINT(self, "%s gets Frozen."%self.name)
 		self.Game.sendSignal("MinionGetsFrozen", self.Game.turn, None, self, 0, "")
 		
+	#对于暂时因为某种aura而获得关键字的情况，直接在keyWords_AuraAffected里面添加对应的关键字，但是不注册aura_Receiver
 	def getsKeyword(self, keyWord):
 		if self.inDeck == False: # and keyWord in self.keyWords.keys()
 			self.keyWords[keyWord] += 1
@@ -1182,6 +1183,7 @@ class Minion(Card):
 			#清除全部buffAura并重置随从的生命值之后，让原来的buffAura_Dealer自行决定是否重新对该随从施加光环。
 			for buffAura_Receiver in CurrentBuffAura_Receivers:
 				buffAura_Receiver.source.applies(self)
+			print(self.triggers["StatChanges"])
 			for func in self.triggers["StatChanges"]:
 				func()
 				

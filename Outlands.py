@@ -1,7 +1,7 @@
 from CardTypes import *
 from VariousHandlers import *
 from Triggers_Auras import *
-from Basic import FieryWarAxe
+from Basic import FieryWarAxe, ExcessMana
 
 import numpy as np
 import copy
@@ -387,9 +387,11 @@ class OverconfidentOrc(Minion):
 			if self.activated == False and self.health >= self.health_upper:
 				self.activated = True
 				self.statChange(2, 0)
+				self.stat_AuraAffected[0] += 2
 			elif self.activated and self.health < self.health_upper:
 				self.activated = False
 				self.statChange(-2, 0)
+				self.stat_AuraAffected[0] -= 2
 				
 				
 class TerrorguardEscapee(Minion):
@@ -1414,10 +1416,9 @@ class Overgrowth(Spell):
 	#不知道满费用和9费时如何结算,假设不会给抽牌的衍生物
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Overgrowth gives player two empty Mana Crystals.")
-		self.Game.ManaHandler.gainEmptyManaCrystal(2, self.ID)
-		#if self.Game.ManaHandler.gainEmptyManaCrystal(2, self.ID) == False:
-		#	PRINT(self, "Player's mana at upper limit already. Wild Growth gives player an Excess Mana instead.")
-		#	self.Game.Hand_Deck.addCardtoHand(ExcessMana(self.Game, self.ID), self.ID)
+		if self.Game.ManaHandler.gainEmptyManaCrystal(2, self.ID) == False:
+			PRINT(self, "Player's mana at upper limit already. Overgrowth gives player an Excess Mana instead.")
+			self.Game.Hand_Deck.addCardtoHand(ExcessMana(self.Game, self.ID), self.ID)
 		return None
 		
 		

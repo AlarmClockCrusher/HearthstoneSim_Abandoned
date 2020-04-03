@@ -3713,21 +3713,21 @@ class DarkSkies(Spell):
 	description = "Deal 1 damage to a random minion. Repeat for each card in your hand"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		PRINT(self, "Dark Skies is cast and deals %d damage to a random minion. And repeat for each card in player's hand"%(damage, handSize))
+		PRINT(self, "Dark Skies is cast and deals %d damage to a random minion. And repeat for each card in player's hand"%damage)
 		#在使用这个法术后先打一次，然后检测手牌数。总伤害个数是手牌数+1
 		targets = self.Game.minionsAlive(1) + self.Game.minionsAlive(2)
 		if targets != []:
 			target = np.random.choice(targets)
 			PRINT(self, "Dark Skies deals %d damage to minion %s"%(damage, target.name))
 			self.dealsDamage(target, damage)
-		for i in range(handSize):
-			targets = self.Game.minionsAlive(1) + self.Game.minionsAlive(2)
-			if targets != []:
-				target = np.random.choice(targets)
-				PRINT(self, "Dark Skies deals %d damage to minion %s"%(damage, target.name))
-				self.dealsDamage(target, damage)
-			else:
-				break
+			for i in range(len(self.Game.Hand_Deck.hands[self.ID])):
+				targets = self.Game.minionsAlive(1) + self.Game.minionsAlive(2)
+				if targets != []:
+					target = np.random.choice(targets)
+					PRINT(self, "Dark Skies deals %d damage to minion %s"%(damage, target.name))
+					self.dealsDamage(target, damage)
+				else:
+					break
 		return None
 		
 		

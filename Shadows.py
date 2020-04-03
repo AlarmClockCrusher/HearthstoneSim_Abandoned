@@ -3324,7 +3324,7 @@ class Scargil(Minion):
 		
 class SwampqueenHagatha(Minion):
 	Class, race, name = "Shaman", "", "Swampqueen Hagatha"
-	mana, attack, health = 7, 5, 5
+	mana, attack, health = 1, 5, 5
 	index = "Shadows~Shaman~Minion~7~5~5~None~Swampqueen Hagatha~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a 5/5 Horror to your hand. Teach it two Shaman spells"
 	poolIdentifier = "Shaman Spells"
@@ -3369,7 +3369,7 @@ class SwampqueenHagatha(Minion):
 			spell1ClassName, spell2ClassName = spell1.__name__, spell2.__name__
 			requireTarget = spell1.requireTarget or spell2.requireTarget
 			newIndex = "Shadows~Shaman~5~5~5~Minion~None~Drustvar Horror_%s_%s~Battlecry~Uncollectible"%(spell1.name, spell2.name)
-			subclass = type("DrustvarHorror~"+spell1ClassName+spell2ClassName, (DrustvarHorror_Mutable, ), 
+			subclass = type("DrustvarHorror_Mutable_"+spell1ClassName+spell2ClassName, (DrustvarHorror_Mutable, ), 
 							{"requireTarget": requireTarget, "learnedSpell1": spell1, "learnedSpell2":spell2,
 							"index": newIndex
 							}
