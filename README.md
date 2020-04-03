@@ -9,5 +9,5 @@ To run the game, either use python to run the GUI.py or simply open the GUI.exe.
 要运行游戏，或使用python来运行GUI.py，或直接打开GUI.exe。你需要在UI的右下方的选项卡中选择对战英雄，并在下方的两个文本框中输入双方的牌组代码。如果没有输入代码则会加载默认牌组(在Hand.py末尾中可以修改)然后点击Confirm开始换牌流程。
 There are no animations of the play resolutions. The UI simply allows player to select characters for plays and shows the final results of each play resolution. The resolutions will be printed 'System Output' panel on the top right corner.
 结算过程没有动画显示。UI只是允许玩家选择角色，并显示结算的最终结果。结果过程会输出到右上角的"System Output"方框中。
-There are two video clips that serve as manuals of the UI. The general rule is left clicks can select subjects or target and right clicks on cards/characters will cancel your current selections. Refer to the videos when confused.
-附上两段视频作为UI使用的指南。总体规则为鼠标左键选择角色，右键单击取消当前选择。如有疑惑，请参考视频
+The general rule is left clicks can select subjects or target and right clicks on cards/characters will cancel your current selections. 
+总体规则为鼠标左键选择角色，右键单击取消当前选择。
