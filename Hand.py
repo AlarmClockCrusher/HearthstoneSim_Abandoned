@@ -47,7 +47,7 @@ class Hand_Deck:
 			Class = self.Game.heroes[ID].Class
 			for obj in self.initialDecks[ID]:
 				card = obj(self.Game, ID)
-				if "Galakrond. " in card.name:
+				if "Galakrond, " in card.name:
 					#检测过程中，如果目前没有主迦拉克隆或者与之前检测到的迦拉克隆与玩家的职业不符合，则把检测到的迦拉克隆定为主迦拉克隆
 					if self.Game.CounterHandler.primaryGalakronds[ID] == None:
 						self.Game.CounterHandler.primaryGalakronds[ID] = card
@@ -68,9 +68,9 @@ class Hand_Deck:
 					mainQuests[ID].append(card)
 			numQueststoDraw = min(len(mainQuests[ID]), mulliganSize[ID])
 			if numQueststoDraw > 0:
-				queststoDraw = self.extractfromDeck(np.random.choice(mainQuests[ID], numQueststoDraw, replace=False))[0]
+				queststoDraw = np.random.choice(mainQuests[ID], numQueststoDraw, replace=False)
 				for quest in queststoDraw:
-					self.Game.mulligans[ID].append(quest)
+					self.Game.mulligans[ID].append(self.extractfromDeck(quest)[0])
 			for i in range(mulliganSize[ID]-numQueststoDraw):
 				self.Game.mulligans[ID].append(self.extractfromDeck(self.decks[ID][-1])[0])
 				
