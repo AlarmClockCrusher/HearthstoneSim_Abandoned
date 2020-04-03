@@ -168,14 +168,14 @@ class FacelessLackey(Minion):
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Neutral~Minion~1~1~1~None~Faceless Lackey~Battlecry~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 2-Cost minion"
-	poolIdentifier = "2-Cost Minions"
+	poolIdentifier = "2-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
-		return "2-Cost Minions", list(Game.MinionsofCost[2].values())
+		return "2-Cost Minions to Summon", list(Game.MinionsofCost[2].values())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Faceless Lackey's battlecry summons a random 2-Cost minions.")
-		minion = np.random.choice(self.Game.RNGPools["2-Cost Minions"])
+		minion = np.random.choice(self.Game.RNGPools["2-Cost Minions to Summon"])
 		self.Game.summonMinion(minion(self.Game, self.ID), self.position+1, self.ID)
 		return None
 		
@@ -234,12 +234,12 @@ class WitchyLackey(Minion):
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Neutral~Minion~1~1~1~None~Witchy Lackey~Battlecry~Uncollectible"
 	requireTarget, keyWord, description = True, "", "Battlecry: Transform a friendly minion into one that costs (1) more"
-	poolIdentifier = "1-Cost Minions"
+	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		costs, lists = [], []
 		for cost in Game.MinionsofCost.keys():
-			costs.append("%d-Cost Minions"%cost)
+			costs.append("%d-Cost Minions to Summon"%cost)
 			lists.append(list(Game.MinionsofCost[cost].values()))
 		return costs, lists
 		
@@ -908,14 +908,14 @@ class ExoticMountseller(Minion):
 	mana, attack, health = 7, 5, 8
 	index = "Shadows~Neutral~Minion~7~5~8~None~Exotic Mountseller"
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, summon a random 3-Cost Beast"
-	poolIdentifier = "3-Cost Beasts"
+	poolIdentifier = "3-Cost Beasts to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		threeCostBeasts = []
 		for key, value in Game.MinionswithRace["Beast"].items():
 			if key.split('~')[3] == "3":
 				threeCostBeasts.append(value)
-		return "3-Cost Beasts", threeCostBeasts
+		return "3-Cost Beasts to Summon", threeCostBeasts
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -930,7 +930,7 @@ class Trigger_ExoticMountseller(TriggeronBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self, "Player casts a spell and %s summons a random 3-Cost Beast."%self.entity.name)
-		beast = np.random.choice(self.entity.Game.RNGPools["3-Cost Beasts"])(self.entity.Game, self.entity.ID)
+		beast = np.random.choice(self.entity.Game.RNGPools["3-Cost Beasts to Summon"])(self.entity.Game, self.entity.ID)
 		self.entity.Game.summonMinion(beast, self.entity.position+1, self.entity.ID)
 		
 		
@@ -1101,10 +1101,10 @@ class BigBadArchmage(Minion):
 	mana, attack, health = 10, 6, 6
 	index = "Shadows~Neutral~Minion~10~6~6~None~Big Bad Archmage"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, summon a random 6-Cost minion"
-	poolIdentifier = "6-Cost Minions"
+	poolIdentifier = "6-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
-		return "6-Cost Minions", list(Game.MinionsofCost[6].values())
+		return "6-Cost Minions to Summon", list(Game.MinionsofCost[6].values())
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -1119,7 +1119,7 @@ class Trigger_BigBadArchmage(TriggeronBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self, "At the end of turn, %s summons a 6-Cost minion."%self.entity.name)
-		minion = np.random.choice(self.entity.Game.RNGPools["6-Cost Minions"])(self.entity.Game, self.entity.ID)
+		minion = np.random.choice(self.entity.Game.RNGPools["6-Cost Minions to Summon"])(self.entity.Game, self.entity.ID)
 		self.entity.Game.summonMinion(minion, self.entity.position+1, self.entity.ID)
 		
 """Druid cards"""
@@ -1994,12 +1994,12 @@ class ConjurersCalling(Spell):
 	requireTarget, mana = True, 4
 	index = "Shadows~Mage~Spell~4~Conjurer's Calling~Twinspell"
 	description = "Twinspell. Destroy a minion. Summon 2 minions of the same Cost to replace it"
-	poolIdentifier = "1-Cost Minions"
+	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		costs, lists = [], []
 		for cost in Game.MinionsofCost.keys():
-			costs.append("%d-Cost Minions"%cost)
+			costs.append("%d-Cost Minions to Summon"%cost)
 			lists.append(list(Game.MinionsofCost[cost].values()))
 		return costs, lists
 		
@@ -2020,7 +2020,7 @@ class ConjurersCalling(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
 			cost = type(target).mana
-			key = "%d-Cost Minions"%cost
+			key = "%d-Cost Minions to Summon"%cost
 			PRINT(self, "Twinspell Conjurer's Calling is cast, destroys minion %s and summons two minions with the same cost"%target.name, cost)
 			targetID, position = target.ID, target.position
 			self.Game.destroyMinion(target) #如果随从在手牌中则将其丢弃
@@ -2112,7 +2112,7 @@ class PowerofCreation(Spell):
 	requireTarget, mana = False, 8
 	index = "Shadows~Mage~Spell~8~Power of Creation"
 	description = "Discover a 6-Cost minion. Summon two copies of it"
-	poolIdentifier = "6-Cost Minions as Mage"
+	poolIdentifier = "6-Cost Minions as Mage to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		classes, lists, neutralCards = [], [], []
@@ -2122,13 +2122,13 @@ class PowerofCreation(Spell):
 			classCards[key.split('~')[1]].append(value)
 			
 		for Class in Classes:
-			classes.append("6-Cost Minions as "+Class)
+			classes.append("6-Cost Minions as %s to Summon"%Class)
 			lists.append(classCards[Class]+classCards["Neutral"])
 		return classes, lists #返回的包含“Class Cards except Hunter”等identifier的列表和其他职业卡表
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Power of Creation is cast, player discovers a 6-Cost minion and summon two copies of it.")
-		key = "6-Cost Minions as "+classforDiscover(self)
+		key = "6-Cost Minions as %s to Summon"%classforDiscover(self)
 		if self.Game.spaceonBoard(self.ID) > 0:
 			if "CastbyOthers" in comment:
 				PRINT(self, "Power of Creation summons two copies of a random 6-Cost minion.")
@@ -3048,12 +3048,12 @@ class ZarogsCrown_Shadows(Spell):
 	requireTarget, mana = False, 3
 	index = "Shadows~Neutral~Spell~3~Zarog's Crown~Uncollectible"
 	description = "Discover a Legendary minion. Summon two copies of it"
-	poolIdentifier = "Legendary Minions as Rogue"
+	poolIdentifier = "Legendary Minions as Druid to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		classes, lists = [], []
 		for Class in Classes:
-			classes.append("Legendary Minions as "+Class)
+			classes.append("Legendary Minions as %s to Summon"%Class)
 			legendaryMinions = []
 			for key, value in Game.LegendaryMinions.items():
 				if "~%s~"%Class in key or "~Neutral~" in key:
@@ -3064,7 +3064,7 @@ class ZarogsCrown_Shadows(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.spaceonBoard(self.ID) > 0:
-			key = "Legendary Minions as " + classforDiscover(self)
+			key = "Legendary Minions as %s to Summon"%classforDiscover(self)
 			if "CastbyOthers" in comment:
 				PRINT(self, "Zarog's Crown summons two copies of a random Legendary minion")
 				minion = np.random.choice(self.Game.RNGPools[key])
@@ -3154,12 +3154,12 @@ class Mutate(Spell):
 	requireTarget, mana = True, 0
 	index = "Shadows~Shaman~Spell~0~Mutate"
 	description = "Transf a friendly minion to a random one that costs (1) more"
-	poolIdentifier = "1-Cost Minions"
+	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		costs, lists = [], []
 		for cost in Game.MinionsofCost.keys():
-			costs.append("%d-Cost Minions"%cost)
+			costs.append("%d-Cost Minions to Summon"%cost)
 			lists.append(list(Game.MinionsofCost[cost].values()))
 		return costs, lists
 		

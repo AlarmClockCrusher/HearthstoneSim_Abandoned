@@ -1942,10 +1942,10 @@ class NetherwindPortal(Secret):
 	requireTarget, mana = False, 3
 	index = "Outlands~Mage~Spell~3~Netherwind Portal~~Secret"
 	description = "After your opponent casts a spell, summon a random 4-Cost minion"
-	poolIdentifier = "4-Cost Minions"
+	poolIdentifier = "4-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
-		return "4-Cost Minions", list(Game.MinionsofCost[4].values())
+		return "4-Cost Minions to Summon", list(Game.MinionsofCost[4].values())
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -1960,7 +1960,7 @@ class Trigger_NetherwindPortal(SecretTrigger):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self, "After the opponent casts a spell, Secret Netherwind Portal is triggered and summons a random 4-Cost minion")
-		minion = np.random.choice(self.entity.Game.RNGPools["4-Cost Minions"])
+		minion = np.random.choice(self.entity.Game.RNGPools["4-Cost Minions to Summon"])
 		self.entity.Game.summonMinion(minion(self.entity.Game, self.entity.ID), -1, self.entity.ID)
 		
 		
@@ -1969,10 +1969,10 @@ class ApexisBlast(Spell):
 	requireTarget, mana = True, 5
 	index = "Outlands~Mage~Spell~5~Apexis Blast"
 	description = "Deal 5 damage. If your deck has no minions, summon a random 5-Cost minion"
-	poolIdentifier = "5-Cost Minions"
+	poolIdentifier = "5-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
-		return "5-Cost Minions", list(Game.MinionsofCost[5].values())
+		return "5-Cost Minions to Summon", list(Game.MinionsofCost[5].values())
 		
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Hand_Deck.noMinionsinDeck(self.ID)
@@ -1984,7 +1984,7 @@ class ApexisBlast(Spell):
 			self.dealsDamage(target, damage)
 			if self.Game.Hand_Deck.noMinionsinDeck(self.ID):
 				PRINT(self, "Because player has no minions in deck, Apexis Blast summons a random 5-Cost minion")
-				minion = np.random.choice(self.Game.RNGPools["5-Cost Minions"])(self.Game, self.ID)
+				minion = np.random.choice(self.Game.RNGPools["5-Cost Minions to Summon"])(self.Game, self.ID)
 				self.Game.summonMinion(minion, -1, self.ID)
 		return target
 		
@@ -2145,14 +2145,14 @@ class MurgurglePrime(Minion):
 	mana, attack, health = 8, 6, 3
 	index = "Outlands~Paladin~Minion~8~6~3~Murloc~Murgurgle Prime~Divine Shield~Battlecry~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield. Battlecry: Summon 4 random Murlocs. Give them Divine Shield"
-	poolIdentifier = "Murlocs"
+	poolIdentifier = "Murlocs to Summon"
 	@classmethod
 	def generatePool(cls, Game):
-		return "Murlocs", list(Game.MinionswithRace["Murloc"].values())
+		return "Murlocs to Summon", list(Game.MinionswithRace["Murloc"].values())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Murgurgle Prime's battlecry summons 4 random Murlocs and gives them Divine Shield")
-		murlocs = [murloc(self.Game, self.ID) for murloc in np.random.choice(self.Game.RNGPools["Murlocs"], 4, replace=True)]
+		murlocs = [murloc(self.Game, self.ID) for murloc in np.random.choice(self.Game.RNGPools["Murlocs to Summon"], 4, replace=True)]
 		#假设召唤位置是在右边，而非左右各两个
 		self.Game.summonMinion(murlocs, (self.position, "totheRight"), self.ID)
 		for i in range(4): #假设是召唤完全部4个之后给予它们圣盾
@@ -2599,12 +2599,12 @@ class Bamboozle(Secret):
 	requireTarget, mana = False, 2
 	index = "Outlands~Rogue~Spell~2~Bamboozle~~Secret"
 	description = "When one of your minions is attacked, transform it into a random one that costs (3) more"
-	poolIdentifier = "3-Cost Minions"
+	poolIdentifier = "3-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		costs, lists = [], []
 		for cost in Game.MinionsofCost.keys():
-			costs.append("%d-Cost Minions"%cost)
+			costs.append("%d-Cost Minions to Summon"%cost)
 			lists.append(list(Game.MinionsofCost[cost].values()))
 		return costs, lists
 		
@@ -2794,12 +2794,12 @@ class BogstrokClacker(Minion):
 	mana, attack, health = 3, 3, 3
 	index = "Outlands~Shaman~Minion~3~3~3~None~Bogstrok Clacker~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Transform adjacent minions into random minions that cost (1) more"
-	poolIdentifier = "1-Cost Minions"
+	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		costs, lists = [], []
 		for cost in Game.MinionsofCost.keys():
-			costs.append("%d-Cost Minions"%cost)
+			costs.append("%d-Cost Minions to Summon"%cost)
 			lists.append(list(Game.MinionsofCost[cost].values()))
 		return costs, lists
 		
@@ -3099,6 +3099,8 @@ class ShadowCouncil(Spell):
 		#choice will return empty lists if handSize/deckSize == 0
 		minionstoHand = np.random.choice(self.Game.RNGPools["Demons"], handSize, replace=True)
 		self.Game.Hand_Deck.addCardtoHand(minionstoHand, self.ID, "CreateUsingType")
+		for minion in minionstoHand:
+			minion.buffDebuff(2, 2)
 		return None
 		
 		

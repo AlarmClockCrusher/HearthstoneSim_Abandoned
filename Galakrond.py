@@ -781,12 +781,12 @@ class ExplosiveEvolution(Spell):
 	requireTarget, mana = True, 2
 	index = "Dragons~Shaman~Spell~2~Explosive Evolution"
 	description = "Transform a friendly minion into a random one that costs (3) more"
-	poolIdentifier = "1-Cost Minions"
+	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		costs, lists = [], []
 		for cost in Game.MinionsofCost.keys():
-			costs.append("%d-Cost Minions"%cost)
+			costs.append("%d-Cost Minions to Summon"%cost)
 			lists.append(list(Game.MinionsofCost[cost].values()))
 		return costs, lists
 		
@@ -832,17 +832,17 @@ class TheFistofRaden(Weapon):
 	Class, name, description = "Shaman", "The Fist of Ra-den", "After you cast a spell, summon a Legendary minion of that Cost. Lose 1 Durability"
 	mana, attack, durability = 4, 1, 4
 	index = "Dragons~Shaman~Weapon~4~1~4~The Fist of Ra-den~Legendary"
-	poolIdentifier = "1-Cost Legendary Minions"
+	poolIdentifier = "1-Cost Legendary Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		minions, costs = {}, []
 		for key, value in Game.LegendaryMinions.items():
 			cost = key.split('~')[3]
 			if cost not in costs:
-				minions[cost+"-Cost Legendary Minions"] = [value]
+				minions[cost+"-Cost Legendary Minions to Summon"] = [value]
 				costs.append(cost)
 			else:
-				minions[cost+"-Cost Legendary Minions"].append(value)
+				minions[cost+"-Cost Legendary Minions to Summon"].append(value)
 				
 		return list(minions.keys()), list(minions.values())
 		
@@ -858,9 +858,9 @@ class Trigger_TheFistofRaden(TriggeronBoard):
 		return subject.ID == self.entity.ID and self.entity.onBoard and self.entity.durability > 0
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		if "%d-Cost Legendary Minions"%number in self.entity.Game.RNGPools.keys():
+		if "%d-Cost Legendary Minions to Summon"%number in self.entity.Game.RNGPools.keys():
 			PRINT(self, "After player casts a spell %s, %s summons a random Legendary minion with that Cost and loses 1 Durability."%(subject.name, self.entity.name))
-			minion = np.random.choice(self.entity.Game.RNGPools["%d-Cost Legendary Minions"%number])
+			minion = np.random.choice(self.entity.Game.RNGPools["%d-Cost Legendary Minions to Summon"%number])
 			self.entity.Game.summonMinion(minion(self.entity.Game, self.entity.ID), -1, self.entity.ID)
 			self.entity.loseDurability()
 			

@@ -424,7 +424,7 @@ class Game:
 			else:
 				break
 		#After deciding the cost of the new minion, transform/replace it depending on it's location
-		newMinion = np.random.choice(list(self.MinionsofCost[cost].values()))(self, target.ID)
+		newMinion = np.random.choice(list(self.RNGPools["%d-Cost Minions to Summon"].values()))(self, target.ID)
 		self.transform(target, newMinion)
 		return newMinion
 		

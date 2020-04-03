@@ -1050,12 +1050,12 @@ class KingPhaoris(Minion):
 	mana, attack, health = 10, 5, 5
 	index = "Uldum~Neutral~Minion~10~5~5~None~King Phaoris~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: For each spell in your hand, summon a minion of the same Cost"
-	poolIdentifier = "1-Cost Minions"
+	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		costs, lists = [], []
 		for cost in Game.MinionsofCost.keys():
-			costs.append("%d-Cost Minions"%cost)
+			costs.append("%d-Cost Minions to Summon"%cost)
 			lists.append(list(Game.MinionsofCost[cost].values()))
 		return costs, lists
 	#不知道如果手中法术的法力值没有对应随从时会如何
@@ -1075,7 +1075,7 @@ class KingPhaoris(Minion):
 		if manasofSpellsinHand != []:
 			minions = []
 			for cost in manasofSpellsinHand:
-				minions.append(np.random.choice(self.Game.RNGPools["%d-Cost Minions"%cost])(self.Game, self.ID))
+				minions.append(np.random.choice(self.Game.RNGPools["%d-Cost Minions to Summon"%cost])(self.Game, self.ID))
 			self.Game.summonMinion(minions, (self.position+1, "totheRight"), self.ID)
 		return None
 		
@@ -3192,10 +3192,10 @@ class DiseasedVulture(Minion):
 	mana, attack, health = 4, 3, 5
 	index = "Uldum~Warlock~Minion~4~3~5~Beast~Diseased Vulture"
 	requireTarget, keyWord, description = False, "", "After your hero takes damage on your turn, summon a random 3-Cost minion"
-	poolIdentifier = "3-Cost Minions"
+	poolIdentifier = "3-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
-		return "3-Cost Minions", list(Game.MinionsofCost[3].values())
+		return "3-Cost Minions to Summon", list(Game.MinionsofCost[3].values())
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3210,7 +3210,7 @@ class Trigger_DiseasedVulture(TriggeronBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self, "After player takes damage on their own turn, %s summons a random 3-Cost minion"%self.entity.name)
-		self.entity.Game.summonMinion(np.random.choice(self.entity.Game.RNGPools["3-Cost Minions"])(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summonMinion(np.random.choice(self.entity.Game.RNGPools["3-Cost Minions to Summon"])(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		
 		
 class Riftcleaver(Minion):

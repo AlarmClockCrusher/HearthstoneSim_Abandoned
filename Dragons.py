@@ -793,14 +793,14 @@ class ZulDrakRitualist(Minion):
 	mana, attack, health = 4, 3, 9
 	index = "Dragons~Neutral~Minion~4~3~9~None~Zul'Drak Ritualist~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Summon three random 1-Cost minions for your opponent"
-	poolIdentifier = "1-Cost Minions"
+	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
-		return "1-Cost Minion", list(Game.MinionsofCost[1].values())
+		return "1-Cost Minion to Summon", list(Game.MinionsofCost[1].values())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Zul'Drak Ritualist's battlecry summons three 1-Cost minions for the opponent")
-		minions = [minion(self.Game, 3-self.ID) for minion in np.random.choice(self.Game.RNGPools["1-Cost Minions"], 3, replace=True)]
+		minions = [minion(self.Game, 3-self.ID) for minion in np.random.choice(self.Game.RNGPools["1-Cost Minions to Summon"], 3, replace=True)]
 		self.Game.summonMinion(minions, (-1, "totheRightEnd"), self.ID)
 		return None
 		
@@ -823,7 +823,7 @@ class ChromaticEgg(Minion):
 	mana, attack, health = 5, 0, 3
 	index = "Dragons~Neutral~Minion~5~0~3~None~Chromatic Egg~Battlecry~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Battlecry: Secretly Discover a Dragon to hatch into. Deathrattle: Hatch!"
-	poolIdentifier = "Dragons as Druid"
+	poolIdentifier = "Dragons as Druid to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		classes, lists, neutralCards = [], [], []
@@ -833,7 +833,7 @@ class ChromaticEgg(Minion):
 			classCards[key.split('~')[1]].append(value)
 			
 		for Class in Classes:
-			classes.append("Dragons as "+Class)
+			classes.append("Dragons as %s to Summon"%Class)
 			lists.append(classCards[Class]+classCards["Neutral"])
 		return classes, lists #返回的包含“Class Cards except Hunter”等identifier的列表和其他职业卡表
 		
@@ -843,7 +843,7 @@ class ChromaticEgg(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.ID == self.Game.turn:
-			key = "Dragons as "+classforDiscover(self)
+			key = "Dragons as %s to Summon"%classforDiscover(self)
 			if "InvokedbyOthers" in comment:
 				PRINT(self, "Chromatic Egg's battlecry chooses a random Dragon to hacth into")
 				for trigger in self.deathrattles:
@@ -974,10 +974,10 @@ class Skyfin(Minion):
 	mana, attack, health = 5, 3, 3
 	index = "Dragons~Neutral~Minion~5~3~3~Murloc~Skyfin~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, summon 2 random Murlocs"
-	poolIdentifier = "Murlocs"
+	poolIdentifier = "Murlocs to Summon"
 	@classmethod
 	def generatePool(cls, Game):
-		return "Murlocs", list(Game.MinionswithRace["Murloc"].values())
+		return "Murlocs to Summon", list(Game.MinionswithRace["Murloc"].values())
 		
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
@@ -985,7 +985,7 @@ class Skyfin(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if self.Game.Hand_Deck.holdingDragon(self.ID):
 			PRINT(self, "Skyfin's battlecry summons two random Murlocs")
-			murlocs = np.random.choice(self.Game.RNGPools["Murlocs"], 2, replace=True)
+			murlocs = np.random.choice(self.Game.RNGPools["Murlocs to Summon"], 2, replace=True)
 			pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 			self.Game.summonMinion([murloc(self.Game, self.ID) for murloc in murlocs], pos, self.ID)
 		return None
@@ -1589,10 +1589,10 @@ class YseraUnleashed(Minion):
 	mana, attack, health = 9, 4, 12
 	index = "Dragons~Druid~Minion~9~4~12~Dragon~Ysera, Unleashed~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle 7 Dream Portals into your deck. When drawn, summon a random Dragon"
-	poolIdentifier = "Dragons"
+	poolIdentifier = "Dragons to Summon"
 	@classmethod
 	def generatePool(cls, Game):
-		return "Dragons", list(Game.MinionswithRace["Dragon"].values())
+		return "Dragons to Summon", list(Game.MinionswithRace["Dragon"].values())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Ysera, Unleashed's battlecry shuffles 7 Dream Portals into player's deck.")
@@ -1607,7 +1607,7 @@ class DreamPortal(Spell):
 	description = "Casts When Drawn. Summon a random Dragon"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Dream Portal is cast and summons a random Dragon.")
-		self.Game.summonMinion(np.random.choice(self.Game.RNGPools["Dragons"])(self.Game, self.ID), -1, self.ID)
+		self.Game.summonMinion(np.random.choice(self.Game.RNGPools["Dragons to Summon"])(self.Game, self.ID), -1, self.ID)
 		return None
 		
 		
@@ -2682,15 +2682,7 @@ class EnvoyofLazul(Minion):
 	mana, attack, health = 2, 2, 2
 	index = "Dragons~Priest~Minion~2~2~2~None~Envoy of Lazul~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Look at 3 cards. Guess which one is in your opponent's hand to get a copy of it"
-	poolIdentifier = "Cards as Druid"
-	@classmethod
-	def generatePool(cls, Game):
-		classes, lists, neutralCards = [], [], list(Game.NeutralMinions.values())
-		for Class in Classes:
-			classes.append("Cards as "+Class)
-			lists.append(list(Game.ClassCards[Class].values())+neutralCards)
-		return classes, lists
-		
+	
 	#One card current in opponent's hand( can be created card). Two other cards are the ones currently in opponent's deck but not in hand.
 	#If less than two cards left in opponent's deck, two copies of cards in opponent's starting deck is given.
 	#不知道猜的牌是否会保留对方手中的buff
@@ -3842,10 +3834,10 @@ class GalakrondtheWretched(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon a random Demon. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Warlock", "Galakrond, the Wretched", GalakrondsMalice, 5
 	index = "Dragons~Warlock~Hero Card~7~Galakrond, the Wretched~Battlecry~Legendary"
-	poolIdentifier = "Demons"
+	poolIdentifier = "Demons to Summon"
 	@classmethod
 	def generatePool(cls, Game):
-		return "Demons", list(Game.MinionswithRace["Demon"].values())
+		return "Demons to Summon", list(Game.MinionswithRace["Demon"].values())
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3854,7 +3846,7 @@ class GalakrondtheWretched(Galakrond_Hero):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Galakrond, the Wretched's summons a random Demon")
-		self.Game.summonMinion(np.random.choice(self.Game.RNGPools["Demons"])(self.Game, self.ID), -1, self.ID)
+		self.Game.summonMinion(np.random.choice(self.Game.RNGPools["Demons to Summon"])(self.Game, self.ID), -1, self.ID)
 		return None
 		
 class GalakrondtheApocalypes_Warlock(Galakrond_Hero):
@@ -3868,7 +3860,7 @@ class GalakrondtheApocalypes_Warlock(Galakrond_Hero):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Galakrond, the Apocalypes's battlecry summons 2 random Demons")
-		demons = np.random.choice(self.Game.RNGPools["Demons"], 2, replace=True)
+		demons = np.random.choice(self.Game.RNGPools["Demons to Summon"], 2, replace=True)
 		self.Game.summonMinion([demon(self.Game, self.ID) for demon in demons], (-1, "totheRightEnd"), self.ID)
 		return None
 		
@@ -3882,7 +3874,7 @@ class GalakrondAzerothsEnd_Warlock(Galakrond_Hero):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Galakrond, Azeroth's End's battlecry summons 4 random Demons")
-		demons = np.random.choice(self.Game.RNGPools["Demons"], 4, replace=True)
+		demons = np.random.choice(self.Game.RNGPools["Demons to Summon"], 4, replace=True)
 		self.Game.summonMinion([demon(self.Game, self.ID) for demon in demons], (-1, "totheRightEnd"), self.ID)
 		PRINT(self, "Galakrond, Azeroth's End's battlecry equips a 5/2 Claw for player")
 		self.Game.equipWeapon(DragonClaw(self.Game, self.ID))

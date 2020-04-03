@@ -1740,17 +1740,17 @@ class BarrensStablehand(Minion):
 	mana, attack, health = 7, 4, 4
 	index = "Classic~Neutral~Minion~7~4~4~None~Barrens Stablehand~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a random Beast"
-	poolIdentifier = "Beasts"
+	poolIdentifier = "Beasts to Summon"
 	@classmethod
 	def generatePool(cls, Game):
-		return "Beasts", list(Game.MinionswithRace["Beast"].values())
+		return "Beasts to Summon", list(Game.MinionswithRace["Beast"].values())
 		
 	def randomorDiscover(self):
 		return "Random"
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Barrens Stablehand's battlecry summons a random Beast.")
-		beast = np.random.choice(self.Game.RNGPools["Beasts"])
+		beast = np.random.choice(self.Game.RNGPools["Beasts to Summon"])
 		self.Game.summonMinion(beast(self.Game, self.ID), self.position+1, self.ID)
 		return None
 		
@@ -4896,10 +4896,10 @@ class BaneofDoom(Spell):
 	requireTarget, mana = True, 5
 	index = "Classic~Warlock~Spell~5~Bane of Doom"
 	description = "Deal 2 damage to a character. It that kills it, summon a random Demon"
-	poolIdentifier = "Demons"
+	poolIdentifier = "Demons to Summon"
 	@classmethod
 	def generatePool(cls, Game):
-		return "Demons", list(Game.MinionswithRace["Demon"].values())
+		return "Demons to Summon", list(Game.MinionswithRace["Demon"].values())
 		
 	def targetExists(self, choice=0):
 		return self.selectableMinionExists()
@@ -4914,7 +4914,7 @@ class BaneofDoom(Spell):
 			objtoTakeDamage, damageActual = self.dealsDamage(target, damage)
 			if (objtoTakeDamage.health < 1 or objtoTakeDamage.dead) and self.Game.spaceonBoard(self.ID) > 0:
 				PRINT(self, "Bane of Doom kills the target minion and summons a random demon.")
-				demon = np.random.choice(self.Game.RNGPools["Demons"])
+				demon = np.random.choice(self.Game.RNGPools["Demons to Summon"])
 				self.Game.summonMinion(demon(self.Game, self.ID), -1, self.ID)
 		return target
 		
