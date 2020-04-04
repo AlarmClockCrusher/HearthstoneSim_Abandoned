@@ -969,7 +969,7 @@ cardPool = {
 			"Dragons~Warlock~Spell~3~Dark Skies": DarkSkies,
 			"Dragons~Warlock~Minion~3~1~1~None~Dragonblight Cultist~Battlecry": DragonblightCultist,
 			"Dragons~Warlock~Spell~4~Fiendish Rites": FiendishRites,
-			"Dragons~Warlock~Minion~4~5~4~Dragon~Veiled Worshipper~Battlecry": VeiledWorshipper,
+			"Dragons~Warlock~Minion~4~5~4~None~Veiled Worshipper~Battlecry": VeiledWorshipper,
 			"Dragons~Warlock~Minion~5~5~5~Dragon~Crazed Netherwing~Battlecry": CrazedNetherwing,
 			"Dragons~Warlock~Minion~6~2~2~None~Abyssal Summoner~Battlecry": AbyssalSummoner,
 			"Dragons~Warlock~Minion~1~1~1~Demon~Abyssal Destroyer~Taunt~Uncollectible": AbyssalDestroyer_Mutable_1,

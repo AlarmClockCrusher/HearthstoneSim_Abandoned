@@ -3751,9 +3751,9 @@ class FiendishRites(Spell):
 		
 		
 class VeiledWorshipper(Minion):
-	Class, race, name = "Warlock", "Dragon", "Veiled Worshipper"
+	Class, race, name = "Warlock", "", "Veiled Worshipper"
 	mana, attack, health = 4, 5, 4
-	index = "Dragons~Warlock~Minion~4~5~4~Dragon~Veiled Worshipper~Battlecry"
+	index = "Dragons~Warlock~Minion~4~5~4~None~Veiled Worshipper~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you've Invoked twice, draw 3 cards"
 	
 	def effectCanTrigger(self):
