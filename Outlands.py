@@ -856,8 +856,7 @@ class CrimsonSigilRunner(Minion):
 	requireTarget, keyWord, description = False, "", "Outcast: Draw a card"
 	
 	def effectCanTrigger(self):
-		posinHand = self.Game.Hand_Deck.hands[self.ID].index(self)
-		self.effectViable = posinHand == 0 or posinHand == len(self.Game.Hand_Deck.hands[self.ID]) - 1
+		self.effectViable = self.Game.Hand_Deck.outcastcanTrigger(self)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if posinHand == 0 or posinHand == -1:
@@ -946,8 +945,7 @@ class SpectralSight(Spell):
 	index = "Outlands~Demon Hunter~Spell~2~Spectral Sight~Outcast"
 	description = "Draw a cards. Outscast: Draw another"
 	def effectCanTrigger(self):
-		posinHand = self.Game.Hand_Deck.hands[self.ID].index(self)
-		self.effectViable = posinHand == 0 or posinHand == len(self.Game.Hand_Deck.hands[self.ID]) - 1
+		self.effectViable = self.Game.Hand_Deck.outcastcanTrigger(self)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Spectral Sight is cast and player draws a card")
@@ -1081,8 +1079,7 @@ class SkullofGuldan(Spell):
 	index = "Outlands~Demon Hunter~Spell~5~Skull of Gul'dan~Outcast"
 	description = "Draw 3 cards. Outscast: Reduce their Cost by (3)"
 	def effectCanTrigger(self):
-		posinHand = self.Game.Hand_Deck.hands[self.ID].index(self)
-		self.effectViable = posinHand == 0 or posinHand == len(self.Game.Hand_Deck.hands[self.ID]) - 1
+		self.effectViable = self.Game.Hand_Deck.outcastcanTrigger(self)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Skull of Gul'dan is cast and player draws 3 card")

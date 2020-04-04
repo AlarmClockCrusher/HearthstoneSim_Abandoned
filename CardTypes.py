@@ -1201,6 +1201,8 @@ class Minion(Card):
 			Copy.statReset(attack, health)
 		for manaMod in Copy.manaModifications:
 			manaMod.activated = False
+		self.attTimes, self.attChances_extra = 0, 0
+		self.decideAttChances_base()
 		if mana != False:
 			for manaMod in Copy.manaModifications:
 				manaMod.getsRemoved()

@@ -996,7 +996,7 @@ class Trigger_Batterhead(TriggeronBoard):
 		
 class HeroicInnkeeper(Minion):
 	Class, race, name = "Neutral", "", "Heroic Innkeeper"
-	mana, attack, health = 1, 4, 4
+	mana, attack, health = 8, 4, 4
 	index = "Shadows~Neutral~Minion~8~4~4~None~Heroic Innkeeper~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Gain +2/+2 for each other friendly minion"
 	
@@ -3324,7 +3324,7 @@ class Scargil(Minion):
 		
 class SwampqueenHagatha(Minion):
 	Class, race, name = "Shaman", "", "Swampqueen Hagatha"
-	mana, attack, health = 1, 5, 5
+	mana, attack, health = 7, 5, 5
 	index = "Shadows~Shaman~Minion~7~5~5~None~Swampqueen Hagatha~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a 5/5 Horror to your hand. Teach it two Shaman spells"
 	poolIdentifier = "Shaman Spells"

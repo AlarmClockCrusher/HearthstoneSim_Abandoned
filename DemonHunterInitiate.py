@@ -128,8 +128,7 @@ class ConsumeMagic(Spell):
 		return target.cardType == "Minion" and target.ID != self.ID and target.onBoard
 		
 	def effectCanTrigger(self):
-		posinHand = self.Game.Hand_Deck.hands[self.ID].index(self)
-		self.effectViable = posinHand == 0 or posinHand == len(self.Game.Hand_Deck.hands[self.ID]) - 1
+		self.effectViable = self.Game.Hand_Deck.outcastcanTrigger(self)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if target != None:
@@ -283,8 +282,7 @@ class EyeBeam(Spell):
 		return target.cardType == "Minion" and target.onBoard
 		
 	def effectCanTrigger(self):
-		posinHand = self.Game.Hand_Deck.hands[self.ID].index(self)
-		self.effectViable = posinHand == 0 or posinHand == len(self.Game.Hand_Deck.hands[self.ID]) - 1
+		self.effectViable = self.Game.Hand_Deck.outcastcanTrigger(self)
 		
 	def selfManaChange(self):
 		if self.inHand:
@@ -344,8 +342,7 @@ class IllidariFelblade(Minion):
 	requireTarget, keyWord, description = False, "Rush", "Rush. Outcast: Gain Immune this turn"
 	
 	def effectCanTrigger(self):
-		posinHand = self.Game.Hand_Deck.hands[self.ID].index(self)
-		self.effectViable = posinHand == 0 or posinHand == len(self.Game.Hand_Deck.hands[self.ID]) - 1
+		self.effectViable = self.Game.Hand_Deck.outcastcanTrigger(self)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if posinHand == 0 or posinHand == -1:

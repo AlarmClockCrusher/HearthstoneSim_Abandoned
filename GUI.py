@@ -917,7 +917,7 @@ class GUI:
 					self.update()
 			#手中选中的随从在这里结算打出位置，如果不需要目标，则直接打出。
 			elif self.selectedSubject == "MinioninHand":
-				if selectedSubject == "Board" or (selectedSubject == "MiniononBoard" and entity.ID == ID):
+				if selectedSubject == "Board" or (selectedSubject == "MiniononBoard" and entity.ID == self.subject.ID):
 					self.position = -1 if selectedSubject == "Board" else entity.position
 					self.printInfo("Position for minion in hand decided: %d"%self.position)
 					self.selectedSubject = "MinionPositionDecided" #将主体记录为标记了打出位置的手中随从。

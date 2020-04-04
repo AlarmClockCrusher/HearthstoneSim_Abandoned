@@ -118,7 +118,11 @@ class Hand_Deck:
 					card.startofGame()
 					
 		self.drawCard(1)
-		
+		for card in self.hands[1] + self.hands[2]:
+			card.effectCanTrigger()
+			card.checkEvanescent()
+			
+			
 	def handNotFull(self, ID):
 		if len(self.hands[ID]) < self.handUpperLimit[ID]:
 			return True
@@ -126,6 +130,10 @@ class Hand_Deck:
 		
 	def spaceinHand(self, ID):
 		return self.handUpperLimit[ID] - len(self.hands[ID])
+		
+	def outcastcanTrigger(self, card):
+		posinHand = self.hands[card.ID].index(card)
+		return posinHand == 0 or posinHand == len(self.hands[card.ID]) - 1
 		
 	def noDuplicatesinDeck(self, ID):
 		record = []
@@ -446,8 +454,8 @@ WarriorDeck = [ImproveMorale, ViciousScraphound, DrBoomsScheme, SweepingStrikes,
 				DeathwingMadAspect, BoomSquad, RiskySkipper, BombWrangler, ImprisonedGanarg, SwordandBoard, CorsairCache, Bladestorm, BonechewerRaider, BulwarkofAzzinoth, 
 				WarmaulChallenger, KargathBladefist, ScrapGolem, BloodboilBrute]
 
-Experiment1 = [SwampqueenHagatha, SwampqueenHagatha, Overgrowth, Overgrowth, SpitefulSmith, Gorehowl, Gorehowl, FieryWarAxe, BloodswornMercenary, BloodswornMercenary, BloodswornMercenary, TempleBerserker, TempleBerserker, GrommashHellscream, AmaniBerserker, AmaniBerserker, 
+Experiment1 = [SandhoofWaterbearer, SandhoofWaterbearer, DarkSkies, DarkSkies, DarkSkies, SwampqueenHagatha, SwampqueenHagatha, Overgrowth, Overgrowth, SpitefulSmith, Gorehowl, Gorehowl, FieryWarAxe, BloodswornMercenary, BloodswornMercenary, BloodswornMercenary, TempleBerserker, TempleBerserker, GrommashHellscream, AmaniBerserker, AmaniBerserker, 
 				]
 
-Experiment2 = [SwampqueenHagatha, SwampqueenHagatha, Overgrowth, Overgrowth, RagingWorgen, RagingWorgen, SpitefulSmith, SpitefulSmith, Gorehowl, Gorehowl, FieryWarAxe, BloodswornMercenary, BloodswornMercenary, BloodswornMercenary, TempleBerserker, TempleBerserker, GrommashHellscream, AmaniBerserker, AmaniBerserker, 
+Experiment2 = [SandhoofWaterbearer, SandhoofWaterbearer, DarkSkies, DarkSkies, DarkSkies, SwampqueenHagatha, SwampqueenHagatha, Overgrowth, Overgrowth, SpitefulSmith, Gorehowl, Gorehowl, FieryWarAxe, BloodswornMercenary, BloodswornMercenary, BloodswornMercenary, TempleBerserker, TempleBerserker, GrommashHellscream, AmaniBerserker, AmaniBerserker, 
 				]
