@@ -122,10 +122,10 @@ class ConsumeMagic(Spell):
 	index = "Shadows~Demon Hunter~Spell~1~Consume Magic~Outcast"
 	description = "Silence an enemy minion. Outcast: Draw a card"
 	def available(self):
-		return self.selectableMinionExists()
+		return self.selectableEnemyMinionExists()
 		
 	def targetCorrect(self, target, choice=0):
-		return target.cardType == "Minion" and target.onBoard
+		return target.cardType == "Minion" and target.ID != self.ID and target.onBoard
 		
 	def effectCanTrigger(self):
 		posinHand = self.Game.Hand_Deck.hands[self.ID].index(self)
