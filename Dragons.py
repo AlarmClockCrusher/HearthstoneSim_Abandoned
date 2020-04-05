@@ -440,7 +440,8 @@ class WyrmrestPurifier(Minion):
 			key = Class+" Cards" if Class != "Neutral" else "%s Cards"%np.random.choice(Classes)
 			num = len(neutralCardsinDeck)
 			cards = [card(self.Game, self.ID) for card in np.random.choice(self.Game.RNGPools[key], num, replace=True)]
-			self.Game.Hand_Deck.extractfromDeck(neutralCardsinDeck)
+			for card in neutralCardsinDeck:
+				self.Game.Hand_Deck.extractfromDeck(card)
 			self.Game.Hand_Deck.decks[self.ID] += cards
 			for card in cards:
 				card.entersDeck()

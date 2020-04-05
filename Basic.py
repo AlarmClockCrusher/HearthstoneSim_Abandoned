@@ -1173,9 +1173,8 @@ class Tracking(Spell):
 			return "Discover"
 			
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		PRINT(self, "Tracking is cast and enters the discover preparation.")
 		numCardsLeft = len(self.Game.Hand_Deck.decks[self.ID])
-		if numCardsLeft  == 1:
+		if numCardsLeft == 1:
 			PRINT(self, "Tracking player draws the only remaining card from deck.")					
 			self.Game.Hand_Deck.drawCard(self.ID)
 		elif numCardsLeft > 1:
@@ -1185,7 +1184,8 @@ class Tracking(Spell):
 				cardtoDraw = cards.pop(np.random.randint(num))
 				PRINT(self, "Tracking randomly draws one of the top 3 cards. And removes the other two.")
 				self.Game.Hand_Deck.drawCard(self.ID, cardtoDraw)
-				self.Game.Hand_Deck.extractfromDeck(cards)
+				for card in cards:
+					self.Game.Hand_Deck.extractfromDeck(card)
 			else:
 				self.Game.options = cards
 				self.Game.DiscoverHandler.startDiscover(self)
@@ -1196,7 +1196,9 @@ class Tracking(Spell):
 		PRINT(self, "Tracking lets player draw card %s from the top 3 cards in deck"%option.name)
 		cardtoDraw = extractfrom(option, self.Game.options)
 		self.Game.Hand_Deck.drawCard(self.ID, cardtoDraw)
-		self.Game.Hand_Deck.extractfromDeck(self.Game.options)
+		for card in self.Game.options:
+			self.Game.Hand_Deck.extractfromDeck(card)
+		self.Game.options = []
 		
 		
 class HuntersMark(Spell):

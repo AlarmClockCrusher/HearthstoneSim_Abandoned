@@ -1183,8 +1183,8 @@ class Trigger_PitCommander(TriggeronBoard):
 				demonsinDeck.append(card)
 				
 		if demonsinDeck != [] and self.entity.Game.spaceonBoard(self.entity.ID) > 0:
-			demon = self.entity.Game.Hand_Deck.extractfromDeck(np.random.choice(demonsinDeck))[0]
-			self.entity.Game.summonMinion(demon, self.entity.position+1, self.entity.ID)
+			demon = np.random.choice(demonsinDeck)
+			self.entity.Game.summonfromDeck(demon, self.entity.position+1, self.entity.ID)
 			
 			
 """Druid cards"""

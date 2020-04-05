@@ -413,17 +413,18 @@ class SecretHandler:
 		return 5 - (len(self.mainQuests[ID]) + len(self.sideQuests[ID]) + len(self.secrets[ID]))
 		
 	def deploySecretsfromDeck(self, ID, num=1):
-		secretsAvailable = []
-		for card in self.Game.Hand_Deck.decks[ID]:
-			if "~~Secret" in card.index and self.isSecretDeployedAlready(card, ID) == False:
-				secretsAvailable.append(card)
-				
-		if secretsAvailable != []:
-			num = min(len(secretsAvailable), num)
-			secrets = np.random.choice(secretsAvailable, num, replace=False)
-			for secret in secrets:
+		for i in range(num):
+			secretsAvailable = []
+			for card in self.Game.Hand_Deck.decks[ID]:
+				if "~~Secret" in card.index and self.isSecretDeployedAlready(card, ID) == False:
+					secretsAvailable.append(card)
+					
+			if secretsAvailable != [] and self.areaNotFull(ID):
+				secret = np.random.choice(secretsAvailable)
 				self.Game.Hand_Deck.extractfromDeck(secret)
 				secret.whenEffective()
+			else:
+				break
 				
 	def extractSecrets(self, ID, all=False):
 		if all:

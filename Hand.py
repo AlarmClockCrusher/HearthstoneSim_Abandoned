@@ -454,8 +454,8 @@ WarriorDeck = [ImproveMorale, ViciousScraphound, DrBoomsScheme, SweepingStrikes,
 				DeathwingMadAspect, BoomSquad, RiskySkipper, BombWrangler, ImprisonedGanarg, SwordandBoard, CorsairCache, Bladestorm, BonechewerRaider, BulwarkofAzzinoth, 
 				WarmaulChallenger, KargathBladefist, ScrapGolem, BloodboilBrute]
 
-Experiment1 = [SandhoofWaterbearer, SandhoofWaterbearer, DarkSkies, DarkSkies, DarkSkies, SwampqueenHagatha, SwampqueenHagatha, Overgrowth, Overgrowth, SpitefulSmith, Gorehowl, Gorehowl, FieryWarAxe, BloodswornMercenary, BloodswornMercenary, BloodswornMercenary, TempleBerserker, TempleBerserker, GrommashHellscream, AmaniBerserker, AmaniBerserker, 
+Experiment1 = [Tracking, Tracking, SwampqueenHagatha, Overgrowth, Overgrowth, SpitefulSmith, Gorehowl, Gorehowl, FieryWarAxe, BloodswornMercenary, BloodswornMercenary, BloodswornMercenary, TempleBerserker, TempleBerserker, GrommashHellscream, AmaniBerserker, AmaniBerserker, 
 				]
 
-Experiment2 = [SandhoofWaterbearer, SandhoofWaterbearer, DarkSkies, DarkSkies, DarkSkies, SwampqueenHagatha, SwampqueenHagatha, Overgrowth, Overgrowth, SpitefulSmith, Gorehowl, Gorehowl, FieryWarAxe, BloodswornMercenary, BloodswornMercenary, BloodswornMercenary, TempleBerserker, TempleBerserker, GrommashHellscream, AmaniBerserker, AmaniBerserker, 
+Experiment2 = [Tracking, Tracking, SandhoofWaterbearer, DarkSkies, DarkSkies, DarkSkies, SwampqueenHagatha, SwampqueenHagatha, Overgrowth, Overgrowth, SpitefulSmith, Gorehowl, Gorehowl, FieryWarAxe, BloodswornMercenary, BloodswornMercenary, BloodswornMercenary, TempleBerserker, TempleBerserker, GrommashHellscream, AmaniBerserker, AmaniBerserker, 
 				]
