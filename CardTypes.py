@@ -61,7 +61,7 @@ def copyListDictTuple(obj, recipient):
 			elif type(value) == type(recipient.Game):
 				objCopy[key] = recipient.Game
 			elif type(value) == list or type(value) == dict or type(value) == tuple:
-				objCopy[key] = (copyListDictTuple(value, recipient))
+				objCopy[key] = copyListDictTuple(value, recipient)
 			else:
 				objCopy[key] = value.selfCopy(recipient)
 	else: #elif isinstance(obj, tuple):
@@ -540,6 +540,7 @@ class Card:
 		return Copy
 		
 	def createCopy(self, recipientGame):
+		print("Copying card ", self.name)
 		if self in recipientGame.copiedObjs:
 			return recipientGame.copiedObjs[self]
 		else:
@@ -577,7 +578,7 @@ class Card:
 						Copy.__dict__[key][keyword] = value[keyword]
 						Copy.__dict__[key]["Auras"] = [aura_Receiver.selfCopy(Copy) for aura_Receiver in value["Auras"]]
 				elif key == "manaModifications":
-					Copy.__dict__[key] = [type(manaMod)(Copy, manaMod.changeby, manaMod.changeto, None, manaMod.lowerbound) for manaMod in value]
+					Copy.__dict__[key] = [manaMod.selfCopy(Copy) for manaMod in value]
 				#用于auras，stat_AuraAffected，keyWords_AuraAffected和manaModifications等
 				elif type(value) == list or type(value) == dict or type(value) == tuple: #If the attribute is a list or dictionary, use the method defined at the start of py
 					Copy.__dict__[key] = copyListDictTuple_Game(value, recipientGame)

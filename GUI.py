@@ -811,6 +811,8 @@ class GUI:
 				color = "green" if ("~~Secret" in obj.index and obj.ID != self.Game.turn) else "red"
 				btnSecretQuest = InactionableButton(self.GamePanel, image=ph, bg=color, height=SecretIconSize, width=SecretIconSize)
 				btnSecretQuest.image = ph
+				btnSecretQuest.bind('<Button-1>', btnSecretQuest.leftClick)
+				btnSecretQuest.bind('<Button-3>', btnSecretQuest.rightClick)
 				btnSecretQuest.Game, btnSecretQuest.GUI, btnSecretQuest.card, btnSecretQuest.selected, btnSecretQuest.colorOrig = self.Game, self, obj, 0, color
 				btnSecretQuest.plot(x=pos[0], y=pos[1], anchor='c')
 				self.buttonsDrawn.append(btnSecretQuest)
@@ -911,6 +913,8 @@ class GUI:
 				self.Game.switchTurn()
 				self.Game = self.Game.copyGame()
 				self.update()
+			elif selectedSubject.endswith("inHand"):
+				self.cancelSelection()
 			elif self.selectedSubject.endswith("onBoard"):
 				if "Hero" not in selectedSubject and selectedSubject != "MiniononBoard":
 					self.printInfo("Invalid target for minion attack.")

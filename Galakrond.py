@@ -190,8 +190,10 @@ class BattlecryCardsCost5MoreNextTurn(TempManaEffect):
 		self.Game.triggersonBoard[self.ID].append((self, "CardEntersHand"))
 		self.Game.ManaHandler.calcMana_All()
 	#auraDisappears()可以尝试移除ManaCostPaid，当然没有反应，所以不必专门定义
-	
-	
+	def selfCopy(self, recipientGame):
+		return type(self)(recipientGame, self.ID)
+		
+		
 class GrandLackeyErkh(Minion):
 	Class, race, name = "Neutral", "", "Grand Lackey Erkh"
 	mana, attack, health = 4, 2, 3

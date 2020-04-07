@@ -491,6 +491,9 @@ class YourOpponentsNextHeroPowerCosts3(TempManaEffect_Power):
 	def applicable(self, target):
 		return target.ID == self.ID
 		
+	def selfCopy(self, recipientGame):
+		return type(self)(recipientGame, self.ID)
+		
 		
 class DreadRaven(Minion):
 	Class, race, name = "Neutral", "Beast", "Dread Raven"
@@ -2327,6 +2330,9 @@ class YourNextSpellCosts0ThisTurn(TempManaEffect):
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.cardType == "Spell"
+		
+	def selfCopy(self, recipientGame):
+		return type(self)(recipientGame, self.ID)
 		
 		
 class ManaGiant(Minion):

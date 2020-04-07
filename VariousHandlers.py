@@ -1,6 +1,7 @@
 import numpy as np
 import tkinter as tk
 import copy
+import inspect
 
 def extractfrom(target, listObject):
 	temp = None
@@ -211,13 +212,13 @@ class ManaHandler:
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
 		for key, value in self.__dict__.items():
-			if key == "Game":
+			if key == "Game" or callable(value):
 				pass
 			elif "Auras" not in key: #不承载光环的列表都是数值，直接复制即可
 				Copy.__dict__[key] = copy.deepcopy(value)
 			else: #承载光环和即将加载的光环的列表
 				for aura in value:
-					Copy.__dict__[key].append(aura.createCopy)
+					Copy.__dict__[key].append(aura.createCopy(recipientGame))
 		return Copy
 		
 		
@@ -316,6 +317,7 @@ class ManaAura_Dealer:
 			#ManaModification.selfCopy(self, recipientCard):
 			#	return ManaModification(recipientCard, self.changeby, self.changeto, self.source, self.lowerbound)
 			for card, manaMod in self.auraAffected: #从自己的auraAffected里面复制内容出去
+				print("Copying card affected by mana aura", card, manaMod)
 				cardCopy = card.createCopy(recipientGame)
 				#重点是复制一个随从是，它自己会携带一个费用改变，这个费用改变怎么追踪到
 					#用序号看行不行
@@ -355,7 +357,6 @@ class TempManaEffect:
 			
 	def applies(self, subject):
 		if self.applicable(subject):
-			PRINT(self, "Card {} gains the Changeby {}/Changeto {} mana change from {}"%(subject.name, self.changeby, self.changeto, self.Game))
 			manaMod = ManaModification(subject, self.changeby, self.changeto, self)
 			manaMod.applies()
 			self.auraAffected.append((subject, manaMod))
@@ -376,9 +377,12 @@ class TempManaEffect:
 		extractfrom((self, "ManaCostPaid"), self.Game.triggersonBoard[self.ID])
 		self.Game.ManaHandler.calcMana_All()
 		
+	def selfCopy(self, recipientGame):
+		return type(self)(recipientGame, self.ID, self.changeby, self.changeto)
+		
 	def createCopy(self, recipientGame): #The recipient is the Game that handles the Aura.
 		if self not in recipientGame.copiedObjs:
-			Copy = type(self)(recipientGame, self.ID, self.changeby, self.changeto)
+			Copy = self.selfCopy(recipientGame)
 			recipientGame.copiedObjs[self] = Copy
 			for card, manaMod in self.auraAffected:
 				cardCopy = card.createCopy(recipientGame)
@@ -416,7 +420,6 @@ class TempManaEffect_Power:
 			
 	def applies(self, subject):
 		if self.applicable(subject):
-			PRINT(self, "Hero Power {} gains the Changeby {}/Changeto {} mana change from {}"%(subject.name, self.changeby, self.changeto, self))
 			manaMod = ManaModification(subject, self.changeby, self.changeto, self)
 			manaMod.applies()
 			self.auraAffected.append((subject, manaMod))
@@ -437,9 +440,12 @@ class TempManaEffect_Power:
 		extractfrom((self, "ManaCostPaid"), self.Game.triggersonBoard[self.ID])
 		self.Game.ManaHandler.calcMana_Powers()
 		
+	def selfCopy(self, recipientGame):
+		return type(self)(recipientGame, self.ID, self.changeby, self.changeto)
+		
 	def createCopy(self, recipientGame): #The recipient is the Game that handles the Aura.
 		if self not in recipientGame.copiedObjs:
-			Copy = type(self)(recipientGame, self.ID, self.changeby, self.changeto)
+			Copy = self.selfCopy(recipientGame)
 			recipientGame.copiedObjs[self] = Copy
 			for heroPower, manaMod in self.auraAffected:
 				heroPowerCopy = heroPower.createCopy(recipientGame)
@@ -687,10 +693,49 @@ class CounterHandler:
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
 		for key, value in self.__dict__.items():
-			if value != self.Game:
+			if value == self.Game:
+				pass
+			elif callable(value):
+				pass
+			elif isinstance(value, (type, type(None), int, np.int64, float, str, bool)):
+				Copy.__dict__[key] = value
+			elif type(value) == list or type(value) == dict or type(value) == tuple:
+				Copy.__dict__[key] = self.copyListDictTuple(value, recipientGame)
+			else:
 				#因为CounterHandler内部的值除了Game都是数字组成的，可以直接deepcopy
-				Copy.__dict__[key] = copy.deepcopy(value)
+				Copy.__dict__[key] = value.createCopy(recipientGame)
 		return Copy
+		
+	def copyListDictTuple(self, obj, recipientGame):
+		if isinstance(obj, list):
+			objCopy = []
+			for element in obj:
+				#check if they're basic types, like int, str, bool, NoneType, 
+				if isinstance(element, (type(None), int, float, str, bool)):
+					#Have tested that basic types can be appended and altering the original won't mess with the content in the list.
+					objCopy.append(element)
+				elif inspect.isclass(element):
+					objCopy.append(element)
+				elif type(element) == list or type(element) == dict or type(element) == tuple: #If the element is a list or dict, just recursively use this function.
+					objCopy.append(self.copyListDictTuple(element, recipientGame))
+				else: #If the element is a self-defined class. All of them have selfCopy methods.
+					objCopy.append(element.createCopy(recipientGame))
+		elif isinstance(obj, dict):
+			objCopy = {}
+			for key, value in obj.items():
+				if isinstance(value, (type(None), int, float, str, bool)):
+					objCopy[key] = value
+				elif inspect.isclass(value):
+					objCopy[key] = value
+				elif type(value) == list or type(value) == dict or type(value) == tuple:
+					objCopy[key] = self.copyListDictTuple(value, recipientGame)
+				else:
+					objCopy[key] = value.createCopy(recipientGame)
+		else: #elif isinstance(obj, tuple):
+			tupleTurnedList = list(obj) #tuple因为是immutable的，所以要根据它生成一个列表
+			objCopy = self.copyListDictTuple(tupleTurnedList, recipientGame) #复制那个列表
+			objCopy = list(objCopy) #把那个列表转换回tuple
+		return objCopy
 		
 		
 class DiscoverHandler:

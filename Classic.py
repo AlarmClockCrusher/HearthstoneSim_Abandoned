@@ -579,7 +579,9 @@ class SpellsCost0NextTurn(TempManaEffect):
 		self.Game.triggersonBoard[self.ID].append((self, "CardEntersHand"))
 		self.Game.ManaHandler.calcMana_All()
 	#auraDisappears()可以尝试移除ManaCostPaid，当然没有反应，所以不必专门定义
-	
+	def selfCopy(self, recipientGame):
+		return type(self)(recipientGame, self.ID)
+		
 	
 class NatPagle(Minion):
 	Class, race, name = "Neutral", "", "Nat Pagle"
@@ -3271,6 +3273,9 @@ class YourNextSecretCosts0ThisTurn(TempManaEffect):
 	def applicable(self, target):
 		return target.ID == self.ID and "~~Secret" in target.index
 		
+	def selfCopy(self, recipientGame):
+		return type(self)(recipientGame, self.ID)
+		
 		
 class ConeofCold(Spell):
 	Class, name = "Mage", "Cone of Cold"
@@ -4054,6 +4059,9 @@ class YourNextSpellCosts2LessThisTurn(TempManaEffect):
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.cardType == "Spell"
+		
+	def selfCopy(self, recipientGame):
+		return type(self)(recipientGame, self.ID)
 		
 		
 class Shadowstep(Spell):
