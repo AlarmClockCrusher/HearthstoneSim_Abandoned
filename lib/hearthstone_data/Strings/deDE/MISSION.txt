@@ -1,0 +1,263 @@
+TAG	TEXT	COMMENT
+BOTA_PUZZLE_CONGRATULATIONS	Gute Arbeit!	
+BOTA_PUZZLE_END_TURN_REMINDER	Startet einfach neu, wenn Ihr nicht weiterkommt.	
+BOTA_PUZZLE_LOADING	Nächstes Rätsel\nwird geladen ...	
+BOTA_PUZZLE_PROGRESS	Rätsel {0}/{1}	
+BOTA_PUZZLE_RESETTING	Rätsel wird\nzurückgesetzt ...	
+DALA_MISSION_CHAPTER_SUBTEXT_01	Bank von Dalaran	
+DALA_MISSION_CHAPTER_SUBTEXT_01_HEROIC	Bank von Dalaran (Heroisch)	
+DALA_MISSION_CHAPTER_SUBTEXT_02	Die Violette Festung	
+DALA_MISSION_CHAPTER_SUBTEXT_02_HEROIC	Die Violette Festung (Heroisch)	
+DALA_MISSION_CHAPTER_SUBTEXT_03	Straßen von Dalaran	
+DALA_MISSION_CHAPTER_SUBTEXT_03_HEROIC	Straßen von Dalaran (Heroisch)	
+DALA_MISSION_CHAPTER_SUBTEXT_04	Die Schattenseite	
+DALA_MISSION_CHAPTER_SUBTEXT_04_HEROIC	Die Schattenseite (Heroisch)	
+DALA_MISSION_CHAPTER_SUBTEXT_05	Zitadelle der Kirin Tor	
+DALA_MISSION_CHAPTER_SUBTEXT_05_HEROIC	Zitadelle der Kirin Tor (Heroisch)	
+DALA_TAVERN_POPUP	Verändert Euer Abenteuerdeck für diesen Beutezug:\nDiener austauschen, Werte anpassen_...\nIhr habt die Wahl!	
+DALA_TAVERN_TURN_START	Verschnaufpause	
+FB_BUILDABRAWL_001	Bei der Macht der Beschwörer!	
+FB_BUILDABRAWL_002	Bei der Maske von Ragnaros!	
+FB_BUILDABRAWL_003	Bei der Macht von Yogg-Saron!	
+FB_BUILDABRAWL_004	Ragnaros mit Karacho	
+FB_BUILDABRAWL_005	Der große Wettstreit des Zufalls	
+FB_BUILDABRAWL_006	Der zufällige Maskenball	
+FB_BUILDABRAWL_007	Yogg-Saron sucht den Superzufall!	
+FB_BUILDABRAWL_008	Zufall mit Karacho	
+FB_BUILDABRAWL_009	Die Schlacht der Beschwörer	
+FB_BUILDABRAWL_010	Die Schlacht um den Maskenball	
+FB_BUILDABRAWL_011	Die Schlacht um Yogg-Saron	
+FB_BUILDABRAWL_012	Mit Karacho in die Schlacht	
+FB_BUILDABRAWL_013	Der große Wettstreit der Blutbeschwörer	
+FB_BUILDABRAWL_014	Der Blutmaskenball	
+FB_BUILDABRAWL_015	Yogg-Sarons Blut	
+FB_BUILDABRAWL_016	Blut und Karacho	
+FB_BUILDABRAWL_INTRO	Aktuelles Kartenchaos:	
+FB_BUILDABRAWL_NOTSTARTED	Das Fireside-Chaos hat noch nicht angefangen. Kontaktiert Euren Gastwirt, um ein selbstgemachtes Kartenchaos zu erstellen!	
+FB_CHAMPS_FIREBAT_DRUID	Firebat hat das Finale mit seinem Druiden begonnen und damit kein einziges Mal verloren! Er ist unser Champion von 2014!	
+FB_CHAMPS_FIREBAT_HUNTER	Firebat hat diesen Jäger gewählt, um DTwos Hexenmeister zu kontern und sich für sein verlorenes Schurkendeck zu revanchieren.	
+FB_CHAMPS_FIREBAT_ROGUE	Firebat hat DTwos Priester 2014 ganz klar geschlagen: Er hat ihm mit einem 12/4-Auktionator den Todesstoß versetzt!	
+FB_CHAMPS_FIREBAT_WARLOCK	Firebats Hexenmeister wurde im Finale von Tiddler Celestial gebannt. Wie wird es diesem Deck wohl jetzt ergehen?	
+FB_CHAMPS_HUNTERACE_MAGE	Mit diesem Deck rund um Bergriesen und Ruf des Beschwörers verlor Hunterace gegen ein fast identisches Deck.	
+FB_CHAMPS_HUNTERACE_ROGUE	Mit der Plünderin der Rüpelbande entdeckte Hunterace genau die Karte, die er für den ersten Sieg seiner Begegnung brauchte.	
+FB_CHAMPS_HUNTERACE_SHAMAN	Hunterace besiegte Vipers Zoo-Hexenmeister durch Erschöpfung und gewann dadurch die HCT Championship_2019. 	
+FB_CHAMPS_HUNTERACE_WARRIOR	Dieses mächtige Kontrollkriegerdeck wurde im Finale gebannt. Aber nicht heute!	
+FB_CHAMPS_MERC14	Mercenaries_14 hat sich in Europa beim Kartenchaos Die Feuertaufe bis ganz an die Spitze gekämpft. Wie wird sich das Deck hier schlagen?	
+FB_CHAMPS_OSTKAKA_MAGE	Ostkaka hat mit diesem eiskalten Magier gegen Hotforms Tempomagier gespielt und ihm mit Feuerbällen mächtig eingeheizt. Ironie des Schicksals_...	
+FB_CHAMPS_OSTKAKA_ROGUE	Im letzten Finalspiel 2015 hat Ostkaka Hotforms Druiden geschlagen und wurde in die Halle der Legenden aufgenommen!	
+FB_CHAMPS_OSTKAKA_WARRIOR	Grimmige Gäste haben Ostkaka zum Sieg verholfen, und das sogar ohne die Kriegshymnenanführerin. So spielt man mit Stil!	
+FB_CHAMPS_PAVEL_DRUID	In diesem Spiel hat Pavel DrHippi geschlagen. Achtet auf die großen Diener!	
+FB_CHAMPS_PAVEL_MAGE	Pavels Magier ist in der Weltmeisterschaft 2016 einige Male knapp davongekommen. Wie wird es Euch ergehen?	
+FB_CHAMPS_PAVEL_ROGUE	Mit aggressiven Decks tut sich Pavels Schurke mitunter schwer, aber sonst haut er gut rein!	
+FB_CHAMPS_PAVEL_SHAMAN	Pavels Schamane wurde von seinen Gegnern jedes Mal gebannt. Aber nicht hier!	
+FB_CHAMPS_PAVEL_WARRIOR	Im Finale hat Pavel zweimal mit diesem C’Thun-Krieger gespielt. Gegen DrHippis Krieger hat er verloren, aber gegen seinen Druiden gewonnen.	
+FB_CHAMPS_TOM60229_DRUID	Mit diesem Deck hat tom60229 die World Championship 2018 gewonnen. Seine Entscheidung, Üble Verseuchung zu behalten, hat das Spiel komplett verändert!	
+FB_CHAMPS_TOM60229_PRIEST	Das Priesterdeck von tom60229 enthält keine doppelten Karten, aber jede Menge Tricks. Die Combos in der späten Spielphase haben es in sich!	
+FB_CHAMPS_TOM60229_ROGUE	Das hat niemand kommen sehen: tom60229 meuchelt seinen eigenen Diener und erhält schon im zweiten Zug einen Edwin van Cleef mit 10 Angriff.	
+FB_CHAMPS_TOM60229_WARLOCK	Das Hexenmeisterdeck von tom60229 wartet mit Überraschungen aus der Zeit vor den Balanceänderungen auf und wurde im Finale gebannt.	
+FB_CHAMPS_VKLIOOON_DRUID	Nach einem langwierigen Kampf gegen bloodyface und sein Questschamanendeck verhalf VKLiooon die Ossirianträne schließlich zum Sieg.	
+FB_CHAMPS_VKLIOOON_HUNTER	VKLiooon hatte einen guten Start und besiegte bloodyfaces Questdruiden, was ihr den Titel Hearthstone-Weltmeister_2019 einbrachte.	
+FB_CHAMPS_VKLIOOON_PRIEST	VKLioons Priesterdeck wurde bei der letzten Begegnung der Global World Championships_2019 gebannt_… aber nicht hier!	
+FB_CHAMPS_VKLIOOON_SHAMAN	Global Finals_2019: Ein Wüstenhase im frühen Spielverlauf gefolgt von ZWEIMAL Evolution sicherte VKLiooon einen schnellen Sieg gegen bloodyface.	
+FB_DuelersCardsLeft1	Noch 1 Karte, bis Ihr ziehen könnt!	
+FB_DuelersCardsLeft2	Noch 2 Karten, bis Ihr ziehen könnt!	
+FB_DuelersCardsLeft3	Noch 3 Karten, bis Ihr ziehen könnt!	
+FB_DuelersCardsLeft4	Noch 4 Karten, bis Ihr ziehen könnt!	
+FB_DuelersCardsLeft5	Noch 5 Karten, bis Ihr ziehen könnt!	
+FB_ELO_EVEN	Ihr und Euer Gegner seid einander ebenbürtig! Ihr könnt beide einen großen Bonus auswählen!	
+FB_ELO_FAVORED	Ihr seid derzeit der Favorit, Euer Gegner erhält deshalb den großen Bonus.	
+FB_ELO_UNDERDOG	Ihr seid derzeit der Außenseiter und könnt deshalb einen großen Bonus auswählen.	
+FB_IKC_CHOSE_SETUP	Spielt eine neue Karte aus und sie wird zur Empfehlung des Gastwirts.	
+FB_IKC_ENDGAME	Die neue Karte wurde ausgewählt! Beenden wir das Spiel.	
+FB_IKC_NEWCARD	Alte Karte behalten oder neue verwenden?	
+FB_IKC_SETUP	Gastwirt! Eine Frage ...	
+FB_JUGGERNAUT_CHOOSE_OPPONENT	Wählt einen feindlichen Kapitän ...	
+FB_JUGGERNAUT_DRUID	Druide	
+FB_JUGGERNAUT_FIRSTLINE	Feuer frei!	
+FB_JUGGERNAUT_HUNTER	Jäger	
+FB_JUGGERNAUT_MAGE	Magier	
+FB_JUGGERNAUT_PALADIN	Paladin	
+FB_JUGGERNAUT_PRIEST	Priester	
+FB_JUGGERNAUT_ROGUE	Schurke	
+FB_JUGGERNAUT_SHAMAN	Schamane	
+FB_JUGGERNAUT_UNKNOWN	Unbekannt	
+FB_JUGGERNAUT_WARLOCK	Hexenmeister	
+FB_JUGGERNAUT_WARRIOR	Krieger	
+FB_LK_BOSSSWITCH	Besiegt den Handlanger des Lichkönigs und zwingt ihn zur Rückkehr!	
+FB_LK_DEAD_01	Glückwunsch, Champions!\nDer Lichkönig wurde besiegt!	
+FB_LK_DEAD_02	Wendet Euch an den Gastwirt Eures Fireside Gatherings, um ihn erneut herauszufordern!	
+FB_LK_HERO_01	Der ultimative Lichkönig	
+FB_LK_HERO_02	Blutkönigin Lana’thel	
+FB_LK_HERO_03	Professor Seuchenmord	
+FB_LK_HERO_04	Lord Mark’gar	
+FB_LK_HERO_05	Sindragosa	
+FB_LK_HEROSWITCH	Spieler 2 ist am Zug! Weiter so!	
+FB_LK_INTRO_01	Dieses Kartenchaos lässt sich am besten mit zwei Spielern spielen, die nebeneinander sitzen!	
+FB_LK_INTRO_02	Spieler 1 fängt an.\nArbeitet zusammen und\nbesiegt den Lichkönig!	
+FB_RAGRAID_01	Glückwunsch, Champions!\nDer große böse Ragnaros wurde besiegt!	
+FB_TopX_Ban	Wählt eine Karte, die Ihr verbannen wollt!	
+ICC_01_LICH_KING_SUBTEXT	Legendär	
+ICC_01_TIRION_SUBTEXT	Nicht so legendär	
+ICC_01_TIRIONTURNS_01	Züge, bis Tirion eintrifft: 1	
+ICC_01_TIRIONTURNS_02	Züge, bis Tirion eintrifft: 2	
+ICC_01_TIRIONTURNS_03	Züge, bis Tirion eintrifft: 3	
+ICC_05_LANATHEL_01	Ihr <b>müsst</b> einen Diener beißen! Auch wenn es ein feindlicher ist!	
+ICCDruidVictory_01	Einst war er der Beschützer des Lebens und hütete die Wildnis von Azeroth. Heute hat Malfurion der Befallene immer noch zum Ziel, das Gleichgewicht der Natur zu wahren, aber wacht über einen Garten des Todes.	
+ICCHunterVictory_01	Rexxar setzte die Seelen frei, die einst Gefangene des Lichkönigs gewesen waren. Er zog einen schwarzen Pfeil aus dem Köcher. „Komm, Misha“, raunte er. „Die Jagd beginnt_...“	
+ICCMageVictory_01	Als frischgekrönter Frostlich schaute Jaina auf ihr Reich. Legionen Untote erfüllten sie mit immer größerer Macht und sie merkte kaum, wie ihr Blut gefror.	
+ICCPaladinVictory_01	Der einst strahlende Paladin des Lichts akzeptierte sein neues Schicksal. Jene, die ein würdiges Leben führten, hatten nichts zu befürchten. Doch jene, die zu Lebzeiten dem Bösen gedient hatten, würden nach ihrem Tod gerichtet werden_...	
+ICCPriestVictory_01	Der Körper des jungen Prinzen wurde zu Schatten. „Jetzt sehe ich alles klar vor mir“, stieß er aus, und in seinen Augen loderten blaue Flammen. „Ich war so naiv_...“	
+ICCRogueVictory_01	Valeera die Bleiche verschwand in die Nacht. Ihre Schatten und Schemen sehen alles. Niemand ist sicher vor ihrer eisigen Klinge_...	
+ICCShamanVictory_01	Der Geist des Schamanen wurde mit den chaotischen Schreien der Toten überflutet. Unbeirrt schloss der Todesseher seine Augen und erwiderte nur ein Wort: „Schlaft.“	
+ICCWarlockVictory_01	Endlich saß Gul’dan auf dem Frostthron. Das Dunkle Portal öffnete sich erneut und unzählige Welten erzitterten vor ihm.	
+ICCWarriorVictory_01	Der einstige Kriegshäuptling der Horde gab sich seiner neu erlangten Macht hin. Die eisigen Leichen derer, die seinen Armeen zum Opfer gefallen waren, sollten sich erheben und dienen, bis er allein Gebieter über alles sein würde, was das Auge sieht_...	
+LOEA16_2_STAFF_TEXT_CHARGE_0	<b>Passive Heldenfähigkeit</b>\nEuer Held ist <b>immun</b>. Noch drei Züge.	
+LOEA16_2_STAFF_TEXT_CHARGE_1	<b>Passive Heldenfähigkeit</b>\nEuer Held ist <b>immun</b>. Noch zwei Züge.	
+LOEA16_2_STAFF_TEXT_CHARGE_2	<b>Passive Heldenfähigkeit</b>\nEuer Held ist <b>immun</b>. Nur noch ein Zug!	
+LOEA16_2_STAFF_TEXT_CHARGE_EXPLODED	<b>Passive Heldenfähigkeit</b>\nIhr habt einen Boss beschworen, aber Euer Held ist nicht mehr <b>immun</b>.	
+MISSION_AIRSHIPCOUNTERNAME	|4(Runde,Runden) bis zum Sieg	
+MISSION_DEFAULTCOUNTERNAME	|4(Runde,Runden) bis zum Ausgang	
+MISSION_GLOWING_POOL	Ein leuchtender Teich	
+MISSION_NEFARIAN_TITLE	Schlächter von dummen, inkompetenten und enttäuschenden Lakaien	
+MISSION_PIT_OF_SPIKES	Eine Stachelgrube	
+MISSION_PRE_TUTORIAL_WANTED	Gesucht	
+MISSION_STATUES_EYE	Das Auge der Statue	
+MISSION_TAKE_THE_SHORTCUT	Abkürzung gefällig?	
+TB_100TH_BANANA_INFO_OPP	Das Deck Eures Gegners besteht aus zufälligen Karten. Jedes Mal, wenn einer seiner Diener stirbt, erhält er eine Banane.	
+TB_100TH_BANANA_INFO_YOU	Euer Deck besteht aus zufälligen Karten. Jedes Mal, wenn einer Eurer Diener stirbt, erhaltet Ihr eine Banane.	
+TB_100TH_BANANA_OPP	Euer Gegner spielt das Kartenchaos „Bananenparty!“, das am 24. Juni 2015 als das 2. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_BANANA_YOU	Ihr spielt das Kartenchaos „Bananenparty!“, das am 24. Juni 2015 als das 2. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_CLONEBALL_INFO_OPP	Das Deck Eures Gegners besteht aus mehreren Kopien von zufälligen legendären Karten.	
+TB_100TH_CLONEBALL_INFO_YOU	Euer Deck besteht aus mehreren Kopien von zufälligen legendären Karten.	
+TB_100TH_CLONEBALL_OPP	Euer Gegner spielt das Kartenchaos „Klonball!“, das am 8. Juni 2016 als das 52. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_CLONEBALL_YOU	Ihr spielt das Kartenchaos „Klonball!“, das am 8. Juni 2016 als das 52. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_PARTYPORTAL_INFO_OPP	Das Deck dieses Spielers besteht aus zufälligen Portalkarten.	
+TB_100TH_PARTYPORTAL_INFO_YOU	Das Deck dieses Spielers besteht aus zufälligen Portalkarten.	
+TB_100TH_PARTYPORTAL_OPP	Euer Gegner spielt das Kartenchaos „Portalparty!“, das am 31. August 2016 als das 64. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_PARTYPORTAL_YOU	Ihr spielt das Kartenchaos „Portalparty!“, das am 31. August 2016 als das 64. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_PORTALS_INFO_OPP	Das Deck Eures Gegners enthält hauptsächlich Instabile Portale, sowie ein paar Zusatzkarten.	
+TB_100TH_PORTALS_INFO_YOU	Euer Deck enthält hauptsächlich Instabile Portale, sowie ein paar Zusatzkarten.	
+TB_100TH_PORTALS_OPP	Euer Gegner spielt das Kartenchaos „Zu viele Portale!“, das am 29. Juli 2015 als das 7. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_PORTALS_YOU	Ihr spielt das Kartenchaos „Zu viele Portale!“, das am 29. Juli 2015 als das 7. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_RANDEMONIUM_INFO_OPP	Das Deck Eures Gegners besteht aus zufälligen Karten, deren Kosten sich in jedem Zug ändern.	
+TB_100TH_RANDEMONIUM_INFO_YOU	Euer Deck besteht aus zufälligen Karten, deren Kosten sich in jedem Zug ändern.	
+TB_100TH_RANDOMONIUM_OPP	Euer Gegner spielt das Kartenchaos „Zufall total“, das am 14. Oktober 2015 als das 18. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_RANDOMONIUM_YOU	Ihr spielt das Kartenchaos „Zufall total“, das am 14. Oktober 2015 als das 18. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_RAVENIDOL_INFO_OPP	Das Deck Eures Gegners besteht aus 30 Rabengötzen.	
+TB_100TH_RAVENIDOL_INFO_YOU	Euer Deck besteht aus 30 Rabengötzen.	
+TB_100TH_RAVENIDOL_OPP	Euer Gegner spielt das Kartenchaos „Nicht viel Federlesens“, das am 20. April 2016 als das 45. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_RAVENIDOL_YOU	Ihr spielt das Kartenchaos „Nicht viel Federlesens“, das am 20. April 2016 als das 45. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_SHIFTER_INFO_OPP	Das Deck Eures Gegners enthält hauptsächlich Gestaltwandler Zerus, sowie ein paar Zusatzkarten.	
+TB_100TH_SHIFTER_INFO_YOU	Euer Deck enthält hauptsächlich Gestaltwandler Zerus, sowie ein paar Zusatzkarten.	
+TB_100TH_SHIFTER_OPP	Euer Gegner spielt das Kartenchaos „Doppelgänger-Konferenz“, das am 29. Juni 2016 als das 55. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_SHIFTER_YOU	Ihr spielt das Kartenchaos „Doppelgänger-Konferenz“, das am 29. Juni 2016 als das 55. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_SPELLBAG_INFO_OPP	Das Deck Eures Gegners besteht aus 30 zufälligen Zaubern, die jeweils einen Diener beschwören, wenn sie gewirkt werden.	
+TB_100TH_SPELLBAG_INFO_YOU	Euer Deck besteht aus 30 zufälligen Zaubern, die jeweils einen Diener beschwören, wenn sie gewirkt werden.	
+TB_100TH_SPELLBAG_OPP	Euer Gegner spielt das Kartenchaos „Valeeras Zauberklau“, das am 23. November 2016 als das 76. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_SPELLBAG_YOU	Ihr spielt das Kartenchaos „Valeeras Zauberklau“, das am 23. November 2016 als das 76. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_YOGG_INFO_OPP	Das Deck Eures Gegners besteht aus zufälligen Dienern, die beim Ausspielen jeweils einen zufälligen Zauber wirken.	
+TB_100TH_YOGG_INFO_YOU	Euer Deck besteht aus zufälligen Dienern, die beim Ausspielen jeweils einen zufälligen Zauber wirken.	
+TB_100TH_YOGG_OPP	Euer Gegner spielt das Kartenchaos „Yogg-Saron sucht den Superdiener!“, das am 13. Juni 2016 als das 57. Kartenchaos zum ersten Mal live ging.	
+TB_100TH_YOGG_YOU	Ihr spielt das Kartenchaos „Yogg-Saron sucht den Superdiener!“, das am 13. Juni 2016 als das 57. Kartenchaos zum ersten Mal live ging.	
+TB_207_01	Schlacht um Tol Barad	
+TB_207_02	Mit Verstand, Herz und Courage	
+TB_207_03	Katakombenschätze!	
+TB_207_04	Angriff der Klondiener	
+TB_207_05	Der Maskenball	
+TB_207_06	Die Leerensingularität	
+TB_207_07	Klonball!	
+TB_207_08	Zufall total	
+TB_207_09	Valeeras Zauberklau	
+TB_207_INTRO_01	Euer Kartenchaos:	
+TB_207_INTRO_02	Kartenchaos des Gegners:	
+TB_CAROUSEL_A	Am Ende jedes Zuges rücken alle Diener eine Position im Uhrzeigersinn weiter (nach links).	
+TB_CAROUSEL_B	Am Ende jedes Zuges rücken alle Diener eine Position gegen den Uhrzeigersinn weiter (nach rechts).	
+TB_DECKBUILDING_FIRSTCARDPLAYED	Nachdem Ihr eine Karte ausgespielt habt, erhaltet Ihr eine Kopie davon in Euer Deck.	
+TB_DECKBUILDING_FIRSTENDTURN	Mischt Eure Hand zurück ins Deck und zieht neue Karten.	
+TB_DECKBUILDING_FIRSTPICKTHREE	Wählt eine neue Handkarte aus.	
+TB_DECKBUILDING_STARTOFGAME	Euer Team wächst mit jedem Zug! Viel Glück!	
+TB_DECKBUILDING_STARTOFGAME_START	Los geht’s!	
+TB_DECKRECIPE_MSG_DRUID	Deckformel: <b>Die Golems des Lotus</b>.	
+TB_DECKRECIPE_MSG_HUNTER	Deckformel: <b>Wilde Meute</b>.	
+TB_DECKRECIPE_MSG_MAGE	Deckformel: <b>Die Mischung macht’s</b>.	
+TB_DECKRECIPE_MSG_PALADIN	Deckformel: <b>Auf dem Schwarzmarkt</b>.	
+TB_DECKRECIPE_MSG_PRIEST	Deckformel: <b>Feuer und Wasser</b>.	
+TB_DECKRECIPE_MSG_ROGUE	Deckformel: <b>Die Docks von Gadgetzan</b>.	
+TB_DECKRECIPE_MSG_SHAMAN	Deckformel: <b>Murlocbanden</b>.	
+TB_DECKRECIPE_MSG_WARLOCK	Deckformel: <b>Dämonen der Kabale</b>.	
+TB_DECKRECIPE_MSG_WARRIOR	Deckformel: <b>Ass im Ärmel</b>.	
+TB_DECKRECIPE_OG_DRUID	Verschafft Euch mit Druidenzaubern zusätzliches Mana und ruft die Diener der Alten Götter wesentlich früher als erwartet herbei.	
+TB_DECKRECIPE_OG_HUNTER	Fürchtet den Tod nicht, denn Eure Diener sind Euch lebendig ebenso nützlich wie tot. Tauscht sie immer wieder ein – früher oder später werdet Ihr den Gegner zermürben.	
+TB_DECKRECIPE_OG_MAGE	Wirkt so viele Zauber wie nur möglich – mit jedem wächst Yogg-Sarons Macht weiter an!	
+TB_DECKRECIPE_OG_PALADIN	Schützt Eure Diener mit Gottesschild, damit sie es gleich mit zwei Feinden aufnehmen können!	
+TB_DECKRECIPE_OG_PRIEST	Heilt Eure Diener und haltet sie lange genug am Leben, damit sie das Kommen des schrecklichen C’Thun miterleben können!	
+TB_DECKRECIPE_OG_ROGUE	Tauscht Eure Diener aggressiv ein! Schließlich verschaffen Euch die meisten beim Tod einen Vorteil_... opfert sie also ruhig.	
+TB_DECKRECIPE_OG_SHAMAN	Ruft so viele Diener wie möglich herbei und entwickelt sie dann weiter. Wählt Diener, deren Effekte schon wirksam sind, um den größten Vorteil herauszuholen!	
+TB_DECKRECIPE_OG_WARLOCK	Verstärkt Euer Heer mit den zahllosen Dienern der Alten Götter. Schickt Eure kleineren Diener in Massen auf das Schlachtfeld, um Euren Gegner zu überwältigen!	
+TB_DECKRECIPE_OG_WARRIOR	Schützt Euch und gebt Euch C’Thun immer mehr hin. Gegen Eure Rüstung und die Macht der Alten Götter wird Euer Gegner nichts ausrichten können!	
+TB_DPROMO_2NDHERO	Der Kuhkönig	
+TB_DPROMO_2NDHEROPOPUP	Ihr habt das Geheimlevel erreicht!	
+TB_DPROMO_COWKINGEMOTES	Muh	
+TB_DUELERSBRAWL_SUDDEN_DEATH	K.o.-Runde!	
+TB_DUELERSBRAWL_TAKE_PACES	Geht 5 Schritte zurück und_... zieht!	
+TB_EVILBRM_CURRENT_BEST_SCORE	Aktueller Rekord:	
+TB_EVILBRM_NEW_BEST_SCORE	Neuer Rekord!	
+TB_FIREFEST_FIRST	Raggis Angriff wird erhöht, wenn er einen Diener verbrennt!	
+TB_FIREFEST_SECOND	Gut gemacht! Verbrennt so viele Diener wie möglich, um eine besondere Belohnung zu erhalten!	
+TB_FIREFEST2_01	Ragnaros der Feuerfürst	
+TB_FIREFEST2_02	Ahune der Frostfürst	
+TB_GIFTEXCHANGE_GIFTSPAWNED	Wenn auf Eurer Seite keine Kiste ist, wird eine geliefert.	
+TB_GIFTEXCHANGE_GIFTSTOLEN	Ihr habt ein Geschenk erhalten! Was könnte es nur sein?	
+TB_GIFTEXCHANGE_START	Fröhliches Winterhauchfest! Schnappt Euch ein paar Geschenke!	
+TB_HEADLESS_HORSEMAN_POISON	Ihr könnt diesen Untoten nicht vergiften, er ist zu mächtig!	
+TB_HEADLESSREDUX_01	Ihr seid der kopflose Reiter, beschützt Euren Friedhof!	
+TB_HEADLESSREDUX_02	Vernichtet die kostümierten Abenteurer Morgana, Schnurps und Flynn, um zu gewinnen!	
+TB_HEADLESSREDUX_03	Ihr habt Euch auf den Friedhof des kopflosen Reiters verirrt!	
+TB_HEADLESSREDUX_04	Beschützt die kostümierten Abenteurer Morgana, Schnurps und Flynn oder Ihr verliert!	
+TB_KOBOLDGIFTS_01	„Schaut, dort oben am Himmel! Altvater Kobold!“	
+TB_KOBOLDGIFTS_02	„Altvater Kobold kommt nächste Runde wieder! Macht etwas Platz!“	
+TB_LEAGUE_REVIVAL_01	Sir Finley ist im Sand verschüttet! Schippt die Sandhaufen weg und grabt ihn aus!	
+TB_LEAGUE_REVIVAL_02	Sir Finley von Sande wurde zu Eurem Deck hinzugefügt.	
+TB_LEAGUE_REVIVAL_03	Arbeitet mit Brann zusammen, um Knirsch den Ungezähmten zu besiegen!	
+TB_LEAGUE_REVIVAL_04	Wenn Knirsch Euch oder Brann besiegt, habt Ihr beide verloren!	
+TB_LEAGUE_REVIVAL_05	Brann der Dinozähmer wurde zu Eurem Deck hinzugefügt.	
+TB_LEAGUE_REVIVAL_06	Reno hat keine Ahnung, wie man das Ding bedient! Bringt ihn zur Vernunft!	
+TB_LEAGUE_REVIVAL_07	Reno der Reliktologe wurde zu Eurem Deck hinzugefügt.	
+TB_LETHAL_NAME	Zugzwang	
+TB_LETHALPUZZLES_FAILURE	Versucht es erneut!	
+TB_LETHALPUZZLES_START	Ihr müsst in jeder Runde Euren Gegner besiegen_... Viel Glück!	
+TB_LETHALPUZZLES_SUCCESS	Ihr habt es geschafft!	
+TB_MARIN_QUEST	Wer seine Quest zuerst abschließt, erhält bei der Schatzjagd einen Vorsprung!	
+TB_MP_BOSS	Festliches Sturmwind	
+TB_MP_BOSS2	Sturmwind in Feierlaune	
+TB_MP_BOSS3	Partyhauptstadt	
+TB_MP_COOP_1STSPELL	Oh oh, anscheinend hat sich die Kabale an der Bowle zu schaffen gemacht_...	
+TB_MP_COOP_2NDSPELL	Bitte, lasst das Feuerwerk nicht drinnen los!	
+TB_MP_COOP_CRASHER_DISCARD	Der Ungeladene Gast findet es auf der Hand total öde und macht sich aus dem Staub.	
+TB_MP_COOP_ENDING	Ein voller Erfolg! Danke, dass Ihr das Jahr des Mammuts mit uns gefeiert habt!	
+TB_MP_COOP_FIRST_CRASHER	Vorsicht! Diese Typen versuchen sich auf die Party zu schmuggeln. Ladet sie wieder aus!	
+TB_MP_COOP_PINATA	Geschafft! Zeit, die Piñata zu zerbrechen! Aber Vorsicht: Die Ungeladenen Gäste sind außer Rand und Band_...	
+TB_MP_COOP_TEXT_START	Setzt Eure Heldenfähigkeit ein, um gemeinsam mit dem anderen Spieler das Gasthaus zu dekorieren!	
+TB_MP_CROSSROADS	Moment mal, wer ist das?	
+TB_MP_CROSSROADS_CRASHER	Was macht der denn hier?	
+TB_MP_STORMWIND_SUCCESS	Geschafft! Aber kommt Ihr noch weiter?	
+TB_PICKYOURFATE_BUILDAROUND_FIRSTFATE	Das gewählte Schicksal gilt für beide Spieler!	
+TB_PICKYOURFATE_BUILDAROUND_NEWFATE	Dieser Bonus gilt nur für Euch.	
+TB_PICKYOURFATE_BUILDAROUND_OPPONENT_FIRSTFATE	Das Schicksal Eures Gegners gilt auch für Euch!	
+TB_PICKYOURFATE_BUILDAROUND_OPPONENTFATE	Dieser Bonus gilt nur für Euren Gegner.	
+TB_PICKYOURFATE_RANDOM_FIRSTFATE	Das gewählte Schicksal gilt für beide Spieler!	
+TB_PICKYOURFATE_RANDOM_NEWFATE	Ihr braucht ein neues Schicksal!	
+TB_PICKYOURFATE_RANDOM_OPPONENTFATE	Euer Gegner braucht ein neues Schicksal!	
+TB_SHADOWTOWERS_ADJACENTMINIONS	Diener neben einem Turm haben <b>Verstohlenheit</b> und können nicht angreifen.	
+TB_SHADOWTOWERS_SHADOWSPAWNED	Wenn auf einer Seite kein Turm ist, wird einer beschworen.	
+TB_SHADOWTOWERS_SHADOWSPAWNEDNEXT	Fehlende Türme werden zu Beginn des Zuges ihres Besitzers beschworen.	
+ULDA_MISSION_CHAPTER_SUBTEXT_01	Die Verlorene Stadt	
+ULDA_MISSION_CHAPTER_SUBTEXT_01_HEROIC	Die Verlorene Stadt (Heroisch)	
+ULDA_MISSION_CHAPTER_SUBTEXT_02	Die sengenden Dünen	
+ULDA_MISSION_CHAPTER_SUBTEXT_02_HEROIC	Die sengenden Dünen (Heroisch)	
+ULDA_MISSION_CHAPTER_SUBTEXT_03	Grab des Khartut	
+ULDA_MISSION_CHAPTER_SUBTEXT_03_HEROIC	Grab des Khartut (Heroisch)	
+ULDA_MISSION_CHAPTER_SUBTEXT_04	Hallen des Ursprungs	
+ULDA_MISSION_CHAPTER_SUBTEXT_04_HEROIC	Hallen des Ursprungs (Heroisch)	
+ULDA_MISSION_CHAPTER_SUBTEXT_05	Das innere Sanktum	
+ULDA_MISSION_CHAPTER_SUBTEXT_05_HEROIC	Das innere Sanktum (Heroisch)	

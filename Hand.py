@@ -472,8 +472,8 @@ WarriorDeck = [ImproveMorale, ViciousScraphound, DrBoomsScheme, SweepingStrikes,
 				DeathwingMadAspect, BoomSquad, RiskySkipper, BombWrangler, ImprisonedGanarg, SwordandBoard, CorsairCache, Bladestorm, BonechewerRaider, BulwarkofAzzinoth, 
 				WarmaulChallenger, KargathBladefist, ScrapGolem, BloodboilBrute]
 
-Experiment1 = [Tracking, Tracking, MurlocWarleader, MurlocWarleader, MurlocWarleader, GrimscaleOracle, GrimscaleOracle, GrimscaleOracle, GrimscaleOracle, DireWolfAlpha, DireWolfAlpha, SoulMirror, SoulMirror, SoulMirror, Overgrowth, Overgrowth, MirrorEntity, MirrorEntity, Mindgames, Mindgames, Mindgames
+Experiment1 = [AldorPeacekeeper, AldorPeacekeeper, AldorPeacekeeper, Mutate, Mutate, Lightwell, Lightwell, Lightwell, Tracking, Tracking, MurlocWarleader, MurlocWarleader, MurlocWarleader, GrimscaleOracle, GrimscaleOracle, GrimscaleOracle, GrimscaleOracle, DireWolfAlpha, DireWolfAlpha, SoulMirror, SoulMirror, SoulMirror, Overgrowth, Overgrowth, MirrorEntity, MirrorEntity, Mindgames, Mindgames, Mindgames
 				]
 
-Experiment2 = [Tracking, Tracking, MurlocWarleader, MurlocWarleader, MurlocWarleader, GrimscaleOracle, GrimscaleOracle, GrimscaleOracle, GrimscaleOracle, DireWolfAlpha, DireWolfAlpha, SoulMirror, SoulMirror, SoulMirror, Overgrowth, Overgrowth, MirrorEntity, MirrorEntity, Mindgames, Mindgames, Mindgames
+Experiment2 = [AldorPeacekeeper, AldorPeacekeeper, AldorPeacekeeper, Mutate, Mutate, Lightwell, Lightwell, Lightwell, Tracking, Tracking, MurlocWarleader, MurlocWarleader, MurlocWarleader, GrimscaleOracle, GrimscaleOracle, GrimscaleOracle, GrimscaleOracle, DireWolfAlpha, DireWolfAlpha, SoulMirror, SoulMirror, SoulMirror, Overgrowth, Overgrowth, MirrorEntity, MirrorEntity, Mindgames, Mindgames, Mindgames
 				]

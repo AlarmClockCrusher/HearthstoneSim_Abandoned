@@ -723,23 +723,26 @@ class Minion(Card):
 		#Temp effects that vanish at certain points.
 		self.status = {"Immune": 0,	"Frozen": 0, "Temp Stealth": 0, "Temp Controlled": 0
 						}
-						
+		#复制出一个游戏内的Copy时要重新设为初始值的attr	
+			#First two are for card authenticity verification. The last is to check if the minion has ever left board.
+			#Princess Talanji needs to confirm if a card started in original deck.
+		self.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
 		self.dead = False
+		self.effectViable, self.evanescent = False, False
+		self.newonthisSide, self.firstTimeonBoard = True, True #firstTimeonBoard用于防止随从在休眠状态苏醒时再次休眠，一般用不上
 		self.onBoard, self.inHand, self.inDeck = False, False, False
+		self.activated = False	#This mark is for minion state change, such as enrage.
+			#self.sequence records the number of the minion's appearance. The first minion on board has a sequence of 0
+		self.sequence, self.position = -1, -2
+		self.attTimes, self.attChances_base, self.attChances_extra = 0, 0, 0
+		
 		self.auras = {}
 		self.options = [] #For Choose One minions.
 		self.overload, self.chooseOne, self.magnetic = 0, 0, 0
-		self.effectViable, self.evanescent = False, False
-		self.newonthisSide, self.firstTimeonBoard = True, True #firstTimeonBoard用于防止随从在休眠状态苏醒时再次休眠，一般用不上
-		self.attTimes, self.attChances_base, self.attChances_extra = 0, 0, 0
 		self.silenced = False
-		self.activated = False #This mark is for minion state change, such as enrage.
-		#self.sequence records the number of the minion's appearance.
-		#The first minion on board has a sequence of 0
-		self.sequence, self.position = -1, -2
-		#Princess Talanji needs to confirm if a card started in original deck.
-		#First two are for card authenticity verification. The last is to check if the minion has ever left board.
-		self.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
+		
+		#
+		
 		
 		self.triggers = {"Discarded":[], "StatChanges":[], "Drawn":[]}
 		self.appearResponse, self.disappearResponse, self.silenceResponse = [], [], []
@@ -1272,22 +1275,30 @@ class Minion(Card):
 	#在原来的Game中创造一个Copy
 	def selfCopy(self, ID, attack=False, health=False, mana=False):
 		Copy = self.hardCopy(ID)
-		Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
 		#随从的光环和亡语复制完全由各自的selfCopy函数负责。
 		for aura_Receiver in Copy.stat_AuraAffected[2]:
 			aura_Receiver.effectDiscard()
 		for aura_Receiver in Copy.keyWords_AuraAffected["Auras"]:
 			aura_Receiver.effectDiscard()
-		Copy.activated = False
+		Copy.activated, Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False, False
 		size = len(Copy.manaModifications) #去掉牌上的因光环产生的费用改变
 		for i in range(size):
 			if Copy.manaModifications[size-1-i].source != None:
 				Copy.manaModifications.pop(size-1-i)
+		#在一个游戏中复制出新实体的时候需要把这些值重置
+		Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
+		Copy.dead = False
+		Copy.effectViable, Copy.evanescent = False, False
+		Copy.newonthisSide, Copy.firstTimeonBoard = True, True #firstTimeonBoard用于防止随从在休眠状态苏醒时再次休眠，一般用不上
+		Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False
+		Copy.activated = False
+		Copy.sequence, Copy.position = -1, -2
+		Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = 0, 0, 0
+		
+		Copy.decideAttChances_base()
 		#如果要生成一个x/x/x的复制
 		if attack != False or health != False:
 			Copy.statReset(attack, health)
-		self.attTimes, self.attChances_extra = 0, 0
-		self.decideAttChances_base()
 		if mana != False:
 			for manaMod in Copy.manaModifications:
 				manaMod.getsRemoved()

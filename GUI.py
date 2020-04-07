@@ -928,16 +928,16 @@ class GUI:
 					self.printInfo("Position for minion in hand decided: %d"%self.position)
 					self.selectedSubject = "MinionPositionDecided" #将主体记录为标记了打出位置的手中随从。
 					#抉择随从如有全选光环，且所有选项不需目标，则直接打出。 连击随从的needTarget()由连击条件决定。
-					self.printInfo("Minion {} in hand needs target: {}".format(self.subject.name, self.subject.needTarget(self.choice)))
+					#self.printInfo("Minion {} in hand needs target: {}".format(self.subject.name, self.subject.needTarget(self.choice)))
 					if self.subject.needTarget(self.choice) == False or self.subject.targetExists(self.choice) == False:
-						self.printInfo("Requesting to play minion {} without target. The choice is {}".format(self.subject.name, self.choice))
+						#self.printInfo("Requesting to play minion {} without target. The choice is {}".format(self.subject.name, self.choice))
 						subject, position, choice = self.subject, self.position, self.choice
 						self.cancelSelection()
 						self.Game.playMinion(subject, None, position, choice)
 						self.Game = self.Game.copyGame()
 						self.update()
 					else:
-						self.printInfo("The minion requires target to play. needTarget() returns {}".format(self.subject.needTarget(self.choice)))
+						#self.printInfo("The minion requires target to play. needTarget() returns {}".format(self.subject.needTarget(self.choice)))
 						button.configure(bg="purple")
 			#随从的打出位置和抉择选项已经在上一步选择，这里处理目标选择。
 			elif self.selectedSubject == "MinionPositionDecided":

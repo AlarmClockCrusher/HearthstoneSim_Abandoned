@@ -197,7 +197,7 @@ class Game:
 				PRINT(self, "Invalid selection to play minion {}, targeting {}, with choice {}".format(minion.name, target, choice))
 				
 		if canPlayMinion:
-			PRINT(self, "	   *********\nHandling play minion {} with target {}, with choice: {}\n	   *********".format(minion.name, target, choice))
+			PRINT(self, "	   *******\nHandling play minion {} with target {}, with choice: {}\n	   *********".format(minion.name, target, choice))
 			#打出随从到所有结算完结为一个序列，序列完成之前不会进行胜负裁定。
 			#打出随从产生的序列分为 
 				#1）使用阶段： 支付费用，随从进入战场（处理位置和刚刚召唤等），抉择变形类随从立刻提前变形，黑暗之主也在此时变形。
@@ -763,7 +763,7 @@ class Game:
 	The deaths of minions will be handled at the end of triggering, which is then followed by drawing card.
 	"""	
 	def switchTurn(self):
-		PRINT(self, "----------------------------------------\nThe turn ends for hero %d\n----------------------------------------"%self.turn)
+		PRINT(self, "----------------\nThe turn ends for hero %d\n-----------------"%self.turn)
 		for minion in self.minions[self.turn] + self.minions[3-self.turn]: #Include the Permanents.
 			minion.turnEnds(self.turn) #Handle minions' attTimes and attChances
 		for card in self.Hand_Deck.hands[self.turn]	+ self.Hand_Deck.hands[3-self.turn]:
@@ -784,7 +784,7 @@ class Game:
 		self.ManaHandler.turnEnds()
 		
 		self.turn = 3 - self.turn #Changes the turn to another hero.
-		PRINT(self, "----------------------------------------\nA new turn starts for hero %d\n----------------------------------------"%self.turn)
+		PRINT(self, "--------------------\nA new turn starts for hero %d\n-----------------"%self.turn)
 		self.ManaHandler.turnStarts()
 		for obj in self.turnStartTrigger: #This is for temp effects.
 			if obj.ID == self.turn:
@@ -907,7 +907,7 @@ class Game:
 				PRINT(self, "Invalid selection to play spell {}, with choice {}".format(spell.name, choice))
 				
 		if canPlaySpell:
-			PRINT(self, "	   *********\nHandling play spell {} with target {}, with choice: {}\n	   *********".format(spell.name, target, choice))
+			PRINT(self, "	   ********\nHandling play spell {} with target {}, with choice: {}\n	   *********".format(spell.name, target, choice))
 			#使用阶段：
 				#支付费用，相关费用状态移除，包括血色绽放，墨水大师，卡雷苟斯以及暮陨者艾维娜。
 				#奥秘和普通法术会进入不同的区域。法术反制触发的话会提前终止整个序列。
@@ -969,9 +969,9 @@ class Game:
 		if self.ManaHandler.costAffordable(weapon) == False:
 			PRINT(self, "Not enough mana to play the weapon {}".format(weapon))
 		else:
-			PRINT(self, "	   *********")
+			PRINT(self, "	   *******")
 			PRINT(self, "Handling play weapon {} with target {}".format(weapon.name, target))
-			PRINT(self, "	   *********")
+			PRINT(self, "	   *******")
 		#使用阶段
 			#卡牌从手中离开，支付费用，费用状态移除，但是目前没有根据武器费用支付而产生响应的效果。
 			#武器进场，此时武器自身的扳机已经可以开始触发。如公正之剑可以通过触发的伊利丹召唤的元素来触发，并给予召唤的元素buff
@@ -1026,7 +1026,7 @@ class Game:
 		if self.ManaHandler.costAffordable(heroCard) == False:
 			PRINT(self, "Not enough mana to play the hero card {}".format(heroCard))
 		else:
-			PRINT(self, "	   *********\nHandling play hero card %s\n	   *********"%heroCard.name)
+			PRINT(self, "	   *******\nHandling play hero card %s\n	   *********"%heroCard.name)
 			#使用阶段
 				#支付费用，费用状态移除
 				#英雄牌进入战场

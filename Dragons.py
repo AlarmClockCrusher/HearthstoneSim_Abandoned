@@ -4138,6 +4138,7 @@ class DeathwingMadAspect(Minion):
 			if minionstoAttack != []:
 				target = np.random.choice(minionstoAttack)
 				PRINT(self, "Deathwing, Mad Aspect attacks minion %s"%target.name)
+				#def battleRequest(self, subject, target, verifySelectable=True, consumeAttackChance=True, resolveDeath=True, resetRedirectionTriggers=True)
 				target = self.Game.battleRequest(self, target, False, True, False, False)
 				minionsbeenAttacked.append(target)
 			else: #No more available minions to attack

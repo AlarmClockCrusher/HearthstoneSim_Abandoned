@@ -2495,18 +2495,19 @@ class SoulMirror(Spell):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Soul Mirror is cast, summons copies of enemy minions and make them attack their copies")
-		pairs, copies = [], []
+		pairs = [[], []]
 		for minion in self.Game.minionsonBoard(3-self.ID):
 			Copy = minion.selfCopy(self.ID)
-			copies.append(Copy)
-			pairs.append((minion, Copy))
-		if copies != []:
-			if self.Game.summonMinion(copies, (-1, "totheRightEnd"), self.ID):
-				for minion, Copy in pairs:
+			pairs[0].append(minion)
+			pairs[1].append(Copy)
+		if pairs[1] != []:
+			if self.Game.summonMinion(pairs[1], (-1, "totheRightEnd"), self.ID):
+				for minion, Copy in zip(pairs[0], pairs[1]):
 					if minion.onBoard and minion.health > 0 and minion.dead == False and Copy.onBoard and Copy.health > 0 and Copy.dead == False:
 						PRINT(self, "%s is forced to attack its copy"%minion.name)
 						#假设不消耗攻击机会，那些随从在攻击之后被我方拐走仍然可以攻击
-						self.Game.battleRequest(minion, Copy, False, False)
+						#def battleRequest(self, subject, target, verifySelectable=True, consumeAttackChance=True, resolveDeath=True, resetRedirectionTriggers=True)
+						self.Game.battleRequest(minion, Copy, verifySelectable=False, consumeAttackChance=False, resolveDeath=False, resetRedirectionTriggers=True)
 		return None
 		
 		

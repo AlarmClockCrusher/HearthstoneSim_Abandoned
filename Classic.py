@@ -3195,7 +3195,6 @@ class Trigger_MirrorEntity(SecretTrigger):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self, "After enemy minion %s is played, Secret Mirro Entity is triggered and summons a copy of it."%subject.name)
 		Copy = subject.selfCopy(self.entity.ID)
-		PRINT(self, "The copied minion to summon has ID %d"%Copy.ID)
 		self.entity.Game.summonMinion(Copy, -1, self.entity.ID)
 		
 		
@@ -3387,7 +3386,7 @@ class Pyroblast(Spell):
 class AldorPeacekeeper(Minion):
 	Class, race, name = "Paladin", "", "Aldor Peacekeeper"
 	mana, attack, health = 3, 3, 3
-	index = "Class~Paladin~Minion~3~3~3~None~Aldor Peacekeeper~Battlecry"
+	index = "Classic~Paladin~Minion~3~3~3~None~Aldor Peacekeeper~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Change an enemy minion's Attack to 1"
 	
 	def targetExists(self, choice=0):
@@ -3821,7 +3820,7 @@ class Trigger_Lightwell(TriggeronBoard):
 		if targets != []:
 			target = np.random.choice(targets)
 			heal = 3 * (2 ** self.entity.countHealDouble())
-			PRINT(self, "At the end of turn, %s restores %d health to damaged friendly character all friendly minions"%(self.entity.name, heal, target.name))
+			PRINT(self, "At the start of turn, %s restores %d health to damaged friendly character %s"%(self.entity.name, heal, target.name))
 			self.entity.restoresHealth(target, heal)
 			
 			

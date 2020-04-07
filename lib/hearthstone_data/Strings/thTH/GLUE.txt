@@ -1,0 +1,1888 @@
+TAG	TEXT	COMMENT
+GLUE_2X_GOLD_EVENT_BANNER_HEADLINE	โกลด์จากโบนัส!	
+GLUE_ADVENTURE	การผจญภัยคนเดียว	
+GLUE_ADVENTURE_ADVENTUREBOOK_DAL_FIRST_TIME_FLOW	บทนี้เราเลี้ยง! ขอให้สนุกนะ!	
+GLUE_ADVENTURE_ADVENTUREBOOK_DAL_FIRST_TIME_FLOW_HEADER	ปลดล็อค	
+GLUE_ADVENTURE_ADVENTUREBOOK_DAL_PREPURCHASETIMELOCK_BUTTON	ซื้อล่วงหน้า	
+GLUE_ADVENTURE_ADVENTUREBOOK_DAL_UNLOCK_CHAPTER1	ลองบทแรกได้เลย!	
+GLUE_ADVENTURE_BONUS_CHALLENGE_LABEL	บททดสอบสุดท้าย	
+GLUE_ADVENTURE_BOSS_HEADER	ข้อมูลบอส	
+GLUE_ADVENTURE_BOT_BOOM_BOARD_CLEAR_TOOLTIP	ผ่านวิง <b>เคลียร์บอร์ด</b> \nเพื่อปลดล็อค	
+GLUE_ADVENTURE_BOT_BOOM_LETHAL_TOOLTIP	ผ่านวิง <b>ปิดเกม</b> \nเพื่อปลดล็อค	
+GLUE_ADVENTURE_BOT_BOOM_MIRROR_TOOLTIP	ผ่านวิง <b>กระจกเงา</b> \nเพื่อปลดล็อค	
+GLUE_ADVENTURE_BOT_BOOM_SURVIVAL_TOOLTIP	ผ่านวิง <b>เอาชีวิตรอด</b> \nเพื่อปลดล็อค	
+GLUE_ADVENTURE_BOT_BOOM_TOOLTIP_HEADER	ล็อค	
+GLUE_ADVENTURE_BOT_INTRO_BANNER_TEXT	ขอต้อนรับสู่บูมแล็บ!	
+GLUE_ADVENTURE_BOT_WING_BOARD_CLEAR	เคลียร์บอร์ด	
+GLUE_ADVENTURE_BOT_WING_LETHAL	ปิดเกม	
+GLUE_ADVENTURE_BOT_WING_MIRROR	กระจกเงา	
+GLUE_ADVENTURE_BOT_WING_SURVIVAL	เอาชีวิตรอด	
+GLUE_ADVENTURE_CARDBACKPAGE_DAL_EVILCARD_NAME_HEROIC	รอดไปได้!	
+GLUE_ADVENTURE_CARDBACKPAGE_DAL_EVILCARD_NAME_NORMAL	รางวัลจากเงามืด	
+GLUE_ADVENTURE_CARDBACKPAGE_DRG_EVILCARD_NAME_EVIL	ตำนาน E.V.I.L.	
+GLUE_ADVENTURE_CARDBACKPAGE_DRG_EVILCARD_NAME_GOOD	ตำนานนักสำรวจ	
+GLUE_ADVENTURE_CARDBACKPAGE_ULD_EVILCARD_NAME_HEROIC	ผู้บุกรุกสุสาน	
+GLUE_ADVENTURE_CARDBACKPAGE_ULD_EVILCARD_NAME_NORMAL	ภารกิจระดับไททัน	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DAL_CHAPTER1	บทที่ 1: ธนาคารดาลารัน	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DAL_CHAPTER2	บทที่ 2: ไวโอเล็ตโฮลด์	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DAL_CHAPTER3	บทที่ 3: ถนนเมืองดาลารัน	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DAL_CHAPTER4	บทที่ 4: อันเดอร์เบลลี่	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DAL_CHAPTER5	บทที่ 5: ปราการคิรินทอร์	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DRG_CHAPTER1	บทที่ 1: การต่อสู้ที่ชายฝั่งน้ำแข็ง	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DRG_CHAPTER2	บทที่ 2: การปะทะที่เวิร์มเรสต์	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DRG_CHAPTER3	บทที่ 3: สงครามเวหาเหนือดราก้อนไบลท์	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_DRG_CHAPTER4	บทที่ 4: ศึกตัดสินในดาลารัน	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_ULD_CHAPTER1	บทที่ 1: นครสาบสูญ	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_ULD_CHAPTER2	บทที่ 2: เนินทรายร้อนระอุ	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_ULD_CHAPTER3	บทที่ 3: สุสานของคาร์ทุต	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_ULD_CHAPTER4	บทที่ 4: วิหารต้นกำเนิด	
+GLUE_ADVENTURE_CHAPTER_PURCHASED_POPUPDESCRIPTION_ULD_CHAPTER5	บทที่ 5: วิหารชั้นใน	
+GLUE_ADVENTURE_CHAPTER_TITLE_DAL_CHAPTER1	1. ธนาคารดาลารัน	
+GLUE_ADVENTURE_CHAPTER_TITLE_DAL_CHAPTER2	2. ไวโอเล็ตโฮลด์	
+GLUE_ADVENTURE_CHAPTER_TITLE_DAL_CHAPTER3	3. ถนนเมืองดาลารัน	
+GLUE_ADVENTURE_CHAPTER_TITLE_DAL_CHAPTER4	4. อันเดอร์เบลลี่	
+GLUE_ADVENTURE_CHAPTER_TITLE_DAL_CHAPTER5	5. ปราการคิรินทอร์	
+GLUE_ADVENTURE_CHAPTER_TITLE_DRG_CHAPTER1	1: การต่อสู้ที่ชายฝั่งน้ำแข็ง	
+GLUE_ADVENTURE_CHAPTER_TITLE_DRG_CHAPTER2	2: การปะทะที่เวิร์มเรสต์	
+GLUE_ADVENTURE_CHAPTER_TITLE_DRG_CHAPTER3	3: สงครามเวหาเหนือดราก้อนไบลท์	
+GLUE_ADVENTURE_CHAPTER_TITLE_DRG_CHAPTER4	4: ศึกตัดสินในดาลารัน	
+GLUE_ADVENTURE_CHAPTER_TITLE_ULD_CHAPTER1	1. นครสาบสูญ	
+GLUE_ADVENTURE_CHAPTER_TITLE_ULD_CHAPTER2	2. เนินทรายร้อนระอุ	
+GLUE_ADVENTURE_CHAPTER_TITLE_ULD_CHAPTER3	3. สุสานของคาร์ทุต	
+GLUE_ADVENTURE_CHAPTER_TITLE_ULD_CHAPTER4	4. วิหารต้นกำเนิด	
+GLUE_ADVENTURE_CHAPTER_TITLE_ULD_CHAPTER5	5. วิหารชั้นใน	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DAL_CHAPTER1	บุกธนาคารดาลารันเพื่อปล้นชิงวัตถุโบราณล้ำค่าในนั้น	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DAL_CHAPTER2	จัดการทหารยามเฝ้าคุกเวทมนตร์\nเพื่อปลดปล่อยสิ่งชั่วร้ายที่ถูกคุมขัง	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DAL_CHAPTER3	จัดการกับเหล่าพ่อค้าแม่ค้าทั่วดาลารัน\nเพื่อควบคุมหัวใจสำคัญของเมือง	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DAL_CHAPTER4	ขับไล่ผู้อาศัยอยู่ในถ้ำใต้เมืองเพื่อติดตั้งจรวดของด็อกเตอร์บูม	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DAL_CHAPTER5	ต่อสู้กับผู้นำเวทมนตร์จากคิรินทอร์เพื่อยึดครองเมืองและ[b]ประกาศชัยชนะของสมาพันธ์ E.V.I.L.!	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_EVIL_CHAPTER1	สมาพันธ์นักสำรวจขึ้นฝั่งที่นอร์ธเรนด์ แต่ E.V.I.L. รอพวกเขาอยู่!	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_EVIL_CHAPTER2	แทรกซึมเข้าสู่วิหารศักดิ์สิทธิ์ของดราก้อนไฟลท์[b]เพื่อสืบหาตำแหน่งซากของกาลาครอนด์	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_EVIL_CHAPTER3	ทั้งสองฝ่ายทุ่มกำลังสู้ศึกกลางเวหา แต่ E.V.I.L. จะปกป้องน่านฟ้ารอบดาลารันสุดชีวิต	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_EVIL_CHAPTER4	ฐานที่มั่นของ E.V.I.L. ในดาลารันถูกปิดล้อม แต่ราฟามก็มีแผนที่จะพลิกสถานการณ์	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_GOOD_CHAPTER1	สมาพันธ์นักสำรวจเดินทางมาถึงนอร์ธเรนด์ แต่ต้องพบกับการต่อต้านอย่างหนักบนชายฝั่ง	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_GOOD_CHAPTER2	ฮีโร่ของเราหวังจะขอความช่วยเหลือจากดราก้อนไฟลท์ แต่กลับพบแผนร้ายที่ E.V.I.L. วางไว้	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_GOOD_CHAPTER3	มังกรเข้าปะทะกับสมาพันธ์ E.V.I.L. ซึ่งตอบโต้ด้วยการโจมตีทางอากาศครั้งใหญ่!	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_DRG_GOOD_CHAPTER4	ฮีโร่ของเราเร่งรุดไปเพื่อยึดเมืองคืน... แต่แผนหลักของราฟามใกล้บรรลุผลแล้ว!	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_ULD_CHAPTER1	สำรวจนครสาบสูญของชาวทอลเวียร์\nเพื่อหยุดยั้งโรคระบาดเมอร์ล็อค	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_ULD_CHAPTER2	ข้ามทะเลทรายสุดอันตรายของอุลดุม พร้อมต่อสู้กับความบ้าคลั่งในทุกย่างก้าว	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_ULD_CHAPTER3	สำรวจสุสานสุดคดเคี้ยวของคาร์ทุต\nเพื่อเสาะหาวิธีเอาชนะความตาย	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_ULD_CHAPTER4	เอาชนะผู้พิทักษ์ไททันของวิหารศักดิ์สิทธิ์\nเพื่อยับยั้งโรคระบาดพิโรธ	
+GLUE_ADVENTURE_CHAPTERPAGE_DESCRIPTION_ULD_CHAPTER5	ฮีโร่ทั้งสี่ร่วมมือกันเผชิญหน้ากับเทคาห์น เจ้าแห่งโรคระบาดเพลิงที่เพิ่งเถลิงอำนาจ	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_DAL_CHAPTER1	เหตุการณ์: กล่องเก็บเงินเหรียญเต็ม	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_DAL_CHAPTER2	เหตุการณ์: มินเนี่ยนถูกจองจำ	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_DAL_CHAPTER3	เหตุการณ์: ถนนแออัด	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_DAL_CHAPTER4	เหตุการณ์: สลับพลังโจมตีและพลังชีวิต	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_DAL_CHAPTER5	เหตุการณ์: การต่อสู้พิเศษเพิ่มอีกสี่ครั้ง	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_ULD_CHAPTER1	เหตุการณ์: เมอร์ล็อคเต็มไปหมด!	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_ULD_CHAPTER2	เหตุการณ์: โจมตีเมื่อจบเทิร์น	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_ULD_CHAPTER3	เหตุการณ์: มินเนี่ยนถูกฝัง	
+GLUE_ADVENTURE_CHAPTERPAGE_GLOBALRULE_ULD_CHAPTER4	เหตุการณ์: มินเนี่ยนเกรี้ยวกราด	
+GLUE_ADVENTURE_CHAPTERUNLOCKED_POPUP_TITLE	ปลดล็อคบทนี้แล้ว!	
+GLUE_ADVENTURE_CHEST_POPUP_DRG	ปราบบอสในบท[b]เพื่อรับรางวัล	
+GLUE_ADVENTURE_DUNGEON_CRAWL_ANOMALY_MODE_BUTTON_LOCKED_TOOLTIP_BODY	คุณจะได้รับผลพิเศษ[b]แบบสุ่มตลอดการเล่นรอบนี้ เป็นเจ้าของการผจญภัยทุกบท[b]เพื่อปลดล็อคโหมดนี้!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_ANOMALY_MODE_BUTTON_LOCKED_TOOLTIP_HEADER	โหมดความผิดปกติ (ถูกล็อค)	
+GLUE_ADVENTURE_DUNGEON_CRAWL_ANOMALY_MODE_BUTTON_TOOLTIP_HEADER	โหมดความผิดปกติ	
+GLUE_ADVENTURE_DUNGEON_CRAWL_ANOMALY_MODE_PANEL_DESCRIPTION	สุ่มมอบ[b]ความผิดปกติ[b]ให้การเล่นรอบนี้	
+GLUE_ADVENTURE_DUNGEON_CRAWL_ANOMALY_MODE_UNAVAILABLE_TOOLTIP_BODY	ไม่สามารถใช้ได้ในบทนี้	
+GLUE_ADVENTURE_DUNGEON_CRAWL_BOSS_HERO_POWER_TOOLTIP	วางเมาส์เหนือเพื่อดู[b]พลังฮีโร่ของบอส	
+GLUE_ADVENTURE_DUNGEON_CRAWL_BOSS_HERO_POWER_TOOLTIP_PHONE	แตะค้างไว้เพื่อดู\nพลังฮีโร่ของบอส	
+GLUE_ADVENTURE_DUNGEON_CRAWL_BOSS_WINS	บอสที่ชนะ	
+GLUE_ADVENTURE_DUNGEON_CRAWL_BOSS_WINS_AS_CLASS	บอสที่ชนะด้วย[b]{0}	0 = Class name
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHALLENGE_COUNT	อุปสรรค {0}/{1}	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_DECK	เลือกเด็คเริ่มต้น	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_HERO_POWER	เลือกพลังฮีโร่	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_LOOT	เลือกรางวัลของคุณ!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_SHRINE	เลือกสื่อวิญญาณเริ่มต้น	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_TEAMMATE	เลือกเพื่อนร่วมทีม!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_TREASURE	เลือกสมบัติ!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_CHOOSE_TREASURE_SATCHEL	เลือกสมบัติประจำตัว!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_DEFEATED_COUNT	ชนะแล้ว {0}/{1}!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_ENTER_TAVERN	เข้าสู่\nโรงเตี๊ยม	
+GLUE_ADVENTURE_DUNGEON_CRAWL_FINAL_CHALLENGE_BANNER_BUTTON	ลุยกันเลย!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_HERO_INFO	ข้อมูลฮีโร่	
+GLUE_ADVENTURE_DUNGEON_CRAWL_INTRO_BANNER_BUTTON	ลุยเลย!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_INTRO_BANNER_GIL_HEADER	รับสมัครนักล่ามอนสเตอร์!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_INTRO_BANNER_HEADER	รับสมัครนักผจญภัย!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_INTRO_BANNER_TRL_HEADER	รับสมัครแชมเปี้ยน!	
+GLUE_ADVENTURE_DUNGEON_CRAWL_MONSTERS_DEFEATED	มอนสเตอร์ที่ชนะ	
+GLUE_ADVENTURE_DUNGEON_CRAWL_MONSTERS_DEFEATED_AS_CLASS	มอนสเตอร์ที่ชนะด้วย[b]{0}	0 = Class name
+GLUE_ADVENTURE_DUNGEON_CRAWL_RUMBLE_RUN_WINS	รอบที่เล่นจบ	
+GLUE_ADVENTURE_DUNGEON_CRAWL_RUN_WINS	รอบที่เล่นจบ	
+GLUE_ADVENTURE_DUNGEON_CRAWL_SHRINE_TUTORIAL_BODY	สื่อวิญญาณอยู่ในสนามตั้งแต่เริ่มเกม\n\nสื่อวิญญาณเป็นสิ่งทรงพลัง และจะหยุดทำงานแทนที่จะตาย	
+GLUE_ADVENTURE_DUNGEON_CRAWL_SHRINE_TUTORIAL_HEADER	สื่อวิญญาณ	
+GLUE_ADVENTURE_DUNGEON_CRAWL_SPECIAL_ENCOUNTER	การเผชิญหน้าที่เป็นมิตร	
+GLUE_ADVENTURE_DUNGEON_CRAWL_TEAMS_DEFEATED	ทีมที่ชนะ	
+GLUE_ADVENTURE_DUNGEON_CRAWL_UPGRADE_SHRINE	อัพเกรดสื่อวิญญาณของคุณ!	
+GLUE_ADVENTURE_HEROIC_UNLOCK_REQUIREMENT	เล่นบทนี้ในโหมดปกติให้จบ[b]เพื่อปลดล็อคระดับฮีโร่	
+GLUE_ADVENTURE_ICC_FROZEN_THRONE_WING_LOCKED	เล่นยอดป้อมปราการให้จบ!	
+GLUE_ADVENTURE_ICC_LOWER_CITADEL_DIFFICULTY_WARNING	ระวังให้ดี: มินเนี่ยนของลิชคิงอาจแข็งแกร่งกว่าศัตรูที่ผ่านมา!	
+GLUE_ADVENTURE_ICC_LOWER_CITADEL_WING_LOCKED	เล่นบทนำให้จบก่อน!	
+GLUE_ADVENTURE_ICC_UPPER_REACHES_WING_LOCKED	เล่นป้อมปราการส่วนล่างให้จบ!	
+GLUE_ADVENTURE_KAR_WING_INVITATION	เพลิดเพลินกับค่ำคืนแห่งปรากฏการณ์[b]สุดมหัศจรรย์ไปกับเมดิฟห์!	
+GLUE_ADVENTURE_KAR_WING_LOCKED	เปิดชั้นก่อนหน้านี้	
+GLUE_ADVENTURE_KAR_WING_LOCKED_PURCHASE	เปิดชั้นก่อนหน้านี้เพื่อซื้อ	
+GLUE_ADVENTURE_KAR_WING_PARLOR_LOCKED	เล่นบทนำให้จบก่อน!	
+GLUE_ADVENTURE_LABEL_COMING_SOON	เร็วๆ นี้!	
+GLUE_ADVENTURE_LABEL_SHOP_CLOSED	ปิด	
+GLUE_ADVENTURE_LOCKED	ล็อค	
+GLUE_ADVENTURE_LOCKED_CHAPTER	บทนี้ล็อคอยู่	
+GLUE_ADVENTURE_LOCKED_HEROICMODE	ต้องเล่นบทนี้ให้จบในโหมดปกติก่อน	
+GLUE_ADVENTURE_LOCKED_SPECIFICCHAPTER	ต้องปลดล็อคบทที่ 1 ก่อน (สมาพันธ์นักสำรวจ)	
+GLUE_ADVENTURE_LOE_STAFF_DISAPPEARED	ขอบใจสำหรับไม้เท้า!\n- ราฟาม	
+GLUE_ADVENTURE_LOE_STAFF_NAME	ไม้เท้าต้นกำเนิด	
+GLUE_ADVENTURE_LOE_STAFF_RESERVED	จองที่ไว้สำหรับ\nไม้เท้าต้นกำเนิด	
+GLUE_ADVENTURE_LOE_WING4_LOCKED	ผ่านวิงอื่นๆ ทั้งหมด	
+GLUE_ADVENTURE_LOE_WING4_LOCKED_PURCHASE	ผ่านวิงอื่นๆ ทั้งหมด เพื่อซื้อ	
+GLUE_ADVENTURE_MODE_CLASS_CHALLENGE_CHOOSE	เลือกการทดสอบ	
+GLUE_ADVENTURE_MORE_CARDS	ใบอื่นๆ	// full text appears as "+6 more cards"
+GLUE_ADVENTURE_NEW_MODE_UNLOCKED_POPUP_TEXT	โหมดใหม่ปลดล็อคแล้ว	
+GLUE_ADVENTURE_NUM_BOSSES_DEFEATED	{0}/{1}	
+GLUE_ADVENTURE_NUM_CARDS_COLLECTED	{0}/{1}	
+GLUE_ADVENTURE_NUM_CHAPTERS_OWNED	มีแล้ว {0} บท	
+GLUE_ADVENTURE_PURCHASE_REWARD_POPUP_DRG	ได้รับการ์ดทันที[b]เมื่อปลดล็อคบทนี้!	
+GLUE_ADVENTURE_READY_TO_OPEN	พร้อมเปิดแล้ว!	
+GLUE_ADVENTURE_REWARD_ADVENTURE_TITLE	รางวัลจากการผจญภัย!	
+GLUE_ADVENTURE_REWARD_DESCRIPTION_HEROIC	เล่นแคมเปญนี้ในโหมดฮีโร่ให้จบ[b]เพื่อรับหลังการ์ดนี้!	
+GLUE_ADVENTURE_REWARD_DESCRIPTION_NORMAL	เล่นทุกบทจนจบ[b]เพื่อรับรางวัลเหล่านี้!	
+GLUE_ADVENTURE_REWARD_DESCRIPTION_STATS	รับรางวัลเพิ่มได้[b]ในระดับฮีโร่!	
+GLUE_ADVENTURE_REWARD_PAGE_CHAPTER_REWARD_CHAPTER5_PACKS	รับซองการ์ด 3 ซอง[b]โดยการเอาชนะบอสในบทนี้!	
+GLUE_ADVENTURE_REWARD_PAGE_CHAPTER_REWARD_PACKS	รับซองการ์ด 3 ซอง[b]เมื่อไปถึงบอสตัวที่ 5 ในบทนี้!	
+GLUE_ADVENTURE_REWARD_PAGE_GOLDENPACK	ซองการ์ดสีทอง	
+GLUE_ADVENTURE_REWARD_PAGE_STATISTIC_BOSSES	บอสที่ชนะ	
+GLUE_ADVENTURE_REWARD_PAGE_STATISTIC_CARDS	การ์ดที่ได้รับ	
+GLUE_ADVENTURE_REWARD_PAGE_TITLE	รางวัล	
+GLUE_ADVENTURE_REWARD_PAGE_TITLE_HEROIC	รางวัลระดับฮีโร่	
+GLUE_ADVENTURE_REWARD_PAGE_TITLE_PROGRESS	ความคืบหน้า[b]การผจญภัย	
+GLUE_ADVENTURE_REWARDS_PREVIEW_HEADER	• รางวัลสำหรับ {0} •	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_TITLE_BOOK	รับการผจญภัยแบบครบทั้งหมด!	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_WHATSINSIDE_ANOMALYBANNER	ปลดล็อคโหมดความผิดปกติ[b]เพื่อรับผลแบบสุ่มทุกครั้ง[b]ที่คุณเริ่มเล่นบทใดๆ	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_WHATSINSIDE_CHAPTERSBANNER_TIMELOCK_FALSE	ปลดล็อคทุกบท!	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_WHATSINSIDE_CHAPTERSBANNER_TIMELOCK_TRUE	เล่นการผจญภัยทุกบท[b]ได้ทันทีที่เปิดให้เล่น@	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_WHATSINSIDE_HEROESBANNER_TIMELOCK_FALSE	ปลดล็อคฮีโร่ผจญภัยทั้งหมด!	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_WHATSINSIDE_HEROESBANNER_TIMELOCK_TRUE	เล่นฮีโร่ผจญภัยทุกตัว[b]ได้ทันทีที่เปิดให้เล่น@	
+GLUE_ADVENTURE_STORE_ADVENTUREBOOK_DAL_WHATSINSIDEBUTTON	มีอะไรอยู่ข้างใน	
+GLUE_ADVENTURE_STORE_CHAPTER_DAL_TITLE_CHAPTER1	ปลดล็อคบทที่ 1	
+GLUE_ADVENTURE_STORE_CHAPTER_DAL_TITLE_CHAPTER2	ปลดล็อคบทที่ 2	
+GLUE_ADVENTURE_STORE_CHAPTER_DAL_TITLE_CHAPTER3	ปลดล็อคบทที่ 3	
+GLUE_ADVENTURE_STORE_CHAPTER_DAL_TITLE_CHAPTER4	ปลดล็อคบทที่ 4	
+GLUE_ADVENTURE_STORE_CHAPTER_DAL_TITLE_CHAPTER5	ปลดล็อคบทที่ 5	
+GLUE_ADVENTURE_STORE_CHAPTERNUMERAL_DAL_CHAPTER1	1	
+GLUE_ADVENTURE_STORE_CHAPTERNUMERAL_DAL_CHAPTER2	2	
+GLUE_ADVENTURE_STORE_CHAPTERNUMERAL_DAL_CHAPTER3	3	
+GLUE_ADVENTURE_STORE_CHAPTERNUMERAL_DAL_CHAPTER4	4	
+GLUE_ADVENTURE_STORE_CHAPTERNUMERAL_DAL_CHAPTER5	5	
+GLUE_ADVENTURE_STORE_CHOOSESTORE_DAL_TITLE	ปลดล็อค	
+GLUE_ADVENTURE_STORE_CHOOSESTORE_UNLOCK_FULLBOOK	ปลดล็อคการผจญภัย\nแบบครบทั้งหมด	
+GLUE_ADVENTURE_STORE_WHATSINSIDE_ANOMALY	ปลดล็อคโหมดความผิดปกติทันที เพื่อรับผลแบบสุ่มทุกครั้ง[b]ที่คุณเริ่มเล่นบทใดๆ	
+GLUE_ADVENTURE_STORE_WHATSINSIDE_RELEASED_CHAPTERS	ปลดล็อคทุกบท	
+GLUE_ADVENTURE_STORE_WHATSINSIDE_RELEASED_HEROES	ปลดล็อคฮีโร่ผจญภัยทั้งหมด	
+GLUE_ADVENTURE_STORE_WHATSINSIDE_REWARDS_TITLE	รับรางวัลทันที	
+GLUE_ADVENTURE_STORE_WHATSINSIDE_TIMELOCKED_CHAPTERS	เล่นการผจญภัยทุกบท[b]ได้ทันทีที่เปิดให้เล่น	
+GLUE_ADVENTURE_STORE_WHATSINSIDE_TIMELOCKED_HEROES	เล่นฮีโร่ผจญภัยทุกตัว[b]ได้ทันทีที่เปิดให้เล่น	
+GLUE_ADVENTURE_STORYMODE_DUNGEONCRAWL_CHAPTER_GAMEPLAYLOCKED	ต้องเล่นบทก่อนหน้า\nทั้งหมดให้จบก่อน	
+GLUE_ADVENTURE_STORYMODE_DUNGEONCRAWL_HEROICMODE_LOCKED	ต้องเล่นบทนี้ให้จบ\nในโหมดปกติก่อน	
+GLUE_ADVENTURE_STORYMODE_TITLE	ดาลารัน	
+GLUE_ADVENTURE_STORYMODE_TITLE_DRG	Galakrond's Awakening	
+GLUE_ADVENTURE_STORYMODE_TITLE_ULD	อุลดุม	
+GLUE_ADVENTURE_STORYMODE_UNLOCK_PREVIOUSCHAPTER	ต้องปลดล็อค\nบทก่อนหน้านี้ก่อน	
+GLUE_ADVENTURE_TIMELOCKED_CHAPTER	เปิดในสัปดาห์ที่	
+GLUE_ADVENTURE_UNLOCK	ปลดล็อค	
+GLUE_ADVENTURE_UNLOCK_PREVIOUSCHAPTER	ปลดล็อคบทตามลำดับ\nหรือปลดล็อคการผจญภัยทั้งชุด	
+GLUE_ADVENTURE_UNLOCKALL	ปลดล็อคทั้งหมด	
+GLUE_ADVENTURE_WING_PURCHASED	ซื้อแล้ว	
+GLUE_ALERT_POPUP_HEADER	ข้อความประจำวัน	
+GLUE_ARCANE_ORBS_CAP_BODY	คุณไม่สามารถมีลูกแก้วเวทมนตร์เกิน {0} ลูก	
+GLUE_ARCANE_ORBS_CAP_HEADER	ลูกแก้วเวทมนตร์เยอะเกินไป!	
+GLUE_ARENA_1ST_TIME_DESC	โดยปกติคุณจะต้องเสียค่าเข้าร่วมลานประลอง แต่เนื่องจากนี่เป็นครั้งแรกของคุณ เราจะจ่ายให้เอง! ขอให้สนุกนะ!	"on the house" is a phrase that means "free" in English.
+GLUE_ARENA_1ST_TIME_HEADER	ลานประลอง	
+GLUE_ARENA_DECK	เด็คลานประลอง	
+GLUE_ARENA_DECK_TOOLTIP	นี่คือเด็คลานประลองของคุณ[b] การ์ดเหล่านี้จะไม่รวมอยู่[b]ในคอลเลกชันของคุณ	
+GLUE_ARENA_DECK_TOOLTIP_HEADER	เด็คลานประลอง	
+GLUE_ARENA_LABEL_SEASON_ENDING_DAYS	กิจกรรมสิ้นสุดในอีก: {0} วัน	
+GLUE_ARENA_LABEL_SEASON_ENDING_HOURS	กิจกรรมสิ้นสุดในอีก: {0} ชั่วโมง	
+GLUE_ARENA_LABEL_SEASON_ENDING_MINUTES	กิจกรรมสิ้นสุดในอีก: {0} นาที	
+GLUE_ARENA_LABEL_SEASON_ENDING_OVER_1_MONTH	กิจกรรมสิ้นสุดในอีก: > 1 เดือน	
+GLUE_ARENA_LABEL_SEASON_ENDING_SECONDS	กิจกรรมสิ้นสุดในอีก: {0} วินาที	
+GLUE_ARENA_LABEL_SEASON_ENDING_WEEKS	กิจกรรมสิ้นสุดในอีก: {0} สัปดาห์	
+GLUE_ARENA_POPUP_COMING_SOON_HEADER_DAYS	เริ่มในอีก {0} วัน	
+GLUE_ARENA_POPUP_COMING_SOON_HEADER_HOURS	เริ่มในอีก {0} ชั่วโมง	
+GLUE_ARENA_POPUP_COMING_SOON_HEADER_MONTHS	เริ่มในอีก {0} เดือน	
+GLUE_ARENA_POPUP_COMING_SOON_HEADER_WEEKS	เริ่มในอีก {0} สัปดาห์	
+GLUE_ARENA_POPUP_ENDING_SOON_HEADER_DAYS	สิ้นสุดในอีก {0} วัน	
+GLUE_ARENA_POPUP_ENDING_SOON_HEADER_HOURS	สิ้นสุดในอีก {0} ชั่วโมง	
+GLUE_ARENA_POPUP_ENDING_SOON_HEADER_MONTHS	สิ้นสุดในอีก {0} เดือน	
+GLUE_ARENA_POPUP_ENDING_SOON_HEADER_WEEKS	สิ้นสุดในอีก {0} สัปดาห์	
+GLUE_ARENA_SIGNUPS_CLOSED	เกมลานประลองนี้ใกล้จะจบลงและปิดรับสมัครแล้ว	
+GLUE_ARENA_VIEW_DECK	ดูเด็ค	
+GLUE_BACON	Battlegrounds	
+GLUE_BACON_BONUS	โบนัส	
+GLUE_BACON_BONUS_1	ปลดล็อคสถิติโบนัส	
+GLUE_BACON_BONUS_2	เลือกเล่นจาก 3 ฮีโร่[b]เมื่อเริ่มเกม	
+GLUE_BACON_BONUS_3	ปลดล็อคการแสดง[b]ความรู้สึกแบบรูปภาพ	
+GLUE_BACON_BONUS_FULL_STATS	สถิติทั้งหมด	
+GLUE_BACON_BONUS_RULE_1	เป็นเจ้าของซองการ์ด <color=#DC5AFF>Descent of Dragons</color> เพื่อปลดล็อคโบนัส	
+GLUE_BACON_BONUS_RULE_2	โบนัสมีผลจนกว่าจะเปิดให้เล่นส่วนเสริมถัดไป	
+GLUE_BACON_BONUS_TAG	ใช้งานได้หลังเบต้า	
+GLUE_BACON_FIRST_PLACE_LABEL	อันดับ 1	
+GLUE_BACON_FOOTER	ขอต้อนรับสู่ Battlegrounds!\nผู้ท้าชิงแปดคนเผชิญหน้า แต่ผู้ชนะมีเพียงหนึ่ง	
+GLUE_BACON_INFO_POPUP_COMBAT	ช่วงต่อสู้	
+GLUE_BACON_INFO_POPUP_COMBAT_TIPS	<color=#C900FF>• จากซ้ายไปขวา:</color> มินเนี่ยนตัวซ้ายสุดของคุณโจมตีก่อน\n<color=#C900FF>• สุ่มเลือกเป้าหมาย:</color> การโจมตีศัตรูแต่ละครั้งสุ่มเป้าหมาย เว้นแต่ว่าศัตรูจะมีมินเนี่ยนยั่วยุ\n<color=#C900FF>• การเสริมพลัง:</color> การเสริมพลังในช่วงต่อสู้มีผลแค่ชั่วคราว\n<color=#C900FF>• ชัยชนะ:</color> เมื่อคุณชนะการต่อสู้ ฮีโร่และมินเนี่ยนของคุณจะสร้างความเสียหายเท่ากับ\nระดับโรงเตี๊ยมของแต่ละตัว	
+GLUE_BACON_INFO_POPUP_PAGE	หน้า	
+GLUE_BACON_INFO_POPUP_PLAY_TUTORIAL	เล่นโหมดสอนเล่น	
+GLUE_BACON_INFO_POPUP_RECRUIT	ช่วงว่าจ้าง	
+GLUE_BACON_INFO_POPUP_RECRUIT_TIPS	<color=#C900FF>• ซื้อ:</color> ลากมินเนี่ยนไปที่ฮีโร่ของคุณเพื่อซื้อในราคา 3 ทอง\n<color=#C900FF>• ขาย:</color> ลากมินเนี่ยนไปที่บ็อบเพื่อขายทิ้งและรับ 1 ทองคืน\n<color=#C900FF>• ทริปเปิ้ล:</color> เป็นเจ้าของการ์ดมินเนี่ยนตัวเดียวกัน 3 ใบเพื่ออัพเกรดมัน พร้อมรับรางวัลโบนัส\n<color=#C900FF>• เรียงลำดับ:</color> ลากมินเนี่ยนของคุณเพื่อเปลี่ยนตำแหน่งและกำหนดว่าตัวใดจะตีก่อน\n<color=#C900FF>• เติบโต:</color> การเสริมพลังในช่วงว่าจ้างมีผลถาวร\n<color=#C900FF>• ระดับโรงเตี๊ยม:</color> อัพเกรดโรงเตี๊ยมของคุณเพื่อพบกับมินเนี่ยนที่เก่งขึ้น\n 	Every other Tier increases the number of shop minions.\n 
+GLUE_BACON_INFO_POPUP_SUMMARY	ต่อสู้กับผู้เล่นอื่นอีก 7 คน ผู้เล่นที่อยู่รอดคนสุดท้ายเป็นผู้ชนะ	
+GLUE_BACON_INFO_POPUP_TITLE	กติกา Battlegrounds	
+GLUE_BACON_LOW_MEMORY_BODY	Battlegrounds เหมาะสำหรับอุปกรณ์ที่มี[b]หน่วยความจำ[b]อย่างน้อย 2GB อุปกรณ์ของคุณ[b]อาจมีคุณสมบัติ[b]ไม่ตรงตาม[b]ความต้องการขั้นต่ำสำหรับเล่นโหมดนี้ เราจะปรับปรุงและพัฒนา[b]การทำงานของโหมดนี้[b]สำหรับอุปกรณ์ของคุณ[b]ในระหว่างช่วงเบต้า	
+GLUE_BACON_LOW_MEMORY_HEADER	คำเตือน	
+GLUE_BACON_RATING_LABEL	คะแนน	
+GLUE_BACON_STATS_LABEL_BIGGEST_MINION	มินเนี่ยน\nแกร่งที่สุด	
+GLUE_BACON_STATS_LABEL_DAMAGE_ONE_MINION	ความเสียหายโดย {0}	
+GLUE_BACON_STATS_LABEL_DAMAGE_ONE_TURN	ความเสียหาย\nในหนึ่งเทิร์น	
+GLUE_BACON_STATS_LABEL_FIRST_PLACE	อันดับ 1	Place Finishes
+GLUE_BACON_STATS_LABEL_GAME_PLAYED	เกม	
+GLUE_BACON_STATS_LABEL_GAMES_PLAYED	เกม	
+GLUE_BACON_STATS_LABEL_LAST_5_ROSTERS	5 กองทัพล่าสุด	
+GLUE_BACON_STATS_LABEL_MINIONS_DESTROYED	มินเนี่ยนที่ทำลาย	
+GLUE_BACON_STATS_LABEL_MOST_PURCHASED_MINIONS	มินเนี่ยนที่ซื้อบ่อยที่สุด	
+GLUE_BACON_STATS_LABEL_PLAYERS_ELIMINATED	ผู้เล่นที่คุณ\nจัดการ	
+GLUE_BACON_STATS_LABEL_TIME_PLAYED	เวลาที่เล่น	
+GLUE_BACON_STATS_LABEL_TOP_5_HEROES_GAMES	ฮีโร่ 5 อันดับสูงสุดตามจำนวนเกมที่เล่น	
+GLUE_BACON_STATS_LABEL_TOP_5_HEROES_WINS	ฮีโร่ 5 อันดับสูงสุดตามจำนวนชัยชนะ	
+GLUE_BACON_STATS_LABEL_TRIPLES	ทริปเปิ้ลที่ทำได้	
+GLUE_BACON_STATS_LABEL_UPGRADES	อัพเกรด\nโรงเตี๊ยม	
+GLUE_BACON_STATS_LABEL_WIN	ชนะ	
+GLUE_BACON_STATS_LABEL_WIN_STREAK	ชนะต่อเนื่อง\nสูงสุด	
+GLUE_BACON_STATS_LABEL_WINS	ชัยชนะ	
+GLUE_BACON_STATS_PAGE	กลับมาที่นี่เพื่อดูสถิติทั้งหมด[b]หลังจากสิ้นสุดเบต้า!	
+GLUE_BACON_STATS_VALUE_BIGGEST_MINION	{0}/{1}	Attack followed by Health
+GLUE_BACON_STATS_VALUE_HOURS_PLAYED	{0} ชั่วโมง	
+GLUE_BACON_STATS_VALUE_MINUTES_PLAYED	{0} นาที	
+GLUE_BACON_TOP_4_LABEL	4 อันดับสูงสุด	
+GLUE_BASIC_DECK_WARNING_BODY	ในขณะที่เด็คพื้นฐานสามารถเล่นได้กับกฎมาตรฐาน การสร้างเด็คใหม่อาจช่วยให้คุณประสบความสำเร็จได้มากขึ้น!	
+GLUE_BASIC_DECK_WARNING_HEADER	เด็คพื้นฐาน	
+GLUE_BASIC_SET_PROGRESS	การ์ดพื้นฐาน {0}/{1}	0=number of owned cards,1=total number of basic cards
+GLUE_BASIC_SET_PROGRESS_PHONE	{0}/{1}	0=number of owned cards,1=total number of basic cards
+GLUE_BLIZZCON2013_ARENA	ยินดีต้อนรับสู่ลานประลอง! ถ้าคุณชนะครบจำนวนเกมที่กำหนด คุณจะได้รับรางวัล!	
+GLUE_BLIZZCON2013_ARENA_5_WINS	ตอนนี้คุณก็มีประสบการณ์ในลานประลองแล้ว! สู้ต่อไปแล้วดูซิว่าคุณจะอยู่ได้นานแค่ไหน!	
+GLUE_BLIZZCON2013_ARENA_GRAND_PRIZE	สุดยอด! เรามีแชมเปี้ยนแห่งลานประลองคนใหม่แล้ว! นำหน้าจอนี้ไปแสดงกับเจ้าหน้าที่งาน BlizzCon เพื่อรับรางวัลใหญ่!	
+GLUE_BLIZZCON2013_ARENA_NO_PRIZE	ขอบคุณที่มาร่วมสนุกกัน! คุณทำได้ดีมาก! แล้วพบกับใหม่เร็วๆ นี้!	
+GLUE_BLIZZCON2013_ARENA_PRIZE	ยินดีด้วย! คุณได้รับรางวัล! นำหน้าจอนี้ไปแสดงกับเจ้าหน้าที่งาน BlizzCon เลย!	
+GLUE_BOT_LOADING_BAR_TASK_1	กำลังตั้งเวลา	
+GLUE_BOT_LOADING_BAR_TASK_10	กำลังเชื่อมโยงทฤษฎี	
+GLUE_BOT_LOADING_BAR_TASK_11	กำลังปลอบบูมบอท	
+GLUE_BOT_LOADING_BAR_TASK_12	กำลังนับถอยหลัง	
+GLUE_BOT_LOADING_BAR_TASK_13	กำลังให้ทุนวิจัย	
+GLUE_BOT_LOADING_BAR_TASK_14	กำลังเกิดปฏิกิริยาลูกโซ่	
+GLUE_BOT_LOADING_BAR_TASK_15	กำลังพ่นฟลู้ป	
+GLUE_BOT_LOADING_BAR_TASK_16	กำลังลดความเสถียรของธาตุ	
+GLUE_BOT_LOADING_BAR_TASK_17	กำลังคำนวณตัวเลข	
+GLUE_BOT_LOADING_BAR_TASK_18	กำลังตั้งทฤษฎีโกลาหล	
+GLUE_BOT_LOADING_BAR_TASK_19	กำลังวาดแบบแปลน	
+GLUE_BOT_LOADING_BAR_TASK_2	กำลังติดแม่เหล็กให้มินเนี่ยน	
+GLUE_BOT_LOADING_BAR_TASK_20	กำลังกดปุ่มใหญ่สีแดง	
+GLUE_BOT_LOADING_BAR_TASK_3	กำลังบังคับอนุภาคให้ชนกัน	
+GLUE_BOT_LOADING_BAR_TASK_4	กำลังจุดตะเกียงบุนเซน	
+GLUE_BOT_LOADING_BAR_TASK_5	กำลังไขลานหุ่นยนต์	
+GLUE_BOT_LOADING_BAR_TASK_6	กำลังมั่วข้อมูล	
+GLUE_BOT_LOADING_BAR_TASK_7	กำลังศึกษาวิทยาศาสตร์	
+GLUE_BOT_LOADING_BAR_TASK_8	กำลังเสาะหาสสารมืด	
+GLUE_BOT_LOADING_BAR_TASK_9	กำลังตั้งสมมติฐาน	
+GLUE_BRAWL	ท้าประลอง	
+GLUE_BRAWL_FRIEND	ท้าประลองกับเพื่อน	
+GLUE_BRAWL_PATRON	ผู้สนับสนุนเกมท้าประลอง	
+GLUE_BRAWLISEUM_FREE_TICKET_BODY	โดยปกติคุณจะต้องเสียค่าเข้าร่วมสนามท้าประลอง แต่เนื่องจากนี่เป็นครั้งแรกของคุณ เราจะจ่ายให้เอง! ขอให้สนุกนะ!	
+GLUE_BRAWLISEUM_NO_WINS_REWARD_PACK_TEXT	ขอแสดงความยินดี!	
+GLUE_BRAWLISEUM_RETIRE_CONFIRM_DESC	เกมท้าประลองจะจบลงเมื่อเลือกตัวเลือกนี้! แน่ใจหรือไม่	
+GLUE_BRAWLISEUM_REWARDS_NOTICE_DESC	รางวัลจากสนามท้าประลองรอบล่าสุด	
+GLUE_BRAWLISEUM_REWARDS_WIN_BANNER_TEXT	ชนะ {0} เกม!	
+GLUE_BRAWLISEUM_SESSION_ERROR	เกิดปัญหาในการรับข้อมูลเกมท้าประลอง	
+GLUE_BRAWLISEUM_SESSION_ERROR_TITLE	เกมท้าประลองมีปัญหา	
+GLUE_BRAWLISEUM_TITLE	สนามท้าประลอง	
+GLUE_BRM_LOADING_BAR_TASK_1	กำลังจับคนแคระเป็นทาส	
+GLUE_BRM_LOADING_BAR_TASK_10	กำลังวางแผนจัดการแร็กนารอส	
+GLUE_BRM_LOADING_BAR_TASK_11	กำลังบ่อนทำลายเนฟาเรี่ยน	
+GLUE_BRM_LOADING_BAR_TASK_12	กำลังเลี้ยงดูแบล็คดราก้อนไฟลท์	
+GLUE_BRM_LOADING_BAR_TASK_13	กำลังจุดไฟเผาข้าวของ	
+GLUE_BRM_LOADING_BAR_TASK_14	กำลังลักพาตัวมังกรนิสัยดี	
+GLUE_BRM_LOADING_BAR_TASK_15	กำลังสร้างอาณาเขต	
+GLUE_BRM_LOADING_BAR_TASK_16	กำลังต้มลาวาให้เดือด	
+GLUE_BRM_LOADING_BAR_TASK_17	กำลังก่อกวนเทศกาลบรูวเฟสต์	
+GLUE_BRM_LOADING_BAR_TASK_18	กำลังเชิญแขกในตำนาน	
+GLUE_BRM_LOADING_BAR_TASK_2	กำลังฝึกแกล้งตาย	
+GLUE_BRM_LOADING_BAR_TASK_3	กำลังชักจูงคนดีให้ทำความชั่ว	
+GLUE_BRM_LOADING_BAR_TASK_4	กำลังทรมานเวลาสตราสซ์	
+GLUE_BRM_LOADING_BAR_TASK_5	กำลังบงการใจมนุษย์	
+GLUE_BRM_LOADING_BAR_TASK_6	กำลังวางแผนยึดครองโลก	
+GLUE_BRM_LOADING_BAR_TASK_7	กำลังทำเรื่องชั่วช้า	
+GLUE_BRM_LOADING_BAR_TASK_8	กำลังเถียงอย่างไม่ลดละ	
+GLUE_BRM_LOADING_BAR_TASK_9	กำลังพูดจาแดกดันคนอื่น	
+GLUE_BUTTON_TAKE	เลือก	
+GLUE_CANNOT_FIND_BATTLENET_CLIENT	Hearthstone ต้องการแอพ Blizzard บนเดสก์ท็อปแต่หาแอพไม่พบ โปรดไปที่ www.battle.net เพื่อติดตั้งอีกครั้ง	
+GLUE_CANNOT_RUN_BATTLENET_CLIENT	Hearthstone ต้องการแอพ Blizzard บนเดสก์ท็อปแต่ไม่สามารถเปิดแอพได้ โปรดไปที่ www.battle.net เพื่อติดตั้งอีกครั้ง	
+GLUE_CARD_NERF_BODY	\nมีการ์ดเปลี่ยนแปลงการ์ดต่อไปนี้:\n{0}_ใบ	0=card names
+GLUE_CARD_NERF_HEADER	การเปลี่ยนแปลง!	
+GLUE_CARD_REPLACEMENT_CARDS_ADDED	เราเพิ่มการ์ดเหล่านี้ในชุดพื้นฐาน	
+GLUE_CARD_REPLACEMENT_CARDS_REMOVED	เรานำการ์ดเหล่านี้ออกจากชุดพื้นฐาน	
+GLUE_CARD_REPLACEMENT_DUST_FOOTER	เนื่องจากคุณมีการ์ดเหล่านี้ เราจะมอบ\nของขวัญพิเศษเพื่อฉลองให้กับคุณ!	
+GLUE_CARD_REPLACEMENT_DUST_HEADER	ผงเวทมนตร์ฟรี!	
+GLUE_CARDS_ADDED	เราเพิ่มการ์ดใหม่ {0} ใบให้ชุดคลาสสิค!	
+GLUE_CARDS_UPDATED	การ์ดเหล่านี้มีการเปลี่ยนแปลง	
+GLUE_CHECKOUT_ERROR_GENERIC_FAILURE	อ๊ะ! มีบางอย่างผิดพลาด โปรดลองอีกครั้ง	
+GLUE_CHECKOUT_ERROR_INSUFFICIENT_FUNDS	คุณมีเงินไม่พอที่จะดำเนินการซื้อนี้ให้เสร็จสิ้นได้	
+GLUE_CHECKOUT_ERROR_PRODUCT_UNAVAILABLE	ผลิตภัณฑ์นี้ไม่พร้อมให้บริการในขณะนี้	
+GLUE_CHINA_STORE_BOOSTER_GIFT	赠礼：\n{0}包卡牌包	
+GLUE_CHINA_STORE_BOOSTER_GIFT_PLUS_BONUS	ของขวัญ:\nซองการ์ด {0}+{1} ซอง	
+GLUE_CHINA_STORE_BOOSTER_GIFT_PREORDER_BONUS	赠礼：\n{0}包卡牌包\n外加20包奖励卡牌包	
+GLUE_CHINA_STORE_DUST_PLUS_BONUS	{0}+{1}	0=base_quantity,1=bonus_quantity
+GLUE_CHINA_STORE_DUST_PLUS_BONUS_DETAILED	限时优惠！额外获得{0}点奥术之尘和{1}包奖励卡牌包	0 = num bonus dust, 1 = num bonus packs
+GLUE_CHINA_STORE_MAMMOTH_BUNDLE_GIFT_1	赠礼：	
+GLUE_CHINA_STORE_MAMMOTH_BUNDLE_GIFT_2	30包卡牌包	
+GLUE_CHINA_STORE_WELCOME_BUNDLE_GIFT_1	赠礼：\n\n10包卡牌包	
+GLUE_CHINA_STORE_WELCOME_BUNDLE_GIFT_2	1张传说卡牌	
+GLUE_CHOOSE	เลือก	
+GLUE_CHOOSE_OPPONENT	เลือกคู่ต่อสู้	
+GLUE_CHOOSE_YOUR_DECK	เลือกเด็คของคุณ	
+GLUE_CHOOSE_YOUR_HERO	เลือกฮีโร่ของคุณ	
+GLUE_CLASS_DESCRIPTION_DRUID	ปรับเปลี่ยนกลยุทธ์ให้เข้ากับสถานการณ์ และสะสมมานาอย่างรวดเร็วเพื่อบดขยี้ศัตรู	
+GLUE_CLASS_DESCRIPTION_HUNTER	ซ่อนกับดักไว้ไม่ให้ศัตรูรู้ตัว และเรียกเหล่าสัตว์ดุร้ายมาร่วมต่อสู้เคียงข้างคุณ	
+GLUE_CLASS_DESCRIPTION_MAGE	เผาผลาญหรือแช่แข็งศัตรูของคุณด้วยเวทมนตร์ที่สร้างความเสียหายรุนแรง หรือใช้กับดักเพื่อให้ฝ่ายตรงข้ามต้องคอยระแวง	
+GLUE_CLASS_DESCRIPTION_PALADIN	เสริมพลังและปกป้องมินเนี่ยนของคุณ และมอบการลงทัณฑ์ให้ศัตรูที่สังหารพวกมัน	
+GLUE_CLASS_DESCRIPTION_PRIEST	ใช้แสงศักดิ์สิทธิ์เพื่อฟื้นฟูพลังชีวิตให้ฝ่ายเดียวกัน หรือเวทมนตร์มืดเพื่อควบคุมศัตรู	
+GLUE_CLASS_DESCRIPTION_ROGUE	สร้างคอมโบการโจมตีที่รุนแรง หรือใช้มินเนี่ยนที่ซ่อนตัวและอาวุธเพื่อลอบสังหารศัตรู	
+GLUE_CLASS_DESCRIPTION_SHAMAN	ควบคุมธาตุอันทรงพลังได้ดั่งใจ แต่อย่าลืมว่าพลังแห่งธาตุย่อมต้องการสิ่งแลกเปลี่ยนเช่นกัน	
+GLUE_CLASS_DESCRIPTION_WARLOCK	สังเวยและเสียสละทุกสิ่งทุกอย่างเพื่อมุ่งสู่การครอบครองพลังอำนาจแห่งปีศาจ	
+GLUE_CLASS_DESCRIPTION_WARRIOR	บดขยี้ศัตรูด้วยอาวุธที่ทรงพลัง และใช้ความกระหายเลือดเป็นแรงผลักดันให้คุณแข็งแกร่งยิ่งขึ้น	
+GLUE_CLOUD_STORAGE_CONTEXT_BODY_01	คุณกำลังจะได้รับการแจ้งเตือนเพื่อขออนุญาตเข้าถึงบัญชี Google Drive\n\nหากคุณอนุญาตให้เข้าถึง เราจะบันทึกความคืบหน้าของเกมไว้ใน Google Drive เพื่อให้กู้คืนได้ในกรณีที่คุณไม่อาจเข้าถึงอุปกรณ์ได้อีก	
+GLUE_CLOUD_STORAGE_CONTEXT_BODY_02	คุณกำลังจะได้รับการแจ้งเตือนเพื่อขออนุญาตเข้าถึงบัญชี Google Drive\n\nHearthstone ต้องการตรวจสอบว่าคุณมีความคืบหน้าในเกมที่บันทึกไว้ใน Google Drive หรือไม่	
+GLUE_CLOUD_STORAGE_CONTEXT_HEADER	สวัสดี!	
+GLUE_COLLECTION_ADD_TO_DECK	เพิ่มในเด็ค	
+GLUE_COLLECTION_ALL	ทั้งหมด	
+GLUE_COLLECTION_ALL_CARDS	การ์ดทั้งหมด	
+GLUE_COLLECTION_ALL_SETS	ทุกชุด	
+GLUE_COLLECTION_ALL_STANDARD_CARDS	การ์ดมาตรฐาน	
+GLUE_COLLECTION_ARTIST	ศิลปิน: {0}	0=artist name
+GLUE_COLLECTION_CARD_COUNT	x{0}	
+GLUE_COLLECTION_CARD_COUNT_LARGE	x9+	
+GLUE_COLLECTION_CARD_CRAFTING_EVENT_NOT_ACTIVE	คุณสร้างหรือสลายการ์ดใบนั้นไม่ได้ ล็อกเอาท์แล้วล็อกอินใหม่เพื่อรับผงเวทมนตร์ที่ใช้ไปคืน	
+GLUE_COLLECTION_CARD_NEW	ใหม่!	
+GLUE_COLLECTION_CARD_PERMISSION_ERROR	คุณสร้างหรือสลายการ์ดใบนั้นไม่ได้ ล็อกเอาท์แล้วล็อกอินใหม่เพื่อรับผงเวทมนตร์ที่ใช้ไปคืน	
+GLUE_COLLECTION_CARD_SOULBOUND	คุณสร้างหรือสลายการ์ดใบนั้นไม่ได้ ล็อกเอาท์แล้วล็อกอินใหม่เพื่อรับผงเวทมนตร์ที่ใช้ไปคืน	
+GLUE_COLLECTION_CARD_UNKNOWN_ERROR	เกิดข้อผิดพลาดที่ไม่คาดคิด id={0} ขึ้น	
+GLUE_COLLECTION_CARD_VALUE_CHANGED_ERROR	เกิดข้อผิดพลาด ลองอีกทีนะ	
+GLUE_COLLECTION_CONVERT_DECK_BODY	การเปลี่ยนเด็คนี้เป็นเด็คมาตรฐานจะนำการ์ด {0}_ใบออกจากเด็ค แน่ใจหรือไม่ว่าต้องการทำต่อ	
+GLUE_COLLECTION_CONVERT_DECK_HEADER	แปลงเด็ค	
+GLUE_COLLECTION_CRAFTING_DISENCHANT_BUTTON_TEXT	สลายการ์ดส่วนเกิน	
+GLUE_COLLECTION_CRAFTING_EXPLANATION	เลือกการ์ดเพื่อเริ่มสร้าง\n\nใช้ผงเวทมนตร์ในการสร้างการ์ด และสะสมผงจากการสลายการ์ด\n\nจำนวนที่ต้องใช้จะแตกต่างกันไป ตามระดับความหายากของการ์ด	
+GLUE_COLLECTION_CRAFTING_FILTERS	ตัวกรอง	
+GLUE_COLLECTION_CRAFTING_MODE	โหมดสร้างการ์ด	
+GLUE_COLLECTION_CRAFTING_MODE_SHORT	สร้างการ์ด	
+GLUE_COLLECTION_CRAFTING_SHOW_ONLY_GOLDEN	แสดงเฉพาะการ์ดสีทอง	
+GLUE_COLLECTION_CRAFTING_SHOW_SOULBOUND_CARDS	แสดงการ์ดที่สร้างไม่ได้	
+GLUE_COLLECTION_CUSTOM_DECKNAME_TEMPLATE	{0} {1} ของคุณ	0=class name, 1=incrementer
+GLUE_COLLECTION_DECK	เด็ค	
+GLUE_COLLECTION_DECK_COMPELTE_BUTTON	จัดเด็คให้เสร็จ	
+GLUE_COLLECTION_DECK_COMPLETE_POPUP_CANCEL	ไม่ใช่	
+GLUE_COLLECTION_DECK_COMPLETE_POPUP_CONFIRM	ใช่	
+GLUE_COLLECTION_DECK_COMPLETE_POPUP_HEADER	จัดเด็คให้เสร็จ	
+GLUE_COLLECTION_DECK_COPIED_TOAST	คัดลอกเด็คของคุณแล้ว!	
+GLUE_COLLECTION_DECK_COPY	คัดลอก	
+GLUE_COLLECTION_DECK_COPY_COMMENT_HEADER_CLASS	คลาส: {0}	
+GLUE_COLLECTION_DECK_COPY_COMMENT_HEADER_DECK_ARENA	เด็คลานประลอง	
+GLUE_COLLECTION_DECK_COPY_COMMENT_HEADER_FORMAT	กฎ: {0}	
+GLUE_COLLECTION_DECK_COPY_TOOLTIP_FORMAT	เด็คของคุณมีการ์ดที่ใช้เล่นในกฎนี้ไม่ได้	
+GLUE_COLLECTION_DECK_COPY_TOOLTIP_HEADLINE	คัดลอกเด็ค	
+GLUE_COLLECTION_DECK_COPY_TOOLTIP_INCOMPLETE	คุณคัดลอกได้เฉพาะเด็คที่มีการ์ดครบ	
+GLUE_COLLECTION_DECK_COPY_TOOLTIP_UNPLAYABLE	เด็คของคุณมีการ์ดบางใบที่ใช้เล่นไม่ได้	
+GLUE_COLLECTION_DECK_DELETE	ลบ	
+GLUE_COLLECTION_DECK_FINISH_FOR_ME	ใช่	
+GLUE_COLLECTION_DECK_FORMAT_STANDARD	มาตรฐาน	
+GLUE_COLLECTION_DECK_FORMAT_WILD	อิสระ	
+GLUE_COLLECTION_DECK_GENERIC_INVALID_MESSAGE	เด็คของคุณมีการ์ดที่ใช้เล่นในกฎนี้ไม่ได้	
+GLUE_COLLECTION_DECK_HELP_BUTTON	ตัวช่วยสร้างเด็ค	
+GLUE_COLLECTION_DECK_HELPER_REPLACE_CARD	เปลี่ยนการ์ดใบนี้	
+GLUE_COLLECTION_DECK_HELPER_REPLACE_INVALID_CARD	เปลี่ยนการ์ดอิสระ	
+GLUE_COLLECTION_DECK_HELPER_REPLACE_INVALID_CARD_NPR	อันดับ 25 ขึ้นไป	
+GLUE_COLLECTION_DECK_HERO_NOT_UNLOCKED	คุณมีเด็คในคลิปบอร์ด แต่ฮีโร่คนนั้นถูกล็อคอยู่	
+GLUE_COLLECTION_DECK_INCOMPLETE_LABEL	คลิกเพื่อจัดให้เสร็จ	
+GLUE_COLLECTION_DECK_INCOMPLETE_LABEL_TOUCH	แตะเพื่อจัดให้เสร็จ	
+GLUE_COLLECTION_DECK_INCOMPLETE_POPUP_HEADER	เด็คไม่สมบูรณ์	
+GLUE_COLLECTION_DECK_INCOMPLETE_POPUP_TEXT	คุณขาดการ์ดอีก {0} ใบจึงจะครบเด็ค\nต้องการจัดเด็คให้เสร็จโดยอัตโนมัติหรือไม่	
+GLUE_COLLECTION_DECK_INCOMPLETE_POPUP_TEXT_NPR	มีการ์ด {0} ใบที่ไม่สามารถใช้ได้จนกว่าจะถึงระดับ 25\nต้องการจัดเด็คให้เสร็จโดยอัตโนมัติหรือไม่	
+GLUE_COLLECTION_DECK_INFO_HERO_POWER_TOOLTIP	พลังฮีโร่	
+GLUE_COLLECTION_DECK_INFO_MANA_TOOLTIP	การ์ด/มานาค่าร่าย	
+GLUE_COLLECTION_DECK_INFO_TITLE	ข้อมูล{0}	
+GLUE_COLLECTION_DECK_INVALID_POPUP_HEADER	เด็คไม่ถูกต้อง	
+GLUE_COLLECTION_DECK_MISSING_CARDS_INDICATOR	{0}/{1}	
+GLUE_COLLECTION_DECK_OVERWRITE_BODY	ต้องการแทนที่เด็คปัจจุบันด้วยเด็คในคลิปบอร์ดของคุณหรือไม่	
+GLUE_COLLECTION_DECK_OVERWRITE_HEADER	แทนที่เด็ค	
+GLUE_COLLECTION_DECK_PASTE	วาง	
+GLUE_COLLECTION_DECK_PASTE_COMMENT_ARENA_WARNING	เด็คนี้ถูกคัดลอกมาจากลานประลองและอาจใช้เล่นในโหมดอื่นๆ ไม่ได้	
+GLUE_COLLECTION_DECK_PASTE_COMMENT_INSTRUCTIONS	คัดลอกเด็คไปยังคลิปบอร์ดแล้วสร้างเด็คใหม่ใน Hearthstone เพื่อใช้เด็คนี้	
+GLUE_COLLECTION_DECK_PASTE_INVALID_CLASS_BODY	เด็คที่คุณต้องการคัดลอกเป็นของคลาสอื่น	
+GLUE_COLLECTION_DECK_PASTE_POPUP_HEADER	วางทับเด็ค	
+GLUE_COLLECTION_DECK_PASTE_TOOLTIP_CLASS_NO_MATCH	เด็คที่คุณคัดลอกมาเป็นของคลาสอื่น	
+GLUE_COLLECTION_DECK_PASTE_TOOLTIP_HEADLINE	วางเด็ค	
+GLUE_COLLECTION_DECK_PASTE_TOOLTIP_INVALID	เด็คที่คัดลอกมาไม่สามารถใช้ได้ในโหมดนี้	
+GLUE_COLLECTION_DECK_PASTE_TOOLTIP_WILD_LOCKED	คุณต้องมีการ์ดอิสระจึงจะสร้างเด็คนี้ได้	
+GLUE_COLLECTION_DECK_RENAME	เปลี่ยนชื่อ	
+GLUE_COLLECTION_DECK_RULE_FINISH_AUTOMATICALLY	ต้องการจัดเด็คให้เสร็จโดยอัตโนมัติหรือไม่	
+GLUE_COLLECTION_DECK_RULE_INVALID_CARDS	คุณมีการ์ด {0}_ใบที่ไม่สามารถใช้ได้ในกฎนี้	
+GLUE_COLLECTION_DECK_RULE_INVALID_CARDS_NPR	คุณมีการ์ด {0} ใบที่ไม่สามารถใช้ได้จนกว่าจนกว่าจะถึงระดับ 25	
+GLUE_COLLECTION_DECK_RULE_INVALID_CLASS_CARD	เด็คของคุณมีการ์ดจากคลาสอื่น {0} ใบ	
+GLUE_COLLECTION_DECK_RULE_MISSING_CARDS	เด็คของคุณยังขาดการ์ดอีก {0} ใบ	
+GLUE_COLLECTION_DECK_RULE_NOT_ENOUGH_CARDS	คุณต้องมีการ์ดอีก {0} ใบเพื่อจัดเด็คโดยใช้คลาสนี้ โปรดสร้างการ์ดเพิ่มเติม หรือจัดเด็คใหม่โดยใช้คลาสอื่น	
+GLUE_COLLECTION_DECK_RULE_TOO_MANY_CARDS	คุณมีการ์ดในเด็คมากเกินกำหนด {0} ใบ	
+GLUE_COLLECTION_DECK_SAVE_ANYWAY	ไม่ใช่	
+GLUE_COLLECTION_DECK_TEMPLATE_HELP_BUTTON	เปลี่ยนการ์ด	
+GLUE_COLLECTION_DECK_TEMPLATE_LOW_CARD_WARNING	โอ๊ะโอ	
+GLUE_COLLECTION_DECK_TEMPLATE_LOW_CARD_WARNING_CANCEL	เดี๋ยวก่อน!	
+GLUE_COLLECTION_DECK_TEMPLATE_LOW_CARD_WARNING_CONFIRM	ฉันแน่ใจ	
+GLUE_COLLECTION_DECK_TEMPLATE_LOW_CARD_WARNING_MESSAGE	เด็คของเจ้ายังขาดการ์ดอีกเพียบเลยนะ  แน่ใจเหรอว่าจะไม่ใช้รูปแบบเด็คคลาสสิคน่ะ?	
+GLUE_COLLECTION_DECK_TEMPLATE_REPLACE	เปลี่ยนเด็ค	
+GLUE_COLLECTION_DECK_TEMPLATE_REPLACE_MESSAGE	การดำเนินการนี้จะลบเด็คเดิมของคุณ และแทนที่ด้วยข้อมูลในเด็คแม่แบบ คุณแน่ใจหรือไม่	
+GLUE_COLLECTION_DECK_TEMPLATE_SELECT_A_DECK	เลือกรูปแบบเด็คเพื่อดูเพิ่มเติมเลย!	
+GLUE_COLLECTION_DECK_VALID_PASTE_BODY	ต้องการสร้างเด็คใหม่ด้วยเด็คในคลิปบอร์ดของคุณหรือไม่	
+GLUE_COLLECTION_DECK_VALID_PASTE_HEADER	สร้างเด็ค	
+GLUE_COLLECTION_DECK_WILD_LABEL	คลิกเพื่อแปลง	
+GLUE_COLLECTION_DECK_WILD_LABEL_TOUCH	แตะเพื่อแปลง	
+GLUE_COLLECTION_DECK_WILD_NOT_UNLOCKED	คุณมีเด็คอิสระในคลิปบอร์ด แต่คุณยังไม่ได้ปลดล็อกโหมดอิสระ	
+GLUE_COLLECTION_DECK_WILD_POPUP_HEADER	เด็คอิสระ	
+GLUE_COLLECTION_DECK_WILD_POPUP_TEXT	นี่เป็นเด็คอิสระ ต้องการแปลงเด็คนี้เป็นเด็คมาตรฐาน[b]ที่สมบูรณ์โดยอัตโนมัติหรือไม่	
+GLUE_COLLECTION_DELETE_CONFIRM_DESC	การดำเนินการนี้จะลบเด็คของคุณ คุณแน่ใจหรือไม่	
+GLUE_COLLECTION_DELETE_CONFIRM_HEADER	ลบ	
+GLUE_COLLECTION_DELETE_UNAVAILABLE_DESC	คุณไม่สามารถลบเด็คได้จนกว่าจะปลดล็อคคลาสทั้ง 9 ครบแล้ว	
+GLUE_COLLECTION_EMPTY_PAGE	หน้า 0	
+GLUE_COLLECTION_ERROR_HEADER	ข้อผิดพลาดในส่วนคอลเลกชัน!	
+GLUE_COLLECTION_FEATURED_CARDS	การ์ดอัพเดต	
+GLUE_COLLECTION_FSG_BRAWL_DECKNAME	เด็ค Fireside	
+GLUE_COLLECTION_GENERIC_ERROR	ไม่สามารถทำตามคำขอของคุณได้เนื่องจากระบบผิดพลาด โปรดลองอีกครั้ง	
+GLUE_COLLECTION_GOLDEN_CARDS	การ์ดสีทอง	
+GLUE_COLLECTION_HOME_PAGE	ภาพรวม	
+GLUE_COLLECTION_INCLUDE_PREMIUMS	รวมการ์ดสีทอง	
+GLUE_COLLECTION_LOCK_CARD_BANNED	ถูกแบน	
+GLUE_COLLECTION_LOCK_CARD_INVALID_CLASS	การ์ดใบนี้เป็นการ์ดของคลาสอื่น	
+GLUE_COLLECTION_LOCK_CARD_NOT_PLAYABLE	ยังไม่เปิดให้เล่น	
+GLUE_COLLECTION_LOCK_MAX_DECK_COPIES	จำกัดต่อเด็ค: {0}	
+GLUE_COLLECTION_LOCK_NO_MORE_INSTANCES	ไม่มีเหลือแล้ว	
+GLUE_COLLECTION_MANAGER_CARD_BACKS_TITLE	หลังการ์ด	
+GLUE_COLLECTION_MANAGER_FAVORITE_BUTTON	เลือกใช้	
+GLUE_COLLECTION_MANAGER_FAVORITE_CARD_BACK	เลือกใช้	
+GLUE_COLLECTION_MANAGER_FAVORITE_DEFAULT_TEXT	{0}ที่เลือก	
+GLUE_COLLECTION_MANAGER_HELP_ME	ช่วยด้วย	
+GLUE_COLLECTION_MANAGER_HERO_SKINS_TITLE	ฮีโร่	
+GLUE_COLLECTION_MANAGER_MANA_FILTER_PROMPT_BODY_EVEN_CARDS	กรองคอลเลกชันเพื่อแสดงเฉพาะการ์ดค่าร่ายเลขคู่หรือไม่	
+GLUE_COLLECTION_MANAGER_MANA_FILTER_PROMPT_BODY_ODD_CARDS	กรองคอลเลกชันเพื่อแสดงเฉพาะการ์ดค่าร่ายเลขคี่หรือไม่	
+GLUE_COLLECTION_MANAGER_MANA_FILTER_PROMPT_HEADER	ตัวกรองมานา	
+GLUE_COLLECTION_MANAGER_MANA_TAB_FIRST_CLICK	คลิกอีกครั้งเพื่อปิดตัวกรอง!	
+GLUE_COLLECTION_MANAGER_ON_ADD_FULL_DECK_ERROR_TEXT	เด็คมีการ์ดครบแล้ว เอาการ์ดออกก่อน!	
+GLUE_COLLECTION_MANAGER_SEARCH_ARTIST	ศิลปิน	
+GLUE_COLLECTION_MANAGER_SEARCH_ATTACK	พลังโจมตี	
+GLUE_COLLECTION_MANAGER_SEARCH_EVEN_ATTACK	เลขคู่	Search term to filter cards in CollectionManager to cards with even attack value. Example attack:even
+GLUE_COLLECTION_MANAGER_SEARCH_EVEN_CARDS	เลขคู่	Search term to filter cards in CollectionManager to cards that player owns an even number of. Example: owned:even
+GLUE_COLLECTION_MANAGER_SEARCH_EVEN_HEALTH	เลขคู่	Search term to filter cards in CollectionManager to cards with even health value. Example health:even
+GLUE_COLLECTION_MANAGER_SEARCH_EVEN_MANA	เลขคู่	Search term to filter cards in CollectionManager to cards with even mana cost. Example: mana:even
+GLUE_COLLECTION_MANAGER_SEARCH_EXTRA	เกิน	
+GLUE_COLLECTION_MANAGER_SEARCH_GOLDEN	สีทอง	
+GLUE_COLLECTION_MANAGER_SEARCH_HAS	มี	
+GLUE_COLLECTION_MANAGER_SEARCH_HEALTH	พลังชีวิต	
+GLUE_COLLECTION_MANAGER_SEARCH_MANA	มานา	
+GLUE_COLLECTION_MANAGER_SEARCH_MISSING	ไม่มี	
+GLUE_COLLECTION_MANAGER_SEARCH_NEW	ใหม่	
+GLUE_COLLECTION_MANAGER_SEARCH_ODD_ATTACK	เลขคี่	Search term to filter cards in CollectionManager to cards with odd attack value. Example attack:odd
+GLUE_COLLECTION_MANAGER_SEARCH_ODD_CARDS	เลขคี่	Search term to filter cards in CollectionManager to cards that player owns an odd number of. Example: owned:odd
+GLUE_COLLECTION_MANAGER_SEARCH_ODD_HEALTH	เลขคี่	Search term to filter cards in CollectionManager to cards with odd health value. Example health:odd
+GLUE_COLLECTION_MANAGER_SEARCH_ODD_MANA	เลขคี่	Search term to filter cards in CollectionManager to cards with odd mana cost. Example: mana:odd
+GLUE_COLLECTION_MANAGER_SEARCH_OWNED	มี	
+GLUE_COLLECTION_MANAGER_SEARCH_RARITY	ระดับความหายาก	
+GLUE_COLLECTION_MANAGER_SEARCH_TYPE	ประเภท	
+GLUE_COLLECTION_MANAGER_WHIZBANG_DEFAULT_DECK_NAME	ผู้วิเศษวิซแบง	
+GLUE_COLLECTION_MANAGER_WHIZBANG_POPUP_BODY	สร้างเด็ค{0}ใหม่ในคอลเลกชันของคุณแล้วใช้รูปแบบเด็ค "{1}" สิ!	0 = deck class, 1 = deck name
+GLUE_COLLECTION_MANAGER_WHIZBANG_POPUP_HEADER	ชอบเด็คนี้ไหม	
+GLUE_COLLECTION_MANAGER_WHIZBANG_WARNING_BODY	การเพิ่มวิซแบงในเด็คของคุณจะนำการ์ดอื่นออกทั้งหมด ทำต่อหรือไม่	
+GLUE_COLLECTION_MANAGER_WHIZBANG_WARNING_HEADER	วิซแบง?	
+GLUE_COLLECTION_MINE	การ์ดของฉัน	
+GLUE_COLLECTION_MULTIPLIER	x	used to show you how many copies of a card you own, e.g. x2
+GLUE_COLLECTION_MY_DECKS	เด็คของฉัน	
+GLUE_COLLECTION_MY_PACKS	ซองการ์ดของฉัน	
+GLUE_COLLECTION_NEW_CARD_CALLOUT	{0}	0=number of new cards for this class
+GLUE_COLLECTION_NEW_DECK	เด็คใหม่	
+GLUE_COLLECTION_NO_MATCHES	ไม่พบรายการที่ตรงกัน	
+GLUE_COLLECTION_NO_RESULTS	ไม่พบการ์ด	
+GLUE_COLLECTION_NO_RESULTS_BUT_CRAFTABLE	คุณไม่มีการ์ดนี้	
+GLUE_COLLECTION_NO_RESULTS_BUT_CRAFTABLE_HINT	ลองดูในโหมดสร้างการ์ดหรือไม่	
+GLUE_COLLECTION_NO_RESULTS_IN_CURRENT_SET	ไม่พบการ์ดในชุดปัจจุบัน	
+GLUE_COLLECTION_NO_RESULTS_IN_CURRENT_SET_HINT	พบการ์ดในชุดอื่น	
+GLUE_COLLECTION_NO_RESULTS_IN_SELECTED_COST	ไม่พบการ์ดที่มีค่าร่ายที่เลือก	
+GLUE_COLLECTION_NO_RESULTS_IN_SELECTED_COST_HINT	พบการ์ดที่มีค่าร่ายอื่น	
+GLUE_COLLECTION_NO_RESULTS_IN_STANDARD	พบการ์ดในชุดอิสระ	
+GLUE_COLLECTION_PAGE_NUM	หน้า {0}	
+GLUE_COLLECTION_PLUS	+	
+GLUE_COLLECTION_RECENT_CARDS	การ์ดที่เพิ่งได้เมื่อเร็วๆ นี้	
+GLUE_COLLECTION_RECENTLY_NERFED	<color=#971c1cff>การ์ดใบนี้ได้รับการแก้ไขเมื่อเร็วๆ นี้ จำนวนผงเวทมนตร์ที่ได้จากการสลายจึงเปลี่ยนไป</color>	
+GLUE_COLLECTION_SEARCH	ค้นหา	
+GLUE_COLLECTION_SET_FILTER_WILD_SET_BODY	ตัวเลือกนี้จะแสดงการ์ดที่ใช้ในกฎมาตรฐานไม่ได้ คุณแน่ใจแล้วนะ?	
+GLUE_COLLECTION_SET_FILTER_WILD_SET_HEADER	การ์ดอิสระ	
+GLUE_COLLECTION_SHOW_ALL_CARDS	แสดงการ์ดทั้งหมด	
+GLUE_COLLECTION_STANDARD_SETS	ชุดมาตรฐาน	
+GLUE_COLLECTION_TAVERN_BRAWL_DECKNAME	เด็คท้าประลอง	
+GLUE_COLLECTION_TO_STANDARD	แปลงเป็นเด็คมาตรฐาน	
+GLUE_COLLECTION_TO_WILD	แปลงเป็นเด็คอิสระ	
+GLUE_COLLECTION_TUTORIAL_REPLACE_WILD_CARDS	เปลี่ยนการ์ดอิสระ\nเป็นการ์ดมาตรฐาน	
+GLUE_COLLECTION_TUTORIAL_REPLACE_WILD_CARDS_NPR	เปลี่ยนการ์ดไม่ถูกต้อง (สีแดง)	
+GLUE_COLLECTION_TUTORIAL_TEMPLATE_REMINDER	ลองใช้แม่แบบอื่นๆ ได้ที่นี่	
+GLUE_COLLECTION_TUTORIAL_TEMPLATE_REPLACE_1	การ์ดใบไหนที่ไม่มี เราจะช่วยเปลี่ยนให้เอง	
+GLUE_COLLECTION_TUTORIAL_TEMPLATE_REPLACE_2	เปลี่ยนการ์ดที่ขาดไป	
+GLUE_COLLECTION_TUTORIAL_TEMPLATE_WELCOME	เจ้าสามารถสร้างเด็คโดยเลือกจากรูปแบบที่มีอยู่ หรือสร้างเด็คของเจ้าเองก็ได้	
+GLUE_COLLECTION_TUTORIAL02	เปลี่ยนหน้าเพื่อดู	
+GLUE_COLLECTION_TUTORIAL03	สลายการ์ดที่\nไม่ได้ใช้	
+GLUE_COLLECTION_TUTORIAL04	เปลี่ยนตัวกรองของคุณเป็น "ทั้งหมด" เพื่อดูการ์ดที่คุณสร้างได้	"ALL" is the same as GLUE_COLLECTION_ALL.
+GLUE_COLLECTION_TUTORIAL05	เปลี่ยนการ์ดใบนี้เป็นผงเวทมนตร์	
+GLUE_COLLECTION_TUTORIAL06	ใช้ผงเวทมนตร์ของคุณ[b]เพื่อสร้างการ์ดใบนี้	
+GLUE_COLLECTION_TUTORIAL07	คุณสามารถ\nปรับแต่งเด็คนี้ได้	
+GLUE_COLLECTION_TUTORIAL08	ลากการ์ดออกมา[b]เพื่อเอาออกจากเด็ค	
+GLUE_COLLECTION_TUTORIAL09	คุณสามารถ\nลบเด็คได้แล้ว	
+GLUE_COLLECTION_TUTORIAL10	แก้ไขหรือสร้างเด็คใหม่!	
+GLUE_COLLECTION_TUTORIAL11	คุณมีที่ว่างไม่พอสำหรับสร้างเด็ค โปรดลบเด็คที่มีอยู่หรือแปลงให้เป็นเด็คมาตรฐาน	
+GLUE_COLLECTION_TUTORIAL12	แปลงเด็คนี้เป็น[b]เด็คมาตรฐานได้ที่นี่	
+GLUE_COLLECTION_TUTORIAL13	ในโหมดมาตรฐาน ผู้เล่นสามารถใช้ได้เฉพาะการ์ดชุดใหม่ล่าสุดเท่านั้น	
+GLUE_COLLECTION_TUTORIAL14	คุณสามารถแปลงเด็คอิสระเป็นเด็คมาตรฐานได้	
+GLUE_COLLECTION_TUTORIAL15	ลองแปลงเด็ค\nเป็นเด็คมาตรฐาน	
+GLUE_COLLECTION_TUTORIAL16	คุณพร้อมสำหรับ\nเกมมาตรฐานแล้ว!	
+GLUE_COLLECTION_TUTORIAL17	มีการ์ดอิสระซ่อนอยู่	
+GLUE_COLLECTION_WILD_SETS	ชุดอิสระ	
+GLUE_CRAFTING_ARCANEDUST	ผงเวทมนตร์	
+GLUE_CRAFTING_ARCANEDUST_DESCRIPTION	สะสมผงเวทมนตร์โดย[b]การสลายการ์ด คุณสามารถ[b]ใช้ผงเวทมนตร์เพื่อสร้าง[b]การ์ดที่คุณต้องการได้!	
+GLUE_CRAFTING_CREATE	สร้าง	
+GLUE_CRAFTING_DISENCHANT	สลาย	
+GLUE_CRAFTING_DISENCHANT_CONFIRM_DESC	คุณแน่ใจหรือไม่ เด็คต่อไปนี้จะใช้งานไม่ได้:	
+GLUE_CRAFTING_DISENCHANT_CONFIRM_HEADER	สลาย	
+GLUE_CRAFTING_DISENCHANT_CONFIRM2_DESC	แน่ใจหรือไม่ การสลายการ์ดนี้จะทำให้คุณมีการ์ดไม่ครบจำนวนที่สามารถใช้ได้ในเด็ค	
+GLUE_CRAFTING_EVENT_NOT_ACTIVE_DESCRIPTION	ขณะนี้ยังไม่สามารถสร้างหรือสลายการ์ด {0} ได้	
+GLUE_CRAFTING_EVENT_NOT_ACTIVE_TITLE	ยังไม่เปิดให้เล่น	
+GLUE_CRAFTING_SOULBOUND	สร้างไม่ได้	
+GLUE_CRAFTING_SOULBOUND_BASIC_DESC	คุณไม่สามารถสลาย[b]หรือสร้างการ์ดพื้นฐานได้	
+GLUE_CRAFTING_SOULBOUND_DESC	คุณไม่สามารถสลาย[b]หรือสร้างการ์ดใบนี้ได้	
+GLUE_CRAFTING_SOULBOUND_FEATURED_DESC	สามารถใช้ได้ใน[b]ช่วงกิจกรรมพิเศษ!	
+GLUE_CRAFTING_SOULBOUND_OFFLINE_DESC	คุณไม่สามารถสร้าง[b]หรือสลายการ์ด[b]ขณะออฟไลน์	
+GLUE_CRAFTING_SOULBOUND_REWARD_DESC	คุณไม่สามารถสลาย[b]หรือสร้างการ์ดที่เป็นรางวัลเควสต์ได้	
+GLUE_CRAFTING_TITLE	การสร้างการ์ด	
+GLUE_CRAFTING_UNDO	เลิกทำ	
+GLUE_CRAFTING_WILD_CARD_DESC	นี่คือการ์ดอิสระ คุณแน่ใจแล้วนะ?	
+GLUE_CRAFTING_WILD_CARD_FIRST_WILD_DESC	การ์ดใบนี้เก่าเกินกว่าจะใช้ในกฎมาตรฐานได้ คุณแน่ใจแล้วนะ?	
+GLUE_CRAFTING_WILD_CARD_HEADER	การ์ดอิสระ	
+GLUE_CRAFTING_WILD_CARD_INTRO_DESC	ในโหมดอิสระ คุณสามารถใช้การ์ดได้ทุกใบที่เคยปล่อยออกมา!	
+GLUE_CRAFTING_WILD_CARD_TAVERN_BRAWL_DESC	การ์ดนี้ไม่สามารถใช้ในเกมท้าประลองนี้ได้ คุณแน่ใจแล้วนะ?	
+GLUE_CRAFTING_WILD_CARD_TAVERN_BRAWL_HEADER	การ์ดไม่ถูกต้อง	
+GLUE_CRAFTING_WILD_CARD_WARNING_CANCEL	โอ๊ะ! ไม่!	
+GLUE_CRAFTING_WILD_CARD_WARNING_CONFIRM	ฉันแน่ใจ	
+GLUE_CREATE_DECK	สร้างเด็ค	
+GLUE_CREATE_STANDARD_DECK	สร้างเด็คมาตรฐาน	
+GLUE_CREATE_WILD_DECK	สร้างเด็คอิสระ	
+GLUE_DAL_LOADING_BAR_TASK_1	กำลังหัวเราะชั่วร้าย	
+GLUE_DAL_LOADING_BAR_TASK_10	กำลังไม่สนผลที่ตามมา	
+GLUE_DAL_LOADING_BAR_TASK_11	กำลังยั่วยุพวกคนดี	
+GLUE_DAL_LOADING_BAR_TASK_12	กำลังประพฤติไม่ชอบ	
+GLUE_DAL_LOADING_BAR_TASK_13	กำลังก่อความวุ่นวาย	
+GLUE_DAL_LOADING_BAR_TASK_14	กำลังทำชั่ว	
+GLUE_DAL_LOADING_BAR_TASK_15	กำลังสะสมความแค้น	
+GLUE_DAL_LOADING_BAR_TASK_16	กำลังถูมือพลางคิดแผนร้าย	
+GLUE_DAL_LOADING_BAR_TASK_17	กำลังก่นด่าลิ่วล้อ	
+GLUE_DAL_LOADING_BAR_TASK_18	กำลังคุยโวอย่างหลงตัวเอง	
+GLUE_DAL_LOADING_BAR_TASK_19	กำลังสร้างความโกลาหล	
+GLUE_DAL_LOADING_BAR_TASK_2	กำลังเขย่ากำปั้น	
+GLUE_DAL_LOADING_BAR_TASK_20	กำลังรับสมัครลูกสมุน	
+GLUE_DAL_LOADING_BAR_TASK_3	กำลังประณามฮีโร่	
+GLUE_DAL_LOADING_BAR_TASK_4	กำลังแอบย่อง	
+GLUE_DAL_LOADING_BAR_TASK_5	กำลังหว่านเมล็ดพันธุ์แห่งความโกลาหล	
+GLUE_DAL_LOADING_BAR_TASK_6	กำลังรอดไปได้	
+GLUE_DAL_LOADING_BAR_TASK_7	กำลังพูดคนเดียว	
+GLUE_DAL_LOADING_BAR_TASK_8	กำลังแสดงให้พวกมันทุกคนได้รู้	
+GLUE_DAL_LOADING_BAR_TASK_9	กำลังหักนิ้ว	
+GLUE_DECK_SHARE_BUTTON_BORROW_DECKS	ยืมเด็ค	
+GLUE_DECK_SHARE_BUTTON_SHOW_MY_DECKS	แสดงเด็คของฉัน	
+GLUE_DECK_SHARE_BUTTON_SHOW_OPPONENT_DECKS	แสดงเด็คของคู่ต่อสู้	
+GLUE_DECK_SHARE_TOOLTIP_BODY_REQUEST	ส่งคำขอเพื่อยืมเด็คของ {0}	0=friend's name
+GLUE_DECK_SHARE_TOOLTIP_HEADER	แชร์เด็ค	
+GLUE_DECK_TEMPLATE_CHOOSE_DECK	รูปแบบเด็ค{0}	0=name of class (e.g. Shaman)
+GLUE_DECK_TEMPLATE_CURRENT_DECK	เด็คปัจจุบัน	
+GLUE_DECK_TEMPLATE_CUSTOM_DECK	เด็คของคุณ	
+GLUE_DECK_TEMPLATE_CUSTOM_DECK_DESCRIPTION	สร้างเด็คของคุณเอง!	
+GLUE_DECK_TRAY_CARD_COUNT_LABEL	การ์ด	
+GLUE_DECK_TRAY_COUNT	{0}/{1}	
+GLUE_DECK_TRAY_DECK_COUNT_LABEL	เด็ค	
+GLUE_DECK_TRAY_GALAKROND_PROMPT_DESC	คุณกำลังจะเพิ่มการ์ดปลุกพลังในเด็คคุณ การ์ดนี้จะทำงาน[b]ได้เต็มประสิทธิภาพ[b]เมื่อมีกาลาครอนด์อยู่ในเด็คด้วย คุณต้องการให้เรา[b]เพิ่มกาลาครอนด์[b]ในเด็คคุณหรือไม่	
+GLUE_DECK_TRAY_GALAKROND_PROMPT_TITLE	เพิ่มกาลาครอนด์ลงในเด็คของคุณหรือไม่	
+GLUE_DECK_TRAY_HEROES_UNLOCKED_COUNT_LABEL	ปลดล็อคแล้ว	
+GLUE_DEVICE_PERFORMANCE_WARNING	อุปกรณ์เครื่องนี้ไม่ตรงตามข้อกำหนดขั้นต่ำของระบบที่จะให้เกมทำงานได้ ดังนั้น Hearthstone อาจมีปัญหาด้านกราฟิกและ/หรือประสิทธิภาพการทำงาน\n\nแตะ บริการลูกค้า เพื่อดูข้อมูลเพิ่มเติม	
+GLUE_DEVICE_PERFORMANCE_WARNING_TITLE	ประสิทธิภาพของอุปกรณ์	
+GLUE_DISABLED_WILD_DECK_DESC	คุณจะต้องแปลงเด็คนี้เป็น[b]เด็คมาตรฐานและนำการ์ด[b]อิสระทั้งหมดออกจากเด็ค[b]เพื่อเล่นภายใต้กฎนี้	
+GLUE_DISABLED_WILD_DECK_HEADER	เด็คอิสระที่ไม่ใช้งาน	
+GLUE_DONT_SHOW_ME_THIS_AGAIN	ไม่ต้องแสดงข้อความนี้อีก	
+GLUE_DRAFT_HERO_INSTRUCTIONS	เลือกฮีโร่ของคุณ	
+GLUE_DRAFT_HERO_POWER_INSTRUCTIONS_DETAIL	คุณจะได้รับพลังฮีโร่ของฮีโร่นั้น และเลือกการ์ดจากทั้งสองคลาส	
+GLUE_DRAFT_HERO_POWER_INSTRUCTIONS_TITLE	เลือกคลาสที่สองของคุณ	
+GLUE_DRAFT_INSTRUCTIONS	เลือกการ์ด	
+GLUE_DRAFT_LOSSES_LABEL	แพ้:	
+GLUE_DRAFT_MATCH_PROG	ความคืบหน้าในลานประลอง	
+GLUE_DRAFT_PLAY_BUTTON	เล่น	
+GLUE_DRAFT_REMOVE_GOLDENS_DIALOG_BODY	ปิดใช้การ์ดสีทองในลานประลองรอบนี้หรือไม่	
+GLUE_DRAFT_REMOVE_GOLDENS_DIALOG_TITLE	ปิดใช้การ์ดสีทอง	
+GLUE_DRAFT_RETIRE_BUTTON	ถอนตัว	
+GLUE_DRAFT_WINS_LABEL	ชนะ	
+GLUE_DRG_LOADING_BAR_TASK_1	กำลังกางปีกบิน	
+GLUE_DRG_LOADING_BAR_TASK_10	กำลังมองที่หกนาฬิกา	
+GLUE_DRG_LOADING_BAR_TASK_11	กำลังบินต่ำ	
+GLUE_DRG_LOADING_BAR_TASK_12	กำลังเปลี่ยนไปใช้มิสไซล์	
+GLUE_DRG_LOADING_BAR_TASK_13	กำลังบินข้ามขีดจำกัด	
+GLUE_DRG_LOADING_BAR_TASK_14	กำลังสวมอานให้มังกร	
+GLUE_DRG_LOADING_BAR_TASK_15	กำลังให้อาหารกริฟฟอน	
+GLUE_DRG_LOADING_BAR_TASK_16	กำลังทิ้งระเบิด	
+GLUE_DRG_LOADING_BAR_TASK_17	กำลังสรรเสริญกาลาครอนด์	
+GLUE_DRG_LOADING_BAR_TASK_18	กำลังไต่ขึ้นเวิร์มเรสต์	
+GLUE_DRG_LOADING_BAR_TASK_19	กำลังพาเรือเหาะบินลัดเลาะ	
+GLUE_DRG_LOADING_BAR_TASK_2	กำลังฟักไข่	
+GLUE_DRG_LOADING_BAR_TASK_20	กำลังบินเป็นฝูง	
+GLUE_DRG_LOADING_BAR_TASK_3	กำลังปล่อยทุ่น	
+GLUE_DRG_LOADING_BAR_TASK_4	กำลังลงแว็กซ์บนปีก	
+GLUE_DRG_LOADING_BAR_TASK_5	กำลังตีลังกาบิน	
+GLUE_DRG_LOADING_BAR_TASK_6	กำลังพ่นไฟ	
+GLUE_DRG_LOADING_BAR_TASK_7	กำลังบรรจุร่มชูชีพ	
+GLUE_DRG_LOADING_BAR_TASK_8	กำลังใส่กระสุนปืนใหญ่	
+GLUE_DRG_LOADING_BAR_TASK_9	กำลังกอดลูกมังกร	
+GLUE_EDIT	แก้ไข	
+GLUE_EDIT_DECK	แก้ไขเด็ค	
+GLUE_ERROR_DECK_RULESET_RULE_VIOLATION	เด็คที่เลือกไม่สามารถใช้ได้ในโหมดนี้	
+GLUE_FAKE_QUEST_FIRST_DESCRIPTION	ยินดีต้อนรับสู่เมืองคนโฉด....	
+GLUE_FAKE_QUEST_FIRST_NAME	ยินดีต้อนรับสู่แกดเจ็ตแซน!	
+GLUE_FAKE_QUEST_FIRST_REWARD	0 โกลด์	
+GLUE_FIRE_FESTIVAL_BANNER_TITLE	ขอต้อนรับสู่เทศกาลไฟ!	
+GLUE_FIRE_FESTIVAL_DOUBLE_GOLD_BAG_TEXT	x2	
+GLUE_FIRESIDE_BRAWL_FLAG	Fireside	
+GLUE_FIRESIDE_GATHERING_ADD_MORE_ACCESS_POINTS	เพิ่มอีก	
+GLUE_FIRESIDE_GATHERING_APPEAR_ONLINE_PROMPT	คุณเข้าร่วม Fireside Gathering ไม่ได้ขณะแสดงตัวว่าออฟไลน์\nต้องการออนไลน์หรือไม่	
+GLUE_FIRESIDE_GATHERING_BETA_TITLE	Fireside Gathering <color=#c01c1cff><size=23>เบต้า</size></color>	Here we can use size and color tags and when necessary, add the BETA label while we are doing slow rollout of the feature.
+GLUE_FIRESIDE_GATHERING_BRAWL	เกมท้าประลอง Fireside	
+GLUE_FIRESIDE_GATHERING_BRAWL_UNAVAILABLE	เกมท้าประลอง Fireside ไม่พร้อมให้เล่น	
+GLUE_FIRESIDE_GATHERING_BRAWLS_BUTTON	เกมท้าประลอง Fireside	
+GLUE_FIRESIDE_GATHERING_CHOOSE_OPPONENT	เลือกคู่ต่อสู้	
+GLUE_FIRESIDE_GATHERING_CONNECT_TO_WIFI_BODY	เชื่อมต่อกับเครือข่าย WIFI ที่ใช้จัด Fireside Gathering นี้ หรือข้ามขั้นตอนนี้หากไม่มี WIFI	
+GLUE_FIRESIDE_GATHERING_CONNECT_TO_WIFI_NO_WIFI_BUTTON	ไม่มี WIFI	
+GLUE_FIRESIDE_GATHERING_CONNECT_TO_WIFI_SSID_CONFIRM_BODY	ถ้าไม่ใช่เครือข่ายนี้ ให้เชื่อมต่ออุปกรณ์ของคุณกับเครือข่ายอื่นก่อนดำเนินการต่อ	
+GLUE_FIRESIDE_GATHERING_CONNECT_TO_WIFI_SSID_CONFIRM_TITLE	คุณเชื่อมต่อกับ:	
+GLUE_FIRESIDE_GATHERING_CONNECT_TO_WIFI_TITLE	โปรดเชื่อมต่อ WIFI	
+GLUE_FIRESIDE_GATHERING_CONNECT_TO_WIFI_USE_WIFI_BUTTON	ถัดไป	
+GLUE_FIRESIDE_GATHERING_DESCRIPTION_TEXT	ยินดีต้อนรับ!\nถึงเวลาพบเพื่อนใหม่และเล่นเกมกันแล้ว!	
+GLUE_FIRESIDE_GATHERING_DUELS_BUTTON	ดวลกระชับมิตร	
+GLUE_FIRESIDE_GATHERING_FIND_EVENT_BODY	รวมตัวกันมาเล่น Hearthstone กับคนอื่นๆ ในสถานที่จัดกิจกรรมใกล้ตัวคุณ Hearthstone จะใช้สถานที่ตั้งของคุณและเครือข่าย Wi-Fi ที่เชื่อมต่อเพื่อค้นหาและให้คุณเช็คอินใน Fireside Gathering	
+GLUE_FIRESIDE_GATHERING_FOOTER_EMPTY_FIRST_LINE	ท่าทางจะไม่มีใคร\nพร้อมรับคำท้าเลย	
+GLUE_FIRESIDE_GATHERING_FOOTER_EMPTY_SECOND_LINE	ที่นี่แสดงเฉพาะลูกค้าที่พร้อมเล่น\nและไม่ได้แข่งเกมอยู่ กลับมาดูทีหลังนะ!	
+GLUE_FIRESIDE_GATHERING_FOOTER_PARTIAL_FIRST_LINE	หาใครไม่เจอหรือเปล่า	
+GLUE_FIRESIDE_GATHERING_FOOTER_PARTIAL_SECOND_LINE	รายการนี้แสดงผู้เล่นที่พร้อมเล่น\nและไม่ได้แข่งเกมอยู่ กลับมาดูทีหลังนะ!	
+GLUE_FIRESIDE_GATHERING_INKEEPER_CONNECT_TO_WIFI_BODY	เชื่อมต่อกับเครือข่าย WIFI ที่คุณต้องการใช้จัด Fireside Gathering นี้ หรือข้ามขั้นตอนนี้หากไม่มี WIFI	
+GLUE_FIRESIDE_GATHERING_INKEEPER_SETUP	กำลังเปิดลังไม้...	
+GLUE_FIRESIDE_GATHERING_INKEEPER_SETUP_FAILED_BODY	ดูให้แน่ใจว่าคุณเปิดใช้บริการตำแหน่งที่ตั้งหรือเชื่อมต่อกับ WIFI แล้วลองอีกครั้งจากรายชื่อเพื่อนของคุณ	
+GLUE_FIRESIDE_GATHERING_INKEEPER_SETUP_FAILED_TITLE	การตั้งค่าล้มเหลว	
+GLUE_FIRESIDE_GATHERING_INKEEPER_SIGN_SUCCESS_NOTE	โรงเตี๊ยมของคุณเปิดแล้ว!	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_CLICK_TO_SETUP	คลิกที่นี่เพื่อตั้งค่า!	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_CLICK_TO_SETUP_PHONE	แตะที่นี่เพื่อตั้งค่า!	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_CLICK_TO_SETUP_TITLE	Gathering ที่กำลังจะเกิดขึ้นของคุณ	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_CONNECT_TO_WIFI_SSID_CONFIRM_TITLE	ใช้การเชื่อมต่อนี้สำหรับ Fireside Gathering ของคุณหรือไม่	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_LOBBY_ARRIVE	ยินดีต้อนรับสู่ Fireside Gathering ของเรา!	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_SETUP_BODY	สวัสดี เจ้าของโรงแรม {0}! พร้อมจะจัด\n Fireside_Gathering ของคุณหรือยัง	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_TOOLTIP	ตั้งค่าที่นี่เมื่อคุณพร้อม!	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_TURN_ON_GPS_BODY	แชร์ตำแหน่งที่ตั้งในหน้าต่างถัดไปเพื่อช่วยให้คนอื่นๆ ค้นพบและเข้าร่วม Fireside Gathering ของคุณ!	
+GLUE_FIRESIDE_GATHERING_INNKEEPER_TURN_ON_WIFI_BODY	เปิด WIFI ในหน้าต่างถัดไปเพื่อช่วยให้คนอื่นๆ ค้นพบและเข้าร่วม Fireside Gathering ของคุณ!	
+GLUE_FIRESIDE_GATHERING_NETWORK_CONFIRM_BODY	โปรดตรวจสอบให้แน่ใจว่าคุณเชื่อมต่อกับเครือข่าย Wi-Fi ที่ถูกต้องก่อนดำเนินการต่อ	
+GLUE_FIRESIDE_GATHERING_NETWORK_CONFIRM_TITLE	เราจะติดตั้ง Fireside Gathering นี้ด้วย Wi-Fi ที่คุณเชื่อมต่ออยู่ในขณะนี้	
+GLUE_FIRESIDE_GATHERING_NO_WIFI_SUCCESS	ยินดีด้วย! โรงเตี๊ยมของคุณพร้อมแล้ว และคุณสามารถอัพเดตโรงเตี๊ยมในรายชื่อเพื่อนเพื่อเพิ่มการเชื่อมต่อ WIFI ได้ทุกเมื่อ!	
+GLUE_FIRESIDE_GATHERING_OFFICIAL_FIRESIDE_DESCRIPTION	นี่คือเกมท้าประลอง Fireside อย่างเป็นทางการของรอบนี้	
+GLUE_FIRESIDE_GATHERING_OPPONENT_OFFLINE	ลูกค้าคนนี้ไม่ออนไลน์แล้ว	
+GLUE_FIRESIDE_GATHERING_OPPONENT_UNAVAILABLE	ลูกค้าคนนี้ไม่มาแล้ว	
+GLUE_FIRESIDE_GATHERING_PLAY_FSG_BRAWL	เกมท้าประลองพิเศษที่เปิดให้เล่นที่ Fireside Gathering เท่านั้น	
+GLUE_FIRESIDE_GATHERING_PLAY_REGULAR_BRAWL	เล่มเกมท้าประลองธรรมดา	
+GLUE_FIRESIDE_GATHERING_RETURN_TO_SCENE_HERE	คลิกที่นี่ เพื่อกลับไปที่ Fireside	
+GLUE_FIRESIDE_GATHERING_SCAN_NO_GPS_OR_WIFI	ใช้ฟีเจอร์นี้ได้เฉพาะในอุปกรณ์ที่ใช้ GPS หรือ Wi-Fi ได้เท่านั้น	
+GLUE_FIRESIDE_GATHERING_SEARCH_FAILURE_BODY	คลิก "เรียนรู้เพิ่มเติม" เพื่อค้นหา Fireside Gathering ใกล้ตัวคุณ หรือจัดกิจกรรมของคุณเอง!	
+GLUE_FIRESIDE_GATHERING_SEARCH_FAILURE_BODY_PHONE	แตะ "เรียนรู้เพิ่มเติม" เพื่อค้นหา Fireside Gathering ใกล้ตัวคุณ หรือจัดกิจกรรมของคุณเอง!	
+GLUE_FIRESIDE_GATHERING_SEARCH_FAILURE_TITLE	ที่นี่ไม่ได้จัด Fireside Gathering	
+GLUE_FIRESIDE_GATHERING_SEARCHING	กำลังค้นหา...	
+GLUE_FIRESIDE_GATHERING_TITLE	Fireside Gatherings	
+GLUE_FIRESIDE_GATHERING_TURN_ON_GPS_BODY	การเปิดใช้บริการตำแหน่งที่ตั้งจะช่วยคุณหา Fireside Gathering ให้เปิดใช้ในหน้าต่างถัดไป	
+GLUE_FIRESIDE_GATHERING_TURN_ON_GPS_TITLE	เปิดใช้บริการตำแหน่งที่ตั้ง	
+GLUE_FIRESIDE_GATHERING_TURN_ON_WIFI_BODY	การเปิดใช้ WIFI จะช่วยคุณหา Fireside Gathering ให้เปิดใช้ในหน้าต่างถัดไป	
+GLUE_FIRESIDE_GATHERING_TURN_ON_WIFI_TITLE	เปิดใช้ WIFI	
+GLUE_FIRESIDE_GATHERING_UPDATING_LOCATION	กำลังอัพเดตตำแหน่งที่ตั้งของฉัน	
+GLUE_FIRESIDE_GATHERING_UPDATING_LOCATION_FAILED_BODY	โปรดเปิดใช้งานบริการหาตำแหน่งที่ตั้งในอุปกรณ์ของคุณเพื่อสแกน	
+GLUE_FIRESIDE_GATHERING_UPDATING_LOCATION_FAILED_TITLE	ค้นหาไม่พบ	
+GLUE_FIRESIDE_GATHERING_UPDATING_LOCATION_SUCCESS	อัพเดตตำแหน่งที่ตั้งแล้ว	
+GLUE_FIRESIDE_GATHERING_WIFI_ACCESS_POINT_SEARCH_BODY	เดินดูรอบๆ เพื่อหาจุดเชื่อมต่อเพิ่ม	
+GLUE_FIRESIDE_GATHERING_WIFI_ACCESS_POINT_SEARCH_TITLE	พบจุดเชื่อมต่อแล้ว	
+GLUE_FIRESIDE_GATHERING_WIFI_ACCESS_POINTS_SEARCH_TITLE	พบจุดเชื่อมต่อแล้ว	
+GLUE_FIRESIDE_GATHERING_WIFI_SETUP_COMPLETE	การตั้งค่าเสร็จสิ้น!	
+GLUE_FIRESIDE_GATHERING_WIFI_SUCCESS	ถ้าคุณมีจุดเชื่อมต่อเครือข่ายไร้สายหลายจุด ให้เพิ่มจุดเชื่อมต่อเหล่านั้นแล้วขยายขอบเขตสัญญาณ WIFI ของคุณด้วยการคลิก "เพิ่มอีก"	
+GLUE_FIRESIDE_GATHERING_WIFI_SUCCESS_PHONE	ถ้าคุณมีจุดเชื่อมต่อเครือข่ายไร้สายหลายจุด ให้เพิ่มจุดเชื่อมต่อเหล่านั้นแล้วขยายขอบเขตสัญญาณ WIFI ของคุณโดยแตะที่ "เพิ่มอีก"	
+GLUE_FORGE	ลานประลอง	
+GLUE_FORGE_EXTRA_PRIZE_LABEL	ชนะ {0} ครั้ง	0 = number of wins required to earn this prize
+GLUE_FORGE_MANATIP_DESC	นี่คือการ์ดในเด็คของคุณ เรียงตามมานาค่าร่าย	
+GLUE_FORGE_MANATIP_HEADER	กราฟมานา	
+GLUE_FORGE_RETIRE_WARNING_DESC	การดำเนินการนี้จะทำให้การเข้าร่วมในลานประลองสิ้นสุดลงก่อนกำหนด! คุณจะยังคงได้รับรางวัลโดยขึ้นอยู่กับกุญแจที่คุณมี	
+GLUE_FORGE_RETIRE_WARNING_HEADER	เดี๋ยวก่อน!	
+GLUE_FORGE_STORE_ADMISSION	ค่าเข้าแข่งขัน	
+GLUE_FORGE_STORE_DETAILS1	จัดเด็คจากการ์ดที่สุ่มมาให้เลือก และพยายามอยู่รอดในลานประลองให้ได้นานที่สุด	
+GLUE_FORGE_STORE_DETAILS2	ยิ่งอยู่ได้นาน คุณก็จะได้รับรางวัลที่ดียิ่งขึ้น!	
+GLUE_FORGE_STORE_HEADLINE	ยินดีต้อนรับสู่ลานประลอง! 	
+GLUE_FRIEND_LIST_ADD_FRIENDS	เพิ่มเพื่อน	
+GLUE_FRIEND_LIST_FIND_FSG	ค้นหา Gathering	
+GLUE_FRIEND_LIST_REFER_FRIENDS	ชวนเพื่อนใหม่	
+GLUE_FRIEND_LIST_REMOVE_FRIENDS	ลบเพื่อน	
+GLUE_FROST_FESTIVAL_FREE_ARENA_WIN_DESC	อาฮูนมอบชัยชนะหนึ่งครั้งให้ฟรีสำหรับการเล่นลานประลองรอบใหม่ที่เริ่มในช่วงเทศกาลน้ำแข็ง! คิดว่าแร็กนารอสจะทำแบบนี้ไหม ไม่มีทาง	
+GLUE_FROST_FESTIVAL_FREE_ARENA_WIN_HEADLINE	ข้าให้ชนะฟรี	
+GLUE_FROSTMOURNE_REWARD_BODY	เอาชนะลิชคิงด้วยฮีโร่ทุกคลาส\nเพื่อรับเจ้าชายอาร์ธัส! คลาสที่เหลือ:	
+GLUE_FROSTMOURNE_REWARD_HEADER	ฮีโร่พาลาดินคนใหม่	
+GLUE_FROSTMOURNE_WING_INCOMPLETE_REWARD_BODY	เอาชนะลิชคิงด้วยฮีโร่ทุกคลาส\nเพื่อรับเจ้าชายอาร์ธัส!	
+GLUE_FSG_BRAWL_PLAY_SUBTITLE	ไปที่รายชื่อเพื่อนแล้วท้าแข่งกับใครสักคนที่ Fireside Gathering ของคุณเลย!	
+GLUE_FSG_BRAWL_PLAY_TITLE	พร้อมจะประลองกันหรือยัง	
+GLUE_FSG_FOUND	พบ Fireside Gathering!	
+GLUE_FSG_HAPPENING_HERE_TEXT	มีการจัด Fireside Gathering ที่นี่!\n คุณอยากเข้าร่วมไหม	
+GLUE_FSG_NEARBY_TOOLTIP	มีการจัด Fireside Gathering!	
+GLUE_FSG_NOT_FOUND	ไม่พบ	
+GLUE_FSG_NOT_FOUND_BODY	โอ๊ะ ท่าทางที่นี่จะไม่ได้จัด Fireside Gathering คุณอยากหา Gathering ที่อยู่ใกล้ตัวคุณไหม	
+GLUE_FSG_NOT_NOW	ไว้ทีหลัง	
+GLUE_FSG_PATRON_COUNT	ผู้สนับสนุน {0} คน	
+GLUE_FSG_STARTING_DAYS	เริ่มในอีก {0} วัน	
+GLUE_FSG_STARTING_HOURS	เริ่มในอีก {0} ชั่วโมง	
+GLUE_FSG_STARTING_MINUTES	เริ่มในอีก {0} นาที	
+GLUE_FSG_STARTING_OVER_1_MONTH	เริ่มในอีก > 1 เดือน	
+GLUE_FSG_STARTING_SECONDS	เริ่มในอีก {0} วินาที	
+GLUE_FSG_STARTING_WEEKS	เริ่มในอีก {0} สัปดาห์	
+GLUE_GAME_MODES	โหมด	
+GLUE_GAME_MODES_POPUP_BACON_DESC	ต่อสู้กับคู่ต่อสู้ 7 คน	
+GLUE_GAME_MODES_POPUP_BETA	เบต้า	
+GLUE_GAME_MODES_POPUP_EARLY_ACCESS	เล่นล่วงหน้า	
+GLUE_GAME_MODES_POPUP_FORGE_DESC	จัดเด็คโดยสุ่มเลือกการ์ด 30 ใบ	
+GLUE_GAME_MODES_POPUP_HEADER	เลือกโหมด	
+GLUE_GENERIC_RANDOM_CARD_SCROLL_DESC	คุณได้รับ {0} จากชุดซองการ์ด!	This is meant to replace the above welcome bundle strings until we have the tech to show custom strings per reward.
+GLUE_GENERIC_RANDOM_CARD_SCROLL_TITLE	ได้การ์ดระดับตำนาน!	This is meant to replace the above welcome bundle strings until we have the tech to show custom strings per reward.
+GLUE_GHOST_CARD_MISSING_DESCRIPTION	คุณไม่มีการ์ดใบนี้\nคลิกเพื่อหาการ์ดทดแทน	
+GLUE_GHOST_CARD_MISSING_DESCRIPTION_TOUCH	คุณไม่มีการ์ดใบนี้\nแตะเพื่อหาการ์ดทดแทน	
+GLUE_GHOST_CARD_MISSING_TITLE	ไม่มีการ์ด	
+GLUE_GHOST_CARD_NOT_VALID_DESCRIPTION	ไม่สามารถใช้การ์ดอิสระในเด็คมาตรฐานได้\nคลิกเพื่อหาการ์ดทดแทน	
+GLUE_GHOST_CARD_NOT_VALID_DESCRIPTION_TOUCH	ไม่สามารถใช้การ์ดอิสระในเด็คมาตรฐานได้\nแตะเพื่อหาการ์ดทดแทน	
+GLUE_GHOST_CARD_NOT_VALID_TITLE	การ์ดอิสระ	
+GLUE_GIL_LOADING_BAR_TASK_1	กำลังจุดตะเกียง	
+GLUE_GIL_LOADING_BAR_TASK_10	กำลังร่ายคำสาป	
+GLUE_GIL_LOADING_BAR_TASK_11	กำลังลับกรงเล็บ	
+GLUE_GIL_LOADING_BAR_TASK_12	กำลังปกคลุมทุกสิ่งด้วยเมือก	
+GLUE_GIL_LOADING_BAR_TASK_13	กำลังเสกมนตร์	
+GLUE_GIL_LOADING_BAR_TASK_14	กำลังคิดค้นคำสาป	
+GLUE_GIL_LOADING_BAR_TASK_15	กำลังตามหาอสูรรับใช้	
+GLUE_GIL_LOADING_BAR_TASK_16	กำลังหัวเราะอย่างชั่วร้าย	
+GLUE_GIL_LOADING_BAR_TASK_17	กำลังได้ยินเสียงแปลกๆ	
+GLUE_GIL_LOADING_BAR_TASK_18	กำลังทำพื้นลั่นเอี๊ยดอ๊าด	
+GLUE_GIL_LOADING_BAR_TASK_2	กำลังเจาะฟักทอง	
+GLUE_GIL_LOADING_BAR_TASK_3	กำลังทำเสียงหลอน	
+GLUE_GIL_LOADING_BAR_TASK_4	กำลังสิงสถิตในบ้าน	
+GLUE_GIL_LOADING_BAR_TASK_5	กำลังเขย่าโซ่	
+GLUE_GIL_LOADING_BAR_TASK_6	กำลังเร่งไฟให้หม้อเดือด	
+GLUE_GIL_LOADING_BAR_TASK_7	กำลังทำให้สิ่งของขยับเอง	
+GLUE_GIL_LOADING_BAR_TASK_8	กำลังหอนพระจันทร์	
+GLUE_GIL_LOADING_BAR_TASK_9	กำลังย่องมาข้างหลังคุณ	
+GLUE_GOLD_CAP_BODY	 คุณจะไม่ได้รับโกลด์เพิ่มอีก จนกว่าคุณจะมีน้อยกว่า\n{0} โกลด์	
+GLUE_GOLD_CAP_HEADER	ครบ {0} โกลด์แล้ว!	
+GLUE_GOONS_CLASS_NAMES	ฮันเตอร์, พาลาดิน, วอริเออร์	
+GLUE_HALL_Of_FAME_BODY	การ์ดบางใบ\nเปลี่ยนไปสังกัดกฎอิสระและ\nใช้เล่นในกฎมาตรฐานไม่ได้	
+GLUE_HALL_OF_FAME_CARD_LIST	การ์ดเหล่านี้ย้ายไปยังกฎอิสระ	
+GLUE_HALL_OF_FAME_DUST_COMPENSATION	เนื่องจากคุณมีการ์ดเหล่านี้ เราจะมอบ\nของขวัญพิเศษเพื่อฉลองให้กับคุณ!	
+GLUE_HALL_Of_FAME_SIGN	หอเกียรติยศ	
+GLUE_HERO_HEROSELECT_NEW	ใหม่!	
+GLUE_HERO_LOCKED_DESC	เอาชนะฮีโร่คนนี้เพื่อปลดล็อค!	
+GLUE_HERO_LOCKED_NAME	ล็อค	
+GLUE_HEROIC_BRAWL_CONTINUE	ฉันเข้าใจ!	Heroic brawl intro dialogue continue button text
+GLUE_HEROIC_BRAWL_DECK	เกมท้าประลองฮีโร่	
+GLUE_HEROIC_BRAWL_INTRO	เกมท้าประลองสัปดาห์นี้\nเป็นเกมสำหรับผู้เล่นประสบการณ์สูง\nเราจะวัดกันด้วยฝีมือและคอลเลกชันการ์ดของคุณ!	
+GLUE_HEROIC_BRAWL_MAX_LOSSES	แพ้ 3 ครั้ง	
+GLUE_HEROIC_BRAWL_MAX_WINS	ชนะ 12 เกม	
+GLUE_HEROIC_BRAWL_MIN_WINS	ชนะ 0 เกม	
+GLUE_HEROIC_BRAWL_NO_WINS_REWARD_PACK_TEXT	ซองการ์ดรางวัล!	
+GLUE_HEROIC_BRAWL_PLAY_CONFIRMATION	คุณจะแก้ไขเด็คไม่ได้อีกตลอดการเล่นรอบนี้ ยืนยันเด็คหรือไม่	
+GLUE_HEROIC_BRAWL_PLAY_CONFIRMATION_CANCEL	ไม่ เดี๋ยวก่อน!	
+GLUE_HEROIC_BRAWL_PLAY_CONFIRMATION_OK	ยืนยัน!	
+GLUE_HEROIC_BRAWL_PLAY_CONFIRMATION_TITLE	ยืนยันเด็ค	
+GLUE_HEROIC_BRAWL_REWARDS_DESCRIPTION	รางวัลเป็นของผู้ชนะ! ยิ่งชนะมากก็ยิ่งได้รางวัลมาก\nชนะ 12 ครั้งเพื่อรับรางวัลสุดยิ่งใหญ่ แพ้ 3 ครั้งเกมจะจบลง	
+GLUE_HEROIC_BRAWL_REWARDS_NOTICE_DESC	รางวัลจากเกมท้าประลองฮีโร่รอบล่าสุดl	
+GLUE_HEROIC_BRAWL_REWARDS_WIN_BANNER_TEXT	ชนะ {0} ครั้ง!	
+GLUE_HEROIC_BRAWL_RULES_TITLE	กฎ	
+GLUE_HEROIC_BRAWL_SESSION_ERROR	เกิดปัญหาในการรับข้อมูลเกมท้าประลองฮีโร่	
+GLUE_HEROIC_BRAWL_SESSION_ERROR_TITLE	เกมท้าประลองฮีโร่มีปัญหา	
+GLUE_HEROIC_BRAWL_SESSION_LIMIT_ALERT_DESCRIPTION_FINAL	นี่คือเกมท้าประลองฮีโร่เกมสุดท้ายแล้ว! ขอให้โชคดี ฮีโร่ผู้กล้า!	
+GLUE_HEROIC_BRAWL_SESSION_LIMIT_ALERT_DESCRIPTION_NORMAL	คุณเข้าร่วมเกมท้าประลองระดับฮีโร่ได้อีก {0} ครั้ง	
+GLUE_HEROIC_BRAWL_SESSION_LIMIT_ALERT_LIMIT_HIT	คุณเล่นเกมท้าประลองฮีโร่ครบตามจำนวนแล้ว	
+GLUE_HEROIC_BRAWL_SESSION_LIMIT_ALERT_LIMIT_RAISED	เจ้าของโรงแรมเพิ่มรอบให้! คุณสามารถเข้าร่วมเกมท้าประลองฮีโร่ได้อีก {0} ครั้ง	
+GLUE_HEROIC_BRAWL_SESSION_LIMIT_ALERT_TITLE	เกมท้าประลองฮีโร่	
+GLUE_HEROIC_BRAWL_SIGNUPS_CLOSED	เกมท้าประลองนี้ใกล้จะจบลงและปิดรับสมัครแล้ว	
+GLUE_HEROIC_BRAWL_SIGNUPS_CLOSED_TITLE	ปิด	
+GLUE_HEROIC_BRAWL_TITLE	เกมท้าประลอง\n<size=50>ฮีโร่</size>	
+GLUE_HEROIC_WARNING	ขอเตือนไว้ก่อนว่าโหมดฮีโร่นั้นยากมาก และไม่เหมาะสำหรับพวกใจเสาะ คิดให้ดีก่อนจะเล่นล่ะ!	
+GLUE_HEROIC_WARNING_TITLE	คำเตือน!	
+GLUE_ICC_LOADING_BAR_TASK_1	กำลังเช็ดฝ้าบนกระจกหน้าต่าง	
+GLUE_ICC_LOADING_BAR_TASK_10	กำลังทำพันธสัญญา	
+GLUE_ICC_LOADING_BAR_TASK_11	กำลังปลุกซอมบี้	
+GLUE_ICC_LOADING_BAR_TASK_12	กำลังประดับหนามบนข้าวของ	
+GLUE_ICC_LOADING_BAR_TASK_13	กำลังสลักรูน	
+GLUE_ICC_LOADING_BAR_TASK_14	กำลังชี้ดาบอย่างมุ่งร้าย	
+GLUE_ICC_LOADING_BAR_TASK_15	กำลังซ้่อมทำเสียงแหบ	
+GLUE_ICC_LOADING_BAR_TASK_16	กำลังโยนของให้อาร์ฟัสไปเก็บ	
+GLUE_ICC_LOADING_BAR_TASK_17	กำลังลูบหัวเพนกวิน	
+GLUE_ICC_LOADING_BAR_TASK_18	กำลังเรียกกูล	
+GLUE_ICC_LOADING_BAR_TASK_19	กำลังขู่ฮีโร่	
+GLUE_ICC_LOADING_BAR_TASK_2	กำลังตักหิมะ	
+GLUE_ICC_LOADING_BAR_TASK_3	กำลังเปิดสุสาน	
+GLUE_ICC_LOADING_BAR_TASK_4	กำลังแช่แข็งบัลลังก์	
+GLUE_ICC_LOADING_BAR_TASK_5	กำลังมองดูความมืด	
+GLUE_ICC_LOADING_BAR_TASK_6	กำลังซ่อมท่อสไลม์	
+GLUE_ICC_LOADING_BAR_TASK_7	กำลังนั่งใจเย็น	
+GLUE_ICC_LOADING_BAR_TASK_8	กำลังสวมมงกุฎน้ำแข็ง	
+GLUE_ICC_LOADING_BAR_TASK_9	กำลังเปิดตู้เย็นหาของกิน	
+GLUE_INCOMPLETE_DECK_DESC	คุณต้องสร้างเด็คนี้ให้เสร็จ	
+GLUE_INCOMPLETE_DECK_HEADER	เด็คไม่สมบูรณ์	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_DRUID	โอ้! การ์ดดรูอิดระดับตำนาน! การ์ดนี้อยู่ในรูปแบบเด็คคลาสสิคด้วย ลองจัดเด็คดูสิ!	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_HUNTER	โอ้! การ์ดฮันเตอร์ระดับตำนาน! การ์ดนี้อยู่ในรูปแบบเด็คคลาสสิคด้วย ลองจัดเด็คดูสิ!	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_MAGE	โอ้! การ์ดเมจระดับตำนาน! การ์ดนี้อยู่ในรูปแบบเด็คคลาสสิคด้วย ลองจัดเด็คดูสิ!	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_PALADIN	โอ้! การ์ดพาลาดินระดับตำนาน! การ์ดนี้อยู่ในรูปแบบเด็คคลาสสิคด้วย ลองจัดเด็คดูสิ!	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_PRIEST	โอ้! การ์ดพรีสต์ระดับตำนาน! การ์ดนี้อยู่ในรูปแบบเด็คคลาสสิคด้วย ลองจัดเด็คดูสิ!	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_ROGUE	ดูสิ! การ์ดโร้กระดับตำนาน! การ์ดนี้อยู่ในรูปแบบเด็คคลาสสิคด้วย ลองจัดเด็คดูสิ!	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_SHAMAN	โอ้โห! การ์ดชาแมนระดับตำนาน! การ์ดนี้อยู่ในรูปแบบเด็คคลาสสิคด้วย ลองจัดเด็คดูสิ!	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_WARLOCK	โอ้! การ์ดวอร์ล็อคระดับตำนาน! การ์ดนี้อยู่ในรูปแบบเด็คคลาสสิคด้วย ลองจัดเด็คดูสิ!	
+GLUE_INKEEPER_RANDOM_CARD_DECK_RECIPE_WARRIOR	โอ้! การ์ดวอริเออร์ระดับตำนาน! การ์ดนี้อยู่ในรูปแบบเด็คคลาสสิคด้วย ลองจัดเด็คดูสิ!	
+GLUE_INNKEEPERS_SPECIAL_CONFIRM_POPUP_HEADER	เปิดเบราเซอร์	
+GLUE_INNKEEPERS_SPECIAL_CONFIRM_POPUP_MESSAGE	เนื้อหานี้จะถูกแสดงผลในเว็บเบราเซอร์ของคุณ ดำเนินการต่อหรือไม่	
+GLUE_INNKEEPERS_SPECIAL_LEARN_MORE	เรียนรู้เพิ่มเติม	
+GLUE_KABAL_CLASS_NAMES	เมจ, พรีสต์, วอร์ล็อค	
+GLUE_KARA_LOADING_BAR_TASK_1	กำลังขัดเครื่องเงิน	
+GLUE_KARA_LOADING_BAR_TASK_10	กำลังเพิ่มอุณหภูมิน้ำในอ่าง	
+GLUE_KARA_LOADING_BAR_TASK_11	กำลังช่วยแขกที่หลงทาง	
+GLUE_KARA_LOADING_BAR_TASK_12	กำลังปิดช่องทางลับ	
+GLUE_KARA_LOADING_BAR_TASK_13	กำลังปิดประตูมิติของอิมพ์	
+GLUE_KARA_LOADING_BAR_TASK_14	กำลังย้ายลำแสงไม่ให้ตัดกัน	
+GLUE_KARA_LOADING_BAR_TASK_15	กำลังซ้อมเต้นให้เมดิว่า	
+GLUE_KARA_LOADING_BAR_TASK_16	กำลังทดสอบระบบเสียง	
+GLUE_KARA_LOADING_BAR_TASK_17	กำลังไล่มัลเคซาร์กลับ	
+GLUE_KARA_LOADING_BAR_TASK_18	กำลังขัดรองเท้าเต้นรำ	
+GLUE_KARA_LOADING_BAR_TASK_2	กำลังสูบลมลูกโป่ง	
+GLUE_KARA_LOADING_BAR_TASK_3	กำลังรินแชมเปญ	
+GLUE_KARA_LOADING_BAR_TASK_4	กำลังเติมน้ำพุช็อกโกแล็ต	
+GLUE_KARA_LOADING_BAR_TASK_5	กำลังวางตัวหมากรุก	
+GLUE_KARA_LOADING_BAR_TASK_6	กำลังส่องกระจกวิเศษ	
+GLUE_KARA_LOADING_BAR_TASK_7	กำลังร่ายมนตร์ใส่ไม้กวาด	
+GLUE_KARA_LOADING_BAR_TASK_8	กำลังถ่ายเซลฟี่กับโรมิวโล	
+GLUE_KARA_LOADING_BAR_TASK_9	กำลังหย่อนลูกบอลดิสโก้ลงมา	
+GLUE_KARA_PROLOGUE_LOADING	กำลังรออีกาคาบข่าว...	
+GLUE_LEAGUE_PROMOTE_SELF_CONFIRMATION_CANCEL	ยกเลิก	
+GLUE_LEAGUE_PROMOTE_SELF_CONFIRMATION_CONFIRM	แน่ใจแล้ว!	
+GLUE_LEAGUE_PROMOTE_SELF_CONFIRMATION_DESCRIPTION	ถ้าคุณข้ามไปที่อันดับ 25 นอกจากจะเจอคู่ต่อสู้ที่แข็งแกร่งขึ้นแล้ว\nคุณยังพลาดรางวัลอื่นที่จะได้รับก่อนไปถึงอับดับนั้นด้วย!	
+GLUE_LEAGUE_PROMOTE_SELF_CONFIRMATION_TITLE	แน่ใจแล้วหรือไม่	
+GLUE_LEGENDARY_QUEST_REROLL_BODY	ทิ้งเควสต์เพื่อรับเควสต์ธรรมดาแทนหรือไม่ ถ้าเควสต์นี้เป็นส่วนหนึ่งของชุดเควสต์ เควสต์จะถูกทิ้งไปทั้งชุด	
+GLUE_LEGENDARY_QUEST_REROLL_TITLE	เปลี่ยนใหม่?	
+GLUE_LOADING	กำลังโหลด...	
+GLUE_LOADING_BAR_TASK_1	กำลังสับการ์ด	
+GLUE_LOADING_BAR_TASK_10	กำลังเตรียมทำใจ	
+GLUE_LOADING_BAR_TASK_11	กำลังจัดตำแหน่งฮีโร่	
+GLUE_LOADING_BAR_TASK_12	กำลังจ้องมองเจ้าของโรงแรม	
+GLUE_LOADING_BAR_TASK_13	กำลังโกนหนวด	
+GLUE_LOADING_BAR_TASK_14	กำลังซ่อมบานพับประตู	
+GLUE_LOADING_BAR_TASK_15	กำลังเสิร์ฟเครื่องดื่ม	
+GLUE_LOADING_BAR_TASK_16	กำลังเลือกกระดาน	
+GLUE_LOADING_BAR_TASK_17	กำลังจัดเด็คให้เรียบร้อย	
+GLUE_LOADING_BAR_TASK_18	กำลังติดสินบนยาม	
+GLUE_LOADING_BAR_TASK_19	กำลังจ่ายเงินให้วงดนตรี	
+GLUE_LOADING_BAR_TASK_2	กำลังขัดคริสตัลมานา	
+GLUE_LOADING_BAR_TASK_3	กำลังเติมแถบโหลดให้เต็ม	
+GLUE_LOADING_BAR_TASK_4	กำลังกวาดฝุ่นจากมินเนี่ยน	
+GLUE_LOADING_BAR_TASK_5	กำลังติดตั้งฟิวส์จับเวลาใหม่	
+GLUE_LOADING_BAR_TASK_6	กำลังรวบรวมผู้ชม	
+GLUE_LOADING_BAR_TASK_7	กำลังต้อนฝูงเมอร์ล็อค	
+GLUE_LOADING_BAR_TASK_8	กำลังหยอดน้ำมันปุ่มจบเทิร์น	
+GLUE_LOADING_BAR_TASK_9	กำลังเช็ดโต๊ะ	
+GLUE_LOADINGSCREEN_APK_UPDATE_FROM_APP_STORE	ไปที่ร้านค้าเพื่อเริ่มดาวน์โหลดได้เลย	
+GLUE_LOADINGSCREEN_APK_UPDATE_FROM_WEBSITE	ไปที่เว็บไซต์ Hearthstone เพื่อเริ่มดาวน์โหลดได้เลย	
+GLUE_LOADINGSCREEN_BUTTON_CANCEL	รอก่อนนะ	
+GLUE_LOADINGSCREEN_BUTTON_CELLULAR	ใช้เครือข่ายมือถือ	
+GLUE_LOADINGSCREEN_BUTTON_RETRY	ลองใหม่	
+GLUE_LOADINGSCREEN_BUTTON_SETTINGS	การตั้งค่า	
+GLUE_LOADINGSCREEN_BUTTON_WAIT	รอสัญญาณ Wi-Fi	
+GLUE_LOADINGSCREEN_BUTTON_YES	ใช่แล้ว เอาเลย!	
+GLUE_LOADINGSCREEN_CHECKING_UNITY_1	กำลังตรวจสอบเวอร์ชัน	
+GLUE_LOADINGSCREEN_CHECKING_UNITY_2	กำลังค้นหาการอัพเดต	
+GLUE_LOADINGSCREEN_DOWNLOAD_DONE	ดาวน์โหลดเสร็จสิ้น	
+GLUE_LOADINGSCREEN_DOWNLOAD_DONE_TICKER	Hearthstone - ดาวน์โหลดเสร็จสิ้น	
+GLUE_LOADINGSCREEN_DOWNLOAD_STOP	หยุดดาวน์โหลดแล้ว	
+GLUE_LOADINGSCREEN_DOWNLOADING	กำลังดาวน์โหลด {0}/{1} MB	0=megabytes so far, 1=total download megabytes
+GLUE_LOADINGSCREEN_DOWNLOADING_TICKER	Hearthstone - กำลังดาวน์โหลด	
+GLUE_LOADINGSCREEN_ERROR_APK_INSTALL	ติดตั้งไม่สำเร็จ โปรดถอนการติดตั้ง Hearthstone และทำการติดตั้งใหม่	
+GLUE_LOADINGSCREEN_ERROR_CHECK_SETTINGS	ไม่มีการเชื่อมต่ออินเทอร์เน็ตที่ใช้ได้ โปรดตรวจสอบการตั้งค่าเครือข่ายของคุณ	
+GLUE_LOADINGSCREEN_ERROR_CLIENT_CONFIG_MESSAGE	ไม่มีไฟล์คอนฟิก โปรดถอนการติดตั้ง Hearthstone และทำการติดตั้งใหม่	
+GLUE_LOADINGSCREEN_ERROR_CONNECTION_MESSAGE	ไม่สามารถดาวน์โหลดไฟล์เพิ่มเติมได้ โปรดตรวจสอบให้แน่ใจว่าคุณสามารถใช้งานอินเทอร์เน็ตได้	
+GLUE_LOADINGSCREEN_ERROR_COPY_ASSETS_MESSAGE	ไม่สามารถคัดลอกแอสเซ็ตได้ โปรดเพิ่มพื้นที่ว่างในอุปกรณ์ของคุณ	
+GLUE_LOADINGSCREEN_ERROR_DISK_SPACE	มีพื้นที่ว่างไม่เพียงพอสำหรับการติดตั้ง Hearthstone บนอุปกรณ์ของคุณ โปรดจัดการพื้นที่ว่างเพิ่มเติม	
+GLUE_LOADINGSCREEN_ERROR_DOWNLOADING_MESSAGE	โปรดถอนการติดตั้งและดาวน์โหลด Hearthstone ใหม่อีกครั้ง	
+GLUE_LOADINGSCREEN_ERROR_DOWNLOADING_TITLE	ข้อผิดพลาดในการดาวน์โหลด	
+GLUE_LOADINGSCREEN_ERROR_FILESYSTEM_MESSAGE	อุปกรณ์ของคุณมีพื้นที่ว่างไม่เพียงพอในการติดตั้ง Hearthstone หากคุณใช้ SD การ์ด โปรดตรวจสอบให้แน่ใจว่าคุณมีสิทธิ์ในการเขียนข้อมูล	
+GLUE_LOADINGSCREEN_ERROR_GENERIC	Hearthstone หยุดทำงาน โปรดถอนการติดตั้ง Hearthstone แล้วติดตั้งใหม่	
+GLUE_LOADINGSCREEN_ERROR_GET_EXTERNAL_FILES	ไม่สามารถเข้าถึงพื้นที่เก็บข้อมูลภายนอก โปรดอนุญาตการเข้าถึงพื้นที่เก็บข้อมูลภายนอก ถ้าอนุญาตเรียบร้อยแล้ว โปรดเริ่มการทำงานอุปกรณ์ของคุณใหม่	
+GLUE_LOADINGSCREEN_ERROR_INSTALLING_TITLE	ข้อผิดพลาดในการติดตั้ง	
+GLUE_LOADINGSCREEN_ERROR_NEEDS_DATA	เมื่อคุณเชื่อมต่อ Wi-Fi แล้ว เรามาโหลดข้อมูลใหม่อีกครั้ง	
+GLUE_LOADINGSCREEN_ERROR_UPDATE	อัพเดตไม่สำเร็จ โปรดตรวจสอบการเชื่อมต่อของคุณ	
+GLUE_LOADINGSCREEN_ERROR_UPDATE_CONFLICT	อัพเดตไม่สำเร็จ โปรดรีสตาร์ท Hearthstone	
+GLUE_LOADINGSCREEN_ERROR_VERSION	รับข้อมูลเวอร์ชันไม่สำเร็จ โปรดตรวจสอบการเชื่อมต่อของคุณ	
+GLUE_LOADINGSCREEN_MISMATCHED_VERSION	เวอร์ชันไม่ตรง	
+GLUE_LOADINGSCREEN_OPEN_APP_STORE	เปิด	
+GLUE_LOADINGSCREEN_PROGRESS_0	กำลังตรวจสอบเวอร์ชัน	
+GLUE_LOADINGSCREEN_PROGRESS_1	เราสามารถทำการดาวน์โหลดได้ในพื้นหลัง	
+GLUE_LOADINGSCREEN_PROGRESS_2	ในระหว่างนี้คุณสามารถสลับไปใช้แอพอื่นได้!	
+GLUE_LOADINGSCREEN_PROGRESS_3	กำลังจุดไฟให้เตาผิง	
+GLUE_LOADINGSCREEN_PROGRESS_4	กำลังเปิดลังไม้	
+GLUE_LOADINGSCREEN_PROGRESS_5	กำลังจัดวางเฟอร์นิเจอร์ใหม่	
+GLUE_LOADINGSCREEN_PROGRESS_6	อาจจะต้องใช้เวลาสักครู่นะ	
+GLUE_LOADINGSCREEN_PROGRESS_IMPEDED	การเชื่อมต่อมีความล่าช้า!	
+GLUE_LOADINGSCREEN_PROGRESS_TEXT	เหลืออีก {0} @ {1}/วิ	0=remaining data size 1=downloading speed
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_1	โปรดรอเพื่อดาวน์โหลด	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_2	กำลังดาวน์โหลดข้อมูลเกม	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_3	กำลังเปิดลังเก็บของ	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_4	การสลับแอพจะหยุดการดาวน์โหลด	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_5	อยู่เป็นเพื่อนเราก่อน งานจะเสร็จเร็วขึ้น! 	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_6	ต้องอัพเดตเพื่อเล่นต่อ	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_7	กำลังดาวน์โหลดอยู่	
+GLUE_LOADINGSCREEN_PROGRESS_UNITY_8	อาจใช้เวลาสักครู่	
+GLUE_LOADINGSCREEN_RESUME	การดาวน์โหลดหยุดชั่วคราว	Resume?
+GLUE_LOADINGSCREEN_SDCARD	กำลังย้ายไฟล์ไปเก็บไว้ในอุปกรณ์ต่อพ่วง	
+GLUE_LOADINGSCREEN_SDCARD_DIALOG	คุณต้องการจัดเก็บข้อมูล Hearthstone บน SD การ์ดหรือไม่ การตั้งค่านี้อาจทำให้ Hearthstone ทำงานช้าลงได้	
+GLUE_LOADINGSCREEN_UPDATE_HEADER	ดาวน์โหลด	
+GLUE_LOADINGSCREEN_UPDATE_WIFI_RECONNECTED	เชื่อมต่อ Wi-Fi ได้อีกครั้งแล้ว! เริ่มดาวน์โหลดไฟล์ต่อ	
+GLUE_LOADINGSCREEN_UPDATE_WIFI_WARNING	ไม่พบการเชื่อมต่อ Wi-Fi คุณต้องการดาวน์โหลดผ่านเครือข่ายมือถือหรือไม่	
+GLUE_LOADINGSCREEN_WARNING_CELLULAR	จำเป็นต้องดาวน์โหลดข้อมูลขนาด {0} คุณแน่ใจหรือไม่ว่าจะใช้สัญญาณจากมือถือ	0=data size
+GLUE_LOCKED_DECK_TOOLTIP	เด็คนี้ถูกล็อคไม่ให้แก้ไข	
+GLUE_LOCKED_DECK_TOOLTIP_TITLE	ล็อค	
+GLUE_LOE_LOADING_BAR_TASK_1	กำลังซ่อนวัตถุโบราณ	
+GLUE_LOE_LOADING_BAR_TASK_10	กำลังบดทราย	
+GLUE_LOE_LOADING_BAR_TASK_11	กำลังปลูกป่า	
+GLUE_LOE_LOADING_BAR_TASK_12	กำลังทำลายไม้เท้า	
+GLUE_LOE_LOADING_BAR_TASK_13	กำลังซ่อมรถขนแร่	
+GLUE_LOE_LOADING_BAR_TASK_14	กำลังขุดอุโมงค์	
+GLUE_LOE_LOADING_BAR_TASK_15	กำลังขัดเกราะ	
+GLUE_LOE_LOADING_BAR_TASK_16	กำลังตกแต่งแมลงปีกแข็ง	
+GLUE_LOE_LOADING_BAR_TASK_17	กำลังขุดสมบัติต้องสาป	
+GLUE_LOE_LOADING_BAR_TASK_18	กำลังทำความสะอาดพิพิธภัณฑ์	
+GLUE_LOE_LOADING_BAR_TASK_2	กำลังวาดแผนที่ขุมสมบัติ	
+GLUE_LOE_LOADING_BAR_TASK_3	กำลังใส่จินนี่เข้าไปในตะเกียง	
+GLUE_LOE_LOADING_BAR_TASK_4	กำลังวางกับดักสุดโหด	
+GLUE_LOE_LOADING_BAR_TASK_5	กำลังปลุกพวกทร็อกก์	
+GLUE_LOE_LOADING_BAR_TASK_6	กำลังปรุงเมอร์ล็อค	
+GLUE_LOE_LOADING_BAR_TASK_7	กำลังสร้างพีระมิด	
+GLUE_LOE_LOADING_BAR_TASK_8	กำลังพันผ้าใหม่ให้มัมมี่	
+GLUE_LOE_LOADING_BAR_TASK_9	กำลังประกอบร่างสเกลเลซอรัส	
+GLUE_LOOT_LOADING_BAR_TASK_1	กำลังซ่อนขุมทรัพย์	
+GLUE_LOOT_LOADING_BAR_TASK_10	กำลังรวบรวมปาร์ตี้	
+GLUE_LOOT_LOADING_BAR_TASK_11	กำลังขุดอุโมงค์	
+GLUE_LOOT_LOADING_BAR_TASK_12	กำลังวางกับดัก	
+GLUE_LOOT_LOADING_BAR_TASK_13	กำลังวิ่งหนีมังกร	
+GLUE_LOOT_LOADING_BAR_TASK_14	กำลังให้อาหารเฟอร์บอล์ก 	
+GLUE_LOOT_LOADING_BAR_TASK_15	กำลังยิงลูกไฟยักษ์แบบสุ่ม	
+GLUE_LOOT_LOADING_BAR_TASK_16	กำลังเก็บสมบัติจากหีบ	
+GLUE_LOOT_LOADING_BAR_TASK_17	กำลังโทษโร้ก	
+GLUE_LOOT_LOADING_BAR_TASK_18	กำลังอัพเกรดอุปกรณ์	
+GLUE_LOOT_LOADING_BAR_TASK_2	กำลังมองหากับดัก	
+GLUE_LOOT_LOADING_BAR_TASK_3	กำลังทอยเต๋าหาคนเริ่มก่อน	
+GLUE_LOOT_LOADING_BAR_TASK_4	กำลังจุดเทียน	
+GLUE_LOOT_LOADING_BAR_TASK_5	กำลังใส่แว็กซ์หนวด	
+GLUE_LOOT_LOADING_BAR_TASK_6	กำลังวาดแผนที่	
+GLUE_LOOT_LOADING_BAR_TASK_7	กำลังระบุชนิดสมบัติ	
+GLUE_LOOT_LOADING_BAR_TASK_8	กำลังโกยเหรียญเข้ากอง	
+GLUE_LOOT_LOADING_BAR_TASK_9	กำลังให้ทิปนักดนตรี	
+GLUE_LOSSES	แพ้	
+GLUE_LOTUS_CLASS_NAMES	ดรูอิด, โร้ก, ชาแมน	
+GLUE_MASS_DISENCHANT_BUTTON_TEXT	สลาย	
+GLUE_MASS_DISENCHANT_DETAILS	คุณไม่สามารถมีการ์ดซ้ำกันในเด็คได้เกิน 2_ใบ (หรือ 1_ใบ สำหรับการ์ดระดับตำนาน) คุณจึงควรสลายการ์ดส่วนเกินเพื่อแปรสภาพเป็นผงเวทมนตร์!	
+GLUE_MASS_DISENCHANT_DETAILS_HEADLINE	สลายการ์ดส่วนเกินของคุณเพื่อสร้างผงเวทมนตร์	
+GLUE_MASS_DISENCHANT_HEADLINE	สลายการ์ดหลายใบ	
+GLUE_MASS_DISENCHANT_HEADLINE_PHONE	สลายการ์ดหลายใบ	
+GLUE_MASS_DISENCHANT_NUM_GOLDEN_CARDS	สีทอง {0}_ใบ	0=number of golden cards
+GLUE_MASS_DISENCHANT_PREMIUM_TITLE	{0}สีทอง	0=rarity
+GLUE_MASS_DISENCHANT_SUB_HEADLINE_TEXT	คุณจะทำลาย:	
+GLUE_MASS_DISENCHANT_TOTAL_AMOUNT	{0:#,###0}	0=total amount with commas and no decimals
+GLUE_MATCHMAKER_FINDING_OPPONENT	กำลังค้นหาคู่ต่อสู้	
+GLUE_MATCHMAKER_FINDING_OPPONENTS	กำลังค้นหาเหล่าคู่ต่อสู้	
+GLUE_MATCHMAKER_PERFECT_OPPONENT	คู่ต่อสู้ที่คู่ควร	
+GLUE_MATCHMAKER_PERFECT_OPPONENTS	เหล่าคู่ต่อสู้ที่คู่ควร	
+GLUE_MINSPEC_ERROR	ขออภัย! อุปกรณ์เครื่องนี้เล่น Hearthstone ไม่ได้ เนื่องจากสเปคเครื่องต่ำเกินไป\n\nแตะที่ บริการลูกค้า เพื่อดูข้อมูลเพิ่มเติม	
+GLUE_MINSPEC_WARNING	อุปกรณ์เครื่องนี้มีสเปคต่ำกว่าสเปคที่แนะนำในการเล่น Hearthstone และอาจมีอาการกระตุกหรือหน่วง\n\nแตะ ตกลง เพื่อดำเนินการต่อ หรือ บริการลูกค้า เพื่อดูข้อมูลเพิ่มเติม	
+GLUE_MOBILE_EXISTING_ACCOUNT_CONVERSATION	ยินดีต้อนรับสู่โรงแรมนะ สหาย!	
+GLUE_MOBILE_EXISTING_ACCOUNT_NEW	ฉันเป็นผู้เล่นใหม่	
+GLUE_MOBILE_EXISTING_ACCOUNT_POPUP	คุณยังไม่เคยเล่น Hearthstone มาก่อน หรือว่ามีบัญชีอยู่แล้ว	
+GLUE_MOBILE_EXISTING_ACCOUNT_RETURNING	ลงชื่อเข้าเล่น!	
+GLUE_MOBILE_REGION_SELECT_FRIENDS	เพื่อน	
+GLUE_MOBILE_REGION_SELECT_PROGRESS	ความคืบหน้า	
+GLUE_MOBILE_REGION_SELECT_PURCHASES	รายการซื้อ	
+GLUE_MOBILE_REGION_SELECT_TOOLTIP	เลือกภูมิภาคที่จะเล่น	
+GLUE_MOBILE_REGION_SELECT_TOOLTIP_HEADER	เลือกภูมิภาค	
+GLUE_MOBILE_REGION_SELECT_WARNING	<size=100>ไม่ใช่ทุกอย่างที่จะไปกับคุณ!</size>\nเมื่อคุณเปลี่ยนภูมิภาค ความคืบหน้าในการเล่นเกมของคุณ (รวมถึงตัวละคร การ์ด และอันดับ) จะไม่ตามคุณไปด้วย และยังส่งผลถึง:	
+GLUE_MOBILE_REGION_SELECT_WARNING_HEADER	เลือกภูมิภาค	
+GLUE_MOBILE_SPLASH_SCREEN_BREAKING_NEWS	ข่าวด่วน	
+GLUE_MOBILE_SPLASH_SCREEN_LOGIN	ล็อกอิน	
+GLUE_MOBILE_STORE_AMAZON_PAYMENT_INFO_DETAILS_ANDROID	การซื้อในแอพจะใช้บัญชี Amazon ของคุณ ต้องการบัญชี Blizzard เพื่อทำการซื้อในแอพด้วยเงินจริง	
+GLUE_MOBILE_STORE_PAYMENT_INFO_DETAILS_ANDROID	การซื้อในแอพจะใช้บัญชี Google Play ของคุณ ต้องการบัญชี Blizzard เพื่อทำการซื้อในแอพด้วยเงินจริง	
+GLUE_MOBILE_STORE_PAYMENT_INFO_DETAILS_APPLE	การซื้อในแอพจะใช้ Apple ID ของคุณ ต้องการบัญชี Blizzard เพื่อทำการซื้อในแอพด้วยเงินจริง 	
+GLUE_MOBILE_STORE_PAYMENT_INFO_URL_DETAILS	แตะที่ "{0}" เพื่อเรียนรู้เกี่ยวกับอัตราการได้รับการ์ด\nตามระดับความหายากและรายละเอียดการซื้อ	
+GLUE_MOBILE_TOOLTIP_BUTTON_STORE_DESC	ซื้อซองการ์ดด้วยโกลด์หรือเงินจริง	
+GLUE_MY_COLLECTION	คอลเลกชันของฉัน	
+GLUE_MY_COLLECTION_PHONE	คอลเลกชันของฉัน	
+GLUE_NAXX_LOADING_BAR_TASK_1	กำลังฝึกหัวเราะอย่างชั่วร้าย	
+GLUE_NAXX_LOADING_BAR_TASK_10	กำลังต้มปีศาจเมือก	
+GLUE_NAXX_LOADING_BAR_TASK_11	กำลังใช้เหรียญถ่วงน้ำหนัก	
+GLUE_NAXX_LOADING_BAR_TASK_12	กำลังหรี่แสงไฟ	
+GLUE_NAXX_LOADING_BAR_TASK_13	กำลังเป่าเทียน	
+GLUE_NAXX_LOADING_BAR_TASK_14	กำลังบิลด์อารมณ์	
+GLUE_NAXX_LOADING_BAR_TASK_15	กำลังเย็บมินเนี่ยนเข้าด้วยกัน	
+GLUE_NAXX_LOADING_BAR_TASK_16	กำลังทดลองกับมินเนี่ยน	
+GLUE_NAXX_LOADING_BAR_TASK_17	กำลังกำจัดผู้บุกรุก	
+GLUE_NAXX_LOADING_BAR_TASK_18	กำลังลูบหัวบิกเกิลสเวิร์ธ	
+GLUE_NAXX_LOADING_BAR_TASK_2	กำลังเปลี่ยนใยแมงมุม	
+GLUE_NAXX_LOADING_BAR_TASK_3	กำลังเติมปีศาจเมือก	
+GLUE_NAXX_LOADING_BAR_TASK_4	กำลังจัดเรียงกระดูก	
+GLUE_NAXX_LOADING_BAR_TASK_5	กำลังซ้อมพูดประโยคตัวร้าย	
+GLUE_NAXX_LOADING_BAR_TASK_6	กำลังพ่นสเปรย์กลิ่นเหม็น	
+GLUE_NAXX_LOADING_BAR_TASK_7	กำลังหยอดน้ำมันโซ่	
+GLUE_NAXX_LOADING_BAR_TASK_8	กำลังเอาขยะไปทิ้ง	
+GLUE_NAXX_LOADING_BAR_TASK_9	กำลังเอาแมงมุมไปซ่อน	
+GLUE_NEARBY_PLAYERS_DISABLE	ปิดเพื่อซ่อนคุณจากผู้เล่นที่อยู่ใกล้เคียง (คุณจะไม่เห็นพวกเขาเช่นกัน!)	
+GLUE_NEARBY_PLAYERS_ENABLE	เปิดเพื่อดูผู้เล่นที่อยู่ใกล้เคียงและแสดงตัวให้พวกเขาเห็นคุณ!	
+GLUE_NEGATIVE_CURRENCY	<color=#ff3232ff>{0}</color>	
+GLUE_NEW_PLAYER_AVAILABLE_AT_RANK_25	เปิดได้เมื่อถึง\nอันดับ 25	
+GLUE_NEW_PLAYER_PROMOTION_CHEST_DESC	ยินดีด้วย! คุณพ้นสถานะมือใหม่\nอย่างเป็นทางการแล้ว\n\nคู่ต่อสู้ที่แข็งแกร่งขึ้นรออยู่!	
+GLUE_NEW_PLAYER_PROMOTION_CHEST_DESC_HUB	รางวัลสำหรับการขึ้นถึงอันดับ 25	
+GLUE_NEW_PLAYER_PROMOTION_CHEST_HEADER	อันดับ {0}!	
+GLUE_NEW_PLAYER_SET_ROTATION_POPUP_BODY	การ์ดใหม่มาแล้ว! ตอนนี้คุณต้องไปให้ถึงอันดับ 25 ก่อนถึงจะใช้การ์ดเก่าบางใบได้	
+GLUE_NEW_PLAYER_SET_ROTATION_POPUP_HEADER	ยินดีต้อนรับกลับมา!	
+GLUE_NINJA	นินจา	
+GLUE_NUM_CHAPTERS_COMPLETED	เล่นจบแล้ว {0}/{1} บท	
+GLUE_OFFLINE_DECK_ERROR_BODY	เกิดข้อผิดพลาดในการสร้างเด็คของคุณในขณะที่คุณออฟไลน์ โปรดเชื่อมต่อใหม่และลองอีกครั้ง	
+GLUE_OFFLINE_FEATURE_DISABLED_BODY	ไม่สามารถ[b]ใช้คุณลักษณะนี้ได้[b]ขณะออฟไลน์	
+GLUE_OFFLINE_FEATURE_DISABLED_HEADER	ออฟไลน์	
+GLUE_OFFLINE_SAVE_DECK_BODY	ระบบได้บันทึกเด็ค[b]ของคุณไว้[b]บนอุปกรณ์นี้[b]จนกว่าคุณจะ[b]เชื่อมต่อ[b]อินเทอร์เน็ตใหม่	
+GLUE_OFFLINE_SAVE_DECK_HEADER	บันทึกแล้ว	
+GLUE_OPEN_PACKS	เปิดซองการ์ด	
+GLUE_OPEN_PACKS_PHONE	เปิดซองการ์ด	
+GLUE_OUTSTANDING_DRAFT_TICKET_DIALOG_DESC	คุณได้รับตั๋วลานประลองเพิ่มแล้ว! ครั้งนี้ไม่ต้องห่วงเรื่องค่าเข้าเล่นเหมือนอย่างเคย	
+GLUE_OUTSTANDING_DRAFT_TICKET_DIALOG_HEADER	ยินดีต้อนรับสู่ลานประลอง!	
+GLUE_PACK_OPENING_ALL_CLASSES	ทุกคลาส	
+GLUE_PACK_OPENING_BOOSTER_COUNT	{0}	0=number of owned boosters
+GLUE_PACK_OPENING_HEADER	เปิดซองการ์ด	
+GLUE_PACK_OPENING_TOOLTIP	카드 팩을 개봉함으로써, 귀하는 카드 팩의 청약철회가 불가하다는 사실을 인지하고 이에 동의합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_PATCHING_ERROR	เกิดข้อผิดพลาดขณะอัพเดต Hearthstone โปรดลองใหม่อีกครั้ง	
+GLUE_PATCHING_LABEL	กำลังดาวน์โหลด {0}/{1} ไฟล์	
+GLUE_PICK_A_CARD	เลือกการ์ดหนึ่งใบ	
+GLUE_PICK_A_REGION	เลือกภูมิภาค	
+GLUE_PICK_A_REPLACEMENT	เลือกเพื่อแทนที่	
+GLUE_PLAY_STANDARD	เล่นมาตรฐาน	
+GLUE_PLAY_WILD	เล่นอิสระ	
+GLUE_PLAYERS_NEARBY	ผู้เล่นใกล้เคียง	
+GLUE_PRACTICE	ฝึกฝน	
+GLUE_PRACTICE_HINT	เล่นโหมดฝึกฝนที่นี่	
+GLUE_PUSH_NOTIFICATION_CONTEXT_BODY	ให้เราแจ้งคุณเมื่อมีการปล่อยของใหม่ๆ ที่น่าสนใจหรือไม่	
+GLUE_PUSH_NOTIFICATION_CONTEXT_CANCEL	ไม่ล่ะ	
+GLUE_PUSH_NOTIFICATION_CONTEXT_CONFIRM	แจ้งมาเลย!	
+GLUE_PUSH_NOTIFICATION_CONTEXT_HEADER	การแจ้งเตือนแบบพุช	
+GLUE_PUSH_NOTIFICATION_EXTENDED_CONTEXT_BODY	ดูเหมือนว่าคุณปิดการแจ้งเตือนสำหรับ Hearthstone ไว้ ไปที่การตั้งค่าอุปกรณ์ของคุณและเปิดใช้งานการแจ้งเตือนสำหรับแอพ!	
+GLUE_QUEST_FINISHED_DAILY	คุณทำเควสต์ประจำวันครบหมดแล้ว	
+GLUE_QUEST_LOG_ARENA	ลานประลอง	
+GLUE_QUEST_LOG_BEST_FORGE_RECORD_HEADLINE	กุญแจลานประลองที่ดีที่สุด	
+GLUE_QUEST_LOG_CHEST_TOOLTIP_BODY	เปิดหีบของคุณเมื่อจบ[b]ฤดูกาล เพิ่มอับดับของคุณ[b]เพื่ออัพเกรดหีบ!	
+GLUE_QUEST_LOG_CHEST_TOOLTIP_BODY_NO_CHEST	ไปให้ถึงอันดับ 20 แล้ว[b]คุณจะได้รับหีบสมบัติ[b]ที่มีรางวัลอยู่ข้างใน[b]เมื่อจบฤดูกาล!	
+GLUE_QUEST_LOG_CHEST_TOOLTIP_BODY_NO_CHEST_REVAMP	ชนะอีก {0}_เกมเพื่อรับ[b]หีบประจำฤดูกาล!	
+GLUE_QUEST_LOG_CHEST_TOOLTIP_HEADER	หีบสมบัติ {0}	0=Rank number of chest
+GLUE_QUEST_LOG_CLASS_LOCKED	ล็อค	
+GLUE_QUEST_LOG_CURRENT_CHEST	หีบจัดอันดับ	
+GLUE_QUEST_LOG_HEADLINE	บันทึกเควสต์	
+GLUE_QUEST_LOG_HERO_LEVELS	เลเวลฮีโร่	
+GLUE_QUEST_LOG_NO_CHEST	ยังไม่มีหีบ!	
+GLUE_QUEST_LOG_NO_QUESTS	คุณไม่มีเควสต์ ปลดล็อคฮีโร่ใหม่ๆ ในโหมดฝึกฝนดูสิ!	
+GLUE_QUEST_LOG_NO_QUESTS_DAILIES_UNLOCKED	คุณไม่มีเควสต์ พรุ่งนี้แวะมาดูอีกทีนะ!	
+GLUE_QUEST_LOG_PHONE_BUTTON	เควสต์	
+GLUE_QUEST_LOG_PLAY_MODE	โหมดแข่งขัน	
+GLUE_QUEST_LOG_PROGRESS	ชนะ\nอีก {0} เกม	Ranked Revamp, newline is due to small chest in quest log
+GLUE_QUEST_LOG_TOTAL_LEVELS	<color=#c4b47c>เลเวลรวม:</color> {0}	
+GLUE_QUEST_LOG_TOTAL_WINS_HEADLINE	ชนะรวม	
+GLUE_QUEST_LOG_WINS_HEADLINE	ชนะในโหมดแข่งขัน	
+GLUE_QUEST_NOTIFICATION_CAPTION	เควสต์ส่วนใหญ่จะทำได้เฉพาะในโหมดการแข่งขันกับผู้เล่นอื่น	
+GLUE_QUEST_NOTIFICATION_CAPTION_FRIEND_WEEK		Set this string to blank to make it not show up, even when Friend Week is active.
+GLUE_QUEST_NOTIFICATION_HEADER	เควสต์ของวันนี้	
+GLUE_QUEST_NOTIFICATION_HEADER_NEW_ONLY	เควสต์ใหม่!	
+GLUE_RAF_COPY_COMPLETE	คัดลอกไปยังคลิปบอร์ด	
+GLUE_RAF_ERROR_BODY	บริการเรียกใช้เพื่อนไม่พร้อมใช้งาน โปรดลองอีกครั้งในภายหลัง	
+GLUE_RAF_ERROR_HEADER	ชวนเพื่อนมาเล่นเกม	
+GLUE_RAF_HERO_FRAME_TEXT	รับมอร์เกิล ฮีโร่ชาแมนคนใหม่เมื่อเพื่อนของคุณเล่น Hearthstone จนถึงเลเวล 20!\n(เพื่อนของคุณจะได้รับซองการ์ดเมื่อยอมรับ)	
+GLUE_RAF_HERO_FRAME_TITLE	ชวนเพื่อนมาเล่นเกม	
+GLUE_RAF_HERO_TOOLTIP_HERO	มอร์เกิลนักพยากรณ์	
+GLUE_RAF_HERO_TOOLTIP_REDEEMED_TITLE	ได้รับมอร์เกิลฮีโร่ชาแมนแล้ว พบมอร์เกิลได้ในคอลเลกชันของฉัน	
+GLUE_RAF_HERO_TOOLTIP_TITLE	รับมอร์เกิล ฮีโร่ชาแมนคนใหม่เมื่อนักรบถึงเลเวล 20!\	
+GLUE_RAF_INFO_BODY	คุณจะได้รับฮีโร่ชาแมน "มอร์เกิลนักพยากรณ์" เมื่อเพื่อนที่คุณชวนมาเล่นเกมจนเลเวลของทุกคลาสรวมกันเท่ากับ 20 ถ้าพวกเขามีเลเวลรวมเท่ากับ 20 หรือมากกว่าอยู่แล้ว คุณจะไม่สามารถชวนพวกเขาได้\n\nและเมื่อเพื่อนที่ชวนมาอีกสี่คนเล่นจนถึงเลเวล 20 คุณจะได้รับซองการ์ดคลาสสิค\n\nหากต้องการข้อมูลเพิ่มเติม โปรดดูเว็บไซต์ของเรา	
+GLUE_RAF_INFO_GOT_IT_BUTTON	รับทราบ!	
+GLUE_RAF_INFO_HEADLINE	สิ่งนี้ทำงานอย่างไร	
+GLUE_RAF_INFO_MORE_INFO_BUTTON	ข้อมูลเพิ่มเติม	
+GLUE_RAF_PACK_TOOLTIP_REDEEMED_TITLE	ได้รับซองการ์ดคลาสสิคนี้แล้ว	
+GLUE_RAF_PACK_TOOLTIP_TITLE	รับซองการ์ดเมื่อเพื่อนมีเลเวล 20!	
+GLUE_RAF_PROGRESS_FRAME_LOCKED_BAR_NAME	กำลังรอนักรบสำหรับเรียกใช้	
+GLUE_RAF_PROGRESS_FRAME_LOCKED_BAR_STATE	ล็อค	
+GLUE_RAF_PROGRESS_FRAME_PROGRESS_TITLE	ความคืบหน้าการชวนเพื่อน	
+GLUE_RAF_PROGRESS_FRAME_RECRUIT_COUNT	+ คนอื่นอีก {0} คน	
+GLUE_RAF_PROGRESS_FRAME_REWARDS_TITLE	รางวัล	
+GLUE_RAF_RECRUIT_BAR_TOOLTIP_DESC	คุณจะได้รับรางวัลเมื่อเพื่อนที่ชวนมาเล่นเกมจนเลเวลของทุกคลาสรวมกันเท่ากับ 20	
+GLUE_RAF_RECRUIT_BAR_TOOLTIP_HEADLINE	เลเวลของผู้เล่น	
+GLUE_RAF_RECRUIT_BUTTON	ชวนเพื่อนใหม่	
+GLUE_RAF_TOOLTIP_DESC	ชวนเพื่อนให้มาเล่น Hearthstone กับคุณ!	
+GLUE_RAF_TOOLTIP_HEADLINE	ชวนเพื่อนมาเล่นเกม	
+GLUE_RAF_TOOLTIP_LOCKED_DESC	คุณจะเข้าสู่ การชวนเพื่อนมาเล่นเกม ได้หลังจากที่ทำภารกิจแนะนำจนเสร็จ	
+GLUE_RAF_URL_BUTTON	คัดลอก	
+GLUE_RAF_URL_TITLE	แชร์ลิงก์นี้กับเพื่อน!	
+GLUE_RDM_HIGH_COST	คุณควรมีการ์ดที่มีค่าร่ายสูงๆ ไว้บ้างเพื่อเผด็จศึกคู่ต่อสู้	
+GLUE_RDM_LOW_COST	อย่าลืมเพิ่มการ์ดที่มีค่าร่ายต่ำไว้ใช้ตอนต้นเกมด้วย	
+GLUE_RDM_MEDIUM_COST	คุณควรมีการ์ดค่าร่ายปานกลางไว้บ้างเพื่อควบคุมกระดาน	
+GLUE_RDM_MORE_SPELLS	คุณควรเพิ่มเวทมนตร์ไปอีกสักหน่อย	
+GLUE_RDM_MORE_WEAPONS	คุณควรเพิ่มอาวุธไปอีกสักหน่อย	
+GLUE_RDM_NO_SPECIFICS	เด็คของคุณดูดีทีเดียว! เพิ่มการ์ดพวกนี้อีกหน่อยก็น่าจะเสร็จเรียบร้อยแล้ว	
+GLUE_RDM_TEMPLATE_REPLACE	นี่คือการ์ดที่เหมาะสำหรับใช้แทนที่\n{0}!	0=card names
+GLUE_RECONNECT_GAME_TYPE_ARENA	ลานประลอง	
+GLUE_RECONNECT_GAME_TYPE_BRM	Blackrock Mountain	
+GLUE_RECONNECT_GAME_TYPE_FRIENDLY	กระชับมิตร	
+GLUE_RECONNECT_GAME_TYPE_NAXXRAMAS	Naxxramas	
+GLUE_RECONNECT_GAME_TYPE_PRACTICE	ฝึกฝน	
+GLUE_RECONNECT_GAME_TYPE_RANKED	เกมจัดอันดับ	
+GLUE_RECONNECT_GAME_TYPE_TAVERN_BRAWL	เกมท้าประลอง	
+GLUE_RECONNECT_GAME_TYPE_TUTORIAL	โหมดสอนเล่น	
+GLUE_RECONNECT_GAME_TYPE_UNRANKED	เกมไม่จัดอันดับ	
+GLUE_RECONNECT_HELPER_ACCESS_DISABLED_BODY	โปรดตรวจสอบว่า[b]อุปกรณ์ของคุณ[b]เปิดใช้งาน[b]อินเทอร์เน็ต จากนั้นลองอีกครั้ง	
+GLUE_RECONNECT_HELPER_ACCESS_DISABLED_HEADER	การเชื่อมต่อ[b]อินเทอร์เน็ต[b]ถูกปิดใช้งาน	
+GLUE_RECONNECT_HELPER_BAD_VERSION_HEADER	มีเวอร์ชันใหม่แล้ว	
+GLUE_RECONNECT_HELPER_BAD_VERSION_LAUNCHER_BODY	โปรดเปิด Hearthstone ใหม่เพื่อรับ[b]การอัพเดตล่าสุด	
+GLUE_RECONNECT_HELPER_BAD_VERSION_RESET_BODY	คุณต้องอัพเดต[b]ก่อนที่[b]คุณจะดำเนินการต่อ	
+GLUE_RECONNECT_HELPER_BODY	คุณต้องเชื่อมต่อใหม่[b]ก่อนที่[b]คุณจะดำเนินการต่อ แต่คุณสามารถ[b]ดูคอลเลกชัน[b]ของคุณ[b]ขณะออฟไลน์ได้	
+GLUE_RECONNECT_HELPER_CANCEL	ยกเลิก	
+GLUE_RECONNECT_HELPER_CONFIRM	เชื่อมต่อใหม่	
+GLUE_RECONNECT_HELPER_EXIT_GAME	ออกจากเกม	
+GLUE_RECONNECT_HELPER_FAILED_BODY	ตรวจสอบว่าคุณ[b]เชื่อมต่อ[b]อินเทอร์เน็ต แล้วลองใหม่อีกครั้ง	
+GLUE_RECONNECT_HELPER_FAILED_HEADER	การเชื่อมต่อใหม่[b]ล้มเหลว	
+GLUE_RECONNECT_HELPER_HEADER	คุณออฟไลน์[b]อยู่ในขณะนี้	
+GLUE_RECONNECT_HELPER_IN_PROGRESS	กำลังเชื่อมต่อใหม่...	
+GLUE_RECONNECT_HELPER_LONG_TIME	กระบวนการนี้[b]ใช้เวลานานผิดปกติ\nโปรดตรวจสอบ[b]การเชื่อมต่อ[b]อินเทอร์เน็ตของคุณ	
+GLUE_RECONNECT_HELPER_TITLE	เชื่อมต่อใหม่	
+GLUE_RECONNECT_HELPER_UPDATE	อัพเดต	
+GLUE_RECONNECT_RESULT_DISCONNECT	คุณแพ้ในการแข่งขัน{0}เกมล่าสุด เนื่องจากคุณถูกตัดการเชื่อมต่อ	0=one of GLOBAL_RECONNECT_GAME_TYPE_*
+GLUE_RECONNECT_RESULT_HEADER	ผลการแข่งขัน	
+GLUE_RECONNECT_RESULT_LOSE	คุณแพ้ในการแข่งขัน{0}เกมล่าสุด	0=one of GLOBAL_RECONNECT_GAME_TYPE_*
+GLUE_RECONNECT_RESULT_TIE	คุณเสมอในการแข่งขัน{0}เกมล่าสุด	0=one of GLOBAL_RECONNECT_GAME_TYPE_*
+GLUE_RECONNECT_RESULT_WIN	คุณชนะในการแข่งขัน{0}เกมล่าสุด	0=one of GLOBAL_RECONNECT_GAME_TYPE_*
+GLUE_REQUIRED_CLIENT_STATIC_ASSETS_ERROR_MESSAGE	เกิดข้อผิดพลาดในการดาวน์โหลดข้อมูลไคลเอนต์เพิ่มเติม	This happens when an error occurred trying to download required assets from the server.
+GLUE_RETURNING_PLAYER_WELCOME_DESC	เราเตรียมเควสต์และรางวัลไว้เพื่อช่วยให้คุณกลับมาเล่นเกมได้ง่ายขึ้น!	Text for Returning Player welcome banner.
+GLUE_RETURNING_PLAYER_WELCOME_TITLE	ยินดีต้อนรับกลับมา!	Title for Returning Player welcome banner.
+GLUE_RETURNINGPLAYER_QUESTDESCRIPTION	เอาชนะผู้ท้าชิงทั้งสามเพื่อรับรางวัล!	
+GLUE_RETURNINGPLAYER_QUESTTITLE	การกลับมาของฮีโร่	
+GLUE_RETURNINGPLAYER_RETIRE_BUTTON_TEXT	ถอนตัว	
+GLUE_RETURNINGPLAYERPOPUP_MESSAGE	ถ้าคุณข้ามภารกิจเจ้าของโรงแรม\nคุณจะกลับมาทำเควสต์เพื่อรับซองการ์ดฟรี 3 ซองไม่ได้อีก!	
+GLUE_RETURNINGPLAYERPOPUP_TITLE	แน่ใจแล้วหรือไม่	
+GLUE_ROTATED_SETS_DIALOG	ชุดการ์ดต่อไปนี้อยู่ภายใต้กฎอิสระแล้ว!	
+GLUE_SET_ROTATION_CURRENT_YEAR	ปีแห่งเรเวน	
+GLUE_SET_ROTATION_NEXT_YEAR	ปีแห่งมังกร	
+GLUE_SHOP_BOOSTER_SKU_BUTTON	{0} ซอง	
+GLUE_SHOP_CONVERT_TO_ARCANE_ORBS_HEADER	Convert Runestones to Arcane Orbs	
+GLUE_SHOP_DESCRIPTION_HEADER	{0} ประกอบด้วย:	
+GLUE_SHOP_GET_MORE_RUNESTONES	คุณมีรูนสโตนไม่เพียงพอที่จะซื้อสิ่งนี้ ต้องการรับรูนสโตนเพิ่มหรือไม่	
+GLUE_SHOP_GET_MORE_RUNESTONES_HEADER	รูนสโตนไม่พอ!	
+GLUE_SHOP_LANDING_ADVENTURE_BANNER	การผจญภัย	
+GLUE_SHOP_NOT_ENOUGH_RUNESTONES	Not enough Runestones	
+GLUE_SHOP_PRICE_ARCANE_ORBS	ลูกแก้วเวทมนตร์ {0} ลูก	
+GLUE_SHOP_PRICE_FREE	ฟรี!	
+GLUE_SHOP_PRICE_RUNESTONES	{0} รูนสโตน	
+GLUE_SHOP_RIBBON_GREATEST_NEWPLAYERS	เหมาะสำหรับผู้เล่นใหม่	
+GLUE_SHOP_RIBBON_LATEST_ADVENTURE	การผจญภัยล่าสุด	
+GLUE_SHOP_RIBBON_PREPURCHASE_BUNDLE	ชุดซื้อล่วงหน้า	
+GLUE_SHOP_RUNESTONE_SKU_BUTTON	{0} รูนสโตน	
+GLUE_SHOP_RUNESTONES_DETAILS_HEADER	สามารถแลกเปลี่ยนรูนสโตนเป็น:	
+GLUE_SHOP_SECTION_HEADER_TIERB	จำกัด\nเวลา!	
+GLUE_SHOP_SECTION_HEADER_TIERC	ซอง\nการ์ด	
+GLUE_SHOP_SECTION_HEADER_TIERD	การผจญภัย	
+GLUE_SHOP_VC_CONVERSION_AUTO_CONVERT	แปลงลูกแก้วที่ขาดไปอัตโนมัติ	
+GLUE_SHOP_VC_CONVERSION_GET_MORE	รับเพิ่ม	
+GLUE_SHOP_WILD_CARDS_DISCLAIMER	•  เฉพาะรูปแบบอิสระ - การ์ดเหล่านี้ไม่สามารถใช้ในรูปแบบมาตรฐาน	
+GLUE_SHOW_CUSTOM_DECKS	เด็คของคุณ	
+GLUE_SHOW_PRECON_DECKS	เด็คพื้นฐาน	
+GLUE_SIDEQUEST_PROGRESS_BANNER	ความคืบหน้า: {0}/{1}	0=Current Progress, 1=Completion Requirement
+GLUE_SINGLE_CARD_ADDED	เราเพิ่มการ์ดใหม่ 1 ใบให้ชุดคลาสสิค!	
+GLUE_SINGLE_CARD_UPDATED	การ์ดใบนี้มีการเปลี่ยนแปลง	
+GLUE_SPECIAL_QUEST_NOTIFICATION_HEADER	เควสต์พิเศษ!	
+GLUE_SPECTATOR_LOADING_BAR_TASK_1	กำลังมองหาโต๊ะของเพื่อน	
+GLUE_SPECTATOR_LOADING_BAR_TASK_2	กำลังอบป๊อปคอร์น	
+GLUE_SPECTATOR_LOADING_BAR_TASK_3	กำลังเช็ดแว่นตา	
+GLUE_SPECTATOR_LOADING_BAR_TASK_4	กำลังแทรกตัวผ่านฝูงชน	
+GLUE_SPECTATOR_LOADING_BAR_TASK_5	กำลังหาที่นั่งดีๆ	
+GLUE_SPECTATOR_LOADING_BAR_TASK_6	กำลังรินเครื่องดื่มก่อนเกม	
+GLUE_SPINNER_1	คู่ต่อสู้กระจอก	
+GLUE_SPINNER_10	วอร์ล็อคว้าวุ่น	
+GLUE_SPINNER_11	โร้กขี้โรค	
+GLUE_SPINNER_12	วอริเออร์ไร้บ้าน	
+GLUE_SPINNER_13	ดรูอิดดื้อด้าน	
+GLUE_SPINNER_14	ชาแมนตัวมอมแมม	
+GLUE_SPINNER_15	พาลาดินแพ้แล้วพาล	
+GLUE_SPINNER_16	ฮันเตอร์จอมฮึดฮัด	
+GLUE_SPINNER_17	พรีสต์เพ้อเจ้อ	
+GLUE_SPINNER_18	ผู้เล่นฝีมือห่วย	
+GLUE_SPINNER_19	อดีตรูมเมทของคุณ	
+GLUE_SPINNER_2	ฝันร้ายของคุณ	
+GLUE_SPINNER_20	มือโปรสตาร์คราฟท์	
+GLUE_SPINNER_21	ตัวตลกฝ่ายบัญชี	
+GLUE_SPINNER_22	หัวหน้ากิลด์ของคุณ	
+GLUE_SPINNER_23	จอร์จคอสั้น	
+GLUE_SPINNER_24	คนขายหมากฝรั่ง	
+GLUE_SPINNER_25	คนขี้โกง	
+GLUE_SPINNER_26	คนหัวช้า	
+GLUE_SPINNER_27	ไอ้หนุ่มแมลงสาบ	
+GLUE_SPINNER_28	นักต่อคำ	
+GLUE_SPINNER_29	คนติดกาแฟ	
+GLUE_SPINNER_3	นักกินแป้งเปียกระดับโลก	
+GLUE_SPINNER_30	นักพูดในใจ	
+GLUE_SPINNER_31	ผู้พัฒนาของ Blizzard	
+GLUE_SPINNER_32	สุดยอดปรมาจารย์	
+GLUE_SPINNER_33	ผู้เล่นไดมอนด์ลีก	
+GLUE_SPINNER_34	ผู้เล่นมือใหม่	
+GLUE_SPINNER_35	เดธไนท์ดักดาน	
+GLUE_SPINNER_36	มังค์มั่วนิ่ม	
+GLUE_SPINNER_37	ลูกหมา	
+GLUE_SPINNER_4	เมอร์ล็อค	
+GLUE_SPINNER_5	นักวิจารณ์ฟัก	
+GLUE_SPINNER_6	คนปากเหม็น	
+GLUE_SPINNER_7	ฮ็อกเกอร์	
+GLUE_SPINNER_8	คนคลั่งการ์ด	
+GLUE_SPINNER_9	เมจเมามาย	
+GLUE_SPINNER_PLURAL_1	ทีมนกฮูก	
+GLUE_SPINNER_PLURAL_10	ทีมผู้พัฒนา Hearthstone	
+GLUE_SPINNER_PLURAL_11	ชนเผ่า	
+GLUE_SPINNER_PLURAL_12	พันธมิตร	
+GLUE_SPINNER_PLURAL_13	เทพโบราณ	
+GLUE_SPINNER_PLURAL_14	อิลลิดารี	
+GLUE_SPINNER_PLURAL_15	พี่น้องวินด์รันเนอร์	
+GLUE_SPINNER_PLURAL_16	ชมรมคนรักหมากรุก	
+GLUE_SPINNER_PLURAL_17	คนแคระทั้งเจ็ด	
+GLUE_SPINNER_PLURAL_18	เจ็ดประจัญบาน	
+GLUE_SPINNER_PLURAL_19	ฝูงเมอร์ล็อค	
+GLUE_SPINNER_PLURAL_2	เจ้าชายหนู	
+GLUE_SPINNER_PLURAL_20	โนมเกรี้ยวกราดเจ็ดตัว	
+GLUE_SPINNER_PLURAL_21	สมาพันธ์ E.V.I.L.	
+GLUE_SPINNER_PLURAL_22	สมาพันธ์นักสำรวจ	
+GLUE_SPINNER_PLURAL_23	กาลาครัมเปอร์	
+GLUE_SPINNER_PLURAL_24	พลันเดอร์ลอร์ด	
+GLUE_SPINNER_PLURAL_25	เหล่าวายร้ายเสียสติ	
+GLUE_SPINNER_PLURAL_26	คนแปลกหน้าที่ร้านกาแฟ	
+GLUE_SPINNER_PLURAL_27	ห้องเรียนอัจฉริยะวัยเยาว์	
+GLUE_SPINNER_PLURAL_28	ทีมนักวางแผนทางทหาร	
+GLUE_SPINNER_PLURAL_29	แก๊งเพื่อนสนิทของคุณ	
+GLUE_SPINNER_PLURAL_3	กลุ่มผู้เล่นนิรนาม	
+GLUE_SPINNER_PLURAL_30	เพื่อนๆ ของบาร์เทนเดอร์บ็อบ	
+GLUE_SPINNER_PLURAL_31	เกมเมอร์ล่าของกิน	
+GLUE_SPINNER_PLURAL_32	กลุ่มคนนอนแพลงกิ้ง	
+GLUE_SPINNER_PLURAL_4	ผู้เล่นชอบสู้กันเป็นทีม	
+GLUE_SPINNER_PLURAL_5	สาวกลัทธิเบคอน	
+GLUE_SPINNER_PLURAL_6	เจ้าปีศาจ	
+GLUE_SPINNER_PLURAL_7	ผู้ดูแลสวนสัตว์	
+GLUE_SPINNER_PLURAL_8	วิศวกรเชิงกล	
+GLUE_SPINNER_PLURAL_9	เมอร์ล็อคผู้หยั่งรู้	
+GLUE_SPLASH_QUEUE_TEXT	กำลังจะมีที่ว่างในอีก:	
+GLUE_SPLASH_QUEUE_TITLE	ทุกโต๊ะเต็มหมดแล้ว!	
+GLUE_STANDARD_COMING_SOON_BODY	กฎมาตรฐานจะอัพเดตเร็วๆ นี้! ที่ผ่านมาคุณเล่นตามกฎมาตรฐานซึ่งอนุญาตให้ใช้เฉพาะการ์ดจาก\nชุดพื้นฐานคลาสสิค และชุดของ 2 ปีหลังสุด รวมถึงเล่นตามกฎอิสระซึ่งอนุญาตให้ใช้การ์ดได้ทุกใบ!	
+GLUE_STANDARD_COMING_SOON_HEADER	เร็วๆ นี้	
+GLUE_START_CLICK	คลิกเพื่อเริ่ม	
+GLUE_START_PRESS	กดเริ่ม	
+GLUE_START_TOUCH	แตะเพื่อเริ่ม	
+GLUE_STARTING_GAME	กำลังเริ่มเกม	
+GLUE_STORE_ADVENTURE_BUTTON_UNAVAILABLE_DESCRIPTION	ขณะนี้คุณไม่สามารถซื้อผลิตภัณฑ์นี้ได้	
+GLUE_STORE_ADVENTURE_BUTTON_UNAVAILABLE_HEADLINE	ไม่พร้อมให้บริการ!	
+GLUE_STORE_ADVENTURE_LEAVING_SOON	การผจญภัยนี้จะเลิกวางจำหน่ายแล้ว!	
+GLUE_STORE_ADVENTURE_LOCKED_HEROES_NOT_PURCHASABLE_TEXT	คุณต้องปลดล็อคคลาสครบทั้ง 9 คลาสก่อนที่\nคุณจะซื้อการผจญภัยนี้ได้\n\nไปจัดการฮีโร่ที่เหลืออย่างน้อยคนละหนึ่งครั้ง!	
+GLUE_STORE_ADVENTURE_LOCKED_HEROES_NOT_PURCHASABLE_TITLE	เดี๋ยวก่อน!	
+GLUE_STORE_AUTH_FAIL_HEADLINE	การซื้อล้มเหลว	
+GLUE_STORE_AUTH_SUCCESS_HEADLINE	การซื้อเสร็จสมบูรณ์!	
+GLUE_STORE_AUTH_WAITING	กำลังรอการอนุมัติ	
+GLUE_STORE_AUTH_ZERO_COST_FAIL_HEADLINE	การเข้าใช้งานถูกปฏิเสธ	
+GLUE_STORE_AUTH_ZERO_COST_SUCCESS_HEADLINE	อนุมัติการเข้าใช้งานแล้ว!	
+GLUE_STORE_AUTH_ZERO_COST_WAITING	กำลังเปิดเนโครโปลิสเป็นครั้งแรก	
+GLUE_STORE_BNET_BALANCE	ยอดคงเหลือ Blizzard	
+GLUE_STORE_BONUS_PACKS	ได้รับซองโบนัส {0} ซองในเวลาที่กำหนด!	0 = number of bonus packs
+GLUE_STORE_BOT_PREORDER_DATE	เปิดได้ในช่วง[b]กลางเดือนสิงหาคม*!	
+GLUE_STORE_BOT_PREORDER_DUST_DATE	卡牌包可以在八月中旬\n打开！	
+GLUE_STORE_BRM_PREORDER_DATE	เปิดในระหว่างเดือนเมษายน!	
+GLUE_STORE_BUY_TEXT	ซื้อ	this is what you see when you initiate the purchase
+GLUE_STORE_CC_EXPIRY_DETAILS	ข้อมูลบัตรเครดิตของคุณหมดอายุแล้ว	
+GLUE_STORE_CHALLENGE_CVV_MESSAGE	โปรดป้อน CVV ของคุณ:\n\nหากต้องการความช่วยเหลือในการค้นหา CVV ของคุณ โปรดคลิกที่ปุ่ม "{0}"	
+GLUE_STORE_CHALLENGE_HEADLINE	โปรดทราบ	
+GLUE_STORE_CHALLENGE_PWD_MESSAGE	โปรดป้อนรหัสผ่าน Blizzard ของคุณ	
+GLUE_STORE_CHALLENGE_PWD_RETRY_MESSAGE	รหัสผ่าน Blizzard ของคุณไม่ถูกต้อง โปรดป้อนใหม่อีกครั้ง	
+GLUE_STORE_CHANGE_PAYMENT_BUTTON_TEXT	เปลี่ยนค่าเริ่มต้นวิธีการชำระเงิน	
+GLUE_STORE_CHINA_DISCLAIMER_DETAILS	如果您希望获得某一张特定卡牌，请按如下步骤操作：\n1）购买并打开一定数量*的扩展包，看其中是否含有该特定卡牌；\n2）如果没有，请在“我的收藏”中使用“分解”功能分解这些您不需要的卡牌，获得奥术之尘；\n3）在“我的收藏”中选择“制作模式”，消耗奥术之尘“制作”那张特定卡牌。\n*每个扩展包至少可分解出40奥术之尘，合成1张白/蓝/紫/橙色稀有度的卡牌分别消耗40/100/400/1600奥术之尘，即至多购买1/2.5/10/40个扩展包，您就可通过上述方式获得任意特定的白/蓝/紫/橙色卡牌。	
+GLUE_STORE_CHINA_DISCLAIMER_HEADLINE	注意	
+GLUE_STORE_CHOOSE_ADVENTURE	เลือกการผจญภัยของคุณ	
+GLUE_STORE_CHOOSE_HERO	เลือกฮีโร่ของคุณ	
+GLUE_STORE_CHOOSE_PACK	เลือกซองการ์ดของคุณ	
+GLUE_STORE_CLOSED_BUTTON_TEXT	ร้านค้า\nปิดอยู่	
+GLUE_STORE_CURRENCY_CHANGED_DESC	เราเปลี่ยนสกุลเงินร้านค้า Blizzard ที่ใช้ในประเทศของคุณแล้ว อาจมีการเรียกเก็บภาษีเพิ่มเติม	
+GLUE_STORE_CURRENCY_CHANGED_HEADER	การอัพเดตสกุลเงิน	
+GLUE_STORE_DAL_PREORDER_DATE	ได้รับในช่วง[b]กลางเดือนเมษายน*!	
+GLUE_STORE_DAL_PREORDER_DUST_DATE	卡牌包可以在四月中旬\n打开！	
+GLUE_STORE_DISABLED	ขณะนี้ร้านค้าไม่เปิดให้บริการ โปรดกลับมาใหม่ในภายหลัง	
+GLUE_STORE_DISCLAIMER_WARNING	你将要花费战网点数或游戏金币进行购买！	
+GLUE_STORE_DONE_WITH_BAM_HEADLINE	ลองใหม่อีกครั้ง	
+GLUE_STORE_DONE_WITH_BAM_MESSAGE	เมื่อคุณกลับมาจากเว็บไซต์ Blizzard โปรดลองซื้อใหม่อีกครั้ง	
+GLUE_STORE_DRG_PREORDER_DATE	เล่นได้ใน[b]เดือนธันวาคม*!	
+GLUE_STORE_DRG_PREORDER_DUST_DATE	卡牌包可以在十二月*打开！	
+GLUE_STORE_DUNGEON_BUTTON_COST_OWNED_TEXT	(ซื้อแล้ว)	
+GLUE_STORE_DUNGEON_BUTTON_COST_TEXT	({0} วิง {1})	0=number of wings,1=cost
+GLUE_STORE_DUNGEON_BUTTON_PREORDER_TEXT	สั่งซื้อการผจญภัยล่วงหน้า	
+GLUE_STORE_DUNGEON_BUTTON_TEXT	การผจญภัยแบบครบทั้งหมด	
+GLUE_STORE_DUNGEON_BUTTON_TEXT_PURCHASED	ซื้อแล้ว	
+GLUE_STORE_DUST_BUTTON_PREORDER_TEXT	{0}点奥术之尘和特殊的卡牌背面图案	0=number of dust
+GLUE_STORE_EULA_AND_TOS_DETAILS	คุณสามารถดูข้อตกลงการใช้งาน และเงื่อนไขการให้บริการได้ที่เว็บไซต์ Blizzard	
+GLUE_STORE_EULA_AND_TOS_HEADLINE	เงื่อนไขการให้บริการ	
+GLUE_STORE_EULA_AND_TOS_URL_DETAILS	การกด "{0}" จะเป็นการเปิดข้อตกลงการใช้งาน และเงื่อนไขการให้บริการบนเว็บไซต์ Blizzard	
+GLUE_STORE_EXPANSION_LEAVING_SOON	ส่วนเสริมจะไปแล้ว!	
+GLUE_STORE_FAIL_BNET_ID	อีเมลไม่ถูกต้อง	
+GLUE_STORE_FAIL_CHALLENGE_ID_FAILED_VERIFICATION	รหัสรับสินค้าของคุณไม่ผ่านการตรวจสอบความถูกต้อง!	
+GLUE_STORE_FAIL_CHALLENGE_TIMEOUT	หมดเวลาการซื้อของคุณแล้ว โปรดเริ่มทำรายการใหม่อีกครั้ง	
+GLUE_STORE_FAIL_DATABASE	ฐานข้อมูลภายในผิดพลาด	
+GLUE_STORE_FAIL_DETAILS_ERROR_CODE	(รหัสข้อผิดพลาด: '{0}')	
+GLUE_STORE_FAIL_GENERAL	เกิดปัญหาในการประมวลผลการชำระเงินของคุณ	
+GLUE_STORE_FAIL_GOLD_GENERIC	การซื้อด้วยโกลด์ล้มเหลว โปรดลองใหม่อีกครั้ง\nในภายหลัง	
+GLUE_STORE_FAIL_IN_PROGRESS	คุณมีอีกหนึ่งการทำรายการที่อยู่ระหว่างดำเนินการ โปรดคอยจนกว่าการทำรายการนั้นจะเสร็จสมบูรณ์ แล้วลองใหม่อีกครั้ง	
+GLUE_STORE_FAIL_LICENSE	พบใบอนุญาตซ้ำ	
+GLUE_STORE_FAIL_NO_ACTIVE_BPAY	ข้อผิดพลาดภายใน: ไม่มีข้อมูลการทำรายการในฐานข้อมูล	
+GLUE_STORE_FAIL_NO_BATTLEPAY	ไม่สามารถดำเนินการทำรายการของคุณจนเสร็จสมบูรณ์ได้ ขอโทษทีนะ! โปรดรอสักครู่แล้วลองใหม่อีกครั้ง	
+GLUE_STORE_FAIL_NOT_ENOUGH_ARCANE_ORBS	คุณมีลูกแก้วเวทมนตร์ไม่พอที่จะซื้อในตอนนี้	
+GLUE_STORE_FAIL_NOT_ENOUGH_GOLD	คุณมีโกลด์ไม่พอที่จะซื้อในตอนนี้	
+GLUE_STORE_FAIL_NOT_ENOUGH_RUNESTONES	คุณมีรูนสโตนไม่พอที่จะซื้อในตอนนี้	
+GLUE_STORE_FAIL_PARENTAL_CONTROL	ขณะนี้การซื้อสินค้าของบัญชีนี้ถูกจำกัดโดยการควบคุมของผู้ปกครอง	
+GLUE_STORE_FAIL_PRODUCT_ALREADY_OWNED	คุณมีสินค้ารายการนั้นอยู่แล้ว	
+GLUE_STORE_FAIL_PRODUCT_NA	ขณะนี้ผลิตภัณฑ์ดังกล่าวไม่พร้อมให้บริการ โปรดเลือกผลิตภัณฑ์อื่นแล้วลองใหม่อีกครั้ง	
+GLUE_STORE_FAIL_PRODUCT_UNIQUENESS_VIOLATED	เราพบว่ามีการซื้อสินค้ารายการนี้ซ้ำ โปรดติดต่อฝ่ายสนับสนุนลูกค้าเพื่อแก้ไขปัญหานี้	
+GLUE_STORE_FAIL_PRODUCT_UNIQUENESS_VIOLATED_URL	การกด "{0}" จะเป็นการนำคุณไปยังเว็บไซต์ Blizzard	
+GLUE_STORE_FAIL_PURCHASE_BAN	บัญชีของคุณถูกห้ามไม่ให้ใช้งานร้านค้า หากคุณเชื่อว่าเหตุการณ์นี้เกิดจากความผิดพลาด โปรดติดต่อฝ่ายสนับสนุนลูกค้า	
+GLUE_STORE_FAIL_QUANTITY	คุณเลือกจำนวนรายการสินค้าไม่ถูกต้อง โปรดเลือกจำนวนอื่นและลองใหม่อีกครั้ง	
+GLUE_STORE_FAIL_REGION_IS_DOWN	ขณะนี้ร้านค้าไม่เปิดให้บริการ โปรดลองซื้ออีกครั้งในภายหลัง	
+GLUE_STORE_FAIL_SPENDING_LIMIT	การซื้อครั้งนี้มียอดเกินจำนวนที่คุณสามารถใช้ได้ คุณสามารถซื้อโกลด์เพิ่มได้นะ!	
+GLUE_STORE_FAIL_THIRD_PARTY_BAD_RECEIPT	เราไม่สามารถดำเนินการซื้อผ่านมือถือของคุณได้	
+GLUE_STORE_FAIL_THROTTLED	เราไม่สามารถทำรายการให้คุณได้ในครั้งนี้ โปรดลองซื้อใหม่อีกครั้งในภายหลัง	
+GLUE_STORE_FORGOT_PWD_DETAILS	คุณป้อนรหัสผ่านผิดต่อเนื่องกันหลายครั้งมากเกินไป หรือคุณเลือกยกเลิกการตอบคำถามเพื่อรีเซ็ตรหัสผ่าน คุณลืมรหัสผ่านของคุณใช่หรือไม่	
+GLUE_STORE_FORGOT_PWD_HEADLINE	ลืมรหัสผ่านใช่หรือไม่	
+GLUE_STORE_FORGOT_PWD_URL_DETAILS	การกด "{0}" จะนำคุณไปที่เว็บไซต์ Blizzard ซึ่งคุณสามารถรีเซ็ตรหัสผ่านได้	
+GLUE_STORE_GENERIC_BP_FAIL_DETAILS	เกิดปัญหาขึ้นขณะดำเนินการชำระเงินของคุณ โปรดใช้วิธีการชำระเงินอื่น หรือติดต่อผู้ให้บริการด้านการชำระเงินของคุณ	
+GLUE_STORE_GENERIC_BP_FAIL_HEADLINE	การซื้อล้มเหลว	
+GLUE_STORE_GENERIC_BP_FAIL_RETRY_CONTACT_CS_IF_PERSISTS_DETAILS	เกิดปัญหาในการดำเนินการชำระเงิน โปรดลองอีกครั้ง	
+GLUE_STORE_GENERIC_BP_FAIL_RETRY_CONTACT_CS_IF_PERSISTS_URL_DETAILS	การกด "{0}" จะเป็นการนำคุณไปยังเว็บไซต์บัญชี Blizzard	
+GLUE_STORE_GENERIC_BP_FAIL_URL_DETAILS	การกด "{0}" จะนำคุณไปที่เว็บไซต์ Blizzard ซึ่งคุณสามารถอัพเดตข้อมูลวิธีการชำระเงินของคุณได้	
+GLUE_STORE_GIL_PREORDER_DATE	เปิดได้ในช่วง[b]กลางเดือนเมษายน*!	
+GLUE_STORE_GIL_PREORDER_DUST_DATE	เปิดซองได้\nกลางเดือนเมษายน*!	
+GLUE_STORE_GOLD_BUTTON_TOOLTIP_HEADLINE	ซื้อด้วยโกลด์	
+GLUE_STORE_GOLD_QTY_CHANGE_DESC	คุณมีโกลด์เยอะมาก! ถ้าคุณต้องการซื้อมากกว่าหนึ่งซอง คุณสามารถดับเบิลคลิกที่ตัวเลือก '1 ซองในราคา 100 โกลด์' เพื่อเปลี่ยนจำนวนซองการ์ดที่ต้องการซื้อได้	
+GLUE_STORE_GOLD_QTY_CHANGE_DESC_TOUCH	คุณมีโกลด์เยอะมาก! ถ้าคุณต้องการซื้อมากกว่าหนึ่งซอง คุณสามารถแตะสองครั้งที่ตัวเลือก '1 ซองในราคา 100 โกลด์' เพื่อเปลี่ยนจำนวนซองการ์ดที่ต้องการซื้อได้	
+GLUE_STORE_GOLD_QTY_CHANGE_HEADER	ซื้อซองการ์ดด้วยโกลด์	
+GLUE_STORE_GORO_PREORDER_DATE	ได้รับในช่วง[b]กลางเดือนเมษายน*!	
+GLUE_STORE_HEADLINE	ร้านค้า	
+GLUE_STORE_HEALUP_BOOSTER_DESC	ต้องมีบัญชี	
+GLUE_STORE_HERO_BUTTON_COST_OWNED_TEXT	(ซื้อแล้ว)	
+GLUE_STORE_HERO_BUTTON_TEXT_PURCHASED	ซื้อแล้ว	
+GLUE_STORE_HERO_PREVIEW	แสดงตัวอย่าง	
+GLUE_STORE_HEROES_PURCHASED	ซื้อแล้ว	
+GLUE_STORE_ICC_PREORDER_DATE	เปิดได้ในช่วง[b]กลางเดือนสิงหาคม*!	
+GLUE_STORE_ICC_PREORDER_DUST_DATE	เปิดซองได้\nกลางเดือนสิงหาคม*!	
+GLUE_STORE_INFO_BUTTON_TEXT	i	
+GLUE_STORE_KOREAN_DISCLAIMER_DETAILS	특정 카드를 원하신다면 아래와 같이 ‘마력 추출’ 기능을 통해 100%의 확률로 제작할 수 있습니다.\n   1) 카드 팩을 구매하고 개봉하여 원하는 카드가 있는지 확인합니다.\n   2) 원하는 카드가 없다면 “내 카드” 메뉴에서 필요하지 않은 카드를 선택하고 “마력 추출” 기능을 사용하세요. 이 기능을 사용하면 해당 카드를 제거하고 “신비한 가루”를 획득합니다.\n   3) “내 카드” 메뉴의 “제작하기” 기능으로 “신비한 가루”를 사용하여 원하는 카드를 제작합니다.\n카드 팩 하나당 최소 40개의 “신비한 가루”를 얻을 수 있습니다. 일반/희귀/영웅/전설 카드를 제작하려면 각각 40/100/400/1600개의 “신비한 가루”가 필요합니다. 즉, 카드 팩을 1/3/10/40개 구매하면 반드시 일반/희귀/영웅/전설 카드 하나를 제작할 수 있습니다.	
+GLUE_STORE_KOREAN_DISCLAIMER_HEADLINE	주의!	
+GLUE_STORE_KOREAN_PRODUCT_DETAILS_ADVENTURE	본 묶음 상품은 구매 후 환불되지 않으며, 구매 즉시 모든 지구 이용이 가능합니다.  	
+GLUE_STORE_KOREAN_PRODUCT_DETAILS_EXPERT_PACK	이용기간 : 서비스 종료 시까지. 본 상품은 구매 후 7일 이내에 청약철회가 가능합니다. 다만, 1개의 카드팩이라도 개봉한 경우에는 청약철회가 불가능합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_STORE_KOREAN_PRODUCT_DETAILS_FIRST_PURCHASE_BUNDLE	이용기간: 서비스 종료 시까지. 본 상품은 각 지역당 1개씩 1회만 구매 가능하며 구매 후 7일 이내에 청약철회가 가능합니다. 다만, 1개의 카드 팩이라도 개봉한경우에는 청약철회가 불가능합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_STORE_KOREAN_PRODUCT_DETAILS_PACKS_PREORDER	사전 구매 상품은 실제 상품 출시 전까지 환불이 가능합니다.	
+GLUE_STORE_LAUNCH_PROMO	โปรโมชั่นเปิดตัว!	
+GLUE_STORE_LEAVING_SOON	ใกล้จะเลิก\nวางจำหน่ายแล้ว!	
+GLUE_STORE_LEAVING_SOON_LEARN_MORE	เรียนรู้เพิ่มเติม	
+GLUE_STORE_LIMITED_TIME_OFFER	ข้อเสนอมีเวลาจำกัด!	
+GLUE_STORE_LOOT_PREORDER_DATE	เล่นได้ในช่วง[b]กลางเดือนธันวาคม*!	
+GLUE_STORE_LOOT_PREORDER_DUST_DATE	เปิดซองได้\nกลางเดือนธันวาคม*!	
+GLUE_STORE_MODE_ADVENTURE	การผจญภัย	
+GLUE_STORE_MODE_CARDS	การ์ด	
+GLUE_STORE_MODE_HEROES	ฮีโร่	
+GLUE_STORE_MODE_NAME_DUST	奥术之尘	
+GLUE_STORE_MONEY_BUTTON_TOOLTIP_HEADLINE	ซื้อ	
+GLUE_STORE_MSG_PREORDER_DATE	พร้อมให้เล่นในช่วงต้นเดือนธันวาคม!	
+GLUE_STORE_NO_PAYMENT_DETAILS	คุณยังไม่ได้เพิ่มวิธีการชำระเงินที่ใช้งานได้ โปรดตั้งค่าให้เรียบร้อยบนเว็บไซต์ Blizzard แล้วลองใหม่อีกครั้ง	
+GLUE_STORE_NO_PAYMENT_HEADLINE	โปรดทราบ	
+GLUE_STORE_NO_PAYMENT_URL_DETAILS	การกด "{0}" จะเป็นการนำคุณไปยังเว็บไซต์ Blizzard	
+GLUE_STORE_OG_PREORDER_DATE	ได้รับในช่วง[b]ไตรมาสที่ 2*!	
+GLUE_STORE_OPEN_BUTTON_TEXT	ร้านค้า	
+GLUE_STORE_PACK_BUTTON_COST_OWNED_TEXT	(ซื้อแล้ว)	
+GLUE_STORE_PACK_BUTTON_TEXT_PURCHASED	ซื้อแล้ว	
+GLUE_STORE_PACKBUY_BEST_VALUE	คุ้มสุดๆ	
+GLUE_STORE_PACKBUY_LIMITED_TIME	จำกัดเวลา	
+GLUE_STORE_PACKBUY_SUGGESTION	แนะนำ	
+GLUE_STORE_PACKS_BUTTON_PREORDER_TEXT	ซื้อล่วงหน้า {0} ซอง	0=number of packs
+GLUE_STORE_PACKS_LATEST_EXPANSION	ส่วนเสริมใหม่ล่าสุด	
+GLUE_STORE_PACKS_PREORDER_TEXT	ซื้อล่วงหน้า	
+GLUE_STORE_PAYMENT_INFO_DETAILS	ต้องการบัญชี Blizzard เพื่อทำการซื้อในแอพด้วยเงินจริง\n\nข้อสำคัญ: โปรดทราบว่าหากเกิดปัญหาใดๆ ขึ้นจากการชำระเงิน หรือการขอคืนเงินจากการทำรายการนี้ อาจส่งผลให้บัญชี Hearthstone ถูกระงับการใช้งานชั่วคราว จนกว่าจะสามารถแก้ไขปัญหาหรือชำระเงินที่ขอคืนเสร็จ	
+GLUE_STORE_PAYMENT_INFO_HEADLINE	ข้อมูลผลิตภัณฑ์	
+GLUE_STORE_PAYMENT_INFO_URL_DETAILS	กด "{0}"[b]เพื่อเรียนรู้เกี่ยวกับอัตราการได้รับการ์ด[b]ตามระดับความหายากและรายละเอียดการซื้อ	
+GLUE_STORE_PRE_PURCHASE_HAS_ENDED	คุณไม่สามารถสั่งซื้อผลิตภัณฑ์นี้ล่วงหน้าได้แล้ว	
+GLUE_STORE_PREORDER	สั่งซื้อล่วงหน้า!	
+GLUE_STORE_PREORDER_EXCLUSIVE	สิทธิพิเศษในการสั่งซื้อล่วงหน้า!	
+GLUE_STORE_PRODUCT_DETAILS_BRM_PART_1	ต่อสู้กับบอสสุดโหดของ {0} ในโหมดเล่นคนเดียว	0=wing name
+GLUE_STORE_PRODUCT_DETAILS_BRM_PART_2	รับการ์ดใหม่จากชุด Blackrock Mountain ไปเก็บสะสมในคอลเลกชันของคุณ รวมถึงการ์ดระดับตำนาน 1_ใบ!	
+GLUE_STORE_PRODUCT_DETAILS_DALA_PART_1	ต่อสู้กับบอสสุดโหดของ {0} ในโหมดเล่นคนเดียว	0=wing name
+GLUE_STORE_PRODUCT_DETAILS_DALA_PART_2	ปลดล็อคบทใหม่เพื่อพบกับ[b]ความท้าทายประจำบท และฮีโร่ใหม่ๆ ให้เลือกเล่น!	
+GLUE_STORE_PRODUCT_DETAILS_DUST	•  购买奥术之尘赠送系列卡牌包\n•  每包卡牌包内含5张{0}《炉石传说》卡牌，其中至少1张为稀有或更高品质\n•  奥术之尘可用于在“我的收藏”中制作卡牌	0=pack type
+GLUE_STORE_PRODUCT_DETAILS_FIRST_PURCHASE_BUNDLE	•  ซองการ์ดคลาสสิค 10 ซองและการ์ดมินเนี่ยนมังกรระดับตำนาน\nแบบสุ่มจากชุดคลาสสิค 1 ใบ\n•  แต่ละซองมีการ์ด 5 ใบ โดยอย่างน้อย 1 ใบเป็นการ์ดระดับหายากหรือสูงกว่า	
+GLUE_STORE_PRODUCT_DETAILS_FIRST_PURCHASE_BUNDLE_DUST	•  购买10点奥术之尘赠送10包经典卡牌包和1张随机经典传说龙牌\n•  每包卡牌包内含5张卡牌，其中至少1张为稀有或更高品质\n•  奥术之尘可用于在“我的收藏”中制作卡牌	
+GLUE_STORE_PRODUCT_DETAILS_GIL_CN_DUST_PRESALE	•  购买50点奥术之尘和1张特殊的卡牌背面图案赠送50包系列卡牌包和20包奖励卡牌包\n•  每包卡牌包内含5张卡牌，其中至少1张为稀有或更高品质\n *卡牌包可以在2018年4月30日前打开\n•  奥术之尘可用于在“我的收藏”中制作卡牌	
+GLUE_STORE_PRODUCT_DETAILS_GIL_PACK_PRESALE	•  ซองการ์ด 50 ซองและหลังการ์ดลายพิเศษ\n•  ซองโบนัส 20 ซอง\n•  แต่ละซองมีการ์ด 5_ใบ โดยอย่างน้อย 1 ใบเป็นการ์ดระดับหายากหรือสูงกว่า\n * เปิดซองได้ก่อนวันที่ 30 เมษายน 2018	
+GLUE_STORE_PRODUCT_DETAILS_GORO_PACK_PRESALE	•  ซองการ์ด 50 ซองและหลังการ์ดลายพิเศษ\n•  แต่ละซองมีการ์ด 5_ใบ และมีการ์ดระดับหายากหรือสูงกว่าอย่างน้อย 1_ใบ\n * เปิดซองได้ก่อนวันที่ 30 เมษายน 2017	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_DUST	奥术之尘：	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_FIRST_PURCHASE_BUNDLE	ชุดต้อนรับประกอบด้วย	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_GIL_PACK_PRESALE	The Witchwood (ซื้อล่วงหน้า) ประกอบด้วย:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_GORO_PACK_PRESALE	Journey to Un'Goro (ซื้อล่วงหน้า) ประกอบด้วย	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_ICC_PACK_PRESALE	Knights of the Frozen Throne (ซื้อล่วงหน้า) ประกอบด้วย:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_LOOT_PACK_PRESALE	Kobolds & Catacombs (ซื้อล่วงหน้า) ประกอบด้วย:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_MAMMOTH_BUNDLE	ชุดแมมมอธประกอบด้วย	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_OG_PACK_PRESALE	Whispers of the Old Gods (ซื้อล่วงหน้า) ประกอบด้วย:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_PACK	สิ่งที่อยู่ในซอง:	
+GLUE_STORE_PRODUCT_DETAILS_HEADLINE_TGT_PACK_PRESALE	The Grand Tournament (ซื้อล่วงหน้า) ประกอบด้วย:	
+GLUE_STORE_PRODUCT_DETAILS_ICC_CN_DUST_PRESALE	•  购买50点奥术之尘和1张特殊的卡牌背面图案赠送50包系列卡牌包\n•  每包卡牌包内含5张卡牌，其中至少1张为稀有或更高品质\n *卡牌包可以在2017年8月31日前打开\n•  奥术之尘可用于在“我的收藏”中制作卡牌	
+GLUE_STORE_PRODUCT_DETAILS_ICC_PACK_PRESALE	•  ซองการ์ด 50 ซองและหลังการ์ดลายพิเศษ\n•  แต่ละซองมีการ์ด 5_ใบ โดยอย่างน้อย 1 ใบเป็นการ์ดระดับหายากหรือสูงกว่า\n * เปิดซองได้ก่อนวันที่ 31 สิงหาคม 2017	
+GLUE_STORE_PRODUCT_DETAILS_KARA_PART_1	ต่อสู้กับบอสสุดโหดของ {0} ในโหมดเล่นคนเดียว	0=wing name
+GLUE_STORE_PRODUCT_DETAILS_KARA_PART_2	รับการ์ดใหม่จากชุดคาราซานไปเก็บสะสมในคอลเลกชันของคุณ รวมถึงการ์ดระดับตำนาน!	
+GLUE_STORE_PRODUCT_DETAILS_LOE_PART_1	ต่อสู้กับบอสสุดโหดของ {0} ในโหมดเล่นคนเดียว	0=wing name
+GLUE_STORE_PRODUCT_DETAILS_LOE_PART_2	รับการ์ดใหม่จากชุด League of Explorers ไปเก็บสะสมในคอลเลกชันของคุณ รวมถึงการ์ดระดับตำนาน!	
+GLUE_STORE_PRODUCT_DETAILS_LOOT_CN_DUST_PRESALE	•  购买50点奥术之尘和1张特殊的卡牌背面图案赠送50包系列卡牌包\n•  每包卡牌包内含5张卡牌，其中至少1张为稀有或更高品质\n *卡牌包可以在2017年12月31日前打开\n•  奥术之尘可用于在“我的收藏”中制作卡牌	
+GLUE_STORE_PRODUCT_DETAILS_LOOT_PACK_PRESALE	•  ซองการ์ด 50 ซองและหลังการ์ดลายพิเศษ\n•  แต่ละซองมีการ์ด 5_ใบ โดยมีการ์ดระดับหายากหรือสูงกว่าอย่างน้อย 1 ใบ\n * เปิดซองได้ก่อนวันที่ 31 ธันวาคม 2017	
+GLUE_STORE_PRODUCT_DETAILS_MAMMOTH_BUNDLE	•  ซองการ์ด Journey to Un'Goro 10 ซอง\n•  ซองการ์ด Knights of the Frozen Throne 10 ซอง\n•  ซองการ์ด Kobolds & Catacombs 10 ซอง\n•  แต่ละซองมีการ์ด 5 ใบ โดยอย่างน้อย 1 ใบเป็นการ์ดระดับหายากหรือสูงกว่า	
+GLUE_STORE_PRODUCT_DETAILS_MAMMOTH_BUNDLE_DUST	购买30点奥术之尘赠送\n•  10包“勇闯安戈洛”卡牌包\n•  10包“冰封王座的骑士”卡牌包\n•  10包“狗头人与地下世界”卡牌包\n•  每包卡牌包内含5张卡牌，其中至少1张为稀有或更高品质\n•  奥术之尘可用于在“我的收藏”中制作卡牌	
+GLUE_STORE_PRODUCT_DETAILS_NAXX_PART_1	ต่อสู้กับบอสสุดโหดของ {0} ในโหมดเล่นคนเดียว	0=wing name
+GLUE_STORE_PRODUCT_DETAILS_NAXX_PART_2	รับการ์ดใหม่จากชุด Naxxramas ไปเก็บสะสมในคอลเลกชันของคุณ รวมถึงการ์ดระดับตำนาน 1_ใบ!	
+GLUE_STORE_PRODUCT_DETAILS_OG_PACK_PRESALE	•  ซองการ์ด 50 ซองและหลังการ์ดลายพิเศษ\n•  แต่ละซองมีการ์ด 5_ใบ และมีการ์ดระดับหายากหรือสูงกว่าอย่างน้อย 1_ใบ\n * เปิดซองได้ก่อนวันที่ 31 พฤษภาคม 2016	
+GLUE_STORE_PRODUCT_DETAILS_PACK	•  การ์ด Hearthstone {0} 5_ใบ\n•  มีการ์ดระดับหายากหรือสูงกว่าอย่างน้อย 1_ใบ	0=pack type
+GLUE_STORE_PRODUCT_DETAILS_TGT_PACK_PRESALE	•  50 ซองพร้อมหลังการ์ดแบบพิเศษ\n•  แต่ละซองมีการ์ด 5_ใบ และมีการ์ดระดับหายากหรือสูงกว่าอย่างน้อย 1_ใบ\n• คุณจะสามารถเปิดซอง The Grand Tournament ได้ในเดือนสิงหาคม!	
+GLUE_STORE_PRODUCT_EVENT_HAS_ENDED	ผลิตภัณฑ์นี้ไม่พร้อมให้บริการ	
+GLUE_STORE_PRODUCT_NAME_BRM_PRESALE_BUNDLE	สั่งซื้อ Blackrock Mountain ล่วงหน้า	
+GLUE_STORE_PRODUCT_NAME_BRM_WING_BUNDLE	การผจญภัย Blackrock Mountain ({0} วิง)	
+GLUE_STORE_PRODUCT_NAME_DALA_WING_BUNDLE	การผจญภัย Dalaran ({0} วิง)	
+GLUE_STORE_PRODUCT_NAME_DUST	{0}个奥术之尘和赠送的{1}包{2}卡牌包	0=quantity of dust,1=quantity of packs,2=pack type
+GLUE_STORE_PRODUCT_NAME_FIRST_PURCHASE_BUNDLE	ชุดต้อนรับ	
+GLUE_STORE_PRODUCT_NAME_FORGE_TICKET	สิทธิ์เข้าร่วมลานประลอง	
+GLUE_STORE_PRODUCT_NAME_GIL_PRESALE_BUNDLE	The Witchwood (ซื้อล่วงหน้า)	
+GLUE_STORE_PRODUCT_NAME_GORO_PRESALE_BUNDLE	Journey to Un'Goro (ซื้อล่วงหน้า)	
+GLUE_STORE_PRODUCT_NAME_ICC_PRESALE_BUNDLE	Knights of the Frozen Throne (ซื้อล่วงหน้า)	
+GLUE_STORE_PRODUCT_NAME_KARA_PRESALE_BUNDLE	โปรโมชั่นเปิดตัว One Night in Karazhan	
+GLUE_STORE_PRODUCT_NAME_KARA_WING_BUNDLE	การผจญภัย One Night in Karazhan ({0} วิง)	
+GLUE_STORE_PRODUCT_NAME_LOE_WING_BUNDLE	การผจญภัย League of Explorers ({0} วิง)	
+GLUE_STORE_PRODUCT_NAME_LOOT_PRESALE_BUNDLE	Kobolds & Catacombs (ซื้อล่วงหน้า)	
+GLUE_STORE_PRODUCT_NAME_MAMMOTH_BUNDLE	ชุดแมมมอธ	
+GLUE_STORE_PRODUCT_NAME_MOBILE_UNKNOWN	ซื้อผ่านโทรศัพท์มือถือ	
+GLUE_STORE_PRODUCT_NAME_NAXX_WING_BUNDLE	การผจญภัย Naxxramas ({0} วิง)	
+GLUE_STORE_PRODUCT_NAME_OG_PRESALE_BUNDLE	Whispers of the Old God (ซื้อล่วงหน้า)	
+GLUE_STORE_PRODUCT_NAME_PACK	{1} {0} ซอง	0=quantity,1=pack type
+GLUE_STORE_PRODUCT_NAME_TGT_PRESALE_BUNDLE	The Grand Tournament (ซื้อล่วงหน้า)	
+GLUE_STORE_PRODUCT_NAME_ULD_PRESALE_BUNDLE	Tombs of Terror (ซื้อล่วงหน้า)	
+GLUE_STORE_PRODUCT_NAME_ULD_WING_BUNDLE	การผจญภัย Tombs of Terror ({0} บท)	
+GLUE_STORE_PRODUCT_NOT_AVAILABLE_HEADER	ไม่พร้อมใช้งาน	
+GLUE_STORE_PRODUCT_NOT_AVAILABLE_TEXT	ยังไม่สามารถใช้งานผลิตภัณฑ์นี้ได้ในขณะนี้	
+GLUE_STORE_PRODUCT_NOT_AVAILABLE_TEXT_HAS_ENDED	ผลิตภัณฑ์นี้ไม่มีวางจำหน่ายอีกต่อไป	
+GLUE_STORE_PRODUCT_NOT_AVAILABLE_TEXT_NOT_YET_STARTED	ผลิตภัณฑ์นี้ยังไม่วางจำหน่าย	
+GLUE_STORE_PRODUCT_PRICE	({0})	0=price
+GLUE_STORE_PRODUCT_PRICE_NA	ไม่มี	
+GLUE_STORE_PURCHASE_LOCK_DESCRIPTION	บัญชีของคุณมีการซื้อที่รอดำเนินการบน {0} โปรดเปิด Hearthstone ด้วยอุปกรณ์ที่คุณใช้ซื้อครั้งล่าสุด\n\nหากยังคงพบปัญหานี้ โปรดติดต่อฝ่ายสนับสนุนลูกค้า	0=one of GLOBAL_STORE_MOBILE_NAME_*
+GLUE_STORE_PURCHASE_LOCK_HEADER	ข้อผิดพลาดในการซื้อ	
+GLUE_STORE_QUANTITY_DUST	{0}个奥术之尘	
+GLUE_STORE_QUANTITY_DUST_BUNDLE	{0}点奥术之尘以及更多	
+GLUE_STORE_QUANTITY_HEADLINE	เปลี่ยนจำนวน	
+GLUE_STORE_QUANTITY_MESSAGE	คุณต้องการใช้โกลด์ซื้อทั้งหมดกี่ซอง จำนวนสูงสุดต้องไม่เกิน {0}	
+GLUE_STORE_QUANTITY_PACK	{0} ซอง	
+GLUE_STORE_QUANTITY_PACK_BUNDLE	{0} ซอง และอื่นๆ	
+GLUE_STORE_QUANTITY_PACK_PLUS_BONUS	{0}+{1}	0=base_quantity,1=bonus_quantity
+GLUE_STORE_RANDOM_CLASS_LEGENDARY	การ์ดคลาสระดับตำนานแบบสุ่ม	
+GLUE_STORE_RANDOM_DRAGON_LEGENDARY	มังกรระดับตำนาน\nแบบสุ่มจากชุดคลาสสิค	
+GLUE_STORE_RANDOM_LEGENDARY	การ์ดระดับตำนานแบบสุ่ม	
+GLUE_STORE_READ_TOS_BUTTON_TEXT	อ่านเงื่อนไขการขาย	
+GLUE_STORE_SPECIAL_OFFER	ข้อเสนอพิเศษ!	
+GLUE_STORE_SUBMIT_CHALLENGE_BUTTON_TEXT	ซื้อ	
+GLUE_STORE_SUMMARY_CHARGE_DETAILS	จะถูกเรียกเก็บเงินไปที่: {0}	
+GLUE_STORE_SUMMARY_HEADLINE	สรุป	
+GLUE_STORE_SUMMARY_ITEM_ORDERED	{0} x {1}	0=item quantity, 1=item name (one of GLUE_STORE_PRODUCT_NAME_*)
+GLUE_STORE_SUMMARY_ITEMS_ORDERED_HEADLINE	รายการที่สั่งซื้อ	
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_ADVENTURE_BUNDLE	본 묶음 상품은 구매 후 환불되지 않으며, 구매 즉시 모든 지구 이용이 가능합니다.  	
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_ADVENTURE_SINGLE	본 상품은 구매 후 환불되지 않으며, 구매 즉시 해당 지구에 내용이 적용됩니다	
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_CONFIRM	본 거래와 관련된 조건과 약관을 확인하며 이에 동의합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_EXPERT_PACK	이용기간 : 서비스 종료 시까지. 본 상품은 구매 후 7일 이내에 청약철회가 가능합니다. 다만, 1개의 카드팩이라도 개봉한 경우에는 청약철회가 불가능합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_FIRST_PURCHASE_BUNDLE	이용기간: 서비스 종료 시까지. 본 상품은 구매 후 즉시 임의 직업의 오리지널 전설 카드가 귀하의 카드에 추가되므로 구매 후 환불이 불가능합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_FORGE_TICKET	투기장 입장료는 구매 후 환불되지 않으며, 구매 즉시 투기장에 입장합니다.	only displayed for Korean customers, should always be in Korean
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_HERO	본 상품은 구매 후 환불되지 않으며, 구매 즉시 이용이 가능합니다.	
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_PACK_PREORDER	사전 구매 상품은 실제 상품 출시 전까지 환불이 가능합니다.	
+GLUE_STORE_SUMMARY_KOREAN_AGREEMENT_TAVERN_BRAWL_TICKET	영웅 난이도 난투 입장료는 구매 후 환불되지 않으며, 구매 즉시 영웅 난이도 난투에 입장합니다.\n서비스 제공기간: 해당 영웅 난이도 난투 만료시까지.\n만료 시 승리한 횟수에 따라 보상이 차등 지급되므로 만료 시간을 확인하시기 바랍니다.	
+GLUE_STORE_SUMMARY_PAY_NOW_TEXT	ชำระเงินทันที	this is what you see when you confirm the purchase
+GLUE_STORE_SUMMARY_PRICE_HEADLINE	ราคา	
+GLUE_STORE_SUMMARY_TAX_DISCLAIMER	รวมภาษีมูลค่าเพิ่มแล้ว	
+GLUE_STORE_SUMMARY_TAX_DISCLAIMER_USD	รวมภาษีอื่นๆ หากมี	
+GLUE_STORE_SUMMARY_TOS_AGREEMENT	เมื่อกด "{0}" จะถือว่าคุณยอมรับว่าได้อ่านและยินยอมปฏิบัติตามเงื่อนไขการขาย คุณสามารถเปลี่ยนค่าเริ่มต้นวิธีการชำระเงินของคุณ หรืออ่านเงื่อนไขการขายได้โดยการกดปุ่ม "{1}"	0=GLUE_STORE_SUMMARY_PAY_NOW_TEXT,1=GLUE_STORE_TERMS_OF_SALE_BUTTON_TEXT
+GLUE_STORE_SUMMARY_TOS_AGREEMENT_EU	เมื่อคลิก "{0}" จะถือว่าคุณยินยอมปฏิบัติตามเงื่อนไขการขาย และยินยอมให้เราทำการจัดส่งสินค้าที่คุณสั่งซื้อในทันที คุณจะไม่สามารถยกเลิกคำสั่งซื้อได้หลังจากที่เริ่มต้นกระบวนการจัดส่งแล้ว คุณสามารถเปลี่ยนค่าเริ่มต้นวิธีการชำระเงินของคุณ หรืออ่านเงื่อนไขการขายได้โดยการกดปุ่ม "{1}"	0=GLUE_STORE_SUMMARY_PAY_NOW_TEXT,1=GLUE_STORE_TERMS_OF_SALE_BUTTON_TEXT
+GLUE_STORE_TERMS_OF_SALE_BUTTON_TEXT	?	
+GLUE_STORE_TGT_PREORDER_DATE	พร้อมใช้งานใน[b]เดือนสิงหาคม!	
+GLUE_STORE_THIS_WEEK_ONLY	เฉพาะสัปดาห์นี้เท่านั้น!	
+GLUE_STORE_TRL_PREORDER_DATE	เล่นได้ในช่วง[b]กลางเดือนธันวาคม*!	
+GLUE_STORE_TRL_PREORDER_DUST_DATE	卡牌包可以在十二月中旬\n打开！	
+GLUE_STORE_ULD_PREORDER_DATE	เปิดได้ใน[b]เดือนสิงหาคม*!	
+GLUE_STORE_ULD_PREORDER_DUST_DATE	卡牌包可以在八月打开！	
+GLUE_STORE_VC_BUTTON_TOOLTIP_HEADLINE	ซื้อ	
+GLUE_TAVERN_BRAWL_HAS_ENDED_HEADER	สิ้นสุดกิจกรรม	
+GLUE_TAVERN_BRAWL_HAS_ENDED_TEXT	กิจกรรมท้าประลองนี้สิ้นสุดลงแล้ว การท้าประลองอื่นๆ จะเกิดขึ้นในเร็วๆ นี้!	
+GLUE_TAVERN_BRAWL_LABEL_ENDING_DAYS	สิ้นสุดในอีก {0} วัน	
+GLUE_TAVERN_BRAWL_LABEL_ENDING_HOURS	สิ้นสุดในอีก {0} ชั่วโมง	
+GLUE_TAVERN_BRAWL_LABEL_ENDING_MINUTES	สิ้นสุดในอีก {0} นาที	
+GLUE_TAVERN_BRAWL_LABEL_ENDING_OVER_1_MONTH	สิ้นสุดในอีก > 1 เดือน	
+GLUE_TAVERN_BRAWL_LABEL_ENDING_SECONDS	สิ้นสุดในอีก {0} วินาที	
+GLUE_TAVERN_BRAWL_LABEL_ENDING_WEEKS	สิ้นสุดในอีก {0} สัปดาห์	
+GLUE_TAVERN_BRAWL_RETIRE	ถอนตัว	
+GLUE_TAVERN_BRAWL_RETIRE_CONFIRM_DESC	เกมท้าประลองฮีโร่จะจบลงเมื่อเลือกตัวเลือกนี้! แน่ใจหรือไม่	
+GLUE_TAVERN_BRAWL_RETIRE_CONFIRM_HEADER	ถอนตัว	
+GLUE_TAVERN_BRAWL_RETURNS_DAYS	กลับมาอีกครั้งใน\n<size=70>{0}</size>\n\nวัน	
+GLUE_TAVERN_BRAWL_RETURNS_HOURS	กลับมาอีกครั้งใน\n<size=70>{0}</size>\n\nชั่วโมง	
+GLUE_TAVERN_BRAWL_RETURNS_LESS_THAN_1_HOUR	กลับมาอีกครั้งใน\n<size=70>< 1 </size>\n\nชั่วโมง	
+GLUE_TAVERN_BRAWL_RETURNS_OVER_1_MONTH	กลับมาอีกครั้งใน\n<size=70>> 1</size>\n\nเดือน	
+GLUE_TAVERN_BRAWL_RETURNS_UNKNOWN	ปิด\n\n\nปรับปรุง	the extra blank lines are there because of the background image filigree on the left and right of the number in "Back in X days" of the other strings. this string shows up when there is no future Tavern Brawl and has the same background filigree.
+GLUE_TAVERN_BRAWL_RETURNS_UNKNOWN_SINGLE_LINE	ปิดปรับปรุง	
+GLUE_TAVERN_BRAWL_RETURNS_WEEKS	กลับมาอีกครั้งใน\n<size=70>{0}</size>\n\nสัปดาห์	
+GLUE_TAVERN_BRAWL_REWARD_DESC	รับซองการ์ดหนึ่งซองสำหรับชัยชนะครั้งแรกของสัปดาห์นี้!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_CARDBACK	รับหลังการ์ดลายนี้สำหรับชัยชนะครั้งแรกของสัปดาห์นี้!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_CARDBACK_QUOTA	รับหลังการ์ดลายนี้[b]เมื่อชนะ {1} ครั้งในสัปดาห์นี้!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_FINISH	รับซองการ์ดหนึ่งซองสำหรับการเล่นเกมท้าประลองครั้งแรกของสัปดาห์นี้!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_FINISH_CARDBACK	รับหลังการ์ดลายนี้สำหรับการเล่นเกมท้าประลองครั้งแรกของสัปดาห์นี้!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_FINISH_MULTIPLE_PACKS	รับซองการ์ด {0} ซองเมื่อจบเกมท้าประลองเกมแรกในสัปดาห์นี้!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_FINISH_QUOTA	รับซองการ์ดหนึ่งซอง[b]เมื่อเล่นเกมท้าประลอง {1} ครั้งในสัปดาห์นี้!	{0} is always # of rewards/packs while {1} is how many game finishes.
+GLUE_TAVERN_BRAWL_REWARD_DESC_FINISH_QUOTA_CARDBACK	รับหลังการ์ดลายนี้[b]เมื่อเล่นเกมท้าประลอง {1} ครั้งในสัปดาห์นี้!	{0} is always # of rewards while {1} is how many game finishes.
+GLUE_TAVERN_BRAWL_REWARD_DESC_FINISH_QUOTA_MULTIPLE_PACKS	รับซองการ์ด {0} ซอง[b]เมื่อเล่นเกมท้าประลอง {1} ครั้งในสัปดาห์นี้!	{0} is always # of rewards/packs while {1} is how many game finishes.
+GLUE_TAVERN_BRAWL_REWARD_DESC_MULTIPLE_PACKS	รับซองการ์ด {0} ซองเมื่อชนะครั้งแรกในสัปดาห์นี้!	
+GLUE_TAVERN_BRAWL_REWARD_DESC_QUOTA	รับซองการ์ดหนึ่งซอง[b]เมื่อชนะ {1} ครั้งในสัปดาห์นี้!	the zeroth parameter {0} is always # of rewards/packs while {1} is how many wins.
+GLUE_TAVERN_BRAWL_REWARD_DESC_QUOTA_MULTIPLE_PACKS	รับซองการ์ด {0} ซอง[b]เมื่อชนะ {1} ครั้งในสัปดาห์นี้!	{0} is always # of rewards/packs while {1} is how many wins.
+GLUE_TEMPORARY_ACCOUNT_DIALOG_BODY_01	สร้างบัญชีเพื่อรักษาความคืบหน้าของเกม! คุณจะได้รับซองการ์ดฟรีด้วย!	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_BODY_02	สร้างบัญชีเพื่อซื้อผลิตภัณฑ์! บัญชีจะช่วยเก็บรักษาคอลเลกชันของคุณ	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_BODY_03	สร้างบัญชีเพื่อเก็บรักษาคอลเลกชันของคุณและรับซองการ์ดฟรี!	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_BODY_04	ทำได้ดี! รักษาความคืบหน้าของคุณไว้ด้วยการสร้างบัญชีเลย!	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_BODY_05	ยินดีด้วย! รักษาความคืบหน้าของคุณไว้ด้วยการสร้างบัญชีเลย!	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_BODY_06	ยอดมาก! รักษาความคืบหน้าของคุณไว้ด้วยการสร้างบัญชีเลย!	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_HEADER_01	ต้องมีบัญชี	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_HEADER_02	สร้างบัญชีหรือไม่	
+GLUE_TEMPORARY_ACCOUNT_DIALOG_HEADER_03	สร้างบัญชีเลยไหม	
+GLUE_TEMPORARY_ACCOUNT_FRIENDS_LIST_BODY	Hearthstone จะสนุกกว่านี้ถ้าได้เล่นกับเพื่อน!\n(ต้องมีบัญชี)	
+GLUE_TEMPORARY_ACCOUNT_FRIENDS_LIST_HEADER	เล่นกับเพื่อนๆ	
+GLUE_TEMPORARY_ACCOUNT_GAME_MENU_BODY	• เก็บคอลเลกชันของคุณ\n• บันทึกความคืบหน้าของคุณไว้\n• ปลดล็อคซองการ์ดฟรี\n• พูดคุย/เล่นเกมกับเพื่อน\n• เลือกชื่อผู้เล่นของคุณเอง\n• เล่นผ่านแพลตฟอร์มอื่น	
+GLUE_TEMPORARY_ACCOUNT_SIGN_UP	ลงทะเบียน	
+GLUE_TEMPORARY_ACCOUNT_SWITCH_ACCOUNT_HEADER	บัญชี	
+GLUE_TEXTURE_COMPRESSION_WARNING	บิลด์นี้ไม่มีรูปแบบเท็กซ์เจอร์ที่ถูกต้องสำหรับแพลตฟอร์มนี้ เกมอาจทำงานได้ไม่เต็มประสิทธิภาพ	--TEMP-- This should be in Chinese
+GLUE_TEXTURE_COMPRESSION_WARNING_TITLE	คำเตือนการบีบอัดเท็กซ์เจอร์	--TEMP-- This should be in Chinese
+GLUE_THE_CLOCK_BANNER_NEW_WAY	รูปแบบการเล่นใหม่!	
+GLUE_THE_CLOCK_BANNER_STANDARD	"มาตรฐาน"	
+GLUE_THE_CLOCK_BANNER_YEAR	ปีแห่งมังกร	
+GLUE_THE_CLOCK_DETAILS	การ์ดที่คุณสามารถใช้ในกฎมาตรฐานได้จะเปลี่ยนแปลงทุกปี	
+GLUE_THE_CLOCK_DETAILS_STANDARD	ในกฏมาตรฐาน คุณสามารถใช้ได้เฉพาะการ์ดจากชุดใหม่เท่านั้น	
+GLUE_TIP_ADVENTURE_0	คุณจะต้องจัดเด็คของคุณเองเพื่อเอาชนะเหล่าบอสที่เก่งกาจที่สุด	
+GLUE_TIP_ADVENTURE_1	อย่าให้บอสสุดโหดทำให้คุณหมดกำลังใจ จัดเด็คของคุณเองเพื่อถล่มพวกมัน	
+GLUE_TIP_ADVENTURE_2	ถ้าคุณแพ้ในการต่อสู้กับบอส คุณควรลองปรับเปลี่ยนเด็คของคุณ	
+GLUE_TIP_ADVENTURE_3	เตรียมตัวให้พร้อม! จัดเด็คเพื่อรับมือกับบอสที่คุณจะท้าสู้	
+GLUE_TIP_ADVENTURE_BOT_0	ปริศนาใช้เวลารีเซ็ตไม่นาน ฉะนั้นอย่ากลัวที่จะทดลองเล่นอะไรใหม่ๆ!	
+GLUE_TIP_ADVENTURE_BOT_1	การไขปริศนาไม่จำเป็นต้องใช้การ์ดทุกใบที่มี	
+GLUE_TIP_ADVENTURE_BOT_2	อย่ารีบยอมแพ้ ลองหาวิธีใช้การ์ดที่ไม่น่าจะใช้ร่วมกันได้	
+GLUE_TIP_ADVENTURE_BOT_3	บางครั้งลำดับการเล่นการ์ดก็อาจส่งผลต่อผลลัพธ์อย่างมาก 	
+GLUE_TIP_ADVENTURE_BOT_4	อย่ากลัวที่จะทำร้ายมินเนี่ยนของตัวเอง\nด็อกเตอร์บูมต้องชอบแน่	
+GLUE_TIP_ADVENTURE_BOT_5	การ์ดบางใบมีให้เล่นในปริศนาของ The Boomsday Project เท่านั้น	
+GLUE_TIP_ADVENTURE_BOT_6	ปริศนา "กระจกเงา" กำหนดให้ทุกอย่างต้องเหมือนกันทุกประการ รวมถึงพลังชีวิตด้วย!	
+GLUE_TIP_ADVENTURE_BOT_7	คุณทำได้แน่ ด็อกเตอร์บูมเชื่อใจคุณนะ!\n(แต่ถ้าล้มเหลว เขาจะเปลี่ยนคุณเป็นของเหลว)	
+GLUE_TIP_ADVENTURE_BOT_8	เล่นแต่ละวิงให้จบเพื่อปลดล็อค\nปริศนาสุดท้าทายของด็อกเตอร์บูม!	
+GLUE_TIP_ADVENTURE_BOT_9	คำเตือน: บูมบอทอาจระเบิด แต่จริงแล้วๆ ไม่ว่าอะไรก็อาจระเบิดได้ทั้งนั้น	
+GLUE_TIP_ADVENTURE_DAL_1	มาคราวนี้คุณเป็นฝ่ายร้าย! ได้เวลาจัดเด็คสุดชั่ว[b]และคอมโบที่ไม่ยุติธรรม	
+GLUE_TIP_ADVENTURE_DAL_10	ถ้าคุณแพ้ คุณจะต้องกลับมาเริ่มใหม่ตั้งแต่ต้น	
+GLUE_TIP_ADVENTURE_DAL_11	สมบัติ “ติดตัว” มีผลตลอดเวลา[b]และจะอยู่กับคุณไปจนจบรอบการเล่น	
+GLUE_TIP_ADVENTURE_DAL_12	ปรับแต่งเด็คของคุณให้เข้ากับ[b]สมบัติที่เลือก[b]เพื่อให้เกิดประสิทธิภาพสูงสุด!	
+GLUE_TIP_ADVENTURE_DAL_13	เมื่อทุกอย่างพังไม่เป็นท่า… ลองแหงนมองฟ้าแล้ว[b]เรียกหาหุ่นบินผ่าน	
+GLUE_TIP_ADVENTURE_DAL_14	เอาชนะทั้งห้าบท[b]เพื่อรับหลังการ์ด	
+GLUE_TIP_ADVENTURE_DAL_15	ปลดล็อคทั้งห้าบท[b]เพื่อเข้าถึงโหมดความผิดปกติ	
+GLUE_TIP_ADVENTURE_DAL_16	โหมดฮีโร่มีไว้ให้สำหรับ[b]สุดยอดอาชญากรเท่านั้น เพราะการต่อสู้[b]และอุปสรรคต่างๆ จะยากกว่ามาก!	
+GLUE_TIP_ADVENTURE_DAL_17	การเผชิญหน้าที่ไม่มีการต่อสู้[b]เป็นโอกาสให้คุณได้จัดการกับ[b]เด็คของคุณภายในรอบนั้น	
+GLUE_TIP_ADVENTURE_DAL_18	สมาพันธ์ E.V.I.L. ไม่ยอมรับความผิดพลาด! แต่จะลองใหม่อีกกี่รอบก็ได้นะ	
+GLUE_TIP_ADVENTURE_DAL_19	คิรินทอร์คือกลุ่มจอมเวทชั้นสูง ประกอบไปด้วยเมจที่ทรงพลังที่สุดในโลก	
+GLUE_TIP_ADVENTURE_DAL_2	ทำเป้าหมายให้สำเร็จ[b]เพื่อปลดล็อค[b]พลังฮีโร่อื่นๆ สำหรับตัวละคร	
+GLUE_TIP_ADVENTURE_DAL_20	สมาพันธ์ E.V.I.L. ได้รวบรวมเหล่าคนชั่ว[b]และวายร้ายจากทั่วทั้งอาเซรอธ	
+GLUE_TIP_ADVENTURE_DAL_21	นักผจญภัยและชาวเมืองดาลารัน[b]จะพยายามขัดขวางแผนการของคุณ!	
+GLUE_TIP_ADVENTURE_DAL_3	เอาชนะการต่อสู้[b]เพื่อปลดล็อค[b]ตัวเลือกเด็คเริ่มต้นใหม่ๆ	
+GLUE_TIP_ADVENTURE_DAL_4	อยากลองอะไรแปลกใหม่ใช่ไหม ลองเปิดโหมดความผิดปกติดูสิ!	
+GLUE_TIP_ADVENTURE_DAL_5	ยิ่งคุณเดินทางเข้าไปในเมือง การต่อสู้ก็จะยิ่งยากขึ้นตามไปด้วย	
+GLUE_TIP_ADVENTURE_DAL_6	แต่ละบทจะมีเหตุการณ์หักมุม[b]ที่ทำให้การต่อสู้มีเอกลักษณ์\nเช่น ถนนแออัด หรือบอสพิเศษเพิ่มเติม	
+GLUE_TIP_ADVENTURE_DAL_7	จัดเด็คที่ยืดหยุ่นได้ เพราะการต่อสู้แต่ละแบบ[b]ต้องใช้กลยุทธ์ที่แตกต่างกันไป	
+GLUE_TIP_ADVENTURE_DAL_8	เมื่อปลดล็อคฮีโร่แล้ว คุณสามารถใช้ฮีโร่นั้นในบทใดก็ได้	
+GLUE_TIP_ADVENTURE_DAL_9	ฮีโร่บางตัวสามารถใช้ประโยชน์[b]จากเหตุการณ์หักมุมของแต่ละบทได้ดีกว่าฮีโร่ตัวอื่นๆ	
+GLUE_TIP_ADVENTURE_DRG_1	เล่นด้วยเด็คที่ให้มาในโหมดเนื้อเรื่อง\nสร้างเด็คของคุณเองเพื่อพิชิตโหมดฮีโร่	
+GLUE_TIP_ADVENTURE_DRG_10	เหล่ามังกรร่อนถลาสู่ดาลารันในศึกกลางเวหา\nที่ยิ่งใหญ่ที่สุดเท่าที่อาเซรอธเคยมีมา	
+GLUE_TIP_ADVENTURE_DRG_11	ในโหมดเนื้อเรื่อง อย่าลืมใช้ประโยชน์จากพลังฮีโร่พิเศษของคุณ	
+GLUE_TIP_ADVENTURE_DRG_2	ลองเล่นโหมดฮีโร่เพื่อสัมผัสความท้าทายสุดขั้ว\nคุณจะต้องสร้างเด็คของตัวเอง!	
+GLUE_TIP_ADVENTURE_DRG_3	สมาพันธ์ E.V.I.L. กำลังตามหา\nซากของกาลาครอนด์... เพื่อชุบชีวิตเขา!	
+GLUE_TIP_ADVENTURE_DRG_4	สมาพันธ์นักสำรวจต้องมีพันธมิตรเป็นมังกร\nหากหวังจะหยุดยั้งแผนการของ E.V.I.L.	
+GLUE_TIP_ADVENTURE_DRG_5	ดราก้อนไฟลท์ทั้งห้าต้องร่วมมือกัน\nเพื่อเอาชนะกาลาครอนด์เมื่อ 10,000 ปีก่อน	
+GLUE_TIP_ADVENTURE_DRG_6	วิหารเวิร์มเรสต์คือสถานที่ชุมนุมของเหล่าดราก้อนไฟลท์ทั้งห้าแต่โบราณ	
+GLUE_TIP_ADVENTURE_DRG_7	ราฟามนำโรคระบาดสุดท้ายมาที่นอร์ธเรนด์\nโดยหวังจะใช้มันชุบชีวิตกาลาครอนด์	
+GLUE_TIP_ADVENTURE_DRG_8	การผจญภัยนี้มีสองแคมเปญแยกจากกันสำหรับ\nสมาพันธ์นักสำรวจและสมาพันธ์ E.V.I.L.	
+GLUE_TIP_ADVENTURE_DRG_9	เล่นทั้งแคมเปญนักสำรวจและแคมเปญ E.V.I.L.\nเพื่อให้รู้เรื่องราวการต่อสู้ฉบับเต็ม!	
+GLUE_TIP_ADVENTURE_GIL_0	ยิ่งคุณเดินทางลึกเข้าไปในวิทช์วู้ด การต่อสู้ก็จะยิ่งยากขึ้น	
+GLUE_TIP_ADVENTURE_GIL_1	นักล่ามอนสเตอร์แต่ละคนจะมีศัตรูคู่อาฆาตของตนเอง	
+GLUE_TIP_ADVENTURE_GIL_10	เมื่อทุกอย่างพังไม่เป็นท่า... จงพึ่งพากระสุนสะท้อน	
+GLUE_TIP_ADVENTURE_GIL_2	คุณไม่รู้หรอกว่าต่อไปจะเจอมอนสเตอร์ตัวไหน สร้างเด็คที่แข็งแกร่งเตรียมไว้เลย!	
+GLUE_TIP_ADVENTURE_GIL_3	มอนสเตอร์บางตัวจะดรอปสมบัติพิเศษเมื่อคุณเอาชนะมันได้	
+GLUE_TIP_ADVENTURE_GIL_4	คุณไม่มีทางซ่อมดาบในตำนานเควลเดลาร์ได้หรอก ตราบใดที่ยังอยู่ที่นี่	
+GLUE_TIP_ADVENTURE_GIL_5	สมบัติ "ติดตัว" มีผลตลอดเวลาและจะอยู่กับคุณไปจนจบรอบการเล่น	
+GLUE_TIP_ADVENTURE_GIL_6	ปรับแต่งเด็คของคุณให้เข้ากับสมบัติที่เลือกเพื่อให้เกิดประสิทธิภาพสูงสุด!	
+GLUE_TIP_ADVENTURE_GIL_7	นักล่ามอนสเตอร์ทั้งสี่ล้วนมีวิธีพิชิตวิทช์วู้ดที่แตกต่างกัน	
+GLUE_TIP_ADVENTURE_GIL_8	ฮากาธาอยู่ไหนนะ นักล่ามอนสเตอร์ทั้งสี่ต้องร่วมมือกันเพื่อตามหานาง!	
+GLUE_TIP_ADVENTURE_GIL_9	คุณจะได้เผชิญหน้ากับมอนสเตอร์ที่ต่างกันกว่า 40 แบบในวิทช์วู้ด	
+GLUE_TIP_ADVENTURE_LOOT_0	ยิ่งคุณเดินทางลึกเข้าไปในดันเจี้ยน การต่อสู้ก็จะยิ่งยากขึ้น	
+GLUE_TIP_ADVENTURE_LOOT_1	บอสสุดท้ายผู้ชั่วร้ายทั้งห้ารอคุณอยู่ที่สุดปลายดันเจี้ยน	
+GLUE_TIP_ADVENTURE_LOOT_10	เมื่อทุกอย่างพังไม่เป็นท่า... จงมองหาคทาย่างสด	
+GLUE_TIP_ADVENTURE_LOOT_2	คุณไม่รู้หรอกว่าต่อไปจะเจอบอสตัวไหน สร้างเด็คที่แข็งแกร่งเตรียมไว้เลย!	
+GLUE_TIP_ADVENTURE_LOOT_3	ศัตรูบางตัวอาจพบได้ยากมาก... และอาจมอบรางวัลโบนัสให้คุณด้วย!	
+GLUE_TIP_ADVENTURE_LOOT_4	คุณไม่มีทางซ่อมดาบในตำนานเควลเดลาร์ได้หรอก ไม่มีทาง	
+GLUE_TIP_ADVENTURE_LOOT_5	สมบัติ "ติดตัว" มีผลตลอดเวลาและจะอยู่กับคุณไปจนจบรอบการเล่น	
+GLUE_TIP_ADVENTURE_LOOT_6	ปรับแต่งเด็คของคุณให้เข้ากับสมบัติที่เลือกเพื่อให้เกิดประสิทธิภาพสูงสุด!	
+GLUE_TIP_ADVENTURE_LOOT_7	คลาสทั้งเก้ามีตัวเลือกสมบัติสำหรับใช้ในดันเจี้ยนที่ต่างกัน	
+GLUE_TIP_ADVENTURE_LOOT_8	พิชิตดันเจี้ยนด้วยคลาสทั้งเก้าเพื่อปลดล็อคหลังการ์ดสุดพิเศษ!	
+GLUE_TIP_ADVENTURE_LOOT_9	เครื่องรางครอบงำจิตจะเพิ่มมินเนี่ยนในเด็คของคุณ จงใช้ให้ดี!	
+GLUE_TIP_ADVENTURE_TRL_0	แชมเปี้ยนที่คุณเจอจะ\nแข็งแกร่งขึ้นเรื่อยๆ	
+GLUE_TIP_ADVENTURE_TRL_1	ศึกษาจุดแข็งและจุดอ่อน\nของแชมเปี้ยนคนอื่นๆ!	
+GLUE_TIP_ADVENTURE_TRL_2	ให้ความสำคัญกับสื่อวิญญาณ\nพลังของคุณจะลดลงเมื่อไม่มีมัน	
+GLUE_TIP_ADVENTURE_TRL_3	เพื่อนร่วมทีมบางคนจะอยู่\nในมือของคุณตั้งแต่ตอนเริ่มเกม	
+GLUE_TIP_ADVENTURE_TRL_4	เล่นอย่างระมัดระวังขณะ\nสื่อวิญญาณของคุณหยุดทำงาน พยายามยื้อเวลาไว้	
+GLUE_TIP_ADVENTURE_TRL_5	ศัตรูจะอ่อนแอลงเมื่อไม่มี\nสื่อวิญญาณ ให้มุ่งเป้าไปที่มัน!	
+GLUE_TIP_ADVENTURE_TRL_6	แต่ละทีมมีสื่อวิญญาณพิเศษสามอัน\nและเพื่อนร่วมทีมพิเศษหกตัว	
+GLUE_TIP_ADVENTURE_TRL_7	สร้างเด็คที่ยืดหยุ่น!\nการหวังพึ่งกลยุทธ์เดียวอาจส่งผลเสียได้	
+GLUE_TIP_ADVENTURE_TRL_8	เลือกเพื่อนร่วมทีมที่ช่วยส่งเสริม\nหรือปิดจุดอ่อนให้สื่อวิญญาณของคุณ!	
+GLUE_TIP_ADVENTURE_TRL_9	ถ้าคุณแพ้การต่อสู้\nคุณจะต้องเริ่มใหม่ตั้งแต่ต้น	
+GLUE_TIP_ADVENTURE_ULD_1	เอาชนะเจ้าแห่งโรคระบาดแห่งอุลดุม[b]เพื่อปกป้องโลก!	
+GLUE_TIP_ADVENTURE_ULD_10	เมื่อปลดล็อคฮีโร่แล้ว คุณสามารถใช้ฮีโร่นั้นในบทใดก็ได้	
+GLUE_TIP_ADVENTURE_ULD_11	ถ้าคุณแพ้ คุณจะต้องกลับมาเริ่มใหม่ตั้งแต่ต้น	
+GLUE_TIP_ADVENTURE_ULD_12	สมบัติ “ติดตัว” มีผลตลอดเวลา[b]และจะอยู่กับคุณไปจนจบรอบการเล่น	
+GLUE_TIP_ADVENTURE_ULD_13	ปรับแต่งเด็คของคุณให้เข้ากับ[b]สมบัติที่เลือก[b]เพื่อให้เกิดประสิทธิภาพสูงสุด!	
+GLUE_TIP_ADVENTURE_ULD_14	เมื่อทุกอย่างพังไม่เป็นท่า… จงใช้ฮาร์ทสโตนพาหนี หนีไปไกลๆ เลย!	
+GLUE_TIP_ADVENTURE_ULD_15	เล่นบทสุดท้ายให้จบเพื่อรับหลังการ์ด และรับหลังการ์ดอีกลายเมื่อจบระดับฮีโร่!	
+GLUE_TIP_ADVENTURE_ULD_16	ปลดล็อคทั้งสี่บทหลัก[b]เพื่อเข้าถึงโหมดความผิดปกติ	
+GLUE_TIP_ADVENTURE_ULD_17	โหมดฮีโร่มีไว้สำหรับนักสำรวจผู้เจนจัดเท่านั้น เพราะการต่อสู้[b]และอุปสรรคต่างๆ จะยากขึ้น!	
+GLUE_TIP_ADVENTURE_ULD_18	การเผชิญหน้าที่เป็นมิตร[b]เปิดโอกาสให้คุณได้ปรับเปลี่ยน[b]เด็คของคุณในการเล่นรอบนั้น	
+GLUE_TIP_ADVENTURE_ULD_19	เจ้าแห่งโรคระบาดมีพลังชีวิตเยอะถึงเยอะมาก ค่อยๆ บั่นทอนพลังชีวิตของมันตลอดการต่อสู้หลายครั้ง!	
+GLUE_TIP_ADVENTURE_ULD_2	ฮีโร่ของคุณทุกคนสามารถสร้างเด็คที่มีสองคลาส ลองสร้างคอมโบใหม่ๆ ดูนะ!	
+GLUE_TIP_ADVENTURE_ULD_20	ฮีโร่ของเราจะหยุดยั้งแผนการของราฟาม \nทันทีที่รู้ว่าเขาวางแผนอะไรไว้	
+GLUE_TIP_ADVENTURE_ULD_21	ฮีโร่ของเราจะต้องเผชิญหน้ากับผู้พิทักษ์โบราณ สิ่งมีชีวิตทะเลทราย… และสมาชิก E.V.I.L.	
+GLUE_TIP_ADVENTURE_ULD_22	ภายในวิหารต้นกำเนิดมีขุมพลัง[b]ที่อาจสร้างโลกหรือทำลายโลกทั้งใบได้!	
+GLUE_TIP_ADVENTURE_ULD_23	ราฟามให้รางวัลเทคาห์น[b]ด้วยการยอมให้เขาควบคุม[b]โรคระบาดเพลิง	
+GLUE_TIP_ADVENTURE_ULD_3	ทำเป้าหมายให้สำเร็จ[b]เพื่อปลดล็อค[b]สมบัติเริ่มต้นอื่นๆ ของฮีโร่	
+GLUE_TIP_ADVENTURE_ULD_4	เอาชนะการต่อสู้[b]เพื่อปลดล็อค[b]ตัวเลือกเด็คเริ่มต้นใหม่ๆ	
+GLUE_TIP_ADVENTURE_ULD_5	อยากลองอะไรแปลกใหม่ใช่ไหม ลองเปิดโหมดความผิดปกติดูสิ!	
+GLUE_TIP_ADVENTURE_ULD_6	ยิ่งคุณคืบหน้าไปไกลในแต่ละบท การต่อสู้ก็จะยิ่งยากขึ้น	
+GLUE_TIP_ADVENTURE_ULD_7	ศัตรูคู่อาฆาตของแต่ละบทคือเจ้าแห่งโรคระบาด ศัตรูขนาดใหญ่ที่มีพลังชีวิตคงเดิม	
+GLUE_TIP_ADVENTURE_ULD_8	แต่ละบทจะมี “จุดพลิกผัน” พิเศษที่เจ้าแห่งโรคระบาดก่อขึ้น	
+GLUE_TIP_ADVENTURE_ULD_9	สร้างเด็คที่ยืดหยุ่น เพราะการต่อสู้แต่ละครั้ง[b]ต้องใช้กลยุทธ์ที่แตกต่างกันไป	
+GLUE_TIP_BACON_0	เมื่อคุณได้ทริปเปิ้ล คุณจะค้นพบมินเนี่ยนจาก[b]ระดับโรงเตี๊ยมที่สูงกว่าระดับปัจจุบัน 1 ขั้น	
+GLUE_TIP_BACON_1	มินเนี่ยนจะโจมตีจากซ้ายไปขวา โดยสุ่มเป้าหมาย\nเว้นแต่ว่ามินเนี่ยนศัตรูจะมียั่วยุ	
+GLUE_TIP_BACON_10	ชัยชนะต่อเนื่องจะปรากฏ[b]ในตารางคะแนนบนสัญลักษณ์รูปเปลวไฟ	
+GLUE_TIP_BACON_11	การเสริมพลังมินเนี่ยนจากในโรงเตี๊ยมจะมีผลถาวร\n แต่การเสริมพลังในช่วงต่อสู้จะหายไปหลังจากสู้เสร็จ 	
+GLUE_TIP_BACON_12	ถ้าคู่ต่อสู้ของคุณเลือกซื้อมินเนี่ยนตัวเดียวกันหลายๆ ชุด คุณจะมีโอกาสเจอมินเนี่ยนตัวนั้นน้อยลง	
+GLUE_TIP_BACON_13	เมื่อคุณขายมินเนี่ยน มันจะกลับกองมินเนี่ยน และคุณจะมีโอกาสเจอมินเนี่ยนตัวนั้นมากขึ้น 	
+GLUE_TIP_BACON_14	ถ้าคุณใช้ทองทั้งหมดเพื่ออัพเกรดโรงเตี๊ยม กองทัพของคุณจะอ่อนแอ และคุณอาจจะแพ้เกม	
+GLUE_TIP_BACON_15	ถ้าคุณไม่เพิ่มระดับโรงเตี๊ยมเลย กองทัพของคุณจะอ่อนแอ และคุณอาจจะแพ้เกม	
+GLUE_TIP_BACON_16	เมอร์ล็อคแข็งแกร่งกว่าใครในช่วงต้นเกม ในขณะที่เครื่องจักรแข็งแกร่งกว่าใครในช่วงท้ายเกม	
+GLUE_TIP_BACON_17	ถ้าคุณมีทองเหลือ 1 ทอง รีเฟรชโรงเตี๊ยมเลย\nถ้าคุณพบมินเนี่ยนที่คุณต้องการ ก็แช่แข็งมันเพื่อกลับมาซื้อในเทิร์นถัดไป	
+GLUE_TIP_BACON_18	การแข่งขันระหว่างผู้เล่น 8 คน แค่ติด 4 อันดับสูงสุดก็ถือว่าชนะแล้ว! \nผู้เล่นอันดับหนึ่งจะได้มงกุฎไปครอง!	
+GLUE_TIP_BACON_19	ผู้เล่นทุกคนว่าจ้างมินเนี่ยนจากกองมินเนี่ยนเดียวกัน	
+GLUE_TIP_BACON_2	ผู้แปลงโฉม เซรุสสามารถเปลี่ยนร่าง[b]เป็นมินเนี่ยนจากโรงเตี๊ยมขั้นใดก็ได้!	
+GLUE_TIP_BACON_20	เมื่อคู่ต่อสู้ของคุณพ่ายแพ้ออกจากเกม มินเนี่ยนของผู้เล่นคนนั้นจะกลับเข้าสู่กองมินเนี่ยน	
+GLUE_TIP_BACON_3	เมื่อคุณชนะการต่อสู้ ฮีโร่และมินเนี่ยนของคุณ[b]จะสร้างความเสียหายเท่ากับระดับโรงเตี๊ยมของแต่ละตัว	
+GLUE_TIP_BACON_4	ค่าใช้จ่ายในการอัพเกรดโรงเตี๊ยมของคุณลดลง 1 ทองทุกเทิร์น	
+GLUE_TIP_BACON_5	มินเนี่ยนขั้น 6 แต่ละตัวมีเพียงหกใบเท่านั้น\n เมื่อซื้อแล้ว มินเนี่ยนตัวนั้นจะถูกนำออกจากกองมินเนี่ยน!	
+GLUE_TIP_BACON_6	แช่แข็งมินเนี่ยนเพื่อเก็บไว้ซื้อในเทิร์นถัดไป หรือกดอีกครั้งเพื่อยกเลิกการแช่แข็ง	
+GLUE_TIP_BACON_7	มินเนี่ยนสีทองสามตัวจะไม่รวมกันเป็นทริปเปิ้ลขั้นสูงกว่า	
+GLUE_TIP_BACON_8	คุณสามารถดูว่าคู่ต่อสู้คนถัดไปของคุณคือใคร[b]ได้จากตารางคะแนน เตรียมตัวเตรียมใจไว้ให้ดี	
+GLUE_TIP_BACON_9	เมื่อจำนวนผู้เล่นที่เหลือในเกมเป็นเลขคี่ เคลธูซาดจะชุบชีวิตมินเนี่ยนของคู่ต่อสู้ที่พ่ายแพ้ไปแล้วมาช่วยสู้	
+GLUE_TIP_DEFAULT_0	คุณสามารถซื้อซองการ์ดเพิ่มได้จากร้านค้า	
+GLUE_TIP_DEFAULT_1	คลิกที่ฮีโร่ของคุณระหว่างแก้ไขเด็ค เพื่อเปลี่ยนชื่อเด็คของคุณ	
+GLUE_TIP_DEFAULT_1_TOUCH	แตะที่ฮีโร่ของคุณระหว่างแก้ไขเด็ค เพื่อเปลี่ยนชื่อเด็คของคุณ	
+GLUE_TIP_DEFAULT_10	ลานประลองจะเปิดโอกาสให้คุณจัดเด็คจากการ์ดที่สุ่มมาให้เลือก คุณมีโอกาสได้รับรางวัลด้วย!	
+GLUE_TIP_DEFAULT_11	คุณจะได้รับการ์ดพื้นฐานจากการเก็บเลเวล การ์ดเหล่านี้จะไม่สามารถสร้างหรือสลายได้	
+GLUE_TIP_DEFAULT_12	คุณจะได้รับผงเวทมนตร์จำนวนมากจากการสลายการ์ดสีทอง	
+GLUE_TIP_DEFAULT_13	คุณสามารถใช้ช่องค้นหาในคอลเลกชันของคุณ เพื่อค้นหาการ์ดทุกใบที่มีความสามารถ "ยั่วยุ"	
+GLUE_TIP_DEFAULT_14	คุณจะได้รับการ์ดพื้นฐานจากการเพิ่มเลเวลให้แต่ละคลาส การ์ดคลาสสิคจะมาจากซองการ์ดคลาสสิค	
+GLUE_TIP_DEFAULT_15	การเล่นกับผู้เล่นจริงจะทำให้คุณได้รับ XP โบนัส	
+GLUE_TIP_DEFAULT_16	คุณสามารถคลิกขวาที่ฮีโร่ของฝ่ายตรงข้ามเพื่อ "ปิดการโต้ตอบ" ได้	
+GLUE_TIP_DEFAULT_16_TOUCH	คุณสามารถแตะที่ฮีโร่ของฝ่ายตรงข้ามเพื่อ "ปิดการโต้ตอบ" ได้	
+GLUE_TIP_DEFAULT_17	ถ้าคุณใช้คลาสใดชนะครบ 500 เกมในโหมดจัดอันดับหรือโหมดลานประลอง คุณจะได้รับฮีโร่สีทอง	
+GLUE_TIP_DEFAULT_18	คุณสามารถเพิ่มเพื่อนลงในรายชื่อเพื่อนได้โดยใช้ปุ่มที่อยู่ด้านซ้ายล่าง	
+GLUE_TIP_DEFAULT_18_PHONE	คุณสามารถเพิ่มเพื่อนลงในรายชื่อเพื่อนได้โดยใช้ปุ่มที่อยู่ด้านซ้ายบน	
+GLUE_TIP_DEFAULT_19	ในโหมดจัดอันดับจะมีทั้งหมด 50 อันดับ โดยอันดับสูงสุดคือ "ตำนาน"	
+GLUE_TIP_DEFAULT_2	คลิกขวาที่ฮีโร่ของคุณเพื่อแสดงความรู้สึก	
+GLUE_TIP_DEFAULT_2_TOUCH	แตะที่ฮีโร่ของคุณเพื่อแสดงความรู้สึก	
+GLUE_TIP_DEFAULT_20	ดูเพื่อนเล่นได้โดยกดปุ่ม "ดวงตา" ในรายชื่อเพื่อนของคุณ ระหว่างที่เพื่อนของคุณกำลังแข่งขัน!	
+GLUE_TIP_DEFAULT_21	เล่น Hearthstone ผ่านโทรศัพท์มือถือ แท็บเล็ต และคอมพิวเตอร์ ใช้การ์ดในคอลเลกชันเดียวกันได้ไม่ว่าจะเล่นบนเครื่องใด!	
+GLUE_TIP_DEFAULT_22	คุณสามารถซื้อฮีโร่ใหม่สำหรับคลาสโปรดของคุณได้จากในร้านค้า	
+GLUE_TIP_DEFAULT_23	มาตรฐานใช้การ์ดพื้นฐาน คลาสสิค และการ์ดจากสองปีหลังสุด	
+GLUE_TIP_DEFAULT_24	คลิกที่ฮีโร่ของคุณระหว่างแก้ไขเด็คเพื่อสลับระหว่างมาตรฐานและอิสระ	
+GLUE_TIP_DEFAULT_24_TOUCH	แตะที่ฮีโร่ของคุณระหว่างแก้ไขเด็คเพื่อสลับระหว่างมาตรฐานและอิสระ	
+GLUE_TIP_DEFAULT_25	ปีนี้คือปีแห่งมังกร! (แต่ละปีจะมีธีมใหม่เป็นของตัวเอง)	
+GLUE_TIP_DEFAULT_26	เมื่อดูคอลเลกชันของคุณ ให้คลิกที่ปุ่มตัวกรองด้านซ้ายล่างเพื่อเลือกชุดการ์ดที่จะแสดง	
+GLUE_TIP_DEFAULT_26_TOUCH	เมื่อดูคอลเลกชันของคุณ ให้แตะที่ปุ่มตัวกรองด้านซ้ายล่างเพื่อเลือกชุดการ์ดที่จะแสดง	
+GLUE_TIP_DEFAULT_27	เมื่อมีการปล่อยชุดการ์ดใหม่ออกมา คุณสามารถใช้ชุดนั้นเล่นได้ทั้งในอิสระและมาตรฐาน	
+GLUE_TIP_DEFAULT_28	อิสระจะให้อิสระสมชื่อ! คุณจะใช้การ์ดใบไหนเล่นก็ได้!	
+GLUE_TIP_DEFAULT_29	ในกฏมาตรฐาน กลยุทธ์ใหม่ๆ จะถูกพัฒนาขึ้นเสมอ	
+GLUE_TIP_DEFAULT_3	หากคุณต้องการความช่วยเหลือในการจัดเด็ค ให้ใช้ ''ตัวช่วยสร้างเด็ค'' ในตัวจัดการคอลเลกชัน!	
+GLUE_TIP_DEFAULT_30	เราจะทยอยปล่อยรูปแบบเด็คใหม่ออกมาเรื่อยๆ	
+GLUE_TIP_DEFAULT_31	ในกฏมาตรฐาน การ์ดที่ใช้เล่นจะเป็นการ์ดจากชุดใหม่ เพื่อให้คุณไม่ต้องทำความรู้จักกับการ์ดเก่าทั้งหมด	
+GLUE_TIP_DEFAULT_32	คุณสามารถทำเควสด้วยการเล่นกับเพื่อน	
+GLUE_TIP_DEFAULT_33	ทำเควสด้วยการท้าแข่งกับเพื่อน!	
+GLUE_TIP_DEFAULT_4	คุณสามารถดูระดับความหายากของการ์ดได้จากสีของอัญมณีที่อยู่ตรงกลาง	
+GLUE_TIP_DEFAULT_5	สีของระดับความหายาก เรียงจากน้อยไปมาก: ขาวคือทั่วไป น้ำเงินคือหายาก ม่วงคือสุดยอด และส้มคือตำนาน	
+GLUE_TIP_DEFAULT_6	การ์ดในแต่ละซองจะมีหนึ่งใบที่เป็นการ์ดระดับหายากหรือดีกว่านั้น แต่ก็มีโอกาสได้มากกว่าหนึ่งใบด้วย!	
+GLUE_TIP_DEFAULT_7	หากเควสต์ของคุณหมด สามารถกลับมารับเควสต์ใหม่ได้ในวันพรุ่งนี้!	
+GLUE_TIP_DEFAULT_8	หากคุณชนะเกมจัดอันดับ 5 เกมภายในหนึ่งฤดูกาล คุณจะได้รับหลังการ์ดพิเศษประจำฤดูกาลนั้น	
+GLUE_TIP_DEFAULT_8_RANKED_2.0	หากคุณไปถึงอันดับ 20 ภายในหนึ่งฤดูกาล คุณจะได้รับหลังการ์ดพิเศษประจำฤดูกาลนั้น	
+GLUE_TIP_DEFAULT_9	ทำเควสต์ให้สำเร็จเพื่อรับโกลด์ คุณสามารถใช้โกลด์เพื่อซื้อซองการ์ดหรือเข้าเล่นในลานประลอง	
+GLUE_TIP_FORGE_0	คุณจะเสียเด็คลานประลองไปหลังจากแพ้ครบ 3 เกม	
+GLUE_TIP_FORGE_1	รางวัลจากลานประลองของคุณจะดีขึ้นเรื่อยๆ ตามจำนวนเกมที่คุณชนะ!	
+GLUE_TIP_FORGE_2	คุณไม่จำเป็นต้องแข่งขันในลานประลองจนครบจำนวนในคราวเดียว	
+GLUE_TIP_HEROICBRAWL_0	การจับคู่ผู้เล่นที่มีสถิติแพ้ชนะใกล้เคียงกันเป็นเรื่องสำคัญมาก\nคุณจึงอาจต้องรอนานกว่าปกติ	
+GLUE_TIP_PLAY_0	ระบบจะจับคู่คุณกับผู้เล่นที่มีระดับฝีมือใกล้เคียงกัน	
+GLUE_TIP_PLAY_1	เมื่อคุณชนะและแพ้ในการแข่งขัน ระบบจะตรวจสอบความสามารถของคุณ และเลือกจับคู่คุณกับคู่แข่งที่มีฝีมือใกล้เคียงกัน	
+GLUE_TIP_PLAY_2	แต่ละคลาสจะมีการ์ดพื้นฐาน 5 แบบที่คุณสามารถปลดล็อคได้เมื่อคุณเลเวลอัพ	
+GLUE_TIP_PLAY_3	ทำเควสต์ให้สำเร็จเพื่อรับโกลด์ คุณสามารถใช้โกลด์เพื่อซื้อซองการ์ดหรือเข้าเล่นในลานประลอง	
+GLUE_TIP_PLAY_4	ในโหมดจัดอันดับจะมีทั้งหมด 50 อันดับ โดยอันดับสูงสุดคือ "ตำนาน"	
+GLUE_TIP_PLAY_5	ในแต่ละเด็คสามารถมีการ์ดซ้ำกันได้สองใบ แต่จะมีการ์ดระดับตำนานได้เพียงใบเดียว	
+GLUE_TIP_PLAY_6	การเล่นในลานประลองเป็นวิธีที่ดีในการสะสมรางวัลระหว่างเข้าร่วมในการแข่งขันย่อมๆ	
+GLUE_TIP_PLAY_7	คุณไม่จำเป็นต้องแข่งขันในลานประลองจนครบจำนวนในคราวเดียว	
+GLUE_TIP_PLAY_8	หากคุณชนะเกมจัดอันดับ 5 เกมภายในหนึ่งฤดูกาล คุณจะได้รับหลังการ์ดพิเศษประจำฤดูกาลนั้น	
+GLUE_TIP_PLAY_8_RANKED_2.0	หากคุณไปถึงอันดับ 20 ภายในหนึ่งฤดูกาล คุณจะได้รับหลังการ์ดพิเศษประจำฤดูกาลนั้น	
+GLUE_TIP_PRACTICE_0	คุณสามารถปลดล็อคฮีโร่ได้โดยการเอาชนะพวกเขาในโหมดฝึกฝน	
+GLUE_TIP_PRACTICE_1	โหมดฝึกฝนมีไว้เพื่อเตรียมความพร้อมคุณสำหรับโหมดแข่งขัน!	
+GLUE_TIP_PRACTICE_2	โหมดแข่งขันจะเป็นการจับคู่คุณกับฝ่ายตรงข้ามที่มีความสามารถใกล้เคียงกัน!	
+GLUE_TIP_PRACTICE_3	คุณสามารถจัดเด็คของคุณเองได้ด้วยการ์ดที่มี โดยการไปที่คอลเลกชัน	
+GLUE_TIP_PRACTICE_4	แต่ละคลาสจะมีการ์ดพื้นฐาน 5 แบบที่คุณสามารถปลดล็อคได้เมื่อคุณเลเวลอัพ	
+GLUE_TIP_PRACTICE_5	ผ่านเควสต์ในโหมด "แข่งขัน" เพื่อรับโกลด์!	
+GLUE_TIP_PRACTICE_6	จะโจมตีฮีโร่หรือมินเนี่ยนดีล่ะ? การตัดสินใจที่ถูกต้องอาจพลิกสถานการณ์ในการต่อสู้ได้	
+GLUE_TIP_PRACTICE_7	หลังจากเลเวล 10 คุณจะได้รับ XP มากขึ้นจากการเล่นกับผู้เล่นคนอื่นๆ	
+GLUE_TIP_TAVERNBRAWL_0	แต่ละสัปดาห์จะมีรูปแบบการเล่นที่แหวกแนวใหม่ๆ ในเกมท้าประลอง!	
+GLUE_TIP_TAVERNBRAWL_1	เราต้องการเวลาหนึ่งชั่วโมงในการเก็บกวาดสถานที่[b]หลังการท้าประลองสิ้นสุดลง หากคุณยังเข้าเล่นไม่ได้ โปรดกลับมาใหม่ในภายหลัง!	
+GLUE_TIP_TAVERNBRAWL_2		This tip was removed. Translators: please leave this blank. Blank tips are skipped over. For devs: when adding new tips later, feel free to use this slot (and update this comment).
+GLUE_TIP_TAVERNBRAWL_3	คุณจะไม่ได้รับซองการ์ดเพิ่มจากการชนะมากกว่าหนึ่งเกมในโหมดท้าประลอง แต่มันก็สนุกดีใช่ไหมล่ะ!	
+GLUE_TIP_TAVERNBRAWL_4	ในบางสัปดาห์คุณจะได้รับเด็ค บางสัปดาห์คุณอาจต้องจัดเด็คขึ้นมาใหม่ ต้องรอดูเอาเอง!	
+GLUE_TIP_TAVERNBRAWL_5	เกมท้าประลองบางรูปแบบอาจเวียนกลับมาอีกในอนาคต	
+GLUE_TIP_TAVERNBRAWL_6	คุณสามารถท้าเพื่อนมาแข่งเกมท้าประลองประจำสัปดาห์ได้ระหว่างที่เปิดให้เล่น	
+GLUE_TIP_TAVERNBRAWL_7	คุณสามารถทำเควสต์ประจำวันได้ในโหมดท้าประลอง!	
+GLUE_TIP_TAVERNBRAWL_8	คุณจะได้รับ 10 โกลด์ เมื่อชนะครบทุกสามเกมในโหมดท้าประลอง เช่นเดียวกับในโหมด "แข่งขัน"	
+GLUE_TOOLTIP_ALTERNATE_WINS_DESC	ชนะ {0} เกมในโหมด[b]จัดอันดับหรือโหมด[b]ลานประลองด้วยคลาสนี้[b]เพื่อรับฮีโร่ทรงเกียรติ!	
+GLUE_TOOLTIP_BOOSTER_CURRENCY_DESCRIPTION	ใช้ลูกแก้วเวทมนตร์เพื่อซื้อซองการ์ด	
+GLUE_TOOLTIP_BOOSTER_CURRENCY_HEADER	ลูกแก้วเวทมนตร์	
+GLUE_TOOLTIP_BUTTON_ADVENTURE_DESC	ออกผจญภัยหรือฝึกฝน[b]ฝีมือกับ AI	
+GLUE_TOOLTIP_BUTTON_ADVENTURE_HEADLINE	การผจญภัยคนเดียว	
+GLUE_TOOLTIP_BUTTON_BACON_DESC_EARLY_ACCESS	ขณะนี้ Battlegrounds อยู่ในช่วงเล่นล่วงหน้า\nคุณสามารถเข้าเล่นในช่วงนี้ได้จากการซื้อล่วงหน้า Descent of Dragons ชุดใดก็ได้ในร้านค้า	
+GLUE_TOOLTIP_BUTTON_BACON_HEADLINE	Battlegrounds	
+GLUE_TOOLTIP_BUTTON_COLLECTION_DESC	ดูการ์ดของคุณหรือจัดเด็ค	
+GLUE_TOOLTIP_BUTTON_COLLECTION_HEADLINE	คอลเลกชันของฉัน	
+GLUE_TOOLTIP_BUTTON_DISABLED_DESC	ส่วนนี้ถูกปิดใช้งานชั่วคราว	
+GLUE_TOOLTIP_BUTTON_FORGE_HEADLINE	ลานประลอง	
+GLUE_TOOLTIP_BUTTON_FORGE_NOT_UNLOCKED	ล็อคจนกว่าทุกคลาส[b]จะมีเลเวล 10	
+GLUE_TOOLTIP_BUTTON_GAME_MODES_DESC	ทดลองเล่นเกมใน[b]รูปแบบต่างจากเดิม	
+GLUE_TOOLTIP_BUTTON_GAME_MODES_HEADLINE	โหมดเกม	
+GLUE_TOOLTIP_BUTTON_PACKOPEN_DESC	เปิดซองการ์ดของคุณเพื่อ[b]เพิ่มการ์ดลงในคอลเลกชัน!	
+GLUE_TOOLTIP_BUTTON_PACKOPEN_HEADLINE	เปิดซองการ์ด	
+GLUE_TOOLTIP_BUTTON_QUESTLOG_DESC	ดูความคืบหน้าปัจจุบัน[b]ของคุณ	
+GLUE_TOOLTIP_BUTTON_QUESTLOG_HEADLINE	บันทึกเควสต์	
+GLUE_TOOLTIP_BUTTON_STORE_DESC	ซื้อซองการ์ดด้วยโกลด์[b]หรือเงินจริง	
+GLUE_TOOLTIP_BUTTON_STORE_HEADLINE	ร้านค้า	
+GLUE_TOOLTIP_BUTTON_TAVERN_BRAWL_DESC	แข่งขันในเกมการท้าทาย[b]รูปแบบใหม่ๆ ทุกสัปดาห์	
+GLUE_TOOLTIP_BUTTON_TAVERN_BRAWL_HEADLINE	ท้าประลอง	
+GLUE_TOOLTIP_BUTTON_TAVERN_BRAWL_NOT_UNLOCKED	ล็อคจนกว่าคุณจะมี[b]คลาสที่มีเลเวล 20	
+GLUE_TOOLTIP_BUTTON_TOURNAMENT_DESC	แข่งขันกับฝ่ายตรงข้าม[b]ที่ฝีมือใกล้เคียงกัน	
+GLUE_TOOLTIP_BUTTON_TOURNAMENT_HEADLINE	แข่งขัน	
+GLUE_TOOLTIP_CASUAL_BUTTON	ค้นหาคู่ต่อสู้ที่ฝีมือ[b]ใกล้เคียงกัน และสนุก[b]ไปกับการแข่งขัน!	
+GLUE_TOOLTIP_DOWNLOAD_DESCRIPTION	Hearthstone กำลังดาวน์โหลดระหว่างที่คุณเล่น!	
+GLUE_TOOLTIP_DOWNLOAD_HEADER	กำลังดาวน์โหลด	
+GLUE_TOOLTIP_GOLD_DESCRIPTION	ใช้โกลด์เพื่อซื้อซองการ์ด[b]หรือเข้าเล่นในลานประลอง	
+GLUE_TOOLTIP_GOLD_HEADER	โกลด์	
+GLUE_TOOLTIP_GOLDEN_WINS_DESC	ชนะ 500 เกมในโหมด[b]จัดอันดับหรือโหมด[b]ลานประลองด้วยคลาสนี้ [b]เพื่อรับฮีโร่คลาสสิคสีทอง!	
+GLUE_TOOLTIP_GOLDEN_WINS_HEADER	ชนะรวม	
+GLUE_TOOLTIP_HOW_TO_UNLOCK_DECKS	ปลดล็อคเด็คนี้ด้วยการเอาชนะฮีโร่คนอื่นๆ ในโหมดใดก็ได้	
+GLUE_TOOLTIP_RANKED_BUTTON	ดูว่าคุณอยู่ใน[b]อันดับใด เมื่อเทียบ[b]กับผู้เล่นคนอื่นๆ!	
+GLUE_TOOLTIP_VIRTUAL_CURRENCY_DESCRIPTION	ใช้รูนสโตนเพื่อซื้อลูกแก้วเวทมนตร์ ฮีโร่ การผจญภัย หรือบัตรลานประลอง	
+GLUE_TOOLTIP_VIRTUAL_CURRENCY_HEADER	รูนสโตน	
+GLUE_TOURNAMENT	แข่งขัน	
+GLUE_TOURNAMENT_CASUAL	ปกติ	
+GLUE_TOURNAMENT_CASUAL_WILD	ปกติอิสระ	
+GLUE_TOURNAMENT_RANKED	จัดอันดับ	
+GLUE_TOURNAMENT_RANKED_WILD	จัดอันดับอิสระ	
+GLUE_TOURNAMENT_STANDARD_DESC	สามารถใช้ได้เฉพาะการ์ดคลาสสิค พื้นฐาน และการ์ดในชุดของ 2 ปีหลังสุดเท่านั้น	
+GLUE_TOURNAMENT_SWITCH_TO_STANDARD	ลองเปลี่ยน\nเป็นเด็คมาตรฐาน	
+GLUE_TOURNAMENT_SWITCH_TO_WILD	คุณสามารถเปลี่ยนเป็น[b]เด็คอิสระได้ที่นี่	
+GLUE_TOURNAMENT_UNRANKED_DESC	ในโหมดที่ไม่จัดอันดับ ระบบจะวัดความสามารถของคุณแยกต่างหาก และคุณจะไม่ได้รับเหรียญรางวัล	
+GLUE_TOURNAMENT_UNRANKED_MODE	โหมดไม่จัดอันดับ	
+GLUE_TOURNAMENT_WILD_DESC	สามารถใช้การ์ดได้ทุกใบ	
+GLUE_TRL_LOADING_BAR_TASK_1	กำลังเล่นเวฟ	
+GLUE_TRL_LOADING_BAR_TASK_10	กำลังจุดดอกไม้ไฟ	
+GLUE_TRL_LOADING_BAR_TASK_11	กำลังใช้ไหมขัดเขี้ยว	
+GLUE_TRL_LOADING_BAR_TASK_12	กำลังแต้มสีบนหน้า	
+GLUE_TRL_LOADING_BAR_TASK_13	กำลังหลอกขายตั๋ว	
+GLUE_TRL_LOADING_BAR_TASK_14	กำลังกินมันฝรั่งทอด	
+GLUE_TRL_LOADING_BAR_TASK_15	กำลังกระทืบเท้า	
+GLUE_TRL_LOADING_BAR_TASK_16	กำลังตื่นเต้น	
+GLUE_TRL_LOADING_BAR_TASK_17	กำลังส่งเสียงเชียร์	
+GLUE_TRL_LOADING_BAR_TASK_18	กำลังชี้นิ้ว	
+GLUE_TRL_LOADING_BAR_TASK_2	กำลังลับอาวุธ	
+GLUE_TRL_LOADING_BAR_TASK_3	กำลังรัวกลอง	
+GLUE_TRL_LOADING_BAR_TASK_4	กำลังคุยโม้โอ้อวด	
+GLUE_TRL_LOADING_BAR_TASK_5	กำลังเบ่งกล้าม	
+GLUE_TRL_LOADING_BAR_TASK_6	กำลังแจกลายเซ็น	
+GLUE_TRL_LOADING_BAR_TASK_7	กำลังโยนเก้าอี้	
+GLUE_TRL_LOADING_BAR_TASK_8	กำลังเล่นเซิร์ฟกับฝูงชน	
+GLUE_TRL_LOADING_BAR_TASK_9	กำลังทำลายข้าวของ	
+GLUE_ULD_LOADING_BAR_TASK_1	กำลังขุดหลุม	
+GLUE_ULD_LOADING_BAR_TASK_10	กำลังถอดรหัสอักขระ	
+GLUE_ULD_LOADING_BAR_TASK_11	กำลังจุดคบเพลิง	
+GLUE_ULD_LOADING_BAR_TASK_12	กำลังปลอบอูฐ	
+GLUE_ULD_LOADING_BAR_TASK_13	ฉลามทราย!!!	
+GLUE_ULD_LOADING_BAR_TASK_14	กำลังวางกับดัก	
+GLUE_ULD_LOADING_BAR_TASK_15	กำลังแจกจ่ายน้ำ	
+GLUE_ULD_LOADING_BAR_TASK_16	กำลังปัดฝุ่นโอเบลิสก์	
+GLUE_ULD_LOADING_BAR_TASK_17	กำลังดูแผนที่	
+GLUE_ULD_LOADING_BAR_TASK_18	กำลังมองเข้าไปในหีบศพ	
+GLUE_ULD_LOADING_BAR_TASK_19	กำลังฝังสมบัติ	
+GLUE_ULD_LOADING_BAR_TASK_2	กำลังขุดค้นโบราณสถาน	
+GLUE_ULD_LOADING_BAR_TASK_20	กำลังเลื่อนกระดาษปาปิรุส	
+GLUE_ULD_LOADING_BAR_TASK_3	กำลังพันผ้าให้มัมมี่	
+GLUE_ULD_LOADING_BAR_TASK_4	กำลังฟาดแส้	
+GLUE_ULD_LOADING_BAR_TASK_5	กำลังฝ่าพายุทราย	
+GLUE_ULD_LOADING_BAR_TASK_6	กำลังถามปริศนาสฟิงซ์	
+GLUE_ULD_LOADING_BAR_TASK_7	กำลังกอบกู้โลก	
+GLUE_ULD_LOADING_BAR_TASK_8	กำลังปล้ำกับสคารับ	
+GLUE_ULD_LOADING_BAR_TASK_9	กำลังสร้างพีระมิด	
+GLUE_UNRELIABLE_GPU_WARNING	อุปกรณ์เครื่องนี้ใช้ฮาร์ดแวร์กราฟิกที่เกมไม่รองรับ ดังนั้น Hearthstone อาจมีปัญหาด้านกราฟิกและ/หรือประสิทธิภาพการทำงาน\n\nแตะ บริการลูกค้า เพื่อดูข้อมูลเพิ่มเติม	
+GLUE_UNRELIABLE_GPU_WARNING_TITLE	อุปกรณ์กราฟิก	
+GLUE_VIEW_DECK	ดูเด็ค	
+GLUE_WEB_PURCHASE_BUTTON	รับทราบ!	
+GLUE_WEB_PURCHASE_DESC	คุณได้ทำการซื้อผ่านเว็บ!\nตรวจสอบอีเมลของคุณเพื่อดูรายละเอียด	
+GLUE_WEB_PURCHASE_TITLE	การซื้อผ่านเว็บ	
+GLUE_WELCOME_BUNDLE_RANDOM_CARD_SCROLL_DESC	ชุดต้อนรับของคุณมาพร้อมกับ{0}!	
+GLUE_WELCOME_BUNDLE_RANDOM_CARD_SCROLL_TITLE	การ์ดระดับตำนานจากชุดต้อนรับ!	
+GLUE_WIN_STREAK	ชนะต่อเนื่อง: {0}	0=number of wins
+GLUE_WINS	ชนะ	header for number of wins
+GLUE_WOODEN_BANNER_TITLE_FRIEND_WEEK	เพื่อนรักหักเหลี่ยมโหด!	
+VO_BOSS_CHO_Male_Ogre_INTRO_QL_GOONS2_01	เอามันออกไป!	
+VO_FIRE_FESTIVAL_RAGNAROS_FESTIVAL	นี่คืองานเทศกาลของข้า!	

@@ -1,0 +1,357 @@
+TAG	TEXT	COMMENT
+PRESENCE_ADVENTURE_MODE_BOT	Esplora i Laboratori Boom	
+PRESENCE_ADVENTURE_MODE_BRM_CLASS_CHALLENGE	Sfida di Classe (Roccianera)	
+PRESENCE_ADVENTURE_MODE_BRM_HEROIC	Massiccio Roccianera (Eroica)	
+PRESENCE_ADVENTURE_MODE_BRM_NORMAL	Massiccio Roccianera	
+PRESENCE_ADVENTURE_MODE_DAL	Pianifica un Colpo grosso	
+PRESENCE_ADVENTURE_MODE_DRG	Spicca il volo a Dracombra	
+PRESENCE_ADVENTURE_MODE_GIL	Si prepara a una Caccia ai Mostri	
+PRESENCE_ADVENTURE_MODE_ICC_NORMAL	Si avventura nella Rocca	
+PRESENCE_ADVENTURE_MODE_KAR_CLASS_CHALLENGE	Sfida di Classe (Karazhan)	
+PRESENCE_ADVENTURE_MODE_KAR_HEROIC	Karazhan (Eroica)	
+PRESENCE_ADVENTURE_MODE_KAR_NORMAL	Karazhan	
+PRESENCE_ADVENTURE_MODE_LOE_CLASS_CHALLENGE	Sfida di Classe (Esploratori)	
+PRESENCE_ADVENTURE_MODE_LOE_HEROIC	Lega degli Esploratori (Eroica)	
+PRESENCE_ADVENTURE_MODE_LOE_NORMAL	Lega degli Esploratori	
+PRESENCE_ADVENTURE_MODE_LOOT	Si prepara a una spedizione	
+PRESENCE_ADVENTURE_MODE_NAXX_CLASS_CHALLENGE	Sfida di Classe (Naxxramas)	
+PRESENCE_ADVENTURE_MODE_NAXX_HEROIC	Naxxramas (Eroica)	
+PRESENCE_ADVENTURE_MODE_NAXX_NORMAL	Naxxramas	
+PRESENCE_ADVENTURE_MODE_RETURNING_PLAYER_CHALLENGE	Ha fatto un gradito ritorno!	
+PRESENCE_ADVENTURE_MODE_TRL	Si prepara per la Sfida...	
+PRESENCE_ADVENTURE_MODE_ULD	Pianifica una spedizione	
+PRESENCE_SCENARIO_BOTA_CLEAR_BOOM	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_CLEAR_PUZZLE_1	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_CLEAR_PUZZLE_2	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_CLEAR_PUZZLE_3	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_CLEAR_PUZZLE_4	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_LETHAL_BOOM	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_LETHAL_PUZZLE_1	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_LETHAL_PUZZLE_2	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_LETHAL_PUZZLE_3	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_LETHAL_PUZZLE_4	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_MIRROR_BOOM	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_MIRROR_PUZZLE_1	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_MIRROR_PUZZLE_2	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_MIRROR_PUZZLE_3	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_MIRROR_PUZZLE_4	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_SURVIVAL_BOOM	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_SURVIVAL_PUZZLE_1	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_SURVIVAL_PUZZLE_2	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_SURVIVAL_PUZZLE_3	Medita su un enigma	
+PRESENCE_SCENARIO_BOTA_SURVIVAL_PUZZLE_4	Medita su un enigma	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_DRUID	Sfida del Druido (Roccianera)	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_HUNTER	Sfida del Cacciatore (Roccianera)	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_MAGE	Sfida del Mago (Roccianera)	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_PALADIN	Sfida del Paladino (Roccianera)	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_PRIEST	Sfida del Sacerdote (Roccianera)	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_ROGUE	Sfida del Ladro (Roccianera)	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_SHAMAN	Sfida dello Sciamano (Roccianera)	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_WARLOCK	Sfida dello Stregone (Roccianera)	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_WARRIOR	Sfida del Guerriero (Roccianera)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_ATRAMEDES	Affronta Atramedes (Eroica)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_BARON_GEDDON	Affronta il Barone Geddon (Eroica)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_CHROMAGGUS	Affronta Cromaggus (Eroica)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_DARK_IRON_ARENA	Affronta Tetrapietra (Eroica)	feel free to shorten long translations since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_DRAKKISATH	Affronta Drakkisath (Eroica)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_GARR	Affronta Garr (Eroica)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_GRIM_GUZZLER	Affronta Coren Birranera (Eroica)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_MAJORDOMO	Affronta Ragnaros (Eroica)	feel free to shorten long translations to 'Heroic Ragnaros' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_MALORIAK	Affronta Maloriak (Eroica)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_NEFARIAN	Affronta Victor Nefarius (Eroica)	feel free to shorten long translations to 'Heroic Nefarius' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_OMNOTRON	Affronta la Difesa Omnotron (Eroica)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_OMOKK	Affronta Omokk (Eroica)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_RAZORGORE	Affronta Alafurion (Eroica)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_REND_BLACKHAND	Affronta Rend Manonera (Eroica)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_THAURISSAN	Affronta Thaurissan (Eroica)	feel free to shorten long translations to 'Heroic Thaurissan' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_VAELASTRASZ	Affronta Vaelastrasz (Eroica)	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_ZOMBIE_NEF	Affronta Nefarian (Eroica)	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_ATRAMEDES	Affronta Atramedes	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_BARON_GEDDON	Affronta il Barone Geddon	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_CHROMAGGUS	Affronta Cromaggus	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_DARK_IRON_ARENA	Affronta Tetrapietra	feel free to shorten long translations since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_DRAKKISATH	Affronta Drakkisath	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_GARR	Affronta Garr	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_GRIM_GUZZLER	Affronta Coren Birranera	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_MAJORDOMO	Affronta Ragnaros	feel free to shorten long translations to 'Battling Ragnaros' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_MALORIAK	Affronta Maloriak	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_NEFARIAN	Affronta Victor Nefarius	feel free to shorten long translations to 'Battling Nefarius' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_OMNOTRON	Affronta la Difesa Omnotron	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_OMOKK	Affronta Omokk	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_RAZORGORE	Affronta Alafurion	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_REND_BLACKHAND	Affronta Rend Manonera	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_THAURISSAN	Affronta Thaurissan	feel free to shorten long translations to 'Battling Thaurissan' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_VAELASTRASZ	Affronta Vaelastrasz	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_ZOMBIE_NEF	Affronta Nefarian	
+PRESENCE_SCENARIO_DALA_01_BANK	Rapina la Banca di Dalaran	
+PRESENCE_SCENARIO_DALA_01_BANK_HEROIC	Rapina la Banca di Dalaran	
+PRESENCE_SCENARIO_DALA_02_VIOLET_HOLD	Libera i prigionieri della Fortezza Violacea	
+PRESENCE_SCENARIO_DALA_02_VIOLET_HOLD_HEROIC	Libera i prigionieri della Fortezza Violacea	
+PRESENCE_SCENARIO_DALA_03_STREETS	Semina il panico nelle Strade	
+PRESENCE_SCENARIO_DALA_03_STREETS_HEROIC	Semina il panico nelle Strade	
+PRESENCE_SCENARIO_DALA_04_UNDERBELLY	Si fa largo nei Sotterranei	
+PRESENCE_SCENARIO_DALA_04_UNDERBELLY_HEROIC	Si fa largo nei Sotterranei	
+PRESENCE_SCENARIO_DALA_05_CITADEL	Conquista la Cittadella Violacea	
+PRESENCE_SCENARIO_DALA_05_CITADEL_HEROIC	Conquista la Cittadella Violacea	
+PRESENCE_SCENARIO_DALA_TAVERN	Complotta nella Locanda di Dalaran	
+PRESENCE_SCENARIO_DALA_TAVERN_HEROIC	Complotta nella Locanda di Dalaran	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_01_COIN_01	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_01_COIN_01_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_01_COIN_02	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_01_COIN_02_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_01_COIN_03	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_01_COIN_03_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_02_COIN_01	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_02_COIN_01_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_02_COIN_02	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_02_COIN_02_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_02_COIN_03	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_02_COIN_03_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_03_COIN_01	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_03_COIN_01_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_03_COIN_02	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_03_COIN_02_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_03_COIN_03	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_03_COIN_03_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_04_COIN_01	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_04_COIN_01_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_04_COIN_02	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_04_COIN_02_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_04_COIN_03	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_04_COIN_03_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_01_COIN_01	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_01_COIN_01_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_01_COIN_02	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_01_COIN_02_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_01_COIN_03	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_01_COIN_03_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_02_COIN_01	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_02_COIN_01_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_02_COIN_02	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_02_COIN_02_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_02_COIN_03	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_02_COIN_03_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_03_COIN_01	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_03_COIN_01_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_03_COIN_02	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_03_COIN_02_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_03_COIN_03	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_03_COIN_03_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_04_COIN_01	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_04_COIN_01_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_04_COIN_02	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_04_COIN_02_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_04_COIN_03	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_04_COIN_03_HEROIC	Combatte nei cieli di Dracombra	
+PRESENCE_SCENARIO_GIL_BONUS_CHALLENGE	Affronta Hagatha	
+PRESENCE_SCENARIO_GIL_DUNGEON	Affronta una Caccia ai Mostri	
+PRESENCE_SCENARIO_ICC_NORMAL_DEATHWHISPER	Affronta Dama Soffiamorte	
+PRESENCE_SCENARIO_ICC_NORMAL_FINALE	Affronta il Re dei Lich	
+PRESENCE_SCENARIO_ICC_NORMAL_LANATHEL	Affronta Lana'thel	
+PRESENCE_SCENARIO_ICC_NORMAL_LICHKING	Perde contro il Re dei Lich	
+PRESENCE_SCENARIO_ICC_NORMAL_MARROWGAR	Affronta Sire Ossamorte	
+PRESENCE_SCENARIO_ICC_NORMAL_PUTRICIDE	Affronta il Professor Putricidio	
+PRESENCE_SCENARIO_ICC_NORMAL_SAURFANG	Affronta Faucisaure	
+PRESENCE_SCENARIO_ICC_NORMAL_SINDRAGOSA	Affronta Sindragosa	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_DRUID	Sfida del Druido (Karazhan)	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_HUNTER	Sfida del Cacciatore (Karazhan)	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_MAGE	Sfida del Mago (Karazhan)	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_PALADIN	Sfida del Paladino (Karazhan)	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_PRIEST	Sfida del Sacerdote (Karazhan)	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_ROGUE	Sfida del Ladro (Karazhan)	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_SHAMAN	Sfida dello Sciamano (Karazhan)	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_WARLOCK	Sfida dello Stregone (Karazhan)	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_WARRIOR	Sfida del Guerriero (Karazhan)	
+PRESENCE_SCENARIO_KAR_HEROIC_ARAN	Ombra di Aran (Eroica)	
+PRESENCE_SCENARIO_KAR_HEROIC_CHESS	Scacchi (Eroica)	
+PRESENCE_SCENARIO_KAR_HEROIC_CRONE	Strega (Eroica)	
+PRESENCE_SCENARIO_KAR_HEROIC_CURATOR	Curatore (Eroica)	
+PRESENCE_SCENARIO_KAR_HEROIC_ILLHOOF	Malazampa (Eroica)	
+PRESENCE_SCENARIO_KAR_HEROIC_JULIANNE	Julianne (Eroica)	
+PRESENCE_SCENARIO_KAR_HEROIC_MIRROR	Specchio Magico (Eroica)	
+PRESENCE_SCENARIO_KAR_HEROIC_NETHERSPITE	Scagliafatua (Eroica)	
+PRESENCE_SCENARIO_KAR_HEROIC_NIGHTBANE	Noctumor (Eroica)	
+PRESENCE_SCENARIO_KAR_HEROIC_PANTRY	Golem dell'Argenteria (Eroica)	
+PRESENCE_SCENARIO_KAR_HEROIC_PORTALS	Libera Medivh (Eroica)	
+PRESENCE_SCENARIO_KAR_HEROIC_PROLOGUE	Malchezaar (Eroica)	
+PRESENCE_SCENARIO_KAR_HEROIC_WOLF	Lupo Cattivo (Eroica)	
+PRESENCE_SCENARIO_KAR_NORMAL_ARAN	Affronta l'Ombra di Aran	
+PRESENCE_SCENARIO_KAR_NORMAL_CHESS	Affronta gli Scacchi	
+PRESENCE_SCENARIO_KAR_NORMAL_CRONE	Affronta la Strega	
+PRESENCE_SCENARIO_KAR_NORMAL_CURATOR	Affronta il Curatore	
+PRESENCE_SCENARIO_KAR_NORMAL_ILLHOOF	Affronta Malazampa	
+PRESENCE_SCENARIO_KAR_NORMAL_JULIANNE	Affronta Julianne	
+PRESENCE_SCENARIO_KAR_NORMAL_MIRROR	Affronta lo Specchio Magico	
+PRESENCE_SCENARIO_KAR_NORMAL_NETHERSPITE	Affronta Scagliafatua	
+PRESENCE_SCENARIO_KAR_NORMAL_NIGHTBANE	Affronta Noctumor	
+PRESENCE_SCENARIO_KAR_NORMAL_PANTRY	Affronta il Golem dell'Argenteria	
+PRESENCE_SCENARIO_KAR_NORMAL_PORTALS	Libera Medivh!	
+PRESENCE_SCENARIO_KAR_NORMAL_PROLOGUE	Affronta Malchezaar	
+PRESENCE_SCENARIO_KAR_NORMAL_WOLF	Affronta il Lupo Cattivo	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_DRUID	Sfida del Druido (Esploratori)	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_HUNTER	Sfida del Cacciatore (Esploratori)	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_MAGE	Sfida del Mago (Esploratori)	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_PALADIN	Sfida del Paladino (Esploratori)	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_PRIEST	Sfida del Sacerdote (Esploratori)	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_ROGUE	Sfida del Ladro (Esploratori)	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_SHAMAN	Sfida dello Sciamano (Esploratori)	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_WARLOCK	Sfida dello Stregone (Esploratori)	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_WARRIOR	Sfida del Guerriero (Esploratori)	
+PRESENCE_SCENARIO_LOE_HEROIC_ARCHAEDAS	Archaedas (Eroica)	
+PRESENCE_SCENARIO_LOE_HEROIC_GIANTFIN	Pinnagrossa (Eroica)	
+PRESENCE_SCENARIO_LOE_HEROIC_LADY_NAZJAR	Dama Naz'jar (Eroica)	
+PRESENCE_SCENARIO_LOE_HEROIC_MINE_CART	Carrello Minerario (Eroica)	
+PRESENCE_SCENARIO_LOE_HEROIC_RAFAAM_1	Arciladro Rafaam (Eroica)	
+PRESENCE_SCENARIO_LOE_HEROIC_RAFAAM_2	Rafaam Inarrestabile (Eroica)	
+PRESENCE_SCENARIO_LOE_HEROIC_SCARVASH	Capo Tribù Scarvash (Eroica)	
+PRESENCE_SCENARIO_LOE_HEROIC_SKELESAURUS	Schelesauro  (Eroica)	
+PRESENCE_SCENARIO_LOE_HEROIC_SLITHERSPEAR	Sire Lanciaviscida (Eroica)	
+PRESENCE_SCENARIO_LOE_HEROIC_STEEL_SENTINEL	Sentinella d'Acciaio (Eroica)	
+PRESENCE_SCENARIO_LOE_HEROIC_SUN_RAIDER_PHAERIX	Sciacallo del Sole Phaerix (Eroica)	
+PRESENCE_SCENARIO_LOE_HEROIC_TEMPLE_ESCAPE	Fuga dal Tempio (Eroica)	
+PRESENCE_SCENARIO_LOE_HEROIC_ZINAAR	Zinaar (Eroica)	
+PRESENCE_SCENARIO_LOE_NORMAL_ARCHAEDAS	Affronta Archaedas	
+PRESENCE_SCENARIO_LOE_NORMAL_GIANTFIN	Affronta Pinnagrossa	
+PRESENCE_SCENARIO_LOE_NORMAL_LADY_NAZJAR	Affronta Dama Naz'jar	
+PRESENCE_SCENARIO_LOE_NORMAL_MINE_CART	Carrello Minerario	
+PRESENCE_SCENARIO_LOE_NORMAL_RAFAAM_1	Affronta Arciladro Rafaam	
+PRESENCE_SCENARIO_LOE_NORMAL_RAFAAM_2	Affronta Rafaam Inarrestabile	
+PRESENCE_SCENARIO_LOE_NORMAL_SCARVASH	Affronta il Capo Tribù Scarvash	
+PRESENCE_SCENARIO_LOE_NORMAL_SKELESAURUS	Affronta lo Schelesauro	
+PRESENCE_SCENARIO_LOE_NORMAL_SLITHERSPEAR	Affronta Sire Lanciaviscida	
+PRESENCE_SCENARIO_LOE_NORMAL_STEEL_SENTINEL	Affronta la Sentinella d'Acciaio	
+PRESENCE_SCENARIO_LOE_NORMAL_SUN_RAIDER_PHAERIX	Affronta lo Sciacallo del Sole Phaerix	
+PRESENCE_SCENARIO_LOE_NORMAL_TEMPLE_ESCAPE	Fuga dal Tempio	
+PRESENCE_SCENARIO_LOE_NORMAL_ZINAAR	Affronta Zinaar	
+PRESENCE_SCENARIO_LOOT_DUNGEON	Affronta una spedizione	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_DRUID	Sfida del Druido (Naxxramas)	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_HUNTER	Sfida del Cacciatore (Naxxramas)	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_MAGE	Sfida del Mago (Naxxramas)	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_PALADIN	Sfida del Paladino (Naxxramas)	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_PRIEST	Sfida del Sacerdote (Naxxramas)	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_ROGUE	Sfida del Ladro (Naxxramas)	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_SHAMAN	Sfida dello Sciamano (Naxxramas)	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_WARLOCK	Sfida dello Stregone (Naxxramas)	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_WARRIOR	Sfida del Guerriero (Naxxramas)	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_ANUBREKHAN	Affronta Anub'rekhan (Eroica)	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_FAERLINA	Affronta Faerlina (Eroica)	feel free to shorten long translations to 'Heroic Faerlina' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_GLUTH	Affronta Gluth (Eroica)	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_GOTHIK	Affronta Gothik (Eroica)	feel free to shorten long translations to 'Heroic Gothik' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_GROBBULUS	Affronta Grobbulus (Eroica)	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_HEIGAN	Affronta Heigan l'Impuro (Eroica)	feel free to shorten long translations to 'Heroic Heigan' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_HORSEMEN	Affronta i Cavalieri (Eroica)	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_KELTHUZAD	Affronta Kel'Thuzad (Eroica)	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_LOATHEB	Affronta Loatheb (Eroica)	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_MAEXXNA	Affronta Maexxna (Eroica)	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_NOTH	Affronta Noth (Eroica)	feel free to shorten long translations to 'Heroic Noth' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_PATCHWERK	Affronta Pezzacarne (Eroica)	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_RAZUVIOUS	Affronta Razuvious (Eroica)	feel free to shorten long translations to 'Heroic Razuvious' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_SAPPHIRON	Affronta Zaffirion (Eroica)	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_THADDIUS	Affronta Thaddius (Eroica)	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_ANUBREKHAN	Affronta Anub'rekhan	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_FAERLINA	Affronta Faerlina	feel free to shorten long translations to 'Battling Faerlina' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_GLUTH	Affronta Gluth	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_GOTHIK	Affronta Gothik	feel free to shorten long translations to 'Battling Gothik' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_GROBBULUS	Affronta Grobbulus	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_HEIGAN	Affronta Heigan l'Impuro	feel free to shorten long translations to 'Battling Heigan' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this is string shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_HORSEMEN	Affronta i Cavalieri	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_KELTHUZAD	Affronta Kel'Thuzad	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_LOATHEB	Affronta Loatheb	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_MAEXXNA	Affronta Maexxna	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_NOTH	Affronta Noth	feel free to shorten long translations to 'Battling Noth' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_PATCHWERK	Affronta Pezzacarne	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_RAZUVIOUS	Affronta Razuvious	feel free to shorten long translations to 'Battling Razuvious' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_SAPPHIRON	Affronta Zaffirion	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_THADDIUS	Affronta Thaddius	
+PRESENCE_SCENARIO_RETURNING_PLAYER_CHALLENGE_1	Ha fatto un gradito ritorno!	
+PRESENCE_SCENARIO_RETURNING_PLAYER_CHALLENGE_2	Ha fatto un gradito ritorno!	
+PRESENCE_SCENARIO_RETURNING_PLAYER_CHALLENGE_3	Ha fatto un gradito ritorno!	
+PRESENCE_SCENARIO_TRL_DUNGEON	Affronta una Sfida	
+PRESENCE_SCENARIO_ULD_01_CITY	Esplora la Città Perduta	
+PRESENCE_SCENARIO_ULD_01_CITY_HEROIC	Esplora la Città Perduta	
+PRESENCE_SCENARIO_ULD_02_DESERT	Si perde nel deserto	
+PRESENCE_SCENARIO_ULD_02_DESERT_HEROIC	Si perde nel deserto	
+PRESENCE_SCENARIO_ULD_03_TOMB	Scava nelle Tombe	
+PRESENCE_SCENARIO_ULD_03_TOMB_HEROIC	Scava nelle Tombe	
+PRESENCE_SCENARIO_ULD_04_HALLS	Vaga nelle Sale	
+PRESENCE_SCENARIO_ULD_04_HALLS_HEROIC	Vaga nelle Sale	
+PRESENCE_SCENARIO_ULD_05_SANCTUM	Combatte nel Santuario	
+PRESENCE_SCENARIO_ULD_05_SANCTUM_HEROIC	Combatte nel Santuario	
+PRESENCE_SCENARIO_ULD_TAVERN	Fa spesa al Bazar	
+PRESENCE_SCENARIO_ULD_TAVERN_HEROIC	Fa spesa al Bazar	
+PRESENCE_STATUS_ADVENTURE_CHOOSING_MODE	Affronta un'Avventura	
+PRESENCE_STATUS_ADVENTURE_SCENARIO_PLAYING_GAME	{0}	{0} replaced with the specific scenario string, via PRESENCE_SCENARIO_NAXX_*
+PRESENCE_STATUS_ADVENTURE_SCENARIO_SELECT	{0}	{0} replaced with the adventure mode, via PRESENCE_ADVENTURE_MODE_*, e.g. Naxxramas (Heroic) -- (originally i wanted it to say "Mission Select: Naxxramas Class Challenge" but this got too long for the UI element.)
+PRESENCE_STATUS_ARENA_FORGE	Forgia un mazzo Arena	
+PRESENCE_STATUS_ARENA_GAME	Combatte nell'Arena	
+PRESENCE_STATUS_ARENA_IDLE	Bazzica nell'Arena	
+PRESENCE_STATUS_ARENA_PURCHASE	Valuta di entrare nell'Arena	
+PRESENCE_STATUS_ARENA_QUEUE	Cerca un avversario (Arena)	
+PRESENCE_STATUS_ARENA_REWARD	Ottiene ricompense d'Arena	
+PRESENCE_STATUS_BATTLEGROUNDS_GAME	Affronta una Battaglia!	
+PRESENCE_STATUS_BATTLEGROUNDS_QUEUE	Cerca un avversario (Battaglia)	
+PRESENCE_STATUS_BATTLEGROUNDS_SCREEN	Bazzica in Battaglia	
+PRESENCE_STATUS_COLLECTION	Consulta la sua collezione	
+PRESENCE_STATUS_CRAFTING	Crea delle carte	
+PRESENCE_STATUS_DECKEDITOR	Compone un mazzo	
+PRESENCE_STATUS_FIRESIDE_BRAWL_SCREEN	Avvia Rissa Fireside	
+PRESENCE_STATUS_FRIENDLY_DECKPICKER	Si prepara a sfidare un amico	
+PRESENCE_STATUS_FRIENDLY_GAME	Combatte con un amico	
+PRESENCE_STATUS_HUB	Bazzica nel menu principale	
+PRESENCE_STATUS_LOGIN	Accede al gioco	
+PRESENCE_STATUS_PACKOPENING	Apre delle buste!!!	
+PRESENCE_STATUS_PLAY_DECKPICKER	Avvia la modalità Gioco	
+PRESENCE_STATUS_PLAY_GAME	Combatte in modalità Gioco!	
+PRESENCE_STATUS_PLAY_QUEUE	Cerca un avversario	
+PRESENCE_STATUS_PRACTICE_DECKPICKER	Avvia la modalità Allenamento	
+PRESENCE_STATUS_PRACTICE_GAME	Si allena contro il Locandiere	
+PRESENCE_STATUS_QUESTLOG	Consulta il Registro missioni	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_BRM_CLASS_CHALLENGE	Osserva: Sfida di Classe (Roccianera)	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_BRM_HEROIC	Osserva: partita (Roccianera Eroica)	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_BRM_NORMAL	Osserva: partita (Roccianera)	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_ICC_NORMAL	Osserva: partita (Trono di Ghiaccio)	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_KAR_CLASS_CHALLENGE	Osserva: Sfida di Classe (Karazhan)	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_KAR_HEROIC	Osserva: partita (Karazhan Eroica)	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_KAR_NORMAL	Osserva: partita (Karazhan)	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_LOE_CLASS_CHALLENGE	Osserva: Sfida di Classe (Esploratori)	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_LOE_HEROIC	Osserva: partita (Esploratori Eroica)	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_LOE_NORMAL	Osserva: partita (Esploratori)	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_NAXX_CLASS_CHALLENGE	Osserva: Sfida di Classe (Naxxramas)	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_NAXX_HEROIC	Osserva: partita (Naxxramas Eroica)	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_NAXX_NORMAL	Osserva: partita (Naxxramas)	
+PRESENCE_STATUS_SPECTATING_GAME_ARENA	Osserva: partita (Arena)	
+PRESENCE_STATUS_SPECTATING_GAME_BATTLEGROUNDS	Osserva: partita (Battaglia)	
+PRESENCE_STATUS_SPECTATING_GAME_BOT	Fa da compagno di laboratorio	
+PRESENCE_STATUS_SPECTATING_GAME_DAL	Assiste a un Colpo grosso	
+PRESENCE_STATUS_SPECTATING_GAME_DAL_HEROIC	Assiste a un Colpo grosso	
+PRESENCE_STATUS_SPECTATING_GAME_DRG	Osserva una battaglia a Dracombra	
+PRESENCE_STATUS_SPECTATING_GAME_DRG_HEROIC	Osserva una battaglia a Dracombra	
+PRESENCE_STATUS_SPECTATING_GAME_FRIENDLY	Osserva: partita (Sfida)	
+PRESENCE_STATUS_SPECTATING_GAME_GIL	Osserva: Caccia ai Mostri	
+PRESENCE_STATUS_SPECTATING_GAME_GIL_BONUS_CHALLENGE	Osserva: scontro con Hagatha	
+PRESENCE_STATUS_SPECTATING_GAME_LOOT	Osserva: spedizione	
+PRESENCE_STATUS_SPECTATING_GAME_PLAY	Osserva: partita (Gioco)	
+PRESENCE_STATUS_SPECTATING_GAME_PRACTICE	Osserva: partita (Allenamento)	
+PRESENCE_STATUS_SPECTATING_GAME_RETURNING_PLAYER_CHALLENGE	Osserva un amico ritornato!	
+PRESENCE_STATUS_SPECTATING_GAME_TAVERN_BRAWL	Osserva: partita (Rissa)	
+PRESENCE_STATUS_SPECTATING_GAME_TRL	Sta osservando una Sfida	
+PRESENCE_STATUS_SPECTATING_GAME_TUTORIAL	Osserva: partita (Tutorial)	
+PRESENCE_STATUS_SPECTATING_GAME_ULD	Osserva le tombe	
+PRESENCE_STATUS_SPECTATING_GAME_ULD_HEROIC	Osserva le tombe	
+PRESENCE_STATUS_STORE	Guarda il negozio	
+PRESENCE_STATUS_TAVERN_BRAWL_DECKEDITOR	Prepara un mazzo Rissa	
+PRESENCE_STATUS_TAVERN_BRAWL_FRIENDLY_GAME	Sfida un amico in Rissa	
+PRESENCE_STATUS_TAVERN_BRAWL_FRIENDLY_WAITING	Si prepara a sfidare un amico in Rissa	
+PRESENCE_STATUS_TAVERN_BRAWL_GAME	Affronta una Rissa!	
+PRESENCE_STATUS_TAVERN_BRAWL_QUEUE	Cerca un avversario (Rissa)	
+PRESENCE_STATUS_TAVERN_BRAWL_SCREEN	Avvia Rissa	
+PRESENCE_STATUS_TUTORIAL_GAME	Cerca di sconfiggere {0}	0 = PRESENCE_TUTORIAL_*
+PRESENCE_STATUS_TUTORIAL_PREGAME	Avvia il gioco per la prima volta	
+PRESENCE_STATUS_WAIT_FOR_OPPONENT_RECONNECT	Attende la riconnessione dell'avversario	
+PRESENCE_STATUS_WELCOMEQUESTS	Medita su nuove missioni!	
+PRESENCE_TUTORIAL_CHO	Cho	
+PRESENCE_TUTORIAL_HEMET	Hemet	
+PRESENCE_TUTORIAL_HOGGER	Boccalarga	
+PRESENCE_TUTORIAL_ILLIDAN	Illidan	
+PRESENCE_TUTORIAL_MILLHOUSE	Millhouse	
+PRESENCE_TUTORIAL_MUKLA	Re Mukla	

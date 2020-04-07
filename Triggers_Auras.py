@@ -315,7 +315,7 @@ class BuffAura_Receiver:
 		self.receiver.stat_AuraAffected[0] -= self.attackChange
 		self.receiver.stat_AuraAffected[1] -= self.healthChange
 		extractfrom(self, self.receiver.stat_AuraAffected[2])
-		PRINT(self.receiver, "Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
+		#PRINT(self.receiver, "Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
 		
 	def selfCopy(self, recipient): #The recipient of the aura is the same minion when copying it.
 		#Source won't change.
@@ -519,7 +519,7 @@ class WarsongCommander_Aura(AuraDealer_toMinion):
 	def selfCopy(self, recipientMinion):
 		return type(self)(recipientMinion)
 	#可以通过AuraDealer_toMinion的createCopy方法复制
-		
+	
 class HasAura_Receiver:
 	def __init__(self, receiver, source, keyWord):
 		self.source = source #The aura.
