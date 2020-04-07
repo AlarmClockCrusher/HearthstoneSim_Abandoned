@@ -264,7 +264,7 @@ class risingwinds(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.chooseOne = 1
-		self.options = [TakeFlight_Option(), SwoopIn_Option(self)]
+		self.options = [TakeFlight_Option(self), SwoopIn_Option(self)]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if choice == "ChooseBoth" or choice == 0:
@@ -275,37 +275,21 @@ class risingwinds(Spell):
 			self.Game.summonMinion(Eagle(self.Game, self.ID), -1, self.ID)
 		return None
 		
-class TakeFlight_Option:
-	def __init__(self):
-		self.name = "Take Flight"
-		self.description = "Draw a card"
-		self.index = "Dragons~Druid~Spell~2~Take Flight~Uncollectible"
-		
+class TakeFlight_Option(ChooseOneOption):
+	name, description = "Take Flight", "Draw a card"
+	index = "Dragons~Druid~Spell~2~Take Flight~Uncollectible"
+	
+class SwoopIn_Option(ChooseOneOption):
+	name, description = "Swoop In", "Summon a 3/2 Eagle"
+	index = "Dragons~Druid~Spell~2~Swoop In~Uncollectible"
 	def available(self):
-		return True
-		
-	def selfCopy(self, recipient):
-		return type(self)()
-		
-class SwoopIn_Option:
-	def __init__(self, spell):
-		self.spell = spell
-		self.name = "Swoop In"
-		self.description = "Summon 3/2"
-		self.index = "Dragons~Druid~Spell~2~Swoop In~Uncollectible"
-		
-	def available(self):
-		return self.spell.Game.spaceonBoard(self.spell.ID) > 0
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
+		return self.entity.Game.spaceonBoard(self.entity.ID) > 0
 		
 class TakeFlight(Spell):
 	Class, name = "Druid", "Take Flight"
 	requireTarget, mana = False, 2
 	index = "Dragons~Druid~Spell~2~Take Flight~Uncollectible"
 	description = "Draw a card"
-	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		PRINT(self, "Take Flight is cast and lets player draw a card")
 		self.Game.Hand_Deck.drawCard(self.ID)
@@ -1055,7 +1039,7 @@ class Trigger_BombWrangler(TriggeronBoard):
 		PRINT(self, "Whenever %s takes damage, it summons a 1/1 Boom Bot"%self.entity.name)
 		self.entity.Game.summonMinion(BoomBot_Dragons(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		
-class BoomBot_Dragons(Minion):	
+class BoomBot_Dragons(Minion):
 	Class, race, name = "Neutral", "Mech", "Boom Bot"
 	mana, attack, health = 1, 1, 1
 	index = "Dragons~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible"

@@ -161,7 +161,7 @@ class TwoFewerManaEffectRemoved:
 		self.Game.ManaHandler.manas_withheld[self.ID] -= 2
 		extractfrom(self, self.Game.turnStartTrigger)
 		
-	def selfCopy(self, recipientGame):
+	def createCopy(self, recipientGame):
 		return type(self)(recipientGame, self.ID)
 		
 		

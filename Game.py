@@ -1,8 +1,7 @@
 from VariousHandlers import *
 from Triggers_Auras import Trigger_Echo
 from Hand import *
-
-import tkinter as tk
+from CardTypes import Card
 import numpy as np
 import copy
 
@@ -32,7 +31,7 @@ def PRINT(obj, string):
 		GUI.printInfo(string)
 	else:
 		print(self, string)
-		
+	
 playerStatusDict = {"Immune": 0, "ImmuneTillYourNextTurn": 0, "ImmuneTillEndofTurn": 0,
 				"Evasive": 0, "EvasiveTillYourNextTurn": 0,
 				"Spell Damage": 0,
@@ -57,7 +56,7 @@ class Game:
 		self.mainPlayerID = np.random.randint(2) + 1
 		self.GUI = GUI
 		
-	def initialize(self, cardPool, MinionsofCost, MinionswithRace, RNGPools, hero1=None, hero2=None, deck1=[], deck2=[]):
+	def initialize(self, cardPool, MinionsofCost, RNGPools, hero1=None, hero2=None, deck1=[], deck2=[]):
 		self.heroes = {1:(Illidan if hero1 == None else hero1)(self, 1), 2:(Anduin if hero2 == None else hero2)(self, 2)}
 		self.heroPowers = {1:self.heroes[1].heroPower, 2:self.heroes[2].heroPower}
 		self.heroes[1].onBoard, self.heroes[2].onBoard = True, True
@@ -86,6 +85,7 @@ class Game:
 		self.triggersonBoard, self.triggersinHand, self.triggersinDeck = {1:[], 2:[]}, {1:[], 2:[]}, {1:[], 2:[]}
 		self.cardPool, self.MinionsofCost, self.RNGPools = cardPool, MinionsofCost, RNGPools
 		self.Hand_Deck = Hand_Deck(self, deck1, deck2)
+		self.Hand_Deck.initialize()
 		
 	def endGame(self, comment):
 		PRINT(self, comment)
@@ -1063,3 +1063,83 @@ class Game:
 			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
 				card.effectCanTrigger()
 				card.checkEvanescent()
+				
+	def createCopy(self, recipientGame):
+		return recipientGame
+		
+	def copyGame(self):
+		Copy = type(self)(self.GUI, None, None)
+		Copy.initialize(self.cardPool, self.MinionsofCost, self.RNGPools, type(self.heroes[1]), type(self.heroes[2]), deck1=[], deck2=[])
+		Copy.copiedObjs = {} #目前只用于记录引用其他随从的对象，把已经复制过的对象记录,避免重复复制
+		for key, value in self.__dict__.items():
+			#print("Copying game attribute", key)
+			#Copy the attributes of basic types, or simply types.
+			if isinstance(value, (type, type(None), int, np.int64, float, str, bool)):
+				Copy.__dict__[key] = value
+			#随从实例上带有的函数一经__init__确定不会改变。所以不需要进行复制
+			#If the attribute is a function or is a list of the triggers
+			elif callable(value): #游戏内的函数没有必要复制
+				pass
+			elif inspect.isclass(value): #如果复制目标是一个类的话
+				Copy.__dict__[key] = value
+			elif value == self: #按理来说Game自己不会携带Game attribute
+				Copy.__dict__[key] = self.Game
+			elif key == "GUI":
+				Copy.__dict__[key] = value
+			elif key.startswith("triggers"): #把场上，手牌和牌库扳机复制一遍，但是这些实体不全是扳机
+				for ID in range(1, 3): #光环也会在这其中，一并复制
+					for trigger, signal in self.__dict__[key][ID]:
+						trigCopy = trigger.createCopy(Copy)
+						Copy.__dict__[key][ID].append((trigCopy, signal))
+			#用于auras，stat_AuraAffected，keyWords_AuraAffected和manaModifications等
+			elif key == "cardPool" or key == "MinionsofCost" or key == "RNGPools":
+				Copy.__dict__[key] = value #游戏在复制时不重新copy卡池，而是直接引用之
+			#复制随从列表，武器，英雄，英雄技能，
+			#auras，playerStatus，options, players, mulligans
+			#turnStartTrigger, turnEndTrigger, tempDeathList
+			elif type(value) == list or type(value) == dict or type(value) == tuple: #If the attribute is a list or dictionary, use the method defined at the start of py
+				Copy.__dict__[key] = self.copyListDictTuple(value, Copy)
+			#复制card, minionPlayed, Hand_Deck, ManaHandler,CounterHandler,SecretHandler,DamageHandler,DiscoverHandler,
+			else: #The attribute is a self-defined class. They will all have selfCopy methods
+				#A minion can't refernece another minion. The attributes here must be like triggers/deathrattles	
+				Copy.__dict__[key] = value.createCopy(Copy)
+		del Copy.copiedObjs
+		return Copy
+		
+	def copyListDictTuple(self, obj, recipientGame):
+		if isinstance(obj, list):
+			objCopy = []
+			for element in obj:
+				#check if they're basic types, like int, str, bool, NoneType, 
+				if isinstance(element, (type(None), int, float, str, bool)):
+					#Have tested that basic types can be appended and altering the original won't mess with the content in the list.
+					objCopy.append(element)
+				#没有列表会直接引用Game的函数
+				#没有列表会引用函数
+				elif inspect.isclass(element):
+					objCopy.append(element)
+				elif type(element) == type(recipientGame):
+					objCopy.append(recipientGame)
+				elif type(element) == list or type(element) == dict or type(element) == tuple: #If the element is a list or dict, just recursively use this function.
+					objCopy.append(self.copyListDictTuple(element, recipientGame))
+				else: #If the element is a self-defined class. All of them have selfCopy methods.
+					objCopy.append(element.createCopy(recipientGame))
+		elif isinstance(obj, dict):
+			objCopy = {}
+			for key, value in obj.items():
+				if isinstance(value, (type(None), int, float, str, bool)):
+					objCopy[key] = value
+				#列表中不会引用Game自己的函数
+				elif inspect.isclass(value):
+					objCopy[key] = value
+				elif type(value) == type(recipientGame):
+					objCopy[key] = recipientGame
+				elif type(value) == list or type(value) == dict or type(value) == tuple:
+					objCopy[key] = (self.copyListDictTuple(value, recipientGame))
+				else:
+					objCopy[key] = value.createCopy(recipientGame)
+		else: #elif isinstance(obj, tuple):
+			tupleTurnedList = list(obj) #tuple因为是immutable的，所以要根据它生成一个列表
+			objCopy = self.copyListDictTuple(tupleTurnedList, recipientGame) #复制那个列表
+			objCopy = list(objCopy) #把那个列表转换回tuple
+		return objCopy

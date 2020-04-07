@@ -1,5 +1,6 @@
 import numpy as np
 import tkinter as tk
+import copy
 
 def extractfrom(target, listObject):
 	temp = None
@@ -48,7 +49,7 @@ class ManaHandler:
 		self.manasOverloaded = {1:0, 2:0}
 		self.manas_UpperLimit = {1:10, 2:10}
 		self.manas_withheld = {1:0, 2:0}
-		#CardAuras不再是放置所有费用修改效果的列表，而改为存放不直接寄存于随从上的费用光环。
+		#CardAuras只存放临时光环，永久光环不再注册于此
 		#对于卡牌的费用修改效果，每张卡牌自己处理。
 		self.CardAuras, self.CardAuras_Backup = [], []
 		self.PowerAuras, self.PowerAuras_Backup = [], []
@@ -207,7 +208,19 @@ class ManaHandler:
 			if self.Game.heroPowers[ID].mana < 0:
 				self.Game.heroPowers[ID].mana = 0
 				
-				
+	def createCopy(self, recipientGame):
+		Copy = type(self)(recipientGame)
+		for key, value in self.__dict__.items():
+			if key == "Game":
+				pass
+			elif "Auras" not in key: #不承载光环的列表都是数值，直接复制即可
+				Copy.__dict__[key] = copy.deepcopy(value)
+			else: #承载光环和即将加载的光环的列表
+				for aura in value:
+					Copy.__dict__[key].append(aura.createCopy)
+		return Copy
+		
+		
 class ManaModification:
 	def __init__(self, card, changeby=0, changeto=-1, source=None, lowerbound=0):
 		self.card = card
@@ -233,21 +246,22 @@ class ManaModification:
 			extractfrom((self.card, self), self.source.auraAffected)
 			
 	def selfCopy(self, recipientCard):
-		return ManaModification(recipientCard, self.changeby, self.changeto, self.source)
+		return ManaModification(recipientCard, self.changeby, self.changeto, self.source, self.lowerbound)
 		
 #既可以用于随从发出的费用光环，也可用于不寄存在随从实体上的暂时费用光环，如伺机待发等。
 #随从发出的光环由随从自己控制光环的开关。
 #不寄存于随从身上的光环一般用于一次性的费用结算。而洛欧塞布等持续一个回合的光环没有任何扳机而已
+#永久费用光环另行定义
 class ManaAura_Dealer:
-	def __init__(self, minion, func, changeby=0, changeto=-1, lowerbound=0):
-		self.blank_init(minion, func, changeby, changeto, lowerbound)
+	def __init__(self, entity, func, changeby=0, changeto=-1, lowerbound=0):
+		self.blank_init(entity, func, changeby, changeto, lowerbound)
 		
-	def blank_init(self, minion, func, changeby, changeto, lowerbound):
-		self.minion = minion
+	def blank_init(self, entity, func, changeby, changeto, lowerbound):
+		self.entity = entity
 		if func != None:
 			self.manaAuraApplicable = func
 		self.changeby, self.changeto, self.lowerbound = changeby, changeto, lowerbound
-		self.auraAffected = [] #A list of (minion, aura_Receiver)
+		self.auraAffected = [] #A list of (card, aura_Receiver)
 		
 	def manaAuraApplicable(self, target):
 		return True
@@ -255,7 +269,7 @@ class ManaAura_Dealer:
 	#只要是有满足条件的卡牌进入手牌，就会触发这个光环。target是承载这个牌的列表。
 	#applicable不需要询问一张牌是否在手牌中。光环只会处理在手牌中的卡牌
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.minion.onBoard and self.manaAuraApplicable(target[0])
+		return self.entity.onBoard and self.manaAuraApplicable(target[0])
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):
@@ -266,36 +280,54 @@ class ManaAura_Dealer:
 		
 	def applies(self, target): #This target is NOT holder.
 		if self.manaAuraApplicable(target):
-			PRINT(self.minion, "Card %s gains the Changeby %d/Changeto %d mana change from %s"%(target.name, self.changeby, self.changeto, self.minion.name))
+			PRINT(self.entity, "Card %s gains the Changeby %d/Changeto %d mana change from %s"%(target.name, self.changeby, self.changeto, self.entity.name))
 			manaMod = ManaModification(target, self.changeby, self.changeto, self, self.lowerbound)
 			manaMod.applies()
 			self.auraAffected.append((target, manaMod))
 			
 	def auraAppears(self):
-		PRINT(self.minion, "{} appears and starts its mana aura {}".format(self.minion.name, self))
-		for card in self.minion.Game.Hand_Deck.hands[1] + self.minion.Game.Hand_Deck.hands[2]:
+		PRINT(self.entity, "{} appears and starts its mana aura {}".format(self.entity.name, self))
+		for card in self.entity.Game.Hand_Deck.hands[1] + self.entity.Game.Hand_Deck.hands[2]:
 			self.applies(card)
 			
-		#Only need to handle minions that appear. Them leaving/silenced will be handled by the BuffAura_Receiver object.
-		#We want this Trigger_MinionAppears can handle everything including registration and buff and removing.
-		self.minion.Game.triggersonBoard[self.minion.ID].append((self, "CardEntersHand"))
-		self.minion.Game.ManaHandler.calcMana_All()
+		self.entity.Game.triggersonBoard[self.entity.ID].append((self, "CardEntersHand"))
+		self.entity.Game.ManaHandler.calcMana_All()
 		
 	#When the aura object is no longer referenced, it vanishes automatically.
 	def auraDisappears(self):
-		PRINT(self.minion, "%s removes its effect."%self.minion.name)
-		for minion, manaMod in fixedList(self.auraAffected):
+		PRINT(self.entity, "%s removes its effect."%self.entity.name)
+		for card, manaMod in fixedList(self.auraAffected):
 			manaMod.getsRemoved()
 			
 		self.auraAffected = []
-		extractfrom((self, "CardEntersHand"), self.minion.Game.triggersonBoard[self.minion.ID])
-		self.minion.Game.ManaHandler.calcMana_All()
+		extractfrom((self, "CardEntersHand"), self.entity.Game.triggersonBoard[self.entity.ID])
+		self.entity.Game.ManaHandler.calcMana_All()
 		
 	def selfCopy(self, recipient): #The recipient is the entity that deals the Aura.
 		#func that checks if subject is manaAuraApplicable will be the new copy's function
-		return type(self)(recipient, recipient.manaAuraApplicable, self.changeby, self.changeto)
-		
-		
+		return type(self)(recipient, recipient.manaAuraApplicable, self.changeby, self.changeto, self.lowerbound)
+	#可以在复制场上扳机列表的时候被调用
+	#可以调用这个函数的时候，一定是因为要复制一个随从的费用光环，那个随从的复制已经创建完毕，可以在复制字典中查到
+	def createCopy(self, recipientGame):
+		if self not in recipientGame.copiedObjs:
+			entityCopy = self.entity.createCopy(recipientGame)
+			Copy = self.selfCopy(entityCopy)
+			recipientGame.copiedObjs[self] = Copy
+			#ManaModification.selfCopy(self, recipientCard):
+			#	return ManaModification(recipientCard, self.changeby, self.changeto, self.source, self.lowerbound)
+			for card, manaMod in self.auraAffected: #从自己的auraAffected里面复制内容出去
+				cardCopy = card.createCopy(recipientGame)
+				#重点是复制一个随从是，它自己会携带一个费用改变，这个费用改变怎么追踪到
+					#用序号看行不行
+				manaModIndex = card.manaModifications.index(manaMod)
+				manaModCopy = cardCopy.manaModifications[manaModIndex]
+				manaModCopy.source = Copy #在处理函数之前，所有的费用状态都已经被一次性复制完毕，它们的来源被迫留为None,需要在这里补上
+				Copy.auraAffected.append((cardCopy, manaModCopy))
+			return Copy
+		else:
+			return recipientGame.copiedObjs[self]
+			
+			
 class TempManaEffect:
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
 		self.Game, self.ID = Game, ID
@@ -344,10 +376,21 @@ class TempManaEffect:
 		extractfrom((self, "ManaCostPaid"), self.Game.triggersonBoard[self.ID])
 		self.Game.ManaHandler.calcMana_All()
 		
-	def selfCopy(self, recipientGame): #The recipient is the Game that handles the Aura.
-		return type(self)(recipientGame, self.ID, self.changeby, self.changeto)
-		
-		
+	def createCopy(self, recipientGame): #The recipient is the Game that handles the Aura.
+		if self not in recipientGame.copiedObjs:
+			Copy = type(self)(recipientGame, self.ID, self.changeby, self.changeto)
+			recipientGame.copiedObjs[self] = Copy
+			for card, manaMod in self.auraAffected:
+				cardCopy = card.createCopy(recipientGame)
+				manaModIndex = card.manaModifications.index(manaMod)
+				manaModCopy = cardCopy.manaModifications[manaModIndex]
+				manaModCopy.source = Copy
+				Copy.auraAffected.append((cardCopy, manaModCopy))
+			return Copy
+		else:
+			return recipientGame.copiedObjs[self]
+			
+			
 class TempManaEffect_Power:
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
 		self.Game, self.ID = Game, ID
@@ -394,11 +437,21 @@ class TempManaEffect_Power:
 		extractfrom((self, "ManaCostPaid"), self.Game.triggersonBoard[self.ID])
 		self.Game.ManaHandler.calcMana_Powers()
 		
-	def selfCopy(self, recipientGame): #The recipient is the Game.
-		return type(self)(recipientGame, self.ID, self.changeby, self.changeto)
-		
-		
-		
+	def createCopy(self, recipientGame): #The recipient is the Game that handles the Aura.
+		if self not in recipientGame.copiedObjs:
+			Copy = type(self)(recipientGame, self.ID, self.changeby, self.changeto)
+			recipientGame.copiedObjs[self] = Copy
+			for heroPower, manaMod in self.auraAffected:
+				heroPowerCopy = heroPower.createCopy(recipientGame)
+				manaModIndex = heroPower.manaModifications.index(manaMod)
+				manaModCopy = heroPowerCopy.manaModifications[manaModIndex]
+				manaModCopy.source = Copy
+				Copy.auraAffected.append((heroPowerCopy, manaModCopy))
+			return Copy
+		else:
+			recipientGame.copiedObjs[self]
+			
+			
 class SecretHandler:
 	def __init__(self, Game):
 		self.Game = Game
@@ -455,7 +508,19 @@ class SecretHandler:
 					return True
 			return False
 			
-			
+	#只有Game自己会引用SecretHandler
+	def createCopy(self, recipientGame):
+		Copy = type(self)(recipientGame)
+		for ID in range(1, 3):
+			for secret in self.secrets[ID]:
+				Copy.secrets[ID].append(secret.createCopy(recipientGame))
+			for quest in self.mainQuests[ID]:
+				Copy.mainQuests[ID].append(quest.createCopy(recipientGame))
+			for quest in self.sideQuests[ID]:
+				Copy.sideQuests[ID].append(quest.createCopy(recipientGame))
+		return Copy
+		
+		
 class DamageHandler:
 	def __init__(self, Game):
 		self.Game = Game
@@ -558,8 +623,14 @@ class DamageHandler:
 			return self.damageTransfer_InitiallyonMinion(target)
 		elif target.cardType == "Hero":
 			return self.damageTransfer_InitiallyonHero(target)
-			
-			
+	#只有Game自己会引用DamageHandler
+	def createCopy(self, recipientGame):
+		Copy = type(self)(recipientGame)
+		Copy.ShellfighterExists = copy.deepcopy(self.ShellfighterExists)
+		Copy.RamshieldExists = copy.deepcopy(self.RamshieldExists)
+		return Copy
+		
+		
 class CounterHandler:
 	def __init__(self, Game):
 		self.Game = Game
@@ -612,6 +683,15 @@ class CounterHandler:
 		self.minionsDiedThisTurn = {1:[], 2:[]}
 		self.heroAttackTimesThisTurn = {1:0, 2:0}
 		
+	#只有Game自己会引用CounterHandler
+	def createCopy(self, recipientGame):
+		Copy = type(self)(recipientGame)
+		for key, value in self.__dict__.items():
+			if value != self.Game:
+				#因为CounterHandler内部的值除了Game都是数字组成的，可以直接deepcopy
+				Copy.__dict__[key] = copy.deepcopy(value)
+		return Copy
+		
 		
 class DiscoverHandler:
 	def __init__(self, Game):
@@ -648,3 +728,7 @@ class DiscoverHandler:
 			self.Game.GUI.update()
 			self.Game.GUI.wishforaCard(initiator)
 			self.Game.options = []
+		
+	#除了Game本身，没有东西会在函数外引用Game.DiscoverHandler
+	def createCopy(self, recipientGame):
+		return type(self)(recipientGame)

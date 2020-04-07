@@ -1301,29 +1301,15 @@ class FungalGargantuan(Minion):
 	index = "Outlands~Druid~Minion~9~9~9~None~Fungal Gargantuan~Taunt~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt,Rush", "Taunt, Rush"
 	
-class MsshifnAttac:
-	def __init__(self, minion):
-		self.minion = minion
-		self.name = "Msshi'fn At'tac"
-		self.description = "Summon a 9/9 with Taunt"
-		
+class MsshifnAttac_Option(ChooseOneOption):
+	name, description = "Msshi'fn At'tac", "Summon a 9/9 with Taunt"
 	def available(self):
-		return self.minion.Game.spaceonBoard(self.minion.ID) > 0
+		return self.entity.Game.spaceonBoard(self.entity.ID) > 0
 		
-	def selfCopy(self, recipientMinion):
-		return type(self)(recipientMinion)
-		
-class MsshifnProtec:
-	def __init__(self, minion):
-		self.minion = minion
-		self.name = "Msshi'fn Pro'tec"
-		self.description = "Summon a 9/9 with Rush"
-		
+class MsshifnProtec_Option(ChooseOneOption):
+	name, description = "Msshi'fn Pro'tec", "Summon a 9/9 with Rush"
 	def available(self):
-		return self.minion.Game.spaceonBoard(self.minion.ID) > 0
-		
-	def selfCopy(self, recipientMinion):
-		return type(self)(recipientMinion)
+		return self.entity.Game.spaceonBoard(self.entity.ID) > 0
 		
 		
 class Bogbeam(Spell):
@@ -2046,9 +2032,6 @@ class SungillStreamrunner(Minion):
 	
 class LibramManaAura:
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
-		self.blank_init(Game, ID, changeby, changeto)
-		
-	def blank_init(self, Game, ID, changeby, changeto):
 		self.Game, self.ID = Game, ID
 		self.changeby, self.changeto = changeby, changeto
 		self.auraAffected = [] #A list of (minion, aura_Receiver)
@@ -2086,10 +2069,27 @@ class LibramManaAura:
 		self.Game.ManaHandler.calcMana_All()
 		
 	#Aura is permanent and doesn't have auraDisappears()
-	def selfCopy(self, recipientGame): #The recipient is the entity that deals the Aura.
-		return type(self)(recipientGame, self.ID, self.changeby, self.changeto)
-		
-		
+	#可以在复制场上扳机列表的时候被调用
+	#可以调用这个函数的时候，一定是因为要复制一个随从的费用光环，那个随从的复制已经创建完毕，可以在复制字典中查到
+	def createCopy(self, recipientGame):
+		if self not in recipientGame.copiedObjs:
+			Copy = type(self)(recipientGame, self.ID, self.changeby, self.changeto)
+			recipientGame.copiedObjs[self] = Copy
+			#ManaModification.selfCopy(self, recipientCard):
+			#	return ManaModification(recipientCard, self.changeby, self.changeto, self.source, self.lowerbound)
+			for card, manaMod in self.auraAffected: #从自己的auraAffected里面复制内容出去
+				cardCopy = card.createCopy(recipientGame)
+				#重点是复制一个随从是，它自己会携带一个费用改变，这个费用改变怎么追踪到
+					#用序号看行不行
+				manaModIndex = card.manaModifications.index(manaMod)
+				manaModCopy = cardCopy.manaModifications[manaModIndex]
+				manaModCopy.source = Copy #在处理函数之前，所有的费用状态都已经被一次性复制完毕，它们的来源被迫留为None,需要在这里补上
+				Copy.auraAffected.append((cardCopy, manaModCopy))
+			return Copy
+		else:
+			return recipientGame.copiedObjs[self]
+			
+			
 class AldorAttendant(Minion):
 	Class, race, name = "Paladin", "", "Aldor Attendant"
 	mana, attack, health = 2, 2, 3

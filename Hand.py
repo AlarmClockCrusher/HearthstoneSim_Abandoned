@@ -39,6 +39,8 @@ class Hand_Deck:
 							2: Experiment2 if deck1 == [] else deck2}
 		self.startingDeckIdentities = {1:[], 2:[]}
 		self.startingHandIdentities = {1:[], 2:[]}
+		
+	def initialize(self):
 		self.initializeDecks()
 		self.initializeHands()
 		
@@ -389,6 +391,22 @@ class Hand_Deck:
 		else:
 			return None
 			
+	def createCopy(self, recipientGame):
+		if self not in recipientGame.copiedObjs:
+			Copy = type(self)(recipientGame)
+			recipientGame.copiedObjs[self] = Copy
+			for key, value in self.__dict__.items():
+				if key == "Game" or key == "initialDecks":
+					pass #携带的游戏和initialDecks不用复制
+				elif key == "hands" or key == "decks":
+					for ID in range(1, 3):
+						for card in value[ID]:
+							Copy.__dict__[key][ID].append(card.createCopy(recipientGame))
+				else:
+					Copy.__dict__[key] = copy.deepcopy(value)
+			return Copy
+		else:
+			return recipientGame.copiedObjs[self]
 			
 			
 DemonHunterDeck = [ShadowhoofSlayer, ChaosStrike, SightlessWatcher, AldrachiWarblades, CoordinatedStrike, SatyrOverseer, SoulCleave, ChaosNova, GlaiveboundAdept, InnerDemon, 
@@ -454,8 +472,8 @@ WarriorDeck = [ImproveMorale, ViciousScraphound, DrBoomsScheme, SweepingStrikes,
 				DeathwingMadAspect, BoomSquad, RiskySkipper, BombWrangler, ImprisonedGanarg, SwordandBoard, CorsairCache, Bladestorm, BonechewerRaider, BulwarkofAzzinoth, 
 				WarmaulChallenger, KargathBladefist, ScrapGolem, BloodboilBrute]
 
-Experiment1 = [Tracking, Tracking, SwampqueenHagatha, Overgrowth, Overgrowth, SpitefulSmith, Gorehowl, Gorehowl, FieryWarAxe, BloodswornMercenary, BloodswornMercenary, BloodswornMercenary, TempleBerserker, TempleBerserker, GrommashHellscream, AmaniBerserker, AmaniBerserker, 
+Experiment1 = [Tracking, Tracking, MurlocWarleader, MurlocWarleader, MurlocWarleader, GrimscaleOracle, GrimscaleOracle, GrimscaleOracle, GrimscaleOracle, DireWolfAlpha, DireWolfAlpha, SoulMirror, SoulMirror, SoulMirror, Overgrowth, Overgrowth, MirrorEntity, MirrorEntity, Mindgames, Mindgames, Mindgames
 				]
 
-Experiment2 = [Tracking, Tracking, SandhoofWaterbearer, DarkSkies, DarkSkies, DarkSkies, SwampqueenHagatha, SwampqueenHagatha, Overgrowth, Overgrowth, SpitefulSmith, Gorehowl, Gorehowl, FieryWarAxe, BloodswornMercenary, BloodswornMercenary, BloodswornMercenary, TempleBerserker, TempleBerserker, GrommashHellscream, AmaniBerserker, AmaniBerserker, 
+Experiment2 = [Tracking, Tracking, MurlocWarleader, MurlocWarleader, MurlocWarleader, GrimscaleOracle, GrimscaleOracle, GrimscaleOracle, GrimscaleOracle, DireWolfAlpha, DireWolfAlpha, SoulMirror, SoulMirror, SoulMirror, Overgrowth, Overgrowth, MirrorEntity, MirrorEntity, Mindgames, Mindgames, Mindgames
 				]

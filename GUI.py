@@ -1,7 +1,7 @@
 import tkinter as tk
 from Game import *
 from Basic import ClassDict
-from CardPools import cardPool, MinionsofCost, MinionswithRace, RNGPools
+from CardPools import cardPool, MinionsofCost, RNGPools
 from Code2CardList import *
 import PIL.Image
 import PIL.ImageTk
@@ -451,7 +451,7 @@ class ClassConfirmationButton(tk.Button):
 				deck2Correct = False
 		if deck1Correct and deck2Correct:
 			self.GUI.Game = Game(self.GUI)
-			self.GUI.Game.initialize(cardPool, MinionsofCost, MinionswithRace, RNGPools, hero_1, hero_2, deck1, deck2)
+			self.GUI.Game.initialize(cardPool, MinionsofCost, RNGPools, hero_1, hero_2, deck1, deck2)
 			self.GUI.posMulligans = {1:[(70+i*2*111, Y-120) for i in range(len(self.GUI.Game.mulligans[1]))],
 								2:[(70+i*2*111, 120) for i in range(len(self.GUI.Game.mulligans[2]))]}
 			self.destroy()
@@ -584,6 +584,7 @@ class GUI:
 		return text
 		
 	def update(self):
+		self.printInfo("Displaying the content of Game {}".format(self.Game))
 		if self.UI == -1: #Draw the mulligan part, the cards and the start turn button
 			self.printInfo("The game starts. Select the cards you want to replace. Then click the button at the center of the screen")
 			self.drawMulligan()
@@ -834,6 +835,7 @@ class GUI:
 			elif selectedSubject == "TurnEnds":
 				self.cancelSelection()
 				self.Game.switchTurn()
+				self.Game = self.Game.copyGame()
 				self.update()
 			elif entity.ID != self.Game.turn:
 				self.printInfo("You can only select your own characters as subject.")
@@ -874,6 +876,7 @@ class GUI:
 						subject = self.subject
 						self.cancelSelection()
 						subject.use(None) #Whether the Hero Power is used or not is handled in the use method.
+						self.Game = self.Game.copyGame()
 						self.update()
 				#不能攻击的随从不能被选择。
 				elif selectedSubject.endswith("onBoard"):
@@ -893,6 +896,7 @@ class GUI:
 			elif selectedSubject == "TurnEnds":
 				self.cancelSelection()
 				self.Game.switchTurn()
+				self.Game = self.Game.copyGame()
 				self.update()
 			else:
 				self.printInfo("You must click an available option to continue.")
@@ -905,6 +909,7 @@ class GUI:
 			if selectedSubject == "TurnEnds":
 				self.cancelSelection()
 				self.Game.switchTurn()
+				self.Game = self.Game.copyGame()
 				self.update()
 			elif self.selectedSubject.endswith("onBoard"):
 				if "Hero" not in selectedSubject and selectedSubject != "MiniononBoard":
@@ -914,6 +919,7 @@ class GUI:
 					subject, target = self.subject, self.target
 					self.cancelSelection()
 					self.Game.battleRequest(subject, target)
+					self.Game = self.Game.copyGame()
 					self.update()
 			#手中选中的随从在这里结算打出位置，如果不需要目标，则直接打出。
 			elif self.selectedSubject == "MinioninHand":
@@ -928,6 +934,7 @@ class GUI:
 						subject, position, choice = self.subject, self.position, self.choice
 						self.cancelSelection()
 						self.Game.playMinion(subject, None, position, choice)
+						self.Game = self.Game.copyGame()
 						self.update()
 					else:
 						self.printInfo("The minion requires target to play. needTarget() returns {}".format(self.subject.needTarget(self.choice)))
@@ -941,6 +948,7 @@ class GUI:
 					subject, position, choice = self.subject, self.position, self.choice
 					self.cancelSelection()
 					self.Game.playMinion(subject, entity, position, choice)
+					self.Game = self.Game.copyGame()
 					self.update()
 			#选中的法术已经确定抉择选项（如果有），下面决定目标选择。
 			elif self.selectedSubject == "SpellinHand":
@@ -950,6 +958,7 @@ class GUI:
 						subject, target, choice = self.subject, None, self.choice
 						self.cancelSelection()
 						self.Game.playSpell(subject, target, choice)
+						self.Game = self.Game.copyGame()
 						self.update()
 				else: #法术或者法术抉择选项需要指定目标。
 					if "Hero" not in selectedSubject and selectedSubject != "MiniononBoard":
@@ -959,6 +968,7 @@ class GUI:
 						subject, target, choice = self.subject, entity, self.choice
 						self.cancelSelection()
 						self.Game.playSpell(subject, target, choice)
+						self.Game = self.Game.copyGame()
 						self.update()
 			#选择手牌中的武器的打出目标
 			elif self.selectedSubject == "WeaponinHand":
@@ -968,6 +978,7 @@ class GUI:
 						subject, target = self.subject, None
 						self.cancelSelection()
 						self.Game.playWeapon(subject, None)
+						self.Game = self.Game.copyGame()
 						self.update()
 				else:
 					if "Hero" not in selectedSubject and selectedSubject != "MiniononBoard":
@@ -977,6 +988,7 @@ class GUI:
 						self.printInfo("Requesting to play weapon {} with target {}".format(subject.name, target.name))
 						self.cancelSelection()
 						self.Game.playWeapon(subject, target)
+						self.Game = self.Game.copyGame()
 						self.update()
 			#手牌中的英雄牌是没有目标的
 			elif self.selectedSubject == "HeroinHand":
@@ -985,6 +997,7 @@ class GUI:
 					subject = self.subject
 					self.cancelSelection()
 					self.Game.playHero(subject)
+					self.Game = self.Game.copyGame()
 					self.update()
 			#Select the target for a Hero Power.
 			#在此选择的一定是指向性的英雄技能。
@@ -996,6 +1009,7 @@ class GUI:
 					subject = self.subject
 					self.cancelSelection()
 					subject.use(entity)
+					self.Game = self.Game.copyGame()
 					self.update()
 					
 		else: #self.UI == 3

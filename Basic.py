@@ -2146,7 +2146,7 @@ class FlametongueTotem(Minion):
 	requireTarget, keyWord, description = False, "", "Adjacent minions have +2 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Buff Aura"] = BuffAura_Dealer_Adjacent(self, None, 2, 0)
+		self.auras["Buff Aura"] = BuffAura_Dealer_Adjacent(self, 2, 0)
 		
 		
 class Hex(Spell):

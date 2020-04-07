@@ -56,6 +56,19 @@ class TriggeronBoard:
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
 		
+	#这个扳机会在复制随从列表，手牌和牌库列表之前调用，扳机所涉及的随从，武器等会被复制
+	#游戏会检查triggersonBoard中的每个(trig, signal),产生一个复制(trigCopy, signal)，并注册
+	#这里负责处理产生一个trigCopy
+	def createCopy(self, recipientGame):
+		if self not in recipientGame.copiedObjs: #这个扳机没有被复制过
+			entityCopy = self.entity.createCopy(recipientGame)
+			trigCopy = type(self)(entityCopy)
+			recipientGame.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return recipientGame.copiedObjs[self]
+			
+			
 class TriggerinHand:
 	def __init__(self, entity):
 		self.blank_init(entity, [])
@@ -86,7 +99,16 @@ class TriggerinHand:
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
 		
-		
+	def createCopy(self, recipientGame):
+		if self not in recipientGame.copiedObjs: #这个扳机没有被复制过
+			entityCopy = self.entity.createCopy(recipientGame)
+			trigCopy = type(self)(entityCopy)
+			recipientGame.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return recipientGame.copiedObjs[self]
+			
+			
 class TriggerinDeck:
 	def __init__(self, entity):
 		self.blank_init(entity, [])
@@ -117,452 +139,17 @@ class TriggerinDeck:
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
 		
-#def __init__(self, receiver, source, attackChange, healthChange):
-class BuffAura_Receiver:
-	#Source is the Aura not the entity that creates the aura.
-	def __init__(self, receiver, source, attackChange, healthChange):
-		self.source = source
-		self.attackChange = attackChange #Positive by default.
-		self.healthChange = healthChange
-		self.receiver = receiver
-		
-	def effectStart(self):
-		self.receiver.statChange(self.attackChange, self.healthChange)
-		self.receiver.stat_AuraAffected[0] += self.attackChange
-		self.receiver.stat_AuraAffected[1] += self.healthChange
-		self.receiver.stat_AuraAffected[2].append(self)
-		self.source.auraAffected.append((self.receiver, self))
-		PRINT(self.receiver, "Minion %s gains buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
-	#Cleanse the aura_Receiver from the receiver and delete the (receiver, aura_Receiver) from source aura's list.
-	def effectClear(self):
-		self.receiver.statChange(-self.attackChange, -self.healthChange)
-		self.receiver.stat_AuraAffected[0] -= self.attackChange
-		self.receiver.stat_AuraAffected[1] -= self.healthChange
-		extractfrom(self, self.receiver.stat_AuraAffected[2])
-		extractfrom((self.receiver, self), self.source.auraAffected)
-		PRINT(self.receiver, "Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
-	#Invoke when the receiver is copied and because the aura_Dealer won't have reference to this copied receiver,
-	#remove this copied aura_Receiver from copied receiver's stat_AuraAffected[2].
-	def effectDiscard(self):
-		self.receiver.statChange(-self.attackChange, -self.healthChange)
-		self.receiver.stat_AuraAffected[0] -= self.attackChange
-		self.receiver.stat_AuraAffected[1] -= self.healthChange
-		extractfrom(self, self.receiver.stat_AuraAffected[2])
-		PRINT(self.receiver, "Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
-		
-	def selfCopy(self, recipientMinion): #The recipient of the aura is the same minion when copying it.
-		#Source won't change. 
-		return type(self)(recipientMinion, self.source, self.attackChange, self.healthChange)
-		
-#def __init__(self, minion, func, attack, health):
-class BuffAura_Dealer_Adjacent:
-	def __init__(self, minion, func, attack, health):
-		self.minion = minion
-		if func != None:
-			self.applicable = func
-		self.attack = attack
-		self.health = health
-		self.auraAffected = [] #A list of (minion, aura_Receiver)
-		
-	#Minions appearing/disappearing will let the minion reevaluate the aura.
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.minion.onBoard
-		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			self.effect(signal, ID, subject, target, number, comment)
+	def createCopy(self, recipientGame):
+		if self not in recipientGame.copiedObjs: #这个扳机没有被复制过
+			entityCopy = self.entity.createCopy(recipientGame)
+			trigCopy = type(self)(entityCopy)
+			recipientGame.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return recipientGame.copiedObjs[self]
 			
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		#重置对于两侧随从的光环
-		for minion, aura_Receiver in fixedList(self.auraAffected):
-			aura_Receiver.effectClear()
-		#Find adjacent minions to self.minion, then try to register them.
-		for minion in self.minion.Game.findAdjacentMinions(self.minion)[0]:
-			self.applies(minion)
 			
-	def applicable(self, target):
-		return True
-		
-	def applies(self, subject):
-		if self.applicable(subject) and subject != self.minion:
-			PRINT(self.minion, "Minion %s gains the %d/%d aura from %s"%(subject.name, self.attack, self.health, self.minion))
-			aura_Receiver = BuffAura_Receiver(subject, self, self.attack, self.health)
-			aura_Receiver.effectStart()
-			
-	def auraAppears(self):
-		PRINT(self.minion, "{} appears and starts its buff aura {}".format(self.minion.name, self))
-		for minion in self.minion.Game.findAdjacentMinions(self.minion)[0]:
-			self.applies(minion)
-			
-		#Only need to handle minions that appear. Them leaving/silenced will be handled by the BuffAura_Receiver object.
-		#We want this Trigger_MinionAppears can handle everything including registration and buff and removing.
-		#self.minion.Game.triggersonBoard[self.minion.ID].append((self, "BoardRearranged"))
-		self.minion.Game.triggersonBoard[self.minion.ID].append((self, "MinionAppears"))
-		#随从disappears的时候已经把 光环效果清除并将自己从光环影响列表中移除。这里只是刷新光环而已。
-		self.minion.Game.triggersonBoard[self.minion.ID].append((self, "MinionDisappears"))
-		
-	#When the aura object is no longer referenced, it vanishes automatically.
-	def auraDisappears(self):
-		PRINT(self.minion, "%s disappears and removes its effect."%self.minion.name)
-		for minion, aura_Receiver in fixedList(self.auraAffected):
-			aura_Receiver.effectClear()
-			
-		self.auraAffected = []
-		#extractfrom((self, "BoardRearranged"), self.minion.Game.triggersonBoard[self.minion.ID])
-		extractfrom((self, "MinionAppears"), self.minion.Game.triggersonBoard[self.minion.ID])
-		extractfrom((self, "MinionDisappears"), self.minion.Game.triggersonBoard[self.minion.ID])
-		
-	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
-		#func that checks if subject is applicable will be the new copy's function
-		return type(self)(recipientMinion, recipientMinion.applicable, self.attack, self.health)
-		
-#def __init__(self, minion, func, attack, health):
-class BuffAura_Dealer_All:
-	def __init__(self, minion, func, attack, health):
-		self.minion = minion
-		if func != None:
-			self.applicable = func
-		self.attack = attack
-		self.health = health
-		self.auraAffected = [] #A list of (minion, aura_Receiver)
-		
-	def applicable(self, target):
-		return True
-	#All minions appearing on the same side will be subject to the buffAura.
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.minion.onBoard and subject.ID == self.minion.ID and subject != self.minion:
-			if self.applicable(subject):
-				return True
-		return False
-		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			self.effect(signal, ID, subject, target, number, comment)
-			
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.applies(subject)
-		
-	def applies(self, subject):
-		if self.applicable(subject) and subject != self.minion:
-			PRINT(self.minion, "Minion %s gains the %d/%d aura from %s"%(subject.name, self.attack, self.health, self.minion))
-			aura_Receiver = BuffAura_Receiver(subject, self, self.attack, self.health)
-			aura_Receiver.effectStart()
-			
-	def auraAppears(self):
-		PRINT(self.minion, "{} appears and starts its buff aura {}".format(self.minion.name, self))
-		for minion in self.minion.Game.minionsonBoard(self.minion.ID):
-			self.applies(minion)
-			
-		#Only need to handle minions that appear. Them leaving/silenced will be handled by the BuffAura_Receiver object.
-		#We want this Trigger_MinionAppears can handle everything including registration and buff and removing.
-		self.minion.Game.triggersonBoard[self.minion.ID].append((self, "MinionAppears"))
-		
-	#When the aura object is no longer referenced, it vanishes automatically.
-	def auraDisappears(self):
-		PRINT(self.minion, "%s disappears and removes its effect."%self.minion.name)
-		for minion, aura_Receiver in fixedList(self.auraAffected):
-			aura_Receiver.effectClear()
-			
-		self.auraAffected = []
-		extractfrom((self, "MinionAppears"), self.minion.Game.triggersonBoard[self.minion.ID])
-		
-	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
-		#func that checks if subject is applicable will be the new copy's function
-		return type(self)(recipientMinion, recipientMinion.applicable, self.attack, self.health)
-		
-		
-class BuffAura_Dealer_Enrage:
-	def __init__(self, minion, attack):
-		self.minion = minion
-		self.attack = attack
-		self.auraAffected = [] #A list of (minion, aura_Receiver)
-		
-	def auraAppears(self):
-		pass
-		
-	def auraDisappears(self):
-		pass
-		
-	def handleEnrage(self):
-		if self.minion.onBoard:
-			if self.minion.activated == False and self.minion.health < self.minion.health_upper:
-				self.minion.activated = True
-				BuffAura_Receiver(self.minion, self, self.attack, 0).effectStart()
-			elif self.minion.activated and self.minion.health >= self.minion.health_upper:
-				self.minion.activated = False
-				for minion, aura_Receiver in fixedList(self.auraAffected):
-					aura_Receiver.effectClear()
-					
-	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
-		#func that checks if subject is applicable will be the new copy's function
-		return type(self)(recipientMinion, self.attack)
-		
-		
-#战歌指挥官的光环相对普通的buff光环更特殊，因为会涉及到随从获得和失去光环的情况
-class WarsongCommander_Aura:
-	def __init__(self, minion):
-		self.minion = minion
-		self.auraAffected = [] #A list of (minion, aura_Receiver)
-		
-	#All minions appearing on the same side will be subject to the buffAura.
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.minion.onBoard and subject.ID == self.minion.ID:
-			#注意，战歌指挥官的光环可以作用在自己身上，这点区分于其他所有身材buff型光环。
-			if signal == "MinionAppears" and subject.keyWords["Charge"] > 0:
-				return True
-			#随从只要发生了冲锋状态的变化就要调用战歌指挥官的Aura_Dealer，如果冲锋状态失去，则由该光环来移除其buff状态
-			if signal == "MinionChargeKeywordChange":
-				return True
-		return False
-		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			self.effect(signal, ID, subject, target, number, comment)
-			
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.applies(signal, subject)
-		
-	def applies(self, signal, subject):
-		if signal == "MinionAppears":
-			if subject.keyWords["Charge"] > 0:
-				PRINT(self.minion, "Minion %s gains the +1 Attack aura from Warsong Commander"%subject.name)
-				aura_Receiver = BuffAura_Receiver(subject, self, 1, 0)
-				aura_Receiver.effectStart()
-		else: #signal == "MinionChargeKeywordChange"
-			if subject.keyWords["Charge"] > 0:
-				notAffectedPreviously = True
-				for receiver, aura_Receiver in fixedList(self.auraAffected):
-					if subject == receiver:
-						notAffectedPreviously = False
-						break
-				if notAffectedPreviously:
-					aura_Receiver = BuffAura_Receiver(subject, self, 1, 0)
-					aura_Receiver.effectStart()
-			elif subject.keyWords["Charge"] < 1:
-				for receiver, aura_Receiver in fixedList(self.auraAffected):
-					if subject == receiver:
-						aura_Receiver.effectClear()
-						break
-						
-	def auraAppears(self):
-		PRINT(self.minion, "{} appears and starts its buff aura {}".format(self.minion.name, self))
-		for minion in self.minion.Game.minionsonBoard(self.minion.ID):
-			self.applies("MinionAppears", minion) #The signal here is a placeholder and directs the function to first-time aura applicatioin
-			
-		#Only need to handle minions that appear. Them leaving/silenced will be handled by the BuffAura_Receiver object.
-		#We want this Trigger_MinionAppears can handle everything including registration and buff and removing.
-		self.minion.Game.triggersonBoard[self.minion.ID].append((self, "MinionAppears"))
-		self.minion.Game.triggersonBoard[self.minion.ID].append((self, "MinionChargeKeywordChange"))
-		
-	#When the aura object is no longer referenced, it vanishes automatically.
-	def auraDisappears(self):
-		PRINT(self, "%s disappears and removes its effect."%self.minion.name)
-		for minion, aura_Receiver in fixedList(self.auraAffected):
-			aura_Receiver.effectClear()
-			
-		#3/4 Voidwalker, buffed by Mal'Ganis, losing the aura will change it to 1/3.		
-		self.auraAffected = []
-		extractfrom((self, "MinionAppears"), self.minion.Game.triggersonBoard[self.minion.ID])
-		extractfrom((self, "MinionChargeKeywordChange"), self.minion.Game.triggersonBoard[self.minion.ID])
-		
-	def selfCopy(self, recipientMinion):
-		return type(self)(recipientMinion)
-		
-#def __init__(self, receiver, source, keyWord):
-class HasAura_Receiver:
-	def __init__(self, receiver, source, keyWord):
-		self.source = source #The aura.
-		self.receiver = receiver
-		self.keyWord = keyWord
-		
-	def effectStart(self):
-		if self.keyWord in self.receiver.keyWords_AuraAffected:
-			self.receiver.keyWords_AuraAffected[self.keyWord] += 1
-		else:
-			self.receiver.keyWords_AuraAffected[self.keyWord] = 1
-		self.receiver.getsKeyword(self.keyWord)
-		self.receiver.keyWords_AuraAffected["Auras"].append(self)
-		self.source.auraAffected.append((self.receiver, self))
-		PRINT(self.receiver, "Minion {} gains {} from Aura {}".format(self.receiver.name, self.keyWord, self.source))
-	#The aura on the receiver is cleared and the source will remove this receiver and aura_Receiver from it's list.
-	def effectClear(self):
-		if self.receiver.keyWords_AuraAffected[self.keyWord] > 0:
-			self.receiver.keyWords_AuraAffected[self.keyWord] -= 1
-		self.receiver.losesKeyword(self.keyWord)
-		extractfrom(self, self.receiver.keyWords_AuraAffected["Auras"])
-		extractfrom((self.receiver, self), self.source.auraAffected)
-		
-	#After a receiver is deep copied, it will also copy this aura_Receiver, simply remove it.
-	#The aura_Dealer won't have reference to this copied aura.
-	def effectDiscard(self):
-		if self.receiver.keyWords_AuraAffected[self.keyWord] > 0:
-			self.receiver.keyWords_AuraAffected[self.keyWord] -= 1
-			self.receiver.losesKeyword(self.keyWord)
-		extractfrom(self, self.receiver.keyWords_AuraAffected["Auras"])
-		
-	def selfCopy(self, recipientMinion):
-		return type(self)(recipientMinion, self.source, self.keyWord)
-		
-class HasAura_Dealer:
-	def __init__(self, minion, func, keyWord):
-		self.minion = minion #For now, there are only three minions that provide this kind aura: Tundra Rhino, Houndmaster Shaw, Whirlwind Tempest
-		if func != None:
-			self.applicable = func
-		self.keyWord = keyWord
-		self.auraAffected = [] #List of (receiver, aura_Receiver)
-		
-	def applicable(self, target):
-		return True
-		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.minion.onBoard and subject.ID == self.minion.ID and subject != self.minion:
-			if self.applicable(subject):
-				return True
-		return False
-		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			self.effect(signal, ID, subject, target, number, comment)
-			
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.applies(subject)
-		
-	def applies(self, subject):
-		if self.applicable(subject):
-			PRINT(self.minion, "Minion %s gains keyWord %s from %s"%(subject.name, self.keyWord, self.minion))
-			aura_Receiver = HasAura_Receiver(subject, self, self.keyWord)
-			aura_Receiver.effectStart()
-			
-	def auraAppears(self):
-		PRINT(self.minion, "{} appears and starts it's aura {}".format(self.minion.name, self))
-		for minion in self.minion.Game.minionsonBoard(self.minion.ID):
-			self.applies(minion)
-			
-		#Handle minion that appear and get silenced.
-		self.minion.Game.triggersonBoard[self.minion.ID].append((self, "MinionAppears"))
-		
-	def auraDisappears(self):
-		PRINT(self.minion, "Aura {} disappears and removes its effect.".format(self))
-		for minion, aura_Receiver in fixedList(self.auraAffected):
-			aura_Receiver.effectClear()
-			
-		self.auraAffected = []
-		extractfrom((self, "MinionAppears"), self.minion.Game.triggersonBoard[self.minion.ID])
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient, recipient.applicable, self.keyWord)
-		
-#Dr. Boom. Mad Genius's Aura. You Mechs have Rush.
-class MechsHaveRush:
-	def __init__(self, Game, ID):
-		self.Game = Game
-		self.ID = ID
-		self.hasAuraAffected = []
-		
-	def applicable(self, target):
-		return "Mech" in target.race and target.ID == self.ID
-		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return subject.ID == self.ID and self.applicable(subject)
-		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			self.effect(signal, ID, subject, target, number, comment)
-			
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.applies(subject)
-		
-	def applies(self, subject):
-		if self.applicable(subject):
-			aura_Receiver = HasAura_Receiver(subject, self, "Rush")
-			aura_Receiver.effectStart()
-			
-	def auraAppears(self):
-		PRINT(self, "Dr. Boom. Mad Genius' aura starts it's effect.")
-		for minion in self.Game.minionsonBoard(self.ID):
-			self.applies(minion)
-			
-		#该光环一旦出现不会消失，所以可以直接在Game的triggersonBoard中登记，同时不需要存到其他的entity之下。
-		self.Game.triggersonBoard[self.ID].append((self, "MinionAppears"))
-		
-	def selfCopy(self, recipientGame):
-		return type(self)(recipientGame, self.ID)
-		
-		
-#Currently only Spiteful Smith has this aura
-#def __init__(self, receiver, source):
-#目前为止所有的武器光环都是+2攻
-class WeaponBuffAura_Receiver:
-	def __init__(self, receiver, source):
-		self.source = source
-		self.receiver = receiver
-		
-	def effectStart(self):
-		self.receiver.gainStat(2, 0)
-		self.receiver.stat_AuraAffected[0] += 2
-		self.receiver.stat_AuraAffected[1].append(self)
-		self.source.auraAffected.append((self.receiver, self))
-		
-	#Cleanse the aura_Receiver from the receiver and delete the (receiver, aura_Receiver) from source aura's list.
-	def effectClear(self):
-		self.receiver.gainStat(-2, 0)
-		self.receiver.stat_AuraAffected[0] -= 2
-		extractfrom(self, self.receiver.stat_AuraAffected[1])
-		extractfrom((self.receiver, self), self.source.auraAffected)
-		
-	#Invoke when the receiver is copied and because the aura_Dealer won't have reference to this copied receiver,
-	#remove this copied aura_Receiver from copied receiver's stat_AuraAffected[2].
-	def effectDiscard(self):
-		self.receiver.gainStat(-2, 0)
-		self.receiver.stat_AuraAffected[0] -= 2
-		extractfrom(self, self.receiver.stat_AuraAffected[1])
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient, self.source)
-		
-		
-class WeaponBuffAura_SpitefulSmith:
-	def __init__(self, minion):
-		self.minion = minion
-		self.auraAffected = []
-		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.minion.onBoard and subject.ID == self.minion.ID
-		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			self.effect(signal, ID, subject, target, number, comment)
-			
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.applies(subject)
-		
-	def applies(self, subject):
-		aura_Receiver = WeaponBuffAura_Receiver(subject, self)
-		aura_Receiver.effectStart()
-		
-	def auraAppears(self):
-		#在随从自己登场时，就会尝试开始这个光环，但是如果没有激怒，则无事发生。
-		if self.minion.health < self.minion.health_upper:
-			self.minion.activated = True
-			weapon = self.minion.Game.availableWeapon(self.minion.ID)
-			#这个Aura_Dealer可以由激怒和出场两个方式来控制。
-			if weapon != None and weapon not in self.auraAffected:
-				self.applies(weapon)
-				
-			self.minion.Game.triggersonBoard[self.minion.ID].append((self, "WeaponEquipped"))
-			
-	def auraDisappears(self):
-		PRINT(self.minion, "WeaponBuffAura_Dealer is shut down. Now remove its effect on weapons, if any.")
-		for weapon, aura_Receiver in fixedList(self.auraAffected):
-			aura_Receiver.effectClear()
-			
-		self.auraAffected = []
-		extractfrom((self, "WeaponEquipped"), self.minion.Game.triggersonBoard[self.minion.ID])
-		
-	def selfCopy(self, recipientMinion):
-		return type(self)(recipientMinion)
-		
-		
+"""Variants of triggeronBoard, triggerinHand, triggerinDeck"""
 class Deathrattle_Minion(TriggeronBoard):
 	def __init__(self, entity):
 		self.blank_init(entity)
@@ -571,14 +158,6 @@ class Deathrattle_Minion(TriggeronBoard):
 		self.entity = entity
 		self.signals = ["MinionDies", "DeathrattleTriggers"]
 		
-	def connect(self):
-		for signal in self.signals:
-			self.entity.Game.triggersonBoard[self.entity.ID].append((self, signal))
-			
-	def disconnect(self):
-		for signal in self.signals:
-			extractfrom((self, signal), self.entity.Game.triggersonBoard[self.entity.ID])
-			
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.entity.Game.playerStatus[self.entity.ID]["Deathrattle Trigger Twice"] > 0:
 			if self.canTrigger(signal, ID, subject, target, number, comment):
@@ -596,12 +175,6 @@ class Deathrattle_Minion(TriggeronBoard):
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity
 		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		pass
-		
-	def selfCopy(self, recipientMinion): #用于无面操纵者等复制场上随从时亡语的复制。
-		return type(self)(recipientMinion) #巫毒娃娃等需要记录一定信息的亡语会有自己的专有函数
-		
 		
 class Deathrattle_Weapon(TriggeronBoard):
 	def __init__(self, entity):
@@ -611,14 +184,6 @@ class Deathrattle_Weapon(TriggeronBoard):
 		self.entity = entity
 		self.signals = ["WeaponDestroyed"]
 		
-	def connect(self):
-		for signal in self.signals:
-			self.entity.Game.triggersonBoard[self.entity.ID].append((self, signal))
-			
-	def disconnect(self):
-		for signal in self.signals:
-			extractfrom((self, signal), self.entity.Game.triggersonBoard[self.entity.ID])
-			
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.entity.Game.playerStatus[self.entity.ID]["Weapon Deathrattle Trigger Twice"] > 0:
 			if self.canTrigger(signal, ID, subject, target, number, comment):
@@ -629,12 +194,6 @@ class Deathrattle_Weapon(TriggeronBoard):
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity
 		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		pass
-		
-	def selfCopy(self, recipientWeapon):
-		return type(self)(recipientWeapon)
-		
 		
 class SecretTrigger(TriggeronBoard):
 	def __init__(self, entity):
@@ -644,14 +203,6 @@ class SecretTrigger(TriggeronBoard):
 		self.entity = entity
 		self.signals = signals
 		
-	def connect(self):
-		for signal in self.signals:
-			self.entity.Game.triggersonBoard[self.entity.ID].append((self, signal))
-			
-	def disconnect(self):
-		for signal in self.signals:
-			extractfrom((self, signal), self.entity.Game.triggersonBoard[self.entity.ID])
-			
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.entity.Game.playerStatus[self.entity.ID]["Secret Trigger Twice"] > 0:
 			if self.canTrigger(signal, ID, subject, target, number, comment):
@@ -663,15 +214,6 @@ class SecretTrigger(TriggeronBoard):
 		self.entity.Game.sendSignal("SecretRevealed", self.entity.Game.turn, self.entity, None, 0, "")
 		self.disconnect()
 		extractfrom(self.entity, self.entity.Game.SecretHandler.secrets[self.entity.ID])
-		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return True
-		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		pass
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
 		
 		
 class Trigger_Echo(TriggerinHand):
@@ -737,24 +279,363 @@ class QuestTrigger(TriggeronBoard):
 		self.signals = signals
 		self.accomplished = False
 		
-	def connect(self):
-		for signal in self.signals:
-			PRINT(self, "Quest {} now registers trigger {}".format(self.entity, (self, signal)))
-			self.entity.Game.triggersonBoard[self.entity.ID].append((self, signal))
-			
-	def disconnect(self):
-		for signal in self.signals:
-			extractfrom((self, signal), self.entity.Game.triggersonBoard[self.entity.ID])
-			
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):
 			self.effect(signal, ID, subject, target, number, comment)
 			
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+			
+#def __init__(self, receiver, source, attackChange, healthChange):
+class BuffAura_Receiver:
+	#Source is the Aura not the entity that creates the aura.
+	def __init__(self, receiver, source, attackChange, healthChange):
+		self.source = source
+		self.attackChange = attackChange #Positive by default.
+		self.healthChange = healthChange
+		self.receiver = receiver
+		
+	def effectStart(self):
+		self.receiver.statChange(self.attackChange, self.healthChange)
+		self.receiver.stat_AuraAffected[0] += self.attackChange
+		self.receiver.stat_AuraAffected[1] += self.healthChange
+		self.receiver.stat_AuraAffected[2].append(self)
+		self.source.auraAffected.append((self.receiver, self))
+		#PRINT(self.receiver, "Minion %s gains buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
+	#Cleanse the aura_Receiver from the receiver and delete the (receiver, aura_Receiver) from source aura's list.
+	def effectClear(self):
+		self.receiver.statChange(-self.attackChange, -self.healthChange)
+		self.receiver.stat_AuraAffected[0] -= self.attackChange
+		self.receiver.stat_AuraAffected[1] -= self.healthChange
+		extractfrom(self, self.receiver.stat_AuraAffected[2])
+		extractfrom((self.receiver, self), self.source.auraAffected)
+		#PRINT(self.receiver, "Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
+	#Invoke when the receiver is copied and because the aura_Dealer won't have reference to this copied receiver,
+	#remove this copied aura_Receiver from copied receiver's stat_AuraAffected[2].
+	def effectDiscard(self):
+		self.receiver.statChange(-self.attackChange, -self.healthChange)
+		self.receiver.stat_AuraAffected[0] -= self.attackChange
+		self.receiver.stat_AuraAffected[1] -= self.healthChange
+		extractfrom(self, self.receiver.stat_AuraAffected[2])
+		PRINT(self.receiver, "Minion %s loses buffAura and its stat is %d/%d."%(self.receiver.name, self.receiver.attack, self.receiver.health))
+		
+	def selfCopy(self, recipient): #The recipient of the aura is the same minion when copying it.
+		#Source won't change.
+		return type(self)(recipient, self.source, self.attackChange, self.healthChange)
+	#aura_Receiver一定是附属于一个随从的，在复制游戏的过程中，优先会createCopy光环本体，之后是光环影响的随从，
+	#随从createCopy过程中会复制出没有source的receiver，所以receiver本身没有必要有createCopy
+	
+	
+class AuraDealer_toMinion:
+	def applicable(self, target):
 		return True
 		
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrigger(signal, ID, subject, target, number, comment):
+			self.effect(signal, ID, subject, target, number, comment)
+			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.applies(subject)
+		
+	def auraAppears(self):
+		for minion in self.entity.Game.minionsonBoard(self.entity.ID):
+			self.applies(minion)
+		#Only need to handle minions that appear. Them leaving/silenced will be handled by the BuffAura_Receiver object.
+		for signal in self.signals:
+			self.entity.Game.triggersonBoard[self.entity.ID].append((self, signal))
+			
+	def auraDisappears(self):
+		for minion, aura_Receiver in fixedList(self.auraAffected):
+			aura_Receiver.effectClear()
+			
+		self.auraAffected = []
+		for signal in self.signals:
+			extractfrom((self, signal), self.entity.Game.triggersonBoard[self.entity.ID])
+			
+	#这个函数会在复制场上扳机列表的时候被调用。
+	def createCopy(self, recipientGame):
+		#一个光环的注册可能需要注册多个扳机
+		if self not in recipientGame.copiedObjs: #这个光环没有被复制过
+			entityCopy = self.entity.createCopy(recipientGame)
+			Copy = self.selfCopy(entityCopy)
+			recipientGame.copiedObjs[self] = Copy
+			if hasattr(self, "keyWord"): #是关键字光环
+				for minion, aura_Receiver in self.auraAffected:
+					minionCopy = minion.createCopy(recipientGame)
+					#复制一个随从的时候已经复制了其携带的光环buff状态receiver
+					#这里只需要找到那个receiver的位置即可
+					##注意一个随从在复制的时候需要把它的buffAura_Receiver，keyWordAura_Reciever和manaMods一次性全部复制之后才能进行光环发出者的复制
+					#相应地，这些光环receiver的来源全部被标为None，需要在之后处理它们的来源时一一补齐
+					receiverIndex = minion.keyWords_AuraAffected["Auras"].index(aura_Receiver)
+					receiverCopy = minionCopy.keyWords_AuraAffected["Auras"][receiverIndex]
+					receiverCopy.source = Copy #补上这个receiver的source
+					Copy.auraAffected.append((minionCopy, receiverCopy))
+			else: #不是关键字光环，而是buff光环
+				for minion, aura_Receiver in self.auraAffected:
+					minionCopy = minion.createCopy(recipientGame)
+					receiverIndex = minion.stat_AuraAffected[2].index(aura_Receiver)
+					receiverCopy = minionCopy.stat_AuraAffected[2][receiverIndex]
+					receiverCopy.source = Copy #补上这个receiver的source
+					Copy.auraAffected.append((minionCopy, receiverCopy))
+			return Copy
+		else:
+			return recipientGame.copiedObjs[self]
+			
+#def __init__(self, minion, func, attack, health):
+class BuffAura_Dealer_Adjacent(AuraDealer_toMinion):
+	def __init__(self, entity, attack, health):
+		self.entity = entity
+		self.attack, self.health = attack, health
+		self.signals, self.auraAffected = ["MinionAppears", "MinionDisappears"], []
+	#Minions appearing/disappearing will let the minion reevaluate the aura.
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		#重置对于两侧随从的光环
+		for minion, aura_Receiver in fixedList(self.auraAffected):
+			aura_Receiver.effectClear()
+		#Find adjacent minions to self.entity, then try to register them.
+		for minion in self.entity.Game.findAdjacentMinions(self.entity)[0]:
+			self.applies(minion)
+			
+	def applies(self, subject):
+		if subject != self.entity:
+			aura_Receiver = BuffAura_Receiver(subject, self, self.attack, self.health)
+			aura_Receiver.effectStart()
+			
+	def auraAppears(self):
+		for minion in self.entity.Game.findAdjacentMinions(self.entity)[0]:
+			self.applies(minion)
+			
+		#Only need to handle minions that appear. Them leaving/silenced will be handled by the BuffAura_Receiver object.
+		self.entity.Game.triggersonBoard[self.entity.ID].append((self, "MinionAppears"))
+		#随从disappears的时候已经把 光环效果清除并将自己从光环影响列表中移除。这里只是刷新光环而已。
+		self.entity.Game.triggersonBoard[self.entity.ID].append((self, "MinionDisappears"))
+		
+	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
+		return type(self)(recipientMinion, self.attack, self.health)
+	#可以通过AuraDealer_toMinion的createCopy方法复制
+	
+	
+class BuffAura_Dealer_All(AuraDealer_toMinion):
+	def __init__(self, entity, func, attack, health):
+		self.entity = entity
+		if func != None:
+			self.applicable = func
+		self.attack, self.health = attack, health
+		self.signals, self.auraAffected = ["MinionAppears"], []
+		
+	#All minions appearing on the same side will be subject to the buffAura.
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity:
+			if self.applicable(subject):
+				return True
+		return False
+		
+	def applies(self, subject):
+		if self.applicable(subject) and subject != self.entity:
+			aura_Receiver = BuffAura_Receiver(subject, self, self.attack, self.health)
+			aura_Receiver.effectStart()
+			
+	def selfCopy(self, recipient): #The recipient is the entity that deals the Aura.
+		#func that checks if subject is applicable will be the new copy's function
+		return type(self)(recipient, recipient.applicable, self.attack, self.health)
+		
+		
+class BuffAura_Dealer_Enrage(AuraDealer_toMinion):
+	def __init__(self, entity, attack):
+		self.entity = entity
+		self.attack = attack
+		self.auraAffected = [] #A list of (entity, aura_Receiver)
+	#光环开启和关闭都取消，因为要依靠随从自己的handleEnrage来触发
+	def auraAppears(self):
+		pass
+		
+	def auraDisappears(self):
+		pass
+		
+	def handleEnrage(self):
+		if self.entity.onBoard:
+			if self.entity.activated == False and self.entity.health < self.entity.health_upper:
+				self.entity.activated = True
+				BuffAura_Receiver(self.entity, self, self.attack, 0).effectStart()
+			elif self.entity.activated and self.entity.health >= self.entity.health_upper:
+				self.entity.activated = False
+				for entity, aura_Receiver in fixedList(self.auraAffected):
+					aura_Receiver.effectClear()
+					
+	def selfCopy(self, recipientMinion): #The recipientMinion is the entity that deals the Aura.
+		#func that checks if subject is applicable will be the new copy's function
+		return type(self)(recipientMinion, self.attack)
+	#激怒的光环仍然可以通过AuraDealer_toMinion的createCopy复制
+	
+#战歌指挥官的光环相对普通的buff光环更特殊，因为会涉及到随从获得和失去光环的情况
+class WarsongCommander_Aura(AuraDealer_toMinion):
+	def __init__(self, entity):
+		self.entity = entity
+		self.signals, self.auraAffected = ["MinionAppears", "MinionChargeKeywordChange"], []
+		
+	#All minions appearing on the same side will be subject to the buffAura.
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.entity.onBoard and subject.ID == self.entity.ID:
+			#注意，战歌指挥官的光环可以作用在自己身上，这点区分于其他所有身材buff型光环。
+			if signal == "MinionAppears" and subject.keyWords["Charge"] > 0:
+				return True
+			#随从只要发生了冲锋状态的变化就要调用战歌指挥官的Aura_Dealer，如果冲锋状态失去，则由该光环来移除其buff状态
+			if signal == "MinionChargeKeywordChange":
+				return True
+		return False
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.applies(signal, subject)
+		
+	def applies(self, signal, subject):
+		if signal == "MinionAppears":
+			if subject.keyWords["Charge"] > 0:
+				aura_Receiver = BuffAura_Receiver(subject, self, 1, 0)
+				aura_Receiver.effectStart()
+		else: #signal == "MinionChargeKeywordChange"
+			if subject.keyWords["Charge"] > 0:
+				notAffectedPreviously = True
+				for receiver, aura_Receiver in fixedList(self.auraAffected):
+					if subject == receiver:
+						notAffectedPreviously = False
+						break
+				if notAffectedPreviously:
+					aura_Receiver = BuffAura_Receiver(subject, self, 1, 0)
+					aura_Receiver.effectStart()
+			elif subject.keyWords["Charge"] < 1:
+				for receiver, aura_Receiver in fixedList(self.auraAffected):
+					if subject == receiver:
+						aura_Receiver.effectClear()
+						break
+						
+	def auraAppears(self):
+		for minion in self.entity.Game.minionsonBoard(self.entity.ID):
+			self.applies("MinionAppears", minion) #The signal here is a placeholder and directs the function to first-time aura applicatioin
+			
+		for signal in self.signals:
+			extractfrom((self, signal), self.entity.Game.triggersonBoard[self.entity.ID])
+			
+	def selfCopy(self, recipientMinion):
+		return type(self)(recipientMinion)
+	#可以通过AuraDealer_toMinion的createCopy方法复制
+		
+class HasAura_Receiver:
+	def __init__(self, receiver, source, keyWord):
+		self.source = source #The aura.
+		self.receiver = receiver
+		self.keyWord = keyWord
+		
+	def effectStart(self):
+		if self.keyWord in self.receiver.keyWords_AuraAffected:
+			self.receiver.keyWords_AuraAffected[self.keyWord] += 1
+		else:
+			self.receiver.keyWords_AuraAffected[self.keyWord] = 1
+		self.receiver.getsKeyword(self.keyWord)
+		self.receiver.keyWords_AuraAffected["Auras"].append(self)
+		self.source.auraAffected.append((self.receiver, self))
+		
+	#The aura on the receiver is cleared and the source will remove this receiver and aura_Receiver from it's list.
+	def effectClear(self):
+		if self.receiver.keyWords_AuraAffected[self.keyWord] > 0:
+			self.receiver.keyWords_AuraAffected[self.keyWord] -= 1
+		self.receiver.losesKeyword(self.keyWord)
+		extractfrom(self, self.receiver.keyWords_AuraAffected["Auras"])
+		extractfrom((self.receiver, self), self.source.auraAffected)
+		
+	#After a receiver is deep copied, it will also copy this aura_Receiver, simply remove it.
+	#The aura_Dealer won't have reference to this copied aura.
+	def effectDiscard(self):
+		if self.receiver.keyWords_AuraAffected[self.keyWord] > 0:
+			self.receiver.keyWords_AuraAffected[self.keyWord] -= 1
+			self.receiver.losesKeyword(self.keyWord)
+		extractfrom(self, self.receiver.keyWords_AuraAffected["Auras"])
+		
+	def selfCopy(self, recipient):
+		return type(self)(recipient, self.source, self.keyWord)
+		
+class HasAura_Dealer(AuraDealer_toMinion):
+	def __init__(self, entity, func, keyWord):
+		self.entity = entity
+		if func != None:
+			self.applicable = func
+		self.keyWord = keyWord
+		self.signals, self.auraAffected = ["MinionAppears"], [] #List of (receiver, aura_Receiver)
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity:
+			if self.applicable(subject):
+				return True
+		return False
+		
+	def applies(self, subject):
+		if self.applicable(subject):
+			aura_Receiver = HasAura_Receiver(subject, self, self.keyWord)
+			aura_Receiver.effectStart()
+			
+	def selfCopy(self, recipient):
+		return type(self)(recipient, recipient.applicable, self.keyWord)
+	#关键字光环可以通过AuraDealer_toMinion的createCopy方法复制
+	
+#Dr. Boom. Mad Genius's Aura. You Mechs have Rush.
+class MechsHaveRush(AuraDealer_toMinion):
+	def __init__(self, Game, ID):
+		self.Game, self.ID = Game, ID
+		self.keyWord = "Rush"
+		self.signals, self.hasAuraAffected = ["MinionAppears"], []
+		
+	def applicable(self, target):
+		return "Mech" in target.race and target.ID == self.ID
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return subject.ID == self.ID and self.applicable(subject)
+		
+	def applies(self, subject):
+		if self.applicable(subject):
+			aura_Receiver = HasAura_Receiver(subject, self, "Rush")
+			aura_Receiver.effectStart()
+			
+	def auraAppears(self):
+		PRINT(self, "Dr. Boom. Mad Genius' aura starts it's effect.")
+		for minion in self.Game.minionsonBoard(self.ID):
+			self.applies(minion)
+			
+		self.Game.triggersonBoard[self.ID].append((self, "MinionAppears"))
+		
+	def auraDisappears(self):
 		pass
 		
 	def selfCopy(self, recipient):
-		return type(self)(recipient)
+		return type(self)(recipient, self.ID)
+	#可以通过AuraDealer_toMinion的createCopy方法复制
+	
+#Currently only Spiteful Smith has this aura
+#def __init__(self, receiver, source):
+#目前为止所有的武器光环都是+2攻
+class WeaponBuffAura_Receiver:
+	def __init__(self, receiver, source):
+		self.source = source
+		self.receiver = receiver
+		
+	def effectStart(self):
+		self.receiver.gainStat(2, 0)
+		self.receiver.stat_AuraAffected[0] += 2
+		self.receiver.stat_AuraAffected[1].append(self)
+		self.source.auraAffected.append((self.receiver, self))
+	#Cleanse the aura_Receiver from the receiver and delete the (receiver, aura_Receiver) from source aura's list.
+	def effectClear(self):
+		self.receiver.gainStat(-2, 0)
+		self.receiver.stat_AuraAffected[0] -= 2
+		extractfrom(self, self.receiver.stat_AuraAffected[1])
+		extractfrom((self.receiver, self), self.source.auraAffected)
+	#Invoke when the receiver is copied and because the aura_Dealer won't have reference to this copied receiver,
+	#remove this copied aura_Receiver from copied receiver's stat_AuraAffected[2].
+	def effectDiscard(self):
+		self.receiver.gainStat(-2, 0)
+		self.receiver.stat_AuraAffected[0] -= 2
+		extractfrom(self, self.receiver.stat_AuraAffected[1])
+		
+	def selfCopy(self, recipient):
+		return type(self)(recipient, self.source)
+	#武器的本体复制一定优先，其复制过程中会自行创建没有source的receiver，receiver自己没有必要创建createCopy方法
+	

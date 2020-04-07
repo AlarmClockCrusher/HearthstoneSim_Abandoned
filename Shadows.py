@@ -1186,38 +1186,23 @@ class CrystalPower(Spell):
 				self.restoresHealth(target, heal)
 		return target
 		
-class PiercingThorns_Option:
-	def __init__(self, spell):
-		self.spell = spell
-		self.name = "Piercing Thorns"
-		self.description = "2 damage to minion"
-		self.index = "Shadows~Druid~Spell~1~Piercing Thorns~Uncollectible"
-		
+class PiercingThorns_Option(ChooseOneOption):
+	name, description = "Piercing Thorns", "Deal 2 damage to minion"
+	index = "Shadows~Druid~Spell~1~Piercing Thorns~Uncollectible"
 	def available(self):
-		return self.spell.selectableMinionExists(0)
+		return self.entity.selectableMinionExists(0)
 		
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
-		
-class HealingBlossom_Option:
-	def __init__(self, spell):
-		self.spell = spell
-		self.name = "Healing Blossom"
-		self.description = "Heal 5"
-		self.index = "Shadows~Druid~Spell~1~Healing Blossom~Uncollectible"
-		
+class HealingBlossom_Option(ChooseOneOption):
+	name, description = "Healing Blossom", "Restore 5 Health"
+	index = "Shadows~Druid~Spell~1~Healing Blossom~Uncollectible"
 	def available(self):
-		return self.spell.selectableCharacterExists(1)
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
+		return self.entity.selectableCharacterExists(1)
 		
 class PiercingThorns(Spell):
 	Class, name = "Druid", "Piercing Thorns"
 	requireTarget, mana = True, 1
 	index = "Shadows~Druid~Spell~1~Piercing Thorns~Uncollectible"
 	description = "Deal 2 damage to a minion"
-	
 	def available(self):
 		return self.selectableMinionExists()
 		
@@ -1806,9 +1791,8 @@ class SpellDamagePlus2Disappears:
 		self.Game.playerStatus[self.ID]["Spell Damage"] -= 2
 		extractfrom(self, self.Game.turnEndTrigger)
 		
-	def selfCopy(self, recipientGame):
+	def createCopy(self, recipientGame):
 		return type(self)(recipientGame, self.ID)
-		
 		
 """Mage cards"""
 class RayofFrost(Spell):

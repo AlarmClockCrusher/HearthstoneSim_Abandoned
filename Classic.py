@@ -219,22 +219,18 @@ class SouthseaDeckhand(Minion):
 		self.blank_init(Game, ID)
 		self.auras["Self Charge"] = SouthseaDeckhand_Dealer(self)
 		
-class SouthseaDeckhand_Dealer:
-	def __init__(self, minion):
-		self.minion = minion #For now, there are only three minions that provide this kind aura: Tundra Rhino, Houndmaster Shaw, Whirlwind Tempest
-		self.auraAffected = []
+class SouthseaDeckhand_Dealer(AuraDealer_toMinion):
+	def __init__(self, entity):
+		self.entity = entity #For now, there are only three minions that provide this kind aura: Tundra Rhino, Houndmaster Shaw, Whirlwind Tempest
+		self.signals, self.auraAffected = ["WeaponEquipped", "WeaponRemoved"], []
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.minion.onBoard:
-			return (signal == "WeaponEquipped" and subject.ID == self.minion.ID) or (signal == "WeaponRemoved" and target.ID == self.minion.ID)
+		if self.entity.onBoard:
+			return (signal == "WeaponEquipped" and subject.ID == self.entity.ID) or (signal == "WeaponRemoved" and target.ID == self.entity.ID)
 		return False
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			self.effect(signal, ID, subject, target, number, comment)
-			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.applies(self.minion)
+		self.applies(self.entity)
 		
 	def applies(self, subject):
 		if subject.Game.availableWeapon(subject.ID) != None:
@@ -245,22 +241,15 @@ class SouthseaDeckhand_Dealer:
 				aura_Receiver.effectClear()
 				
 	def auraAppears(self):
-		self.applies(self.minion)
-		self.minion.Game.triggersonBoard[self.minion.ID].append((self, "WeaponEquipped"))
-		self.minion.Game.triggersonBoard[self.minion.ID].append((self, "WeaponRemoved"))
-		
-	def auraDisappears(self):
-		for minion, aura_Receiver in self.auraAffected:
-			aura_Receiver.effectClear()
+		self.applies(self.entity)
+		for signal in self.signals:
+			self.entity.Game.triggersonBoard[self.entity.ID].append((self, signal))
 			
-		self.auraAffected = []
-		extractfrom((self, "WeaponEquipped"), self.minion.Game.triggersonBoard[self.minion.ID])
-		extractfrom((self, "WeaponRemoved"), self.minion.Game.triggersonBoard[self.minion.ID])
-		
 	def selfCopy(self, recipientMinion):
 		return type(self)(recipientMinion)
-		
-		
+	#可以通过AuraDealer_toMinion的createCopy方法复制
+	
+	
 class WorgenInfiltrator(Minion):
 	Class, race, name = "Neutral", "", "Worgen Infiltrator"
 	mana, attack, health = 1, 2, 1
@@ -380,7 +369,7 @@ class DireWolfAlpha(Minion):
 	requireTarget, keyWord, description = False, "", "Adjacent minions have +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Buff Aura"] = BuffAura_Dealer_Adjacent(self, None, 1, 0)
+		self.auras["Buff Aura"] = BuffAura_Dealer_Adjacent(self, 1, 0)
 		
 		
 class Doomsayer(Minion):
@@ -1065,10 +1054,10 @@ class RagingWorgen(Minion):
 	def handleEnrage(self):
 		self.auras["Enrage"].handleEnrage()
 		
-class EnrageAura_RaginWorgen:
-	def __init__(self, minion):
-		self.minion = minion
-		self.auraAffected = [] #A list of (minion, aura_Receiver)
+class EnrageAura_RaginWorgen(AuraDealer_toMinion):
+	def __init__(self, entity):
+		self.entity = entity
+		signals, self.auraAffected = [], []
 		
 	def auraAppears(self):
 		pass
@@ -1077,21 +1066,41 @@ class EnrageAura_RaginWorgen:
 		pass
 		
 	def handleEnrage(self):
-		if self.minion.onBoard:
-			if self.minion.activated == False and self.minion.health < self.minion.health_upper:
-				self.minion.activated = True
-				BuffAura_Receiver(self.minion, self, 1, 0).effectStart()
-				HasAura_Receiver(self.minion, self, "Windfury").effectStart()
-			elif self.minion.activated and self.minion.health >= self.minion.health_upper:
-				self.minion.activated = False
-				for minion, aura_Receiver in fixedList(self.auraAffected):
+		if self.entity.onBoard:
+			if self.entity.activated == False and self.entity.health < self.entity.health_upper:
+				self.entity.activated = True
+				BuffAura_Receiver(self.entity, self, 1, 0).effectStart()
+				HasAura_Receiver(self.entity, self, "Windfury").effectStart()
+			elif self.entity.activated and self.entity.health >= self.entity.health_upper:
+				self.entity.activated = False
+				for entity, aura_Receiver in fixedList(self.auraAffected):
 					aura_Receiver.effectClear()
 					
 	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
 		return type(self)(recipientMinion)
 		
-		
+	def createCopy(self, recipientGame):
+		#一个光环的注册可能需要注册多个扳机
+		if self not in recipientGame.copiedObjs: #这个光环没有被复制过
+			entityCopy = self.entity.createCopy(recipientGame)
+			Copy = self.selfCopy(entityCopy)
+			recipientGame.copiedObjs[self] = Copy
+			for minion, aura_Receiver in self.auraAffected:
+				minionCopy = minion.createCopy(recipientGame)
+				if hasattr(aura_Receiver, "keyWord"):
+					receiverIndex = minion.keyWords_AuraAffected["Auras"].index(aura_Receiver)
+					receiverCopy = minionCopy.keyWords_AuraAffected["Auras"][receiverIndex]
+				else: #不是关键字光环，而是buff光环
+					receiverIndex = minion.stat_AuraAffected[2].index(aura_Receiver)
+					receiverCopy = minionCopy.stat_AuraAffected[2][receiverIndex]
+				receiverCopy.source = Copy #补上这个receiver的source
+				Copy.auraAffected.append((minionCopy, receiverCopy))
+			return Copy
+		else:
+			return recipientGame.copiedObjs[self]
+			
+			
 class ScarletCrusader(Minion):
 	Class, race, name = "Neutral", "", "Scarlet Crusader"
 	mana, attack, health = 3, 3, 1
@@ -1510,7 +1519,66 @@ class SpitefulSmith(Minion):
 				#随从不再处于激怒状态时，取消光环，无论此时有无武器装备。
 				self.auras["Spiteful Smith Aura"].auraDisappears()
 				
+
+class WeaponBuffAura_SpitefulSmith:
+	def __init__(self, entity):
+		self.entity = entity
+		self.auraAffected = []
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and subject.ID == self.entity.ID
+		
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrigger(signal, ID, subject, target, number, comment):
+			self.effect(signal, ID, subject, target, number, comment)
+			
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.applies(subject)
+		
+	def applies(self, subject):
+		aura_Receiver = WeaponBuffAura_Receiver(subject, self)
+		aura_Receiver.effectStart()
+		
+	def auraAppears(self):
+		#在随从自己登场时，就会尝试开始这个光环，但是如果没有激怒，则无事发生。
+		if self.entity.health < self.entity.health_upper:
+			self.entity.activated = True
+			weapon = self.entity.Game.availableWeapon(self.entity.ID)
+			#这个Aura_Dealer可以由激怒和出场两个方式来控制。
+			if weapon != None and weapon not in self.auraAffected:
+				self.applies(weapon)
 				
+			self.entity.Game.triggersonBoard[self.entity.ID].append((self, "WeaponEquipped"))
+			
+	def auraDisappears(self):
+		for weapon, aura_Receiver in fixedList(self.auraAffected):
+			aura_Receiver.effectClear()
+			
+		self.auraAffected = []
+		extractfrom((self, "WeaponEquipped"), self.entity.Game.triggersonBoard[self.entity.ID])
+		
+	def selfCopy(self, recipiententity):
+		return type(self)(recipiententity)
+		
+	#这个函数会在复制场上扳机列表的时候被调用。
+	def createCopy(self, recipientGame):
+		#一个光环的注册可能需要注册多个扳机
+		if self not in recipientGame.copiedObjs: #这个光环没有被复制过
+			entityCopy = self.entity.createCopy(recipientGame)
+			Copy = self.selfCopy(entityCopy)
+			recipientGame.copiedObjs[self] = Copy
+			for entity, aura_Receiver in self.auraAffected:
+				entityCopy = entity.createCopy(recipientGame)
+				#武器光环的stat_AuraAffected是[0, []]
+				receiverIndex = entity.stat_AuraAffected[1].index(aura_Receiver)
+				receiverCopy = entityCopy.stat_AuraAffected[1][receiverIndex]
+				receiverCopy.source = Copy #补上这个receiver的source
+				Copy.auraAffected.append((entityCopy, receiverCopy))
+			return Copy
+		else:
+			return recipientGame.copiedObjs[self]
+			
+			
 class StampedingKodo(Minion):
 	Class, race, name = "Neutral", "Beast", "Stampeding Kodo"
 	mana, attack, health = 5, 3, 5
@@ -2071,30 +2139,15 @@ class PoweroftheWild(Spell):
 				minion.buffDebuff(1, 1)
 		return None
 		
-class LeaderofthePack_Option:
-	def __init__(self, spell):
-		self.name = "Leader of the Pack"
-		self.description = "+1/+1"
-		self.index = "Classic~Druid~Spell~2~Leader of the Pack~Uncollectible"
-		
+class LeaderofthePack_Option(ChooseOneOption):
+	name, description = "Leader of the Pack", "Give your minions +1/+1"
+	index = "Classic~Druid~Spell~2~Leader of the Pack~Uncollectible"
+	
+class SummonaPanther_Option(ChooseOneOption):
+	name, description = "Summon a Panther", "Summon a 3/2 Panther"
+	index = "Classic~Druid~Spell~2~Summon a Panther~Uncollectible"
 	def available(self):
-		return True
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
-		
-class SummonaPanther_Option:
-	def __init__(self, spell):
-		self.spell = spell
-		self.name = "Summon a Panther"
-		self.description = "Summon Panther"
-		self.index = "Classic~Druid~Spell~2~Summon a Panther~Uncollectible"
-		
-	def available(self):
-		return self.spell.Game.spaceonBoard(self.spell.ID) > 0
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
+		return self.entity.Game.spaceonBoard(self.entity.ID) > 0
 		
 class LeaderofthePack(Spell):
 	Class, name = "Druid", "Leader of the Pack"
@@ -2159,31 +2212,17 @@ class Wrath(Spell):
 				self.Game.Hand_Deck.drawCard(self.ID)
 		return target
 		
-class SolarWrath_Option:
-	def __init__(self, spell):
-		self.spell = spell
-		self.name = "Solar Wrath"
-		self.description = "3 damage"
-		self.index = "Classic~Druid~Spell~2~Solar Wrath~Uncollectible"
-		
+class SolarWrath_Option(ChooseOneOption):
+	name, description = "Solar Wrath", "Deal 3 damage to a minion"
+	index = "Classic~Druid~Spell~2~Solar Wrath~Uncollectible"
 	def available(self):
-		return self.spell.selectableMinionExists(0)
+		return self.entity.selectableMinionExists(0)
 		
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
-		
-class NaturesWrath_Option:
-	def __init__(self, spell):
-		self.spell = spell
-		self.name = "Nature's Wrath"
-		self.description = "1 damage. Draw card."
-		self.index = "Classic~Druid~Spell~2~Nature's Wrath~Uncollectible"
-		
+class NaturesWrath_Option(ChooseOneOption):
+	name, description = "Nature's Wrath", "Deal 1 damage to a minion. Draw card."
+	index = "Classic~Druid~Spell~2~Nature's Wrath~Uncollectible"
 	def available(self):
-		return self.spell.selectableMinionExists(1)
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
+		return self.entity.selectableMinionExists(1)
 		
 class SolarWrath(Spell):
 	Class, name = "Druid", "Solar Wrath"
@@ -2249,31 +2288,17 @@ class MarkofNature(Spell):
 				target.getsKeyword("Taunt")
 		return target
 		
-class TigersFury_Option:
-	def __init__(self, spell):
-		self.spell = spell
-		self.name = "Tiger's Fury"
-		self.description = "+4 attack"
-		self.index = "Classic~Druid~Spell~3~Tiger's Fury~Uncollectible"
-		
+class TigersFury_Option(ChooseOneOption):
+	name, description = "Tiger's Fury", "+4 attack"
+	index = "Classic~Druid~Spell~3~Tiger's Fury~Uncollectible"
 	def available(self):
-		return self.spell.selectableMinionExists(0)
+		return self.entity.selectableMinionExists(0)
 		
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
-		
-class ThickHide_Option:
-	def __init__(self, spell):
-		self.spell = spell
-		self.name = "Thick Hide"
-		self.description = "+4 Health and Taunt"
-		self.index = "Classic~Druid~Spell~3~Thick Hide~Uncollectible"
-		
+class ThickHide_Option(ChooseOneOption):
+	name, description = "Thick Hide", "+4 Health and Taunt"
+	index = "Classic~Druid~Spell~3~Thick Hide~Uncollectible"
 	def available(self):
-		return self.spell.selectableMinionExists(1)
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
+		return self.entity.selectableMinionExists(1)
 		
 class TigersFury(Spell):
 	Class, name = "Druid", "Tiger's Fury"
@@ -2331,7 +2356,7 @@ class KeeperoftheGrove(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.chooseOne = 1
-		self.options = [Moonfire_Option(), Dispel_Option(self)]
+		self.options = [Moonfire_Option(self), Dispel_Option(self)]
 		
 	def targetExists(self, choice=0):
 		if choice == "ChooseBoth" or choice == 0: #Deal 2 damage
@@ -2358,30 +2383,13 @@ class KeeperoftheGrove(Minion):
 				self.dealsDamage(target, 2)
 		return target
 		
-#Deals 2 damage
-class Moonfire_Option:
-	def __init__(self):
-		self.name = "Moonfire"
-		self.description = "2 damage"
-		
+class Moonfire_Option(ChooseOneOption):
+	name, description = "Moonfire", "Deal 2 damage"
+	
+class Dispel_Option(ChooseOneOption):
+	name, description = "Dispel", "Silence a minion"
 	def available(self):
-		return True
-		
-	def selfCopy(self, recipient):
-		return type(self)()
-		
-#Silences a minion.
-class Dispel_Option:
-	def __init__(self, minion):
-		self.minion = minion
-		self.name = "Dispel"
-		self.description = "Silence"
-		
-	def available(self):
-		return self.minion.selectableMinionExists(1)
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
+		return self.entity.selectableMinionExists(1)
 		
 		
 class SouloftheForest(Spell):
@@ -2421,7 +2429,7 @@ class DruidoftheClaw(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.chooseOne = 1
-		self.options = [CatForm_Option(), BearForm_Option()]
+		self.options = [CatForm_Option(self), BearForm_Option(self)]
 		
 	def played(self, target=None, choice=0, mana=0, posinHand=0, comment=""):
 		self.statReset(self.attack_Enchant, self.health_Enchant)
@@ -2440,28 +2448,12 @@ class DruidoftheClaw(Minion):
 		self.Game.gathertheDead()
 		return None
 		
-class CatForm_Option:
-	def __init__(self):
-		self.name = "Cat Form"
-		self.description = "Charge"
-		
-	def available(self):
-		return True
-		
-	def selfCopy(self, recipient):
-		return type(self)()
-		
-class BearForm_Option:
-	def __init__(self):
-		self.name = "Bear Form"
-		self.description = "+4 health and Taunt"
-		
-	def available(self):
-		return True
-		
-	def selfCopy(self, recipient):
-		return type(self)()
-		
+class CatForm_Option(ChooseOneOption):
+	name, description = "Cat Form", "Charge"
+	
+class BearForm_Option(ChooseOneOption):
+	name, description = "Bear Form", "+2 health and Taunt"
+	
 class DruidoftheClaw_Charge(Minion):
 	Class, race, name = "Druid", "Beast", "Druid of the Claw"
 	mana, attack, health = 5, 4, 4
@@ -2503,7 +2495,7 @@ class Starfall(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.chooseOne = 1
-		self.options = [Starlord_Option(self), StellarDrift_Option()]
+		self.options = [Starlord_Option(self), StellarDrift_Option(self)]
 		
 	def returnTrue(self, choice=0):
 		return choice == "ChooseBoth" or choice == 0
@@ -2531,31 +2523,16 @@ class Starfall(Spell):
 			self.dealsAOE(targets, [damage_2 for minion in targets])	
 		return target
 		
-class Starlord_Option:
-	def __init__(self, spell):
-		self.spell = spell
-		self.name = "Starlord"
-		self.description = "5 damage"
-		self.index = "Classic~Druid~Spell~5~Starlord~Uncollectible"
-		
+class Starlord_Option(ChooseOneOption):
+	name, description = "Starlord", "Deal 5 damage to a minion"
+	index = "Classic~Druid~Spell~5~Starlord~Uncollectible"
 	def available(self):
-		return self.spell.selectableMinionExists(0)
+		return self.entity.selectableMinionExists(0)
 		
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
-		
-class StellarDrift_Option:
-	def __init__(self):
-		self.name = "Stellar Drift"
-		self.description = "2 damage AOE"
-		self.index = "Classic~Druid~Spell~5~Stellar Drift~Uncollectible"
-		
-	def available(self):
-		return True
-		
-	def selfCopy(self, recipient):
-		return type(self)()
-		
+class StellarDrift_Option(ChooseOneOption):
+	name, description = "Stellar Drift", "Deal 2 damage to all enemy minions"
+	index = "Classic~Druid~Spell~5~Stellar Drift~Uncollectible"
+	
 class Starlord(Spell):
 	Class, name = "Druid", "Starlord"
 	requireTarget, mana = True, 5
@@ -2595,7 +2572,7 @@ class Nourish(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.chooseOne = 1
-		self.options = [RampantGrowth_Option(), Enrich_Option()]
+		self.options = [RampantGrowth_Option(self), Enrich_Option(self)]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if choice == "ChooseBoth" or choice == 0:
@@ -2608,30 +2585,14 @@ class Nourish(Spell):
 			self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
-class RampantGrowth_Option:
-	def __init__(self):
-		self.name = "Rampant Growth"
-		self.description = "2 mana crystals"
-		self.index = "Classic~Druid~Spell~6~Rampant Growth~Uncollectible"
-		
-	def available(self):
-		return True
-		
-	def selfCopy(self, recipient):
-		return type(self)()
-		
-class Enrich_Option:
-	def __init__(self):
-		self.name = "Enrich"
-		self.description = "Draw 3 cards"
-		self.index = "Classic~Druid~Spell~6~Enrich~Uncollectible"
-		
-	def available(self):
-		return True
-		
-	def selfCopy(self, recipient):
-		return type(self)()
-		
+class RampantGrowth_Option(ChooseOneOption):
+	name, description = "Rampant Growth", "Gain 2 Mana Crystals"
+	index = "Classic~Druid~Spell~6~Rampant Growth~Uncollectible"
+	
+class Enrich_Option(ChooseOneOption):
+	name, description = "Enrich", "Draw 3 cards"
+	index = "Classic~Druid~Spell~6~Enrich~Uncollectible"
+	
 class RampantGrowth(Spell):
 	Class, name = "Druid", "Rampant Growth"
 	requireTarget, mana = False, 6
@@ -2663,7 +2624,7 @@ class AncientofLore(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.chooseOne = 1
-		self.options = [AncientTeachings_Option(), AncientSecrets_Option()]
+		self.options = [AncientTeachings_Option(self), AncientSecrets_Option(self)]
 		
 	def returnTrue(self, choice=0):
 		return choice == "ChooseBoth" or choice == 1
@@ -2682,29 +2643,13 @@ class AncientofLore(Minion):
 			self.Game.Hand_Deck.drawCard(self.ID)
 		return target
 		
-class AncientTeachings_Option:
-	def __init__(self):
-		self.name = "Ancient Teachings"
-		self.description = "Draw a card"
-		
-	def available(self):
-		return True
-		
-	def selfCopy(self, recipient):
-		return type(self)()
-		
-class AncientSecrets_Option:
-	def __init__(self):
-		self.name = "Ancient Secrets"
-		self.description = "Restore 5 health"
-		
-	def available(self):
-		return True
-		
-	def selfCopy(self, recipient):
-		return type(self)()
-		
-		
+class AncientTeachings_Option(ChooseOneOption):
+	name, description = "Ancient Teachings", "Draw a card"
+	
+class AncientSecrets_Option(ChooseOneOption):
+	name, description = "Ancient Secrets", "Restore 5 health"
+	
+	
 class AncientofWar(Minion):
 	Class, race, name = "Druid", "", "Ancient of War"
 	mana, attack, health = 7, 5, 5
@@ -2713,7 +2658,7 @@ class AncientofWar(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.chooseOne = 1
-		self.options = [Uproot_Option(), Rooted_Option()]
+		self.options = [Uproot_Option(self), Rooted_Option(self)]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		if choice == "ChooseBoth" or choice == 0:
@@ -2725,28 +2670,13 @@ class AncientofWar(Minion):
 			self.getsKeyword("Taunt")
 		return None
 		
-class Uproot_Option:
-	def __init__(self):
-		self.name = "Uproot"
-		self.description = "+5 attack"
-		
-	def available(self):
-		return True
-		
-	def selfCopy(self, recipient):
-		return type(self)()
-		
-class Rooted_Option:
-	def __init__(self):
-		self.name = "Rooted"
-		self.description = "+5 health and Taunt"
-		
-	def available(self):
-		return True
-		
-	def selfCopy(self, recipient):
-		return type(self)()
-		
+class Uproot_Option(ChooseOneOption):
+	name, description = "Uproot", "+5 attack"
+	
+class Rooted_Option(ChooseOneOption):
+	name, description = "Rooted", "+5 health and Taunt"
+	
+	
 class GiftoftheWild(Spell):
 	Class, name = "Druid", "Gift of the Wild"
 	requireTarget, mana = False, 8
@@ -2769,7 +2699,7 @@ class Cenarius(Minion):
 		self.blank_init(Game, ID)
 		self.chooseOne = 1
 		# 0: Give other minion +2/+2; 1:Summon two Treants with Taunt.
-		self.options = [DemigodsFavor_Option(), ShandosLesson_Option(self)]
+		self.options = [DemigodsFavor_Option(self), ShandosLesson_Option(self)]
 		
 	#对于抉择随从而言，应以与战吼类似的方式处理，打出时抉择可以保持到最终结算。但是打出时，如果因为鹿盔和发掘潜力而没有选择抉择，视为到对方场上之后仍然可以而没有如果没有
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
@@ -2792,28 +2722,13 @@ class Treant_Classic_Taunt(Minion):
 	index = "Classic~Druid~Minion~2~2~2~None~Treant~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	
-class DemigodsFavor_Option:
-	def __init__(self):
-		self.name = "Demigod's Favor"
-		self.description = "Other minions +2/+2"
-		
+class DemigodsFavor_Option(ChooseOneOption):
+	name, description = "Demigod's Favor", "Give your other minions +2/+2"
+	
+class ShandosLesson_Option(ChooseOneOption):
+	name, description = "Shan'do's Lesson", "Summon two 2/2 Treants with Taunt"
 	def available(self):
-		return True
-		
-	def selfCopy(self, recipientMinion):
-		return type(self)()
-		
-class ShandosLesson_Option:
-	def __init__(self, minion):
-		self.minion = minion
-		self.name = "Shan'do's Lesson"
-		self.description = "2 Treants with Taunt"
-		
-	def available(self):
-		return self.minion.Game.spaceonBoard(self.minion.ID) > 0
-		
-	def selfCopy(self, recipientMinion):
-		return type(self)(recipientMinion)
+		return self.entity.Game.spaceonBoard(self.entity.ID) > 0
 		
 """Hunter Cards"""
 class BestialWrath(Spell):

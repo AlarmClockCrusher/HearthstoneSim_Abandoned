@@ -37,7 +37,6 @@ def copyListDictTuple(obj, recipient):
 				objCopy.append(element)
 			elif callable(element): #If the element is a function
 				func_name = element.__qualname__.split('.')[1]
-				print("The element to copy is ", func_name)
 				objCopy.append(getattr(recipient, func_name))
 			elif inspect.isclass(element):
 				objCopy.append(element)
@@ -46,7 +45,6 @@ def copyListDictTuple(obj, recipient):
 			elif type(element) == list or type(element) == dict or type(element) == tuple: #If the element is a list or dict, just recursively use this function.
 				objCopy.append(copyListDictTuple(element, recipient))
 			else: #If the element is a self-defined class. All of them have selfCopy methods.
-				print("Copying self-defined obj", element)
 				objCopy.append(element.selfCopy(recipient))
 	elif isinstance(obj, dict):
 		objCopy = {}
@@ -72,6 +70,44 @@ def copyListDictTuple(obj, recipient):
 		objCopy = list(objCopy) #把那个列表转换回tuple
 	return objCopy
 	
+#用于一张卡牌在createCopy的时候，对它的一个列表内的内容进行复制。
+#但是只有函数本身的函数的列表是不涉及这个函数处理的，如triggers,appearResponse等
+#这个函数只处理triggersonBoard，Deathrattles等
+def copyListDictTuple_Game(obj, recipientGame):
+	if isinstance(obj, list):
+		objCopy = []
+		for element in obj:
+			#check if they're basic types, like int, str, bool, NoneType, 
+			if isinstance(element, (type(None), int, float, str, bool)):
+				#Have tested that basic types can be appended and altering the original won't mess with the content in the list.
+				objCopy.append(element)
+			elif inspect.isclass(element):
+				objCopy.append(element)
+			elif type(element) == type(recipientGame):
+				objCopy.append(recipientGame)
+			elif type(element) == list or type(element) == dict or type(element) == tuple: #If the element is a list or dict, just recursively use this function.
+				objCopy.append(copyListDictTuple_Game(element, recipientGame))
+			else: #If the element is a self-defined class. All of them have selfCopy methods.
+				objCopy.append(element.createCopy(recipientGame))
+	elif isinstance(obj, dict):
+		objCopy = {}
+		for key, value in obj.items():
+			if isinstance(value, (type(None), int, float, str, bool)):
+				objCopy[key] = value
+			#列表中不会引用Game自己的函数
+			elif inspect.isclass(value):
+				objCopy[key] = value
+			elif type(value) == type(recipientGame):
+				objCopy[key] = recipientGame
+			elif type(value) == list or type(value) == dict or type(value) == tuple:
+				objCopy[key] = (copyListDictTuple_Game(value, recipientGame))
+			else:
+				objCopy[key] = value.createCopy(recipientGame)
+	else: #elif isinstance(obj, tuple):
+		tupleTurnedList = list(obj) #tuple因为是immutable的，所以要根据它生成一个列表
+		objCopy = self.copyListDictTuple(tupleTurnedList, recipientGame) #复制那个列表
+		objCopy = list(objCopy) #把那个列表转换回tuple
+	return objCopy
 	
 	
 class Card:
@@ -489,19 +525,67 @@ class Card:
 			else: #The attribute is a self-defined class. They will all have selfCopy methods
 				#A minion can't refernece another minion. The attributes here must be like triggers/deathrattles	
 				Copy.__dict__[key] = value.selfCopy(Copy)
+		Copy.ID = ID
 		return Copy
 		
+	#给非随从牌用的，目前也没有复制场上武器的牌
 	def selfCopy(self, ID):
 		Copy = self.hardCopy(ID)
 		Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
-		#复制一张牌的费用修改情况
-		for manaMod in self.manaModifications:
-			mod = copy.deepcopy(manaMod)
-			mod.card = Copy
-			mod.applies()
+		#复制一张牌的费用修改情况,移除来自光环影响的费用效果
+		size = len(Copy.manaModifications)
+		for i in range(size):
+			if Copy.manaModifications[size-1-i].source != None:
+				Copy.manaModifications.pop(size-1-i)
 		return Copy
 		
-		
+	def createCopy(self, recipientGame):
+		if self in recipientGame.copiedObjs:
+			return recipientGame.copiedObjs[self]
+		else:
+			Copy = type(self)(recipientGame, self.ID)
+			recipientGame.copiedObjs[self] = Copy
+			for key, value in self.__dict__.items():
+				if isinstance(value, (type, type(None), int, np.int64, float, str, bool)):
+					Copy.__dict__[key] = value
+				elif callable(value): ##随从的函数初始化后不会改变，无需复制
+					pass
+				elif inspect.isclass(value): #如果复制目标是一个类的话
+					Copy.__dict__[key] = value
+				elif value == self.Game: #Only shallow copy the Game.
+					Copy.__dict__[key] = recipientGame
+				elif key == "triggers" or key.endswith("Response"):
+					Copy.__dict__[key] = copyListDictTuple(value, Copy)
+				#------注意，因为光环一定注册在游戏的triggersonBoard里面，所以首先从场上扳机列表中开始复制光环，然后这些光环会复制受影响的卡牌
+				#那些卡牌可能会延伸到其他光环，但是一定会保证复制aura_Receiver出现在auraDealer正式处理之前。
+				#叠迭到最后结果是所有的auraReceiver都被复制了之后才会开始正式处理一个光环
+				#所以随从或者武器上携带的aura_Receiver在这里直接用游戏内复制的selfCopy方法
+				#----------但是此时它们的source是不正确的，之后在处理它们的source的时候会把定位这些aura_Receiver,然后把它们的source矫正
+				elif key == "stat_AuraAffected":
+					#print("Copying minion %s's stat_AuraAffected"%self.name, value)
+					if len(value) == 2: #复制对象是武器
+						Copy.__dict__[key][0] = value[0]
+						Copy.__dict__[key][1] = [aura_Receiver.selfCopy(Copy) for aura_Receiver in value[1]]
+					else: #len(value) == 3 复制对象是随从
+						Copy.__dict__[key][0], Copy.__dict__[key][1] = value[0], value[1]
+						Copy.__dict__[key][2] = [aura_Receiver.selfCopy(Copy) for aura_Receiver in value[2]]
+					#print("Copied minion %s's stat_AuraAffected"%Copy.name, Copy.__dict__[key])
+				elif key == "keyWords_AuraAffected":
+					#print("Copying minion's keyWords_AuraAffected", value)
+					Copy.__dict__[key] = {}
+					for keyword in value.keys():
+						Copy.__dict__[key][keyword] = value[keyword]
+						Copy.__dict__[key]["Auras"] = [aura_Receiver.selfCopy(Copy) for aura_Receiver in value["Auras"]]
+				elif key == "manaModifications":
+					Copy.__dict__[key] = [type(manaMod)(Copy, manaMod.changeby, manaMod.changeto, None, manaMod.lowerbound) for manaMod in value]
+				#用于auras，stat_AuraAffected，keyWords_AuraAffected和manaModifications等
+				elif type(value) == list or type(value) == dict or type(value) == tuple: #If the attribute is a list or dictionary, use the method defined at the start of py
+					Copy.__dict__[key] = copyListDictTuple_Game(value, recipientGame)
+				else:
+					Copy.__dict__[key] = value.createCopy(recipientGame)
+			return Copy
+			
+			
 class Permanent(Card):
 	Class, name = "Neutral", "Vanilla"
 	description = ""
@@ -578,6 +662,7 @@ class Permanent(Card):
 		return 0
 		
 	def STATUSPRINT(self):
+		PRINT(self, "Game is {}.".format(self.Game))
 		PRINT(self, "Permanent: %s.\tDescription: %s"%(self.name, self.description))
 		if self.triggersonBoard != []:
 			PRINT(self, "\tPermanent's triggersonBoard")
@@ -590,11 +675,8 @@ class Permanent(Card):
 		if hasattr(self, "progress"):
 			PRINT(self, "\tPermanent's progress is currently: %d"%self.progress)
 			
-	def selfCopy(self, ID):
-		return self.hardCopy(ID)
-		
-		
-		
+			
+			
 class Minion(Card):
 	Class, race, name = "Neutral", "", "Vanilla"
 	mana, attack, health = 2, 2, 2
@@ -719,7 +801,7 @@ class Minion(Card):
 		#Let hasAura_Receivers remove themselves
 		while self.keyWords_AuraAffected["Auras"] != []:
 			self.keyWords_AuraAffected["Auras"][0].effectClear()
-			
+		self.activated = False
 		self.Game.sendSignal("MinionDisappears", self.ID, None, self, 0, "")
 		
 	"""Attack chances handle"""
@@ -763,6 +845,7 @@ class Minion(Card):
 			self.attTimes, self.attChances_extra = 0, 0
 			
 	def STATUSPRINT(self):
+		PRINT(self, "Game is {}.".format(self.Game))
 		PRINT(self, "Minion: %s. ID: %d Race: %s\nDescription: %s"%(self.name, self.ID, self.race, self.description))
 		if self.manaModifications != []:
 			PRINT(self, "\tCarries mana modification:")
@@ -1183,10 +1266,10 @@ class Minion(Card):
 			#清除全部buffAura并重置随从的生命值之后，让原来的buffAura_Dealer自行决定是否重新对该随从施加光环。
 			for buffAura_Receiver in CurrentBuffAura_Receivers:
 				buffAura_Receiver.source.applies(self)
-			print(self.triggers["StatChanges"])
 			for func in self.triggers["StatChanges"]:
 				func()
 				
+	#在原来的Game中创造一个Copy
 	def selfCopy(self, ID, attack=False, health=False, mana=False):
 		Copy = self.hardCopy(ID)
 		Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
@@ -1196,11 +1279,13 @@ class Minion(Card):
 		for aura_Receiver in Copy.keyWords_AuraAffected["Auras"]:
 			aura_Receiver.effectDiscard()
 		Copy.activated = False
+		size = len(Copy.manaModifications) #去掉牌上的因光环产生的费用改变
+		for i in range(size):
+			if Copy.manaModifications[size-1-i].source != None:
+				Copy.manaModifications.pop(size-1-i)
 		#如果要生成一个x/x/x的复制
 		if attack != False or health != False:
 			Copy.statReset(attack, health)
-		for manaMod in Copy.manaModifications:
-			manaMod.activated = False
 		self.attTimes, self.attChances_extra = 0, 0
 		self.decideAttChances_base()
 		if mana != False:
@@ -1294,6 +1379,7 @@ class Spell(Card):
 		self.effectViable, self.evanescent = False, False
 		
 	def STATUSPRINT(self):
+		PRINT(self, "Game is {}.".format(self.Game))
 		PRINT(self, "Spell: %s. Description: %s"%(self.name, self.description))
 		if self.manaModifications != []:
 			PRINT(self, "\tCarries mana modification:")
@@ -1626,7 +1712,8 @@ class HeroPower(Card):
 		self.triggersonBoard = []
 		
 	def STATUSPRINT(self):
-		PRINT(self, "Hero Power: %s. Description: %s"%(self.name, self.description))
+		PRINT(self, "Game is {}.".format(self.Game))
+		PRINT(self, "Hero Power %d: %s. Description: %s"%(self.ID, self.name, self.description))
 		PRINT(self, "Chances_base: %d. Chances_extra %d"%(self.heroPowerChances_base, self.heroPowerChances_extra))
 		if self.manaModifications != []:
 			PRINT(self, "\tCarries mana modification:")
@@ -1799,6 +1886,7 @@ class Hero(Card):
 		
 	"""Handle hero's attacks, attack chances, attack chances and frozen status."""
 	def STATUSPRINT(self):
+		PRINT(self, "Game is {}.".format(self.Game))
 		PRINT(self, "Hero %d %s: Attacked times: %d.	Base att chances left: %d.	Extra att chances left: %d"%(self.ID, self.name, self.attTimes, self.attChances_base, self.attChances_extra))
 		if self.manaModifications != []:
 			PRINT(self, "\tCarries mana modification:")
@@ -2003,9 +2091,11 @@ class Hero(Card):
 		if self.weapon != None: #如果英雄本身带有装备，则会替换当前的玩家装备（如加拉克苏斯大王）
 			self.Game.equipWeapon(self.weapon(self.Game, self.ID))
 		if fromHeroCard == False: #英雄牌被其他牌打出时不会取消当前玩家的免疫状态
-			self.Game.playerStatus[self.ID]["ImmuneTillEndofTurn"] = 0
+			#Hero's immune state is gone, except that given by Mal'Ganis
+			self.Game.playerStatus[self.ID]["Immune"] -= self.Game.playerStatus[self.ID]["ImmuneTillYourNextTurn"] + self.Game.playerStatus[self.ID]["ImmuneTillEndofTurn"]
 			self.Game.playerStatus[self.ID]["ImmuneTillYourNextTurn"] = 0
-			self.Game.playerStatus[self.ID]["Immune"] = 0 #Hero's immune state is gone, except that given by Mal'Ganis
+			self.Game.playerStatus[self.ID]["ImmuneTillEndofTurn"] = 0
+			
 		self.Game.sendSignal("HeroReplaced", self.ID, None, self, 0, "")
 		
 		
@@ -2043,6 +2133,7 @@ class Weapon(Card):
 		self.evanescent = True
 		
 	def STATUSPRINT(self):
+		PRINT(self, "Game is {}.".format(self.Game))
 		PRINT(self, "Weapon: %s. Description: %s"%(self.name, self.description))
 		if self.manaModifications != []:
 			PRINT(self, "\tCarries mana modification:")
@@ -2189,3 +2280,23 @@ class Weapon(Card):
 		return num
 		
 		
+class ChooseOneOption:
+	name, description = "", ""
+	index = ""
+	def __init__(self, entity):
+		self.entity = entity
+		self.name = type(self).name
+		self.description = type(self).description
+		if hasattr(type(self), "index"):
+			self.index = type(self).index
+			
+	def available(self):
+		return True
+		
+	def selfCopy(self, recipient):
+		return type(self)(recipient)
+		
+	#抉择选项的复制一定是以复制卡牌为前提的，调用此函数时，抉择主体一定已经被复制了
+	def createCopy(self, recipientGame):
+		entityCopy = recipientGame.copiedObjs[self.entity]
+		return type(self)(entityCopy)
