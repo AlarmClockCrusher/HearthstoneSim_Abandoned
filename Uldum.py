@@ -2602,7 +2602,7 @@ class ShadowofDeath(Spell):
 			for i in range(3):
 				typeName = type(target).__name__
 				newIndex = "Uldum~Rogue~4~Spell~Shadow~Casts When Drawn~Summon %s~Uncollectible"%typeName
-				subclass = type("Shadow_"+typeName, (Shadow_Mutable, ),
+				subclass = type("Shadow_Mutable_"+typeName, (Shadow_Mutable, ),
 								{"index": newIndex, "description": "Casts When Drawn. Summon a "+typeName,
 								"miniontoSummon": type(target)}
 								)

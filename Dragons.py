@@ -3739,7 +3739,7 @@ class AbyssalSummoner(Minion):
 		elif handSize > 1:
 			cost = min(handSize, 10)
 			newIndex = "Dragons~Warlock~%d~%d~%d~Minion~Demon~Abyssal Destroyer~Taunt~Uncollectible"%(cost, handSize, handSize)
-			subclass = type("AbyssalDestroyer"+str(handSize), (AbyssalDestroyer_Mutable_1, ),
+			subclass = type("AbyssalDestroyer_Mutable_"+str(handSize), (AbyssalDestroyer_Mutable_1, ),
 							{"mana": cost, "attack": handSize, "health": handSize,
 							"index": newIndex}
 							)
