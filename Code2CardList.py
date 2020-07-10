@@ -6,9 +6,16 @@ from CardPools import *
 import sys
 
 j = json.loads(open("cards.collectible.json", "r", encoding="utf-8").read())
-def typeName2Class(cardName):
+def typeName2Class(typename):
 	for value in cardPool.values():
-		if value.__name__ == cardName:
+		if value.__name__ == typename:
+			return value
+	print(typename, " not found")
+	return None
+	
+def cardName2Class(cardName):
+	for value in cardPool.values():
+		if value.name == cardName:
 			return value
 	print(cardName, " not found")
 	return None

@@ -1,33 +1,20 @@
 import numpy as np
-import tkinter as tk
+from numpy.random import choice as npchoice
 import copy
 import inspect
 
 def extractfrom(target, listObject):
-	temp = None
-	for i in range(len(listObject)):
-		if listObject[i] == target:
-			temp = listObject.pop(i)
-			break
-	return temp
+	try: return listObject.pop(listObject.index(target))
+	except: return None
 	
 def fixedList(listObject):
 	return listObject[0:len(listObject)]
 	
-def PRINT(obj, string, *args):
-	if hasattr(obj, "GUI"):
-		GUI = obj.GUI
-	elif hasattr(obj, "Game"):
-		GUI = obj.Game.GUI
-	elif hasattr(obj, "entity"):
-		GUI = obj.entity.Game.GUI
-	else:
-		GUI = None
-	if GUI != None:
-		GUI.printInfo(string)
-	else:
-		print(string)
-		
+def PRINT(game, string, *args):
+	if game.GUI:
+		if not game.mode: game.GUI.printInfo(string)
+	elif not game.mode: print("game's guide mode is 0\n", string)
+	
 #对卡牌的费用机制的改变	
 #主要参考贴（冰封王座BB还在的时候）：https://www.diyiyou.com/lscs/news/194867.html
 #
@@ -41,7 +28,7 @@ def PRINT(obj, string, *args):
 #3.对方场上一个木乃伊，我方一个沙漠女巫，对方一个木乃伊，然后大帝，然后第一个木乃伊被连续杀死，光环消失。结算是赋值为5，-1光环，-1费用变化。最终那张法术的费用为3.
 #4.对方场上一个木乃伊，我方一个沙漠女巫，对方一个木乃伊，然后大帝，第二个木乃伊被连续杀死，则那个法术-1光环，赋值为5，-1费用变化，最终费用为4.（已经验证是确实如此）
 #5。对方场上一个木乃伊，我方一个沙漠女巫，对方一个木乃伊，然后大帝，第一个木乃伊被连续杀死，则那个法术会经历赋值为5，-1光环，-1费用变化，变为3费（注意第一个木乃伊第一次死亡的时候会复生出一个新的带光环的木乃伊，然后把费用变成2费，但是再杀死那个复生出来的木乃伊之后，费用就是正确的3费。）
-class ManaHandler:
+class Manas:
 	def __init__(self, Game):
 		self.Game = Game
 		self.manas = {1:1, 2:0}
@@ -112,11 +99,11 @@ class ManaHandler:
 		self.manas[ID] = min(self.manas[ID], self.manasUpper[ID])
 		self.Game.sendSignal("EmptyManaCrystalCheck", ID, None, None, 0, "")
 		
-	def costAffordable(self, subject):
+	def affordable(self, subject):
 		ID = subject.ID
-		if subject.cardType == "Spell": #目前只考虑法术的法力消耗改生命消耗光环
+		if subject.type == "Spell": #目前只考虑法术的法力消耗改生命消耗光环
 			if self.status[ID]["Spells Cost Health Instead"] > 0:
-				if subject.mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.playerStatus[ID]["Immune"] > 0:
+				if subject.mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.status[ID]["Immune"] > 0:
 					return True
 			else:
 				if subject.mana <= self.manas[ID]:
@@ -128,21 +115,16 @@ class ManaHandler:
 		return False
 		
 	def payManaCost(self, subject, mana):
-		ID = subject.ID
-		mana = max(0, mana)
-		if subject.cardType == "Spell":
-			if self.status[ID]["Spells Cost Health Instead"] > 0:
-				objtoTakeDamage = self.Game.DamageHandler.damageTransfer(self.Game.heroes[ID])
-				objtoTakeDamage.takesDamage(None, mana)
-			else:
-				self.manas[ID] -= mana
-		else:
-			self.manas[ID] -= mana
+		ID, mana = subject.ID, max(0, mana)
+		if subject.type == "Spell" and self.status[ID]["Spells Cost Health Instead"] > 0:
+			objtoTakeDamage = self.Game.DmgHandler.damageTransfer(self.Game.heroes[ID])
+			objtoTakeDamage.takesDamage(None, mana)
+		else: self.manas[ID] -= mana
 		self.Game.sendSignal("ManaCostPaid", ID, subject, None, mana, "")
-		if subject.cardType == "Minion":
-			self.Game.CounterHandler.manaSpentonPlayingMinions[ID] += mana
-		elif subject.cardType == "Spell":
-			self.Game.CounterHandler.manaSpentonSpells[ID] += mana
+		if subject.type == "Minion":
+			self.Game.Counters.manaSpentonPlayingMinions[ID] += mana
+		elif subject.type == "Spell":
+			self.Game.Counters.manaSpentonSpells[ID] += mana
 			
 	#At the start of turn, player's locked mana crystals are removed.
 	#Overloaded manas will becomes the newly locked mana.
@@ -172,7 +154,7 @@ class ManaHandler:
 	def turnEnds(self):
 		for aura in self.CardAuras + self.PowerAuras:
 			if hasattr(aura, "temporary") and aura.temporary:
-				PRINT(self, "{} expires at the end of turn.".format(aura))
+				PRINT(self.Game, "{} expires at the end of turn.".format(aura))
 				aura.auraDisappears()
 		self.calcMana_All()
 		self.calcMana_Powers()
@@ -196,18 +178,18 @@ class ManaHandler:
 		card.selfManaChange()
 		if card.mana < 0: #费用修改不能把卡的费用降为0
 			card.mana = 0
-		if card.cardType == "Minion" and card.mana < 1 and card.keyWords["Echo"] > 0:
+		if card.type == "Minion" and card.mana < 1 and card.keyWords["Echo"] > 0:
 			card.mana = 1
-		elif card.cardType == "Spell" and card.mana < 1 and "Echo" in card.index:
+		elif card.type == "Spell" and card.mana < 1 and "Echo" in card.index:
 			card.mana = 1
 			
 	def calcMana_Powers(self):
 		for ID in range(1, 3):
-			self.Game.heroPowers[ID].mana = type(self.Game.heroPowers[ID]).mana
-			for manaMod in self.Game.heroPowers[ID].manaModifications:
+			self.Game.powers[ID].mana = type(self.Game.powers[ID]).mana
+			for manaMod in self.Game.powers[ID].manaModifications:
 				manaMod.handleMana()
-			if self.Game.heroPowers[ID].mana < 0:
-				self.Game.heroPowers[ID].mana = 0
+			if self.Game.powers[ID].mana < 0:
+				self.Game.powers[ID].mana = 0
 				
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
@@ -239,11 +221,11 @@ class ManaModification:
 	def applies(self):
 		self.card.manaModifications.append(self) #需要让卡牌自己也带有一个检测的光环，离开手牌或者牌库中需要清除。
 		if self.card in self.card.Game.Hand_Deck.hands[self.card.ID] or self.card in self.card.Game.Hand_Deck.decks[self.card.ID]:
-			self.card.Game.ManaHandler.calcMana_Single(self.card)
+			self.card.Game.Manas.calcMana_Single(self.card)
 			
 	def getsRemoved(self):
 		extractfrom(self, self.card.manaModifications)
-		if self.source != None:
+		if self.source:
 			extractfrom((self.card, self), self.source.auraAffected)
 			
 	def selfCopy(self, recipientCard):
@@ -254,18 +236,16 @@ class ManaModification:
 #不寄存于随从身上的光环一般用于一次性的费用结算。而洛欧塞布等持续一个回合的光环没有任何扳机而已
 #永久费用光环另行定义
 class ManaAura_Dealer:
-	def __init__(self, entity, func, changeby=0, changeto=-1, lowerbound=0):
-		self.blank_init(entity, func, changeby, changeto, lowerbound)
+	def __init__(self, entity, changeby=0, changeto=-1, lowerbound=0):
+		self.blank_init(entity, changeby, changeto, lowerbound)
 		
-	def blank_init(self, entity, func, changeby, changeto, lowerbound):
+	def blank_init(self, entity, changeby, changeto, lowerbound):
 		self.entity = entity
-		if func != None:
-			self.manaAuraApplicable = func
 		self.changeby, self.changeto, self.lowerbound = changeby, changeto, lowerbound
 		self.auraAffected = [] #A list of (card, aura_Receiver)
 		
 	def manaAuraApplicable(self, target):
-		return True
+		return self.entity.manaAuraApplicable(target)
 		
 	#只要是有满足条件的卡牌进入手牌，就会触发这个光环。target是承载这个牌的列表。
 	#applicable不需要询问一张牌是否在手牌中。光环只会处理在手牌中的卡牌
@@ -292,7 +272,7 @@ class ManaAura_Dealer:
 			self.applies(card)
 			
 		self.entity.Game.triggersonBoard[self.entity.ID].append((self, "CardEntersHand"))
-		self.entity.Game.ManaHandler.calcMana_All()
+		self.entity.Game.Manas.calcMana_All()
 		
 	#When the aura object is no longer referenced, it vanishes automatically.
 	def auraDisappears(self):
@@ -302,32 +282,28 @@ class ManaAura_Dealer:
 			
 		self.auraAffected = []
 		extractfrom((self, "CardEntersHand"), self.entity.Game.triggersonBoard[self.entity.ID])
-		self.entity.Game.ManaHandler.calcMana_All()
+		self.entity.Game.Manas.calcMana_All()
 		
 	def selfCopy(self, recipient): #The recipient is the entity that deals the Aura.
-		#func that checks if subject is manaAuraApplicable will be the new copy's function
-		return type(self)(recipient, recipient.manaAuraApplicable, self.changeby, self.changeto, self.lowerbound)
+		return type(self)(recipient, self.changeby, self.changeto, self.lowerbound)
+		
 	#可以在复制场上扳机列表的时候被调用
 	#可以调用这个函数的时候，一定是因为要复制一个随从的费用光环，那个随从的复制已经创建完毕，可以在复制字典中查到
-	def createCopy(self, recipientGame):
-		if self not in recipientGame.copiedObjs:
-			entityCopy = self.entity.createCopy(recipientGame)
+	def createCopy(self, game):
+		if self not in game.copiedObjs:
+			entityCopy = self.entity.createCopy(game)
 			Copy = self.selfCopy(entityCopy)
-			recipientGame.copiedObjs[self] = Copy
-			#ManaModification.selfCopy(self, recipientCard):
-			#	return ManaModification(recipientCard, self.changeby, self.changeto, self.source, self.lowerbound)
+			game.copiedObjs[self] = Copy
 			for card, manaMod in self.auraAffected: #从自己的auraAffected里面复制内容出去
-				print("Copying card affected by mana aura", card, manaMod)
-				cardCopy = card.createCopy(recipientGame)
+				cardCopy = card.createCopy(game)
 				#重点是复制一个随从是，它自己会携带一个费用改变，这个费用改变怎么追踪到
-					#用序号看行不行
 				manaModIndex = card.manaModifications.index(manaMod)
 				manaModCopy = cardCopy.manaModifications[manaModIndex]
 				manaModCopy.source = Copy #在处理函数之前，所有的费用状态都已经被一次性复制完毕，它们的来源被迫留为None,需要在这里补上
 				Copy.auraAffected.append((cardCopy, manaModCopy))
 			return Copy
 		else:
-			return recipientGame.copiedObjs[self]
+			return game.copiedObjs[self]
 			
 			
 class TempManaEffect:
@@ -366,16 +342,16 @@ class TempManaEffect:
 			self.applies(card)
 		self.Game.triggersonBoard[self.ID].append((self, "CardEntersHand"))
 		self.Game.triggersonBoard[self.ID].append((self, "ManaCostPaid"))
-		self.Game.ManaHandler.calcMana_All()
+		self.Game.Manas.calcMana_All()
 		
 	def auraDisappears(self):
 		for minion, manaMod in fixedList(self.auraAffected):
 			manaMod.getsRemoved()
 		self.auraAffected = []
-		extractfrom(self, self.Game.ManaHandler.CardAuras)
+		extractfrom(self, self.Game.Manas.CardAuras)
 		extractfrom((self, "CardEntersHand"), self.Game.triggersonBoard[self.ID])
 		extractfrom((self, "ManaCostPaid"), self.Game.triggersonBoard[self.ID])
-		self.Game.ManaHandler.calcMana_All()
+		self.Game.Manas.calcMana_All()
 		
 	def selfCopy(self, recipientGame):
 		return type(self)(recipientGame, self.ID, self.changeby, self.changeto)
@@ -415,7 +391,7 @@ class TempManaEffect_Power:
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		if signal == "HeroPowerAcquired":
 			self.applies(subject)
-		else: #signal == "ManaCostPaid"
+		elif subject == self.Game.powers[self.ID]:
 			self.auraDisappears()
 			
 	def applies(self, subject):
@@ -425,20 +401,20 @@ class TempManaEffect_Power:
 			self.auraAffected.append((subject, manaMod))
 			
 	def auraAppears(self):
-		self.applies(self.Game.heroPowers[1])
-		self.applies(self.Game.heroPowers[2])
+		self.applies(self.Game.powers[1])
+		self.applies(self.Game.powers[2])
 		self.Game.triggersonBoard[self.ID].append((self, "HeroPowerAcquired"))
 		self.Game.triggersonBoard[self.ID].append((self, "ManaCostPaid"))
-		self.Game.ManaHandler.calcMana_Powers()
+		self.Game.Manas.calcMana_Powers()
 		
 	def auraDisappears(self):
 		for minion, manaMod in fixedList(self.auraAffected):
 			manaMod.getsRemoved()
 		self.auraAffected = []
-		extractfrom(self, self.Game.ManaHandler.PowerAuras)
+		extractfrom(self, self.Game.Manas.PowerAuras)
 		extractfrom((self, "HeroPowerAcquired"), self.Game.triggersonBoard[self.ID])
 		extractfrom((self, "ManaCostPaid"), self.Game.triggersonBoard[self.ID])
-		self.Game.ManaHandler.calcMana_Powers()
+		self.Game.Manas.calcMana_Powers()
 		
 	def selfCopy(self, recipientGame):
 		return type(self)(recipientGame, self.ID, self.changeby, self.changeto)
@@ -455,10 +431,10 @@ class TempManaEffect_Power:
 				Copy.auraAffected.append((heroPowerCopy, manaModCopy))
 			return Copy
 		else:
-			recipientGame.copiedObjs[self]
+			return recipientGame.copiedObjs[self]
 			
 			
-class SecretHandler:
+class Secrets:
 	def __init__(self, Game):
 		self.Game = Game
 		self.secrets = {1:[], 2:[]}
@@ -472,37 +448,32 @@ class SecretHandler:
 		return 5 - (len(self.mainQuests[ID]) + len(self.sideQuests[ID]) + len(self.secrets[ID]))
 		
 	def deploySecretsfromDeck(self, ID, num=1):
+		curGame = self.Game
 		for i in range(num):
-			secretsAvailable = []
-			for card in self.Game.Hand_Deck.decks[ID]:
-				if "~~Secret" in card.index and self.isSecretDeployedAlready(card, ID) == False:
-					secretsAvailable.append(card)
-					
-			if secretsAvailable != [] and self.areaNotFull(ID):
-				secret = np.random.choice(secretsAvailable)
-				self.Game.Hand_Deck.extractfromDeck(secret)
-				secret.whenEffective()
-			else:
-				break
+			if curGame.mode == 0:
+				if curGame.guides and curGame.guides[0][1] == "Deploy Secret":
+					i = curGame.guides.pop(0)
+					if i < 0: break
+				else:
+					secrets = [i for i, card in enumerate(curGame.Hand_Deck.decks[ID]) if "~~Secret" in card.index and not self.sameSecretExists(card, ID)]
+					if secrets and self.areaNotFull(ID):
+						i = npchoice(secrets)
+						curGame.fixedGuides.append(i)
+					else:
+						curGame.fixedGuides.append(-1)
+						break
+				curGame.Hand_Deck.extractfromDeck(i, ID)[0].whenEffective()
 				
-	def extractSecrets(self, ID, all=False):
-		if all:
-			numSecrets = len(self.secrets[ID])
-			while self.secrets[ID] != []:
-				self.secrets[ID][0].active = False
-				self.secrets[ID].pop(0)
-				
-			return numSecrets
-		else:
-			if self.secrets[ID] != []:
-				secret = self.secrets[ID].pop(np.random.randint(len(self.secrets[ID])))
-				secret.active = False
-				return secret
-			else:
-				return None
-				
+	def extractSecrets(self, ID, index=0):
+		secret = self.secrets[ID].pop(index)
+		secret.active = False
+		for trigger in secret.triggersonBoard:
+			trigger.disconnect()
+		PRINT(self.Game, "Secret %s is removed"%secret.name)
+		return secret
+		
 	#secret can be type, index or real card.
-	def isSecretDeployedAlready(self, secret, ID):
+	def sameSecretExists(self, secret, ID):
 		if type(secret) == type(""): #If secret is the index
 			for deployedSecret in self.secrets[ID]:
 				if deployedSecret.index == secret:
@@ -514,7 +485,7 @@ class SecretHandler:
 					return True
 			return False
 			
-	#只有Game自己会引用SecretHandler
+	#只有Game自己会引用Secrets
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
 		for ID in range(1, 3):
@@ -527,11 +498,12 @@ class SecretHandler:
 		return Copy
 		
 		
-class DamageHandler:
+class DmgHandler:
 	def __init__(self, Game):
 		self.Game = Game
 		self.ShellfighterExists = {1: 0, 2: 0}
 		self.RamshieldExists = {1: 0, 2: 0}
+		self.scapegoatforHero = {1: None, 2: None}
 		
 	def isActiveShellfighter(self, target):
 		return target.name == "Snapjaw Shellfighter" and target.silenced == False
@@ -572,45 +544,39 @@ class DamageHandler:
 	#已经测试过Immune的随从在受伤时不会转移给钳嘴龟盾卫
 	#已经测试过圣盾随从在受伤时会转移转移给钳嘴龟盾卫，圣盾似乎只阻挡最后的伤害判定，不负责伤害目标转移
 	def damageTransfer_InitiallyonMinion(self, minion):
-		if minion.cardType == "Permanent":
-			return minion
+		if minion.type == "Permanent": return minion
 		#This method will never be invoked if the minion is dead already or in deck.
-		else: #minion.cardType == "Minion"
-			if minion.inHand:
-				return minion
+		else: #minion.type == "Minion"
+			if minion.inHand: return minion
 			elif minion.onBoard:
-				if self.ShellfighterExists[minion.ID] <= 0 or minion.status["Immune"] > 0:
+				if self.ShellfighterExists[minion.ID] < 1 or minion.status["Immune"] > 0:
 					return minion #Immune minions won't need to transfer damage
 				else:
-					adjacentMinions, distribution = self.Game.findAdjacentMinions(minion)
-					if distribution == "Minions on Both Sides":
-						ShellfighterontheLeft = self.isActiveShellfighter(adjacentMinions[0])
-						ShellfighterontheRight = self.isActiveShellfighter(adjacentMinions[1])
+					neighbors, dist = self.Game.adjacentMinions2(minion)
+					if dist == 1:
+						ShellfighterontheLeft = self.isActiveShellfighter(neighbors[0])
+						ShellfighterontheRight = self.isActiveShellfighter(neighbors[1])
 						#If both sides are active Shellfighters, the early one on board will trigger.
 						if ShellfighterontheLeft and ShellfighterontheRight:
-							if adjacentMinions[0].sequence < adjacentMinions[1].sequence:
-								miniontoTakeDamage = self.leftmostShellfighter(minion)
-							else:
-								miniontoTakeDamage = self.rightmostShellfighter(minion)
+							return self.leftmostShellfighter(minion) if neighbors[0].sequence < neighbors[1].sequence else self.rightmostShellfighter(minion)
 						#If there is only a Shellfighter on the left, find the leftmost Shellfighter
-						elif ShellfighterontheLeft:
-							miniontoTakeDamage = self.leftmostShellfighter(minion)
+						elif ShellfighterontheLeft: return self.leftmostShellfighter(minion)
 						#If there is only a Shellfighter on the right, find the rightmost Shellfighter
-						else:
-							miniontoTakeDamage = self.rightmostShellfighter(minion)
-							
-					elif distribution == "Minions Only on the Left":
-						miniontoTakeDamage = self.leftmostShellfighter(minion)
-					elif distribution == "Minions Only on the Right":
-						miniontoTakeDamage = self.rightmostShellfighter(minion)
-					elif distribution == "No Adjacent Minions":
-						miniontoTakeDamage = minion
+						else: return self.rightmostShellfighter(minion)
 						
-					return miniontoTakeDamage
+					elif dist < 0: return self.leftmostShellfighter(minion)
+					elif dist == 2: return self.rightmostShellfighter(minion)
+					else: return minion
 					
 	def damageTransfer_InitiallyonHero(self, hero):
-		if self.RamshieldExists[hero.ID] <= 0 or self.Game.playerStatus[hero.ID]["Immune"] > 0:
+		if (self.RamshieldExists[hero.ID] < 1 and not self.scapegoatforHero[hero.ID]) or self.Game.status[hero.ID]["Immune"] > 0:
 			return hero
+		elif self.scapegoatforHero[hero.ID]:
+			if self.scapegoatforHero[hero.ID].onBoard:
+				return self.damageTransfer_InitiallyonMinion(self.scapegoatforHero[hero.ID])
+			else:
+				self.scapegoatforHero[hero.ID] = None
+				return hero
 		else:
 			Ramshields = []
 			for minion in self.Game.minionsonBoard(hero.ID):
@@ -618,26 +584,28 @@ class DamageHandler:
 					Ramshields.append(minion)
 					
 			if Ramshields != []:
-				Ramshields, order = self.Game.sort_Sequence(Ramshield)
+				Ramshields, order = self.Game.sort_Sequence(Ramshields)
 				minion = Ramshields[0]
 				return self.damageTransfer_InitiallyonMinion(minion)
 			else:
 				return hero
 				
 	def damageTransfer(self, target):
-		if target.cardType == "Minion":
+		if target.type == "Minion":
 			return self.damageTransfer_InitiallyonMinion(target)
-		elif target.cardType == "Hero":
+		elif target.type == "Hero":
 			return self.damageTransfer_InitiallyonHero(target)
 	#只有Game自己会引用DamageHandler
-	def createCopy(self, recipientGame):
-		Copy = type(self)(recipientGame)
+	def createCopy(self, game):
+		Copy = type(self)(game)
 		Copy.ShellfighterExists = copy.deepcopy(self.ShellfighterExists)
 		Copy.RamshieldExists = copy.deepcopy(self.RamshieldExists)
+		Copy.scapegoatforHero = {1: None if self.scapegoatforHero[1] == None else self.scapegoatforHero[1].createCopy(game),
+								2:  None if self.scapegoatforHero[2] == None else self.scapegoatforHero[2].createCopy(game)}
 		return Copy
 		
 		
-class CounterHandler:
+class Counters:
 	def __init__(self, Game):
 		self.Game = Game
 		self.cardsPlayedThisGame = {1:[], 2:[]}
@@ -650,7 +618,7 @@ class CounterHandler:
 		self.healthRestoredThisGame = {1: 0, 2: 0}
 		self.cardsDiscardedThisGame = {1:[], 2:[]}
 		self.createdCardsPlayedThisGame = {1:0, 2:0}
-		self.spellsCastonFriendliesThisGame = {1:[], 2:[]}
+		self.spellsonFriendliesThisGame = {1:[], 2:[]}
 		
 		self.numSpellsPlayedThisTurn = {1: 0, 2: 0}
 		self.numMinionsPlayedThisTurn = {1: 0, 2: 0}
@@ -689,7 +657,7 @@ class CounterHandler:
 		self.minionsDiedThisTurn = {1:[], 2:[]}
 		self.heroAttackTimesThisTurn = {1:0, 2:0}
 		
-	#只有Game自己会引用CounterHandler
+	#只有Game自己会引用Counters
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
 		for key, value in self.__dict__.items():
@@ -702,7 +670,7 @@ class CounterHandler:
 			elif type(value) == list or type(value) == dict or type(value) == tuple:
 				Copy.__dict__[key] = self.copyListDictTuple(value, recipientGame)
 			else:
-				#因为CounterHandler内部的值除了Game都是数字组成的，可以直接deepcopy
+				#因为Counters内部的值除了Game都是数字组成的，可以直接deepcopy
 				Copy.__dict__[key] = value.createCopy(recipientGame)
 		return Copy
 		
@@ -738,7 +706,7 @@ class CounterHandler:
 		return objCopy
 		
 		
-class DiscoverHandler:
+class Discover:
 	def __init__(self, Game):
 		self.Game = Game
 		self.initiator = None
@@ -759,21 +727,21 @@ class DiscoverHandler:
 			#根据这个发现选项进行排列组合，挑选无随机的所有可能性。记录下那个分数，和之后其他选项的对比
 			discover_branch[key+initiator.name+"_chooses_"+option.name+";"] = game
 			
-	def startDiscover(self, initiator):
-		if self.Game.GUI != None:
+	def startDiscover(self, initiator, info):
+		if self.Game.GUI:
 			self.initiator = initiator
 			self.Game.GUI.update()
-			self.Game.GUI.waitforDiscover()
+			self.Game.GUI.waitforDiscover(info)
 			self.initiator, self.Game.options = None, []
-		
+			
 	def typeCardName(self, initiator):
-		if self.Game.GUI != None:
+		if self.Game.GUI:
 			self.initiator = initiator
-			PRINT(self, "Start to type the name of a card you want")
+			PRINT(self.Game, "Start to type the name of a card you want")
 			self.Game.GUI.update()
 			self.Game.GUI.wishforaCard(initiator)
 			self.Game.options = []
 		
-	#除了Game本身，没有东西会在函数外引用Game.DiscoverHandler
+	#除了Game本身，没有东西会在函数外引用Game.Discover
 	def createCopy(self, recipientGame):
 		return type(self)(recipientGame)
