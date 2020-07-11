@@ -1,6 +1,5 @@
 from CardTypes import *
 from Triggers_Auras import *
-from VariousHandlers import *
 
 class WindWalkerMistweaver(HeroPower): #踏风织雾
 	mana, name, requireTarget = 2, "WindWalker-Mistweaver", True
@@ -82,9 +81,9 @@ class CanewithaWineGourd(Weapon): #带酒葫芦的杖子
 	index = "Basic~Monk~Weapon~1~0~4~Cane with a Wine Gourd"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_CanewithaWineGourd(self)]
+		self.trigsBoard = [Trigger_CanewithaWineGourd(self)]
 		
-class Trigger_CanewithaWineGourd(TriggeronBoard):
+class Trigger_CanewithaWineGourd(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -208,20 +207,20 @@ class SwiftBrewmaster(Minion): #迷踪的酒仙
 	requireTarget, keyWord, description = False, "", "Your Hero Power also targets adjacent minions if it triggers Quaff"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_SwiftBrewmaster(self)]
+		self.trigsBoard = [Trigger_SwiftBrewmaster(self)]
 		
-class Trigger_SwiftBrewmaster(TriggeronBoard):
+class Trigger_SwiftBrewmaster(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["ManaCostPaid", "HeroUsedAbility"])
+		self.blank_init(entity, ["ManaPaid", "HeroUsedAbility"])
 		self.activated = False
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		minion, game = self.entity, self.entity.Game
-		if signal == "ManaCostPaid": return subject == game.powers[minion.ID] and not self.activated and game.Manas.manas[minion.ID] == 0
+		if signal == "ManaPaid": return subject == game.powers[minion.ID] and not self.activated and game.Manas.manas[minion.ID] == 0
 		else: return ID == self.entity.ID and self.activated
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		if signal == "ManaCostPaid":
+		if signal == "ManaPaid":
 			PRINT(self.entity.entity, "Player's Hero Power triggers Quaff and %s enables it to also target adjacent minions"%self.entity.name)
 			self.entity.Game.status[self.entity.ID]["Power Sweep"] += 1
 			self.activated = True
@@ -269,9 +268,9 @@ class ShadoPanWuKao(Minion): #影踪派悟道者
 	requireTarget, keyWord, description = False, "", "After your hero attacks, gain Stealth"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_ShadoPanWuKao(self)]
+		self.trigsBoard = [Trigger_ShadoPanWuKao(self)]
 		
-class Trigger_ShadoPanWuKao(TriggeronBoard):
+class Trigger_ShadoPanWuKao(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -340,9 +339,9 @@ class XuentheWhiteTiger_Mutable_1(Minion): #白虎 雪怒
 	requireTarget, keyWord, description = False, "Rush", "Rush. After you play a card, return this to your hand and give it +2/+2 for the rest of the game. It costs (1) more(up to 10)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_XuentheWhiteTiger(self)]
+		self.trigsBoard = [Trigger_XuentheWhiteTiger(self)]
 		
-class Trigger_XuentheWhiteTiger(TriggeronBoard):
+class Trigger_XuentheWhiteTiger(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed", "SpellBeenPlayed", "WeaponBeenPlayed", "HeroCardBeenPlayed"])
 		
@@ -450,11 +449,11 @@ class Liquor(Spell): #醉酿
 				PRINT(self.Game, "Liquor gives renders minion %s unable to attack for two turns"%target.name)
 				target.marks["Can't Attack"] += 1
 				trigger = Trigger_Liquor(target)
-				target.triggersonBoard.append(trigger)
+				target.trigsBoard.append(trigger)
 				trigger.connect()
 		return target
 		
-class Trigger_Liquor(TriggeronBoard):
+class Trigger_Liquor(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		self.temp = True
@@ -469,7 +468,7 @@ class Trigger_Liquor(TriggeronBoard):
 			PRINT(self.entity.Game, "%s can attack next turn."%self.entity.name)
 			self.entity.marks["Can't Attack"] -= 1
 			self.disconnect()
-			extractfrom(self, self.entity.triggersonBoard)
+			extractfrom(self, self.entity.trigsBoard)
 		else:
 			PRINT(self.entity.Game, "%s still can't attack for another turn"%self.entity.name)
 			
@@ -513,38 +512,29 @@ class TouchofKarma(Spell): #业报之触
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and target.onBoard:
 			PRINT(self.Game, "Touch of Karma is cast and damage on player's Hero this turn will go to enemy minion %s instead"%target.name)
-			self.Game.DmgHandler.scapegoatforHero[self.ID] = target
-			trigger = Trigger_TouchofKarma(target, self.ID)
-			target.triggersonBoard.append(trigger)
-			if target.onBoard:
-				trigger.connect()
+			trig = Trigger_TouchofKarma(target, self.ID)
+			target.trigsBoard.append(trig)
+			trig.connect()
 		return target
 		
-
-class Trigger_TouchofKarma(TriggeronBoard):
+class Trigger_TouchofKarma(TrigBoard):
 	def __init__(self, entity, ID):
-		self.blank_init(entity, ["TurnEnds"])
+		self.blank_init(entity, ["TurnEnds", "DmgTaker?"])
 		self.ID = ID
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return True #不需要随从在场上，即使在手牌中也会过期
+		return signal == "TurnEnds" or (target[0].type == "Hero" and target[0].ID == self.ID)
 		
-	def connect(self):
-		for signal in self.signals:
-			self.entity.Game.triggersonBoard[self.entity.ID].append((self, signal))
-		self.entity.Game.DmgHandler.scapegoatforHero[self.ID] = self.entity
-		
-	def disconnect(self):
-		for signal in self.signals:
-			extractfrom((self, signal), self.entity.Game.triggersonBoard[self.entity.ID])
-		if self.entity.Game.DmgHandler.scapegoatforHero[self.ID] == self.entity:
-			self.entity.Game.DmgHandler.scapegoatforHero[self.ID] = None
-			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "At the end of turn, minion %s no longer intercepts damage on player %d."%(self.entity.name, self.ID))
-		self.disconnect()
-		extractfrom(self, self.entity.triggersonBoard)
-		
+		if signal == "TurnEnds":
+			PRINT(self.entity.Game, "At the end of turn, minion %s no longer intercepts damage on player %d."%(self.entity.name, self.ID))
+			self.disconnect()
+			try: self.entity.trigsBoard.remove(self)
+			except: pass
+		else:
+			PRINT(self.entity.Game, "Minion %s takes the damage meant for player's Hero"%self.entity.name)
+			target[0] = self.entity
+			
 	def selfCopy(self, recipient):
 		return type(self)(recipient, self.ID)
 		
@@ -566,7 +556,7 @@ class JadeTether(HeroPower):
 	description = "Transform a minion into a 2/2 Golem with Taunt"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_JadeTether(self)]
+		self.trigsBoard = [Trigger_JadeTether(self)]
 		self.progress = 0
 		self.heroPowerReplaced = None
 		
@@ -586,7 +576,7 @@ class JadeTether(HeroPower):
 		self.Game.powers[self.ID] = self
 		self.appears()
 		
-class Trigger_JadeTether(TriggeronBoard):
+class Trigger_JadeTether(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroUsedAbility"])
 		
@@ -637,7 +627,7 @@ class DrunkenBoxing(Spell): #醉拳
 				PRINT(self.Game, "Drunken Boxing lets player attack minion %s"%attackTarget.name)
 				#def battle(self, subject, target, verifySelectable=True, consumeAttackChance=True, resolveDeath=True, resetRedirectionTriggers=True)
 				self.Game.battle(hero, attackTarget, False, True, False, False)
-				self.Game.triggersonBoard[self.ID]
+				self.Game.trigsBoard[self.ID]
 			elif attackTarget.health < 0 or attackTarget.dead:
 				PRINT(self.Game, "Player doesn't attack target minion %s since it's dead already")
 				continue
@@ -647,7 +637,7 @@ class DrunkenBoxing(Spell): #醉拳
 		if quaffTriggered: trigger.disconnect()
 		return None
 		
-class Trigger_DrunkenBoxing(TriggeronBoard):
+class Trigger_DrunkenBoxing(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -668,9 +658,9 @@ class OnimaActuary(Minion): #秘典宗精算师
 	#潜行。在该随从攻击后，本回合中你的英雄技能的法力值消耗为(1)点
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_OnimaActuary(self)]
+		self.trigsBoard = [Trigger_OnimaActuary(self)]
 		
-class Trigger_OnimaActuary(TriggeronBoard):
+class Trigger_OnimaActuary(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackedMinion", "MinionAttackedHero"])
 		
@@ -859,9 +849,9 @@ class LotusHealer(Minion): #玉莲帮医者
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. After this is attacked, restored 1 Health to all friendly minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_LotusHealer(self)]
+		self.trigsBoard = [Trigger_LotusHealer(self)]
 		
-class Trigger_LotusHealer(TriggeronBoard):
+class Trigger_LotusHealer(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackedMinion", "HeroAttackedMinion"])
 		
@@ -897,9 +887,9 @@ class KunLaiSummitZenAlchemist(Minion): #昆莱山禅师
 	requireTarget, keyWord, description = False, "", "At the end of your turn, change the Attack of a random enemy minion with 1 or more Attack to 1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_KunLaiSummitZenAlchemist(self)]
+		self.trigsBoard = [Trigger_KunLaiSummitZenAlchemist(self)]
 		
-class Trigger_KunLaiSummitZenAlchemist(TriggeronBoard):
+class Trigger_KunLaiSummitZenAlchemist(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -924,9 +914,9 @@ class FistsoftheHeavens(Weapon): #诸天之拳
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.keyWords["Windfury"] = 1
-		self.triggersonBoard = [Trigger_FistsoftheHeavens(self)]
+		self.trigsBoard = [Trigger_FistsoftheHeavens(self)]
 		
-class Trigger_FistsoftheHeavens(TriggeronBoard):
+class Trigger_FistsoftheHeavens(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["QuaffTriggered"])
 		

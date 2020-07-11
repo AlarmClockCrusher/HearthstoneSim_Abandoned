@@ -4,12 +4,12 @@ from Triggers_Auras import *
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 
-def extractfrom(target, listObject):
-	try: return listObject.pop(listObject.index(target))
+def extractfrom(target, listObj):
+	try: return listObj.pop(listObj.index(target))
 	except: return None
 	
-def fixedList(listObject):
-	return listObject[0:len(listObject)]
+def fixedList(listObj):
+	return listObj[0:len(listObj)]
 	
 def PRINT(game, string, *args):
 	if game.GUI:
@@ -35,9 +35,9 @@ class HealingTotem(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, restore 1 health to all friendly minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_HealingTotem(self)]
+		self.trigsBoard = [Trigger_HealingTotem(self)]
 		
-class Trigger_HealingTotem(TriggeronBoard):
+class Trigger_HealingTotem(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -151,9 +151,8 @@ class Fireblast(HeroPower):
 	def effect(self, target, choice=0):
 		damage = (1 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		PRINT(self.Game, "Hero Power Fireblast deals %d damage to %s"%(damage, target.name))
-		objtoTakeDamage, damageActual = self.dealsDamage(target, damage)
-		if objtoTakeDamage.health < 1 or objtoTakeDamage.dead:
-			return 1
+		dmgTaker, damageActual = self.dealsDamage(target, damage)
+		if dmgTaker.health < 1 or dmgTaker.dead: return 1
 		return 0
 		
 class FireblastRank2(HeroPower):
@@ -163,9 +162,8 @@ class FireblastRank2(HeroPower):
 	def effect(self, target, choice=0):
 		damage = (2 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		PRINT(self.Game, "Hero Power Fireblast Rank 2 deals %d damage to %s"%(damage, target.name))
-		objtoTakeDamage, damageActual = self.dealsDamage(target, damage)
-		if objtoTakeDamage.health < 1 or objtoTakeDamage.dead:
-			return 1
+		dmgTaker, damageActual = self.dealsDamage(target, damage)
+		if dmgTaker.health < 1 or dmgTaker.dead: return 1
 		return 0
 		
 #Paladin basic and upgraded powers
@@ -757,11 +755,11 @@ class GurubashiBerserker(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever this minion takes damage, gain +3 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_GurubashiBerserker(self)]
+		self.trigsBoard = [Trigger_GurubashiBerserker(self)]
 		
-class Trigger_GurubashiBerserker(TriggeronBoard):
+class Trigger_GurubashiBerserker(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionTakesDamage"])
+		self.blank_init(entity, ["MinionTakesDmg"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity and self.entity.onBoard
@@ -941,9 +939,9 @@ class SatyrOverseer(Minion):
 	requireTarget, keyWord, description = False, "", "After your hero attacks, summon a 2/2 Satyr"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_SatyrOverseer(self)]
+		self.trigsBoard = [Trigger_SatyrOverseer(self)]
 		
-class Trigger_SatyrOverseer(TriggeronBoard):
+class Trigger_SatyrOverseer(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -1414,9 +1412,9 @@ class StarvingBuzzard(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever you summon a Beast, draw a card"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_StarvingBuzzard(self)]
+		self.trigsBoard = [Trigger_StarvingBuzzard(self)]
 		
-class Trigger_StarvingBuzzard(TriggeronBoard):
+class Trigger_StarvingBuzzard(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionSummoned"])
 		
@@ -1588,11 +1586,11 @@ class WaterElemental(Minion):
 	requireTarget, keyWord, description = False, "", "Freeze any character damaged by this minion"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_WaterElemental(self)]
+		self.trigsBoard = [Trigger_WaterElemental(self)]
 		
-class Trigger_WaterElemental(TriggeronBoard):
+class Trigger_WaterElemental(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionTakesDamage", "HeroTakesDamage"])
+		self.blank_init(entity, ["MinionTakesDmg", "HeroTakesDmg"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity
@@ -1740,9 +1738,9 @@ class TruesilverChampion(Weapon):
 	index = "Basic~Paladin~Weapon~4~4~2~Truesilver Champion"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_TruesilverChampion(self)]
+		self.trigsBoard = [Trigger_TruesilverChampion(self)]
 		
-class Trigger_TruesilverChampion(TriggeronBoard):
+class Trigger_TruesilverChampion(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackingMinion", "HeroAttackingHero"])
 		
@@ -2367,11 +2365,11 @@ class Corruption(Spell):
 			PRINT(self.Game, "Corruption chooses enemy minion %s to die at the start of player's next turn."%target.name)
 			trigger = Trigger_Corruption(target)
 			trigger.ID = self.ID
-			target.triggersonBoard.append(trigger)
+			target.trigsBoard.append(trigger)
 			trigger.connect()
 		return target
 		
-class Trigger_Corruption(TriggeronBoard):
+class Trigger_Corruption(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		self.temp = True
@@ -2384,7 +2382,7 @@ class Trigger_Corruption(TriggeronBoard):
 		PRINT(self.entity.Game, "At the start of player %d's turn, Corrupted minion %s dies."%(self.ID, self.entity.name))
 		self.entity.dead = True
 		self.disconnect()
-		extractfrom(self, self.entity.triggersonBoard)
+		extractfrom(self, self.entity.trigsBoard)
 		
 	def selfCopy(self, recipient):
 		trigger = type(self)(recipient)
@@ -2410,8 +2408,8 @@ class MortalCoil(Spell):
 		if target:
 			damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			PRINT(self.Game, "Mortal Coil deals %d damage to minion %s"%(damage, target.name))
-			self.dealsDamage(target, damage)
-			if target.health < 1 or target.dead:
+			dmgTaker, damageActual = self.dealsDamage(target, damage)
+			if dmgTaker.health < 1 or dmgTaker.dead:
 				PRINT(self.Game, "Mortal Coil kills the target and lets player draw a card.")
 				self.Game.Hand_Deck.drawCard(self.ID)
 		return target
@@ -2576,10 +2574,10 @@ class Charge(Spell):
 			target.marks["Can't Attack Hero"] += 1
 			trigger = Trigger_Charge(target)
 			trigger.connect()
-			target.triggersonBoard.append(trigger)
+			target.trigsBoard.append(trigger)
 		return target
 		
-class Trigger_Charge(TriggeronBoard):
+class Trigger_Charge(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		self.temp = True
@@ -2592,7 +2590,7 @@ class Trigger_Charge(TriggeronBoard):
 		if self.entity.marks["Can't Attack Hero"] > 0:
 			self.entity.marks["Can't Attack Hero"] -= 1
 		self.disconnect()
-		extractfrom(self, self.entity.triggersonBoard)
+		extractfrom(self, self.entity.trigsBoard)
 		
 		
 class Execute(Spell):

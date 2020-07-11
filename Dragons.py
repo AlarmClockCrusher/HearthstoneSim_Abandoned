@@ -1,6 +1,5 @@
 from CardTypes import *
 from Triggers_Auras import *
-from VariousHandlers import *
 
 from Basic import Claw, ArcaneMissiles, TruesilverChampion
 from Shadows import EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, WitchyLackey
@@ -10,12 +9,12 @@ from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 
-def extractfrom(target, listObject):
-	try: return listObject.pop(listObject.index(target))
+def extractfrom(target, listObj):
+	try: return listObj.pop(listObj.index(target))
 	except: return None
 	
-def fixedList(listObject):
-	return listObject[0:len(listObject)]
+def fixedList(listObj):
+	return listObj[0:len(listObj)]
 	
 def PRINT(game, string, *args):
 	if game.GUI:
@@ -105,7 +104,7 @@ class Galakrond_Hero(Hero):
 		self.onBoard, self.inHand, self.inDeck = False, True, False
 		if self.Game.Counters.primaryGalakronds[self.ID] == None:
 			self.Game.Counters.primaryGalakronds[self.ID] = self
-		for trigger in self.triggersinHand:
+		for trigger in self.trigsHand:
 			trigger.connect()
 		return self
 		
@@ -114,7 +113,7 @@ class Galakrond_Hero(Hero):
 		self.Game.Manas.calcMana_Single(self)
 		if self.Game.Counters.primaryGalakronds[self.ID] == None:
 			self.Game.Counters.primaryGalakronds[self.ID] = self
-		for trigger in self.triggersinDeck:
+		for trigger in self.trigsDeck:
 			trigger.connect()
 			
 	def replaceHero(self, fromHeroCard=False):
@@ -173,9 +172,9 @@ class DepthCharge(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, deal 5 damage to all minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_DepthCharge(self)]
+		self.trigsBoard = [Trigger_DepthCharge(self)]
 		
-class Trigger_DepthCharge(TriggeronBoard):
+class Trigger_DepthCharge(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -195,9 +194,9 @@ class HotAirBalloon(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, gain +1 Health"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_HotAirBalloon(self)]
+		self.trigsBoard = [Trigger_HotAirBalloon(self)]
 		
-class Trigger_HotAirBalloon(TriggeronBoard):
+class Trigger_HotAirBalloon(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -313,7 +312,7 @@ class GrizzledWizard(Minion):
 		trigger.connect()
 		return None
 		
-class Trigger_GrizzledWizard(TriggeronBoard):
+class Trigger_GrizzledWizard(TrigBoard):
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.signals = ["TurnStarts"]
@@ -323,13 +322,13 @@ class Trigger_GrizzledWizard(TriggeronBoard):
 		return ID == self.ID
 		
 	def connect(self):
-		for signal in self.signals:
-			self.Game.triggersonBoard[self.ID].append((self, signal))
-			
+		try: self.Game.trigsBoard[self.ID]["TurnStarts"].append(self)
+		except: self.Game.trigsBoard[self.ID]["TurnStarts"] = [self]
+		
 	def disconnect(self):
-		for signal in self.signals:
-			extractfrom((self, signal), self.Game.triggersonBoard[self.ID])
-			
+		try: self.Game.trigsBoard[self.ID]["TurnStarts"].remove(self)
+		except: pass
+		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "At the start of player's turn, the two players' Hero Powers are swapped back")
 		temp = self.Game.powers[1]
@@ -340,7 +339,7 @@ class Trigger_GrizzledWizard(TriggeronBoard):
 		self.Game.powers[2] = temp
 		self.Game.powers[2].appears()
 		self.Game.powers[1].ID, self.Game.powers[2].ID = 1, 2
-		
+		self.disconnect()
 		
 class ParachuteBrigand(Minion):
 	Class, race, name = "Neutral", "Pirate", "Parachute Brigand"
@@ -349,9 +348,9 @@ class ParachuteBrigand(Minion):
 	requireTarget, keyWord, description = False, "", "After you play a Pirate, summon this minion from your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersinHand = [Trigger_ParachuteBrigand(self)]
+		self.trigsHand = [Trigger_ParachuteBrigand(self)]
 		
-class Trigger_ParachuteBrigand(TriggerinHand):
+class Trigger_ParachuteBrigand(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed"])
 		
@@ -414,9 +413,9 @@ class Transmogrifier(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Transmogrifier(self)]
+		self.trigsBoard = [Trigger_Transmogrifier(self)]
 		
-class Trigger_Transmogrifier(TriggeronBoard):
+class Trigger_Transmogrifier(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["CardDrawn"])
 		
@@ -532,8 +531,9 @@ class BuffAura_DreadRaven(AuraDealer_toMinion):
 			
 	def auraAppears(self):
 		self.applies(self.entity)
-		for signal in self.signals:
-			self.entity.Game.triggersonBoard[self.entity.ID].append((self, signal))
+		for sig in self.signals:
+			try: self.minion.Game.trigsBoard[self.minion.ID][sig].append(self)
+			except: self.minion.Game.trigsBoard[self.minion.ID][sig] = self
 			
 	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
@@ -700,7 +700,7 @@ class FrizzKindleroost(Minion):
 		PRINT(self.Game, "Frizz Kindleroost's battlecry reduces the Cost of Dragons in player's deck by (2)")
 		for card in self.Game.Hand_Deck.decks[self.ID]:
 			if card.type == "Minion" and "Dragon" in card.race:
-				ManaModification(card, changeby=-2, changeto=-1).applies()
+				ManaMod(card, changeby=-2, changeto=-1).applies()
 		return None
 		
 		
@@ -803,8 +803,9 @@ class BuffAura_WingCommander(AuraDealer_toMinion):
 			
 	def auraAppears(self):
 		self.applies(self.minion)
-		for signal in self.signals:
-			self.minion.Game.triggersonBoard[self.minion.ID].append((self, signal))
+		for sig in self.signals:
+			try: self.minion.Game.trigsBoard[self.minion.ID][sig].append(self)
+			except: self.minion.Game.trigsBoard[self.minion.ID][sig] = self
 			
 	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
@@ -1060,8 +1061,8 @@ class TentacledMenace(Minion):
 		card2, mana = self.Game.Hand_Deck.drawCard(3-self.ID)
 		if card1 and card2:
 			mana1, mana2 = card1.mana, card2.mana
-			ManaModification(card1, changeby=0, changeto=mana2).applies()
-			ManaModification(card2, changeby=0, changeto=mana1).applies()
+			ManaMod(card1, changeby=0, changeto=mana2).applies()
+			ManaMod(card2, changeby=0, changeto=mana1).applies()
 			self.Game.Manas.calcMana_Single(card1)
 			self.Game.Manas.calcMana_Single(card2)
 		return None
@@ -1222,9 +1223,9 @@ class Shuma(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, fill your board with 1/1 Tentacles"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Shuma(self)]
+		self.trigsBoard = [Trigger_Shuma(self)]
 		
-class Trigger_Shuma(TriggeronBoard):
+class Trigger_Shuma(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -1292,8 +1293,8 @@ class DragonqueenAlexstrasza(Minion):
 					dragon1, dragon2 = npchoice(curGame.RNGPools["Dragons except Dragonqueen Alexstrasza"], 2, replace=True)
 				dragon1, dragon2 = dragon1(curGame, self.ID), dragon2(curGame, self.ID)
 				curGame.Hand_Deck.addCardtoHand([dragon1, dragon2], self.ID)
-				ManaModification(dragon1, changeby=0, changeto=1).applies()
-				ManaModification(dragon2, changeby=0, changeto=1).applies()
+				ManaMod(dragon1, changeby=0, changeto=1).applies()
+				ManaMod(dragon2, changeby=0, changeto=1).applies()
 				curGame.Manas.calcMana_Single(dragon1)
 				curGame.Manas.calcMana_Single(dragon2)
 		return None
@@ -1338,7 +1339,7 @@ class Embiggen(Spell):
 				card.health_max += 2 #By default, this healthGain has to be non-negative.
 				card.attack_Enchant += 2
 				if card.mana < 10:
-					ManaModification(card, changeby=+1, changeto=-1).applies()
+					ManaMod(card, changeby=+1, changeto=-1).applies()
 		return None
 		
 		
@@ -1349,7 +1350,7 @@ class SecuretheDeck(Quest):
 	description = "Sidequest: Attack twice with your hero. Reward: Add 3 'Claw' to your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_SecuretheDeck(self)]
+		self.trigsBoard = [Trigger_SecuretheDeck(self)]
 		
 class Trigger_SecuretheDeck(QuestTrigger):
 	def __init__(self, entity):
@@ -1375,7 +1376,7 @@ class StrengthinNumbers(Quest):
 	description = "Sidequest: Spend 10 Mana on minions. Rewards: Summon a minion from your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_StrengthinNumbers(self)]
+		self.trigsBoard = [Trigger_StrengthinNumbers(self)]
 		
 class Trigger_StrengthinNumbers(QuestTrigger):
 	def __init__(self, entity):
@@ -1525,7 +1526,7 @@ class Aeroponics(Spell):
 	description = "Draw 2 cards. Costs (2) less for each Treant you control"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersinHand = [Trigger_Aeroponics(self)]
+		self.trigsHand = [Trigger_Aeroponics(self)]
 		
 	def selfManaChange(self):
 		if self.inHand:
@@ -1543,7 +1544,7 @@ class Aeroponics(Spell):
 		self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
-class Trigger_Aeroponics(TriggerinHand):
+class Trigger_Aeroponics(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAppears", "MinionDisappears"])
 		
@@ -1638,7 +1639,8 @@ class YourTreantsHavePlus1Plus1(AuraDealer_toMinion):
 	def auraAppears(self):
 		for minion in self.Game.minionsonBoard(self.ID):
 			self.applies(minion)
-		self.Game.triggersonBoard[self.ID].append((self, "MinionAppears"))
+		try: self.Game.trigsBoard[self.ID]["MinionAppears"].append(self)
+		except: pass
 	#没有auraDisappear方法
 	#可以通过AuraDealer_toMinion的createCopy方法复制
 	
@@ -1685,7 +1687,7 @@ class CleartheWay(Quest):
 	description = "Sidequest: Summon 3 Rush minions. Reward: Summon a 4/4 Gryphon with Rush"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_CleartheWay(self)]
+		self.trigsBoard = [Trigger_CleartheWay(self)]
 		
 class Trigger_CleartheWay(QuestTrigger):
 	def __init__(self, entity):
@@ -1739,7 +1741,7 @@ class ToxicReinforcements(Quest):
 	description = "Sidequest: Use your Hero Power three times. Reward: Summon three 1/1 Leper Gnomes"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_ToxicReinforcement(self)]
+		self.trigsBoard = [Trigger_ToxicReinforcement(self)]
 		
 class Trigger_ToxicReinforcement(QuestTrigger):
 	def __init__(self, entity):
@@ -1804,9 +1806,9 @@ class PhaseStalker(Minion):
 	requireTarget, keyWord, description = False, "", "After you use your Hero Power, cast a Secret from your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_PhaseStalker(self)]
+		self.trigsBoard = [Trigger_PhaseStalker(self)]
 		
-class Trigger_PhaseStalker(TriggeronBoard):
+class Trigger_PhaseStalker(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroUsedAbility"])
 		
@@ -1912,9 +1914,9 @@ class Dragonbane(Minion):
 	requireTarget, keyWord, description = False, "", "After you use your Hero Power, deal 5 damage to a random enemy"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Dragonbane(self)]
+		self.trigsBoard = [Trigger_Dragonbane(self)]
 		
-class Trigger_Dragonbane(TriggeronBoard):
+class Trigger_Dragonbane(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroUsedAbility"])
 		
@@ -2020,7 +2022,7 @@ class ElementalAllies(Quest):
 	description = "Sidequest: Play an Elemental two turns in a row. Reward: Draw 3 spells from your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_ElementalAllies(self)]
+		self.trigsBoard = [Trigger_ElementalAllies(self)]
 		
 class Trigger_ElementalAllies(QuestTrigger):
 	def __init__(self, entity):
@@ -2059,7 +2061,7 @@ class LearnDraconic(Quest):
 	description = "Sidequest: Spend 8 Mana on spells. Reward: Summon a 6/6 Dragon"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_LearnDraconic(self)]
+		self.trigsBoard = [Trigger_LearnDraconic(self)]
 		
 class Trigger_LearnDraconic(QuestTrigger):
 	def __init__(self, entity):
@@ -2106,17 +2108,17 @@ class Chenvaala(Minion):
 	requireTarget, keyWord, description = False, "", "After you cast three spells in a turn, summon a 5/5 Elemental"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Chenvaala(self)]
+		self.trigsBoard = [Trigger_Chenvaala(self)]
 		self.appearResponse = [self.resetCounter]
 		self.disappearResponse = [self.resetCounter]
 		self.silenceResponse = [self.resetCounter]
 		
 	def resetCounter(self):
-		for trig in self.triggersonBoard:
+		for trig in self.trigsBoard:
 			if type(trig) == Trigger_Chenvaala:
 				trig.counter = 0
 				
-class Trigger_Chenvaala(TriggeronBoard):
+class Trigger_Chenvaala(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed", "TurnEnds", "TurnStarts"])
 		self.counter = 0
@@ -2507,14 +2509,14 @@ class ManaGiant(Minion):
 	requireTarget, keyWord, description = False, "", "Costs (1) less for each card you've played this game that didn't start in your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersinHand = [Trigger_ManaGiant(self)]
+		self.trigsHand = [Trigger_ManaGiant(self)]
 		
 	def selfManaChange(self):
 		if self.inHand:
 			self.mana -= self.Game.Counters.createdCardsPlayedThisGame[self.ID]
 			self.mana = max(self.mana, 0)
 			
-class Trigger_ManaGiant(TriggerinHand):
+class Trigger_ManaGiant(TrigHand):
 	def __init__(self, entity):
 		#假设这个费用改变扳机在“当你使用一张法术之后”。不需要预检测
 		self.blank_init(entity, ["SpellBeenPlayed"])
@@ -2534,7 +2536,7 @@ class RighteousCause(Quest):
 	description = "Sidequest: Summon 5 minions. Reward: Give your minions +1/+1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_RighteousCause(self)]
+		self.trigsBoard = [Trigger_RighteousCause(self)]
 		
 class Trigger_RighteousCause(QuestTrigger):
 	def __init__(self, entity):
@@ -2585,7 +2587,7 @@ class Sanctuary(Quest):
 	description = "Sidequest: Take no damage for a turn. Reward: Summon a 3/6 minion with Taunt"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Sanctuary(self)]
+		self.trigsBoard = [Trigger_Sanctuary(self)]
 		
 class Trigger_Sanctuary(QuestTrigger):
 	def __init__(self, entity):
@@ -2970,7 +2972,7 @@ class FateWeaver(Minion):
 		if self.Game.Counters.invocationCounts[self.ID] > 1:
 			PRINT(self.Game, "Fate Weaver's battlecry reduces the Cost of cards in player's hand by (1)")
 			for card in self.Game.Hand_Deck.hands[self.ID]:
-				ManaModification(card, changeby=-1, changeto=-1).applies()
+				ManaMod(card, changeby=-1, changeto=-1).applies()
 			self.Game.Manas.calcMana_All()
 		return None
 		
@@ -3420,7 +3422,7 @@ class CandleBreath(Spell):
 	description = "Draw 3 cards. Costs (3) less while you're holding a Dragon"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersinHand = [Trigger_CandleBreath(self)]
+		self.trigsHand = [Trigger_CandleBreath(self)]
 		
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
@@ -3436,7 +3438,7 @@ class CandleBreath(Spell):
 			self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
-class Trigger_CandleBreath(TriggerinHand):
+class Trigger_CandleBreath(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["CardLeavesHand", "CardEntersHand"])
 		
@@ -3519,7 +3521,7 @@ class GalakrondtheNightmare(Galakrond_Hero):
 		PRINT(self.Game, "Galakrond, the Nightmare's battlecry lets player draw a card. It costs (0)")
 		card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 		if card:
-			ManaModification(card, changeby=0, changeto=1).applies()
+			ManaMod(card, changeby=0, changeto=1).applies()
 		return None
 		
 class GalakrondtheApocalypes_Rogue(Galakrond_Hero):
@@ -3536,7 +3538,7 @@ class GalakrondtheApocalypes_Rogue(Galakrond_Hero):
 		for i in range(2):
 			card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 			if card:
-				ManaModification(card, changeby=0, changeto=1).applies()
+				ManaMod(card, changeby=0, changeto=1).applies()
 		return None
 		
 class GalakrondAzerothsEnd_Rogue(Galakrond_Hero):
@@ -3552,7 +3554,7 @@ class GalakrondAzerothsEnd_Rogue(Galakrond_Hero):
 		for i in range(4):
 			card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 			if card:
-				ManaModification(card, changeby=0, changeto=1).applies()
+				ManaMod(card, changeby=0, changeto=1).applies()
 		PRINT(self.Game, "Galakrond, Azeroth's End's battlecry equips a 5/2 Claw for player")
 		self.Game.equipWeapon(DragonClaw(self.Game, self.ID))
 		return None
@@ -3591,7 +3593,7 @@ class SurgingTempest(Minion):
 class BuffAura_SurgingTempest(AuraDealer_toMinion):
 	def __init__(self, entity):
 		self.entity = entity
-		self.signals, self.auraAffected = ["OverloadStatusCheck"], []
+		self.signals, self.auraAffected = ["OverloadCheck"], []
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
@@ -3618,7 +3620,8 @@ class BuffAura_SurgingTempest(AuraDealer_toMinion):
 			self.entity.activated = True
 			self.applies(self.entity)
 			
-		self.entity.Game.triggersonBoard[self.entity.ID].append((self, "OverloadStatusCheck"))
+		try: self.entity.Game.trigsBoard[self.entity.ID]["OverloadCheck"].append(self)
+		except: self.entity.Game.trigsBoard[self.entity.ID]["OverloadCheck"] = [self]
 		
 	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
 		return type(self)(recipientMinion)
@@ -3691,9 +3694,9 @@ class Bandersmosh(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersinHand = [Trigger_Bandersmosh_PreShifting(self)]
+		self.trigsHand = [Trigger_Bandersmosh_PreShifting(self)]
 		
-class Trigger_Bandersmosh_PreShifting(TriggerinHand):
+class Trigger_Bandersmosh_PreShifting(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		self.makesCardEvanescent = True
@@ -3712,13 +3715,13 @@ class Trigger_Bandersmosh_PreShifting(TriggerinHand):
 			minion = minion(curGame, self.entity.ID)
 			PRINT(curGame, "At the start of turn, Bandersmosh transforms for the first time into a 5/5 copy of random Legendary minion")
 			minion.statReset(5, 5)
-			ManaModification(minion, changeby=0, changeto=5).applies()
+			ManaMod(minion, changeby=0, changeto=5).applies()
 			trigger = Trigger_Bandersmosh_KeepShifting(minion)
 			trigger.connect()
-			minion.triggersonBoard.append(trigger)
+			minion.trigsBoard.append(trigger)
 			curGame.Hand_Deck.replaceCardinHand(self.entity, minion)
 		
-class Trigger_Bandersmosh_KeepShifting(TriggeronBoard):
+class Trigger_Bandersmosh_KeepShifting(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		self.makesCardEvanescent = True
@@ -3737,10 +3740,10 @@ class Trigger_Bandersmosh_KeepShifting(TriggeronBoard):
 			minion = minion(curGame, self.entity.ID)
 			PRINT(curGame, "At the start of turn, Bandersmosh transforms for the first time into a 5/5 copy of random Legendary minion")
 			minion.statReset(5, 5)
-			ManaModification(minion, changeby=0, changeto=5).applies()
+			ManaMod(minion, changeby=0, changeto=5).applies()
 			trigger = Trigger_Bandersmosh_KeepShifting(minion) #新的扳机保留这个变色龙的原有reference.在对方无手牌时会变回起始的变色龙。
 			trigger.connect()
-			minion.triggersonBoard.append(trigger)
+			minion.trigsBoard.append(trigger)
 			curGame.Hand_Deck.replaceCardinHand(self.entity, minion)
 			
 			
@@ -3824,9 +3827,9 @@ class StormEgg(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, transform into a 4/4 Storm Drake with Rush"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_StormEgg(self)]
+		self.trigsBoard = [Trigger_StormEgg(self)]
 		
-class Trigger_StormEgg(TriggeronBoard):
+class Trigger_StormEgg(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -4209,11 +4212,11 @@ class ZzerakutheWarped(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever your hero takes damage, summon a 6/6 Nether Drake"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_ZzerakutheWarped(self)]
+		self.trigsBoard = [Trigger_ZzerakutheWarped(self)]
 		
-class Trigger_ZzerakutheWarped(TriggeronBoard):
+class Trigger_ZzerakutheWarped(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroTakesDamage"])
+		self.blank_init(entity, ["HeroTakesDmg"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity.Game.heroes[self.entity.ID]
@@ -4282,9 +4285,9 @@ class Ancharrr(Weapon):
 	index = "Dragons~Warrior~Weapon~3~2~2~Ancharrr~Legendary"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Ancharrr(self)]
+		self.trigsBoard = [Trigger_Ancharrr(self)]
 		
-class Trigger_Ancharrr(TriggeronBoard):
+class Trigger_Ancharrr(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["BattleFinished"])
 		
@@ -4389,9 +4392,9 @@ class Skybarge(Minion):
 	requireTarget, keyWord, description = False, "", "After you summon a Pirate, deal 2 damage to a random enemy"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Skybarge(self)]
+		self.trigsBoard = [Trigger_Skybarge(self)]
 		
-class Trigger_Skybarge(TriggeronBoard):
+class Trigger_Skybarge(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenSummoned"])
 		

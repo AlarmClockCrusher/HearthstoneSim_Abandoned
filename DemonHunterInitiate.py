@@ -1,17 +1,17 @@
 from CardTypes import *
 from Triggers_Auras import *
-from VariousHandlers import *
+
 from Basic import IllidariInitiate
 
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 
-def extractfrom(target, listObject):
-	try: return listObject.pop(listObject.index(target))
+def extractfrom(target, listObj):
+	try: return listObj.pop(listObj.index(target))
 	except: return None
 	
-def fixedList(listObject):
-	return listObject[0:len(listObject)]
+def fixedList(listObj):
+	return listObj[0:len(listObj)]
 	
 def PRINT(game, string, *args):
 	if game.GUI:
@@ -33,27 +33,28 @@ class Blur(Spell):
 		trigger.connect()
 		return None
 		
-class Trigger_Blur(TriggeronBoard):
+class Trigger_Blur(TrigBoard):
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
-		self.signals = ["HeroAbouttoTakeDamage"]
+		self.signals = ["FinalDmgonHero?"]
 		self.temp = False
 		#number here is a list that holds the damage to be processed
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target.ID == self.ID and target.onBoard
 		
 	def connect(self):
-		for signal in self.signals:
-			self.Game.triggersonBoard[self.ID].append((self, signal))
+		try: self.Game.trigsBoard[self.ID]["FinalDmgonHero?"].append(self)
+		except: self.Game.trigsBoard[self.ID]["FinalDmgonHero?"] = [self]
 		self.Game.turnEndTrigger.append(self)
 		
 	def disconnect(self):
-		for signal in self.signals:
-			extractfrom((self, signal), self.Game.triggersonBoard[self.ID])
-		extractfrom(self, self.Game.turnEndTrigger)
+		try: self.Game.trigsBoard[self.ID]["FinalDmgonMinion?"].remove(self)
+		except: pass
+		try: self.Game.turnEndTrigger.remove(self)
+		except: pass
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "Blur prevents the player from taking damage")
+		PRINT(self.Game, "Blur prevents the player from taking damage")
 		number[0] = 0
 		
 	def turnEndTrigger(self):
@@ -93,9 +94,9 @@ class Battlefiend(Minion):
 	requireTarget, keyWord, description = False, "", "After your hero attacks, gain +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Battlefiend(self)]
+		self.trigsBoard = [Trigger_Battlefiend(self)]
 		
-class Trigger_Battlefiend(TriggeronBoard):
+class Trigger_Battlefiend(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -243,9 +244,9 @@ class AltruistheOutcast(Minion):
 	requireTarget, keyWord, description = False, "", "After you play the left- or right-most card in your hand, deal 1 damage to all enemies"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_AltruistheOutcast(self)]
+		self.trigsBoard = [Trigger_AltruistheOutcast(self)]
 		
-class Trigger_AltruistheOutcast(TriggeronBoard):
+class Trigger_AltruistheOutcast(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed", "SpellBeenPlayed", "WeaponBeenPlayed", "HeroCardBeenPlayed"])
 		
@@ -267,7 +268,7 @@ class EyeBeam(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.keyWords["Lifesteal"] = 1
-		self.triggersinHand = [Trigger_EyeBeam(self)]
+		self.trigsHand = [Trigger_EyeBeam(self)]
 		
 	def available(self):
 		return self.selectableMinionExists()
@@ -291,7 +292,7 @@ class EyeBeam(Spell):
 			self.dealsDamage(target, damage)
 		return target
 		
-class Trigger_EyeBeam(TriggerinHand):
+class Trigger_EyeBeam(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["CardLeavesHand", "CardEntersHand"])
 		
@@ -312,9 +313,9 @@ class WrathscaleNaga(Minion):
 	requireTarget, keyWord, description = False, "", "After a friendly minion dies, deal 3 damage to a random enemy"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_WrathscaleNaga(self)]
+		self.trigsBoard = [Trigger_WrathscaleNaga(self)]
 		
-class Trigger_WrathscaleNaga(TriggeronBoard):
+class Trigger_WrathscaleNaga(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDied"])
 		
@@ -422,9 +423,9 @@ class WrathspikeBrute(Minion):
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. After this is attacked, deal 1 damage to all enemies"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_WrathspikeBrute(self)]
+		self.trigsBoard = [Trigger_WrathspikeBrute(self)]
 		
-class Trigger_WrathspikeBrute(TriggeronBoard):
+class Trigger_WrathspikeBrute(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackedMinion", "HeroAttackedMinion"])
 		
@@ -453,9 +454,9 @@ class HulkingOverfiend(Minion):
 	requireTarget, keyWord, description = False, "Rush", "Rush. After this attacks and kills a minion, it may attack again"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_HulkingOverfiend(self)]
+		self.trigsBoard = [Trigger_HulkingOverfiend(self)]
 		
-class Trigger_HulkingOverfiend(TriggeronBoard):
+class Trigger_HulkingOverfiend(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackedMinion"])
 		
@@ -483,7 +484,7 @@ class Nethrandamus(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersinHand = [Trigger_Nethrandamus(self)] #只有在手牌中才会升级
+		self.trigsHand = [Trigger_Nethrandamus(self)] #只有在手牌中才会升级
 		self.progress = 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -504,7 +505,7 @@ class Nethrandamus(Minion):
 			curGame.summon([minion(curGame, self.ID) for minion in minions], pos, self.ID)
 		return None
 		
-class Trigger_Nethrandamus(TriggerinHand):
+class Trigger_Nethrandamus(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDies"])
 		

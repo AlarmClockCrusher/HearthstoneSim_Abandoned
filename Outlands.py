@@ -1,5 +1,4 @@
 from CardTypes import *
-from VariousHandlers import *
 from Triggers_Auras import *
 from Basic import FieryWarAxe, ExcessMana
 
@@ -7,12 +6,12 @@ from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 
-def extractfrom(target, listObject):
-	try: return listObject.pop(listObject.index(target))
+def extractfrom(target, listObj):
+	try: return listObj.pop(listObj.index(target))
 	except: return None
 	
-def fixedList(listObject):
-	return listObject[0:len(listObject)]
+def fixedList(listObj):
+	return listObj[0:len(listObj)]
 	
 def classforDiscover(initiator):
 	Class = initiator.Game.heroes[initiator.ID].Class
@@ -50,7 +49,7 @@ class Minion_Dormantfor2turns(Minion):
 			for value in self.auras.values():
 				value.auraAppears()
 			#随从入场时将注册其场上扳机和亡语扳机
-			for trigger in self.triggersonBoard + self.deathrattles:
+			for trigger in self.trigsBoard + self.deathrattles:
 				trigger.connect() #把(obj, signal)放入Game.triggersonBoard中
 			#Mainly mana aura minions, e.g. Sorcerer's Apprentice.
 			for func in self.appearResponse:
@@ -68,7 +67,7 @@ class ImprisonedDormantForm(Permanent):
 	description = "Awakens after 2 turns"
 	def __init__(self, Game, ID, originalMinion=None):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_ImprisonedDormantForm(self)]
+		self.trigsBoard = [Trigger_ImprisonedDormantForm(self)]
 		self.originalMinion = originalMinion
 		if originalMinion: #When creating a copy, this is left blank temporarily
 			self.Class = self.originalMinion.Class
@@ -79,7 +78,7 @@ class ImprisonedDormantForm(Permanent):
 		Copy.originalMinion = self.originalMinion.createCopy(Copy.Game)
 		Copy.name, Copy.Class, Copy.description = self.name, self.Class, self.description
 		
-class Trigger_ImprisonedDormantForm(TriggeronBoard):
+class Trigger_ImprisonedDormantForm(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		self.counter = 2
@@ -136,7 +135,7 @@ class Minion_DormantuntilTrig(Minion):
 			for value in self.auras.values():
 				value.auraAppears()
 			#随从入场时将注册其场上扳机和亡语扳机
-			for trigger in self.triggersonBoard + self.deathrattles:
+			for trigger in self.trigsBoard + self.deathrattles:
 				trigger.connect() #把(obj, signal)放入Game.triggersonBoard中
 			#Mainly mana aura minions, e.g. Sorcerer's Apprentice.
 			for func in self.appearResponse:
@@ -194,9 +193,9 @@ class InfectiousSporeling(Minion):
 	requireTarget, keyWord, description = False, "", "After this damages a minion, turn it into an Infectious Sporeling"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_InfectiousSporeling(self)]
+		self.trigsBoard = [Trigger_InfectiousSporeling(self)]
 		
-class Trigger_InfectiousSporeling(TriggeronBoard):
+class Trigger_InfectiousSporeling(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionTookDamage"])
 		
@@ -234,11 +233,11 @@ class SoulboundAshtongue(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever this minion takes damage, also deal that amount to your hero"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_SoulboundAshtongue(self)]
+		self.trigsBoard = [Trigger_SoulboundAshtongue(self)]
 		
-class Trigger_SoulboundAshtongue(TriggeronBoard):
+class Trigger_SoulboundAshtongue(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionTakesDamage"])
+		self.blank_init(entity, ["MinionTakesDmg"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity
@@ -256,11 +255,11 @@ class BonechewerBrawler(Minion):
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Whenever this minion takes damage, gain +2 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_BonechewerBrawler(self)]
+		self.trigsBoard = [Trigger_BonechewerBrawler(self)]
 		
-class Trigger_BonechewerBrawler(TriggeronBoard):
+class Trigger_BonechewerBrawler(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionTakesDamage"])
+		self.blank_init(entity, ["MinionTakesDmg"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity and self.entity.onBoard
@@ -284,11 +283,11 @@ class MoargArtificer(Minion):
 	requireTarget, keyWord, description = False, "", "All minions take double damage from spells"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_MoargArtificer(self)]
+		self.trigsBoard = [Trigger_MoargArtificer(self)]
 		
-class Trigger_MoargArtificer(TriggeronBoard):
+class Trigger_MoargArtificer(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionAbouttoTakeDamage"])
+		self.blank_init(entity, ["FinalDmgonMinion?"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and target.type == "Minion" and subject.type == "Spell" and number[0] > 0
@@ -326,9 +325,9 @@ class BlisteringRot(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, summon a Rot with stats equal to this minion's"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_BlisteringRot(self)]
+		self.trigsBoard = [Trigger_BlisteringRot(self)]
 		
-class Trigger_BlisteringRot(TriggeronBoard):
+class Trigger_BlisteringRot(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -525,10 +524,10 @@ class Magtheridon_Dormant(Permanent):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.progress = 0
-		self.triggersonBoard = [Trigger_Magtheridon_Dormant(self)]
+		self.trigsBoard = [Trigger_Magtheridon_Dormant(self)]
 		self.originalMinion = Magtheridon
 		
-class Trigger_Magtheridon_Dormant(TriggeronBoard):
+class Trigger_Magtheridon_Dormant(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDies"]) #假设是死亡时扳机，而还是死亡后扳机
 		
@@ -581,9 +580,9 @@ class Replicatotron(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, transform a neighbor into a copy of this"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Replicatotron(self)]
+		self.trigsBoard = [Trigger_Replicatotron(self)]
 		
-class Trigger_Replicatotron(TriggeronBoard):
+class Trigger_Replicatotron(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -660,9 +659,9 @@ class AshesofAlar(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, transform this into Al'ar"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_AshesofAlar(self)]
+		self.trigsBoard = [Trigger_AshesofAlar(self)]
 		
-class Trigger_AshesofAlar(TriggeronBoard):
+class Trigger_AshesofAlar(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -744,7 +743,7 @@ class KaelthasSunstrider(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=0, changeto=0)
-		self.triggersonBoard = [Trigger_KaelthasSunstrider(self)]
+		self.trigsBoard = [Trigger_KaelthasSunstrider(self)]
 		#随从的光环启动在顺序上早于appearResponse,关闭同样早于disappearResponse
 		self.appearResponse = [self.checkAuraCorrectness]
 		self.disappearResponse = [self.deactivateAura]
@@ -757,7 +756,7 @@ class KaelthasSunstrider(Minion):
 		if self.Game.turn != self.ID or self.Game.Counters.numSpellsPlayedThisTurn[self.ID] % 3 != 2:
 			PRINT(self.Game, "Kael'thas Sunstrider's mana aura is incorrectly activated. It will be shut down")
 			self.auras["Mana Aura"].auraDisappears()
-			for trig in self.triggersonBoard:
+			for trig in self.trigsBoard:
 				if type(trig) == Trigger_KaelthasSunstrider:
 					trig.counter = self.Game.Counters.numSpellsPlayedThisTurn[self.ID]
 					
@@ -766,15 +765,15 @@ class KaelthasSunstrider(Minion):
 		self.auras["Mana Aura"].auraDisappears()
 		
 #不知道之前法术被反制之后是否会计为打出的牌.假设不会计入计数器中
-class Trigger_KaelthasSunstrider(TriggeronBoard):
+class Trigger_KaelthasSunstrider(TrigBoard):
 	def __init__(self, entity): #以我方打出一张法术之后来启动给每回合第三张法术的光环
-		self.blank_init(entity, ["SpellBeenPlayed", "TurnEnds", "ManaCostPaid"])
+		self.blank_init(entity, ["SpellBeenPlayed", "TurnEnds", "ManaPaid"])
 		self.counter = 0
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if signal == "TurnEnds" and self.entity.onBoard:
 			return True
-		if (signal == "ManaCostPaid" or signal == "SpellBeenPlayed") and self.entity.onBoard and subject.type == "Spell" and subject.ID == self.entity.ID:
+		if (signal == "ManaPaid" or signal == "SpellBeenPlayed") and self.entity.onBoard and subject.type == "Spell" and subject.ID == self.entity.ID:
 			return True
 		return False
 		
@@ -787,7 +786,7 @@ class Trigger_KaelthasSunstrider(TriggeronBoard):
 			self.counter += 1
 			if self.entity.Game.Counters.numSpellsPlayedThisTurn[self.entity.ID] % 3 == 2:
 				self.entity.auras["Mana Aura"].auraAppears()
-		else: #signal == "ManaCostPaid"
+		else: #signal == "ManaPaid"
 			self.entity.auras["Mana Aura"].auraDisappears()
 			
 	#一些扳机的counter可以随复制保留，但是Chenvaala在游戏内复制时，的counter不能保留
@@ -832,11 +831,11 @@ class BonechewerVanguard(Minion):
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Whenever this minion takes damage, gain +2 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_BonechewerVanguard(self)]
+		self.trigsBoard = [Trigger_BonechewerVanguard(self)]
 		
-class Trigger_BonechewerVanguard(TriggeronBoard):
+class Trigger_BonechewerVanguard(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionTakesDamage"])
+		self.blank_init(entity, ["MinionTakesDmg"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity and self.entity.onBoard
@@ -1064,16 +1063,15 @@ class DemonicBlast(HeroPower):
 	description = "Deal 4 damage"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_DemonicBlast(self)]
+		self.trigsBoard = [Trigger_DemonicBlast(self)]
 		self.progress = 0
 		self.heroPowerReplaced = None
 		
 	def effect(self, target, choice=0):
 		damage = (4 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		PRINT(self.Game, "Hero Power Demonic Blast deals %d damage to %s"%(damage, target.name))
-		objtoTakeDamage, damageActual = self.dealsDamage(target, damage)
-		if objtoTakeDamage.health < 1 or objtoTakeDamage.dead:
-			return 1
+		dmgTaker, damageActual = self.dealsDamage(target, damage)
+		if dmgTaker.health < 1 or dmgTaker.dead: return 1
 		return 0
 		
 	def replaceHeroPower(self):
@@ -1084,7 +1082,7 @@ class DemonicBlast(HeroPower):
 		self.Game.powers[self.ID] = self
 		self.appears()
 		
-class Trigger_DemonicBlast(TriggeronBoard):
+class Trigger_DemonicBlast(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroUsedAbility"])
 		
@@ -1143,7 +1141,7 @@ class SkullofGuldan(Spell):
 			card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 			if outcastCanTrigger and card:
 				PRINT(self.Game, "Skull of Gul'dan's Outcast triggers and reduces the Cost of the drawn card by (3)")
-				ManaModification(card, changeby=-3, changeto=-1).applies()
+				ManaMod(card, changeby=-3, changeto=-1).applies()
 		return None
 		
 		
@@ -1153,9 +1151,9 @@ class WarglaivesofAzzinoth(Weapon):
 	index = "Outlands~Demon Hunter~Weapon~6~3~4~Warglaives of Azzinoth"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_WarglaivesofAzzinoth(self)]
+		self.trigsBoard = [Trigger_WarglaivesofAzzinoth(self)]
 		
-class Trigger_WarglaivesofAzzinoth(TriggeronBoard):
+class Trigger_WarglaivesofAzzinoth(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion"])
 		
@@ -1174,9 +1172,9 @@ class PriestessofFury(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, deal 6 damage randomly split among all enemies"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_PriestessofFury(self)]
+		self.trigsBoard = [Trigger_PriestessofFury(self)]
 		
-class Trigger_PriestessofFury(TriggeronBoard):
+class Trigger_PriestessofFury(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -1231,9 +1229,9 @@ class PitCommander(Minion):
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. At the end of your turn, summon a Demon from your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_PitCommander(self)]
+		self.trigsBoard = [Trigger_PitCommander(self)]
 		
-class Trigger_PitCommander(TriggeronBoard):
+class Trigger_PitCommander(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -1286,7 +1284,7 @@ class Ironbark(Spell):
 	description = "Give a minion +1/+3 and Taunt. Costs (0) if you have at least 7 Mana Crystals"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersinHand = [Trigger_Ironbark(self)]
+		self.trigsHand = [Trigger_Ironbark(self)]
 		
 	def available(self):
 		return self.selectableMinionExists()
@@ -1306,9 +1304,9 @@ class Ironbark(Spell):
 			target.getsKeyword("Taunt")
 		return target
 		
-class Trigger_Ironbark(TriggerinHand):
+class Trigger_Ironbark(TrigHand):
 	def __init__(self, entity):
-		self.blank_init(entity, ["EmptyManaCrystalCheck"])
+		self.blank_init(entity, ["ManaXtlsCheck"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and ID == self.entity.ID
@@ -1391,7 +1389,7 @@ class Bogbeam(Spell):
 	description = "Deal 3 damage to a minion. Costs (0) if you have at least 7 Mana Crystals"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersinHand = [Trigger_Bogbeam(self)]
+		self.trigsHand = [Trigger_Bogbeam(self)]
 		
 	def available(self):
 		return self.selectableMinionExists()
@@ -1414,9 +1412,9 @@ class Bogbeam(Spell):
 			self.dealsDamage(target, damage)
 		return target
 		
-class Trigger_Bogbeam(TriggerinHand):
+class Trigger_Bogbeam(TrigHand):
 	def __init__(self, entity):
-		self.blank_init(entity, ["EmptyManaCrystalCheck"])
+		self.blank_init(entity, ["ManaXtlsCheck"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and ID == self.entity.ID
@@ -1449,7 +1447,7 @@ class ImprisonedSatyr(Minion_Dormantfor2turns):
 					curGame.fixedGuides.append(-1)
 					return
 			PRINT(curGame, "Imprisoned Satyr awakens and reduces the Cost of a random minion in player's hand by (5)")
-			ManaModification(minion, changeby=-5, changeto=-1).applies()
+			ManaMod(minion, changeby=-5, changeto=-1).applies()
 			
 			
 class Germination(Spell):
@@ -1530,9 +1528,9 @@ class MarshHydra(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_MarshHydra(self)]
+		self.trigsBoard = [Trigger_MarshHydra(self)]
 		
-class Trigger_MarshHydra(TriggeronBoard):
+class Trigger_MarshHydra(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackedMinion", "MinionAttackedHero"])
 		
@@ -1627,7 +1625,7 @@ class PackTactics(Secret):
 	description = "When a friendly minion is attacked, summon a 3/3 copy"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_PackTactics(self)]
+		self.trigsBoard = [Trigger_PackTactics(self)]
 		
 class Trigger_PackTactics(SecretTrigger):
 	def __init__(self, entity):
@@ -1880,11 +1878,11 @@ class Evocation(Spell):
 					mageSpell = npchoice(curGame.RNGPools["Mage Spells"])
 					curGame.fixedGuides.append(mageSpell)
 				trigger = Trigger_Evocation(mageSpell)
-				mageSpell.triggersinHand.append(trigger)
+				mageSpell.trigsHand.append(trigger)
 				curGame.Hand_Deck.addCardtoHand(mageSpell, self.ID)
 		return None
 		
-class Trigger_Evocation(TriggerinHand):
+class Trigger_Evocation(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		self.temp = True
@@ -1896,7 +1894,7 @@ class Trigger_Evocation(TriggerinHand):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "At the end of turn, spell %s created by Evocation is discarded"%self.entity.name)
-		#The discard() func takes care of disconnecting the TriggerinHand
+		#The discard() func takes care of disconnecting the TrigHand
 		self.entity.Game.Hand_Deck.discardCard(self.entity.ID, self.entity)
 		
 		
@@ -1975,7 +1973,7 @@ class ApexisSmuggler(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_ApexisSmuggler(self)]
+		self.trigsBoard = [Trigger_ApexisSmuggler(self)]
 		
 	def discoverDecided(self, option, info):
 		PRINT(self.Game, "Spell %s is put into player's hand"%option.name)
@@ -1983,7 +1981,7 @@ class ApexisSmuggler(Minion):
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
-class Trigger_ApexisSmuggler(TriggeronBoard):
+class Trigger_ApexisSmuggler(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
@@ -2058,7 +2056,7 @@ class IncantersFlow(Spell):
 		PRINT(self.Game, "Incanter's Flow is cast and reduces the Cost of spells in your deck by (1)")
 		for card in fixedList(self.Game.Hand_Deck.decks[self.ID]):
 			if card.type == "Spell":
-				ManaModification(card, changeby=-1, changeto=-1).applies()
+				ManaMod(card, changeby=-1, changeto=-1).applies()
 		return None
 		
 		
@@ -2106,7 +2104,7 @@ class NetherwindPortal(Secret):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_NetherwindPortal(self)]
+		self.trigsBoard = [Trigger_NetherwindPortal(self)]
 		
 class Trigger_NetherwindPortal(SecretTrigger):
 	def __init__(self, entity):
@@ -2188,11 +2186,11 @@ class WaterElemental_Outlands(Minion):
 	requireTarget, keyWord, description = False, "", "Freeze any character damaged by this minion"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_WaterElemental(self)]
+		self.trigsBoard = [Trigger_WaterElemental(self)]
 		
-class Trigger_WaterElemental(TriggeronBoard):
+class Trigger_WaterElemental(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionTakesDamage", "HeroTakesDamage"])
+		self.blank_init(entity, ["MinionTakesDmg", "HeroTakesDmg"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity
@@ -2244,18 +2242,18 @@ class LibramManaAura:
 	def applies(self, target): #This target is NOT holder.
 		if self.applicable(target):
 			PRINT(self.Game, "Card %s gains the Changeby %d/Changeto %d mana change"%(target.name, self.changeby, self.changeto))
-			manaMod = ManaModification(target, self.changeby, self.changeto, self)
+			manaMod = ManaMod(target, self.changeby, self.changeto, self)
 			manaMod.applies()
 			self.auraAffected.append((target, manaMod))
 			
 	def auraAppears(self):
 		PRINT(self.Game, "Aura", self, "starts")
-		for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
-			self.applies(card)
-			
+		for card in self.Game.Hand_Deck.hands[1]: self.applies(card)
+		for card in self.Game.Hand_Deck.hands[2]: self.applies(card)
 		#Only need to handle minions that appear. Them leaving/silenced will be handled by the BuffAura_Receiver object.
 		#We want this Trigger_MinionAppears can handle everything including registration and buff and removing.
-		self.Game.triggersonBoard[self.ID].append((self, "CardEntersHand"))
+		try: self.Game.trigsBoard[self.ID]["CardEntersHand"].append(self)
+		except: self.Game.trigsBoard[self.ID]["CardEntersHand"] = [self]
 		self.Game.Manas.calcMana_All()
 		
 	#Aura is permanent and doesn't have auraDisappears()
@@ -2265,14 +2263,14 @@ class LibramManaAura:
 		if self not in recipientGame.copiedObjs:
 			Copy = type(self)(recipientGame, self.ID, self.changeby, self.changeto)
 			recipientGame.copiedObjs[self] = Copy
-			#ManaModification.selfCopy(self, recipientCard):
-			#	return ManaModification(recipientCard, self.changeby, self.changeto, self.source, self.lowerbound)
+			#ManaMod.selfCopy(self, recipientCard):
+			#	return ManaMod(recipientCard, self.changeby, self.changeto, self.source, self.lowerbound)
 			for card, manaMod in self.auraAffected: #从自己的auraAffected里面复制内容出去
 				cardCopy = card.createCopy(recipientGame)
 				#重点是复制一个随从是，它自己会携带一个费用改变，这个费用改变怎么追踪到
 					#用序号看行不行
-				manaModIndex = card.manaModifications.index(manaMod)
-				manaModCopy = cardCopy.manaModifications[manaModIndex]
+				manaModIndex = card.manaMods.index(manaMod)
+				manaModCopy = cardCopy.manaMods[manaModIndex]
 				manaModCopy.source = Copy #在处理函数之前，所有的费用状态都已经被一次性复制完毕，它们的来源被迫留为None,需要在这里补上
 				Copy.auraAffected.append((cardCopy, manaModCopy))
 			return Copy
@@ -2392,9 +2390,9 @@ class UnderlightAnglingRod(Weapon):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_UnderlightAnglingRod(self)]
+		self.trigsBoard = [Trigger_UnderlightAnglingRod(self)]
 		
-class Trigger_UnderlightAnglingRod(TriggeronBoard):
+class Trigger_UnderlightAnglingRod(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -2598,9 +2596,9 @@ class SethekkVeilweaver(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_SethekkVeilweaver(self)]
+		self.trigsBoard = [Trigger_SethekkVeilweaver(self)]
 		
-class Trigger_SethekkVeilweaver(TriggeronBoard):
+class Trigger_SethekkVeilweaver(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
@@ -2645,9 +2643,9 @@ class DragonmawOverseer(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, give another friendly minion +2/+2"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_DragonmawOverseer(self)]
+		self.trigsBoard = [Trigger_DragonmawOverseer(self)]
 		
-class Trigger_DragonmawOverseer(TriggeronBoard):
+class Trigger_DragonmawOverseer(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -2706,9 +2704,9 @@ class SkeletalDragon(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_SkeletalDragon(self)]
+		self.trigsBoard = [Trigger_SkeletalDragon(self)]
 		
-class Trigger_SkeletalDragon(TriggeronBoard):
+class Trigger_SkeletalDragon(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -2774,8 +2772,8 @@ class BlackjackStunner(Minion):
 		if target and target.onBoard:
 			PRINT(self.Game, "Blackjack Stunner's battlecry returns %s to owner's hand."%target.name)
 			#假设那张随从在进入手牌前接受-2费效果。可以被娜迦海巫覆盖。
-			manaMod = ManaModification(target, changeby=+1, changeto=-1)
-			self.Game.returnMiniontoHand(target, keepDeathrattlesRegistered=False, manaModification=manaMod)
+			manaMod = ManaMod(target, changeby=+1, changeto=-1)
+			self.Game.returnMiniontoHand(target, keepDeathrattlesRegistered=False, manaMod=manaMod)
 		return target
 		
 		
@@ -2793,7 +2791,7 @@ class Ambush(Secret):
 	description = "After your opponent plays a minion, summon a 2/3 Ambusher with Poisonous"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Ambush(self)]
+		self.trigsBoard = [Trigger_Ambush(self)]
 		
 class Trigger_Ambush(SecretTrigger):
 	def __init__(self, entity):
@@ -2848,7 +2846,7 @@ class Bamboozle(Secret):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Bamboozle(self)]
+		self.trigsBoard = [Trigger_Bamboozle(self)]
 		
 class Trigger_Bamboozle(SecretTrigger):
 	def __init__(self, entity):
@@ -2884,7 +2882,7 @@ class DirtyTricks(Secret):
 	description = "After your opponent casts a spell, draw 2 cards"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_DirtyTricks(self)]
+		self.trigsBoard = [Trigger_DirtyTricks(self)]
 		
 class Trigger_DirtyTricks(SecretTrigger):
 	def __init__(self, entity):
@@ -2923,7 +2921,7 @@ class ShadowjewelerHanar(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_ShadowjewelerHanar(self)]
+		self.trigsBoard = [Trigger_ShadowjewelerHanar(self)]
 		
 	def discoverDecided(self, option, info):
 		PRINT(self.Game, "Secret %s is put into player's hand"%option.name)
@@ -2931,7 +2929,7 @@ class ShadowjewelerHanar(Minion):
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
 		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
 		
-class Trigger_ShadowjewelerHanar(TriggeronBoard):
+class Trigger_ShadowjewelerHanar(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
@@ -3117,7 +3115,7 @@ class VashjPrime(Minion):
 						break
 				PRINT(curGame, "Vashj Prime lets player draw a spell from deck and reduces its cost by (3)")
 				spell = curGame.Hand_Deck.drawCard(self.ID, i)[0]
-				if spell: ManaModification(spell, changeby=-3, changeto=-1).applies()
+				if spell: ManaMod(spell, changeby=-3, changeto=-1).applies()
 		return None
 		
 		
@@ -3285,9 +3283,9 @@ class BoggspineKnuckles(Weapon):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_BoggspineKnuckles(self)]
+		self.trigsBoard = [Trigger_BoggspineKnuckles(self)]
 		
-class Trigger_BoggspineKnuckles(TriggeronBoard):
+class Trigger_BoggspineKnuckles(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -3501,9 +3499,9 @@ class Darkglare(Minion):
 	requireTarget, keyWord, description = False, "", "After your hero takes damage, refresh 2 Mana Crystals"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_Darkglare(self)]
+		self.trigsBoard = [Trigger_Darkglare(self)]
 		
-class Trigger_Darkglare(TriggeronBoard):
+class Trigger_Darkglare(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroTookDamage"])
 		
@@ -3569,7 +3567,7 @@ class TheDarkPortal(Spell):
 			minion = curGame.Hand_Deck.drawCard(self.ID, i)[0]
 			if minion and len(curGame.Hand_Deck.hands[self.ID]) > 7:
 				PRINT(curGame, "Player has at least 8 cards in hand and The Dark Portal reduces the Cost of the drawn minion by (5)")
-				ManaModification(minion, changeby=-5, changeto=-1).applies()
+				ManaMod(minion, changeby=-5, changeto=-1).applies()
 		return None
 		
 		
@@ -3598,7 +3596,7 @@ class KelidantheBreaker(Minion):
 		self.blank_init(Game, ID)
 		self.justDrawn = False
 		self.triggers["Drawn"] = [self.setJustDrawntoTrue]
-		self.triggersinHand = [Trigger_KelidantheBreaker(self)]
+		self.trigsHand = [Trigger_KelidantheBreaker(self)]
 		
 	def setJustDrawntoTrue(self):
 		self.justDrawn = True
@@ -3626,7 +3624,7 @@ class KelidantheBreaker(Minion):
 			self.Game.destroyMinion(target)
 		return target
 		
-class Trigger_KelidantheBreaker(TriggerinHand):
+class Trigger_KelidantheBreaker(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -3778,11 +3776,11 @@ class BulwarkofAzzinoth(Weapon):
 	index = "Outlands~Warrior~Weapon~3~1~4~Bulwark of Azzinoth~Legendary"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_BulwarkofAzzinoth(self)]
+		self.trigsBoard = [Trigger_BulwarkofAzzinoth(self)]
 		
-class Trigger_BulwarkofAzzinoth(TriggeronBoard):
+class Trigger_BulwarkofAzzinoth(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroAbouttoTakeDamage"])
+		self.blank_init(entity, ["FinalDmgonHero?"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		#Can only prevent damage if there is still durability left
@@ -3842,9 +3840,9 @@ class KargathPrime(Minion):
 	requireTarget, keyWord, description = False, "Rush", "Rush. Whenever this attacks and kills a minion, gain 10 Armor"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_KargathPrime(self)]
+		self.trigsBoard = [Trigger_KargathPrime(self)]
 		
-class Trigger_KargathPrime(TriggeronBoard):
+class Trigger_KargathPrime(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackedMinion"])
 		
@@ -3878,7 +3876,7 @@ class BloodboilBrute(Minion):
 	requireTarget, keyWord, description = False, "Rush", "Rush. Costs (1) less for each damaged minion"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersinHand = [Trigger_BloodboilBrute(self)]
+		self.trigsHand = [Trigger_BloodboilBrute(self)]
 		
 	def selfManaChange(self):
 		if self.inHand:
@@ -3889,9 +3887,9 @@ class BloodboilBrute(Minion):
 			self.mana -= numDamagedMinion
 			self.mana = max(0, self.mana)
 			
-class Trigger_BloodboilBrute(TriggerinHand):
+class Trigger_BloodboilBrute(TrigHand):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionAppears", "MinionDisappears", "MinionTakesDamage"])
+		self.blank_init(entity, ["MinionAppears", "MinionDisappears", "MinionTakesDmg"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand

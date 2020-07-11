@@ -30,11 +30,11 @@ import PIL.Image, PIL.ImageTk
 import os, inspect, time
 import pickle
 
-def fixedList(listObject):
-	return listObject[0:len(listObject)]
+def fixedList(listObj):
+	return listObj[0:len(listObj)]
 	
-def extractfrom(target, listObject):
-	try: return listObject.pop(listObject.index(target))
+def extractfrom(target, listObj):
+	try: return listObj.pop(listObj.index(target))
 	except: return None
 	
 def findPicFilepath(card):
@@ -296,9 +296,9 @@ class MinionButton(tk.Button):
 	def plot(self, x=11, y=11, anchor='c'):
 		self.labels = []
 		self.place(x=x, y=y, anchor=anchor)
-		if self.card.triggersonBoard != [] or (hasattr(self.card, "deathrattles") and self.card.deathrattles != []):
+		if self.card.trigsBoard != [] or (hasattr(self.card, "deathrattles") and self.card.deathrattles != []):
 			string = ""
-			for trig in self.card.triggersonBoard:
+			for trig in self.card.trigsBoard:
 				if hasattr(trig, "counter"): string += "%d "%trig.counter
 			lbl_trigger = CardLabel(text=' %s'%string, bg="yellow", fg="black", font=("Yahei", 10, ))
 			lbl_trigger.plot(x=x+offset, y=y+0.54*CARD_Y, anchor='c')
@@ -367,9 +367,9 @@ class InactionableButton(tk.Button): #休眠物和武器无论左右键都是取
 		self.labels = []
 		self.place(x=x, y=y, anchor=anchor)
 		if self.card.type == "Weapon":
-			if self.card.triggersonBoard != [] or (hasattr(self.card, "deathrattles") and self.card.deathrattles != []):
+			if self.card.trigsBoard != [] or (hasattr(self.card, "deathrattles") and self.card.deathrattles != []):
 				string = ""
-				for trig in self.card.triggersonBoard:
+				for trig in self.card.trigsBoard:
 					if hasattr(trig, "counter"): string += "%d "%trig.counter
 				lbl_trigger = CardLabel(text=' %s'%string, bg="yellow", fg="white", font=("Yahei", 6, ))
 				lbl_trigger.plot(x=x+offset, y=y+0.39*CARD_Y, anchor='c')

@@ -1,14 +1,14 @@
 import numpy as np
 import inspect
 import copy
-from VariousHandlers import ManaModification
+from Triggers_Auras import ManaMod
 
-def extractfrom(target, listObject):
-	try: return listObject.pop(listObject.index(target))
+def extractfrom(target, listObj):
+	try: return listObj.pop(listObj.index(target))
 	except: return None
 	
-def fixedList(listObject):
-	return listObject[0:len(listObject)]
+def fixedList(listObj):
+	return listObj[0:len(listObj)]
 	
 def PRINT(game, string, *args):
 	if game.GUI:
@@ -73,16 +73,13 @@ class Card:
 	def selfManaChange(self):
 		pass
 		
-	def randomorDiscover(self):
-		return "No RNG"
-		
 	#This is for battlecries with specific target requirement.
 	def effectCanTrigger(self):
 		pass
 		
 	def checkEvanescent(self):
 		self.evanescent = False
-		for trigger in self.triggersonBoard + self.triggersinHand:
+		for trigger in self.trigsBoard + self.trigsHand:
 			if hasattr(trigger, "makesCardEvanescent"):
 				self.evanescent = True
 				break
@@ -90,56 +87,56 @@ class Card:
 	#处理卡牌进入/离开 手牌/牌库时的扳机和各个onBoard/inHand/inDeck标签
 	def entersHand(self):
 		self.onBoard, self.inHand, self.inDeck = False, True, False
-		for trigger in self.triggersinHand:
+		for trigger in self.trigsHand:
 			trigger.connect()
 		return self
 		
 	def leavesHand(self, intoDeck=False):
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		#将注册了的场上、手牌和牌库扳机全部注销。
-		for trigger in self.triggersonBoard:
+		for trigger in self.trigsBoard:
 			trigger.disconnect()
 			if hasattr(trigger, "temp") and trigger.temp: #If the trigger is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				extractfrom(trigger, self.triggersonBoard)
-		for trigger in self.triggersinHand:
+				extractfrom(trigger, self.trigsBoard)
+		for trigger in self.trigsHand:
 			trigger.disconnect()
 			if hasattr(trigger, "temp") and trigger.temp: #If the trigger is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				extractfrom(trigger, self.triggersinHand)
-		for trigger in self.triggersinDeck:
+				extractfrom(trigger, self.trigsHand)
+		for trigger in self.trigsDeck:
 			trigger.disconnect()
 			if hasattr(trigger, "temp") and trigger.temp: #If the trigger is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				extractfrom(trigger, self.triggersinDeck)
+				extractfrom(trigger, self.trigsDeck)
 		#无论如果离开手牌，被移出还是洗回牌库，费用修改效果（如大帝-1）都会消失
-		for manaMod in fixedList(self.manaModifications):
+		for manaMod in fixedList(self.manaMods):
 			manaMod.getsRemoved()
-		self.manaModifications = []
+		self.manaMods = []
 		
 	def entersDeck(self):
 		self.onBoard, self.inHand, self.inDeck = False, False, True
 		#Hand_Deck.shuffleCardintoDeck won't track the mana change.
 		self.Game.Manas.calcMana_Single(self)
-		for trigger in self.triggersinDeck:
+		for trigger in self.trigsDeck:
 			trigger.connect()
 			
 	def leavesDeck(self, intoHand=True):
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		#将注册了的场上、手牌和牌库扳机全部注销。
-		for trigger in self.triggersonBoard:
+		for trigger in self.trigsBoard:
 			trigger.disconnect()
 			if hasattr(trigger, "temp") and trigger.temp: #If the trigger is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				extractfrom(trigger, self.triggersonBoard)
-		for trigger in self.triggersinHand:
+				extractfrom(trigger, self.trigsBoard)
+		for trigger in self.trigsHand:
 			trigger.disconnect()
 			if hasattr(trigger, "temp") and trigger.temp: #If the trigger is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				extractfrom(trigger, self.triggersinHand)
-		for trigger in self.triggersinDeck:
+				extractfrom(trigger, self.trigsHand)
+		for trigger in self.trigsDeck:
 			trigger.disconnect()
 			if hasattr(trigger, "temp") and trigger.temp: #If the trigger is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				extractfrom(trigger, self.triggersinDeck)
+				extractfrom(trigger, self.trigsDeck)
 		if intoHand == False: #离开牌库时，只有去往手牌中时费用修改效果不会丢失。
-			for manaMod in self.manaModifications:
+			for manaMod in self.manaMods:
 				manaMod.getsRemoved()
-			self.manaModifications = []
+			self.manaMods = []
 			
 	"""Handle the target selection. All methods belong to minions. Other types will define their own methods."""
 	def targetCorrect(self, target, choice=0):
@@ -277,50 +274,45 @@ class Card:
 			self.losesKeyword("Stealth")
 		self.status["Temp Stealth"] = 0
 		#Manipulate the health of the subject/target's health.
-		#Only send out "MinionTakesDamage" signal at this point.
-		if consumeAttackChance:
-			self.attTimes += 1
-			
+		#Only send out "MinionTakesDmg" signal at this point.
+		if consumeAttackChance: self.attTimes += 1
+		
 		damageDealingList = []
 		#如果攻击者是英雄且装备着当前回合打开着的武器，则将攻击的伤害来源视为那把武器。
 		if self.type == "Hero" and self.Game.availableWeapon(self.ID) and self.ID == self.Game.turn:
 			damageDealer_attacker = self.Game.availableWeapon(self.ID)
-		else:
-			damageDealer_attacker = self
+		else: damageDealer_attacker = self
 		#如果被攻击者是英雄，且装备着当前回合打开着的武器，则将攻击目标造成的伤害来源视为那把武器。
 		if target.type == "Hero" and self.Game.availableWeapon(target.ID) and target.ID == self.Game.turn:
 			damageDealer_target = self.Game.availableWeapon(target.ID)
-		else:
-			damageDealer_target = target
-			
+		else: damageDealer_target = target
 		#首先结算攻击者对于攻击目标的伤害，如果攻击力小于1，则攻击目标不会被记入伤害处理列表。
 		#注意这个伤害承受目标不一定是攻击目标，因为有博尔夫碎盾以及钳嘴龟持盾者的存在
 		#承受伤害者的血量减少，结算剧毒，但是此时不会发出受伤信号。
-		objtoTakeDamage = self.Game.DmgHandler.damageTransfer(target)
-		damageActual = objtoTakeDamage.takesDamage(damageDealer_attacker, subject_attack, sendDamageSignal=False)
+		dmgTaker = self.Game.scapegoat4(target, damageDealer_attacker)
+		damageActual = dmgTaker.takesDamage(damageDealer_attacker, subject_attack, sendDamageSignal=False)
 		if damageActual > 0:
-			damageDealingList.append((damageDealer_attacker, objtoTakeDamage, damageActual))
+			damageDealingList.append((damageDealer_attacker, dmgTaker, damageActual))
 			
 		#寻找受到攻击目标的伤害的角色。同理，此时受伤的角色不会发出受伤信号，这些受伤信号会在之后统一发出。
-		objtoTakeDamage = self.Game.DmgHandler.damageTransfer(self)
-		damageActual = objtoTakeDamage.takesDamage(damageDealer_target, target_attack, sendDamageSignal=False)
+		dmgTaker = self.Game.scapegoat4(self, damageDealer_target)
+		damageActual = dmgTaker.takesDamage(damageDealer_target, target_attack, sendDamageSignal=False)
 		if damageActual > 0:
-			damageDealingList.append((damageDealer_target, objtoTakeDamage, damageActual))
+			damageDealingList.append((damageDealer_target, dmgTaker, damageActual))
 		#如果攻击者的伤害来源（随从或者武器）有对相邻随从也造成伤害的扳机，则将相邻的随从录入处理列表。
 		if damageDealer_attacker.type != "Hero" and damageDealer_attacker.marks["Sweep"] > 0 and target.type == "Minion":
 			adjacentMinions = self.Game.adjacentMinions2(target)[0] #此时被攻击的随从一定是在场的，已经由Game.battleRequest保证。
 			for minion in adjacentMinions:
-				objtoTakeDamage = self.Game.DmgHandler.damageTransfer(minion)
-				damageActual = objtoTakeDamage.takesDamage(damageDealer_attacker, subject_attack, sendDamageSignal=False)
+				dmgTaker = self.Game.scapegoat4(minion, damageDealer_attacker)
+				damageActual = dmgTaker.takesDamage(damageDealer_attacker, subject_attack, sendDamageSignal=False)
 				if damageActual > 0:
-					damageDealingList.append((damageDealer_attacker, objtoTakeDamage, damageActual))
+					damageDealingList.append((damageDealer_attacker, dmgTaker, damageActual))
 					
-		if damageDealer_attacker.type == "Weapon":
-			damageDealer_attacker.loseDurability()
-		for damageDealer, objtoTakeDamage, damage in damageDealingList:
+		if damageDealer_attacker.type == "Weapon": damageDealer_attacker.loseDurability()
+		for damageDealer, dmgTaker, damage in damageDealingList:
 			#参与战斗的各方在战斗过程中只减少血量，受伤的信号在血量和受伤名单登记完毕之后按被攻击者，攻击者，被涉及者顺序发出。
-			self.Game.sendSignal(objtoTakeDamage.type+"TakesDamage", self.Game.turn, damageDealer, objtoTakeDamage, damage, "")
-			self.Game.sendSignal(objtoTakeDamage.type+"TookDamage", self.Game.turn, damageDealer, objtoTakeDamage, damage, "")
+			self.Game.sendSignal(dmgTaker.type+"TakesDamage", 0, damageDealer, dmgTaker, damage, "")
+			self.Game.sendSignal(dmgTaker.type+"TookDamage", 0, damageDealer, dmgTaker, damage, "")
 			#吸血扳机始终在队列结算的末尾。
 			damageDealer.tryLifesteal(damage)
 			
@@ -328,16 +320,17 @@ class Card:
 	#Handle Lifesteal of a card. Currently Minion/Weapon/Spell classs have this method.
 	##法术因为有因为外界因素获得吸血的能力，所以有自己的tryLifesteal方法。
 	def tryLifesteal(self, damage):
-		if self.keyWords["Lifesteal"] > 0 or (self.type == "Spell" and self.Game.status[self.ID]["Spells Lifesteal"] > 0):
+		game = self.Game
+		if self.keyWords["Lifesteal"] > 0 or (self.type == "Spell" and game.status[self.ID]["Spells Lifesteal"] > 0):
 			heal = damage * (2 ** self.countHealDouble())
-			PRINT(self.Game, "%s deals %d damage and restores %d Health to player"%(self.name, damage, heal))
-			if self.Game.status[self.ID]["Heal to Damage"] > 0:
+			PRINT(game, "%s deals %d damage and restores %d Health to player"%(self.name, damage, heal))
+			if game.status[self.ID]["Heal to Damage"] > 0:
 				#If the Lifesteal heal is converted to damage, then the obj to take the final 
 				#damage will not cause Lifesteal cycle.
-				objtoTakeDamage_Auchenai = self.Game.DmgHandler.damageTransfer(self.Game.heroes[self.ID])
-				objtoTakeDamage_Auchenai.takesDamage(self, heal)
+				dmgTaker = self.Game.scapegoat4(game.heroes[self.ID])
+				dmgTaker.takesDamage(self, heal)
 			else: #Heal is heal.
-				self.Game.heroes[self.ID].getsHealed(self, heal)
+				game.heroes[self.ID].getsHealed(self, heal)
 				
 	#可以对在场上以及手牌中的随从造成伤害，同时触发应有的响应，比如暴乱狂战士和+1攻击力和死亡缠绕的抽牌。
 	#牌库中的和已经死亡的随从免疫伤害，但是死亡缠绕可以触发抽牌。
@@ -345,48 +338,43 @@ class Card:
 	#暂时可以考虑不把吸血做成场上扳机，因为几乎没有战吼随从可以获得吸血，直接将吸血视为随从的dealsDamage自带属性也可以。
 	def dealsDamage(self, target, damage):
 		if target.onBoard or target.inHand:
-			objtoTakeDamage = self.Game.DmgHandler.damageTransfer(target)
+			dmgTaker = self.Game.scapegoat4(target, self)
 			#超杀和造成伤害触发的效果为场上扳机.吸血始终会在队列的末尾结算。
 			#战斗时不会调用这个函数，血量减少时也不立即发生伤害信号，但是这里是可以立即发生信号触发扳机的。
 			#如果随从或者英雄处于可以修改伤害的效果之下，如命令怒吼或者复活的铠甲，伤害量会发生变化
-			damageActual = objtoTakeDamage.takesDamage(self, damage)
-			self.tryLifesteal(damageActual)
-			return objtoTakeDamage, damageActual
-		else: #The target is neither on board or in hand. Either removed already or shuffled into deck.
-			if target.dead and target.inDeck == False:
-				return target, 0
-			elif target.inDeck:
-				return target, 0 #Minions in deck won't receive any damage and effect following it.
-				
+			dmgActual = dmgTaker.takesDamage(self, damage)
+			self.tryLifesteal(dmgActual)
+			return dmgTaker, dmgActual
+		else: return target, 0 #The target is neither on board or in hand. Either removed already or shuffled into deck.
+		
 	#The targets can be [], [subject], [subject1, subject2, ...]		
 	#For now, AOE will only affect targets that are on board. No need to check if the target is dead, in hand or in deck.
 	#当场上有血量为2的奥金尼和因为欧米茄灵能者获得的法术吸血时，神圣新星杀死奥金尼仍然会保留治疗转伤害的效果。
 	#有的扳机随从默认随从需要在非濒死情况下才能触发扳机，如北郡牧师。
 	def dealsAOE(self, targets, damages):
 		targets, damages = fixedList(targets), fixedList(damages)
-		targets_damaged, damagesConnected, totalDamageDone = [], [], 0
+		dmgTakers, damagesConnected, totalDamageDone = [], [], 0
 		for target, damage in zip(targets, damages):
-			#Handle Immune, Shellfighter and Ramshield here.
-			objtoTakeDamage = self.Game.DmgHandler.damageTransfer(target)
+			dmgTaker = self.Game.scapegoat4(target, self)
 			#Handle the Divine Shield and Commanding Shout here.
-			damageActual = objtoTakeDamage.takesDamage(self, damage, sendDamageSignal=False)
+			damageActual = dmgTaker.takesDamage(self, damage, sendDamageSignal=False)
 			if damageActual > 0:
-				targets_damaged.append(objtoTakeDamage)
+				dmgTakers.append(dmgTaker)
 				damagesConnected.append(damageActual)
 				totalDamageDone += damageActual
 		#AOE首先计算血量变化，之后才发出伤害信号。
-		for target, damageActual in zip(targets_damaged, damagesConnected):
+		for target, damageActual in zip(dmgTakers, damagesConnected):
 			self.Game.sendSignal(target.type+"TakesDamage", self.ID, self, target, damageActual, "")
 			self.Game.sendSignal(target.type+"TookDamage", self.ID, self, target, damageActual, "")
 		self.tryLifesteal(totalDamageDone)
-		return targets_damaged, damagesConnected, totalDamageDone
+		return dmgTakers, damagesConnected, totalDamageDone
 		
 	def restoresAOE(self, targets, heals):
 		targets_Heal, heals = fixedList(targets), fixedList(heals)
 		if self.Game.status[self.ID]["Heal to Damage"] > 0:
-			targets_damaged, damagesConnected, totalDamageDone = self.dealsAOE(targets_Heal, heals)
+			dmgTakers, damagesConnected, totalDamageDone = self.dealsAOE(targets_Heal, heals)
 			healsConnected = [-damage for damage in damagesConnected]
-			return targets_damaged, healsConnected, -totalDamageDone #对于AOE回复，如果反而造成伤害，则返回数值为负数
+			return dmgTakers, healsConnected, -totalDamageDone #对于AOE回复，如果反而造成伤害，则返回数值为负数
 		else:
 			targets_healed, healsConnected, totalHealingDone = [], [], 0
 			for target, heal in zip(targets, heals):
@@ -401,8 +389,8 @@ class Card:
 		
 	def restoresHealth(self, target, heal):
 		if self.Game.status[self.ID]["Heal to Damage"] > 0:
-			objtoTakeDamage, damageActual = self.dealsDamage(target, heal)
-			return objtoTakeDamage, -damageActual
+			dmgTaker, damageActual = self.dealsDamage(target, heal)
+			return dmgTaker, -damageActual
 		else:
 			healActual = target.getsHealed(self, heal)
 			return target, healActual
@@ -497,7 +485,7 @@ class Card:
 				Copy.__dict__[key] = value
 			elif value == self.Game: #Only shallow copy the Game.
 				Copy.__dict__[key] = self.Game
-			#用于auras，statbyAura，keyWordbyAura和manaModifications等
+			#用于auras，statbyAura，keyWordbyAura和manaMods等
 			elif type(value) == list or type(value) == dict or type(value) == tuple: #If the attribute is a list or dictionary, use the method defined at the start of py
 				Copy.__dict__[key] = copyListDictTuple(value, Copy)
 			else: #The attribute is a self-defined class. They will all have selfCopy methods
@@ -511,10 +499,10 @@ class Card:
 		Copy = self.hardCopy(ID)
 		Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
 		#复制一张牌的费用修改情况,移除来自光环影响的费用效果
-		size = len(Copy.manaModifications)
+		size = len(Copy.manaMods)
 		for i in range(size):
-			if Copy.manaModifications[size-1-i].source:
-				Copy.manaModifications.pop(size-1-i)
+			if Copy.manaMods[size-1-i].source:
+				Copy.manaMods.pop(size-1-i)
 		return Copy
 		
 	def assistCreateCopy(self, Copy):
@@ -555,7 +543,7 @@ class Permanent(Card):
 		self.status = {"Immune": 0,	"Frozen": 0, "Temp Stealth": 0, "Borrowed": 0
 						}
 		self.auras = {}
-		self.triggersonBoard, self.triggersinHand, self.triggersinDeck = [], [], []
+		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		
 	def appears(self):
 		PRINT(self.Game, "Permanent %s appears on board."%self.name)
@@ -566,7 +554,7 @@ class Permanent(Card):
 			PRINT(self.Game, "Now starting %s's Aura {}".format(value))
 			value.auraAppears()
 		#随从入场时将注册其场上扳机。
-		for trigger in self.triggersonBoard:
+		for trigger in self.trigsBoard:
 			trigger.connect() #把(obj, signal)放入Game.triggersonBoard中
 			
 	#Permanent本身是没有死亡扳机的，所以这个keepDeathrattlesRegistered无论真假都无影响
@@ -577,7 +565,7 @@ class Permanent(Card):
 		for value in self.auras.values():
 			value.auraDisappears()
 		#随从离场时清除其携带的普通场上扳机，但是此时不考虑亡语扳机
-		for trigger in self.triggersonBoard:
+		for trigger in self.trigsBoard:
 			trigger.disconnect()
 			
 	def turnStarts(self, ID):
@@ -595,9 +583,9 @@ class Permanent(Card):
 	def STATUSPRINT(self):
 		PRINT(self.Game, "Game is {}.".format(self.Game))
 		PRINT(self.Game, "Permanent: %s.\tDescription: %s"%(self.name, self.description))
-		if self.triggersonBoard != []:
-			PRINT(self.Game, "\tPermanent's triggersonBoard")
-			for trigger in self.triggersonBoard:
+		if self.trigsBoard != []:
+			PRINT(self.Game, "\tPermanent's trigsBoard")
+			for trigger in self.trigsBoard:
 				PRINT(self.Game, "\t{}".format(type(trigger)))
 		if self.auras != {}:
 			PRINT(self.Game, "\tPermanent's aura:")
@@ -613,7 +601,7 @@ class Permanent(Card):
 			game.copiedObjs[self] = Copy
 			Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
 			Copy.sequence, Copy.position = self.sequence, self.position
-			Copy.triggersonBoard = [trig.createCopy(game) for trig in self.triggersonBoard]
+			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -631,7 +619,7 @@ class Minion(Card):
 		self.Class, self.name = type(self).Class, type(self).name
 		self.type, self.race = "Minion", type(self).race
 		#卡牌的费用和对于费用修改的效果列表在此处定义
-		self.mana, self.manaModifications = type(self).mana, []
+		self.mana, self.manaMods = type(self).mana, []
 		self.attack, self.attack_0 = type(self).attack, type(self).attack
 		self.health_0, self.health, self.health_upper = type(self).health, type(self).health, type(self).health
 		self.tempAttackChanges = [] #list of tempAttChange, expiration timepoint
@@ -685,7 +673,7 @@ class Minion(Card):
 		self.triggers = {"Discarded":[], "StatChanges":[], "Drawn":[]}
 		self.appearResponse, self.disappearResponse, self.silenceResponse = [], [], []
 		self.deathrattles = [] #随从的亡语的触发方式与场上扳机一致，诸扳机之间与
-		self.triggersonBoard, self.triggersinHand, self.triggersinDeck = [], [], []
+		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.history = {"Spells Cast on This": [],
 						"Magnetic Upgrades": {"AttackGain": 0, "HealthGain": 0,
 												"Keywords":{}, "Marks":{},
@@ -696,7 +684,7 @@ class Minion(Card):
 	def applicable(self, target):
 		return target != self
 		
-	"""Handle the triggersonBoard/inHand/inDeck of minions based on its move"""
+	"""Handle the trigsBoard/inHand/inDeck of minions based on its move"""
 	def appears(self):
 		PRINT(self.Game, "%s appears on board."%self.name)
 		self.newonthisSide = True
@@ -708,7 +696,7 @@ class Minion(Card):
 			PRINT(self.Game, "Now starting minion {}'s Aura {}".format(self.name, value))
 			value.auraAppears()
 		#随从入场时将注册其场上扳机和亡语扳机
-		for trigger in self.triggersonBoard + self.deathrattles:
+		for trigger in self.trigsBoard + self.deathrattles:
 			trigger.connect() #把(obj, signal)放入Game.triggersonBoard中
 		#Mainly mana aura minions, e.g. Sorcerer's Apprentice.
 		for func in self.appearResponse:
@@ -724,7 +712,7 @@ class Minion(Card):
 		for value in self.auras.values():
 			value.auraDisappears()
 		#随从离场时清除其携带的普通场上扳机，但是此时不考虑亡语扳机
-		for trigger in self.triggersonBoard:
+		for trigger in self.trigsBoard:
 			trigger.disconnect()
 		#随从因离场方式不同，对于亡语扳机的注册是否保留也有不同
 			#死亡时触发的区域移动扳机导致的返回手牌或者牌库--保留其他死亡扳机的注册
@@ -791,9 +779,9 @@ class Minion(Card):
 	def STATUSPRINT(self):
 		PRINT(self.Game, "Game is {}.".format(self.Game))
 		PRINT(self.Game, "Minion: %s. ID: %d Race: %s\nDescription: %s"%(self.name, self.ID, self.race, self.description))
-		if self.manaModifications != []:
+		if self.manaMods != []:
 			PRINT(self.Game, "\tCarries mana modification:")
-			for manaMod in self.manaModifications:
+			for manaMod in self.manaMods:
 				if manaMod.changeby != 0:
 					PRINT(self.Game, "\t\tChanged by %d"%manaMod.changeby)
 				else:
@@ -813,17 +801,17 @@ class Minion(Card):
 				statusList.append(key)
 		if statusList != []:
 			PRINT(self.Game, "\tMinion status: {}".format(statusList))
-		if self.triggersonBoard != []:
-			PRINT(self.Game, "\tMinion's triggersonBoard")
-			for trigger in self.triggersonBoard:
+		if self.trigsBoard != []:
+			PRINT(self.Game, "\tMinion's trigsBoard")
+			for trigger in self.trigsBoard:
 				PRINT(self.Game, "\t{}".format(type(trigger)))
-		if self.triggersinHand != []:
-			PRINT(self.Game, "\tMinion's triggersinHand")
-			for trigger in self.triggersinHand:
+		if self.trigsHand != []:
+			PRINT(self.Game, "\tMinion's trigsHand")
+			for trigger in self.trigsHand:
 				PRINT(self.Game, "\t{}".format(type(trigger)))
-		if self.triggersinDeck != []:
-			PRINT(self.Game, "\tMinion's triggersinDeck")
-			for trigger in self.triggersinDeck:
+		if self.trigsDeck != []:
+			PRINT(self.Game, "\tMinion's trigsDeck")
+			for trigger in self.trigsDeck:
 				PRINT(self.Game, "\t{}".format(type(trigger)))
 		if self.auras != {}:
 			PRINT(self.Game, "Minion's aura")
@@ -933,13 +921,12 @@ class Minion(Card):
 	#Stealth Dreadscale actually stays in stealth.
 	def takesDamage(self, subject, damage, sendDamageSignal=True):
 		damageTaken = 0
-		if damage > 0 and self.status["Immune"] <= 0: #随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
-			if self.keyWords["Divine Shield"] > 0:
-				self.losesKeyword("Divine Shield")
+		if damage > 0 and self.status["Immune"] < 1: #随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
+			if self.keyWords["Divine Shield"] > 0: self.losesKeyword("Divine Shield")
 			else:
 				#伤害量预检测。如果随从有圣盾则伤害预检测实际上是没有意义的。
 				damageHolder = [damage] #这个列表用于盛装伤害数值，会经由伤害扳机判定
-				self.Game.sendSignal("MinionAbouttoTakeDamage", self.ID, subject, self, damageHolder, "")
+				self.Game.sendSignal("FinalDmgonMinion?", 0, subject, self, damageHolder, "")
 				damage = damageHolder[0]
 				damageTaken = damage
 				self.health -= damage
@@ -948,7 +935,7 @@ class Minion(Card):
 					self.dead = True
 				#在同时涉及多个角色的伤害处理中，受到的伤害暂不发送信号而之后统一进行扳机触发。
 				if sendDamageSignal:
-					self.Game.sendSignal("MinionTakesDamage", self.Game.turn, subject, self, damage, "")
+					self.Game.sendSignal("MinionTakesDmg", self.Game.turn, subject, self, damage, "")
 					self.Game.sendSignal("MinionTookDamage", self.Game.turn, subject, self, damage, "")
 				if subject.type == "Power":
 					self.Game.Counters.damageDealtbyHeroPower[subject.ID] += damage
@@ -1001,7 +988,7 @@ class Minion(Card):
 				marks_orig[key] = value
 		#将随从携带的扳机也记录,磁力随从是没有手牌扳机和场上扳机的
 		triggers_orig, deathrattles_orig = [], []
-		for trigger in Copy.triggersonBoard:
+		for trigger in Copy.trigsBoard:
 			if trigger.temp == False: #临时扳机不会被记录和赋予，如腐蚀术
 				triggers_orig.append(type(trigger))
 		for trigger in Copy.deathrattles:
@@ -1031,7 +1018,7 @@ class Minion(Card):
 		#将亡语赋予随从，同时记录在"Magnetic Upgrades"里面
 		for trigger_Class in triggers_orig:
 			trigger = trigger_Class(target)
-			target.triggersonBoard.append(trigger)
+			target.trigsBoard.append(trigger)
 			trigger.connect()
 			target.history["Magnetic Upgrades"]["Triggers"].append(trigger_Class)
 		#最后进行身材的改变，并在这里调用目标随从的StatChanges方法
@@ -1137,13 +1124,13 @@ class Minion(Card):
 		
 	"""buffAura effect, Buff/Debuff, stat reset, copy"""
 	#Generally invoked by buffAura_Receivers and buffDebuff.
-	def statChange(self, attackChange, healthChange):
-		self.attack += attackChange
-		if healthChange >= 0:
-			self.health += healthChange
-			self.health_upper += healthChange
+	def statChange(self, attGain, healthGain):
+		self.attack += attGain
+		if healthGain >= 0:
+			self.health += healthGain
+			self.health_upper += healthGain
 		else: #When the buffAura is gone.
-			self.health_upper += healthChange
+			self.health_upper += healthGain
 			self.health_upper = max(1, self.health_upper)
 			if self.health > self.health_upper:
 				self.health = self.health_upper
@@ -1191,10 +1178,10 @@ class Minion(Card):
 		for aura_Receiver in Copy.keyWordbyAura["Auras"]:
 			aura_Receiver.effectDiscard()
 		Copy.activated, Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False, False
-		size = len(Copy.manaModifications) #去掉牌上的因光环产生的费用改变
+		size = len(Copy.manaMods) #去掉牌上的因光环产生的费用改变
 		for i in range(size):
-			if Copy.manaModifications[size-1-i].source:
-				Copy.manaModifications.pop(size-1-i)
+			if Copy.manaMods[size-1-i].source:
+				Copy.manaMods.pop(size-1-i)
 		#在一个游戏中复制出新实体的时候需要把这些值重置
 		Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
 		Copy.dead = False
@@ -1210,10 +1197,10 @@ class Minion(Card):
 		if attack != False or health != False:
 			Copy.statReset(attack, health)
 		if mana != False:
-			for manaMod in Copy.manaModifications:
+			for manaMod in Copy.manaMods:
 				manaMod.getsRemoved()
-			Copy.manaModifications = []
-			ManaModification(Copy, changeby=0, changeto=mana).applies()
+			Copy.manaMods = []
+			ManaMod(Copy, changeby=0, changeto=mana).applies()
 		return Copy
 		
 	#破法者因为阿努巴尔潜伏者的亡语被返回手牌，之后被沉默，但是仍然可以触发其战吼
@@ -1234,9 +1221,9 @@ class Minion(Card):
 				
 			self.auras = {}
 			#清除所有场上扳机,亡语扳机，手牌扳机和牌库扳机。然后将这些扳机全部清除	
-			for trigger in self.triggersonBoard + self.deathrattles + self.triggersinHand + self.triggersinDeck:
+			for trigger in self.trigsBoard + self.deathrattles + self.trigsHand + self.trigsDeck:
 				trigger.disconnect()
-			self.triggersonBoard, self.deathrattles, self.triggersinHand, self.triggersinDeck = [], [], [], []
+			self.trigsBoard, self.deathrattles, self.trigsHand, self.trigsDeck = [], [], [], []
 			#清除随从因为关键字光环获得的关键字：冲锋，突袭，超级风怒。这些关键字是否之后恢复由光环施加者决定。
 			#暂时不清除随从身上的buffAura增益，统一留到最后的statReset()中处理。
 			CurrentKeywordAura_Receivers = fixedList(self.keyWordbyAura["Auras"])
@@ -1277,7 +1264,7 @@ class Minion(Card):
 			Copy = type(self)(game, self.ID)
 			game.copiedObjs[self] = Copy
 			Copy.mana = self.mana
-			Copy.manaModifications = [mod.selfCopy(Copy) for mod in self.manaModifications]
+			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
 			Copy.attack, Copy.attack_0, Copy.attack_Enchant = self.attack, self.attack_0, self.attack_Enchant
 			Copy.health_0, Copy.health, Copy.health_upper, Copy.health_max = self.health_0, self.health, self.health_upper, self.health_max
 			Copy.tempAttackChanges = copy.deepcopy(self.tempAttackChanges)
@@ -1304,9 +1291,9 @@ class Minion(Card):
 			for key, value in self.auras.items():
 				Copy.auras[key] = value.createCopy(game)
 			Copy.deathrattles = [trig.createCopy(game) for trig in self.deathrattles]
-			Copy.triggersonBoard = [trig.createCopy(game) for trig in self.triggersonBoard]
-			Copy.triggersinHand = [trig.createCopy(game) for trig in self.triggersinHand]
-			Copy.triggersinDeck = [trig.createCopy(game) for trig in self.triggersinDeck]
+			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
+			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
+			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.history = copy.deepcopy(self.history)
 			self.assistCreateCopy(Copy)
 			return Copy
@@ -1326,7 +1313,7 @@ class Spell(Card):
 		self.Class, self.name = type(self).Class, type(self).name
 		self.type = "Spell"
 		self.index = type(self).index
-		self.mana, self.manaModifications = type(self).mana, []
+		self.mana, self.manaMods = type(self).mana, []
 		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
 		self.description = type(self).description
 		self.overload, self.chooseOne, self.twinSpell = 0, 0, 0
@@ -1334,7 +1321,7 @@ class Spell(Card):
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
 		#法术的triggersonBoard只是一个placeholder
-		self.triggersonBoard, self.triggersinHand, self.triggersinDeck = [], [], []
+		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.options = [] #For Choose One spells
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
 		self.triggers = {"Discarded": []}
@@ -1343,16 +1330,16 @@ class Spell(Card):
 	def STATUSPRINT(self):
 		PRINT(self.Game, "Game is {}.".format(self.Game))
 		PRINT(self.Game, "Spell: %s. Description: %s"%(self.name, self.description))
-		if self.manaModifications != []:
+		if self.manaMods != []:
 			PRINT(self.Game, "\tCarries mana modification:")
-			for manaMod in self.manaModifications:
+			for manaMod in self.manaMods:
 				if manaMod.changeby != 0:
 					PRINT(self.Game, "\t\tChanged by %d"%manaMod.changeby)
 				else:
 					PRINT(self.Game, "\t\tChanged to %d"%manaMod.changeto)
-		if self.triggersinHand != []:
-			PRINT(self.Game, "Spell's triggersinHand")
-			for trigger in self.triggersinHand:
+		if self.trigsHand != []:
+			PRINT(self.Game, "Spell's trigsHand")
+			for trigger in self.trigsHand:
 				PRINT(self.Game, "\t{}".format(trigger))
 		if hasattr(self, "progress"):
 			PRINT(self.Game, "\tSpell's progress is currently: %d"%self.progress)
@@ -1486,7 +1473,7 @@ class Spell(Card):
 		if "~Echo" in self.index:
 			echoCard = type(minion)(self, self.Game.turn)
 			trigger = Trigger_Echo(echoCard)
-			echoCard.triggersinHand.append(trigger)
+			echoCard.trigsHand.append(trigger)
 			self.Game.Hand_Deck.addCardtoHand(echoCard, self.ID)
 			
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1523,12 +1510,12 @@ class Spell(Card):
 			Copy = type(self)(game, self.ID)
 			game.copiedObjs[self] = Copy
 			Copy.mana = self.mana
-			Copy.manaModifications = [mod.selfCopy(Copy) for mod in self.manaModifications]
+			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
 			Copy.inHand, Copy.inDeck = self.inHand, self.inDeck
 			Copy.identity = copy.deepcopy(self.identity)
-			Copy.triggersonBoard = [trig.createCopy(game) for trig in self.triggersonBoard]
-			Copy.triggersinHand = [trig.createCopy(game) for trig in self.triggersinHand]
-			Copy.triggersinDeck = [trig.createCopy(game) for trig in self.triggersinDeck]
+			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
+			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
+			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
@@ -1551,7 +1538,7 @@ class Secret(Spell):
 		self.Class = type(self).Class
 		self.name = type(self).name
 		self.index = type(self).index
-		self.mana, self.manaModifications = type(self).mana, []
+		self.mana, self.manaMods = type(self).mana, []
 		self.Game, self.ID = Game, ID
 		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
 		self.type = "Spell"
@@ -1560,7 +1547,7 @@ class Secret(Spell):
 		#法术也设置onBoard标签，但只是placeholder而已
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.identity = [np.random.rand(), np.random.rand()]
-		self.triggersonBoard, self.triggersinHand, self.triggersinDeck = [], [], []
+		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.options = [] #For Choose One spells
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
 		self.triggers = {"Discarded": []}
@@ -1594,7 +1581,7 @@ class Secret(Spell):
 		secretcanRegister = True
 		if self.Game.Secrets.areaNotFull(self.ID) and self.Game.Secrets.sameSecretExists(self, self.ID) == False:
 			self.Game.Secrets.secrets[self.ID].append(self)
-			for trigger in self.triggersonBoard:
+			for trigger in self.trigsBoard:
 				trigger.connect() #把(obj, signal)放入Game.triggersonBoard中
 		else:
 			secretcanRegister = False
@@ -1617,14 +1604,14 @@ class Quest(Spell):
 		self.Class, self.name = type(self).Class, type(self).name
 		self.type = "Spell"
 		self.index = type(self).index
-		self.mana, self.manaModifications = type(self).mana, []
+		self.mana, self.manaMods = type(self).mana, []
 		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
 		self.description = type(self).description
 		self.overload, self.chooseOne, self.twinSpell = 0, 0, 0
 		#法术也设置onBoard标签，但只是placeholder而已
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.identity = [np.random.rand(), np.random.rand()]
-		self.triggersonBoard, self.triggersinHand, self.triggersinDeck = [], [], []
+		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.options = [] #For Choose One spells
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
 		self.triggers = {"Discarded": []}
@@ -1673,12 +1660,12 @@ class Quest(Spell):
 						break
 				if questcanRegister:
 					self.Game.Secrets.sideQuests[self.ID].append(self)
-					for trigger in self.triggersonBoard:
+					for trigger in self.trigsBoard:
 						trigger.connect()
 			else: #The quest is a main quest	
 				if self.Game.Secrets.mainQuests[self.ID] == []:
 					self.Game.Secrets.mainQuests[self.ID].append(self)
-					for trigger in self.triggersonBoard:
+					for trigger in self.trigsBoard:
 						trigger.connect() #把(obj, signal)放入Game.triggersonBoard中
 				else:
 					questcanRegister = False
@@ -1706,7 +1693,7 @@ class HeroPower(Card):
 		#额外的英雄技能技能只有考达拉幼龙和要塞指挥官可以更改。
 		#技能能否使用，需要根据已使用次数和基础机会和额外机会的和相比较。
 		self.heroPowerChances_base, self.heroPowerChances_extra = 1, 0
-		self.mana, self.manaModifications = type(self).mana, []
+		self.mana, self.manaMods = type(self).mana, []
 		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
 		self.chooseOne = 0
 		self.onBoard = True
@@ -1714,15 +1701,15 @@ class HeroPower(Card):
 		self.keyWords = {"Lifesteal": 0,
 						"Poisonous": 0 #As a placeholder
 						}
-		self.triggersonBoard = []
+		self.trigsBoard = []
 		
 	def STATUSPRINT(self):
 		PRINT(self.Game, "Game is {}.".format(self.Game))
 		PRINT(self.Game, "Hero Power %d: %s. Description: %s"%(self.ID, self.name, self.description))
 		PRINT(self.Game, "Chances_base: %d. Chances_extra %d"%(self.heroPowerChances_base, self.heroPowerChances_extra))
-		if self.manaModifications != []:
+		if self.manaMods != []:
 			PRINT(self.Game, "\tCarries mana modification:")
-			for manaMod in self.manaModifications:
+			for manaMod in self.manaMods:
 				if manaMod.changeby != 0:
 					PRINT(self.Game, "\t\tChanged by %d"%manaMod.changeby)
 				else:
@@ -1741,17 +1728,17 @@ class HeroPower(Card):
 	def appears(self):
 		self.heroPowerChances_base = 1
 		self.heroPowerTimes = 0
-		for trigger in self.triggersonBoard:
+		for trigger in self.trigsBoard:
 			trigger.connect()
 		self.Game.sendSignal("HeroPowerAcquired", self.ID, self, None, 0, "")
 		self.Game.Manas.calcMana_Powers()
 		
 	def disappears(self):
-		for trigger in self.triggersonBoard:
+		for trigger in self.trigsBoard:
 			trigger.disconnect()
-		for manaMod in self.manaModifications:
+		for manaMod in self.manaMods:
 			manaMod.getsRemoved()
-		self.manaModifications = []
+		self.manaMods = []
 		
 	def replaceHeroPower(self):
 		if self.Game.powers[self.ID]:
@@ -1852,12 +1839,12 @@ class HeroPower(Card):
 			Copy = type(self)(game, self.ID)
 			game.copiedObjs[self] = Copy
 			Copy.mana = self.mana
-			Copy.manaModifications = [mod.selfCopy(Copy) for mod in self.manaModifications]
+			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
 			Copy.heroPowerTimes = self.heroPowerTimes
 			Copy.heroPowerChances_base, Copy.heroPowerChances_extra = self.heroPowerChances_base, self.heroPowerChances_extra
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.keyWords = copy.deepcopy(self.keyWords)
-			Copy.triggersonBoard = [trig.createCopy(game) for trig in self.triggersonBoard]
+			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -1872,7 +1859,7 @@ class Hero(Card):
 		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
-		self.mana, self.manaModifications = type(self).mana, []
+		self.mana, self.manaMods = type(self).mana, []
 		self.health_upper, self.health = 30, 30
 		self.attack, self.attack_bare, self.armor = 0, 0, type(self).armor
 		self.name = type(self).name
@@ -1892,16 +1879,16 @@ class Hero(Card):
 		self.options = [] #For Choose One heroes
 		self.overload, self.chooseOne = 0, 0
 		self.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
-		self.triggersonBoard, self.triggersinHand, self.triggersinDeck = [], [], []
+		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.effectViable, self.evanescent = False, False
 		
 	"""Handle hero's attacks, attack chances, attack chances and frozen status."""
 	def STATUSPRINT(self):
 		PRINT(self.Game, "Game is {}.".format(self.Game))
 		PRINT(self.Game, "Hero %d %s: Attacked times: %d.	Base att chances left: %d.	Extra att chances left: %d"%(self.ID, self.name, self.attTimes, self.attChances_base, self.attChances_extra))
-		if self.manaModifications != []:
+		if self.manaMods != []:
 			PRINT(self.Game, "\tCarries mana modification:")
-			for manaMod in self.manaModifications:
+			for manaMod in self.manaMods:
 				if manaMod.changeby != 0:
 					PRINT(self.Game, "\t\tChanged by %d"%manaMod.changeby)
 				else:
@@ -1985,7 +1972,7 @@ class Hero(Card):
 		damageTaken = 0
 		if damage > 0 and self.Game.status[self.ID]["Immune"] <= 0:
 			damageHolder = [damage]
-			self.Game.sendSignal("HeroAbouttoTakeDamage", self.ID, subject, self, damageHolder, "")
+			self.Game.sendSignal("FinalDmgonHero?", self.ID, subject, self, damageHolder, "")
 			damageTaken, damage = damageHolder[0], damageHolder[0]
 			if damage > 0:
 				if self.armor > damage:
@@ -1995,7 +1982,7 @@ class Hero(Card):
 					self.armor = 0
 				self.Game.Counters.damageonHeroThisTurn[self.ID] += damage
 				if sendDamageSignal:
-					self.Game.sendSignal("HeroTakesDamage", self.Game.turn, subject, self, damage, "")
+					self.Game.sendSignal("HeroTakesDmg", self.Game.turn, subject, self, damage, "")
 					self.Game.sendSignal("HeroTookDamage", self.Game.turn, subject, self, damage, "")
 		return damage
 		
@@ -2075,7 +2062,7 @@ class Hero(Card):
 			Copy = type(self)(game, self.ID)
 			game.copiedObjs[self] = Copy
 			Copy.mana = self.mana
-			Copy.manaModifications = [mod.selfCopy(Copy) for mod in self.manaModifications]
+			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
 			Copy.attack, Copy.attack_bare, Copy.armor = self.attack, self.attack_bare, self.armor
 			Copy.health_upper, Copy.health = self.health_upper, self.health
 			Copy.attChances_base, Copy.attChances_extra, Copy.attTimes = self.attChances_base, self.attChances_extra, self.attTimes
@@ -2086,9 +2073,9 @@ class Hero(Card):
 				Copy.triggers[key] = [getattr(Copy, func.__qualname__.split(".")[1]) for func in value]
 			Copy.identity = copy.deepcopy(self.identity)
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
-			Copy.triggersonBoard = [trig.createCopy(game) for trig in self.triggersonBoard]
-			Copy.triggersinHand = [trig.createCopy(game) for trig in self.triggersinHand]
-			Copy.triggersinDeck = [trig.createCopy(game) for trig in self.triggersinDeck]
+			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
+			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
+			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
 			self.assistCreateCopy(Copy)
 			return Copy
@@ -2106,7 +2093,7 @@ class Weapon(Card):
 		self.Game, self.ID = Game, ID
 		self.Class, self.name = type(self).Class, type(self).name
 		self.type = "Weapon"
-		self.mana, self.manaModifications = type(self).mana, []
+		self.mana, self.manaMods = type(self).mana, []
 		self.attack = type(self).attack
 		self.statbyAura = [0, []] #没有针对武器耐久度的光环
 		self.durability = type(self).durability #将来会处理有buff的武器洗入牌库的问题，如弑君
@@ -2120,7 +2107,7 @@ class Weapon(Card):
 		self.dead = False
 		self.sequence = -1
 		self.deathrattles = []
-		self.triggersonBoard, self.triggersinHand, self.triggersinDeck = [], [], []
+		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
 		self.options = [] #For Choose One weapon, non-existent at this point.
 		self.auras = {}
@@ -2129,16 +2116,16 @@ class Weapon(Card):
 	def STATUSPRINT(self):
 		PRINT(self.Game, "Game is {}.".format(self.Game))
 		PRINT(self.Game, "Weapon: %s. Description: %s"%(self.name, self.description))
-		if self.manaModifications != []:
+		if self.manaMods != []:
 			PRINT(self.Game, "\tCarries mana modification:")
-			for manaMod in self.manaModifications:
+			for manaMod in self.manaMods:
 				if manaMod.changeby != 0:
 					PRINT(self.Game, "\t\tChanged by %d"%manaMod.changeby)
 				else:
 					PRINT(self.Game, "\t\tChanged to %d"%manaMod.changeto)
-		if self.triggersonBoard != []:
-			PRINT(self.Game, "Weapon's triggersonBoard")
-			for trigger in self.triggersonBoard:
+		if self.trigsBoard != []:
+			PRINT(self.Game, "Weapon's trigsBoard")
+			for trigger in self.trigsBoard:
 				PRINT(self.Game, "{}".format(trigger))
 		if hasattr(self, "progress"):
 			PRINT(self.Game, "\tWeapon's progress is currently: %d"%self.progress)
@@ -2151,7 +2138,7 @@ class Weapon(Card):
 		self.inHand, self.inDeck, self.dead = False, False, False
 		self.mana = type(self).mana
 		#武器的表面上的场上扳机和亡语都有相同的入场注册方式
-		for trigger in self.triggersonBoard:
+		for trigger in self.trigsBoard:
 			trigger.connect() #把(obj, signal)放入Game.triggersonBoard中
 		for trigger in self.deathrattles:
 			trigger.connect()
@@ -2178,7 +2165,7 @@ class Weapon(Card):
 			self.onBoard, self.dead = False, True
 			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare
 			#移除武器对应的场上扳机，亡语扳机在deathrattles中保存
-			for trigger in self.triggersonBoard:
+			for trigger in self.trigsBoard:
 				trigger.disconnect()
 				
 			for value in self.auras.values():
@@ -2202,7 +2189,7 @@ class Weapon(Card):
 			self.onBoard = False
 			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare
 			#移除武器对应的场上扳机，亡语扳机在deathrattles中保存
-			for trigger in self.triggersonBoard:
+			for trigger in self.trigsBoard:
 				trigger.disconnect()
 			for value in self.auras.values():
 				value.auraDisappears()
@@ -2284,7 +2271,7 @@ class Weapon(Card):
 			Copy = type(self)(game, self.ID)
 			game.copiedObjs[self] = Copy
 			Copy.mana = self.mana
-			Copy.manaModifications = [mod.selfCopy(Copy) for mod in self.manaModifications]
+			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
 			Copy.attack, Copy.durability = self.attack, self.durability
 			Copy.keyWords, Copy.marks = copy.deepcopy(self.keyWords), copy.deepcopy(self.marks)
 			for key, value in self.triggers.items():
@@ -2297,9 +2284,9 @@ class Weapon(Card):
 				Copy.auras[key] = value.createCopy(game)
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.deathrattles = [trig.createCopy(game) for trig in self.deathrattles]
-			Copy.triggersonBoard = [trig.createCopy(game) for trig in self.triggersonBoard]
-			Copy.triggersinHand = [trig.createCopy(game) for trig in self.triggersinHand]
-			Copy.triggersinDeck = [trig.createCopy(game) for trig in self.triggersinDeck]
+			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
+			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
+			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
 			self.assistCreateCopy(Copy)
 			return Copy

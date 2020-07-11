@@ -1,4 +1,5 @@
 import copy
+from Triggers_Auras import ManaMod
 
 def concatenateDicts(dict1, dict2):
 	for key in dict2.keys():

@@ -5,11 +5,11 @@ import collections
 
 def sqrtActi(x): return np.sqrt(x) if x >=0 else -np.sqrt(-x)
 
-def extractfrom(target, listObject):
-	try: return listObject.pop(listObject.index(target))
+def extractfrom(target, listObj):
+	try: return listObj.pop(listObj.index(target))
 	except: return None
 	
-def fixedList(listObject): return listObject[0:len(listObject)]
+def fixedList(listObj): return listObj[0:len(listObj)]
 	
 def exponential(x, ver_offset, amp, rate): return ver_offset + amp * np.exp(rate * x)
 	
