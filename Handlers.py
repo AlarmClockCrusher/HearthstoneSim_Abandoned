@@ -219,18 +219,14 @@ class Secrets:
 		curGame = self.Game
 		for i in range(num):
 			if curGame.mode == 0:
-				if curGame.guides and curGame.guides[0][1] == "Deploy Secret":
+				if curGame.guides:
 					i = curGame.guides.pop(0)
-					if i < 0: break
 				else:
 					secrets = [i for i, card in enumerate(curGame.Hand_Deck.decks[ID]) if "~~Secret" in card.index and not self.sameSecretExists(card, ID)]
-					if secrets and self.areaNotFull(ID):
-						i = npchoice(secrets)
-						curGame.fixedGuides.append(i)
-					else:
-						curGame.fixedGuides.append(-1)
-						break
-				curGame.Hand_Deck.extractfromDeck(i, ID)[0].whenEffective()
+					i = npchoice(secrets) if secrets and self.areaNotFull(ID) else -1
+					curGame.fixedGuides.append(i)
+				if i > -1: curGame.Hand_Deck.extractfromDeck(i, ID)[0].whenEffective()
+				else: break
 				
 	def extractSecrets(self, ID, index=0):
 		secret = self.secrets[ID].pop(index)
@@ -296,8 +292,8 @@ class Counters:
 		self.primaryGalakronds = {1: None, 2: None}
 		self.invocationCounts = {1:0, 2:0} #For Galakrond
 		self.hasPlayedQuestThisGame = {1:False, 2:False}
-		self.CThunAttack = {1:6, 2:6}
-		self.jadeGolemCounter = {1:1, 2:1}
+		self.timesHeroChangedHealth_inOwnTurn = {1:0, 2:0}
+		self.heroChangedHealthThisTurn = {1:False, 2:False}
 		
 	def turnEnds(self):
 		self.numElementalsPlayedLastTurn[self.Game.turn] = 0
@@ -317,6 +313,7 @@ class Counters:
 		self.damageonHeroThisTurn = {1:0, 2:0}
 		self.minionsDiedThisTurn = {1:[], 2:[]}
 		self.heroAttackTimesThisTurn = {1:0, 2:0}
+		self.heroChangedHealthThisTurn = {1:False, 2:False}
 		
 	#只有Game自己会引用Counters
 	def createCopy(self, recipientGame):
@@ -388,7 +385,7 @@ class Discover:
 			#根据这个发现选项进行排列组合，挑选无随机的所有可能性。记录下那个分数，和之后其他选项的对比
 			discover_branch[key+initiator.name+"_chooses_"+option.name+";"] = game
 			
-	def startDiscover(self, initiator, info):
+	def startDiscover(self, initiator, info=None):
 		if self.Game.GUI:
 			self.initiator = initiator
 			self.Game.GUI.update()
@@ -427,16 +424,13 @@ class Hand_Deck:
 		
 	def initializeDecks(self):
 		for ID in range(1, 3):
-			Class = self.Game.heroes[ID].Class
+			Class = self.Game.heroes[ID].Class #Hero's class
 			for obj in self.initialDecks[ID]:
 				card = obj(self.Game, ID)
 				if "Galakrond, " in card.name:
 					#检测过程中，如果目前没有主迦拉克隆或者与之前检测到的迦拉克隆与玩家的职业不符合，则把检测到的迦拉克隆定为主迦拉克隆
-					if self.Game.Counters.primaryGalakronds[ID] == None:
+					if self.Game.Counters.primaryGalakronds[ID] is None or (self.Game.Counters.primaryGalakronds[ID].Class != Class and card.Class == Class):
 						self.Game.Counters.primaryGalakronds[ID] = card
-					elif self.Game.Counters.primaryGalakronds[ID].Class != Class and card.Class == Class:
-						self.Game.Counters.primaryGalakronds[ID] = card
-				card.entersDeck()
 				self.decks[ID].append(card)
 				self.startingDeckIdentities[ID].append(card.identity)	
 			npshuffle(self.decks[ID])
@@ -446,85 +440,65 @@ class Hand_Deck:
 		mainQuests = {1:[], 2:[]}
 		mulliganSize = {1:3, 2:4}
 		for ID in range(1, 3):
-			for card in self.decks[ID]:
-				if card.description.startswith("Quest"):
-					mainQuests[ID].append(card)
+			mainQuests[ID] = [card for card in self.decks[ID] if card.description.startswith("Quest")]
 			numQueststoDraw = min(len(mainQuests[ID]), mulliganSize[ID])
 			if numQueststoDraw > 0:
 				queststoDraw = npchoice(mainQuests[ID], numQueststoDraw, replace=False)
 				for quest in queststoDraw:
-					self.Game.mulligans[ID].append(self.extractfromDeck(quest)[0])
+					self.Game.mulligans[ID].append(extractfrom(quest, self.decks[ID]))
 			for i in range(mulliganSize[ID]-numQueststoDraw):
-				self.Game.mulligans[ID].append(self.extractfromDeck(self.decks[ID][-1])[0])
+				self.Game.mulligans[ID].append(self.decks[ID].pop())
 				
-	def mulligan(self, indicesCards1, indicesCards2):
-		indicesCards = {1:indicesCards1, 2:indicesCards2} #indicesCards是要替换的手牌的列表序号，如[1, 3]
+	def mulligan(self, indices1, indices2):
+		indices = {1:indices1, 2:indices2} #indicesCards是要替换的手牌的列表序号，如[1, 3]
 		for ID in range(1, 3):
 			cardstoReplace = []
 			#self.Game.mulligans is the cards currently in players' hands.
-			if indicesCards[ID] != []:
-				for num in range(1, len(indicesCards[ID])+1):
+			if indices[ID]:
+				for num in range(1, len(indices[ID])+1):
 					#起手换牌的列表mulligans中根据要换掉的牌的序号从大到小摘掉，然后在原处补充新手牌
-					cardstoReplace.append(self.Game.mulligans[ID].pop(indicesCards[ID][-num]))
-					newCard = self.extractfromDeck(self.decks[ID][-1])[0]
-					self.Game.mulligans[ID].insert(indicesCards[ID][-num], newCard)
-				#调用手牌中没有被替代的卡的entersHand()
-				for card in self.Game.mulligans[ID]: #起手的手牌要entersHand
-					self.hands[ID].append(card.entersHand())
-					
-				self.decks[ID] += cardstoReplace
-				for card in cardstoReplace: #被换进牌库的牌要entersDeck，注册牌库扳机
-					card.entersDeck()
-				npshuffle(self.decks[ID]) #Shuffle the deck after mulligan
-			else: #No card replaced
-				for card in self.Game.mulligans[ID]:
-					card.leavesDeck()
-					card = card.entersHand()
-				self.hands[ID] = self.Game.mulligans[ID]
-				
-			#Record the starting hand identities.
-			for card in self.hands[ID]:
-				self.startingHandIdentities[ID].append(card.identity)
-				
-			PRINT(self.Game, "Player's starting hand: {}".format(self.hands[ID]))
+					cardstoReplace.append(self.Game.mulligans[ID].pop(indices[ID][-num]))
+					self.Game.mulligans[ID].insert(indices[ID][-num], self.decks[ID].pop())
+			self.decks[ID] += cardstoReplace
+			for card in self.decks[ID]: card.entersDeck() #Cards in deck arm their possible trigDeck
+			npshuffle(self.decks[ID]) #Shuffle the deck after mulligan
+			#手牌和牌库中的牌调用entersHand和entersDeck,注册手牌和牌库扳机
+			self.hands[ID] = [card.entersHand() for card in self.Game.mulligans[ID]]
+			self.Game.mulligans[ID] = []
+			self.startingHandIdentities[ID] = [card.identity for card in self.hands[ID]] #Record starting hand
 			for card in self.hands[1] + self.hands[2]:
 				card.effectCanTrigger()
 				card.checkEvanescent()
 				
+		if self.Game.GUI: self.Game.GUI.update()
 		self.addCardtoHand(TheCoin(self.Game, 2), 2)
 		self.Game.Manas.calcMana_All()
 		for ID in range(1, 3):
 			for card in self.hands[ID] + self.decks[ID]:
 				if "Start of Game" in card.index:
 					card.startofGame()
-					
 		self.drawCard(1)
 		for card in self.hands[1] + self.hands[2]:
 			card.effectCanTrigger()
 			card.checkEvanescent()
+			
 	#双人游戏中一方很多控制自己的换牌，之后两个游戏中复制对方的手牌和牌库信息
 	def mulligan1Side(self, ID, indices):
 		cardstoReplace = []
-		if indices != []:
+		if indices:
 			for num in range(1, len(indices)+1):
 				cardstoReplace.append(self.Game.mulligans[ID].pop(indices[-num]))
-				newCard = self.extractfromDeck(self.decks[ID][-1])[0]
-				self.Game.mulligans[ID].insert(indices[-num], newCard)
-			for card in self.Game.mulligans[ID]:
-				self.hands[ID].append(card.entersHand())
-				
-			self.decks[ID] += cardstoReplace
-			for card in cardstoReplace: card.entersDeck()
-			npshuffle(self.decks[ID])
-		else:
-			for card in self.Game.mulligans[ID]:
-				card.leavesDeck()
-				card = card.entersHand()
-			self.hands[ID] = self.Game.mulligans[ID]
-	#在双方给予了自己的手牌和牌库信息之后把它们注册同时触发游戏开始时的效果
-	def postMulligan_2PGame(self, ID): #This ID is the opponent's ID
-		for card in self.hands[ID]: card.entersHand()
+				self.Game.mulligans[ID].insert(indices[-num], self.decks[ID].pop())
+		self.hands[ID] = self.Game.mulligans[ID]
+		self.decks[ID] += cardstoReplace
 		for card in self.decks[ID]: card.entersDeck()
+		npshuffle(self.decks[ID])
+	#在双方给予了自己的手牌和牌库信息之后把它们注册同时触发游戏开始时的效果
+	def startGame(self): #This ID is the opponent's ID
+		for ID in range(1, 3): #直接拿着mulligans开始
+			self.hands[ID] = [card.entersHand() for card in self.hands[ID]]
+			for card in self.decks[ID]: card.entersDeck()
+			self.Game.mulligans[ID] = []
 		for ID in range(1, 3):
 			for card in self.hands[ID]:
 				self.startingHandIdentities[ID].append(card.identity)
@@ -541,7 +515,7 @@ class Hand_Deck:
 		for card in self.hands[1] + self.hands[2]:
 			card.effectCanTrigger()
 			card.checkEvanescent()
-		
+			
 	def handNotFull(self, ID):
 		return len(self.hands[ID]) < self.handUpperLimit[ID]
 		
@@ -586,114 +560,93 @@ class Hand_Deck:
 		
 	def holdingCardfromAnotherClass(self, ID, card=None):
 		Class = self.Game.heroes[ID].Class
-		if card == None:
-			for cardinHand in self.hands[ID]:
-				if Class not in cardinHand.Class and cardinHand.Class != "Neutral":
-					return True
-			return False
-		else:
+		if card:
 			for cardinHand in self.hands[ID]:
 				if Class not in cardinHand.Class and cardinHand.Class != "Neutral" and cardinHand != card:
 					return True
-			return False
+		else:
+			for cardinHand in self.hands[ID]:
+				if Class not in cardinHand.Class and cardinHand.Class != "Neutral":
+					return True
+		return False
 			
 	#抽牌一次只能一张，需要废除一次抽多张牌的功能，因为这个功能都是用于抽效果指定的牌。但是这些牌中如果有抽到时触发的技能，可能会导致马上抽牌把列表后面的牌提前抽上来
 	#现在规则为如果要连续抽2张法术，则分两次检测牌库中的法术牌，然后随机抽一张。
 	#如果这个规则是正确的，则在牌库只有一张夺灵者哈卡的堕落之血时，抽到这个法术之后会立即额外抽牌，然后再塞进去两张堕落之血，那么第二次抽法术可能会抽到新洗进去的堕落之血。
 	#Damage taken due to running out of card will keep increasing. Refilling the deck won't reset the damage you take next time you draw from empty deck
 	def drawCard(self, ID, card=None):
+		game, GUI = self.Game, self.Game.GUI
 		if card is None: #Draw from top of the deck.
-			PRINT(self.Game, "Hero %d draws from the top of the deck"%ID)
-			if self.decks[ID] == []: #No cards left in deck.
-				PRINT(self.Game, "Hero%d's deck is empty and will take damage"%ID)
-				self.noCards[ID] += 1 #如果在疲劳状态有卡洗入牌库，则疲劳值不会减少，在下次疲劳时，仍会从当前的非零疲劳值开始。
-				damage = self.noCards[ID]
-				dmgTaker = self.Game.scapegoat4(self.Game.heroes[ID])
-				dmgTaker.takesDamage(None, damage) #疲劳伤害没有来源
-				return (None, 0)
-			else:
+			PRINT(game, "Hero %d draws from the top of the deck"%ID)
+			if self.decks[ID]: #Still have cards left in deck.
 				card = self.decks[ID].pop()
 				mana = card.mana
+			else:
+				PRINT(game, "Hero%d's deck is empty and will take damage"%ID)
+				self.noCards[ID] += 1 #如果在疲劳状态有卡洗入牌库，则疲劳值不会减少，在下次疲劳时，仍会从当前的非零疲劳值开始。
+				damage = self.noCards[ID]
+				if GUI: GUI.fatigueAni(ID, damage)
+				dmgTaker = game.scapegoat4(game.heroes[ID])
+				dmgTaker.takesDamage(None, damage) #疲劳伤害没有来源
+				return (None, 0)
 		else:
 			if isinstance(card, (int, np.int32, np.int64)):
 				card = self.decks[ID].pop(card)
 			else: card = extractfrom(card, self.decks[ID])
-			PRINT(self.Game, "Hero %d draws %s from the deck"%(ID, card.name))
+			PRINT(game, "Hero %d draws %s from the deck"%(ID, card.name))
 			mana = card.mana
 		card.leavesDeck()
 		if self.handNotFull(ID):
+			if GUI: btn = GUI.drawCardAni_1(card)
 			cardTracker = [card] #把这张卡放入一个列表，然后抽牌扳机可以对这个列表进行处理同时传递给其他抽牌扳机
-			self.Game.sendSignal("CardDrawn", ID, None, cardTracker, mana, "")
+			game.sendSignal("CardDrawn", ID, None, cardTracker, mana, "")
 			if cardTracker[0].type == "Spell" and "Casts When Drawn" in cardTracker[0].index:
-				PRINT(self.Game, "%s is drawn and cast."%cardTracker[0].name)
+				PRINT(game, "%s is drawn and cast."%cardTracker[0].name)
+				if GUI: btn.remove()
 				cardTracker[0].whenEffective()
 				self.drawCard(ID)
 				cardTracker[0].afterDrawingCard()
 			else: #抽到的牌可以加入手牌。
 				if cardTracker[0].type == "Minion" and cardTracker[0].triggers["Drawn"] != []:
-					PRINT(self.Game, "%s is drawn and triggers its effect."%cardTracker[0].name)
+					PRINT(game, "%s is drawn and triggers its effect."%cardTracker[0].name)
 					for func in cardTracker[0].triggers["Drawn"]:
 						func()
 				cardTracker[0] = cardTracker[0].entersHand()
 				self.hands[ID].append(cardTracker[0])
-				self.Game.sendSignal("CardEntersHand", ID, None, cardTracker, mana, "")
-				self.Game.Manas.calcMana_All()
+				if GUI: GUI.drawCardAni_2(btn, cardTracker[0])
+				game.sendSignal("CardEntersHand", ID, None, cardTracker, mana, "")
+				game.Manas.calcMana_All()
 			return (cardTracker[0], mana)
 		else:
-			PRINT(self.Game, "Player's hand is full. The drawn card %s is milled"%card.name)
+			PRINT(game, "Player's hand is full. The drawn card %s is milled"%card.name)
+			if GUI: GUI.millCardAni(card)
 			return (None, 0)
 			
 	#Will force the ID of the card to change.
-	def addCardtoHand(self, obj, ID, comment="AddRealCard", index=-1):
-		if isinstance(obj, (list, np.ndarray, tuple)): #Multiple cards at a time
-			for card in obj:
-				if self.handNotFull(ID):
-					if comment == "CreateUsingIndex":
-						card = self.Game.cardPool[card](self.Game, ID)
-					elif comment == "CreateUsingType":
-						card = card(self.Game, ID)
-						
-					card.ID = ID
-					card = card.entersHand()
-					#Add the card to hand.
-					if index == -1:
-						self.hands[ID].append(card)
-					else:
-						self.hands[ID].insert(index, card)
-					PRINT(self.Game, "%s is put into player %d's hand."%(card.name, ID))
-					self.Game.sendSignal("CardEntersHand", ID, None, [card], 0, comment)
-				else:
-					PRINT(self.Game, "Player's hand is full. Can't add more cards.")
-					break
-		else: #If the obj is a single card/index/type.
+	def addCardtoHand(self, obj, ID, comment="", i=-1):
+		game, GUI = self.Game, self.Game.GUI
+		if not isinstance(obj, (list, np.ndarray, tuple)): #if the obj is not a list, turn it into a single-element list
+			obj = [obj]
+		morethan3 = len(obj) > 2
+		for card in obj:
 			if self.handNotFull(ID):
-				if comment == "CreateUsingIndex":
-					obj = self.Game.cardPool[obj](self.Game, ID)
-				elif comment == "CreateUsingType":
-					obj = obj(self.Game, ID)
-				obj.ID = ID
-				obj = obj.entersHand()
-				#Add card into hand.
-				if index == -1:
-					self.hands[ID].append(obj)
-				else:
-					PRINT(self.Game, "Inserting card into posinHand: %d"%index)
-					self.hands[ID].insert(index, obj)
-				#Process the card's entersHand() method.
-				PRINT(self.Game, "%s is added into player %d's hand."%(obj.name, ID))
-				self.Game.sendSignal("CardEntersHand", ID, None, [obj], 0, comment)					
-			else:
-				PRINT(self.Game, "Player's hand is full. Can't add more cards.")
-				
-		self.Game.Manas.calcMana_All()
+				if comment == "type": card = card(game, ID)
+				elif comment == "index": card = game.cardPool[card](game, ID)
+				card.ID = ID
+				if GUI: btn = GUI.cardEntersHandAni_1(card)
+				self.hands[ID].insert(i+100*(i < 0), card)
+				if GUI: GUI.cardEntersHandAni_2(btn, i+100*(i < 0), steps=5 if morethan3 else 10)
+				card = card.entersHand()
+				game.sendSignal("CardEntersHand", ID, None, [card], 0, comment)
+			else: break
+		game.Manas.calcMana_All()
 		
 	def replaceCardDrawn(self, targetHolder, newCard):
 		ID = targetHolder[0].ID
 		isPrimaryGalakrond = targetHolder[0] == self.Game.Counters.primaryGalakronds[ID]
 		targetHolder[0] = newCard
-		if isPrimaryGalakrond:
-			self.Game.Counters.primaryGalakronds[ID] = newCard
-			
+		if isPrimaryGalakrond: self.Game.Counters.primaryGalakronds[ID] = newCard
+		
 	def replaceCardinHand(self, card, newCard):
 		ID = card.ID
 		for i in range(len(self.hands[ID])):
@@ -701,92 +654,88 @@ class Hand_Deck:
 				card.leavesHand()
 				self.hands[ID].pop(i)
 				self.Game.sendSignal("CardLeavesHand", ID, None, card, 0, "")
-				self.addCardtoHand(newCard, ID, "AddRealCard", i)
+				self.addCardtoHand(newCard, ID, "card", i)
 				break
 				
 	def replaceCardinDeck(self, card, newCard):
 		ID = card.ID
-		for i in range(len(self.decks[ID])):
-			if self.decks[ID][i] == card:
-				card.leavesDeck()
-				self.decks[ID].pop(i)
-				newCard.entersDeck()
-				self.decks[ID].insert(i, newCard)
-				break
-				
+		try:
+			i = self.decks[ID].index(card)
+			card.leavesDeck()
+			self.decks[ID].pop(i)
+			self.decks[ID].insert(i, newCard)
+		except: pass
+		
 	#All the cards shuffled will be into the same deck. If necessary, invoke this function for each deck.
 	#PlotTwist把手牌洗入牌库的时候，手牌中buff的随从两次被抽上来时buff没有了。
 	#假设洗入牌库这个动作会把一张牌初始化
-	def shuffleCardintoDeck(self, obj, initiatorID):
-		if type(obj) == type([]) or type(obj) == type(np.array([])):
+	def shuffleCardintoDeck(self, obj, initiatorID, enemyCanSee=True):
+		curGame = self.Game
+		if curGame.GUI: curGame.GUI.shuffleCardintoDeckAni(obj, enemyCanSee)
+		if isinstance(obj, (list, np.ndarray)):
 			ID = obj[0].ID
-			targetDeck = self.decks[ID]
-			for card in obj:
-				targetDeck.append(card)
-				card.entersDeck()
+			newDeck = self.decks[ID]
+			newDeck += obj
+			for card in obj: card.entersDeck()
 		else: #Shuffle a single card
 			ID = obj.ID
-			targetDeck = self.decks[ID]
-			targetDeck.append(obj)
+			newDeck = self.decks[ID]
+			newDeck.append(obj)
 			obj.entersDeck()
 			
-		curGame = self.Game
 		if curGame.mode == 0:
-			if curGame.guides and curGame.guides[0][1] == "Shuffle":
+			if curGame.guides:
 				order = curGame.guides.pop(0)
-				self.decks[ID] = [targetDeck[i] for i in order]
 			else:
-				if len(targetDeck) > 1:
-					order = list(range(len(self.hands[ID])))
-					npshuffle(order)
-					curGame.fixedGuides.append(("R", "Shuffle", order))
-					self.decks[ID] = [targetDeck[i] for i in order]
+				order = list(range(len(self.hands[ID])))
+				npshuffle(order)
+				curGame.fixedGuides.append(tuple(order))
+			self.decks[ID] = [newDeck[i] for i in order]
 		curGame.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
 		
 	def discardAll(self, ID):
-		if self.hands[ID] != []:
-			cards, cost, isRightmostCardinHand = self.extractfromHand(None, all=True, ID=ID)
+		if self.hands[ID]:
+			cards, cost, isRightmostCardinHand = self.extractfromHand(None, all=True, ID=ID, enemyCanSee=True)
 			for card in cards:
 				PRINT(self.Game, "Card %s in player's hand is discarded:"%card.name)
-				for func in card.triggers["Discarded"]:
-					func()
+				for func in card.triggers["Discarded"]: func()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")					
 			self.Game.Manas.calcMana_All()
 			
 	def discardCard(self, ID, card=None):
 		if card is None: #Discard a random card.
-			if self.hands[ID] != []:
+			if self.hands[ID]:
 				card = npchoice(self.hands[ID])
-				card, cost, isRightmostCardinHand = self.extractfromHand(card)
+				card, cost, isRightmostCardinHand = self.extractfromHand(card, enemyCanSee=True)
 				PRINT(self.Game, "Card %s in player's hand is discarded:"%card.name)
-				for func in card.triggers["Discarded"]:
-					func()
+				for func in card.triggers["Discarded"]: func()
 				self.Game.Manas.calcMana_All()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
 				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
 		else: #Discard a chosen card.
-			if isinstance(card, (int, np.int32, np.int64)):
-				card = self.hands[ID].pop(card)
-				card.leavesHand()
-			else: card = self.extractfromHand(card)[0]
+			i = card if isinstance(card, (int, np.int32, np.int64)) else self.hands[ID].index(card)
+			card = self.hands[ID].pop(i)
+			card.leavesHand()
+			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee=True)
 			PRINT(self.Game, "Card %s in player's hand is discarded:"%card.name)
-			for func in card.triggers["Discarded"]:
-				func()
+			for func in card.triggers["Discarded"]: func()
 			self.Game.Manas.calcMana_All()
 			self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
 			self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")					
 			
 	#只能全部拿出手牌中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
-	def extractfromHand(self, card, all=False, ID=0):
+	def extractfromHand(self, card, all=False, ID=0, enemyCanSee=False):
 		if all: #Extract the entire hand.
 			temp = self.hands[ID]
 			self.hands[ID] = []
 			for card in temp:
 				card.leavesHand()
 				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
+			#一般全部取出手牌的时候都是直接洗入牌库，一般都不可见
+			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(temp, False)
 			return temp, 0, -2 #-2 means the positioninHand doesn't have real meaning.
 		else:
 			if not isinstance(card, (int, np.int32, np.int64)):
@@ -802,6 +751,7 @@ class Hand_Deck:
 				card = self.hands[ID].pop(card)
 				cost = card.mana
 			card.leavesHand()
+			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee)
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
 			return card, cost, positioninHand
 	#只能全部拿牌库中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
@@ -818,13 +768,12 @@ class Hand_Deck:
 			return card, 0, False
 			
 	def removeDeckTopCard(self, ID):
-		if self.decks[ID] != []:
+		try: #Should have card most of the time.
 			card = self.decks[ID].pop(0)
 			card.leavesDeck()
 			PRINT(self.Game, "The top card %s in player %d's deck is removed"%(card.name, ID))
 			return card
-		else:
-			return None
+		except: return None
 			
 	def createCopy(self, game):
 		if self not in game.copiedObjs:

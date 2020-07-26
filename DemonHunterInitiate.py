@@ -169,7 +169,7 @@ class UrzulHorror(Minion):
 class AddaLostSoultoYourHand(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Deathrattle: Add a 2/1 Lost Soul to your hand triggers")
-		self.entity.Game.Hand_Deck.addCardtoHand(LostSoul, self.entity.ID, "CreateUsingType")
+		self.entity.Game.Hand_Deck.addCardtoHand(LostSoul, self.entity.ID, "type")
 		
 class LostSoul(Minion):
 	Class, race, name = "Demon Hunter", "", "Lost Soul"
@@ -325,23 +325,20 @@ class Trigger_WrathscaleNaga(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
-			if curGame.guides and curGame.guides[0][1] == "Wrathscale Naga":
+			enemy = None
+			if curGame.guides:
 				i, where = curGame.guides.pop(0)
 				if where: enemy = curGame.find(i, where)
-				else: return
 			else:
 				targets = curGame.charsAlive(3-self.entity.ID)
 				if targets:
 					enemy = npchoice(targets)
-					if enemy.type == "Minion": i, where = enemy.position, "minion%d"%enemy.ID
-					else: i, where = enemy.ID, "hero"
-					curGame.fixedGuides.append((i, where))
-				else:
-					curGame.fixedGuides.append((0, ""))
-					return
-			PRINT(curGame, "After friendly minion %s dies, Wrathscale Naga deals 3 damage to random enemy %s"%(target.name, enemy.name))
-			self.entity.dealsDamage(enemy, 1)
-			
+					curGame.fixedGuides.append((enemy.position, "minion%d"%enemy.ID) if enemy.type == "Minion" else (enemy.ID, "hero"))
+				else: curGame.fixedGuides.append((0, ""))
+			if enemy:
+				PRINT(curGame, "After a friendly minion dies, Wrathscale Naga deals 3 damage to random enemy %s"%enemy.name)
+				self.entity.dealsDamage(enemy, 1)
+				
 """Mana 4 cards"""
 class IllidariFelblade(Minion):
 	Class, race, name = "Demon Hunter", "", "Illidari Felblade"
@@ -490,7 +487,7 @@ class Nethrandamus(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
-			if curGame.guides and curGame.guides[0][1] == "Nethrandamus":
+			if curGame.guides:
 				minions = curGame.guides.pop(0)
 			else:
 				#假设计数过高，超出了费用范围，则取最高的可选费用
@@ -499,7 +496,7 @@ class Nethrandamus(Minion):
 					if cost not in curGame.MinionsofCost: cost -= 1
 					else: break
 				minions = npchoice(curGame.RNGPools["%d-Cost Minions"%cost], 2, replace=True)
-				curGame.fixedGuides.append(("R", "Nethrandamus", tuple(minions)))
+				curGame.fixedGuides.append(tuple(minions))
 			PRINT(curGame, "Nethrandamus' battlecry summons two random %d-Cost minions."%self.progress)
 			pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 			curGame.summon([minion(curGame, self.ID) for minion in minions], pos, self.ID)

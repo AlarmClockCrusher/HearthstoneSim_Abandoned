@@ -299,7 +299,7 @@ class TotemicSlam(HeroPower):
 				curGame.summon(curGame.guides.pop(0)(curGame, self.ID), -1, self.ID, '')
 			else:
 				curGame.options = [totem(curGame, self.ID) for totem in [SearingTotem, StoneclawTotem, HealingTotem, WrathofAirTotem]]
-				curGame.Discover.startDiscover(self, None)
+				curGame.Discover.startDiscover(self)
 		return 0
 		
 	def discoverDecided(self, option, info):
@@ -401,7 +401,7 @@ class ElvenArcher(Minion):
 	Class, race, name = "Neutral", "", "Elven Archer"
 	mana, attack, health = 1, 1, 1
 	index = "Basic~Neutral~Minion~1~1~1~None~Elven Archer~Battlecry"
-	requireTarget, keyWord, description = True, "", "Deal 1 damamge"
+	requireTarget, keyWord, description = True, "", "Battlecry: Deal 1 damamge"
 	#Dealing damage to minions not on board(moved to grave and returned to deck) won't have any effect.
 	#Dealing damage to minions in hand will trigger Frothing Berserker, but that minion will trigger its own damage taken response.
 	#When the minion in hand takes damage, at the moment it's replayed, the health will be reset even if it's reduced to below 0.
@@ -896,7 +896,7 @@ class SightlessWatcher(Minion):
 					else:
 						PRINT(curGame, "Sightless Watcher's battlecry lets player look at 3 cards in the deck and put one on top")
 						curGame.options = npchoice(ownDeck, min(3, len(ownDeck)), replace=False)
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -1241,7 +1241,7 @@ class Tracking(Spell):
 			if curGame.mode == 0:
 				if curGame.guides:
 					PRINT(curGame, "Tracking lets player draw one of the top 3 cards and discard the others")
-					Tracking.draw1DitchOthers(self, curGame.guides[0])
+					Tracking.draw1DitchOthers(self, curGame.guides.pop(0))
 				else:
 					num = min(3, numCardsLeft)
 					indices = [numCardsLeft-3, numCardsLeft-2, numCardsLeft-1] if num == 3 else [numCardsLeft-2, numCardsLeft-1]
@@ -1260,10 +1260,8 @@ class Tracking(Spell):
 	#产生选择选项的时候是牌库顶的牌在最选项的最左面
 	def discoverDecided(self, option, info):
 		PRINT(self.Game, "Tracking lets player draw card %s from the top 3 cards in deck"%option.name)
-		for i, opt in enumerate(self.Game.options):
-			if opt == option:
-				index = info.pop(i)
-				break
+		i = self.Game.options.index(option)
+		index = info.pop(i)
 		info = (index, tuple(info))
 		self.Game.fixedGuides.append(info)
 		Tracking.draw1DitchOthers(self, info)
@@ -1961,9 +1959,7 @@ class MindControl(Spell):
 		return self.selectableEnemyMinionExists()
 		
 	def targetCorrect(self, target, choice=0):
-		if target.type == "Minion" and target.ID != self.ID and target.onBoard:
-			return True
-		return False
+		return target.type == "Minion" and target.ID != self.ID and target.onBoard
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and target.ID != self.ID:
@@ -1981,7 +1977,7 @@ class Backstab(Spell):
 		return self.selectableMinionExists()
 		
 	def targetCorrect(self, target, choice=0):
-		return target.type == "Minion" and target.health == target.health_upper and target.onBoard
+		return target.type == "Minion" and target.health == target.health_max and target.onBoard
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -2151,14 +2147,12 @@ class AncestralHealing(Spell):
 		return self.selectableMinionExists()
 		
 	def targetCorrect(self, target, choice=0):
-		if target.type == "Minion" and target.onBoard:
-			return True
-		return False
+		return target.type == "Minion" and target.onBoard
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Ancestral Healing restores minion %s to its full health."%target.name)
-			self.restoresHealth(target, target.health_upper)
+			self.restoresHealth(target, target.health_max)
 		return target
 		
 		
@@ -2501,9 +2495,7 @@ class ShadowBolt(Spell):
 		return self.selectableMinionExists()
 		
 	def targetCorrect(self, target, choice=0):
-		if target.type == "Minion" and target.onBoard:
-			return True
-		return False
+		return target.type == "Minion" and target.onBoard
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -2602,7 +2594,7 @@ class Execute(Spell):
 		return self.selectableEnemyMinionExists()
 		
 	def targetCorrect(self, target, choice=0):
-		return target.type == "Minion" and target.ID != self.ID and target.health < target.health_upper and target.onBoard
+		return target.type == "Minion" and target.ID != self.ID and target.health < target.health_max and target.onBoard
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:

@@ -208,7 +208,7 @@ class Player:
 					if not sub.onBoard: #Hero Power's onBoard is always True(it's a placeholder)
 						choices = [0]
 						if sub.chooseOne: #抉择牌或技能需要根据光环决定可以使用的选项
-							choices = ["ChooseBoth"] if gameOrig.status[self.ID]["Choose Both"] > 0 else [i for i in range(len(sub.options)) if sub.options[i].available()]
+							choices = [-1] if gameOrig.status[self.ID]["Choose Both"] > 0 else [i for i in range(len(sub.options)) if sub.options[i].available()]
 						for choice in choices: #对所有可用的选项进行遍历，返回所有合法目标
 							tars, tarInds, tarWheres = sub.findTargets(choice) if sub.needTarget(choice) else [None], [0], ['']
 							gameCopies == gameOrig.copyGame(len(tars))

@@ -34,7 +34,7 @@ class TrigBoard:
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):
-			if self.entity.Game.withAnimation:
+			if self.entity.Game.GUI:
 				self.entity.Game.GUI.triggerBlink(self.entity)
 			self.effect(signal, ID, subject, target, number, comment)
 			
@@ -84,8 +84,7 @@ class TrigHand:
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):
-			if self.entity.Game.withAnimation:
-				self.entity.Game.GUI.triggerBlink(self.entity)
+			if self.entity.Game.GUI: self.entity.Game.GUI.triggerBlink(self.entity)
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
@@ -167,12 +166,10 @@ class Deathrattle_Minion(TrigBoard):
 		minion, game = self.entity, self.entity.Game
 		if game.status[minion.ID]["Deathrattle x2"] > 0:
 			if self.canTrigger(signal, ID, subject, target, number, comment):
-				if game.withAnimation:
-					game.GUI.triggerBlink(minion)
+				if game.GUI: game.GUI.triggerBlink(minion, color="grey40")
 				self.effect(signal, ID, subject, target, number, comment)
 		if self.canTrigger(signal, ID, subject, target, number, comment):
-			if game.withAnimation:
-				game.GUI.triggerBlink(minion)
+			if game: game.GUI.triggerBlink(minion, color="grey40")
 			self.effect(signal, ID, subject, target, number, comment)
 		#随从通过死亡触发的亡语扳机需要在亡语触发之后注销。同样的，如果随从在亡语触发之后不在随从列表中了，如将随从洗回牌库，则同样要注销亡语
 		#但是如果随从在由其他效果在场上触发的扳机，则这个亡语不会注销
@@ -196,12 +193,10 @@ class Deathrattle_Weapon(TrigBoard):
 		weapon, game = self.entity, self.entity.Game
 		if game.status[weapon.ID]["Weapon Deathrattle x2"] > 0:
 			if self.canTrigger(signal, ID, subject, target, number, comment):
-				if game.withAnimation:
-					game.GUI.triggerBlink(weapon)
+				if game.GUI: game.GUI.triggerBlink(weapon, color="grey40")
 				self.effect(signal, ID, subject, target, number, comment)
 		if self.canTrigger(signal, ID, subject, target, number, comment):
-			if game.withAnimation:
-				game.GUI.triggerBlink(weapon)
+			if game.GUI: game.GUI.triggerBlink(weapon, color="grey40")
 			self.effect(signal, ID, subject, target, number, comment)
 		#目前没有触发武器亡语的效果，所以武器的亡语触发之后可以很安全地直接将其删除。
 		self.disconnect()
@@ -222,16 +217,16 @@ class SecretTrigger(TrigBoard):
 		secret, game = self.entity, self.entity.Game
 		if game.status[secret.ID]["Secrets x2"] > 0:
 			if self.canTrigger(signal, ID, subject, target, number, comment):
-				if game.withAnimation:
-					game.GUI.triggerBlink(secret)
+				if game.GUI: game.GUI.triggerBlink(secret)
 				self.effect(signal, ID, subject, target, number, comment)
 		if self.canTrigger(signal, ID, subject, target, number, comment):
-			if game.withAnimation:
-				game.GUI.triggerBlink(secret)
+			if game.GUI: game.GUI.triggerBlink(secret)
 			self.effect(signal, ID, subject, target, number, comment)
 		game.sendSignal("SecretRevealed", game.turn, secret, None, 0, "")
 		self.disconnect()
-		try: game.Secrets.secrets[secret.ID].remove(secret)
+		try:
+			game.Secrets.secrets[secret.ID].remove(secret)
+			print("Counterspell has been triggered and removed")
 		except: pass
 		
 		
@@ -297,11 +292,11 @@ class QuestTrigger(TrigBoard):
 		self.entity, self.signals = entity, signals
 		self.accomplished = False
 		self.armed = False
+		self.counter = 0
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):
-			if self.entity.Game.withAnimation:
-				self.entity.Game.GUI.triggerBlink(self.entity)
+			if self.entity.Game.GUI: self.entity.Game.GUI.triggerBlink(self.entity)
 			self.effect(signal, ID, subject, target, number, comment)
 			
 			
@@ -415,7 +410,7 @@ class BuffAura_Dealer_Adjacent(AuraDealer_toMinion):
 		for minion, aura_Receiver in fixedList(self.auraAffected):
 			aura_Receiver.effectClear()
 		#Find adjacent minions to self.entity, then try to register them.
-		for minion in self.entity.Game.adjacentMinions2(self.entity)[0]:
+		for minion in self.entity.Game.neighbors2(self.entity)[0]:
 			self.applies(minion)
 			
 	def applies(self, subject):
@@ -424,7 +419,7 @@ class BuffAura_Dealer_Adjacent(AuraDealer_toMinion):
 			aura_Receiver.effectStart()
 			
 	def auraAppears(self):
-		for minion in self.entity.Game.adjacentMinions2(self.entity)[0]:
+		for minion in self.entity.Game.neighbors2(self.entity)[0]:
 			self.applies(minion)
 			
 		#Only need to handle minions that appear. Them leaving/silenced will be handled by the BuffAura_Receiver object.
@@ -474,10 +469,10 @@ class BuffAura_Dealer_Enrage(AuraDealer_toMinion):
 		
 	def handleEnrage(self):
 		if self.entity.onBoard:
-			if self.entity.activated == False and self.entity.health < self.entity.health_upper:
+			if self.entity.activated == False and self.entity.health < self.entity.health_max:
 				self.entity.activated = True
 				BuffAura_Receiver(self.entity, self, self.attack, 0).effectStart()
-			elif self.entity.activated and self.entity.health >= self.entity.health_upper:
+			elif self.entity.activated and self.entity.health >= self.entity.health_max:
 				self.entity.activated = False
 				for entity, aura_Receiver in fixedList(self.auraAffected):
 					aura_Receiver.effectClear()

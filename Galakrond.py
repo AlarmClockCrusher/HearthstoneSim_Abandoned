@@ -97,7 +97,7 @@ class LicensedAdventurer(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Secrets.mainQuests[self.ID] != [] or self.Game.Secrets.sideQuests[self.ID] != []:
 			PRINT(self.Game, "Licensed Adventurer's battlecry adds a Coin to player's hand")
-			self.Game.Hand_Deck.addCardtoHand(TheCoin, self.ID, "CreateUsingType")
+			self.Game.Hand_Deck.addCardtoHand(TheCoin, self.ID, "type")
 		return None
 		
 class FrenziedFelwing(Minion):
@@ -212,7 +212,7 @@ class Trigger_GrandLackeyErkh(TrigBoard):
 				lackey = npchoice(Lackeys)
 				curGame.fixedGuides.append(lackey)
 			PRINT(curGame, "After player plays a Lackey, Grand Lackey Erkh adds a Lackey to player's hand")
-			curGame.Hand_Deck.addCardtoHand(lackey, self.entity.ID, "CreateUsingType")
+			curGame.Hand_Deck.addCardtoHand(lackey, self.entity.ID, "type")
 			
 			
 class SkyGenralKragg(Minion):
@@ -250,10 +250,10 @@ class RisingWinds(Spell):
 		self.options = [TakeFlight_Option(), SwoopIn_Option(self)]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if choice == "ChooseBoth" or choice == 0:
+		if choice < 1:
 			PRINT(self.Game, "Rising Winds lets player draw a card")
 			self.Game.Hand_Deck.drawCard(self.ID)
-		if choice == "ChooseBoth" or choice == 1:
+		if choice != 0:
 			PRINT(self.Game, "Rising Winds summons a 3/2 Eagle")
 			self.Game.summon(Eagle(self.Game, self.ID), -1, self.ID)
 		return None
@@ -269,10 +269,10 @@ class risingwinds(Spell):
 		self.options = [TakeFlight_Option(self), SwoopIn_Option(self)]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if choice == "ChooseBoth" or choice == 0:
+		if choice < 1:
 			PRINT(self.Game, "Rising Winds lets player draw a card")
 			self.Game.Hand_Deck.drawCard(self.ID)
-		if choice == "ChooseBoth" or choice == 1:
+		if choice != 0:
 			PRINT(self.Game, "Rising Winds summons a 3/2 Eagle")
 			self.Game.summon(Eagle(self.Game, self.ID), -1, self.ID)
 		return None
@@ -413,7 +413,7 @@ class Trigger_ChopshopCopter(TrigBoard):
 				mech = npchoice(curGame.RNGPools["Mechs"])
 				curGame.fixedGuides.append(mech)
 			PRINT(curGame, "After a friendly minion died, Chopshop Copter adds a random Mech to player's hand")
-			curGame.Hand_Deck.addCardtoHand(mech, self.entity.ID, "CreateUsingType")
+			curGame.Hand_Deck.addCardtoHand(mech, self.entity.ID, "type")
 			
 			
 class RotnestDrake(Minion):
@@ -541,7 +541,7 @@ class TheAmazingReno(Hero):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "The Amazing Reno's battlecry makes all minions disappear.")
 		for minion in fixedList(self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)):
-			minion.disappears(keepDeathrattlesRegistered=False)
+			minion.disappears(deathrattlesStayArmed=False)
 			self.Game.removeMinionorWeapon(minion)
 		return None
 		
@@ -655,7 +655,7 @@ class ClericofScales(Minion):
 						else:
 							PRINT(curGame, "Cleric of Scales' battlecry lets player Discover a spell from their deck")
 							curGame.options = npchoice(spells, min(3, len(spells)), replace=False)
-							curGame.Discover.startDiscover(self, None)
+							curGame.Discover.startDiscover(self)
 					else: return None
 		return None
 		
@@ -705,7 +705,7 @@ class DarkProphecy(Spell):
 					minions = npchoice(curGame.RNGPools[key], 3, replace=False)
 					PRINT(curGame, "Dark Prophecy lets player Discover a 2-Cost minion to summon and gain +3 Health")
 					curGame.options = [minion(curGame, self.ID) for minion in minions]
-					curGame.Discover.startDiscover(self, None)
+					curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -772,7 +772,7 @@ class Waxmancy(Spell):
 					minions = npchoice(curGame.RNGPools[key], 3, replace=False)
 					PRINT(curGame, "Waxmancy lets player Discover a Battlecry minion. It costs (2) less")
 					curGame.options = [minion(curGame, self.ID) for minion in minions]
-					curGame.Discover.startDiscover(self, None)
+					curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -957,18 +957,18 @@ class TwistedKnowledge(Spell):
 			if curGame.mode == 0:
 				if curGame.guides:
 					PRINT(curGame, "Twisted Knowledge adds a Warlock card to player's hand")
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "CreateUsingType")
+					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
 				else:
 					if "byOthers" in comment:
 						card = npchoice(curGame.RNGPools["Warlock Cards"])
 						curGame.fixedGuides.append(card)
 						PRINT(curGame, "Twisted Knowledge is cast and adds a random Warlock card to player's hand")
-						curGame.Hand_Deck.addCardtoHand(curGame, self.ID, "CreateUsingType")
+						curGame.Hand_Deck.addCardtoHand(curGame, self.ID, "type")
 					else:
 						cards = npchoice(curGame.RNGPools["Warlock Cards"], 3, replace=False)
 						PRINT(curGame, "Twisted Knowledge lets player Discover a Warlock card")
 						curGame.options = [card(curGame, self.ID) for card in cards]
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -1064,7 +1064,7 @@ class BoomSquad(Spell):
 		if curGame.mode == 0:
 			if curGame.guides:
 				PRINT(curGame, "Boom Squad is cast and adds a Lackey/Mech/Dragon to player's hand")
-				curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "CreateUsingType")
+				curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
 			else:
 				key_Mech = "Mechs as " + classforDiscover(self)
 				key_Dragon = "Dragons as " + classforDiscover(self)
@@ -1073,12 +1073,12 @@ class BoomSquad(Spell):
 					card = npchoice(mixedPool[nprandint(3)])
 					curGame.fixedGuides.append(card)
 					PRINT(curGame, "Boom Squad is cast and adds a random Lackey, Mech, or Dragon card to player's hand")
-					curGame.Hand_Deck.addCardtoHand(card, self.ID, "CreateUsingType")
+					curGame.Hand_Deck.addCardtoHand(card, self.ID, "type")
 				else:
 					cards = [npchoice(Lackeys), npchoice(curGame.RNGPools[key_Mech]), npchoice(curGame.RNGPools[key_Dragon])]
 					PRINT(curGame, "Boom Squad lets player Discover a Lackey, Mech or Dragon")
 					curGame.options = [card(curGame, self.ID) for card in cards]
-					curGame.Discover.startDiscover(self, None)
+					curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):

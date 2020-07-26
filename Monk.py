@@ -51,7 +51,7 @@ class Resuscitate(Spell): #轮回转世
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and target.onBoard:
 			PRINT(self.Game, "Resuscitate returns friendly minion %s to player's hand and restores a Mana Crystal"%target.name)
-			self.Game.returnMiniontoHand(target, keepDeathrattlesRegistered=False)
+			self.Game.returnMiniontoHand(target, deathrattlesStayArmed=False)
 		self.Game.Manas.restoreManaCrystal(1, self.ID)
 		return target
 		
@@ -64,7 +64,7 @@ class ArchoftheTemple(Minion): #禅院的牌坊
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Arch of the Templer's battlecry adds two 1/1 Monks with Rush to player's hand")
-		self.Game.Hand_Deck.addCardtoHand([MonkAttacker, MonkAttacker], self.ID, "CreateUsingType")
+		self.Game.Hand_Deck.addCardtoHand([MonkAttacker, MonkAttacker], self.ID, "type")
 		return None
 		
 class MonkAttacker(Minion): #武僧袭击者
@@ -296,33 +296,34 @@ class WiseLorewalkerCho(Minion): #睿智的游学者周卓
 		for cost in range(11):
 			spells, cond = [], "~Spell~%d~"%cost
 			for Class in Game.Classes:
-				for key, value in Game.ClassCards[Class].items():
-					if cond in key:
-						spells.append(value)
+				spells += [value for key, value in Game.ClassCards[Class].items() if cond in key]
 			costs.append("%d-Cost Spells"%cost)
 			lists.append(spells)
 		return costs, lists
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if self.Game.Hand_Deck.handNotFull(self.ID) and self.ID == self.Game.turn:
+		if self.ID == self.Game.turn:
 			Class = "Monk" if self.Game.heroes[self.ID].Class == "Neutral" else self.Game.heroes[self.ID].Class
 			#需要把所有的职业捋一遍，出一个dict
 			mana = self.Game.Manas.manas[self.ID]
 			spells, pool = {}, self.Game.RNGPools["%d-Cost Spells"%mana]
 			for spell in pool:
-				if spell.Class in spells: spells[spell.Class].append(spell)
-				else: spells[spell.Class] = [spell]
+				for spellClass in spell.Class.split(','):
+					if spellClass in spells: spells[spellClass].append(spell)
+					else: spells[spellClass] = [spell]
 			if "byOthers" in comment:
 				card = npchoice(npchoice(list(spells.keys())))
 				PRINT(self.Game, "Wise Lorewalker Cho's battlecry adds a random spell from another class with cost equal player's remain mana to player's hand")
-				self.Game.Hand_Deck.addCardtoHand(card, self.ID, "CreateUsingType")
+				self.Game.Hand_Deck.addCardtoHand(card, self.ID, "type")
 			else:
 				classes = list(spells.keys())
+				try: classes.remove(Class)
+				except: pass
 				classes = npchoice(classes, min(3, len(classes)), replace=False)
 				for Class in classes:
 					self.Game.options.append(npchoice(spells[Class])(self.Game, self.ID))
 				PRINT(self.Game, "Wise Lorewalker Cho's battlecry lets player discover a Dragon")
-				self.Game.Discover.startDiscover(self, None)
+				self.Game.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -351,7 +352,7 @@ class Trigger_XuentheWhiteTiger(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
 		PRINT(minion.entity.Game, "Player played a card and %s returns itself to player's hand. It gain +2/+2 and costs (1) more permanently."%minion.name)
-		if minion.Game.returnMiniontoHand(minion, keepDeathrattlesRegistered=False):
+		if minion.Game.returnMiniontoHand(minion, deathrattlesStayArmed=False):
 			cost = type(minion).mana + 1
 			stat = cost * 2 - 1
 			newIndex = "Classic~Monk~Minion~%d~%d~%d~Beast~Xuen, the White Tiger~Rush~Legendary~Uncollectible"%(cost, stat, stat)
@@ -708,7 +709,7 @@ class SpawnofXuen(Minion): #雪怒的子嗣
 				else:
 					PRINT(self.Game, "Spawn of Xuen's battlecry lets player discover a 1-Cost minion from deck")
 					self.Game.options = npchoice(oneCostMinions, min(3, len(oneCostMinions)), replace=False)
-					self.Game.Discover.startDiscover(self, None)
+					self.Game.Discover.startDiscover(self)
 			else: PRINT(self.Game, "No 1-Cost minion in deck. Spawn of Xuen's battlecry has no effect")
 		return None
 		
@@ -737,7 +738,7 @@ class QuickSip(Spell): #浅斟快饮
 				self.Game.sendSignal("QuaffTriggered", self.ID, None, None, 0, "")
 				numCardsLeft = len(self.Game.Hand_Deck.decks[self.ID])
 				self.Game.options = npchoice(self.Game.Hand_Deck.decks[self.ID], min(3, numCardsLeft), replace=False)
-				self.Game.Discover.startDiscover(self, None)
+				self.Game.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -836,7 +837,7 @@ class InnerPeace(Spell): #平常心
 		self.Game.Hand_Deck.drawCard(self.ID)
 		if self.Game.heroes[self.ID].health > 14:
 			PRINT(self.Game, "Player's health is 15 or higher, and Inner Peace fully heals the player")
-			heal = self.Game.heroes[self.ID].health_upper * (2 ** self.countHealDouble())
+			heal = self.Game.heroes[self.ID].health_max * (2 ** self.countHealDouble())
 			self.restoresHealth(self.Game.heroes[self.ID], heal)
 		return None
 		
@@ -927,7 +928,7 @@ class Trigger_FistsoftheHeavens(TrigBoard):
 		PRINT(self.entity.Game, "Player's Quaff triggers and %s gains +4 Durability."%self.entity.name)
 		self.entity.Game.heroes[self.entity.ID].gainTempAttack(4)
 		
-			
+		
 class PandariaGuardian(Minion): #潘达利亚守护者
 	#嘲讽。畅饮：获得+2生命值且无法成为法术或英雄技能的目标
 	Class, race, name = "Monk", "", "Pandaria Guardian"
@@ -973,9 +974,9 @@ class ShuffleThisintoYourDeck(Deathrattle_Minion):
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):
 			PRINT(self.entity.Game, "Deathrattle: Shuffle this minion into your deck triggers")
-			if self.entity.Game.withAnimation:
+			if self.entity.Game.GUI:
 				self.entity.Game.GUI.triggerBlink(self.entity)
-			self.entity.Game.returnMiniontoDeck(self.entity, targetDeckID=self.entity.ID, initiatorID=self.entity.ID, keepDeathrattlesRegistered=True)
+			self.entity.Game.returnMiniontoDeck(self.entity, targetDeckID=self.entity.ID, initiatorID=self.entity.ID, deathrattlesStayArmed=True)
 			
 Monk_Indices = { #Hero and standard Hero Powers
 				"Hero: Monk": Chen,

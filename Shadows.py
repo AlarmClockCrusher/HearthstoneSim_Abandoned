@@ -92,12 +92,12 @@ class DraconicLackey(Minion):
 			key = "Dragons as "+classforDiscover(self)
 			if "byOthers" in comment:
 				PRINT(self.Game, "Draconic Lackey's battlecry adds a random Dragon to player's hand")
-				self.Game.Hand_Deck.addCardtoHand(npchoice(self.Game.RNGPools[key]), self.ID, "CreateUsingType")
+				self.Game.Hand_Deck.addCardtoHand(npchoice(self.Game.RNGPools[key]), self.ID, "type")
 			else:
 				dragons = npchoice(self.Game.RNGPools[key], 3, replace=False)
 				self.Game.options = [dragon(self.Game, self.ID) for dragon in dragons]
 				PRINT(self.Game, "Draconic Lackey's battlecry lets player discover a Dragon")
-				self.Game.Discover.startDiscover(self, None)
+				self.Game.Discover.startDiscover(self)
 				
 		return None
 		
@@ -117,11 +117,7 @@ class EtherealLackey(Minion):
 		classes, lists = [], []
 		for Class in Game.Classes:
 			classes.append(Class+" Spells")
-			spellsinClass = []
-			for key, value in Game.ClassCards[Class].items():
-				if "~Spell~" in key:
-					spellsinClass.append(value)
-			lists.append(spellsinClass)
+			lists.append([value for key, value in Game.ClassCards[Class].items() if "~Spell~" in key])
 		return classes, lists
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -130,19 +126,19 @@ class EtherealLackey(Minion):
 			if curGame.mode == 0:
 				if curGame.guides:
 					PRINT(curGame, "Ethereal Lackey's battlecry adds a spell to player's hand")
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "CreateUsingType")
+					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
 				else:
 					key = classforDiscover(self) + " Spells"
 					if "byOthers" in comment:
 						spell = npchoice(curGame.RNGPools[key])
 						curGame.fixedGuides.append(spell)
 						PRINT(curGame, "Ethereal Lackey's battlecry adds a random spell to player's hand")
-						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "CreateUsingType")
+						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
 					else:
 						spells = npchoice(curGame.RNGPools[key], 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
 						PRINT(curGame, "Ethereal Lackey's battlecry lets player discover a spell")
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -278,7 +274,7 @@ class DalaranLibrarian(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.onBoard:
-			adjacentMinions, distribution = self.Game.adjacentMinions2(self)
+			adjacentMinions, distribution = self.Game.neighbors2(self)
 			if adjacentMinions != []:
 				PRINT(self.Game, "Dalaran Librarian's battlecry Silences adjacent minions.")
 				for minion in adjacentMinions:
@@ -300,7 +296,7 @@ class EVILCableRat(Minion):
 				lackey = npchoice(Lackeys)
 				curGame.fixedGuides.append(lackey)
 			PRINT(curGame, "EVIL Cable Rat's battlecry adds a random Lackey to player's hand")
-			curGame.Hand_Deck.addCardtoHand(lackey, self.ID, "CreateUsingType")
+			curGame.Hand_Deck.addCardtoHand(lackey, self.ID, "type")
 		return None
 		
 		
@@ -1132,7 +1128,7 @@ class ArchivistElysiana(Minion):
 					for i in range(5):
 						cards = npchoice(curGame.RNGPools[key], 3, replace=False)
 						self.Game.options = [card(self.Game, self.ID) for card in cards]
-						self.Game.Discover.startDiscover(self, None)
+						self.Game.Discover.startDiscover(self)
 				npshuffle(self.deck)
 				deck = self.deck
 				curGame.fixedGuides.append(tuple(deck))
@@ -1193,7 +1189,7 @@ class Acornbearer(Minion):
 class AddTwoSquirrelstoHand(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Deathrattle: Summon a 2/1 Damaged Golem triggers.")
-		self.entity.Game.Hand_Deck.addCardtoHand([Squirrel, Squirrel], self.entity.ID, "CreateUsingType")
+		self.entity.Game.Hand_Deck.addCardtoHand([Squirrel, Squirrel], self.entity.ID, "type")
 		
 class Squirrel(Minion):
 	Class, race, name = "Neutral", "Beast", "Squirrel"
@@ -1217,14 +1213,11 @@ class CrystalPower(Spell):
 		
 	#available() only needs to check selectableCharacterExists
 	def targetCorrect(self, target, choice=0):
-		if choice == "ChooseBoth" or choice == 1:
-			return (target.type == "Minion" or target.type == "Hero") and target.onBoard
-		else:
-			return target.type == "Minion" and target.onBoard
-			
+		return target.onBoard and (target.type == "Minion" or (choice != 0 and target.type == "Hero"))
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			if choice == "ChooseBoth": #如果目标是一个随从，先对其造成伤害，如果目标存活，才能造成治疗
+			if choice < 0: #如果目标是一个随从，先对其造成伤害，如果目标存活，才能造成治疗
 				if target.type == "Minion": #只会对随从造成伤害
 					damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 					PRINT(self.Game, "Crystal Power deals %d damage to %s"%(damage, target.name))
@@ -1325,23 +1318,23 @@ class CrystalsongPortal(Spell):
 						minions = npchoice(curGame.RNGPools["Druid Minions"], 3, replace=False)
 						curGame.fixedGuides.append(tuple(minions))
 					PRINT(curGame, "Crystalsong Portal is cast and adds 3 random Druid minions to player's hand, as there're no minion in player's hand")
-					curGame.Hand_Deck.addCardtoHand(minions, self.ID, "CreateUsingType")
+					curGame.Hand_Deck.addCardtoHand(minions, self.ID, "type")
 				else:
 					if curGame.guides:
 						minion = curGame.guides.pop(0)
 						curGame.fixedGuides.append(minion)
-						curGame.Hand_Deck.addCardtoHand(minion, self.ID, "CreateUsingType")
+						curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type")
 					else:
 						if "byOthers" in comment:
 							minion = npchoice(curGame.RNGPools["Druid Minions"])
 							curGame.fixedGuides.append(minion)
 							PRINT(curGame, "Crystalsong Portal is cast and adds a random Druid minion to player's hand")
-							curGame.Hand_Deck.addCardtoHand(minion, self.ID, "CreateUsingType")
+							curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type")
 						else:
 							PRINT(curGame, "Crystalsong Portal is cast and lets player discover a Mage Minion.")
 							minions = npchoice(curGame.RNGPools["Druid Minions"], 3, replace=False)
 							curGame.options = [minion(curGame, self.ID) for minion in minions]
-							curGame.Discover.startDiscover(self, None)
+							curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -1390,7 +1383,7 @@ class Trigger_KeeperStalladris(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "After player casts spell %s, %s adds copies of both choices to player's hand."%(subject.name, self.entity.name))
 		for option in subject.options:
-			self.entity.Game.Hand_Deck.addCardtoHand(option.index, self.entity.ID, "CreateUsingIndex")
+			self.entity.Game.Hand_Deck.addCardtoHand(option.index, self.entity.ID, "index")
 			
 			
 class Lifeweaver(Minion):
@@ -1427,7 +1420,7 @@ class Trigger_Lifeweaver(TrigBoard):
 				spell = npchoice(curGame.RNGPools["Druid Spells"])
 				curGame.fixedGuides.append(spell)
 			PRINT(curGame, "Player restores Health, and Lifeweaver adds a random Druid spell to player's hand.")
-			curGame.Hand_Deck.addCardtoHand(spell, self.entity.ID, "CreateUsingType")
+			curGame.Hand_Deck.addCardtoHand(spell, self.entity.ID, "type")
 			
 			
 class CrystalStag(Minion):
@@ -1623,7 +1616,7 @@ class AddaHunterSpelltoHand(Deathrattle_Minion):
 				spell = npchoice(curGame.RNGPools["Hunter Spells"])
 				curGame.fixedGuides.append(spell)
 			PRINT(curGame, "Deathrattle: Add a random Hunter spell to your hand triggers.")
-			curGame.Hand_Deck.addCardtoHand(spell, self.entity.ID, "CreateUsingType")
+			curGame.Hand_Deck.addCardtoHand(spell, self.entity.ID, "type")
 			
 			
 class NineLives(Spell):
@@ -1666,7 +1659,7 @@ class NineLives(Spell):
 							PRINT(curGame, "Nine Lives is cast and lets player discover adds a random friendly Deathrattle minion that died this game")
 							minions = npchoice(minions, min(3, len(minions)), replace=False)
 							curGame.options = [curGame.cardPool[minion](curGame, self.ID) for minion in minions]
-							curGame.Discover.startDiscover(self, None)
+							curGame.Discover.startDiscover(self)
 					else:
 						curGame.fixedGuides.append(None)
 						PRINT(curGame, "Player has no Deathrattle minions that died this game. Nine Lives has no effect")
@@ -1780,19 +1773,19 @@ class MarkedShot(Spell):
 		if self.Game.Hand_Deck.handNotFull(self.ID):
 			if curGame.mode == 0:
 				if curGame.guides:
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "CreateUsingType")
+					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
 				else:
 					key = classforDiscover(self)+" Spells"
 					if "byOthers" in comment:
 						spell = npchoice(curGame.RNGPools[key])
 						curGame.fixedGuides.append(spell)
 						PRINT(curGame, "Marked Shot is cast and adds a random spell to player's hand")
-						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "CreateUsingType")
+						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
 					else:
 						PRINT(curGame, "Marked Shot lets player discover a spell")
 						spells = npchoice(curGame.RNGPools[key], 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 		return target
 		
 	def discoverDecided(self, option, info):
@@ -2062,18 +2055,18 @@ class MessengerRaven(Minion):
 				if curGame.guides:
 					minion = curGame.guides.pop(0)
 					PRINT(curGame, "Messenger Raven's battlecry adds a Mage minion to player's hand")
-					curGame.Hand_Deck.addCardtoHand(minion, self.ID, "CreateUsingType")
+					curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type")
 				else:
 					if "byOthers" in comment:
 						minion = npchoice(curGame.RNGPools["Mage Minions"])
 						curGame.fixedGuides.append(minion)
 						PRINT(curGame, "Messenger Raven's battlecry adds random Mage minion to player's hand.")
-						curGame.Hand_Deck.addCardtoHand(minion, self.ID, "CreateUsingType")
+						curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type")
 					else:
 						PRINT(curGame, "Messenger Raven's battlecry lets player discover a Mage minion.")
 						minions = npchoice(curGame.RNGPools["Mage Minions"], 3, replace=False)
 						curGame.options = [minion(curGame, self.ID) for minion in minions]
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -2111,19 +2104,19 @@ class MagicTrick(Spell):
 				if curGame.guides:
 					spell = curGame.guides.pop(0)
 					PRINT(curGame, "Magic Trick adds a Mage spell that costs (3) or less to player's hand")
-					curGame.Hand_Deck.addCardtoHand(spell, self.ID, "CreateUsingType")
+					curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
 				else:
 					key = "Spells 3-Cost or less as "+classforDiscover(self)
 					if "byOthers" in comment:
 						spell = npchoice(curGame.RNGPools[key])
 						curGame.fixedGuides.append(spell)
 						PRINT(curGame, "Magic Trick adds random Mage spell that costs (3) or less to player's hand.")
-						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "CreateUsingType")
+						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
 					else:
 						PRINT(curGame, "Magic Trick lets player discover a Mage spell that costs (3) or less.")
 						spells = npchoice(curGame.RNGPools[key], 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -2168,7 +2161,8 @@ class ConjurersCalling(Spell):
 			key = "%d-Cost Minions to Summon"%cost
 			PRINT(curGame, "Twinspell Conjurer's Calling is cast, destroys minion %s and summons two minions with the same cost"%target.name, cost)
 			targetID, position = target.ID, target.position
-			curGame.destroyMinion(target) #如果随从在手牌中则将其丢弃
+			if target.onBoard: target.dead = True
+			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
 			#强制死亡需要在此插入死亡结算，并让随从离场
 			curGame.gathertheDead()
 			if curGame.mode == 0:
@@ -2205,7 +2199,8 @@ class conjurerscalling(Spell):
 			key = "%d-Cost Minions to Summon"%cost
 			PRINT(curGame, "Conjurer's Calling is cast, destroys minion %s and summons two minions with the same cost"%target.name, cost)
 			targetID, position = target.ID, target.position
-			curGame.destroyMinion(target) #如果随从在手牌中则将其丢弃
+			if target.onBoard: target.dead = True
+			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
 			#强制死亡需要在此插入死亡结算，并让随从离场
 			curGame.gathertheDead()
 			if curGame.mode == 0:
@@ -2267,7 +2262,7 @@ class ManaCyclone(Minion):
 					curGame.fixedGuides.append(())
 					return None
 			PRINT(curGame, "Mana Cyclone's battlecry adds a random Mage spell into player's hand for each spell played this turn.")
-			curGame.Hand_Deck.addCardtoHand(spells, self.ID, "CreateUsingType")
+			curGame.Hand_Deck.addCardtoHand(spells, self.ID, "type")
 		return None
 		
 		
@@ -2307,7 +2302,7 @@ class PowerofCreation(Spell):
 					PRINT(curGame, "Power of Creation lets player discover a minion to summon 2 copies of it.")
 					minions = npchoice(curGame.RNGPools[key], 3, replace=False)
 					curGame.options = [minion(curGame, self.ID) for minion in minions]
-					curGame.Discover.startDiscover(self, None)
+					curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -2353,12 +2348,12 @@ class Kalecgos(Minion):
 						spell = npchoice(curGame.RNGPools[key])
 						curGame.fixedGuides.append(spell)
 						PRINT(curGame, "Kalecgos' battlecry adds a random spell to player's hand")
-						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "CreateUsingType")
+						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
 					else:
 						PRINT(curGame, "Kalecgos's battlecry lets player discover a spell")
 						spells = npchoice(curGame.RNGPools[key], 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -2476,7 +2471,7 @@ class BronzeHerald(Minion):
 class AddTwoBronzeDragonstoHand(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Deathrattle: Add Two 4/4 Bronze Dragons to hand triggers.")
-		self.entity.Game.Hand_Deck.addCardtoHand([BronzeDragon, BronzeDragon], self.entity.ID, "CreateUsingType")
+		self.entity.Game.Hand_Deck.addCardtoHand([BronzeDragon, BronzeDragon], self.entity.ID, "type")
 		
 class BronzeDragon(Minion):
 	Class, race, name = "Paladin", "Dragon", "Bronze Dragon"
@@ -2669,8 +2664,8 @@ class Nozari(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Nozari's battlecry restores all health to both players.")
-		heal1 = self.Game.heroes[1].health_upper * (2 ** self.countHealDouble())
-		heal2 = self.Game.heroes[2].health_upper * (2 ** self.countHealDouble())
+		heal1 = self.Game.heroes[1].health_max * (2 ** self.countHealDouble())
+		heal2 = self.Game.heroes[2].health_max * (2 ** self.countHealDouble())
 		self.restoresAOE([self.Game.heroes[1], self.Game.heroes[2]], [heal1, heal2])
 		return None
 		
@@ -2694,7 +2689,7 @@ class AddaRandomLackeytoHand(Deathrattle_Minion):
 			else:
 				lackey = npchoice(Lackeys)
 				curGame.fixedGuides.append(lackey)
-			curGame.Hand_Deck.addCardtoHand(lackey, self.entity.ID, "CreateUsingType")
+			curGame.Hand_Deck.addCardtoHand(lackey, self.entity.ID, "type")
 			
 			
 class HenchClanShadequill(Minion):
@@ -2905,7 +2900,7 @@ class MadameLazul(Minion):
 						PRINT(curGame, "Madame Lazul's battlecry lets player discover a copy of card in opponent's hand.")
 						num = min(3, len(HD.hands[3-self.ID]))
 						curGame.options = npchoice(HD.hands[3-self.ID], num, replace=False)
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -2984,7 +2979,7 @@ class EVILMiscreant(Minion):
 					lackeys = npchoice(Lackeys, 2, replace=True)
 					curGame.fixedGuides.append(tuple(lackeys))
 			PRINT(curGame, "EVIL Miscreant's Combo triggers and adds two Lackeys to player's hand.")
-			curGame.Hand_Deck.addCardtoHand(lackeys, self.ID, "CreateUsingType")
+			curGame.Hand_Deck.addCardtoHand(lackeys, self.ID, "type")
 		return None
 		
 		
@@ -3016,7 +3011,7 @@ class HenchClanBurglar(Minion):
 				if curGame.guides:
 					spell = curGame.guides.pop(0)
 					PRINT(curGame, "Hench-Clan Burglar's battlecry adds a spell from another class to player's hand")
-					curGame.Hand_Deck.addCardtoHand(spell, self.ID, "CreateUsingType")
+					curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
 				else:
 					Class, classPool = curGame.heroes[self.ID].Class, fixedList(curGame.Classes)
 					if Class == "Neutral": Class = "Rogue"
@@ -3024,14 +3019,14 @@ class HenchClanBurglar(Minion):
 						spell = npchoice(curGame.RNGPools["%s Spells"%npchoice(classPool)])
 						curGame.fixedGuides.append(spell)
 						PRINT(curGame, "Hench-Clan Burglar's battlecry adds a random spell from another class to player's hand")
-						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "CreateUsingType")
+						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
 					else:
 						PRINT(curGame, "Hench-Clan Burglar's battlecry lets player Discover a spell from another class")
 						extractfrom(Class, classPool)
 						classPool = npchoice(classPool, 3, replace=False)
 						spells = [npchoice(curGame.RNGPools["%s Spells"%Class]) for Class in classPool]
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -3123,7 +3118,7 @@ class Trigger_Vendetta(TrigHand):
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		#Only cards with a different class than your hero class will trigger this
 		card = target[0] if signal == "CardEntersHand" else target
-		return self.entity.inHand and card.ID == self.entity.ID and card.Class != self.entity.Game.heroes[self.entity.ID].Class
+		return self.entity.inHand and card.ID == self.entity.ID and self.entity.Game.heroes[self.entity.ID].Class not in card.Class
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.Game.Manas.calcMana_Single(self.entity)
@@ -3152,7 +3147,7 @@ class ReturnaFriendlyMiniontoHand(Deathrattle_Weapon):
 					curGame.fixedGuides.append(i)
 				#假设那张随从在进入手牌前接受-2费效果。可以被娜迦海巫覆盖。
 				manaMod = ManaMod(minion, changeby=-2, changeto=-1)
-				curGame.returnMiniontoHand(minion, keepDeathrattlesRegistered=False, manaMod=manaMod)
+				curGame.returnMiniontoHand(minion, deathrattlesStayArmed=False, manaMod=manaMod)
 				
 				
 class UnidentifiedContract(Spell):
@@ -3223,7 +3218,7 @@ class LucrativeContract(Spell):
 			PRINT(self.Game, "Lucrative Contract is cast and destroys minion %s"%target.name)
 			target.dead = True
 		PRINT(self.Game, "Lucrative Contract also adds two Coins to player's hand")
-		self.Game.Hand_Deck.addCardtoHand([TheCoin, TheCoin], self.ID, "CreateUsingType")
+		self.Game.Hand_Deck.addCardtoHand([TheCoin, TheCoin], self.ID, "type")
 		return target
 		
 class RecruitmentContract(Spell):
@@ -3243,7 +3238,7 @@ class RecruitmentContract(Spell):
 			PRINT(self.Game, "Recruitment Contract is cast and destroys minion %s"%target.name)
 			target.dead = True
 		PRINT(self.Game, "Recruitment Contract also adds a copy of the minion to player's hand")
-		self.Game.Hand_Deck.addCardtoHand(type(target), self.ID, "CreateUsingType")
+		self.Game.Hand_Deck.addCardtoHand(type(target), self.ID, "type")
 		return target
 		
 class TurncoatContract(Spell):
@@ -3264,7 +3259,7 @@ class TurncoatContract(Spell):
 			target.dead = True
 			if target.onBoard:
 				PRINT(self.Game, "Turncoat Contract also lets the minion deal its damage to adjacent minions")
-				adjacentMinions, distribution = self.Game.adjacentMinions2(target)
+				adjacentMinions, distribution = self.Game.neighbors2(target)
 				if adjacentMinions != []:
 					target.dealsAOE(adjacentMinions, [target.attack for minion in adjacentMinions])
 		return target
@@ -3292,7 +3287,7 @@ class GoldenKobold_Shadows(Minion):
 				curGame.fixedGuides.append(tuple(hand))
 				if not hand: return None
 			curGame.Hand_Deck.extractfromHand(None, True, self.ID)
-			curGame.Hand_Deck.addCardtoHand(hand, self.ID, "CreateUsingType")
+			curGame.Hand_Deck.addCardtoHand(hand, self.ID, "type")
 		return None
 		
 class TolinsGoblet_Shadows(Spell):
@@ -3360,7 +3355,7 @@ class ZarogsCrown_Shadows(Spell):
 						PRINT(curGame, "Zarog's Crown lets playersummons two copies of a random Legendary minion")
 						minions = npchoice(curGame.RNGPools[key], 3, replace=False)
 						curGame.options = [minion(curGame, self.ID) for minion in minions]
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -3400,11 +3395,11 @@ class HeistbaronTogwaggle(Minion):
 						treasure = npchoice(FantasticTreasures)
 						curGame.fixedGuides.append(treasure)
 						PRINT(curGame, "Heistbaron Togwaggle's battlecry gives player a fantastic treasure")
-						curGame.Hand_Deck.addCardtoHand(treasure, self.ID, "CreateUsingType")
+						curGame.Hand_Deck.addCardtoHand(treasure, self.ID, "type")
 					else:
 						PRINT(curGame, "Heistbaron Togwaggle's battlecry lets player choose a fantastic treasure.")
 						curGame.options = [treasure(curGame, self.ID) for treasure in FantasticTreasures]
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 		return None
 	
 	def discoverDecided(self, option, info):
@@ -3501,7 +3496,7 @@ class SludgeSlurper(Minion):
 				lackey = npchoice(Lackeys)
 				curGame.fixedGuides.append(lackey)
 			PRINT(curGame, "Sludge Slurper's battlecry adds a random Lackey to player's hand")
-			curGame.Hand_Deck.addCardtoHand(lackey, self.ID, "CreateUsingType")
+			curGame.Hand_Deck.addCardtoHand(lackey, self.ID, "type")
 		return None
 		
 		
@@ -3693,11 +3688,11 @@ class SwampqueenHagatha(Minion):
 						PRINT(curGame, "Swampqueen Hagatha's battlecry lets player create a 5/5 Horror and teach it two Shaman Spells.")
 						spells = npchoice(curGame.RNGPools["Shaman Spells"], 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 						if self.spell1.requireTarget: spells = npchoice(curGame.RNGPools["Non-targeting Shaman Spells"], 3, replace=False)
 						else: spells = npchoice(curGame.RNGPools["Shaman Spells"], 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
-						curGame.Discover.startDiscover(self, None)
+						curGame.Discover.startDiscover(self)
 						spell1, spell2 = self.spell1, self.spell2
 						self.spell1, self.spell2 = None, None
 						curGame.fixedGuides.append((spell1, spell2))
@@ -3781,7 +3776,7 @@ class EVILGenius(Minion):
 				else:
 					lackeys = npchoice(Lackeys, 2, replace=True)
 					curGame.fixedGuides.append(lackeys)
-				curGame.Hand_Deck.addCardtoHand(lackeys, self.ID, "CreateUsingType")
+				curGame.Hand_Deck.addCardtoHand(lackeys, self.ID, "type")
 		return target
 		
 		
@@ -3827,11 +3822,11 @@ class PlotTwist(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Plot Twist is cast and shuffles all of player's hand into deck. Then draw that many cards.")
 		handSize = len(self.Game.Hand_Deck.hands[self.ID])
-		cardstoShuffle, mana, isRightmostCardinHand = self.Game.Hand_Deck.extractfromHand(None, True, self.ID) #Extract all cards.
+		cardstoShuffle = self.Game.Hand_Deck.extractfromHand(None, True, self.ID)[0] #Extract all cards.
 		#Remove all the temp effects on cards in hand, e.g, TheSoularium and the echo trigger
 		for card in cardstoShuffle:
-			for trigger in card.trigsBoard + card.trigsHand + card.trigsDeck:
-				trigger.disconnect()
+			for trig in card.trigsBoard + card.trigsHand + card.trigsDeck:
+				trig.disconnect()
 			identity = card.identity
 			card.__init__(self.Game, self.ID)
 			card.identity = identity
@@ -3964,7 +3959,7 @@ class ArchVillainRafaam(Minion):
 				if not hand or not deck: return None
 			curGame.Hand_Deck.extractfromDeck(0, self.ID, all=True)
 			curGame.Hand_Deck.extractfromHand(None, True, self.ID)
-			curGame.Hand_Deck.addCardtoHand(hand, self.ID, "CreateUsingType")
+			curGame.Hand_Deck.addCardtoHand(hand, self.ID, "type")
 			curGame.Hand_Deck[self.ID] = [card(curGame, self.ID) for card in deck]
 			for card in curGame.Hand_Deck[self.ID]: card.entersDeck()
 		return None
@@ -4031,7 +4026,7 @@ class ImproveMorale(Spell):
 						lackey = npchoice(Lackeys)
 						curGame.fixedGuides.append(lackey)
 					PRINT(curGame, "The target survives Improve Morale, a Lackey is added to player's hand.")
-					curGame.Hand_Deck.addCardtoHand(lackey, self.ID, "CreateUsingType")
+					curGame.Hand_Deck.addCardtoHand(lackey, self.ID, "type")
 		return target
 		
 		
