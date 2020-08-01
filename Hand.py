@@ -427,13 +427,11 @@ class Hand_Deck:
             return game.copiedObjs[self]
 
 
-Default1 = [Coerce, SecretPassage, SelfSharpeningSword, DoctorKrastinov,
-            AthleticStudies, CeremonialMaul, LordBarov, ReapersScythe, Commencement, Troublemaker, Rattlegore,
+Default1 = [LightningBloom,LightningBloom,LightningBloom,LightningBloom,LightningBloom,
             AugmentedPorcupine, AugmentedPorcupine, AugmentedPorcupine,
-
+            Rattlegore,Rattlegore,Rattlegore,
             ]
 
-Default2 = [RaiseDead, MindrenderIllucia, PowerWordFeast, SecretPassage, SelfSharpeningSword, MindrenderIllucia,
-            SelfSharpeningSword, DoctorKrastinov,
+Default2 = [LightningBloom,LightningBloom,LightningBloom,LightningBloom,LightningBloom,
             Armorsmith, Armorsmith, Armorsmith, Armorsmith,
-			MoargArtificer, MoargArtificer, MoargArtificer]
+			Coerce,Coerce,Coerce,Coerce,Coerce,Coerce,Coerce]

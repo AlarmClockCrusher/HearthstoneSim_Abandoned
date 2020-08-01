@@ -4072,30 +4072,34 @@ class Rattlegore(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [ResummonwithMinus1Minus1(self)]
-		
-#假设一个随从以白字为准
-class ResummonwithMinus1Minus1(Deathrattle_Minion):
+		self.deathrattles = [ResummonRattlegore(self, 8)]
+
+class RattlegoreToken(Minion):
+	Class, race, name = "Warrior", "", "Rattlegore"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
+
+	def __init__(self, Game, ID, number):
+		self.blank_init(Game, ID)
+		if number > 1:
+			self.deathrattles = [ResummonRattlegore(self, number - 1)]
+			self.index = f"Academy~Warrior~Minion~{number}~{number}~{number}~None~Rattlegore~Deathrattle~Legendary~Uncollectible"
+		else:
+			self.index = f"Academy~Warrior~Minion~{number}~{number}~{number}~None~Rattlegore~Legendary~Uncollectible"
+		self.mana, self.attack, self.health = number, number, number
+
+class ResummonRattlegore(Deathrattle_Minion):
+	def __init__(self, entity, number):
+		self.blank_init(entity)
+		self.number = number
+
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		#假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
 		minion = self.entity
-		if minion.health_0 > 1:
-			minionType = type(minion)
-			cost, attack, health = max(0, minionType.mana - 1), minion.attack_0 - 1, minion.health_0 - 1
-			indices = minion.index.split('~')
-			newIndex = "%s~%s~%d~%d~%d"%(indices[0], indices[1], cost, attack, health)
-			length = len(indices) if not indices[-1] == "Uncollectible" else len(indices) - 1
-			for i in range(len(5, indices)): newIndex += "~%s"%indices[i]
-			newIndex += "~Uncollectible" #The new index will always be uncollectible
-			subclass = type(minionType.__name__+"_Mutable_"+str(health), (minionType, ),
-							{"mana": cost, "attack": attack, "health": health,
-							"index": newIndex}
-							)
-						
-		newMinion = subclass(minion.Game, minion.ID)
+		newMinion = RattlegoreToken(minion.Game, minion.ID, self.number)
 		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
 		minion.Game.summon(newMinion, pos, minion.ID)
-		
+
+	def selfCopy(self, recipient):
+		return type(self)(recipient, self.number)
 		
 		
 Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": TransferStudent,
