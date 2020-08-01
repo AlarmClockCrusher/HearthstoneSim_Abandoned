@@ -2688,7 +2688,7 @@ class Trigger_PowerWordFeast(TrigBoard):
 		try: self.entity.trigsBoard.remove(self)
 		except: pass
 		PRINT(self.entity.Game, "At the end of turn, minion %s is restored to full Health."%self.entity.name)
-		heal = self.entity.health_max * (2 ** self.countHealDouble())
+		heal = self.entity.health_max * (2 ** self.entity.countHealDouble())
 		PowerWordFeast(self.entity.Game, self.entity.ID).restoresHealth(self.entity, heal)
 		
 		
@@ -3059,7 +3059,7 @@ class SummonForsakenLilian(Deathrattle_Minion):
 				enemies = curGame.charsAlive(3-self.entity.ID)
 				if minion.onBoard and minion.health > 0 and not minion.dead and enemies:
 					enemy = npchoice(enemies)
-					curGame.fixedGuides.append((enemy.position, "minion%d"%minion.ID) if minion.type == "Minion" else (enemy.ID, "hero"))
+					curGame.fixedGuides.append((enemy.position, "minion%d"%minion.ID) if enemy.type == "Minion" else (enemy.ID, "hero"))
 				else:
 					curGame.fixedGuides.append((0, ''))
 			if enemy: #假设攻击会消耗攻击机会
@@ -3379,7 +3379,11 @@ class Trigger_InstructorFireheart(TrigBoard):
 			try: self.Game.trigsBoard[self.ID][sig].append(self)
 			except: self.Game.trigsBoard[self.ID][sig] = [self]
 		self.Game.turnEndTrigger.append(self)
-		
+
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrigger(signal, ID, subject, target, number, comment):
+			self.effect(signal, ID, subject, target, number, comment)
+
 	def disconnect(self):
 		for sig in self.signals:
 			try: self.Game.trigsBoard[self.ID][sig].remove(self)
@@ -4012,7 +4016,7 @@ class Commencement(Spell):
 				curGame.fixedGuides.append(i)
 			if i > -1:
 				minion = curGame.Hand_Deck.decks[self.ID][i]
-				curGame.summonfromDeck(i, self.ID, self.position+1, self.ID)
+				curGame.summonfromDeck(i, self.ID,-1, self.ID)
 				minion.getsKeyword("Taunt")
 				minion.getsKeyword("Divine Shield")
 		return None

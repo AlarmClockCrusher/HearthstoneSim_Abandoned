@@ -247,7 +247,7 @@ class RisingWinds(Spell):
 		self.twinSpell = 1
 		self.twinSpellCopy = risingwinds
 		self.chooseOne = 1
-		self.options = [TakeFlight_Option(), SwoopIn_Option(self)]
+		self.options = [TakeFlight_Option(self), SwoopIn_Option(self)]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if choice < 1:
