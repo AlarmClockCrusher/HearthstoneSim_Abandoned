@@ -33,9 +33,9 @@ def decode_deckstring(s, to="List"):
 			#print(each) #(cardID, number of cards in the deck)
 			for i in range(each[1]):
 				cardName = getCardnameFromDbf(each[0])
-				result1 = cardName.translate(str.maketrans('', '', string.punctuation))
-				result2 = result1.replace(' ', '')
-				deckList += result2+', '
+				name_withoutPunctuations = cardName.translate(str.maketrans('', '', string.punctuation))
+				name_NoSpace = name_withoutPunctuations.replace(' ', '')
+				deckList += name_NoSpace+', '
 				
 		deckList += ']'
 		return deckList
@@ -45,13 +45,35 @@ def decode_deckstring(s, to="List"):
 			#print(each) #(cardID, number of cards in the deck)
 			for i in range(each[1]):
 				cardName = getCardnameFromDbf(each[0])
-				result1 = cardName.translate(str.maketrans('', '', string.punctuation))
-				result2 = result1.replace(' ', '')
-				className = typeName2Class(result2)
+				name_withoutPunctuations = cardName.translate(str.maketrans('', '', string.punctuation))
+				name_NoSpace = name_withoutPunctuations.replace(' ', '')
+				className = typeName2Class(name_NoSpace)
 				deckList.append(className)
 		return deckList
 		
 if __name__ == "__main__":
-	code = sys.argv[1]
-	deck = decode_deckstring(code, to="List")
-	print(deck)
+#	code = sys.argv[1]
+#	deck = decode_deckstring(code, to="List")
+#	print(deck)
+
+	#Check if card names are matched in the json
+	#for key, value in cardPool.items():
+	#	if "Uncollectible" not in key:
+	#		nameExists = False
+	#		for each in j:
+	#			if each["name"] == value.name:
+	#				nameExists = True
+	#				break
+	#		if not nameExists: print(value)
+			
+	#Check if all collectible cards are matched in the json
+	for key, value in cardPool.items():
+		if "Uncollectible" not in key:
+			for each in j:
+				if each["name"] == value.name:
+					name_withoutPunctuations = each["name"].translate(str.maketrans('', '', string.punctuation))
+					name_NoSpace = name_withoutPunctuations.replace(' ', '')
+					className = typeName2Class(name_NoSpace)
+					if className != value: print(value)
+					break
+					

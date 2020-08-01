@@ -278,12 +278,19 @@ class HandZone:
 						posEnds.append(posHands[i])
 						break
 			for btn in reversed(self.btnsDrawn): btn.remove()
-			#如果需要让最后一个button等待，总btnsKept不为空且其中最后一个btn就是最后一张手牌时
-			i = min(len(ownHand)-1, cardMoving2)
-			if cardMoving2 > -2 and btnsKept and i<len(btnsKept) and btnsKept[i].card == ownHand[i]:
-				lastBtn, lastPos = btnsKept.pop(i), posEnds.pop(i)
+			#如果需要第cardMoving2个btn等待时
+			if cardMoving2 > -2 and btnsKept:
+				lastBtn, lastPos = None, None
+				if cardMoving2 == -1:
+					if btnsKept[-1].card == ownHand[-1]:
+						lastBtn, lastPos = btnsKept.pop(), posEnds.pop()
+				else:
+					for i, btn in enumerate(btnsKept):
+						if btn.card == ownHand[cardMoving2]:
+							lastBtn, lastPos = btnsKept.pop(i), posEnds.pop(i)
 				self.GUI.moveBtnsAni(btnsKept, posEnds, steps=steps)
-				self.GUI.moveBtnsAni(lastBtn, lastPos, steps=steps)
+				if lastBtn:
+					self.GUI.moveBtnsAni(lastBtn, lastPos, steps=steps)
 			else: self.GUI.moveBtnsAni(btnsKept, posEnds, steps=steps) #其他情况下最后一个btn不等待，直接与其他的handBtn一同移动
 			for pos, btn, card in zip(posHands, btns, ownHand):
 				if btn:

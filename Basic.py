@@ -35,9 +35,9 @@ class HealingTotem(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, restore 1 health to all friendly minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_HealingTotem(self)]
+		self.trigsBoard = [Trig_HealingTotem(self)]
 		
-class Trigger_HealingTotem(TrigBoard):
+class Trig_HealingTotem(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -755,9 +755,9 @@ class GurubashiBerserker(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever this minion takes damage, gain +3 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_GurubashiBerserker(self)]
+		self.trigsBoard = [Trig_GurubashiBerserker(self)]
 		
-class Trigger_GurubashiBerserker(TrigBoard):
+class Trig_GurubashiBerserker(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionTakesDmg"])
 		
@@ -883,7 +883,7 @@ class SightlessWatcher(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		ownDeck = curGame.Hand_Deck.decks[self.ID]
-		if curGame.turn == self.ID and ownDeck: #卡组数小于2张时没有作用
+		if curGame.turn == self.ID and ownDeck:
 			if curGame.mode == 0:
 				if curGame.guides:
 					ownDeck.append(ownDeck.pop(curGame.guides.pop(0)))
@@ -939,9 +939,9 @@ class SatyrOverseer(Minion):
 	requireTarget, keyWord, description = False, "", "After your hero attacks, summon a 2/2 Satyr"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_SatyrOverseer(self)]
+		self.trigsBoard = [Trig_SatyrOverseer(self)]
 		
-class Trigger_SatyrOverseer(TrigBoard):
+class Trig_SatyrOverseer(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -1246,7 +1246,7 @@ class Tracking(Spell):
 				else:
 					num = min(3, numCardsLeft)
 					indices = [numCardsLeft-3, numCardsLeft-2, numCardsLeft-1] if num == 3 else [numCardsLeft-2, numCardsLeft-1]
-					if "byOthers" in comment:
+					if self.ID != curGame.turn or "byOthers" in comment:
 						PRINT(curGame, "Tracking randomly draws one of the top 3 cards. And removes the other two.")
 						index = indices.pop(nprandint(num))
 						info = (index, tuple(indices))
@@ -1380,9 +1380,9 @@ class Houndmaster(Minion):
 		
 		
 class MultiShot(Spell):
-	Class, name = "Hunter", "Multi Shot"
+	Class, name = "Hunter", "Multi-Shot"
 	requireTarget, mana = False, 4
-	index = "Basic~Hunter~Spell~4~Multi Shot"
+	index = "Basic~Hunter~Spell~4~Multi-Shot"
 	description = "Deal 3 damage to two random enemy minions"
 	def available(self):
 		return self.Game.minionsonBoard(3-self.ID) != []
@@ -1399,7 +1399,7 @@ class MultiShot(Spell):
 					num = min(2, len(minions))
 					minions = npchoice(minions, num, replace=False)
 					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
-				PRINT(curGame, "Multi Shot is cast and deals {} damage to enemy minions {}".format(damage, minions))
+				PRINT(curGame, "Multi-Shot is cast and deals {} damage to enemy minions {}".format(damage, minions))
 				self.dealsAOE(minions, [damage]*len(minions))
 		return None
 		
@@ -1411,9 +1411,9 @@ class StarvingBuzzard(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever you summon a Beast, draw a card"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_StarvingBuzzard(self)]
+		self.trigsBoard = [Trig_StarvingBuzzard(self)]
 		
-class Trigger_StarvingBuzzard(TrigBoard):
+class Trig_StarvingBuzzard(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionSummoned"])
 		
@@ -1585,9 +1585,9 @@ class WaterElemental(Minion):
 	requireTarget, keyWord, description = False, "", "Freeze any character damaged by this minion"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_WaterElemental(self)]
+		self.trigsBoard = [Trig_WaterElemental(self)]
 		
-class Trigger_WaterElemental(TrigBoard):
+class Trig_WaterElemental(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionTakesDmg", "HeroTakesDmg"])
 		
@@ -1737,9 +1737,9 @@ class TruesilverChampion(Weapon):
 	index = "Basic~Paladin~Weapon~4~4~2~Truesilver Champion"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_TruesilverChampion(self)]
+		self.trigsBoard = [Trig_TruesilverChampion(self)]
 		
-class Trigger_TruesilverChampion(TrigBoard):
+class Trig_TruesilverChampion(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackingMinion", "HeroAttackingHero"])
 		
@@ -2358,13 +2358,13 @@ class Corruption(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and target.onBoard:
 			PRINT(self.Game, "Corruption chooses enemy minion %s to die at the start of player's next turn."%target.name)
-			trigger = Trigger_Corruption(target)
+			trigger = Trig_Corruption(target)
 			trigger.ID = self.ID
 			target.trigsBoard.append(trigger)
 			trigger.connect()
 		return target
 		
-class Trigger_Corruption(TrigBoard):
+class Trig_Corruption(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		self.temp = True
@@ -2565,12 +2565,12 @@ class Charge(Spell):
 			PRINT(self.Game, "Charge gives friendly minion %s Charge. But it can't attack heroes this turn."%target.name)
 			target.getsKeyword("Charge")
 			target.marks["Can't Attack Hero"] += 1
-			trig = Trigger_Charge(target)
+			trig = Trig_Charge(target)
 			trig.connect()
 			target.trigsBoard.append(trig)
 		return target
 		
-class Trigger_Charge(TrigBoard):
+class Trig_Charge(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		self.temp = True
@@ -2798,7 +2798,7 @@ Basic_Indices = { #Heroes and standard Hero Powers
 				"Basic~Hunter~Minion~3~4~4~Beast~Misha~Taunt~Uncollectible": Misha,
 				"Basic~Hunter~Spell~3~Kill Command": KillCommand,
 				"Basic~Hunter~Minion~4~4~3~None~Houndmaster~Battlecry": Houndmaster,
-				"Basic~Hunter~Spell~4~Multi Shot": MultiShot,
+				"Basic~Hunter~Spell~4~Multi-Shot": MultiShot,
 				"Basic~Hunter~Minion~5~3~2~Beast~Starving Buzzard": StarvingBuzzard,
 				"Basic~Hunter~Minion~5~2~5~Beast~Tundra Rhino": TundraRhino,
 				#Mage

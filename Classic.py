@@ -1,6 +1,6 @@
 from CardTypes import *
 from Triggers_Auras import *
-from Basic import Trigger_Corruption
+from Basic import Trig_Corruption
 
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
@@ -129,9 +129,9 @@ class Lightwarden(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever a character is healed, gain +2 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_LightWarden(self)]
+		self.trigsBoard = [Trig_LightWarden(self)]
 		
-class Trigger_LightWarden(TrigBoard):
+class Trig_LightWarden(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionGetsHealed", "HeroGetsHealed"])
 		
@@ -150,9 +150,9 @@ class MurlocTidecaller(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever you summon a Murloc, gain +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_MurlocTidecaller(self)]
+		self.trigsBoard = [Trig_MurlocTidecaller(self)]
 		
-class Trigger_MurlocTidecaller(TrigBoard):
+class Trig_MurlocTidecaller(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionSummoned"])
 		
@@ -172,9 +172,9 @@ class Secretkeeper(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever a Secret is played, gain +1/+1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Secretkeeper(self)]
+		self.trigsBoard = [Trig_Secretkeeper(self)]
 		
-class Trigger_Secretkeeper(TrigBoard):
+class Trig_Secretkeeper(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
 		
@@ -256,9 +256,9 @@ class YoungPriestess(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, give another random friendly minion +1 Health"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_YoungPriestess(self)]
+		self.trigsBoard = [Trig_YoungPriestess(self)]
 		
-class Trigger_YoungPriestess(TrigBoard):
+class Trig_YoungPriestess(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -375,9 +375,9 @@ class Doomsayer(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, destroy ALL minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Doomsayer(self)]
+		self.trigsBoard = [Trig_Doomsayer(self)]
 		
-class Trigger_Doomsayer(TrigBoard):
+class Trig_Doomsayer(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -411,9 +411,9 @@ class KnifeJuggler(Minion):
 	requireTarget, keyWord, description = False, "", "After you summon a minion, deal 1 damage to a random enemy"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_KnifeJuggler(self)]
+		self.trigsBoard = [Trig_KnifeJuggler(self)]
 		
-class Trigger_KnifeJuggler(TrigBoard):
+class Trig_KnifeJuggler(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenSummoned"])
 		
@@ -456,9 +456,9 @@ class LorewalkerCho(Minion):
 	requireTarget, keyWord = False, ""
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_LorewalkerCho(self)]
+		self.trigsBoard = [Trig_LorewalkerCho(self)]
 		
-class Trigger_LorewalkerCho(TrigBoard):
+class Trig_LorewalkerCho(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
 		
@@ -506,9 +506,9 @@ class ManaAddict(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, gain +2 Attack this turn"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ManaAddict(self)]
+		self.trigsBoard = [Trig_ManaAddict(self)]
 		
-class Trigger_ManaAddict(TrigBoard):
+class Trig_ManaAddict(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
 		
@@ -540,9 +540,9 @@ class MasterSwordsmith(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, give another random friendly minion +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_MasterSwordsmith(self)]
+		self.trigsBoard = [Trig_MasterSwordsmith(self)]
 		
-class Trigger_MasterSwordsmith(TrigBoard):
+class Trig_MasterSwordsmith(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -615,9 +615,9 @@ class NatPagle(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, you have a 50% chance to draw an extra card"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_NatPagle(self)]
+		self.trigsBoard = [Trig_NatPagle(self)]
 		
-class Trigger_NatPagle(TrigBoard):
+class Trig_NatPagle(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -648,7 +648,7 @@ class PintSizedSummoner(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=-1, changeto=-1)
-		self.trigsBoard = [Trigger_PintsizedSummoner(self)]
+		self.trigsBoard = [Trig_PintsizedSummoner(self)]
 		#随从的光环启动在顺序上早于appearResponse,关闭同样早于disappearResponse
 		self.appearResponse = [self.checkAuraCorrectness]
 		self.disappearResponse = [self.deactivateAura]
@@ -666,7 +666,7 @@ class PintSizedSummoner(Minion):
 		PRINT(self.Game, "Pint-Sized Summoner's mana aura is removed. Player's first minion each turn no longer costs 1 less.")
 		self.auras["Mana Aura"].auraDisappears()
 		
-class Trigger_PintsizedSummoner(TrigBoard):
+class Trig_PintsizedSummoner(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts", "TurnEnds", "ManaPaid"])
 		
@@ -710,9 +710,9 @@ class WildPyromancer(Minion):
 	requireTarget, keyWord, description = False, "", "After you cast a spell, deal 1 damage to ALL minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_WildPyromancer(self)]
+		self.trigsBoard = [Trig_WildPyromancer(self)]
 		
-class Trigger_WildPyromancer(TrigBoard):
+class Trig_WildPyromancer(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
@@ -751,9 +751,9 @@ class AlarmoBot(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, swap this minion with a random one in your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_AlarmoBot(self)]
+		self.trigsBoard = [Trig_AlarmoBot(self)]
 		
-class Trigger_AlarmoBot(TrigBoard):
+class Trig_AlarmoBot(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -869,9 +869,9 @@ class Demolisher(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, deal 2 damage to a random enemy"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Demolisher(self)]
+		self.trigsBoard = [Trig_Demolisher(self)]
 		
-class Trigger_Demolisher(TrigBoard):
+class Trig_Demolisher(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -927,9 +927,9 @@ class FlesheatingGhoul(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever a minion dies, gain +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_FlesheatingGhoul(self)]
+		self.trigsBoard = [Trig_FlesheatingGhoul(self)]
 		
-class Trigger_FlesheatingGhoul(TrigBoard):
+class Trig_FlesheatingGhoul(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDies"])
 		
@@ -969,9 +969,9 @@ class ImpMaster(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, deal 1 damage to this minion and summon a 1/1 Imp"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ImpMaster(self)]
+		self.trigsBoard = [Trig_ImpMaster(self)]
 		
-class Trigger_ImpMaster(TrigBoard):
+class Trig_ImpMaster(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -1078,9 +1078,9 @@ class QuestingAdventurer(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever your play a card, gain +1/+1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_QuestingAdventurer(self)]
+		self.trigsBoard = [Trig_QuestingAdventurer(self)]
 		
-class Trigger_QuestingAdventurer(TrigBoard):
+class Trig_QuestingAdventurer(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionPlayed", "SpellPlayed", "WeaponPlayed", "HeroCardPlayed"])
 		
@@ -1128,18 +1128,18 @@ class EnrageAura_RaginWorgen(AuraDealer_toMinion):
 				for entity, aura_Receiver in fixedList(self.auraAffected):
 					aura_Receiver.effectClear()
 					
-	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
+	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
-		return type(self)(recipientMinion)
+		return type(self)(recipient)
 		
-	def createCopy(self, recipientGame):
+	def createCopy(self, game):
 		#一个光环的注册可能需要注册多个扳机
-		if self not in recipientGame.copiedObjs: #这个光环没有被复制过
-			entityCopy = self.entity.createCopy(recipientGame)
+		if self not in game.copiedObjs: #这个光环没有被复制过
+			entityCopy = self.entity.createCopy(game)
 			Copy = self.selfCopy(entityCopy)
-			recipientGame.copiedObjs[self] = Copy
+			game.copiedObjs[self] = Copy
 			for minion, aura_Receiver in self.auraAffected:
-				minionCopy = minion.createCopy(recipientGame)
+				minionCopy = minion.createCopy(game)
 				if hasattr(aura_Receiver, "keyWord"):
 					receiverIndex = minion.keyWordbyAura["Auras"].index(aura_Receiver)
 					receiverCopy = minionCopy.keyWordbyAura["Auras"][receiverIndex]
@@ -1150,7 +1150,7 @@ class EnrageAura_RaginWorgen(AuraDealer_toMinion):
 				Copy.auraAffected.append((minionCopy, receiverCopy))
 			return Copy
 		else:
-			return recipientGame.copiedObjs[self]
+			return game.copiedObjs[self]
 			
 			
 class ScarletCrusader(Minion):
@@ -1277,9 +1277,9 @@ class CultMaster(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever one of your other minion dies, draw a card"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_CultMaster(self)]
+		self.trigsBoard = [Trig_CultMaster(self)]
 		
-class Trigger_CultMaster(TrigBoard):
+class Trig_CultMaster(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDies"])
 		
@@ -1333,7 +1333,7 @@ class DreadCorsair(Minion):
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Costs (1) less per Attack your weapon"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trigger_DreadCorsair(self)]
+		self.trigsHand = [Trig_DreadCorsair(self)]
 		
 	def selfManaChange(self):
 		if self.inHand:
@@ -1342,7 +1342,7 @@ class DreadCorsair(Minion):
 				self.mana -= weapon.attack
 				self.mana = max(0, self.mana)
 				
-class Trigger_DreadCorsair(TrigHand):
+class Trig_DreadCorsair(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["WeaponEquipped", "WeaponRemoved"])
 		
@@ -1368,7 +1368,7 @@ class SilvermoonGuardian(Minion):
 	
 	
 class SI7Infiltrator(Minion):
-	Class, race, name = "Neutral", "", "SI: 7 Infiltrator"
+	Class, race, name = "Neutral", "", "SI:7 Infiltrator"
 	mana, attack, health = 4, 5, 4
 	index = "Classic~Neutral~Minion~4~5~4~None~SI:7 Infiltrator~Battlecry"
 	requireTarget, keyWord, description = False, "", "Destroy a random enemy secret"
@@ -1412,9 +1412,9 @@ class VioletTeacher(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, summon a 1/1 Violet Apperentice"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_VioletTeacher(self)]
+		self.trigsBoard = [Trig_VioletTeacher(self)]
 		
-class Trigger_VioletTeacher(TrigBoard):
+class Trig_VioletTeacher(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
 		
@@ -1632,14 +1632,14 @@ class WeaponBuffAura_SpitefulSmith:
 		return type(self)(recipient)
 		
 	#这个函数会在复制场上扳机列表的时候被调用。
-	def createCopy(self, recipientGame):
+	def createCopy(self, game):
 		#一个光环的注册可能需要注册多个扳机
-		if self not in recipientGame.copiedObjs: #这个光环没有被复制过
-			entityCopy = self.entity.createCopy(recipientGame)
+		if self not in game.copiedObjs: #这个光环没有被复制过
+			entityCopy = self.entity.createCopy(game)
 			Copy = self.selfCopy(entityCopy)
-			recipientGame.copiedObjs[self] = Copy
+			game.copiedObjs[self] = Copy
 			for entity, aura_Receiver in self.auraAffected:
-				entityCopy = entity.createCopy(recipientGame)
+				entityCopy = entity.createCopy(game)
 				#武器光环的statbyAura是[0, []]
 				receiverIndex = entity.statbyAura[1].index(aura_Receiver)
 				receiverCopy = entityCopy.statbyAura[1][receiverIndex]
@@ -1647,7 +1647,7 @@ class WeaponBuffAura_SpitefulSmith:
 				Copy.auraAffected.append((entityCopy, receiverCopy))
 			return Copy
 		else:
-			return recipientGame.copiedObjs[self]
+			return game.copiedObjs[self]
 			
 			
 class StampedingKodo(Minion):
@@ -1745,9 +1745,9 @@ class GadgetzanAuctioneer(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, draw a card"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_GadgetzanAuctioneer(self)]
+		self.trigsBoard = [Trig_GadgetzanAuctioneer(self)]
 		
-class Trigger_GadgetzanAuctioneer(TrigBoard):
+class Trig_GadgetzanAuctioneer(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
 		
@@ -1766,9 +1766,9 @@ class Hogger(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, summon a 2/2 Gnoll with Taunt"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Hogger(self)]
+		self.trigsBoard = [Trig_Hogger(self)]
 		
-class Trigger_Hogger(TrigBoard):
+class Trig_Hogger(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -1797,9 +1797,9 @@ class Xavius(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever you play a card, summon a 2/1 Satyr"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Xavius(self)]
+		self.trigsBoard = [Trig_Xavius(self)]
 		
-class Trigger_Xavius(TrigBoard):
+class Trig_Xavius(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionPlayed", "SpellPlayed", "WeaponPlayed", "HeroCardPlayed"])
 		
@@ -1914,9 +1914,9 @@ class BaronGeddon(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of turn, deal 2 damage to ALL other characters"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_BaronGeddon(self)]
+		self.trigsBoard = [Trig_BaronGeddon(self)]
 		
-class Trigger_BaronGeddon(TrigBoard):
+class Trig_BaronGeddon(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -1975,9 +1975,9 @@ class ArcaneDevourer(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, gain +2/+2"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ArcaneDevourer(self)]
+		self.trigsBoard = [Trig_ArcaneDevourer(self)]
 		
-class Trigger_ArcaneDevourer(TrigBoard):
+class Trig_ArcaneDevourer(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
 		
@@ -1996,9 +1996,9 @@ class Gruul(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of each turn, gain +1/+1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Gruul(self)]
+		self.trigsBoard = [Trig_Gruul(self)]
 		
-class Trigger_Gruul(TrigBoard):
+class Trig_Gruul(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -2069,9 +2069,9 @@ class Ysera(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, add a Dream Card to your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Ysera(self)]
+		self.trigsBoard = [Trig_Ysera(self)]
 		
-class Trigger_Ysera(TrigBoard):
+class Trig_Ysera(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -2121,7 +2121,7 @@ class Nightmare(Spell):
 		if target and target.onBoard:
 			PRINT(self.Game, "Nightmare is cast and gives minion %s +5/+5. It dies at the start of player's turn."%target.name)
 			target.buffDebuff(5, 5)
-			trigger = Trigger_Corruption(target)
+			trigger = Trig_Corruption(target)
 			trigger.ID = self.ID
 			target.trigsBoard.append(trigger)
 			trigger.connect()
@@ -2180,7 +2180,7 @@ class SeaGiant(Minion):
 	requireTarget, keyWord, description = False, "", "Costs (1) less for each other minion on the battlefield"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trigger_SeaGiant(self)]
+		self.trigsHand = [Trig_SeaGiant(self)]
 		
 	def selfManaChange(self):
 		if self.inHand:
@@ -2188,7 +2188,7 @@ class SeaGiant(Minion):
 			self.mana -= num
 			self.mana = max(0, self.mana)
 		
-class Trigger_SeaGiant(TrigHand):
+class Trig_SeaGiant(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAppears", "MinionDisappears"])
 		
@@ -2841,9 +2841,9 @@ class ExplosiveTrap(Secret):
 	description = "When your hero is attacked, deal 2 damage to all enemies"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ExplosiveTrap(self)]
+		self.trigsBoard = [Trig_ExplosiveTrap(self)]
 		
-class Trigger_ExplosiveTrap(SecretTrigger):
+class Trig_ExplosiveTrap(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttacksHero", "MinionAttacksHero"])
 		
@@ -2864,9 +2864,9 @@ class FreezingTrap(Secret):
 	description = "When an enemy minion attacks, return it to its owner's hand. It costs (2) more."
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_FreezingTrap(self)]
+		self.trigsBoard = [Trig_FreezingTrap(self)]
 		
-class Trigger_FreezingTrap(SecretTrigger):
+class Trig_FreezingTrap(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttacksMinion", "MinionAttacksHero"])
 		
@@ -2887,9 +2887,9 @@ class Misdirection(Secret):
 	description = "When an enemy attacks your hero, instead it attacks another random character"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Misdirection(self)]
+		self.trigsBoard = [Trig_Misdirection(self)]
 		
-class Trigger_Misdirection(SecretTrigger):
+class Trig_Misdirection(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttacksHero", "MinionAttacksHero"])
 		
@@ -2931,9 +2931,9 @@ class SnakeTrap(Secret):
 	description = "When one of your minions is attacked, summon three 1/1 Snakes"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_SnakeTrap(self)]
+		self.trigsBoard = [Trig_SnakeTrap(self)]
 		
-class Trigger_SnakeTrap(SecretTrigger):
+class Trig_SnakeTrap(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttacksMinion", "HeroAttacksMinion"])
 		
@@ -2959,9 +2959,9 @@ class Snipe(Secret):
 	description = "After your opponent plays a minion, deal 4 damage to it"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Snipe(self)]
+		self.trigsBoard = [Trig_Snipe(self)]
 		
-class Trigger_Snipe(SecretTrigger):
+class Trig_Snipe(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed"])
 		
@@ -2997,9 +2997,9 @@ class ScavengingHyena(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever a friendly Beast dies, gain +2/+1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ScavengingHyena(self)]
+		self.trigsBoard = [Trig_ScavengingHyena(self)]
 		
-class Trigger_ScavengingHyena(TrigBoard):
+class Trig_ScavengingHyena(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDies"])
 		
@@ -3043,9 +3043,9 @@ class EaglehornBow(Weapon):
 	index = "Classic~Hunter~Weapon~3~3~2~Eaglehorn Bow"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_EaglehornBow(self)]
+		self.trigsBoard = [Trig_EaglehornBow(self)]
 		
-class Trigger_EaglehornBow(TrigBoard):
+class Trig_EaglehornBow(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SecretRevealed"])
 		
@@ -3132,9 +3132,9 @@ class GladiatorsLongbow(Weapon):
 	index = "Classic~Hunter~Weapon~7~5~2~Gladiator's Longbow"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_GladiatorsLongbow(self)]
+		self.trigsBoard = [Trig_GladiatorsLongbow(self)]
 		
-class Trigger_GladiatorsLongbow(TrigBoard):
+class Trig_GladiatorsLongbow(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["BattleStarted", "BattleFinished"])
 		
@@ -3210,9 +3210,9 @@ class ManaWyrm(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, gain 1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ManaWyrm(self)]
+		self.trigsBoard = [Trig_ManaWyrm(self)]
 		
-class Trigger_ManaWyrm(TrigBoard):
+class Trig_ManaWyrm(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
 		
@@ -3245,9 +3245,9 @@ class Counterspell(Secret):
 	description = "When your opponent casts a spell, Counter it."
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Counterspell(self)]
+		self.trigsBoard = [Trig_Counterspell(self)]
 		
-class Trigger_Counterspell(SecretTrigger):
+class Trig_Counterspell(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TriggerCounterspell"])
 		
@@ -3266,9 +3266,9 @@ class IceBarrier(Secret):
 	description = "When your hero is attacked, gain 8 Armor"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_IceBarrier(self)]
+		self.trigsBoard = [Trig_IceBarrier(self)]
 		
-class Trigger_IceBarrier(SecretTrigger):
+class Trig_IceBarrier(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttacksHero", "MinionAttacksHero"])
 		
@@ -3287,9 +3287,9 @@ class MirrorEntity(Secret):
 	description = "After your opponent plays a minion, summon a copy of it"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_MirrorEntity(self)]
+		self.trigsBoard = [Trig_MirrorEntity(self)]
 		
-class Trigger_MirrorEntity(SecretTrigger):
+class Trig_MirrorEntity(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed"])
 		
@@ -3309,9 +3309,9 @@ class Spellbender(Secret):
 	description = "When an enemy casts a spell on a minion, summon a 1/3 as the new target"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Spellbender(self)]
+		self.trigsBoard = [Trig_Spellbender(self)]
 		
-class Trigger_Spellbender(SecretTrigger):
+class Trig_Spellbender(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellTargetDecision"])
 		
@@ -3338,9 +3338,9 @@ class Vaporize(Secret):
 	description = "When a minion attacks your hero, destroy it"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Vaporize(self)]
+		self.trigsBoard = [Trig_Vaporize(self)]
 		
-class Trigger_Vaporize(SecretTrigger):
+class Trig_Vaporize(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttacksHero"])
 		
@@ -3413,9 +3413,9 @@ class EtherealArcanist(Minion):
 	requireTarget, keyWord, description = False, "", "If you control a Secret at the end of your turn, gain +2/+2"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_EtherealArcanist(self)]
+		self.trigsBoard = [Trig_EtherealArcanist(self)]
 		
-class Trigger_EtherealArcanist(TrigBoard):
+class Trig_EtherealArcanist(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -3450,9 +3450,9 @@ class ArchmageAntonidas(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, add a 'Fireball' spell to your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ArchmageAntonidas(self)]
+		self.trigsBoard = [Trig_ArchmageAntonidas(self)]
 		
-class Trigger_ArchmageAntonidas(TrigBoard):
+class Trig_ArchmageAntonidas(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
 		
@@ -3525,13 +3525,13 @@ class BlessingofWisdom(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and (target.inHand or target.onBoard):
 			PRINT(self.Game, "Blessing of Wisdom is cast on target %s. Whenever it attacks, player draws a card."%target.name)
-			trigger = Trigger_BlessingofWisdom(target)
+			trigger = Trig_BlessingofWisdom(target)
 			target.trigsBoard.append(trigger)
 			if target.onBoard:
 				trigger.connect()
 		return target
 		
-class Trigger_BlessingofWisdom(TrigBoard):
+class Trig_BlessingofWisdom(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 		
@@ -3550,9 +3550,9 @@ class EyeforanEye(Secret):
 	description = "When your hero takes damage, deal that much damage to the enemy hero"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_EyeforanEye(self)]
+		self.trigsBoard = [Trig_EyeforanEye(self)]
 		
-class Trigger_EyeforanEye(SecretTrigger):
+class Trig_EyeforanEye(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroTakesDmg"])
 		
@@ -3572,9 +3572,9 @@ class NobleSacrifice(Secret):
 	description = "When an enemy attacks, summon a 2/1 Defender as the new target"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_NobleSacrifice(self)]
+		self.trigsBoard = [Trig_NobleSacrifice(self)]
 		
-class Trigger_NobleSacrifice(SecretTrigger):
+class Trig_NobleSacrifice(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttacksHero", "MinionAttacksMinion", "HeroAttacksHero", "HeroAttacksMinion"])
 		
@@ -3602,9 +3602,9 @@ class Redemption(Secret):
 	description = "When an enemy attacks, summon a 2/1 Defender as the new target"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Redemption(self)]
+		self.trigsBoard = [Trig_Redemption(self)]
 		
-class Trigger_Redemption(SecretTrigger):
+class Trig_Redemption(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDies"])
 		
@@ -3625,9 +3625,9 @@ class Repentance(Secret):
 	description = "After your opponent plays a minion, reduce its Health to 1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Repentance(self)]
+		self.trigsBoard = [Trig_Repentance(self)]
 		
-class Trigger_Repentance(SecretTrigger):
+class Trig_Repentance(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed"])
 		
@@ -3695,9 +3695,9 @@ class SwordofJustice(Weapon):
 	index = "Classic~Paladin~Weapon~3~1~5~Sword of Justice"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_SwordofJustice(self)]
+		self.trigsBoard = [Trig_SwordofJustice(self)]
 		
-class Trigger_SwordofJustice(TrigBoard):
+class Trig_SwordofJustice(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenSummoned"])
 		
@@ -3918,9 +3918,9 @@ class Lightwell(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, restore 3 health to a damaged friendly character"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Lightwell(self)]
+		self.trigsBoard = [Trig_Lightwell(self)]
 		
-class Trigger_Lightwell(TrigBoard):
+class Trig_Lightwell(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -4352,12 +4352,12 @@ class Headcrack(Spell):
 		PRINT(self.Game, "Headcrack is cast and deals %d damage to the enemy hero."%damage)
 		self.dealsDamage(self.Game.heroes[3-self.ID], damage)
 		if self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 0:
-			trigger = Trigger_HeadCrack(self)
+			trigger = Trig_HeadCrack(self)
 			trigger.ID = self.ID
 			trigger.connect()
 		return None
 		
-class Trigger_HeadCrack(TrigBoard):
+class Trig_HeadCrack(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -4683,9 +4683,9 @@ class ManaTideTotem(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, draw a card"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ManaTideTotem(self)]
+		self.trigsBoard = [Trig_ManaTideTotem(self)]
 		
-class Trigger_ManaTideTotem(TrigBoard):
+class Trig_ManaTideTotem(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -4704,9 +4704,9 @@ class UnboundElemental(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever you play a card with Overload, gain +1/+1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_UnboundElemental(self)]
+		self.trigsBoard = [Trig_UnboundElemental(self)]
 		
-class Trigger_UnboundElemental(TrigBoard):
+class Trig_UnboundElemental(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionPlayed", "SpellPlayed", "WeaponPlayed", "HeroCardPlayed"])
 		
@@ -4753,9 +4753,9 @@ class BloodImp(Minion):
 	requireTarget, keyWord, description = False, "Stealth", "At the end of your turn, give another random friendly minion +1 Health"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_BloodImp(self)]
+		self.trigsBoard = [Trig_BloodImp(self)]
 		
-class Trigger_BloodImp(TrigBoard):
+class Trig_BloodImp(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -5165,9 +5165,9 @@ class Armorsmith(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever a friendly minion takes damage, gain +1 Armor"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Armorsmith(self)]
+		self.trigsBoard = [Trig_Armorsmith(self)]
 		
-class Trigger_Armorsmith(TrigBoard):
+class Trig_Armorsmith(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionTakesDmg"])
 		
@@ -5208,19 +5208,16 @@ class CommandingShout(Spell):
 	description = "Your minions can't be reduced below 1 Health this turn. Draw a card"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Commanding Shout will prevent player's minions' health be reduced below 1 this turn. Player draws a card.")
-		trigger = Trigger_CommandingShout(self.Game, self.ID)
+		trigger = Trig_CommandingShout(self.Game, self.ID)
 		trigger.connect()
 		self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
-class Trigger_CommandingShout(TrigBoard):
+class Trig_CommandingShout:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.signals = ["FinalDmgonMinion?"]
 		self.temp = False
-		#number here is a list that holds the damage to be processed
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return target.ID == self.ID and target.onBoard and number[0] > 0
 		
 	def connect(self):
 		try: self.Game.trigsBoard[self.ID]["FinalDmgonMinion?"].append(self)
@@ -5232,18 +5229,30 @@ class Trigger_CommandingShout(TrigBoard):
 		except: pass
 		try: self.Game.turnEndTrigger.remove(self)
 		except: pass
+		#number here is a list that holds the damage to be processed
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return target.ID == self.ID and target.onBoard and number[0] > 0
 		
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrigger(signal, ID, subject, target, number, comment):
+			self.effect(signal, ID, subject, target, number, comment)
+			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "Commandin Shout prevents the minion's health from being reduced to below 1")
-		if target.health > 1: number[0] = min(number[0], target.health - 1)
-		else: number[0] = 0
+		PRINT(self.Game, "Commandin Shout prevents the minion's health from being reduced to below 1")
+		number[0] = min(number[0], target.health - 1) * (target.health > 1)
 		
 	def turnEndTrigger(self):
 		self.disconnect()
 		
 	def createCopy(self, game):
-		return type(self)(self.Game, self.ID)
-		
+		if self not in game.copiedObjs:
+			trigCopy = type(self)(game, self.ID)
+			game.copiedObjs[self] = trigCopy
+			return trigCopy
+		else:
+			return game.copiedObjs[self]
+			
+			
 class CruelTaskmaster(Minion):
 	Class, race, name = "Warrior", "", "Cruel Taskmaster"
 	mana, attack, health = 2, 2, 2
@@ -5312,9 +5321,9 @@ class FrothingBerserker(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever a minion takes damage, gain +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_FrothingBerserker(self)]
+		self.trigsBoard = [Trig_FrothingBerserker(self)]
 		
-class Trigger_FrothingBerserker(TrigBoard):
+class Trig_FrothingBerserker(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionTakesDmg"])
 		
@@ -5394,7 +5403,7 @@ class Gorehowl(Weapon):
 	index = "Classic~Warrior~Weapon~7~7~1~Gorehowl"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Gorehowl(self)]
+		self.trigsBoard = [Trig_Gorehowl(self)]
 		self.canLoseDurability = True
 		
 	def loseDurability(self):
@@ -5409,7 +5418,7 @@ class Gorehowl(Weapon):
 			if self.attack < 1:
 				self.dead = True
 				
-class Trigger_Gorehowl(TrigBoard):
+class Trig_Gorehowl(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackingMinion"])
 		

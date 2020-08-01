@@ -29,18 +29,15 @@ class Blur(Spell):
 	#不知道与博尔碎盾的结算是如何进行的。
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Blur is cast and player can't take any damage this turn")
-		trigger = Trigger_Blur(self.Game, self.ID)
+		trigger = Trig_Blur(self.Game, self.ID)
 		trigger.connect()
 		return None
 		
-class Trigger_Blur(TrigBoard):
+class Trig_Blur:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.signals = ["FinalDmgonHero?"]
 		self.temp = False
-		#number here is a list that holds the damage to be processed
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return target.ID == self.ID and target.onBoard
 		
 	def connect(self):
 		try: self.Game.trigsBoard[self.ID]["FinalDmgonHero?"].append(self)
@@ -48,22 +45,34 @@ class Trigger_Blur(TrigBoard):
 		self.Game.turnEndTrigger.append(self)
 		
 	def disconnect(self):
-		try: self.Game.trigsBoard[self.ID]["FinalDmgonMinion?"].remove(self)
+		try: self.Game.trigsBoard[self.ID]["FinalDmgonHero?"].remove(self)
 		except: pass
 		try: self.Game.turnEndTrigger.remove(self)
 		except: pass
+		#number here is a list that holds the damage to be processed
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return target.ID == self.ID and target.onBoard
 		
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrigger(signal, ID, subject, target, number, comment):
+			self.effect(signal, ID, subject, target, number, comment)
+			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.Game, "Blur prevents the player from taking damage")
+		print("Blur prevents the player from taking damage")
 		number[0] = 0
 		
 	def turnEndTrigger(self):
 		self.disconnect()
 		
-	def createCopy(self, game):
-		return type(self)(self.Game, self.ID)
-		
-		
+	def createCopy(self, game): #不是纯的只在回合结束时触发，需要完整的createCopy
+		if self not in game.copiedObjs: #这个扳机没有被复制过
+			trigCopy = type(self)(game, self.ID)
+			game.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return game.copiedObjs[self]
+			
+			
 class TwinSlice(Spell):
 	Class, name = "Demon Hunter", "Twin Slice"
 	requireTarget, mana = False, 1
@@ -97,9 +106,9 @@ class Battlefiend(Minion):
 	requireTarget, keyWord, description = False, "", "After your hero attacks, gain +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Battlefiend(self)]
+		self.trigsBoard = [Trig_Battlefiend(self)]
 		
-class Trigger_Battlefiend(TrigBoard):
+class Trig_Battlefiend(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -157,8 +166,8 @@ class TwoFewerManaEffectRemoved:
 		try: self.Game.turnStartTrigger.remove(self)
 		except: pass
 		
-	def createCopy(self, recipientGame):
-		return type(self)(recipientGame, self.ID)
+	def createCopy(self, game):
+		return type(self)(game, self.ID)
 		
 		
 class UrzulHorror(Minion):
@@ -248,9 +257,9 @@ class AltruistheOutcast(Minion):
 	requireTarget, keyWord, description = False, "", "After you play the left- or right-most card in your hand, deal 1 damage to all enemies"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_AltruistheOutcast(self)]
+		self.trigsBoard = [Trig_AltruistheOutcast(self)]
 		
-class Trigger_AltruistheOutcast(TrigBoard):
+class Trig_AltruistheOutcast(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed", "SpellBeenPlayed", "WeaponBeenPlayed", "HeroCardBeenPlayed"])
 		
@@ -272,7 +281,7 @@ class EyeBeam(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.keyWords["Lifesteal"] = 1
-		self.trigsHand = [Trigger_EyeBeam(self)]
+		self.trigsHand = [Trig_EyeBeam(self)]
 		
 	def available(self):
 		return self.selectableMinionExists()
@@ -296,7 +305,7 @@ class EyeBeam(Spell):
 			self.dealsDamage(target, damage)
 		return target
 		
-class Trigger_EyeBeam(TrigHand):
+class Trig_EyeBeam(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["CardLeavesHand", "CardEntersHand"])
 		
@@ -317,9 +326,9 @@ class WrathscaleNaga(Minion):
 	requireTarget, keyWord, description = False, "", "After a friendly minion dies, deal 3 damage to a random enemy"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_WrathscaleNaga(self)]
+		self.trigsBoard = [Trig_WrathscaleNaga(self)]
 		
-class Trigger_WrathscaleNaga(TrigBoard):
+class Trig_WrathscaleNaga(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDied"])
 		
@@ -424,9 +433,9 @@ class WrathspikeBrute(Minion):
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. After this is attacked, deal 1 damage to all enemies"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_WrathspikeBrute(self)]
+		self.trigsBoard = [Trig_WrathspikeBrute(self)]
 		
-class Trigger_WrathspikeBrute(TrigBoard):
+class Trig_WrathspikeBrute(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackedMinion", "HeroAttackedMinion"])
 		
@@ -455,9 +464,9 @@ class HulkingOverfiend(Minion):
 	requireTarget, keyWord, description = False, "Rush", "Rush. After this attacks and kills a minion, it may attack again"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_HulkingOverfiend(self)]
+		self.trigsBoard = [Trig_HulkingOverfiend(self)]
 		
-class Trigger_HulkingOverfiend(TrigBoard):
+class Trig_HulkingOverfiend(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackedMinion"])
 		
@@ -482,7 +491,7 @@ class Nethrandamus(Minion):
 				
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trigger_Nethrandamus(self)] #只有在手牌中才会升级
+		self.trigsHand = [Trig_Nethrandamus(self)] #只有在手牌中才会升级
 		self.progress = 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -503,7 +512,7 @@ class Nethrandamus(Minion):
 			curGame.summon([minion(curGame, self.ID) for minion in minions], pos, self.ID)
 		return None
 		
-class Trigger_Nethrandamus(TrigHand):
+class Trig_Nethrandamus(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDies"])
 		

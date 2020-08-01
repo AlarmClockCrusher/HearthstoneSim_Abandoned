@@ -29,15 +29,15 @@ class TrigBoard:
 			try: self.entity.Game.trigsBoard[self.entity.ID][sig].remove(self)
 			except: pass
 			
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return True
+		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):
 			if self.entity.Game.GUI:
 				self.entity.Game.GUI.triggerBlink(self.entity)
 			self.effect(signal, ID, subject, target, number, comment)
 			
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return True
-		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		pass
 		
@@ -52,6 +52,7 @@ class TrigBoard:
 		if self not in game.copiedObjs: #这个扳机没有被复制过
 			entityCopy = self.entity.createCopy(game)
 			trigCopy = self.selfCopy(entityCopy)
+			if hasattr(self, "counter"): trigCopy.counter = self.counter
 			game.copiedObjs[self] = trigCopy
 			return trigCopy
 		else: #一个扳机被复制过了，则其携带者也被复制过了
@@ -247,7 +248,7 @@ class Trig_Echo(TrigHand):
 		self.entity.Game.Hand_Deck.extractfromHand(self.entity)
 		
 		
-class Trigger_WorgenShift_FromHuman(TrigHand):
+class Trig_WorgenShift_FromHuman(TrigHand):
 	def __init__(self, entity, worgenType):
 		self.blank_init(entity, ["TurnEnds"])
 		self.worgenType = worgenType
@@ -267,7 +268,7 @@ class Trigger_WorgenShift_FromHuman(TrigHand):
 		self.entity.Game.Hand_Deck.replaceCardinHand(self.entity, worgen)
 		
 		
-class Trigger_WorgenShift_FromWorgen(TrigHand):
+class Trig_WorgenShift_FromWorgen(TrigHand):
 	def __init__(self, entity, humanType):
 		self.blank_init(entity, ["TurnEnds"])
 		self.humanType = humanType

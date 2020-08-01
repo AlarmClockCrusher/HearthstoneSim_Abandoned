@@ -171,9 +171,9 @@ class DepthCharge(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, deal 5 damage to all minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_DepthCharge(self)]
+		self.trigsBoard = [Trig_DepthCharge(self)]
 		
-class Trigger_DepthCharge(TrigBoard):
+class Trig_DepthCharge(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -193,9 +193,9 @@ class HotAirBalloon(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, gain +1 Health"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_HotAirBalloon(self)]
+		self.trigsBoard = [Trig_HotAirBalloon(self)]
 		
-class Trigger_HotAirBalloon(TrigBoard):
+class Trig_HotAirBalloon(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -247,6 +247,7 @@ class GrizzledWizard(Minion):
 	mana, attack, health = 2, 3, 2
 	index = "Dragons~Neutral~Minion~2~3~2~None~Grizzled Wizard~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Swap Hero Powers with your opponent until next turn"
+	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		#The Hero Powers are swapped at the start of your next turn
 		PRINT(self.Game, "Grizzled Wizard's battlecry swaps player's Hero Powers until next turn")
@@ -259,29 +260,20 @@ class GrizzledWizard(Minion):
 		self.Game.powers[2].appears()
 		self.Game.powers[1].ID, self.Game.powers[2].ID = 1, 2
 		
-		trigger = Trigger_GrizzledWizard(self.Game, self.ID)
-		trigger.connect()
+		trigs = self.Game.turnStartTrigger
+		trigSwap = SwapHeroPowersBack(self.Game, self.ID)
+		for i in reversed(range(len(trigs))):
+			if isinstance(trigs[i], SwapHeroPowersBack):
+				trigs.pop(i)
+		trigs.append(trigSwap)
 		return None
 		
-class Trigger_GrizzledWizard(TrigBoard):
+class SwapHeroPowersBack:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
-		self.signals = ["TurnStarts"]
-		self.temp = False
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return ID == self.ID
-		
-	def connect(self):
-		try: self.Game.trigsBoard[self.ID]["TurnStarts"].append(self)
-		except: self.Game.trigsBoard[self.ID]["TurnStarts"] = [self]
-		
-	def disconnect(self):
-		try: self.Game.trigsBoard[self.ID]["TurnStarts"].remove(self)
-		except: pass
-		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "At the start of player's turn, the two players' Hero Powers are swapped back")
+	def turnStartTrigger(self):
+		PRINT(self.Game, "At the start of turn, player's Hero Powers are swapped back")
 		temp = self.Game.powers[1]
 		self.Game.powers[1].disappears()
 		self.Game.powers[2].disappears()
@@ -292,6 +284,13 @@ class Trigger_GrizzledWizard(TrigBoard):
 		self.Game.powers[1].ID, self.Game.powers[2].ID = 1, 2
 		self.disconnect()
 		
+		try: self.Game.turnStartTrigger.remove(self)
+		except: pass
+		
+	def createCopy(self, game):
+		return type(self)(game, self.ID)
+		
+		
 class ParachuteBrigand(Minion):
 	Class, race, name = "Neutral", "Pirate", "Parachute Brigand"
 	mana, attack, health = 2, 2, 2
@@ -299,9 +298,9 @@ class ParachuteBrigand(Minion):
 	requireTarget, keyWord, description = False, "", "After you play a Pirate, summon this minion from your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trigger_ParachuteBrigand(self)]
+		self.trigsHand = [Trig_ParachuteBrigand(self)]
 		
-class Trigger_ParachuteBrigand(TrigHand):
+class Trig_ParachuteBrigand(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed"])
 		
@@ -364,9 +363,9 @@ class Transmogrifier(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Transmogrifier(self)]
+		self.trigsBoard = [Trig_Transmogrifier(self)]
 		
-class Trigger_Transmogrifier(TrigBoard):
+class Trig_Transmogrifier(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["CardDrawn"])
 		
@@ -779,8 +778,7 @@ class ZulDrakRitualist(Minion):
 				minions = npchoice(curGame.RNGPools["1-Cost Minions to Summon"], 3, replace=True)
 				curGame.fixedGuides.append(tuple(minions))
 			PRINT(curGame, "Zul'Drak Ritualist's battlecry summons three 1-Cost minions for the opponent")
-			minions = [minion(curGame, 3-self.ID) for minion in minions]
-			curGame.summon(minions, (-1, "totheRightEnd"), self.ID)
+			curGame.summon([minion(curGame, 3-self.ID) for minion in minions], (-1, "totheRightEnd"), self.ID)
 		return None
 		
 		
@@ -1058,20 +1056,21 @@ class KronxDragonhoof(Minion):
 					break
 			if galakrond: curGame.Hand_Deck.drawCard(self.ID, galakrond)
 		else:
-			if curGame.mode == 0:
-				if curGame.guides:
-					PRINT(curGame, "Kronx Dragonhoof's battlecry chooses a Devastation to unleash")
-					self.discoverDecided(curGame.guides.pop(0)())
-				else:
-					if "byOthers" in comment:
-						effect = npchoice([Annihilation, Decimation, Domination, Reanimation])
-						curGame.fixedGuides.append(effect)
-						PRINT(curGame, "Kronx Dragonhoof's battlecry chooses a random Devastation to unleash")
-						self.discoverDecided(effect())
+			if self.ID == curGame.turn:
+				if curGame.mode == 0:
+					if curGame.guides:
+						PRINT(curGame, "Kronx Dragonhoof's battlecry chooses a Devastation to unleash")
+						self.discoverDecided(curGame.guides.pop(0)())
 					else:
-						PRINT(curGame, "Kronx Dragonhoof's battlecry lets player choose a Devastation to unleash")
-						curGame.options = [Annihilation(), Decimation(), Domination(), Reanimation()]
-						curGame.Discover.startDiscover(self)
+						if "byOthers" in comment:
+							effect = npchoice([Annihilation, Decimation, Domination, Reanimation])
+							curGame.fixedGuides.append(effect)
+							PRINT(curGame, "Kronx Dragonhoof's battlecry chooses a random Devastation to unleash")
+							self.discoverDecided(effect())
+						else:
+							PRINT(curGame, "Kronx Dragonhoof's battlecry lets player choose a Devastation to unleash")
+							curGame.options = [Annihilation(), Decimation(), Domination(), Reanimation()]
+							curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -1159,9 +1158,9 @@ class Shuma(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, fill your board with 1/1 Tentacles"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Shuma(self)]
+		self.trigsBoard = [Trig_Shuma(self)]
 		
-class Trigger_Shuma(TrigBoard):
+class Trig_Shuma(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -1285,9 +1284,9 @@ class SecuretheDeck(Quest):
 	description = "Sidequest: Attack twice with your hero. Reward: Add 3 'Claw' to your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_SecuretheDeck(self)]
+		self.trigsBoard = [Trig_SecuretheDeck(self)]
 		
-class Trigger_SecuretheDeck(QuestTrigger):
+class Trig_SecuretheDeck(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedHero", "HeroAttackedMinion"])
 		
@@ -1311,9 +1310,9 @@ class StrengthinNumbers(Quest):
 	description = "Sidequest: Spend 10 Mana on minions. Rewards: Summon a minion from your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_StrengthinNumbers(self)]
+		self.trigsBoard = [Trig_StrengthinNumbers(self)]
 		
-class Trigger_StrengthinNumbers(QuestTrigger):
+class Trig_StrengthinNumbers(QuestTrigger):
 	def __init__(self, entity): #假设人多势众是使用后扳机
 		self.blank_init(entity, ["MinionBeenPlayed"])
 		
@@ -1460,7 +1459,7 @@ class Aeroponics(Spell):
 	description = "Draw 2 cards. Costs (2) less for each Treant you control"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trigger_Aeroponics(self)]
+		self.trigsHand = [Trig_Aeroponics(self)]
 		
 	def selfManaChange(self):
 		if self.inHand:
@@ -1478,7 +1477,7 @@ class Aeroponics(Spell):
 		self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
-class Trigger_Aeroponics(TrigHand):
+class Trig_Aeroponics(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAppears", "MinionDisappears"])
 		
@@ -1510,18 +1509,18 @@ class EmeraldExplorer(Minion):
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		if self.ID == curGame.turn and curGame.Hand_Deck.handNotFull(self.ID):
+		if self.ID == curGame.turn:
 			if curGame.mode == 0:
 				if curGame.guides:
 					PRINT(curGame, "Emeral Explorer's battlecry adds a Dragon to player's hand")
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
+					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 				else:
 					key = "Dragons as "+classforDiscover(self)
 					if "byOthers" in comment:
 						dragon = npchoice(self.Game.RNGPools[key])
 						curGame.fixedGuides.append(dragon)
 						PRINT(curGame, "Emeral Explorer's battlecry adds a random Dragon to player's hand")
-						curGame.Hand_Deck.addCardtoHand(dragon, self.ID, "type")
+						curGame.Hand_Deck.addCardtoHand(dragon, self.ID, "type", byDiscover=True)
 					else:
 						dragons = npchoice(self.Game.RNGPools[key], 3, replace=False)
 						curGame.options = [dragon(curGame, self.ID) for dragon in dragons]
@@ -1532,9 +1531,7 @@ class EmeraldExplorer(Minion):
 		
 	def discoverDecided(self, option, info):
 		self.Game.fixedGuides.append(type(option))
-		PRINT(self.Game, "Dragon %s is put into player's hand."%option.name)
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 		
 class GorutheMightree(Minion):
@@ -1617,9 +1614,9 @@ class CleartheWay(Quest):
 	description = "Sidequest: Summon 3 Rush minions. Reward: Summon a 4/4 Gryphon with Rush"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_CleartheWay(self)]
+		self.trigsBoard = [Trig_CleartheWay(self)]
 		
-class Trigger_CleartheWay(QuestTrigger):
+class Trig_CleartheWay(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenSummoned"])
 		
@@ -1671,9 +1668,9 @@ class ToxicReinforcements(Quest):
 	description = "Sidequest: Use your Hero Power three times. Reward: Summon three 1/1 Leper Gnomes"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ToxicReinforcement(self)]
+		self.trigsBoard = [Trig_ToxicReinforcement(self)]
 		
-class Trigger_ToxicReinforcement(QuestTrigger):
+class Trig_ToxicReinforcement(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroUsedAbility"])
 		
@@ -1692,7 +1689,7 @@ class Trigger_ToxicReinforcement(QuestTrigger):
 class LeperGnome_Dragons(Minion):
 	Class, race, name = "Neutral", "", "Leper Gnome"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Neutral~Minion~1~1~1~None~Leper Gnome~Deathrattle"
+	index = "Dragons~Neutral~Minion~1~1~1~None~Leper Gnome~Deathrattle~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Deal 2 damage to the enemy hero"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -1736,9 +1733,9 @@ class PhaseStalker(Minion):
 	requireTarget, keyWord, description = False, "", "After you use your Hero Power, cast a Secret from your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_PhaseStalker(self)]
+		self.trigsBoard = [Trig_PhaseStalker(self)]
 		
-class Trigger_PhaseStalker(TrigBoard):
+class Trig_PhaseStalker(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroUsedAbility"])
 		
@@ -1791,18 +1788,18 @@ class PrimordialExplorer(Minion):
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		if self.ID == curGame.turn and curGame.Hand_Deck.handNotFull(self.ID):
+		if self.ID == curGame.turn:
 			if curGame.mode == 0:
 				if curGame.guides:
 					PRINT(curGame, "Primordial Explorer's battlecry adds a Dragon to player's hand")
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
+					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 				else:
 					key = "Dragons as "+classforDiscover(self)
 					if "byOthers" in comment:
 						dragon = npchoice(self.Game.RNGPools[key])
 						curGame.fixedGuides.append(dragon)
 						PRINT(curGame, "Primordial Explorer's battlecry adds a random Dragon to player's hand")
-						curGame.Hand_Deck.addCardtoHand(dragon, self.ID, "type")
+						curGame.Hand_Deck.addCardtoHand(dragon, self.ID, "type", byDiscover=True)
 					else:
 						dragons = npchoice(self.Game.RNGPools[key], 3, replace=False)
 						curGame.options = [dragon(curGame, self.ID) for dragon in dragons]
@@ -1812,9 +1809,7 @@ class PrimordialExplorer(Minion):
 		
 	def discoverDecided(self, option, info):
 		self.Game.fixedGuides.append(type(option))
-		PRINT(self.Game, "Dragon %s is put into player's hand."%option.name)
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 		
 class Stormhammer(Weapon):
@@ -1840,9 +1835,9 @@ class Dragonbane(Minion):
 	requireTarget, keyWord, description = False, "", "After you use your Hero Power, deal 5 damage to a random enemy"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Dragonbane(self)]
+		self.trigsBoard = [Trig_Dragonbane(self)]
 		
-class Trigger_Dragonbane(TrigBoard):
+class Trig_Dragonbane(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroUsedAbility"])
 		
@@ -1908,18 +1903,18 @@ class ArcaneBreath(Spell):
 			damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			PRINT(curGame, "Arcane Breath deals %d damage to minion %s"%(damage, target.name))
 			self.dealsDamage(target, damage)
-			if curGame.Hand_Deck.holdingDragon(self.ID) and curGame.Hand_Deck.handNotFull(self.ID):
+			if curGame.Hand_Deck.holdingDragon(self.ID):
 				if curGame.mode == 0:
 					if curGame.guides:
 						PRINT(curGame, "Arcane Breath adds a spell to player's hand")
-						curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
+						curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 					else:
 						key = classforDiscover(self)+" Spells"
 						if self.ID != curGame.turn or "byOthers" in comment:
 							PRINT(curGame, "Arcane Breath adds a random spell to player's hand")
 							spell = npchoice(curGame.RNGPools[key])
 							curGame.fixedGuides.append(spell)
-							curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
+							curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type", byDiscover=True)
 						else:
 							PRINT(curGame, "Arcane Breath lets player discover a spell")
 							spells = npchoice(curGame.RNGPools[key], 3, replace=False)
@@ -1928,10 +1923,8 @@ class ArcaneBreath(Spell):
 		return target
 		
 	def discoverDecided(self, option, info):
-		PRINT(self.Game, "Spell %s is put into player's hand."%option.name)
 		self.Game.fixedGuides.append(type(option))
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 		
 class ElementalAllies(Quest):
@@ -1941,9 +1934,9 @@ class ElementalAllies(Quest):
 	description = "Sidequest: Play an Elemental two turns in a row. Reward: Draw 3 spells from your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ElementalAllies(self)]
+		self.trigsBoard = [Trig_ElementalAllies(self)]
 		
-class Trigger_ElementalAllies(QuestTrigger):
+class Trig_ElementalAllies(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed", "TurnEnds"])
 		
@@ -1984,9 +1977,9 @@ class LearnDraconic(Quest):
 	description = "Sidequest: Spend 8 Mana on spells. Reward: Summon a 6/6 Dragon"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_LearnDraconic(self)]
+		self.trigsBoard = [Trig_LearnDraconic(self)]
 		
-class Trigger_LearnDraconic(QuestTrigger):
+class Trig_LearnDraconic(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed"]) #假设是使用后扳机
 		
@@ -2031,17 +2024,17 @@ class Chenvaala(Minion):
 	requireTarget, keyWord, description = False, "", "After you cast three spells in a turn, summon a 5/5 Elemental"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Chenvaala(self)]
+		self.trigsBoard = [Trig_Chenvaala(self)]
 		self.appearResponse = [self.resetCounter]
 		self.disappearResponse = [self.resetCounter]
 		self.silenceResponse = [self.resetCounter]
 		
 	def resetCounter(self):
 		for trig in self.trigsBoard:
-			if type(trig) == Trigger_Chenvaala:
+			if type(trig) == Trig_Chenvaala:
 				trig.counter = 0
 				
-class Trigger_Chenvaala(TrigBoard):
+class Trig_Chenvaala(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed", "TurnEnds", "TurnStarts"])
 		self.counter = 0
@@ -2060,19 +2053,8 @@ class Trigger_Chenvaala(TrigBoard):
 				self.entity.Game.summon(SnowElemental(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		else: #At the start/end of turn, the counter is reset
 			self.entity.resetCounter()
-			
-	#Chenvaala的扳机在游戏内复制的时候不会保留counter
-	def createCopy(self, game):
-		if self not in game.copiedObjs: #这个扳机没有被复制过
-			entityCopy = self.entity.createCopy(game)
-			trigCopy = self.selfCopy(entityCopy)
-			trigCopy.counter = self.counter
-			game.copiedObjs[self] = trigCopy
-			return trigCopy
-		else: #一个扳机被复制过了，则其携带者也被复制过了
-			return game.copiedObjs[self]
-			
-			
+	#Chenvaala在游戏内复制的时候不保留扳机进度
+	
 class SnowElemental(Minion):
 	Class, race, name = "Mage", "Elemental", "Snow Elemental"
 	mana, attack, health = 5, 5, 5
@@ -2100,18 +2082,18 @@ class AzureExplorer(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		if self.ID == curGame.turn and curGame.Hand_Deck.handNotFull(self.ID):
+		if self.ID == curGame.tur:
 			if curGame.mode == 0:
 				if curGame.guides:
 					PRINT(curGame, "Azure Explorer's battlecry adds a Dragon to player's hand")
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
+					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 				else:
 					key = "Dragons as "+classforDiscover(self)
 					if "byOthers" in comment:
 						dragon = npchoice(self.Game.RNGPools[key])
 						curGame.fixedGuides.append(dragon)
 						PRINT(curGame, "Azure Explorer's battlecry adds a random Dragon to player's hand")
-						curGame.Hand_Deck.addCardtoHand(dragon, self.ID, "type")
+						curGame.Hand_Deck.addCardtoHand(dragon, self.ID, "type", byDiscover=True)
 					else:
 						dragons = npchoice(self.Game.RNGPools[key], 3, replace=False)
 						curGame.options = [dragon(curGame, self.ID) for dragon in dragons]
@@ -2121,9 +2103,7 @@ class AzureExplorer(Minion):
 		
 	def discoverDecided(self, option, info):
 		self.Game.fixedGuides.append(type(option))
-		PRINT(self.Game, "Dragon %s is put into player's hand."%option.name)
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 		
 class MalygossFrostbolt(Spell):
@@ -2212,11 +2192,11 @@ class MalygossTome(Spell):
 		PRINT(curGame, "Malygos's Tome is cast and adds 3 random Mage card to player's hand.")	
 		if curGame.Hand_Deck.handNotFull(self.ID):
 			if curGame.guides:
-				mageSpells = list(curGame.guides.pop(0))
+				spell = list(curGame.guides.pop(0))
 			else:
-				mageSpells = npchoice(curGame.RNGPools["Mage Spells"], 3, replace=True)
-				curGame.fixedGuides.append(tuple(mageSpells))
-			curGame.Hand_Deck.addCardtoHand(mageSpells, self.ID, "type")
+				spell = npchoice(curGame.RNGPools["Mage Spells"], 3, replace=True)
+				curGame.fixedGuides.append(tuple(spell))
+			curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
 		return None
 		
 class MalygossExplosion(Spell):
@@ -2287,16 +2267,16 @@ class MalygosAspectofMagic(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		if curGame.Hand_Deck.holdingDragon(self.ID) and curGame.Hand_Deck.handNotFull(self.ID) and self.ID == curGame.turn:
+		if curGame.Hand_Deck.holdingDragon(self.ID) and self.ID == curGame.turn:
 			if curGame.guides:
 				PRINT(curGame, "Malygos, Aspect of Magic's battlecry puts an upgraded Mage spell to player's hand")
-				curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
+				curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 			else:
 				if "byOthers" in comment:
 					spell = npchoice(MalygosUpgradedSpells)
 					curGame.fixedGuides.append(spell)
 					PRINT(curGame, "Malygos, Aspect of Magic's battlecry adds a random upgraded Mage spell to player's hand")
-					curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
+					curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type", byDiscover=True)
 				else:
 					spells = npchoice(MalygosUpgradedSpells, 3, replace=False)
 					curGame.options = [spell(curGame, self.ID) for spell in spells]
@@ -2306,9 +2286,7 @@ class MalygosAspectofMagic(Minion):
 		
 	def discoverDecided(self, option, info):
 		self.Game.fixedGuides.append(type(option))
-		PRINT(self.Game, "Upgraded Mage spell %s is put into player's hand."%option.name)
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 		
 #火球滚滚会越过休眠物。直接打在相隔的其他随从上。圣盾随从会分担等于自己当前生命值的伤害。
@@ -2424,14 +2402,14 @@ class ManaGiant(Minion):
 	requireTarget, keyWord, description = False, "", "Costs (1) less for each card you've played this game that didn't start in your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trigger_ManaGiant(self)]
+		self.trigsHand = [Trig_ManaGiant(self)]
 		
 	def selfManaChange(self):
 		if self.inHand:
 			self.mana -= self.Game.Counters.createdCardsPlayedThisGame[self.ID]
 			self.mana = max(self.mana, 0)
 			
-class Trigger_ManaGiant(TrigHand):
+class Trig_ManaGiant(TrigHand):
 	def __init__(self, entity):
 		#假设这个费用改变扳机在“当你使用一张法术之后”。不需要预检测
 		self.blank_init(entity, ["SpellBeenPlayed"])
@@ -2451,9 +2429,9 @@ class RighteousCause(Quest):
 	description = "Sidequest: Summon 5 minions. Reward: Give your minions +1/+1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_RighteousCause(self)]
+		self.trigsBoard = [Trig_RighteousCause(self)]
 		
-class Trigger_RighteousCause(QuestTrigger):
+class Trig_RighteousCause(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenSummoned"])
 		
@@ -2502,9 +2480,9 @@ class Sanctuary(Quest):
 	description = "Sidequest: Take no damage for a turn. Reward: Summon a 3/6 minion with Taunt"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Sanctuary(self)]
+		self.trigsBoard = [Trig_Sanctuary(self)]
 		
-class Trigger_Sanctuary(QuestTrigger):
+class Trig_Sanctuary(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -2541,18 +2519,18 @@ class BronzeExplorer(Minion):
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		if self.ID == curGame.turn and curGame.Hand_Deck.handNotFull(self.ID):
+		if self.ID == curGame.turn:
 			if curGame.mode == 0:
 				if curGame.guides:
 					PRINT(curGame, "Bronze Explorer's battlecry adds a Dragon to player's hand")
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
+					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 				else:
 					key = "Dragons as "+classforDiscover(self)
 					if "byOthers" in comment:
 						dragon = npchoice(self.Game.RNGPools[key])
 						curGame.fixedGuides.append(dragon)
 						PRINT(curGame, "Bronze Explorer's battlecry adds a random Dragon to player's hand")
-						curGame.Hand_Deck.addCardtoHand(dragon, self.ID, "type")
+						curGame.Hand_Deck.addCardtoHand(dragon, self.ID, "type", byDiscover=True)
 					else:
 						dragons = npchoice(self.Game.RNGPools[key], 3, replace=False)
 						curGame.options = [dragon(curGame, self.ID) for dragon in dragons]
@@ -2562,9 +2540,7 @@ class BronzeExplorer(Minion):
 		
 	def discoverDecided(self, option, info):
 		self.Game.fixedGuides.append(type(option))
-		PRINT(self.Game, "Dragon %s is put into player's hand."%option.name)
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 		
 class SkyClaw(Minion):
@@ -2697,21 +2673,17 @@ class LightforgedCrusader(Minion):
 		if curGame.mode == 0:
 			if curGame.guides:
 				cards = curGame.guides.pop(0)
-				if not cards: return None
 			else:
 				noNeutralCardsinDeck = True
 				for card in curGame.Hand_Deck.decks[self.ID]:
 					if card.Class == "Neutral":
 						noNeutralCardsinDeck = False
 						break
-				if noNeutralCardsinDeck:
-					cards = npchoice(curGame.RNGPools["Paladin Cards"], 5, replace=True)
-					curGame.fixedGuides.append(tuple(cards))
-				else:
-					curGame.fixedGuides.append(())
-					return None
-			PRINT(curGame, "Lightforged Crusader's battlecry adds 5 random Paladin cards to player's hand")
-			curGame.Hand_Deck.addCardtoHand(cards, self.ID, "type")
+				cards = tuple(npchoice(curGame.RNGPools["Paladin Cards"], 5, replace=True)) if noNeutralCardsinDeck else ()
+				curGame.fixedGuides.append(cards)
+			if cards:
+				PRINT(curGame, "Lightforged Crusader's battlecry adds 5 random Paladin cards to player's hand")
+				curGame.Hand_Deck.addCardtoHand(cards, self.ID, "type")
 		return None
 		
 		
@@ -2994,16 +2966,19 @@ class GalakrondtheUnspeakable(Galakrond_Hero):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		targets = curGame.minionsonBoard(3-self.ID)
-		if targets:
-			if curGame.mode == 0:
-				PRINT(curGame, "Galakrond, the Unspeakable's battlecry destroys a random enemy minion.")
-				if curGame.guides:
-					minion = curGame.minions[3-self.ID][curGame.guides.pop(0)]
-				else:
+		if curGame.mode == 0:
+			if curGame.guides:
+				i = curGame.guides.pop(0)
+				minion = curGame.minions[3-self.ID][i] if i > -1 else None
+			else:
+				targets = curGame.minionsonBoard(3-self.ID)
+				if targets:
 					minion = npchoice(targets)
 					curGame.fixedGuides.append(minion.position)
-				minion.dead = True
+				else:
+					minion = None
+					curGame.fixedGuides.append(-1)
+			if minion: minion.dead = True
 		return None
 		
 class GalakrondtheApocalypes_Priest(Galakrond_Hero):
@@ -3017,17 +2992,15 @@ class GalakrondtheApocalypes_Priest(Galakrond_Hero):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		targets = curGame.minionsonBoard(3-self.ID)
-		if targets:
-			if curGame.mode == 0:
-				PRINT(curGame, "Galakrond, the Apocalypes's battlecry destroys 2 random enemy minions.")
-				if curGame.guides:
-					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
-				else:
-					num = min(2, len(targets))
-					minions = npchoice(targets, num, replace=True)
-					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
-				for minion in minions: minion.dead = True
+		if curGame.mode == 0:
+			PRINT(curGame, "Galakrond, the Apocalypes's battlecry destroys 2 random enemy minions.")
+			if curGame.guides:
+				minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
+			else:
+				targets = curGame.minionsonBoard(3-self.ID)
+				minions = npchoice(targets, min(4, len(targets)), replace=False)
+				curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
+			for minion in minions: minion.dead
 		return None
 		
 class GalakrondAzerothsEnd_Priest(Galakrond_Hero):
@@ -3040,17 +3013,15 @@ class GalakrondAzerothsEnd_Priest(Galakrond_Hero):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		targets = curGame.minionsonBoard(3-self.ID)
-		if targets:
-			if curGame.mode == 0:
-				PRINT(curGame, "Galakrond, Azeroth's End's battlecry destroys 4 random enemy minions.")
-				if curGame.guides:
-					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
-				else:
-					num = min(4, len(targets))
-					minions = npchoice(targets, num, replace=True)
-					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
-				for minion in minions: minion.dead = True
+		if curGame.mode == 0:
+			PRINT(curGame, "Galakrond, Azeroth's End's battlecry destroys 4 random enemy minions.")
+			if curGame.guides:
+				minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
+			else:
+				targets = curGame.minionsonBoard(3-self.ID)
+				minions = npchoice(targets, min(4, len(targets)), replace=False)
+				curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
+			for minion in minions: minion.dead
 		PRINT(curGame, "Galakrond, Azeroth's End's battlecry equips a 5/2 Claw for player")
 		curGame.equipWeapon(DragonClaw(curGame, self.ID))
 		return None
@@ -3142,7 +3113,7 @@ class DragonsHoard(Spell):
 			if curGame.mode == 0:
 				if curGame.guides:
 					PRINT(curGame, "Dragon's Hoard adds a Legendary minion from another class to player's hand")
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
+					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 				else:
 					classes = fixedList(curGame.RNGPools["Classes"])
 					try: classes.remove(curGame.heroes[self.ID].Class)
@@ -3151,7 +3122,7 @@ class DragonsHoard(Spell):
 						minion = npchoice(curGame.RNGPools["%s Legendary Minions"%npchoice(classes)])
 						curGame.fixedGuides.append(minion)
 						PRINT(curGame, "Dragon's Hoard is cast and adds a random Legendary minion from another class to player's hand")
-						curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type")
+						curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type", byDiscover=True)
 					else:
 						classes = npchoice(classes, 3, replace=False)
 						minions = [npchoice(curGame.RNGPools["%s Legendary Minions"%Class]) for Class in classes]
@@ -3162,9 +3133,7 @@ class DragonsHoard(Spell):
 		
 	def discoverDecided(self, option, info):
 		self.Game.fixedGuides.append(type(option))
-		PRINT(self.Game, "Legendary minion %s is put into player's hand."%option.name)
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 		
 class PraiseGalakrond(Spell):
@@ -3323,7 +3292,7 @@ class CandleBreath(Spell):
 	description = "Draw 3 cards. Costs (3) less while you're holding a Dragon"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trigger_CandleBreath(self)]
+		self.trigsHand = [Trig_CandleBreath(self)]
 		
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
@@ -3339,7 +3308,7 @@ class CandleBreath(Spell):
 			self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
-class Trigger_CandleBreath(TrigHand):
+class Trig_CandleBreath(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["CardLeavesHand", "CardEntersHand"])
 		
@@ -3370,11 +3339,11 @@ class FlikSkyshiv(Minion):
 			HD = self.Game.Hand_Deck
 			for ID in range(1, 3):
 				for minion in self.Game.minionsonBoard(ID):
-					minion.dead = True
-				for i, card in enumerate(reversed(HD.hands[ID])):
-					if card.name == target.name: HD.extractfromHand(i, ID, enemyCanSee=True)
-				for i, card in enumerate(reversed(HD.decks[ID])):
-					if card.name == target.name: HD.extractfromDeck(i, ID)
+					if minion.name == target.name: minion.dead = True
+				for i in reversed(range(len(HD.decks[ID]))):
+					if HD.decks[ID][i].name == target.name: HD.extractfromDeck(i, ID)
+				for i in reversed(range(len(HD.hands[ID]))):
+					if HD.hands[ID][i].name == target.name: HD.extractfromHand(i, ID, enemyCanSee=True)
 		return target
 		
 		
@@ -3587,9 +3556,9 @@ class Bandersmosh(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trigger_Bandersmosh_PreShifting(self)]
+		self.trigsHand = [Trig_Bandersmosh_PreShifting(self)]
 		
-class Trigger_Bandersmosh_PreShifting(TrigHand):
+class Trig_Bandersmosh_PreShifting(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		self.makesCardEvanescent = True
@@ -3609,12 +3578,12 @@ class Trigger_Bandersmosh_PreShifting(TrigHand):
 			PRINT(curGame, "At the start of turn, Bandersmosh transforms for the first time into a 5/5 copy of random Legendary minion")
 			minion.statReset(5, 5)
 			ManaMod(minion, changeby=0, changeto=5).applies()
-			trigger = Trigger_Bandersmosh_KeepShifting(minion)
+			trigger = Trig_Bandersmosh_KeepShifting(minion)
 			trigger.connect()
 			minion.trigsBoard.append(trigger)
 			curGame.Hand_Deck.replaceCardinHand(self.entity, minion)
 		
-class Trigger_Bandersmosh_KeepShifting(TrigBoard):
+class Trig_Bandersmosh_KeepShifting(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		self.makesCardEvanescent = True
@@ -3634,7 +3603,7 @@ class Trigger_Bandersmosh_KeepShifting(TrigBoard):
 			PRINT(curGame, "At the start of turn, Bandersmosh transforms for the first time into a 5/5 copy of random Legendary minion")
 			minion.statReset(5, 5)
 			ManaMod(minion, changeby=0, changeto=5).applies()
-			trigger = Trigger_Bandersmosh_KeepShifting(minion) #新的扳机保留这个变色龙的原有reference.在对方无手牌时会变回起始的变色龙。
+			trigger = Trig_Bandersmosh_KeepShifting(minion) #新的扳机保留这个变色龙的原有reference.在对方无手牌时会变回起始的变色龙。
 			trigger.connect()
 			minion.trigsBoard.append(trigger)
 			curGame.Hand_Deck.replaceCardinHand(self.entity, minion)
@@ -3720,9 +3689,9 @@ class StormEgg(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, transform into a 4/4 Storm Drake with Rush"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_StormEgg(self)]
+		self.trigsBoard = [Trig_StormEgg(self)]
 		
-class Trigger_StormEgg(TrigBoard):
+class Trig_StormEgg(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -4105,9 +4074,9 @@ class ZzerakutheWarped(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever your hero takes damage, summon a 6/6 Nether Drake"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ZzerakutheWarped(self)]
+		self.trigsBoard = [Trig_ZzerakutheWarped(self)]
 		
-class Trigger_ZzerakutheWarped(TrigBoard):
+class Trig_ZzerakutheWarped(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroTakesDmg"])
 		
@@ -4178,9 +4147,9 @@ class Ancharrr(Weapon):
 	index = "Dragons~Warrior~Weapon~3~2~2~Ancharrr~Legendary"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Ancharrr(self)]
+		self.trigsBoard = [Trig_Ancharrr(self)]
 		
-class Trigger_Ancharrr(TrigBoard):
+class Trig_Ancharrr(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["BattleFinished"])
 		
@@ -4286,9 +4255,9 @@ class Skybarge(Minion):
 	requireTarget, keyWord, description = False, "", "After you summon a Pirate, deal 2 damage to a random enemy"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_Skybarge(self)]
+		self.trigsBoard = [Trig_Skybarge(self)]
 		
-class Trigger_Skybarge(TrigBoard):
+class Trig_Skybarge(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenSummoned"])
 		

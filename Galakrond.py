@@ -72,9 +72,9 @@ class IceShard(Minion):
 	requireTarget, keyWord, description = False, "", "Freeze any character damaged by this minion"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_IceShard(self)]
+		self.trigsBoard = [Trig_IceShard(self)]
 		
-class Trigger_IceShard(TrigBoard):
+class Trig_IceShard(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionTakesDmg", "HeroTakesDmg"])
 		
@@ -107,7 +107,7 @@ class FrenziedFelwing(Minion):
 	requireTarget, keyWord, description = False, "", "Costs (1) less for each damage dealt to your opponent this turn"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trigger_FrenziedFelwing(self)]
+		self.trigsHand = [Trig_FrenziedFelwing(self)]
 		
 	def selfManaChange(self):
 		if self.inHand:
@@ -116,7 +116,7 @@ class FrenziedFelwing(Minion):
 			self.mana -= manaReduction
 			self.mana = max(0, self.mana)
 			
-class Trigger_FrenziedFelwing(TrigHand):
+class Trig_FrenziedFelwing(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroTakesDmg"])
 		
@@ -134,9 +134,9 @@ class EscapedManasaber(Minion):
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. Whenever this attacks, gain 1 Mana Crystal this turn only"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_EscapedManasaber(self)]
+		self.trigsBoard = [Trig_EscapedManasaber(self)]
 		
-class Trigger_EscapedManasaber(TrigBoard):
+class Trig_EscapedManasaber(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
 		
@@ -194,9 +194,9 @@ class GrandLackeyErkh(Minion):
 	requireTarget, keyWord, description = False, "", "After you play a Lackey, add a Lackey to your hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_GrandLackeyErkh(self)]
+		self.trigsBoard = [Trig_GrandLackeyErkh(self)]
 		
-class Trigger_GrandLackeyErkh(TrigBoard):
+class Trig_GrandLackeyErkh(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed"])
 		
@@ -395,9 +395,9 @@ class ChopshopCopter(Minion):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ChopshopCopter(self)]
+		self.trigsBoard = [Trig_ChopshopCopter(self)]
 		
-class Trigger_ChopshopCopter(TrigBoard):
+class Trig_ChopshopCopter(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDied"])
 		
@@ -488,7 +488,7 @@ class WhatDoesThisDo(HeroPower):
 	description = "Passive Hero Power. At the start of your turn, cast a random spell"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_WhatDoesThisDo(self)]
+		self.trigsBoard = [Trig_WhatDoesThisDo(self)]
 		
 	def available(self, choice=0):
 		return False
@@ -505,7 +505,7 @@ class WhatDoesThisDo(HeroPower):
 		for trigger in self.trigsBoard:
 			trigger.disconnect()
 			
-class Trigger_WhatDoesThisDo(TrigBoard):
+class Trig_WhatDoesThisDo(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
@@ -634,8 +634,7 @@ class ClericofScales(Minion):
 			if curGame.mode == 0:
 				if curGame.guides:
 					i = curGame.guides.pop(0)
-					if i < 0: return None
-					else:
+					if i > -1:
 						PRINT(curGame, "Cleric of Scales' battlecry lets player draw a spell from deck")
 						curGame.Hand_Deck.drawCard(self.ID, i)
 				else:
@@ -654,13 +653,12 @@ class ClericofScales(Minion):
 							PRINT(curGame, "Cleric of Scales' battlecry lets player Discover a spell from their deck")
 							curGame.options = npchoice(spells, min(3, len(spells)), replace=False)
 							curGame.Discover.startDiscover(self)
-					else: return None
+					else: curGame.fixedGuides.append(-1)
 		return None
 		
 	def discoverDecided(self, option, info):
 		i = self.Game.Hand_Deck.decks[self.ID].index(option)
 		self.Game.fixedGuides.append(i)
-		PRINT(self.Game, "Spell is drawn.")
 		self.Game.Hand_Deck.drawCard(self.ID, i)
 		
 		
@@ -689,7 +687,7 @@ class DarkProphecy(Spell):
 				curGame.summon(minion, -1, self.ID)
 			else:
 				key = "2-Cost Minions as " + classforDiscover(self)
-				if "byOthers" in comment:
+				if self.ID != curGame.turn or "byOthers" in comment:
 					minion = npchoice(curGame.RNGPools[key])
 					curGame.fixedGuides.append(minion)
 					PRINT(curGame, "Dark Prophecy is cast and summons a random 2-Cost minion and gives it +3 Health")
@@ -746,16 +744,16 @@ class Waxmancy(Spell):
 				PRINT(curGame, "Waxmancy is cast and adds a Battlecry minion to player's hand. It costs (2) less")
 				minion = curGame.guides.pop(0)(curGame, self.ID)
 				ManaMod(minion, changeby=-2, changeto=-1).applies()
-				curGame.Hand_Deck.addCardtoHand(minion, self.ID)
+				curGame.Hand_Deck.addCardtoHand(minion, self.ID, byDiscover=True)
 			else:
 				key = "Battlecry Minions as " + classforDiscover(self)
-				if "byOthers" in comment:
+				if self.ID != curGame.turn or "byOthers" in comment:
 					PRINT(curGame, "Waxmancy is cast and adds a random Battlecry minion to player's hand. It costs (2) less")
 					minion = npchoice(curGame.RNGPools[key])
 					curGame.fixedGuides.append(minion)
 					minion = minion(curGame, self.ID)
 					ManaMod(minion, changeby=-2, changeto=-1).applies()
-					curGame.Hand_Deck.addCardtoHand(minion, self.ID)
+					curGame.Hand_Deck.addCardtoHand(minion, self.ID, byDiscover=True)
 				else:
 					minions = npchoice(curGame.RNGPools[key], 3, replace=False)
 					PRINT(curGame, "Waxmancy lets player Discover a Battlecry minion. It costs (2) less")
@@ -765,10 +763,8 @@ class Waxmancy(Spell):
 		
 	def discoverDecided(self, option, info):
 		self.Game.fixedGuides.append(type(option))
-		PRINT(self.Game, "Battlecry minion %s is added to hand and costs (2) less."%option.name)
 		ManaMod(option, changeby=-2, changeto=-1).applies()
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 		
 class ShadowSculptor(Minion):
@@ -864,9 +860,9 @@ class TheFistofRaden(Weapon):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_TheFistofRaden(self)]
+		self.trigsBoard = [Trig_TheFistofRaden(self)]
 		
-class Trigger_TheFistofRaden(TrigBoard):
+class Trig_TheFistofRaden(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
@@ -935,13 +931,13 @@ class TwistedKnowledge(Spell):
 			if curGame.mode == 0:
 				if curGame.guides:
 					PRINT(curGame, "Twisted Knowledge adds a Warlock card to player's hand")
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
+					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 				else:
-					if "byOthers" in comment:
+					if self.ID != curGame.turn or "byOthers" in comment:
 						card = npchoice(curGame.RNGPools["Warlock Cards"])
 						curGame.fixedGuides.append(card)
 						PRINT(curGame, "Twisted Knowledge is cast and adds a random Warlock card to player's hand")
-						curGame.Hand_Deck.addCardtoHand(curGame, self.ID, "type")
+						curGame.Hand_Deck.addCardtoHand(curGame, self.ID, "type", byDiscover=True)
 					else:
 						cards = npchoice(curGame.RNGPools["Warlock Cards"], 3, replace=False)
 						PRINT(curGame, "Twisted Knowledge lets player Discover a Warlock card")
@@ -951,9 +947,7 @@ class TwistedKnowledge(Spell):
 		
 	def discoverDecided(self, option, info):
 		self.Game.fixedGuides.append(type(option))
-		PRINT(self.Game, "Warlock card %s is put into player's hand."%option.name)
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 #只会考虑当前的费用，寻找下回合法力值以下的牌。延时生效的法力值效果不会被考虑。
 #如果被战吼触发前被对方控制了，则也会根据我方下个回合的水晶进行腐化。但是这个回合结束时就会丢弃（因为也算是一个回合。）
@@ -970,8 +964,6 @@ class ChaosGazer(Minion):
 			PRINT(curGame, "Chaos Gazer's battlecry corrupts a playable card in opponent's hand")
 			if curGame.guides:
 				i = curGame.guides.pop()
-				if i < 0: return None
-				else: card = curGame.Hand_Deck.hands[3-self.ID][i]
 			else:
 				ID = 3-self.ID, 
 				manaNextTurn = max(0, min(10, curGame.Manas.manasUpper[ID] + 1) - curGame.Manas.manasOverloaded[ID])
@@ -980,22 +972,20 @@ class ChaosGazer(Minion):
 					if card.mana <= manaNextTurn:
 						notCorrupted = True
 						for trig in card.trigsHand:
-							if type(trig) == Trigger_CorruptedHand:
+							if type(trig) == Trig_CorruptedHand:
 								notCorrupted = False
 								break
 						if notCorrupted: cards.append(i)
-				if cards:
-					card = npchoice(cards)
-					curGame.fixedGuides.append(i)
-				else:
-					curGame.fixedGuides.append(-1)
-					return None
-			trigger = Trigger_CorruptedHand(card)
-			card.trigsHand.append(trigger)
-			trigger.connect()
+				i = npchoice(cards) if cards else -1
+				curGame.fixedGuides.append(i)
+			if i > -1:
+				card = curGame.Hand_Deck.hands[3-self.ID][i]
+				trig = Trig_CorruptedHand(card)
+				card.trigsHand.append(trig)
+				trig.connect()
 		return None
 		
-class Trigger_CorruptedHand(TrigHand):
+class Trig_CorruptedHand(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		self.temp = True
@@ -1038,7 +1028,7 @@ class BoomSquad(Spell):
 		if curGame.mode == 0:
 			if curGame.guides:
 				PRINT(curGame, "Boom Squad is cast and adds a Lackey/Mech/Dragon to player's hand")
-				curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
+				curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 			else:
 				Class = classforDiscover(self)
 				key_Mech, key_Dragon = "Mechs as " + Class, "Dragons as " + Class
@@ -1047,7 +1037,7 @@ class BoomSquad(Spell):
 					card = npchoice(mixedPool[nprandint(3)])
 					curGame.fixedGuides.append(card)
 					PRINT(curGame, "Boom Squad is cast and adds a random Lackey, Mech, or Dragon card to player's hand")
-					curGame.Hand_Deck.addCardtoHand(card, self.ID, "type")
+					curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True)
 				else:
 					cards = [npchoice(Lackeys), npchoice(curGame.RNGPools[key_Mech]), npchoice(curGame.RNGPools[key_Dragon])]
 					PRINT(curGame, "Boom Squad lets player Discover a Lackey, Mech or Dragon")
@@ -1057,8 +1047,7 @@ class BoomSquad(Spell):
 		
 	def discoverDecided(self, option, info):
 		self.Game.fixedGuides.append(type(option))
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 		
 class RiskySkipper(Minion):
@@ -1068,9 +1057,9 @@ class RiskySkipper(Minion):
 	requireTarget, keyWord, description = False, "", "After you play a minion, deal 1 damage to all minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_RiskySkipper(self)]
+		self.trigsBoard = [Trig_RiskySkipper(self)]
 		
-class Trigger_RiskySkipper(TrigBoard):
+class Trig_RiskySkipper(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed"])
 		
@@ -1090,9 +1079,9 @@ class BombWrangler(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever this minion takes damage, summon a 1/1 Boom Bot"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_BombWrangler(self)]
+		self.trigsBoard = [Trig_BombWrangler(self)]
 		
-class Trigger_BombWrangler(TrigBoard):
+class Trig_BombWrangler(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionTakesDmg"])
 		

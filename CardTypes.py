@@ -681,13 +681,11 @@ class Minion(Card):
 		for trigger in self.trigsBoard + self.deathrattles:
 			trigger.connect() #把(obj, signal)放入Game.triggersonBoard中
 		#Mainly mana aura minions, e.g. Sorcerer's Apprentice.
-		for func in self.appearResponse:
-			func()
+		for func in self.appearResponse: func()
 		#The buffAuras/hasAuras will react to this signal.
 		self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, "")
-		for func in self.triggers["StatChanges"]: #For Lightspawn and Paragon of Light
-			func()
-			
+		for func in self.triggers["StatChanges"]: func()
+		
 	def disappears(self, deathrattlesStayArmed=True): #The minion is about to leave board.
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		#Only the auras and disappearResponse will be invoked when the minion switches side.
@@ -707,8 +705,7 @@ class Minion(Card):
 			for trigger in self.deathrattles:
 				trigger.disconnect()
 		#如果随从有离场时需要触发的函数，在此处理
-		for func in self.disappearResponse:
-			func()
+		for func in self.disappearResponse: func()
 		#Let buffAura_Receivers remove themselves
 		while self.statbyAura[2] != []:
 			self.statbyAura[2][0].effectClear()
@@ -882,50 +879,37 @@ class Minion(Card):
 		return True
 		
 	def canAttackTarget(self, target):
-		if self.canAttack() == False:
-			return False
-		if not target.selectablebyBattle(self):
-			PRINT(self.Game, "%s is not selectable by attack."%target.name)
-			return False
-		#在actionable为True且目标可选的情况下只用一种情况下随从不能攻击一个角色： 突袭不能攻击英雄。
-		#刚登场回合，如果不是有冲锋或者是被暂时控制，则一个随从不能攻击对方英雄。
-		if self.newonthisSide and self.status["Borrowed"] < 1 and self.keyWords["Charge"] < 1 and target.type == "Hero":
-			PRINT(self.Game, "%s has Rush but the target is not minion."%self.name)
-			return False
+		return self.canAttack() and target.selectablebyBattle(self) and \
+			(target.type == "Minion" or (target.type == "Hero" and \
+											(not self.newonthisSide or self.status["Borrowed"] > 0 or self.keyWords["Charge"] > 0) \
+												and self.marks["Can't Attack Hero"] < 1)
+			)
 			
-		if self.marks["Can't Attack Hero"] > 0 and target.type == "Hero":
-			PRINT(self.Game, "The minion is not allowed to attack hero")
-			return False
-			
-		return True
-		
 	"""Healing, damage, takeDamage, AOE, lifesteal and dealing damage response"""
 	#Stealth Dreadscale actually stays in stealth.
 	def takesDamage(self, subject, damage, sendDamageSignal=True):
-		damageTaken = 0
+		game = self.Game
 		if damage > 0 and self.status["Immune"] < 1: #随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
 			if self.keyWords["Divine Shield"] > 0: self.losesKeyword("Divine Shield")
 			else:
 				#伤害量预检测。如果随从有圣盾则伤害预检测实际上是没有意义的。
 				damageHolder = [damage] #这个列表用于盛装伤害数值，会经由伤害扳机判定
-				self.Game.sendSignal("FinalDmgonMinion?", 0, subject, self, damageHolder, "")
+				game.sendSignal("FinalDmgonMinion?", 0, subject, self, damageHolder, "")
 				damage = damageHolder[0]
-				damageTaken = damage
 				self.health -= damage
 				#经过检测，被伏击者返回手牌中的紫罗兰老师不会因为毒药贩子加精灵弓箭手而直接丢弃。会减1血，并在打出时复原。
-				if ((subject.type == "Spell" and self.Game.status[subject.ID]["Spells Poisonous"] > 0) or subject.keyWords["Poisonous"] > 0) and self.onBoard:
+				if ((subject.type == "Spell" and game.status[subject.ID]["Spells Poisonous"] > 0) or subject.keyWords["Poisonous"] > 0) and self.onBoard:
 					self.dead = True
 				#在同时涉及多个角色的伤害处理中，受到的伤害暂不发送信号而之后统一进行扳机触发。
 				if sendDamageSignal:
-					self.Game.sendSignal("MinionTakesDmg", self.Game.turn, subject, self, damage, "")
-					self.Game.sendSignal("MinionTookDamage", self.Game.turn, subject, self, damage, "")
+					game.sendSignal("MinionTakesDmg", game.turn, subject, self, damage, "")
+					game.sendSignal("MinionTookDamage", game.turn, subject, self, damage, "")
 				if subject.type == "Power":
-					self.Game.Counters.damageDealtbyHeroPower[subject.ID] += damage
+					game.Counters.damageDealtbyHeroPower[subject.ID] += damage
 				#随从的激怒，根据血量和攻击的状态改变都在这里触发。
-				for func in self.triggers["StatChanges"]:
-					func()
-					
-		return damageTaken
+				for func in self.triggers["StatChanges"]: func()
+		else: damage = 0
+		return damage
 		
 	def deathResolution(self, attackbeforeDeath, triggersAllowed_WhenDies, triggersAllowed_AfterDied):
 		self.Game.sendSignal("MinionDies", self.Game.turn, None, self, attackbeforeDeath, "", 0, triggersAllowed_WhenDies)
@@ -992,17 +976,17 @@ class Minion(Card):
 			else:
 				target.history["Magnetic Upgrades"]["Marks"][key] = value
 		#将扳机赋予随从，同时记录在目标随从的"Magnetic Upgrades"中
-		for trigger_Class in deathrattles_orig:
-			trigger = trigger_Class(target)
+		for Trig_Class in deathrattles_orig:
+			trigger = Trig_Class(target)
 			target.deathrattles.append(trigger)
 			trigger.connect()
-			target.history["Magnetic Upgrades"]["Deathrattles"].append(trigger_Class)
+			target.history["Magnetic Upgrades"]["Deathrattles"].append(Trig_Class)
 		#将亡语赋予随从，同时记录在"Magnetic Upgrades"里面
-		for trigger_Class in triggers_orig:
-			trigger = trigger_Class(target)
+		for Trig_Class in triggers_orig:
+			trigger = Trig_Class(target)
 			target.trigsBoard.append(trigger)
 			trigger.connect()
-			target.history["Magnetic Upgrades"]["Triggers"].append(trigger_Class)
+			target.history["Magnetic Upgrades"]["Triggers"].append(Trig_Class)
 		#最后进行身材的改变，并在这里调用目标随从的StatChanges方法
 		target.buffDebuff(attack_orig, health_orig)
 		target.history["Magnetic Upgrades"]["AttackGain"] += attack_orig
@@ -1115,8 +1099,7 @@ class Minion(Card):
 			self.health_max += healthGain
 			self.health_max = max(1, self.health_max)
 			self.health = min(self.health, self.health_max)
-		for func in self.triggers["StatChanges"]:
-			func()
+		for func in self.triggers["StatChanges"]: func()
 			
 	#attRevertTime = "' or "EndofTurn" or "StartofTurn 1" or "StartofTurn 2"
 	def buffDebuff(self, attackGain, healthGain, attRevertTime=''):
@@ -1147,8 +1130,7 @@ class Minion(Card):
 			#清除全部buffAura并重置随从的生命值之后，让原来的buffAura_Dealer自行决定是否重新对该随从施加光环。
 			for buffAura_Receiver in CurrentBuffAura_Receivers:
 				buffAura_Receiver.source.applies(self)
-			for func in self.triggers["StatChanges"]:
-				func()
+			for func in self.triggers["StatChanges"]: func()
 				
 	#在原来的Game中创造一个Copy
 	def selfCopy(self, ID, attack=False, health=False, mana=False):
@@ -1190,8 +1172,7 @@ class Minion(Card):
 		if self.onBoard:
 			self.silenced, self.activated = True, False
 			#随从如需对沉默做出响应，在此处理。然后移除被沉默，出场，离场的特殊响应
-			for func in self.silenceResponse:
-				func()
+			for func in self.silenceResponse: func()
 			self.silenceResponse, self.appearResponse, self.disappearResponse = [], [], []
 			#Remove the enrage/Lightspawn effects. And discard effect.
 			for key in self.triggers.keys():
@@ -1960,11 +1941,11 @@ class Hero(Card):
 		pass
 		
 	def takesDamage(self, subject, damage, sendDamageSignal=True):
-		game, damageTaken = self.Game, 0
+		game = self.Game
 		if damage > 0 and game.status[self.ID]["Immune"] <= 0:
 			damageHolder = [damage]
 			game.sendSignal("FinalDmgonHero?", self.ID, subject, self, damageHolder, "")
-			damageTaken, damage = damageHolder[0], damageHolder[0]
+			damage = damageHolder[0]
 			if damage > 0:
 				if self.armor > damage: self.armor -= damage
 				else:
@@ -1978,6 +1959,7 @@ class Hero(Card):
 					game.Counters.timesHeroChangedHealth_inOwnTurn[self.ID] += 1
 					game.Counters.heroChangedHealthThisTurn[self.ID] = True
 					game.sendSignal("HeroChangedHealthinTurn", self.ID, None, None, 0, "")
+		else: damage = 0
 		return damage
 		
 	def healthReset(self, health, health_max=False):
@@ -2319,5 +2301,4 @@ class ChooseOneOption:
 		
 	#抉择选项的复制一定是以复制卡牌为前提的，调用此函数时，抉择主体一定已经被复制了
 	def createCopy(self, game):
-		entityCopy = game.copiedObjs[self.entity]
-		return type(self)(entityCopy)
+		return type(self)(game.copiedObjs[self.entity])

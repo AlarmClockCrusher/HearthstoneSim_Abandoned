@@ -195,7 +195,7 @@ class GUI_2P(GUI_Common):
 			tempGuides.grid(row=3, column=2)
 			btn2.grid(row=4, column=2)
 			
-			tk.Label(self.window, text="                 ").grid(row=0, column=1)
+			tk.Label(self.window, text="				 ").grid(row=0, column=1)
 			
 		self.window.wait_variable(var)
 		if var.get() == 1: #点击左边的情况会有要求先换牌，然后把信息传给对方
@@ -247,7 +247,7 @@ class GUI_2P(GUI_Common):
 		lbl_Output = tk.Label(master=self.outputPanel, text="System Resolution", font=("Yahei", 15))
 		scrollbar_hor = tk.Scrollbar(master=self.outputPanel, orient="horizontal")
 		scrollbar_ver = tk.Scrollbar(master=self.outputPanel)
-		self.output = tk.Listbox(master=self.outputPanel, xscrollcommand=scrollbar_hor.set, yscrollcommand=scrollbar_ver.set, width=40, height=4, bg="white", font=("Yahei", 13))
+		self.output = tk.Listbox(master=self.outputPanel, xscrollcommand=scrollbar_hor.set, yscrollcommand=scrollbar_ver.set, width=50, height=6, bg="white", font=("Yahei", 13))
 		scrollbar_hor.configure(command=self.output.xview)
 		scrollbar_ver.configure(command=self.output.yview)
 		scrollbar_ver.pack(fill=tk.Y, side=tk.RIGHT)

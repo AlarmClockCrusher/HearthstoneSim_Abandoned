@@ -393,7 +393,7 @@ class Game:
 		elif target.inHand: return target
 		else: return None #The target is dead and removed already
 		
-	#targetDeckID decides the destination. initiatorID is for triggers, such as Trigger_AugmentedElekk
+	#targetDeckID decides the destination. initiatorID is for triggers, such as Trig_AugmentedElekk
 	def returnMiniontoDeck(self, target, targetDeckID, initiatorID, deathrattlesStayArmed=False):
 		if target in self.minions[target.ID]:
 			ID, identity = targetDeckID, target.identity
@@ -492,7 +492,7 @@ class Game:
 					if trigs: hasResponder = True
 					if signal == "MinionDies" and self.Secrets.sameSecretExists(Redemption, 3-self.turn):
 						for i in range(len(trigs)):
-							if type(trigs[i]) == Trigger_Redemption:
+							if type(trigs[i]) == Trig_Redemption:
 								trigs.append(trigs.pop(i)) #把救赎的扳机移到最后
 								break
 					for trig in trigs: trig.trigger(signal, ID, subject, target, number, comment, choice)

@@ -81,9 +81,9 @@ class CanewithaWineGourd(Weapon): #带酒葫芦的杖子
 	index = "Basic~Monk~Weapon~1~0~4~Cane with a Wine Gourd"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_CanewithaWineGourd(self)]
+		self.trigsBoard = [Trig_CanewithaWineGourd(self)]
 		
-class Trigger_CanewithaWineGourd(TrigBoard):
+class Trig_CanewithaWineGourd(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -188,14 +188,16 @@ class EffusiveMists(Spell): #流溢之雾
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		minions = self.Game.minionsonBoard(3-self.ID)
-		if len(minions) > 1:
-			targets = npchoice(minions, 2, replace=False)
-			PRINT(self.Game, "Effusive Mists changes the Attack of random enemy minions {} to 1".format(targets))
-			for minion in targets:
-				minion.statReset(1, False)
-		elif len(minions) == 1:
-			PRINT(self.Game, "Effusive Mists changes the Attack minion %s to 1"%minions[0].name)
-			minions[0].statReset(1, False)
+		if minions:
+			if curGame.mode == 0:
+				if curGame.guides:
+					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
+				else:
+					num = min(2, len(minions))
+					minions = npchoice(minions, num, replace=False)
+					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
+				PRINT(curGame, "Effusive Mists sets the Attack of minions {} to 1".format(minions))
+				for minion in minions: minion.statReset(1, False)
 		return None
 		
 		
@@ -207,9 +209,9 @@ class SwiftBrewmaster(Minion): #迷踪的酒仙
 	requireTarget, keyWord, description = False, "", "Your Hero Power also targets adjacent minions if it triggers Quaff"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_SwiftBrewmaster(self)]
+		self.trigsBoard = [Trig_SwiftBrewmaster(self)]
 		
-class Trigger_SwiftBrewmaster(TrigBoard):
+class Trig_SwiftBrewmaster(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["ManaPaid", "HeroUsedAbility"])
 		self.activated = False
@@ -268,9 +270,9 @@ class ShadoPanWuKao(Minion): #影踪派悟道者
 	requireTarget, keyWord, description = False, "", "After your hero attacks, gain Stealth"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_ShadoPanWuKao(self)]
+		self.trigsBoard = [Trig_ShadoPanWuKao(self)]
 		
-class Trigger_ShadoPanWuKao(TrigBoard):
+class Trig_ShadoPanWuKao(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -328,8 +330,7 @@ class WiseLorewalkerCho(Minion): #睿智的游学者周卓
 		
 	def discoverDecided(self, option, info):
 		PRINT(self.Game, "Spell %s is added to player's hand"%option.name)
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-		self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 		
 class XuentheWhiteTiger_Mutable_1(Minion): #白虎 雪怒
@@ -340,9 +341,9 @@ class XuentheWhiteTiger_Mutable_1(Minion): #白虎 雪怒
 	requireTarget, keyWord, description = False, "Rush", "Rush. After you play a card, return this to your hand and give it +2/+2 for the rest of the game. It costs (1) more(up to 10)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_XuentheWhiteTiger(self)]
+		self.trigsBoard = [Trig_XuentheWhiteTiger(self)]
 		
-class Trigger_XuentheWhiteTiger(TrigBoard):
+class Trig_XuentheWhiteTiger(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed", "SpellBeenPlayed", "WeaponBeenPlayed", "HeroCardBeenPlayed"])
 		
@@ -449,12 +450,12 @@ class Liquor(Spell): #醉酿
 			elif target.onBoard: #假设只有当目标随从还在场上的时候会生效
 				PRINT(self.Game, "Liquor gives renders minion %s unable to attack for two turns"%target.name)
 				target.marks["Can't Attack"] += 1
-				trigger = Trigger_Liquor(target)
+				trigger = Trig_Liquor(target)
 				target.trigsBoard.append(trigger)
 				trigger.connect()
 		return target
 		
-class Trigger_Liquor(TrigBoard):
+class Trig_Liquor(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		self.temp = True
@@ -473,7 +474,7 @@ class Trigger_Liquor(TrigBoard):
 		else:
 			PRINT(self.entity.Game, "%s still can't attack for another turn"%self.entity.name)
 			
-	#一些扳机的counter可以随复制保留，但是Chenvaala在游戏内复制时，的counter不能保留
+	#复制的随从一并保留其沉醉扳机
 	def selfCopy(self, recipient):
 		trig = type(self)(recipient)
 		trig.counter = self.counter
@@ -513,12 +514,12 @@ class TouchofKarma(Spell): #业报之触
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and target.onBoard:
 			PRINT(self.Game, "Touch of Karma is cast and damage on player's Hero this turn will go to enemy minion %s instead"%target.name)
-			trig = Trigger_TouchofKarma(target, self.ID)
+			trig = Trig_TouchofKarma(target, self.ID)
 			target.trigsBoard.append(trig)
 			trig.connect()
 		return target
 		
-class Trigger_TouchofKarma(TrigBoard):
+class Trig_TouchofKarma(TrigBoard):
 	def __init__(self, entity, ID):
 		self.blank_init(entity, ["TurnEnds", "DmgTaker?"])
 		self.ID = ID
@@ -557,7 +558,7 @@ class JadeTether(HeroPower):
 	description = "Transform a minion into a 2/2 Golem with Taunt"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_JadeTether(self)]
+		self.trigsBoard = [Trig_JadeTether(self)]
 		self.heroPowerReplaced = None
 		
 	def effect(self, target, choice=0):
@@ -576,7 +577,7 @@ class JadeTether(HeroPower):
 		self.Game.powers[self.ID] = self
 		self.appears()
 		
-class Trigger_JadeTether(TrigBoard):
+class Trig_JadeTether(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroUsedAbility"])
 		self.counter = 0
@@ -618,7 +619,7 @@ class DrunkenBoxing(Spell): #醉拳
 		minionstoAttack = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
 		npshuffle(minionstoAttack)
 		if quaffTriggered:
-			trigger = Trigger_DrunkenBoxing(self)
+			trigger = Trig_DrunkenBoxing(self)
 			trigger.connect()
 			self.Game.sendSignal("QuaffTriggered", self.ID, None, None, 0, "")
 		#注册扳机，检测英雄的攻击
@@ -638,7 +639,7 @@ class DrunkenBoxing(Spell): #醉拳
 		if quaffTriggered: trigger.disconnect()
 		return None
 		
-class Trigger_DrunkenBoxing(TrigBoard):
+class Trig_DrunkenBoxing(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -659,9 +660,9 @@ class OnimaActuary(Minion): #秘典宗精算师
 	#潜行。在该随从攻击后，本回合中你的英雄技能的法力值消耗为(1)点
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_OnimaActuary(self)]
+		self.trigsBoard = [Trig_OnimaActuary(self)]
 		
-class Trigger_OnimaActuary(TrigBoard):
+class Trig_OnimaActuary(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackedMinion", "MinionAttackedHero"])
 		
@@ -710,7 +711,6 @@ class SpawnofXuen(Minion): #雪怒的子嗣
 					PRINT(self.Game, "Spawn of Xuen's battlecry lets player discover a 1-Cost minion from deck")
 					self.Game.options = npchoice(oneCostMinions, min(3, len(oneCostMinions)), replace=False)
 					self.Game.Discover.startDiscover(self)
-			else: PRINT(self.Game, "No 1-Cost minion in deck. Spawn of Xuen's battlecry has no effect")
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -718,34 +718,34 @@ class SpawnofXuen(Minion): #雪怒的子嗣
 		self.Game.Hand_Deck.drawCard(self.ID, option)
 		
 		
-class QuickSip(Spell): #浅斟快饮
-	#随机将你的牌库中的一张牌的3张复制置入你的手牌。畅饮：改为从你的牌库中发现这张牌
-	Class, name = "Monk", "Quick Sip"
-	requireTarget, mana = False, 5
-	index = "Classic~Monk~Spell~5~Quick Sip~Quaff"
-	description = "Add 3 copies of a random card in your deck to your hand. Quaff: Discover the card instead"
-	def effectCanTrigger(self):
-		self.effectViable = (self.Game.Manas.manas[self.ID] == self.mana)
-		
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if self.Game.Hand_Deck.decks[self.ID]:
-			if (posinHand == -2 or self.Game.Manas.manas[self.ID]) or "byOthers" in comment or len(self.Game.Hand_Deck.decks[self.ID]) == 1:
-				PRINT(self.Game, "Quick Sip adds 3 copies of a random card in player's deck to player's hand"%target.name)
-				card = npchoice(self.Game.Hand_Deck.decks[self.ID])
-				self.Game.Hand_Deck.addCardtoHand([card.selfCopy(self.ID) for i in range(3)], self.ID)
-			else: #Triggers Quaff
-				PRINT(self.Game, "Quick Sip's Quaff triggers and lets player discover a card from the deck to add 3 copies of it to player's hand")
-				self.Game.sendSignal("QuaffTriggered", self.ID, None, None, 0, "")
-				numCardsLeft = len(self.Game.Hand_Deck.decks[self.ID])
-				self.Game.options = npchoice(self.Game.Hand_Deck.decks[self.ID], min(3, numCardsLeft), replace=False)
-				self.Game.Discover.startDiscover(self)
-		return None
-		
-	def discoverDecided(self, option, info):
-		PRINT(self.Game, "Quick Sip puts 3 copies of card %s into player's hand"%option.name)
-		self.Game.Hand_Deck.addCardtoHand([option.selfCopy(self.ID) for i in range(3)], self.ID)
-		
-		
+#class QuickSip(Spell): #浅斟快饮
+#	#随机将你的牌库中的一张牌的3张复制置入你的手牌。畅饮：改为从你的牌库中发现这张牌
+#	Class, name = "Monk", "Quick Sip"
+#	requireTarget, mana = False, 5
+#	index = "Classic~Monk~Spell~5~Quick Sip~Quaff"
+#	description = "Add 3 copies of a random card in your deck to your hand. Quaff: Discover the card instead"
+#	def effectCanTrigger(self):
+#		self.effectViable = (self.Game.Manas.manas[self.ID] == self.mana)
+#		
+#	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+#		if self.Game.Hand_Deck.decks[self.ID]:
+#			if (posinHand == -2 or self.Game.Manas.manas[self.ID]) or "byOthers" in comment or len(self.Game.Hand_Deck.decks[self.ID]) == 1:
+#				PRINT(self.Game, "Quick Sip adds 3 copies of a random card in player's deck to player's hand"%target.name)
+#				card = npchoice(self.Game.Hand_Deck.decks[self.ID])
+#				self.Game.Hand_Deck.addCardtoHand([card.selfCopy(self.ID) for i in range(3)], self.ID)
+#			else: #Triggers Quaff
+#				PRINT(self.Game, "Quick Sip's Quaff triggers and lets player discover a card from the deck to add 3 copies of it to player's hand")
+#				self.Game.sendSignal("QuaffTriggered", self.ID, None, None, 0, "")
+#				numCardsLeft = len(self.Game.Hand_Deck.decks[self.ID])
+#				self.Game.options = npchoice(self.Game.Hand_Deck.decks[self.ID], min(3, numCardsLeft), replace=False)
+#				self.Game.Discover.startDiscover(self)
+#		return None
+#		
+#	def discoverDecided(self, option, info):
+#		PRINT(self.Game, "Quick Sip puts 3 copies of card %s into player's hand"%option.name)
+#		self.Game.Hand_Deck.addCardtoHand([option.selfCopy(self.ID) for i in range(3)], self.ID)
+#		
+#		
 class PawnofShaohao(Minion): #少昊的禁卫
 	#突袭。风怒
 	Class, race, name = "Monk", "", "Pawn of Shaohao"
@@ -850,9 +850,9 @@ class LotusHealer(Minion): #玉莲帮医者
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. After this is attacked, restored 1 Health to all friendly minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_LotusHealer(self)]
+		self.trigsBoard = [Trig_LotusHealer(self)]
 		
-class Trigger_LotusHealer(TrigBoard):
+class Trig_LotusHealer(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackedMinion", "HeroAttackedMinion"])
 		
@@ -888,9 +888,9 @@ class KunLaiSummitZenAlchemist(Minion): #昆莱山禅师
 	requireTarget, keyWord, description = False, "", "At the end of your turn, change the Attack of a random enemy minion with 1 or more Attack to 1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trigger_KunLaiSummitZenAlchemist(self)]
+		self.trigsBoard = [Trig_KunLaiSummitZenAlchemist(self)]
 		
-class Trigger_KunLaiSummitZenAlchemist(TrigBoard):
+class Trig_KunLaiSummitZenAlchemist(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
@@ -915,9 +915,9 @@ class FistsoftheHeavens(Weapon): #诸天之拳
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.keyWords["Windfury"] = 1
-		self.trigsBoard = [Trigger_FistsoftheHeavens(self)]
+		self.trigsBoard = [Trig_FistsoftheHeavens(self)]
 		
-class Trigger_FistsoftheHeavens(TrigBoard):
+class Trig_FistsoftheHeavens(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["QuaffTriggered"])
 		
@@ -1008,7 +1008,7 @@ Monk_Indices = { #Hero and standard Hero Powers
 				"Classic~Monk~Spell~4~Drunken Boxing~Quaff": DrunkenBoxing,
 				"Classic~Monk~Minion~4~5~4~None~Onima Actuary~Stealth": OnimaActuary,
 				"Classic~Monk~Minion~5~3~5~Beast~Spawn of Xuen~Rush~Battlecry": SpawnofXuen,
-				"Classic~Monk~Spell~5~Quick Sip~Quaff": QuickSip,
+				#"Classic~Monk~Spell~5~Quick Sip~Quaff": QuickSip,
 				"Classic~Monk~Minion~4~5~3~None~Pawn of Shaohao~Rush~Windfury": PawnofShaohao,
 				"Classic~Monk~Minion~4~3~5~None~Shaohao, the Emperor~Battlecry~Legendary": ShaohaotheEmperor,
 				"Classic~Monk~Spell~6~Inner Peace": InnerPeace,
