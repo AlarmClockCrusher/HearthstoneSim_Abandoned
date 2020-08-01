@@ -2434,8 +2434,8 @@ class Psychopomp(Minion):
 		
 class HighPriestAmet(Minion):
 	Class, race, name = "Priest", "", "High Priest Amet"
-	mana, attack, health = 4, 1, 7
-	index = "Uldum~Priest~Minion~4~1~7~None~High Priest Amet~Legendary"
+	mana, attack, health = 4, 2, 7
+	index = "Uldum~Priest~Minion~4~2~7~None~High Priest Amet~Legendary"
 	requireTarget, keyWord, description = False, "", "Whenever you summon a minion, set its Health equal to this minion's"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3764,7 +3764,7 @@ Uldum_Indices = {"Uldum~Neutral~Minion~1~1~2~None~Beaming Sidekick~Battlecry": B
 				"Uldum~Priest~Spell~2~Holy Ripple": HolyRipple,
 				"Uldum~Priest~Minion~3~3~3~None~Wretched Reclaimer~Battlecry": WretchedReclaimer,
 				"Uldum~Priest~Minion~4~3~1~None~Psychopomp~Battlecry": Psychopomp,
-				"Uldum~Priest~Minion~4~1~7~None~High Priest Amet~Legendary": HighPriestAmet,
+				"Uldum~Priest~Minion~4~2~7~None~High Priest Amet~Legendary": HighPriestAmet,
 				"Uldum~Priest~Spell~9~Plague of Death": PlagueofDeath,
 				
 				"Uldum~Rogue~Spell~1~Bazaar Burglary~~Quest~Legendary": BazaarBurglary,

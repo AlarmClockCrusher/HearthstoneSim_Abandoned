@@ -1005,12 +1005,14 @@ class BoardButton(tk.Canvas):
 		pass
 		
 	def connectBtns(self, btn1, btn2):
-		x1, y1, x2, y2 = btn1.x, btn1.y, btn2.x, btn2.y
-		x1 += Board_X/2 - self.x
-		y1 += Board_Y/2 - self.y
-		x2 += Board_X/2 - self.x
-		y2 += Board_Y/2 - self.y
-		return self.create_line(x1, y1, x2, y2, width=5, fill="blue")
+		if btn1 and btn2:
+			x1, y1, x2, y2 = btn1.x, btn1.y, btn2.x, btn2.y
+			x1 += Board_X/2 - self.x
+			y1 += Board_Y/2 - self.y
+			x2 += Board_X/2 - self.x
+			y2 += Board_Y/2 - self.y
+			return self.create_line(x1, y1, x2, y2, width=5, fill="blue")
+		return None
 		
 class TurnEndButton(tk.Button):
 	def __init__(self, GUI):

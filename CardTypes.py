@@ -289,8 +289,9 @@ class Card:
 		if damageDealer_attacker.type == "Weapon": damageDealer_attacker.loseDurability()
 		for damageDealer, dmgTaker, damage in damageDealingList:
 			#参与战斗的各方在战斗过程中只减少血量，受伤的信号在血量和受伤名单登记完毕之后按被攻击者，攻击者，被涉及者顺序发出。
-			self.Game.sendSignal(dmgTaker.type+"TakesDamage", 0, damageDealer, dmgTaker, damage, "")
-			self.Game.sendSignal(dmgTaker.type+"TookDamage", 0, damageDealer, dmgTaker, damage, "")
+			self.Game.sendSignal(dmgTaker.type+"TakesDmg", 0, damageDealer, dmgTaker, damage, "")
+			self.Game.sendSignal(dmgTaker.type+"TookDmg", 0, damageDealer, dmgTaker, damage, "")
+
 			#吸血扳机始终在队列结算的末尾。
 			damageDealer.tryLifesteal(damage)
 			

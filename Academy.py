@@ -2541,7 +2541,7 @@ class RaiseDead(Spell):
 				deadMinions = [curGame.cardPool[index] for index in curGame.Counters.minionsDiedThisGame[self.ID]]
 				minions = npchoice(deadMinions, min(2, len(deadMinions)), replace=True) if deadMinions else []
 				curGame.fixedGuides.append(minions)
-			if minions:
+			if minions is not None:
 				curGame.Hand_Deck.addCardtoHand(minions, self.ID, "type")
 		return None
 		
@@ -2872,7 +2872,7 @@ class SecretPassage(Spell):
 				HD.shuffleCardintoDeck(hand, self.ID, enemyCanSee=False, sendSig=False)
 				HD.addCardtoHand(cardsfromDeck, self.ID)
 				#假设换回来是全部手牌洗回去
-				self.Game.turnStartTrigger.append(trigSwap)
+				self.Game.turnEndTrigger.append(trigSwap)
 		return None
 		
 class SwapSecretPassageBack(TrigBoard):
@@ -2880,7 +2880,7 @@ class SwapSecretPassageBack(TrigBoard):
 		self.Game, self.ID = Game, ID
 		self.cardsShuffled = []
 		
-	def turnStartTrigger(self):
+	def turnEndTrigger(self):
 		PRINT(self.Game, "At the start of turn, player swaps the hand and the cards shuffled back")
 		cards2SwapBack = [card for card in self.cardsShuffled if card.inDeck]
 		HD = self.Game.Hand_Deck
@@ -2896,7 +2896,7 @@ class SwapSecretPassageBack(TrigBoard):
 		HD.shuffleCardintoDeck(hand, self.ID, enemyCanSee=False, sendSig=False)
 		HD.addCardtoHand(cards2SwapBack, self.ID)
 		
-		try: self.Game.turnStartTrigger.remove(self)
+		try: self.Game.turnEndTrigger.remove(self)
 		except: pass
 		
 	def createCopy(self, game):
@@ -3142,7 +3142,7 @@ class Steeldancer(Minion):
 		return None
 		
 		
-class CuttingClass(Minion):
+class CuttingClass(Spell):
 	Class, name = "Rogue,Warrior", "Cutting Class"
 	requireTarget, mana = False, 5
 	index = "Academy~Rogue,Warrior~Spell~5~Cutting Class"
@@ -3914,7 +3914,11 @@ class LordBarov(Minion):
 	mana, attack, health = 3, 3, 2
 	index = "Academy~Warrior,Paladin~Minion~3~3~2~None~Lord Barov~Battlecry~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Battlecry: Set the Health of all other minions to 1. Deathrattle: Deal 1 damage to all other minions"
-	
+
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.deathrattles = [ResummonwithMinus1Minus1(self)]
+
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Lord Barov's battlecry summons a random Demon from player's hand and deck")
 		for minion in self.Game.minionsonBoard(self.ID, self) + self.Game.minionsonBoard(3-self.ID):
@@ -3991,7 +3995,7 @@ class Trig_SweepThisTurn(TrigBoard):
 		self.entity.marks["Sweep"] -= 1
 		
 		
-class Commencement(Minion):
+class Commencement(Spell):
 	Class, name = "Warrior,Paladin", "Commencement"
 	requireTarget, mana = False, 7
 	index = "Academy~Warrior,Paladin~Spell~7~Commencement"
