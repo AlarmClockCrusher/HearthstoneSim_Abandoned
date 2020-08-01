@@ -1,0 +1,292 @@
+﻿TAG	TEXT	COMMENT
+BOTA_PUZZLE_LOADING	Loading the next puzzle...
+BOTA_PUZZLE_RESETTING	Resetting the puzzle...
+BOTA_PUZZLE_PROGRESS	Puzzle {0}/{1}
+BOTA_PUZZLE_CONGRATULATIONS	Great Job!
+BOTA_PUZZLE_END_TURN_REMINDER	Retry if you're stuck.
+MISSION_PRE_TUTORIAL_WANTED	Wanted	
+MISSION_NEFARIAN_TITLE	Slayer of Stupid, Incompetent, and Disappointing Minions
+MISSION_DEFAULTCOUNTERNAME	|4(Turn,Turns) to Escape
+MISSION_AIRSHIPCOUNTERNAME	|4(Turn,Turns) to Victory
+MISSION_GLOWING_POOL	A Glowing Pool	
+MISSION_PIT_OF_SPIKES	A Pit of Spikes	
+MISSION_STATUES_EYE	The Statue's Eye	
+MISSION_TAKE_THE_SHORTCUT	Take the Shortcut?	
+TB_DECKBUILDING_FIRSTPICKTHREE	Pick a new card for your hand.
+TB_DECKBUILDING_FIRSTCARDPLAYED	After you play a card, shuffle a copy into your deck.
+TB_DECKBUILDING_FIRSTENDTURN	Now return your hand to your deck and redraw.
+TB_DECKBUILDING_STARTOFGAME	Build your team as you play! Good luck!
+TB_DECKBUILDING_STARTOFGAME_START	Start!
+TB_GIFTEXCHANGE_GIFTSPAWNED	If your side has no crate, then one's delivered.
+TB_GIFTEXCHANGE_GIFTSTOLEN	You got a gift! What could it be...
+TB_GIFTEXCHANGE_START	Happy Winter's Veil! Grab those gifts!
+TB_PICKYOURFATE_RANDOM_NEWFATE	You need a new fate!
+TB_PICKYOURFATE_RANDOM_OPPONENTFATE	Your opponent needs a new fate!
+TB_PICKYOURFATE_RANDOM_FIRSTFATE	Chosen fates affect both players!
+TB_PICKYOURFATE_BUILDAROUND_NEWFATE	Remember, this bonus is only for you.
+TB_PICKYOURFATE_BUILDAROUND_OPPONENTFATE	Remember, this bonus is only for your opponent.
+TB_PICKYOURFATE_BUILDAROUND_FIRSTFATE	Chosen fates affect both players!
+TB_PICKYOURFATE_BUILDAROUND_OPPONENT_FIRSTFATE	Your opponent's fate affects you as well!
+TB_SHADOWTOWERS_SHADOWSPAWNED	If a side has no tower, then one is summoned.
+TB_SHADOWTOWERS_SHADOWSPAWNEDNEXT	Missing towers are replaced at the start of their owner's turn.
+TB_SHADOWTOWERS_ADJACENTMINIONS	Minions next to a tower are <b>Stealthed</b> and Can't Attack.
+TB_DECKRECIPE_OG_DRUID	Use the Druid’s Mana-generating spells to summon the servants of the Old Gods way ahead of schedule.  
+TB_DECKRECIPE_OG_HUNTER	Do not fear death, hero; your minions are useful to you both alive and dead. Keep trading your minions for theirs; you will eventually overwhelm them.
+TB_DECKRECIPE_OG_MAGE	Cast as many spells as possible. Each one will fuel the reawakening of Yogg-Saron!
+TB_DECKRECIPE_OG_PALADIN	Protect your minions with Divine Shield and they’ll be able to take on two enemies at a time!
+TB_DECKRECIPE_OG_PRIEST	Heal your minions to keep them alive long enough to see the rise of the horrific C’Thun!
+TB_DECKRECIPE_OG_ROGUE	Trade your minions aggressively! Most of them give you an advantage when they're killed, so sacrifice away.
+TB_DECKRECIPE_OG_SHAMAN	Summon as many minions as possible before evolving them! Evolve minions that have already done work for you to maximize your value!
+TB_DECKRECIPE_OG_WARLOCK	Bolster your armies with the innumerable minions of the Old Gods. Swarm the board with smaller minions to overwhelm your opponent.
+TB_DECKRECIPE_OG_WARRIOR	Protect yourself as your devotion to C’Thun grows. Amass enough armor that your opponent’s efforts become futile before the Old Gods!
+TB_LETHALPUZZLES_SUCCESS	You did it!
+TB_LETHALPUZZLES_START	Each round, you must defeat your opponent... good luck!
+TB_LETHALPUZZLES_FAILURE	 Try again!
+
+TB_DECKRECIPE_MSG_DRUID	Deck recipe: <b>The Lotus’ Golems</b>.
+TB_DECKRECIPE_MSG_HUNTER	Deck recipe: <b>Band of Beasts</b>.
+TB_DECKRECIPE_MSG_MAGE	Deck recipe: <b>Kabalist Mixology</b>.
+TB_DECKRECIPE_MSG_PALADIN	Deck recipe: <b>The Black Market</b>.
+TB_DECKRECIPE_MSG_PRIEST	Deck recipe: <b>Dragonheart</b>.
+TB_DECKRECIPE_MSG_ROGUE	Deck recipe: <b>Gadgetzan Dockside</b>.
+TB_DECKRECIPE_MSG_SHAMAN	Deck recipe: <b>Murloc Association</b>.
+TB_DECKRECIPE_MSG_WARLOCK	Deck recipe: <b>Demons of the Kabal</b>.
+TB_DECKRECIPE_MSG_WARRIOR	Deck recipe: <b>The Goons’ Empire</b>.
+
+TB_DPROMO_2NDHERO	The Cow King
+TB_DPROMO_2NDHEROPOPUP	You made it to the Secret Level!
+TB_DPROMO_COWKINGEMOTES	Moo
+
+TB_MP_CROSSROADS	Wait, who's that guy?
+
+TB_MP_STORMWIND_SUCCESS	You did it! How much more can you go?
+TB_MP_BOSS	Decorated Stormwind
+TB_MP_BOSS2	Partytown
+TB_MP_BOSS3	Party Capital
+
+TB_MP_CROSSROADS_CRASHER	What's he doing here??
+
+TB_MP_COOP_TEXT_START	Use your Hero Power to decorate the Tavern with the other player! 
+TB_MP_COOP_FIRST_CRASHER	Watch out! Those guys are trying to crash the party. Get rid of them!
+TB_MP_COOP_PINATA	You did it! Time to hit the Piñata! But the Party Crashers are getting out of hand....
+TB_MP_COOP_CRASHER_DISCARD	The Party Crasher gets bored of sitting in the player's hand and leaves.
+TB_MP_COOP_ENDING	Success! Thanks for celebrating the Year of the Mammoth with us!
+TB_MP_COOP_1STSPELL	Uh oh, the Kabal may have gotten into the punch....
+TB_MP_COOP_2NDSPELL	Please don't light the fireworks inside!
+
+TB_100TH_RAVENIDOL_YOU	You are playing the brawl Idols of Azeroth, which debuted as the 45th brawl on April 20th, 2016.
+TB_100TH_RAVENIDOL_OPP	Your opponent is playing the brawl Idols of Azeroth, which debuted as the 45th brawl on April 20th, 2016.
+TB_100TH_RANDOMONIUM_YOU	You are playing the brawl Randomonium, which debuted as the 18th brawl on October 14th, 2015.
+TB_100TH_RANDOMONIUM_OPP	Your opponent is playing the brawl Randomonium, which debuted as the 18th brawl on October 14th, 2015.
+TB_100TH_BANANA_YOU	You are playing the brawl Banana Brawl!, which debuted as the 2nd brawl on June 24th, 2015.
+TB_100TH_BANANA_OPP	Your opponent is playing the brawl Banana Brawl!, which debuted as the 2nd brawl on June 24th, 2015.
+TB_100TH_YOGG_YOU	You are playing the brawl Servant of Yogg-Saron Tryouts, which debuted as the 57th brawl on July 13th, 2016.
+TB_100TH_YOGG_OPP	Your opponent is playing the brawl Servant of Yogg-Saron Tryouts, which debuted as the 57th brawl on July 13th, 2016.
+TB_100TH_PARTYPORTAL_YOU	You are playing the brawl Party Portals!, which debuted as the 64th brawl on August 31st, 2016.
+TB_100TH_PARTYPORTAL_OPP	Your opponent is playing the brawl Party Portals!, which debuted as the 64th brawl on August 31st, 2016.
+TB_100TH_CLONEBALL_YOU	You are playing the brawl Cloneball!, which debuted as the 52nd brawl on June 8th, 2016.
+TB_100TH_CLONEBALL_OPP	Your opponent is playing the brawl Cloneball!, which debuted as the 52nd brawl on June 8th, 2016.
+TB_100TH_SPELLBAG_YOU	You are playing the brawl Valeera's Bag of Burgled Spells, which debuted as the 76th brawl on November 23rd, 2016.
+TB_100TH_SPELLBAG_OPP	Your opponent is playing the brawl Valeera's Bag of Burgled Spells, which debuted as the 76th brawl on November 23rd, 2016.
+TB_100TH_PORTALS_YOU	You are playing the brawl Too Many Portals!, which debuted as the 7th brawl on July 29th, 2015.
+TB_100TH_PORTALS_OPP	Your opponent is playing the brawl Too Many Portals!, which debuted as the 7th brawl on July 29th, 2015.
+TB_100TH_SHIFTER_YOU	You are playing the brawl ShiftCon, which debuted as the 55th brawl on June 29th, 2016.
+TB_100TH_SHIFTER_OPP	Your opponent is playing the brawl ShiftCon, which debuted as the 55th brawl on June 29th, 2016.
+
+TB_100TH_RAVENIDOL_INFO_YOU	Your deck is made up of 30 Raven Idols. 
+TB_100TH_RAVENIDOL_INFO_OPP	Your opponent's deck is made up of 30 Raven Idols. 
+TB_100TH_RANDEMONIUM_INFO_YOU	Your deck is made up of random cards that switch their costs every turn. 
+TB_100TH_RANDEMONIUM_INFO_OPP	Your opponent's deck is made up of random cards that switch their costs every turn. 
+TB_100TH_BANANA_INFO_YOU	Your deck is made up of random cards. Whenever one of your minions dies, you get a banana. 
+TB_100TH_BANANA_INFO_OPP	Your opponent's deck is made up of random cards. Whenever one of their minions dies, they get a banana. 
+TB_100TH_YOGG_INFO_YOU	Your deck is made up of random minions that each cast a random spell when played. 
+TB_100TH_YOGG_INFO_OPP	Your opponent's deck is made up of random minions that each cast a random spell when played. 
+TB_100TH_PARTYPORTAL_INFO_YOU	This player's deck is made up of random portal cards. 
+TB_100TH_PARTYPORTAL_INFO_OPP	This player's deck is made up of random portal cards. 
+TB_100TH_CLONEBALL_INFO_YOU	Your deck is made up of multiple copies of a few random legendaries. 
+TB_100TH_CLONEBALL_INFO_OPP	Your opponent's deck is made up of multiple copies of a few random legendaries. 
+TB_100TH_SPELLBAG_INFO_YOU	Your deck is made up of 30 random spells that each summon a minion when played. 
+TB_100TH_SPELLBAG_INFO_OPP	Your opponent's deck is made up of 30 random spells that each summon a minion when played. 
+TB_100TH_PORTALS_INFO_YOU	Your deck is made mostly of Unstable Portals, as well as a few extra cards. 
+TB_100TH_PORTALS_INFO_OPP	Your opponent's deck is made mostly of Unstable Portals, as well as a few extra cards. 
+TB_100TH_SHIFTER_INFO_YOU	Your deck is made mostly of Shifter Zerus, as well as a few extra cards. 
+TB_100TH_SHIFTER_INFO_OPP	Your opponent's deck is made mostly of Shifter Zerus, as well as a few extra cards. 
+
+LOEA16_2_STAFF_TEXT_CHARGE_0	<b>Passive Hero Power</b>\nYour hero is <b>Immune</b>. Three turns to go.	
+LOEA16_2_STAFF_TEXT_CHARGE_1	<b>Passive Hero Power</b>\nYour hero is <b>Immune</b>. Two turns to go.	
+LOEA16_2_STAFF_TEXT_CHARGE_2	<b>Passive Hero Power</b>\nYour hero is <b>Immune</b>. One turn left!	
+LOEA16_2_STAFF_TEXT_CHARGE_EXPLODED	<b>Passive Hero Power</b>\nSummoned a boss but lost <b>Immunity</b>.
+
+TB_FIREFEST_FIRST	Mini-Rag gains attack when he incinerates a minion!
+TB_FIREFEST_SECOND	Well done! Incinerate as many as you can for a special reward!
+
+TB_LETHAL_NAME	One Turn to Burn
+ICC_05_LANATHEL_01	You <b>must</b> bite a minion! Even if it's not yours!	
+ICC_01_TIRIONTURNS_01	Turns until Tirion arrives: 1
+ICC_01_TIRIONTURNS_02	Turns until Tirion arrives: 2
+ICC_01_TIRIONTURNS_03	Turns until Tirion arrives: 3
+ICC_01_LICH_KING_SUBTEXT	Legendary
+ICC_01_TIRION_SUBTEXT	Not so Legendary
+
+FB_LK_INTRO_01	This Brawl is best played by two players seated\n side-by-side!
+FB_LK_INTRO_02	Player 1 goes first,\n work together to defeat\n The Lich King!
+FB_LK_HEROSWITCH	Player 2's Turn! Keep it up!
+FB_LK_BOSSSWITCH	Defeat The Lich King's Lieutenant and force him to return!
+FB_LK_DEAD_01	Congratulation Champions!\nThe Lich King has been defeated!
+FB_LK_DEAD_02	Contact your Fireside Innkeeper to challenge him again!
+
+ICCWarriorVictory_01	The one-time Warchief of the Horde embraced his newfound power. The frozen victims of his army would rise up to serve, until he was master of all he surveyed.
+ICCShamanVictory_01	The shaman’s mind was overwhelmed with voices, a cacophony of the dead. The Deathseer closed his eyes and uttered a single word: “Sleep…”
+ICCRogueVictory_01	Valeera the Hollow disappeared into the night. Her shades and shadows see all, and none are safe from her icy blade…
+ICCPaladinVictory_01	The once-noble Paladin embraced his new destiny. Those who lived a worthy life would have nothing to fear. But in death, the wicked would face his judgement... 
+ICCHunterVictory_01	Rexxar released the souls once trapped by the Lich King. He drew a black arrow from his quiver. “Come Misha!” he said. “The hunt begins…”
+ICCDruidVictory_01	Once, he nurtured life by tending the wilds of Azeroth. Now Malfurion the Pestilent ensures the balance of nature by tending a garden of death.
+ICCMageVictory_01	The newly-crowned frost lich surveyed her domain. Legions of undead added their power to her own. She didn’t even notice her blood freezing.
+ICCPriestVictory_01	The young Prince’s body dissolved into shadow. “I see it all now,” he said, his eyes burning with blue flame. “I have been so naive…”
+ICCWarlockVictory_01	At last Gul’dan sat upon the Frozen Throne. The Dark Portal yawned open once more, and worlds uncounted trembled before him.
+FB_LK_HERO_01	Supreme Lich King
+FB_LK_HERO_02	Blood-Queen Lana'thel
+FB_LK_HERO_03	Professor Putricide
+FB_LK_HERO_04	Lord Marrowgar
+FB_LK_HERO_05	Sindragosa
+FB_JUGGERNAUT_UNKNOWN	Unknown
+FB_JUGGERNAUT_DRUID	Druid
+FB_JUGGERNAUT_HUNTER	Hunter
+FB_JUGGERNAUT_MAGE	Mage
+FB_JUGGERNAUT_PALADIN	Paladin
+FB_JUGGERNAUT_PRIEST	Priest
+FB_JUGGERNAUT_ROGUE	Rogue
+FB_JUGGERNAUT_SHAMAN	Shaman
+FB_JUGGERNAUT_WARLOCK	Warlock
+FB_JUGGERNAUT_WARRIOR	Warrior
+FB_JUGGERNAUT_CHOOSE_OPPONENT	Choose your rival Captain...
+FB_JUGGERNAUT_FIRSTLINE	Fire away!
+FB_IKC_SETUP	Innkeeper! A question...
+FB_IKC_NEWCARD	Keep the old card, or use the new?
+FB_IKC_ENDGAME	The new card's chosen! Let's end the game.
+FB_IKC_CHOSE_SETUP	Play a new card, and it will become the Innkeeper's Choice.
+
+TB_HEADLESS_HORSEMAN_POISON	You can't poison this undead, he's too powerful!
+
+TB_HEADLESSREDUX_01	You're the Headless Horseman, protect your Graveyard!
+TB_HEADLESSREDUX_02	Destroy the costumed adventurers Hazel, Johnny and Flynn to win!
+TB_HEADLESSREDUX_03	You've wandered into the Headless Horseman's Graveyard! 
+TB_HEADLESSREDUX_04	Protect the costumed adventurers Hazel, Johnny and Flynn or you'll lose!
+
+FB_ELO_FAVORED	You're Favored to win, your opponent will receive a greater bonus.
+FB_ELO_UNDERDOG	You're the Underdog, you'll get to choose a greater bonus!
+FB_ELO_EVEN	You're evenly matched with your opponent! You'll both get to choose a greater bonus!
+
+TB_MARIN_QUEST	Whoever completes their quest first will get a head start on getting the treasure!
+TB_KOBOLDGIFTS_01	"Look in the sky! It's Greatfather Kobold!"
+TB_KOBOLDGIFTS_02	"Greatfather Kobold will return next turn! Make some room!"
+
+FB_CHAMPS_PAVEL_DRUID	Pavel beat DrHippi in a mirror match. Watch out for big minions!
+FB_CHAMPS_PAVEL_MAGE	Pavel's Mage had multiple close calls in the 2016 Championship. How about you?
+FB_CHAMPS_PAVEL_SHAMAN	Pavel's Shaman was always banned by his opponents. But it's not banned here!
+FB_CHAMPS_PAVEL_ROGUE	Pavel's Rogue can struggle against aggressive decks, but it packs a big punch!
+FB_CHAMPS_PAVEL_WARRIOR	Pavel played this C'thun Warrior twice in the Finals, losing to DrHippi's Warrior and winning against his Druid.
+FB_CHAMPS_OSTKAKA_ROGUE	In the last match of the 2015 Finals, Ostkaka beat Hotform's Druid and was welcomed into the Hall of Champions!
+FB_CHAMPS_OSTKAKA_WARRIOR	Grim Patrons helped Ostkaka win... even without Warsong Commander. That's playing with style!
+FB_CHAMPS_OSTKAKA_MAGE	Ostkaka played this Freeze Mage against Hotform's Tempo Mage, burning it down with fireballs. Irony!
+FB_CHAMPS_FIREBAT_ROGUE	Firebat soundly beat DTwo's Priest in 2014, achieving lethal with a miracle 12/4 Auctioneer!
+FB_CHAMPS_FIREBAT_HUNTER	Firebat chose this Hunter to counter DTwo's Warlock, as payback for losing his Rogue deck...
+FB_CHAMPS_FIREBAT_DRUID	Firebat started the Finals with his Druid... and never lost! He's the 2014 Champion!
+FB_CHAMPS_FIREBAT_WARLOCK	Firebat's Warlock was banned in the finals by Tiddler Celestial. How will it do now?
+FB_CHAMPS_TOM60229_WARLOCK	Banned from the finals, tom60229's Cube Warlock deck has some pre-nerf surprises in it.
+FB_CHAMPS_TOM60229_DRUID	tom60229 sealed the 2018 championship with this deck. Refusing to mulligan an Ultimate Infestation changed the game!
+FB_CHAMPS_TOM60229_ROGUE	Spoiler: tom60229 Backstabbed his own minion for a 10-Attack Edwin Van Cleef on Turn 2. Watch out!
+FB_CHAMPS_TOM60229_PRIEST	tom60229's priest deck has no duplicates but tons of tricks. Look out for those late-game combos!
+FB_CHAMPS_VKLIOOON_SHAMAN	2019 Global Finals: An early Desert Hare followed by TWO Evolves secured a quick win for VKLiooon against bloodyface.
+FB_CHAMPS_VKLIOOON_HUNTER	VKLiooon started strong and defeated bloodyface’s Quest Druid, crowning her the 2019 Hearthstone Global World Champion!
+FB_CHAMPS_VKLIOOON_PRIEST	VKLioon's priest deck was banned in the final matchup of the 2019 Global World Championships... but not here!
+FB_CHAMPS_VKLIOOON_DRUID	After a slow battle against bloodyface's Quest Shaman, VKLiooon's Ossirian Tear eventually clinched her the win.
+FB_CHAMPS_HUNTERACE_SHAMAN	Hunterace beat Viper's Zoo Warlock deck, in fatigue, to take the 2019 HCT Championship! 
+FB_CHAMPS_HUNTERACE_ROGUE	A stategic discover from Hench-clan Burglar secured Hunterace's first win in his matchup.
+FB_CHAMPS_HUNTERACE_MAGE	Hunterace lost in a mirror match with this deck of Mountain Giants and Conjurer's Callings.
+FB_CHAMPS_HUNTERACE_WARRIOR	This powerful Control Warrior deck was banned in the finals. But not today!
+FB_CHAMPS_MERC14	Mercenaries 14 tore through the competition in The Burndown Tavern Brawl in Europe. How will it do here??
+
+FB_BUILDABRAWL_INTRO	The Current Brawl is:
+FB_BUILDABRAWL_001	By The Power of the Summoner's Competition!
+FB_BUILDABRAWL_002	By The Mask of Ragnaros!
+FB_BUILDABRAWL_003	By The Power of Yogg-Saron!
+FB_BUILDABRAWL_004	By The Power of Minions!
+FB_BUILDABRAWL_005	Random-ummoner's Competitions
+FB_BUILDABRAWL_006	The Random-masked Ball
+FB_BUILDABRAWL_007	Random-ogg-Saron Tryouts
+FB_BUILDABRAWL_008	Randominions
+FB_BUILDABRAWL_009	The Battle of The Summoner's Competition 
+FB_BUILDABRAWL_010	The Battle of The Masked Ball
+FB_BUILDABRAWL_011	The Battle of Yogg-Saron's Tryouts
+FB_BUILDABRAWL_012	The Battle of the Clash of the Minions
+FB_BUILDABRAWL_013	Blood Summoner's Competition
+FB_BUILDABRAWL_014	The Masked Bloody Ball
+FB_BUILDABRAWL_015	Yogg-Saron's Blood
+FB_BUILDABRAWL_016	Blood of the Minions
+FB_BUILDABRAWL_NOTSTARTED	The Fireside Brawl has not been started, contact your Innkeeper to Build-A-Brawl!
+
+TB_FIREFEST2_01	Ragnaros the Firelord
+TB_FIREFEST2_02	Ahune the Frostlord
+
+TB_DUELERSBRAWL_TAKE_PACES	Take 5 paces, then draw!
+TB_DUELERSBRAWL_SUDDEN_DEATH	Sudden Death!
+FB_DuelersCardsLeft1	1 Card left until you can draw!
+FB_DuelersCardsLeft2	2 Cards left until you can draw!
+FB_DuelersCardsLeft3	3 Cards left until you can draw!
+FB_DuelersCardsLeft4	4 Cards left until you can draw!
+FB_DuelersCardsLeft5	5 Cards left until you can draw!
+
+FB_TopX_Ban	Choose a card to ban!
+
+DALA_TAVERN_POPUP	Modify your Adventure Deck this run:\nAdd or remove minions and more!
+DALA_TAVERN_TURN_START	Friendly Encounter
+DALA_MISSION_CHAPTER_SUBTEXT_01	Dalaran Bank
+DALA_MISSION_CHAPTER_SUBTEXT_02	The Violet Hold
+DALA_MISSION_CHAPTER_SUBTEXT_03	Streets of Dalaran
+DALA_MISSION_CHAPTER_SUBTEXT_04	The Underbelly
+DALA_MISSION_CHAPTER_SUBTEXT_05	Kirin Tor Citadel
+DALA_MISSION_CHAPTER_SUBTEXT_01_HEROIC	Dalaran Bank (Heroic)
+DALA_MISSION_CHAPTER_SUBTEXT_02_HEROIC	The Violet Hold (Heroic)
+DALA_MISSION_CHAPTER_SUBTEXT_03_HEROIC	Streets of Dalaran (Heroic)
+DALA_MISSION_CHAPTER_SUBTEXT_04_HEROIC	The Underbelly (Heroic)
+DALA_MISSION_CHAPTER_SUBTEXT_05_HEROIC	Kirin Tor Citadel (Heroic)
+
+TB_207_INTRO_01	Your Brawl is: 
+TB_207_INTRO_02	Your opponent's Brawl is: 
+TB_207_01	The Battle of Tol Barad
+TB_207_02	Yellow-Brick Brawl
+TB_207_03	Catacomb Treasures!
+TB_207_04	When Clones Attack!
+TB_207_05	The Masked Ball
+TB_207_06	The Void Singularity
+TB_207_07	Cloneball!
+TB_207_08	Randomonium
+TB_207_09	Bag of Burgled Spells
+
+TB_EVILBRM_NEW_BEST_SCORE	New best \n score!
+TB_EVILBRM_CURRENT_BEST_SCORE	Current best \n score:
+
+FB_RAGRAID_01	Congratulation Champions!\nBig Bad Ragnaros has been defeated!
+
+TB_LEAGUE_REVIVAL_01	Sir Finley is buried in the sand! Clear the Sand Piles and dig him up!
+TB_LEAGUE_REVIVAL_02	Sir Finley of the Sands has been added to your deck.
+TB_LEAGUE_REVIVAL_03	Work with Brann to defeat King Krush, Untamed!
+TB_LEAGUE_REVIVAL_04	If King Krush defeats you or Brann you both lose!
+TB_LEAGUE_REVIVAL_05	Dinotamer Brann has been added to your deck.
+TB_LEAGUE_REVIVAL_06	Reno doesn't know how to use that thing! Knock some sense into him!
+TB_LEAGUE_REVIVAL_07	Reno the Relicologist has been added to your deck.
+
+ULDA_MISSION_CHAPTER_SUBTEXT_01	The Lost City
+ULDA_MISSION_CHAPTER_SUBTEXT_02	Scorching Dunes
+ULDA_MISSION_CHAPTER_SUBTEXT_03	Khartut's Tomb
+ULDA_MISSION_CHAPTER_SUBTEXT_04	Halls of Origination
+ULDA_MISSION_CHAPTER_SUBTEXT_05	The Inner Sanctum
+ULDA_MISSION_CHAPTER_SUBTEXT_01_HEROIC	The Lost City (Heroic)
+ULDA_MISSION_CHAPTER_SUBTEXT_02_HEROIC	Scorching Dunes (Heroic)
+ULDA_MISSION_CHAPTER_SUBTEXT_03_HEROIC	Khartut's Tomb (Heroic)
+ULDA_MISSION_CHAPTER_SUBTEXT_04_HEROIC	Halls of Origination (Heroic)
+ULDA_MISSION_CHAPTER_SUBTEXT_05_HEROIC	The Inner Sanctum (Heroic)
+
+TB_CAROUSEL_A	At end of each turn minions will rotate clockwise (to the left).
+TB_CAROUSEL_B	At end of each turn minions will rotate counter-clockwise (to the right).

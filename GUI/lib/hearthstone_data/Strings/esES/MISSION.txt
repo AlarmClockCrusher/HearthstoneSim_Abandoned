@@ -1,0 +1,263 @@
+TAG	TEXT	COMMENT
+BOTA_PUZZLE_CONGRATULATIONS	¡Buen trabajo!	
+BOTA_PUZZLE_END_TURN_REMINDER	Si te atascas, vuelve a intentarlo.	
+BOTA_PUZZLE_LOADING	Cargando el siguiente puzle...	
+BOTA_PUZZLE_PROGRESS	Puzle {0}/{1}	
+BOTA_PUZZLE_RESETTING	Reiniciando el puzle...	
+DALA_MISSION_CHAPTER_SUBTEXT_01	El banco de Dalaran	
+DALA_MISSION_CHAPTER_SUBTEXT_01_HEROIC	El banco de Dalaran (heroico)	
+DALA_MISSION_CHAPTER_SUBTEXT_02	El Bastión Violeta	
+DALA_MISSION_CHAPTER_SUBTEXT_02_HEROIC	El Bastión Violeta (heroico)	
+DALA_MISSION_CHAPTER_SUBTEXT_03	Las calles de Dalaran	
+DALA_MISSION_CHAPTER_SUBTEXT_03_HEROIC	Las calles de Dalaran (heroico)	
+DALA_MISSION_CHAPTER_SUBTEXT_04	Los Bajos Fondos	
+DALA_MISSION_CHAPTER_SUBTEXT_04_HEROIC	Los Bajos Fondos (heroico)	
+DALA_MISSION_CHAPTER_SUBTEXT_05	La ciudadela del Kirin Tor	
+DALA_MISSION_CHAPTER_SUBTEXT_05_HEROIC	La ciudadela del Kirin Tor (heroico)	
+DALA_TAVERN_POPUP	Modifica tu mazo de aventura en esta ronda:\n¡Añade o elimina esbirros y mucho más!	
+DALA_TAVERN_TURN_START	Encuentro amistoso	
+FB_BUILDABRAWL_001	Por el poder de la competición de invocadores	
+FB_BUILDABRAWL_002	Por la máscara de Ragnaros	
+FB_BUILDABRAWL_003	Por el poder de Yogg-Saron	
+FB_BUILDABRAWL_004	Por el poder de los esbirros	
+FB_BUILDABRAWL_005	Aleatición de invocadores	
+FB_BUILDABRAWL_006	Aleatobaile de máscaras	
+FB_BUILDABRAWL_007	Aleatogg-Saron	
+FB_BUILDABRAWL_008	Aleatoesbirros	
+FB_BUILDABRAWL_009	Batalla de la competición de invocadores	
+FB_BUILDABRAWL_010	Batalla del baile de máscaras	
+FB_BUILDABRAWL_011	Batalla del sirviente para Yogg-Saron	
+FB_BUILDABRAWL_012	Batalla de la furia de esbirros	
+FB_BUILDABRAWL_013	Competición sangrienta de invocadores	
+FB_BUILDABRAWL_014	Baile sangriento de máscaras	
+FB_BUILDABRAWL_015	Sangre de Yogg-Saron	
+FB_BUILDABRAWL_016	Sangre de esbirros	
+FB_BUILDABRAWL_INTRO	La pelea actual es:	
+FB_BUILDABRAWL_NOTSTARTED	La pelea Fireside no ha empezado. ¡Hablad con vuestro tabernero para organizar una Tabernamanía!	
+FB_CHAMPS_FIREBAT_DRUID	Firebat empezó la final con su druida... ¡y ya no perdió! ¡Es el campeón de 2014!	
+FB_CHAMPS_FIREBAT_HUNTER	Firebat eligió este mazo de cazador para enfrentarse al mazo de brujo de DTwo, como venganza por haber perdido con su mazo de pícaro.	
+FB_CHAMPS_FIREBAT_ROGUE	Firebat derrotó al sacerdote de DTwo en 2014 y consiguió letal con un milagroso subastador 12/4.	
+FB_CHAMPS_FIREBAT_WARLOCK	El mazo de brujo de Firebat no pudo usarse ante la negativa de Tiddler Celestial. ¿Qué tal funcionará ahora?	
+FB_CHAMPS_HUNTERACE_MAGE	Hunterace perdió un enfrentamiento idéntico con este mazo de Gigantes monteses y Llamadas del conjurador.	
+FB_CHAMPS_HUNTERACE_ROGUE	Un crucial descubrimiento con Ladrona de los Secuaces le dio a Hunterace su primer triunfo en el duelo.	
+FB_CHAMPS_HUNTERACE_SHAMAN	¡Hunterace venció en la fatiga al mazo brujo de esbirros baratos de Viper para llevarse el HCT Championship 2019! 	
+FB_CHAMPS_HUNTERACE_WARRIOR	Este potente mazo de guerrero control fue vetado en la final. ¡Hoy no!	
+FB_CHAMPS_MERC14	Mercenarios 14 arrasó con la competencia en la pelea de taberna Duelo ardiente en Europa. ¿Qué resultados ofrecerá aquí?	
+FB_CHAMPS_OSTKAKA_MAGE	Ostkaka utilizó este mazo de mago Congelación contra el de mago Tempo de Hotform y lo calcinó con bolas de fuego. Ah, ¡dulce ironía!	
+FB_CHAMPS_OSTKAKA_ROGUE	En la última partida de la final de 2015, Ostkaka derrotó al druida de Hotform, ¡y así entró en la Sala de los Campeones!	
+FB_CHAMPS_OSTKAKA_WARRIOR	Los parroquianos lúgubres ayudaron a Ostkaka a obtener la victoria... ¡sin el comandante Grito de Guerra! A eso se le llama jugar con estilo.	
+FB_CHAMPS_PAVEL_DRUID	Pavel derrotó a DrHippi con un mazo idéntico al suyo. ¡Cuidado con los esbirros colosales!	
+FB_CHAMPS_PAVEL_MAGE	El mago de Pavel se salvó de la muerte unas cuantas veces durante el campeonato de 2016. ¿Podrás hacer lo mismo?	
+FB_CHAMPS_PAVEL_ROGUE	Al pícaro de Pavel le puede costar lidiar con mazos agresivos, ¡pero da mucha guerra!	
+FB_CHAMPS_PAVEL_SHAMAN	Este mazo de chamán de Pavel siempre termina vetado por sus contrincantes, ¡pero aquí está disponible!	
+FB_CHAMPS_PAVEL_WARRIOR	Pavel jugó a su guerrero C'Thun dos veces en la final: perdió contra el guerrero de DrHippi y ganó contra su druida.	
+FB_CHAMPS_TOM60229_DRUID	tom60229 selló el campeonato de 2018 con este mazo. ¡Quedarse con Infestación definitiva cambió el curso de la partida!	
+FB_CHAMPS_TOM60229_PRIEST	El mazo de sacerdote de tom60229 no tiene duplicados, pero sí un montón de trucos. ¡Presta atención a esos combos en la parte final de la partida!	
+FB_CHAMPS_TOM60229_ROGUE	tom60229 usó Puñalada en su propio esbirro para conseguir un Edwin VanCleef con 10 p. de ataque en el turno 2. ¡Mantente alerta!	
+FB_CHAMPS_TOM60229_WARLOCK	El mazo de brujo cubo de tom60229, vetado en la final, contiene algunas sorpresas pre-cambios.	
+FB_CHAMPS_VKLIOOON_DRUID	Tras una lenta batalla contra el chamán misión de bloodyface, la Lágrima de Osirio de VKLiooon acabó por darle la victoria.	
+FB_CHAMPS_VKLIOOON_HUNTER	¡VKLiooon empezó con fuerza y derrotó al druida misión de bloodyface para coronarse como campeona del mundo de Hearthstone de 2019!	
+FB_CHAMPS_VKLIOOON_PRIEST	El mazo de sacerdote de VKLioon fue vetado en el último encuentro de la final mundial de 2019..., ¡pero aquí no!	
+FB_CHAMPS_VKLIOOON_SHAMAN	Final mundial de 2019: una temprana Liebre del desierto, seguida de dos usos de Evolucionar, dio una rápida victoria a VKLiooon contra bloodyface.	
+FB_DuelersCardsLeft1	¡Falta 1 carta para que puedas robar!	
+FB_DuelersCardsLeft2	¡Faltan 2 cartas para que puedas robar!	
+FB_DuelersCardsLeft3	¡Faltan 3 cartas para que puedas robar!	
+FB_DuelersCardsLeft4	¡Faltan 4 cartas para que puedas robar!	
+FB_DuelersCardsLeft5	¡Faltan 5 cartas para que puedas robar!	
+FB_ELO_EVEN	¡Estás al mismo nivel que tu oponente! ¡Los dos podréis elegir un bonus superior!	
+FB_ELO_FAVORED	Cuentas con el favoritismo para la victoria: tu oponente recibirá un bonus superior.	
+FB_ELO_UNDERDOG	Tu rival cuenta con el favoritismo para la victoria: ¡podrás elegir un bonus superior!	
+FB_IKC_CHOSE_SETUP	Juega una carta nueva y se convertirá en la elección del tabernero.	
+FB_IKC_ENDGAME	¡Se ha elegido la nueva carta! Acabemos la partida.	
+FB_IKC_NEWCARD	¿Te quedas con la carta antigua o usas la nueva?	
+FB_IKC_SETUP	¡Tabernero! Una pregunta...	
+FB_JUGGERNAUT_CHOOSE_OPPONENT	Elige a qué capitán enfrentarte...	
+FB_JUGGERNAUT_DRUID	Druida	
+FB_JUGGERNAUT_FIRSTLINE	¡Fuego a discreción!	
+FB_JUGGERNAUT_HUNTER	Cazador	
+FB_JUGGERNAUT_MAGE	Mago	
+FB_JUGGERNAUT_PALADIN	Paladín	
+FB_JUGGERNAUT_PRIEST	Sacerdote	
+FB_JUGGERNAUT_ROGUE	Pícaro	
+FB_JUGGERNAUT_SHAMAN	Chamán	
+FB_JUGGERNAUT_UNKNOWN	Desconocido	
+FB_JUGGERNAUT_WARLOCK	Brujo	
+FB_JUGGERNAUT_WARRIOR	Guerrero	
+FB_LK_BOSSSWITCH	¡Derrota al teniente del Rey Exánime y oblígalo a regresar!	
+FB_LK_DEAD_01	¡Enhorabuena, campeones!\n¡El Rey Exánime ha sido derrotado!	
+FB_LK_DEAD_02	¡Hablad con vuestro tabernero Fireside para volver a desafiarlo!	
+FB_LK_HERO_01	Rey Exánime supremo	
+FB_LK_HERO_02	Reina de Sangre Lana'thel	
+FB_LK_HERO_03	Profesor Putricidio	
+FB_LK_HERO_04	Lord Tuétano	
+FB_LK_HERO_05	Sindragosa	
+FB_LK_HEROSWITCH	¡Turno del jugador 2! Ánimo, ¡que no decaiga!	
+FB_LK_INTRO_01	¡Esta pelea se juega mejor con dos jugadores\nsentados uno junto al otro!	
+FB_LK_INTRO_02	El jugador 1 va primero.\n¡Colaborad para derrotar\n al Rey Exánime!	
+FB_RAGRAID_01	¡Enhorabuena, campeones!\n¡El Gran Ragnaros feroz ha sido derrotado!	
+FB_TopX_Ban	¡Elige una carta que inhabilitar!	
+ICC_01_LICH_KING_SUBTEXT	Legendario	
+ICC_01_TIRION_SUBTEXT	No tan legendario	
+ICC_01_TIRIONTURNS_01	Turnos hasta la llegada de Tirion: 1	
+ICC_01_TIRIONTURNS_02	Turnos hasta la llegada de Tirion: 2	
+ICC_01_TIRIONTURNS_03	Turnos hasta la llegada de Tirion: 3	
+ICC_05_LANATHEL_01	¡<b>Tienes</b> que morder a un esbirro! ¡Aunque no sea tuyo!	
+ICCDruidVictory_01	Antes fomentaba la vida cuidando de la naturaleza de Azeroth. Ahora, Malfurion el Pestilente preserva el equilibrio natural protegiendo un jardín yerto.	
+ICCHunterVictory_01	Rexxar liberó las almas atrapadas por el Rey Exánime. Tomó una flecha negra del carcaj. «¡Vamos, Misha!», ordenó. «Comienza la caza...».	
+ICCMageVictory_01	La recién coronada Exánime de Escarcha contempló sus dominios. Legiones de no-muertos se adhirieron a su poder. Ni siquiera notó cómo se le helaba la sangre.	
+ICCPaladinVictory_01	El paladín, tan noble en otro tiempo, aceptó su nuevo destino. Aquellos que hubiesen vivido una vida de virtud no tendrían nada que temer. Sin embargo, los viles no escaparían a su juicio...	
+ICCPriestVictory_01	El joven príncipe se fundió con las sombras. «Ahora lo veo todo», dijo con llamas azules en los ojos. «Qué ingenuo he sido».	
+ICCRogueVictory_01	Valeera la Lúgubre desapareció en la noche. Sus sombras lo ven todo y nadie está a salvo de su hoja helada...	
+ICCShamanVictory_01	La mente del chamán se ahogaba entre voces, una cacofonía de muertos que inundaba su cabeza. El Agorero cerró los ojos y pronunció una sola palabra: «Dormid...».	
+ICCWarlockVictory_01	Al fin Gul'dan se sentó en el Trono Helado. El Portal Oscuro volvió a abrirse e incontables mundos temblaron ante él...	
+ICCWarriorVictory_01	El que una vez fuera jefe de guerra de la Horda aceptó su nuevo poder. Las víctimas heladas de su ejército se alzaban para servir, hasta que se convirtió en maestro de todo lo que alcanzaba a ver.	
+LOEA16_2_STAFF_TEXT_CHARGE_0	<b>Poder de héroe pasivo</b>\nTu héroe es <b>inmune</b>. Quedan tres turnos.	
+LOEA16_2_STAFF_TEXT_CHARGE_1	<b>Poder de héroe pasivo</b>\nTu héroe es <b>inmune</b>. Quedan dos turnos.	
+LOEA16_2_STAFF_TEXT_CHARGE_2	<b>Poder de héroe pasivo</b>\nTu héroe es <b>inmune</b>. ¡Queda un turno!	
+LOEA16_2_STAFF_TEXT_CHARGE_EXPLODED	<b>Poder de héroe pasivo</b>\nHas invocado a un jefe, pero has perdido tu <b>inmunidad</b>.	
+MISSION_AIRSHIPCOUNTERNAME	|4(Turno,Turnos) para la victoria	
+MISSION_DEFAULTCOUNTERNAME	|4(Turno,Turnos) para escapar	
+MISSION_GLOWING_POOL	Una poza brillante	
+MISSION_NEFARIAN_TITLE	Asesino de esbirros decepcionantes, incompetentes y estúpidos	
+MISSION_PIT_OF_SPIKES	Una fosa de pinchos	
+MISSION_PRE_TUTORIAL_WANTED	Se busca	
+MISSION_STATUES_EYE	El ojo de la estatua	
+MISSION_TAKE_THE_SHORTCUT	¿Coges el atajo?	
+TB_100TH_BANANA_INFO_OPP	El mazo de tu oponente está compuesto por cartas aleatorias. Cada vez que muera uno de sus esbirros, recibirá un plátano.	
+TB_100TH_BANANA_INFO_YOU	Tu mazo está compuesto por cartas aleatorias. Cada vez que muera uno de tus esbirros, recibirás un plátano.	
+TB_100TH_BANANA_OPP	Tu oponente está jugando a la pelea de taberna ¡Pelea de plátanos!, que debutó como la 2.ª pelea de taberna el 24 de junio de 2015.	
+TB_100TH_BANANA_YOU	Estás jugando a la pelea de taberna ¡Pelea de plátanos!, que debutó como la 2.ª pelea de taberna el 24 de junio de 2015.	
+TB_100TH_CLONEBALL_INFO_OPP	El mazo de tu oponente está compuesto por varias copias de unas pocas legendarias.	
+TB_100TH_CLONEBALL_INFO_YOU	Tu mazo está compuesto por varias copias de unas pocas legendarias.	
+TB_100TH_CLONEBALL_OPP	Tu oponente está jugando a la pelea de taberna ¡Clonobola!, que debutó como la 52.ª pelea de taberna el 8 de junio de 2016.	
+TB_100TH_CLONEBALL_YOU	Estás jugando a la pelea de taberna ¡Clonobola!, que debutó como la 52.ª pelea de taberna el 8 de junio de 2016.	
+TB_100TH_PARTYPORTAL_INFO_OPP	El mazo de este jugador está compuesto por cartas de portal aleatorio.	
+TB_100TH_PARTYPORTAL_INFO_YOU	El mazo de este jugador está compuesto por cartas de portal aleatorio.	
+TB_100TH_PARTYPORTAL_OPP	Tu oponente está jugando a la pelea de taberna ¡Portales de la fiesta!, que debutó como la 64.ª pelea de taberna el 31 de agosto de 2016.	
+TB_100TH_PARTYPORTAL_YOU	Estás jugando a la pelea de taberna Batalla de jefes, que debutó como la 64.ª pelea de taberna el 31 de agosto de 2016.	
+TB_100TH_PORTALS_INFO_OPP	El mazo de tu oponente está compuesto principalmente por Portales inestables, además de algunas cartas extra.	
+TB_100TH_PORTALS_INFO_YOU	Tu mazo está compuesto principalmente por Portales inestables, además de algunas cartas extra.	
+TB_100TH_PORTALS_OPP	Tu oponente está jugando a la pelea de taberna ¡Portales por doquier!, que debutó como la 7.ª pelea de taberna el 29 de julio de 2015.	
+TB_100TH_PORTALS_YOU	Estás jugando a la pelea de taberna ¡Portales por doquier!, que debutó como la 7.ª pelea de taberna el 29 de julio de 2015.	
+TB_100TH_RANDEMONIUM_INFO_OPP	El mazo de tu oponente está compuesto por cartas aleatorias que cambian sus costes cada turno.	
+TB_100TH_RANDEMONIUM_INFO_YOU	Tu mazo está compuesto por cartas aleatorias que cambian sus costes cada turno.	
+TB_100TH_RANDOMONIUM_OPP	Tu oponente está jugando a la pelea de taberna Aleatórium, que debutó como la 18.ª pelea de taberna el 14 de octubre de 2015.	
+TB_100TH_RANDOMONIUM_YOU	Estás jugando a la pelea de taberna Aleatórium, que debutó como la 18.ª pelea de taberna el 14 de octubre de 2015.	
+TB_100TH_RAVENIDOL_INFO_OPP	El mazo de tu oponente está compuesto por 30 Ídolos del cuervo.	
+TB_100TH_RAVENIDOL_INFO_YOU	Tu mazo está compuesto por 30 Ídolos del cuervo.	
+TB_100TH_RAVENIDOL_OPP	Tu oponente está jugando a la pelea de taberna Ídolos de Azeroth, que debutó como la 45.ª pelea de taberna el 20 de abril de 2016.	
+TB_100TH_RAVENIDOL_YOU	Estás jugando a la pelea de taberna Ídolos de Azeroth, que debutó como la 45.ª pelea de taberna el 20 de abril de 2016.	
+TB_100TH_SHIFTER_INFO_OPP	El mazo de tu oponente está compuesto principalmente por copias del Transfigurador Zerus, además de algunas cartas extra.	
+TB_100TH_SHIFTER_INFO_YOU	Tu mazo está compuesto principalmente por copias del Transfigurador Zerus, además de algunas cartas extra.	
+TB_100TH_SHIFTER_OPP	Tu oponente está jugando a la pelea de taberna TransfiCon, que debutó como la 55.ª pelea de taberna el 29 de junio de 2016.	
+TB_100TH_SHIFTER_YOU	Estás jugando a la pelea de taberna TransfiCon, que debutó como la 55.ª pelea de taberna el 29 de junio de 2016.	
+TB_100TH_SPELLBAG_INFO_OPP	El mazo de tu oponente está compuesto por 30 hechizos aleatorios; cada hechizo invoca a un esbirro al jugarlo.	
+TB_100TH_SPELLBAG_INFO_YOU	Tu mazo está compuesto por 30 hechizos aleatorios; cada hechizo invoca a un esbirro al jugarlo.	
+TB_100TH_SPELLBAG_OPP	Tu oponente está jugando a la pelea de taberna Saco de hechizos hurtados de Valeera, que debutó como la 76.ª pelea de taberna el 23 de noviembre de 2016.	
+TB_100TH_SPELLBAG_YOU	Estás jugando a la pelea de taberna Saco de hechizos hurtados de Valeera, que debutó como la 76.ª pelea de taberna el 23 de noviembre de 2016.	
+TB_100TH_YOGG_INFO_OPP	El mazo de tu oponente está compuesto por esbirros aleatorios; cada esbirro lanza un hechizo aleatorio al jugarlo.	
+TB_100TH_YOGG_INFO_YOU	Tu mazo está compuesto por esbirros aleatorios; cada esbirro lanza un hechizo aleatorio al jugarlo.	
+TB_100TH_YOGG_OPP	Tu oponente está jugando a la pelea de taberna Se busca sirviente para Yogg-Saron, que debutó como la 57.ª pelea de taberna el 13 de julio de 2016.	
+TB_100TH_YOGG_YOU	Estás jugando a la pelea de taberna Se busca sirviente para Yogg-Saron, que debutó como la 57.ª pelea de taberna el 13 de julio de 2016.	
+TB_207_01	La Batalla de Tol Barad	
+TB_207_02	Pelea de Baldosas amarillas	
+TB_207_03	¡Tesoros de las catacumbas!	
+TB_207_04	¡El ataque de los clones!	
+TB_207_05	El baile de máscaras	
+TB_207_06	Singularidad del Vacío	
+TB_207_07	¡Clonobola!	
+TB_207_08	Aleatórium	
+TB_207_09	Saco de hechizos hurtados	
+TB_207_INTRO_01	Tu pelea es:	
+TB_207_INTRO_02	La pelea de tu oponente es:	
+TB_CAROUSEL_A	Al final de cada turno, los esbirros rotan en sentido horario (hacia la izquierda).	
+TB_CAROUSEL_B	Al final de cada turno, los esbirros rotan en sentido antihorario (hacia la derecha).	
+TB_DECKBUILDING_FIRSTCARDPLAYED	Después de jugar una carta, mete una copia de esta en tu mazo.	
+TB_DECKBUILDING_FIRSTENDTURN	Ahora devuelve tu mano al mazo y vuelve a robar cartas.	
+TB_DECKBUILDING_FIRSTPICKTHREE	Elige una nueva carta para tu mano.	
+TB_DECKBUILDING_STARTOFGAME	¡Forma tu equipo a medida que juegas! ¡Suerte!	
+TB_DECKBUILDING_STARTOFGAME_START	¡Vamos!	
+TB_DECKRECIPE_MSG_DRUID	Mazo prediseñado: <b>Gólems del Loto</b>.	
+TB_DECKRECIPE_MSG_HUNTER	Mazo prediseñado: <b>Banda de bestias</b>.	
+TB_DECKRECIPE_MSG_MAGE	Mazo prediseñado: <b>Mezclas kabalistas</b>.	
+TB_DECKRECIPE_MSG_PALADIN	Mazo prediseñado: <b>Mercado mafioso</b>.	
+TB_DECKRECIPE_MSG_PRIEST	Mazo prediseñado: <b>Dragón oculto</b>.	
+TB_DECKRECIPE_MSG_ROGUE	Mazo prediseñado: <b>Muelle de Gadgetzan</b>.	
+TB_DECKRECIPE_MSG_SHAMAN	Mazo prediseñado: <b>Múrlocs organizados</b>.	
+TB_DECKRECIPE_MSG_WARLOCK	Mazo prediseñado: <b>Demonios del Kabal</b>.	
+TB_DECKRECIPE_MSG_WARRIOR	Mazo prediseñado: <b>Imperio de los Mugres</b>.	
+TB_DECKRECIPE_OG_DRUID	Utiliza los hechizos del druida que generan maná para invocar a los sirvientes de los dioses antiguos con valiosa antelación.	
+TB_DECKRECIPE_OG_HUNTER	No temas a la muerte, héroe: tus esbirros te serán útiles tanto vivos como muertos. Sigue intercambiando tus esbirros por los del enemigo, al final lo abrumarás.	
+TB_DECKRECIPE_OG_MAGE	Lanza tantos hechizos como puedas, cada uno de ellos contribuirá al despertar de Yogg-Saron.	
+TB_DECKRECIPE_OG_PALADIN	¡Protege a tus esbirros con Escudo divino y podrán enfrentarse a varios enemigos!	
+TB_DECKRECIPE_OG_PRIEST	¡Sana a tus esbirros y consigue que vivan lo suficiente para contemplar el ascenso del terrorífico C'Thun!	
+TB_DECKRECIPE_OG_ROGUE	¡Usa a tus esbirros aunque eso les cueste la vida! Muchos te otorgan algún tipo de ventaja al morir, así que sacrifícalos sin temor.	
+TB_DECKRECIPE_OG_SHAMAN	¡Invoca tantos esbirros como sea posible y luego haz que evolucionen! Aprovecha al máximo el valor de tus esbirros evolucionando a aquellos que ya te hayan servido.	
+TB_DECKRECIPE_OG_WARLOCK	Refuerza tus tropas con los innumerables esbirros de los dioses antiguos. Invade el tablero con esbirros pequeños para abrumar a tu oponente.	
+TB_DECKRECIPE_OG_WARRIOR	Protégete mientras tu devoción por C'Thun aumenta. ¡Acumula armadura hasta que los esfuerzos de tu oponente resulten inútiles contra los dioses antiguos!	
+TB_DPROMO_2NDHERO	El Rey de las Vacas	
+TB_DPROMO_2NDHEROPOPUP	¡Has llegado al nivel secreto!	
+TB_DPROMO_COWKINGEMOTES	Mu	
+TB_DUELERSBRAWL_SUDDEN_DEATH	¡Muerte súbita!	
+TB_DUELERSBRAWL_TAKE_PACES	¡Da 5 pasos y desenfunda!	
+TB_EVILBRM_CURRENT_BEST_SCORE	Mejor puntuación \n actual:	
+TB_EVILBRM_NEW_BEST_SCORE	¡Nueva mejor \n puntuación!	
+TB_FIREFEST_FIRST	¡Mini Rag obtiene ataque al incinerar a un esbirro!	
+TB_FIREFEST_SECOND	¡Bien hecho! ¡Incinera a todos los que puedas y obtén una recompensa especial!	
+TB_FIREFEST2_01	Ragnaros, Señor del Fuego	
+TB_FIREFEST2_02	Ahune, Señor de la Escarcha	
+TB_GIFTEXCHANGE_GIFTSPAWNED	Si en tu lado no hay caja, se te entregará una.	
+TB_GIFTEXCHANGE_GIFTSTOLEN	¡Tienes un regalo! ¿Qué será?	
+TB_GIFTEXCHANGE_START	¡Feliz Festival de Invierno! ¡A por los regalos!	
+TB_HEADLESS_HORSEMAN_POISON	No puedes envenenar a este no-muerto: ¡es demasiado poderoso!	
+TB_HEADLESSREDUX_01	Eres el Jinete decapitado, ¡protege tu cementerio!	
+TB_HEADLESSREDUX_02	¡Acaba con los aventureros disfrazados Hazel, Johnny y Flynn para ganar!	
+TB_HEADLESSREDUX_03	¡Te has aventurado en el cementerio del Jinete decapitado!	
+TB_HEADLESSREDUX_04	¡Protege a los aventureros disfrazados Hazel, Johnny y Flynn o perderás!	
+TB_KOBOLDGIFTS_01	¡Mira al cielo! ¡Es el Gran Padre Kóbold!	
+TB_KOBOLDGIFTS_02	¡El Gran Padre Kóbold volverá el próximo turno! ¡Haz sitio!	
+TB_LEAGUE_REVIVAL_01	¡Sir Finley está enterrado en la arena! ¡Despeja los montones de arena y desentiérralo!	
+TB_LEAGUE_REVIVAL_02	Se ha añadido a Sir Finley de las Arenas a tu mazo.	
+TB_LEAGUE_REVIVAL_03	¡Ayuda a Brann a derrotar a Rey Krush el Indomable!	
+TB_LEAGUE_REVIVAL_04	¡Si Rey Krush os derrota a ti o a Brann, perderéis los dos!	
+TB_LEAGUE_REVIVAL_05	Se ha añadido a Domadinos Brann a tu mazo.	
+TB_LEAGUE_REVIVAL_06	¡Reno no sabe usar esa cosa! ¡Hazle entrar en razón!	
+TB_LEAGUE_REVIVAL_07	Se ha añadido a Reno el relicólogo a tu mazo.	
+TB_LETHAL_NAME	Sin presión	
+TB_LETHALPUZZLES_FAILURE	¡Inténtalo de nuevo!	
+TB_LETHALPUZZLES_START	Tienes que derrotar a tu oponente en cada ronda... ¡Buena suerte!	
+TB_LETHALPUZZLES_SUCCESS	¡Lo has conseguido!	
+TB_MARIN_QUEST	¡Quien complete primero su misión conseguirá ventaja para hacerse con el tesoro!	
+TB_MP_BOSS	Ventormenta decorada	
+TB_MP_BOSS2	Ciudad de fiesta	
+TB_MP_BOSS3	Capital de fiesta	
+TB_MP_COOP_1STSPELL	Oh, oh, parece que el Kabal ha alterado el ponche...	
+TB_MP_COOP_2NDSPELL	¡Los fuegos artificiales afuera, por favor!	
+TB_MP_COOP_CRASHER_DISCARD	El aguafiestas se aburre al estar de brazos cruzados en la mano del jugador y se marcha.	
+TB_MP_COOP_ENDING	¡Éxito! ¡Gracias por celebrar el Año del Mamut con nosotros!	
+TB_MP_COOP_FIRST_CRASHER	¡Cuidado! Esos tipos intentan aguar la fiesta. ¡Deshazte de ellos!	
+TB_MP_COOP_PINATA	¡Lo has conseguido! ¡A por la piñata! Pero los aguafiestas se están descontrolando...	
+TB_MP_COOP_TEXT_START	¡Utiliza tu poder de héroe para decorar la taberna con el otro jugador!	
+TB_MP_CROSSROADS	Espera, ¿quién es ese?	
+TB_MP_CROSSROADS_CRASHER	¿Qué hace ahí?	
+TB_MP_STORMWIND_SUCCESS	¡Lo has conseguido! ¿Cuánto más podrás aguantar?	
+TB_PICKYOURFATE_BUILDAROUND_FIRSTFATE	¡El destino elegido afecta a ambos jugadores!	
+TB_PICKYOURFATE_BUILDAROUND_NEWFATE	Recuerda, este bonus es solo para ti.	
+TB_PICKYOURFATE_BUILDAROUND_OPPONENT_FIRSTFATE	¡El destino de tu oponente también te afecta a ti!	
+TB_PICKYOURFATE_BUILDAROUND_OPPONENTFATE	Recuerda, este bonus es solo para tu oponente.	
+TB_PICKYOURFATE_RANDOM_FIRSTFATE	¡El destino elegido afecta a ambos jugadores!	
+TB_PICKYOURFATE_RANDOM_NEWFATE	¡Necesitas otro destino!	
+TB_PICKYOURFATE_RANDOM_OPPONENTFATE	¡Tu oponente necesita otro destino!	
+TB_SHADOWTOWERS_ADJACENTMINIONS	Los esbirros junto a una torre están en <b>Sigilo</b> y no pueden atacar.	
+TB_SHADOWTOWERS_SHADOWSPAWNED	Si uno de los dos lados no tiene una torre, se invoca una.	
+TB_SHADOWTOWERS_SHADOWSPAWNEDNEXT	Las torres que falten se reemplazarán al principio del turno de su dueño.	
+ULDA_MISSION_CHAPTER_SUBTEXT_01	Ciudad Perdida	
+ULDA_MISSION_CHAPTER_SUBTEXT_01_HEROIC	Ciudad Perdida (heroico)	
+ULDA_MISSION_CHAPTER_SUBTEXT_02	Dunas Abrasadoras	
+ULDA_MISSION_CHAPTER_SUBTEXT_02_HEROIC	Dunas Abrasadoras (heroico)	
+ULDA_MISSION_CHAPTER_SUBTEXT_03	Tumba de Khartut	
+ULDA_MISSION_CHAPTER_SUBTEXT_03_HEROIC	Tumba de Khartut (heroico)	
+ULDA_MISSION_CHAPTER_SUBTEXT_04	Cámaras de los Orígenes	
+ULDA_MISSION_CHAPTER_SUBTEXT_04_HEROIC	Cámaras de los Orígenes (heroica)	
+ULDA_MISSION_CHAPTER_SUBTEXT_05	Sagrario Interior	
+ULDA_MISSION_CHAPTER_SUBTEXT_05_HEROIC	Sagrario Interior (heroico)	

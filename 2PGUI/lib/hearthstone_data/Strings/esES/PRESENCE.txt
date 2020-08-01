@@ -1,0 +1,357 @@
+TAG	TEXT	COMMENT
+PRESENCE_ADVENTURE_MODE_BOT	Explorando los Laboratorios Bum	
+PRESENCE_ADVENTURE_MODE_BRM_CLASS_CHALLENGE	Desafío de Roca Negra	
+PRESENCE_ADVENTURE_MODE_BRM_HEROIC	Montaña Roca Negra (heroico)	
+PRESENCE_ADVENTURE_MODE_BRM_NORMAL	Montaña Roca Negra	
+PRESENCE_ADVENTURE_MODE_DAL	Planeando un golpe	
+PRESENCE_ADVENTURE_MODE_DRG	Despegando del Cementerio de Dragones	
+PRESENCE_ADVENTURE_MODE_GIL	Preparándose para la caza	
+PRESENCE_ADVENTURE_MODE_ICC_NORMAL	Entrando en Corona de Hielo	
+PRESENCE_ADVENTURE_MODE_KAR_CLASS_CHALLENGE	Desafío de clase de Karazhan	
+PRESENCE_ADVENTURE_MODE_KAR_HEROIC	Karazhan (heroico)	
+PRESENCE_ADVENTURE_MODE_KAR_NORMAL	Karazhan	
+PRESENCE_ADVENTURE_MODE_LOE_CLASS_CHALLENGE	Desafío de clase de la LdE	
+PRESENCE_ADVENTURE_MODE_LOE_HEROIC	Liga de Expedicionarios (heroico)	
+PRESENCE_ADVENTURE_MODE_LOE_NORMAL	Liga de Expedicionarios	
+PRESENCE_ADVENTURE_MODE_LOOT	Preparándose para una mazmorra	
+PRESENCE_ADVENTURE_MODE_NAXX_CLASS_CHALLENGE	Desafío de Naxxramas	
+PRESENCE_ADVENTURE_MODE_NAXX_HEROIC	Naxxramas (heroico)	
+PRESENCE_ADVENTURE_MODE_NAXX_NORMAL	Naxxramas	
+PRESENCE_ADVENTURE_MODE_RETURNING_PLAYER_CHALLENGE	Regresando por todo lo alto	
+PRESENCE_ADVENTURE_MODE_TRL	Preparándose para saltar a la arena...	
+PRESENCE_ADVENTURE_MODE_ULD	Planeando una expedición	
+PRESENCE_SCENARIO_BOTA_CLEAR_BOOM	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_CLEAR_PUZZLE_1	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_CLEAR_PUZZLE_2	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_CLEAR_PUZZLE_3	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_CLEAR_PUZZLE_4	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_LETHAL_BOOM	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_LETHAL_PUZZLE_1	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_LETHAL_PUZZLE_2	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_LETHAL_PUZZLE_3	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_LETHAL_PUZZLE_4	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_MIRROR_BOOM	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_MIRROR_PUZZLE_1	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_MIRROR_PUZZLE_2	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_MIRROR_PUZZLE_3	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_MIRROR_PUZZLE_4	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_SURVIVAL_BOOM	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_SURVIVAL_PUZZLE_1	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_SURVIVAL_PUZZLE_2	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_SURVIVAL_PUZZLE_3	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BOTA_SURVIVAL_PUZZLE_4	Dándole vueltas a un puzle	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_DRUID	Desafío del druida de Roca Negra	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_HUNTER	Desafío del cazador de Roca Negra	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_MAGE	Desafío del mago de Roca Negra	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_PALADIN	Desafío del paladín de Roca Negra	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_PRIEST	Desafío del sacerdote de Roca Negra	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_ROGUE	Desafío del pícaro de Roca Negra	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_SHAMAN	Desafío del chamán de Roca Negra	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_WARLOCK	Desafío del brujo de Roca Negra	
+PRESENCE_SCENARIO_BRM_CLASS_CHALLENGE_WARRIOR	Desafío del guerrero de Roca Negra	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_ATRAMEDES	Atramedes heroico	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_BARON_GEDDON	Barón Geddon heroico	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_CHROMAGGUS	Chromaggus heroico	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_DARK_IRON_ARENA	Arena Hierro Negro heroica	feel free to shorten long translations since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_DRAKKISATH	Drakkisath heroico	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_GARR	Garr heroico	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_GRIM_GUZZLER	Tragapenas heroico	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_MAJORDOMO	Ragnaros heroico	feel free to shorten long translations to 'Heroic Ragnaros' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_MALORIAK	Maloriak heroico	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_NEFARIAN	Nefarius heroico	feel free to shorten long translations to 'Heroic Nefarius' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_OMNOTRON	Omnitron heroico	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_OMOKK	Omokk heroico	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_RAZORGORE	Sangrevaja heroico	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_REND_BLACKHAND	Rend Puño Negro heroico	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_THAURISSAN	Thaurissan heroico	feel free to shorten long translations to 'Heroic Thaurissan' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_VAELASTRASZ	Vaelastrasz heroico	
+PRESENCE_SCENARIO_BRM_HEROIC_SCENARIO_ZOMBIE_NEF	Nefarian heroico	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_ATRAMEDES	Luchando contra Atramedes	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_BARON_GEDDON	Luchando contra el barón Geddon	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_CHROMAGGUS	Luchando contra Chromaggus	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_DARK_IRON_ARENA	Luchando en la Arena Hierro Negro	feel free to shorten long translations since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_DRAKKISATH	Luchando contra Drakkisath	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_GARR	Luchando contra Garr	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_GRIM_GUZZLER	Luchando en el Tragapenas	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_MAJORDOMO	Luchando contra Ragnaros	feel free to shorten long translations to 'Battling Ragnaros' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_MALORIAK	Luchando contra Maloriak	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_NEFARIAN	Luchando contra Nefarius	feel free to shorten long translations to 'Battling Nefarius' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_OMNOTRON	Luchando contra Omnitron	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_OMOKK	Luchando contra Omokk	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_RAZORGORE	Luchando contra Sangrevaja	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_REND_BLACKHAND	Luchando contra Rend Puño Negro	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_THAURISSAN	Luchando contra Thaurissan	feel free to shorten long translations to 'Battling Thaurissan' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_VAELASTRASZ	Luchando contra Vaelastrasz	
+PRESENCE_SCENARIO_BRM_NORMAL_SCENARIO_ZOMBIE_NEF	Luchando contra Nefarian	
+PRESENCE_SCENARIO_DALA_01_BANK	Robando el banco de Dalaran	
+PRESENCE_SCENARIO_DALA_01_BANK_HEROIC	Robando el banco de Dalaran	
+PRESENCE_SCENARIO_DALA_02_VIOLET_HOLD	Liberando presos del Bastión Violeta	
+PRESENCE_SCENARIO_DALA_02_VIOLET_HOLD_HEROIC	Liberando presos del Bastión Violeta	
+PRESENCE_SCENARIO_DALA_03_STREETS	Sembrando el caos en las calles	
+PRESENCE_SCENARIO_DALA_03_STREETS_HEROIC	Sembrando el caos en las calles	
+PRESENCE_SCENARIO_DALA_04_UNDERBELLY	Infiltrándose en Los Bajos Fondos	
+PRESENCE_SCENARIO_DALA_04_UNDERBELLY_HEROIC	Infiltrándose en Los Bajos Fondos	
+PRESENCE_SCENARIO_DALA_05_CITADEL	Tomando la Ciudadela Violeta	
+PRESENCE_SCENARIO_DALA_05_CITADEL_HEROIC	Tomando la Ciudadela Violeta	
+PRESENCE_SCENARIO_DALA_TAVERN	Confabulando en una taberna de Dalaran	
+PRESENCE_SCENARIO_DALA_TAVERN_HEROIC	Confabulando en una taberna de Dalaran	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_01_COIN_01	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_01_COIN_01_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_01_COIN_02	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_01_COIN_02_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_01_COIN_03	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_01_COIN_03_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_02_COIN_01	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_02_COIN_01_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_02_COIN_02	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_02_COIN_02_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_02_COIN_03	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_02_COIN_03_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_03_COIN_01	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_03_COIN_01_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_03_COIN_02	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_03_COIN_02_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_03_COIN_03	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_03_COIN_03_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_04_COIN_01	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_04_COIN_01_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_04_COIN_02	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_04_COIN_02_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_04_COIN_03	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_EVIL_CHAPTER_04_COIN_03_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_01_COIN_01	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_01_COIN_01_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_01_COIN_02	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_01_COIN_02_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_01_COIN_03	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_01_COIN_03_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_02_COIN_01	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_02_COIN_01_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_02_COIN_02	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_02_COIN_02_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_02_COIN_03	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_02_COIN_03_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_03_COIN_01	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_03_COIN_01_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_03_COIN_02	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_03_COIN_02_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_03_COIN_03	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_03_COIN_03_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_04_COIN_01	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_04_COIN_01_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_04_COIN_02	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_04_COIN_02_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_04_COIN_03	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_DRGA_GOOD_CHAPTER_04_COIN_03_HEROIC	Luchando en el Cementerio de Dragones	
+PRESENCE_SCENARIO_GIL_BONUS_CHALLENGE	Luchando contra Hagatha	
+PRESENCE_SCENARIO_GIL_DUNGEON	En una caza de monstruos	
+PRESENCE_SCENARIO_ICC_NORMAL_DEATHWHISPER	Luchando contra Susurramuerte	
+PRESENCE_SCENARIO_ICC_NORMAL_FINALE	Luchando contra el Rey Exánime	
+PRESENCE_SCENARIO_ICC_NORMAL_LANATHEL	Luchando contra Lana'thel	
+PRESENCE_SCENARIO_ICC_NORMAL_LICHKING	Perdiendo contra el Rey Exánime	
+PRESENCE_SCENARIO_ICC_NORMAL_MARROWGAR	Luchando contra Tuétano	
+PRESENCE_SCENARIO_ICC_NORMAL_PUTRICIDE	Luchando contra Putricidio	
+PRESENCE_SCENARIO_ICC_NORMAL_SAURFANG	Luchando contra Colmillosauro	
+PRESENCE_SCENARIO_ICC_NORMAL_SINDRAGOSA	Luchando contra Sindragosa	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_DRUID	Desafío del druida de Karazhan	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_HUNTER	Desafío del cazador de Karazhan	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_MAGE	Desafío del mago de Karazhan	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_PALADIN	Desafío del paladín de Karazhan	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_PRIEST	Desafío del sacerdote de Karazhan	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_ROGUE	Desafío del pícaro de Karazhan	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_SHAMAN	Desafío del chamán de Karazhan	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_WARLOCK	Desafío del brujo de Karazhan	
+PRESENCE_SCENARIO_KAR_CLASS_CHALLENGE_WARRIOR	Desafío del guerrero de Karazhan	
+PRESENCE_SCENARIO_KAR_HEROIC_ARAN	Sombra de Aran heroica	
+PRESENCE_SCENARIO_KAR_HEROIC_CHESS	Ajedrez heroico	
+PRESENCE_SCENARIO_KAR_HEROIC_CRONE	Vieja bruja heroica	
+PRESENCE_SCENARIO_KAR_HEROIC_CURATOR	Curator heroico	
+PRESENCE_SCENARIO_KAR_HEROIC_ILLHOOF	Pezuña Enferma heroico	
+PRESENCE_SCENARIO_KAR_HEROIC_JULIANNE	Julianne heroica	
+PRESENCE_SCENARIO_KAR_HEROIC_MIRROR	Espejo mágico heroico	
+PRESENCE_SCENARIO_KAR_HEROIC_NETHERSPITE	Rencor Abisal heroico	
+PRESENCE_SCENARIO_KAR_HEROIC_NIGHTBANE	Nocturno heroico	
+PRESENCE_SCENARIO_KAR_HEROIC_PANTRY	Gólem de la vajilla heroico	
+PRESENCE_SCENARIO_KAR_HEROIC_PORTALS	¡Liberando a Medivh (heroico)!	
+PRESENCE_SCENARIO_KAR_HEROIC_PROLOGUE	Malchezaar heroico	
+PRESENCE_SCENARIO_KAR_HEROIC_WOLF	Lobo feroz heroico	
+PRESENCE_SCENARIO_KAR_NORMAL_ARAN	Luchando contra la Sombra de Aran	
+PRESENCE_SCENARIO_KAR_NORMAL_CHESS	Luchando contra el ajedrez	
+PRESENCE_SCENARIO_KAR_NORMAL_CRONE	Luchando contra la Vieja bruja	
+PRESENCE_SCENARIO_KAR_NORMAL_CURATOR	Luchando contra el Curator	
+PRESENCE_SCENARIO_KAR_NORMAL_ILLHOOF	Luchando contra Pezuña Enferma	
+PRESENCE_SCENARIO_KAR_NORMAL_JULIANNE	Luchando contra Julianne	
+PRESENCE_SCENARIO_KAR_NORMAL_MIRROR	Luchando contra el espejo mágico	
+PRESENCE_SCENARIO_KAR_NORMAL_NETHERSPITE	Luchando contra Rencor Abisal	
+PRESENCE_SCENARIO_KAR_NORMAL_NIGHTBANE	Luchando contra Nocturno	
+PRESENCE_SCENARIO_KAR_NORMAL_PANTRY	Luchando contra el gólem de la vajilla	
+PRESENCE_SCENARIO_KAR_NORMAL_PORTALS	¡Liberando a Medivh!	
+PRESENCE_SCENARIO_KAR_NORMAL_PROLOGUE	Luchando contra Malchezaar	
+PRESENCE_SCENARIO_KAR_NORMAL_WOLF	Luchando contra el Lobo feroz	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_DRUID	Desafío del druida de la LdE	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_HUNTER	Desafío del cazador de la LdE	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_MAGE	Desafío del mago de la LdE	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_PALADIN	Desafío del paladín de la LdE	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_PRIEST	Desafío del sacerdote de la LdE	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_ROGUE	Desafío del pícaro de la LdE	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_SHAMAN	Desafío del chamán de la LdE	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_WARLOCK	Desafío del brujo de la LdE	
+PRESENCE_SCENARIO_LOE_CLASS_CHALLENGE_WARRIOR	Desafío del guerrero de la LdE	
+PRESENCE_SCENARIO_LOE_HEROIC_ARCHAEDAS	Archaedas heroico	
+PRESENCE_SCENARIO_LOE_HEROIC_GIANTFIN	Aletaza heroico	
+PRESENCE_SCENARIO_LOE_HEROIC_LADY_NAZJAR	Lady Naz'jar heroica	
+PRESENCE_SCENARIO_LOE_HEROIC_MINE_CART	Huida en vagoneta heroica	
+PRESENCE_SCENARIO_LOE_HEROIC_RAFAAM_1	Archiladrón Rafaam heroico	
+PRESENCE_SCENARIO_LOE_HEROIC_RAFAAM_2	Rafaam desatado heroico	
+PRESENCE_SCENARIO_LOE_HEROIC_SCARVASH	Cabecilla Scarvash heroico	
+PRESENCE_SCENARIO_LOE_HEROIC_SKELESAURUS	Esquelesaurus rex heroico	
+PRESENCE_SCENARIO_LOE_HEROIC_SLITHERSPEAR	Lord Reptalanza heroico	
+PRESENCE_SCENARIO_LOE_HEROIC_STEEL_SENTINEL	El centinela férreo heroico	
+PRESENCE_SCENARIO_LOE_HEROIC_SUN_RAIDER_PHAERIX	Asaltante del sol Phaerix heroico	
+PRESENCE_SCENARIO_LOE_HEROIC_TEMPLE_ESCAPE	Huida del templo heroica	
+PRESENCE_SCENARIO_LOE_HEROIC_ZINAAR	Zinaar heroico	
+PRESENCE_SCENARIO_LOE_NORMAL_ARCHAEDAS	Luchando contra Archaedas	
+PRESENCE_SCENARIO_LOE_NORMAL_GIANTFIN	Luchando contra Aletaza	
+PRESENCE_SCENARIO_LOE_NORMAL_LADY_NAZJAR	Luchando contra Lady Naz'jar	
+PRESENCE_SCENARIO_LOE_NORMAL_MINE_CART	Huida en vagoneta	
+PRESENCE_SCENARIO_LOE_NORMAL_RAFAAM_1	Luchando contra el archiladrón Rafaam	
+PRESENCE_SCENARIO_LOE_NORMAL_RAFAAM_2	Luchando contra Rafaam desatado	
+PRESENCE_SCENARIO_LOE_NORMAL_SCARVASH	Luchando contra el cabecilla Scarvash	
+PRESENCE_SCENARIO_LOE_NORMAL_SKELESAURUS	Luchando contra Esquelesaurus rex	
+PRESENCE_SCENARIO_LOE_NORMAL_SLITHERSPEAR	Luchando contra Lord Reptalanza	
+PRESENCE_SCENARIO_LOE_NORMAL_STEEL_SENTINEL	Luchando contra el centinela férreo	
+PRESENCE_SCENARIO_LOE_NORMAL_SUN_RAIDER_PHAERIX	Luchando contra el asaltante del sol Phaerix	
+PRESENCE_SCENARIO_LOE_NORMAL_TEMPLE_ESCAPE	Huida del templo	
+PRESENCE_SCENARIO_LOE_NORMAL_ZINAAR	Luchando contra Zinaar	
+PRESENCE_SCENARIO_LOOT_DUNGEON	En una mazmorra	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_DRUID	Desafío del druida de Naxxramas	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_HUNTER	Desafío del cazador de Naxxramas	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_MAGE	Desafío del mago de Naxxramas	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_PALADIN	Desafío del paladín de Naxxramas	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_PRIEST	Desafío del sacerdote de Naxxramas	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_ROGUE	Desafío del pícaro de Naxxramas	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_SHAMAN	Desafío del chamán de Naxxramas	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_WARLOCK	Desafío del brujo de Naxxramas	
+PRESENCE_SCENARIO_NAXX_CLASS_CHALLENGE_WARRIOR	Desafío del guerrero de Naxxramas	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_ANUBREKHAN	Anub'Rekhan heroico	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_FAERLINA	Gran Viuda Faerlina heroica	feel free to shorten long translations to 'Heroic Faerlina' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_GLUTH	Gluth heroico	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_GOTHIK	Gothik el Cosechador heroico	feel free to shorten long translations to 'Heroic Gothik' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_GROBBULUS	Grobbulus heroico	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_HEIGAN	Heigan el Impuro heroico	feel free to shorten long translations to 'Heroic Heigan' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_HORSEMEN	Los Cuatro Jinetes heroicos	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_KELTHUZAD	Kel'Thuzad heroico	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_LOATHEB	Loatheb heroico	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_MAEXXNA	Maexxna heroica	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_NOTH	Noth el Pesteador heroico	feel free to shorten long translations to 'Heroic Noth' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_PATCHWERK	Remendejo heroico	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_RAZUVIOUS	Instructor Razuvious heroico	feel free to shorten long translations to 'Heroic Razuvious' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_SAPPHIRON	Sapphiron heroico	
+PRESENCE_SCENARIO_NAXX_HEROIC_SCENARIO_THADDIUS	Thaddius heroico	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_ANUBREKHAN	Luchando contra Anub'Rekhan	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_FAERLINA	Luchando contra Faerlina	feel free to shorten long translations to 'Battling Faerlina' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_GLUTH	Luchando contra Gluth	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_GOTHIK	Luchando contra Gothik	feel free to shorten long translations to 'Battling Gothik' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_GROBBULUS	Luchando contra Grobbulus	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_HEIGAN	Luchando contra Heigan	feel free to shorten long translations to 'Battling Heigan' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this is string shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_HORSEMEN	Luchando contra los Cuatro Jinetes	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_KELTHUZAD	Luchando contra Kel'Thuzad	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_LOATHEB	Luchando contra Loatheb	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_MAEXXNA	Luchando contra Maexxna	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_NOTH	Luchando contra Noth	feel free to shorten long translations to 'Battling Noth' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_PATCHWERK	Luchando contra Remendejo	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_RAZUVIOUS	Luchando contra Razuvious	feel free to shorten long translations to 'Battling Razuvious' since the UI may squeeze text into a tiny (unreadable) font size when text is too long. this string is shown in the Friends List.
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_SAPPHIRON	Luchando contra Sapphiron	
+PRESENCE_SCENARIO_NAXX_NORMAL_SCENARIO_THADDIUS	Luchando contra Thaddius	
+PRESENCE_SCENARIO_RETURNING_PLAYER_CHALLENGE_1	Regresando por todo lo alto	
+PRESENCE_SCENARIO_RETURNING_PLAYER_CHALLENGE_2	Regresando por todo lo alto	
+PRESENCE_SCENARIO_RETURNING_PLAYER_CHALLENGE_3	Regresando por todo lo alto	
+PRESENCE_SCENARIO_TRL_DUNGEON	Todo o nada en la Arena Gurubashi	
+PRESENCE_SCENARIO_ULD_01_CITY	Explorando la Ciudad Perdida	
+PRESENCE_SCENARIO_ULD_01_CITY_HEROIC	Explorando la Ciudad Perdida	
+PRESENCE_SCENARIO_ULD_02_DESERT	Perdiéndose en el desierto	
+PRESENCE_SCENARIO_ULD_02_DESERT_HEROIC	Perdiéndose en el desierto	
+PRESENCE_SCENARIO_ULD_03_TOMB	Excavando las tumbas	
+PRESENCE_SCENARIO_ULD_03_TOMB_HEROIC	Excavando las tumbas	
+PRESENCE_SCENARIO_ULD_04_HALLS	Deambulando por las cámaras	
+PRESENCE_SCENARIO_ULD_04_HALLS_HEROIC	Deambulando por las cámaras	
+PRESENCE_SCENARIO_ULD_05_SANCTUM	Luchando en el sagrario	
+PRESENCE_SCENARIO_ULD_05_SANCTUM_HEROIC	Luchando en el sagrario	
+PRESENCE_SCENARIO_ULD_TAVERN	Comprando en el bazar	
+PRESENCE_SCENARIO_ULD_TAVERN_HEROIC	Comprando en el bazar	
+PRESENCE_STATUS_ADVENTURE_CHOOSING_MODE	Buscando una aventura de un jugador	
+PRESENCE_STATUS_ADVENTURE_SCENARIO_PLAYING_GAME	{0}	{0} replaced with the specific scenario string, via PRESENCE_SCENARIO_NAXX_*
+PRESENCE_STATUS_ADVENTURE_SCENARIO_SELECT	{0}	{0} replaced with the adventure mode, via PRESENCE_ADVENTURE_MODE_*, e.g. Naxxramas (Heroic) -- (originally i wanted it to say "Mission Select: Naxxramas Class Challenge" but this got too long for the UI element.)
+PRESENCE_STATUS_ARENA_FORGE	Forjando un mazo para la Arena	
+PRESENCE_STATUS_ARENA_GAME	Luchando en la Arena	
+PRESENCE_STATUS_ARENA_IDLE	Pasando el rato en la Arena	
+PRESENCE_STATUS_ARENA_PURCHASE	Planteándose entrar en la Arena	
+PRESENCE_STATUS_ARENA_QUEUE	Buscando un oponente para la Arena	
+PRESENCE_STATUS_ARENA_REWARD	Obteniendo recompensas de la Arena	
+PRESENCE_STATUS_BATTLEGROUNDS_GAME	¡Compitiendo en Campos de batalla!	
+PRESENCE_STATUS_BATTLEGROUNDS_QUEUE	Buscando rivales para Campos de batalla	
+PRESENCE_STATUS_BATTLEGROUNDS_SCREEN	Paseando por los campos de batalla	
+PRESENCE_STATUS_COLLECTION	Estudiando la colección	
+PRESENCE_STATUS_CRAFTING	Creando cartas	
+PRESENCE_STATUS_DECKEDITOR	Creando un mazo	
+PRESENCE_STATUS_FIRESIDE_BRAWL_SCREEN	Entrando en una pelea Fireside	
+PRESENCE_STATUS_FRIENDLY_DECKPICKER	A punto de luchar contra un amigo	
+PRESENCE_STATUS_FRIENDLY_GAME	Luchando contra un amigo	
+PRESENCE_STATUS_HUB	Pasando el rato en el menú principal	
+PRESENCE_STATUS_LOGIN	Iniciando el juego	
+PRESENCE_STATUS_PACKOPENING	¡Abriendo sobres de cartas!	
+PRESENCE_STATUS_PLAY_DECKPICKER	Entrando en el modo Jugar	
+PRESENCE_STATUS_PLAY_GAME	¡Luchando en el modo Jugar!	
+PRESENCE_STATUS_PLAY_QUEUE	Buscando un oponente	
+PRESENCE_STATUS_PRACTICE_DECKPICKER	Entrando en el modo Práctica	
+PRESENCE_STATUS_PRACTICE_GAME	Practicando contra el tabernero	
+PRESENCE_STATUS_QUESTLOG	Leyendo el registro de misiones	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_BRM_CLASS_CHALLENGE	¡Observando un desafío de Roca Negra!	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_BRM_HEROIC	¡Observando Roca Negra heroico!	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_BRM_NORMAL	¡Observando una batalla de Roca Negra!	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_ICC_NORMAL	¡Observando el Trono Helado!	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_KAR_CLASS_CHALLENGE	¡Observando un desafío de clase de Karazhan!	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_KAR_HEROIC	¡Observando Karazhan heroico!	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_KAR_NORMAL	¡Observando Karazhan!	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_LOE_CLASS_CHALLENGE	¡Observando un desafío de clase de la LdE!	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_LOE_HEROIC	¡Observando la LdE heroica!	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_LOE_NORMAL	¡Observando la Liga de Expedicionarios!	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_NAXX_CLASS_CHALLENGE	¡Observando un desafío de Naxxramas!	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_NAXX_HEROIC	¡Observando Naxxramas heroico!	
+PRESENCE_STATUS_SPECTATING_GAME_ADVENTURE_NAXX_NORMAL	¡Observando una batalla de Naxxramas!	
+PRESENCE_STATUS_SPECTATING_GAME_ARENA	Observando un duelo en la Arena	
+PRESENCE_STATUS_SPECTATING_GAME_BATTLEGROUNDS	Observando partida de Campos de batalla	
+PRESENCE_STATUS_SPECTATING_GAME_BOT	Colaborando en el laboratorio	
+PRESENCE_STATUS_SPECTATING_GAME_DAL	Espiando un golpe en Dalaran	
+PRESENCE_STATUS_SPECTATING_GAME_DAL_HEROIC	Espiando un golpe en Dalaran	
+PRESENCE_STATUS_SPECTATING_GAME_DRG	Observando el Cementerio de Dragones	
+PRESENCE_STATUS_SPECTATING_GAME_DRG_HEROIC	Observando el Cementerio de Dragones	
+PRESENCE_STATUS_SPECTATING_GAME_FRIENDLY	Observando un duelo amistoso	
+PRESENCE_STATUS_SPECTATING_GAME_GIL	Observando una caza de monstruos	
+PRESENCE_STATUS_SPECTATING_GAME_GIL_BONUS_CHALLENGE	Observando la lucha contra Hagatha	
+PRESENCE_STATUS_SPECTATING_GAME_LOOT	Observando una mazmorra	
+PRESENCE_STATUS_SPECTATING_GAME_PLAY	Observando un duelo del modo Jugar	
+PRESENCE_STATUS_SPECTATING_GAME_PRACTICE	Observando una partida de práctica	
+PRESENCE_STATUS_SPECTATING_GAME_RETURNING_PLAYER_CHALLENGE	Observando el regreso de un amigo	
+PRESENCE_STATUS_SPECTATING_GAME_TAVERN_BRAWL	Observando una pelea de taberna	
+PRESENCE_STATUS_SPECTATING_GAME_TRL	Observando Los juegos de los loa	
+PRESENCE_STATUS_SPECTATING_GAME_TUTORIAL	Observando una partida del tutorial	
+PRESENCE_STATUS_SPECTATING_GAME_ULD	Observando las tumbas	
+PRESENCE_STATUS_SPECTATING_GAME_ULD_HEROIC	Observando las tumbas	
+PRESENCE_STATUS_STORE	Explorando la tienda	
+PRESENCE_STATUS_TAVERN_BRAWL_DECKEDITOR	Preparando mazo para pelea de taberna	
+PRESENCE_STATUS_TAVERN_BRAWL_FRIENDLY_GAME	Peleando contra un amigo	
+PRESENCE_STATUS_TAVERN_BRAWL_FRIENDLY_WAITING	A punto de pelear contra un amigo	
+PRESENCE_STATUS_TAVERN_BRAWL_GAME	Luchando en una pelea de taberna	
+PRESENCE_STATUS_TAVERN_BRAWL_QUEUE	Buscando un oponente para pelear	
+PRESENCE_STATUS_TAVERN_BRAWL_SCREEN	Entrando en una pelea de taberna	
+PRESENCE_STATUS_TUTORIAL_GAME	Luchando contra {0}	0 = PRESENCE_TUTORIAL_*
+PRESENCE_STATUS_TUTORIAL_PREGAME	Empezando el juego por primera vez	
+PRESENCE_STATUS_WAIT_FOR_OPPONENT_RECONNECT	Esperando a que el oponente restaure la conexión	
+PRESENCE_STATUS_WELCOMEQUESTS	¡Examinando misiones nuevas!	
+PRESENCE_TUTORIAL_CHO	Eremita Cho	
+PRESENCE_TUTORIAL_HEMET	Hemet Nesingwary	
+PRESENCE_TUTORIAL_HOGGER	Hogger	
+PRESENCE_TUTORIAL_ILLIDAN	Illidan Tempestira	
+PRESENCE_TUTORIAL_MILLHOUSE	Molino Tormenta de Maná	
+PRESENCE_TUTORIAL_MUKLA	Rey Mukla	

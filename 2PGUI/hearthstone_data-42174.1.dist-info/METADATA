@@ -1,0 +1,22 @@
+Metadata-Version: 2.0
+Name: hearthstone-data
+Version: 42174.1
+Summary: CardDefs.xml and Strings for Hearthstone
+Home-page: https://github.com/HearthSim/python-hearthstone-data/
+Author: Jerome Leclanche
+Author-email: jerome@leclan.ch
+License: UNKNOWN
+Download-URL: https://github.com/HearthSim/python-hearthstone-data/tarball/master
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Topic :: Games/Entertainment
+
+UNKNOWN
+
+

@@ -1,0 +1,279 @@
+TAG	TEXT	COMMENT
+FB_BUILDABRAWL001	Wybierz pierwszą Karczemną bójkę!	
+FB_BUILDABRAWL002	Wybierz drugą Karczemną bójkę!	
+FB_ELO_GREATERSPIRITS	Wybierz większą premię!	
+FB_ELO_SPIRITS	Wybierz premię!	
+GALAKROND_ONCE	<b>Inwokuj</b> raz, aby ulepszyć.	
+GALAKROND_TWICE	<b>Inwokuj</b>_dwa razy, aby ulepszyć.	
+GAMEPLAY_AI_OPPONENT_NAME	Karczmarz	
+GAMEPLAY_AMETHYST_SPELLSTONE_1	<i>(Otrzymaj obrażenia od twoich kart, aby ulepszyć.)</i>	
+GAMEPLAY_AMETHYST_SPELLSTONE_2	<i>(Otrzymaj obrażenia od twoich kart, aby ulepszyć.)</i>	
+GAMEPLAY_AMETHYST_SPELLSTONE_3	<i>(Otrzymaj obrażenia od twoich kart, aby ulepszyć.)</i>	
+GAMEPLAY_BACON_ALTERNATE_PLAYER_NAME	Jako {0}	0=character hero name
+GAMEPLAY_BACON_BUY_TUTORIAL	Przeciągnij, aby kupić.	
+GAMEPLAY_BACON_COIN_TUTORIAL_1	Zakup stronnika <b>ZAWSZE</b> kosztuje 3 szt. złota.	
+GAMEPLAY_BACON_COIN_TUTORIAL_2	Nie zachowujesz niewykorzystanego złota.	
+GAMEPLAY_BACON_COMBAT_BODY_TUTORIAL	Stronnicy, którzy przeżyją walkę, pomagają ci zadawać dodatkowe obrażenia.\n\nIm wyższy poziom Karczmy, tym większe obrażenia!	
+GAMEPLAY_BACON_COMBAT_BUTTON_TUTORIAL	OK!	
+GAMEPLAY_BACON_COMBAT_END_TURN_BUTTON_TEXT	Walcz	
+GAMEPLAY_BACON_COMBAT_PHASE_NAME	Walka	
+GAMEPLAY_BACON_COMBAT_TITLE_TUTORIAL	Obrażenia w walce	
+GAMEPLAY_BACON_CONFIRM_BUTTON_TUTORIAL	OK!	
+GAMEPLAY_BACON_DRAGBUY_BODY_TUTORIAL	Przeciągnij stronników\ndo twojego bohatera,\naby kupić ich za 3 szt. złota.\n\nStwórz armię, która zniszczy twoich wrogów!	
+GAMEPLAY_BACON_DRAGBUY_BUTTON_TUTORIAL	Kup	
+GAMEPLAY_BACON_DRAGBUY_TITLE_TUTORIAL	Kup stronników!	
+GAMEPLAY_BACON_DRAGBUY_TRIPLE_TUTORIAL	Kup za trójkę!	
+GAMEPLAY_BACON_DRAGBUY_TUTORIAL	Przeciągnij do twojego bohatera.	
+GAMEPLAY_BACON_DRAGSELL_BODY_TUTORIAL	Przeciągnij stronników do Boba, aby ich sprzedać.\n\nZwolnisz w ten sposób miejsce i otrzymasz 1 szt. złota!	
+GAMEPLAY_BACON_DRAGSELL_BUTTON_TUTORIAL	Sprzedaj	
+GAMEPLAY_BACON_DRAGSELL_TITLE_TUTORIAL	Sprzedaj stronników!	
+GAMEPLAY_BACON_DRAGSELL_TUTORIAL	Przeciągnij tu stronnika, aby go sprzedać.	
+GAMEPLAY_BACON_ENEMY_MINION_TUTORIAL	Wybierz stronnika!	
+GAMEPLAY_BACON_FREEZE_TUTORIAL	Zamroź stronników, aby zatrzymać ich tutaj do następnej tury.	
+GAMEPLAY_BACON_MINION_MOVE_TUTORIAL	Przeciągnij w prawo, aby przestawić.	
+GAMEPLAY_BACON_MINION_UPGRADE_TAVERN_TUTORIAL	Ulepsz Karczmę!	
+GAMEPLAY_BACON_MULLIGAN_CHOOSE_HERO_BANNER	Wybierz bohatera	
+GAMEPLAY_BACON_MULLIGAN_WAITING_BANNER	Gotowi zawodnicy: {0}/8	0=number of players ready
+GAMEPLAY_BACON_MULLIGAN_WAITING_BANNER_SUBTITLE	Pozostały czas:	
+GAMEPLAY_BACON_PLAY_MINION_TUTORIAL	Graj!	
+GAMEPLAY_BACON_RECENT_COMBATS	Ostatnie walki	
+GAMEPLAY_BACON_RECENT_UPGRADE	Ostatnie ulepszenie	
+GAMEPLAY_BACON_RECRUIT_REMINDER_TUTORIAL	Wybierz stronnika.	
+GAMEPLAY_BACON_RECRUIT_REMINDER_TUTORIAL_2	Kup stronnika.	
+GAMEPLAY_BACON_REFRESH_TUTORIAL	Zobacz nowych rekrutów.	
+GAMEPLAY_BACON_REFRESH_UPGRADE_TUTORIAL	Poznaj lepszych rekrutów!	
+GAMEPLAY_BACON_SHOP_END_TURN_BUTTON_TEXT	Rekrutuj	
+GAMEPLAY_BACON_SHOP_PHASE_NAME	Rekrutuj	
+GAMEPLAY_BACON_TAVERN_TIER	Poziom Karczmy	
+GAMEPLAY_BACON_TEXT_EMOTE_GREETINGS	Witaj	
+GAMEPLAY_BACON_TEXT_EMOTE_INVALID	...	
+GAMEPLAY_BACON_TEXT_EMOTE_OOPS	Ups	
+GAMEPLAY_BACON_TEXT_EMOTE_SORRY	Wybacz	
+GAMEPLAY_BACON_TEXT_EMOTE_THANKS	Dzięki	
+GAMEPLAY_BACON_TEXT_EMOTE_THREATEN	!!!	
+GAMEPLAY_BACON_TEXT_EMOTE_WELL_PLAYED	Nieźle	
+GAMEPLAY_BACON_TEXT_EMOTE_WOW	Wow	
+GAMEPLAY_BACON_TRIPLE_BODY_TUTORIAL	Jeśli masz 3 kopie danego stronnika, zamieni się on w potężną, złotą kopię tego stronnika.\n\nZagraj go, a otrzymasz nagrodę!	
+GAMEPLAY_BACON_TRIPLE_BUTTON_TUTORIAL	Połącz	
+GAMEPLAY_BACON_TRIPLE_TITLE_TUTORIAL	Trójkowe ulepszenie!	
+GAMEPLAY_BACON_TRIPLES_ICON	Trójki	
+GAMEPLAY_BACON_WIN_STREAK_ICON	Seria zwycięstw	
+GAMEPLAY_BURNED_CARDS_HISTORY_TEXT	Jeśli mając pełną rękę dobierzesz kartę, zostanie ona zniszczona.	
+GAMEPLAY_BURNED_CARDS_TITLE	Zniszczone karty	
+GAMEPLAY_CHOOSE_ONE	Wybierz jedno	will be displayed for card choices e.g. tracking
+GAMEPLAY_CHOOSE_ONE_ADAPT_ALL_MINIONS	Wybierz jedno dla twoich stronników:	
+GAMEPLAY_CHOOSE_ONE_ADAPT_ALL_MURLOCS	Wybierz jedno dla twoich Murloków:	
+GAMEPLAY_CHOOSE_ONE_ADAPT_ALL_RECRUITS	Wybierz jedno dla twoich Rekrutów:	
+GAMEPLAY_CHOOSE_ONE_HERO_POWER	Wybierz jedno	will be displayed for choosing a Hero Power e.g. Sir Finley Mrrgglton
+GAMEPLAY_COIN_TOSS_LOST	Otrzymujesz dodatkową kartę	
+GAMEPLAY_COIN_TOSS_WON	Zaczynasz	
+GAMEPLAY_COPY_DEATHRATTLE	Skopiowana Agonia z karty {0}.	
+GAMEPLAY_DIAMOND_SPELLSTONE_1	<i>(Rzuć 4 zaklęcia, aby ulepszyć.)</i>	
+GAMEPLAY_DIAMOND_SPELLSTONE_2	<i>(Rzuć jeszcze 3 zaklęcia, aby ulepszyć.)</i>	
+GAMEPLAY_DIAMOND_SPELLSTONE_3	<i>(Rzuć jeszcze 2 zaklęcia, aby ulepszyć.)</i>	
+GAMEPLAY_DIAMOND_SPELLSTONE_4	<i>(Rzuć jeszcze 1 zaklęcie, aby ulepszyć.)</i>	
+GAMEPLAY_DISCONNECT_BODY	Gra ukończona i zapisana! Uruchom ponownie Hearthstone, aby kontynuować. 	
+GAMEPLAY_DISCONNECT_BODY_RESET	Gra ukończona i zapisana! Trwa ponowne łączenie z serwerami Hearthstone. 	
+GAMEPLAY_DISCONNECT_HEADER	Rozłączono 	
+GAMEPLAY_DISCOVER_JUGGERNAUT	Wybierz kapitana na rywala...	
+GAMEPLAY_DISCOVER_MYSTERY	Co wybrał twój przeciwnik?	
+GAMEPLAY_DISCOVER_OVERRIDE_EXPLORER_RETRAINING	Wybierz nową moc specjalną:	
+GAMEPLAY_DISCOVER_OVERRIDE_FRIENDLY_SMITH	Dodaj do talii. Otrzymuje +2/+2:	
+GAMEPLAY_DISCOVER_OVERRIDE_HIRING_REPLACEMENTS	Zastąp kartą:	
+GAMEPLAY_DISCOVER_OVERRIDE_KINDLE	Usuń z talii:	
+GAMEPLAY_DISCOVER_OVERRIDE_PARTY_OF_FOUR	Wybierz typ wrogiego stronnika:	
+GAMEPLAY_DISCOVER_OVERRIDE_RECRUIT_A_VETERAN	Dodaj do talii:	
+GAMEPLAY_DISCOVER_OVERRIDE_RIDDLE_OF_THE_SPHINX	Zgadnij	
+GAMEPLAY_DISCOVER_OVERRIDE_STUDY_BREAK	Wybierz kartę do ręki startowej:	
+GAMEPLAY_DISCOVER_OVERRIDE_THE_UPPER_HAND	Wybierz jedno i zmniejsz koszt:	
+GAMEPLAY_DONE_TURN	GOTOWE	
+GAMEPLAY_EMOTE_LABEL_DISABLED_EMOTES	...	
+GAMEPLAY_EMOTE_LABEL_FIREWORKS	Wow	
+GAMEPLAY_EMOTE_LABEL_GREETINGS	Witaj	
+GAMEPLAY_EMOTE_LABEL_OOPS	Ups	
+GAMEPLAY_EMOTE_LABEL_SORRY	Wybacz	
+GAMEPLAY_EMOTE_LABEL_THANKS	Dzięki	
+GAMEPLAY_EMOTE_LABEL_THREATEN	Groźba	
+GAMEPLAY_EMOTE_LABEL_WELL_PLAYED	Nieźle	
+GAMEPLAY_EMOTE_LABEL_WOW	Wow	
+GAMEPLAY_EMOTE_SQUELCH	Wycisz	
+GAMEPLAY_EMOTE_UNSQUELCH	Anuluj wyciszenie	
+GAMEPLAY_END_OF_GAME_DEFEAT	Porażka!	
+GAMEPLAY_END_OF_GAME_DEFEAT_MAYBE	Porażka?	
+GAMEPLAY_END_OF_GAME_PLACE_1	1. miejsce!	
+GAMEPLAY_END_OF_GAME_PLACE_2	2. miejsce!	
+GAMEPLAY_END_OF_GAME_PLACE_3	3. miejsce!	
+GAMEPLAY_END_OF_GAME_PLACE_4	4. miejsce!	
+GAMEPLAY_END_OF_GAME_PLACE_5	5. miejsce	
+GAMEPLAY_END_OF_GAME_PLACE_6	6. miejsce	
+GAMEPLAY_END_OF_GAME_PLACE_7	7. miejsce	
+GAMEPLAY_END_OF_GAME_PLACE_8	8. miejsce	
+GAMEPLAY_END_OF_GAME_RATING	Klasyfikacja	
+GAMEPLAY_END_OF_GAME_TIE_ESCAPED	Ucieczka!	
+GAMEPLAY_END_OF_GAME_VICTORY	Zwycięstwo!	
+GAMEPLAY_END_OF_GAME_VICTORY_MAYBE	Zwycięstwo?	
+GAMEPLAY_END_TURN	KONIEC TURY	
+GAMEPLAY_END_TURN_BUTTON_COUNTDOWN	{0} sek.	0 = An integer of the number of seconds left in the turn.
+GAMEPLAY_ENEMY_TURN	PRZECIWNIK	
+GAMEPLAY_ERROR_PLAY_REJECTED	Za późno! Twoja tura dobiegła końca.	
+GAMEPLAY_FATIGUE_HISTORY_TEXT	Próba dobrania karty z pustej talii zadaje wzrastające obrażenia twojemu bohaterowi.	
+GAMEPLAY_FATIGUE_TEXT	Brak kart! Otrzymujesz\n{0} pkt. obrażeń.	
+GAMEPLAY_FATIGUE_TITLE	Zmęczenie	
+GAMEPLAY_GOLDHERO_WINS	Zwycięstwo! 	
+GAMEPLAY_HIDDEN_PLAYER_NAME	Ty	
+GAMEPLAY_HISTORY_CREATED_BY	Efekt działania karty:\n{0}	0=name of a card
+GAMEPLAY_JASPER_SPELLSTONE_1	<i>(Otrzymaj 3 pkt. pancerza, aby ulepszyć.)</i>	
+GAMEPLAY_JASPER_SPELLSTONE_2	<i>(Otrzymaj jeszcze 2 pkt. pancerza, aby ulepszyć.)</i>	
+GAMEPLAY_JASPER_SPELLSTONE_3	<i>(Otrzymaj jeszcze 1 pkt. pancerza, aby ulepszyć.)</i>	
+GAMEPLAY_LOOT_526d_DARKNESS_1	Gdy twój przeciwnik dobierze\ntrzy Świece, Ciemność przebudzi się!	
+GAMEPLAY_LOOT_526d_DARKNESS_2	Gdy twój przeciwnik dobierze jeszcze\ndwie Świece, Ciemność przebudzi się!	
+GAMEPLAY_LOOT_526d_DARKNESS_3	Gdy twój przeciwnik dobierze jeszcze\njedną Świecę, Ciemność przebudzi się!	
+GAMEPLAY_MANA_COUNTER	{0}/{1}	0=unused mana 1=current total mana
+GAMEPLAY_MISSING_OPPONENT_NAME	Twój przeciwnik	
+GAMEPLAY_MOBILE_BATTLECRY_CANCELED	Okrzyk bojowy anulowany.	
+GAMEPLAY_MOBILE_TARGETING_CANCELED	Namierzanie anulowane.	
+GAMEPLAY_MULLIGAN_REPLACE	DO WYMIANY	
+GAMEPLAY_MULLIGAN_STARTING_HAND	Ręka startowa	
+GAMEPLAY_MULLIGAN_SUBTITLE	Zatrzymaj lub wymień	
+GAMEPLAY_MULLIGAN_WAITING	Przeciwnik wciąż wybiera...	
+GAMEPLAY_NEXT_TURN	EKSTRA TURA	
+GAMEPLAY_ONYX_SPELLSTONE_1	<i>(Zagraj 3 karty z_<b>Agonią</b>, aby ulepszyć.)</i>	
+GAMEPLAY_ONYX_SPELLSTONE_2	<i>(Zagraj jeszcze 2_karty z_<b>Agonią</b>, aby ulepszyć.)</i>	
+GAMEPLAY_ONYX_SPELLSTONE_3	<i>(Zagraj jeszcze 1_kartę z_<b>Agonią</b>, aby ulepszyć.)</i>	
+GAMEPLAY_PEARL_SPELLSTONE_1	<i>(Przywróć 3 pkt. zdrowia, aby ulepszyć.)</i>	
+GAMEPLAY_PEARL_SPELLSTONE_2	<i>(Przywróć jeszcze 2 pkt. zdrowia, aby ulepszyć.)</i>	
+GAMEPLAY_PEARL_SPELLSTONE_3	<i>(Przywróć jeszcze 1 pkt. zdrowia, aby ulepszyć.)</i>	
+GAMEPLAY_PlayErrors_REQ_ATTACK_GREATER_THAN_0	Postać bez wartości ataku nie może atakować	
+GAMEPLAY_PlayErrors_REQ_ATTACKER_CAN_ATTACK	Ta postać nie może atakować	
+GAMEPLAY_PlayErrors_REQ_ATTACKER_NOT_FROZEN	Zamrożona postać nie może atakować	
+GAMEPLAY_PlayErrors_REQ_BOUGHT_MINION_THIS_TURN	W tej turze nie udało ci się jeszcze kupić żadnych stronników	
+GAMEPLAY_PlayErrors_REQ_CAN_BE_ATTACKED	Ta postać nie może zostać zaatakowana	
+GAMEPLAY_PlayErrors_REQ_CAN_BE_TARGETED_BY_BATTLECRIES	Nie można wybrać jako cel okrzyków bojowych	
+GAMEPLAY_PlayErrors_REQ_CAN_BE_TARGETED_BY_COMBOS	Nie można wybrać jako cel Kombinacji	
+GAMEPLAY_PlayErrors_REQ_CAN_BE_TARGETED_BY_HERO_POWERS	Nie można wybrać jako cel mocy specjalnych	
+GAMEPLAY_PlayErrors_REQ_CAN_BE_TARGETED_BY_OPPONENTS	Ta postać nie może zostać wybrana	
+GAMEPLAY_PlayErrors_REQ_CAN_BE_TARGETED_BY_SPELLS	Nie można wybrać jako cel zaklęć	
+GAMEPLAY_PlayErrors_REQ_CANNOT_PLAY_THIS	Nie możesz tego zagrać	
+GAMEPLAY_PlayErrors_REQ_CHARGE_TARGET	Wybierz postać z Szarżą	
+GAMEPLAY_PlayErrors_REQ_DAMAGED_TARGET	Wybierz ranną postać	
+GAMEPLAY_PlayErrors_REQ_DRAG_TO_PLAY	Musisz przeciągnąć to na cel	
+GAMEPLAY_PlayErrors_REQ_ENCHANTED_TARGET	Wybierz zauroczoną postać	
+GAMEPLAY_PlayErrors_REQ_ENEMY_TARGET	Wybierz wroga	
+GAMEPLAY_PlayErrors_REQ_ENEMY_TARGET_NOT_IMMUNE	Ta postać jest niewrażliwa	
+GAMEPLAY_PlayErrors_REQ_ENEMY_WEAPON_EQUIPPED	Twój przeciwnik musi mieć broń	
+GAMEPLAY_PlayErrors_REQ_ENOUGH_COIN	Za mało złota	
+GAMEPLAY_PlayErrors_REQ_ENOUGH_HEALTH	Za mało zdrowia	
+GAMEPLAY_PlayErrors_REQ_ENOUGH_MANA	Za mało many	
+GAMEPLAY_PlayErrors_REQ_ENTIRE_ENTOURAGE_NOT_IN_PLAY	Masz już każdy rodzaj totemu	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_DEATHRATTLE_MINION_DIED_THIS_GAME	W tej grze nie zginęli żadni stronnicy z Agonią	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_MINION_DIED_THIS_GAME	W tej grze nie zginęli żadni przyjazni stronnicy	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_MINION_DIED_THIS_TURN	W tej turze nie zginęli żadni przyjazni stronnicy	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_MINION_OF_RACE_DIED_THIS_TURN	W tej turze nie zginęli żadni prawidłowi przyjaźni stronnicy	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_MINION_OF_RACE_IN_HAND	Nie masz w ręce prawidłowych stronników	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_MINIONS_OF_RACE_DIED_THIS_GAME	W tej grze nie zginęli żadni prawidłowi przyjaźni stronnicy	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_REBORN_MINION_DIED_THIS_GAME	W tej grze nie zginęli żadni przyjaźni stronnicy z Odrodzeniem	
+GAMEPLAY_PlayErrors_REQ_FRIENDLY_TARGET	Wybierz przyjazną postać	
+GAMEPLAY_PlayErrors_REQ_FROZEN_TARGET	Wybierz zamrożoną postać	
+GAMEPLAY_PlayErrors_REQ_HAND_NOT_FULL	Masz pełną rękę	
+GAMEPLAY_PlayErrors_REQ_HERO_OR_MINION_TARGET	Musisz wskazać postać	
+GAMEPLAY_PlayErrors_REQ_HERO_TARGET	Musisz wskazać bohatera	
+GAMEPLAY_PlayErrors_REQ_LEGENDARY_TARGET	Musisz wskazać legendarnego stronnika	
+GAMEPLAY_PlayErrors_REQ_MAX_QUESTS	Możesz mieć maksymalnie {0} |4(zadanie,zadania,zadań)	
+GAMEPLAY_PlayErrors_REQ_MAX_SECRETS	Możesz mieć maksymalnie {0} |4(sekret,sekrety,sekretów)	
+GAMEPLAY_PlayErrors_REQ_MINIMUM_ENEMY_MINIONS	Wróg musi mieć co najmniej {0} |4(stronnika,stronników,stronników)	
+GAMEPLAY_PlayErrors_REQ_MINIMUM_TOTAL_MINIONS	Na polu bitwy musi być co najmniej {0} |4(stronnik,stronników,stronników)	
+GAMEPLAY_PlayErrors_REQ_MINION_CAP	Nie możesz mieć więcej stronników	
+GAMEPLAY_PlayErrors_REQ_MINION_CAP_IF_TARGET_AVAILABLE	Nie możesz mieć więcej stronników	
+GAMEPLAY_PlayErrors_REQ_MINION_DIED_THIS_GAME	W tej grze nie zginęli żadni stronnicy	
+GAMEPLAY_PlayErrors_REQ_MINION_OR_ENEMY_HERO	Wybierz stronnika lub wrogiego bohatera	
+GAMEPLAY_PlayErrors_REQ_MINION_SLOT_OR_MANA_CRYSTAL_SLOT	Nie możesz mieć więcej stronników ani \nkryształów many	
+GAMEPLAY_PlayErrors_REQ_MINION_TARGET	Wybierz stronnika	
+GAMEPLAY_PlayErrors_REQ_MUST_PLAY_OTHER_CARD_FIRST	Najpierw musisz zagrać kartę	
+GAMEPLAY_PlayErrors_REQ_MUST_TARGET_TAUNTER	Musisz wskazać stronnika z Prowokacją	
+GAMEPLAY_PlayErrors_REQ_NONSELF_TARGET	Stronnik nie może sam się wskazać	
+GAMEPLAY_PlayErrors_REQ_NONSTEALTH_ENEMY_TARGET	Ukryte postaci nie mogą nie mogą zostać zaatakowane lub wybrane	
+GAMEPLAY_PlayErrors_REQ_NOT_DISABLED_HERO_POWER	Twoja moc specjalna jest wyłączona	
+GAMEPLAY_PlayErrors_REQ_NOT_EXHAUSTED_ACTIVATE	Ta postać już atakowała	
+GAMEPLAY_PlayErrors_REQ_NOT_EXHAUSTED_HERO_POWER	Moce specjalne można wykorzystać tylko raz na turę	
+GAMEPLAY_PlayErrors_REQ_NOT_MINION_JUST_PLAYED	Stronnicy nie mogą atakować w turze,\nw której zostali zagrani	
+GAMEPLAY_PlayErrors_REQ_NUM_MINION_SLOTS	Nie możesz tego zrobić, gdyż masz za dużo stronników	
+GAMEPLAY_PlayErrors_REQ_OPPONENT_PLAYED_CARDS_THIS_GAME	Twój przeciwnik nie zagrał jeszcze żadnych kart.	
+GAMEPLAY_PlayErrors_REQ_SECRET_ZONE_CAP	Możesz mieć maksymalnie {0} |4(sekret i zadanie,sekrety i zadania,sekretów i zadań)	
+GAMEPLAY_PlayErrors_REQ_SOLD_MINION_THIS_TURN	W tej turze nie udało ci się jeszcze sprzedać żadnych stronników	
+GAMEPLAY_PlayErrors_REQ_STEALTHED_TARGET	Wybierz postać z Ukryciem	
+GAMEPLAY_PlayErrors_REQ_SUBCARD_IS_PLAYABLE	Żadna z tych opcji nie jest dostępna	
+GAMEPLAY_PlayErrors_REQ_TARGET_ATTACKED_THIS_TURN	Musisz wskazać postać, która już atakowała	
+GAMEPLAY_PlayErrors_REQ_TARGET_EXACT_COST	Wybierz stronnika o koszcie {0}	
+GAMEPLAY_PlayErrors_REQ_TARGET_FOR_COMBO	Nie możesz zagrać tej karty – brak celu	
+GAMEPLAY_PlayErrors_REQ_TARGET_FOR_NO_COMBO	Nie możesz zagrać tej karty – brak celu	
+GAMEPLAY_PlayErrors_REQ_TARGET_IF_AVAILABE_AND_ELEMENTAL_PLAYED_LAST_TURN	Nie możesz zagrać tej karty – brak celu	
+GAMEPLAY_PlayErrors_REQ_TARGET_IF_AVAILABLE	Nie możesz zagrać tej karty – brak celu	
+GAMEPLAY_PlayErrors_REQ_TARGET_IF_AVAILABLE_AND_DRAGON_IN_HAND	Nie możesz zagrać tej karty – brak celu	
+GAMEPLAY_PlayErrors_REQ_TARGET_IF_AVAILABLE_AND_MINIMUM_FRIENDLY_MINIONS	Nie możesz zagrać tej karty – brak celu	
+GAMEPLAY_PlayErrors_REQ_TARGET_IF_AVAILABLE_AND_MINIMUM_FRIENDLY_SECRETS	Nie możesz zagrać tej karty – brak celu	
+GAMEPLAY_PlayErrors_REQ_TARGET_MAGNET	Jest już stronnik, który musi zostać wskazany	
+GAMEPLAY_PlayErrors_REQ_TARGET_MAX_ATTACK	Wybierz postać z atakiem {0} lub mniejszym	
+GAMEPLAY_PlayErrors_REQ_TARGET_MIN_ATTACK	Wybierz postać z atakiem równym {0} lub większym	
+GAMEPLAY_PlayErrors_REQ_TARGET_NON_TRIPLED_MINION	Ten stronnik jest już złoty.	
+GAMEPLAY_PlayErrors_REQ_TARGET_NOT_DAMAGEABLE_ONLY_BY_WEAPONS	Tę postać można zranić tylko bronią	
+GAMEPLAY_PlayErrors_REQ_TARGET_NOT_VAMPIRE	Ten stronnik jest już wampirem	
+GAMEPLAY_PlayErrors_REQ_TARGET_TAUNTER_CHARACTER	Na drodze stoi postać z Prowokacją	
+GAMEPLAY_PlayErrors_REQ_TARGET_TAUNTER_MINION	Na drodze stoi stronnik z Prowokacją	
+GAMEPLAY_PlayErrors_REQ_TARGET_TO_ATTACK	Nie ma nic do zaatakowania	
+GAMEPLAY_PlayErrors_REQ_TARGET_TO_PLAY	Nie możesz zagrać tej karty – brak celu	
+GAMEPLAY_PlayErrors_REQ_TARGET_WITH_BATTLECRY	Wybierz postać z Okrzykiem bojowym	
+GAMEPLAY_PlayErrors_REQ_TARGET_WITH_DEATHRATTLE	Wybierz postać z Agonią	
+GAMEPLAY_PlayErrors_REQ_TARGET_WITH_RACE	To nie jest odpowiednia rasa	
+GAMEPLAY_PlayErrors_REQ_UNDAMAGED_TARGET	Musisz wskazać niezranionego stronnika.	
+GAMEPLAY_PlayErrors_REQ_UNIQUE_SECRET	Ta karta jest już w grze	
+GAMEPLAY_PlayErrors_REQ_WEAPON_EQUIPPED	Nie masz broni	
+GAMEPLAY_RESTART_PUZZLES	WCZYTYWANIE ZAGADKI...	
+GAMEPLAY_RUBY_SPELLSTONE_1	<i>(Zagraj 2 Żywiołaki, aby_ulepszyć.)</i>	
+GAMEPLAY_RUBY_SPELLSTONE_2	<i>(Zagraj jeszcze 1 Żywiołaka, aby_ulepszyć.)</i>	
+GAMEPLAY_SAPPHIRE_SPELLSTONE_1	<i>(<b>Przeciąż</b> 3 kryształy many, aby ulepszyć.)</i>	
+GAMEPLAY_SAPPHIRE_SPELLSTONE_2	<i>(<b>Przeciąż</b> 2 kryształy many, aby ulepszyć.)</i>	
+GAMEPLAY_SAPPHIRE_SPELLSTONE_3	<i>(<b>Przeciąż</b> 1 kryształ many, aby ulepszyć.)</i>	
+GAMEPLAY_SCORE_SCREEN_TITLE_CONGRATS	Gratulacje!	
+GAMEPLAY_SECRET_BANNER_TITLE	Sekret!	
+GAMEPLAY_SECRET_DESC	Karta pozostaje ukryta do spełnienia sekretnego warunku... Uważaj!	
+GAMEPLAY_SECRET_NAME	Sekret	
+GAMEPLAY_SECRET_NAME_HUNTER	Sekret łowcy	
+GAMEPLAY_SECRET_NAME_MAGE	Sekret maga	
+GAMEPLAY_SECRET_NAME_PALADIN	Sekret paladyna	
+GAMEPLAY_SECRET_NAME_ROGUE	Sekret łotra	
+GAMEPLAY_SPECTATOR_DISCONNECT_BODY	Nastąpiło rozłączenie. Aby kontynuować, ponownie uruchom Hearthstone. Może być konieczne ponowne uruchomienie trybu widza.	
+GAMEPLAY_SPECTATOR_DISCONNECT_BODY_RESET	Nastąpiło rozłączenie. Trwa ponowne dołączanie. Może być konieczne ponowne uruchomienie trybu widza.	
+GAMEPLAY_TOOLTIP_BACON_GOLD	Kupuj stronników za złoto.	
+GAMEPLAY_TOOLTIP_DECK_DESCRIPTION	Masz {0} |4(kartę,karty,kart) w talii.	
+GAMEPLAY_TOOLTIP_DECK_HEADLINE	Talia	
+GAMEPLAY_TOOLTIP_ENEMYDECK_DESC	Przeciwnik ma {0} |4(kartę,karty,kart) w talii.	
+GAMEPLAY_TOOLTIP_ENEMYDECK_HEADLINE	Talia przeciwnika	
+GAMEPLAY_TOOLTIP_ENEMYHAND_DESC	Przeciwnik ma {0} |4(kartę,karty,kart) w ręce.	0= number of cards in hand.
+GAMEPLAY_TOOLTIP_ENEMYHAND_DESC_SINGLE	Przeciwnik ma {0} |4(kartę,karty,kart) w ręce.	0= number of cards in hand.
+GAMEPLAY_TOOLTIP_ENEMYHAND_DESC_TUT	Karty przeciwnika. Gracze co turę dobierają jedną kartę.	
+GAMEPLAY_TOOLTIP_ENEMYHAND_HEADLINE	Ręka przeciwnika	
+GAMEPLAY_TOOLTIP_FATIGUE_DECK_DESCRIPTION	Nie masz już kart! Od tej pory będziesz otrzymywać obrażenia za każdym razem, gdy spróbujesz dobrać kartę.	
+GAMEPLAY_TOOLTIP_FATIGUE_DECK_HEADLINE	Zmęczenie	
+GAMEPLAY_TOOLTIP_FATIGUE_ENEMYDECK_DESCRIPTION	Twój przeciwnik nie ma już kart! Od tej pory będzie otrzymywać obrażenia za każdym razem, gdy spróbuje dobrać kartę.	
+GAMEPLAY_TOOLTIP_FATIGUE_ENEMYDECK_HEADLINE	Zmęczenie	
+GAMEPLAY_TOOLTIP_HAND_DESCRIPTION	Masz {0} |4(kartę,karty,kart) w ręce.	
+GAMEPLAY_TOOLTIP_HAND_FULL_DESCRIPTION	Masz {0} |4(kartę,karty,kart) w ręce. Twoja ręka jest pełna.	
+GAMEPLAY_TOOLTIP_HAND_FULL_HEADLINE	Pełna ręka	
+GAMEPLAY_TOOLTIP_HAND_HEADLINE	Ręka	
+GAMEPLAY_TOOLTIP_MANA_COIN_DESCRIPTION	Wydawaj sztuki złota na karty, aby modyfikować swoją talię.	
+GAMEPLAY_TOOLTIP_MANA_COIN_HEADLINE	Sztuki złota	
+GAMEPLAY_TOOLTIP_MANA_DESCRIPTION	Kiedy zaczyna się twoja tura, otrzymujesz nowy kryształ i wypełniasz puste.	
+GAMEPLAY_TOOLTIP_MANA_HEADLINE	Kryształy many	
+GAMEPLAY_TOOLTIP_MANA_OVERLOAD_DESCRIPTION	W poprzedniej turze zagrano kartę z Przeciążeniem.	
+GAMEPLAY_TOOLTIP_MANA_OVERLOAD_HEADLINE	Zablokowane kryształy many	
+GAMEPLAY_TOT_109t_STASIS_DRAGON_1	Po dwóch turach obudzi się ze <b>Zrywem</b>.	
+GAMEPLAY_TOT_109t_STASIS_DRAGON_2	W następnej turze obudzi się ze <b>Zrywem</b>.	
+GAMEPLAY_TRLA_TROLL_SHRINE_1	Tury do powrotu\nKapliczki: 3	
+GAMEPLAY_TRLA_TROLL_SHRINE_2	Tury do powrotu\nKapliczki: 2	
+GAMEPLAY_TRLA_TROLL_SHRINE_3	Tury do powrotu\nKapliczki: 1	
+GAMEPLAY_UNDATAKAH1	{0}	
+GAMEPLAY_UNDATAKAH2	{0} i {1}	
+GAMEPLAY_UNDATAKAH3	{0}, {1} i {2}	
+GAMEPLAY_UNKNOWN_CREATED_BY	inna karta	
+GAMEPLAY_WIN_REWARD_PROGRESS	Wygrane: {0}/{1}	
+GAMEPLAY_YOUR_TURN	Twoja tura	
