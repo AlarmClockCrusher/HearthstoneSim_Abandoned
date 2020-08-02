@@ -879,7 +879,7 @@ class HeroZone: #Include heroes, weapons and powers
 class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选择，打印目前状态
 	def __init__(self, GUI, card):
 		self.decideColorOrig(GUI, card)
-		if "~~Secret" not in card.index or not hasattr(GUI, "ID") or seeEnemyHand or GUI.ID == card.ID:
+		if not card.description.startswith("Secret:") or not hasattr(GUI, "ID") or seeEnemyHand or GUI.ID == card.ID:
 			img = PIL.Image.open(findPicFilepath(card)).resize((SecretImgSize, SecretImgSize))
 			ph = PIL.ImageTk.PhotoImage(img)
 			tk.Button.__init__(self, relief=tk.FLAT, image=ph, compound=tk.TOP, master=GUI.GamePanel, bg=self.colorOrig, width=SecretIconSize_img, height=SecretIconSize_img, font=("Yahei", 10, "bold"))

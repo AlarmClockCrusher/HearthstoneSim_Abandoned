@@ -3015,7 +3015,7 @@ class Earthquake(Spell):
 		damage2 = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		PRINT(self.Game, "Earthquake deals %d damage to all minions"%damage2)
 		targets = self.Game.minionsonBoard(self.ID) + self.Game.minionsonBoard(3-self.ID)
-		self.dealsAOE(targets, [damage2]*len(target))
+		self.dealsAOE(targets, [damage2]*len(targets))
 		return None
 		
 		

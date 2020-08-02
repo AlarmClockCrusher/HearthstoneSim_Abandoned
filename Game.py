@@ -679,7 +679,7 @@ class Game:
 			card.checkEvanescent()
 		self.moves.append(("EndTurn", ))
 		
-	def battle(self, subject, target, verifySelectable=True, consumeAttackChance=True, resolveDeath=True, resetRedirectionTriggers=True):
+	def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirectionTriggers=True):
 		if verifySelectable and not subject.canAttackTarget(target):
 			PRINT(self, "Battle not allowed between attacker %s and target%s"%(subject.name, target.name))
 			return False
@@ -745,18 +745,18 @@ class Game:
 			elif (target.type != "Minion" and target.type != "Hero") or target.onBoard == False or target.health < 1 or target.dead:
 				PRINT(self, "The target is not onBoard/alive anymore. Battle interrupted. The attacker's attack chance is still wasted.")
 				battleContinues = False
-				if consumeAttackChance: #If this attack is canceled, the attack time still increases.
+				if useAttChance: #If this attack is canceled, the attack time still increases.
 					subject.attTimes += 1
 			elif self.heroes[1].health < 1 or self.heroes[1].dead or self.heroes[2].health < 1 or self.heroes[2].dead:
 				PRINT(self, "At least one of the players is dying, battle interrupted. But the attacker still wastes an attack chance.")
 				battleContinues = False
-				if consumeAttackChance: #If this attack is canceled, the attack time still increases.
+				if useAttChance: #If this attack is canceled, the attack time still increases.
 					subject.attTimes += 1
 			if battleContinues:
 				#伤害步骤，攻击者移除潜行，攻击者对被攻击者造成伤害，被攻击者对攻击者造成伤害。然后结算两者的伤害事件。
 				#攻击者和被攻击的血量都减少。但是此时尚不发出伤害判定。先发出攻击完成的信号，可以触发扫荡打击。
 				if self.GUI: self.GUI.attackAni(subject, target)
-				subject.attacks(target, consumeAttackChance)
+				subject.attacks(target, useAttChance)
 				#巨型沙虫的获得额外攻击机会的触发在随从死亡之前结算。同理达利乌斯克罗雷的触发也在死亡结算前，但是有隐藏的条件：自己不能处于濒死状态。
 				self.sendSignal(subject.type+"Attacked"+target.type, self.turn, subject, target, 0, "")
 				if subject == self.heroes[1] or subject == self.heroes[2]:

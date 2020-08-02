@@ -245,7 +245,7 @@ class Card:
 	#然后被攻击的那个狂暴者先受伤加攻，然后我方的狂暴者受伤加攻，最后是被AOE波及的那个狂暴者加攻。
 	#说明扫荡打击是把相邻的随从列入伤害处理列表 ，主要涉及的两个随从是最先结算的两个，
 	#被扫荡打击涉及的两个随从从左到右依次结算。
-	def attacks(self, target, consumeAttackChance=True):
+	def attacks(self, target, useAttChance=True):
 		PRINT(self.Game, "%s attacks %s"%(self.name, target.name))
 		subject_attack, target_attack = max(0, self.attack), max(0, target.attack)
 		if self.type == "Minion" and self.keyWords["Stealth"] > 0:
@@ -253,7 +253,7 @@ class Card:
 		self.status["Temp Stealth"] = 0
 		#Manipulate the health of the subject/target's health.
 		#Only send out "MinionTakesDmg" signal at this point.
-		if consumeAttackChance: self.attTimes += 1
+		if useAttChance: self.attTimes += 1
 		
 		damageDealingList = []
 		#如果攻击者是英雄且装备着当前回合打开着的武器，则将攻击的伤害来源视为那把武器。
@@ -890,7 +890,9 @@ class Minion(Card):
 	def takesDamage(self, subject, damage, sendDamageSignal=True):
 		game = self.Game
 		if damage > 0 and self.status["Immune"] < 1: #随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
-			if self.keyWords["Divine Shield"] > 0: self.losesKeyword("Divine Shield")
+			if self.keyWords["Divine Shield"] > 0:
+				damage = 0
+				self.losesKeyword("Divine Shield")
 			else:
 				#伤害量预检测。如果随从有圣盾则伤害预检测实际上是没有意义的。
 				damageHolder = [damage] #这个列表用于盛装伤害数值，会经由伤害扳机判定

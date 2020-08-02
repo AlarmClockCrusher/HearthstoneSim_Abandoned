@@ -2684,8 +2684,8 @@ class SoulMirror(Spell):
 					if minion.onBoard and minion.health > 0 and minion.dead == False and Copy.onBoard and Copy.health > 0 and Copy.dead == False:
 						PRINT(self.Game, "%s is forced to attack its copy"%minion.name)
 						#假设不消耗攻击机会，那些随从在攻击之后被我方拐走仍然可以攻击
-						#def battle(self, subject, target, verifySelectable=True, consumeAttackChance=True, resolveDeath=True, resetRedirectionTriggers=True)
-						self.Game.battle(minion, Copy, verifySelectable=False, consumeAttackChance=False, resolveDeath=False, resetRedirectionTriggers=True)
+						#def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirectionTriggers=True)
+						self.Game.battle(minion, Copy, verifySelectable=False, useAttChance=False, resolveDeath=False, resetRedirectionTriggers=True)
 		return None
 		
 		
@@ -3726,12 +3726,12 @@ class WarmaulChallenger(Minion):
 			PRINT(self.Game, "Warmaul Challenger's battlecry lets the minion battle enemy minion %s to the death"%target.name)
 			#假设双方轮流攻击，该随从先攻击.假设不消耗攻击机会
 			whoAttacks = 0
-			#def battle(self, subject, target, verifySelectable=True, consumeAttackChance=True, resolveDeath=True, resetRedirectionTriggers=True)
+			#def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirectionTriggers=True)
 			while self.onBoard and self.health > 0 and self.dead == False and target.onBoard and target.health > 0 and target.dead == False:
 				if whoAttacks == 0: #Warmaul Challenger attacks first
-					self.Game.battle(self, target, verifySelectable=False, consumeAttackChance=False, resolveDeath=False, resetRedirectionTriggers=False)
+					self.Game.battle(self, target, verifySelectable=False, useAttChance=False, resolveDeath=False, resetRedirectionTriggers=False)
 				else:
-					self.Game.battle(target, self, verifySelectable=False, consumeAttackChance=False, resolveDeath=False, resetRedirectionTriggers=False)
+					self.Game.battle(target, self, verifySelectable=False, useAttChance=False, resolveDeath=False, resetRedirectionTriggers=False)
 				whoAttacks = 1 - whoAttacks
 		return target
 		

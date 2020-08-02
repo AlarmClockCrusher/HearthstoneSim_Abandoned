@@ -1119,7 +1119,7 @@ class Trig_TrueaimCrescent(TrigBoard):
 		minions = self.entity.Game.minionsAlive(self.entity.ID)
 		for minion in minions:
 			if target.onBoard and target.health > 0 and not target.dead:
-				self.entity.Game.battle(minion, target, verifySelectable=False, consumeAttackChance=True, resolveDeath=False, resetRedirectionTriggers=True)
+				self.entity.Game.battle(minion, target, verifySelectable=False, useAttChance=True, resolveDeath=False, resetRedirectionTriggers=True)
 				
 				
 class AceHunterKreen(Minion):

@@ -2504,8 +2504,8 @@ class Duel(Spell):
 	description = "Summon a minion from each player's deck. They fight"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		PRINT(curGame, "Duel! is cast and summons a minion from each player's deck. They fight.")
 		if curGame.mode == 0:
+			PRINT(curGame, "Duel! is cast and summons a minion from each player's deck. They fight.")
 			if curGame.guides:
 				i, j = curGame.guides.pop(0)
 			else:
@@ -2520,12 +2520,12 @@ class Duel(Spell):
 				curGame.summonfromDeck(i, self.ID, -1, self.ID)
 			if j > -1:
 				enemy = curGame.Hand_Deck.decks[3-self.ID][j]
-				curGame.summonfromDeck(i, 3-self.ID, -1, self.ID)
+				curGame.summonfromDeck(j, 3-self.ID, -1, self.ID)
 			#如果我方随从有不能攻击的限制，如Ancient Watcher之类，不能攻击。
 			#攻击不消耗攻击机会
 			#需要测试有条件限制才能攻击的随从，如UnpoweredMauler
 			if friendly and enemy and friendly.marks["Can't Attack"] < 1:
-				curGame.battle(friendly, enemy, False, False)
+				curGame.battle(friendly, enemy, verifySelectable=False, useAttChance=False, resolveDeath=False)
 		return None
 		
 		

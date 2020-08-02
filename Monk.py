@@ -627,7 +627,7 @@ class DrunkenBoxing(Spell): #醉拳
 			attackTarget = minionstoAttack.pop()
 			if attackTarget.health > 0 and not attackTarget.dead and hero.health > 0 and not hero.dead:
 				PRINT(self.Game, "Drunken Boxing lets player attack minion %s"%attackTarget.name)
-				#def battle(self, subject, target, verifySelectable=True, consumeAttackChance=True, resolveDeath=True, resetRedirectionTriggers=True)
+				#def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirectionTriggers=True)
 				self.Game.battle(hero, attackTarget, False, True, False, False)
 				self.Game.trigsBoard[self.ID]
 			elif attackTarget.health < 0 or attackTarget.dead:
