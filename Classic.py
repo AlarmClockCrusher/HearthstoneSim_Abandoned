@@ -3607,17 +3607,29 @@ class Redemption(Secret):
 class Trig_Redemption(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionDies"])
+		self.triggered = False
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.ID != self.entity.Game.turn and target.ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0
+		return self.entity.ID != self.entity.Game.turn and target.ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and not self.triggered
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "When friendly minion %s dies, Secret Redemption returns it to life with 1 Health."%target.name)
+		self.triggered = True
 		minion = type(target)(self.entity.Game, self.entity.ID)
 		minion.health = 1
 		self.entity.Game.summon(minion, -1, self.entity.ID)
 		
-		
+	def createCopy(self, game):
+		if self not in game.copiedObjs: #这个扳机没有被复制过
+			entityCopy = self.entity.createCopy(game)
+			trigCopy = self.selfCopy(entityCopy)
+			trigCopy.triggered = self.triggered
+			game.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return game.copiedObjs[self]
+			
+			
 class Repentance(Secret):
 	Class, name = "Paladin", "Repentance"
 	requireTarget, mana = False, 1
@@ -5208,12 +5220,12 @@ class CommandingShout(Spell):
 	description = "Your minions can't be reduced below 1 Health this turn. Draw a card"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Commanding Shout will prevent player's minions' health be reduced below 1 this turn. Player draws a card.")
-		trigger = Trig_CommandingShout(self.Game, self.ID)
+		trigger = CommandingShoutEffect(self.Game, self.ID)
 		trigger.connect()
 		self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
-class Trig_CommandingShout:
+class CommandingShoutEffect:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.signals = ["FinalDmgonMinion?"]

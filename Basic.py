@@ -1445,11 +1445,11 @@ class ArcaneMissiles(Spell):
 	description = "Deal 3 damage randomly split among all enemies"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		num = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		side, curGame = 3-self.ID, self.Game
 		if curGame.mode == 0:
-			PRINT(curGame, "Arcane Missiles launches %d missiles."%num)
-			for i in range(num):
+			PRINT(curGame, "Arcane Missiles launches %d missiles."%damage)
+			for num in range(damage):
 				if curGame.guides:
 					i, where = curGame.guides.pop(0)
 					if where: char = curGame.find(i, where)
@@ -2380,9 +2380,9 @@ class Trig_Corruption(TrigBoard):
 		extractfrom(self, self.entity.trigsBoard)
 		
 	def selfCopy(self, recipient):
-		trigger = type(self)(recipient)
-		trigger.ID = self.ID
-		return trigger
+		trig = type(self)(recipient)
+		trig.ID = self.ID
+		return trig
 		
 class MortalCoil(Spell):
 	Class, name = "Warlock", "Mortal Coil"

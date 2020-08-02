@@ -2484,7 +2484,6 @@ class Renew(Spell):
 			heal = 3 * (2 ** self.countHealDouble())
 			PRINT(curGame, "Renew restores %d Health to"%heal)
 			self.restoresHealth(target, heal)
-		if curGame.Hand_Deck.handNotFull(self.ID) and self.ID != curGame.turn:
 			if curGame.mode == 0:
 				if curGame.guides:
 					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
@@ -2806,7 +2805,7 @@ class Trig_Bamboozle(SecretTrigger):
 				curGame.fixedGuides.append(newMinion)
 			PRINT(curGame, "When friendly minion %s is attacked, Secret Bamboozle triggers and transforms it into a random one that costs (3) more"%target[0].name)
 			#不知道如果攻击目标已经被导离这个目标随从之后是否会把目标重导向回它，假设不会
-			newMinion = newMinion(curGame, self.ID)
+			newMinion = newMinion(curGame, self.entity.ID)
 			curGame.transform(target[0], newMinion)
 			if target[0] == target[1]: target[0], target[1] = newMinion, newMinion
 			else: target[0] = newMinion

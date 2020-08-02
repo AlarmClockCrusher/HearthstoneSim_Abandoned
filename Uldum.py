@@ -1073,11 +1073,12 @@ class Trig_UntappedPotential(QuestTrigger):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.entity.Game.Manas.manas[self.entity.ID] > 0:
 			self.counter += 1
-			PRINT(self.Game, "Player ends turn with unspent mana. Quest Untapped Potential progresses by 1. Current progress: %d"%self.counter)
+			PRINT(self.entity.Game, "Player ends turn with unspent mana. Quest Untapped Potential progresses by 1. Current progress: %d"%self.counter)
 			if self.counter > 3:
-				PRINT(self.Game, "Player ends turn with unspent mana for the 4th time and gains Reward: Orissian Tear.")
+				PRINT(self.entity.Game, "Player ends turn with unspent mana for the 4th time and gains Reward: Orissian Tear.")
 				self.disconnect()
-				extractfrom(self.entity, self.entity.Game.Secrets.mainQuests[self.entity.ID])
+				try: self.entity.Game.Secrets.mainQuests[self.entity.ID].remove(self.entity)
+				except: pass
 				OssirianTear(self.entity.Game, self.entity.ID).replaceHeroPower()
 				
 class OssirianTear(HeroPower):
@@ -1403,11 +1404,12 @@ class Trig_UnsealtheVault(QuestTrigger):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.counter += 1
-		PRINT(self.Game, "After player summons minion %s, Quest Unseal the Vault progresses by 1. Current progress: %d"%(subject.name, self.counter))
+		PRINT(self.entity.Game, "After player summons minion %s, Quest Unseal the Vault progresses by 1. Current progress: %d"%(subject.name, self.counter))
 		if self.counter > 19:
-			PRINT(self.Game, "Player summons the 20th minion and gains Reward: Ramkahen Roar.")
+			PRINT(self.entity.Game, "Player summons the 20th minion and gains Reward: Ramkahen Roar.")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.mainQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.mainQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			RamkahenRoar(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
 class RamkahenRoar(HeroPower):
@@ -1666,11 +1668,12 @@ class Trig_RaidtheSkyTemple(QuestTrigger):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.counter += 1
-		PRINT(self.Game, "Player plays spell and Quest Raid the Sky Temple progresses by 1. Current progress: %d"%self.counter)
+		PRINT(self.entity.Game, "Player plays spell and Quest Raid the Sky Temple progresses by 1. Current progress: %d"%self.counter)
 		if self.counter > 9:
-			PRINT(self.Game, "Player plays the 10th spell and gains Reward: Ascendant Scroll.")
+			PRINT(self.entity.Game, "Player plays the 10th spell and gains Reward: Ascendant Scroll.")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.mainQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.mainQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			AscendantScroll(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
 class AscendantScroll(HeroPower):
@@ -1915,7 +1918,7 @@ class RenotheRelicologist(Minion):
 		
 class PuzzleBoxofYoggSaron(Spell):
 	Class, name = "Mage", "Puzzle Box of Yogg-Saron"
-	requireTarget, mana = False, 10
+	requireTarget, mana = False, 1
 	index = "Uldum~Mage~Spell~10~Puzzle Box of Yogg-Saron"
 	description = "Cast 10 random spells (targets chosen randomly)"
 	poolIdentifier = "Spells"
@@ -1963,11 +1966,12 @@ class Trig_MakingMummies(QuestTrigger):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.counter += 1
-		PRINT(self.Game, "Player plays Reborn minion %s and Quest Making Mummies progresses by 1. Current progress: %d"%(subject.name, self.counter))
+		PRINT(self.entity.Game, "Player plays Reborn minion %s and Quest Making Mummies progresses by 1. Current progress: %d"%(subject.name, self.counter))
 		if self.counter > 4:
-			PRINT(self.Game, "Player plays the 5th spell and gains Reward: Emperor Wraps.")
+			PRINT(self.entity.Game, "Player plays the 5th spell and gains Reward: Emperor Wraps.")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.mainQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.mainQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			EmperorWraps(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
 class EmperorWraps(HeroPower):
@@ -2222,11 +2226,12 @@ class Trig_ActivatetheObelisk(QuestTrigger):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.counter += number
-		PRINT(self.Game, "Player restores %d Health and Quest Activate the Obelisk progresses. Current progress: %d"%self.counter)
+		PRINT(self.entity.Game, "Player restores %d Health and Quest Activate the Obelisk progresses. Current progress: %d"%self.counter)
 		if self.counter > 14:
-			PRINT(self.Game, "Player has restored 15 or more Health and gains Reward: Obelisk's Eye.")
+			PRINT(self.entity.Game, "Player has restored 15 or more Health and gains Reward: Obelisk's Eye.")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.mainQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.mainQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			ObelisksEye(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
 class ObelisksEye(HeroPower):
@@ -2483,11 +2488,12 @@ class Trig_BazaarBurglary(QuestTrigger):
 			#之所以用牌的identity来作为标识的原因是随从在下场后被闷棍返回手牌之后仍然可以视为作为进度。所以需要用不同的identity加以区分
 			self.entity.cardsfromOtherClasses.append(target[0].identity)
 			self.counter += 1
-			PRINT(self.Game, "A card from another Class %s is put into player's hand, Quest Bazaar Burglary progresses by 1. Current progress: %d"%(target[0].name, self.counter))
+			PRINT(self.entity.Game, "A card from another Class %s is put into player's hand, Quest Bazaar Burglary progresses by 1. Current progress: %d"%(target[0].name, self.counter))
 			if self.counter > 3:
-				PRINT(self.Game, "The 4th card from another Class is put into player's hand. Player gains Reward: Ancient Blades.")
+				PRINT(self.entity.Game, "The 4th card from another Class is put into player's hand. Player gains Reward: Ancient Blades.")
 				self.disconnect()
-				extractfrom(self.entity, self.entity.Game.Secrets.mainQuests[self.entity.ID])
+				try: self.entity.Game.Secrets.mainQuests[self.entity.ID].remove(self.entity)
+				except: pass
 				AncientBlades(self.entity.Game, self.entity.ID).replaceHeroPower()
 				
 class AncientBlades(HeroPower):
@@ -2782,11 +2788,12 @@ class Trig_CorrupttheWaters(QuestTrigger):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.counter += 1
-		PRINT(self.Game, "After player plays Battlecry card %s, Quest Corrupt the Waters progresses by 1. Current progress: %d"%(subject.name, self.counter))
+		PRINT(self.entity.Game, "After player plays Battlecry card %s, Quest Corrupt the Waters progresses by 1. Current progress: %d"%(subject.name, self.counter))
 		if self.counter > 5:
-			PRINT(self.Game, "Player plays the 6th Battlecry card and gains Reward: Heart of Vir'naal.")
+			PRINT(self.entity.Game, "Player plays the 6th Battlecry card and gains Reward: Heart of Vir'naal.")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.mainQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.mainQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			HeartofVirnaal(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
 class HeartofVirnaal(HeroPower):
@@ -3128,7 +3135,8 @@ class Trig_SupremeArchaeology(QuestTrigger):
 		if self.counter > 19:
 			PRINT(self.entity.Game, "Player draws the 20th card and gains Reward: Tome of Origination.")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.mainQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.mainQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			TomeofOrigination(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
 class TomeofOrigination(HeroPower):
@@ -3411,7 +3419,8 @@ class Trig_HacktheSystem(QuestTrigger):
 		if self.counter > 4:
 			PRINT(self.entity.Game, "Player has attacked the 5th time and gains Reward: Anraphet's Core.")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.mainQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.mainQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			AnraphetsCore(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
 class AnraphetsCore(HeroPower):

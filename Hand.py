@@ -300,26 +300,27 @@ class Hand_Deck:
 	# PlotTwist把手牌洗入牌库的时候，手牌中buff的随从两次被抽上来时buff没有了。
 	# 假设洗入牌库这个动作会把一张牌初始化
 	def shuffleCardintoDeck(self, obj, initiatorID, enemyCanSee=True, sendSig=True):
-		curGame = self.Game
-		if curGame.GUI: curGame.GUI.shuffleCardintoDeckAni(obj, enemyCanSee)
-		if isinstance(obj, (list, np.ndarray)):
-			ID = obj[0].ID
-			newDeck = self.decks[ID] + obj
-			for card in obj: card.entersDeck()
-		else:  # Shuffle a single card
-			ID = obj.ID
-			newDeck = self.decks[ID] + [obj]
-			obj.entersDeck()
+		if obj:
+			curGame = self.Game
+			if curGame.GUI: curGame.GUI.shuffleCardintoDeckAni(obj, enemyCanSee)
+			if isinstance(obj, (list, np.ndarray)):
+				ID = obj[0].ID
+				newDeck = self.decks[ID] + obj
+				for card in obj: card.entersDeck()
+			else:  # Shuffle a single card
+				ID = obj.ID
+				newDeck = self.decks[ID] + [obj]
+				obj.entersDeck()
 
-		if curGame.mode == 0:
-			if curGame.guides:
-				order = curGame.guides.pop(0)
-			else:
-				order = list(range(len(newDeck)))
-				npshuffle(order)
-				curGame.fixedGuides.append(tuple(order))
-			self.decks[ID] = [newDeck[i] for i in order]
-		if sendSig: curGame.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
+			if curGame.mode == 0:
+				if curGame.guides:
+					order = curGame.guides.pop(0)
+				else:
+					order = list(range(len(newDeck)))
+					npshuffle(order)
+					curGame.fixedGuides.append(tuple(order))
+				self.decks[ID] = [newDeck[i] for i in order]
+			if sendSig: curGame.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
 
 	def discardAll(self, ID):
 		if self.hands[ID]:
@@ -426,8 +427,8 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 
 
-Default1 = [MoargArtificer, MoargArtificer, Blur, Blur, CommandingShout, CommandingShout, ArcaneMissiles, ArcaneMissiles
+Default1 = [HighAbbessAlura, Renew, Renew, HighAbbessAlura, CommandingShout, CommandingShout, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron, MoargArtificer, MoargArtificer, EducatedElekk, EducatedElekk, UntappedPotential, BazaarBurglary, CleverDisguise, CleverDisguise, PharaohCat, PharaohCat
 			]
 
-Default2 = [MoargArtificer, MoargArtificer, Blur, Blur, CommandingShout, CommandingShout, ArcaneMissiles, ArcaneMissiles
+Default2 = [HighAbbessAlura, Renew, Renew, HighAbbessAlura, CommandingShout, CommandingShout, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron, MoargArtificer, MoargArtificer, EducatedElekk, EducatedElekk, UntappedPotential, BazaarBurglary, CleverDisguise, CleverDisguise, PharaohCat, PharaohCat
 			]

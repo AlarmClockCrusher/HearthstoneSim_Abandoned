@@ -29,11 +29,11 @@ class Blur(Spell):
 	#不知道与博尔碎盾的结算是如何进行的。
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Blur is cast and player can't take any damage this turn")
-		trigger = Trig_Blur(self.Game, self.ID)
+		trigger = BlurEffect(self.Game, self.ID)
 		trigger.connect()
 		return None
 		
-class Trig_Blur:
+class BlurEffect:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.signals = ["FinalDmgonHero?"]

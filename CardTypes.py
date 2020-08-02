@@ -1,7 +1,11 @@
-import numpy as np
 import inspect
 import copy
-from Triggers_Auras import ManaMod
+
+from numpy.random import choice as npchoice
+from numpy.random import randint as nprandint
+import numpy as np
+
+from Triggers_Auras import Trig_Echo, ManaMod
 
 def extractfrom(target, listObj):
 	try: return listObj.pop(listObj.index(target))
@@ -1349,7 +1353,7 @@ class Spell(Card):
 		if curGame.GUI:
 			curGame.GUI.displayCard(self)
 			curGame.GUI.target = target
-			curGame.GUI.wait(400)
+			curGame.GUI.wait(550)
 		#在法术要施放两次的情况下，第二次的目标仍然是第一次时随机决定的
 		for i in range(repeatTimes):
 			if self.overload > 0:
@@ -1970,7 +1974,7 @@ class Hero(Card):
 		if health_max: self.health_max = health_max
 		if healthChanged and self.Game.turn == self.ID:
 			self.Game.Counters.timesHeroChangedHealth_inOwnTurn[self.ID] += 1
-			game.Counters.heroChangedHealthThisTurn[self.ID] = True
+			self.Game.Counters.heroChangedHealthThisTurn[self.ID] = True
 			self.Game.sendSignal("HeroChangedHealthinTurn", self.ID, None, None, 0, "")
 			
 	#专门被英雄牌使用，加拉克苏斯大王和拉格纳罗斯都不会调用该方法。

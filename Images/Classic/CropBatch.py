@@ -16,10 +16,10 @@ from PIL import Image
 #		im1 = im.crop((83, 70, 203, 190)) 
 #		im1.save('Crop96x96\\'+filename)
 
-singlefilename = "Spellbender.png"
+singlefilename = "LordJaraxxus2.png"
 im = Image.open(singlefilename)
 ## Size of the image in pixels (size of orginal image) 
-im1 = im.crop((83, 70, 203, 190))
+im1 = im.crop((58, 50, 208, 200))
 #Image size will be 96x96
 im1.show()
-im1.save("Crop96x96\\"+singlefilename)
+im1.save("Crop\\"+singlefilename)

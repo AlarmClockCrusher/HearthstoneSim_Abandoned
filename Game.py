@@ -1,5 +1,5 @@
 from Handlers import *
-from Triggers_Auras import Trig_Echo, Trig_Borrow
+from Triggers_Auras import Trig_Borrow
 
 from Basic import Illidan, Anduin
 
@@ -151,11 +151,11 @@ class Game:
 			#在打出序列的开始阶段决定是否要产生一个回响copy
 			if self.GUI: self.GUI.displayCard(minion)
 			hasEcho = False
-			#if minion.keyWords["Echo"] > 0:
-			#	hasEcho = True
-			#	echoCard = type(minion)(self, self.turn)
-			#	trigger = Trig_Echo(echoCard)
-			#	echoCard.trigsHand.append(trigger)
+			if minion.keyWords["Echo"] > 0:
+				hasEcho = True
+				echoCard = type(minion)(self, self.turn)
+				trigger = Trig_Echo(echoCard)
+				echoCard.trigsHand.append(trigger)
 			subIndex, subWhere = self.Hand_Deck.hands[minion.ID].index(minion), "hand%d"%minion.ID
 			if target:
 				if target.type == "Minion": tarIndex, tarWhere = target.position, "minion%d"%target.ID
@@ -243,7 +243,7 @@ class Game:
 						newPositions.append(pos+1)
 						newPositions.append(pos+1)
 				#Preprocessing finished, don't invoke doubling. Use the newSubjects and newPositions created.
-				self.summon(newSubjects, newPositions, subject.ID, comment="")
+				self.summon(newSubjects, newPositions, subject[0].ID, comment="")
 				
 	#不考虑卡德加带来的召唤数量翻倍。用于被summonMinion引用。
 	def summonSingle(self, subject, position):

@@ -1,6 +1,9 @@
 from CardTypes import *
 from Triggers_Auras import *
 
+from numpy.random import choice as npchoice
+from numpy.random import shuffle as npshuffle
+
 class WindWalkerMistweaver(HeroPower): #踏风织雾
 	mana, name, requireTarget = 2, "WindWalker-Mistweaver", True
 	index = "Monk~Basic Hero Power~2~WindWalker-Mistweaver"
@@ -187,7 +190,8 @@ class EffusiveMists(Spell): #流溢之雾
 		return self.Game.minionsonBoard(3-self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		minions = self.Game.minionsonBoard(3-self.ID)
+		curGame = self.Game
+		minions = curGame.minionsonBoard(3-self.ID)
 		if minions:
 			if curGame.mode == 0:
 				if curGame.guides:

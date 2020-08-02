@@ -528,8 +528,7 @@ class EducatedElekk(Minion):
 class Trig_EducatedElekk(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
-		self.spellsRemembered = []
-		
+
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID
 		
@@ -3294,7 +3293,7 @@ class Trig_RuneDagger(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "After player attacks, Rune Dagger gives player Spell Damage +1 this turn.")
 		self.entity.Game.status[self.entity.ID]["Spell Damage"] += 1
-		self.Game.turnEndTrigger.append(SpellDamagePlus1Disappears(self.Game, self.ID))
+		self.entity.Game.turnEndTrigger.append(SpellDamagePlus1Disappears(self.entity.Game, self.entity.ID))
 		
 class SpellDamagePlus1Disappears:
 	def __init__(self, Game, ID):
@@ -3360,12 +3359,12 @@ class InstructorFireheart(Minion):
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.ID == self.Game.turn:
-			trig = Trig_InstructorFireheart(self.Game, self.ID)
+			trig = FireheartEffect(self.Game, self.ID)
 			trig.connect()
 			trig.effect(signal='', ID=0, subject=None, target=None, number=0, comment=comment, choice=0)
 		return None
 		
-class Trig_InstructorFireheart:
+class FireheartEffect:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.temp = False

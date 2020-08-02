@@ -1300,7 +1300,8 @@ class Trig_SecuretheDeck(QuestTrigger):
 		if self.entity.progress > 1:
 			PRINT(self.entity.Game, "Player has attacked twice and gain Reward: 3 'Claws'")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.sideQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.sideQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			self.entity.Game.Hand_Deck.addCardtoHand([Claw, Claw, Claw], self.entity.ID, "type")
 			
 			
@@ -1327,20 +1328,16 @@ class Trig_StrengthinNumbers(QuestTrigger):
 		if self.counter > 9:
 			PRINT(curGame, "Player has spent at least 10 Mana on playing minions and gains Reward: Summon a minion from your deck")
 			self.disconnect()
-			extractfrom(self.entity, curGame.Secrets.sideQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.sideQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			if curGame.mode == 0:
 				if curGame.guides:
 					i = curGame.guides.pop(0)
-					if i < 0: return
 				else:
-					minionsinDeck = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if card.type == "Minion"]
-					if minionsinDeck:
-						i = npchoice(minionsinDeck)
-						curGame.fixedGuides.append(i)
-					else:
-						curGame.fixedGuides.append(-1)
-						return
-				curGame.summonfromDeck(i, self.entity.ID, -1, self.entity.ID)
+					minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if card.type == "Minion"]
+					i = npchoice(minions) if minionsinDeck and curGame.space(self.entity.ID) > 0 else -1
+					curGame.fixedGuides.append(i)
+				if > -1: curGame.summonfromDeck(i, self.entity.ID, -1, self.entity.ID)
 				
 				
 class Treenforcements(Spell):
@@ -1631,7 +1628,8 @@ class Trig_CleartheWay(QuestTrigger):
 		if self.counter > 2:
 			PRINT(self.entity.Game, "Player has summoned at least 3 Rush minions and gains Reward: Summon a 4/4 Gryphon with Rush")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.sideQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.sideQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			self.entity.Game.summon(Gryphon_Dragons(self.entity.Game, self.entity.ID), -1, self.entity.ID)
 			
 			
@@ -1684,7 +1682,8 @@ class Trig_ToxicReinforcement(QuestTrigger):
 		if self.counter > 2:
 			PRINT(self.entity.Game, "Player used Hero Power for the third time and gains Reward: Summon three 1/1 Leper Gnomes")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.sideQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.sideQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			self.entity.Game.summon([LeperGnome_Dragons(self.entity.Game, self.entity.ID) for i in range(3)], (-1, "totheRightEnd"), self.entity.ID)
 			
 class LeperGnome_Dragons(Minion):
@@ -1946,29 +1945,26 @@ class Trig_ElementalAllies(QuestTrigger):
 		else: return subject.ID == self.entity.ID and "Elemental" in subject.race and self.counter < 2
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		curGame = self.Game
+		curGame = self.entity.Game
 		if signal == "TurnEnds": self.counter -= 1 * (self.counter > 0)
 		else:
 			self.counter += 2
 			if self.counter > 2:
 				PRINT(curGame, "Player has played Elementals two turns in a row and gains Reward: Draw 3 spells from your deck")
 				self.disconnect()
-				extractfrom(self.entity, curGame.Secrets.sideQuests[self.entity.ID])
-				ownDeck = curGame.Hand_Deck.decks[self.ID]
+				try: curGame.Secrets.sideQuests[self.entity.ID].remove(self.entity)
+				except: pass
+				ownDeck = curGame.Hand_Deck.decks[self.entity.ID]
 				for num in range(3):
 					if curGame.mode == 0:
 						if curGame.guides:
 							i = curGame.guides.pop(0)
-							if i < 0: break
 						else:
 							spellsinDeck = [i for i, card in enumerate(ownDeck) if card.type == "Spell"]
-							if spellsinDeck:
-								i = npchoice(spellsinDeck)
-								curGame.fixedGuides.append(i)
-							else:
-								curGame.fixedGuides.append(-1)
-								break
-						curGame.Hand_Deck.drawCard(self.ID, i)
+							i = npchoice(spellsinDeck) if spellsinDeck else -1
+							curGame.fixedGuides.append(i)
+						if i > -1: curGame.Hand_Deck.drawCard(self.entity.ID, i)
+						else: break
 						
 						
 class LearnDraconic(Quest):
@@ -1993,7 +1989,8 @@ class Trig_LearnDraconic(QuestTrigger):
 		if self.counter > 7:
 			PRINT(self.entity.Game, "Player has spent 8 or more Mana on spells and gains Rewards: Summon a 6/6 Dragon")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.sideQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.sideQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			self.entity.Game.summon(DraconicEmissary(self.entity.Game, self.entity.ID), -1, self.entity.ID)
 			
 class DraconicEmissary(Minion):
@@ -2445,7 +2442,8 @@ class Trig_RighteousCause(QuestTrigger):
 		if self.counter > 4:
 			PRINT(self.entity.Game, "Player has summoned at least 5 minions and gains Reward: Give your minions +1/+1")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.sideQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.sideQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			for minion in fixedList(self.entity.Game.minionsonBoard(self.entity.ID)):
 				minion.buffDebuff(1, 1)
 				
@@ -2494,7 +2492,8 @@ class Trig_Sanctuary(QuestTrigger):
 		if self.entity.Game.Counters.damageonHeroThisTurn[self.entity.ID] == 0:
 			PRINT(self.entity.Game, "Player ends turn with without taking damage this turn and gains Reward: Summon a 4/6 with Taunt")
 			self.disconnect()
-			extractfrom(self.entity, self.entity.Game.Secrets.sideQuests[self.entity.ID])
+			try: self.entity.Game.Secrets.sideQuests[self.entity.ID].remove(self.entity)
+			except: pass
 			self.entity.Game.summon(IndomitableChampion(self.entity.Game, self.entity.ID), -1, self.entity.ID)
 			
 class IndomitableChampion(Minion):

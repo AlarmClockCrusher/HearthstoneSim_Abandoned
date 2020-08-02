@@ -371,22 +371,6 @@ class Discover:
 		self.Game = Game
 		self.initiator = None
 		
-	#When there is no GUI selection, the player_HandleRNG should do the discover right away.
-	#当Player决定打出一张触发发现的手牌时，进入发现过程，然后player会假设挑选所有的发现选项，然后根据不同的发现选项来分析得到这个发现选项之后的行为（同样
-	#是NO_RNG和有一次随机的选项，然后和其他的对比），取分数最高的挑选。
-	#这次挑选之后如果有再次发现的情况，则需要再次进行以上流程。
-	def branch_discover(self, initiator):
-		self.initiator = initiator
-		for i in range(len(discoverOptions)):
-			game = copy.deepcopy(self.Game)
-			option = game.options[i]
-			initiatorCopy = game.initiator
-			#拿到提供的一个发现选项。
-			initiatorCopy.discoverDecided(option)#这里可能会返回多次发现的情况，如档案管理员
-			game.options = []
-			#根据这个发现选项进行排列组合，挑选无随机的所有可能性。记录下那个分数，和之后其他选项的对比
-			discover_branch[key+initiator.name+"_chooses_"+option.name+";"] = game
-			
 	def startDiscover(self, initiator, info=None):
 		if self.Game.GUI:
 			self.initiator = initiator

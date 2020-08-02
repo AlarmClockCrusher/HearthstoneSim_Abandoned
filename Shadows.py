@@ -1480,7 +1480,7 @@ class Trig_SpiritofLucentbark(TrigBoard):
 		PRINT(self.entity.Game, "Player restores %d Health, and %s's counter records it."%(number, self.entity.name))
 		self.counter += number
 		if self.counter > 4:
-			PRINT(self.Game, "Spirit of Lucentbark transforms into Lucentbark")
+			PRINT(self.entity.Game, "Spirit of Lucentbark transforms into Lucentbark")
 			self.entity.Game.transform(self.entity, Lucentbark(self.entity.Game, self.entity.ID))
 			
 			
@@ -1848,7 +1848,7 @@ class Trig_ThoridaltheStarsFury(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "After player attacks, Thori'dal, the Stars' Fury gives player Spell Damage +2 this turn.")
 		self.entity.Game.status[self.entity.ID]["Spell Damage"] += 2
-		self.Game.turnEndTrigger.append(SpellDamagePlus2Disappears(self.Game, self.ID))
+		self.entity.Game.turnEndTrigger.append(SpellDamagePlus2Disappears(self.entity.Game, self.entity.ID))
 		
 class SpellDamagePlus2Disappears:
 	def __init__(self, Game, ID):
