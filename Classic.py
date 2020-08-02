@@ -180,7 +180,7 @@ class Trig_Secretkeeper(TrigBoard):
 		
 	#Assume Secretkeeper and trigger while dying.
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and "~~Secret" in subject.index
+		return self.entity.onBoard and subject.description.startswith("Secret:")
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "A Secret is played and %s gains 1/+1."%self.entity.name)
@@ -2838,7 +2838,7 @@ class ExplosiveTrap(Secret):
 	Class, name = "Hunter", "Explosive Trap"
 	requireTarget, mana = False, 2
 	index = "Classic~Hunter~Spell~2~Explosive Trap~~Secret"
-	description = "When your hero is attacked, deal 2 damage to all enemies"
+	description = "Secret: When your hero is attacked, deal 2 damage to all enemies"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_ExplosiveTrap(self)]
@@ -2861,7 +2861,7 @@ class FreezingTrap(Secret):
 	Class, name = "Hunter", "Freezing Trap"
 	requireTarget, mana = False, 2
 	index = "Classic~Hunter~Spell~2~Freezing Trap~~Secret"
-	description = "When an enemy minion attacks, return it to its owner's hand. It costs (2) more."
+	description = "Secret: When an enemy minion attacks, return it to its owner's hand. It costs (2) more."
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_FreezingTrap(self)]
@@ -2884,7 +2884,7 @@ class Misdirection(Secret):
 	Class, name = "Hunter", "Misdirection"
 	requireTarget, mana = False, 2
 	index = "Classic~Hunter~Spell~2~Misdirection~~Secret"
-	description = "When an enemy attacks your hero, instead it attacks another random character"
+	description = "Secret: When an enemy attacks your hero, instead it attacks another random character"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Misdirection(self)]
@@ -2928,7 +2928,7 @@ class SnakeTrap(Secret):
 	Class, name = "Hunter", "Snake Trap"
 	requireTarget, mana = False, 2
 	index = "Classic~Hunter~Spell~2~Snake Trap~~Secret"
-	description = "When one of your minions is attacked, summon three 1/1 Snakes"
+	description = "Secret: When one of your minions is attacked, summon three 1/1 Snakes"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_SnakeTrap(self)]
@@ -2956,7 +2956,7 @@ class Snipe(Secret):
 	Class, name = "Hunter", "Snipe"
 	requireTarget, mana = False, 2
 	index = "Classic~Hunter~Spell~2~Snipe~~Secret"
-	description = "After your opponent plays a minion, deal 4 damage to it"
+	description = "Secret: After your opponent plays a minion, deal 4 damage to it"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Snipe(self)]
@@ -3242,7 +3242,7 @@ class Counterspell(Secret):
 	Class, name = "Mage", "Counterspell"
 	requireTarget, mana = False, 3
 	index = "Classic~Mage~Spell~3~Counterspell~~Secret"
-	description = "When your opponent casts a spell, Counter it."
+	description = "Secret: When your opponent casts a spell, Counter it."
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Counterspell(self)]
@@ -3263,7 +3263,7 @@ class IceBarrier(Secret):
 	Class, name = "Mage", "Ice Barrier"
 	requireTarget, mana = False, 3
 	index = "Classic~Mage~Spell~3~Ice Barrier~~Secret"
-	description = "When your hero is attacked, gain 8 Armor"
+	description = "Secret: When your hero is attacked, gain 8 Armor"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_IceBarrier(self)]
@@ -3284,7 +3284,7 @@ class MirrorEntity(Secret):
 	Class, name = "Mage", "Mirror Entity"
 	requireTarget, mana = False, 3
 	index = "Classic~Mage~Spell~3~Mirror Entity~~Secret"
-	description = "After your opponent plays a minion, summon a copy of it"
+	description = "Secret: After your opponent plays a minion, summon a copy of it"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_MirrorEntity(self)]
@@ -3306,7 +3306,7 @@ class Spellbender(Secret):
 	Class, name = "Mage", "Spellbender"
 	requireTarget, mana = False, 3
 	index = "Classic~Mage~Spell~3~Spellbender~~Secret"
-	description = "When an enemy casts a spell on a minion, summon a 1/3 as the new target"
+	description = "Secret: When an enemy casts a spell on a minion, summon a 1/3 as the new target"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Spellbender(self)]
@@ -3335,7 +3335,7 @@ class Vaporize(Secret):
 	Class, name = "Mage", "Vaporize"
 	requireTarget, mana = False, 3
 	index = "Classic~Mage~Spell~3~Vaporize~~Secret"
-	description = "When a minion attacks your hero, destroy it"
+	description = "Secret: When a minion attacks your hero, destroy it"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Vaporize(self)]
@@ -3373,7 +3373,7 @@ class YourNextSecretCosts0ThisTurn(TempManaEffect):
 		self.auraAffected = []
 		
 	def applicable(self, target):
-		return target.ID == self.ID and "~~Secret" in target.index
+		return target.ID == self.ID and target.description.startswith("Secret:")
 		
 	def selfCopy(self, recipientGame):
 		return type(self)(recipientGame, self.ID)
@@ -3547,7 +3547,7 @@ class EyeforanEye(Secret):
 	Class, name = "Paladin", "Eye for an Eye"
 	requireTarget, mana = False, 1
 	index = "Classic~Paladin~Spell~1~Eye for an Eye~~Secret"
-	description = "When your hero takes damage, deal that much damage to the enemy hero"
+	description = "Secret: When your hero takes damage, deal that much damage to the enemy hero"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_EyeforanEye(self)]
@@ -3569,7 +3569,7 @@ class NobleSacrifice(Secret):
 	Class, name = "Paladin", "Noble Sacrifice"
 	requireTarget, mana = False, 1
 	index = "Classic~Paladin~Spell~1~Noble Sacrifice~~Secret"
-	description = "When an enemy attacks, summon a 2/1 Defender as the new target"
+	description = "Secret: When an enemy attacks, summon a 2/1 Defender as the new target"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_NobleSacrifice(self)]
@@ -3599,7 +3599,7 @@ class Redemption(Secret):
 	Class, name = "Paladin", "Redemption"
 	requireTarget, mana = False, 1
 	index = "Classic~Paladin~Spell~1~Redemption~~Secret"
-	description = "When an enemy attacks, summon a 2/1 Defender as the new target"
+	description = "Secret: When an enemy attacks, summon a 2/1 Defender as the new target"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Redemption(self)]
@@ -3622,7 +3622,7 @@ class Repentance(Secret):
 	Class, name = "Paladin", "Repentance"
 	requireTarget, mana = False, 1
 	index = "Classic~Paladin~Spell~1~Repentance~~Secret"
-	description = "After your opponent plays a minion, reduce its Health to 1"
+	description = "Secret: After your opponent plays a minion, reduce its Health to 1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Repentance(self)]

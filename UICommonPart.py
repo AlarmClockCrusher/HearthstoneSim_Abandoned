@@ -449,7 +449,7 @@ class GUI_Common:
 		
 	def displayCard(self, card, notSecretBeingPlayed=True):
 		if card:
-			if notSecretBeingPlayed or not hasattr(self, "ID") or card.ID == self.ID or "~~Secret" not in card.index or seeEnemyHand:
+			if notSecretBeingPlayed or not hasattr(self, "ID") or card.ID == self.ID or not card.description.startswith("Secret:") or seeEnemyHand:
 				img = PIL.Image.open(findPicFilepath_FullImg(card))#.resize(((270, 360)))
 			else: img = PIL.Image.open("Images\\%sSecret.png"%card.Class)
 			#if img.size[1] > 360: img = img.resize((240, 320))

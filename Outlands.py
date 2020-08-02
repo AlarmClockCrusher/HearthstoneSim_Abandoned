@@ -1590,7 +1590,7 @@ class PackTactics(Secret):
 	Class, name = "Hunter", "Pack Tactics"
 	requireTarget, mana = False, 2
 	index = "Outlands~Hunter~Spell~2~Pack Tactics~~Secret"
-	description = "When a friendly minion is attacked, summon a 3/3 copy"
+	description = "Secret: When a friendly minion is attacked, summon a 3/3 copy"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_PackTactics(self)]
@@ -1936,7 +1936,7 @@ class Trig_ApexisSmuggler(TrigBoard):
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and subject.ID == self.entity.ID and "~~Secret" in subject.index
+		return self.entity.onBoard and subject.ID == self.entity.ID and subject.description.startswith("Secret:")
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
@@ -2050,7 +2050,7 @@ class NetherwindPortal(Secret):
 	Class, name = "Mage", "Netherwind Portal"
 	requireTarget, mana = False, 3
 	index = "Outlands~Mage~Spell~3~Netherwind Portal~~Secret"
-	description = "After your opponent casts a spell, summon a random 4-Cost minion"
+	description = "Secret: After your opponent casts a spell, summon a random 4-Cost minion"
 	poolIdentifier = "4-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
@@ -2728,7 +2728,7 @@ class Ambush(Secret):
 	Class, name = "Rogue", "Ambush"
 	requireTarget, mana = False, 2
 	index = "Outlands~Rogue~Spell~2~Ambush~~Secret"
-	description = "After your opponent plays a minion, summon a 2/3 Ambusher with Poisonous"
+	description = "Secret: After your opponent plays a minion, summon a 2/3 Ambusher with Poisonous"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Ambush(self)]
@@ -2774,7 +2774,7 @@ class Bamboozle(Secret):
 	Class, name = "Rogue", "Bamboozle"
 	requireTarget, mana = False, 2
 	index = "Outlands~Rogue~Spell~2~Bamboozle~~Secret"
-	description = "When one of your minions is attacked, transform it into a random one that costs (3) more"
+	description = "Secret: When one of your minions is attacked, transform it into a random one that costs (3) more"
 	poolIdentifier = "3-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
@@ -2816,7 +2816,7 @@ class DirtyTricks(Secret):
 	Class, name = "Rogue", "Dirty Tricks"
 	requireTarget, mana = False, 2
 	index = "Outlands~Rogue~Spell~2~Dirty Tricks~~Secret"
-	description = "After your opponent casts a spell, draw 2 cards"
+	description = "Secret: After your opponent casts a spell, draw 2 cards"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_DirtyTricks(self)]
@@ -2844,7 +2844,7 @@ class ShadowjewelerHanar(Minion):
 	def generatePool(cls, Game):
 		classes, lists = [], []
 		for Class in Game.Classes:
-			secrets = [value for key, value in Game.ClassCards[Class].items() if "~~Secret" in key]
+			secrets = [value for key, value in Game.ClassCards[Class].items() if value.description.startswith("Secret:")]
 			if secrets:
 				classes.append(Class+" Secrets")
 				lists.append(secrets)
@@ -2863,7 +2863,7 @@ class Trig_ShadowjewelerHanar(TrigBoard):
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and subject.ID == self.entity.ID and "~~Secret" in subject.index
+		return self.entity.onBoard and subject.ID == self.entity.ID and subject.description.startswith("Secret:")
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion, curGame = self.entity, self.entity.Game

@@ -733,7 +733,7 @@ class Waxmancy(Spell):
 	@classmethod
 	def generatePool(cls, Game):
 		classCards = {s : [value for key, value in Game.ClassCards[s].items() if "~Minion~" in key and "~Battlecry" in key] for s in Game.Classes}
-		classCards["Neutral"] = [value for key, value in Game.NeutralMinions.items() if "~Minion~" in key and "~Battlecry" in key]
+		classCards["Neutral"] = [value for key, value in Game.NeutralCards.items() if "~Minion~" in key and "~Battlecry" in key]
 		return ["Battlecry Minions as "+Class for Class in Game.Classes], \
 			[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
 			

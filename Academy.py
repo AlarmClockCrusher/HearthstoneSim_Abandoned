@@ -243,9 +243,9 @@ class TransferStudent_Academy(Minion_Dormantfor2turns):
 		
 """Mana 0 cards"""
 class DeskImp(Minion):
-	Class, race, name = "Neutral", "", "Desk Imp"
+	Class, race, name = "Neutral", "Demon", "Desk Imp"
 	mana, attack, health = 0, 1, 1
-	index = "Academy~Neutral~Minion~0~1~1~None~Desk Imp"
+	index = "Academy~Neutral~Minion~0~1~1~Demon~Desk Imp"
 	requireTarget, keyWord, description = False, "", ""
 	
 """Mana 1 cards"""
@@ -597,7 +597,7 @@ class Trig_EnchantedCauldron(TrigBoard):
 				
 				
 class RobesofProtection(Minion):
-	Class, race, name = "Academy", "", "Robes of Protection"
+	Class, race, name = "Neutral", "", "Robes of Protection"
 	mana, attack, health = 3, 2, 4
 	index = "Academy~Neutral~Minion~3~2~4~None~Robes of Protection"
 	requireTarget, keyWord, description = False, "", "Your minions have 'Can't be targeted by spells or Hero Powers'"
@@ -1603,9 +1603,9 @@ class Groundskeeper(Minion):
 		
 		
 class TwilightRunner(Minion):
-	Class, race, name = "Druid", "", "Twilight Runner"
+	Class, race, name = "Druid", "Beast", "Twilight Runner"
 	mana, attack, health = 5, 5, 4
-	index = "Academy~Druid~Minion~5~5~4~None~Twilight Runner~Stealth"
+	index = "Academy~Druid~Minion~5~5~4~Beast~Twilight Runner~Stealth"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. Whenever this attacks, draw 2 cards"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -1742,7 +1742,7 @@ class CarrionStudies(Spell):
 	@classmethod
 	def generatePool(cls, Game):
 		classCards = {s: [value for key, value in Game.ClassCards[s].items() if "~Minion~" in key and "~Deathrattle" in key] for s in Game.Classes}
-		classCards["Neutral"] = [value for key, value in Game.NeutralMinions.items() if "~Minion~" in key and "~Deathrattle" in key]
+		classCards["Neutral"] = [value for key, value in Game.NeutralCards.items() if "~Minion~" in key and "~Deathrattle" in key]
 		return ["Deathrattle Minions as "+Class for Class in Game.Classes], \
 				[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
 				
@@ -2906,7 +2906,7 @@ class Plagiarize(Secret):
 	Class, name = "Rogue", "Plagiarize"
 	requireTarget, mana = False, 2
 	index = "Academy~Rogue~Spell~2~Plagiarize~~Secret"
-	description = "At the end of your opponent's turn, add copies of the cards they played this turn"
+	description = "Secret: At the end of your opponent's turn, add copies of the cards they played this turn"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Plagiarize(self)]
@@ -3202,7 +3202,7 @@ class PrimordialStudies(Spell):
 	@classmethod
 	def generatePool(cls, Game):
 		classCards = {s: [value for key, value in Game.ClassCards[s].items() if "~Spell Damage" in key] for s in Game.Classes}
-		classCards["Neutral"] = [value for key, value in Game.NeutralMinions.items() if "~Minion~" in key and "~Spell Damage" in key]
+		classCards["Neutral"] = [value for key, value in Game.NeutralCards.items() if "~Minion~" in key and "~Spell Damage" in key]
 		return ["Spell Damage Minions as "+Class for Class in Game.Classes], \
 				[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
 				
@@ -3443,9 +3443,9 @@ class MoltenBlast(Spell):
 		return target
 		
 class MoltenElemental(Minion):
-	Class, race, name = "Shaman", "", "Molten Elemental"
+	Class, race, name = "Shaman", "Elemental", "Molten Elemental"
 	mana, attack, health = 1, 1, 1
-	index = "Academy~Shaman~Minion~1~1~1~None~Molten Elemental~Uncollectible"
+	index = "Academy~Shaman~Minion~1~1~1~Elemental~Molten Elemental~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	
 	
@@ -3796,7 +3796,7 @@ class AthleticStudies(Spell):
 	@classmethod
 	def generatePool(cls, Game):
 		classCards = {s: [value for key, value in Game.ClassCards[s].items() if "~Minion~" in key and "~Rush" in key] for s in Game.Classes}
-		classCards["Neutral"] = [value for key, value in Game.NeutralMinions.items() if "~Minion~" in key and "~Rush" in key]
+		classCards["Neutral"] = [value for key, value in Game.NeutralCards.items() if "~Minion~" in key and "~Rush" in key]
 		return ["Rush Minions as "+Class for Class in Game.Classes], \
 				[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
 				
@@ -3869,7 +3869,7 @@ class InFormation(Spell):
 	poolIdentifier = "Taunt Minions"
 	@classmethod
 	def generatePool(cls, Game):
-		minions = [value for key, value in Game.NeutralMinions.items() if "~Minion~" in key and "~Taunt~" in key]
+		minions = [value for key, value in Game.NeutralCards.items() if "~Minion~" in key and "~Taunt~" in key]
 		for Class in Game.Classes:
 			minions += [value for key, value in Game.ClassCards[Class].items() if "~Minion~" in key and "~Taunt~" in key]
 		return "Taunt Minions", minions
@@ -4110,7 +4110,7 @@ class ResummonwithMinus1Minus1(Deathrattle_Minion):
 		
 		
 Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": TransferStudent,
-					"Academy~Neutral~Minion~0~1~1~None~Desk Imp": DeskImp,
+					"Academy~Neutral~Minion~0~1~1~Demon~Desk Imp": DeskImp,
 					"Academy~Neutral~Minion~1~1~1~None~Animated Broomstick~Rush~Battlecry": AnimatedBroomstick,
 					"Academy~Neutral~Minion~1~1~2~None~Intrepid Initiate~Battlecry": IntrepidInitiate,
 					"Academy~Neutral~Minion~1~1~1~None~Pen Flinger~Battlecry": PenFlinger,
@@ -4173,7 +4173,7 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Druid~Spell~1~Partner Assignment": PartnerAssignment,
 					"Academy~Druid~Minion~3~1~4~None~Speaker Gidra~Rush~Windfury": SpeakerGidra,
 					"Academy~Druid,Shaman~Minion~4~4~5~None~Groundskeeper~Taunt~Battlecry": Groundskeeper,
-					"Academy~Druid~Minion~5~5~4~None~Twilight Runner~Stealth": TwilightRunner,
+					"Academy~Druid~Minion~5~5~4~Beast~Twilight Runner~Stealth": TwilightRunner,
 					"Academy~Druid~Minion~6~5~4~None~Forest Warden Omu~Legendary": ForestWardenOmu,
 					"Academy~Druid,Shaman~Spell~6~Runic Carvings~Choose One": RunicCarvings,
 					"Academy~Druid,Shaman~Minion~2~2~2~Totem~Treant Totem~Uncollectible": TreantTotem,
@@ -4245,7 +4245,7 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Shaman,Mage~Minion~2~0~3~Totem~Trick Totem": TrickTotem,
 					"Academy~Shaman~Minion~3~3~3~None~Instructor Fireheart~Battlecry~Legendary": InstructorFireheart,
 					"Academy~Shaman~Spell~3~Molten Blast": MoltenBlast,
-					"Academy~Shaman~Minion~1~1~1~None~Molten Elemental~Uncollectible": MoltenElemental,
+					"Academy~Shaman~Minion~1~1~1~Elemental~Molten Elemental~Uncollectible": MoltenElemental,
 					"Academy~Shaman,Mage~Minion~5~3~6~None~Ras Frostwhisper~Legendary": RasFrostwhisper,
 					"Academy~Shaman~Minion~5~4~5~Totem~Totem Goliath~Deathrattle": TotemGoliath,
 					"Academy~Shaman~Spell~8~Tidal Wave": TidalWave,

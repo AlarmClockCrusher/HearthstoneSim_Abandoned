@@ -421,7 +421,7 @@ class GoldenScarab(Minion):
 	@classmethod
 	def generatePool(cls, Game):
 		classCards = {s : [value for key, value in Game.ClassCards[s].items() if key.split('~')[3] == '4'] for s in Game.Classes}
-		classCards["Neutral"] = [value for key, value in Game.NeutralMinions.items() if key.split('~')[3] == '4']
+		classCards["Neutral"] = [value for key, value in Game.NeutralCards.items() if key.split('~')[3] == '4']
 		return ["4-Cost Cards as %s"%Class for Class in Game.Classes], \
 			[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
 			
@@ -1425,7 +1425,7 @@ class PressurePlate(Secret):
 	Class, name = "Hunter", "Pressure Plate"
 	requireTarget, mana = False, 2
 	index = "Uldum~Hunter~Spell~2~Pressure Plate~~Secret"
-	description = "After your opponent casts a spell, destroy a random enemy minion"
+	description = "Secret: After your opponent casts a spell, destroy a random enemy minion"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_PressurePlate(self)]
@@ -1481,7 +1481,7 @@ class HuntersPack(Spell):
 		beasts, secrets, weapons = [], [], []
 		for key, value in Game.ClassCards["Hunter"].items():
 			if "~Beast~" in key: beasts.append(value)
-			elif "~~Secret" in key: secrets.append(value)
+			elif value.description.startswith("Secret:"): secrets.append(value)
 			elif "~Weapon~" in key: weapons.append(value)
 		return ["Hunter Beasts", "Hunter Secrets", "Hunter Weapons"], [beasts, secrets, weapons]
 		
@@ -1708,7 +1708,7 @@ class AncientMysteries(Spell):
 					PRINT(curGame, "Player's deck has no Secrets. Ancient Mysteries has no effect")
 					return None
 			else:
-				secretsinDeck = [i for i, card in enumerate(ownDeck) if "~~Secret" in card.index]
+				secretsinDeck = [i for i, card in enumerate(ownDeck) if card.description.startswith("Secret:")]
 				if secretsinDeck:
 					i = npchoice(secretsinDeck)
 					curGame.fixedGuides.append(i)
@@ -1727,7 +1727,7 @@ class FlameWard(Secret):
 	Class, name = "Mage", "Flame Ward"
 	requireTarget, mana = False, 3
 	index = "Uldum~Mage~Spell~3~Flame Ward~~Secret"
-	description = "After a minion attacks your hero, deal 3 damage to all enemy minions"
+	description = "Secret: After a minion attacks your hero, deal 3 damage to all enemy minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_FlameWard(self)]
@@ -1780,7 +1780,7 @@ class Trig_ArcaneFlakmage(TrigBoard):
 		
 	#Assume Secretkeeper and trigger while dying.
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and subject.ID == self.entity.ID and "~~Secret" in subject.index
+		return self.entity.onBoard and subject.ID == self.entity.ID and subject.description.startswith("Secret:")
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Player plays a Secret and %s deals 2 damage to all enemy minions"%self.entity.name)
@@ -3475,7 +3475,7 @@ class FrightenedFlunky(Minion):
 	@classmethod
 	def generatePool(cls, Game):
 		classCards = {s : [value for key, value in Game.ClassCards[s].items() if "~Minion~" in key and "~Taunt" in key] for s in Game.Classes}
-		classCards["Neutral"] = [value for key, value in Game.NeutralMinions.items() if "~Minion~" in key and "~Taunt" in key]
+		classCards["Neutral"] = [value for key, value in Game.NeutralCards.items() if "~Minion~" in key and "~Taunt" in key]
 		return ["Taunt Minions as %s"%Class for Class in Game.Classes], \
 				[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
 				

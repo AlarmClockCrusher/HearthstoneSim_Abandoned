@@ -14,6 +14,11 @@ def extractfrom(target, listObject):
 def indexHasClass(index, Class):
 	return Class in index.split('~')[1]
 	
+def canBeGenerated(cardType):
+	return not cardType.description.startswith("Quest:") and \
+			not ("Galakrond" in cardType.name or "Galakrond" in cardType.description or "Invoke" in cardType.description or "invoke" in cardType.description)
+			
+			
 class PoolManager:
 	def __init__(self):
 		self.cardPool = {}
@@ -116,39 +121,34 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 	Game.basicPowers = BasicPowers
 	Game.upgradedPowers = UpgradedPowers
 	
-	keys, values = list(cardPool.keys()), list(cardPool.values())
-	for key, value in zip(keys, values):
-		if key.startswith("Dragons~") and "Galakrond" in value.description or "Invoke" in value.description or "invoke" in value.description:
-			del Game.cardPool[key]
-		if value.description.startswith("Quest: "):
-			del Game.cardPool[key]
+	#cardPool本身需要保留各种祈求牌
 	Game.MinionswithRace = {"Beast": {}, "Demon": {}, "Dragon": {}, "Elemental":{},
 							"Murloc": {}, "Mech": {}, "Pirate":{}, "Totem": {}}
 	for key, value in Game.cardPool.items(): #Fill MinionswithRace
-		if "~Uncollectible" not in key:
-			for race in Game.MinionswithRace.keys():
-				if "~%s~"%race in key: Game.MinionswithRace[race][key] = value
+		if "~Uncollectible" not in key and hasattr(value, "race") and value.race and canBeGenerated(value):
+			for race in value.race.split(','):
+				Game.MinionswithRace[race][key] = value
 				
 	Game.MinionsofCost = {}
 	for key, value in Game.cardPool.items():
-		if "~Minion~" in key and "~Uncollectible" not in key:
+		if "~Minion~" in key and "~Uncollectible" not in key and canBeGenerated(value):
 			cost = int(key.split('~')[3])
 			try: Game.MinionsofCost[cost][key] = value
 			except: Game.MinionsofCost[cost] = {key: value}
 			
 	Game.ClassCards = {s:{} for s in Game.Classes}
-	Game.NeutralMinions = {}
-	for key, value in Game.cardPool.items():  #Fill NeutralMinions
-		if "~Uncollectible" not in key:
+	Game.NeutralCards = {}
+	for key, value in Game.cardPool.items():  #Fill NeutralCards
+		if "~Uncollectible" not in key and canBeGenerated(value):
 			for Class in key.split('~')[1].split(','):
 				if Class != "Neutral":
 					try: Game.ClassCards[Class][key] = value
 					except: print("Failed Class Assignment is ", Class, key, value)
-				else: Game.NeutralMinions[key] = value
+				else: Game.NeutralCards[key] = value
 				
 	Game.LegendaryMinions = {}
 	for key, value in Game.cardPool.items():
-		if "~Legendary" in key and "~Minion~" in key and "~Uncollectible" not in key:
+		if "~Legendary" in key and "~Minion~" in key and "~Uncollectible" not in key and canBeGenerated(value):
 			Game.LegendaryMinions[key] = value
 			
 	RNGPools = {}
@@ -227,9 +227,9 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 			out_file.write("\t\t\t},\n")
 		out_file.write("\t\t\t}\n\n")
 		
-		#把NeutralMinions写入python里面
-		out_file.write("NeutralMinions = {\n")
-		for index, obj in Game.NeutralMinions.items():
+		#把NeutralCards写入python里面
+		out_file.write("NeutralCards = {\n")
+		for index, obj in Game.NeutralCards.items():
 			out_file.write('\t\t\t"%s": %s,\n'%(index, obj.__name__))
 		out_file.write("\t\t}\n\n")
 		

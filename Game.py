@@ -811,7 +811,7 @@ class Game:
 				else: tarIndex, tarWhere = target.ID, "hero"
 			else: tarIndex, tarWhere = 0, ''
 			#支付法力值，结算血色绽放等状态。
-			spell, mana, positioninHand = self.Hand_Deck.extractfromHand(spell, enemyCanSee="~~Secret" not in spell.index)
+			spell, mana, positioninHand = self.Hand_Deck.extractfromHand(spell, enemyCanSee=not spell.description.startswith("Secret:"))
 			self.Manas.payManaCost(spell, mana)
 			#请求使用法术，如果此时对方场上有法术反制，则取消后续序列。
 			#法术反制会阻挡使用时扳机，如伊利丹和任务达人等。但是法力值消耗扳机，如血色绽放，肯瑞托法师会触发，从而失去费用光环

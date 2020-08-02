@@ -1131,7 +1131,7 @@ class Minion(Card):
 			for buffAura_Receiver in CurrentBuffAura_Receivers:
 				buffAura_Receiver.source.applies(self)
 			for func in self.triggers["StatChanges"]: func()
-				
+			
 	#在原来的Game中创造一个Copy
 	def selfCopy(self, ID, attack=False, health=False, mana=False):
 		Copy = self.hardCopy(ID)

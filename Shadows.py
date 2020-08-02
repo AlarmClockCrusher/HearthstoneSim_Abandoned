@@ -1085,7 +1085,7 @@ class ArchivistElysiana(Minion):
 	poolIdentifier = "Cards as Druid"
 	@classmethod
 	def generatePool(cls, Game):
-		return ["Cards as "+Class for Class in Game.Classes], [list(Game.ClassCards[Class].values())+list(Game.NeutralMinions.values()) for Class in Game.Classes]
+		return ["Cards as "+Class for Class in Game.Classes], [list(Game.ClassCards[Class].values())+list(Game.NeutralCards.values()) for Class in Game.Classes]
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -2308,7 +2308,7 @@ class NeverSurrender(Secret):
 	Class, name = "Paladin", "Never Surrender!"
 	requireTarget, mana = False, 1
 	index = "Shadows~Paladin~Spell~1~Never Surrender!~~Secret"
-	description = "Whenever your opponent casts a spell, give your minions +2 Health"
+	description = "Secret: Whenever your opponent casts a spell, give your minions +2 Health"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_NeverSurrender(self)]
@@ -2396,7 +2396,7 @@ class DesperateMeasures(Spell):
 	poolIdentifier = "Paladin Secrets"
 	@classmethod
 	def generatePool(cls, Game):
-		return "Paladin Secrets", [value for key, value in Game.ClassCards["Paladin"].items() if "~~Secret" in key]
+		return "Paladin Secrets", [value for key, value in Game.ClassCards["Paladin"].items() if value.description.startswith("Secret:")]
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3206,7 +3206,7 @@ class ZarogsCrown_Shadows(Spell):
 	@classmethod
 	def generatePool(cls, Game):
 		classCards = {s : [value for key, value in Game.ClassCards[s].items() if "~Minion~" in key and "~Legendary" in key] for s in Game.Classes}
-		classCards["Neutral"] = [value for key, value in Game.NeutralMinions.items() if "~Minion~" in key and "~Legendary" in key]
+		classCards["Neutral"] = [value for key, value in Game.NeutralCards.items() if "~Minion~" in key and "~Legendary" in key]
 		return ["Legendary Minions as %s to Summon"%Class for Class in Game.Classes], \
 			[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
 			

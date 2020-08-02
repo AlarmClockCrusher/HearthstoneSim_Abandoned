@@ -223,7 +223,7 @@ class Secrets:
 				if curGame.guides:
 					i = curGame.guides.pop(0)
 				else:
-					secrets = [i for i, card in enumerate(curGame.Hand_Deck.decks[ID]) if "~~Secret" in card.index and not self.sameSecretExists(card, ID)]
+					secrets = [i for i, card in enumerate(curGame.Hand_Deck.decks[ID]) if card.description.startswith("Secret:") and not self.sameSecretExists(card, ID)]
 					i = npchoice(secrets) if secrets and self.areaNotFull(ID) else -1
 					curGame.fixedGuides.append(i)
 				if i > -1: curGame.Hand_Deck.extractfromDeck(i, ID, enemyCanSee=False)[0].whenEffective()

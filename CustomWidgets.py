@@ -54,10 +54,10 @@ import os
 
 def pickleObj2Str(obj):
 	s = str(pickle.dumps(obj, 0).decode())
-	return s.replace("\n", "_._")
+	return s.replace("\n", "*")
 	
 def unpickleStr2Obj(s):
-	s = s.replace("_._", "\n")
+	s = s.replace("*", "\n")
 	obj = pickle.loads(bytes(s.encode()))
 	return obj
 	
@@ -895,7 +895,7 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 			if hasattr(trig, "counter"): self.counts += trig.counter
 			
 	def decideColorOrig(self, GUI, card):
-		self.colorOrig = "red" if not("~~Secret" in card.index and card.ID == GUI.Game.turn) \
+		self.colorOrig = "red" if not(card.description.startswith("Secret:") and card.ID == GUI.Game.turn) \
 						else {"Paladin": "yellow", "Hunter": "green3", "Rogue": "grey", "Mage": "purple3"}[card.Class]
 						
 	def rightClick(self, event):
