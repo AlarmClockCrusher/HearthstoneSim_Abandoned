@@ -343,8 +343,8 @@ class Card:
 				totalDamageDone += damageActual
 		#AOE首先计算血量变化，之后才发出伤害信号。
 		for target, damageActual in zip(dmgTakers, damagesConnected):
-			self.Game.sendSignal(target.type+"TakesDamage", self.ID, self, target, damageActual, "")
-			self.Game.sendSignal(target.type+"TookDamage", self.ID, self, target, damageActual, "")
+			self.Game.sendSignal(target.type+"TakesDmg", self.ID, self, target, damageActual, "")
+			self.Game.sendSignal(target.type+"TookDmg", self.ID, self, target, damageActual, "")
 		self.tryLifesteal(totalDamageDone)
 		return dmgTakers, damagesConnected, totalDamageDone
 		

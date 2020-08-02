@@ -2523,7 +2523,7 @@ class RaiseDead(Spell):
 				minions = curGame.guides.pop(0)
 			else:
 				deadMinions = [curGame.cardPool[index] for index in curGame.Counters.minionsDiedThisGame[self.ID]]
-				minions = tuple(npchoice(deadMinions, min(2, len(deadMinions)), replace=True) if deadMinions else [])
+				minions = tuple(npchoice(deadMinions, min(2, len(deadMinions)), replace=False) if deadMinions else [])
 				curGame.fixedGuides.append(minions)
 			if minions:
 				curGame.Hand_Deck.addCardtoHand(minions, self.ID, "type")

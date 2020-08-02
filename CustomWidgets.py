@@ -246,7 +246,7 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		for label in self.labels: label.moveby(xOffset, yOffset)
 		
 	def represents(self, card):
-		if not hasattr(self.GUI, "ID") or seeEnemyHand or self.GUI.ID == card.ID:
+		if not hasattr(self.GUI, "ID") or seeEnemyHand or self.GUI.ID == card.ID: #If UI shows it
 			if not isinstance(card, self.cardInfo) or self.mana != card.mana: return False
 			if card.type == "Minion": attack, health = card.attack, card.health
 			elif card.type == "Weapon": attack, health = card.attack, card.durability
