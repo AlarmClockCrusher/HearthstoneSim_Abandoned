@@ -248,7 +248,7 @@ class GUI_2P(GUI_Common):
 		lbl_Output = tk.Label(master=self.outputPanel, text="System Resolution", font=("Yahei", 15))
 		scrollbar_hor = tk.Scrollbar(master=self.outputPanel, orient="horizontal")
 		scrollbar_ver = tk.Scrollbar(master=self.outputPanel)
-		self.output = tk.Listbox(master=self.outputPanel, xscrollcommand=scrollbar_hor.set, yscrollcommand=scrollbar_ver.set, width=50, height=6, bg="white", font=("Yahei", 13))
+		self.output = tk.Listbox(master=self.outputPanel, xscrollcommand=scrollbar_hor.set, yscrollcommand=scrollbar_ver.set, width=40, height=6, bg="white", font=("Yahei", 13))
 		scrollbar_hor.configure(command=self.output.xview)
 		scrollbar_ver.configure(command=self.output.yview)
 		scrollbar_ver.pack(fill=tk.Y, side=tk.RIGHT)
