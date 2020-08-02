@@ -69,7 +69,7 @@ def extractfrom(target, listObj):
 	except: return None
 	
 def findPicFilepath(card):
-	if card.type == "Permanent": #休眠的随从会主动查看自己携带的originalMinion的名字和index
+	if card.type == "Dormant": #休眠的随从会主动查看自己携带的originalMinion的名字和index
 		index = card.originalMinion.index
 		if inspect.isclass(card.originalMinion):
 			name = card.originalMinion.__name__
@@ -87,7 +87,7 @@ def findPicFilepath(card):
 	return filepath
 	
 def findPicFilepath_FullImg(card):
-	if card.type == "Permanent": #休眠的随从会主动查看自己携带的originalMinion的名字和index
+	if card.type == "Dormant": #休眠的随从会主动查看自己携带的originalMinion的名字和index
 		index = card.originalMinion.index
 		if inspect.isclass(card.originalMinion):
 			name = card.originalMinion.__name__
@@ -527,8 +527,11 @@ class MinionButton(tk.Button):
 			if self.card.type == "Minion":
 				selectedSubject = "MiniononBoard"
 				self.GUI.resolveMove(self.card, self, selectedSubject)
-			else: #card.type == "Permanent"
-				self.GUI.cancelSelection()
+			else: #card.type == "Dormant"
+				if self.GUI.UI == 1:
+					selectedSubject = "DormantonBoard"
+					self.GUI.resolveMove(self.card, self, selectedSubject)
+				else: self.GUI.cancelSelection()
 				
 	def rightClick(self, event):
 		self.GUI.cancelSelection()
@@ -568,7 +571,7 @@ class MinionButton(tk.Button):
 		
 	def represents(self, minion):
 		if not isinstance(minion, self.cardInfo): return False
-		if minion.type == "Minion": #Only need to check minion for now. Permanents don't have keyWords
+		if minion.type == "Minion": #Only need to check minion for now. Dormants don't have keyWords
 			attack, health, keyWords = minion.attack, minion.health, ''
 			for key, value in minion.keyWords.items():
 				if value > 0: keyWords += key

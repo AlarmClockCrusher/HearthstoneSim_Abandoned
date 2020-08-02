@@ -42,8 +42,8 @@ class Minion_Dormantfor2turns(Minion):
 		#没有光环，目前炉石没有给随从人为添加光环的效果, 不可能在把手牌中获得的扳机带入场上，因为会在变形中丢失
 		#The buffAuras/hasAuras will react to this signal.
 		if self.firstTimeonBoard: #用activated来标记随从能否出现在场上而不休眠，第一次出现时，activated为False
-			#假设第一次出现时，会进入休眠状态，生成的Permanent不保存这个初始随从
-			PRINT(self.Game, "%a starts as a Permanent"%self.name)
+			#假设第一次出现时，会进入休眠状态，生成的Dormant不保存这个初始随从
+			PRINT(self.Game, "%a starts as a Dormant"%self.name)
 			self.Game.transform(self, ImprisonedDormantForm(self.Game, self.ID, self))
 		else: #只有不是第一次出现在场上时才会执行这些函数
 			for value in self.auras.values():
@@ -60,7 +60,7 @@ class Minion_Dormantfor2turns(Minion):
 	def awakenEffect(self):
 		pass
 		
-class ImprisonedDormantForm(Permanent):
+class ImprisonedDormantForm(Dormant):
 	Class, name = "Neutral", "Imprisoned Vanilla"
 	description = "Awakens after 2 turns"
 	def __init__(self, Game, ID, originalMinion=None):
@@ -68,9 +68,10 @@ class ImprisonedDormantForm(Permanent):
 		self.trigsBoard = [Trig_ImprisonedDormantForm(self)]
 		self.originalMinion = originalMinion
 		if originalMinion: #When creating a copy, this is left blank temporarily
-			self.Class = self.originalMinion.Class
-			self.name = "Dormant " + self.originalMinion.name
-			self.description = self.originalMinion.description
+			self.Class = originalMinion.Class
+			self.name = "Dormant " + originalMinion.name
+			self.description = originalMinion.description
+			self.index = originalMinion.index
 			
 	def assistCreateCopy(self, Copy):
 		Copy.originalMinion = self.originalMinion.createCopy(Copy.Game)
@@ -112,8 +113,8 @@ class Minion_DormantuntilTrig(Minion):
 		#没有光环，目前炉石没有给随从人为添加光环的效果, 不可能在把手牌中获得的扳机带入场上，因为会在变形中丢失
 		#The buffAuras/hasAuras will react to this signal.
 		if self.firstTimeonBoard: #用activated来标记随从能否出现在场上而不休眠，第一次出现时，activated为False
-			#假设第一次出现时，会进入休眠状态，生成的Permanent不会保存这个初始随从
-			PRINT(self.Game, "%s starts as a Permanent"%self.name)
+			#假设第一次出现时，会进入休眠状态，生成的Dormant不会保存这个初始随从
+			PRINT(self.Game, "%s starts as a Dormant"%self.name)
 			#pos, identity = self.position, self.identity
 			#self.__init__(self.Game, self.ID)
 			#self.position = pos
@@ -504,7 +505,7 @@ class Magtheridon(Minion_DormantuntilTrig):
 		self.Game.summon([HellfireWarder(self.Game, 3-self.ID) for i in range(3)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
-class Magtheridon_Dormant(Permanent):
+class Magtheridon_Dormant(Dormant):
 	Class, name = "Neutral", "Dormant Magtheridon"
 	description = "Destroy 3 Warders to destroy all minions and awaken this"
 	def __init__(self, Game, ID):

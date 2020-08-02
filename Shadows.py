@@ -1457,10 +1457,10 @@ class BecomeSpiritofLucentbark(Deathrattle_Minion):
 			PRINT(self.entity.Game, "Deathrattle: Turn into Spirit of Lucentbark triggers")
 			if self.entity.Game.withAnimation:
 				self.entity.Game.GUI.triggerBlink(self.entity)
-			permanent = SpiritofLucentbark(self.entity.Game, self.entity.ID)
-			self.entity.Game.transform(self.entity, permanent)
+			dormant = SpiritofLucentbark(self.entity.Game, self.entity.ID)
+			self.entity.Game.transform(self.entity, dormant)
 			
-class SpiritofLucentbark(Permanent):
+class SpiritofLucentbark(Dormant):
 	Class, name = "Druid", "Spirit of Lucentbark"
 	description = "Restore 5 Health to awaken"
 	def __init__(self, Game, ID):

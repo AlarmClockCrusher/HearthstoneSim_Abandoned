@@ -195,7 +195,7 @@ class GUI_2P(GUI_Common):
 			tempGuides.grid(row=3, column=2)
 			btn2.grid(row=4, column=2)
 			
-			tk.Label(self.window, text="				 ").grid(row=0, column=1)
+			tk.Label(self.window, text="		 ").grid(row=0, column=1)
 			
 		self.window.wait_variable(var)
 		if var.get() == 1: #点击左边的情况会有要求先换牌，然后把信息传给对方
@@ -216,6 +216,7 @@ class GUI_2P(GUI_Common):
 				self.window = tk.Tk()
 				self.initLoadDeckUI()
 				self.deckImportPanel.destroy()
+				self.btnGenInfo.pack()
 				self.initGameDisplay()
 				self.update()
 			elif tempGuides.get(): #The loaded entry must be non-empty

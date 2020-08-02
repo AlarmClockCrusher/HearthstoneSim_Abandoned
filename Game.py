@@ -78,12 +78,12 @@ class Game:
 		if target: return [minion for minion in self.minions[ID] if minion.type == "Minion" and minion.onBoard and minion != target]
 		else: return [minion for minion in self.minions[ID] if minion.type == "Minion" and minion.onBoard]
 		
-	def neighbors2(self, target, countPermanents=False):
+	def neighbors2(self, target, countDormants=False):
 		targets, ID, pos, i = [], target.ID, target.position, 0
 		while pos > 0:
 			pos -= 1
 			obj_onLeft = self.minions[ID][pos]
-			if not countPermanents and obj_onLeft.type != "Minion": break #If Permanents aren't considered as adjacent entities, they block the search
+			if not countDormants and obj_onLeft.type != "Minion": break #If Dormants aren't considered as adjacent entities, they block the search
 			elif obj_onLeft.onBoard: #If the minion is not onBoard, skip it; if on board, count it.
 				targets.append(obj_onLeft)
 				i -= 1
@@ -93,7 +93,7 @@ class Game:
 		while pos < boardSize - 1:
 			pos += 1
 			obj_onRight = self.minions[ID][pos]
-			if not countPermanents and obj_onRight.type != "Minion": break
+			if not countDormants and obj_onRight.type != "Minion": break
 			elif obj_onRight.onBoard:
 				targets.append(obj_onRight)
 				i += 2
@@ -116,7 +116,7 @@ class Game:
 	def space(self, ID):
 		num = 7
 		for minion in self.minions[ID]:
-			if minion.onBoard: num -= 1 #Minions and Permanents both occupy space as long as they are on board.
+			if minion.onBoard: num -= 1 #Minions and Dormants both occupy space as long as they are on board.
 		return num
 		
 	def playMinion(self, minion, target, position, choice=0, comment=""):
@@ -344,7 +344,7 @@ class Game:
 			
 	#This method is always invoked after the minion.disappears() method.
 	def removeMinionorWeapon(self, target):
-		if target.type == "Minion" or target.type == "Permanent":
+		if target.type == "Minion" or target.type == "Dormant":
 			target.onBoard = False
 			extractfrom(target, self.minions[target.ID])
 			self.rearrangeSequence()
@@ -354,13 +354,13 @@ class Game:
 			extractfrom(target, self.weapons[target.ID])
 			self.rearrangeSequence()
 			
-	#The leftmost minion has position 0. Consider Permanent
+	#The leftmost minion has position 0. Consider Dormant
 	def rearrangePosition(self):
 		for i, obj in enumerate(self.minions[1]): obj.position = i
 		for i, obj in enumerate(self.minions[2]): obj.position = i
 		
 	#Rearrange all livng minions' sequences if change is true. Otherwise, just return the list of the sequences.	
-	#需要考虑Permanent的出场顺序
+	#需要考虑Dormant的出场顺序
 	def rearrangeSequence(self):
 		objs = self.weapons[1] + self.weapons[2] + self.minions[1] + self.minions[2]
 		for i, obj in zip(np.asarray([obj.sequence for obj in objs]).argsort().argsort(), objs): obj.sequence = i
@@ -634,7 +634,7 @@ class Game:
 	"""	
 	def switchTurn(self):
 		PRINT(self, "----------------\nThe turn ends for hero %d\n-----------------"%self.turn)
-		for minion in self.minions[self.turn] + self.minions[3-self.turn]: #Include the Permanents.
+		for minion in self.minions[self.turn] + self.minions[3-self.turn]: #Include the Dormants.
 			minion.turnEnds(self.turn) #Handle minions' attTimes and attChances
 		for card in self.Hand_Deck.hands[self.turn]	+ self.Hand_Deck.hands[3-self.turn]:
 			if card.type == "Minion": #Minions in hands will clear their temp buffDebuff
@@ -663,7 +663,7 @@ class Game:
 		self.heroes[3-self.turn].turnStarts(self.turn)
 		self.powers[self.turn].turnStarts(self.turn)
 		self.powers[3-self.turn].turnStarts(self.turn)
-		for minion in self.minions[1] + self.minions[2]: #Include the Permanents.
+		for minion in self.minions[1] + self.minions[2]: #Include the Dormants.
 			minion.turnStarts(self.turn) #Handle minions' attTimes and attChances
 		for card in self.Hand_Deck.hands[1]	+ self.Hand_Deck.hands[2]:
 			if card.type == "Minion":

@@ -4439,7 +4439,7 @@ class DeathwingMadAspect(Minion):
 						curGame.battle(curGame.minionPlayed, minion, False, True, False, False)
 					curGame.sendSignal("BattleFinished", self.Game.turn, self, None, 0, "")
 			else:
-				minions = curGame.Game.minionsAlive(self.ID, curGame.minionPlayed) + curGame.minionsAlive(3-self.ID)
+				minions = curGame.minionsAlive(self.ID, curGame.minionPlayed) + curGame.minionsAlive(3-self.ID)
 				npshuffle(minions)
 				if minions:
 					infos = []

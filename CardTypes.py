@@ -492,7 +492,7 @@ class Card:
 		
 		
 		
-class Permanent(Card):
+class Dormant(Card):
 	Class, name = "Neutral", "Vanilla"
 	description = ""
 	def __init__(self, Game, ID):
@@ -503,7 +503,7 @@ class Permanent(Card):
 		self.Class = type(self).Class
 		self.name = type(self).name
 		self.description = type(self).description
-		self.type = "Permanent"
+		self.type = "Dormant"
 		self.race = ""
 		
 		self.onBoard, self.inHand, self.inDeck = False, False, False
@@ -531,7 +531,7 @@ class Permanent(Card):
 		PRINT(self.Game, "Permanent %s appears on board."%self.name)
 		self.onBoard, self.inHand, self.inDeck = True, False, False
 		self.dead = False
-		#目前没有Permanent有光环
+		#目前没有Dormant有光环
 		for value in self.auras.values():
 			PRINT(self.Game, "Now starting %s's Aura {}".format(value))
 			value.auraAppears()
@@ -539,7 +539,7 @@ class Permanent(Card):
 		for trigger in self.trigsBoard:
 			trigger.connect() #把(obj, signal)放入Game.triggersonBoard中
 			
-	#Permanent本身是没有死亡扳机的，所以这个deathrattlesStayArmed无论真假都无影响
+	#Dormant本身是没有死亡扳机的，所以这个deathrattlesStayArmed无论真假都无影响
 	def disappears(self, deathrattlesStayArmed=False):
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.dead = False
@@ -564,17 +564,17 @@ class Permanent(Card):
 		
 	def STATUSPRINT(self):
 		PRINT(self.Game, "Game is {}.".format(self.Game))
-		PRINT(self.Game, "Permanent: %s.\tDescription: %s"%(self.name, self.description))
+		PRINT(self.Game, "Dormant: %s.\tDescription: %s"%(self.name, self.description))
 		if self.trigsBoard != []:
-			PRINT(self.Game, "\tPermanent's trigsBoard")
+			PRINT(self.Game, "\tDormant's trigsBoard")
 			for trigger in self.trigsBoard:
 				PRINT(self.Game, "\t{}".format(type(trigger)))
 		if self.auras != {}:
-			PRINT(self.Game, "\tPermanent's aura:")
+			PRINT(self.Game, "\tDormant's aura:")
 			for key, value in self.auras.items():
 				PRINT(self.Game, "{}: {}".format(key, value))
 		if hasattr(self, "progress"):
-			PRINT(self.Game, "\tPermanent's progress is currently: %d"%self.progress)
+			PRINT(self.Game, "\tDormant's progress is currently: %d"%self.progress)
 			
 	def createCopy(self, game):
 		if self in game.copiedObjs: return game.copiedObjs[self]
