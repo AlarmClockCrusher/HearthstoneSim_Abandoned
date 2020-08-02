@@ -2036,20 +2036,23 @@ class DevolvingMissiles(Spell):
 		side, curGame = 3 - self.ID, self.Game
 		if curGame.mode == 0:
 			PRINT(curGame, "Devolving Missiles is cast and launches 3 missiles.")
-			for i in range(3):
+			for num in range(3):
 				if curGame.guides:
 					i = curGame.guides.pop(0)
 				else:
 					objs = curGame.minionsonBoard(side)
-					minion = npchoice(objs) if objs else None
-					curGame.fixedGuides.append(minion.position if minion else -1)
+					i = npchoice(objs).position if objs else -1
+					curGame.fixedGuides.append(i)
 				if i > -1: minion = curGame.minions[side][i]
 				else: break
 				PRINT(curGame, "Devolving Missiles hits %s"%minion.name)
 				if curGame.guides:
 					newMinion = curGame.guides.pop(0)
 				else:
-					newMinion = npchoice(curGame.RNGPools["%d-Cost Minions to Summon"%max(0, type(minion).mana-1)])
+					cost = type(minion).mana - 1
+					while cost not in curGame.MinionsofCost:
+						cost += 1
+					newMinion = npchoice(curGame.RNGPools["%d-Cost Minions to Summon"%cost])
 					curGame.fixedGuides.append(newMinion)
 				newMinion = newMinion(curGame, side)
 				curGame.transform(minion, newMinion)

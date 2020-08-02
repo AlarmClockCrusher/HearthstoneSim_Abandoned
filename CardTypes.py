@@ -1968,7 +1968,7 @@ class Hero(Card):
 		healthChanged = health != self.health
 		self.health = health
 		if health_max: self.health_max = health_max
-		if healthChanged and self.Game.turn == ID:
+		if healthChanged and self.Game.turn == self.ID:
 			self.Game.Counters.timesHeroChangedHealth_inOwnTurn[self.ID] += 1
 			game.Counters.heroChangedHealthThisTurn[self.ID] = True
 			self.Game.sendSignal("HeroChangedHealthinTurn", self.ID, None, None, 0, "")

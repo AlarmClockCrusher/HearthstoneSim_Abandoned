@@ -3216,9 +3216,8 @@ class Trig_BoggspineKnuckles(TrigBoard):
 					newMinion = curGame.guides.pop(0)
 				else:
 					cost = type(minion).mana + 1
-					while True:
-						if cost not in curGame.MinionsofCost: cost -= 1
-						else: break
+					while cost not in curGame.MinionsofCost:
+						cost -= 1
 					newMinion = npchoice(curGame.RNGPools["%d-Cost Minions to Summon"%cost])
 					curGame.fixedGuides.append(newMinion)
 				curGame.transform(minion, newMinion(curGame, minion.ID))
