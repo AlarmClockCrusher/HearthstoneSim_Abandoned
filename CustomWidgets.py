@@ -528,8 +528,10 @@ class MinionButton(tk.Button):
 				selectedSubject = "MiniononBoard"
 				self.GUI.resolveMove(self.card, self, selectedSubject)
 			else: #card.type == "Dormant"
-				if self.GUI.UI == 1:
+				print("Pressing Dormant button", self.GUI.UI)
+				if self.GUI.UI == 2:
 					selectedSubject = "DormantonBoard"
+					print("Resolving")
 					self.GUI.resolveMove(self.card, self, selectedSubject)
 				else: self.GUI.cancelSelection()
 				
