@@ -109,7 +109,7 @@ class GUI_1P(GUI_Common):
 		scrollbar_ver.pack(fill=tk.Y, side=tk.RIGHT)
 		scrollbar_hor = tk.Scrollbar(master=self.outputPanel, orient="horizontal")
 		scrollbar_hor.pack(fill=tk.X, side=tk.BOTTOM)
-		self.output = tk.Listbox(master=self.outputPanel, xscrollcommand=scrollbar_hor.set, yscrollcommand=scrollbar_ver.set, width=50, height=6, bg="white", font=("Yahei", 13))
+		self.output = tk.Listbox(master=self.outputPanel, xscrollcommand=scrollbar_hor.set, yscrollcommand=scrollbar_ver.set, width=40, height=6, bg="white", font=("Yahei", 13))
 		self.output.pack(side=tk.LEFT)
 		scrollbar_hor.configure(command=self.output.xview)
 		scrollbar_ver.configure(command=self.output.yview)

@@ -1226,6 +1226,7 @@ class DragonqueenAlexstrasza(Minion):
 				else:
 					PRINT(curGame, "Dragonqueen Alexstrasza's battlecry adds two random Dragons to player's hand. They cost (1)")
 					dragon1, dragon2 = npchoice(curGame.RNGPools["Dragons except Dragonqueen Alexstrasza"], 2, replace=True)
+					curGame.fixedGuides.append(tuple(dragon1, dragon2))
 				dragon1, dragon2 = dragon1(curGame, self.ID), dragon2(curGame, self.ID)
 				curGame.Hand_Deck.addCardtoHand([dragon1, dragon2], self.ID)
 				ManaMod(dragon1, changeby=0, changeto=1).applies()
