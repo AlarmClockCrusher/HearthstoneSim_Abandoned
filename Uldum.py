@@ -1918,7 +1918,7 @@ class RenotheRelicologist(Minion):
 		
 class PuzzleBoxofYoggSaron(Spell):
 	Class, name = "Mage", "Puzzle Box of Yogg-Saron"
-	requireTarget, mana = False, 1
+	requireTarget, mana = False, 10
 	index = "Uldum~Mage~Spell~10~Puzzle Box of Yogg-Saron"
 	description = "Cast 10 random spells (targets chosen randomly)"
 	poolIdentifier = "Spells"
@@ -2971,19 +2971,19 @@ class BuffAura_Vessina(AuraDealer_toMinion):
 			isOverloaded = self.entity.Game.Manas.manasOverloaded[self.entity.ID] > 0 or self.entity.Game.Manas.manasLocked[self.entity.ID] > 0
 			if isOverloaded == False and self.entity.activated:
 				self.entity.activated = False
-				PRINT(self.entity, "Vessina's Buff Aura: Your other minions have +2 Attack is shut down.")
+				PRINT(self.entity.Game, "Vessina's Buff Aura: Your other minions have +2 Attack is shut down.")
 				for minion, aura_Receiver in fixedList(self.auraAffected):
 					aura_Receiver.effectClear()
 				self.auraAffected = []
 			elif isOverloaded and self.entity.activated == False:
 				self.entity.activated = True
-				PRINT(self.entity, "Vessina's Buff Aura: Your other minions have +2 Attack is activated.")
+				PRINT(self.entity.Game, "Vessina's Buff Aura: Your other minions have +2 Attack is activated.")
 				for minion in self.entity.Game.minionsonBoard(self.entity.ID):
 					self.applies(minion)
 					
 	def applies(self, subject):
 		if subject != self.entity:
-			PRINT(self.entity, "Minion %s gains the %d/%d aura from %s"%(subject.name, 2, 0, self.entity))
+			PRINT(self.entity.Game, "Minion %s gains the %d/%d aura from %s"%(subject.name, 2, 0, self.entity))
 			aura_Receiver = BuffAura_Receiver(subject, self, 2, 0)
 			aura_Receiver.effectStart()
 			
@@ -2992,7 +2992,7 @@ class BuffAura_Vessina(AuraDealer_toMinion):
 		isOverloaded = game.Manas.manasOverloaded[self.entity.ID] > 0 or game.Manas.manasLocked[self.entity.ID] > 0
 		if isOverloaded:
 			self.entity.activated = True
-			PRINT(self.entity, "Vessina's Buff Aura: Your other minions have +2 Attack is activated.")
+			PRINT(self.entity.Game, "Vessina's Buff Aura: Your other minions have +2 Attack is activated.")
 			for minion in game.minionsonBoard(self.entity.ID):
 				self.applies(minion)
 				

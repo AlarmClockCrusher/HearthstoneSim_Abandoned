@@ -317,8 +317,8 @@ class ManaReservoir(Minion):
 	
 class SpellbookBinder(Minion):
 	Class, race, name = "Neutral", "", "Spellbook Binder"
-	mana, attack, health = 2, 2, 3
-	index = "Shadows~Neutral~Minion~2~2~3~None~Spellbook Binder~Battlecry"
+	mana, attack, health = 2, 3, 2
+	index = "Shadows~Neutral~Minion~2~3~2~None~Spellbook Binder~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you have Spell Damage, draw a card"
 	
 	def effectCanTrigger(self):

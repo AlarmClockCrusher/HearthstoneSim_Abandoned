@@ -3000,7 +3000,7 @@ class GalakrondtheApocalypes_Priest(Galakrond_Hero):
 				targets = curGame.minionsonBoard(3-self.ID)
 				minions = npchoice(targets, min(4, len(targets)), replace=False)
 				curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
-			for minion in minions: minion.dead
+			for minion in minions: minion.dead = True
 		return None
 		
 class GalakrondAzerothsEnd_Priest(Galakrond_Hero):
@@ -3021,7 +3021,7 @@ class GalakrondAzerothsEnd_Priest(Galakrond_Hero):
 				targets = curGame.minionsonBoard(3-self.ID)
 				minions = npchoice(targets, min(4, len(targets)), replace=False)
 				curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
-			for minion in minions: minion.dead
+			for minion in minions: minion.dead = True
 		PRINT(curGame, "Galakrond, Azeroth's End's battlecry equips a 5/2 Claw for player")
 		curGame.equipWeapon(DragonClaw(curGame, self.ID))
 		return None
@@ -3428,10 +3428,10 @@ class InvocationofFrost(Spell):
 	index = "Dragons~Shaman~Spell~2~Invocation of Frost"
 	description = "Freeze a minion. Invoke Galakrond"
 	def available(self):
-		return self.selectableMinionExists()
+		return self.selectableEnemyExists()
 		
 	def targetCorrect(self, target, choice=0):
-		return target.type == "Minion" and target.onBoard
+		return target.type == "Minion" or target.type == "Hero" and target.onBoard and target.ID != self.ID
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:

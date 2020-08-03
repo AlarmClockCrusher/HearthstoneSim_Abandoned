@@ -3281,6 +3281,7 @@ class TheLurkerBelow(Minion):
 						self.dealsDamage(minion, 3)
 						if minion.health < 1 or minion.dead:
 							neighbors, dist = self.Game.neighbors2(minion)
+							# i = 0 if no adjacent; -1 if only left; 1 if both; 2 if only right
 							minion = None
 							if direction == 1:
 								if dist > 0: minion = neighbors[2-dist]
@@ -3288,6 +3289,8 @@ class TheLurkerBelow(Minion):
 							else:
 								if dist == 1 or dist == -1: minion = neighbors[0]
 								else: break
+						else:
+							break
 		return target
 		
 		

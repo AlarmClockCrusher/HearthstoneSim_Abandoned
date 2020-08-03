@@ -608,18 +608,19 @@ class GUI_Common:
 		self.handZones[btn.card.ID].draw(cardMoving2=i, steps=steps)
 		
 	def cardsLeaveHandAni(self, cards, enemyCanSee=True):
-		ownID = self.ID if hasattr(self, "ID") else 1
-		if not isinstance(cards, (list, tuple)): cards = [cards]
-		ID, btns, posEnds = cards[0].ID, [], []
-		for card in cards:
-			for btn in self.handZones[ID].btnsDrawn:
-				if btn.card == card:
-					if enemyCanSee: btn.showOpponent()
-					btn.configure(bg="red")
-					btns.append(btn)
-					posEnds.append((btn.x, 0.62*Y if ID == ownID else 0.38*Y))
-					break
-		self.moveBtnsAni(btns, posEnds, vanish=True)
+		if cards is not None:
+			ownID = self.ID if hasattr(self, "ID") else 1
+			if not isinstance(cards, (list, tuple)): cards = [cards]
+			ID, btns, posEnds = cards[0].ID, [], []
+			for card in cards:
+				for btn in self.handZones[ID].btnsDrawn:
+					if btn.card == card:
+						if enemyCanSee: btn.showOpponent()
+						btn.configure(bg="red")
+						btns.append(btn)
+						posEnds.append((btn.x, 0.62*Y if ID == ownID else 0.38*Y))
+						break
+			self.moveBtnsAni(btns, posEnds, vanish=True)
 	
 	def cardLeavesDeckAni(self, card, enemyCanSee=True):
 		ownID = self.ID if hasattr(self, "ID") else 1
