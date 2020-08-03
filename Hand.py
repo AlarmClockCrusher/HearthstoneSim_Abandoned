@@ -427,8 +427,11 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 
 
-Default1 = [HighAbbessAlura, Renew, Renew, HighAbbessAlura, CommandingShout, CommandingShout, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron, MoargArtificer, MoargArtificer, EducatedElekk, EducatedElekk, UntappedPotential, BazaarBurglary, CleverDisguise, CleverDisguise, PharaohCat, PharaohCat
+Default1 = [TheLurkerBelow,TheLurkerBelow,TheLurkerBelow,
+			LightningBloom,LightningBloom,LightningBloom,LightningBloom,
 			]
 
-Default2 = [HighAbbessAlura, Renew, Renew, HighAbbessAlura, CommandingShout, CommandingShout, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron, MoargArtificer, MoargArtificer, EducatedElekk, EducatedElekk, UntappedPotential, BazaarBurglary, CleverDisguise, CleverDisguise, PharaohCat, PharaohCat
+Default2 = [LightningBloom,LightningBloom,LightningBloom,
+RafaamsScheme,RafaamsScheme,RafaamsScheme,RafaamsScheme,
+			SeaGiant,SeaGiant,SeaGiant,
 			]

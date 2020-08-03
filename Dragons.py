@@ -47,7 +47,7 @@ def invokeGalakrond(Game, ID):
 		PRINT(Game, "Class of Primary Galakrond of player is %s"%Class)
 		if "Priest" in Class:
 			if Game.mode == 0:
-				if Game.guides and Game.guides[0][1] == "Priest Invoke":
+				if Game.guides and Game.guides == "Priest Invoke":
 					minion = Game.guides.pop(0)
 				else:
 					minion = npchoice(Game.RNGPools["Priest Minions"])
@@ -1335,9 +1335,9 @@ class Trig_StrengthinNumbers(QuestTrigger):
 					i = curGame.guides.pop(0)
 				else:
 					minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if card.type == "Minion"]
-					i = npchoice(minions) if minionsinDeck and curGame.space(self.entity.ID) > 0 else -1
+					i = npchoice(minions) if minions and curGame.space(self.entity.ID) > 0 else -1
 					curGame.fixedGuides.append(i)
-				if > -1: curGame.summonfromDeck(i, self.entity.ID, -1, self.entity.ID)
+				if i > -1: curGame.summonfromDeck(i, self.entity.ID, -1, self.entity.ID)
 				
 				
 class Treenforcements(Spell):

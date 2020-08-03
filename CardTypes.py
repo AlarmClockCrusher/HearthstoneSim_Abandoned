@@ -66,7 +66,7 @@ def copyListDictTuple(obj, recipient):
 class Card:
 	#For Choose One cards.
 	def needTarget(self, choice=0):
-		return type(self).requireTarget
+		return type(self).requireTarget()
 		
 	def returnTrue(self, choice=0):
 		return True
