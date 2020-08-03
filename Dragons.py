@@ -3473,7 +3473,7 @@ class BuffAura_SurgingTempest(AuraDealer_toMinion):
 			
 	def applies(self, subject):
 		if subject == self.entity:
-			aura_Receiver = BuffAura_Receiver(subject, self, 2, 0)
+			aura_Receiver = BuffAura_Receiver(subject, self, 1, 0)
 			aura_Receiver.effectStart()
 			
 	def auraAppears(self):

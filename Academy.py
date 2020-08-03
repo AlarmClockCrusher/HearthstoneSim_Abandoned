@@ -2864,7 +2864,7 @@ class SecretPassage(Spell):
 				HD.shuffleCardintoDeck(hand, self.ID, enemyCanSee=False, sendSig=False)
 				HD.addCardtoHand(cardsfromDeck, self.ID)
 				#假设连续释放该效果会覆盖之前的效果（移除同类同ID的trig）
-				trigs = self.Game.turnStartTrigger
+				trigs = self.Game.turnEndTrigger
 				for i in reversed(range(len(trigs))):
 					if isinstance(trigs[i], SwapSecretPassageBack) and trigs[i].ID == self.ID:
 						trigs.pop(i)
@@ -2876,8 +2876,8 @@ class SwapSecretPassageBack:
 		self.Game, self.ID = Game, ID
 		self.cardsHand2Deck, self.cardsDeck2Hand = [], []
 		
-	def turnStartTrigger(self):
-		PRINT(self.Game, "At the start of turn, player swaps the hand and the cards shuffled back")
+	def turnEndTrigger(self):
+		PRINT(self.Game, "At the end of turn, player swaps the hand and the cards shuffled back")
 		cardstoReturn2Deck = [card for card in self.cardsDeck2Hand if card.inHand]
 		cardstoReturn2Hand = [card for card in self.cardsHand2Deck if card.inDeck]
 		HD = self.Game.Hand_Deck
@@ -2894,7 +2894,7 @@ class SwapSecretPassageBack:
 		HD.shuffleCardintoDeck(cardstoReturn2Deck, self.ID, enemyCanSee=False, sendSig=False)
 		HD.addCardtoHand(cardstoReturn2Hand, self.ID)
 		
-		try: self.Game.turnStartTrigger.remove(self)
+		try: self.Game.turnEndTrigger.remove(self)
 		except: pass
 		
 	def createCopy(self, game): #TurnStartTrigger
@@ -3342,8 +3342,9 @@ class Trig_TrickTotem(TrigBoard):
 			else:
 				spell = npchoice(curGame.RNGPools["Spells of <=3 Cost"])
 				curGame.fixedGuides.append(spell)
-			PRINT(curGame, "Trick Totem's casts spell "%spell.name)
-			spell(curGame, self.entity.ID).cast()
+			spell = spell(curGame, self.entity.ID)
+			PRINT(curGame, "Trick Totem's casts spell " + spell.name)
+			spell.cast()
 			
 			
 class InstructorFireheart(Minion):
@@ -3610,7 +3611,7 @@ class SpiritJailer(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Spirit Jailer shuffles 2 Soul Fragments into player's deck")
-		self.Game.Hand_Deck.shuffleCardintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID, "type")
+		self.Game.Hand_Deck.shuffleCardintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID)
 		return None
 		
 		

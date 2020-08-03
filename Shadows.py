@@ -4118,7 +4118,9 @@ class TheBoomReaver(Minion):
 					curGame.fixedGuides.append(-1)
 					return None
 			PRINT(curGame, "Dimensional Ripper is cast and summons two copies of a minion in player's deck.")
-			curGame.summon(curGame.Hand_Deck.decks[self.ID][i], (-1, "totheRightEnd"), self.ID)
+			minion=curGame.Hand_Deck.decks[self.ID][i]
+			curGame.summon(minion, (-1, "totheRightEnd"), self.ID)
+			minion.getsKeyword("Rush")
 		return None
 		
 		

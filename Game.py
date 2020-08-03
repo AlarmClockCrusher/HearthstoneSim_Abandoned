@@ -247,6 +247,8 @@ class Game:
 				
 	#不考虑卡德加带来的召唤数量翻倍。用于被summonMinion引用。
 	def summonSingle(self, subject, position):
+		if type(position)== tuple:
+			position=position[0]
 		ID = subject.ID
 		if self.space(ID) > 0:
 			subject.sequence = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
