@@ -428,9 +428,9 @@ class Hand_Deck:
 
 
 Default1 = [TrickTotem,TrickTotem,TrickTotem,TrickTotem,
-			LightningBloom,LightningBloom,LightningBloom,LightningBloom,LightningBloom,LightningBloom,
+			Doomsayer,Doomsayer,Doomsayer,Doomsayer,Doomsayer,Doomsayer,Doomsayer,Doomsayer,Doomsayer,Doomsayer,
 			]
 
 Default2 = [LightningBloom,LightningBloom,LightningBloom,
-TrickTotem,TrickTotem,TrickTotem,TrickTotem,TrickTotem,
+Rattlegore,Rattlegore,Rattlegore,Rattlegore
 			]

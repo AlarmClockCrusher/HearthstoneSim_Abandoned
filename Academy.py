@@ -4096,7 +4096,7 @@ class Rattlegore88(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummonwith77(self)]
+		self.deathrattles = [Resummon77(self)]
 
 class Rattlegore77(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4105,7 +4105,7 @@ class Rattlegore77(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummonwith66(self)]
+		self.deathrattles = [Resummon66(self)]
 
 class Rattlegore66(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4114,7 +4114,7 @@ class Rattlegore66(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummonwith55(self)]
+		self.deathrattles = [Resummon55(self)]
 
 class Rattlegore55(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4123,7 +4123,7 @@ class Rattlegore55(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummonwith44(self)]
+		self.deathrattles = [Resummon44(self)]
 
 class Rattlegore44(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4132,7 +4132,7 @@ class Rattlegore44(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummonwith33(self)]
+		self.deathrattles = [Resummon33(self)]
 
 class Rattlegore33(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4141,7 +4141,7 @@ class Rattlegore33(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummonwith22(self)]
+		self.deathrattles = [Resummon22(self)]
 
 class Rattlegore22(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4150,7 +4150,7 @@ class Rattlegore22(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummonwith11(self)]
+		self.deathrattles = [Resummon11(self)]
 
 class Rattlegore11(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
