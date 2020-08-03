@@ -2549,7 +2549,7 @@ class PharaohCat(Minion):
 			if curGame.guides: minion = curGame.guides.pop(0)
 			else:
 				minion = npchoice(curGame.RNGPools["Reborn Minions"])
-				curGame.guides.append(minion)
+				curGame.fixedGuides.append(minion)
 			curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type")
 		return None
 		
