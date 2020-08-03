@@ -4087,31 +4087,150 @@ class Rattlegore(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [ResummonwithMinus1Minus1(self)]
-		
+		self.deathrattles = [Resummon88(self)]
+
+class Rattlegore88(Minion):
+	Class, race, name = "Warrior", "", "Rattlegore"
+	mana, attack, health = 8, 8, 8
+	index = "Academy~Warrior~Minion~8~8~8~None~Rattlegore~Deathrattle~Legendary~Uncollectible"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.deathrattles = [Resummonwith77(self)]
+
+class Rattlegore77(Minion):
+	Class, race, name = "Warrior", "", "Rattlegore"
+	mana, attack, health = 7, 7, 7
+	index = "Academy~Warrior~Minion~7~7~7~None~Rattlegore~Deathrattle~Legendary~Uncollectible"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.deathrattles = [Resummonwith66(self)]
+
+class Rattlegore66(Minion):
+	Class, race, name = "Warrior", "", "Rattlegore"
+	mana, attack, health = 6, 6, 6
+	index = "Academy~Warrior~Minion~6~6~6~None~Rattlegore~Deathrattle~Legendary~Uncollectible"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.deathrattles = [Resummonwith55(self)]
+
+class Rattlegore55(Minion):
+	Class, race, name = "Warrior", "", "Rattlegore"
+	mana, attack, health = 5, 5, 5
+	index = "Academy~Warrior~Minion~5~5~5~None~Rattlegore~Deathrattle~Legendary~Uncollectible"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.deathrattles = [Resummonwith44(self)]
+
+class Rattlegore44(Minion):
+	Class, race, name = "Warrior", "", "Rattlegore"
+	mana, attack, health = 4, 4, 4
+	index = "Academy~Warrior~Minion~4~4~4~None~Rattlegore~Deathrattle~Legendary~Uncollectible"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.deathrattles = [Resummonwith33(self)]
+
+class Rattlegore33(Minion):
+	Class, race, name = "Warrior", "", "Rattlegore"
+	mana, attack, health = 3, 3, 3
+	index = "Academy~Warrior~Minion~3~3~3~None~Rattlegore~Deathrattle~Legendary~Uncollectible"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.deathrattles = [Resummonwith22(self)]
+
+class Rattlegore22(Minion):
+	Class, race, name = "Warrior", "", "Rattlegore"
+	mana, attack, health = 2, 2, 2
+	index = "Academy~Warrior~Minion~2~2~2~None~Rattlegore~Deathrattle~Legendary~Uncollectible"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.deathrattles = [Resummonwith11(self)]
+
+class Rattlegore11(Minion):
+	Class, race, name = "Warrior", "", "Rattlegore"
+	mana, attack, health = 1, 1, 1
+	index = "Academy~Warrior~Minion~1~1~1~None~Rattlegore~Legendary~Uncollectible"
+	requireTarget, keyWord, description = False, "", ""
+
 #假设一个随从以白字为准
-class ResummonwithMinus1Minus1(Deathrattle_Minion):
+class Resummon88(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		#假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
 		minion = self.entity
-		if minion.health_0 > 1:
-			minionType = type(minion)
-			cost, attack, health = max(0, minionType.mana - 1), minion.attack_0 - 1, minion.health_0 - 1
-			indices = minion.index.split('~')
-			newIndex = "%s~%s~%s~%d~%d~%d"%(indices[0], indices[1], indices[2], cost, attack, health)
-			for i in range(6, len(indices)): newIndex += "~%s"%indices[i]
-			if "Uncollectible" not in newIndex: newIndex += "~Uncollectible" #The new index will always be uncollectible
-			subclass = type(minionType.__name__+"_Mutable_"+str(health), (minionType, ),
-							{"mana": cost, "attack": attack, "health": health,
-							"index": newIndex}
-							)
-							
-		newMinion = subclass(minion.Game, minion.ID)
+		newMinion = Rattlegore88(minion.Game, minion.ID)
 		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
 		minion.Game.summon(newMinion, pos, minion.ID)
-		
-		
-		
+
+
+class Resummon77(Deathrattle_Minion):
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
+		minion = self.entity
+		newMinion = Rattlegore77(minion.Game, minion.ID)
+		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
+		minion.Game.summon(newMinion, pos, minion.ID)
+
+
+class Resummon66(Deathrattle_Minion):
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
+		minion = self.entity
+		newMinion = Rattlegore66(minion.Game, minion.ID)
+		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
+		minion.Game.summon(newMinion, pos, minion.ID)
+
+
+class Resummon55(Deathrattle_Minion):
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
+		minion = self.entity
+		newMinion = Rattlegore55(minion.Game, minion.ID)
+		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
+		minion.Game.summon(newMinion, pos, minion.ID)
+
+
+class Resummon44(Deathrattle_Minion):
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
+		minion = self.entity
+		newMinion = Rattlegore44(minion.Game, minion.ID)
+		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
+		minion.Game.summon(newMinion, pos, minion.ID)
+
+
+class Resummon33(Deathrattle_Minion):
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
+		minion = self.entity
+		newMinion = Rattlegore33(minion.Game, minion.ID)
+		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
+		minion.Game.summon(newMinion, pos, minion.ID)
+
+
+class Resummon22(Deathrattle_Minion):
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
+		minion = self.entity
+		newMinion = Rattlegore22(minion.Game, minion.ID)
+		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
+		minion.Game.summon(newMinion, pos, minion.ID)
+
+
+class Resummon11(Deathrattle_Minion):
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
+		minion = self.entity
+		newMinion = Rattlegore11(minion.Game, minion.ID)
+		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
+		minion.Game.summon(newMinion, pos, minion.ID)
+
+
 Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": TransferStudent,
 					"Academy~Neutral~Minion~0~1~1~Demon~Desk Imp": DeskImp,
 					"Academy~Neutral~Minion~1~1~1~None~Animated Broomstick~Rush~Battlecry": AnimatedBroomstick,
@@ -4143,7 +4262,6 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Neutral~Minion~1~1~1~Dragon~Plagued Hatchling~Uncollectible": PlaguedHatchling,
 					"Academy~Neutral~Minion~6~4~9~Dragon~Onyx Magescribe": OnyxMagescribe,
 					"Academy~Neutral~Minion~6~5~7~None~Smug Senior~Taunt~Deathrattle": SmugSenior,
-					"Academy~Neutral~Minion~4~4~3~None~Spectral Flyer~Rush~Uncollectible": SpectralFlyer,
 					"Academy~Neutral~Minion~6~6~6~Beast~Sorcerous Substitute~Battlecry": SorcerousSubstitute,
 					"Academy~Neutral~Minion~7~6~8~None~Keymaster Alabaster~Legendary": KeymasterAlabaster,
 					"Academy~Neutral~Minion~8~8~8~Dragon~Plagued Protodrake~Deathrattle": PlaguedProtodrake,
