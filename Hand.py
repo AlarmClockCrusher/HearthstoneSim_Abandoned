@@ -427,10 +427,11 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 
 
-Default1 = [TrickTotem,TrickTotem,TrickTotem,TrickTotem,
-			Doomsayer,Doomsayer,Doomsayer,Doomsayer,Doomsayer,Doomsayer,Doomsayer,Doomsayer,Doomsayer,Doomsayer,
+Default1 = [TidalWave,TidalWave,TidalWave,
+			LightningBloom,LightningBloom,LightningBloom,LightningBloom,LightningBloom,
 			]
 
 Default2 = [LightningBloom,LightningBloom,LightningBloom,
-Rattlegore,Rattlegore,Rattlegore,Rattlegore
+RafaamsScheme,RafaamsScheme,RafaamsScheme,RafaamsScheme,
+			SeaGiant,SeaGiant,SeaGiant,
 			]

@@ -3508,7 +3508,7 @@ class TidalWave(Spell):
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		minions = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
 		PRINT(self.Game, "Tidal Wave deals %d damage to all minions"%damage)
-		self.dealsAOE(minions, damage)
+		self.dealsAOE(minions, [damage] * len(minions))
 		return None
 		
 		
