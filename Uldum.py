@@ -4,9 +4,10 @@ from Triggers_Auras import *
 from Basic import Trig_Corruption
 from Shadows import EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey, DraconicLackey, Lackeys
 
-from numpy import inf, ndarray
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
+from numpy.random import shuffle as npshuffle
+import numpy as np
 from collections import Counter as cnt
 import copy
 
@@ -303,18 +304,11 @@ class Trig_SpittingCamel(TrigBoard):
 		if curGame.mode == 0:
 			if curGame.guides:
 				i = curGame.guides.pop(0)
-				if i < 0: return
-				else: minion = curGame.minions[self.entity.ID][i]
 			else:
-				targets = curGame.minionsAlive(self.entity.ID, self.entity)
-				if targets:
-					minion = npchoice(targets)
-					curGame.fixedGuides.append(minion.position)
-				else:
-					curGame.fixedGuides.append(-1)
-					return
-			PRINT(curGame, "At the end of turn, Spitting Camel deals 1 damage to another random friendly minion %s."%minion.name)
-			self.entity.dealsDamage(minion, 1)
+				minions = curGame.minionsAlive(self.entity.ID, self.entity)
+				i = npchoice(minions).position if minions else -1
+				curGame.fixedGuides.append(-1)
+			if i > -1: self.entity.dealsDamage(curGame.minions[self.entity.ID][i], 1)
 			
 			
 class TempleBerserker(Minion):
@@ -469,23 +463,17 @@ class Trig_HistoryBuff(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
-		ownHand = curGame.Hand_Deck.hands[self.entity.ID]
 		if curGame.mode == 0:
+			PRINT(curGame, "Player plays a minion and History Buff gives a random minion in hand +1/+1")
 			if curGame.guides:
 				i = curGame.guides.pop(0)
-				if i < 0: return
 			else:
-				minionsinHand = [i for i, card in enumerate(ownHand) if card.type == "Minion"]
-				if minionsinHand:
-					i = npchoice(minionsinHand)
-					curGame.fixedGuides.append(i)
-				else:
-					curGame.fixedGuides.append(-1)
-					return
-		PRINT(curGame, "Player plays a minion and History Buff gives a random minion in hand +1/+1")
-		ownHand[i].buffDebuff(1, 1)
-		
-		
+				minions = [i for i, card in enumerate(curGame.Hand_Deck.hands[self.entity.ID]) if card.type == "Minion"]
+				i = npchoice(minions) if minions else -1
+				curGame.fixedGuides.append(i)
+			if i > -1: curGame.Hand_Deck.hands[self.entity.ID][i].buffDebuff(1, 1)
+			
+			
 class InfestedGoblin(Minion):
 	Class, race, name = "Neutral", "", "Infested Goblin"
 	mana, attack, health = 3, 2, 3
@@ -600,6 +588,7 @@ class BodyWrapper(Minion):
 				if curGame.guides:
 					minion = curGame.guides.pop(0)
 					if minion:
+						PRINT(curGame, "Body Wrapper's battlecry shuffles a friendly minion that died this game into player's deck")
 						curGame.Hand_Deck.shuffleCardintoDeck(minion(curGame, self.ID), self.ID)
 				else:
 					minions = list(cnt(curGame.Counters.minionsDiedThisGame[self.ID]).keys())
@@ -718,20 +707,18 @@ class Trig_DesertObelisk(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
+			char = None
 			if curGame.guides:
 				i, where = curGame.guides.pop(0)
 				if where: char = curGame.find(i, where)
-				else: return
 			else:
-				targets = curGame.charsAlive(3-self.entity.ID)
-				if targets:
-					char = npchoice(targets)
+				chars = curGame.charsAlive(3-self.entity.ID)
+				if chars:
+					char = npchoice(chars)
 					curGame.fixedGuides.append((char.position, "minion%d"%char.ID) if char.type == "Minion" else (char.ID, "hero"))
 				else:
 					curGame.fixedGuides.append((0, ''))
-					return
-			PRINT(curGame, "At the end of turn, as the player controls 3 or more Desert Obelisk, Desert Obelisk deals 5 damage to a random enemy.")
-			self.entity.dealsDamage(char, 5)
+			if char: self.entity.dealsDamage(char, 5)
 			
 			
 class MortuaryMachine(Minion):
@@ -834,23 +821,20 @@ class BothPlayersSummonLowestCostMinionfromHand(Deathrattle_Minion):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
 			PRINT(curGame, "Deathrattle: Each player summons the lowest Cost minion from their hand")
-			if curGame.guides:
-				infos = list(curGame.guides.pop(0))
-			else:
-				infos = []
-				for ID in range(1, 3):
-					minions, highestCost = [], inf
+			for ID in range(1, 3):
+				if curGame.guides:
+					i = curGame.guides.pop(0)
+				else: #假设是依次召唤，如果召唤前一个随从时进行了某些结算，则后面的召唤可能受之影响
+					minions, highestCost = [], np.inf
 					for i, card in enumerate(curGame.Hand_Deck.hands[ID]):
 						if card.type == "Minion":
 							if card.mana < highestCost: minions, highestCost = [i], card.mana
 							elif card.mana == highestCost: minions.append(i)
-					if minions:
-						index = npchoice(minions)
-						infos.append((i, ID))
-				curGame.fixedGuides.append(tuple(infos))
-			for i, ID in infos: curGame.summonfromHand(i, ID, -1, self.entity.ID)
-			
-			
+					i = npchoice(minions) if minions and curGame.space(ID) > 0 else -1
+					curGame.fixedGuides.append(i)
+				if i > -1: curGame.summonfromHand(i, ID, -1, self.entity.ID)
+				
+				
 class KhartutDefender(Minion):
 	Class, race, name = "Neutral", "", "Khartut Defender"
 	mana, attack, health = 6, 3, 4
@@ -973,8 +957,7 @@ class Octosari(Minion):
 class Draw8Cards(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Deathrattle: Draw 8 cards triggers")
-		for i in range(8):
-			self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
+		for i in range(8): self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
 			
 			
 class PitCrocolisk(Minion):
@@ -1116,21 +1099,20 @@ class WorthyExpedition(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		if curGame.Hand_Deck.handNotFull(self.ID):
-			if curGame.mode == 0:
-				if curGame.guides:
-					PRINT(curGame, "Worthy Expedition adds a Choose One card to player's hand")
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
+		if curGame.mode == 0:
+			if curGame.guides:
+				PRINT(curGame, "Worthy Expedition adds a Choose One card to player's hand")
+				curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
+			else:
+				if self.ID != curGame.turn or "byOthers" in comment:
+					card = npchoice(curGame.RNGPools["Choose One Cards"])
+					curGame.fixedGuides.append(card)
+					PRINT(curGame, "Worthy Expedition is cast and adds a random Choose One card to player's hand")
+					curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True)
 				else:
-					if "byOthers" in comment:
-						card = npchoice(curGame.RNGPools["Choose One Cards"])
-						curGame.fixedGuides.append(card)
-						PRINT(curGame, "Worthy Expedition is cast and adds a random Choose One card to player's hand")
-						curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True)
-					else:
-						cards = npchoice(curGame.RNGPools["Choose One Cards"], 3, replace=False)
-						curGame.options = [card(curGame, self.ID) for card in cards]
-						curGame.Discover.startDiscover(self)
+					cards = npchoice(curGame.RNGPools["Choose One Cards"], 3, replace=False)
+					curGame.options = [card(curGame, self.ID) for card in cards]
+					curGame.Discover.startDiscover(self)
 		return None
 		
 	def discoverDecided(self, option, info):
@@ -1181,7 +1163,7 @@ class BEEEES(Spell):
 			for bee in bees:
 				#召唤的蜜蜂需要在场上且存活，同时目标也需要在场且存活
 				if bee.onBoard and bee.health > 0 and bee.dead == False and target.onBoard and target.health > 0 and target.dead == False:
-					self.Game.battle(bee, target, False, False)
+					self.Game.battle(bee, target, verifySelectable=False, useAttChance=False, resolveDeath=False)
 		return target
 		
 class Bee_Uldum(Minion):
@@ -1284,7 +1266,8 @@ class OasisSurger(Minion):
 			self.buffDebuff(2, 2)
 		if choice != 0:
 			PRINT(self.Game, "Oasis Surger summons a copy of itself")
-			self.Game.summon(self.selfCopy(self.ID), self.position+1, self.ID)
+			Copy = self.selfCopy(self.ID) if self.onBoard else type(self)(self.Game, self.ID)
+			self.Game.summon(Copy, self.position+1, self.ID)
 		return None
 		
 class FocusedBurst_Option(ChooseOneOption):
@@ -1381,8 +1364,7 @@ class Overflow(Spell):
 		PRINT(self.Game, "Overflow is cast and restores %d Health to all characters. The player draws 5 cards"%heal)
 		targets = [self.Game.heroes[self.ID], self.Game.heroes[3-self.ID]] + self.Game.minionsonBoard(self.ID) + self.Game.minionsonBoard(3-self.ID)
 		self.restoresAOE(targets, [heal for obj in targets])
-		for i in range(5):
-			self.Game.Hand_Deck.drawCard(self.ID)
+		for i in range(5): self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
 """Hunter cards"""
@@ -1443,12 +1425,12 @@ class Trig_PressurePlate(SecretTrigger):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
 			if curGame.guides:
-				minion = curGame.minions[3-self.entity.ID][curGame.guides.pop(0)]
+				i = curGame.guides.pop(0)
 			else:
-				minion = npchoice(curGame.minionsAlive(3-self.entity.ID))
-				curGame.fixedGuides.append(minion.position)
-				PRINT(curGame, "After the opponent casts a spell, Secret Pressure Plate is triggered and destroys random enemy minion %s"%minion.name)
-			minion.dead = True
+				minions = curGame.minionsAlive(3-self.entity.ID)
+				i = npchoice(minions).position if minions else -1
+				curGame.fixedGuides.append(i)
+			if i > -1: curGame.minions[3-self.entity.ID][i].dead = True
 			
 			
 class DesertSpear(Weapon):
@@ -1493,8 +1475,8 @@ class HuntersPack(Spell):
 			if curGame.guides:
 				cards = list(curGame.guides.pop(0))
 			else:
-				cards = [npchoice(curGame.RNGPools["Hunter Beasts"]), npchoice(curGame.RNGPools["Hunter Secrets"]), npchoice(curGame.RNGPools["Hunter Weapons"])]
-				curGame.fixedGuides.append(tuple(cards))
+				cards = (npchoice(curGame.RNGPools["Hunter Beasts"]), npchoice(curGame.RNGPools["Hunter Secrets"]), npchoice(curGame.RNGPools["Hunter Weapons"]))
+				curGame.fixedGuides.append(cards)
 			PRINT(curGame, "Hunter's Pack is cast and adds a random Hunter Beast, Secret, and Weapon to player's hand")
 			curGame.Hand_Deck.addCardtoHand(cards, self.ID, "type")
 		return None
@@ -1531,23 +1513,15 @@ class RamkahenWildtamer(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		if curGame.Hand_Deck.handNotFull(self.ID):
-			if curGame.mode == 0:
-				if curGame.guides:
-					i = curGame.guides.pop(0)
-					if i < 0:
-						PRINT(curGame, "No Beast in player's hand. Ramkahen Wildtamer's battlecry has no effect")
-						return None
-				else:
-					beastsinHand = [i for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]) if card.type == "Minion" and "Beast" in card.race]
-					if beastsinHand:
-						i = npchoice(beastsinHand)
-						curGame.fixedGuides.append(i)
-					else:
-						PRINT(curGame, "No Beast in player's hand. Ramkahen Wildtamer's battlecry has no effect")
-						curGame.fixedGuides.append(-1)
-						return None
-				PRINT(curGame, "Ramkahen Wildtamer's battlecry copies a Beast in player's hand")
+		if curGame.mode == 0:
+			PRINT(curGame, "Ramkahen Wildtamer's battlecry copies a Beast in player's hand")
+			if curGame.guides:
+				i = curGame.guides.pop(0)
+			else:
+				beasts = [i for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]) if card.type == "Minion" and "Beast" in card.race]
+				i = npchoice(beasts) if beasts else -1
+				curGame.fixedGuides.append(i)
+			if i > -1:
 				beast = curGame.Hand_Deck.hands[self.ID][i].selfCopy(self.ID)
 				curGame.Hand_Deck.addCardtoHand(beast, self.ID)
 		return None
@@ -1576,22 +1550,17 @@ class ScarletWebweaver(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
+			PRINT(curGame, "Scarlet Webweaver's battlecry reduces the Cost of random Beast in player's hand by (5)")
 			if curGame.guides:
 				i = curGame.guides.pop(0)
-				if i < 0: return None
 			else:
-				beastsinHand = [i for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]) if card.type == "Minion" and "Beast" in card.race]
-				if beastsinHand:
-					i = npchoice(beastsinHand)
-					curGame.fixedGuides.append(i)
-				else:
-					PRINT(curGame, "No Beast in player's hand. Scarlet Webweaver's battlecry has no effect")
-					curGame.fixedGuides.append(-1)
-					return None
-			PRINT(curGame, "Scarlet Webweaver's battlecry reduces the Cost of random Beast in player's hand by (5)")
-			beast = curGame.Hand_Deck.hands[self.ID][i]
-			ManaMod(beast, changeby=-5, changeto=-1).applies()
-			curGame.Manas.calcMana_Single(beast)
+				beasts = [i for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]) if card.type == "Minion" and "Beast" in card.race]
+				i = npchoice(beasts) if beasts else -1
+				curGame.fixedGuides.append(i)
+			if i > -1:
+				beast = curGame.Hand_Deck.hands[self.ID][i]
+				ManaMod(beast, changeby=-5, changeto=-1).applies()
+				curGame.Manas.calcMana_Single(beast)
 		return None
 		
 		
@@ -1604,21 +1573,16 @@ class WildBloodstinger(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
+			PRINT(curGame, "Wild Bloodstinger's battlecry summons a minion from Opponent's hand and attacks it")
 			if curGame.guides:
 				i = curGame.guides.pop(0)
-				if i < 0: return None
 			else:
 				minions = [i for i, card in enumerate(curGame.Hand_Deck.hands[3-self.ID]) if card.type == "Minion"]
-				if minions and curGame.space(3-self.ID):
-					i = npchoice(minions)
-					curGame.fixedGuides.append(i)
-				else:
-					curGame.fixedGuides.append(-1)
-					return None
-			minion = curGame.Hand_Deck.hands[3-self.ID][i]
-			PRINT(curGame, "Wild Bloodstinger's battlecry summons minion %s from Opponent's hand and lets Wild Bloodstinger attack it"%minion.name)
-			curGame.summonfromHand(i, 3-self.ID, -1, self.ID)
-			if minion.onBoard: curGame.battle(self, minion, False, False)
+				i = npchoice(minions) if minions and curGame.space(3-self.ID) > 0 else -1
+				curGame.fixedGuides.append(i)
+			if i > -1:
+				minion = curGame.summonfromHand(i, 3-self.ID, -1, self.ID)
+				if minion.onBoard: curGame.battle(self, minion, verifySelectable=False, useAttChance=False, resolveDeath=False)
 		return None
 		
 		
@@ -1707,22 +1671,13 @@ class AncientMysteries(Spell):
 			PRINT(curGame, "Ancient Mysteries lets player draw a Secret from deck. It costs (0)")
 			if curGame.guides:
 				i = curGame.guides.pop(0)
-				if i < 0:
-					PRINT(curGame, "Player's deck has no Secrets. Ancient Mysteries has no effect")
-					return None
 			else:
-				secretsinDeck = [i for i, card in enumerate(ownDeck) if card.description.startswith("Secret:")]
-				if secretsinDeck:
-					i = npchoice(secretsinDeck)
-					curGame.fixedGuides.append(i)
-				else:
-					curGame.fixedGuides.append(-1)
-					PRINT(curGame, "Player's deck has no Secrets. Ancient Mysteries has no effect")
-					return None
-			secret = curGame.Hand_Deck.drawCard(self.ID, i)[0]
-			if secret:
-				PRINT(curGame, "Ancient Mysteries makes the drawn Secret cost (0)")
-				ManaMod(secret, changeby=0, changeto=0).applies()
+				secrets = [i for i, card in enumerate(ownDeck) if card.description.startswith("Secret:")]
+				i = npchoice(secrets) if secrets else -1
+				curGame.fixedGuides.append(i)
+			if i > -1:
+				secret = curGame.Hand_Deck.drawCard(self.ID, i)[0]
+				if secret: ManaMod(secret, changeby=0, changeto=0).applies()
 		return None
 		
 		
@@ -1901,18 +1856,11 @@ class RenotheRelicologist(Minion):
 				for num in range(10):
 					if curGame.guides:
 						i = curGame.guides.pop(0)
-						if i < 0: break
-						else: minion = curGame.minions[3-self.ID][i]
 					else:
 						minions = curGame.minionsAlive(3-self.ID)
-						if minions:
-							minion = npchoice(minions)
-							curGame.fixedGuides.append(minion.position)
-						else:
-							curGame.fixedGuides.append(-1)
-							break
-					PRINT(curGame, "Reno the Relicologist's battlecry deals 1 damage to enemy minion %s"%minion.name)
-					self.dealsDamage(minion, 1)
+						i = npchoice(minions).position if minions else -1
+						curGame.fixedGuides.append(i)
+					if i > -1: self.dealsDamage(curGame.minions[3-self.ID][i], 1)
 		return None
 		
 		
@@ -2034,19 +1982,11 @@ class Trig_MicroMummy(TrigBoard):
 		if curGame.mode == 0:
 			if curGame.guides:
 				i = curGame.guides.pop(0)
-				if i < 0: return
-				else: minion = curGame.minions[self.entity.ID][i]
 			else:
-				targets = curGame.minionsonBoard(self.entity.ID)
-				extractfrom(self.entity, targets)
-				if targets:
-					minion = npchoice(targets)
-					curGame.fixedGuides.append(minion.position)
-				else:
-					curGame.fixedGuides.append(-1)
-					return
-			PRINT(curGame, "At the end of turn, Micro Mummy gvies another random friendly minion %s +1 Attack."%minion.name)
-			minion.buffDebuff(1, 0)
+				minions = curGame.minionsonBoard(self.entity.ID, self.entity)
+				i = npchoice(minions).position if minions else -1
+				curGame.fixedGuides.append(i)
+			if i > -1: curGame.minions[self.entity.ID][i].buffDebuff(1, 0)
 			
 			
 class SandwaspQueen(Minion):
@@ -2089,10 +2029,11 @@ class SirFinleyoftheSands(Minion):
 					curGame.guides.pop(0)(curGame, self.ID).replaceHeroPower()
 				else:
 					heroPowerPool = fixedList(curGame.upgradedPowers)
-					extractfrom(type(curGame.powers[self.ID]), heroPowerPool)
+					try: heroPowerPool.remove(type(curGame.powers[self.ID]))
+					except: pass
 					if "byOthers" in comment:
 						power = npchoice(heroPowerPool)
-						curGame.guides.append(power)
+						curGame.fixedGuides.append(power)
 						PRINT(curGame, "Sir Finley of the Sands's battlecry changes player's Hero Power to %s"%power.name)
 						power(curGame, self.ID).replaceHeroPower()
 					else:
@@ -2104,7 +2045,6 @@ class SirFinleyoftheSands(Minion):
 		
 	def discoverDecided(self, option, info):
 		self.Game.fixedGuides.append(type(option))
-		PRINT(self.Game, "New Upgraded Hero Power %s replaces the current Hero Power"%option.name)
 		option.replaceHeroPower()
 		
 		
@@ -2138,21 +2078,17 @@ class SalhetsPride(Minion):
 class DrawTwo1HealthMinions(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
-		PRINT(curGame, "Deathrattle: Draw two 1-Health minions from your deck triggers")
 		if curGame.mode == 0:
-			for i in range(2):
+			PRINT(curGame, "Deathrattle: Draw two 1-Health minions from your deck triggers")
+			for num in range(2):
 				if curGame.guides:
 					i = curGame.guides.pop(0)
-					if i < 0: break
 				else:
 					minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if card.type == "Minion" and card.health == 1]
-					if minions:
-						i = npchoice(minions)
-						curGame.fixedGuides.append(i)
-					else:
-						curGame.fixedGuides.append(-1)
-						break
-				curGame.Hand_Deck.drawCard(self.entity.ID, i)
+					i = npchoice(minions) if minions else -1
+					curGame.fixedGuides.append(i)
+				if i > -1: curGame.Hand_Deck.drawCard(self.entity.ID, i)
+				else: break
 				
 				
 class AncestralGuardian(Minion):
@@ -2189,21 +2125,18 @@ class TiptheScales(Spell):
 	description = "Summon 7 Murlocs from your deck"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
+		ownDeck = curGame.Hand_Deck.decks[self.ID]
 		if curGame.mode == 0:
 			PRINT(curGame, "Tip the Scales is cast and summon 7 Murlocs from player's deck")
-			for i in range(7):
+			for num in range(7):
 				if curGame.guides:
 					i = curGame.guides.pop(0)
-					if i < 0: break
 				else:
-					murlocs = [i for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]) if card.type == "Minion" and "Murloc" in card.race]
-					if murlocs:
-						i = npchoice(murlocs)
-						curGame.fixedGuides.append(i)
-					else:
-						curGame.fixedGuides.append(-1)
-						break
-				if curGame.summonfromDeck(murlocs, -1, self.ID) is None: break
+					murlocs = [i for i, card in enumerate(ownDeck) if card.type == "Minion" and "Murloc" in card.race]
+					i = npchoice(murlocs) if murlocs and curGame.space(self.ID) > 0 else -1
+					curGame.fixedGuides.append(i)
+				if i > -1: curGame.summonfromDeck(i, self.ID, -1, self.ID)
+				else: break
 		return None
 		
 		
@@ -2310,22 +2243,18 @@ class Trig_SandhoofWaterbearer(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
+			char = None
 			if curGame.guides:
 				i, where = curGame.guides.pop(0)
 				if where: char = curGame.find(i, where)
-				else: return
 			else:
 				chars = [char for char in curGame.charsAlive(self.entity.ID) if char.health < char.health_max]
 				if chars:
 					char = npchoice(chars)
-					info = (char.position, "minion%d"%char.ID) if char.type == "Minion" else (char.ID, "hero")
-					curGame.fixedGuides.append(info)
+					curGame.fixedGuides.append((char.position, "minion%d"%char.ID) if char.type == "Minion" else (char.ID, "hero"))
 				else:
 					curGame.fixedGuides.append((0, ''))
-					return
-			heal = 5 * (2 ** self.entity.countHealDouble())
-			PRINT(curGame, "At the start of turn, Sandhoof Waterbearer restores %d health to damaged friendly character %s"%(heal, char.name))
-			self.entity.restoresHealth(char, heal)
+			if char: self.entity.restoresHealth(char, 5 * (2 ** self.entity.countHealDouble()))
 			
 			
 class Grandmummy(Minion):
@@ -2344,17 +2273,11 @@ class GiveRandomFriendlyMinionPlus1Plus1(Deathrattle_Minion):
 			PRINT(curGame, "Deathrattle: Give a random friendly minion +1/+1 triggers")
 			if curGame.guides:
 				i = curGame.guides.pop(0)
-				if i < 0: return
-				minion = curGame.minions[self.entity.ID][i]
 			else:
 				minions = curGame.minionsonBoard(self.entity.ID)
-				if minions:
-					minion = npchoice(minions)
-					curGame.fixedGuides.append(minion.position)
-				else:
-					curGame.fixedGuides.append(-1)
-					return
-			minion.buffDebuff(1, 1)
+				i = npchoice(minions).position if minions else -1
+				curGame.fixedGuides.append(i)
+			if i > -1: curGame.minions[self.entity.ID][i].buffDebuff(1, 1)
 			
 			
 class HolyRipple(Spell):
@@ -2412,20 +2335,14 @@ class Psychopomp(Minion):
 			PRINT(curGame, "Psychopomp's battlecry summons a random friendly minion that died this game and gives it Reborn.")
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
-				if minion is None: return None
 			else:
 				minionsDied = curGame.Counters.minionsDiedThisGame[self.ID]
-				if minionsDied:
-					minion = curGame.cardPool[npchoice(minionsDied)]
-					curGame.fixedGuides.append(minion)
-				else:
-					curGame.fixedGuides.append(None)
-					return None
-			minion = minion(curGame, self.ID)
-			#不知道卡德加翻倍召唤出的随从是否也会获得复生，假设会。
-			minion.getsKeyword("Reborn")
-			PRINT(curGame, "Psychopomp's battlecry summons %s with Reborn"%minion.name)
-			curGame.summon(minion, self.position+1, self.ID)
+				minion = curGame.cardPool[npchoice(minionsDied)] if minionsDied else None
+				curGame.fixedGuides.append(minion)
+			if minion:
+				minion = minion(curGame, self.ID)
+				minion.getsKeyword("Reborn") #不知道卡德加翻倍召唤出的随从是否也会获得复生，假设会。
+				curGame.summon(minion, self.position+1, self.ID)
 		return None
 		
 		
@@ -2546,7 +2463,8 @@ class PharaohCat(Minion):
 		curGame = self.Game
 		if curGame.mode == 0:
 			PRINT(curGame, "Pharaoh Cat's battlecry adds a random Reborn minion to player's hand")
-			if curGame.guides: minion = curGame.guides.pop(0)
+			if curGame.guides:
+				minion = curGame.guides.pop(0)
 			else:
 				minion = npchoice(curGame.RNGPools["Reborn Minions"])
 				curGame.fixedGuides.append(minion)
@@ -2590,13 +2508,14 @@ class CleverDisguise(Spell):
 		curGame = self.Game
 		if curGame.mode == 0:
 			PRINT(curGame, "Clever Disguise is cast and adds 2 random spells from another Class to player's hand")
-			if curGame.guides: spells = curGame.guides.pop(0)
+			if curGame.guides:
+				spells = curGame.guides.pop(0)
 			else:
 				classes = fixedList(curGame.RNGPools["Classes"])
 				try: classes.remove(curGame.heroes[self.ID].Class)
 				except: pass
-				classes = npchoice(classes, 2, replace=True)
-				spells = [npchoice(curGame.RNGPools["%s Spells"%Class]) for Class in classes]
+				pool = curGame.RNGPools["%s Spells"%npchoice(classes)]
+				spells = [npchoice(pool) for i in range(2)]
 				curGame.fixedGuides.append(tuple(spells))
 			curGame.Hand_Deck.addCardtoHand(spells, self.ID, "type")
 		return None
@@ -2628,7 +2547,8 @@ class Trig_WhirlkickMaster(TrigBoard):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
 			PRINT(curGame, "Player plays a Combo card and Whirlkick Master adds random Combo card to player's hand.")
-			if curGame.guides: card = curGame.guides.pop(0)
+			if curGame.guides:
+				card = curGame.guides.pop(0)
 			else:
 				card = npchoice(curGame.RNGPools["Combo Cards"])
 				curGame.fixedGuides.append(card)
@@ -2666,19 +2586,14 @@ class ReturnaRandomEnemyMiniontoHand(Deathrattle_Minion):
 			PRINT(curGame, "Deathrattle: Return a random enemy minion to its owner's hand triggers.")
 			if curGame.guides:
 				i = curGame.guides.pop(0)
-				if i < 0: return
-				else: minion = curGame.minions[3-self.entity.ID][i]
 			else:
 				minions = curGame.minionsonBoard(3-self.entity.ID)
-				if minions:
-					minion = npchoice(minions)
-					curGame.fixedGuides.append(minion.position)
-				else:
-					curGame.fixedGuides.append(-1)
-					return
-			curGame.returnMiniontoHand(minion) #minion是在场上的，所以不需要询问是否保留亡语注册
-			
-			
+				i = npchoice(minion).position if minions else -1
+				curGame.fixedGuides.append(i)
+			if i > -1:
+				curGame.returnMiniontoHand(curGame.minions[3-self.entity.ID][i]) #minion是在场上的，所以不需要询问是否保留亡语注册
+				
+				
 class BazaarMugger(Minion):
 	Class, race, name = "Rogue", "", "Bazaar Mugger"
 	mana, attack, health = 5, 3, 5
@@ -2719,15 +2634,14 @@ class ShadowofDeath(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Shadow of Death shuffles 3 'Shadows' into player's deck. When drawn, they summon a copy of the chosen minion %s"%target.name)
-			for i in range(3):
-				typeName = type(target).__name__
-				newIndex = "Uldum~Rogue~4~Spell~Shadow~Casts When Drawn~Summon %s~Uncollectible"%typeName
-				subclass = type("Shadow_Mutable_"+typeName, (Shadow_Mutable, ),
-								{"index": newIndex, "description": "Casts When Drawn. Summon a "+typeName,
-								"miniontoSummon": type(target)}
-								)
-				self.Game.cardPool[newIndex] = subclass #Create the subclass and add it to the game's cardPool.
-				self.Game.Hand_Deck.shuffleCardintoDeck(subclass(self.Game, self.ID), self.ID)
+			typeName = type(target).__name__
+			newIndex = "Uldum~Rogue~4~Spell~Shadow~Casts When Drawn~Summon %s~Uncollectible"%typeName
+			subclass = type("Shadow_Mutable_"+typeName, (Shadow_Mutable, ),
+							{"index": newIndex, "description": "Casts When Drawn. Summon a "+typeName,
+							"miniontoSummon": type(target)}
+							)
+			self.Game.cardPool[newIndex] = subclass #Create the subclass and add it to the game's cardPool.
+			self.Game.Hand_Deck.shuffleCardintoDeck([subclass(self.Game, self.ID) for i in range(3)], self.ID)
 		return target
 		
 class Shadow_Mutable(Spell):
@@ -2853,7 +2767,8 @@ class Trig_EVILTotem(TrigBoard):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
 			PRINT(curGame, "At the end of turn, EVIL Totem adds a Lackey to player's hand")
-			if curGame.guides: lackey = curGame.guides.pop(0)
+			if curGame.guides:
+				lackey = curGame.guides.pop(0)
 			else:
 				lackey = npchoice(Lackeys)
 				curGame.fixedGuides.append(lackey)
@@ -2936,7 +2851,7 @@ class SplittingAxe(Weapon):
 	index = "Uldum~Shaman~Weapon~4~3~2~Splitting Axe~Battlecry"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Splitting Axe's battlecry summons copies of all friendly Totem")
-		for minion in fixedList(self.Game.minionsonBoard(self.ID)):
+		for minion in self.Game.minionsonBoard(self.ID):
 			if "Totem" in minion.race:
 				self.Game.summon(minion.selfCopy(minion.ID), minion.position+1, self.ID)
 		return None
@@ -2971,19 +2886,19 @@ class BuffAura_Vessina(AuraDealer_toMinion):
 			isOverloaded = self.entity.Game.Manas.manasOverloaded[self.entity.ID] > 0 or self.entity.Game.Manas.manasLocked[self.entity.ID] > 0
 			if isOverloaded == False and self.entity.activated:
 				self.entity.activated = False
-				PRINT(self.entity.Game, "Vessina's Buff Aura: Your other minions have +2 Attack is shut down.")
+				PRINT(self.entity, "Vessina's Buff Aura: Your other minions have +2 Attack is shut down.")
 				for minion, aura_Receiver in fixedList(self.auraAffected):
 					aura_Receiver.effectClear()
 				self.auraAffected = []
 			elif isOverloaded and self.entity.activated == False:
 				self.entity.activated = True
-				PRINT(self.entity.Game, "Vessina's Buff Aura: Your other minions have +2 Attack is activated.")
+				PRINT(self.entity, "Vessina's Buff Aura: Your other minions have +2 Attack is activated.")
 				for minion in self.entity.Game.minionsonBoard(self.entity.ID):
 					self.applies(minion)
 					
 	def applies(self, subject):
 		if subject != self.entity:
-			PRINT(self.entity.Game, "Minion %s gains the %d/%d aura from %s"%(subject.name, 2, 0, self.entity))
+			PRINT(self.entity, "Minion %s gains the %d/%d aura from %s"%(subject.name, 2, 0, self.entity))
 			aura_Receiver = BuffAura_Receiver(subject, self, 2, 0)
 			aura_Receiver.effectStart()
 			
@@ -2992,7 +2907,7 @@ class BuffAura_Vessina(AuraDealer_toMinion):
 		isOverloaded = game.Manas.manasOverloaded[self.entity.ID] > 0 or game.Manas.manasLocked[self.entity.ID] > 0
 		if isOverloaded:
 			self.entity.activated = True
-			PRINT(self.entity.Game, "Vessina's Buff Aura: Your other minions have +2 Attack is activated.")
+			PRINT(self.entity, "Vessina's Buff Aura: Your other minions have +2 Attack is activated.")
 			for minion in game.minionsonBoard(self.entity.ID):
 				self.applies(minion)
 				
@@ -3092,9 +3007,8 @@ class SinisterDeal(Spell):
 		curGame = self.Game
 		if curGame.mode == 0:
 			if curGame.guides:
-				lackey = curGame.guides.pop(0)
 				PRINT(curGame, "Sinister Deal adds a Lackey to player's hand")
-				curGame.Hand_Deck.addCardtoHand(lackey, self.ID, "type", byDiscover=True)
+				curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 			else:
 				if self.ID != curGame.turn or "byOthers" in comment:
 					lackey = npchoice(Lackeys)
@@ -3167,24 +3081,20 @@ class ExpiredMerchant(Minion):
 			PRINT(curGame, "Expired Merchant's battlecry discards the highest cost card in player's hand")
 			if curGame.guides:
 				i = curGame.guides.pop(0)
-				if i < 0: return None
 			else:
-				cards, highestCost = [], -inf
+				cards, highestCost = [], -np.inf
 				for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]):
 					if card.mana > highestCost: cards, highestCost = [i], card.mana
 					elif card.mana == highestCost: cards.append(i)
-				if cards:
-					i = npchoice(cards)
-					curGame.fixedGuides.append(i)
-				else:
-					curGame.fixedGuides.append(-1)
-					return None
-			card = curGame.Hand_Deck.hands[self.ID][i]
-			curGame.Hand_Deck.discardCard(self.ID, i)
-			PRINT(curGame, "Expired Merchant's battlecry discards %s"%card.name)
-			for trig in self.deathrattles:
-				if type(trig) == Return2CopiesofDiscardedCard:
-					trig.discardedCard = type(card)
+				i = npchoice(cards) if cards else -1
+				curGame.fixedGuides.append(i)
+			if i > -1:
+				card = curGame.Hand_Deck.hands[self.ID][i]
+				curGame.Hand_Deck.discardCard(self.ID, i)
+				PRINT(curGame, "Expired Merchant's battlecry discards %s"%card.name)
+				for trig in self.deathrattles:
+					if isinstance(trig, Return2CopiesofDiscardedCard):
+						trig.discardedCard = type(card)
 		return None
 		
 class Return2CopiesofDiscardedCard(Deathrattle_Minion):
@@ -3307,8 +3217,9 @@ class Trig_DiseasedVulture(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
-			PRINT(curGame, "After player takes damage on their own turn, %s summons a random 3-Cost minion"%self.entity.name)
-			if curGame.guides: minion = curGame.guides.pop(0)
+			PRINT(curGame, "After player takes damage on their own turn, Diseased Vulture summons a random 3-Cost minion")
+			if curGame.guides:
+				minion = curGame.guides.pop(0)
 			else:
 				minion = npchoice(curGame.RNGPools["3-Cost Minions to Summon"])
 				curGame.fixedGuides.append(minion)
@@ -3535,8 +3446,8 @@ class BloodswornMercenary(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Bloodsworn Mercenary's summons a copy of damaged friendly minion %s"%target.name)
-			minion = target.selfCopy(self.ID) if target.onBoard else type(target)(self.Game, self.ID)
-			self.Game.summon(minion, target.position+1, self.ID)
+			Copy = target.selfCopy(self.ID) if target.onBoard else type(target)(self.Game, self.ID)
+			self.Game.summon(Copy, target.position+1, self.ID)
 		return target
 		
 		
@@ -3564,7 +3475,7 @@ class Trig_LivewireLance(TrigBoard):
 			else:
 				lackey = npchoice(Lackeys)
 				curGame.fixedGuides.append(lackey)
-			PRINT(curGame, "After hero attacks, weapon %s adds a Lackey to player's hand"%self.entity.name)
+			PRINT(curGame, "After hero attacks, weapon Livewire Lance adds a Lackey to player's hand")
 			curGame.Hand_Deck.addCardtoHand(lackey, self.entity.ID, "type")
 			
 			
@@ -3634,7 +3545,7 @@ class Trig_ArmoredGoon(TrigBoard):
 		return self.entity.onBoard and subject == self.entity.Game.heroes[self.entity.ID]
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "Whenever player attacks, %s lets player gain +5 Armor"%self.entity.name)
+		PRINT(self.entity.Game, "Whenever player attacks, Armored Goon lets player gain +5 Armor")
 		self.entity.Game.heroes[self.entity.ID].gainsArmor(5)
 		
 		
@@ -3646,7 +3557,7 @@ class TombWarden(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Tomb Warden's summons a copy of the minion itself")
-		minion = self.selfCopy(self.ID) if self.onBoard else TombWarden(self.Game, self.ID)
+		minion = self.selfCopy(self.ID) if self.onBoard else type(self)(self.Game, self.ID)
 		self.Game.summon(minion, self.position+1, self.ID)
 		return None
 		

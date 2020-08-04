@@ -247,8 +247,6 @@ class Game:
 				
 	#不考虑卡德加带来的召唤数量翻倍。用于被summonMinion引用。
 	def summonSingle(self, subject, position):
-		if type(position)== tuple:
-			position=position[0]
 		ID = subject.ID
 		if self.space(ID) > 0:
 			subject.sequence = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
@@ -261,10 +259,8 @@ class Game:
 				self.GUI.wait(200, showLine=False)
 			self.sendSignal("MinionSummoned", self.turn, subject, None, 0, "")
 			self.sendSignal("MinionBeenSummoned", self.turn, subject, None, 0, "")
-			return True
-		else:
-			PRINT(self, "The board is full and no minion can be summoned")
-			return False
+			return subject
+		return None
 			
 	#只能为同一方召唤随从，如有需要，则多次引用这个函数即可。subject不能是空的
 	#注意，卡德加的机制是2 ** n倍。每次翻倍会出现多召唤1个，2个，4个的情况。目前不需要处理3个卡德加的情况，因为7个格子放不下。
@@ -280,8 +276,8 @@ class Game:
 					if self.summonSingle(copies[0], subject.position+1):
 						for i in range(1, numCopies): #复制的随从列表中剩余的随从，如果没有剩余随从了，直接跳过
 							if not self.summonSingle(copies[i], copies[i-1].position): break #翻倍出来的复制会始终紧跟在初始随从的右边。
-					return True #只要第一次召唤出随从就视为召唤成功
-				return False
+					return minionSummoned #只要第一次召唤出随从就视为召唤成功
+				return None
 			else: return self.summonSingle(subject, position)
 		else: #Summoning multiple minions in a row. But the list can be of length 1
 			if len(subject) == 1: #用列表形式但是只召唤一个随从的时候，position一定是(self.position, "totheRight")或者（-1, "totheRightEnd"）
@@ -290,7 +286,6 @@ class Game:
 			else: #真正召唤多个随从的时候，会把它们划分为多次循环。每次循环后下次循环召唤的随从紧贴在这次循环召唤的随从的右边。
 				if position[1] == "leftandRight":
 					centralMinion, totheRight = self.minions[subject[0].ID][position[0]], 1 #必须得到中间的随从的位置
-					print("Center minion is ", centralMinion)
 					for i in range(len(subject)):
 						if i == 0: pos = centralMinion.position+1 #i == 0 召唤的第一个随从直接出现在传递进来的位置的右+1，没有任何问题。但是之后的召唤需要得知发起随从的位置或者之前召唤的随从的位置
 						elif i == 1: pos = centralMinion.position #这个召唤实际上是在列表中插入一个新的随从把中间随从向右挤
@@ -299,18 +294,17 @@ class Game:
 							
 						totheRight = 1 - totheRight
 						if not self.summon(subject[i], pos, initiatorID, comment):
-							print("Boards are", [obj.name for obj in self.minions[initiatorID]])
-							if i == 0: return False #只有第一次召唤就因为没有位置而失败时会返回False
+							if i == 0: return None #只有第一次召唤就因为没有位置而失败时会返回False
 							else: break
-					return True
+					return subject[0]
 				else: #totheRight or totheRightEnd
 					#如果position[1]是"totheRight"，那么position[0]是-2的话会返回pos=1
 					pos = -1 if position[1] == "totheRightEnd" else position[0]+1
 					for i in range(len(subject)):
 						pos = pos if i == 0 else subject[i-1].position+1
 						if not self.summon(subject[i], pos, initiatorID, comment) and i == 0:
-							return False
-					return True
+							return None
+					return subject[0]
 					
 	#一次只从一方的手牌中召唤一个随从。没有列表，从手牌中召唤多个随从都是循环数次检索，然后单个召唤入场的。
 	def summonfromHand(self, i, ID, position, initiatorID, comment="Enablex2"):
@@ -649,7 +643,7 @@ class Game:
 		self.sendSignal("TurnEnds", self.turn, None, None, 0, "")
 		self.gathertheDead(True)
 		#The secrets and temp effects are cleared at the end of turn.
-		for obj in self.turnEndTrigger: #所有一回合光环都是回合结束时消失，即使效果在自己回合外触发了也是如此
+		for obj in fixedList(self.turnEndTrigger): #所有一回合光环都是回合结束时消失，即使效果在自己回合外触发了也是如此
 			obj.turnEndTrigger()
 			
 		self.Counters.turnEnds()
@@ -658,9 +652,8 @@ class Game:
 		self.turn = 3 - self.turn #Changes the turn to another hero.
 		PRINT(self, "--------------------\nA new turn starts for hero %d\n-----------------"%self.turn)
 		self.Manas.turnStarts()
-		for obj in self.turnStartTrigger: #This is for temp effects.
-			if obj.ID == self.turn:
-				obj.turnStartTrigger()
+		for obj in fixedList(self.turnStartTrigger): #This is for temp effects.
+			if not hasattr(obj, "ID") or obj.ID == self.turn: obj.turnStartTrigger()
 		self.heroes[self.turn].turnStarts(self.turn)
 		self.heroes[3-self.turn].turnStarts(self.turn)
 		self.powers[self.turn].turnStarts(self.turn)

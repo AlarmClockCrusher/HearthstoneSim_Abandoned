@@ -513,7 +513,7 @@ class GUI_Common:
 			self.window.wait_variable(var)
 			btn1.move2(pos1, pos2)
 			
-	def moveBtnsAni(self, btns, posEnds, vanish=False, timestep=14, steps=10): #vanish means buttons disappear after reaching final positions
+	def moveBtnsAni(self, btns, posEnds, vanish=False, timestep=14, steps=10, vanishTime=250): #vanish means buttons disappear after reaching final positions
 		if isinstance(btns, (list, tuple)): #Move multiple buttons
 			#Remove those already at the posEnds
 			btns_real, indices, posArrays_x, posArrays_y = [], [], [], []
@@ -533,7 +533,7 @@ class GUI_Common:
 					for btn, pos1, pos2 in zip(btns_real, posArray_x, posArray_y):
 						btn.move2(pos1, pos2)
 				if vanish:
-					self.window.after(200, var.set, 1)
+					self.window.after(vanishTime, var.set, 1)
 					self.window.wait_variable(var)
 					for btn in btns: btn.remove()
 		else: #Move a single button. btns is a button, posEnds is a single tuple
@@ -608,19 +608,18 @@ class GUI_Common:
 		self.handZones[btn.card.ID].draw(cardMoving2=i, steps=steps)
 		
 	def cardsLeaveHandAni(self, cards, enemyCanSee=True):
-		if cards is not None:
-			ownID = self.ID if hasattr(self, "ID") else 1
-			if not isinstance(cards, (list, tuple)): cards = [cards]
-			ID, btns, posEnds = cards[0].ID, [], []
-			for card in cards:
-				for btn in self.handZones[ID].btnsDrawn:
-					if btn.card == card:
-						if enemyCanSee: btn.showOpponent()
-						btn.configure(bg="red")
-						btns.append(btn)
-						posEnds.append((btn.x, 0.62*Y if ID == ownID else 0.38*Y))
-						break
-			self.moveBtnsAni(btns, posEnds, vanish=True)
+		ownID = self.ID if hasattr(self, "ID") else 1
+		if not isinstance(cards, (list, tuple)): cards = [cards]
+		ID, btns, posEnds = cards[0].ID, [], []
+		for card in cards:
+			for btn in self.handZones[ID].btnsDrawn:
+				if btn.card == card:
+					if enemyCanSee: btn.showOpponent()
+					btn.configure(bg="red")
+					btns.append(btn)
+					posEnds.append((btn.x, 0.62*Y if ID == ownID else 0.38*Y))
+					break
+		self.moveBtnsAni(btns, posEnds, vanish=True)
 	
 	def cardLeavesDeckAni(self, card, enemyCanSee=True):
 		ownID = self.ID if hasattr(self, "ID") else 1
@@ -654,3 +653,60 @@ class GUI_Common:
 			self.moveBtnsAni(btn, posEnd, timestep)
 			btn.remove()
 			
+	def targetingEffectAni(self, subject, target, num, color="red"):
+		pos1, pos2 = (), ()
+		if subject and target:
+			for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
+				if btn.card == subject:
+					pos1 = btn.x, btn.y
+					break
+			if not pos1: #如果施放的是法术，则不会找到对应这个法术的button，直接连接施法者和目标
+				btnHero = self.heroZones[subject.ID].btnsDrawn[0]
+				pos1 = btnHero.x, btnHero.y
+			for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
+				if btn.card == target:
+					pos2 = btn.x, btn.y
+					break
+			var = tk.IntVar()
+			btn = tk.Button(master=self.GamePanel, text=str(num), bg=color, width=2, height=1, font=("Yahei", 14, "bold"))
+			btn.x, btn.y = pos1
+			btn.move2 = lambda x, y: btn.place(x=x, y=y)
+			btn.place(x=btn.x, y=btn.y, anchor='c')
+			self.window.after(250, var.set, 1)
+			self.window.wait_variable(var)
+			self.moveBtnsAni(btn, pos2, timestep=14)
+			self.window.after(250, var.set, 1)
+			self.window.wait_variable(var)
+			btn.destroy()
+			
+	def AOEAni(self, subject, targets, numbers, color="red"):
+		if targets:
+			if len(targets) == 1: self.targetingEffectAni(subject, targets[0], numbers[0])
+			else:
+				timestep = 14 if len(targets) < 4 else 11
+				pos1, pos2, btns = (), (), []
+				for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
+					if btn.card == subject:
+						pos1 = btn.x, btn.y
+						break
+				if not pos1: #如果施放的是法术，则不会找到对应这个法术的button，直接连接施法者和目标
+					btnHero = self.heroZones[subject.ID].btnsDrawn[0]
+					pos1 = btnHero.x, btnHero.y
+				#Starting drawing and moving btns for each target
+				var = tk.IntVar()
+				for target, num in zip(targets, numbers):
+					for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
+						if btn.card == target:
+							pos2 = btn.x, btn.y
+							break
+					btn = tk.Button(master=self.GamePanel, text=str(num), bg=color, width=2, height=1, font=("Yahei", 14, "bold"))
+					btn.x, btn.y = pos1
+					btn.move2 = lambda x, y: btn.place(x=x, y=y)
+					btn.place(x=btn.x, y=btn.y, anchor='c')
+					self.window.after(150, var.set, 1)
+					self.window.wait_variable(var)
+					self.moveBtnsAni(btn, pos2, timestep=timestep)
+					btns.append(btn)
+				self.window.after(250, var.set, 1)
+				self.window.wait_variable(var)
+				for btn in btns: btn.destroy()

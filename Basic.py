@@ -3,6 +3,7 @@ from Triggers_Auras import *
 
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
+from numpy.random import shuffle as npshuffle
 
 def extractfrom(target, listObj):
 	try: return listObj.pop(listObj.index(target))
@@ -197,7 +198,7 @@ class TheSilverHand(HeroPower):
 		
 	def effect(self, target=None, choice=0):
 		PRINT(self.Game, "Hero Power The Silver Hand summons two 1/1 Silver Hand Recruits")
-		self.Game.summon([SilverHandRecruit(self.Game, self.ID) for i in range(2)], (-11, "totheRightEnd"), self.ID, "")
+		self.Game.summon([SilverHandRecruit(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID, "")
 		return 0
 		
 #Priest basic and upgraded powers
@@ -250,7 +251,7 @@ class TotemicCall(HeroPower):
 	def available(self):
 		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
 			return False
-		if self.Game.space(self.ID) < 1 or self.viableTotems() == []:
+		if self.Game.space(self.ID) < 1 or self.viableTotems()[0] > 0:
 			return False
 		return True
 		
@@ -260,25 +261,19 @@ class TotemicCall(HeroPower):
 			PRINT(curGame, "Hero Power Totemic Call summons a random Basic Totem")
 			if curGame.guides:
 				totem = curGame.guides.pop(0)
-				if totem is None: return 0
 			else:
 				size, totems = self.viableTotems()
-				if size:
-					totem = npchoice(totems)
-					curGame.fixedGuides.append(totem)
-				else:
-					curGame.fixedGuides.append(None)
-					return 0
-			curGame.summon(totem(curGame, self.ID), -1, self.ID, '')
+				totem = npchoice(totems) if size else None
+				curGame.fixedGuides.append(totem)
+			if totem: curGame.summon(totem(curGame, self.ID), -1, self.ID, '')
 		return 0
 		
 	def viableTotems(self):
-		viableBasicTotems = [SearingTotem, StoneclawTotem, HealingTotem, WrathofAirTotem]
+		viableTotems = [SearingTotem, StoneclawTotem, HealingTotem, WrathofAirTotem]
 		for minion in self.Game.minionsonBoard(self.ID):
-			if type(minion) in viableBasicTotems:
-				extractfrom(type(minion), viableBasicTotems)
-				
-		return len(viableBasicTotems), viableBasicTotems
+			if type(minion) in viableTotems:
+				viableTotems.remove(type(minion))
+		return len(viableTotems), viableTotems
 		
 class TotemicSlam(HeroPower):
 	mana, name, requireTarget = 2, "Totemic Slam", False
@@ -303,7 +298,6 @@ class TotemicSlam(HeroPower):
 		return 0
 		
 	def discoverDecided(self, option, info):
-		PRINT(self.Game, "Hero Power Totemic Slam summons totem %s"%option.name)
 		self.Game.fixedGuides.append(type(option))
 		self.Game.summon(option, -1, self.ID, "")
 		
@@ -875,10 +869,6 @@ class SightlessWatcher(Minion):
 	mana, attack, health = 2, 3, 2
 	index = "Basic~Demon Hunter~Minion~2~3~2~Demon~Sightless Watcher~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Look at 3 cards in your deck. Choose one to put on top"
-	
-	def moveCardtoDeckTop(self, index):
-		deck = self.Game.Hand_Deck.decks[self.ID]
-		deck.append(deck.pop(index))
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -901,7 +891,6 @@ class SightlessWatcher(Minion):
 		
 	def discoverDecided(self, option, info):
 		ownDeck = self.Game.Hand_Deck.decks[self.ID]
-		PRINT(self.Game, "Card %s in player's deck will be put on top"%option.name)
 		i = ownDeck.index(option)
 		self.Game.fixedGuides.append(i)
 		ownDeck.append(ownDeck.pop(i))
@@ -977,8 +966,7 @@ class SoulCleave(Spell):
 				if curGame.guides:
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 				else:
-					num = min(2, len(minions))
-					minions = npchoice(minions, num, replace=False)
+					minions = list(npchoice(minions, min(2, len(minions)), replace=False))
 					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
 				PRINT(curGame, "Soul Cleave is cast and deals {} damage to enemy minions {}".format(damage, minions))
 				self.dealsAOE(minions, [damage]*len(minions))
@@ -1260,7 +1248,6 @@ class Tracking(Spell):
 		
 	#产生选择选项的时候是牌库顶的牌在最选项的最左面
 	def discoverDecided(self, option, info):
-		PRINT(self.Game, "Tracking lets player draw card %s from the top 3 cards in deck"%option.name)
 		i = self.Game.options.index(option)
 		index = info.pop(i)
 		info = (index, tuple(info))
@@ -1396,8 +1383,7 @@ class MultiShot(Spell):
 				if curGame.guides:
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 				else:
-					num = min(2, len(minions))
-					minions = npchoice(minions, num, replace=False)
+					minions = list(npchoice(minions, min(2, len(minions)), replace=False))
 					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
 				PRINT(curGame, "Multi-Shot is cast and deals {} damage to enemy minions {}".format(damage, minions))
 				self.dealsAOE(minions, [damage]*len(minions))
@@ -1450,10 +1436,10 @@ class ArcaneMissiles(Spell):
 		if curGame.mode == 0:
 			PRINT(curGame, "Arcane Missiles launches %d missiles."%damage)
 			for num in range(damage):
+				char = None
 				if curGame.guides:
 					i, where = curGame.guides.pop(0)
 					if where: char = curGame.find(i, where)
-					else: break
 				else:
 					objs = curGame.charsAlive(side)
 					if objs:
@@ -1461,9 +1447,9 @@ class ArcaneMissiles(Spell):
 						curGame.fixedGuides.append((side, "hero") if char.type == "Hero" else (char.position, "minion%d"%side))
 					else:
 						curGame.fixedGuides.append((0, ''))
-						break #If no enemy character is alive, stop the cycle
-				PRINT(curGame, "Arcane Missiles deals 1 damage to %s"%char.name)
-				self.dealsDamage(char, 1)
+				if char:
+					self.dealsDamage(char, 1)
+				else: break
 		return None
 		
 		
@@ -1477,7 +1463,7 @@ class MirrorImage(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Mirror Image summons two 0/2 Mirror Images with Taunt.")
-		self.Game.summon([MirrorImage_Minion(self.Game, self.ID) for i in range(2)], (-11, "totheRightEnd"), self.ID)
+		self.Game.summon([MirrorImage_Minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
 class MirrorImage_Minion(Minion):
@@ -1811,22 +1797,14 @@ class MindVision(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		enemyHand = curGame.Hand_Deck.hands[3-self.ID]
-		if curGame.Hand_Deck.handNotFull(self.ID) and enemyHand:
-			if curGame.mode == 0:
-				PRINT(curGame, "Mind Vision is cast and copies a card from enemy hand")
-				if curGame.guides:
-					i = curGame.guides.pop(0)
-					if i < 0: return None
-					else: card = enemyHand[i]
-				else:
-					if enemyHand:
-						i = nprandint(len(enemyHand))
-						card = enemyHand[i]
-						curGame.fixedGuides.append(i)
-					else:
-						curGame.fixedGuides.append(-1)
-						return None
-				curGame.Hand_Deck.addCardtoHand(card.selfCopy(self.ID), self.ID)
+		if curGame.mode == 0:
+			PRINT(curGame, "Mind Vision is cast and copies a card from enemy hand")
+			if curGame.guides:
+				i = curGame.guides.pop(0)
+			else:
+				i = nprandint(len(enemyHand)) if enemyHand else -1
+				curGame.fixedGuides.append(i)
+			if i > -1: curGame.Hand_Deck.addCardtoHand(enemyHand[i].selfCopy(self.ID), self.ID)
 		return None
 		
 		
@@ -1838,23 +1816,15 @@ class PsychicConjurer(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		ownHand, enemyDeck = curGame.Hand_Deck.hands[self.ID], curGame.Hand_Deck.decks[3-self.ID]
-		if curGame.Hand_Deck.handNotFull(self.ID) and enemyDeck:
-			if curGame.mode == 0:
-				PRINT(curGame, "Psychic Conjurer's battlecry puts a copy of a card from opponent's deck into player's hand")
-				if curGame.guides:
-					i = curGame.guides.pop(0)
-					if i < 0: return None
-					else: card = enemyDeck[i]
-				else:
-					if enemyDeck:
-						i = nprandint(len(enemyDeck))
-						card = enemyDeck[i]
-						curGame.fixedGuides.append(i)
-					else:
-						curGame.fixedGuides.append(-1)
-						return None
-				curGame.Hand_Deck.addCardtoHand(card.selfCopy(self.ID), self.ID)
+		enemyDeck = curGame.Hand_Deck.decks[3-self.ID]
+		if curGame.mode == 0:
+			PRINT(curGame, "Psychic Conjurer's battlecry puts a copy of a card from opponent's deck into player's hand")
+			if curGame.guides:
+				i = curGame.guides.pop(0)
+			else:
+				i = nprandint(len(enemyDeck)) if enemyDeck else -1
+				curGame.fixedGuides.append(i)
+			if i > -1: curGame.Hand_Deck.addCardtoHand(enemyDeck[i].selfCopy(self.ID), self.ID)
 		return None
 		
 		
@@ -2426,15 +2396,11 @@ class Soulfire(Spell):
 			PRINT(curGame, "Soulfire's makes player discard a random card.")
 			if curGame.guides:
 				i = curGame.guides.pop(0)
-				if i < 0: return None
 			else:
-				if ownHand:
-					i = nprandint(len(ownHand))
-					curGame.fixedGuides.append(i)
-				else:
-					curGame.fixedGuides.append(-1)
-					return None
-			curGame.Hand_Deck.discardCard(self.ID, i)
+				ownHand = curGame.Hand_Deck.hands[self.ID]
+				i = nprandint(len(ownHand)) if ownHand else -1
+				curGame.fixedGuides.append(i)
+			if i > -1: curGame.Hand_Deck.discardCard(self.ID, i)
 		return target
 		
 		
@@ -2453,21 +2419,15 @@ class Felstalker(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		ownHand = curGame.Hand_Deck.hands[self.ID]
-		if ownHand:
-			if curGame.mode == 0:
-				PRINT(curGame, "Felstalker's battlecry makes player discard a random card.")
-				if curGame.guides:
-					i = curGame.guides.pop(0)
-					if i < 0: return None
-				else:
-					if ownHand:
-						i = nprandint(len(ownHand))
-						curGame.fixedGuides.append(i)
-					else:
-						curGame.fixedGuides.append(-1)
-						return None
-				curGame.Hand_Deck.discardCard(self.ID, i)
+		if curGame.mode == 0:
+			PRINT(curGame, "Felstalker's battlecry makes player discard a random card.")
+			if curGame.guides:
+				i = curGame.guides.pop(0)
+			else:
+				ownHand = curGame.Hand_Deck.hands[self.ID]
+				i = nprandint(len(ownHand)) if ownHand else -1
+				curGame.fixedGuides.append(i)
+			if i > -1: curGame.Hand_Deck.discardCard(self.ID, i)
 		return None
 		
 		
@@ -2621,8 +2581,7 @@ class Cleave(Spell):
 				if curGame.guides:
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 				else:
-					num = min(2, len(minions))
-					minions = npchoice(minions, num, replace=False)
+					minions = list(npchoice(minions, min(2, len(minions)), replace=False))
 					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
 				PRINT(curGame, "Cleave is cast and deals {} damage to enemy minions {}".format(damage, minions))
 				self.dealsAOE(minions, [damage]*len(minions))

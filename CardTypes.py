@@ -3,6 +3,7 @@ import copy
 
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
+from numpy.random import shuffle as npshuffle
 import numpy as np
 
 from Triggers_Auras import Trig_Echo, ManaMod
@@ -64,7 +65,6 @@ def copyListDictTuple(obj, recipient):
 	
 	
 class Card:
-	requireTarget = False
 	#For Choose One cards.
 	def needTarget(self, choice=0):
 		return type(self).requireTarget
@@ -322,6 +322,8 @@ class Card:
 	#暂时可以考虑不把吸血做成场上扳机，因为几乎没有战吼随从可以获得吸血，直接将吸血视为随从的dealsDamage自带属性也可以。
 	def dealsDamage(self, target, damage):
 		if target.onBoard or target.inHand:
+			if self.Game.GUI:
+				self.Game.GUI.targetingEffectAni(self, target, damage)
 			dmgTaker = self.Game.scapegoat4(target, self)
 			#超杀和造成伤害触发的效果为场上扳机.吸血始终会在队列的末尾结算。
 			#战斗时不会调用这个函数，血量减少时也不立即发生伤害信号，但是这里是可以立即发生信号触发扳机的。
@@ -338,6 +340,8 @@ class Card:
 	def dealsAOE(self, targets, damages):
 		targets, damages = fixedList(targets), fixedList(damages)
 		dmgTakers, damagesConnected, totalDamageDone = [], [], 0
+		if targets and self.Game.GUI:
+			self.Game.GUI.AOEAni(self, targets, damages)
 		for target, damage in zip(targets, damages):
 			dmgTaker = self.Game.scapegoat4(target, self)
 			#Handle the Divine Shield and Commanding Shout here.
@@ -361,6 +365,8 @@ class Card:
 			return dmgTakers, healsConnected, -totalDamageDone #对于AOE回复，如果反而造成伤害，则返回数值为负数
 		else:
 			targets_healed, healsConnected, totalHealingDone = [], [], 0
+			if targets and self.Game.GUI:
+				self.Game.GUI.AOEAni(self, targets, heals, color="green3")
 			for target, heal in zip(targets, heals):
 				healActual = target.getsHealed(self, heal, sendHealSignal=False)
 				if healActual > 0:
@@ -375,7 +381,9 @@ class Card:
 		if self.Game.status[self.ID]["Heal to Damage"] > 0:
 			dmgTaker, damageActual = self.dealsDamage(target, heal)
 			return dmgTaker, -damageActual
-		else:
+		else:	
+			if self.Game.GUI:
+				self.Game.GUI.targetingEffectAni(self, target, heal, color="green3")
 			healActual = target.getsHealed(self, heal)
 			return target, healActual
 			
@@ -486,10 +494,8 @@ class Card:
 		Copy = self.hardCopy(ID)
 		Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
 		#复制一张牌的费用修改情况,移除来自光环影响的费用效果
-		size = len(Copy.manaMods)
-		for i in range(size):
-			if Copy.manaMods[size-1-i].source:
-				Copy.manaMods.pop(size-1-i)
+		for i in reversed(range(len(Copy.manaMods))):
+			if Copy.manaMods[i].source: Copy.manaMods.pop(i)
 		return Copy
 		
 	def assistCreateCopy(self, Copy):
@@ -723,19 +729,17 @@ class Minion(Card):
 	"""Attack chances handle"""
 	#The game will directly invoke the turnStarts/turnEnds methods.
 	def turnStarts(self, ID):
-		size = len(self.tempAttChanges) #Remove the temp attack changes.
-		for i in range(size):
-			PRINT(self.Game, "Temp Attack change: {}".format(self.tempAttChanges[size-1-i]))
+		for i in reversed(range(len(self.tempAttChanges))): #Remove the temp attack changes.
+			PRINT(self.Game, "Temp Attack change: {}".format(self.tempAttChanges[i]))
 			#self.tempAttChanges[size-1-i]是一个tuple(tempAttackChange, timepoint)
-			if self.tempAttChanges[size-1-i][1] == "StartofTurn 1" and self.Game.turn == 1:
-				self.statChange(-self.tempAttChanges[size-1-i][0], 0)
-				self.tempAttChanges.pop(size-1-i)
-			if self.tempAttChanges[size-1-i][1] == "StartofTurn 2" and self.Game.turn == 2:
-				self.statChange(-self.tempAttChanges[size-1-i][0], 0)
-				self.tempAttChanges.pop(size-1-i)
+			if self.tempAttChanges[i][1] == "StartofTurn 1" and self.Game.turn == 1:
+				self.statChange(-self.tempAttChanges[i][0], 0)
+				self.tempAttChanges.pop(i)
+			if self.tempAttChanges[i][1] == "StartofTurn 2" and self.Game.turn == 2:
+				self.statChange(-self.tempAttChanges[i][0], 0)
+				self.tempAttChanges.pop(i)
 		if ID == self.ID:
-			if self.onBoard: #Only minions onBoard will lose the temp Stealth
-				self.status["Temp Stealth"] = 0
+			if self.onBoard: self.status["Temp Stealth"] = 0 #Only minions on board lose Temp Stealth
 			self.newonthisSide = False
 			self.attTimes, self.attChances_extra = 0, 0
 			self.decideAttChances_base()

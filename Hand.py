@@ -1,31 +1,27 @@
 from CardPools import *
 from Academy import TransferStudent
 import copy
-from numpy.random import shuffle as npshuffle
 from numpy.random import choice as npchoice
+from numpy.random import randint as nprandint
+from numpy.random import shuffle as npshuffle
 import numpy as np
 
 import inspect
 
 
 def extractfrom(target, listObj):
-	try:
-		return listObj.pop(listObj.index(target))
-	except:
-		return None
-
-
+	try: return listObj.pop(listObj.index(target))
+	except: return None
+	
 def fixedList(listObj):
 	return listObj[0:len(listObj)]
-
-
+	
 def PRINT(game, string, *args):
 	if game.GUI:
 		if not game.mode: game.GUI.printInfo(string)
-	elif not game.mode:
-		print("game's guide mode is 0\n", string)
-
-
+	elif not game.mode: print("game's guide mode is 0\n", string)
+	
+	
 class Hand_Deck:
 	def __init__(self, Game, deck1=[], deck2=[]):  # 通过卡组列表加载卡组
 		self.Game = Game
@@ -37,11 +33,11 @@ class Hand_Deck:
 							 2: deck2 if deck2 else Default2}
 		self.startingDeckIdentities = {1: [], 2: []}
 		self.startingHandIdentities = {1: [], 2: []}
-
+		
 	def initialize(self):
 		self.initializeDecks()
 		self.initializeHands()
-
+		
 	def initializeDecks(self):
 		for ID in range(1, 3):
 			Class = self.Game.heroes[ID].Class  # Hero's class
@@ -399,7 +395,7 @@ class Hand_Deck:
 			card.leavesDeck()
 			if self.Game.GUI: self.Game.GUI.cardLeavesDeckAni(card, enemyCanSee=enemyCanSee)
 			return card, 0, False
-
+			
 	def removeDeckTopCard(self, ID):
 		try:  # Should have card most of the time.
 			card = self.decks[ID].pop(0)
@@ -408,7 +404,7 @@ class Hand_Deck:
 			return card
 		except:
 			return None
-
+			
 	def createCopy(self, game):
 		if self not in game.copiedObjs:
 			Copy = type(self)(game)
@@ -427,11 +423,8 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 
 
-Default1 = [TidalWave,TidalWave,TidalWave,
-			LightningBloom,LightningBloom,LightningBloom,LightningBloom,LightningBloom,
+Default1 = [Renew, Renew, HolyLight, HolyLight, HolyLight, ArcaneExplosion, ArcaneExplosion, HighAbbessAlura, CommandingShout, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron, MoargArtificer, MoargArtificer, EducatedElekk, EducatedElekk, CleverDisguise, CleverDisguise, PharaohCat, PharaohCat
 			]
 
-Default2 = [LightningBloom,LightningBloom,LightningBloom,
-RafaamsScheme,RafaamsScheme,RafaamsScheme,RafaamsScheme,
-			SeaGiant,SeaGiant,SeaGiant,
+Default2 = [Renew, Renew, HolyLight, HolyLight, HolyLight, CircleofHealing, MadBomber, MadBomber, MadBomber, MadBomber, MadBomber, MadBomber, VoodooDoctor, VoodooDoctor, MoargArtificer, EducatedElekk, EducatedElekk
 			]

@@ -112,6 +112,7 @@ class TransferStudent_FourWindValley(Minion):
 		return target
 		
 Lackeys = [EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, WitchyLackey, TitanicLackey, DraconicLackey]
+
 class TransferStudent_Shadows(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
@@ -137,6 +138,7 @@ class TransferStudent_UldumDesert(Minion):
 	requireTarget, keyWord, description = False, "Reborn", "Reborn"
 	
 Plagues = [PlagueofDeath, PlagueofMadness, PlagueofMurlocs, PlagueofFlames, PlagueofWrath]
+
 class TransferStudent_UldumOasis(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
@@ -171,7 +173,7 @@ class TransferStudent_Dragons(Minion):
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		if self.ID == curGame.turn and curGame.Hand_Deck.handNotFull(self.ID):
+		if self.ID == curGame.turn:
 			if curGame.mode == 0:
 				if curGame.guides:
 					PRINT(curGame, "Transfer Student's battlecry adds a Dragon to player's hand")
@@ -204,13 +206,11 @@ class TransferStudent_Outlands(Minion_Dormantfor2turns):
 		curGame = self.Game
 		minions = curGame.minionsAlive(3-self.ID)
 		if minions:
-			PRINT(curGame, "There are living minions")
 			if curGame.mode == 0:
 				if curGame.guides:
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 				else:
-					num = min(2, len(minions))
-					minions = npchoice(minions, num, replace=False)
+					minions = list(npchoice(minions, min(2, len(minions)), replace=False))
 					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
 				PRINT(curGame, "Transfer Student awakens and deals {} damage to enemy minions {}".format(3, minions))
 				self.dealsAOE(minions, [3]*len(minions))
@@ -588,7 +588,8 @@ class Trig_EnchantedCauldron(TrigBoard):
 			if curGame.guides:
 				spell = curGame.guides.pop(0)
 			else:
-				spell = npchoice(curGame.RNGPools["%d-Cost Spells"%number]) if number > -1 and number < 11 else None
+				try: spell = npchoice(curGame.RNGPools["%d-Cost Spells"%number])
+				except: spell = None
 				curGame.fixedGuides.append(spell)
 			if spell:
 				PRINT(curGame, "Enchanted Cauldron's Spellburst casts spell %s"%spell.name)
@@ -720,7 +721,7 @@ class LorekeeperPolkelt(Minion):
 		for card in self.Game.Hand_Deck.decks[self.ID]:
 			try: cardDict[type(card).mana].append(card)
 			except: cardDict[type(card).mana] = [card]
-		self.Game.Hand_Deck.decks[self.ID] = [] #After sorting using numpy, the 1st mana is the lowest
+		self.Game.Hand_Deck.decks[self.ID] = [] #After sorting using np, the 1st mana is the lowest
 		for mana in np.sort(list(cardDict.keys())): #Doesn't reorder the card of same Cost
 			self.Game.Hand_Deck.decks[self.ID] += cardDict[mana]
 		print(self.Game.Hand_Deck.decks[self.ID])
@@ -890,7 +891,8 @@ class Vectus(Minion):
 				minions = [npchoice(minions), npchoice(minions)] if minions else [None, None]
 				curGame.fixedGuides.append(tuple(minions))
 			whelps = [PlaguedHatchling(curGame, self.ID) for i in range(2)]
-			curGame.summon(whelps, (self.position, "leftandRight"), self.ID)
+			pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
+			curGame.summon(whelps, pos, self.ID)
 			for minion, whelp in zip(minions, whelps):
 				if minion and whelp.onBoard:
 					for trig in minion(curGame, self.ID).deathrattles:
@@ -1300,7 +1302,7 @@ class VilefiendTrainer(Minion):
 		if posinHand == 0 or posinHand == -1:
 			PRINT(self.Game, "Vilefiend Trainer's Outcast triggers and summons two 1/1 Demons")
 			pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
-			self.Game.summon([SnarlingVilefiend(self.Game, self.ID) for i in range(2)], (self.position, "leftandRight"), self.ID)
+			self.Game.summon([SnarlingVilefiend(self.Game, self.ID) for i in range(2)], pos, self.ID)
 		return None
 		
 class SnarlingVilefiend(Minion):
@@ -1978,16 +1980,15 @@ class GuardianAnimals(Spell):
 		curGame = self.Game
 		if curGame.mode == 0:
 			for num in range(2):
+				PRINT(curGame, "Guardian Animals summons two Beasts that cost (5) or less from player's deck and gives them Rush.")
 				if curGame.guides:
-					PRINT(curGame, "Guardian Animals summons two Beasts that cost (5) or less from player's deck and gives them Rush.")
 					i = curGame.guides.pop(0)
 				else:
 					beasts = [i for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]) if card.type == "Minion" and "Beast" in card.race and card.mana < 6]
-					i = npchoice(beasts) if beasts else -1
+					i = npchoice(beasts) if beasts and curGame.space(self.ID) > 0 else -1
 					curGame.fixedGuides.append(i)
 				if i > -1:
-					beast = curGame.Hand_Deck.decks[self.ID][i]
-					curGame.summonfromDeck(i, self.ID, -1, self.ID)
+					beast = curGame.summonfromDeck(i, self.ID, -1, self.ID)
 					beast.getsKeyword("Rush")
 		return None
 		
@@ -2162,7 +2163,7 @@ class Trig_Firebrand(TrigBoard):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
 			PRINT(curGame, "After player casts a spell, Firebrand deals 4 damage randomly split among all enemy minions")
-			for i in range(4):
+			for num in range(4):
 				if curGame.guides:
 					i = curGame.guides.pop(0)
 				else:
@@ -2297,7 +2298,8 @@ class Trig_WyrmWeaver(TrigBoard):
 		try: minion.trigsBoard.remove(self)
 		except: pass
 		PRINT(minion.Game, "After player casts a spell, Wyrm Weaver summons two Mana Wyrms")
-		minion.Game.summon([ManaWyrm(minion.Game, minion.ID) for i in range(2)], (minion.position, "leftandRight"), minion.ID)
+		pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
+		minion.Game.summon([ManaWyrm(minion.Game, minion.ID) for i in range(2)], pos, minion.ID)
 		
 		
 """Paladin Cards"""
@@ -2863,38 +2865,33 @@ class SecretPassage(Spell):
 				trigSwap.cardsDeck2Hand = cardsfromDeck
 				HD.shuffleCardintoDeck(hand, self.ID, enemyCanSee=False, sendSig=False)
 				HD.addCardtoHand(cardsfromDeck, self.ID)
-				#假设连续释放该效果会覆盖之前的效果（移除同类同ID的trig）
-				trigs = self.Game.turnEndTrigger
-				for i in reversed(range(len(trigs))):
-					if isinstance(trigs[i], SwapSecretPassageBack) and trigs[i].ID == self.ID:
-						trigs.pop(i)
-				trigs.append(trigSwap)
+				self.Game.turnStartTrigger.insert(0, trigSwap)
 		return None
 		
 class SwapSecretPassageBack:
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
+	def __init__(self, Game, playerID):
+		self.Game, self.playerID = Game, playerID
 		self.cardsHand2Deck, self.cardsDeck2Hand = [], []
 		
-	def turnEndTrigger(self):
-		PRINT(self.Game, "At the end of turn, player swaps the hand and the cards shuffled back")
-		cardstoReturn2Deck = [card for card in self.cardsDeck2Hand if card.inHand]
-		cardstoReturn2Hand = [card for card in self.cardsHand2Deck if card.inDeck]
+	def turnStartTrigger(self):
+		PRINT(self.Game, "At the start of turn, player swaps the hand and the cards shuffled back")
+		cardstoReturn2Deck = [card for card in self.cardsDeck2Hand if card.inHand and card.ID == self.playerID]
+		cardstoReturn2Hand = [card for card in self.cardsHand2Deck if card.inDeck and card.ID == self.playerID]
 		HD = self.Game.Hand_Deck
 		for card in cardstoReturn2Hand:
-			HD.extractfromDeck(card, self.ID, all=False, enemyCanSee=False)
+			HD.extractfromDeck(card, self.playerID, all=False, enemyCanSee=False)
 		for card in cardstoReturn2Deck:
-			HD.extractfromHand(card, self.ID, all=False, enemyCanSee=False)
+			HD.extractfromHand(card, self.playerID, all=False, enemyCanSee=False)
 		for card in cardstoReturn2Deck:
 			for trig in card.trigsBoard + card.trigsHand + card.trigsDeck:
 				trig.disconnect()
 			identity = card.identity
-			card.__init__(self.Game, self.ID)
+			card.__init__(self.Game, self.playerID)
 			card.identity = identity
-		HD.shuffleCardintoDeck(cardstoReturn2Deck, self.ID, enemyCanSee=False, sendSig=False)
-		HD.addCardtoHand(cardstoReturn2Hand, self.ID)
+		HD.shuffleCardintoDeck(cardstoReturn2Deck, self.playerID, enemyCanSee=False, sendSig=False)
+		HD.addCardtoHand(cardstoReturn2Hand, self.playerID)
 		
-		try: self.Game.turnEndTrigger.remove(self)
+		try: self.Game.turnStartTrigger.remove(self)
 		except: pass
 		
 	def createCopy(self, game): #TurnStartTrigger
@@ -3131,9 +3128,8 @@ class Steeldancer(Minion):
 				weapon = self.Game.availableWeapon(self.ID)
 				if weapon:
 					cost = max(weapon.attack, 0) #假设计数过高，超出了费用范围，则取最高的可选费用
-					while True:
-						if cost not in curGame.MinionsofCost: cost -= 1
-						else: break
+					while cost not in curGame.MinionsofCost:
+						cost -= 1
 					minion = npchoice(curGame.RNGPools["%d-Cost Minions to Summon"%cost])
 				else: minion = None
 				curGame.fixedGuides.append(minion)
@@ -3342,9 +3338,8 @@ class Trig_TrickTotem(TrigBoard):
 			else:
 				spell = npchoice(curGame.RNGPools["Spells of <=3 Cost"])
 				curGame.fixedGuides.append(spell)
-			spell = spell(curGame, self.entity.ID)
-			PRINT(curGame, "Trick Totem's casts spell " + spell.name)
-			spell.cast()
+			PRINT(curGame, "Trick Totem's casts spell "%spell.name)
+			spell(curGame, self.entity.ID).cast()
 			
 			
 class InstructorFireheart(Minion):
@@ -3508,7 +3503,7 @@ class TidalWave(Spell):
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		minions = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
 		PRINT(self.Game, "Tidal Wave deals %d damage to all minions"%damage)
-		self.dealsAOE(minions, [damage] * len(minions))
+		self.dealsAOE(minions, [damage]*len(minions))
 		return None
 		
 		
@@ -3748,6 +3743,7 @@ class SoulciologistMalicia(Minion):
 			if isinstance(card, SoulFragment): num += 1
 		PRINT(self.Game, "Soulciologist Malicia's battlecry summons a 3/3 Soul with Rush for each Soul Fragment in player's deck")
 		minions = [ReleasedSoul(self.Game, self.ID) for i in range(num)]
+		#假设召唤的衍生物都在右侧
 		self.Game.summon(minions, (self.position, "totheRight"), self.ID)
 		return None
 	
@@ -3770,20 +3766,18 @@ class ArchwitchWillow(Minion):
 		PRINT(curGame, "Archwitch Willow's battlecry summons a random Demon from player's hand and deck")
 		if curGame.mode == 0:
 			refMinion = self
-			#Summon a demon from deck
-			if curGame.guides:
+			if curGame.guides: #Summon a demon from deck
 				i = curGame.guides.pop(0)
 			else: #Find demons in hand
 				demonsfromHand = [i for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]) if card.type == "Minion" and "Demon" in card.race]
-				i = npchoice(demonsfromHand) if demonsfromHand and curGame.space(self.ID) else -1
+				i = npchoice(demonsfromHand) if demonsfromHand and curGame.space(self.ID) > 0 else -1
 				curGame.fixedGuides.append(i)
 			if i > -1: refMinion = curGame.summonfromHand(i, self.ID, refMinion.position+1, self.ID)	
-			#Summon a demon from deck
-			if curGame.guides:
+			if curGame.guides: #Summon a demon from deck
 				i = curGame.guides.pop(0)
 			else:
 				demonsfromDeck = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if card.type == "Minion" and "Demon" in card.race]
-				i = npchoice(demonsfromDeck) if demonsfromDeck and curGame.space(self.ID) else -1
+				i = npchoice(demonsfromDeck) if demonsfromDeck and curGame.space(self.ID) > 0 else -1
 				curGame.fixedGuides.append(i)
 			if i > -1: refMinion = curGame.summonfromDeck(i, self.ID, refMinion.position+1, self.ID)	
 		return None
@@ -4027,11 +4021,10 @@ class Commencement(Spell):
 				i = curGame.guides.pop(0)
 			else:
 				minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if card.type == "Minion"]
-				i = npchoice(minions) if minions and curGame.space(self.ID) else -1
+				i = npchoice(minions) if minions and curGame.space(self.ID) > 0 else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
-				minion = curGame.Hand_Deck.decks[self.ID][i]
-				curGame.summonfromDeck(i, self.ID, -1, self.ID)
+				minion = curGame.summonfromDeck(i, self.ID, -1, self.ID)
 				minion.getsKeyword("Taunt")
 				minion.getsKeyword("Divine Shield")
 		return None
@@ -4059,19 +4052,19 @@ class Trig_Troublemaker(TrigBoard):
 		ruffians = [Ruffian(curGame, self.entity.ID) for i in range(2)]
 		curGame.summon(ruffians, (self.entity.position, "leftandRight"), self.entity.ID)
 		if curGame.mode == 0:
-			for i in range(2):
+			for num in range(2):
 				enemy = None
 				if curGame.guides:
 					i, where = curGame.guides.pop(0)
 					if where: enemy = curGame.find(i, where)
 				else:
 					targets = curGame.charsAlive(3-self.entity.ID)
-					if ruffians[i].onBoard and not ruffians[i].dead and ruffians[i].health > 0 and targets:
+					if ruffians[num].onBoard and not ruffians[num].dead and ruffians[num].health > 0 and targets:
 						enemy = npchoice(targets)
 						curGame.fixedGuides.append((enemy.position, "minion%d"%enemy.ID) if enemy.type == "Minion" else (enemy.ID, "hero"))
 					else:
 						curGame.fixedGuides.append((0, ''))
-				if enemy: curGame.battle(ruffians[i], enemy, verifySelectable=False, resolveDeath=False)
+				if enemy: curGame.battle(ruffians[num], enemy, verifySelectable=False, resolveDeath=False)
 				
 class Ruffian(Minion):
 	Class, race, name = "Warrior", "", "Ruffian"
@@ -4087,8 +4080,8 @@ class Rattlegore(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummon88(self)]
-
+		self.deathrattles = [SummonRattlegore88(self)]
+		
 class Rattlegore88(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
 	mana, attack, health = 8, 8, 8
@@ -4096,7 +4089,7 @@ class Rattlegore88(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummon77(self)]
+		self.deathrattles = [SummonRattlegore77(self)]
 
 class Rattlegore77(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4105,7 +4098,7 @@ class Rattlegore77(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummon66(self)]
+		self.deathrattles = [SummonRattlegore66(self)]
 
 class Rattlegore66(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4114,7 +4107,7 @@ class Rattlegore66(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummon55(self)]
+		self.deathrattles = [SummonRattlegore55(self)]
 
 class Rattlegore55(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4123,7 +4116,7 @@ class Rattlegore55(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummon44(self)]
+		self.deathrattles = [SummonRattlegore44(self)]
 
 class Rattlegore44(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4132,7 +4125,7 @@ class Rattlegore44(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummon33(self)]
+		self.deathrattles = [SummonRattlegore33(self)]
 
 class Rattlegore33(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4141,7 +4134,7 @@ class Rattlegore33(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummon22(self)]
+		self.deathrattles = [SummonRattlegore22(self)]
 
 class Rattlegore22(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4150,7 +4143,7 @@ class Rattlegore22(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [Resummon11(self)]
+		self.deathrattles = [SummonRattlegore11(self)]
 
 class Rattlegore11(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
@@ -4159,78 +4152,63 @@ class Rattlegore11(Minion):
 	requireTarget, keyWord, description = False, "", ""
 
 #假设一个随从以白字为准
-class Resummon88(Deathrattle_Minion):
+class SummonRattlegore88(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		#假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
 		minion = self.entity
-		newMinion = Rattlegore88(minion.Game, minion.ID)
-		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
-		minion.Game.summon(newMinion, pos, minion.ID)
+		PRINT(minion.Game, "Deathrattle: Summon an 8/8 Rattlegore triggers")
+		minion.Game.summon(Rattlegore88(minion.Game, minion.ID), minion.position + 1, minion.ID)
 
 
-class Resummon77(Deathrattle_Minion):
+class SummonRattlegore77(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
 		minion = self.entity
-		newMinion = Rattlegore77(minion.Game, minion.ID)
-		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
-		minion.Game.summon(newMinion, pos, minion.ID)
+		PRINT(minion.Game, "Deathrattle: Summon a 7/7 Rattlegore triggers")
+		minion.Game.summon(Rattlegore77(minion.Game, minion.ID), minion.position + 1, minion.ID)
 
 
-class Resummon66(Deathrattle_Minion):
+class SummonRattlegore66(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
 		minion = self.entity
-		newMinion = Rattlegore66(minion.Game, minion.ID)
-		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
-		minion.Game.summon(newMinion, pos, minion.ID)
+		PRINT(minion.Game, "Deathrattle: Summon a 6/6 Rattlegore triggers")
+		minion.Game.summon(Rattlegore66(minion.Game, minion.ID), minion.position + 1, minion.ID)
 
 
-class Resummon55(Deathrattle_Minion):
+class SummonRattlegore55(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
 		minion = self.entity
-		newMinion = Rattlegore55(minion.Game, minion.ID)
-		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
-		minion.Game.summon(newMinion, pos, minion.ID)
+		PRINT(minion.Game, "Deathrattle: Summon a 5/5 Rattlegore triggers")
+		minion.Game.summon(Rattlegore55(minion.Game, minion.ID), minion.position + 1, minion.ID)
 
 
-class Resummon44(Deathrattle_Minion):
+class SummonRattlegore44(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
 		minion = self.entity
-		newMinion = Rattlegore44(minion.Game, minion.ID)
-		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
-		minion.Game.summon(newMinion, pos, minion.ID)
-
-
-class Resummon33(Deathrattle_Minion):
+		PRINT(minion.Game, "Deathrattle: Summon a 4/4 Rattlegore triggers")
+		minion.Game.summon(Rattlegore44(minion.Game, minion.ID), minion.position + 1, minion.ID)
+		
+		
+class SummonRattlegore33(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
 		minion = self.entity
-		newMinion = Rattlegore33(minion.Game, minion.ID)
-		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
-		minion.Game.summon(newMinion, pos, minion.ID)
+		PRINT(minion.Game, "Deathrattle: Summon a 3/3 Rattlegore triggers")
+		minion.Game.summon(Rattlegore33(minion.Game, minion.ID), minion.position + 1, minion.ID)
+		
 
-
-class Resummon22(Deathrattle_Minion):
+class SummonRattlegore22(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
 		minion = self.entity
-		newMinion = Rattlegore22(minion.Game, minion.ID)
-		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
-		minion.Game.summon(newMinion, pos, minion.ID)
+		PRINT(minion.Game, "Deathrattle: Summon a 2/2 Rattlegore triggers")
+		minion.Game.summon(Rattlegore22(minion.Game, minion.ID), minion.position + 1, minion.ID)
+		
 
-
-class Resummon11(Deathrattle_Minion):
+class SummonRattlegore11(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		# 假设在手牌中会直接召唤一个复制。而且任何随从如果继承这个亡语都会生成各自对应的-1-1-1
 		minion = self.entity
-		newMinion = Rattlegore11(minion.Game, minion.ID)
-		pos = minion.position + 1 if minion in minion.Game.minions[minion.ID] else -1
-		minion.Game.summon(newMinion, pos, minion.ID)
-
-
+		PRINT(minion.Game, "Deathrattle: Summon a 1/1 Rattlegore triggers")
+		minion.Game.summon(Rattlegore11(minion.Game, minion.ID), minion.position + 1, minion.ID)
+		
+		
+		
 Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": TransferStudent,
 					"Academy~Neutral~Minion~0~1~1~Demon~Desk Imp": DeskImp,
 					"Academy~Neutral~Minion~1~1~1~None~Animated Broomstick~Rush~Battlecry": AnimatedBroomstick,
@@ -4262,6 +4240,7 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Neutral~Minion~1~1~1~Dragon~Plagued Hatchling~Uncollectible": PlaguedHatchling,
 					"Academy~Neutral~Minion~6~4~9~Dragon~Onyx Magescribe": OnyxMagescribe,
 					"Academy~Neutral~Minion~6~5~7~None~Smug Senior~Taunt~Deathrattle": SmugSenior,
+					"Academy~Neutral~Minion~4~4~3~None~Spectral Flyer~Rush~Uncollectible": SpectralFlyer,
 					"Academy~Neutral~Minion~6~6~6~Beast~Sorcerous Substitute~Battlecry": SorcerousSubstitute,
 					"Academy~Neutral~Minion~7~6~8~None~Keymaster Alabaster~Legendary": KeymasterAlabaster,
 					"Academy~Neutral~Minion~8~8~8~Dragon~Plagued Protodrake~Deathrattle": PlaguedProtodrake,
@@ -4397,4 +4376,12 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Warrior~Minion~8~6~8~None~Troublemaker": Troublemaker,
 					"Academy~Warrior~Minion~3~3~3~None~Ruffian~Uncollectible": Ruffian,
 					"Academy~Warrior~Minion~9~9~9~None~Rattlegore~Deathrattle~Legendary": Rattlegore,
+					"Academy~Warrior~Minion~8~8~8~None~Rattlegore~Deathrattle~Legendary~Uncollectible": Rattlegore88,
+					"Academy~Warrior~Minion~7~7~7~None~Rattlegore~Deathrattle~Legendary~Uncollectible": Rattlegore77,
+					"Academy~Warrior~Minion~6~6~6~None~Rattlegore~Deathrattle~Legendary~Uncollectible": Rattlegore66,
+					"Academy~Warrior~Minion~5~5~5~None~Rattlegore~Deathrattle~Legendary~Uncollectible": Rattlegore55,
+					"Academy~Warrior~Minion~4~4~4~None~Rattlegore~Deathrattle~Legendary~Uncollectible": Rattlegore44,
+					"Academy~Warrior~Minion~3~3~3~None~Rattlegore~Deathrattle~Legendary~Uncollectible": Rattlegore33,
+					"Academy~Warrior~Minion~2~2~2~None~Rattlegore~Deathrattle~Legendary~Uncollectible": Rattlegore22,
+					"Academy~Warrior~Minion~1~1~1~None~Rattlegore~Legendary~Uncollectible": Rattlegore11,
 					}

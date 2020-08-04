@@ -1,8 +1,9 @@
 from CardPools import *
 from Academy import TransferStudent
 import copy
-from numpy.random import shuffle as npshuffle
 from numpy.random import choice as npchoice
+from numpy.random import randint as nprandint
+from numpy.random import shuffle as npshuffle
 import numpy as np
 
 import inspect
@@ -218,7 +219,7 @@ class Secrets:
 		
 	def deploySecretsfromDeck(self, ID, num=1):
 		curGame = self.Game
-		for i in range(num):
+		for n in range(num):
 			if curGame.mode == 0:
 				if curGame.guides:
 					i = curGame.guides.pop(0)

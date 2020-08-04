@@ -5,6 +5,7 @@ from Basic import IllidariInitiate
 
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
+from numpy.random import shuffle as npshuffle
 
 def extractfrom(target, listObj):
 	try: return listObj.pop(listObj.index(target))
@@ -209,8 +210,7 @@ class BladeDance(Spell):
 				if curGame.guides:
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 				else:
-					num = min(3, len(minions))
-					minions = npchoice(minions, num, replace=False)
+					minions = list(npchoice(minions, min(3, len(minions)), replace=False))
 					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
 				PRINT(curGame, "Blade Dance is cast and deals {} damage to enemy minions {}".format(damage, minions))
 				self.dealsAOE(minions, [damage]*len(minions))
@@ -227,9 +227,8 @@ class FeastofSouls(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Feast of Souls is cast and lets player draw a card for each friendly minion that died this turn.")
-		numMinionsDiedThisTurn = len(self.Game.Counters.minionsDiedThisTurn[self.ID])
-		for i in range(numMinionsDiedThisTurn):
-			self.Game.Hand_Deck.drawCard(self.ID)
+		num = len(self.Game.Counters.minionsDiedThisTurn[self.ID])
+		for i in range(num): self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
 		
@@ -500,11 +499,9 @@ class Nethrandamus(Minion):
 			if curGame.guides:
 				minions = curGame.guides.pop(0)
 			else:
-				#假设计数过高，超出了费用范围，则取最高的可选费用
 				cost = self.progress
-				while True:
-					if cost not in curGame.MinionsofCost: cost -= 1
-					else: break
+				while cost not in curGame.MinionsofCost: #假设计数过高，超出了费用范围，则取最高的可选费用
+					cost -= 1
 				minions = npchoice(curGame.RNGPools["%d-Cost Minions to Summon"%cost], 2, replace=True)
 				curGame.fixedGuides.append(tuple(minions))
 			PRINT(curGame, "Nethrandamus' battlecry summons two random %d-Cost minions."%self.progress)
@@ -521,8 +518,6 @@ class Trig_Nethrandamus(TrigHand):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.progress += 1
-		
-		
 		
 		
 DemonHunterInit_Indices = {"Shadows~Demon Hunter~Spell~0~Blur": Blur,

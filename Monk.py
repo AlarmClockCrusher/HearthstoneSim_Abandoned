@@ -2,6 +2,7 @@ from CardTypes import *
 from Triggers_Auras import *
 
 from numpy.random import choice as npchoice
+from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 
 class WindWalkerMistweaver(HeroPower): #踏风织雾
@@ -197,8 +198,7 @@ class EffusiveMists(Spell): #流溢之雾
 				if curGame.guides:
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 				else:
-					num = min(2, len(minions))
-					minions = npchoice(minions, num, replace=False)
+					minions = list(npchoice(minions, min(2, len(minions)), replace=False))
 					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
 				PRINT(curGame, "Effusive Mists sets the Attack of minions {} to 1".format(minions))
 				for minion in minions: minion.statReset(1, False)
@@ -632,7 +632,7 @@ class DrunkenBoxing(Spell): #醉拳
 			if attackTarget.health > 0 and not attackTarget.dead and hero.health > 0 and not hero.dead:
 				PRINT(self.Game, "Drunken Boxing lets player attack minion %s"%attackTarget.name)
 				#def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirectionTriggers=True)
-				self.Game.battle(hero, attackTarget, False, True, False, False)
+				self.Game.battle(hero, attackTarget, verifySelectable=False, useAttChance=True, resolveDeath=False, resetRedirectionTriggers=False)
 				self.Game.trigsBoard[self.ID]
 			elif attackTarget.health < 0 or attackTarget.dead:
 				PRINT(self.Game, "Player doesn't attack target minion %s since it's dead already")
@@ -701,25 +701,35 @@ class SpawnofXuen(Minion): #雪怒的子嗣
 	requireTarget, keyWord, description = False, "Rush", "Rush. Battlecry: Discover a 1-Cost minion from your deck"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		hdHandler = self.Game.Hand_Deck
-		if hdHandler.handNotFull(self.ID) and self.Game.turn == self.ID:
-			oneCostMinions = []
-			for card in hdHandler.decks[self.ID]:
-				if card.mana == 1 and card.type == "Minion": oneCostMinions.append(card)
-			if oneCostMinions:
-				if "byOthers" in comment or len(oneCostMinions) < 2:
-					PRINT(self.Game, "Spawn of Xuen's battlecry lets player draw a random 1-Cost minion from deck")
-					minion = npchoice(oneCostMinions)
-					self.Game.Hand_Deck.drawCard(self.ID, minion)
+		curGame = self.Game
+		if curGame.turn == self.ID:
+			if curGame.mode == 0:
+				if curGame.guides:
+					i = curGame.guides.pop(0)
+					if i > -1:
+						PRINT(curGame, "SpawnofXuen's battlecry lets player draw a 1-Cost minion from deck")
+						curGame.Hand_Deck.drawCard(self.ID, i)
 				else:
-					PRINT(self.Game, "Spawn of Xuen's battlecry lets player discover a 1-Cost minion from deck")
-					self.Game.options = npchoice(oneCostMinions, min(3, len(oneCostMinions)), replace=False)
-					self.Game.Discover.startDiscover(self)
+					oneCostMinions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if card.type == "Minion" and card.mana == 1]
+					if oneCostMinions:
+						if "byOthers" in comment:
+							PRINT(curGame, "Spawn of Xuen's battlecry lets player draw a random 1-Cost minion from deck")
+							i = npchoice(oneCostMinions)
+							curGame.fixedGuides.append(i)
+							curGame.Hand_Deck.drawCard(self.ID, i)
+						else:
+							PRINT(curGame, "Spawn of Xuen's battlecry lets player discover a 1-Cost minion from deck")
+							indices = npchoice(oneCostMinions, min(3, len(oneCostMinions)), replace=False)
+							curGame.options = [curGame.Hand_Deck.decks[self.ID][i] for i in indices]
+							curGame.Discover.startDiscover(self)
+					else: curGame.fixedGuides.append(-1)
 		return None
 		
 	def discoverDecided(self, option, info):
-		PRINT(self.Game, "Player draws 1-Cost minion %s"%option.name)
-		self.Game.Hand_Deck.drawCard(self.ID, option)
+		for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]):
+			if card == option:
+				self.Game.fixedGuides.append(i)
+				self.Game.Hand_Deck.drawCard(self.ID, option)
 		
 		
 #class QuickSip(Spell): #浅斟快饮
