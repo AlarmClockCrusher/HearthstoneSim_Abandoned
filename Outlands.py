@@ -2365,10 +2365,11 @@ class LadyLiadrin(Minion):
 				spells = curGame.guides.pop(0)
 			else:
 				spells = curGame.Counters.spellsonFriendliesThisGame[self.ID]
-				spells = tuple(npchoice(spells, min(curGame.Hand_Deck.spaceinHand(self.ID), len(spells)), replace=True))
+				spells = npchoice(spells, min(curGame.Hand_Deck.spaceinHand(self.ID), len(spells)), replace=False)
+				spells = tuple([curGame.cardPool[index] for index in spells])
 				curGame.fixedGuides.append(spells)
 			PRINT(curGame, "Lady Liadrin's battlecry adds a copy of each spell player cast on friendly characters this game")
-			curGame.Hand_Deck.addCardtoHand(spells, self.ID, "index")
+			curGame.Hand_Deck.addCardtoHand(spells, self.ID, "type")
 		return None
 		
 		

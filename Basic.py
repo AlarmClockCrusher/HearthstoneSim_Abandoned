@@ -251,7 +251,7 @@ class TotemicCall(HeroPower):
 	def available(self):
 		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
 			return False
-		if self.Game.space(self.ID) < 1 or self.viableTotems()[0] > 0:
+		if self.Game.space(self.ID) < 1 or self.viableTotems()[0] < 1:
 			return False
 		return True
 		
@@ -271,8 +271,8 @@ class TotemicCall(HeroPower):
 	def viableTotems(self):
 		viableTotems = [SearingTotem, StoneclawTotem, HealingTotem, WrathofAirTotem]
 		for minion in self.Game.minionsonBoard(self.ID):
-			if type(minion) in viableTotems:
-				viableTotems.remove(type(minion))
+			try: viableTotems.remove(type(minion))
+			except: pass
 		return len(viableTotems), viableTotems
 		
 class TotemicSlam(HeroPower):
@@ -993,13 +993,13 @@ class GlaiveboundAdept(Minion):
 	requireTarget, keyWord, description = True, "", "Battlecry: If your hero attacked this turn, deal 4 damage"
 	
 	def effectCanTrigger(self):
-		self.effectViable = self.Game.CounterHandler.heroAttackTimesThisTurn[self.ID] > 0
+		self.effectViable = self.Game.Counters.heroAttackTimesThisTurn[self.ID] > 0
 		
 	def returnTrue(self, choice=0):
-		return self.Game.CounterHandler.heroAttackTimesThisTurn[self.ID] > 0
+		return self.Game.Counters.heroAttackTimesThisTurn[self.ID] > 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if target and self.Game.CounterHandler.heroAttackTimesThisTurn[self.ID] > 0:
+		if target and self.Game.Counters.heroAttackTimesThisTurn[self.ID] > 0:
 			PRINT(self.Game, "Glaivebound Adept's battlecry deals 4 damage to target %s"%target.name)
 			self.dealsDamage(target, 4)
 		return target

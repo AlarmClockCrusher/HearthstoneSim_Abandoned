@@ -265,7 +265,7 @@ class Hand_Deck:
 			else:
 				break
 		game.Manas.calcMana_All()
-
+		
 	def replaceCardDrawn(self, targetHolder, newCard):
 		ID = targetHolder[0].ID
 		isPrimaryGalakrond = targetHolder[0] == self.Game.Counters.primaryGalakronds[ID]
@@ -317,7 +317,7 @@ class Hand_Deck:
 					curGame.fixedGuides.append(tuple(order))
 				self.decks[ID] = [newDeck[i] for i in order]
 			if sendSig: curGame.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
-
+			
 	def discardAll(self, ID):
 		if self.hands[ID]:
 			cards, cost, isRightmostCardinHand = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True)
@@ -327,7 +327,7 @@ class Hand_Deck:
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
 			self.Game.Manas.calcMana_All()
-
+			
 	def discardCard(self, ID, card=None):
 		if card is None:  # Discard a random card.
 			if self.hands[ID]:
@@ -350,36 +350,34 @@ class Hand_Deck:
 			self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
 			self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
-
+			
 	# 只能全部拿出手牌中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
 	def extractfromHand(self, card, ID=0, all=False, enemyCanSee=False):
 		if all:  # Extract the entire hand.
 			temp = self.hands[ID]
-			self.hands[ID] = []
-			for card in temp:
-				card.leavesHand()
-				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
-			# 一般全部取出手牌的时候都是直接洗入牌库，一般都不可见
-			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(temp, False)
-			return temp, 0, -2  # -2 means the positioninHand doesn't have real meaning.
+			if temp:
+				self.hands[ID] = []
+				for card in temp:
+					card.leavesHand()
+					self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
+				# 一般全部取出手牌的时候都是直接洗入牌库，一般都不可见
+				if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(temp, False)
+			return temp, 0, -2  # -2 means the posinHand doesn't have real meaning.
 		else:
 			if not isinstance(card, (int, np.int32, np.int64)):
 				# Need to keep track of the card's location in hand.
-				for i in range(len(self.hands[card.ID])):
-					if self.hands[card.ID][i] == card:
-						index, cost = i, card.mana
-						break
-				positioninHand = index if index < len(self.hands[card.ID]) - 1 else -1
+				index, cost = self.hands[card.ID].index(card), card.mana
+				posinHand = index if index < len(self.hands[card.ID]) - 1 else -1
 				card = self.hands[card.ID].pop(index)
 			else:  # card is a number
-				positioninHand = card if card < len(self.hands[ID]) - 1 else -1
+				posinHand = card if card < len(self.hands[ID]) - 1 else -1
 				card = self.hands[ID].pop(card)
 				cost = card.mana
 			card.leavesHand()
 			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee)
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
-			return card, cost, positioninHand
-
+			return card, cost, posinHand
+			
 	# 只能全部拿牌库中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
 	def extractfromDeck(self, card, ID=0, all=False, enemyCanSee=True):
 		if all:  # For replacing the entire deck or throwing it away.
@@ -421,10 +419,10 @@ class Hand_Deck:
 			return Copy
 		else:
 			return game.copiedObjs[self]
-
-
-Default1 = [Renew, Renew, HolyLight, HolyLight, HolyLight, ArcaneExplosion, ArcaneExplosion, HighAbbessAlura, CommandingShout, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron, MoargArtificer, MoargArtificer, EducatedElekk, EducatedElekk, CleverDisguise, CleverDisguise, PharaohCat, PharaohCat
+			
+			
+Default1 = [Khadgar, Khadgar, ConjurersCalling, ConjurersCalling, TourGuide, TourGuide, Renew, Renew, SorcerersApprentice, HighAbbessAlura, CommandingShout, PuzzleBoxofYoggSaron, SpiritJailer, SpiritJailer, SpiritJailer, FleshGiant, FleshGiant, ShardshatterMystic
 			]
-
-Default2 = [Renew, Renew, HolyLight, HolyLight, HolyLight, CircleofHealing, MadBomber, MadBomber, MadBomber, MadBomber, MadBomber, MadBomber, VoodooDoctor, VoodooDoctor, MoargArtificer, EducatedElekk, EducatedElekk
+			
+Default2 = [Khadgar, Khadgar, ConjurersCalling, ConjurersCalling, TourGuide, TourGuide, Renew, Renew, SorcerersApprentice, HighAbbessAlura, CommandingShout, PuzzleBoxofYoggSaron, SpiritJailer, SpiritJailer, SpiritJailer, FleshGiant, FleshGiant, ShardshatterMystic
 			]

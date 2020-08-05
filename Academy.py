@@ -215,7 +215,7 @@ class TransferStudent_Outlands(Minion_Dormantfor2turns):
 				PRINT(curGame, "Transfer Student awakens and deals {} damage to enemy minions {}".format(3, minions))
 				self.dealsAOE(minions, [3]*len(minions))
 				
-class TransferStudent_Academy(Minion_Dormantfor2turns):
+class TransferStudent_Academy(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
 	index = "Academy~Neutral~Minion~2~2~2~None~Transfer Student~Battlecry"

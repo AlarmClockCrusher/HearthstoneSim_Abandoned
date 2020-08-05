@@ -1387,7 +1387,6 @@ class Spell(Card):
 			PRINT(self.Game, "%s is cast and Overloads %d mana crystals."%(self.name, self.overload))
 			self.Game.Manas.overloadMana(self.overload, self.ID)
 		if self.twinSpell > 0:
-			PRINT(self.Game, "Twinspell %s is cast and adds a another copy to player's hand"%self.name)
 			self.Game.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, "type", posinHand)
 			
 		#使用阶段结束，进行死亡结算。不处理胜负裁定。
@@ -1413,7 +1412,7 @@ class Spell(Card):
 					PRINT(self.Game, "%s is played and Overloads %d mana crystals."%(self.name, self.overload))
 					self.Game.Manas.overloadMana(self.overload, self.ID)
 				if self.twinSpell > 0:
-					PRINT(self.Game, "Twinspell", self.name, "is cast and adds a another copy to player's hand, index pos", posinHand)
+					PRINT(self.Game, "Twinspell %s is cast and adds a another copy to player's hand, pos"%(self.name, posinHand))
 					self.Game.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, "type", posinHand)
 					
 			PRINT(self.Game, "The target for the spell is now {}".format(target))

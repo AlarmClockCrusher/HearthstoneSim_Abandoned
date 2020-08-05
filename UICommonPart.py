@@ -496,10 +496,24 @@ class GUI_Common:
 				break
 				
 	def attackAni(self, subject, target):
-		for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
-			if btn.card == subject:
-				btn1 = btn
-				break
+		subjectFound = False
+		for zone in [self.boardZones[1].btnsDrawn, self.boardZones[2].btnsDrawn]:
+			for i, btn in enumerate(zone):
+				if btn.card == subject:
+					btn1 = MinionButton(btn.GUI, btn.card)
+					btn.remove()
+					btn1.plot(btn.x, y=btn.y)
+					zone.insert(i, zone.pop())
+					subjectFound = True
+					break
+		if not subjectFound:
+			for zone in [self.heroZones[1].btnsDrawn, self.heroZones[2].btnsDrawn]:
+				for i, btn in enumerate(zone):
+					if btn.card == subject:
+						btn1 = HeroButton(btn.GUI, btn.card)
+						btn.remove()
+						btn1.plot(btn.x, y=btn.y)
+						break
 		for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
 			if btn.card == target:
 				btn2 = btn
@@ -509,7 +523,7 @@ class GUI_Common:
 		posArrays_y = list(np.linspace(y1, y2, 10)) + list(np.linspace(y2, y1, 10))
 		var = tk.IntVar()
 		for pos1, pos2 in zip(posArrays_x, posArrays_y):
-			self.window.after(14, var.set, 1)
+			self.window.after(15, var.set, 1)
 			self.window.wait_variable(var)
 			btn1.move2(pos1, pos2)
 			
@@ -612,15 +626,18 @@ class GUI_Common:
 		if not isinstance(cards, (list, tuple)): cards = [cards]
 		ID, btns, posEnds = cards[0].ID, [], []
 		for card in cards:
-			for btn in self.handZones[ID].btnsDrawn:
+			for i, btn in enumerate(self.handZones[ID].btnsDrawn):
 				if btn.card == card:
-					if enemyCanSee: btn.showOpponent()
-					btn.configure(bg="red")
-					btns.append(btn)
+					btn1 = HandButton(btn.GUI, btn.card, enemyCanSee=enemyCanSee)
+					btn.remove()
+					btn1.configure(bg="red")
+					btn1.plot(x=btn.x, y=btn.y)
+					self.handZones[ID].btnsDrawn.insert(i, self.handZones[ID].btnsDrawn.pop())
+					btns.append(btn1)
 					posEnds.append((btn.x, 0.62*Y if ID == ownID else 0.38*Y))
 					break
 		self.moveBtnsAni(btns, posEnds, vanish=True)
-	
+		
 	def cardLeavesDeckAni(self, card, enemyCanSee=True):
 		ownID = self.ID if hasattr(self, "ID") else 1
 		btn = HandButton(self, card)

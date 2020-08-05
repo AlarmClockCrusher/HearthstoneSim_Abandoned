@@ -44,10 +44,9 @@ def invokeGalakrond(Game, ID):
 	if primaryGalakrond:
 		PRINT(Game, "Primary Galakrond of player %d is %s"%(ID, primaryGalakrond.name))
 		Class = primaryGalakrond.Class
-		PRINT(Game, "Class of Primary Galakrond of player is %s"%Class)
 		if "Priest" in Class:
 			if Game.mode == 0:
-				if Game.guides and Game.guides[0][1] == "Priest Invoke":
+				if Game.guides:
 					minion = Game.guides.pop(0)
 				else:
 					minion = npchoice(Game.RNGPools["Priest Minions"])
@@ -56,7 +55,7 @@ def invokeGalakrond(Game, ID):
 				Game.Hand_Deck.addCardtoHand(minion, ID, "type")
 		elif "Rogue" in Class:
 			if Game.mode == 0:
-				if Game.guides and Game.guides[0][1] == "Rogue Invoke":
+				if Game.guides:
 					lackey = Game.guides.pop(0)
 				else:
 					lackey = npchoice(Lackeys)
@@ -80,7 +79,6 @@ def invokeGalakrond(Game, ID):
 			isPrimaryGalakrond = (card == primaryGalakrond)
 			if hasattr(card, "progress"):
 				card.progress += 1
-				PRINT(Game, "%s's Invocation progress is now %d"%(card.name, card.progress))
 				if upgrade and card.progress > 1:
 					Game.Hand_Deck.replaceCardinHand(card, upgrade(Game, ID))
 					if isPrimaryGalakrond:
@@ -91,7 +89,6 @@ def invokeGalakrond(Game, ID):
 			isPrimaryGalakrond = (card == primaryGalakrond)
 			if hasattr(card, "progress"):
 				card.progress += 1
-				PRINT(Game, "%s's Invocation progress is now %d"%(card.name, card.progress))
 				if upgrade and card.progress > 1:
 					Game.Hand_Deck.replaceCardinDeck(card, upgrade(Game, ID))
 					if isPrimaryGalakrond:
@@ -474,7 +471,7 @@ class BuffAura_DreadRaven(AuraDealer_toMinion):
 		self.applies(self.entity)
 		for sig in self.signals:
 			try: self.minion.Game.trigsBoard[self.minion.ID][sig].append(self)
-			except: self.minion.Game.trigsBoard[self.minion.ID][sig] = self
+			except: self.minion.Game.trigsBoard[self.minion.ID][sig] = [self]
 			
 	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
@@ -733,7 +730,7 @@ class BuffAura_WingCommander(AuraDealer_toMinion):
 		self.applies(self.minion)
 		for sig in self.signals:
 			try: self.minion.Game.trigsBoard[self.minion.ID][sig].append(self)
-			except: self.minion.Game.trigsBoard[self.minion.ID][sig] = self
+			except: self.minion.Game.trigsBoard[self.minion.ID][sig] = [self]
 			
 	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function

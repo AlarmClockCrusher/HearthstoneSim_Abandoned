@@ -161,7 +161,7 @@ class Game:
 				if target.type == "Minion": tarIndex, tarWhere = target.position, "minion%d"%target.ID
 				else: tarIndex, tarWhere = target.ID, "hero"
 			else: tarIndex, tarWhere = 0, ''
-			minion, mana, positioninHand = self.Hand_Deck.extractfromHand(minion, enemyCanSee=True)
+			minion, mana, posinHand = self.Hand_Deck.extractfromHand(minion, enemyCanSee=True)
 			minionIndex = minion.index
 			self.Manas.payManaCost(minion, mana) #海魔钉刺者，古加尔和血色绽放的伤害生效。
 			#The new minion played will have the largest sequence.
@@ -175,7 +175,7 @@ class Game:
 			self.minionPlayed = minion
 			armedTrigs = self.armedTrigs("MinionBeenPlayed")
 			if self.GUI: self.GUI.wait(400)
-			target = minion.played(target, choice, mana, positioninHand, comment)
+			target = minion.played(target, choice, mana, posinHand, comment)
 			#完成阶段
 			#只有当打出的随从还在场上的时候，飞刀杂耍者等“在你召唤一个xx随从之后”才会触发。当大王因变形为英雄而返回None时也不会触发。
 			#召唤后步骤，触发“每当你召唤一个xx随从之后”的扳机，如飞刀杂耍者，公正之剑和船载火炮等
@@ -192,8 +192,8 @@ class Game:
 			if self.minionPlayed and self.minionPlayed.type == "Minion":
 				if self.minionPlayed.identity not in self.Hand_Deck.startingDeckIdentities[self.turn]:
 					self.Counters.createdCardsPlayedThisGame[self.turn] += 1
-				#The comment here is positioninHand, which records the position a card is played from hand. -1 means the rightmost, 0 means the leftmost
-				self.sendSignal("MinionBeenPlayed", self.turn, self.minionPlayed, target, mana, positioninHand, choice, armedTrigs)
+				#The comment here is posinHand, which records the position a card is played from hand. -1 means the rightmost, 0 means the leftmost
+				self.sendSignal("MinionBeenPlayed", self.turn, self.minionPlayed, target, mana, posinHand, choice, armedTrigs)
 			#............完成阶段结束，开始处理死亡情况，此时可以处理胜负问题。
 			self.gathertheDead(True)
 			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
@@ -261,7 +261,7 @@ class Game:
 			self.sendSignal("MinionBeenSummoned", self.turn, subject, None, 0, "")
 			return subject
 		return None
-			
+		
 	#只能为同一方召唤随从，如有需要，则多次引用这个函数即可。subject不能是空的
 	#注意，卡德加的机制是2 ** n倍。每次翻倍会出现多召唤1个，2个，4个的情况。目前不需要处理3个卡德加的情况，因为7个格子放不下。
 	def summon(self, subject, position, initiatorID, comment="Enablex2"):
@@ -411,7 +411,7 @@ class Game:
 	def minionSwitchSide(self, target, activity="Permanent"):
 		#如果随从在手牌中，则该会在手牌中换边；如果随从在牌库中，则无事发生。
 		if target.inHand and target in self.Hand_Deck.hands[target.ID]:
-			card, mana, positioninHand = self.Hand_Deck.extractfromHand(target, enemyCanSee=True)
+			card, mana, posinHand = self.Hand_Deck.extractfromHand(target, enemyCanSee=True)
 			#addCardtoHand method will force the ID of the card to change to the target hand ID.
 			#If the other side has full hand, then the card is extracted and thrown away.
 			self.Hand_Deck.addCardtoHand(card, 3-card.ID)
@@ -793,7 +793,7 @@ class Game:
 			#完成阶段：
 				#如果该牌有回响，结算回响（没有其他牌可以让法术获得回响）
 				#使用后步骤：触发“当你使用一张xx牌之后”的扳机，如狂野炎术士，西风灯神，星界密使和风潮的状态移除。
-			
+				
 			#如果是施放的法术（非玩家亲自打出）
 			#获得过载，与双生法术 -> 依照版面描述结算，如有星界密使或者风潮，这个法术也会被重复或者法强增益，但是不会触发泽蒂摩。 -> 星界密使和风潮的状态移除。
 			#符文之矛和导演释放的法术也会使用风潮或者星界密使的效果。
@@ -806,7 +806,7 @@ class Game:
 				else: tarIndex, tarWhere = target.ID, "hero"
 			else: tarIndex, tarWhere = 0, ''
 			#支付法力值，结算血色绽放等状态。
-			spell, mana, positioninHand = self.Hand_Deck.extractfromHand(spell, enemyCanSee=not spell.description.startswith("Secret:"))
+			spell, mana, posinHand = self.Hand_Deck.extractfromHand(spell, enemyCanSee=not spell.description.startswith("Secret:"))
 			self.Manas.payManaCost(spell, mana)
 			#请求使用法术，如果此时对方场上有法术反制，则取消后续序列。
 			#法术反制会阻挡使用时扳机，如伊利丹和任务达人等。但是法力值消耗扳机，如血色绽放，肯瑞托法师会触发，从而失去费用光环
@@ -824,14 +824,14 @@ class Game:
 				armedTrigs = self.armedTrigs("SpellBeenPlayed")
 				self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(spell.index)
 				self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
-				spell.played(target, choice, mana, positioninHand, comment) #choice用于抉择选项，comment用于区分是GUI环境下使用还是AI分叉
+				spell.played(target, choice, mana, posinHand, comment) #choice用于抉择选项，comment用于区分是GUI环境下使用还是AI分叉
 				self.Counters.numCardsPlayedThisTurn[self.turn] += 1
 				self.Counters.numSpellsPlayedThisTurn[self.turn] += 1
 				self.Counters.cardsPlayedThisGame[self.turn].append(spell.index)
 				#使用后步骤，触发“每当使用一张xx牌之后”的扳机，如狂野炎术士，西风灯神，星界密使的状态移除和伊莱克特拉风潮的状态移除。
 				if spell.identity not in self.Hand_Deck.startingDeckIdentities[self.turn]:
 					self.Counters.createdCardsPlayedThisGame[self.turn] += 1
-				self.sendSignal("SpellBeenPlayed", self.turn, spell, target, mana, positioninHand, choice, armedTrigs)
+				self.sendSignal("SpellBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
 				#完成阶段结束，处理亡语，此时可以处理胜负问题。
 				self.gathertheDead(True)
 				for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
@@ -873,12 +873,12 @@ class Game:
 				else: tarIndex, tarWhere = target.ID, "hero"
 			else: tarIndex, tarWhere = 0, ''
 			#卡牌从手中离开，支付费用，费用状态移除，但是目前没有根据武器费用支付而产生响应的效果。
-			weapon, mana, positioninHand = self.Hand_Deck.extractfromHand(weapon, enemyCanSee=True)
+			weapon, mana, posinHand = self.Hand_Deck.extractfromHand(weapon, enemyCanSee=True)
 			weaponIndex = weapon.index
 			self.Manas.payManaCost(weapon, mana)
 			#使用阶段，结算阶段。
 			armedTrigs = self.armedTrigs("WeaponBeenPlayed")
-			weapon.played(target, 0, mana, positioninHand, comment="") #There are no weapon with Choose One.
+			weapon.played(target, 0, mana, posinHand, comment="") #There are no weapon with Choose One.
 			self.Counters.numCardsPlayedThisTurn[self.turn] += 1
 			self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(weaponIndex)
 			self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
@@ -886,7 +886,7 @@ class Game:
 			#完成阶段，触发“每当你使用一张xx牌”的扳机，如捕鼠陷阱和瑟拉金之种等。
 			if weapon.identity not in self.Hand_Deck.startingDeckIdentities[self.turn]:
 				self.Counters.createdCardsPlayedThisGame[self.turn] += 1
-			self.sendSignal("WeaponBeenPlayed", self.turn, weapon, target, mana, positioninHand, 0, armedTrigs)
+			self.sendSignal("WeaponBeenPlayed", self.turn, weapon, target, mana, posinHand, 0, armedTrigs)
 			#完成阶段结束，处理亡语，可以处理胜负问题。	
 			self.gathertheDead(True)
 			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
@@ -933,12 +933,12 @@ class Game:
 			if self.GUI: self.GUI.displayCard(heroCard)
 			subIndex, subWhere = self.Hand_Deck.hands[heroCard.ID].index(heroCard), "hand%d"%heroCard.ID
 			#支付费用，以及费用状态移除
-			heroCard, mana, positioninHand = self.Hand_Deck.extractfromHand(heroCard, enemyCanSee=True)
+			heroCard, mana, posinHand = self.Hand_Deck.extractfromHand(heroCard, enemyCanSee=True)
 			heroCardIndex = heroCard.index
 			self.Manas.payManaCost(heroCard, mana)
 			#使用阶段，结算阶段的处理。
 			armedTrigs = self.armedTrigs("HeroCardBeenPlayed")
-			heroCard.played(None, choice, mana, positioninHand, comment="")
+			heroCard.played(None, choice, mana, posinHand, comment="")
 			self.Counters.numCardsPlayedThisTurn[self.turn] += 1
 			self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(heroCardIndex)
 			self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
@@ -947,7 +947,7 @@ class Game:
 			#使用后步骤，触发“每当你使用一张xx牌之后”的扳机，如捕鼠陷阱等。
 			if heroCard.identity not in self.Hand_Deck.startingDeckIdentities[self.turn]:
 				self.Counters.createdCardsPlayedThisGame[self.turn] += 1
-			self.sendSignal("HeroCardBeenPlayed", self.turn, heroCard, None, mana, positioninHand, choice, armedTrigs)
+			self.sendSignal("HeroCardBeenPlayed", self.turn, heroCard, None, mana, posinHand, choice, armedTrigs)
 			#完成阶段结束，处理亡语，可以处理胜负问题。
 			self.gathertheDead(True)
 			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:

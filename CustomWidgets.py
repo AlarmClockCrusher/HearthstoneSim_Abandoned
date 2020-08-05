@@ -200,6 +200,10 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			self['text'] = text
 		self.zone.btnsDrawn.append(self)
 		
+	def hide(self): #因为DiscoverCardOption是HandButton上面定义的，不用再次定replot
+		self.place_forget()
+		for label in self.labels: label.place_forget()
+		
 	def replot(self): #After the button is hidden by place_forget, use this to show the button again
 		self.place(x=self.x, y=self.y, anchor='c')
 		for label in self.labels: label.replot()
@@ -401,10 +405,6 @@ class DiscoverCardButton(HandButton):
 		self.destroy()
 		try: self.GUI.btnsDrawn.remove(self)
 		except: pass
-		
-	def hide(self): #因为DiscoverCardOption是HandButton上面定义的，不用再次定replot
-		self.place_forget()
-		for label in self.labels: label.place_forget()
 		
 		
 class DiscoverOptionButton(tk.Button):
@@ -679,7 +679,7 @@ class HeroButton(tk.Button):
 			for trig in self.card.trigsBoard:
 				if hasattr(trig, "counter"): string += "%d "%trig.counter
 			CardLabel(btn=self, text=' %s'%string, bg="yellow").plot(x=x, y=y+0.45*CARD_Y)
-		self.zone.btnsDrawn.append(self)
+		self.zone.btnsDrawn[0] = self
 		
 	def move2(self, x, y):
 		xOffset, yOffset = x - self.x, y - self.y
@@ -690,7 +690,7 @@ class HeroButton(tk.Button):
 	def remove(self):
 		for label in self.labels: label.destroy()
 		self.destroy()
-		try: self.zone.btnsDrawn.remove(self)
+		try: self.zone.btnsDrawn[0] = None
 		except: pass
 		
 	def represents(self, hero):
@@ -699,6 +699,62 @@ class HeroButton(tk.Button):
 		for trig in hero.trigsBoard:
 			if hasattr(trig, "counter"): counts += trig.counter
 		return self.trigs == [type(trig) for trig in hero.trigsBoard] and self.counts == counts
+		
+class HeroPowerButton(tk.Button): #For Hero Powers that are on board
+	def __init__(self, GUI, power):
+		self.decideColorOrig(GUI, power)
+		img = PIL.Image.open(findPicFilepath(power)).resize((PowerImgSize, PowerImgSize))
+		ph = PIL.ImageTk.PhotoImage(img)
+		tk.Button.__init__(self, relief=tk.FLAT, master=GUI.GamePanel, image=ph, bg=self.colorOrig, width=PowerIconSize, height=PowerIconSize)
+		self.GUI, self.card, self.image, self.selected = GUI, power, ph, 0
+		self.bind('<Button-1>', self.leftClick)
+		self.bind('<Button-3>', self.rightClick)
+		self.x, self.y, self.labels, self.zone = 0, 0, [], GUI.heroZones[power.ID]
+		#Info bookkeeping
+		self.cardInfo = type(power)
+		self.mana = power.mana
+		self.trigs = [type(trig) for trig in power.trigsBoard]
+		self.counts = 0
+		for trig in power.trigsBoard:
+			if hasattr(trig, "counter"): self.counts += trig.counter
+			
+	def decideColorOrig(self, GUI, power):
+		self.colorOrig = "green3" if power.ID == GUI.Game.turn and power.available() and GUI.Game.Manas.affordable(power) else "red"
+		
+	def leftClick(self, event):
+		if self.GUI.UI < 3 and self.GUI.UI > -1:
+			if self.card.ID == self.GUI.Game.turn and self.GUI.Game.Manas.affordable(self.card) and self.card.available():
+				self.GUI.resolveMove(self.card, self, "Power")
+			else:
+				self.GUI.printInfo("Hero Power can't be selected")
+				self.GUI.cancelSelection()
+				self.card.STATUSPRINT()
+				self.GUI.displayCard(self.card)
+				
+	def rightClick(self, event):
+		self.GUI.cancelSelection()
+		self.card.STATUSPRINT()
+		self.GUI.displayCard(self.card)
+		
+	def plot(self, x, y):
+		self.x, self.y, self.labels = x, y, []
+		self.place(x=x, y=y, anchor='c')
+		CardLabel(btn=self, text=str(self.card.mana)).plot(x=x, y=y-int(0.25*CARD_Y))
+		self.zone.btnsDrawn[1] = self
+		
+	def remove(self):
+		for label in self.labels: label.destroy()
+		self.destroy()
+		try: self.zone.btnsDrawn[1] = None
+		except: pass
+		
+	def represents(self, power):
+		if not isinstance(power, self.cardInfo) or power.mana != self.mana: return False
+		trigs = [type(trig) for trig in power.trigsBoard]
+		counts = 0
+		for trig in power.trigsBoard:
+			if hasattr(trig, "counter"): counts += trig.counter
+		return self.trigs == trigs and self.counts == counts
 		
 class WeaponButton(tk.Button): #休眠物和武器无论左右键都是取消选择，打印目前状态
 	def __init__(self, GUI, weapon):
@@ -758,62 +814,6 @@ class WeaponButton(tk.Button): #休眠物和武器无论左右键都是取消选
 			if hasattr(trig, "counter"): counts += trig.counter
 		return self.trigs == trigs and self.counts == counts
 		
-class HeroPowerButton(tk.Button): #For Hero Powers that are on board
-	def __init__(self, GUI, power):
-		self.decideColorOrig(GUI, power)
-		img = PIL.Image.open(findPicFilepath(power)).resize((PowerImgSize, PowerImgSize))
-		ph = PIL.ImageTk.PhotoImage(img)
-		tk.Button.__init__(self, relief=tk.FLAT, master=GUI.GamePanel, image=ph, bg=self.colorOrig, width=PowerIconSize, height=PowerIconSize)
-		self.GUI, self.card, self.image, self.selected = GUI, power, ph, 0
-		self.bind('<Button-1>', self.leftClick)
-		self.bind('<Button-3>', self.rightClick)
-		self.x, self.y, self.labels, self.zone = 0, 0, [], GUI.heroZones[power.ID]
-		#Info bookkeeping
-		self.cardInfo = type(power)
-		self.mana = power.mana
-		self.trigs = [type(trig) for trig in power.trigsBoard]
-		self.counts = 0
-		for trig in power.trigsBoard:
-			if hasattr(trig, "counter"): self.counts += trig.counter
-			
-	def decideColorOrig(self, GUI, power):
-		self.colorOrig = "green3" if power.ID == GUI.Game.turn and power.available() and GUI.Game.Manas.affordable(power) else "red"
-		
-	def leftClick(self, event):
-		if self.GUI.UI < 3 and self.GUI.UI > -1:
-			if self.card.ID == self.GUI.Game.turn and self.GUI.Game.Manas.affordable(self.card) and self.card.available():
-				self.GUI.resolveMove(self.card, self, "Power")
-			else:
-				self.GUI.printInfo("Hero Power can't be selected")
-				self.GUI.cancelSelection()
-				self.card.STATUSPRINT()
-				self.GUI.displayCard(self.card)
-				
-	def rightClick(self, event):
-		self.GUI.cancelSelection()
-		self.card.STATUSPRINT()
-		self.GUI.displayCard(self.card)
-		
-	def plot(self, x, y):
-		self.x, self.y, self.labels = x, y, []
-		self.place(x=x, y=y, anchor='c')
-		CardLabel(btn=self, text=str(self.card.mana)).plot(x=x, y=y-int(0.25*CARD_Y))
-		self.zone.btnsDrawn.append(self)
-		
-	def remove(self):
-		for label in self.labels: label.destroy()
-		self.destroy()
-		try: self.zone.btnsDrawn.remove(self)
-		except: pass
-		
-	def represents(self, power):
-		if not isinstance(power, self.cardInfo) or power.mana != self.mana: return False
-		trigs = [type(trig) for trig in power.trigsBoard]
-		counts = 0
-		for trig in power.trigsBoard:
-			if hasattr(trig, "counter"): counts += trig.counter
-		return self.trigs == trigs and self.counts == counts
-		
 class HeroZone: #Include heroes, weapons and powers
 	def __init__(self, GUI, ID):
 		self.GUI, self.ID, self.btnsDrawn = GUI, ID, []
@@ -823,40 +823,35 @@ class HeroZone: #Include heroes, weapons and powers
 		hero, power, weapon = game.heroes[self.ID], game.powers[self.ID], game.availableWeapon(self.ID)
 		if not hasattr(self.GUI, "ID"): posBtns = [Hero1Pos, Power1Pos, Weapon1Pos] if self.ID == 1 else [Hero2Pos, Power2Pos, Weapon2Pos]
 		else: posBtns = [OwnHeroPos, OwnPowerPos, OwnWeaponPos] if self.ID == self.GUI.ID else [EnemyHeroPos, EnemyPowerPos, EnemyWeaponPos]
-		heroBtn, powerBtn, weaponBtn = None, None, None
 		if self.btnsDrawn:
+			#Check if the hero button still correctly show the hero
 			if self.btnsDrawn[0].represents(hero):
-				heroBtn = self.btnsDrawn.pop(0)
+				heroBtn = self.btnsDrawn[0]
 				heroBtn.card = hero
-			for i, btn in enumerate(self.btnsDrawn):
-				if btn.represents(power):
-					powerBtn = self.btnsDrawn.pop(i)
-					powerBtn.card = power
-					break
-			if weapon:
-				for i, btn in enumerate(self.btnsDrawn):
-					if btn.represents(weapon):
-						weaponBtn = self.btnsDrawn.pop(i)
-						weaponBtn.card = weapon
-						break
-			for btn in reversed(self.btnsDrawn): btn.remove()
-			if heroBtn:
-				self.btnsDrawn.append(heroBtn)
 				heroBtn.decideColorOrig(self.GUI, hero)
 				heroBtn.configure(bg=heroBtn.colorOrig)
-			else: HeroButton(self.GUI, hero).plot(posBtns[0][0], posBtns[0][1])
-			if powerBtn:
-				self.btnsDrawn.append(powerBtn)
+			else:
+				self.btnsDrawn[0].remove()
+				HeroButton(self.GUI, hero).plot(posBtns[0][0], posBtns[0][1])
+			#Check if the power button still correctly show the Hero Power
+			if self.btnsDrawn[1].represents(power):
+				powerBtn = self.btnsDrawn[1]
+				powerBtn.card = power
 				powerBtn.decideColorOrig(self.GUI, power)
 				powerBtn.configure(bg=powerBtn.colorOrig)
-			else: HeroPowerButton(self.GUI, power).plot(posBtns[1][0], posBtns[1][1])
+			else:
+				self.btnsDrawn[1].remove()
+				HeroPowerButton(self.GUI, power).plot(posBtns[1][0], posBtns[1][1])
 			if weapon:
-				if weaponBtn: #可能在之前是没有画这个button的
-					self.btnsDrawn.append(weaponBtn)
-					weaponBtn.decideColorOrig(self.GUI, weapon)
-					weaponBtn.configure(bg=weaponBtn.colorOrig)
-				else: WeaponButton(self.GUI, weapon).plot(posBtns[2][0], posBtns[2][1])
-		else:
+				if len(self.btnsDrawn) < 3 or not self.btnsDrawn[2].represents(weapon): #之前没有武器button或者武器button不再能正确显示数值
+					try: self.btnsDrawn[2].remove()
+					except: pass
+					WeaponButton(self.GUI, weapon).plot(posBtns[2][0], posBtns[2][1])
+			else:
+				for i in reversed(range(2, len(self.btnsDrawn))):
+					self.btnsDrawn[i].remove()
+		else:		
+			self.btnsDrawn = [None, None]
 			HeroButton(self.GUI, hero).plot(posBtns[0][0], posBtns[0][1])
 			HeroPowerButton(self.GUI, power).plot(posBtns[1][0], posBtns[1][1])
 			if weapon: WeaponButton(self.GUI, weapon).plot(posBtns[2][0], posBtns[2][1])
@@ -997,7 +992,7 @@ class BoardButton(tk.Canvas):
 				"21 Uldum Desert": "Reborn",
 				"22 Uldum Oasis": "Battlecry: Add a Uldum plague card to your hand",
 				"23 Dragons": "Battlecry: Discover a Dragon",
-				"24 Outlands": "Dormant for 2 turns. When this awakens, deal 2 damage to 2 random enemy minions",
+				"24 Outlands": "Dormant for 2 turns. When this awakens, deal 3 damage to 2 random enemy minions",
 				"25 Scholomance Academy": "Add a Dual class card to your hand",
 				}[self.boardInfo]
 		self.create_text(Board_X/2, Board_Y/2, text=self.text, fill="orange2", font=("Yahei", 14, ))
@@ -1116,7 +1111,7 @@ class ManaZone(tk.Frame):
 				ph = PIL.ImageTk.PhotoImage(img)
 				mana = tk.Button(self, image=ph, bg="grey46", height=ManaXtlSize, width=ManaXtlSize)
 				mana.image = ph
-				mana.place(relx=0.08+i/13, rely=0.3, anchor='c')
+				mana.place(relx=0.1+i/13, rely=0.3, anchor='c')
 				self.manasDrawn.append(mana)
 				i += 1
 			for i in range(1, self.overloaded+1):
@@ -1125,7 +1120,7 @@ class ManaZone(tk.Frame):
 				ph = PIL.ImageTk.PhotoImage(img)
 				mana = tk.Button(self, image=ph, bg="grey46", height=ManaXtlSize, width=ManaXtlSize)
 				mana.image = ph
-				mana.place(relx=0.08+i/13, rely=0.7, anchor='c')
+				mana.place(relx=0.1+i/13, rely=0.7, anchor='c')
 				self.manasDrawn.append(mana)
 				
 	#Exclusively for single-player replay. It needs the new game for preparation

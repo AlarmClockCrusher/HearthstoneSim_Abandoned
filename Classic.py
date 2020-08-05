@@ -1334,7 +1334,7 @@ class DreadCorsair(Minion):
 				
 class Trig_DreadCorsair(TrigHand):
 	def __init__(self, entity):
-		self.blank_init(entity, ["WeaponEquipped", "WeaponRemoved"])
+		self.blank_init(entity, ["WeaponEquipped", "WeaponRemoved", "WeaponAttChanges"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and ID == self.entity.ID

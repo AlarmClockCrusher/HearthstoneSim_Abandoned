@@ -3106,7 +3106,7 @@ class TolinsGoblet_Shadows(Spell):
 		PRINT(self.Game, "Tolin's Goblet lets player draw a card and fills their hand with copies of it")
 		card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 		if card and self.Game.Hand_Deck.handNotFull(self.ID):
-			copies = [card.selfCopy(self.ID) for i in self.Game.Hand_Deck.spaceinHand(self.ID)]
+			copies = [card.selfCopy(self.ID) for i in range(self.Game.Hand_Deck.spaceinHand(self.ID))]
 			self.Game.Hand_Deck.addCardtoHand(copies, self.ID)
 		return None
 		

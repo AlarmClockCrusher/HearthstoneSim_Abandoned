@@ -720,7 +720,7 @@ class ManaAura_Dealer:
 		for card in game.Hand_Deck.hands[2]: self.applies(card)
 		
 		try: game.trigsBoard[self.entity.ID]["CardEntersHand"].append(self)
-		except: game.trigsBoard[self.entity.ID]["CardEntersHand"] = self
+		except: game.trigsBoard[self.entity.ID]["CardEntersHand"] = [self]
 		game.Manas.calcMana_All()
 		
 	#When the aura object is no longer referenced, it vanishes automatically.

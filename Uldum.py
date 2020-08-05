@@ -206,8 +206,8 @@ class InjuredTolvir(Minion):
 		
 class KoboldSandtrooper(Minion):
 	Class, race, name = "Neutral", "", "Kobold Sandtrooper"
-	mana, attack, health = 2, 3, 1
-	index = "Uldum~Neutral~Minion~2~3~1~None~Kobold Sandtrooper~Deathrattle"
+	mana, attack, health = 2, 2, 1
+	index = "Uldum~Neutral~Minion~2~2~1~None~Kobold Sandtrooper~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Deal 3 damage to the enemy hero"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3303,7 +3303,7 @@ class YourLackeysareAlways44(AuraDealer_toMinion):
 			
 		for sig in self.signals:
 			try: self.Game.trigsBoard[self.ID][sig].append(self)
-			except: self.Game.trigsBoard[self.ID][sig] = self
+			except: self.Game.trigsBoard[self.ID][sig] = [self]
 			
 	#可以通过AuraDealer_toMinion的createCopy方法复制
 	
@@ -3574,7 +3574,7 @@ Uldum_Indices = {"Uldum~Neutral~Minion~1~1~2~None~Beaming Sidekick~Battlecry": B
 				"Uldum~Neutral~Minion~2~2~3~None~Dwarven Archaeologist": DwarvenArchaeologist,
 				"Uldum~Neutral~Minion~2~3~2~Murloc~Fishflinger~Battlecry": Fishflinger,
 				"Uldum~Neutral~Minion~2~2~6~None~Injured Tol'vir~Battlecry": InjuredTolvir,
-				"Uldum~Neutral~Minion~2~3~1~None~Kobold Sandtrooper~Deathrattle": KoboldSandtrooper,
+				"Uldum~Neutral~Minion~2~2~1~None~Kobold Sandtrooper~Deathrattle": KoboldSandtrooper,
 				"Uldum~Neutral~Minion~2~2~3~None~Neferset Ritualist~Battlecry": NefersetRitualist,
 				"Uldum~Neutral~Minion~2~2~3~None~Questing Explorer~Battlecry": QuestingExplorer,
 				"Uldum~Neutral~Minion~2~3~2~Elemental~Quicksand Elemental~Battlecry": QuicksandElemental,
