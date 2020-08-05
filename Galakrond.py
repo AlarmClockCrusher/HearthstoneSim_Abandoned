@@ -807,7 +807,8 @@ class ExplosiveEvolution(Spell):
 					curGame.fixedGuides.append(newMinion)
 				newMinion = newMinion(curGame, target.ID)
 				curGame.transform(target, newMinion)
-		return newMinion
+			target = newMinion
+		return target
 		
 		
 class EyeoftheStorm(Spell):

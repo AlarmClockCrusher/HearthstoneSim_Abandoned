@@ -250,7 +250,8 @@ class WitchyLackey(Minion):
 					curGame.fixedGuides.append(newMinion)
 			newMinion = newMinion(curGame, target.ID)
 			curGame.transform(target, newMinion)
-		return newMinion
+			target = newMinion
+		return target
 		
 Lackeys = [DraconicLackey, EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey]
 """Mana 2 cards"""
@@ -3269,7 +3270,8 @@ class Mutate(Spell):
 					curGame.fixedGuides.append(newMinion)
 				newMinion = newMinion(curGame, target.ID)
 				curGame.transform(target, newMinion)
-		return newMinion
+			target = newMinion
+		return target
 		
 		
 class SludgeSlurper(Minion):

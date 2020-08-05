@@ -983,8 +983,8 @@ class BoardButton(tk.Canvas):
 		self.GUI, self.selected, self.colorOrig, self.boardInfo = GUI, 0, BoardColor, GUI.boardID
 		self.bind('<Button-1>', self.leftClick)   # bind left mouse click
 		self.bind('<Button-3>', self.rightClick)   # bind right mouse click
-		self.text = self.boardInfo + "\nTransfer Student Effect:\n" \
-				+ {"1 Classic Ogrimmar": "Battlecry: Deal 2 damage",
+		self.text = "Transfer Student Effect:\n%s\n"% \
+				{"1 Classic Ogrimmar": "Battlecry: Deal 2 damage",
 				"2 Classic Stormwind": "Divine Shield",
 				"3 Classic Stranglethorn": "Stealth, Poisonous",
 				"4 Classic Four Wind Valley": "Battlecry: Give a friendly minion +1/+2",
@@ -995,7 +995,7 @@ class BoardButton(tk.Canvas):
 				"24 Outlands": "Dormant for 2 turns. When this awakens, deal 3 damage to 2 random enemy minions",
 				"25 Scholomance Academy": "Add a Dual class card to your hand",
 				}[self.boardInfo]
-		self.create_text(Board_X/2, Board_Y/2, text=self.text, fill="orange2", font=("Yahei", 14, ))
+		self.effectIDs = []
 		
 	def leftClick(self, event):
 		if self.GUI.UI > -1 and self.GUI.UI < 3: #不在发现中和动画演示中才会响应
@@ -1007,6 +1007,23 @@ class BoardButton(tk.Canvas):
 	def plot(self):
 		self.place(x=X/2, y=Y/2, anchor='c')
 		self.x, self.y = X/2, Y/2
+		
+	def draw(self):
+		while self.effectIDs:
+			self.delete(self.effectIDs.pop())
+		game = self.GUI.Game
+		status = self.text + "\nPlayer 1 has:\n"
+		for key, value in game.status[1].items():
+			if value > 0: status += "%s:%d "%(key, value)
+		status += "\n\nPlayer 2 has:\n"
+		for key, value in game.status[2].items():
+			if value > 0: status += "%s:%d    "%(key, value)
+		status += "\n\nTemporary Triggers:\n"
+		for obj in game.turnStartTrigger + game.turnEndTrigger:
+			status += type(obj).__name__ + ' '
+		self.GUI.wrapText(status, lengthLimit=60)
+		textID = self.create_text(int(0.3*Board_X), Board_Y/2, text=status, fill="orange2", font=("Yahei", 14, ))
+		self.effectIDs.append(textID)
 		
 	def remove(self):
 		pass

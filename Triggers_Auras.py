@@ -454,7 +454,7 @@ class BuffAura_Dealer_All(AuraDealer_toMinion):
 			
 	def selfCopy(self, recipient): #The recipient is the entity that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
-		return type(self)(recipient, recipient.applicable, self.attack, self.health)
+		return type(self)(recipient, self.attack, self.health)
 		
 		
 class BuffAura_Dealer_Enrage(AuraDealer_toMinion):

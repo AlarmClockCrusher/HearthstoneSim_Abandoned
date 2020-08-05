@@ -74,6 +74,7 @@ class GUI_Common:
 		self.secretZones = {1: SecretZone(self, 1), 2: SecretZone(self, 2)}
 		self.manaZones = {1: ManaZone(self, 1), 2: ManaZone(self, 2)}
 		self.deckZones = {1: DeckZone(self, 1), 2: DeckZone(self, 2)}
+		self.offBoardTrigs = {1: None, 2: None}
 		
 		if hasattr(self, "ID"): ownID, enemyID = self.ID, 3 - self.ID
 		else: ownID, enemyID = 1, 2
@@ -143,7 +144,8 @@ class GUI_Common:
 					self.manaZones[ID].draw()
 					self.secretZones[ID].draw()
 					self.deckZones[ID].draw()
-					
+				self.canvas.draw()
+				
 			if not hasattr(self, "ID"): TurnEndButton(self).plot(x=int(0.95*X), y=int(0.58*Y) if self.Game.turn == 1 else int(0.42*Y))
 			elif self.ID == self.Game.turn: TurnEndButton(self).plot(x=int(0.95*X), y=int(0.5*Y))
 					
@@ -465,7 +467,8 @@ class GUI_Common:
 		if showLine:
 			btn1, btn2 = None, None
 			if self.subject and self.target:
-				for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
+				for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn + \
+					([self.offBoardTrigs[1]] if self.offBoardTrigs[1] else []) + ([self.offBoardTrigs[2]] if self.offBoardTrigs[2] else []):
 					if btn.card == self.subject:
 						btn1 = btn
 						break
@@ -486,6 +489,7 @@ class GUI_Common:
 		for btn in self.boardZones[entity.ID].btnsDrawn + self.heroZones[entity.ID].btnsDrawn + self.secretZones[entity.ID].btnsDrawn \
 					+ (self.handZones[entity.ID].btnsDrawn if not hasattr(self, "ID") or seeEnemyHand or entity.ID == self.ID else []):
 			if btn.card == entity:
+				btnFound = True
 				color_0 = btn.cget("bg")
 				btn.config(bg=color)
 				self.displayCard(entity, notSecretBeingPlayed=True)
@@ -495,6 +499,28 @@ class GUI_Common:
 				btn.config(bg=color_0)
 				break
 				
+	def showOffBoardTrig(self, card, linger=True):
+		ID, ownID = card.ID, self.ID if hasattr(self, "ID") else 1
+		if self.offBoardTrigs[ID]: self.offBoardTrigs[ID].remove()
+		#After erasing the old effect, show the new effect being resolved.
+		btn = HandButton(self, card, enemyCanSee=True)
+		pos = int(0.9*X), int(0.75*Y if ID == ownID else 0.25*Y)
+		btn.plot(pos[0], pos[1])
+		self.handZones[ID].btnsDrawn.remove(btn)
+		self.offBoardTrigs[ID] = btn
+		if not linger:
+			btn.configure(bg="yellow")
+			var = tk.IntVar()
+			self.window.after(500, var.set, 1)
+			self.window.wait_variable(var)
+			btn.remove()
+			self.offBoardTrigs[ID] = None
+			
+	def eraseOffBoardTrig(self, ID):
+		try: self.offBoardTrigs[ID].remove()
+		except: pass
+		self.offBoardTrigs[ID] = None
+		
 	def attackAni(self, subject, target):
 		subjectFound = False
 		for zone in [self.boardZones[1].btnsDrawn, self.boardZones[2].btnsDrawn]:
@@ -589,7 +615,7 @@ class GUI_Common:
 		btn = HandButton(self, card, enemyCanSee=True)
 		btn.plot(x=self.deckZones[ID].x, y=self.deckZones[ID].y)
 		btn.configure(bg="grey46")
-		posEnds = (int(0.85*X), int(0.83*Y if ID == ownID else 0.17*Y))
+		posEnds = (int(0.85*X), int(0.7*Y if ID == ownID else 0.3*Y))
 		self.moveBtnsAni(btn, posEnds)
 		var = tk.IntVar()
 		self.window.after(int(350), var.set, 1)
@@ -603,7 +629,7 @@ class GUI_Common:
 		btn.move2 = lambda x, y: btn.place(x=x, y=y)
 		btn.place(x=btn.x, y=btn.y, anchor='c')
 		btn.configure(bg="red")
-		posEnds = (int(0.85*X), int(0.83*Y) if ID == ownID else int(0.17*Y))
+		posEnds = (int(0.85*X), int(0.7*Y) if ID == ownID else int(0.3*Y))
 		self.moveBtnsAni(btn, posEnds)
 		var = tk.IntVar()
 		self.window.after(int(300), var.set, 1)
@@ -673,7 +699,8 @@ class GUI_Common:
 	def targetingEffectAni(self, subject, target, num, color="red"):
 		pos1, pos2 = (), ()
 		if subject and target:
-			for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
+			for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn + \
+					([self.offBoardTrigs[1]] if self.offBoardTrigs[1] else []) + ([self.offBoardTrigs[2]] if self.offBoardTrigs[2] else []):
 				if btn.card == subject:
 					pos1 = btn.x, btn.y
 					break
@@ -691,7 +718,7 @@ class GUI_Common:
 			btn.place(x=btn.x, y=btn.y, anchor='c')
 			self.window.after(250, var.set, 1)
 			self.window.wait_variable(var)
-			self.moveBtnsAni(btn, pos2, timestep=14)
+			self.moveBtnsAni(btn, pos2, timestep=18)
 			self.window.after(250, var.set, 1)
 			self.window.wait_variable(var)
 			btn.destroy()
@@ -700,9 +727,10 @@ class GUI_Common:
 		if targets:
 			if len(targets) == 1: self.targetingEffectAni(subject, targets[0], numbers[0])
 			else:
-				timestep = 14 if len(targets) < 4 else 11
+				timestep = 17 if len(targets) < 4 else 15
 				pos1, pos2, btns = (), (), []
-				for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
+				for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn + \
+					([self.offBoardTrigs[1]] if self.offBoardTrigs[1] else []) + ([self.offBoardTrigs[2]] if self.offBoardTrigs[2] else []):
 					if btn.card == subject:
 						pos1 = btn.x, btn.y
 						break

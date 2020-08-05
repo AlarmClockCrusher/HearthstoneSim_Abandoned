@@ -1866,7 +1866,7 @@ class RenotheRelicologist(Minion):
 		
 class PuzzleBoxofYoggSaron(Spell):
 	Class, name = "Mage", "Puzzle Box of Yogg-Saron"
-	requireTarget, mana = False, 10
+	requireTarget, mana = False, 1
 	index = "Uldum~Mage~Spell~10~Puzzle Box of Yogg-Saron"
 	description = "Cast 10 random spells (targets chosen randomly)"
 	poolIdentifier = "Spells"
