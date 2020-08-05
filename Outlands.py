@@ -3228,6 +3228,8 @@ class TheLurkerBelow(Minion):
 						else:
 							if dist == 1 or dist == -1: minion = neighbors[0]
 							else: break
+					else:
+						break
 		return target
 		
 		
