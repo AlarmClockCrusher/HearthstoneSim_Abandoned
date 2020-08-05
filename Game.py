@@ -815,7 +815,6 @@ class Game:
 			#被反制的法术不会被导演们重复施放
 			#很特殊的是，连击机制仍然可以通过被反制的法术触发。所以需要一个本回合打出过几张牌的计数器
 			#https://www.bilibili.com/video/av51236298?zw
-			if self.GUI: self.GUI.wait(500)
 			if self.Secrets.sameSecretExists("Classic~Mage~Spell~3~Counterspell~~Secret", 3-self.turn):
 				PRINT(self, "Player's spell %s played is Countered by Counterspell"%spell.name)
 				self.sendSignal("TriggerCounterspell", spell.ID, spell, target, 0, "")

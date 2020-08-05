@@ -46,6 +46,7 @@ def invokeGalakrond(Game, ID):
 		Class = primaryGalakrond.Class
 		if "Priest" in Class:
 			if Game.mode == 0:
+				if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheUnspeakable(Game, ID), linger=False)
 				if Game.guides:
 					minion = Game.guides.pop(0)
 				else:
@@ -55,6 +56,7 @@ def invokeGalakrond(Game, ID):
 				Game.Hand_Deck.addCardtoHand(minion, ID, "type")
 		elif "Rogue" in Class:
 			if Game.mode == 0:
+				if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheNightmare(Game, ID), linger=False)
 				if Game.guides:
 					lackey = Game.guides.pop(0)
 				else:
@@ -63,12 +65,15 @@ def invokeGalakrond(Game, ID):
 			PRINT(Game, "On Invocation, Galakrond adds a Lackey to player's hand")
 			Game.Hand_Deck.addCardtoHand(lackey, ID, "type")
 		elif "Shaman" in Class:
+			if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheTempest(Game, ID), linger=False)
 			PRINT(Game, "On Invocation, Galakrond summons a 2/1 Elemental with Rush")
 			Game.summon(WindsweptElemental(Game, ID), -1, ID, "")
 		elif "Warlock" in Class:
+			if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheWretched(Game, ID), linger=False)
 			PRINT(Game, "On Invocation, Galakrond summons two 1/1 Imps")
 			Game.summon([DraconicImp(Game, ID) for i in range(2)], (-1, "totheRightEnd"), ID, "")
 		elif "Warrior" in Class:
+			if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheUnbreakable(Game, ID), linger=False)
 			PRINT(Game, "On Invocation, Galakrond gives player +3 Attach this turn")
 			Game.heroes[ID].gainTempAttack(3)
 	#invocation counter increases and upgrade the galakronds
@@ -883,11 +888,12 @@ class FacelessCorruptor(Minion):
 		return target.type == "Minion" and target.ID == self.ID and target != self and target.onBoard
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if target and (self.onBoard or self.inHand):
+		if target:
 			PRINT(self.Game, "Faceless Corruptor's battlecry transforms friendly minion %s into a copy of the minion"%target.name)
-			Copy = self.selfCopy(self.ID)
+			Copy = self.selfCopy(self.ID) if self.onBoard or self.inHand else type(self)(self.Game, self.ID)
 			self.Game.transform(target, Copy)
-		return Copy
+			return Copy
+		return None
 		
 		
 class KoboldStickyfinger(Minion):

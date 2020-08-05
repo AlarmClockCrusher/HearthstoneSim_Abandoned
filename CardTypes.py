@@ -1357,8 +1357,10 @@ class Spell(Card):
 				curGame.fixedGuides.append((i, where, choice))
 		if curGame.GUI:
 			curGame.GUI.displayCard(self)
+			curGame.GUI.showOffBoardTrig(self)
+			curGame.GUI.subject = self
 			curGame.GUI.target = target
-			curGame.GUI.wait(550)
+			curGame.GUI.wait(750)
 		#在法术要施放两次的情况下，第二次的目标仍然是第一次时随机决定的
 		for i in range(repeatTimes):
 			if self.overload > 0:
@@ -1369,6 +1371,7 @@ class Spell(Card):
 				curGame.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, "type")
 			#指向性法术如果没有目标也可以释放，只是可能没有效果而已
 			target = self.whenEffective(target, "byOthers", choice, posinHand=-2)
+		if curGame.GUI: curGame.GUI.eraseOffBoardTrig(self.ID)
 		#使用后步骤，但是此时的扳机只会触发星界密使和风潮的状态移除。这个信号不是“使用一张xx牌之后”的扳机。
 		curGame.sendSignal("SpellBeenCast", self.ID, self, target, 0, "byOthers", choice=0)
 		
@@ -1380,6 +1383,9 @@ class Spell(Card):
 		#判定该法术是否会因为风潮的光环存在而释放两次。发现的子游戏中不会两次触发，直接跳过
 		if "Branching" not in comment:
 			repeatTimes = 2 if self.Game.status[self.ID]["Spells x2"] > 0 else 1
+		if self.Game.GUI:
+			self.Game.GUI.showOffBoardTrig(self)
+			self.Game.GUI.wait(500)
 		#使用时步骤，触发伊利丹和紫罗兰老师等“每当你使用一张xx牌”的扳机
 		self.Game.sendSignal("SpellPlayed", self.ID, self, target, mana, "", choice)
 		#获得过载和双生法术牌。
@@ -1447,6 +1453,8 @@ class Spell(Card):
 			echoCard.trigsHand.append(trigger)
 			self.Game.Hand_Deck.addCardtoHand(echoCard, self.ID)
 			
+		if self.Game.GUI: self.Game.GUI.eraseOffBoardTrig(self.ID)
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		return target
 		
