@@ -1,11 +1,11 @@
 from CardPools import *
 from Academy import TransferStudent
+from DefaultDeck import Default1,Default2
 import copy
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 import numpy as np
-
 import inspect
 
 
@@ -421,8 +421,3 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 			
 			
-Default1 = [Khadgar, Khadgar, ConjurersCalling, ConjurersCalling, TourGuide, TourGuide, Renew, Renew, SorcerersApprentice, HighAbbessAlura, CommandingShout, PuzzleBoxofYoggSaron, SpiritJailer, SpiritJailer, SpiritJailer, FleshGiant, FleshGiant, ShardshatterMystic
-			]
-			
-Default2 = [Khadgar, Khadgar, ConjurersCalling, ConjurersCalling, TourGuide, TourGuide, Renew, Renew, SorcerersApprentice, HighAbbessAlura, CommandingShout, PuzzleBoxofYoggSaron, SpiritJailer, SpiritJailer, SpiritJailer, FleshGiant, FleshGiant, ShardshatterMystic
-			]
