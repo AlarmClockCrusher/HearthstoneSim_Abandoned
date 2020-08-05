@@ -3369,10 +3369,10 @@ class InvocationofFrost(Spell):
 	index = "Dragons~Shaman~Spell~2~Invocation of Frost"
 	description = "Freeze a minion. Invoke Galakrond"
 	def available(self):
-		return self.selectableMinionExists()
+		return self.selectableEnemyExists()
 		
 	def targetCorrect(self, target, choice=0):
-		return target.type == "Minion" and target.onBoard
+		return target.type == "Minion" or target.type == "Hero" and target.onBoard and target.ID != self.ID
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:

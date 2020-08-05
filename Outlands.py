@@ -341,7 +341,7 @@ class FrozenShadoweaver(Minion):
 	index = "Outlands~Neutral~Minion~3~4~3~None~Frozen Shadoweaver~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Freeze an enemy"
 	def targetExists(self, choice=0):
-		return self.selectableEnemyMinionExists()
+		return self.selectableEnemyExists()
 		
 	def targetCorrect(self, target, choice=0):
 		return (target.type == "Minion" or target.type == "Hero") and target.ID != self.ID and target.onBoard
