@@ -643,7 +643,7 @@ class ClericofScales(Minion):
 							curGame.Hand_Deck.drawCard(self.ID, i)
 						else:
 							PRINT(curGame, "Cleric of Scales' battlecry lets player Discover a spell from their deck")
-							curGame.options = npchoice(spells, min(3, len(spells)), replace=False)
+							curGame.options = [curGame.Hand_Deck.decks[i] for i in npchoice(spells, min(3, len(spells)), replace=False)]
 							curGame.Discover.startDiscover(self)
 					else: curGame.fixedGuides.append(-1)
 		return None

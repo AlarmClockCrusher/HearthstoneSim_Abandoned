@@ -583,7 +583,7 @@ class Trig_Replicatotron(TrigBoard):
 				i = npchoice(neighbors).position if neighbors else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
-				neighbor = curGame.minions[minion.ID][pos]
+				neighbor = curGame.minions[minion.ID][i]
 				PRINT(curGame, "At the start of turn, Replicat-o-tron transforms its neighbor %s into a copy of it"%neighbor.name)
 				curGame.transform(neighbor, minion.selfCopy(minion.ID))
 				

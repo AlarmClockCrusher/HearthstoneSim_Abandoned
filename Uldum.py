@@ -2588,7 +2588,7 @@ class ReturnaRandomEnemyMiniontoHand(Deathrattle_Minion):
 				i = curGame.guides.pop(0)
 			else:
 				minions = curGame.minionsonBoard(3-self.entity.ID)
-				i = npchoice(minion).position if minions else -1
+				i = npchoice(minions).position if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
 				curGame.returnMiniontoHand(curGame.minions[3-self.entity.ID][i]) #minion是在场上的，所以不需要询问是否保留亡语注册
