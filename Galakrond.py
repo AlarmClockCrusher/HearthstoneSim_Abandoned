@@ -241,7 +241,7 @@ class RisingWinds(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.twinSpell = 1
-		self.twinSpellCopy = risingwinds
+		self.twinSpellCopy = RisingWinds2
 		self.chooseOne = 1
 		self.options = [TakeFlight_Option(self), SwoopIn_Option(self)]
 		
@@ -254,7 +254,7 @@ class RisingWinds(Spell):
 			self.Game.summon(Eagle(self.Game, self.ID), -1, self.ID)
 		return None
 		
-class risingwinds(Spell):
+class RisingWinds2(Spell):
 	Class, name = "Druid", "Rising Winds"
 	requireTarget, mana = False, 2
 	index = "Dragons~Druid~Spell~2~Rising Winds~Choose One~Uncollectible"
@@ -347,7 +347,7 @@ class FreshScent(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.twinSpell = 1
-		self.twinSpellCopy = freshscent
+		self.twinSpellCopy = FreshScent2
 		
 	def available(self):
 		return self.selectableMinionExists()
@@ -361,7 +361,7 @@ class FreshScent(Spell):
 			target.buffDebuff(2, 2)
 		return None
 		
-class freshscent(Spell):
+class FreshScent2(Spell):
 	Class, name = "Hunter", "Fresh Scent"
 	requireTarget, mana = True, 2
 	index = "Dragons~Hunter~Spell~2~Fresh Scent~Uncollectible"
@@ -552,14 +552,14 @@ class AirRaid(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.twinSpell = 1
-		self.twinSpellCopy = airraid
+		self.twinSpellCopy = AirRaid2
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Air Raid is cast and summons two 1/1 Silve Hand Recruits")
 		self.Game.summon([SilverHandRecruit_Dragons(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
-class airraid(Spell):
+class AirRaid2(Spell):
 	Class, name = "Paladin", "Air Raid"
 	requireTarget, mana = False, 2
 	index = "Dragons~Paladin~Spell~2~Air Raid~Uncollectible"
@@ -1112,14 +1112,14 @@ Galakrond_Indices = {"Dragons~Neutral~Minion~3~2~2~None~Skydiving Instructor~Bat
 					"Dragons~Neutral~Minion~4~2~3~Pirate~Sky Gen'ral Kragg~Battlecry~Legendary": SkyGenralKragg,
 					"Dragons~Neutral~Minion~4~4~2~Beast~Sharkbait~Rush~Legendary~Uncollectible": Sharkbait,
 					"Dragons~Druid~Spell~2~Rising Winds~Twinspell~Choose One": RisingWinds,
-					"Dragons~Druid~Spell~2~Rising Winds~Choose One~Uncollectible": risingwinds,
+					"Dragons~Druid~Spell~2~Rising Winds~Choose One~Uncollectible": RisingWinds2,
 					"Dragons~Druid~Spell~2~Take Flight~Uncollectible": TakeFlight,
 					"Dragons~Druid~Spell~2~Swoop In~Uncollectible": SwoopIn,
 					"Dragons~Druid~Minion~2~3~2~Beast~Eagle~Uncollectible": Eagle,
 					"Dragons~Druid~Minion~2~2~3~Beast~Steel Beetle~Battlecry": SteelBeetle,
 					"Dragons~Druid~Minion~7~6~8~Beast~Winged Guardian~Taunt~Reborn": WingedGuardian,
 					"Dragons~Hunter~Spell~2~Fresh Scent~Twinspell": FreshScent,
-					"Dragons~Hunter~Spell~2~Fresh Scent~Uncollectible": freshscent,
+					"Dragons~Hunter~Spell~2~Fresh Scent~Uncollectible": FreshScent2,
 					"Dragons~Hunter~Minion~3~2~4~Mech~Chopshop Copter": ChopshopCopter,
 					"Dragons~Hunter~Minion~5~6~5~Dragon~Rotnest Drake~Battlecry": RotnestDrake,
 					"Dragons~Mage~Minion~3~2~5~Elemental~Arcane Amplifier": ArcaneAmplifier,
@@ -1127,7 +1127,7 @@ Galakrond_Indices = {"Dragons~Neutral~Minion~3~2~2~None~Skydiving Instructor~Bat
 					"Dragons~Mage~Hero Card~10~The Amazing Reno~Battlecry~Legendary": TheAmazingReno,
 					"Dragons~Paladin~Minion~2~2~2~Mech~Shotbot~Reborn": Shotbot,
 					"Dragons~Paladin~Spell~2~Air Raid~Twinspell": AirRaid,
-					"Dragons~Paladin~Spell~2~Air Raid~Uncollectible": airraid,
+					"Dragons~Paladin~Spell~2~Air Raid~Uncollectible": AirRaid2,
 					"Dragons~Paladin~Minion~1~1~1~None~Silver Hand Recruit~Taunt~Uncollectible": SilverHandRecruit_Dragons,
 					"Dragons~Paladin~Minion~5~5~6~Dragon~Scalelord~Battlecry": Scalelord,
 					"Dragons~Priest~Minion~6~4~4~Dragon~Aeon Reaver~Battlecry": AeonReaver,

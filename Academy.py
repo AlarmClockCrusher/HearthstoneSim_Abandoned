@@ -549,6 +549,11 @@ class ShuffleRememberedSpells(Deathrattle_Minion):
 		spells = [spell(self.entity.Game, self.entity.ID) for spell in self.spellsRemembered]
 		self.entity.Game.Hand_Deck.shuffleCardintoDeck(spells, self.entity.ID)
 		
+	def selfCopy(self, recipient):
+		trig = type(self)(recipient)
+		trig.spellsRemembered = fixedList(self.spellsRemembered)
+		return trig
+		
 		
 class EnchantedCauldron(Minion):
 	Class, race, name = "Neutral", "", "Enchanted Cauldron"
@@ -971,7 +976,7 @@ class SpectralSenior(Minion):
 class SorcerousSubstitute(Minion):
 	Class, race, name = "Neutral", "", "Sorcerous Substitute"
 	mana, attack, health = 6, 6, 6
-	index = "Academy~Neutral~Minion~6~6~6~Beast~Sorcerous Substitute~Battlecry"
+	index = "Academy~Neutral~Minion~6~6~6~None~Sorcerous Substitute~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you have Spell Damage, summon a copy of this"
 	
 	def effectCanTrigger(self):
@@ -1060,13 +1065,13 @@ class DemonCompanion(Spell):
 class Reffuh(Minion):
 	Class, race, name = "Demon Hunter,Hunter", "Demon", "Reffuh"
 	mana, attack, health = 1, 2, 1
-	index = "Academy~Demon Hunter,Hunter~Minion~1~2~1~Beast~Reffuh~Charge~Uncollectible"
+	index = "Academy~Demon Hunter,Hunter~Minion~1~2~1~Demon~Reffuh~Charge~Uncollectible"
 	requireTarget, keyWord, description = False, "Charge", "Charge"
 	
 class Kolek(Minion):
 	Class, race, name = "Demon Hunter,Hunter", "Demon", "Kolek"
 	mana, attack, health = 1, 1, 2
-	index = "Academy~Demon Hunter,Hunter~Minion~1~1~2~Beast~Kolek~Uncollectible"
+	index = "Academy~Demon Hunter,Hunter~Minion~1~1~2~Demon~Kolek~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -2182,8 +2187,7 @@ class PotionofIllusion(Spell):
 	index = "Academy~Mage,Rogue~Spell~4~Potion of Illusion"
 	description = "Add 1/1 copies of your minions to your hand. They cost (1)"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		copies = [minion.selfCopy(self.ID) for minion in self.Game.minionsonBoard(self.ID)]
-		for minion in copies: ManaMod(minion, 0, 1).applies()
+		copies = [minion.selfCopy(self.ID, 1, 1, 1) for minion in self.Game.minionsonBoard(self.ID)]
 		self.Game.Hand_Deck.addCardtoHand(copies, self.ID)
 		return None
 		
@@ -3071,7 +3075,7 @@ class ForsakenLilian(Minion):
 class ShiftySophomore(Minion):
 	Class, race, name = "Rogue", "", "Shifty Sophomore"
 	mana, attack, health = 4, 4, 4
-	index = "Academy~Rogue,Warrior~Minion~4~4~4~None~Shifty Sophomore~Stealth"
+	index = "Academy~Rogue~Minion~4~4~4~None~Shifty Sophomore~Stealth"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. Spellburst: Add a Combo card to your hand"
 	poolIdentifier = "Combo Cards"
 	@classmethod
@@ -3170,9 +3174,9 @@ class Trig_CuttingClass(TrigHand):
 		
 		
 class DoctorKrastinov(Minion):
-	Class, race, name = "Rogue", "", "Doctor Krastinov"
+	Class, race, name = "Rogue,Warrior", "", "Doctor Krastinov"
 	mana, attack, health = 5, 4, 4
-	index = "Academy~Rogue~Minion~5~4~4~None~Doctor Krastinov~Rush~Legendary"
+	index = "Academy~Rogue,Warrior~Minion~5~4~4~None~Doctor Krastinov~Rush~Legendary"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Whenever this attacks, give your weapon +1/+1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -4241,14 +4245,14 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Neutral~Minion~1~1~1~Dragon~Plagued Hatchling~Uncollectible": PlaguedHatchling,
 					"Academy~Neutral~Minion~6~4~9~Dragon~Onyx Magescribe": OnyxMagescribe,
 					"Academy~Neutral~Minion~6~5~7~None~Smug Senior~Taunt~Deathrattle": SmugSenior,
-					"Academy~Neutral~Minion~4~4~3~None~Spectral Flyer~Rush~Uncollectible": SpectralFlyer,
-					"Academy~Neutral~Minion~6~6~6~Beast~Sorcerous Substitute~Battlecry": SorcerousSubstitute,
+					"Academy~Neutral~Minion~6~5~7~None~Spectral Senior~Taunt~Uncollectible": SpectralSenior,
+					"Academy~Neutral~Minion~6~6~6~None~Sorcerous Substitute~Battlecry": SorcerousSubstitute,
 					"Academy~Neutral~Minion~7~6~8~None~Keymaster Alabaster~Legendary": KeymasterAlabaster,
 					"Academy~Neutral~Minion~8~8~8~Dragon~Plagued Protodrake~Deathrattle": PlaguedProtodrake,
 					
 					"Academy~Demon Hunter,Hunter~Spell~1~Demon Companion": DemonCompanion,
-					"Academy~Demon Hunter,Hunter~Minion~1~2~1~Beast~Reffuh~Charge~Uncollectible": Reffuh,
-					"Academy~Demon Hunter,Hunter~Minion~1~1~2~Beast~Kolek~Uncollectible": Kolek,
+					"Academy~Demon Hunter,Hunter~Minion~1~2~1~Demon~Reffuh~Charge~Uncollectible": Reffuh,
+					"Academy~Demon Hunter,Hunter~Minion~1~1~2~Demon~Kolek~Uncollectible": Kolek,
 					"Academy~Demon Hunter,Hunter~Minion~1~2~2~Demon~Shima~Taunt~Uncollectible": Shima,
 					"Academy~Demon Hunter~Spell~1~Double Jump": DoubleJump,
 					"Academy~Demon Hunter,Hunter~Weapon~1~1~4~Trueaim Crescent": TrueaimCrescent,
@@ -4334,10 +4338,10 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Rogue~Minion~3~3~3~None~Vulpera Toxinblade": VulperaToxinblade,
 					"Academy~Rogue~Minion~4~4~2~None~Infiltrator Lilian~Stealth~Deathrattle~Legendary": InfiltratorLilian,
 					"Academy~Rogue~Minion~4~4~2~None~Forsaken Lilian~Legendary~Uncollectible": ForsakenLilian,
-					"Academy~Rogue,Warrior~Minion~4~4~4~None~Shifty Sophomore~Stealth": ShiftySophomore,
+					"Academy~Rogue~Minion~4~4~4~None~Shifty Sophomore~Stealth": ShiftySophomore,
 					"Academy~Rogue,Warrior~Minion~4~4~4~None~Steeldancer~Battlecry": Steeldancer,
 					"Academy~Rogue,Warrior~Spell~5~Cutting Class": CuttingClass,
-					"Academy~Rogue~Minion~5~4~4~None~Doctor Krastinov~Rush~Legendary": DoctorKrastinov,
+					"Academy~Rogue,Warrior~Minion~5~4~4~None~Doctor Krastinov~Rush~Legendary": DoctorKrastinov,
 					
 					"Academy~Shaman,Mage~Spell~1~Devolving Missiles": DevolvingMissiles,
 					"Academy~Shaman,Mage~Spell~1~Primordial Studies": PrimordialStudies,

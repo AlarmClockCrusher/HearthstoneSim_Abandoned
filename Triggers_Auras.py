@@ -209,9 +209,7 @@ class SecretTrigger(TrigBoard):
 			self.effect(signal, ID, subject, target, number, comment)
 		game.sendSignal("SecretRevealed", game.turn, secret, None, 0, "")
 		self.disconnect()
-		try:
-			game.Secrets.secrets[secret.ID].remove(secret)
-			print("Counterspell has been triggered and removed")
+		try: game.Secrets.secrets[secret.ID].remove(secret)
 		except: pass
 		
 		

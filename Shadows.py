@@ -554,9 +554,9 @@ class HenchClanHag(Minion):
 		return None
 		
 class Amalgam(Minion):
-	Class, race, name = "Neutral", "Elemental, Mech, Demon, Murloc, Dragon, Beast, Pirate, Totem", "Amalgam"
+	Class, race, name = "Neutral", "Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem", "Amalgam"
 	mana, attack, health = 1, 1, 1
-	index = "Shadows~Neutral~Minion~1~1~1~Beast~Murloc~Pirate~Mech~Totem~Demon~Elemental~Dragon~Amalgam~Uncollectible"
+	index = "Shadows~Neutral~Minion~1~1~1~Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem~Amalgam~Uncollectible"
 	requireTarget, keyWord, description = False, "", "This is an Elemental, Mech, Demon, Murloc, Dragon, Beast, Pirate and Totem"
 	
 	
@@ -1158,7 +1158,7 @@ class AddTwoSquirrelstoHand(Deathrattle_Minion):
 		self.entity.Game.Hand_Deck.addCardtoHand([Squirrel_Shadows, Squirrel_Shadows], self.entity.ID, "type")
 		
 class Squirrel_Shadows(Minion):
-	Class, race, name = "Neutral", "Beast", "Squirrel"
+	Class, race, name = "Druid", "Beast", "Squirrel"
 	mana, attack, health = 1, 1, 1
 	index = "Shadows~Druid~Minion~1~1~1~Beast~Squirrel~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
@@ -1404,7 +1404,7 @@ class BlessingoftheAncients(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.twinSpell = 1
-		self.twinSpellCopy = blessingoftheancients
+		self.twinSpellCopy = BlessingoftheAncients2
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Twinspell Blessing of the Ancients is played and gives all friendly minions +1/+1.")
@@ -1412,7 +1412,7 @@ class BlessingoftheAncients(Spell):
 			minion.buffDebuff(1, 1)
 		return None
 		
-class blessingoftheancients(Spell):
+class BlessingoftheAncients2(Spell):
 	Class, name = "Druid", "Blessing of the Ancients"
 	requireTarget, mana = False, 3
 	index = "Shadows~Druid~Spell~3~Blessing of the Ancients~Uncollectible"
@@ -1478,14 +1478,14 @@ class TheForestsAid(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.twinSpell = 1
-		self.twinSpellCopy = theforestsaid
+		self.twinSpellCopy = TheForestsAid2
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Twinspell The Forest's Aid is played and summons five 2/2 Treants.")
 		self.Game.summon([Treant_Shadows(self.Game, self.ID) for i in range(5)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
-class theforestsaid(Spell):
+class TheForestsAid2(Spell):
 	Class, name = "Druid", "The Forest's Aid"
 	requireTarget, mana = False, 8
 	index = "Shadows~Druid~Spell~8~The Forest's Aid~Uncollectible"
@@ -1511,7 +1511,7 @@ class RapidFire(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.twinSpell = 1
-		self.twinSpellCopy = rapidfire
+		self.twinSpellCopy = RapidFire2
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -1520,7 +1520,7 @@ class RapidFire(Spell):
 			self.dealsDamage(target, damage)
 		return target
 		
-class rapidfire(Spell):
+class RapidFire2(Spell):
 	Class, name = "Hunter", "Rapid Fire"
 	requireTarget, mana = True, 1
 	index = "Shadows~Hunter~Spell~1~Rapid Fire~Uncollectible"
@@ -1590,6 +1590,7 @@ class NineLives(Spell):
 						minion = npchoice(minions)
 						curGame.fixedGuides.append(minion)
 						PRINT(curGame, "Nine Lives is cast and adds a random friendly Deathrattle minion that died this game")
+						minion = minion(curGame, self.ID)
 						curGame.Hand_Deck.addCardtoHand(minion, self.ID, byDiscover=True)
 						PRINT(curGame, "Nine Lives triggers the Deathrattle of the minion %s added to hand"%minion.name)
 						for trig in minion.deathrattles:
@@ -1762,14 +1763,14 @@ class UnleashtheBeast(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.twinSpell = 1
-		self.twinSpellCopy = unleashthebeast
+		self.twinSpellCopy = UnleashtheBeast2
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Twinspell Unleash the Beast is cast and summons a 5/5 Wyvern.")
 		self.Game.summon(Wyvern(self.Game, self.ID), -1, self.ID)
 		return None
 		
-class unleashthebeast(Spell):
+class UnleashtheBeast2(Spell):
 	Class, name = "Hunter", "Unleash the Beast"
 	requireTarget, mana = False, 6
 	index = "Shadows~Hunter~Spell~6~Unleash the Beast~Uncollectible"
@@ -1839,7 +1840,7 @@ class RayofFrost(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.twinSpell = 1
-		self.twinSpellCopy = rayoffrost
+		self.twinSpellCopy = RayofFrost2
 		
 	def available(self):
 		return self.selectableMinionExists()
@@ -1858,7 +1859,7 @@ class RayofFrost(Spell):
 				target.getsFrozen()
 		return target
 		
-class rayoffrost(Spell):
+class RayofFrost2(Spell):
 	Class, name = "Mage", "Ray of Frost"
 	requireTarget, mana = True, 1
 	index = "Shadows~Mage~Spell~1~Ray of Frost~Uncollectible"
@@ -2024,7 +2025,7 @@ class ConjurersCalling(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.twinSpell = 1
-		self.twinSpellCopy = conjurerscalling
+		self.twinSpellCopy = ConjurersCalling2
 		
 	def available(self):
 		return self.selectableMinionExists()
@@ -2061,7 +2062,7 @@ class ConjurersCalling(Spell):
 			curGame.summon([minion(curGame, target.ID) for minion in minions], pos, self.ID)
 		return target
 		
-class conjurerscalling(Spell):
+class ConjurersCalling2(Spell):
 	Class, name = "Mage", "Conjurer's Calling"
 	requireTarget, mana = True, 4
 	index = "Shadows~Mage~Spell~4~Conjurer's Calling~Uncollectible"
@@ -2288,7 +2289,7 @@ class LightforgedBlessing(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.twinSpell = 1
-		self.twinSpellCopy = lightforgedblessing
+		self.twinSpellCopy = LightforgedBlessing2
 		
 	def available(self):
 		return self.selectableFriendlyMinionExists()
@@ -2302,7 +2303,7 @@ class LightforgedBlessing(Spell):
 			target.getsKeyword("Lifesteal")
 		return target
 		
-class lightforgedblessing(Spell):
+class LightforgedBlessing2(Spell):
 	Class, name = "Paladin", "Lightforged Blessing"
 	requireTarget, mana = True, 2
 	index = "Shadows~Paladin~Spell~2~Lightforged Blessing~Uncollectible"
@@ -2355,7 +2356,7 @@ class DesperateMeasures(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.twinSpell = 1
-		self.twinSpellCopy = desperatemeasures
+		self.twinSpellCopy = DesperateMeasures2
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -2370,7 +2371,7 @@ class DesperateMeasures(Spell):
 			if secret: secret(curGame, self.ID).cast()
 		return None
 		
-class desperatemeasures(Spell):
+class DesperateMeasures2(Spell):
 	Class, name = "Paladin", "Desperate Measures"
 	requireTarget, mana = False, 1
 	index = "Shadows~Paladin~Spell~1~Desperate Measures~Uncollectible"
@@ -3348,9 +3349,9 @@ class Trig_UnderbellyAngler(TrigBoard):
 				murloc = npchoice(curGame.RNGPools["Murlocs"])
 				curGame.fixedGuides.append(murloc)
 			PRINT(curGame, "After player plays Murloc %s, Underbelly Angler adds a random Murloc to player's hand."%subject.name)
-			curGame.Hand_Deck.addCardtoHand(murloc, self.entity.ID)
-		
-		
+			curGame.Hand_Deck.addCardtoHand(murloc, self.entity.ID, "type")
+			
+			
 class HagathasScheme(Spell):
 	Class, name = "Shaman", "Hagatha's Scheme"
 	requireTarget, mana = False, 5
@@ -3625,7 +3626,7 @@ class PlotTwist(Spell):
 class Impferno(Spell):
 	Class, name = "Warlock", "Impferno"
 	requireTarget, mana = False, 3
-	index = "Shadows~Warlock~Spell~3~ImpfernoTwist"
+	index = "Shadows~Warlock~Spell~3~Impferno"
 	description = "Give your Demons +1 Attack. Deal 1 damage to all enemy minions"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -3852,6 +3853,12 @@ class SweepingStrikes(Spell):
 	requireTarget, mana = True, 2
 	index = "Shadows~Warrior~Spell~2~Sweeping Strikes"
 	description = "Give a minion 'Also damages minions next to whoever this attacks'"
+	def available(self):
+		return self.selectableMinionExists()
+		
+	def targetCorrect(self, target, choice=0):
+		return target.type == "Minion" and target.onBoard
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Sweeping Strikes is cast and gives minion %s 'Also damage adjacent minions to whoever this attacks'."%target.name)
@@ -3994,7 +4001,7 @@ class DimensionalRipper(Spell):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				minions = [i for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]) if card.type == "Minion"]
+				minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if card.type == "Minion"]
 				i = npchoice(minions) if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
@@ -4002,7 +4009,7 @@ class DimensionalRipper(Spell):
 				curGame.summon([minion.selfCopy(self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
-			
+		
 class TheBoomReaver(Minion):
 	Class, race, name = "Warrior", "Mech", "The Boom Reaver"
 	mana, attack, health = 10, 7, 9
@@ -4016,7 +4023,7 @@ class TheBoomReaver(Minion):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				minions = [i for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]) if card.type == "Minion"]
+				minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if card.type == "Minion"]
 				i = npchoice(minions) if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
@@ -4052,7 +4059,7 @@ Shadows_Indices = {"Shadows~Neutral~Minion~1~1~1~None~Potion Vendor~Battlecry": 
 					"Shadows~Neutral~Minion~4~2~6~None~Archmage Vargoth~Legendary": ArchmageVargoth,
 					"Shadows~Neutral~Minion~4~3~8~Mech~Hecklebot~Taunt~Battlecry": Hecklebot,
 					"Shadows~Neutral~Minion~4~3~3~None~Hench-Clan Hag~Battlecry": HenchClanHag,
-					"Shadows~Neutral~Minion~1~1~1~Beast~Murloc~Pirate~Mech~Totem~Demon~Elemental~Dragon~Amalgam~Uncollectible": Amalgam,
+					"Shadows~Neutral~Minion~1~1~1~Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem~Amalgam~Uncollectible": Amalgam,
 					"Shadows~Neutral~Minion~4~5~2~Demon~Portal Keeper~Battlecry": PortalKeeper,
 					"Shadows~Neutral~Spell~2~Felhound Portal~Casts When Drawn~Uncollectible": FelhoundPortal,
 					"Shadows~Neutral~Minion~2~2~2~Demon~Felhound~Rush~Uncollectible": Felhound,
@@ -4099,14 +4106,14 @@ Shadows_Indices = {"Shadows~Neutral~Minion~1~1~1~None~Potion Vendor~Battlecry": 
 					"Shadows~Druid~Minion~3~2~5~None~Lifeweaver": Lifeweaver,
 					"Shadows~Druid~Minion~5~4~4~Beast~Crystal Stag~Rush~Battlecry": CrystalStag,
 					"Shadows~Druid~Spell~3~Blessing of the Ancients~Twinspell": BlessingoftheAncients,
-					"Shadows~Druid~Spell~3~Blessing of the Ancients~Uncollectible": blessingoftheancients,
+					"Shadows~Druid~Spell~3~Blessing of the Ancients~Uncollectible": BlessingoftheAncients2,
 					"Shadows~Druid~Minion~8~4~8~None~Lucentbark~Taunt~Deathrattle~Legendary": Lucentbark,
 					"Shadows~Druid~Spell~8~The Forest's Aid~Twinspell": TheForestsAid,
-					"Shadows~Druid~Spell~8~The Forest's Aid~Uncollectible": theforestsaid,
+					"Shadows~Druid~Spell~8~The Forest's Aid~Uncollectible": TheForestsAid2,
 					"Shadows~Druid~Minion~2~2~2~None~Treant~Uncollectible": Treant_Shadows,
 					#Hunter
 					"Shadows~Hunter~Spell~1~Rapid Fire~Twinspell": RapidFire,
-					"Shadows~Hunter~Spell~1~Rapid Fire~Uncollectible": rapidfire,
+					"Shadows~Hunter~Spell~1~Rapid Fire~Uncollectible": RapidFire2,
 					"Shadows~Hunter~Minion~1~1~1~Beast~Shimmerfly~Deathrattle": Shimmerfly,
 					"Shadows~Hunter~Spell~3~Nine Lives": NineLives,
 					"Shadows~Hunter~Minion~3~3~3~Mech~Ursatron~Deathrattle": Ursatron,
@@ -4115,19 +4122,19 @@ Shadows_Indices = {"Shadows~Neutral~Minion~1~1~1~None~Potion Vendor~Battlecry": 
 					"Shadows~Hunter~Spell~5~Hunting Party": HuntingParty,
 					"Shadows~Hunter~Minion~6~3~4~Mech~Oblivitron~Deathrattle~Legendary": Oblivitron,
 					"Shadows~Hunter~Spell~6~Unleash the Beast~Twinspell": UnleashtheBeast,
-					"Shadows~Hunter~Spell~6~Unleash the Beast~Uncollectible": unleashthebeast,
+					"Shadows~Hunter~Spell~6~Unleash the Beast~Uncollectible": UnleashtheBeast2,
 					"Shadows~Hunter~Minion~5~5~5~Beast~Wyvern~Rush~Uncollectible": Wyvern,
 					"Shadows~Hunter~Minion~7~5~6~None~Vereesa Windrunner~Battlecry~Legendary": VereesaWindrunner,
 					"Shadows~Hunter~Weapon~3~2~3~Thori'dal, the Stars' Fury~Legendary~Uncollectible": ThoridaltheStarsFury,
 					#Mage
 					"Shadows~Mage~Spell~1~Ray of Frost~Twinspell": RayofFrost,
-					"Shadows~Mage~Spell~1~Ray of Frost~Uncollectible": rayoffrost,
+					"Shadows~Mage~Spell~1~Ray of Frost~Uncollectible": RayofFrost2,
 					"Shadows~Mage~Minion~2~2~2~None~Khadgar~Legendary": Khadgar,
 					"Shadows~Mage~Minion~2~1~3~Beast~Magic Dart Frog": MagicDartFrog,
 					"Shadows~Mage~Minion~3~3~2~Beast~Messenger Raven~Battlecry": MessengerRaven,
 					"Shadows~Mage~Spell~1~Magic Trick": MagicTrick,
 					"Shadows~Mage~Spell~4~Conjurer's Calling~Twinspell": ConjurersCalling,
-					"Shadows~Mage~Spell~4~Conjurer's Calling~Uncollectible": conjurerscalling,
+					"Shadows~Mage~Spell~4~Conjurer's Calling~Uncollectible": ConjurersCalling2,
 					"Shadows~Mage~Minion~4~3~3~None~Kirin Tor Tricaster": KirinTorTricaster,
 					"Shadows~Mage~Minion~2~2~2~Elemental~Mana Cyclone~Battlecry": ManaCyclone,
 					"Shadows~Mage~Spell~8~Power of Creation": PowerofCreation,
@@ -4135,11 +4142,11 @@ Shadows_Indices = {"Shadows~Neutral~Minion~1~1~1~None~Potion Vendor~Battlecry": 
 					#Paladin
 					"Shadows~Paladin~Spell~1~Never Surrender!~~Secret": NeverSurrender,
 					"Shadows~Paladin~Spell~2~Lightforged Blessing~Twinspell": LightforgedBlessing,
-					"Shadows~Paladin~Spell~2~Lightforged Blessing~Uncollectible": lightforgedblessing,
+					"Shadows~Paladin~Spell~2~Lightforged Blessing~Uncollectible": LightforgedBlessing2,
 					"Shadows~Paladin~Minion~3~3~2~Dragon~Bronze Herald~Deathrattle": BronzeHerald,
 					"Shadows~Paladin~Minion~4~4~4~Dragon~Bronze Dragon~Uncollectible": BronzeDragon,
 					"Shadows~Paladin~Spell~1~Desperate Measures~Twinspell": DesperateMeasures,
-					"Shadows~Paladin~Spell~1~Desperate Measures~Uncollectible": desperatemeasures,
+					"Shadows~Paladin~Spell~1~Desperate Measures~Uncollectible": DesperateMeasures2,
 					"Shadows~Paladin~Weapon~2~2~2~Mysterious Blade~Battlecry": MysteriousBlade,
 					"Shadows~Paladin~Spell~3~Call to Adventure": CalltoAdventure,
 					"Shadows~Paladin~Minion~5~3~5~None~Dragon Speaker~Battlecry": DragonSpeaker,
@@ -4192,7 +4199,7 @@ Shadows_Indices = {"Shadows~Neutral~Minion~1~1~1~None~Potion Vendor~Battlecry": 
 					"Shadows~Warlock~Spell~3~Rafaam's Scheme": RafaamsScheme,
 					"Shadows~Warlock~Minion~6~4~6~Demon~Aranasi Broodmother~Taunt~Triggers when Drawn": AranasiBroodmother,
 					"Shadows~Warlock~Spell~2~Plot Twist": PlotTwist,
-					"Shadows~Warlock~Spell~3~ImpfernoTwist": Impferno,
+					"Shadows~Warlock~Spell~3~Impferno": Impferno,
 					"Shadows~Warlock~Minion~4~2~2~None~Eager Underling~Deathrattle": EagerUnderling,
 					"Shadows~Warlock~Spell~6~Darkest Hour": DarkestHour,
 					"Shadows~Warlock~Minion~10~8~8~Demon~Jumbo Imp": JumboImp,

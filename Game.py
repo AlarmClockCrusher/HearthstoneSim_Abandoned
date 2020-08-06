@@ -337,7 +337,8 @@ class Game:
 			self.Hand_Deck.replaceCardinHand(target, newMinion)
 		elif target in self.Hand_Deck.decks[target.ID]:
 			PRINT(self, "Minion %s is deck and can't be transformed")
-			
+		if self.GUI: self.GUI.update()
+		
 	#This method is always invoked after the minion.disappears() method.
 	def removeMinionorWeapon(self, target):
 		if target.type == "Minion" or target.type == "Dormant":

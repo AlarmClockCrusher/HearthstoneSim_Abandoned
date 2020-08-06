@@ -545,25 +545,20 @@ class GUI_Common:
 				btn2 = btn
 				break
 		x1, y1, x2, y2 = btn1.x, btn1.y, btn2.x, btn2.y
-		posArrays_x = list(np.linspace(x1, x2, 10)) + list(np.linspace(x2, x1, 10)) #20 points
-		posArrays_y = list(np.linspace(y1, y2, 10)) + list(np.linspace(y2, y1, 10))
-		var = tk.IntVar()
-		for pos1, pos2 in zip(posArrays_x, posArrays_y):
-			self.window.after(15, var.set, 1)
-			self.window.wait_variable(var)
-			btn1.move2(pos1, pos2)
-			
-	def moveBtnsAni(self, btns, posEnds, vanish=False, timestep=14, steps=10, vanishTime=250): #vanish means buttons disappear after reaching final positions
+		self.moveBtnsAni(btn1, (x2, y2), timestep=6, stepSize=10)
+		self.moveBtnsAni(btn1, (x1, y1), timestep=6, stepSize=10)
+		
+	def moveBtnsAni(self, btns, posEnds, timestep=14, stepSize=0, vanish=False, vanishTime=250): #vanish means buttons disappear after reaching final positions
+		numSteps = 10
 		if isinstance(btns, (list, tuple)): #Move multiple buttons
 			#Remove those already at the posEnds
-			btns_real, indices, posArrays_x, posArrays_y = [], [], [], []
+			btns_real, posArrays_x, posArrays_y = [], [], []
 			for i, btn in enumerate(btns):
 				if btn.x != posEnds[i][0] or btn.y != posEnds[i][1]:
 					btns_real.append(btn)
-					indices.append(i)
-					posArrays_x.append(np.linspace(btn.x, posEnds[i][0], steps))
-					posArrays_y.append(np.linspace(btn.y, posEnds[i][1], steps))
-			if posArrays_x: #After transposition, posArrays_x has length = steps
+					posArrays_x.append(np.linspace(btn.x, posEnds[i][0], numSteps))
+					posArrays_y.append(np.linspace(btn.y, posEnds[i][1], numSteps))
+			if posArrays_x: #After transposition, posArrays_x has length = 10
 				posArrays_x = np.transpose(np.asarray(posArrays_x))
 				posArrays_y = np.transpose(np.asarray(posArrays_y))
 				var = tk.IntVar()
@@ -579,7 +574,11 @@ class GUI_Common:
 		else: #Move a single button. btns is a button, posEnds is a single tuple
 			x1, y1, x2, y2 = btns.x, btns.y, posEnds[0], posEnds[1]
 			if x1 != x2 or y1 != y2:
-				posArray_x, posArray_y = np.linspace(x1, x2, steps), np.linspace(y1, y2, steps)
+				if stepSize:
+					distance = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+					numSteps = int(distance / stepSize)
+				posArray_x = np.linspace(x1, x2, numSteps)
+				posArray_y = np.linspace(y1, y2, numSteps)
 				var = tk.IntVar()
 				for pos1, pos2 in zip(posArray_x, posArray_y):
 					self.window.after(timestep, var.set, 1)
@@ -615,10 +614,10 @@ class GUI_Common:
 		btn = HandButton(self, card, enemyCanSee=True)
 		btn.plot(x=self.deckZones[ID].x, y=self.deckZones[ID].y)
 		btn.configure(bg="grey46")
-		posEnds = (int(0.85*X), int(0.7*Y if ID == ownID else 0.3*Y))
+		posEnds = (int(0.95*X), int(0.7*Y if ID == ownID else 0.3*Y))
 		self.moveBtnsAni(btn, posEnds)
 		var = tk.IntVar()
-		self.window.after(int(350), var.set, 1)
+		self.window.after(int(450), var.set, 1)
 		self.window.wait_variable(var)
 		btn.remove() #Milled cards simply vanish
 		
@@ -718,7 +717,7 @@ class GUI_Common:
 			btn.place(x=btn.x, y=btn.y, anchor='c')
 			self.window.after(250, var.set, 1)
 			self.window.wait_variable(var)
-			self.moveBtnsAni(btn, pos2, timestep=18)
+			self.moveBtnsAni(btn, pos2, timestep=5, stepSize=8)
 			self.window.after(250, var.set, 1)
 			self.window.wait_variable(var)
 			btn.destroy()
@@ -727,7 +726,7 @@ class GUI_Common:
 		if targets:
 			if len(targets) == 1: self.targetingEffectAni(subject, targets[0], numbers[0])
 			else:
-				timestep = 17 if len(targets) < 4 else 15
+				timestep = 4 if len(targets) < 4 else 5
 				pos1, pos2, btns = (), (), []
 				for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn + \
 					([self.offBoardTrigs[1]] if self.offBoardTrigs[1] else []) + ([self.offBoardTrigs[2]] if self.offBoardTrigs[2] else []):
@@ -750,7 +749,7 @@ class GUI_Common:
 					btn.place(x=btn.x, y=btn.y, anchor='c')
 					self.window.after(150, var.set, 1)
 					self.window.wait_variable(var)
-					self.moveBtnsAni(btn, pos2, timestep=timestep)
+					self.moveBtnsAni(btn, pos2, timestep=timestep, stepSize=8)
 					btns.append(btn)
 				self.window.after(250, var.set, 1)
 				self.window.wait_variable(var)

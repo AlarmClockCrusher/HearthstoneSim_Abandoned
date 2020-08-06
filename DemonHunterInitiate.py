@@ -392,8 +392,8 @@ class YourNextDemonCosts2Less(TempManaEffect):
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Minion" and "Demon" in target.race
 		
-	def selfCopy(self, recipientGame):
-		return type(self)(recipientGame, self.ID)
+	def selfCopy(self, game):
+		return type(self)(game, self.ID)
 		
 		
 class SoulSplit(Spell):

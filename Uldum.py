@@ -795,8 +795,8 @@ class BuffAura_PhalanxCommander(AuraDealer_toMinion):
 		try: self.minion.Game.trigsBoard[self.minion.ID]["MinionTauntKeywordChange"].append(self)
 		except: self.minion.Game.trigsBoard[self.minion.ID]["MinionTauntKeywordChange"] = [self]
 		
-	def selfCopy(self, minion): #The recipientMinion is the minion that deals the Aura.
-		return type(self)(minion)
+	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
+		return type(self)(recipient)
 	#可以通过AuraDealer_toMinion的createCopy方法复制
 	
 	
@@ -1090,7 +1090,7 @@ class OssirianTear(HeroPower):
 class WorthyExpedition(Spell):
 	Class, name = "Druid", "Worthy Expedition"
 	requireTarget, mana = False, 1
-	index = "Uldum~Druid~Spell~1~Worth Expedition"
+	index = "Uldum~Druid~Spell~1~Worthy Expedition"
 	description = "Discover a Choose One card"
 	poolIdentifier = "Choose One Cards"
 	@classmethod
@@ -1866,7 +1866,7 @@ class RenotheRelicologist(Minion):
 		
 class PuzzleBoxofYoggSaron(Spell):
 	Class, name = "Mage", "Puzzle Box of Yogg-Saron"
-	requireTarget, mana = False, 1
+	requireTarget, mana = False, 10
 	index = "Uldum~Mage~Spell~10~Puzzle Box of Yogg-Saron"
 	description = "Cast 10 random spells (targets chosen randomly)"
 	poolIdentifier = "Spells"
@@ -2805,9 +2805,10 @@ class PlagueofMurlocs(Spell):
 		curGame = self.Game
 		if curGame.mode == 0:
 			PRINT(curGame, "Plague of Murlocs is cast and transforms all minions into random Murlocs")
-			if curGame.guides: murlocs = curGame.guides.pop(0)
+			minions = curGame.minionsonBoard(1) + curGame.minionsonBoard(2)
+			if curGame.guides:
+				murlocs = curGame.guides.pop(0)
 			else:
-				minions = curGame.minionsonBoard(1) + curGame.minionsonBoard(2)
 				murlocs = tuple(npchoice(curGame.RNGPools["Murlocs"], len(minions), replace=True))
 				curGame.fixedGuides.append(murlocs)
 			for minion, murloc in zip(minions, murlocs):
@@ -2916,8 +2917,8 @@ class BuffAura_Vessina(AuraDealer_toMinion):
 		try: game.trigsBoard[self.entity.ID]["OverloadCheck"].append(self)
 		except: game.trigsBoard[self.entity.ID]["OverloadCheck"] = [self]
 		
-	def selfCopy(self, recipientMinion):
-		return type(self)(recipientMinion)
+	def selfCopy(self, recipient):
+		return type(self)(recipient)
 	#可以通过AuraDealer_toMinion的createCopy方法复制
 	
 	
@@ -2972,7 +2973,7 @@ class Trig_MoguFleshshaper(TrigHand):
 class PlagueofFlames(Spell):
 	Class, name = "Warlock", "Plague of Flames"
 	requireTarget, mana = False, 1
-	index = "Uldum~Warlock~Spell~1~Plagues of Flames"
+	index = "Uldum~Warlock~Spell~1~Plague of Flames"
 	description = "Destroy all your minions. For each one, destroy a random enemy minion"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -3107,10 +3108,10 @@ class Return2CopiesofDiscardedCard(Deathrattle_Minion):
 			PRINT(self.entity.Game, "Deathrattle: Add 2 copies of the discarded card %s to player's hand triggers"%self.discardedCard.name)
 			self.entity.Game.Hand_Deck.addCardtoHand([self.discardedCard, self.discardedCard], self.entity.ID, "type")
 			
-	def selfCopy(self, recipientMinion):
-		trigger = type(self)(recipientMinion)
-		trigger.discardedCard = self.discardedCard
-		return trigger
+	def selfCopy(self, recipient):
+		trig = type(self)(recipient)
+		trig.discardedCard = self.discardedCard
+		return trig
 		
 class EVILRecruiter(Minion):
 	Class, race, name = "Warlock", "", "EVIL Recruiter"
@@ -3369,7 +3370,7 @@ class Trig_AnraphetsCore(TrigBoard):
 class StoneGolem(Minion):
 	Class, race, name = "Warrior", "", "Stone Golem"
 	mana, attack, health = 3, 4, 3
-	index = "Uldum~Warrior~Minion~3~4~3~None~Stone Golden~Uncollectible"
+	index = "Uldum~Warrior~Minion~3~4~3~None~Stone Golem~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	
 	
@@ -3614,7 +3615,7 @@ Uldum_Indices = {"Uldum~Neutral~Minion~1~1~2~None~Beaming Sidekick~Battlecry": B
 				"Uldum~Neutral~Minion~10~5~5~None~King Phaoris~Battlecry~Legendary": KingPhaoris,
 				"Uldum~Neutral~Minion~10~10~10~None~Living Monument~Taunt": LivingMonument,
 				"Uldum~Druid~Spell~1~Untapped Potential~~Quest~Legendary": UntappedPotential,
-				"Uldum~Druid~Spell~1~Worth Expedition": WorthyExpedition,
+				"Uldum~Druid~Spell~1~Worthy Expedition": WorthyExpedition,
 				"Uldum~Druid~Minion~2~1~4~None~Crystal Merchant": CrystalMerchant,
 				"Uldum~Druid~Spell~3~BEEEES!!!": BEEEES,
 				"Uldum~Druid~Minion~1~1~1~Beast~Bee~Uncollectible": Bee_Uldum,
@@ -3701,7 +3702,7 @@ Uldum_Indices = {"Uldum~Neutral~Minion~1~1~2~None~Beaming Sidekick~Battlecry": B
 				"Uldum~Shaman~Minion~9~3~4~None~Mogu Fleshshaper~Rush": MoguFleshshaper,
 				
 				"Uldum~Warlock~Spell~1~Supreme Archaeology~~Quest~Legendary": SupremeArchaeology,
-				"Uldum~Warlock~Spell~1~Plagues of Flames": PlagueofFlames,
+				"Uldum~Warlock~Spell~1~Plague of Flames": PlagueofFlames,
 				"Uldum~Warlock~Spell~1~Sinister Deal": SinisterDeal,
 				"Uldum~Warlock~Minion~2~2~1~None~Expired Merchant~Battlecry~Deathrattle": ExpiredMerchant,
 				"Uldum~Warlock~Minion~3~3~3~None~EVIL Recruiter~Battlecry": EVILRecruiter,
@@ -3714,7 +3715,7 @@ Uldum_Indices = {"Uldum~Neutral~Minion~1~1~2~None~Beaming Sidekick~Battlecry": B
 				"Uldum~Warlock~Minion~5~4~4~None~Dark Pharaoh Tekahn~Battlecry~Legendary": DarkPharaohTekahn,
 				
 				"Uldum~Warrior~Spell~1~Hack the System~~Quest~Legendary": HacktheSystem,
-				"Uldum~Warrior~Minion~3~4~3~None~Stone Golden~Uncollectible": StoneGolem,
+				"Uldum~Warrior~Minion~3~4~3~None~Stone Golem~Uncollectible": StoneGolem,
 				"Uldum~Warrior~Spell~1~Into the Fray": IntotheFray,
 				"Uldum~Warrior~Minion~2~2~2~None~Frightened Flunky~Taunt~Battlecry": FrightenedFlunky,
 				"Uldum~Warrior~Minion~3~2~2~None~Bloodsworn Mercenary~Battlecry": BloodswornMercenary,

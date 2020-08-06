@@ -918,7 +918,7 @@ class CoordinatedStrike(Spell):
 class IllidariInitiate(Minion):
 	Class, race, name = "Demon Hunter", "", "Illidari Initiate"
 	mana, attack, health = 1, 1, 1
-	index = "Basic~Demon Hunter~Minion~1~1~1~None~Illidari~Uncollectible"
+	index = "Basic~Demon Hunter~Minion~1~1~1~None~Illidari Initiate~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	
 class SatyrOverseer(Minion):
@@ -1811,7 +1811,7 @@ class MindVision(Spell):
 class PsychicConjurer(Minion):
 	Class, race, name = "Priest", "", "Psychic Conjurer"
 	mana, attack, health = 1, 1, 1
-	index = "Basic~Priest~Minion~1~1~1~None~Psychic Conjurer-Battlecry"
+	index = "Basic~Priest~Minion~1~1~1~None~Psychic Conjurer~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Copy a card in your opponent's deck and add it to your hand"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2727,7 +2727,7 @@ Basic_Indices = { #Heroes and standard Hero Powers
 				"Basic~Demon Hunter~Minion~2~3~2~Demon~Sightless Watcher~Battlecry": SightlessWatcher,
 				"Basic~Demon Hunter~Weapon~3~2~2~Aldrachi Warblades~Lifesteal": AldrachiWarblades,
 				"Basic~Demon Hunter~Spell~3~Coordinated Strike": CoordinatedStrike,
-				"Basic~Demon Hunter~Minion~1~1~1~None~Illidari~Uncollectible": IllidariInitiate,
+				"Basic~Demon Hunter~Minion~1~1~1~None~Illidari Initiate~Uncollectible": IllidariInitiate,
 				"Basic~Demon Hunter~Minion~3~4~2~Demon~Satyr Overseer": SatyrOverseer,
 				"Basic~Demon Hunter~Minion~2~2~2~Demon~Illidari Satyr~Uncollectible": IllidariSatyr,
 				"Basic~Demon Hunter~Spell~3~Soul Cleave": SoulCleave,
@@ -2788,7 +2788,7 @@ Basic_Indices = { #Heroes and standard Hero Powers
 				"Basic~Priest~Spell~0~Power Word: Shield": PowerWordShield,
 				"Basic~Priest~Spell~1~Holy Smite": HolySmite,
 				"Basic~Priest~Spell~1~Mind Vision": MindVision,
-				"Basic~Priest~Minion~1~1~1~None~Psychic Conjurer-Battlecry": PsychicConjurer,
+				"Basic~Priest~Minion~1~1~1~None~Psychic Conjurer~Battlecry": PsychicConjurer,
 				"Basic~Priest~Spell~1~Radiance": Radiance,
 				"Basic~Priest~Spell~2~Shadow Word: Death": ShadowWordDeath,
 				"Basic~Priest~Spell~2~Shadow Word: Pain": ShadowWordPain,

@@ -230,14 +230,23 @@ class Secrets:
 				if i > -1: curGame.Hand_Deck.extractfromDeck(i, ID, enemyCanSee=False)[0].whenEffective()
 				else: break
 				
-	def extractSecrets(self, ID, index=0):
-		secret = self.secrets[ID].pop(index)
-		secret.active = False
-		for trigger in secret.trigsBoard:
-			trigger.disconnect()
-		PRINT(self.Game, "Secret %s is removed"%secret.name)
-		return secret
-		
+	def extractSecrets(self, ID, index=0, all=False):
+		if all:
+			for secret in reversed(self.secrets[ID]):
+				secret = self.secrets[ID].pop()
+				secret.active = False
+				for trigger in secret.trigsBoard:
+					trigger.disconnect()
+				PRINT(self.Game, "Secret %s is removed"%secret.name)
+			return None
+		else:
+			secret = self.secrets[ID].pop(index)
+			secret.active = False
+			for trigger in secret.trigsBoard:
+				trigger.disconnect()
+			PRINT(self.Game, "Secret %s is removed"%secret.name)
+			return secret
+			
 	#secret can be type, index or real card.
 	def sameSecretExists(self, secret, ID):
 		if isinstance(secret, str):

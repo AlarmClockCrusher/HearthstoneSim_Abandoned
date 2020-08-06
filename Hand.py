@@ -421,8 +421,8 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 			
 			
-Default1 = [RuneDagger, InstructorFireheart, SerpentshrinePortal, SerpentshrinePortal, TourGuide, TourGuide, Renew, Renew, SorcerersApprentice, HighAbbessAlura, CommandingShout, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron
+Default1 = [PotionofIllusion, PotionofIllusion, TheLurkerBelow, TheLurkerBelow, RollingFireball, RollingFireball, HighAbbessAlura, CommandingShout, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron
 			]
 			
-Default2 = [RuneDagger, InstructorFireheart, SerpentshrinePortal, SerpentshrinePortal, TourGuide, TourGuide, Renew, Renew, SorcerersApprentice, HighAbbessAlura, CommandingShout, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron
+Default2 = [PotionofIllusion, PotionofIllusion, Bamboozle, Bamboozle, ShadowjewelerHanar, ShadowjewelerHanar, TheLurkerBelow, TheLurkerBelow, RollingFireball, RollingFireball, SorcerersApprentice, HighAbbessAlura, CommandingShout, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron
 			]

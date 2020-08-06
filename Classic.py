@@ -230,8 +230,8 @@ class SouthseaDeckhand_Dealer(AuraDealer_toMinion):
 			try: self.entity.Game.trigsBoard[self.entity.ID][sig].append(self)
 			except: self.entity.Game.trigsBoard[self.entity.ID][sig] = [self]
 			
-	def selfCopy(self, recipientMinion):
-		return type(self)(recipientMinion)
+	def selfCopy(self, recipient):
+		return type(self)(recipient)
 	#可以通过AuraDealer_toMinion的createCopy方法复制
 	
 	
@@ -684,7 +684,7 @@ class Trig_PintsizedSummoner(TrigBoard):
 			
 class SunfuryProtector(Minion):
 	Class, race, name = "Neutral", "", "Sunfury Protector"
-	mana, attack, health = 2, 2, 2
+	mana, attack, health = 2, 2, 3
 	index = "Classic~Neutral~Minion~2~2~3~None~Sunfury Protector~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Give adjacent minions Taunt"
 	
@@ -1543,7 +1543,7 @@ class SilverHandKnight(Minion):
 class Squire(Minion):
 	Class, race, name = "Neutral", "", "Squire"
 	mana, attack, health = 1, 2, 2
-	index = "Classic~Neutral~Minion~2~2~2~None~Squire~Uncollectible"
+	index = "Classic~Neutral~Minion~1~2~2~None~Squire~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	
 	
@@ -2483,7 +2483,7 @@ class SummonaTreant(Deathrattle_Minion):
 class Treant_Classic(Minion):
 	Class, race, name = "Druid", "", "Treant"
 	mana, attack, health = 2, 2, 2
-	index = "Classic~Druid~Minion~2~2~2~None~Treant Classic~Uncollectible"
+	index = "Classic~Druid~Minion~2~2~2~None~Treant~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	
 	
@@ -2961,7 +2961,7 @@ class Flare(Spell):
 		for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2):
 			minion.keyWords["Stealth"] = 0
 			minion.status["Temp Stealth"] = 0
-		self.Game.Secrets.extractSecrets(3-self.ID, True)
+		self.Game.Secrets.extractSecrets(3-self.ID, all=True)
 		self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
@@ -3064,7 +3064,7 @@ class ExplosiveShot(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage_target = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			damage_adjacent = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+			damage_adjacent = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			PRINT(self.Game, "Explosive Shot is cast and deals %d damage to %s and %d damage to minions adjacent to it."%(damage_target, target.name, damage_adjacent))
 			neighbors = self.Game.neighbors2(target)[0]
 			if target.onBoard and neighbors:
@@ -3347,8 +3347,8 @@ class YourNextSecretCosts0ThisTurn(TempManaEffect):
 	def applicable(self, target):
 		return target.ID == self.ID and target.description.startswith("Secret:")
 		
-	def selfCopy(self, recipientGame):
-		return type(self)(recipientGame, self.ID)
+	def selfCopy(self, game):
+		return type(self)(game, self.ID)
 		
 		
 class ConeofCold(Spell):
@@ -4148,8 +4148,8 @@ class YourNextSpellCosts2LessThisTurn(TempManaEffect):
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Spell"
 		
-	def selfCopy(self, recipientGame):
-		return type(self)(recipientGame, self.ID)
+	def selfCopy(self, game):
+		return type(self)(game, self.ID)
 		
 		
 class Shadowstep(Spell):
@@ -4834,7 +4834,7 @@ class SenseDemons(Spell):
 		return None
 		
 class WorthlessImp(Minion):
-	Class, race, name = "Warlock", "", "Worthless Imp"
+	Class, race, name = "Warlock", "Demon", "Worthless Imp"
 	mana, attack, health = 1, 1, 1
 	index = "Classic~Warlock~Minion~1~1~1~Demon~Worthless Imp~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
@@ -5493,7 +5493,7 @@ Classic_Indices = {"Classic~Neutral~Minion~0~1~1~None~Wisp": Wisp,
 					"Classic~Neutral~Minion~5~3~6~None~Fen Creeper~Taunt": FenCreeper,
 					"Classic~Neutral~Minion~5~5~4~None~Harrison Jones~Battlecry~Legendary": HarrisonJones,
 					"Classic~Neutral~Minion~5~4~4~None~Silver Hand Knight~Battlecry": SilverHandKnight,
-					"Classic~Neutral~Minion~2~2~2~None~Squire~Uncollectible": Squire,
+					"Classic~Neutral~Minion~1~2~2~None~Squire~Uncollectible": Squire,
 					"Classic~Neutral~Minion~5~4~6~None~Spiteful Smith": SpitefulSmith,
 					"Classic~Neutral~Minion~5~3~5~Beast~Stampeding Kodo~Battlecry": StampedingKodo,
 					"Classic~Neutral~Minion~5~5~5~Beast~Stranglethorn Tiger~Stealth": StranglethornTiger,
@@ -5551,7 +5551,7 @@ Classic_Indices = {"Classic~Neutral~Minion~0~1~1~None~Wisp": Wisp,
 					"Classic~Druid~Minion~5~4~6~Beast~Druid of the Claw~Taunt~Uncollectible": DruidoftheClaw_Taunt,
 					"Classic~Druid~Minion~5~4~6~Beast~Druid of the Claw~Taunt~Charge~Uncollectible": DruidoftheClaw_Both,
 					"Classic~Druid~Spell~5~Force of Nature": ForceofNature,
-					"Classic~Druid~Minion~2~2~2~None~Treant Classic~Uncollectible": Treant_Classic,
+					"Classic~Druid~Minion~2~2~2~None~Treant~Uncollectible": Treant_Classic,
 					"Classic~Druid~Spell~5~Starfall~Choose One": Starfall,
 					"Classic~Druid~Spell~5~Starlord~Uncollectible": Starlord,
 					"Classic~Druid~Spell~5~Stellar Drift~Uncollectible": StellarDrift,

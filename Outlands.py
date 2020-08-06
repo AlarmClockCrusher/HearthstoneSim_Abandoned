@@ -429,9 +429,9 @@ class ResummonDestroyedMinionwithPlus1Plus1(Deathrattle_Minion):
 			for minion in minions: minion.buffDebuff(1, 1)
 			self.entity.Game.summon(minions, pos, self.entity.ID)
 			
-	def selfCopy(self, recipientMinion):
-		trigger = type(self)(recipientMinion)
-		trigger.minionsDestroyed = self.minionsDestroyed
+	def selfCopy(self, recipient):
+		trigger = type(self)(recipient)
+		trigger.minionsDestroyed = fixedList(self.minionsDestroyed)
 		return trigger
 		
 		
@@ -709,7 +709,7 @@ class SummonaDragonrider(Deathrattle_Minion):
 class Dragonrider(Minion):
 	Class, race, name = "Neutral", "", "Dragonrider"
 	mana, attack, health = 3, 3, 4
-	index = "Outlands~Neutral~Minion~3~3~4~Dragon~Dragonrider~Uncollectible"
+	index = "Outlands~Neutral~Minion~3~3~4~None~Dragonrider~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	
 	
@@ -842,7 +842,7 @@ class SummonaFelcrackedColossuswithTaunt(Deathrattle_Minion):
 class FelcrackedColossus(Minion):
 	Class, race, name = "Neutral", "Elemental", "Felcracked Colossus"
 	mana, attack, health = 7, 7, 7
-	index = "Outlands~Neutral~Minion~10~7~7~Elemental~Felcracked Colossus~Taunt~Uncollectible"
+	index = "Outlands~Neutral~Minion~7~7~7~Elemental~Felcracked Colossus~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	
 """Demon Hunter cards"""
@@ -1702,12 +1702,12 @@ class ScrapShot(Spell):
 	index = "Outlands~Hunter~Spell~4~Scrap Shot"
 	description = "Deal 3 damage. Give a random Beast in your hand +3/+3"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.entity.Game
+		curGame = self.Game
 		if target:
 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			PRINT(curGame, "Scrap Shot deals %d damage to %s"%(damage, target.name))
 			self.dealsDamage(target, damage)
-			ownHand = curGame.Hand_Deck.hands[self.entity.ID]
+			ownHand = curGame.Hand_Deck.hands[self.ID]
 			if curGame.mode == 0:
 				if curGame.guides:
 					i = curGame.guides.pop(0)
@@ -1781,7 +1781,7 @@ class NagrandSlam(Spell):
 		return None
 		
 class Clefthoof(Minion):
-	Class, race, name = "Hunter", "Beast", "Clefthoofs"
+	Class, race, name = "Hunter", "Beast", "Clefthoof"
 	mana, attack, health = 4, 3, 5
 	index = "Outlands~Hunter~Minion~4~3~5~Beast~Clefthoof~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
@@ -1903,18 +1903,17 @@ class Trig_ApexisSmuggler(TrigBoard):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject.description.startswith("Secret:")
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		curGame = self.entity.Game
+		minion, curGame = self.entity, self.entity.Game
 		if curGame.mode == 0:
 			if curGame.guides:
-				spell = curGame.guides.pop(0)
 				PRINT(curGame, "After player plays a Secret, Apexis Smuggler adds a spell to player's hand")
-				curGame.Hand_Deck.addCardtoHand(spell, self.entity.ID, "type", byDiscover=True)
+				curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), minion.ID, "type", byDiscover=True)
 			else:
 				PRINT(curGame, "After player plays a Secret, Apexis Smuggler lets player Discover a spell")
-				key = classforDiscover(self.entity)+" Spells"
+				key = classforDiscover(minion)+" Spells"
 				spells = npchoice(curGame.RNGPools[key], 3, replace=False)
-				curGame.options = [spell(curGame, self.entity.ID) for spell in spells]
-				curGame.Discover.startDiscover(self.entity)
+				curGame.options = [spell(curGame, minion.ID) for spell in spells]
+				curGame.Discover.startDiscover(minion)
 				
 				
 class AstromancerSolarian(Minion):
@@ -2348,7 +2347,7 @@ class LibramofJustice(Spell):
 		return None
 		
 class OverdueJustice(Weapon):
-	Class, name, description = "Paladin", "UnOverdue Justiceknown", ""
+	Class, name, description = "Paladin", "Overdue Justice", ""
 	mana, attack, durability = 1, 1, 4
 	index = "Outlands~Paladin~Weapon~1~1~4~Overdue Justice~Uncollectible"
 	
@@ -2417,7 +2416,7 @@ class ShuffleReliquaryPrimeintoYourDeck(Deathrattle_Minion):
 class ReliquaryPrime(Minion):
 	Class, race, name = "Priest", "", "Reliquary Prime"
 	mana, attack, health = 7, 6, 8
-	index = "Outlands~Paladin~Minion~7~6~8~None~Reliquary Prime~Taunt~Lifesteal~Legendary~Uncollectible"
+	index = "Outlands~Priest~Minion~7~6~8~None~Reliquary Prime~Taunt~Lifesteal~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt,Lifesteal", "Taunt, Lifesteal. Only you can target this with spells and Hero Powers"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -2820,16 +2819,21 @@ class Trig_ShadowjewelerHanar(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion, curGame = self.entity, self.entity.Game
 		if minion.ID == curGame.turn:
-			PRINT(curGame, "After player plays a Secret, %s lets player Discover a Secret from a different class"%minion.name)
-			ClasseswithSecrets = ["Hunter", "Mage", "Paladin", "Rogue"]
-			try: ClasseswithSecrets.remove(subject.Class)
-			except: pass
-			Classes = npchoice(ClasseswithSecrets, 3, replace=False)
-			secrets = [npchoice(curGame.RNGPools[Class+" Secrets"]) for Class in Classes]
-			curGame.options = [secret(curGame, minion.ID) for secret in secrets]
-			curGame.Discover.startDiscover(minion)
-			
-			
+			if curGame.mode == 0:
+				if curGame.guides:
+					PRINT(curGame, "After player plays a Secret, Shadowjeweler Hanar adds a Secret from a different class to player's hand")
+					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), minion.ID, "type")
+				else:
+					PRINT(curGame, "After player plays a Secret, Shadowjeweler Hanar lets player Discover a Secret from a different class")
+					ClasseswithSecrets = ["Hunter", "Mage", "Paladin", "Rogue"]
+					try: ClasseswithSecrets.remove(subject.Class)
+					except: pass
+					Classes = npchoice(ClasseswithSecrets, 3, replace=False)
+					secrets = [npchoice(curGame.RNGPools[Class+" Secrets"]) for Class in Classes]
+					curGame.options = [secret(curGame, minion.ID) for secret in secrets]
+					curGame.Discover.startDiscover(minion)
+					
+					
 class Akama(Minion):
 	Class, race, name = "Rogue", "", "Akama"
 	mana, attack, health = 3, 3, 4
@@ -3471,6 +3475,9 @@ class KelidantheBreaker(Minion):
 			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
 		return target
 		
+	def assistCreateCopy(self, recipient):
+		recipient.justDrawn = self.justDrawn
+		
 class Trig_KelidantheBreaker(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
@@ -3775,13 +3782,13 @@ Outlands_Indices = {"Outlands~Neutral~Minion~1~2~1~None~Ethereal Augmerchant~Bat
 					"Outlands~Neutral~Minion~5~1~8~None~Ruststeed Raider~Taunt~Rush~Battlecry": RuststeedRaider,
 					"Outlands~Neutral~Minion~5~3~3~None~Waste Warden~Battlecry": WasteWarden,
 					"Outlands~Neutral~Minion~6~5~6~Dragon~Dragonmaw Sky Stalker~Deathrattle": DragonmawSkyStalker,
-					"Outlands~Neutral~Minion~3~3~4~Dragon~Dragonrider~Uncollectible": Dragonrider,
+					"Outlands~Neutral~Minion~3~3~4~None~Dragonrider~Uncollectible": Dragonrider,
 					"Outlands~Neutral~Minion~6~6~3~Demon~Scavenging Shivarra~Battlecry": ScavengingShivarra,
 					"Outlands~Neutral~Minion~7~4~10~None~Bonechewer Vanguard~Taunt": BonechewerVanguard,
 					"Outlands~Neutral~Minion~7~4~7~None~Kael'thas Sunstrider~Legendary": KaelthasSunstrider,
 					"Outlands~Neutral~Minion~8~12~12~Demon~Supreme Abyssal": SupremeAbyssal,
 					"Outlands~Neutral~Minion~10~7~7~Elemental~Scrapyard Colossus~Taunt~Deathrattle": ScrapyardColossus,
-					"Outlands~Neutral~Minion~10~7~7~Elemental~Felcracked Colossus~Taunt~Uncollectible": FelcrackedColossus,
+					"Outlands~Neutral~Minion~7~7~7~Elemental~Felcracked Colossus~Taunt~Uncollectible": FelcrackedColossus,
 					"Outlands~Demon Hunter~Minion~1~1~1~None~Crimson Sigil Runner~Outcast": CrimsonSigilRunner,
 					"Outlands~Demon Hunter~Minion~2~3~2~Murloc~Furious Felfin~Battlecry": FuriousFelfin,
 					"Outlands~Demon Hunter~Spell~2~Immolation Aura": ImmolationAura,
@@ -3853,7 +3860,7 @@ Outlands_Indices = {"Outlands~Neutral~Minion~1~2~1~None~Ethereal Augmerchant~Bat
 					"Outlands~Paladin~Minion~8~8~8~None~Ancient Guardian~Taunt~Divine Shield~Uncollectible": AncientGuardian,
 					"Outlands~Priest~Minion~1~2~5~Demon~Imprisoned Homunculus~Taunt": ImprisonedHomunculus,
 					"Outlands~Priest~Minion~1~1~3~None~Reliquary of Souls~Lifesteal~Deathrattle~Legendary": ReliquaryofSouls,
-					"Outlands~Paladin~Minion~7~6~8~None~Reliquary Prime~Taunt~Lifesteal~Legendary~Uncollectible": ReliquaryPrime,
+					"Outlands~Priest~Minion~7~6~8~None~Reliquary Prime~Taunt~Lifesteal~Legendary~Uncollectible": ReliquaryPrime,
 					"Outlands~Priest~Spell~1~Renew": Renew,
 					"Outlands~Priest~Minion~2~1~4~None~Dragonmaw Sentinel~Battlecry": DragonmawSentinel,
 					"Outlands~Priest~Minion~2~2~3~None~Sethekk Veilweaver": SethekkVeilweaver,

@@ -434,8 +434,8 @@ class YourOpponentsNextHeroPowerCosts3(TempManaEffect_Power):
 	def applicable(self, target):
 		return target.ID == self.ID
 		
-	def selfCopy(self, recipientGame):
-		return type(self)(recipientGame, self.ID)
+	def selfCopy(self, recipient):
+		return type(self)(recipient, self.ID)
 		
 		
 class DreadRaven(Minion):
@@ -478,9 +478,9 @@ class BuffAura_DreadRaven(AuraDealer_toMinion):
 			try: self.minion.Game.trigsBoard[self.minion.ID][sig].append(self)
 			except: self.minion.Game.trigsBoard[self.minion.ID][sig] = [self]
 			
-	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
+	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
-		return type(self)(recipientMinion)
+		return type(self)(recipient)
 	#可以通过AuraDealer_toMinion的createCopy方法复制
 	
 	
@@ -737,9 +737,9 @@ class BuffAura_WingCommander(AuraDealer_toMinion):
 			try: self.minion.Game.trigsBoard[self.minion.ID][sig].append(self)
 			except: self.minion.Game.trigsBoard[self.minion.ID][sig] = [self]
 			
-	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
+	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
-		return type(self)(recipientMinion)
+		return type(self)(recipient)
 	#可以通过AuraDealer_toMinion的createCopy方法复制
 	
 	
@@ -844,8 +844,8 @@ class HatchintotheChosenDragon(Deathrattle_Minion):
 					self.entity.Game.GUI.triggerBlink(self.entity)
 				self.entity.Game.transform(self.entity, self.dragonInside(self.entity.Game, self.entity.ID))
 				
-	def selfCopy(self, newMinion):
-		trigger = type(self)(newMinion)
+	def selfCopy(self, recipient):
+		trigger = type(self)(recipient)
 		trigger.dragonInside = self.dragonInside
 		return trigger
 		
@@ -1479,7 +1479,7 @@ class Trig_Aeroponics(TrigHand):
 class EmeraldExplorer(Minion):
 	Class, race, name = "Druid", "Dragon", "Emerald Explorer"
 	mana, attack, health = 6, 4, 8
-	index = "Dragons~Druid~Minion~6~4~8~Dragon~Emeral Explorer~Taunt~Battlecry"
+	index = "Dragons~Druid~Minion~6~4~8~Dragon~Emerald Explorer~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Discover a Dragon"
 	poolIdentifier = "Dragons as Druid"
 	@classmethod
@@ -2199,7 +2199,7 @@ class MalygossIntellect(Spell):
 class MalygossFireball(Spell):
 	Class, name = "Mage", "Malygos's Fireball"
 	requireTarget, mana = True, 4
-	index = "Dragons~Mage~Spell~3~Malygos's Fireball~Legendary~Uncollectible"
+	index = "Dragons~Mage~Spell~4~Malygos's Fireball~Legendary~Uncollectible"
 	description = "Deal 8 damage"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -2280,7 +2280,7 @@ class RollingFireball(Spell):
 			damage = (8 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			curGame = self.Game
 			if curGame.mode == 0:
-				minion, direction, damageleft, infos = None, "", damage, []
+				minion, direction, damageleft = None, "", damage
 				damageDealt = min(target.health, damageleft) if target.health > 0 else 0
 				damageleft -= damageDealt
 				if curGame.guides:
@@ -2291,12 +2291,13 @@ class RollingFireball(Spell):
 					if target.onBoard:
 						neighbors, dist = curGame.neighbors2(target, True) #对目标进行伤害之后，在场上寻找其相邻随从，决定滚动方向。
 						#direction = 1 means fireball rolls right, direction = 1 is left
-						if dist == "1":
+						if dist == 1:
 							ran = nprandint(2) #ran == 1: roll right, 0: roll left
 							minion, direction = neighbors[ran], ran
 						elif dist < 0: minion, direction = neighbors[0], 0
 						elif dist == 2: minion, direction = neighbors[0], 1
-						infos.append((minion.position, "minion%d"%minion.ID, direction))
+						if minion: curGame.fixedGuides.append((minion.position, "minion%d"%minion.ID, direction))
+						else: curGame.fixedGuides.append((0, '', ''))
 					else: #如果可以在手牌中找到那个随从时
 						#火球滚滚打到手牌中的随从时，会判断目前那个随从在手牌中位置，如果在从左数第3张的话，那么会将过量伤害传递给场上的2号或者4号随从。
 						try: i = curGame.Hand_Deck.hands[target.ID].index(target)
@@ -2310,9 +2311,10 @@ class RollingFireball(Spell):
 									else: minion, direction = minions[i-1], 0
 								#如果随从在手牌中的编号很大，如手牌中第5张（编号4），则如果场上有5张或者以下随从，则都会向左滚
 								else: minion, direction = minions[-1], 0
-								infos.append((minion.position, "minion%d"%minion.ID, direction))
+								if minion: curGame.fixedGuides.append((minion.position, "minion%d"%minion.ID, direction))
+								else: curGame.fixedGuides.append((0, '', ''))
 						else:
-							infos.append((0, '', ''))
+							curGame.fixedGuides.append((0, '', ''))
 				self.dealsDamage(target, damageDealt)
 				#当已经决定了要往哪个方向走之后
 				while minion and damageleft > 0: #如果下个随从不存在或者没有剩余伤害则停止循环
@@ -2356,8 +2358,8 @@ class YourNextSpellCosts0ThisTurn(TempManaEffect):
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Spell"
 		
-	def selfCopy(self, recipientGame):
-		return type(self)(recipientGame, self.ID)
+	def selfCopy(self, game):
+		return type(self)(game, self.ID)
 		
 		
 class ManaGiant(Minion):
@@ -3432,8 +3434,8 @@ class BuffAura_SurgingTempest(AuraDealer_toMinion):
 		try: self.entity.Game.trigsBoard[self.entity.ID]["OverloadCheck"].append(self)
 		except: self.entity.Game.trigsBoard[self.entity.ID]["OverloadCheck"] = [self]
 		
-	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
-		return type(self)(recipientMinion)
+	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
+		return type(self)(recipient)
 	#可以通过AuraDealer_toMinion的createCopy方法复制
 	
 	
@@ -3756,7 +3758,7 @@ class RainofFire(Spell):
 class NetherBreath(Spell):
 	Class, name = "Warlock", "Nether Breath"
 	requireTarget, mana = True, 2
-	index = "Dragons~Warlock~Spell~2~Neth Breath"
+	index = "Dragons~Warlock~Spell~2~Nether Breath"
 	description = "Deal 2 damage. If you're holding a Dragon, deal 4 damage with Lifesteal instead"
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
@@ -4420,13 +4422,13 @@ Dragons_Indices = {"Dragons~Neutral~Minion~1~2~2~None~Blazing Battlemage": Blazi
 					"Dragons~Druid~Spell~1~Secure the Deck~~Quest": SecuretheDeck,
 					"Dragons~Druid~Spell~1~Strength in Numbers~~Quest": StrengthinNumbers,
 					"Dragons~Druid~Spell~1~Treenforcements~Choose One": Treenforcements,
-					"Dragons~Druid~Spell~1~Spin 'em Up~Uncollectible": SmallRepairs,
+					"Dragons~Druid~Spell~1~Small Repairs~Uncollectible": SmallRepairs,
 					"Dragons~Druid~Spell~1~Spin 'em Up~Uncollectible": SpinemUp,
 					"Dragons~Druid~Spell~2~Breath of Dreams": BreathofDreams,
 					"Dragons~Druid~Minion~2~1~1~None~Shrubadier~Battlecry": Shrubadier,
 					"Dragons~Druid~Minion~2~2~2~None~Treant~Uncollectible": Treant_Dragons,
 					"Dragons~Druid~Spell~5~Aeroponics": Aeroponics,
-					"Dragons~Druid~Minion~6~4~8~Dragon~Emeral Explorer~Taunt~Battlecry": EmeraldExplorer,
+					"Dragons~Druid~Minion~6~4~8~Dragon~Emerald Explorer~Taunt~Battlecry": EmeraldExplorer,
 					"Dragons~Druid~Minion~7~5~10~None~Goru the Mightree~Taunt~Battlecry~Legendary": GorutheMightree,
 					"Dragons~Druid~Minion~9~4~12~Dragon~Ysera, Unleashed~Battlecry~Legendary": YseraUnleashed,
 					"Dragons~Druid~Spell~9~Dream Portal~Casts When Drawn~Uncollectible": DreamPortal,
@@ -4434,7 +4436,7 @@ Dragons_Indices = {"Dragons~Neutral~Minion~1~2~2~None~Blazing Battlemage": Blazi
 					"Dragons~Hunter~Minion~4~4~4~Beast~Gryphon~Rush~Uncollectible": Gryphon_Dragons,
 					"Dragons~Hunter~Minion~1~1~3~None~Dwarven Sharpshooter": DwarvenSharpshooter,
 					"Dragons~Hunter~Spell~1~Toxic Reinforcements~~Quest": ToxicReinforcements,
-					"Dragons~Neutral~Minion~1~1~1~None~Leper Gnome~Deathrattle": LeperGnome_Dragons,
+					"Dragons~Neutral~Minion~1~1~1~None~Leper Gnome~Deathrattle~Uncollectible": LeperGnome_Dragons,
 					"Dragons~Hunter~Spell~2~Corrosive Breath": CorrosiveBreath,
 					"Dragons~Hunter~Minion~2~2~3~Beast~Phase Stalker": PhaseStalker,
 					"Dragons~Hunter~Minion~3~4~1~Beast~Diving Gryphon~Rush~Battlecry": DivingGryphon,
@@ -4457,7 +4459,7 @@ Dragons_Indices = {"Dragons~Neutral~Minion~1~2~2~None~Blazing Battlemage": Blazi
 					"Dragons~Mage~Spell~1~Malygos's Tome~Legendary~Uncollectible": MalygossTome,
 					"Dragons~Mage~Spell~2~Malygos's Explosion~Legendary~Uncollectible": MalygossExplosion,
 					"Dragons~Mage~Spell~3~Malygos's Intellect~Legendary~Uncollectible": MalygossIntellect,
-					"Dragons~Mage~Spell~3~Malygos's Fireball~Legendary~Uncollectible": MalygossFireball,
+					"Dragons~Mage~Spell~4~Malygos's Fireball~Legendary~Uncollectible": MalygossFireball,
 					"Dragons~Mage~Spell~7~Malygos's Flamestrike~Legendary~Uncollectible": MalygossFlamestrike,
 					"Dragons~Mage~Minion~1~1~1~Beast~Malygos's Sheep~Legendary~Uncollectible": MalygossSheep,
 					"Dragons~Mage~Minion~5~2~8~Dragon~Malygos, Aspect of Magic~Battlecry~Legendary": MalygosAspectofMagic,
@@ -4526,7 +4528,7 @@ Dragons_Indices = {"Dragons~Neutral~Minion~1~2~2~None~Blazing Battlemage": Blazi
 					"Dragons~Shaman~Minion~4~4~4~Elemental~Living Storm~Rush~Uncollectible": LivingStorm,
 					"Dragons~Shaman~Minion~8~8~8~Elemental~Raging Storm~Rush~Uncollectible": RagingStorm,
 					"Dragons~Warlock~Spell~1~Rain of Fire": RainofFire,
-					"Dragons~Warlock~Spell~2~Neth Breath": NetherBreath,
+					"Dragons~Warlock~Spell~2~Nether Breath": NetherBreath,
 					"Dragons~Warlock~Spell~3~Dark Skies": DarkSkies,
 					"Dragons~Warlock~Minion~3~1~1~None~Dragonblight Cultist~Battlecry": DragonblightCultist,
 					"Dragons~Warlock~Spell~4~Fiendish Rites": FiendishRites,

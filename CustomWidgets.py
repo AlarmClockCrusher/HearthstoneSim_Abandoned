@@ -25,7 +25,7 @@ Power1Pos, Power2Pos = (0.58*X, Y-0.25*Y), (0.58*X, 0.25*Y)
 
 #For 2-player GUI
 seeEnemyHand = False
-ReplayMovesThisTurn = False
+ReplayMovesThisTurn = True
 LeftorRight = 1
 if LeftorRight: shift, offset =  0, 0
 else: shift, offset = 100, 320
@@ -81,7 +81,7 @@ def findPicFilepath(card):
 		if card.type != "Hero" and card.type != "Power":
 			path = "Crops\\%s\\"%index.split('~')[0]
 		else: path = "Crops\\HerosandPowers\\"
-			
+		
 	name = name.split("_")[0] if "Mutable" in name else name
 	filepath = path+"%s.png"%name
 	return filepath
@@ -292,10 +292,10 @@ class HandZone:
 					for i, btn in enumerate(btnsKept):
 						if btn.card == ownHand[cardMoving2]:
 							lastBtn, lastPos = btnsKept.pop(i), posEnds.pop(i)
-				self.GUI.moveBtnsAni(btnsKept, posEnds, steps=steps)
+				self.GUI.moveBtnsAni(btnsKept, posEnds)
 				if lastBtn:
-					self.GUI.moveBtnsAni(lastBtn, lastPos, steps=steps)
-			else: self.GUI.moveBtnsAni(btnsKept, posEnds, steps=steps) #其他情况下最后一个btn不等待，直接与其他的handBtn一同移动
+					self.GUI.moveBtnsAni(lastBtn, lastPos)
+			else: self.GUI.moveBtnsAni(btnsKept, posEnds) #其他情况下最后一个btn不等待，直接与其他的handBtn一同移动
 			for pos, btn, card in zip(posHands, btns, ownHand):
 				if btn:
 					self.btnsDrawn.append(btn)
@@ -825,22 +825,24 @@ class HeroZone: #Include heroes, weapons and powers
 		else: posBtns = [OwnHeroPos, OwnPowerPos, OwnWeaponPos] if self.ID == self.GUI.ID else [EnemyHeroPos, EnemyPowerPos, EnemyWeaponPos]
 		if self.btnsDrawn:
 			#Check if the hero button still correctly show the hero
-			if self.btnsDrawn[0].represents(hero):
+			if self.btnsDrawn[0] and self.btnsDrawn[0].represents(hero):
 				heroBtn = self.btnsDrawn[0]
 				heroBtn.card = hero
 				heroBtn.decideColorOrig(self.GUI, hero)
 				heroBtn.configure(bg=heroBtn.colorOrig)
 			else:
-				self.btnsDrawn[0].remove()
+				try: self.btnsDrawn[0].remove()
+				except: pass
 				HeroButton(self.GUI, hero).plot(posBtns[0][0], posBtns[0][1])
 			#Check if the power button still correctly show the Hero Power
-			if self.btnsDrawn[1].represents(power):
+			if self.btnsDrawn[1] and self.btnsDrawn[1].represents(power):
 				powerBtn = self.btnsDrawn[1]
 				powerBtn.card = power
 				powerBtn.decideColorOrig(self.GUI, power)
 				powerBtn.configure(bg=powerBtn.colorOrig)
 			else:
-				self.btnsDrawn[1].remove()
+				try: self.btnsDrawn[1].remove()
+				except: pass
 				HeroPowerButton(self.GUI, power).plot(posBtns[1][0], posBtns[1][1])
 			if weapon:
 				if len(self.btnsDrawn) < 3 or not self.btnsDrawn[2].represents(weapon): #之前没有武器button或者武器button不再能正确显示数值
@@ -850,7 +852,7 @@ class HeroZone: #Include heroes, weapons and powers
 			else:
 				for i in reversed(range(2, len(self.btnsDrawn))):
 					self.btnsDrawn[i].remove()
-		else:		
+		else:
 			self.btnsDrawn = [None, None]
 			HeroButton(self.GUI, hero).plot(posBtns[0][0], posBtns[0][1])
 			HeroPowerButton(self.GUI, power).plot(posBtns[1][0], posBtns[1][1])
@@ -983,7 +985,7 @@ class BoardButton(tk.Canvas):
 		self.GUI, self.selected, self.colorOrig, self.boardInfo = GUI, 0, BoardColor, GUI.boardID
 		self.bind('<Button-1>', self.leftClick)   # bind left mouse click
 		self.bind('<Button-3>', self.rightClick)   # bind right mouse click
-		self.text = "Transfer Student Effect:\n%s\n"% \
+		self.text = "Transfer Student--%s\n"% \
 				{"1 Classic Ogrimmar": "Battlecry: Deal 2 damage",
 				"2 Classic Stormwind": "Divine Shield",
 				"3 Classic Stranglethorn": "Stealth, Poisonous",
@@ -1018,11 +1020,12 @@ class BoardButton(tk.Canvas):
 		status += "\n\nPlayer 2 has:\n"
 		for key, value in game.status[2].items():
 			if value > 0: status += "%s:%d    "%(key, value)
-		status += "\n\nTemporary Triggers:\n"
+		status += "\n\nTempTriggers:\n"
 		for obj in game.turnStartTrigger + game.turnEndTrigger:
 			status += type(obj).__name__ + ' '
-		self.GUI.wrapText(status, lengthLimit=60)
-		textID = self.create_text(int(0.3*Board_X), Board_Y/2, text=status, fill="orange2", font=("Yahei", 14, ))
+		
+		textID = self.create_text(int(0.3*Board_X), Board_Y/2, text=self.GUI.wrapText(status, lengthLimit=60), 
+									fill="orange2", font=("Yahei", 14, ))
 		self.effectIDs.append(textID)
 		
 	def remove(self):

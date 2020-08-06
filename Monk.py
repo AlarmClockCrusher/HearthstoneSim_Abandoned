@@ -137,9 +137,9 @@ class Aura_MonksApprentice(AuraDealer_toMinion):
 				for entity, aura_Receiver in fixedList(self.auraAffected):
 					aura_Receiver.effectClear()
 					
-	def selfCopy(self, recipientMinion): #The recipientMinion is the minion that deals the Aura.
+	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
-		return type(self)(recipientMinion)
+		return type(self)(recipient)
 		
 	def createCopy(self, recipientGame):
 		#一个光环的注册可能需要注册多个扳机
@@ -689,8 +689,8 @@ class YourHeroPowerCosts1ThisTurn(TempManaEffect_Power):
 	def applicable(self, target):
 		return target.ID == self.ID
 		
-	def selfCopy(self, recipientGame):
-		return type(self)(recipientGame, self.ID)
+	def selfCopy(self, game):
+		return type(self)(game, self.ID)
 		
 		
 class SpawnofXuen(Minion): #雪怒的子嗣
