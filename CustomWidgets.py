@@ -174,6 +174,10 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		self.card.STATUSPRINT()
 		self.GUI.displayCard(self.card)
 		
+	def tempLeftClick(self, event): #For Shadowverse
+		self.GUI.select = self.card
+		self.var.set(1)
+		
 	def plot(self, x, y):
 		card = self.card
 		self.x, self.y, self.labels = x, y, []
@@ -488,6 +492,7 @@ class ChooseOneButton(tk.Button):
 		try: self.GUI.btnsDrawn.remove(self)
 		except: pass
 		
+		
 """Minion/Permanet buttons and zone"""
 class MinionButton(tk.Button):
 	def __init__(self, GUI, minion):
@@ -541,6 +546,10 @@ class MinionButton(tk.Button):
 		self.GUI.displayCard(self.card)
 		print("This button of %s is in zone's btnsDrawn"%self.card.name, self in self.zone.btnsDrawn)
 		print("This boardZones' btnsDrawn", self.GUI.boardZones[1].btnsDrawn, self.GUI.boardZones[2].btnsDrawn)
+		
+	def tempLeftClick(self, event): #For Shadowverse
+		self.GUI.select = self.card
+		self.var.set(1)
 		
 	def plot(self, x, y):
 		self.x, self.y, self.labels = x, y, []

@@ -4123,7 +4123,7 @@ class Rattlegore55(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [SummonRattlegore44(self)]
-
+		
 class Rattlegore44(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
 	mana, attack, health = 4, 4, 4
@@ -4132,7 +4132,7 @@ class Rattlegore44(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [SummonRattlegore33(self)]
-
+		
 class Rattlegore33(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
 	mana, attack, health = 3, 3, 3
@@ -4141,7 +4141,7 @@ class Rattlegore33(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [SummonRattlegore22(self)]
-
+		
 class Rattlegore22(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
 	mana, attack, health = 2, 2, 2
@@ -4214,7 +4214,31 @@ class SummonRattlegore11(Deathrattle_Minion):
 		minion.Game.summon(Rattlegore11(minion.Game, minion.ID), minion.position + 1, minion.ID)
 		
 		
+class EntrancingBlow(Spell):
+	Class, name = "Warrior", "Entrancing Blow"
+	requireTarget, mana = False, 2
+	index = "Academy~Warrior~Spell~2~Entrancing Blow"
+	description = "fefwsfe"
+	def effectCanTrigger(self):
+		self.effectViable = False
+		for card in self.Game.Hand_Deck.hands[self.ID]:
+			if card.type == "Minion":
+				self.effectViable = True
+				break
+				
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+		minions = [card for card in self.Game.Hand_Deck.hands[self.ID]]
+		if minions:
+			self.Game.Discover.startSelectHand(self, minions)
+		return None
 		
+	def selectBoardDecided(self, obj):
+		obj.buffDebuff(2, 0)
+		minions = self.Game.minionsonBoard(3-self.ID)
+		if minions:
+			self.dealsDamage(npchoice(minions), 3)
+			
+			
 Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": TransferStudent,
 					"Academy~Neutral~Minion~0~1~1~Demon~Desk Imp": DeskImp,
 					"Academy~Neutral~Minion~1~1~1~None~Animated Broomstick~Rush~Battlecry": AnimatedBroomstick,

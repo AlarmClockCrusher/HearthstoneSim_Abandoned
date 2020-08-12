@@ -372,16 +372,19 @@ class GUI_Common:
 					self.update()
 		else: #self.UI == 3
 			if selectedSubject == "DiscoverOption":
-				#The first option is indexed as 0.
-				for i in range(len(game.options)):
-					if entity == game.options[i]:
-						self.printInfo("Discover option {} chosen".format(game.options[i].name))
-						self.UI, option = 0, game.options[i] #选项已准备好，进入目标或打出位置选择界面选择界面
-						break
+				self.UI = 0
 				self.update()
-				game.Discover.initiator.discoverDecided(option, info)
+				game.Discover.initiator.discoverDecided(entity, info)
+			elif selectedSubject == "SelectObjBoard":
+				self.UI = 0
+				self.update()
+				game.Discover.initiator.selectBoardDecided(entity)
+			elif selectedSubject == "SelectObjHand":
+				self.UI = 0
+				self.update()
+				game.Discover.initiator.selectHandDecided(entity)
 			else:
-				self.printInfo("You must click an Discover option to continue.")
+				self.printInfo("You MUST click an Discover option to continue.")
 				
 	def waitforDiscover(self, info=None):
 		self.UI, self.discover, var = 3, None, tk.IntVar()
@@ -399,6 +402,54 @@ class GUI_Common:
 		btnDiscoverConfirm.wait_variable(var)
 		btnDiscoverConfirm.destroy()
 		self.resolveMove(self.discover, None, "DiscoverOption", info)
+		
+	def waitforSelectBoard(self, validTargets):
+		self.UI, self.select, var = 3, None, tk.IntVar()
+		btnSelectConfirm = tk.Button(master=self.GamePanel, text="Select\nTarget", bg="lime green", width=7, height=3, font=("Yahei", 12, "bold"))
+		btnSelectConfirm.GUI, btnSelectConfirm.colorOrig = self, "lime green"
+		#应该在场上再draw新的button
+		validBtns = []
+		for target in validTargets:
+			for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
+				if btn.card == target:
+					btn.var = var
+					btn.configure(bg="cyan2")
+					btn.unbind("<Button-1>")
+					btn.bind("<Button-1>", btn.tempLeftClick)
+					validBtns.append(btn)
+					break
+		btnSelectConfirm.place(x=0.83*X, y=0.5*Y, anchor='c')
+		btnSelectConfirm.wait_variable(var)
+		btnSelectConfirm.destroy()
+		for btn in validBtns:
+			btn.configure(bg=btn.colorOrig)
+			btn.unbind("<Button-1>")
+			btn.bind("<Button-1>", btn.leftClick)
+		self.resolveMove(self.select, None, "SelectObjBoard")
+		
+	def waitforSelectHand(self, validTargets):
+		self.UI, self.select, var = 3, None, tk.IntVar()
+		btnSelectConfirm = tk.Button(master=self.GamePanel, text="Select\nTarget", bg="lime green", width=7, height=3, font=("Yahei", 12, "bold"))
+		btnSelectConfirm.GUI, btnSelectConfirm.colorOrig = self, "lime green"
+		#应该在场上再draw新的button
+		validBtns = []
+		for target in validTargets:
+			for btn in self.handZones[1].btnsDrawn + self.handZones[2].btnsDrawn:
+				if btn.card == target:
+					btn.var = var
+					btn.configure(bg="cyan2")
+					btn.unbind("<Button-1>")
+					btn.bind("<Button-1>", btn.tempLeftClick)
+					validBtns.append(btn)
+					break
+		btnSelectConfirm.place(x=0.83*X, y=0.5*Y, anchor='c')
+		btnSelectConfirm.wait_variable(var)
+		btnSelectConfirm.destroy()
+		for btn in validBtns:
+			btn.configure(bg=btn.colorOrig)
+			btn.unbind("<Button-1>")
+			btn.bind("<Button-1>", btn.leftClick)
+		self.resolveMove(self.select, None, "SelectObjHand")
 		
 	def wishforaCard(self, initiator):
 		self.UI = 3

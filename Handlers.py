@@ -388,6 +388,20 @@ class Discover:
 			self.Game.GUI.waitforDiscover(info)
 			self.initiator, self.Game.options = None, []
 			
+	def startSelectBoard(self, initiator, validTargets):
+		if self.Game.GUI:
+			self.initiator = initiator
+			self.Game.GUI.update()
+			self.Game.GUI.waitforSelectBoard(validTargets)
+			self.initiator = None
+			
+	def startSelectHand(self, initiator, validTargets):
+		if self.Game.GUI:
+			self.initiator = initiator
+			self.Game.GUI.update()
+			self.Game.GUI.waitforSelectHand(validTargets)
+			self.initiator = None
+			
 	def typeCardName(self, initiator):
 		if self.Game.GUI:
 			self.initiator = initiator
@@ -397,6 +411,6 @@ class Discover:
 			self.Game.options = []
 		
 	#除了Game本身，没有东西会在函数外引用Game.Discover
-	def createCopy(self, recipientGame):
-		return type(self)(recipientGame)
+	def createCopy(self, game):
+		return type(self)(game)
 		
