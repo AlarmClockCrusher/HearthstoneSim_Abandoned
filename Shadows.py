@@ -10,7 +10,7 @@ from numpy.random import shuffle as npshuffle
 import numpy as np
 
 import copy
-
+#extract an element from the list
 def extractfrom(target, listObj):
 	try: return listObj.pop(listObj.index(target))
 	except: return None
