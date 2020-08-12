@@ -519,7 +519,7 @@ class EducatedElekk(Minion):
 	Class, race, name = "Neutral", "Beast", "Educated Elekk"
 	mana, attack, health = 3, 3, 4
 	index = "Academy~Neutral~Minion~3~3~4~Beast~Educated Elekk~Deathrattle"
-	requireTarget, keyWord, description = False, "", "Battlecry: Reorder your deck from the highest Cost card to the lowest Cost card"
+	requireTarget, keyWord, description = False, "", "Whenever a spell is played, this minion remembers it. Deathrattle: Shuffle the spells into your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_EducatedElekk(self)]
@@ -528,9 +528,9 @@ class EducatedElekk(Minion):
 class Trig_EducatedElekk(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
-
+		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and subject.ID == self.entity.ID
+		return self.entity.onBoard
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
@@ -1985,7 +1985,7 @@ class GuardianAnimals(Spell):
 		curGame = self.Game
 		if curGame.mode == 0:
 			for num in range(2):
-				PRINT(curGame, "Guardian Animals summons two Beasts that cost (5) or less from player's deck and gives them Rush.")
+				PRINT(curGame, "Guardian Animals summons a Beast that costs (5) or less from player's deck and gives it Rush.")
 				if curGame.guides:
 					i = curGame.guides.pop(0)
 				else:
@@ -1995,6 +1995,7 @@ class GuardianAnimals(Spell):
 				if i > -1:
 					beast = curGame.summonfromDeck(i, self.ID, -1, self.ID)
 					beast.getsKeyword("Rush")
+				else: break
 		return None
 		
 		
@@ -2477,10 +2478,10 @@ class DevoutPupil(Minion):
 			
 class Trig_DevoutPupil(TrigHand):
 	def __init__(self, entity):
-		self.blank_init(entity, ["SpellPlayed"])
+		self.blank_init(entity, ["SpellBeenPlayed"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.inHand and subject.ID == target.ID == self.entity.ID
+		return self.entity.inHand and target and subject.ID == target.ID and subject.ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.Game.Manas.calcMana_Single(self.entity)

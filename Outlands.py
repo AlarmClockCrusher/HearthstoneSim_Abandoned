@@ -3657,15 +3657,9 @@ class WarmaulChallenger(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Warmaul Challenger's battlecry lets the minion battle enemy minion %s to the death"%target.name)
-			#假设双方轮流攻击，该随从先攻击.假设不消耗攻击机会
-			whoAttacks = 0
-			#def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirectionTriggers=True)
-			while self.onBoard and self.health > 0 and self.dead == False and target.onBoard and target.health > 0 and target.dead == False:
-				if whoAttacks == 0: #Warmaul Challenger attacks first
-					self.Game.battle(self, target, verifySelectable=False, useAttChance=False, resolveDeath=False, resetRedirectionTriggers=False)
-				else:
-					self.Game.battle(target, self, verifySelectable=False, useAttChance=False, resolveDeath=False, resetRedirectionTriggers=False)
-				whoAttacks = 1 - whoAttacks
+			#该随从会连续攻击那个目标直到一方死亡
+			while self.onBoard and self.health > 0 and not self.dead and target.onBoard and target.health > 0 and not target.dead:
+				self.Game.battle(self, target, verifySelectable=False, useAttChance=False, resolveDeath=False, resetRedirectionTriggers=False)
 		return target
 		
 		

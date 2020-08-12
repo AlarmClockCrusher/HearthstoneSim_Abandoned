@@ -1381,8 +1381,7 @@ class Spell(Card):
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
 		#使用阶段
 		#判定该法术是否会因为风潮的光环存在而释放两次。发现的子游戏中不会两次触发，直接跳过
-		if "Branching" not in comment:
-			repeatTimes = 2 if self.Game.status[self.ID]["Spells x2"] > 0 else 1
+		repeatTimes = 2 if self.Game.status[self.ID]["Spells x2"] > 0 else 1
 		if self.Game.GUI:
 			self.Game.GUI.showOffBoardTrig(self)
 			self.Game.GUI.wait(500)
