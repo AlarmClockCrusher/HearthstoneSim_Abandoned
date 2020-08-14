@@ -159,8 +159,8 @@ class Card:
 		
 	def selectablebyBattle(self, subject):
 		if self.type == "Minion":
-			if self.onBoard and self.ID != subject.ID and self.status["Temp Stealth"] + self.status["Immune"] + self.keyWords["Stealth"] < 1:
-				if self.keyWords["Taunt"] > 0 or self.Game.status[subject.ID]["Ignore Taunt"] > 0:
+			if self.onBoard and self.ID != subject.ID and self.status["Temp Stealth"] + self.status["Immune"] + self.keyWords["Stealth"] + self.marks["Can't Be Attacked"] < 1:
+				if self.keyWords["Taunt"] > 0 or self.Game.status[subject.ID]["Ignore Taunt"] + subject.marks["Ignore Taunt"] > 0:
 					return True
 				else:
 					for minion in self.Game.minionsonBoard(self.ID):
@@ -169,8 +169,8 @@ class Card:
 							return False
 					return True
 		elif self.type == "Hero":
-			if self.onBoard and self.ID != subject.ID and self.status["Temp Stealth"] + self.Game.status[self.ID]["Immune"] < 1:
-				if self.Game.status[subject.ID]["Ignore Taunt"] > 0: return True #如果对方的攻击无论嘲讽，则始终可以被选定
+			if self.onBoard and self.ID != subject.ID and self.status["Temp Stealth"] + self.Game.status[self.ID]["Immune"] + self.marks["Can't Be Attacked"] < 1:
+				if self.Game.status[subject.ID]["Ignore Taunt"] + subject.marks["Ignore Taunt"] > 0: return True #如果对方的攻击无论嘲讽，则始终可以被选定
 				else: #如果对方没有无视嘲讽的光环，则需要判定角色是否藏在嘲讽之后
 					for minion in self.Game.minionsonBoard(self.ID):
 						if minion.keyWords["Taunt"] > 0 and minion.status["Temp Stealth"] + minion.status["Immune"] + minion.keyWords["Stealth"] < 1:
@@ -181,22 +181,22 @@ class Card:
 		
 	def canSelect(self, target):
 		if target.type == "Hero":
-			return target.onBoard and \\
-					{"Power": self.Game.status[target.ID]["Evasive"] < 1 and (self.ID == target.ID or target.status["Temp Stealth"] + self.Game.status[target.ID]["Immune"] < 1),
-					"Spell": self.Game.status[target.ID]["Evasive"] < 1 and (self.ID == target.ID or target.status["Temp Stealth"] + self.Game.status[target.ID]["Immune"] < 1),
-					"Minion": target.ID == self.ID or self.Game.status[target.ID]["Immune"] + target.status["Temp Stealth"] < 1,
-					"Weapon": target.ID == self.ID or self.Game.status[target.ID]["Immune"] + target.status["Temp Stealth"] < 1,
+			return target.onBoard and \
+					{"Power": self.Game.status[target.ID]["Evasive"] < 1 and (self.ID == target.ID or target.status["Temp Stealth"] + self.Game.status[target.ID]["Immune"] + target.marks["Enemy Effect Evasive"] < 1),
+					"Spell": self.Game.status[target.ID]["Evasive"] < 1 and (self.ID == target.ID or target.status["Temp Stealth"] + self.Game.status[target.ID]["Immune"] + target.marks["Enemy Effect Evasive"] < 1),
+					"Minion": target.ID == self.ID or self.Game.status[target.ID]["Immune"] + target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1,
+					"Weapon": target.ID == self.ID or self.Game.status[target.ID]["Immune"] + target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1,
 					}[self.type]
 		else: #"Minion"
-			return target.onBoard and 
-					{"Power": target.marks["Evasive"] < 1 and (self.ID == target.ID or target.marks["Enemy Evasive"] + target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] < 1),
-					"Spell": target.marks["Evasive"] < 1 and (self.ID == target.ID or target.marks["Enemy Evasive"] + target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] < 1),
-					"Minion": target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] < 1,
-					"Weapon": target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] < 1,
+			return target.onBoard and \
+					{"Power": target.marks["Evasive"] < 1 and (self.ID == target.ID or target.marks["Enemy Evasive"] + target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1),
+					"Spell": target.marks["Evasive"] < 1 and (self.ID == target.ID or target.marks["Enemy Evasive"] + target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1),
+					"Minion": target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1,
+					"Weapon": target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1,
 					}[self.type]
 					
 	def selectableEnemyMinionExists(self, choice=0):
-		for minion in self.Game.minionsonBoard(3-self.ID):
+		for minion in self.Game.minonsonBoard(3-self.ID):
 			if self.canSelect(minion) and self.targetCorrect(minion, choice):
 				return True
 		return False
@@ -204,7 +204,7 @@ class Card:
 	def selectableFriendlyMinionExists(self, choice=0):
 		for minion in self.Game.minionsonBoard(self.ID):
 			if self.canSelect(minion) and self.targetCorrect(minion, choice):
-				return True
+				return Truei
 		return False
 		
 	def selectableMinionExists(self, choice=0):
@@ -379,8 +379,15 @@ class Card:
 					targets_healed.append(target)
 					healsConnected.append(healActual)
 					totalHealingDone += healActual
+			containHero = False
 			for target, healActual in zip(targets_healed, healsConnected):
 				self.Game.sendSignal(target.type+"GetsHealed", self.Game.turn, self, target, healActual, "FullyHealed")
+				if target.type == "Hero":
+					containHero = True
+			if containHero:
+				self.Game.sendSignal("AllCured", self.Game.turn, self, None, 0, "")
+			else:
+				self.Game.sendSignal("MinionsCured", self.Game.turn, self, None, 0, "")
 		return targets_healed, healsConnected, totalHealingDone
 		
 	def restoresHealth(self, target, heal):
@@ -399,6 +406,8 @@ class Card:
 	def getsHealed(self, subject, heal, sendHealSignal=True):
 		game, healActual = self.Game, 0
 		if self.inHand or self.onBoard:#If the character is dead and removed already or in deck. Nothing happens.
+			if sendHealSignal:  # During AOE healing, the signals are delayed.
+				game.sendSignal(self.type + "GetsCured", game.turn, subject, self, 0, "")
 			if self.health == self.health_max:
 				PRINT(game, "Character %s at full health already."%self.name)
 			else:
@@ -627,7 +636,7 @@ class Minion(Card):
 			#self.attack_0; self.health_max; self.health, self.health_max.
 		self.attack_Enchant, self.health_max = self.attack, self.health
 		self.statbyAura = [0, 0, []] #激怒的攻击力变化直接被记录在第一个元素中，不涉及buffAura_Receiver, The list contains all the Aura Objs put on this minion.
-		self.keyWordbyAura = {"Charge":0, "Rush":0, "Mega Windfury":0,
+		self.keyWordbyAura = {"Charge":0, "Rush":0, "Mega Windfury":0, "Free Evolve": 0,
 										"Auras":[]}
 		self.description = type(self).description
 		#当一个实例被创建的时候，其needTarget被强行更改为returnTrue或者是returnFalse，不论定义中如何修改needTarget(self, choice=0)这个函数，都会被绕过。需要直接对returnTrue()函数进行修改。
@@ -635,18 +644,22 @@ class Minion(Card):
 		self.keyWords = {"Taunt": 0, "Divine Shield": 0, "Stealth": 0,
 						"Lifesteal": 0,	"Spell Damage": 0, "Poisonous": 0,
 						"Windfury": 0, "Mega Windfury": 0, "Charge": 0, "Rush": 0,
-						"Echo": 0, "Reborn": 0,
+						"Echo": 0, "Reborn": 0, "Evolved": 0, "Bane":0, "Drain":0
 						}
 		if type(self).keyWord != "":
 			for key in type(self).keyWord.split(","):
 				self.keyWords[key.strip()] = 1
 		#Some state of the minion represented by the marks
 		self.marks = {"Sweep": 0,
-						"Evasive": 0, "Enemy Evasive": 0,
-						"Can't Attack": 0, "Can't Attack Hero": 0,
-						"Heal x2": 0, #Crystalsmith Kangor
-						"Power Heal&Dmg x2": 0, #Prophet Velen, Clockwork Automation
-						"Spell Heal&Dmg x2": 0
+					  "Evasive": 0, "Enemy Evasive": 0,
+					  "Can't Attack": 0, "Can't Attack Hero": 0,
+					  "Heal x2": 0, #Crystalsmith Kangor
+					  "Power Heal&Dmg x2": 0, #Prophet Velen, Clockwork Automation
+					  "Spell Heal&Dmg x2": 0,
+					  "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
+					  "Can't Break": 0, "Can't Be Attacked": 0,
+					  "Next damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0,
+					  "Max Damage": -1
 						}
 		#Temp effects that vanish at certain points.
 		self.status = {"Immune": 0,	"Frozen": 0, "Temp Stealth": 0, "Borrowed": 0
@@ -682,7 +695,13 @@ class Minion(Card):
 						
 	def applicable(self, target):
 		return target != self
-		
+
+	def whenAppears(self):
+		return
+
+	def whenDisappears(self):
+		return
+
 	"""Handle the trigsBoard/inHand/inDeck of minions based on its move"""
 	def appears(self):
 		PRINT(self.Game, "%s appears on board."%self.name)
@@ -702,6 +721,7 @@ class Minion(Card):
 		#The buffAuras/hasAuras will react to this signal.
 		self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, "")
 		for func in self.triggers["StatChanges"]: func()
+		self.whenAppears()
 		
 	def disappears(self, deathrattlesStayArmed=True): #The minion is about to leave board.
 		self.onBoard, self.inHand, self.inDeck = False, False, False
@@ -731,6 +751,7 @@ class Minion(Card):
 			self.keyWordbyAura["Auras"][0].effectClear()
 		self.activated = False
 		self.Game.sendSignal("MinionDisappears", self.ID, None, self, 0, "")
+		self.whenDisappears()
 		
 	"""Attack chances handle"""
 	#The game will directly invoke the turnStarts/turnEnds methods.
@@ -895,29 +916,41 @@ class Minion(Card):
 	#Stealth Dreadscale actually stays in stealth.
 	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
 		game = self.Game
-		if damage > 0 and self.status["Immune"] < 1: #随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
-			if self.keyWords["Divine Shield"] > 0:
+		if self.status["Immune"] < 1: #随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
+			if "Next damage 0" in self.marks and self.marks["Next damage 0"] > 0:
 				damage = 0
-				self.losesKeyword("Divine Shield")
+				self.marks["Next damage 0"] = 0
+			if "Max Damage" in self.marks and self.marks["Max Damage"] >= 0:
+				damage = min(damage,self.marks["Max Damage"])
+			if "Enemy Effect Damage Immune" in self.marks and self.marks["Enemy Effect Damage Immune"] > 0 and damageType == "ability":
+				damage = 0
+			if damage > 0:
+				if self.keyWords["Divine Shield"] > 0:
+					damage = 0
+					self.losesKeyword("Divine Shield")
+				else:
+					#伤害量预检测。如果随从有圣盾则伤害预检测实际上是没有意义的。
+					damageHolder = [damage] #这个列表用于盛装伤害数值，会经由伤害扳机判定
+					game.sendSignal("FinalDmgonMinion?", 0, subject, self, damageHolder, "")
+					damage = damageHolder[0]
+					self.health -= damage
+					#经过检测，被伏击者返回手牌中的紫罗兰老师不会因为毒药贩子加精灵弓箭手而直接丢弃。会减1血，并在打出时复原。
+					if ((subject.type == "Spell" and game.status[subject.ID]["Spells Poisonous"] > 0) or subject.keyWords["Poisonous"] > 0) and self.onBoard:
+						self.dead = True
+					#在同时涉及多个角色的伤害处理中，受到的伤害暂不发送信号而之后统一进行扳机触发。
+					if sendDamageSignal:
+						game.sendSignal("MinionTakesDmg", game.turn, subject, self, damage, "")
+						game.sendSignal("MinionTookDamage", game.turn, subject, self, damage, "")
+					if subject.type == "Power":
+						game.Counters.damageDealtbyHeroPower[subject.ID] += damage
+					#随从的激怒，根据血量和攻击的状态改变都在这里触发。
+					for func in self.triggers["StatChanges"]: func()
 			else:
-				#伤害量预检测。如果随从有圣盾则伤害预检测实际上是没有意义的。
-				damageHolder = [damage] #这个列表用于盛装伤害数值，会经由伤害扳机判定
-				game.sendSignal("FinalDmgonMinion?", 0, subject, self, damageHolder, "")
-				damage = damageHolder[0]
-				self.health -= damage
-				#经过检测，被伏击者返回手牌中的紫罗兰老师不会因为毒药贩子加精灵弓箭手而直接丢弃。会减1血，并在打出时复原。
-				if ((subject.type == "Spell" and game.status[subject.ID]["Spells Poisonous"] > 0) or subject.keyWords["Poisonous"] > 0) and self.onBoard:
+				if "Bane" in subject.keyWords and subject.keyWords[
+					"Bane"] > 0 and damageType == "Battle" and self.onBoard:
 					self.dead = True
-				elif "Bane" in subject.keyWords and subject.keyWords["Bane"] > 0 and damageType == "Battle" and self.onBoard:
-					self.dead = True
-				#在同时涉及多个角色的伤害处理中，受到的伤害暂不发送信号而之后统一进行扳机触发。
-				if sendDamageSignal:
-					game.sendSignal("MinionTakesDmg", game.turn, subject, self, damage, "")
-					game.sendSignal("MinionTookDamage", game.turn, subject, self, damage, "")
-				if subject.type == "Power":
-					game.Counters.damageDealtbyHeroPower[subject.ID] += damage
-				#随从的激怒，根据血量和攻击的状态改变都在这里触发。
-				for func in self.triggers["StatChanges"]: func()
+				game.sendSignal("MinionTakes0Dmg", game.turn, subject, self, 0, "")
+				game.sendSignal("MinionTook0Damage", game.turn, subject, self, 0, "")
 		else: damage = 0
 		return damage
 		
@@ -1864,6 +1897,8 @@ class Hero(Card):
 		self.dead = False
 		self.heroPower = type(self).heroPower(self.Game, self.ID) if type(self).heroPower else None
 		self.keyWords = {"Poisonous": 0} #Just as a placeholder
+		self.marks={"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
+					"Can't Be Attacked": 0, "Next damage 0": 0, "Max Damage": -1}
 		self.status = {"Frozen": 0, "Temp Stealth": 0}
 		self.triggers = {"Discarded": []}
 		self.identity = [np.random.rand(), np.random.rand()]
@@ -1961,25 +1996,39 @@ class Hero(Card):
 		
 	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
 		game = self.Game
-		if damage > 0 and game.status[self.ID]["Immune"] <= 0:
-			damageHolder = [damage]
-			game.sendSignal("FinalDmgonHero?", self.ID, subject, self, damageHolder, "")
-			damage = damageHolder[0]
+		if self.status["Immune"] < 1:  # 随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
+			if "Next damage 0" in self.marks and self.marks["Next damage 0"] > 0:
+				damage = 0
+				self.marks["Next damage 0"] = 0
+			if "Max Damage" in self.marks and self.marks["Max Damage"] >= 0:
+				damage = min(damage, self.marks["Max Damage"])
+			if "Enemy Effect Damage Immune" in self.marks and self.marks[
+				"Enemy Effect Damage Immune"] > 0 and damageType == "ability":
+				damage = 0
 			if damage > 0:
-				if self.armor > damage: self.armor -= damage
-				else:
-					self.health -= damage - self.armor
-					self.armor = 0
-				game.Counters.damageonHeroThisTurn[self.ID] += damage
-				if sendDamageSignal:
-					game.sendSignal("HeroTakesDmg", game.turn, subject, self, damage, "")
-					game.sendSignal("HeroTookDamage", game.turn, subject, self, damage, "")
-				if game.turn == self.ID:
-					game.Counters.timesHeroChangedHealth_inOwnTurn[self.ID] += 1
-					game.Counters.timesHeroTookDamage_inOwnTurn[self.ID] += 1
-					game.Counters.heroChangedHealthThisTurn[self.ID] = True
-					game.sendSignal("HeroChangedHealthinTurn", self.ID, None, None, 0, "")
-		else: damage = 0
+				damageHolder = [damage]
+				game.sendSignal("FinalDmgonHero?", self.ID, subject, self, damageHolder, "")
+				damage = damageHolder[0]
+				if damage > 0:
+					if self.armor > damage:
+						self.armor -= damage
+					else:
+						self.health -= damage - self.armor
+						self.armor = 0
+					game.Counters.damageonHeroThisTurn[self.ID] += damage
+					if sendDamageSignal:
+						game.sendSignal("HeroTakesDmg", game.turn, subject, self, damage, "")
+						game.sendSignal("HeroTookDamage", game.turn, subject, self, damage, "")
+					if game.turn == self.ID:
+						game.Counters.timesHeroChangedHealth_inOwnTurn[self.ID] += 1
+						game.Counters.timesHeroTookDamage_inOwnTurn[self.ID] += 1
+						game.Counters.heroChangedHealthThisTurn[self.ID] = True
+						game.sendSignal("HeroChangedHealthinTurn", self.ID, None, None, 0, "")
+			else:
+				game.sendSignal("HeroTakes0Dmg", game.turn, subject, self, 0, "")
+				game.sendSignal("HeroTook0Damage", game.turn, subject, self, 0, "")
+		else:
+			damage = 0
 		return damage
 		
 	def healthReset(self, health, health_max=False):
@@ -2077,6 +2126,8 @@ class Hero(Card):
 			Copy.attChances_base, Copy.attChances_extra, Copy.attTimes = self.attChances_base, self.attChances_extra, self.attTimes
 			Copy.onBoard, Copy.inHand, Copy.inDeck = self.onBoard, self.inHand, self.inDeck
 			Copy.dead = self.dead
+			Copy.keyWords = copy.deepcopy(self.keyWords)
+			Copy.marks = copy.deepcopy(self.marks)
 			Copy.status = copy.deepcopy(self.status)
 			for key, value in self.triggers.items():
 				Copy.triggers[key] = [getattr(Copy, func.__qualname__.split(".")[1]) for func in value]

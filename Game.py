@@ -72,8 +72,8 @@ class Game:
 		
 	def minionsAlive(self, ID, target=None): #if target is not None, return all living minions except the target
 		if target: return [minion for minion in self.minions[ID] if minion.type == "Minion" \
-							and minion != target and minion.onBoard and not minion.dead and minion.health > 0]
-		else: return [minion for minion in self.minions[ID] if minion.type == "Minion" and minion.onBoard and not minion.dead and minion.health > 0]
+							and minion != target and minion.onBoard and (not minion.dead or minion.marks["Can't Break"] > 0) and minion.health > 0]
+		else: return [minion for minion in self.minions[ID] if minion.type == "Minion" and minion.onBoard and (not minion.dead or minion.marks["Can't Break"] > 0) and minion.health > 0]
 		
 	def minionsonBoard(self, ID, target=None): #if target is not None, return all onBoard minions except the target
 		if target: return [minion for minion in self.minions[ID] if minion.type == "Minion" and minion.onBoard and minion != target]
@@ -538,6 +538,8 @@ class Game:
 				else: #If the weapon is the latest weapon to equip
 					break
 			for minion in fixedList(self.minionsonBoard(ID)):
+				if minion.dead and minion.marks["Can't Break"] > 0:
+					minion.dead = False
 				if minion.health < 1 or minion.dead:
 					minion.dead = True
 					attackwhenDies = minion.attack

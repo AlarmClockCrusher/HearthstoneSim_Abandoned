@@ -219,23 +219,6 @@ class ShadowverseMinion(Minion):
 				
 	def blank_init(self, Game, ID):
 		super().blank_init(Game, ID)
-		self.keyWords = {"Taunt": 0, "Divine Shield": 0, "Stealth": 0,
-						  "Lifesteal": 0, "Spell Damage": 0, "Poisonous": 0,
-						  "Windfury": 0, "Mega Windfury": 0, "Charge": 0, "Rush": 0,
-						  "Echo": 0, "Reborn": 0, "Evolved": 0, "Bane":0, "Drain":0
-						  }
-		self.marks = {"Sweep": 0,
-					  "Evasive": 0, "Enemy Evasive": 0,
-					  "Can't Attack": 0, "Can't Attack Hero": 0,
-					  "Heal x2": 0,  # Crystalsmith Kangor
-					  "Power Heal&Dmg x2": 0,  # Prophet Velen, Clockwork Automation
-					  "Spell Heal&Dmg x2": 0,
-					  "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
-					  "Can't Break": 0, "Damage Immune": 0, "Can't Be Attacked": 0,
-					  "Next damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0
-					  }
-		self.keyWordbyAura = {"Charge": 0, "Rush": 0, "Mega Windfury": 0, "Free Evolve": 0,
-							  "Auras": []}
 
 	def createCopy(self, game):
 		if self in game.copiedObjs:
