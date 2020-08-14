@@ -25,7 +25,7 @@ Power1Pos, Power2Pos = (0.58*X, Y-0.25*Y), (0.58*X, 0.25*Y)
 
 #For 2-player GUI
 seeEnemyHand = False
-ReplayMovesThisTurn = True
+ReplayMovesThisTurn = False
 LeftorRight = 1
 if LeftorRight: shift, offset =  0, 0
 else: shift, offset = 100, 320
@@ -136,6 +136,8 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			self.x, self.y, self.labels, self.zone = 0, 0, [], GUI.handZones[card.ID]
 			self.bind('<Button-1>', self.leftClick)   # bind left mouse click
 			self.bind('<Button-3>', self.rightClick)   # bind right mouse click
+			if card.index.startswith("Shadowverse") and hasattr(card, "fusion"):
+				self.bind("<Double-Button-1>", lambda event: game.Discover.startFusion(card, card.findFusionMaterials()))
 			#Info bookkeeping
 			self.cardInfo, self.mana = type(card), card.mana
 			if card.type == "Minion": self.attack, self.health = card.attack, card.health
@@ -178,6 +180,16 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		self.GUI.select = self.card
 		self.var.set(1)
 		
+	def tempLeftClick_Fusion(self, event):
+		self.selected = 1 - self.selected
+		if self.selected:
+			self.configure(bg="white")
+			self.GUI.fusionMaterials.append(self.card)
+		else:
+			self.configure(bg="cyan2")
+			try: self.GUI.fusionMaterials.remove(self.card)
+			except: pass
+			
 	def plot(self, x, y):
 		card = self.card
 		self.x, self.y, self.labels = x, y, []

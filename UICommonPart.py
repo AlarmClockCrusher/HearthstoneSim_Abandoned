@@ -383,6 +383,10 @@ class GUI_Common:
 				self.UI = 0
 				self.update()
 				game.Discover.initiator.selectHandDecided(entity)
+			elif selectedSubject == "Fusion":
+				self.UI = 0
+				self.update()
+				game.Discover.initiator.fusionDecided(entity)
 			else:
 				self.printInfo("You MUST click an Discover option to continue.")
 				
@@ -451,6 +455,36 @@ class GUI_Common:
 			btn.bind("<Button-1>", btn.leftClick)
 		self.resolveMove(self.select, None, "SelectObjHand")
 		
+	def waitforFusion(self, validTargets):
+		self.UI, self.fusionMaterials, var = 3, [], tk.IntVar()
+		btnSelectConfirm = tk.Button(master=self.GamePanel, text="Left Click to Fuse\nRight Click to Cancel", bg="lime green", width=15, height=3, font=("Yahei", 12, "bold"))
+		btnSelectConfirm.GUI, btnSelectConfirm.colorOrig = self, "lime green"
+		btnSelectConfirm.bind("<Button-1>", lambda event: var.set(1))
+		btnSelectConfirm.bind("<Button-3>", lambda event: var.set(2))
+		validBtns = []
+		for target in validTargets:
+			for btn in self.handZones[validTargets[0].ID].btnsDrawn:
+				if btn.card == target:
+					btn.var = var
+					btn.configure(bg="cyan2")
+					btn.unbind("<Button-1>")
+					btn.bind("<Button-1>", btn.tempLeftClick_Fusion)
+					validBtns.append(btn)
+					break
+		btnSelectConfirm.place(x=0.83*X, y=0.5*Y, anchor='c')
+		btnSelectConfirm.wait_variable(var)
+		btnSelectConfirm.destroy()
+		for btn in validBtns: #Reset the buttons' color and binding
+			btn.configure(bg=btn.colorOrig)
+			btn.unbind("<Button-1>")
+			btn.bind("<Button-1>", btn.leftClick)
+		if var.get() == 1: #var.get() == 2 means cancel the fusion
+			if self.fusionMaterials: self.resolveMove(self.fusionMaterials, None, "Fusion")
+			else: self.printInfo("Fusion requires other cards selected")
+		else:
+			self.UI = 0
+			self.fusionMaterials = []
+			
 	def wishforaCard(self, initiator):
 		self.UI = 3
 		self.lbl_wish.pack(fill=tk.X, side=tk.TOP)

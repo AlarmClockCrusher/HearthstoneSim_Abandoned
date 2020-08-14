@@ -402,6 +402,13 @@ class Discover:
 			self.Game.GUI.waitforSelectHand(validTargets)
 			self.initiator = None
 			
+	def startFusion(self, initiator, validTargets):
+		if self.Game.GUI:
+			self.initiator = initiator
+			self.Game.GUI.update()
+			self.Game.GUI.waitforFusion(validTargets)
+			self.initiator = None
+			
 	def typeCardName(self, initiator):
 		if self.Game.GUI:
 			self.initiator = initiator

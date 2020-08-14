@@ -4150,48 +4150,43 @@ class Rattlegore22(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [SummonRattlegore11(self)]
-
+		
 class Rattlegore11(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
 	mana, attack, health = 1, 1, 1
 	index = "Academy~Warrior~Minion~1~1~1~None~Rattlegore~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
-
+	
 #假设一个随从以白字为准
 class SummonRattlegore88(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
 		PRINT(minion.Game, "Deathrattle: Summon an 8/8 Rattlegore triggers")
 		minion.Game.summon(Rattlegore88(minion.Game, minion.ID), minion.position + 1, minion.ID)
-
-
+		
 class SummonRattlegore77(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
 		PRINT(minion.Game, "Deathrattle: Summon a 7/7 Rattlegore triggers")
 		minion.Game.summon(Rattlegore77(minion.Game, minion.ID), minion.position + 1, minion.ID)
-
-
+		
 class SummonRattlegore66(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
 		PRINT(minion.Game, "Deathrattle: Summon a 6/6 Rattlegore triggers")
 		minion.Game.summon(Rattlegore66(minion.Game, minion.ID), minion.position + 1, minion.ID)
-
-
+		
 class SummonRattlegore55(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
 		PRINT(minion.Game, "Deathrattle: Summon a 5/5 Rattlegore triggers")
 		minion.Game.summon(Rattlegore55(minion.Game, minion.ID), minion.position + 1, minion.ID)
-
-
+		
 class SummonRattlegore44(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
 		PRINT(minion.Game, "Deathrattle: Summon a 4/4 Rattlegore triggers")
 		minion.Game.summon(Rattlegore44(minion.Game, minion.ID), minion.position + 1, minion.ID)
-		
 		
 class SummonRattlegore33(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -4199,14 +4194,12 @@ class SummonRattlegore33(Deathrattle_Minion):
 		PRINT(minion.Game, "Deathrattle: Summon a 3/3 Rattlegore triggers")
 		minion.Game.summon(Rattlegore33(minion.Game, minion.ID), minion.position + 1, minion.ID)
 		
-
 class SummonRattlegore22(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
 		PRINT(minion.Game, "Deathrattle: Summon a 2/2 Rattlegore triggers")
 		minion.Game.summon(Rattlegore22(minion.Game, minion.ID), minion.position + 1, minion.ID)
 		
-
 class SummonRattlegore11(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
@@ -4214,31 +4207,6 @@ class SummonRattlegore11(Deathrattle_Minion):
 		minion.Game.summon(Rattlegore11(minion.Game, minion.ID), minion.position + 1, minion.ID)
 		
 		
-class EntrancingBlow(Spell):
-	Class, name = "Warrior", "Entrancing Blow"
-	requireTarget, mana = False, 2
-	index = "Academy~Warrior~Spell~2~Entrancing Blow"
-	description = "fefwsfe"
-	def effectCanTrigger(self):
-		self.effectViable = False
-		for card in self.Game.Hand_Deck.hands[self.ID]:
-			if card.type == "Minion":
-				self.effectViable = True
-				break
-				
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		minions = [card for card in self.Game.Hand_Deck.hands[self.ID]]
-		if minions:
-			self.Game.Discover.startSelectHand(self, minions)
-		return None
-		
-	def selectBoardDecided(self, obj):
-		obj.buffDebuff(2, 0)
-		minions = self.Game.minionsonBoard(3-self.ID)
-		if minions:
-			self.dealsDamage(npchoice(minions), 3)
-			
-			
 Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": TransferStudent,
 					"Academy~Neutral~Minion~0~1~1~Demon~Desk Imp": DeskImp,
 					"Academy~Neutral~Minion~1~1~1~None~Animated Broomstick~Rush~Battlecry": AnimatedBroomstick,

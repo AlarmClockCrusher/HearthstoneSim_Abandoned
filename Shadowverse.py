@@ -1,48 +1,26 @@
 from CardTypes import *
 from Triggers_Auras import *
 
-import numpy as np
 import copy
 
+from numpy.random import choice as npchoice
+from numpy.random import randint as nprandint
+from numpy.random import shuffle as npshuffle
 
-def extractfrom(target, listObject):
-    temp = None
-    for i in range(len(listObject)):
-        if listObject[i] == target:
-            temp = listObject.pop(i)
-            break
-    return temp
+import numpy as np
 
-
+def extractfrom(target, listObj):
+	try: return listObj.pop(listObj.index(target))
+	except: return None
+	
 def fixedList(listObject):
     return listObject[0:len(listObject)]
 
-
-def classforDiscover(initiator):
-    Class = initiator.Game.heroes[initiator.ID].Class
-    if Class != "Neutral":  # 如果发现的发起者的职业不是中立，则返回那个职业
-        return Class
-    elif initiator.Class != "Neutral":  # 如果玩家职业是中立，但卡牌职业不是中立，则发现以那个卡牌的职业进行
-        return initiator.Class
-    else:  # 如果玩家职业和卡牌职业都是中立，则随机选取一个职业进行发现。
-        return np.random.choice(Classes)
-
-
-def PRINT(obj, string, *args):
-    if hasattr(obj, "GUI"):
-        GUI = obj.GUI
-    elif hasattr(obj, "Game"):
-        GUI = obj.Game.GUI
-    elif hasattr(obj, "entity"):
-        GUI = obj.entity.Game.GUI
-    else:
-        GUI = None
-    if GUI != None:
-        GUI.printInfo(string)
-    else:
-        print(string)
-
-
+def PRINT(game, string, *args):
+	if game.GUI:
+		if not game.mode: game.GUI.printInfo(string)
+	elif not game.mode: print("game's guide mode is 0\n", string)
+	
 Classes = ["Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin", "Priest", "Rogue", "Shaman", "Swordcraft",
            "Warlock", "Warrior"]
 ClassesandNeutral = ["Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin", "Priest", "Rogue", "Shaman",
@@ -99,7 +77,7 @@ class Erika(Hero):
         self.health, self.health_upper, self.armor = 20, 20, 0
 
 
-class ShadowverseMinion(Minion):
+class SVMinion(Minion):
     attackAdd = 2
     healthAdd = 2
     evolveNeedTarget = False
@@ -127,69 +105,87 @@ class ShadowverseMinion(Minion):
         return target is not None
 
     def returnTargets(self, comment="", choice=0):
-        targets = []
+        game, targets, indices, wheres = self.Game, [], [], []
         if comment == "":
-            if self.targetSelectable(self.Game.heroes[1]) and self.targetCorrect(self.Game.heroes[1], choice):
-                targets.append(self.Game.heroes[1])
-            if self.targetSelectable(self.Game.heroes[2]) and self.targetCorrect(self.Game.heroes[2], choice):
-                targets.append(self.Game.heroes[2])
-            for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2):
-                if self.targetSelectable(minion) and self.targetCorrect(minion, choice):
-                    targets.append(minion)
+            for ID in range(1, 3):
+				if self.canSelect(game.heroes[ID]) and self.targetCorrect(game.heroes[ID], choice):
+					targets.append(game.heroes[ID])
+					indices.append(ID)
+					wheres.append("hero")
+			for minion in game.minionsonBoard(1):
+				if self.canSelect(minion) and self.targetCorrect(minion, choice):
+					targets.append(minion)
+					indices.append(minion.position)
+					wheres.append("minion1")
+			for minion in game.minionsonBoard(2):
+				if self.canSelect(minion) and self.targetCorrect(minion, choice):
+					targets.append(minion)
+					indices.append(minion.position)
+					wheres.append("minion2")
         elif comment == "IgnoreStealthandImmune":
-            if self.targetCorrect(self.Game.heroes[1], choice):
-                targets.append(self.Game.heroes[1])
-            if self.targetCorrect(self.Game.heroes[2], choice):
-                targets.append(self.Game.heroes[2])
-            for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2):
-                if self.targetCorrect(minion, choice):
-                    targets.append(minion)
+            for ID in range(1, 3):
+				if self.targetCorrect(game.heroes[ID], choice):
+					targets.append(game.heroes[ID])
+					indices.append(ID)
+					wheres.append("hero")
+			for minion in game.minionsonBoard(1):
+				if self.targetCorrect(minion, choice):
+					targets.append(minion)
+					indices.append(minion.position)
+					wheres.append("minion1")
+			for minion in game.minionsonBoard(2):
+				if self.targetCorrect(minion, choice):
+					targets.append(minion)
+					indices.append(minion.position)
+					wheres.append("minion2")
         else:
-            if self.targetSelectable(self.Game.heroes[1]) and self.extraTargetCorrect(self.Game.heroes[1], comment):
-                targets.append(self.Game.heroes[1])
-            if self.targetSelectable(self.Game.heroes[2]) and self.extraTargetCorrect(self.Game.heroes[2], comment):
-                targets.append(self.Game.heroes[2])
-            for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2):
-                if self.targetSelectable(minion) and self.extraTargetCorrect(minion, comment):
-                    targets.append(minion)
-            for card in self.Game.Hand_Deck.hands[self.ID]:
+            for ID in range(1, 3):
+				if self.canSelect(game.heroes[ID]) and self.extraTargetCorrect(game.heroes[ID], comment):
+					targets.append(game.heroes[ID])
+					indices.append(ID)
+					wheres.append("hero")
+            for minion in game.minionsonBoard(1):
+				if self.canSelect(minion) and self.extraTargetCorrect(minion, comment):
+					targets.append(minion)
+					indices.append(minion.position)
+					wheres.append("minion1")
+			 for minion in game.minionsonBoard(2):
+				if self.canSelect(minion) and self.extraTargetCorrect(minion, comment):
+					targets.append(minion)
+					indices.append(minion.position)
+					wheres.append("minion2")
+            s = "hand%d"%self.ID
+			for i, card in enumerate(game.Hand_Deck.hands[self.ID]):
                 if self.extraTargetCorrect(card, comment):
                     targets.append(card)
-
-        return targets
-
+					indices.append(i)
+					wheres.append(s)
+        if targets: return targets, indices, wheres
+		else: return [None], [0], ['']
+		
     def actionable(self):
-        # 不考虑冻结、零攻和自身有不能攻击的debuff的情况。
-        if self.ID == self.Game.turn:
-            # 如果随从是刚到我方场上，则需要分析是否是暂时控制或者是有冲锋或者突袭。
-            if self.newonthisSide:
-                if self.status["Temp Controlled"] > 0 or self.keyWords["Charge"] > 0 or \
-                        self.keyWords["Rush"] > 0 or self.keyWords["Evolved"] > 0:
-                    return True
-            else:  # 随从已经在我方场上存在一个回合。则肯定可以行动。
-                return True
-        return False
-
+        #逻辑与炉石基本一致，但是加入了Storm关键字（同Charge）
+		return self.ID == self.Game.turn and \\
+				(not self.newonthisSide or (self.status["Borrowed"] > 0 or self.keyWords["Charge"] > 0 or self.keyWords["Storm"] > 0 or self.keyWords["Rush"] > 0))
+				
     def canAttack(self):
-        if self.actionable() == False or self.status["Frozen"] > 0:
-            return False
-        if self.attChances_base + self.attChances_extra <= self.attTimes:
-            return False
-        return True
-
+        return self.actionable() and self.attack > 0 and self.status["Frozen"] < 1 \\
+				and self.attChances_base + self.attChances_extra > self.attTimes \\
+				and self.marks["Can't Attack"] < 1
+				
     def blank_init(self, Game, ID):
         super().blank_init(Game, ID)
-        self.keyWords = self.keyWords = {"Taunt": 0, "Divine Shield": 0, "Stealth": 0,
-                                         "Lifesteal": 0, "Spell Damage": 0, "Poisonous": 0,
-                                         "Windfury": 0, "Mega Windfury": 0, "Charge": 0, "Rush": 0,
-                                         "Echo": 0, "Reborn": 0, "Evolved": 0, "Free Evolve": 0
-                                         }
-        self.marks = {"Attack Adjacent Minions": 0,
+        self.keyWords = {"Taunt": 0, "Divine Shield": 0, "Stealth": 0,
+                          "Lifesteal": 0, "Spell Damage": 0, "Poisonous": 0,
+                          "Windfury": 0, "Mega Windfury": 0, "Charge": 0, "Rush": 0,
+                          "Echo": 0, "Reborn": 0, "Evolved": 0, "Free Evolve": 0
+                          }
+        self.marks = {"Sweep": 0,
                       "Evasive": 0, "Enemy Evasive": 0,
                       "Can't Attack": 0, "Can't Attack Hero": 0,
-                      "Double Heal": 0,  # Crystalsmith Kangor
-                      "Hero Power Double Heal and Damage": 0,  # Prophet Velen, Clockwork Automation
-                      "Spell Double Heal and Damage": 0,
+                      "Heal x2": 0,  # Crystalsmith Kangor
+                      "Power Heal&Dmg x2": 0,  # Prophet Velen, Clockwork Automation
+                      "Spell Heal&Dmg x2": 0,
                       "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
                       "Can't Break": 0, "Damage Immune": 0, "Can't Be Attacked": 0,
                       "Next damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0
@@ -313,6 +309,159 @@ class AccelerateSpell(Spell):
         super().__init__(Game, ID)
 
 
+class AirboundBarrage(Spell):
+	Class, name = "Warrior", "Airbound Barrage"
+	requireTarget, mana = False, 1
+	index = "Shadowverse~Warrior~Spell~1~Airbound Barrage"
+	description = "Choose a friendly minion and then an enemy minion. Return the friendly minion to your hand and deal 3 damage to the enemy minion"
+	def available(self):
+		return self.selectableFriendlyMinionExists() and self.selectableEnemyMinionExists()
+		
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+		ownMinions = [minion for minion in self.Game.minionsonBoard(self.ID) if self.canSelect(minion)]
+		enemyMinions = [minion for minion in self.Game.minionsonBoard(3-self.ID) if self.canSelect(minion)]
+		if ownMinions and enemyMinions:
+			self.ownMinion, self.enemyMinion = None, None
+			self.Game.Discover.startSelectBoard(self, ownMinions)
+			self.Game.Discover.startSelectBoard(self, enemyMinions)
+			PRINT(self.Game, "Airbound Barrage returns friendly minion %s to player's hand"%self.ownMinion.name)
+			self.Game.returnMiniontoHand(self.ownMinion, deathrattlesStayArmed=False)
+			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+			PRINT(self.Game, "Airbound Barrage deals %d damage to enemy minion %s"%(damage, self.enemyMinion.name))
+			self.dealsDamage(self.enemyMinion, damage)
+		return None
+		
+	def selectBoardDecided(self, entity):
+		if entity.ID == self.ID: self.ownMinion = entity
+		else: self.enemyMinion = entity
+		
+		
+class EntrancingBlow(Spell):
+	Class, name = "Warrior", "Entrancing Blow"
+	requireTarget, mana = False, 2
+	index = "Shadowverse~Warrior~Spell~2~Entrancing Blow"
+	description = "fefwsfe"
+	def available(self):
+		for card in self.Game.Hand_Deck.hands[self.ID]:
+			if card.type == "Minion":
+				return True
+		return False
+		
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+		minions = [card for card in self.Game.Hand_Deck.hands[self.ID]]
+		if minions:
+			self.Game.Discover.startSelectHand(self, minions)
+		return None
+		
+	def selectHandDecided(self, obj):
+		obj.buffDebuff(2, 0)
+		minions = self.Game.minionsonBoard(3-self.ID)
+		if minions:
+			self.dealsDamage(npchoice(minions), 3)
+			
+			
+class SavoringSlash(Spell):
+	Class, name = "Warrior", "Savoring Slash"
+	requireTarget, mana = False, 2
+	index = "Shadowverse~Warrior~Spell~2~Savoring Slash"
+	description = "fefwsfe"
+	def available(self):
+		return self.selectableEnemyMinionExists()
+		
+	#葬送是什么东西
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+		minionsinHand = [card for card in self.Game.Hand_Deck.hands[self.ID]]
+		enemyMinions = [minion for minion in self.Game.minionsonBoard(3-self.ID) if self.canSelect(minion)]
+		if enemyMinions:
+			self.minioninHand, self.enemyMinion = None, None
+			if minionsinHand:
+				self.Game.Discover.startSelectHand(self, minionsinHand)
+			self.Game.Discover.startSelectBoard(self, enemyMinions)
+			if self.minioninHand:
+				pass
+			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+			PRINT(self.Game, "Savoring Slash deals %d damage to enemy minion %s"%(damage, self.enemyMinion.name))
+			self.dealsDamage(self.enemyMinion, damage)
+		return None
+		
+	def selectBoardDecided(self, entity):
+		self.enemyMinion = entity
+		
+	def selectHandDecided(self, entity):
+		self.minioninHand = entity
+		
+		
+class PantherScout(SVMinion):
+	Class, race, name = "Warrior", "", "Panther Scout"
+	mana, attack, health = 2, 2, 2
+	index = "Shadowverse~Warrior~Minion~2~2~2~None~Panther Scout~Fanfare"
+	requireTarget, keyWord, description = False, "", "Fanfare: Restore 1 Mana. Enhance 8: Gain +3/+3 and restore 7 Mana instead"
+	
+	def effectCanTrigger(self):
+		self.effectViable = self.Game.Manas.manas[self.ID] > 7
+		
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+		if :
+			PRINT(self.Game, "Panther Scout's Fanfare restores 7 Mana Crystals and gives minion +3/+3")
+			self.entity.Game.Manas.restoreManaCrystal(7, self.entity.ID)
+			self.buffDebuff(3, 3)
+		else:
+			PRINT(self.Game, "Panther Scout's Fanfare restores 1 Mana Crystal")
+			self.entity.Game.Manas.restoreManaCrystal(1, self.entity.ID)
+		return None
+		
+		
+class RoanWingedNexx(SVMinion):
+	Class, race, name = "Warrior", "", "Roan Winged Nexx"
+	mana, attack, health = 4, 3, 4
+	index = "Shadowverse~Warrior~Minion~4~3~3~None~Reclusive Ponderer~Ambush~Accelerate"
+	requireTarget, keyWord, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
+	
+class ReclusivePonderer(SVMinion):
+	Class, race, name = "Warrior", "", "Reclusive Ponderer"
+	mana, attack, health = 4, 3, 3
+	index = "Shadowverse~Warrior~Minion~4~3~3~None~Reclusive Ponderer~Ambush~Accelerate"
+	requireTarget, keyWord, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
+	
+	
+class OathlessKnight(SVMinion):
+	Class, race, name = "Warrior", "", "Terrorformer"
+	mana, attack, health = 6, 4, 4
+	index = "Shadowverse~Warrior~Minion~6~4~4~None~Terrorformer~Fanfare"
+	requireTarget, keyWord, description = True, "", "Fuse: Targets are minions with original costs no less than 2. Fanfare: If "
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.fusion = 1
+		self.fusionMaterials = 0
+		
+	def returnTrue(self, choice=0):
+		return self.fusionMaterials > 0
+		
+	def targetCorrect(self, target, choice=0):
+		return target.type == "Minion" and target.ID != self.ID and target.onBoard
+		
+	def findFusionMaterials(self):
+		return [card for card in self.Game.Hand_Deck.hands[self.ID] if card.type == "Minion" and card != self]
+		
+	def fusionDecided(self, objs):
+		if objs:
+			self.fusionMaterials += len(objs)
+			self.Game.Hand_Deck.extractfromHand(self, enemyCanSee=True)
+			for obj in objs: self.Game.Hand_Deck.extractfromHand(obj, enemyCanSee=True)
+			self.Game.Hand_Deck.addCardtoHand(self, self.ID)
+			if len(objs) > 1:
+				PRINT(self.Game, "Terrorformer's Fusion involves more than 1 minion. It gains +2/+0 and lets player draw a card")
+				self.buffDebuff(2, 0)
+				self.Game.Hand_Deck.drawCard(self.ID)
+				
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+		PRINT(self.Game, "Terrorformer's Fanfare gives minion Storm as it has no less than 2 fusion materials")
+		self.getsKeyword("Charge")
+		if target and self.fusionMaterials > 0:
+			PRINT(self.Game, "Dragon Breeder's battlecry adds a copy of friendly Dragon %s to player's hand"%target.name)
+			target.dead = True
+		return target
+		
 # """Token"""
 #
 #

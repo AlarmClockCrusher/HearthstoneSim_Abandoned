@@ -178,16 +178,18 @@ class Card:
 		
 	def canSelect(self, target):
 		if target.type == "Hero":
-			return {"Power": target.onBoard and self.Game.status[target.ID]["Evasive"] < 1 and (self.ID == target.ID or target.status["Temp Stealth"] + self.Game.status[target.ID]["Immune"] < 1),
-					"Spell": target.onBoard and self.Game.status[target.ID]["Evasive"] < 1 and (self.ID == target.ID or target.status["Temp Stealth"] + self.Game.status[target.ID]["Immune"] < 1),
-					"Minion": target.onBoard and (target.ID == self.ID or self.Game.status[target.ID]["Immune"] + target.status["Temp Stealth"] < 1),
-					"Weapon": target.onBoard and (target.ID == self.ID or self.Game.status[target.ID]["Immune"] + target.status["Temp Stealth"] < 1),
+			return target.onBoard and \\
+					{"Power": self.Game.status[target.ID]["Evasive"] < 1 and (self.ID == target.ID or target.status["Temp Stealth"] + self.Game.status[target.ID]["Immune"] < 1),
+					"Spell": self.Game.status[target.ID]["Evasive"] < 1 and (self.ID == target.ID or target.status["Temp Stealth"] + self.Game.status[target.ID]["Immune"] < 1),
+					"Minion": target.ID == self.ID or self.Game.status[target.ID]["Immune"] + target.status["Temp Stealth"] < 1,
+					"Weapon": target.ID == self.ID or self.Game.status[target.ID]["Immune"] + target.status["Temp Stealth"] < 1,
 					}[self.type]
 		else: #"Minion"
-			return {"Power": target.onBoard and target.marks["Evasive"] < 1 and (self.ID == target.ID or target.marks["Enemy Evasive"] + target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] < 1),
-					"Spell": target.onBoard and target.marks["Evasive"] < 1 and (self.ID == target.ID or target.marks["Enemy Evasive"] + target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] < 1),
-					"Minion": target.onBoard and (target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] < 1),
-					"Weapon": target.onBoard and (target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] < 1),
+			return target.onBoard and 
+					{"Power": target.marks["Evasive"] < 1 and (self.ID == target.ID or target.marks["Enemy Evasive"] + target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] < 1),
+					"Spell": target.marks["Evasive"] < 1 and (self.ID == target.ID or target.marks["Enemy Evasive"] + target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] < 1),
+					"Minion": target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] < 1,
+					"Weapon": target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] < 1,
 					}[self.type]
 					
 	def selectableEnemyMinionExists(self, choice=0):
@@ -428,38 +430,38 @@ class Card:
 	#所有打出效果的目标寻找，包括战吼，法术等
 	#To be invoked by AI and Shudderwock.
 	def findTargets(self, comment="", choice=0):
-		targets, indices, wheres = [], [], []
+		game, targets, indices, wheres = self.Game, [], [], []
 		if comment == "":
 			for ID in range(1, 3):
-				if self.canSelect(self.Game.heroes[ID]) and self.targetCorrect(self.Game.heroes[ID], choice):
-					targets.append(self.Game.heroes[ID])
+				if self.canSelect(game.heroes[ID]) and self.targetCorrect(game.heroes[ID], choice):
+					targets.append(game.heroes[ID])
 					indices.append(ID)
 					wheres.append("hero")
-			for i, minion in enumerate(self.Game.minionsonBoard(1)):
+			for minion in game.minionsonBoard(1):
 				if self.canSelect(minion) and self.targetCorrect(minion, choice):
 					targets.append(minion)
-					indices.append(i)
+					indices.append(minion.position)
 					wheres.append("minion1")
-			for i, minion in enumerate(self.Game.minionsonBoard(2)):
+			for minion in game.minionsonBoard(2):
 				if self.canSelect(minion) and self.targetCorrect(minion, choice):
 					targets.append(minion)
-					indices.append(i)
+					indices.append(minion.position)
 					wheres.append("minion2")
 		else:
 			for ID in range(1, 3):
-				if self.targetCorrect(self.Game.heroes[ID], choice):
-					targets.append(self.Game.heroes[ID])
+				if self.targetCorrect(game.heroes[ID], choice):
+					targets.append(game.heroes[ID])
 					indices.append(ID)
 					wheres.append("hero")
-			for i, minion in enumerate(self.Game.minionsonBoard(1)):
+			for minion in game.minionsonBoard(1):
 				if self.targetCorrect(minion, choice):
 					targets.append(minion)
-					indices.append(i)
+					indices.append(minion.position)
 					wheres.append("minion1")
-			for i, minion in enumerate(self.Game.minionsonBoard(2)):
+			for minion in game.minionsonBoard(2):
 				if self.targetCorrect(minion, choice):
 					targets.append(minion)
-					indices.append(i)
+					indices.append(minion.position)
 					wheres.append("minion2")
 		if targets: return targets, indices, wheres
 		else: return [None], [0], ['']
@@ -819,15 +821,11 @@ class Minion(Card):
 	#判定随从是否处于刚在我方场上登场，以及暂时控制、冲锋、突袭等。
 	def actionable(self):
 		#不考虑冻结、零攻和自身有不能攻击的debuff的情况。
-		if self.ID == self.Game.turn:
-			#如果随从是刚到我方场上，则需要分析是否是暂时控制或者是有冲锋或者突袭。
-			if self.newonthisSide:
-				if self.status["Borrowed"] > 0 or self.keyWords["Charge"] > 0 or self.keyWords["Rush"] > 0:
-					return True
-			else: #随从已经在我方场上存在一个回合。则肯定可以行动。
-				return True
-		return False
-		
+		#如果随从是刚到我方场上，则需要分析是否是暂时控制或者是有冲锋或者突袭。
+		#随从已经在我方场上存在一个回合。则肯定可以行动。
+		return self.ID == self.Game.turn and \\
+				(not self.newonthisSide or (self.status["Borrowed"] > 0 or self.keyWords["Charge"] > 0 or self.keyWords["Rush"] > 0))
+				
 	def decideAttChances_base(self):
 		if self.keyWords["Mega Windfury"] > 0:
 			self.attChances_base = 4
@@ -874,19 +872,14 @@ class Minion(Card):
 		if activity == "Borrow": self.status["Borrowed"] = 1
 		else: #activity == "Permanent" or "Return"
 			self.status["Borrowed"] = 0
-		self.STATUSPRINT()
-		
+			
 	#Whether the minion can select the attack target or not.
 	def canAttack(self):
-		if self.actionable() == False or self.attack < 1 or self.status["Frozen"] > 0:
-			return False
 		#THE CHARGE/RUSH MINIONS WILL GAIN ATTACKCHANCES WHEN THEY APPEAR
-		if self.attChances_base + self.attChances_extra <= self.attTimes:
-			return False
-		if self.marks["Can't Attack"] > 0:
-			return False
-		return True
-		
+		return self.actionable() and self.attack > 0 and self.status["Frozen"] < 1 \\
+				and self.attChances_base + self.attChances_extra > self.attTimes \\
+				and self.marks["Can't Attack"] < 1
+				
 	def canAttackTarget(self, target):
 		return self.canAttack() and target.selectablebyBattle(self) and \
 			(target.type == "Minion" or (target.type == "Hero" and \
