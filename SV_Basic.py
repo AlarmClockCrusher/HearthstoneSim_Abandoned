@@ -14,100 +14,145 @@ def extractfrom(target, listObj):
 	except: return None
 	
 def fixedList(listObject):
-    return listObject[0:len(listObject)]
+	return listObject[0:len(listObject)]
 
 def PRINT(game, string, *args):
 	if game.GUI:
 		if not game.mode: game.GUI.printInfo(string)
 	elif not game.mode: print("game's guide mode is 0\n", string)
-	
-Classes = ["Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin", "Priest", "Rogue", "Shaman", "Swordcraft",
-           "Warlock", "Warrior"]
+
+SVClasses = ["Forestcraft","Swordcraft","Runecraft","Drangoncraft","Shadowcraft","Bloodcraft","Havencraft","Portalcraft"]
+Classes = ["Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin", "Priest", "Rogue", "Shaman","Warlock", "Warrior",
+		   "Forestcraft","Swordcraft","Runecraft","Drangoncraft","Shadowcraft","Bloodcraft","Havencraft","Portalcraft"]
 ClassesandNeutral = ["Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin", "Priest", "Rogue", "Shaman",
-                     "Swordcraft", "Warlock", "Warrior", "Neutral"]
+					"Warlock", "Warrior", "Neutral","Forestcraft","Swordcraft","Runecraft","Drangoncraft","Shadowcraft","Bloodcraft","Havencraft","Portalcraft"]
 
 
 class Evolve(HeroPower):
-    mana, name, requireTarget = 0, "Evolve", True
-    index = "Shadowverse~Hero Power~0~Evolve"
-    description = "Evolve an unevolved friendly minion."
+	mana, name, requireTarget = 0, "Evolve", True
+	index = "Shadowverse~Hero Power~0~Evolve"
+	description = "Evolve an unevolved friendly minion."
 
-    def available(self):
-        if self.selectableFriendlyExists() and self.heroPowerTimes < self.heroPowerChances_base + \
-                self.heroPowerChances_extra and \
-                self.Game.CounterHandler.numTurnPassedThisGame[self.ID] >= \
-                self.Game.CounterHandler.numEvolutionTurn[self.ID]:
-            if self.Game.CounterHandler.numEvolutionPoint[self.ID] > 0:
-                return True
-            else:
-                hasFree = False
-                for minion in self.Game.minionsonBoard(self.ID):
-                    if isinstance(minion, ShadowverseMinion) and minion.keyWords["Free Evolve"] > 0:
-                        hasFree = True
-                        break
-                return hasFree
-        return False
+	def available(self):
+		if self.selectableFriendlyMinionExists() and self.heroPowerTimes < self.heroPowerChances_base + \
+				self.heroPowerChances_extra and \
+				self.Game.Counters.turns[self.ID] >= \
+				self.Game.Counters.numEvolutionTurn[self.ID]:
+			if self.Game.Counters.numEvolutionPoint[self.ID] > 0:
+				return True
+			else:
+				hasFree = False
+				for minion in self.Game.minionsonBoard(self.ID):
+					if isinstance(minion, ShadowverseMinion) and minion.keyWords["Free Evolve"] > 0:
+						hasFree = True
+						break
+				return hasFree
+		return False
 
-    def targetCorrect(self, target, choice=0):
-        if target.cardType == "Minion" and target.ID == self.ID and target.onBoard \
-                and isinstance(target, ShadowverseMinion) and target.keyWords["Evolved"] < 1 \
-                and target.marks["Can't Evolve"] == 0:
-            if self.Game.CounterHandler.numEvolutionPoint[self.ID] == 0:
-                return target.keyWords["Free Evolve"] > 0
-            else:
-                return True
-        return False
+	def targetCorrect(self, target, choice=0):
+		if target.cardType == "Minion" and target.ID == self.ID and target.onBoard \
+				and isinstance(target, ShadowverseMinion) and target.keyWords["Evolved"] < 1 \
+				and target.marks["Can't Evolve"] == 0:
+			if self.Game.Counters.numEvolutionPoint[self.ID] == 0:
+				return target.marks["Free Evolve"] > 0
+			else:
+				return True
+		return False
 
-    def effect(self, target, choice=0):
-        if target.keyWords["Free Evolve"] == 0:
-            self.Game.CounterHandler.numEvolutionPoint[self.ID] -= 1
-        target.evolve()
-        if target.evolveNeedTarget and target.returnTargets("inHandEvolving"):
-            self.Game.ExtraSelectHandler.startSelect(target, "inHandEvolving")
-        else:
-            target.inHandEvolving()
-        return 0
+	def effect(self, target, choice=0):
+		if target.marks["Free Evolve"] == 0:
+			self.Game.Counters.numEvolutionPoint[self.ID] -= 1
+		target.evolve()
+		target.inHandEvolving()
+		return 0
 
+class Arisa(Hero):
+	Class, name, heroPower = "Forestcraft", "Erika", Evolve
+
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.health, self.health_upper, self.armor = 20, 20, 0
 
 class Erika(Hero):
-    Class, name, heroPower = "Swordcraft", "Erika", Evolve
+	Class, name, heroPower = "Swordcraft", "Erika", Evolve
 
-    def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
-        self.health, self.health_upper, self.armor = 20, 20, 0
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.health, self.health_upper, self.armor = 20, 20, 0
+
+class Isabelle(Hero):
+	Class, name, heroPower = "Runecraft", "Erika", Evolve
+
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.health, self.health_upper, self.armor = 20, 20, 0
+
+class Rowen(Hero):
+	Class, name, heroPower = "Dragoncraft", "Erika", Evolve
+
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.health, self.health_upper, self.armor = 20, 20, 0
+
+class Luna(Hero):
+	Class, name, heroPower = "Shadowcraft", "Erika", Evolve
+
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.health, self.health_upper, self.armor = 20, 20, 0
+
+class Urias(Hero):
+	Class, name, heroPower = "Bloodcraft", "Erika", Evolve
+
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.health, self.health_upper, self.armor = 20, 20, 0
+
+class Eris(Hero):
+	Class, name, heroPower = "Havencraft", "Erika", Evolve
+
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.health, self.health_upper, self.armor = 20, 20, 0
+
+class Yuwan(Hero):
+	Class, name, heroPower = "Portalcraft", "Erika", Evolve
+
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.health, self.health_upper, self.armor = 20, 20, 0
 
 
-class SVMinion(Minion):
-    attackAdd = 2
-    healthAdd = 2
-    evolveNeedTarget = False
+class ShadowverseMinion(Minion):
+	attackAdd = 2
+	healthAdd = 2
 
-    def evolve(self):
-        if self.keyWords["Evolved"] < 1:
-            self.attack_0 += self.attackAdd
-            self.health_0 += self.healthAdd
-            self.statReset(self.attack + self.attackAdd, self.health + self.healthAdd)
-            self.getsKeyword("Evolved")
-            PRINT(self, self.name + " evolves.")
-            self.Game.CounterHandler.numMinionsEvolvedThisGame[self.ID] += 1
-            for card in self.Game.Hand_Deck.hands[self.ID]:
-                if isinstance(card, ShadowverseMinion) and "UB" in card.marks:
-                    card.marks["UB"] -= 1
-            self.inEvolving()
+	def evolve(self):
+		if self.keyWords["Evolved"] < 1:
+			self.attack_0 += self.attackAdd
+			self.health_0 += self.healthAdd
+			self.statReset(self.attack + self.attackAdd, self.health + self.healthAdd)
+			self.getsKeyword("Evolved")
+			PRINT(self, self.name + " evolves.")
+			self.Game.Counters.evolvedThisGame[self.ID] += 1
+			for card in self.Game.Hand_Deck.hands[self.ID]:
+				if isinstance(card, ShadowverseMinion) and "UB" in card.marks:
+					card.marks["UB"] -= 1
+			self.inEvolving()
 
-    def inEvolving(self):
-        return
+	def inEvolving(self):
+		return
 
-    def inHandEvolving(self, target=None):
-        return
+	def inHandEvolving(self, target=None):
+		return
 
-    def extraTargetCorrect(self, target, affair):
-        return target is not None
+	def extraTargetCorrect(self, target, affair):
+		return target is not None
 
-    def returnTargets(self, comment="", choice=0):
-        game, targets, indices, wheres = self.Game, [], [], []
-        if comment == "":
-            for ID in range(1, 3):
+	def returnTargets(self, comment="", choice=0):
+		game, targets, indices, wheres = self.Game, [], [], []
+		if comment == "":
+			for ID in range(1, 3):
 				if self.canSelect(game.heroes[ID]) and self.targetCorrect(game.heroes[ID], choice):
 					targets.append(game.heroes[ID])
 					indices.append(ID)
@@ -122,8 +167,8 @@ class SVMinion(Minion):
 					targets.append(minion)
 					indices.append(minion.position)
 					wheres.append("minion2")
-        elif comment == "IgnoreStealthandImmune":
-            for ID in range(1, 3):
+		elif comment == "IgnoreStealthandImmune":
+			for ID in range(1, 3):
 				if self.targetCorrect(game.heroes[ID], choice):
 					targets.append(game.heroes[ID])
 					indices.append(ID)
@@ -138,175 +183,167 @@ class SVMinion(Minion):
 					targets.append(minion)
 					indices.append(minion.position)
 					wheres.append("minion2")
-        else:
-            for ID in range(1, 3):
+		else:
+			for ID in range(1, 3):
 				if self.canSelect(game.heroes[ID]) and self.extraTargetCorrect(game.heroes[ID], comment):
 					targets.append(game.heroes[ID])
 					indices.append(ID)
 					wheres.append("hero")
-            for minion in game.minionsonBoard(1):
+			for minion in game.minionsonBoard(1):
 				if self.canSelect(minion) and self.extraTargetCorrect(minion, comment):
 					targets.append(minion)
 					indices.append(minion.position)
 					wheres.append("minion1")
-			 for minion in game.minionsonBoard(2):
+			for minion in game.minionsonBoard(2):
 				if self.canSelect(minion) and self.extraTargetCorrect(minion, comment):
 					targets.append(minion)
 					indices.append(minion.position)
 					wheres.append("minion2")
-            s = "hand%d"%self.ID
+			s = "hand%d"%self.ID
 			for i, card in enumerate(game.Hand_Deck.hands[self.ID]):
-                if self.extraTargetCorrect(card, comment):
-                    targets.append(card)
+				if self.extraTargetCorrect(card, comment):
+					targets.append(card)
 					indices.append(i)
 					wheres.append(s)
-        if targets: return targets, indices, wheres
+		if targets: return targets, indices, wheres
 		else: return [None], [0], ['']
 		
-    def actionable(self):
-        #逻辑与炉石基本一致，但是加入了Storm关键字（同Charge）
-		return self.ID == self.Game.turn and \\
-				(not self.newonthisSide or (self.status["Borrowed"] > 0 or self.keyWords["Charge"] > 0 or self.keyWords["Storm"] > 0 or self.keyWords["Rush"] > 0))
+	def actionable(self):
+		return self.ID == self.Game.turn and \
+				(not self.newonthisSide or (self.status["Borrowed"] > 0 or self.keyWords["Charge"] > 0 or self.keyWords["Rush"] > 0 or self.keyWords["Evolved"] > 0))
 				
-    def canAttack(self):
-        return self.actionable() and self.attack > 0 and self.status["Frozen"] < 1 \\
-				and self.attChances_base + self.attChances_extra > self.attTimes \\
+	def canAttack(self):
+		return self.actionable() and self.status["Frozen"] < 1 \
+				and self.attChances_base + self.attChances_extra > self.attTimes \
 				and self.marks["Can't Attack"] < 1
 				
-    def blank_init(self, Game, ID):
-        super().blank_init(Game, ID)
-        self.keyWords = {"Taunt": 0, "Divine Shield": 0, "Stealth": 0,
-                          "Lifesteal": 0, "Spell Damage": 0, "Poisonous": 0,
-                          "Windfury": 0, "Mega Windfury": 0, "Charge": 0, "Rush": 0,
-                          "Echo": 0, "Reborn": 0, "Evolved": 0, "Free Evolve": 0
-                          }
-        self.marks = {"Sweep": 0,
-                      "Evasive": 0, "Enemy Evasive": 0,
-                      "Can't Attack": 0, "Can't Attack Hero": 0,
-                      "Heal x2": 0,  # Crystalsmith Kangor
-                      "Power Heal&Dmg x2": 0,  # Prophet Velen, Clockwork Automation
-                      "Spell Heal&Dmg x2": 0,
-                      "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
-                      "Can't Break": 0, "Damage Immune": 0, "Can't Be Attacked": 0,
-                      "Next damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0
-                      }
-        self.keyWordbyAura = {"Charge": 0, "Rush": 0, "Mega Windfury": 0, "Free Evolve": 0,
-                              "Auras": []}
+	def blank_init(self, Game, ID):
+		super().blank_init(Game, ID)
+		self.keyWords = {"Taunt": 0, "Divine Shield": 0, "Stealth": 0,
+						  "Lifesteal": 0, "Spell Damage": 0, "Poisonous": 0,
+						  "Windfury": 0, "Mega Windfury": 0, "Charge": 0, "Rush": 0,
+						  "Echo": 0, "Reborn": 0, "Evolved": 0, "Bane":0, "Drain":0
+						  }
+		self.marks = {"Sweep": 0,
+					  "Evasive": 0, "Enemy Evasive": 0,
+					  "Can't Attack": 0, "Can't Attack Hero": 0,
+					  "Heal x2": 0,  # Crystalsmith Kangor
+					  "Power Heal&Dmg x2": 0,  # Prophet Velen, Clockwork Automation
+					  "Spell Heal&Dmg x2": 0,
+					  "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
+					  "Can't Break": 0, "Damage Immune": 0, "Can't Be Attacked": 0,
+					  "Next damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0
+					  }
+		self.keyWordbyAura = {"Charge": 0, "Rush": 0, "Mega Windfury": 0, "Free Evolve": 0,
+							  "Auras": []}
 
-    def createCopy(self, game):
-        if self in game.copiedObjs:
-            return game.copiedObjs[self]
-        else:
-            Copy = type(self)(game, self.ID)
-            game.copiedObjs[self] = Copy
-            Copy.mana = self.mana
-            Copy.manaModifications = [mod.selfCopy(Copy) for mod in self.manaModifications]
-            Copy.attack, Copy.attack_0, Copy.attack_Enchant = self.attack, self.attack_0, self.attack_Enchant
-            Copy.health_0, Copy.health, Copy.health_upper, Copy.health_Enchant = self.health_0, self.health, self.health_upper, self.health_Enchant
-            Copy.tempAttackChanges = copy.deepcopy(self.tempAttackChanges)
-            Copy.statbyAura = [self.statbyAura[0], self.statbyAura[1],
-                               [aura_Receiver.selfCopy(Copy) for aura_Receiver in self.statbyAura[2]]]
-            for key, value in self.keyWordbyAura.items():
-                if key != "Auras":
-                    Copy.keyWordbyAura[key] = value
-                else:
-                    Copy.keyWordbyAura[key] = [aura_Receiver.selfCopy(Copy) for aura_Receiver in
-                                               self.keyWordbyAura["Auras"]]
-            Copy.keyWords = copy.deepcopy(self.keyWords)
-            Copy.marks = copy.deepcopy(self.marks)
-            Copy.status = copy.deepcopy(self.status)
-            Copy.identity = copy.deepcopy(self.identity)
-            Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
-            if hasattr(self, "progress"): Copy.progress = self.progress
-            Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
-            Copy.newonthisSide, Copy.firstTimeonBoard = self.newonthisSide, self.firstTimeonBoard
-            Copy.sequence, Copy.position = self.sequence, self.position
-            Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
-            Copy.options = [option.selfCopy(Copy) for option in self.options]
-            for key, value in self.triggers.items():
-                Copy.triggers[key] = [getattr(Copy, func.__qualname__.split(".")[1]) for func in value]
-            Copy.appearResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.appearResponse]
-            Copy.disappearResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.disappearResponse]
-            Copy.silenceResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.silenceResponse]
-            for key, value in self.auras.items():
-                Copy.auras[key] = value.createCopy(game)
-            Copy.deathrattles = [trig.createCopy(game) for trig in self.deathrattles]
-            Copy.triggersonBoard = [trig.createCopy(game) for trig in self.triggersonBoard]
-            Copy.triggersinHand = [trig.createCopy(game) for trig in self.triggersinHand]
-            Copy.triggersinDeck = [trig.createCopy(game) for trig in self.triggersinDeck]
-            Copy.history = copy.deepcopy(self.history)
-            Copy.attackAdd = self.attackAdd
-            Copy.healthAdd = self.healthAdd
-            Copy.evolveNeedTarget = self.evolveNeedTarget
-            self.assistCreateCopy(Copy)
-            return Copy
+	def createCopy(self, game):
+		if self in game.copiedObjs:
+			return game.copiedObjs[self]
+		else:
+			Copy = type(self)(game, self.ID)
+			game.copiedObjs[self] = Copy
+			Copy.mana = self.mana
+			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
+			Copy.attack, Copy.attack_0, Copy.attack_Enchant = self.attack, self.attack_0, self.attack_Enchant
+			Copy.health_0, Copy.health, Copy.health_max = self.health_0, self.health, self.health_max
+			Copy.tempAttChanges = copy.deepcopy(self.tempAttChanges)
+			Copy.statbyAura = [self.statbyAura[0], self.statbyAura[1], [aura_Receiver.selfCopy(Copy) for aura_Receiver in self.statbyAura[2]]]
+			for key, value in self.keyWordbyAura.items():
+				if key != "Auras": Copy.keyWordbyAura[key] = value
+				else: Copy.keyWordbyAura[key] = [aura_Receiver.selfCopy(Copy) for aura_Receiver in self.keyWordbyAura["Auras"]]
+			Copy.keyWords = copy.deepcopy(self.keyWords)
+			Copy.marks = copy.deepcopy(self.marks)
+			Copy.status = copy.deepcopy(self.status)
+			Copy.identity = copy.deepcopy(self.identity)
+			Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
+			if hasattr(self, "progress"): Copy.progress = self.progress
+			Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
+			Copy.newonthisSide, Copy.firstTimeonBoard = self.newonthisSide, self.firstTimeonBoard
+			Copy.sequence, Copy.position = self.sequence, self.position
+			Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
+			Copy.options = [option.selfCopy(Copy) for option in self.options]
+			for key, value in self.triggers.items():
+				Copy.triggers[key] = [getattr(Copy, func.__qualname__.split(".")[1]) for func in value]
+			Copy.appearResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.appearResponse]
+			Copy.disappearResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.disappearResponse]
+			Copy.silenceResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.silenceResponse]
+			for key, value in self.auras.items():
+				Copy.auras[key] = value.createCopy(game)
+			Copy.deathrattles = [trig.createCopy(game) for trig in self.deathrattles]
+			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
+			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
+			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
+			Copy.history = copy.deepcopy(self.history)
+			Copy.attackAdd = self.attackAdd
+			Copy.healthAdd = self.healthAdd
+			self.assistCreateCopy(Copy)
+			return Copy
 
 
 class AccelerateMinion(ShadowverseMinion):
-    accelerate = 0
+	accelerate = 0
+	def getMana(self):
+		if self.Game.ManaHandler.manas[self.ID] < self.mana:
+			return min(self.accelerate, self.mana)
+		else:
+			return self.mana
 
-    def getMana(self):
-        if self.Game.ManaHandler.manas[self.ID] < self.mana:
-            return min(self.accelerate, self.mana)
-        else:
-            return self.mana
+	def getAccelerateSpell(self):
+		return None
 
-    def getAccelerateSpell(self):
-        return None
-
-    def createCopy(self, game):
-        if self in game.copiedObjs:
-            return game.copiedObjs[self]
-        else:
-            Copy = type(self)(game, self.ID)
-            game.copiedObjs[self] = Copy
-            Copy.mana = self.mana
-            Copy.manaModifications = [mod.selfCopy(Copy) for mod in self.manaModifications]
-            Copy.attack, Copy.attack_0, Copy.attack_Enchant = self.attack, self.attack_0, self.attack_Enchant
-            Copy.health_0, Copy.health, Copy.health_upper, Copy.health_Enchant = self.health_0, self.health, self.health_upper, self.health_Enchant
-            Copy.tempAttackChanges = copy.deepcopy(self.tempAttackChanges)
-            Copy.statbyAura = [self.statbyAura[0], self.statbyAura[1],
-                               [aura_Receiver.selfCopy(Copy) for aura_Receiver in self.statbyAura[2]]]
-            for key, value in self.keyWordbyAura.items():
-                if key != "Auras":
-                    Copy.keyWordbyAura[key] = value
-                else:
-                    Copy.keyWordbyAura[key] = [aura_Receiver.selfCopy(Copy) for aura_Receiver in
-                                               self.keyWordbyAura["Auras"]]
-            Copy.keyWords = copy.deepcopy(self.keyWords)
-            Copy.marks = copy.deepcopy(self.marks)
-            Copy.status = copy.deepcopy(self.status)
-            Copy.identity = copy.deepcopy(self.identity)
-            Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
-            if hasattr(self, "progress"): Copy.progress = self.progress
-            Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
-            Copy.newonthisSide, Copy.firstTimeonBoard = self.newonthisSide, self.firstTimeonBoard
-            Copy.sequence, Copy.position = self.sequence, self.position
-            Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
-            Copy.options = [option.selfCopy(Copy) for option in self.options]
-            for key, value in self.triggers.items():
-                Copy.triggers[key] = [getattr(Copy, func.__qualname__.split(".")[1]) for func in value]
-            Copy.appearResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.appearResponse]
-            Copy.disappearResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.disappearResponse]
-            Copy.silenceResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.silenceResponse]
-            for key, value in self.auras.items():
-                Copy.auras[key] = value.createCopy(game)
-            Copy.deathrattles = [trig.createCopy(game) for trig in self.deathrattles]
-            Copy.triggersonBoard = [trig.createCopy(game) for trig in self.triggersonBoard]
-            Copy.triggersinHand = [trig.createCopy(game) for trig in self.triggersinHand]
-            Copy.triggersinDeck = [trig.createCopy(game) for trig in self.triggersinDeck]
-            Copy.history = copy.deepcopy(self.history)
-            Copy.attackAdd = self.attackAdd
-            Copy.healthAdd = self.healthAdd
-            Copy.evolveNeedTarget = self.evolveNeedTarget
-            Copy.accelerate = self.accelerate
-            self.assistCreateCopy(Copy)
-            return Copy
-
+	def createCopy(self, game):
+		if self in game.copiedObjs:
+			return game.copiedObjs[self]
+		else:
+			Copy = type(self)(game, self.ID)
+			game.copiedObjs[self] = Copy
+			Copy.mana = self.mana
+			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
+			Copy.attack, Copy.attack_0, Copy.attack_Enchant = self.attack, self.attack_0, self.attack_Enchant
+			Copy.health_0, Copy.health, Copy.health_max = self.health_0, self.health, self.health_max
+			Copy.tempAttChanges = copy.deepcopy(self.tempAttChanges)
+			Copy.statbyAura = [self.statbyAura[0], self.statbyAura[1],
+							   [aura_Receiver.selfCopy(Copy) for aura_Receiver in self.statbyAura[2]]]
+			for key, value in self.keyWordbyAura.items():
+				if key != "Auras":
+					Copy.keyWordbyAura[key] = value
+				else:
+					Copy.keyWordbyAura[key] = [aura_Receiver.selfCopy(Copy) for aura_Receiver in
+											   self.keyWordbyAura["Auras"]]
+			Copy.keyWords = copy.deepcopy(self.keyWords)
+			Copy.marks = copy.deepcopy(self.marks)
+			Copy.status = copy.deepcopy(self.status)
+			Copy.identity = copy.deepcopy(self.identity)
+			Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
+			if hasattr(self, "progress"): Copy.progress = self.progress
+			Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
+			Copy.newonthisSide, Copy.firstTimeonBoard = self.newonthisSide, self.firstTimeonBoard
+			Copy.sequence, Copy.position = self.sequence, self.position
+			Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
+			Copy.options = [option.selfCopy(Copy) for option in self.options]
+			for key, value in self.triggers.items():
+				Copy.triggers[key] = [getattr(Copy, func.__qualname__.split(".")[1]) for func in value]
+			Copy.appearResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.appearResponse]
+			Copy.disappearResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in
+									  self.disappearResponse]
+			Copy.silenceResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.silenceResponse]
+			for key, value in self.auras.items():
+				Copy.auras[key] = value.createCopy(game)
+			Copy.deathrattles = [trig.createCopy(game) for trig in self.deathrattles]
+			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
+			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
+			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
+			Copy.history = copy.deepcopy(self.history)
+			Copy.accelerate = self.accelerate
+			Copy.attackAdd = self.attackAdd
+			Copy.healthAdd = self.healthAdd
+			self.assistCreateCopy(Copy)
+			return Copy
 
 class AccelerateSpell(Spell):
-    def __init__(self, Game, ID):
-        super().__init__(Game, ID)
+	def __init__(self, Game, ID):
+		super().__init__(Game, ID)
 
 
 class AirboundBarrage(Spell):
@@ -357,7 +394,8 @@ class EntrancingBlow(Spell):
 		obj.buffDebuff(2, 0)
 		minions = self.Game.minionsonBoard(3-self.ID)
 		if minions:
-			self.dealsDamage(npchoice(minions), 3)
+			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+			self.dealsDamage(npchoice(minions), damage)
 			
 			
 class SavoringSlash(Spell):
@@ -391,7 +429,7 @@ class SavoringSlash(Spell):
 		self.minioninHand = entity
 		
 		
-class PantherScout(SVMinion):
+class PantherScout(ShadowverseMinion):
 	Class, race, name = "Warrior", "", "Panther Scout"
 	mana, attack, health = 2, 2, 2
 	index = "Shadowverse~Warrior~Minion~2~2~2~None~Panther Scout~Fanfare"
@@ -411,20 +449,20 @@ class PantherScout(SVMinion):
 		return None
 		
 		
-class RoanWingedNexx(SVMinion):
+class RoanWingedNexx(ShadowverseMinion):
 	Class, race, name = "Warrior", "", "Roan Winged Nexx"
 	mana, attack, health = 4, 3, 4
 	index = "Shadowverse~Warrior~Minion~4~3~3~None~Reclusive Ponderer~Ambush~Accelerate"
 	requireTarget, keyWord, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
 	
-class ReclusivePonderer(SVMinion):
+class ReclusivePonderer(ShadowverseMinion):
 	Class, race, name = "Warrior", "", "Reclusive Ponderer"
 	mana, attack, health = 4, 3, 3
 	index = "Shadowverse~Warrior~Minion~4~3~3~None~Reclusive Ponderer~Ambush~Accelerate"
 	requireTarget, keyWord, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
 	
-	
-class OathlessKnight(SVMinion):
+
+class OathlessKnight(ShadowverseMinion):
 	Class, race, name = "Warrior", "", "Terrorformer"
 	mana, attack, health = 6, 4, 4
 	index = "Shadowverse~Warrior~Minion~6~4~4~None~Terrorformer~Fanfare"
@@ -673,7 +711,7 @@ class OathlessKnight(SVMinion):
 #         return self.entity.onBoard and subject == self.entity
 #
 #     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#         evolved = self.entity.Game.CounterHandler.numMinionsEvolvedThisGame[ID]
+#         evolved = self.entity.Game.Counters.numMinionsEvolvedThisGame[ID]
 #         PRINT(self, f"Minion {self.entity.name} attacks and get +{evolved}/+{evolved}")
 #         self.entity.buffDebuff(evolved, evolved)
 #
@@ -713,10 +751,10 @@ class OathlessKnight(SVMinion):
 #     requireTarget, keyWord, description = False, "", "Fanfare: Rally (10) - Put a Dread Hound into your hand."
 #
 #     def effectCanTrigger(self):
-#         self.effectViable = self.Game.CounterHandler.numMinionsSummonThisGame[self.ID] >= 10
+#         self.effectViable = self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 10
 #
 #     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-#         if self.Game.CounterHandler.numMinionsSummonThisGame[self.ID] >= 10:
+#         if self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 10:
 #             if self.Game.Hand_Deck.handNotFull(self.ID):
 #                 self.Game.Hand_Deck.addCardtoHand(DreadHound(self.Game, self.ID), self.ID)
 #         return None
@@ -805,7 +843,7 @@ class OathlessKnight(SVMinion):
 #     description = "Put a random Swordcraft follower from your deck into your hand.Rally (10): Put 2 random Swordcraft followers into your hand instead."
 #
 #     def effectCanTrigger(self):
-#         self.effectViable = self.Game.CounterHandler.numMinionsSummonThisGame[self.ID] >= 10
+#         self.effectViable = self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 10
 #
 #     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #         minions = []
@@ -816,7 +854,7 @@ class OathlessKnight(SVMinion):
 #             card = np.random.choice(minions)
 #             self.Game.Hand_Deck.drawCard(self.ID, card)
 #             PRINT(self, f"Pompous Summons let you draw {card.name}.")
-#         if self.Game.CounterHandler.numMinionsSummonThisGame[self.ID] >= 10:
+#         if self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 10:
 #             minions = []
 #             for card in self.Game.Hand_Deck.decks[self.ID]:
 #                 if card.cardType == "Minion" and card.Class == "Swordcraft":
@@ -1066,10 +1104,10 @@ class OathlessKnight(SVMinion):
 #         self.deathrattles = [DeathrattleHonorableThief(self)]
 #
 #     def effectCanTrigger(self):
-#         self.effectViable = self.Game.CounterHandler.numMinionsSummonThisGame[self.ID] >= 7
+#         self.effectViable = self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 7
 #
 #     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-#         if self.Game.CounterHandler.numMinionsSummonThisGame[self.ID] >= 7:
+#         if self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 7:
 #             self.evolve()
 #         return None
 #
@@ -1169,10 +1207,10 @@ class OathlessKnight(SVMinion):
 #         return self.Game.spaceonBoard(self.ID)
 #
 #     def effectCanTrigger(self):
-#         self.effectViable = self.Game.CounterHandler.numMinionsSummonThisGame[self.ID] >= 15
+#         self.effectViable = self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 15
 #
 #     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-#         if self.Game.CounterHandler.numMinionsSummonThisGame[self.ID] >= 15:
+#         if self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 15:
 #             PRINT(self, "Shield Phalanx summons a Frontguard General and Knight.")
 #             self.Game.summonMinion([FrontguardGeneral(self.Game, self.ID), Knight(self.Game, self.ID)],
 #                                    (-11, "totheRightEnd"), self.ID)
@@ -1669,10 +1707,10 @@ class OathlessKnight(SVMinion):
 #         self.triggersonBoard = [TriggerPecorinePeckishPrincess(self)]
 #
 #     def effectCanTrigger(self):
-#         self.effectViable = self.marks["UB"] <= self.Game.CounterHandler.numTurnPassedThisGame[self.ID]
+#         self.effectViable = self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]
 #
 #     def targetExists(self, choice=0):
-#         if self.marks["UB"] <= self.Game.CounterHandler.numTurnPassedThisGame[self.ID]:
+#         if self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
 #             return self.selectableEnemyMinionExists(choice)
 #         return False
 #
@@ -1680,7 +1718,7 @@ class OathlessKnight(SVMinion):
 #         return target.cardType == "Minion" and target.ID != self.ID and target.onBoard
 #
 #     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-#         if self.marks["UB"] <= self.Game.CounterHandler.numTurnPassedThisGame[self.ID]:
+#         if self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
 #             self.buffDebuff(3, 3)
 #             if target:
 #                 PRINT(self, f"Pecorine, Peckish Princess deals 5 damage to minion {target.name}")
@@ -1707,10 +1745,10 @@ class OathlessKnight(SVMinion):
 #     requireTarget, keyWord, description = False, "Stealth", "Ambush.Fanfare: If at least 10 allied followers have been destroyed this match, gain +1/+1 and randomly destroy 1 of the enemy followers with the highest attack in play."
 #
 #     def effectCanTrigger(self):
-#         self.effectViable = self.Game.CounterHandler.numMinionsDiedThisGame[self.ID] >= 10
+#         self.effectViable = self.Game.Counters.numMinionsDiedThisGame[self.ID] >= 10
 #
 #     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-#         if self.Game.CounterHandler.numMinionsDiedThisGame[self.ID] >= 10:
+#         if self.Game.Counters.numMinionsDiedThisGame[self.ID] >= 10:
 #             self.buffDebuff(1, 1)
 #             PRINT(self, f"Tsubaki of the Demon Blade's Fanfare gives itself +1/+1.")
 #             ts = self.Game.minionsAlive(3 - self.ID)
@@ -1885,12 +1923,12 @@ class OathlessKnight(SVMinion):
 #
 #     def targetExists(self, choice=0):
 #         selfPoint, oppPoint = 0, 0
-#         if self.Game.CounterHandler.numTurnPassedThisGame[self.ID] >= \
-#                 self.Game.CounterHandler.numEvolutionTurn[self.ID]:
-#             selfPoint = self.Game.CounterHandler.numEvolutionPoint[self.ID]
-#         if self.Game.CounterHandler.numTurnPassedThisGame[3 - self.ID] >= \
-#                 self.Game.CounterHandler.numEvolutionTurn[3 - self.ID]:
-#             oppPoint = self.Game.CounterHandler.numEvolutionPoint[3 - self.ID]
+#         if self.Game.Counters.numTurnPassedThisGame[self.ID] >= \
+#                 self.Game.Counters.numEvolutionTurn[self.ID]:
+#             selfPoint = self.Game.Counters.numEvolutionPoint[self.ID]
+#         if self.Game.Counters.numTurnPassedThisGame[3 - self.ID] >= \
+#                 self.Game.Counters.numEvolutionTurn[3 - self.ID]:
+#             oppPoint = self.Game.Counters.numEvolutionPoint[3 - self.ID]
 #         return self.selectableEnemyMinionExists() and selfPoint > oppPoint
 #
 #     def targetCorrect(self, target, choice=0):
@@ -1898,12 +1936,12 @@ class OathlessKnight(SVMinion):
 #
 #     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #         selfPoint, oppPoint = 0, 0
-#         if self.Game.CounterHandler.numTurnPassedThisGame[self.ID] >= \
-#                 self.Game.CounterHandler.numEvolutionTurn[self.ID]:
-#             selfPoint = self.Game.CounterHandler.numEvolutionPoint[self.ID]
-#         if self.Game.CounterHandler.numTurnPassedThisGame[3 - self.ID] >= \
-#                 self.Game.CounterHandler.numEvolutionTurn[3 - self.ID]:
-#             oppPoint = self.Game.CounterHandler.numEvolutionPoint[3 - self.ID]
+#         if self.Game.Counters.numTurnPassedThisGame[self.ID] >= \
+#                 self.Game.Counters.numEvolutionTurn[self.ID]:
+#             selfPoint = self.Game.Counters.numEvolutionPoint[self.ID]
+#         if self.Game.Counters.numTurnPassedThisGame[3 - self.ID] >= \
+#                 self.Game.Counters.numEvolutionTurn[3 - self.ID]:
+#             oppPoint = self.Game.Counters.numEvolutionPoint[3 - self.ID]
 #         if selfPoint > oppPoint:
 #             self.buffDebuff(0, 2)
 #             PRINT(self, f"Panther Scout's Fanfare gives itself +0/+2.")
@@ -1935,12 +1973,12 @@ class OathlessKnight(SVMinion):
 #
 #     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 #         return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.spaceonBoard(self.entity.ID) > 0 and \
-#                self.entity.Game.CounterHandler.numMinionsSummonThisGame[self.entity.ID] >= 10 and \
-#                self.entity.name not in self.entity.Game.CounterHandler.minionInvocationThisTurn
+#                self.entity.Game.Counters.numMinionsSummonThisGame[self.entity.ID] >= 10 and \
+#                self.entity.name not in self.entity.Game.Counters.minionInvocationThisTurn
 #
 #     def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #         if self.entity.Game.spaceonBoard(self.entity.ID) > 0:
-#             self.entity.Game.CounterHandler.minionInvocationThisTurn.append(self.entity.name)
+#             self.entity.Game.Counters.minionInvocationThisTurn.append(self.entity.name)
 #             self.entity.Game.summonfromDeck(self.entity, -1, self.entity.ID)
 #             PRINT(self, f"Fieran, Havensent Wind God is summoned from player {self.entity.ID}'s deck.")
 #
@@ -1960,9 +1998,9 @@ class OathlessKnight(SVMinion):
 #     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #         if self.ID == self.Game.turn:
 #             target.dead = True
-#         if self.Game.CounterHandler.numMinionsEvolvedThisGame[self.ID] > 3:
+#         if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] > 3:
 #             self.Game.ManaHandler.manas[self.ID] += 3
-#         if self.Game.CounterHandler.numMinionsEvolvedThisGame[self.ID] > 5:
+#         if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] > 5:
 #             self.Game.Hand_Deck.drawCard(self.ID)
 #             self.Game.Hand_Deck.drawCard(self.ID)
 #         return None
@@ -2003,10 +2041,10 @@ class OathlessKnight(SVMinion):
 #     requireTarget, keyWord, description = False, "Taunt", "Ward.Fanfare: Union Burst (10) - Deal 3 damage to the enemy leader. Gain the ability to evolve for 0 evolution points."
 #
 #     def effectCanTrigger(self):
-#         self.effectViable = self.marks["UB"] <= self.Game.CounterHandler.numTurnPassedThisGame[self.ID]
+#         self.effectViable = self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]
 #
 #     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-#         if self.marks["UB"] <= self.Game.CounterHandler.numTurnPassedThisGame[self.ID]:
+#         if self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
 #             self.getsKeyword("Free Evolve")
 #             PRINT(self, f"Shizuru, Sisterly Sabreur 3 damage to the enemy leader.")
 #             self.dealsDamage(self.Game.heroes[3 - self.ID], 3)
@@ -2028,12 +2066,12 @@ class OathlessKnight(SVMinion):
 #
 #     def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #         selfPoint, oppPoint = 0, 0
-#         if self.entity.Game.CounterHandler.numTurnPassedThisGame[self.entity.ID] >= \
-#                 self.entity.Game.CounterHandler.numEvolutionTurn[self.entity.ID]:
-#             selfPoint = self.entity.Game.CounterHandler.numEvolutionPoint[self.entity.ID]
-#         if self.entity.Game.CounterHandler.numTurnPassedThisGame[3 - self.entity.ID] >= \
-#                 self.entity.Game.CounterHandler.numEvolutionTurn[3 - self.entity.ID]:
-#             oppPoint = self.entity.Game.CounterHandler.numEvolutionPoint[3 - self.entity.ID]
+#         if self.entity.Game.Counters.numTurnPassedThisGame[self.entity.ID] >= \
+#                 self.entity.Game.Counters.numEvolutionTurn[self.entity.ID]:
+#             selfPoint = self.entity.Game.Counters.numEvolutionPoint[self.entity.ID]
+#         if self.entity.Game.Counters.numTurnPassedThisGame[3 - self.entity.ID] >= \
+#                 self.entity.Game.Counters.numEvolutionTurn[3 - self.entity.ID]:
+#             oppPoint = self.entity.Game.Counters.numEvolutionPoint[3 - self.entity.ID]
 #         if selfPoint > oppPoint:
 #             self.entity.restoresHealth(self.entity, 3)
 #             self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], 3)
@@ -2122,13 +2160,13 @@ class OathlessKnight(SVMinion):
 #
 #     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 #         return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.spaceonBoard(self.entity.ID) > 0 and \
-#                self.entity.Game.CounterHandler.numTurnPassedThisGame[self.entity.ID] == 10 and \
-#                self.entity.name not in self.entity.Game.CounterHandler.minionInvocationThisTurn
+#                self.entity.Game.Counters.numTurnPassedThisGame[self.entity.ID] == 10 and \
+#                self.entity.name not in self.entity.Game.Counters.minionInvocationThisTurn
 #
 #     def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #         if self.entity.Game.spaceonBoard(self.entity.ID) > 0:
 #             self.entity.Game.summonfromDeck(self.entity, -1, self.entity.ID)
-#             self.entity.Game.CounterHandler.minionInvocationThisTurn.append(self.entity.name)
+#             self.entity.Game.Counters.minionInvocationThisTurn.append(self.entity.name)
 #             PRINT(self, f"XXI. Zelgenea, The World is summoned from player {self.entity.ID}'s deck.")
 #             self.entity.evolve()
 #
@@ -2140,19 +2178,19 @@ class OathlessKnight(SVMinion):
 #     requireTarget, keyWord, description = False, "", "Fanfare: If at least 1 allied follower has evolved this match, gain Ward.Then, if at least 3 have evolved, recover 3 play points.Then, if at least 5 have evolved, restore 5 defense to your leader.Then, if at least 7 have evolved, draw cards until there are 7 cards in your hand."
 #
 #     def effectCanTrigger(self):
-#         self.effectViable = self.Game.CounterHandler.numMinionsEvolvedThisGame[self.ID] >= 1
+#         self.effectViable = self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 1
 #
 #     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-#         if self.Game.CounterHandler.numMinionsEvolvedThisGame[self.ID] >= 1:
+#         if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 1:
 #             PRINT(self, "Luxblade Arriet gains Ward.")
 #             self.getsKeyword("Taunt")
-#         if self.Game.CounterHandler.numMinionsEvolvedThisGame[self.ID] >= 3:
+#         if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 3:
 #             PRINT(self, "Luxblade Arriet restores 3 PP.")
 #             self.Game.ManaHandler.manas[self.ID] += 3
-#         if self.Game.CounterHandler.numMinionsEvolvedThisGame[self.ID] >= 5:
+#         if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 5:
 #             PRINT(self, "Luxblade Arriet restore 5 defense to your leader.")
 #             self.restoresHealth(self.Game.heroes[self.ID], 5)
-#         if self.Game.CounterHandler.numMinionsEvolvedThisGame[self.ID] >= 7:
+#         if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 7:
 #             PRINT(self, "Luxblade Arriet let you draw cards until there are 7 cards in your hand.")
 #             for i in range(7 - len(self.Game.Hand_Deck.hands[self.ID])):
 #                 self.Game.Hand_Deck.drawCard(self.ID)
@@ -2392,12 +2430,12 @@ class OathlessKnight(SVMinion):
 #
 #     def effectCanTrigger(self):
 #         self.effectViable = (self.getMana() > self.accelerate or self.mana <= self.accelerate) and \
-#                             self.Game.CounterHandler.numMinionsDiedThisGame[
+#                             self.Game.Counters.numMinionsDiedThisGame[
 #                                 self.ID] >= 10 or self.getMana() != self.mana
 #
 #     def targetExists(self, choice=0):
 #         if (self.getMana() > self.accelerate or self.mana <= self.accelerate) and \
-#                 self.Game.CounterHandler.numMinionsDiedThisGame[self.ID] >= 10:
+#                 self.Game.Counters.numMinionsDiedThisGame[self.ID] >= 10:
 #             return self.selectableFriendlyMinionExists(choice)
 #         return False
 #
@@ -2447,7 +2485,7 @@ class OathlessKnight(SVMinion):
 #
 # class DeathrattleHonoredFrontguardGeneral(Deathrattle_Minion):
 #     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#         evolved = self.entity.Game.CounterHandler.numMinionsEvolvedThisGame[self.entity.ID]
+#         evolved = self.entity.Game.Counters.numMinionsEvolvedThisGame[self.entity.ID]
 #         PRINT(self, f"Last Words: Summon a Shield Guardian, and give it +{evolved}/+{evolved}.")
 #         s = ShieldGuardian(self.entity.Game, self.entity.ID)
 #         self.entity.Game.summonMinion([s], (-11, "totheRightEnd"), self.entity.ID)

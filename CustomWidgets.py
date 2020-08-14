@@ -83,6 +83,12 @@ def findPicFilepath(card):
 		else: path = "Crops\\HerosandPowers\\"
 		
 	name = name.split("_")[0] if "Mutable" in name else name
+	if hasattr(card,"evolve") and card.keyWords["evolved"]>0:
+		name += "_1"
+	if "Accelerate" in name:
+		name = name.replace("Accelerate","")
+	if "Crystallize" in name:
+		name = name.replace("Crystallize","")
 	filepath = path+"%s.png"%name
 	return filepath
 	

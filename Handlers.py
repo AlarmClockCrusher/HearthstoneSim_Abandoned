@@ -92,11 +92,15 @@ class Manas:
 			return False
 			
 	def restoreManaCrystal(self, num, ID, restoreAll=False):
+		before = self.manas[ID]
 		if restoreAll:
 			self.manas[ID] = self.manasUpper[ID] - self.manasLocked[ID]
 		else:
 			self.manas[ID] += num
 			self.manas[ID] = min(self.manas[ID], self.manasUpper[ID] - self.manasLocked[ID])
+		after = self.manas[ID]
+		if after-before > 0:
+			self.Game.sendSignal("ManaXtlsRestore", ID, None, None, after-before, "")
 			
 	def destroyManaCrystal(self, num, ID):
 		self.manasUpper[ID] -= num
@@ -106,19 +110,20 @@ class Manas:
 		
 	def affordable(self, subject):
 		ID = subject.ID
+		mana = subject.getMana()
 		return {"Spell": (self.status[ID]["Spells Cost Health Instead"] > 0 and subject.mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.status[ID]["Immune"] > 0) \
-					or subject.mana <= self.manas[ID], #目前只考虑法术的法力消耗改生命消耗光环
-				"Minion": subject.mana <= self.manas[ID],
-				"Weapon": subject.mana <= self.manas[ID],
-				"Power": subject.mana <= self.manas[ID],
-				"Hero": subject.mana <= self.manas[ID]
+					or mana <= self.manas[ID], #目前只考虑法术的法力消耗改生命消耗光环
+				"Minion": mana <= self.manas[ID],
+				"Weapon": mana <= self.manas[ID],
+				"Power": mana <= self.manas[ID],
+				"Hero": mana <= self.manas[ID]
 				}[subject.type]
 				
 	def payManaCost(self, subject, mana):
 		ID, mana = subject.ID, max(0, mana)
 		if subject.type == "Spell" and self.status[ID]["Spells Cost Health Instead"] > 0:
 			dmgTaker = self.Game.scapegoat4(self.Game.heroes[ID])
-			dmgTaker.takesDamage(None, mana)
+			dmgTaker.takesDamage(None, mana, damageType="Ability")
 		else: self.manas[ID] -= mana
 		self.Game.sendSignal("ManaPaid", ID, subject, None, mana, "")
 		if subject.type == "Minion":
@@ -305,6 +310,16 @@ class Counters:
 		self.timesHeroChangedHealth_inOwnTurn = {1:0, 2:0}
 		self.heroChangedHealthThisTurn = {1:False, 2:False}
 		self.powerUsedThisTurn = 0
+		#Shadowverse Counters
+		self.numEvolutionTurn = {1:5, 2:4}
+		self.numEvolutionPoint = {1:2, 2:3}
+		self.shadows = {1:0, 2:0}
+		self.turns = {1:0, 2:0}
+		self.evolvedThisGame = {1:0, 2:0}
+		self.minionsSummonedThisGame = {1:0, 2:0}
+		self.timesHeroTookDamage_inOwnTurn = {1:0, 2:0}
+		self.tempVengeance = {1:False, 2:False}
+
 		
 	def turnEnds(self):
 		self.numElementalsPlayedLastTurn[self.Game.turn] = 0

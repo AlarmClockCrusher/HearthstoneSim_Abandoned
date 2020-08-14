@@ -2,4 +2,7 @@
 *.p
 *.db
 *.zip
-DefaultDeck.py
+*.iml
+*.xml
+venv/
+.idea/

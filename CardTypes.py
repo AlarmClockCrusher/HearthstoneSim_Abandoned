@@ -65,6 +65,9 @@ def copyListDictTuple(obj, recipient):
 	
 	
 class Card:
+	def getMana(self):
+		return self.mana
+
 	#For Choose One cards.
 	def needTarget(self, choice=0):
 		return type(self).requireTarget
@@ -275,13 +278,13 @@ class Card:
 		#注意这个伤害承受目标不一定是攻击目标，因为有博尔夫碎盾以及钳嘴龟持盾者的存在
 		#承受伤害者的血量减少，结算剧毒，但是此时不会发出受伤信号。
 		dmgTaker = self.Game.scapegoat4(target, damageDealer_attacker)
-		damageActual = dmgTaker.takesDamage(damageDealer_attacker, subject_attack, sendDamageSignal=False)
+		damageActual = dmgTaker.takesDamage(damageDealer_attacker, subject_attack, sendDamageSignal=False, damageType="Battle")
 		if damageActual > 0:
 			damageDealingList.append((damageDealer_attacker, dmgTaker, damageActual))
 			
 		#寻找受到攻击目标的伤害的角色。同理，此时受伤的角色不会发出受伤信号，这些受伤信号会在之后统一发出。
 		dmgTaker = self.Game.scapegoat4(self, damageDealer_target)
-		damageActual = dmgTaker.takesDamage(damageDealer_target, target_attack, sendDamageSignal=False)
+		damageActual = dmgTaker.takesDamage(damageDealer_target, target_attack, sendDamageSignal=False, damageType="Battle")
 		if damageActual > 0:
 			damageDealingList.append((damageDealer_target, dmgTaker, damageActual))
 		#如果攻击者的伤害来源（随从或者武器）有对相邻随从也造成伤害的扳机，则将相邻的随从录入处理列表。
@@ -289,7 +292,7 @@ class Card:
 			adjacentMinions = self.Game.neighbors2(target)[0] #此时被攻击的随从一定是在场的，已经由Game.battleRequest保证。
 			for minion in adjacentMinions:
 				dmgTaker = self.Game.scapegoat4(minion, damageDealer_attacker)
-				damageActual = dmgTaker.takesDamage(damageDealer_attacker, subject_attack, sendDamageSignal=False)
+				damageActual = dmgTaker.takesDamage(damageDealer_attacker, subject_attack, sendDamageSignal=False, damageType="Ability")
 				if damageActual > 0:
 					damageDealingList.append((damageDealer_attacker, dmgTaker, damageActual))
 					
@@ -300,21 +303,22 @@ class Card:
 			self.Game.sendSignal(dmgTaker.type+"TookDmg", 0, damageDealer, dmgTaker, damage, "")
 
 			#吸血扳机始终在队列结算的末尾。
-			damageDealer.tryLifesteal(damage)
+			damageDealer.tryLifesteal(damage ,damageType="Battle")
 			
 	"""Handle cards dealing targeting/AOE damage/heal to target(s)."""
 	#Handle Lifesteal of a card. Currently Minion/Weapon/Spell classs have this method.
 	##法术因为有因为外界因素获得吸血的能力，所以有自己的tryLifesteal方法。
-	def tryLifesteal(self, damage):
+	def tryLifesteal(self, damage, damageType="None"):
 		game = self.Game
-		if self.keyWords["Lifesteal"] > 0 or (self.type == "Spell" and game.status[self.ID]["Spells Lifesteal"] > 0):
+		if self.keyWords["Lifesteal"] > 0 or (self.type == "Spell" and game.status[self.ID]["Spells Lifesteal"] > 0)\
+				or (damageType == "Battle" and "Drain" in self.keyWords and self.keyWords["Drain"] > 0):
 			heal = damage * (2 ** self.countHealDouble())
 			PRINT(game, "%s deals %d damage and restores %d Health to player"%(self.name, damage, heal))
 			if game.status[self.ID]["Heal to Damage"] > 0:
 				#If the Lifesteal heal is converted to damage, then the obj to take the final 
 				#damage will not cause Lifesteal cycle.
 				dmgTaker = self.Game.scapegoat4(game.heroes[self.ID])
-				dmgTaker.takesDamage(self, heal)
+				dmgTaker.takesDamage(self, heal, damageType="Ability")
 			else: #Heal is heal.
 				game.heroes[self.ID].getsHealed(self, heal)
 				
@@ -330,8 +334,8 @@ class Card:
 			#超杀和造成伤害触发的效果为场上扳机.吸血始终会在队列的末尾结算。
 			#战斗时不会调用这个函数，血量减少时也不立即发生伤害信号，但是这里是可以立即发生信号触发扳机的。
 			#如果随从或者英雄处于可以修改伤害的效果之下，如命令怒吼或者复活的铠甲，伤害量会发生变化
-			dmgActual = dmgTaker.takesDamage(self, damage)
-			self.tryLifesteal(dmgActual)
+			dmgActual = dmgTaker.takesDamage(self, damage, damageType="Ability")
+			self.tryLifesteal(dmgActual,"Ability")
 			return dmgTaker, dmgActual
 		else: return target, 0 #The target is neither on board or in hand. Either removed already or shuffled into deck.
 		
@@ -347,7 +351,7 @@ class Card:
 		for target, damage in zip(targets, damages):
 			dmgTaker = self.Game.scapegoat4(target, self)
 			#Handle the Divine Shield and Commanding Shout here.
-			damageActual = dmgTaker.takesDamage(self, damage, sendDamageSignal=False)
+			damageActual = dmgTaker.takesDamage(self, damage, sendDamageSignal=False, damageType="Ability")
 			if damageActual > 0:
 				dmgTakers.append(dmgTaker)
 				damagesConnected.append(damageActual)
@@ -356,7 +360,7 @@ class Card:
 		for target, damageActual in zip(dmgTakers, damagesConnected):
 			self.Game.sendSignal(target.type+"TakesDmg", self.ID, self, target, damageActual, "")
 			self.Game.sendSignal(target.type+"TookDmg", self.ID, self, target, damageActual, "")
-		self.tryLifesteal(totalDamageDone)
+		self.tryLifesteal(totalDamageDone,"Ability")
 		return dmgTakers, damagesConnected, totalDamageDone
 		
 	def restoresAOE(self, targets, heals):
@@ -572,7 +576,7 @@ class Dormant(Card):
 	def canAttack(self):
 		return False
 		
-	def takesDamage(self, subject, damage, sendDamageSignal=True):
+	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
 		return 0
 		
 	def STATUSPRINT(self):
@@ -823,7 +827,7 @@ class Minion(Card):
 		#不考虑冻结、零攻和自身有不能攻击的debuff的情况。
 		#如果随从是刚到我方场上，则需要分析是否是暂时控制或者是有冲锋或者突袭。
 		#随从已经在我方场上存在一个回合。则肯定可以行动。
-		return self.ID == self.Game.turn and \\
+		return self.ID == self.Game.turn and \
 				(not self.newonthisSide or (self.status["Borrowed"] > 0 or self.keyWords["Charge"] > 0 or self.keyWords["Rush"] > 0))
 				
 	def decideAttChances_base(self):
@@ -876,8 +880,8 @@ class Minion(Card):
 	#Whether the minion can select the attack target or not.
 	def canAttack(self):
 		#THE CHARGE/RUSH MINIONS WILL GAIN ATTACKCHANCES WHEN THEY APPEAR
-		return self.actionable() and self.attack > 0 and self.status["Frozen"] < 1 \\
-				and self.attChances_base + self.attChances_extra > self.attTimes \\
+		return self.actionable() and self.attack > 0 and self.status["Frozen"] < 1 \
+				and self.attChances_base + self.attChances_extra > self.attTimes \
 				and self.marks["Can't Attack"] < 1
 				
 	def canAttackTarget(self, target):
@@ -889,7 +893,7 @@ class Minion(Card):
 			
 	"""Healing, damage, takeDamage, AOE, lifesteal and dealing damage response"""
 	#Stealth Dreadscale actually stays in stealth.
-	def takesDamage(self, subject, damage, sendDamageSignal=True):
+	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
 		game = self.Game
 		if damage > 0 and self.status["Immune"] < 1: #随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
 			if self.keyWords["Divine Shield"] > 0:
@@ -903,6 +907,8 @@ class Minion(Card):
 				self.health -= damage
 				#经过检测，被伏击者返回手牌中的紫罗兰老师不会因为毒药贩子加精灵弓箭手而直接丢弃。会减1血，并在打出时复原。
 				if ((subject.type == "Spell" and game.status[subject.ID]["Spells Poisonous"] > 0) or subject.keyWords["Poisonous"] > 0) and self.onBoard:
+					self.dead = True
+				elif "Bane" in subject.keyWords and subject.keyWords["Bane"] > 0 and damageType == "Battle" and self.onBoard:
 					self.dead = True
 				#在同时涉及多个角色的伤害处理中，受到的伤害暂不发送信号而之后统一进行扳机触发。
 				if sendDamageSignal:
@@ -1172,7 +1178,7 @@ class Minion(Card):
 		
 	#破法者因为阿努巴尔潜伏者的亡语被返回手牌，之后被沉默，但是仍然可以触发其战吼
 	#在手牌中时不能接受沉默。已经用紫罗兰老师测试过了，仍然可以触发其扳机，没有沉默标记
-	def getsSilenced(self):
+	def loseAbility(self):
 		if self.onBoard:
 			self.silenced, self.activated = True, False
 			#随从如需对沉默做出响应，在此处理。然后移除被沉默，出场，离场的特殊响应
@@ -1216,6 +1222,9 @@ class Minion(Card):
 				keywordAura_Receiver.source.applies(self)
 			self.decideAttChances_base()
 			#self.statReset() can handle statbyAura
+
+	def getsSilenced(self):
+			self.loseAbility()
 			#沉默后的血量计算是求当前血量上限与实际血量的差，沉默后在基础血量上扣除该差值。（血量不能小于1）
 			damageTaken = self.health_max - self.health
 			#在此处理随从身上存在的buffAura的效果。先是将其全部取消，然后看之前的光环是否还会继续对其产生作用。
@@ -1947,10 +1956,10 @@ class Hero(Card):
 		return self.canAttack() and target.selectablebyBattle(self)
 		
 	#Heroes don't have Lifesteal.
-	def tryLifesteal(self, damage):
+	def tryLifesteal(self, damage,damageType="None"):
 		pass
 		
-	def takesDamage(self, subject, damage, sendDamageSignal=True):
+	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
 		game = self.Game
 		if damage > 0 and game.status[self.ID]["Immune"] <= 0:
 			damageHolder = [damage]
@@ -1967,6 +1976,7 @@ class Hero(Card):
 					game.sendSignal("HeroTookDamage", game.turn, subject, self, damage, "")
 				if game.turn == self.ID:
 					game.Counters.timesHeroChangedHealth_inOwnTurn[self.ID] += 1
+					game.Counters.timesHeroTookDamage_inOwnTurn[self.ID] += 1
 					game.Counters.heroChangedHealthThisTurn[self.ID] = True
 					game.sendSignal("HeroChangedHealthinTurn", self.ID, None, None, 0, "")
 		else: damage = 0

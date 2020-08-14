@@ -3245,7 +3245,7 @@ class Riftcleaver(Minion):
 			damage, target.dead = max(0, target.health), True
 			#不知道这个对于英雄的伤害有无伤害来源。假设没有，和抽牌疲劳伤害类似
 			dmgTaker = self.Game.scapegoat4(self.Game.heroes[self.ID])
-			dmgTaker.takesDamage(None, damage) #假设伤害没有来源
+			dmgTaker.takesDamage(None, damage, damageType="Ability") #假设伤害没有来源
 		return target
 		
 #光环生效时跟班变成白字的4/4，可以在之后被buff，reset和光环buff。返回手牌中时也会是4/4的身材。沉默之后仍为4/4

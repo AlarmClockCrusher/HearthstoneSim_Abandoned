@@ -2,6 +2,7 @@ from Handlers import *
 from Triggers_Auras import Trig_Borrow
 
 from Basic import Illidan, Anduin
+from SV_Basic import SVClasses
 
 import numpy as np
 import copy
@@ -115,6 +116,8 @@ class Game:
 	#Minions to die will still count as a placeholder on board. Only minions that have entered the tempDeads don't occupy space.
 	def space(self, ID):
 		num = 7
+		if self.heroes[ID].Class in SVClasses:
+			num = 5
 		for minion in self.minions[ID]:
 			if minion.onBoard: num -= 1 #Minions and Dormants both occupy space as long as they are on board.
 		return num
@@ -544,6 +547,7 @@ class Game:
 					minion.disappears(deathrattlesStayArmed=True) #随从死亡时不会注销其死亡扳机，这些扳机会在触发之后自行注销
 					self.Counters.minionsDiedThisTurn[minion.ID].append(minion.index)
 					self.Counters.minionsDiedThisGame[minion.ID].append(minion.index)
+					self.Counters.shadows[minion.ID] += 1
 					if "Mech" in minion.race:
 						#List: [ [mechIndex, [magnetic upgrades]] ]
 						self.Counters.mechsDiedThisGame[minion.ID].append([minion.index, minion.history["Magnetic Upgrades"]])
@@ -652,6 +656,7 @@ class Game:
 		
 		self.turn = 3 - self.turn #Changes the turn to another hero.
 		PRINT(self, "--------------------\nA new turn starts for hero %d\n-----------------"%self.turn)
+		self.Counters.turns[self.turn]+=1
 		self.Manas.turnStarts()
 		for obj in fixedList(self.turnStartTrigger): #This is for temp effects.
 			if not hasattr(obj, "ID") or obj.ID == self.turn: obj.turnStartTrigger()
@@ -838,6 +843,7 @@ class Game:
 					card.effectCanTrigger()
 					card.checkEvanescent()
 			self.moves.append(("playSpell", subIndex, subWhere, tarIndex, tarWhere, choice))
+			self.Counters.shadows[spell.ID] += 1
 			
 	def availableWeapon(self, ID):
 		for weapon in self.weapons[ID]:

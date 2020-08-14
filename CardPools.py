@@ -8,12 +8,16 @@ from DemonHunterInitiate import *
 from Outlands import *
 from Academy import *
 
+from SV_Basic import *
+
 BasicPowers = [DemonClaws, Shapeshift, SteadyShot, Fireblast, Reinforce, LesserHeal, DaggerMastery, TotemicCall, LifeTap, ArmorUp, ]
 
 UpgradedPowers = [DemonsBite, DireShapeshift, BallistaShot, FireblastRank2, TheSilverHand, Heal, PoisonedDaggers, TotemicSlam, SoulTap, TankUp, ]
-Classes = ['Demon Hunter', 'Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', ]
-ClassesandNeutral = ['Demon Hunter', 'Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', 'Neutral', ]
-ClassDict = {'Demon Hunter': Illidan, 'Druid': Malfurion, 'Hunter': Rexxar, 'Mage': Jaina, 'Paladin': Uther, 'Priest': Anduin, 'Rogue': Valeera, 'Shaman': Thrall, 'Warlock': Guldan, 'Warrior': Garrosh, }
+Classes = ['Demon Hunter', 'Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', "Forestcraft","Swordcraft","Runecraft","Drangoncraft","Shadowcraft","Bloodcraft","Havencraft","Portalcraft"]
+ClassesandNeutral = ['Demon Hunter', 'Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', 'Neutral',"Forestcraft","Swordcraft","Runecraft","Drangoncraft","Shadowcraft","Bloodcraft","Havencraft","Portalcraft" ]
+SVClasses = ["Forestcraft","Swordcraft","Runecraft","Drangoncraft","Shadowcraft","Bloodcraft","Havencraft","Portalcraft"]
+ClassDict = {'Demon Hunter': Illidan, 'Druid': Malfurion, 'Hunter': Rexxar, 'Mage': Jaina, 'Paladin': Uther, 'Priest': Anduin, 'Rogue': Valeera, 'Shaman': Thrall, 'Warlock': Guldan, 'Warrior': Garrosh,
+			 "Forestcraft":Arisa,"Swordcraft":Erika,"Runecraft":Isabelle,"Drangoncraft":Rowen,"Shadowcraft":Luna,"Bloodcraft":Urias,"Havencraft":Eris,"Portalcraft":Yuwan}
 
 cardPool = {
 			"Basic~Neutral~Spell~0~The Coin~Uncollectible": TheCoin,

@@ -29,6 +29,10 @@ class Hand_Deck:
 		self.decks = {1: [], 2: []}
 		self.noCards = {1: 0, 2: 0}
 		self.handUpperLimit = {1: 10, 2: 10}
+		if self.Game.heroes[1].Calss in SVClasses:
+			self.handUpperLimit[1] = 9
+		if self.Game.heroes[2].Calss in SVClasses:
+			self.handUpperLimit[2] = 9
 		self.initialDecks = {1: deck1 if deck1 else Default1,
 							 2: deck2 if deck2 else Default2}
 		self.startingDeckIdentities = {1: [], 2: []}
@@ -208,7 +212,7 @@ class Hand_Deck:
 				damage = self.noCards[ID]
 				if GUI: GUI.fatigueAni(ID, damage)
 				dmgTaker = game.scapegoat4(game.heroes[ID])
-				dmgTaker.takesDamage(None, damage)  # 疲劳伤害没有来源
+				dmgTaker.takesDamage(None, damage, damageType="Ability")  # 疲劳伤害没有来源
 				return (None, 0)
 		else:
 			if isinstance(card, (int, np.int32, np.int64)):
@@ -318,6 +322,12 @@ class Hand_Deck:
 				self.decks[ID] = [newDeck[i] for i in order]
 			if sendSig: curGame.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
 			
+	def burialRite(self, ID, minion):
+		self.Game.summonfromHand(minion, ID, -1, ID)
+		minion.getsSilenced()
+		minion.dead = True
+		self.Game.sendSignal("BurialRite", ID, None, minion, 0, "")
+
 	def discardAll(self, ID):
 		if self.hands[ID]:
 			cards, cost, isRightmostCardinHand = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True)
@@ -325,6 +335,7 @@ class Hand_Deck:
 				PRINT(self.Game, "Card %s in player's hand is discarded:" % card.name)
 				for func in card.triggers["Discarded"]: func()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
+				self.Game.Counters.shadows[card.ID] += 1
 				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
 			self.Game.Manas.calcMana_All()
 			
@@ -337,6 +348,7 @@ class Hand_Deck:
 				for func in card.triggers["Discarded"]: func()
 				self.Game.Manas.calcMana_All()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
+				self.Game.Counters.shadows[card.ID] += 1
 				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
 				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
 		else:  # Discard a chosen card.
@@ -348,6 +360,7 @@ class Hand_Deck:
 			for func in card.triggers["Discarded"]: func()
 			self.Game.Manas.calcMana_All()
 			self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
+			self.Game.Counters.shadows[card.ID] += 1
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
 			self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
 			
@@ -366,13 +379,13 @@ class Hand_Deck:
 		else:
 			if not isinstance(card, (int, np.int32, np.int64)):
 				# Need to keep track of the card's location in hand.
-				index, cost = self.hands[card.ID].index(card), card.mana
+				index, cost = self.hands[card.ID].index(card), card.getMana()
 				posinHand = index if index < len(self.hands[card.ID]) - 1 else -1
 				card = self.hands[card.ID].pop(index)
 			else:  # card is a number
 				posinHand = card if card < len(self.hands[ID]) - 1 else -1
 				card = self.hands[ID].pop(card)
-				cost = card.mana
+				cost = card.getMana()
 			card.leavesHand()
 			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee)
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
