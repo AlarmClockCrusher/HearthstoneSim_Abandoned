@@ -198,7 +198,7 @@ class GUI_Common:
 							#法术没有可选目标，或者是不可用的非指向性法术
 							self.printInfo("Selected spell unavailable. All selection canceled.")
 							self.cancelSelection()
-						elif selectedSubject == "MinioninHand" and game.space(entity.ID) < 1:
+						elif (selectedSubject == "MinioninHand" or selectedSubject == "AmuletinHand") and game.space(entity.ID) < 1:
 							self.printInfo("The board is full and minion selected can't be played")
 							self.cancelSelection()
 						else:
@@ -292,8 +292,27 @@ class GUI_Common:
 						#self.printInfo("The minion requires target to play. needTarget() returns {}".format(self.subject.needTarget(self.choice)))
 						button.configure(bg="purple")
 			#随从的打出位置和抉择选项已经在上一步选择，这里处理目标选择。
+			elif self.selectedSubject == "AmuletinHand":
+				if selectedSubject == "Board" or (entity.ID == self.subject.ID and selectedSubject == "AmuletonBoard"):
+					self.position = -1 if selectedSubject == "Board" else entity.position
+					self.printInfo("Position for amulet in hand decided: %d"%self.position)
+					self.selectedSubject = "AmuletPositionDecided" #将主体记录为标记了打出位置的手中随从。
+					#抉择随从如有全选光环，且所有选项不需目标，则直接打出。 连击随从的needTarget()由连击条件决定。
+					#self.printInfo("Minion {} in hand needs target: {}".format(self.subject.name, self.subject.needTarget(self.choice)))
+					if self.subject.needTarget(self.choice) == False or self.subject.targetExists(self.choice) == False:
+						#self.printInfo("Requesting to play minion {} without target. The choice is {}".format(self.subject.name, self.choice))
+						subject, position, choice = self.subject, self.position, self.choice
+						self.cancelSelection()
+						self.subject, self.target, self.UI = subject, None, -1
+						game.playAmulet(subject, None, position, choice)
+						self.subject, self.target, self.UI = None, None, 0
+						self.update()
+					else:
+						#self.printInfo("The minion requires target to play. needTarget() returns {}".format(self.subject.needTarget(self.choice)))
+						button.configure(bg="purple")
+			#随从的打出位置和抉择选项已经在上一步选择，这里处理目标选择。
 			elif self.selectedSubject == "MinionPositionDecided":
-				if selectedSubject.endswith("MiniononBoard") == False and selectedSubject.endswith("HeroonBoard") == False: #指定目标时必须是英雄或者场上随从
+				if selectedSubject.endswith("MiniononBoard") == False and selectedSubject.endswith("HeroonBoard") == False and selectedSubject.endswith("AmuletonBoard") == False: #指定目标时必须是英雄或者场上随从
 					self.printInfo("Board is not a valid option. All selections canceled.")
 				else:
 					self.printInfo("Requesting to play minion {}, targeting {} with choice: {}".format(self.subject.name, entity.name, self.choice))
@@ -301,6 +320,17 @@ class GUI_Common:
 					self.cancelSelection()
 					self.subject, self.target, self.UI = subject, entity, -1
 					game.playMinion(subject, entity, position, choice)
+					self.subject, self.target, self.UI = None, None, 0
+					self.update()
+			elif self.selectedSubject == "AmuletPositionDecided":
+				if selectedSubject.endswith("MiniononBoard") == False and selectedSubject.endswith("HeroonBoard") == False and selectedSubject.endswith("AmuletonBoard") == False: #指定目标时必须是英雄或者场上随从
+					self.printInfo("Board is not a valid option. All selections canceled.")
+				else:
+					self.printInfo("Requesting to play amulet {}, targeting {} with choice: {}".format(self.subject.name, entity.name, self.choice))
+					subject, position, choice = self.subject, self.position, self.choice
+					self.cancelSelection()
+					self.subject, self.target, self.UI = subject, entity, -1
+					game.playAmulet(subject, entity, position, choice)
 					self.subject, self.target, self.UI = None, None, 0
 					self.update()
 			#选中的法术已经确定抉择选项（如果有），下面决定目标选择。
@@ -315,7 +345,7 @@ class GUI_Common:
 						self.subject, self.target, self.UI = None, None, 0
 						self.update()
 				else: #法术或者法术抉择选项需要指定目标。
-					if "Hero" not in selectedSubject and selectedSubject != "MiniononBoard":
+					if "Hero" not in selectedSubject and selectedSubject != "MiniononBoard" and selectedSubject != "AmuletonBoard":
 						self.printInfo("Targeting spell must be cast on Hero or Minion on board.")
 					else:
 						self.printInfo("Requesting to play spell {} with target {}. The choice is {}".format(self.subject.name, entity, self.choice))
@@ -337,7 +367,7 @@ class GUI_Common:
 						self.subject, self.target, self.UI = None, None, 0
 						self.update()
 				else:
-					if "Hero" not in selectedSubject and selectedSubject != "MiniononBoard":
+					if "Hero" not in selectedSubject and selectedSubject != "MiniononBoard" and selectedSubject != "AmuletonBoard":
 						self.printInfo("Targeting weapon must be played with a target.")
 					else:
 						subject, target = self.subject, entity

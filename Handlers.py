@@ -317,6 +317,8 @@ class Counters:
 		self.turns = {1:0, 2:0}
 		self.evolvedThisGame = {1:0, 2:0}
 		self.minionsSummonedThisGame = {1:0, 2:0}
+		self.amuletsDestroyedThisTurn = {1:0, 2:0}
+		self.amuletsDestroyedThisGame = {1:0, 2:0}
 		self.timesHeroTookDamage_inOwnTurn = {1:0, 2:0}
 		self.tempVengeance = {1:False, 2:False}
 

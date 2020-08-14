@@ -78,7 +78,11 @@ class Game:
 	def minionsonBoard(self, ID, target=None): #if target is not None, return all onBoard minions except the target
 		if target: return [minion for minion in self.minions[ID] if minion.type == "Minion" and minion.onBoard and minion != target]
 		else: return [minion for minion in self.minions[ID] if minion.type == "Minion" and minion.onBoard]
-		
+
+	def amuletsonBoard(self, ID, target=None):
+		if target: return [amulet for amulet in self.minions[ID] if amulet.type == "Amulet" and amulet.onBoard and amulet != target]
+		else: return [amulet for amulet in self.minions[ID] if amulet.type == "Amulet" and amulet.onBoard]
+
 	def neighbors2(self, target, countDormants=False):
 		targets, ID, pos, i = [], target.ID, target.position, 0
 		while pos > 0:
@@ -111,7 +115,101 @@ class Game:
 			objs = [obj for obj in self.minions[ID] if obj.type == "Minion" and obj.onBoard and not obj.dead and obj.health > 0]
 			if hero.health > 0 and not hero.dead: objs.append(hero)
 		return objs
-		
+
+	def playAmulet(self, amulet, target, position, choice=0, comment=""):
+		ID, canPlayAmulet = amulet.ID, False
+		if not self.Manas.affordable(amulet):
+			PRINT(self, "Not enough mana to play amulet {}".format(amulet))
+		elif self.space(ID) < 1:
+			PRINT(self, "No more amulet can be played.")
+		else:
+			if amulet.selectionLegit(target, choice):
+				canPlayAmulet = True
+			else:
+				PRINT(self,
+					  "Invalid selection to play amulet {}, targeting {}, with choice {}".format(amulet.name, target,
+																								 choice))
+
+		if canPlayAmulet:
+			PRINT(self,
+				  "	   *******\nHandling play amulet {} with target {}, with choice: {}\n	   *********".format(
+					  amulet.name, target, choice))
+			# 打出随从到所有结算完结为一个序列，序列完成之前不会进行胜负裁定。
+			# 打出随从产生的序列分为
+			# 1）使用阶段： 支付费用，随从进入战场（处理位置和刚刚召唤等），抉择变形类随从立刻提前变形，黑暗之主也在此时变形。
+			# 如果随从有回响，在此时决定其将在完成阶段结算回响
+			# 使用时阶段：使用时扳机，如伊利丹，任务达人和魔能机甲等
+			# 召唤时阶段：召唤时扳机，如鱼人招潮者，饥饿的秃鹫等
+			# 得到过载
+			###开始结算死亡事件。此时序列还没有结束，不用处理胜负问题。
+			# 2）结算阶段： 根据随从的死亡，在手牌、牌库和场上等位置来决定战吼，战吼双次的扳机等。
+			# 开始时判定是否需要触发多次战吼，连击
+			# 指向型战吼连击和抉择随机选取目标。如果此时场上没有目标，则不会触发 对应指向部分效果和它引起的效果。
+			# 抉择和磁力也在此时结算，不过抉择变形类随从已经提前结算，此时略过。
+			###开始结算死亡事件，不必处理胜负问题。
+			# 3）完成阶段
+			# 召唤后步骤：召唤后扳机触发：如飞刀杂耍者，船载火炮等
+			# 将回响牌加入打出者的手牌
+			# 使用后步骤：使用后扳机：如镜像实体，狙击，顽石元素。低语元素的状态移除结算和dk的技能刷新等。
+			###结算死亡，此时因为序列结束可以处理胜负问题。
+
+			# 在打出序列的开始阶段决定是否要产生一个回响copy
+			if self.GUI: self.GUI.displayCard(amulet)
+			hasEcho = False
+			if amulet.keyWords["Echo"] > 0:
+				hasEcho = True
+				echoCard = type(amulet)(self, self.turn)
+				trigger = Trig_Echo(echoCard)
+				echoCard.trigsHand.append(trigger)
+			subIndex, subWhere = self.Hand_Deck.hands[amulet.ID].index(amulet), "hand%d" % amulet.ID
+			if target:
+				if target.type == "Minion":
+					tarIndex, tarWhere = target.position, "minion%d" % target.ID
+				else:
+					tarIndex, tarWhere = target.ID, "hero"
+			else:
+				tarIndex, tarWhere = 0, ''
+			amulet, mana, posinHand = self.Hand_Deck.extractfromHand(amulet, enemyCanSee=True)
+			amuletIndex = amulet.index
+			self.Manas.payManaCost(amulet, mana)  # 海魔钉刺者，古加尔和血色绽放的伤害生效。
+			# The new minion played will have the largest sequence.
+			# 处理随从的位置的登场顺序。
+			amulet.sequence = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
+			self.minions[ID].insert(position + 100 * (position < 0), amulet)
+			self.rearrangePosition()
+			# 使用随从牌、召唤随从牌、召唤结束信号会触发
+			# 把本回合召唤随从数的计数提前至打出随从之前，可以让小个子召唤师等“每回合第一张”光环在随从打出时正确结算。连击等结算仍依靠cardsPlayedThisTurn
+			self.amuletPlayed = amulet
+			armedTrigs = self.armedTrigs("AmuletBeenPlayed")
+			if self.GUI: self.GUI.wait(400)
+			target = amulet.played(target, choice, mana, posinHand, comment)
+			# 完成阶段
+			# 只有当打出的随从还在场上的时候，飞刀杂耍者等“在你召唤一个xx随从之后”才会触发。当大王因变形为英雄而返回None时也不会触发。
+			# 召唤后步骤，触发“每当你召唤一个xx随从之后”的扳机，如飞刀杂耍者，公正之剑和船载火炮等
+			if self.amuletPlayed and self.amuletPlayed.onBoard:
+				self.sendSignal("AmuletBeenSummoned", self.turn, self.amuletPlayed, target, mana, "")
+			self.Counters.numCardsPlayedThisTurn[self.turn] += 1
+			# 假设打出的随从被对面控制的话仍然会计为我方使用的随从。被对方变形之后仍记录打出的初始随从
+			self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(amuletIndex)
+			self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
+			self.Counters.cardsPlayedThisGame[self.turn].append(amuletIndex)
+			# 将回响牌加入打出者的手牌
+			if hasEcho: self.Hand_Deck.addCardtoHand(echoCard, self.turn)
+			# 使用后步骤，触发镜像实体，狙击，顽石元素等“每当你使用一张xx牌”之后的扳机。
+			if self.amuletPlayed and self.amuletPlayed.type == "Amulet":
+				if self.amuletPlayed.identity not in self.Hand_Deck.startingDeckIdentities[self.turn]:
+					self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+				# The comment here is posinHand, which records the position a card is played from hand. -1 means the rightmost, 0 means the leftmost
+				self.sendSignal("AmuletBeenPlayed", self.turn, self.amuletPlayed, target, mana, posinHand, choice,
+								armedTrigs)
+			# ............完成阶段结束，开始处理死亡情况，此时可以处理胜负问题。
+			self.gathertheDead(True)
+			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
+				card.effectCanTrigger()
+				card.checkEvanescent()
+			PRINT(self, "Making move: playAmulet %d %s %d %s" % (subIndex, subWhere, tarIndex, tarWhere))
+			self.moves.append(("playAmulet", subIndex, subWhere, tarIndex, tarWhere, position, choice))
+
 	#There probably won't be board size limit changing effects.
 	#Minions to die will still count as a placeholder on board. Only minions that have entered the tempDeads don't occupy space.
 	def space(self, ID):
@@ -344,7 +442,7 @@ class Game:
 		
 	#This method is always invoked after the minion.disappears() method.
 	def removeMinionorWeapon(self, target):
-		if target.type == "Minion" or target.type == "Dormant":
+		if target.type == "Minion" or target.type == "Dormant" or target.type == "Amulet":
 			target.onBoard = False
 			extractfrom(target, self.minions[target.ID])
 			self.rearrangeSequence()
@@ -547,8 +645,12 @@ class Game:
 					self.tempDeads[0].append(minion)
 					self.tempDeads[1].append(minion.attack)
 					minion.disappears(deathrattlesStayArmed=True) #随从死亡时不会注销其死亡扳机，这些扳机会在触发之后自行注销
-					self.Counters.minionsDiedThisTurn[minion.ID].append(minion.index)
-					self.Counters.minionsDiedThisGame[minion.ID].append(minion.index)
+					if minion.type == "Minion":
+						self.Counters.minionsDiedThisTurn[minion.ID].append(minion.index)
+						self.Counters.minionsDiedThisGame[minion.ID].append(minion.index)
+					elif minion.type == "Amulet":
+						self.Counters.amuletsDestroyedThisTurn[minion.ID].append(minion.index)
+						self.Counters.amuletsDestroyedThisGame[minion.ID].append(minion.index)
 					self.Counters.shadows[minion.ID] += 1
 					if "Mech" in minion.race:
 						#List: [ [mechIndex, [magnetic upgrades]] ]
@@ -591,8 +693,8 @@ class Game:
 		while True:
 			rebornMinions = []
 			if not self.deads[0]: break #If no minions are dead, then stop the loop
-			armedTrigs_WhenDies = self.armedTrigs("MinionDies") + self.armedTrigs("WeaponDestroyed")
-			armedTrigs_AfterDied = self.armedTrigs("MinionDied")
+			armedTrigs_WhenDies = self.armedTrigs("MinionDies") + self.armedTrigs("WeaponDestroyed") + self.armedTrigs("AmuletDestroys")
+			armedTrigs_AfterDied = self.armedTrigs("MinionDied") + self.armedTrigs("AmuletDestroyed")
 			PRINT(self, "The dead/destroyed characters to handle are:")
 			for i in range(len(self.deads[0])):
 				PRINT(self, "\tCharacter: {}	Attack when dies: {}".format(self.deads[0][i].name, self.deads[1][i]))
@@ -1039,6 +1141,7 @@ class Game:
 			{"battle": lambda: self.battle(sub, tar),
 			"power": lambda: sub.use(tar, move[5]),
 			"playMinion": lambda: self.playMinion(sub, tar, move[5], move[6]),
+			"playAmulet": lambda: self.playAmulet(sub, tar, move[5], move[6]),
 			"playWeapon": lambda: self.playWeapon(sub, tar, move[5]),
 			"playSpell": lambda: self.playSpell(sub, tar, move[5]),
 			"playHero": lambda: self.playHero(sub, tar, move[5]),

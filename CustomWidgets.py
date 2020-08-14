@@ -158,14 +158,14 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		if not hasattr(GUI, "ID") or seeEnemyHand or GUI.ID == card.ID:
 			game, self.colorOrig = card.Game, "red"
 			if card.ID == game.turn and game.Manas.affordable(card):
-				if (card.type == "Spell" and card.available()) or (card.type == "Minion" and game.space(card.ID) > 0) or card.type == "Weapon" or card.type == "Hero":
+				if (card.type == "Spell" and card.available()) or ((card.type == "Minion" or card.type == "Amulet") and game.space(card.ID) > 0) or card.type == "Weapon" or card.type == "Hero":
 					self.colorOrig = "blue" if card.evanescent else ("yellow" if card.effectViable else "green3")
 		else: self.colorOrig = "grey46" #Only is grey when it's opponent's card in 2PGUI in "Don't show opponent cards" mode
 		
 	def leftClick(self, event):
 		if self.GUI.UI < 3 and self.GUI.UI > -1: #只有不在发现或动画演示中才会响应
 			card, ID, game = self.card, self.card.ID, self.GUI.Game
-			if ID == game.turn and game.Manas.affordable(card) and ((card.type == "Spell" and card.available()) or (card.type == "Minion" and game.space(ID) > 0) or card.type == "Weapon" or card.type == "Hero"):
+			if ID == game.turn and game.Manas.affordable(card) and ((card.type == "Spell" and card.available()) or ((card.type == "Minion" or card.type == "Amulet") and game.space(ID) > 0) or card.type == "Weapon" or card.type == "Hero"):
 				self.selected = 1 - self.selected #在选中一张牌后再次选择它，会取消所有选择
 				if self.selected == 1:
 					self.configure(bg="white")
@@ -538,7 +538,7 @@ class MinionButton(tk.Button):
 			if hasattr(trig, "counter"): self.counts += trig.counter
 			
 	def decideColorOrig(self, GUI, minion):
-		if minion.type != "Minion": self.colorOrig = "grey46" 
+		if minion.type != "Minion" and minion.type != "Amulet": self.colorOrig = "grey46"
 		else:
 			if minion.dead: self.colorOrig = "grey25"
 			elif minion == GUI.subject: self.colorOrig = "white"
@@ -550,13 +550,16 @@ class MinionButton(tk.Button):
 			if self.card.type == "Minion":
 				selectedSubject = "MiniononBoard"
 				self.GUI.resolveMove(self.card, self, selectedSubject)
-			else: #card.type == "Dormant"
+			elif self.card.type == "Dormant":
 				print("Pressing Dormant button", self.GUI.UI)
 				if self.GUI.UI == 2:
 					selectedSubject = "DormantonBoard"
 					print("Resolving")
 					self.GUI.resolveMove(self.card, self, selectedSubject)
 				else: self.GUI.cancelSelection()
+			elif self.card.type == "Amulet":
+				selectedSubject = "AmuletonBoard"
+				self.GUI.resolveMove(self.card, self, selectedSubject)
 				
 	def rightClick(self, event):
 		self.GUI.cancelSelection()
@@ -573,7 +576,7 @@ class MinionButton(tk.Button):
 		self.x, self.y, self.labels = x, y, []
 		self.place(x=x, y=y, anchor='c')
 		trigsBoard = [trig for trig in self.card.trigsBoard if not hasattr(trig, "hide")]
-		if trigsBoard or (self.card.type == "Minion" and self.card.deathrattles):
+		if trigsBoard or ((self.card.type == "Minion" or self.card.type == "Amulet") and self.card.deathrattles):
 			string = ""
 			for trig in self.card.trigsBoard:
 				if hasattr(trig, "counter"): string += "%d "%trig.counter
@@ -584,6 +587,9 @@ class MinionButton(tk.Button):
 						("black" if self.card.health_max <= self.card.health_0 else "green3")
 			CardLabel(btn=self, text=str(self.card.attack), fg=attColor).plot(x=x-0.42*CARD_X, y=y+0.43*CARD_Y)
 			CardLabel(btn=self, text=str(self.card.health), fg=healthColor).plot(x=x+0.42*CARD_X, y=y+0.43*CARD_Y)
+		elif self.card.type == "Amulet" and self.card.countdown > 0:
+			countdownColor = "black"
+			CardLabel(btn=self, text=str(self.card.countdown), fg=countdownColor).plot(x=x, y=y+0.43*CARD_Y)
 		self.zone.btnsDrawn.append(self)
 		
 	def move2(self, x, y):
@@ -640,11 +646,12 @@ class BoardZone:
 					#Reset the text involving sequence and the color of the minion
 					seq = minion.sequence
 					text = {0: "1st", 1: "2nd", 2: "3rd"}[seq] if seq < 3 else "%dth"%(seq+1) + ' '
-					for key, value in minion.keyWords.items():
-						if value > 0: text += key+'\n'
-					btn.decideColorOrig(self.GUI, minion)
-					btn['text'] = text
-					btn.configure(bg=btn.colorOrig) #Reset the color of the button
+					if minion.type == "Minion":
+						for key, value in minion.keyWords.items():
+							if value > 0: text += key+'\n'
+						btn.decideColorOrig(self.GUI, minion)
+						btn['text'] = text
+						btn.configure(bg=btn.colorOrig) #Reset the color of the button
 				else: MinionButton(self.GUI, minion).plot(x=pos[0], y=pos[1])
 		else:
 			for pos, minion in zip(posMinions, ownMinions):

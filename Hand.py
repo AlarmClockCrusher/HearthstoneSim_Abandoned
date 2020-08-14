@@ -233,7 +233,7 @@ class Hand_Deck:
 				self.drawCard(ID)
 				cardTracker[0].afterDrawingCard()
 			else:  # 抽到的牌可以加入手牌。
-				if cardTracker[0].type == "Minion" and cardTracker[0].triggers["Drawn"] != []:
+				if cardTracker[0].type == "Minion" or cardTracker[0].type == "Amulet" and cardTracker[0].triggers["Drawn"] != []:
 					PRINT(game, "%s is drawn and triggers its effect." % cardTracker[0].name)
 					for func in cardTracker[0].triggers["Drawn"]: func()
 				cardTracker[0] = cardTracker[0].entersHand()
