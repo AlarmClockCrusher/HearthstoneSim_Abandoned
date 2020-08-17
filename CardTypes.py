@@ -773,8 +773,7 @@ class Minion(Card):
         self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, "")
         for func in self.triggers["StatChanges"]: func()
 
-    def disappears(self, deathrattlesStayArmed=True, source="Rule"):  # The minion is about to leave board.
-        if source == "Ability" and self.marks["Can't Disappear"] > 0: return
+    def disappears(self, deathrattlesStayArmed=True):  # The minion is about to leave board.
         self.onBoard, self.inHand, self.inDeck = False, False, False
         # Only the auras and disappearResponse will be invoked when the minion switches side.
         for value in self.auras.values():

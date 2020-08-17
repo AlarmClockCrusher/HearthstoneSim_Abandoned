@@ -286,7 +286,7 @@ class Hand_Deck:
                 game.sendSignal("CardEntersHand", ID, None, [card], 0, comment)
                 if byDiscover: game.sendSignal("PutinHandbyDiscover", ID, None, obj, 0, '')
             else:
-                break
+                self.Game.Counters.shadows[ID] += 1
         game.Manas.calcMana_All()
 
     def replaceCardDrawn(self, targetHolder, newCard):

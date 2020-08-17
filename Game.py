@@ -472,7 +472,13 @@ class Game:
 		self.rearrangeSequence()
 		if target.type != "Weapon": self.rearrangePosition()
 		if self.GUI: self.GUI.update()
-		
+
+	def letDisappear(self, target):
+		if target.type in ["Minion", "Amulet"] and target.marks["Can't Disappear"] > 0:
+			return
+		target.disappears(deathrattlesStayArmed=False)
+		self.removeMinionorWeapon(target)
+
 	#The leftmost minion has position 0. Consider Dormant
 	def rearrangePosition(self):
 		for i, obj in enumerate(self.minions[1]): obj.position = i
@@ -483,7 +489,7 @@ class Game:
 	def rearrangeSequence(self):
 		objs = self.weapons[1] + self.weapons[2] + self.minions[1] + self.minions[2]
 		for i, obj in zip(np.asarray([obj.sequence for obj in objs]).argsort().argsort(), objs): obj.sequence = i
-		
+
 	def returnMiniontoHand(self, target, deathrattlesStayArmed=False, manaMod=None):
 		if target in self.minions[target.ID]: #如果随从仍在随从列表中
 			if self.Hand_Deck.handNotFull(target.ID):

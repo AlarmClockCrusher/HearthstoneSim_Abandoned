@@ -531,8 +531,7 @@ class TheAmazingReno(Hero):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "The Amazing Reno's battlecry makes all minions disappear.")
 		for minion in fixedList(self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)):
-			minion.disappears(deathrattlesStayArmed=False, source="Ability")
-			self.Game.removeMinionorWeapon(minion)
+			self.Game.letDisappear(minion)
 		return None
 		
 		

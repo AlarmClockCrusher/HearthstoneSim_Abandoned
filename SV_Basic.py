@@ -1012,6 +1012,243 @@ class AngelicSwordMaiden(ShadowverseMinion):
 
 """Forestcraft cards"""
 
+
+class Fairy(ShadowverseMinion):
+    Class, race, name = "Forestcraft", "", "Fairy"
+    mana, attack, health = 1, 1, 1
+    index = "SV_Basic~Forestcraft~Minion~1~1~1~None~Fairy~Uncollectible"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+
+class WaterFairy(ShadowverseMinion):
+    Class, race, name = "Forestcraft", "", "Water Fairy"
+    mana, attack, health = 1, 1, 1
+    index = "SV_Basic~Forestcraft~Minion~1~1~1~None~Water Fairy~Deathrattle"
+    requireTarget, keyWord, description = False, "", "Last Words: Put a Fairy into your hand."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.overload = 2
+        self.deathrattles = [Deathrattle_WaterFairy(self)]
+
+
+class Deathrattle_WaterFairy(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Water Fairy's Last Words put a Fairy into your hand.")
+        self.entity.Game.Hand_Deck.addCardtoHand(Fairy, self.entity.ID, "CreateUsingType")
+
+
+class FairyWhisperer(ShadowverseMinion):
+    Class, race, name = "Forestcraft", "", "Fairy Whisperer"
+    mana, attack, health = 2, 1, 1
+    index = "SV_Basic~Forestcraft~Minion~2~1~1~None~Fairy Whisperer~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Put 2 Fairies into your hand."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self.Game, "Fairy Whisperer's Fanfare put a Fairy into your hand.")
+        self.Game.Hand_Deck.addCardtoHand([Fairy for i in range(2)], self.ID, "CreateUsingType")
+        return None
+
+
+class ElfGuard(ShadowverseMinion):
+    Class, race, name = "Forestcraft", "", "Elf Guard"
+    mana, attack, health = 2, 1, 3
+    index = "SV_Basic~Forestcraft~Minion~2~1~3~None~Elf Guard~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Gain +1/+1 and Ward if at least 2 other cards were played this turn."
+    attackAdd, healthAdd = 2, 2
+
+    def effectCanTrigger(self):
+        return len(self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"]) >= 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        numCardsPlayed = len(self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"])
+        if numCardsPlayed >= 2:
+            PRINT(self.Game, "Elf Guard gains +1/+1 and Ward")
+            self.buffDebuff(1, 1)
+            self.getsKeyword("Taunt")
+        return None
+
+
+class ElfMetallurgist(ShadowverseMinion):
+    Class, race, name = "Forestcraft", "", "Elf Metallurgist"
+    mana, attack, health = 2, 2, 1
+    index = "SV_Basic~Forestcraft~Minion~2~2~1~None~Elf Metallurgist~Battlecry"
+    requireTarget, keyWord, description = True, "", "Fanfare: Deal 2 damage to an enemy follower if at least 2 other cards were played this turn."
+    attackAdd, healthAdd = 2, 2
+
+    def returnTrue(self, choice=0):
+        return len(self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"]) >= 2
+
+    def effectCanTrigger(self):
+        self.effectViable = len(self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"]) >= 2
+
+    def targetExists(self, choice=0):
+        return self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        return target.type == "Minion" and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        numCardsPlayed = len(self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"])
+        if numCardsPlayed >= 2:
+            self.dealsDamage(target, 2)
+            PRINT(self.Game, f"Elf Metallurgist deals 2 damage to {target.name}")
+        return None
+
+
+class SylvanJustice(ShadowverseSpell):
+    Class, name = "Forestcraft", "Sylvan Justice"
+    requireTarget, mana = True, 2
+    index = "SV_Basic~Forestcraft~Spell~2~Sylvan Justice"
+    description = "Deal 2 damage to an enemy follower. Put a Fairy into your hand."
+
+    def available(self):
+        return self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        return target.type == "Minion" and target.onBoard and target.ID != self.ID
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+            PRINT(self.Game,
+                  f"Sylvan Justice deals {damage} damage to {target} and put a Fairy into your hand.")
+            self.Game.Hand_Deck.addCardtoHand(Fairy, self.ID, "CreateUsingType")
+        return target
+
+
+class DarkElfFaure(ShadowverseMinion):
+    Class, race, name = "Forestcraft", "", "Dark Elf Faure"
+    mana, attack, health = 3, 2, 3
+    index = "SV_Basic~Forestcraft~Minion~3~2~3~None~Dark Elf Faure"
+    requireTarget, keyWord, description = False, "", "Strike: Put a Fairy into your hand."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_DarkElfFaure(self)]
+
+
+class Trig_DarkElfFaure(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return subject == self.entity and self.entity.onBoard
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Dark Elf Faure's Strike put a Fairy into your hand.")
+        self.entity.Game.Hand_Deck.addCardtoHand(Fairy, self.entity.ID, "CreateUsingType")
+
+
+class Okami(ShadowverseMinion):
+    Class, race, name = "Forestcraft", "", "Okami"
+    mana, attack, health = 4, 3, 4
+    index = "SV_Basic~Forestcraft~Minion~4~3~4~None~Okami"
+    requireTarget, keyWord, description = False, "", "Whenever another allied follower comes into play, gain +1/+0."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_Okami(self)]
+
+
+class Trig_Okami(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionSummoned"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game,
+              f"A friendly minion {subject.name} is summoned and Okami gains +1 attack.")
+        self.entity.buffDebuff(1, 0)
+
+
+class RoseGardener(ShadowverseMinion):
+    Class, race, name = "Forestcraft", "", "Rose Gardener"
+    mana, attack, health = 4, 4, 3
+    index = "SV_Basic~Forestcraft~Minion~4~4~3~None~Rose Gardener"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 1, 1
+
+    def inHandEvolving(self, target=None):
+        if target and target.onBoard:
+            PRINT(self.Game, f"Rose Gardener's Evolve returns {target.name} to owner's hand.")
+            self.Game.returnMiniontoHand(target, deathrattlesStayArmed=False)
+
+
+class Treant(ShadowverseMinion):
+    Class, race, name = "Forestcraft", "", "Treant"
+    mana, attack, health = 5, 4, 4
+    index = "SV_Basic~Forestcraft~Minion~5~4~4~None~Treant~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Gain +2/+2 if at least 2 other cards were played this turn."
+    attackAdd, healthAdd = 2, 2
+
+    def effectCanTrigger(self):
+        return len(self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"]) >= 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        numCardsPlayed = len(self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"])
+        if numCardsPlayed >= 2:
+            PRINT(self.Game, "Elf Guard gains +2/+2")
+            self.buffDebuff(2, 2)
+        return None
+
+
+class ElfTracker(ShadowverseMinion):
+    Class, race, name = "Forestcraft", "", "Elf Tracker"
+    mana, attack, health = 6, 4, 5
+    index = "SV_Basic~Forestcraft~Minion~6~4~5~None~Elf Tracker~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Deal 1 damage to a random enemy follower. Do this 2 times."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        side, curGame = 3 - self.ID, self.Game
+        if curGame.mode == 0:
+            for num in range(2):
+                char = None
+                if curGame.guides:
+                    i, where = curGame.guides.pop(0)
+                    if where: char = curGame.find(i, where)
+                else:
+                    objs = curGame.minionsonBoard(side)
+                    if objs:
+                        char = npchoice(objs)
+                        curGame.fixedGuides.append((char.position, f"minion{side}"))
+                    else:
+                        curGame.fixedGuides.append((0, ''))
+                if char:
+                    self.dealsDamage(char, 1)
+                    PRINT(self.Game, f"Elf Tracker's Fanfare deals 1 damage to {char.name}")
+                else:
+                    break
+        return None
+
+
+class MagnaBotanist(ShadowverseMinion):
+    Class, race, name = "Forestcraft", "", "Magna Botanist"
+    mana, attack, health = 6, 5, 5
+    index = "SV_Basic~Forestcraft~Minion~6~5~5~None~Magna Botanist~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Give +1/+1 to all allied followers if at least 2 other cards were played this turn."
+    attackAdd, healthAdd = 2, 2
+
+    def effectCanTrigger(self):
+        return len(self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"]) >= 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        numCardsPlayed = len(self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"])
+        if numCardsPlayed >= 2:
+            PRINT(self.Game, "Magna Botanist's Fanfare Give +1/+1 to all allied followers")
+            for minion in fixedList(self.Game.minionsonBoard(self.ID)):
+                minion.buffDebuff(1, 1)
+        return None
+
+
 """Swordcraft cards"""
 
 """Runecraft cards"""
@@ -1046,6 +1283,18 @@ SV_Basic_Indices = {
     "SV_Basic~Neutral~Minion~7~7~7~None~Flame and Glass~Charge~Uncollectible": FlameandGlass,
     "SV_Basic~Neutral~Minion~4~3~4~None~Goliath": Goliath,
     "SV_Basic~Neutral~Minion~5~2~6~None~Angelic Sword Maiden~Taunt": AngelicSwordMaiden,
+    "SV_Basic~Forestcraft~Minion~1~1~1~None~Fairy~Uncollectible": Fairy,
+    "SV_Basic~Forestcraft~Minion~1~1~1~None~Water Fairy~Deathrattle": WaterFairy,
+    "SV_Basic~Forestcraft~Minion~2~1~1~None~Fairy Whisperer~Battlecry": FairyWhisperer,
+    "SV_Basic~Forestcraft~Minion~2~1~3~None~Elf Guard~Battlecry": ElfGuard,
+    "SV_Basic~Forestcraft~Minion~2~2~1~None~Elf Metallurgist~Battlecry": ElfMetallurgist,
+    "SV_Basic~Forestcraft~Spell~2~Sylvan Justice": SylvanJustice,
+    "SV_Basic~Forestcraft~Minion~3~2~3~None~Dark Elf Faure": DarkElfFaure,
+    "SV_Basic~Forestcraft~Minion~4~3~4~None~Okami": Okami,
+    "SV_Basic~Forestcraft~Minion~4~4~3~None~Rose Gardener": RoseGardener,
+    "SV_Basic~Forestcraft~Minion~5~4~4~None~Treant~Battlecry": Treant,
+    "SV_Basic~Forestcraft~Minion~6~4~5~None~Elf Tracker~Battlecry": ElfTracker,
+    "SV_Basic~Forestcraft~Minion~6~5~5~None~Magna Botanist~Battlecry": MagnaBotanist,
 
     "SV_Basic~Runecraft~4~3~3~Minion~None~Vesper, Witchhunter~Accelerate~Fanfare": VesperWitchhunter,
     "SV_Basic~Runecraft~Spell~2~Vesper, Witchhunter~Uncollectible": VesperWitchhunter_Accelerate,
