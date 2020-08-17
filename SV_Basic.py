@@ -54,7 +54,7 @@ class ShadowverseMinion(Minion):
             self.health_0 += self.healthAdd
             self.statReset(self.attack + self.attackAdd, self.health + self.healthAdd)
             self.status["Evolved"] += 1
-            PRINT(self, self.name + " evolves.")
+            PRINT(self.Game, self.name + " evolves.")
             self.Game.Counters.evolvedThisGame[self.ID] += 1
             for card in self.Game.Hand_Deck.hands[self.ID]:
                 if isinstance(card, ShadowverseMinion) and "UB" in card.marks:
@@ -444,7 +444,7 @@ class Evolve(HeroPower):
         return False
 
     def targetCorrect(self, target, choice=0):
-        if target.cardType == "Minion" and target.ID == self.ID and target.onBoard \
+        if target.type == "Minion" and target.ID == self.ID and target.onBoard \
                 and isinstance(target, ShadowverseMinion) and target.status["Evolved"] < 1 \
                 and target.marks["Can't Evolve"] == 0:
             if self.Game.Counters.numEvolutionPoint[self.ID] == 0:
@@ -466,7 +466,7 @@ class Arisa(Hero):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.health, self.health_upper, self.armor = 20, 20, 0
+        self.health, self.health_max, self.armor = 20, 20, 0
 
 
 class Erika(Hero):
@@ -474,7 +474,7 @@ class Erika(Hero):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.health, self.health_upper, self.armor = 20, 20, 0
+        self.health, self.health_max, self.armor = 20, 20, 0
 
 
 class Isabelle(Hero):
@@ -482,7 +482,7 @@ class Isabelle(Hero):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.health, self.health_upper, self.armor = 20, 20, 0
+        self.health, self.health_max, self.armor = 20, 20, 0
 
 
 class Rowen(Hero):
@@ -490,7 +490,7 @@ class Rowen(Hero):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.health, self.health_upper, self.armor = 20, 20, 0
+        self.health, self.health_max, self.armor = 20, 20, 0
 
 
 class Luna(Hero):
@@ -498,7 +498,7 @@ class Luna(Hero):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.health, self.health_upper, self.armor = 20, 20, 0
+        self.health, self.health_max, self.armor = 20, 20, 0
 
 
 class Urias(Hero):
@@ -506,7 +506,7 @@ class Urias(Hero):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.health, self.health_upper, self.armor = 20, 20, 0
+        self.health, self.health_max, self.armor = 20, 20, 0
 
 
 class Eris(Hero):
@@ -514,7 +514,7 @@ class Eris(Hero):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.health, self.health_upper, self.armor = 20, 20, 0
+        self.health, self.health_max, self.armor = 20, 20, 0
 
 
 class Yuwan(Hero):
@@ -522,7 +522,7 @@ class Yuwan(Hero):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.health, self.health_upper, self.armor = 20, 20, 0
+        self.health, self.health_max, self.armor = 20, 20, 0
 
 
 class VesperWitchhunter_Accelerate(ShadowverseSpell):
@@ -917,7 +917,7 @@ class Trig_HarnessedFlameUnion(TrigBoard):
             if minion.name == "Harnessed Glass":
                 minion.disappears(deathrattlesStayArmed=False)
                 self.entity.Game.removeMinionorWeapon(minion)
-                self.entity.Game.transform(minion, FlameandGlass(self.entity.Game, self.entity.ID))
+                self.entity.Game.transform(self.entity, FlameandGlass(self.entity.Game, self.entity.ID))
                 break
 
 
@@ -962,7 +962,7 @@ class Trig_HarnessedGlassUnion(TrigBoard):
             if minion.name == "Harnessed Flame":
                 minion.disappears(deathrattlesStayArmed=False)
                 self.entity.Game.removeMinionorWeapon(minion)
-                self.entity.Game.transform(minion, FlameandGlass(self.entity.Game, self.entity.ID))
+                self.entity.Game.transform(self.entity, FlameandGlass(self.entity.Game, self.entity.ID))
                 break
 
 

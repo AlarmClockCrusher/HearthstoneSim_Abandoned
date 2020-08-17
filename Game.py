@@ -781,7 +781,7 @@ class Game:
 		
 		self.turn = 3 - self.turn #Changes the turn to another hero.
 		PRINT(self, "--------------------\nA new turn starts for hero %d\n-----------------"%self.turn)
-		self.Counters.turns[self.turn]+=1
+		self.Counters.turns[self.turn] += 1
 		self.Manas.turnStarts()
 		for obj in fixedList(self.turnStartTrigger): #This is for temp effects.
 			if not hasattr(obj, "ID") or obj.ID == self.turn: obj.turnStartTrigger()
@@ -798,7 +798,9 @@ class Game:
 		self.sendSignal("TurnStarts", self.turn, None, None, 0, "")
 		self.gathertheDead(True)
 		#抽牌阶段之后的死亡处理可以涉及胜负裁定。
-		self.Hand_Deck.drawCard(self.turn)
+		self.Hand_Deck.drawCard(self.turn, type="Turn")
+		if self.turn == 2 and self.Counters.turns[2] == 1 and self.heroes[2].Class in SVClasses:
+			self.Hand_Deck.drawCard(self.turn)
 		self.gathertheDead(True) #There might be death induced by drawing cards.
 		for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
 			card.effectCanTrigger()

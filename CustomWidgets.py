@@ -776,7 +776,11 @@ class HeroPowerButton(tk.Button): #For Hero Powers that are on board
 	def plot(self, x, y):
 		self.x, self.y, self.labels = x, y, []
 		self.place(x=x, y=y, anchor='c')
-		CardLabel(btn=self, text=str(self.card.mana)).plot(x=x, y=y-int(0.25*CARD_Y))
+		if self.card.name == "Evolve":
+			mana = self.card.Game.Counters.numEvolutionPoint[self.card.ID]
+		else:
+			mana = self.card.mana
+		CardLabel(btn=self, text=str(mana)).plot(x=x, y=y-int(0.25*CARD_Y))
 		self.zone.btnsDrawn[1] = self
 		
 	def remove(self):
