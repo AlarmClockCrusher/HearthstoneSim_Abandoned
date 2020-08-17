@@ -83,7 +83,7 @@ class ShadowverseMinion(Minion):
             where = "hand%d" % ID
             for i, card in enumerate(game.Hand_Deck.hands[ID]):
                 if self.targetCorrect(card, choice):
-                    targets.append(obj)
+                    targets.append(card)
                     indices.append(i)
                     wheres.append(where)
 
@@ -670,13 +670,13 @@ class AirboundBarrage(ShadowverseSpell):
 
     def available(self):
         return (
-                           self.selectableFriendlyMinionExists() or self.selectableFriendlyAmuletExists()) and self.selectableEnemyMinionExists()
+                       self.selectableFriendlyMinionExists() or self.selectableFriendlyAmuletExists()) and self.selectableEnemyMinionExists()
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list):
             allied, enemy = target[0], target[1]
             return (
-                               allied.type == "Minion" or allied.type == "Amulet") and allied.onBoard and allied.ID == self.ID and enemy.type == "Minion" and enemy.ID != self.ID and enemy.onBoard
+                           allied.type == "Minion" or allied.type == "Amulet") and allied.onBoard and allied.ID == self.ID and enemy.type == "Minion" and enemy.ID != self.ID and enemy.onBoard
         else:
             if self.targets:  # When checking the 2nd target
                 return target.type == "Minion" and target.ID != self.ID and target.onBoard
@@ -818,6 +818,198 @@ class XIErntzJustice(ShadowverseMinion):
 
 """Neutral cards"""
 
+
+class Goblin(ShadowverseMinion):
+    Class, race, name = "Neutral", "", "Goblin"
+    mana, attack, health = 1, 1, 2
+    index = "SV_Basic~Neutral~Minion~1~1~2~None~Goblin"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+
+class Fighter(ShadowverseMinion):
+    Class, race, name = "Neutral", "", "Fighter"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Basic~Neutral~Minion~2~2~2~None~Fighter"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+
+class WellofDestiny(ShadowverseAmulet):
+    Class, race, name = "Neutral", "", "Well of Destiny"
+    mana = 2
+    index = "SV_Basic~Neutral~Amulet~2~None~Well of Destiny"
+    requireTarget, description = False, "At the start of your turn, give +1/+1 to a random allied follower."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_WellofDestiny(self)]
+
+
+class Trig_WellofDestiny(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnStarts"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        curGame = self.entity.Game
+        if curGame.mode == 0:
+            if curGame.guides:
+                i = curGame.guides.pop(0)
+            else:
+                minions = curGame.minionsonBoard(self.entity.ID)
+                try:
+                    minions.remove(self.entity)
+                except:
+                    pass
+                i = npchoice(minions).position if minions else -1
+                curGame.fixedGuides.append(i)
+            if i > -1:
+                minion = curGame.minions[self.entity.ID][i]
+                PRINT(self.entity.Game, "At the start of turn, Well of Destiny give +1/+1 to a random allied follower.")
+                minion.buffDebuff(1, 1)
+
+
+class MercenaryDrifter(ShadowverseMinion):
+    Class, race, name = "Neutral", "", "Mercenary Drifter"
+    mana, attack, health = 3, 3, 2
+    index = "SV_Basic~Neutral~Minion~3~3~2~None~Mercenary Drifter"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+
+class HarnessedFlame(ShadowverseMinion):
+    Class, race, name = "Neutral", "", "Harnessed Flame"
+    mana, attack, health = 3, 2, 1
+    index = "SV_Basic~Neutral~Minion~3~2~1~None~Harnessed Flame"
+    requireTarget, keyWord, description = False, "", "Strike: Deal 2 damage to the enemy leader.At the start of your turn, this follower combines with an allied Harnessed Glass to become Flame and Glass."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_HarnessedFlame(self), Trig_HarnessedFlameUnion(self)]
+
+
+class Trig_HarnessedFlame(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return subject == self.entity and self.entity.onBoard
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "When Harnessed Flame attacks, Deal 2 damage to the enemy leader.")
+        self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 2)
+
+
+class Trig_HarnessedFlameUnion(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnStarts"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        minions = self.entity.Game.minionsonBoard(self.entity.ID)
+        for minion in minions:
+            if minion.name == "Harnessed Glass":
+                minion.disappears(deathrattlesStayArmed=False)
+                self.entity.Game.removeMinionorWeapon(minion)
+                self.entity.Game.transform(minion, FlameandGlass(self.entity.Game, self.entity.ID))
+                break
+
+
+class HarnessedGlass(ShadowverseMinion):
+    Class, race, name = "Neutral", "", "Harnessed Glass"
+    mana, attack, health = 3, 1, 2
+    index = "SV_Basic~Neutral~Minion~3~2~1~None~Harnessed Glass"
+    requireTarget, keyWord, description = False, "", "Strike: Deal 1 damage to all enemy followers.At the start of your turn, this follower combines with an allied Harnessed Flame to become Flame and Glass."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_HarnessedGlass(self), Trig_HarnessedGlassUnion(self)]
+
+
+class Trig_HarnessedGlass(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return subject == self.entity and self.entity.onBoard
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "When Harnessed Glass attacks, Deal 1 damage to all enemy followers.")
+        targets = self.entity.Game.minionsonBoard(3 - self.entity.ID)
+        self.entity.dealsAOE(targets, [1 for obj in targets])
+        self.entity.Game.gathertheDead()
+        if not target.onBoard:
+            self.entity.attTimes += 1
+
+
+class Trig_HarnessedGlassUnion(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnStarts"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        minions = self.entity.Game.minionsonBoard(self.entity.ID)
+        for minion in minions:
+            if minion.name == "Harnessed Flame":
+                minion.disappears(deathrattlesStayArmed=False)
+                self.entity.Game.removeMinionorWeapon(minion)
+                self.entity.Game.transform(minion, FlameandGlass(self.entity.Game, self.entity.ID))
+                break
+
+
+class FlameandGlass(ShadowverseMinion):
+    Class, race, name = "Neutral", "", "Flame and Glass"
+    mana, attack, health = 7, 7, 7
+    index = "SV_Basic~Neutral~Minion~7~7~7~None~Flame and Glass~Charge~Uncollectible"
+    requireTarget, keyWord, description = False, "Charge", "Storm.Strike: Deal 7 damage to all enemies."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_FlameandGlass(self)]
+
+
+class Trig_FlameandGlass(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return subject == self.entity and self.entity.onBoard
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "When Flame and Glass attacks, Deal 7 damage to all enemies.")
+        targets = [self.entity.Game.heroes[3 - self.entity.ID]] + self.entity.Game.minionsonBoard(3 - self.entity.ID)
+        self.entity.dealsAOE(targets, [7 for obj in targets])
+        self.entity.Game.gathertheDead()
+        if not target.onBoard:
+            self.entity.attTimes += 1
+
+
+class Goliath(ShadowverseMinion):
+    Class, race, name = "Neutral", "", "Goliath"
+    mana, attack, health = 4, 3, 4
+    index = "SV_Basic~Neutral~Minion~4~3~4~None~Goliath"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+
+class AngelicSwordMaiden(ShadowverseMinion):
+    Class, race, name = "Neutral", "", "Angelic Sword Maiden"
+    mana, attack, health = 5, 2, 6
+    index = "SV_Basic~Neutral~Minion~5~2~6~None~Angelic Sword Maiden~Taunt"
+    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    attackAdd, healthAdd = 2, 2
+
+
 """Forestcraft cards"""
 
 """Swordcraft cards"""
@@ -834,11 +1026,32 @@ class XIErntzJustice(ShadowverseMinion):
 
 """Portalcraft cards"""
 
-SV_Basic_Indices = {"SV_Basic~Runecraft~4~3~3~Minion~None~Vesper, Witchhunter~Accelerate~Fanfare": VesperWitchhunter,
-                    "SV_Basic~Runecraft~Spell~2~Vesper, Witchhunter~Uncollectible": VesperWitchhunter_Accelerate,
-                    "SV_Basic~Havencraft~1~Amulet~None~Sacred Plea~Last Words": SacredPlea,
-                    "SV_Basic~Bloodcraft~Minion~10~5~10~None~Ruinweb Spider~Crystallize": RuinwebSpider,
-                    "SV_Basic~Bloodcraft~2~Amulet~None~Ruinweb Spider~Last Words": RuinwebSpider_Shadowverse_Amulet,
-                    "SV_Basic~Bloodcraft~Minion~10~11~8~Dragon~XI. Erntz, Justice~Ward": XIErntzJustice,
-                    "SV_Basic~Forestcraft~Spell~1~Airbound Barrage": AirboundBarrage,
-                    }
+SV_Basic_Indices = {
+    "SV_Hero: Forestcraft": Arisa,
+    "SV_Hero: Swordcraft": Erika,
+    "SV_Hero: Runecraft": Isabelle,
+    "SV_Hero: Drangoncraft": Rowen,
+    "SV_Hero: Shadowcraft": Luna,
+    "SV_Hero: Bloodcraft": Urias,
+    "SV_Hero: Havencraft": Eris,
+    "SV_Hero: Portalcraft": Yuwan,
+    "SV_Hero~Hero Power~0~Evolve": Evolve,
+
+    "SV_Basic~Neutral~Minion~1~1~2~None~Goblin": Goblin,
+    "SV_Basic~Neutral~Minion~2~2~2~None~Fighter": Fighter,
+    "SV_Basic~Neutral~Amulet~2~None~Well of Destiny": WellofDestiny,
+    "SV_Basic~Neutral~Minion~3~3~2~None~Mercenary Drifter": MercenaryDrifter,
+    "SV_Basic~Neutral~Minion~3~2~1~None~Harnessed Flame": HarnessedFlame,
+    "SV_Basic~Neutral~Minion~3~2~1~None~Harnessed Glass": HarnessedGlass,
+    "SV_Basic~Neutral~Minion~7~7~7~None~Flame and Glass~Charge~Uncollectible": FlameandGlass,
+    "SV_Basic~Neutral~Minion~4~3~4~None~Goliath": Goliath,
+    "SV_Basic~Neutral~Minion~5~2~6~None~Angelic Sword Maiden~Taunt": AngelicSwordMaiden,
+
+    "SV_Basic~Runecraft~4~3~3~Minion~None~Vesper, Witchhunter~Accelerate~Fanfare": VesperWitchhunter,
+    "SV_Basic~Runecraft~Spell~2~Vesper, Witchhunter~Uncollectible": VesperWitchhunter_Accelerate,
+    "SV_Basic~Havencraft~1~Amulet~None~Sacred Plea~Last Words": SacredPlea,
+    "SV_Basic~Bloodcraft~Minion~10~5~10~None~Ruinweb Spider~Crystallize": RuinwebSpider,
+    "SV_Basic~Bloodcraft~2~Amulet~None~Ruinweb Spider~Last Words": RuinwebSpider_Shadowverse_Amulet,
+    "SV_Basic~Bloodcraft~Minion~10~11~8~Dragon~XI. Erntz, Justice~Ward": XIErntzJustice,
+    "SV_Basic~Forestcraft~Spell~1~Airbound Barrage": AirboundBarrage,
+}

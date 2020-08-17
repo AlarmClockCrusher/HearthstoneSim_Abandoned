@@ -436,5 +436,4 @@ class Hand_Deck:
 Default1 = [VesperWitchhunter, VesperWitchhunter, VesperWitchhunter, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher,
 			]
 			
-Default2 = [Terrorformer, Terrorformer, Terrorformer, AirboundBarrage, AirboundBarrage, VesperWitchhunter, VesperWitchhunter, VesperWitchhunter, SacredPlea, SacredPlea, RuinwebSpider, RuinwebSpider, XIErntzJustice, XIErntzJustice, 
-			]
+Default2 = [ElvenArcher,ElvenArcher,ElvenArcher,ElvenArcher,AirboundBarrage,AirboundBarrage,AirboundBarrage]
