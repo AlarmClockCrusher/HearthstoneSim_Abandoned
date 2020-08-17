@@ -111,14 +111,9 @@ class Manas:
 	def affordable(self, subject):
 		ID = subject.ID
 		mana = subject.getMana()
-		return {"Spell": (self.status[ID]["Spells Cost Health Instead"] > 0 and subject.mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.status[ID]["Immune"] > 0) \
-					or mana <= self.manas[ID], #目前只考虑法术的法力消耗改生命消耗光环
-				"Minion": mana <= self.manas[ID],
-				"Weapon": mana <= self.manas[ID],
-				"Power": mana <= self.manas[ID],
-				"Hero": mana <= self.manas[ID]
-				}[subject.type]
-				
+		return mana <= self.manas[ID] or (subject.type == "Spell" \
+					and (self.status[ID]["Spells Cost Health Instead"] > 0 and subject.mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.status[ID]["Immune"] > 0)) 
+					
 	def payManaCost(self, subject, mana):
 		ID, mana = subject.ID, max(0, mana)
 		if subject.type == "Spell" and self.status[ID]["Spells Cost Health Instead"] > 0:
@@ -316,12 +311,11 @@ class Counters:
 		self.shadows = {1:0, 2:0}
 		self.turns = {1:0, 2:0}
 		self.evolvedThisGame = {1:0, 2:0}
-		self.minionsSummonedThisGame = {1:0, 2:0}
-		self.amuletsDestroyedThisTurn = {1:0, 2:0}
-		self.amuletsDestroyedThisGame = {1:0, 2:0}
+		self.numMinionsSummonedThisGame = {1:0, 2:0}
+		self.amuletsDestroyedThisTurn = {1:[], 2:[]}
+		self.amuletsDestroyedThisGame = {1:[], 2:[]}
 		self.timesHeroTookDamage_inOwnTurn = {1:0, 2:0}
 		self.tempVengeance = {1:False, 2:False}
-
 		
 	def turnEnds(self):
 		self.numElementalsPlayedLastTurn[self.Game.turn] = 0
@@ -340,6 +334,7 @@ class Counters:
 		self.numSpellsPlayedThisTurn = {1:0, 2:0}
 		self.damageonHeroThisTurn = {1:0, 2:0}
 		self.minionsDiedThisTurn = {1:[], 2:[]}
+		self.amuletsDestroyedThisTurn = {1:[], 2:[]}
 		self.heroAttackTimesThisTurn = {1:0, 2:0}
 		self.heroChangedHealthThisTurn = {1:False, 2:False}
 		self.powerUsedThisTurn = 0
@@ -405,18 +400,11 @@ class Discover:
 			self.Game.GUI.waitforDiscover(info)
 			self.initiator, self.Game.options = None, []
 			
-	def startSelectBoard(self, initiator, validTargets):
+	def startSelect(self, initiator, validTargets):
 		if self.Game.GUI:
 			self.initiator = initiator
 			self.Game.GUI.update()
-			self.Game.GUI.waitforSelectBoard(validTargets)
-			self.initiator = None
-			
-	def startSelectHand(self, initiator, validTargets):
-		if self.Game.GUI:
-			self.initiator = initiator
-			self.Game.GUI.update()
-			self.Game.GUI.waitforSelectHand(validTargets)
+			self.Game.GUI.waitforSelect(validTargets)
 			self.initiator = None
 			
 	def startFusion(self, initiator, validTargets):

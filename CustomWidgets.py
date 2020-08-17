@@ -83,13 +83,12 @@ def findPicFilepath(card):
 		else: path = "Crops\\HerosandPowers\\"
 		
 	name = name.split("_")[0] if "Mutable" in name else name
-	if hasattr(card,"evolve") and card.keyWords["evolved"]>0:
+	if card.type == "Minion" and card.index.startswith("SV_") and card.status["Evolved"] > 0:
 		name += "_1"
-	if "Accelerate" in name:
-		name = name.replace("Accelerate","")
-	if "Crystallize" in name:
-		name = name.replace("Crystallize","")
-	filepath = path+"%s.png"%name
+	if "Accelerate" in name: name = name.replace("_Accelerate","")
+	if "Crystallize" in name: name = name.replace("_Crystallize","")
+	if "_Amulet" in name: name = name.replace("_Amulet","")
+	filepath = path + "%s.png"%name
 	return filepath
 	
 def findPicFilepath_FullImg(card):
@@ -107,6 +106,11 @@ def findPicFilepath_FullImg(card):
 		else: path = "Images\\HerosandPowers\\"
 		
 	name = name.split("_")[0] if "Mutable" in name else name
+	if card.type == "Minion" and card.index.startswith("SV_") and card.status["Evolved"] > 0:
+		name += "_1"
+	if "Accelerate" in name: name = name.replace("_Accelerate","")
+	if "Crystallize" in name: name = name.replace("_Crystallize","")
+	if "_Amulet" in name: name = name.replace("_Amulet","")
 	filepath = path+"%s.png"%name
 	return filepath
 	
@@ -142,7 +146,7 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			self.x, self.y, self.labels, self.zone = 0, 0, [], GUI.handZones[card.ID]
 			self.bind('<Button-1>', self.leftClick)   # bind left mouse click
 			self.bind('<Button-3>', self.rightClick)   # bind right mouse click
-			if card.index.startswith("Shadowverse") and hasattr(card, "fusion"):
+			if card.index.startswith("SV_") and hasattr(card, "fusion"):
 				self.bind("<Double-Button-1>", lambda event: game.Discover.startFusion(card, card.findFusionMaterials()))
 			#Info bookkeeping
 			self.cardInfo, self.mana = type(card), card.mana
@@ -538,7 +542,7 @@ class MinionButton(tk.Button):
 			if hasattr(trig, "counter"): self.counts += trig.counter
 			
 	def decideColorOrig(self, GUI, minion):
-		if minion.type != "Minion" and minion.type != "Amulet": self.colorOrig = "grey46"
+		if minion.type != "Minion": self.colorOrig = "grey46"
 		else:
 			if minion.dead: self.colorOrig = "grey25"
 			elif minion == GUI.subject: self.colorOrig = "white"
@@ -551,10 +555,8 @@ class MinionButton(tk.Button):
 				selectedSubject = "MiniononBoard"
 				self.GUI.resolveMove(self.card, self, selectedSubject)
 			elif self.card.type == "Dormant":
-				print("Pressing Dormant button", self.GUI.UI)
 				if self.GUI.UI == 2:
 					selectedSubject = "DormantonBoard"
-					print("Resolving")
 					self.GUI.resolveMove(self.card, self, selectedSubject)
 				else: self.GUI.cancelSelection()
 			elif self.card.type == "Amulet":
@@ -587,9 +589,6 @@ class MinionButton(tk.Button):
 						("black" if self.card.health_max <= self.card.health_0 else "green3")
 			CardLabel(btn=self, text=str(self.card.attack), fg=attColor).plot(x=x-0.42*CARD_X, y=y+0.43*CARD_Y)
 			CardLabel(btn=self, text=str(self.card.health), fg=healthColor).plot(x=x+0.42*CARD_X, y=y+0.43*CARD_Y)
-		elif self.card.type == "Amulet" and self.card.countdown > 0:
-			countdownColor = "black"
-			CardLabel(btn=self, text=str(self.card.countdown), fg=countdownColor).plot(x=x, y=y+0.43*CARD_Y)
 		self.zone.btnsDrawn.append(self)
 		
 	def move2(self, x, y):
@@ -700,6 +699,10 @@ class HeroButton(tk.Button):
 		self.GUI.cancelSelection()
 		self.card.STATUSPRINT()
 		self.GUI.displayCard(self.card)
+		
+	def tempLeftClick(self, event): #For Shadowverse
+		self.GUI.select = self.card
+		self.var.set(1)
 		
 	def plot(self, x=11, y=11):
 		self.x, self.y, self.labels = x, y, []

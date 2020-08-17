@@ -15,7 +15,7 @@ def indexHasClass(index, Class):
 	return Class in index.split('~')[1]
 	
 def canBeGenerated(cardType):
-	return not cardType.description.startswith("Quest:") and \
+	return not cardType.index.startswith("SV_") and not cardType.description.startswith("Quest:") and \
 			not ("Galakrond" in cardType.name or "Galakrond" in cardType.description or "Invoke" in cardType.description or "invoke" in cardType.description)
 			
 			
@@ -33,6 +33,7 @@ from DemonHunterInitiate import *
 from Outlands import *
 from Monk import *
 from Academy import *
+from SV_Basic import *
 
 def makeCardPool(monk=0, board="0 Random Game Board"):
 	cardPool, info = {}, ""
@@ -60,6 +61,9 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 	
 	cardPool.update(Outlands_Indices)
 	info += "from Outlands import *\n"
+	
+	cardPool.update(SV_Basic_Indices)
+	info += "from SV_Basic import *\n"
 	
 	if monk:
 		print("Including Monk")
@@ -121,6 +125,7 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 	Game.basicPowers = BasicPowers
 	Game.upgradedPowers = UpgradedPowers
 	
+	print("SV cards included in card pool:", "SV_Basic~Runecraft~4~3~3~Minion~None~Vesper, Witchhunter~Accelerate~Fanfare" in Game.cardPool)
 	#cardPool本身需要保留各种祈求牌
 	Game.MinionswithRace = {"Beast": {}, "Demon": {}, "Dragon": {}, "Elemental":{},
 							"Murloc": {}, "Mech": {}, "Pirate":{}, "Totem": {}}

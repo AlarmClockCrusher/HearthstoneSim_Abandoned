@@ -94,7 +94,9 @@ class GUI_Common:
 			for btn in reversed(self.btnsDrawn):
 				if isinstance(btn, ChooseOneButton): btn.remove()
 			self.resetCardColors()
-			
+			for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
+				if hasattr(card, "targets"): card.targets = []
+				
 	def wrapText(self, text, lengthLimit=10):
 		if len(text) > lengthLimit: #"Savannah Highmane"
 			lines, string, words = "", '', text.split(' ')
@@ -189,17 +191,17 @@ class GUI_Common:
 				self.UI, self.choice = 2, 0 #选择了主体目标，则准备进入选择打出位置或目标界面。抉择法术可能会将界面导入抉择界面。
 				button.selected = 1 - button.selected
 				button.configure(bg="white")
-				if "inHand" in selectedSubject: #Choose card in hand as subject
+				if selectedSubject.endswith("inHand"): #Choose card in hand as subject
 					if not game.Manas.affordable(entity): #No enough mana to use card
 						self.cancelSelection()
 					else: #除了法力值不足，然后是指向性法术没有合适目标和随从没有位置使用
-						#If the card in hand is Choose One spell.
-						if selectedSubject == "SpellinHand" and entity.available() == False:
+						typewhenPlayed = self.subject.getTypewhenPlayed()
+						if typewhenPlayed == "Spell" and not entity.available():
 							#法术没有可选目标，或者是不可用的非指向性法术
 							self.printInfo("Selected spell unavailable. All selection canceled.")
 							self.cancelSelection()
-						elif (selectedSubject == "MinioninHand" or selectedSubject == "AmuletinHand") and game.space(entity.ID) < 1:
-							self.printInfo("The board is full and minion selected can't be played")
+						elif game.space(entity.ID) < 1 and (typewhenPlayed == "Minion" or typewhenPlayed == "Amulet"): #如果场上没有空位，且目标是护符或者无法触发激奏的随从的话，则不能打出牌
+							self.printInfo("The board is full and minion/amulet selected can't be played")
 							self.cancelSelection()
 						else:
 							if entity.chooseOne > 0:
@@ -211,7 +213,11 @@ class GUI_Common:
 									game.options = entity.options
 									self.UI = 1 #进入抉择界面，退出抉择界面的时候已经self.choice已经选好。
 									self.update()
-							elif (entity.type != "Weapon" and entity.needTarget()) or (entity.type == "Weapon" and entity.requireTarget):
+							#如果选中的手牌是一个需要选择目标的SV法术
+							elif entity.index.startswith("SV_") and typewhenPlayed == "Spell" and entity.needTarget():
+								game.Discover.startSelect(entity, entity.findTargets("")[0])
+							#选中的手牌是需要目标的炉石卡
+							elif (typewhenPlayed != "Weapon" and entity.needTarget()) or (typewhenPlayed == "Weapon" and entity.requireTarget):
 								self.highlightTargets(entity.findTargets("", self.choice)[0])
 				#不需目标的英雄技能当即使用。需要目标的进入目标选择界面。暂时不用考虑技能的抉择
 				elif selectedSubject == "Power":
@@ -231,6 +237,7 @@ class GUI_Common:
 				elif selectedSubject.endswith("onBoard"):
 					if not entity.canAttack(): self.cancelSelection()
 					else: self.highlightTargets(entity.findBattleTargets()[0])
+					
 		elif self.UI == 1:
 			if selectedSubject == "ChooseOneOption" and entity.available():
 				#The first option is indexed as 0.
@@ -249,7 +256,7 @@ class GUI_Common:
 			else:
 				self.printInfo("You must click an available option to continue.")
 				
-		elif self.UI == 2:
+		elif self.UI == 2: #影之诗的目标选择是不会进入这个阶段的，直接进入UI == 3，并在那里完成所有的目标选择
 			self.target = entity
 			self.printInfo("Selected target: {}".format(entity))
 			#No matter what the selections are, pressing EndTurn button ends the turn.
@@ -259,7 +266,7 @@ class GUI_Common:
 				self.subject, self.target = None, None
 				game.switchTurn()
 				self.update()
-			elif selectedSubject.endswith("inHand"):
+			elif selectedSubject.endswith("inHand"): #影之诗的目标选择不会在这个阶段进行
 				self.cancelSelection()
 			elif self.selectedSubject.endswith("onBoard"):
 				if "Hero" not in selectedSubject and selectedSubject != "MiniononBoard":
@@ -273,14 +280,14 @@ class GUI_Common:
 					self.subject, self.target, self.UI = None, None, 0
 					self.update()
 			#手中选中的随从在这里结算打出位置，如果不需要目标，则直接打出。
-			elif self.selectedSubject == "MinioninHand":
-				if selectedSubject == "Board" or (entity.ID == self.subject.ID and (selectedSubject == "MiniononBoard" or selectedSubject == "DormantonBoard")):
+			elif self.selectedSubject == "MinioninHand" or self.selectedSubject == "AmuletinHand": #选中场上的友方随从，我休眠物和护符时会把随从打出在其左侧
+				if selectedSubject == "Board" or (entity.ID == self.subject.ID and (selectedSubject.endswith("onBoard") and not selectedSubject.startswith("Hero"))):
 					self.position = -1 if selectedSubject == "Board" else entity.position
 					self.printInfo("Position for minion in hand decided: %d"%self.position)
 					self.selectedSubject = "MinionPositionDecided" #将主体记录为标记了打出位置的手中随从。
 					#抉择随从如有全选光环，且所有选项不需目标，则直接打出。 连击随从的needTarget()由连击条件决定。
 					#self.printInfo("Minion {} in hand needs target: {}".format(self.subject.name, self.subject.needTarget(self.choice)))
-					if self.subject.needTarget(self.choice) == False or self.subject.targetExists(self.choice) == False:
+					if not (self.subject.needTarget(self.choice) and self.subject.targetExists(self.choice)):
 						#self.printInfo("Requesting to play minion {} without target. The choice is {}".format(self.subject.name, self.choice))
 						subject, position, choice = self.subject, self.position, self.choice
 						self.cancelSelection()
@@ -291,30 +298,13 @@ class GUI_Common:
 					else:
 						#self.printInfo("The minion requires target to play. needTarget() returns {}".format(self.subject.needTarget(self.choice)))
 						button.configure(bg="purple")
-			#随从的打出位置和抉择选项已经在上一步选择，这里处理目标选择。
-			elif self.selectedSubject == "AmuletinHand":
-				if selectedSubject == "Board" or (entity.ID == self.subject.ID and selectedSubject == "AmuletonBoard"):
-					self.position = -1 if selectedSubject == "Board" else entity.position
-					self.printInfo("Position for amulet in hand decided: %d"%self.position)
-					self.selectedSubject = "AmuletPositionDecided" #将主体记录为标记了打出位置的手中随从。
-					#抉择随从如有全选光环，且所有选项不需目标，则直接打出。 连击随从的needTarget()由连击条件决定。
-					#self.printInfo("Minion {} in hand needs target: {}".format(self.subject.name, self.subject.needTarget(self.choice)))
-					if self.subject.needTarget(self.choice) == False or self.subject.targetExists(self.choice) == False:
-						#self.printInfo("Requesting to play minion {} without target. The choice is {}".format(self.subject.name, self.choice))
-						subject, position, choice = self.subject, self.position, self.choice
-						self.cancelSelection()
-						self.subject, self.target, self.UI = subject, None, -1
-						game.playAmulet(subject, None, position, choice)
-						self.subject, self.target, self.UI = None, None, 0
-						self.update()
-					else:
-						#self.printInfo("The minion requires target to play. needTarget() returns {}".format(self.subject.needTarget(self.choice)))
-						button.configure(bg="purple")
+						#需要区分SV和炉石随从的目标选择。
+						subject = self.subject
+						if subject.index.startswith("SV_"): #能到这个阶段的都是有目标选择的随从
+							game.Discover.startSelect(subject, subject.findTargets("")[0])
 			#随从的打出位置和抉择选项已经在上一步选择，这里处理目标选择。
 			elif self.selectedSubject == "MinionPositionDecided":
-				if selectedSubject.endswith("MiniononBoard") == False and selectedSubject.endswith("HeroonBoard") == False and selectedSubject.endswith("AmuletonBoard") == False: #指定目标时必须是英雄或者场上随从
-					self.printInfo("Board is not a valid option. All selections canceled.")
-				else:
+				if selectedSubject == "MiniononBoard" or selectedSubject == "HeroonBoard":
 					self.printInfo("Requesting to play minion {}, targeting {} with choice: {}".format(self.subject.name, entity.name, self.choice))
 					subject, position, choice = self.subject, self.position, self.choice
 					self.cancelSelection()
@@ -322,20 +312,11 @@ class GUI_Common:
 					game.playMinion(subject, entity, position, choice)
 					self.subject, self.target, self.UI = None, None, 0
 					self.update()
-			elif self.selectedSubject == "AmuletPositionDecided":
-				if selectedSubject.endswith("MiniononBoard") == False and selectedSubject.endswith("HeroonBoard") == False and selectedSubject.endswith("AmuletonBoard") == False: #指定目标时必须是英雄或者场上随从
-					self.printInfo("Board is not a valid option. All selections canceled.")
 				else:
-					self.printInfo("Requesting to play amulet {}, targeting {} with choice: {}".format(self.subject.name, entity.name, self.choice))
-					subject, position, choice = self.subject, self.position, self.choice
-					self.cancelSelection()
-					self.subject, self.target, self.UI = subject, entity, -1
-					game.playAmulet(subject, entity, position, choice)
-					self.subject, self.target, self.UI = None, None, 0
-					self.update()
+					self.printInfo("Not a valid selection. All selections canceled.")
 			#选中的法术已经确定抉择选项（如果有），下面决定目标选择。
 			elif self.selectedSubject == "SpellinHand":
-				if self.subject.needTarget(self.choice) == False:
+				if not self.subject.needTarget(self.choice): #Non-targeting spells can only be cast by clicking the board
 					if selectedSubject == "Board":
 						self.printInfo("Requesting to play spell {} without target. The choice is {}".format(self.subject.name, self.choice))
 						subject, target, choice = self.subject, None, self.choice
@@ -345,9 +326,7 @@ class GUI_Common:
 						self.subject, self.target, self.UI = None, None, 0
 						self.update()
 				else: #法术或者法术抉择选项需要指定目标。
-					if "Hero" not in selectedSubject and selectedSubject != "MiniononBoard" and selectedSubject != "AmuletonBoard":
-						self.printInfo("Targeting spell must be cast on Hero or Minion on board.")
-					else:
+					if selectedSubject == "MiniononBoard" or selectedSubject == "HeroonBoard":
 						self.printInfo("Requesting to play spell {} with target {}. The choice is {}".format(self.subject.name, entity, self.choice))
 						subject, target, choice = self.subject, entity, self.choice
 						self.cancelSelection()
@@ -355,9 +334,10 @@ class GUI_Common:
 						game.playSpell(subject, target, choice)
 						self.subject, self.target, self.UI = None, None, 0
 						self.update()
+					else: self.printInfo("Targeting spell must be cast on Hero or Minion on board.")
 			#选择手牌中的武器的打出目标
 			elif self.selectedSubject == "WeaponinHand":
-				if self.subject.requireTarget == False:
+				if not self.subject.requireTarget:
 					if selectedSubject == "Board":
 						self.printInfo("Requesting to play Weapon {}".format(self.subject.name))
 						subject, target = self.subject, None
@@ -367,9 +347,7 @@ class GUI_Common:
 						self.subject, self.target, self.UI = None, None, 0
 						self.update()
 				else:
-					if "Hero" not in selectedSubject and selectedSubject != "MiniononBoard" and selectedSubject != "AmuletonBoard":
-						self.printInfo("Targeting weapon must be played with a target.")
-					else:
+					if selectedSubject == "MiniononBoard" or selectedSubject == "HeroonBoard":
 						subject, target = self.subject, entity
 						self.printInfo("Requesting to play weapon {} with target {}".format(subject.name, target.name))
 						self.cancelSelection()
@@ -377,10 +355,11 @@ class GUI_Common:
 						game.playWeapon(subject, target)
 						self.subject, self.target, self.UI = None, None, 0
 						self.update()
+					else: self.printInfo("Targeting weapon must be played with a target.")
 			#手牌中的英雄牌是没有目标的
 			elif self.selectedSubject == "HeroinHand":
 				if selectedSubject == "Board":
-					self.printInfo("Requesting to play hero card {}".format(self.subject.name))
+					self.printInfo("Requesting to play hero card %s"%self.subject.name)
 					subject = self.subject
 					self.cancelSelection()
 					self.subject, self.target, self.UI = subject, None, -1
@@ -390,9 +369,7 @@ class GUI_Common:
 			#Select the target for a Hero Power.
 			#在此选择的一定是指向性的英雄技能。
 			elif self.selectedSubject == "Power": #如果需要指向的英雄技能对None使用，HeroPower的合法性检测会阻止使用。
-				if "Hero" not in selectedSubject and selectedSubject != "MiniononBoard":
-					self.printInfo("Targeting hero power must be used with a target.")
-				else:
+				if selectedSubject == "MiniononBoard" or selectedSubject == "HeroonBoard":
 					self.printInfo("Requesting to use Hero Power {} on {}".format(self.subject.name, entity.name))
 					subject = self.subject
 					self.cancelSelection()
@@ -400,25 +377,34 @@ class GUI_Common:
 					subject.use(entity)
 					self.subject, self.target, self.UI = None, None, 0
 					self.update()
+				else: self.printInfo("Targeting hero power must be used with a target.")
 		else: #self.UI == 3
 			if selectedSubject == "DiscoverOption":
 				self.UI = 0
 				self.update()
 				game.Discover.initiator.discoverDecided(entity, info)
-			elif selectedSubject == "SelectObjBoard":
-				self.UI = 0
-				self.update()
-				game.Discover.initiator.selectBoardDecided(entity)
-			elif selectedSubject == "SelectObjHand":
-				self.UI = 0
-				self.update()
-				game.Discover.initiator.selectHandDecided(entity)
+			elif selectedSubject == "SelectObj":
+				print("Selecting obj for SV card")
+				self.subject.targets.append(entity)
+				try: self.target.append(entity)
+				except: self.target = [entity]
+				if self.subject.needTarget():
+					game.Discover.startSelect(self.subject, self.subject.findTargets("")[0])
+				else: #如果目标选择完毕了，则不用再选择，直接开始打出结算
+					self.UI = 0
+					subject, target, position, choice = self.subject, self.subject.targets, self.position, -1
+					self.printInfo("Requesting to play Shadowverse spell {} with targets {}".format(subject.name, target))
+					self.cancelSelection()
+					{"Minion": lambda : game.playMinion(subject, target, position, choice),
+					"Spell": lambda : game.playSpell(subject, target, choice),
+					"Amulet": lambda : game.playAmulet(subject, target, choice),
+					}[subject.type]()
 			elif selectedSubject == "Fusion":
 				self.UI = 0
 				self.update()
 				game.Discover.initiator.fusionDecided(entity)
 			else:
-				self.printInfo("You MUST click an Discover option to continue.")
+				self.printInfo("You MUST click a correct object to continue.")
 				
 	def waitforDiscover(self, info=None):
 		self.UI, self.discover, var = 3, None, tk.IntVar()
@@ -437,84 +423,70 @@ class GUI_Common:
 		btnDiscoverConfirm.destroy()
 		self.resolveMove(self.discover, None, "DiscoverOption", info)
 		
-	def waitforSelectBoard(self, validTargets):
+	def waitforSelect(self, validTargets):
 		self.UI, self.select, var = 3, None, tk.IntVar()
-		btnSelectConfirm = tk.Button(master=self.GamePanel, text="Select\nTarget", bg="lime green", width=7, height=3, font=("Yahei", 12, "bold"))
+		btnSelectConfirm = tk.Button(master=self.GamePanel, text="Cancel\nSelection", bg="lime green", width=9, height=2, font=("Yahei", 12, "bold"))
 		btnSelectConfirm.GUI, btnSelectConfirm.colorOrig = self, "lime green"
-		#应该在场上再draw新的button
-		validBtns = []
-		for target in validTargets:
-			for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
-				if btn.card == target:
-					btn.var = var
-					btn.configure(bg="cyan2")
-					btn.unbind("<Button-1>")
-					btn.bind("<Button-1>", btn.tempLeftClick)
-					validBtns.append(btn)
-					break
-		btnSelectConfirm.place(x=0.83*X, y=0.5*Y, anchor='c')
-		btnSelectConfirm.wait_variable(var)
-		btnSelectConfirm.destroy()
-		for btn in validBtns:
-			btn.configure(bg=btn.colorOrig)
-			btn.unbind("<Button-1>")
-			btn.bind("<Button-1>", btn.leftClick)
-		self.resolveMove(self.select, None, "SelectObjBoard")
-		
-	def waitforSelectHand(self, validTargets):
-		self.UI, self.select, var = 3, None, tk.IntVar()
-		btnSelectConfirm = tk.Button(master=self.GamePanel, text="Select\nTarget", bg="lime green", width=7, height=3, font=("Yahei", 12, "bold"))
-		btnSelectConfirm.GUI, btnSelectConfirm.colorOrig = self, "lime green"
-		#应该在场上再draw新的button
-		validBtns = []
-		for target in validTargets:
-			for btn in self.handZones[1].btnsDrawn + self.handZones[2].btnsDrawn:
-				if btn.card == target:
-					btn.var = var
-					btn.configure(bg="cyan2")
-					btn.unbind("<Button-1>")
-					btn.bind("<Button-1>", btn.tempLeftClick)
-					validBtns.append(btn)
-					break
-		btnSelectConfirm.place(x=0.83*X, y=0.5*Y, anchor='c')
-		btnSelectConfirm.wait_variable(var)
-		btnSelectConfirm.destroy()
-		for btn in validBtns:
-			btn.configure(bg=btn.colorOrig)
-			btn.unbind("<Button-1>")
-			btn.bind("<Button-1>", btn.leftClick)
-		self.resolveMove(self.select, None, "SelectObjHand")
-		
-	def waitforFusion(self, validTargets):
-		self.UI, self.fusionMaterials, var = 3, [], tk.IntVar()
-		btnSelectConfirm = tk.Button(master=self.GamePanel, text="Left Click to Fuse\nRight Click to Cancel", bg="lime green", width=15, height=3, font=("Yahei", 12, "bold"))
-		btnSelectConfirm.GUI, btnSelectConfirm.colorOrig = self, "lime green"
-		btnSelectConfirm.bind("<Button-1>", lambda event: var.set(1))
+		btnSelectConfirm.bind("<Button-1>", lambda event: var.set(2))
 		btnSelectConfirm.bind("<Button-3>", lambda event: var.set(2))
+		#应该在场上再draw新的button
 		validBtns = []
 		for target in validTargets:
-			for btn in self.handZones[validTargets[0].ID].btnsDrawn:
+			for btn in self.handZones[1].btnsDrawn + self.handZones[2].btnsDrawn \
+						+ self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
 				if btn.card == target:
 					btn.var = var
 					btn.configure(bg="cyan2")
 					btn.unbind("<Button-1>")
-					btn.bind("<Button-1>", btn.tempLeftClick_Fusion)
+					btn.bind("<Button-1>", btn.tempLeftClick)
 					validBtns.append(btn)
 					break
 		btnSelectConfirm.place(x=0.83*X, y=0.5*Y, anchor='c')
 		btnSelectConfirm.wait_variable(var)
+		print("btnSelectConfirm clicked, var is", var.get(), var.get())
 		btnSelectConfirm.destroy()
-		for btn in validBtns: #Reset the buttons' color and binding
+		for btn in validBtns:
 			btn.configure(bg=btn.colorOrig)
 			btn.unbind("<Button-1>")
 			btn.bind("<Button-1>", btn.leftClick)
-		if var.get() == 1: #var.get() == 2 means cancel the fusion
-			if self.fusionMaterials: self.resolveMove(self.fusionMaterials, None, "Fusion")
-			else: self.printInfo("Fusion requires other cards selected")
-		else:
+		if var.get() == 1:
+			self.resolveMove(self.select, None, "SelectObj")
+		else: #var == 2 #If btnSelectConfirm is clicked, cancel the selection
 			self.UI = 0
-			self.fusionMaterials = []
+			self.cancelSelection()
 			
+	def waitforFusion(self, validTargets):
+		initiator = self.Game.Discover.initiator
+		if initiator.fusion > 0 and initiator.ID == self.Game.turn:
+			self.UI, self.fusionMaterials, var = 3, [], tk.IntVar()
+			btnSelectConfirm = tk.Button(master=self.GamePanel, text="Left Click to Fuse\nRight Click to Cancel", bg="lime green", width=15, height=3, font=("Yahei", 12, "bold"))
+			btnSelectConfirm.GUI, btnSelectConfirm.colorOrig = self, "lime green"
+			btnSelectConfirm.bind("<Button-1>", lambda event: var.set(1))
+			btnSelectConfirm.bind("<Button-3>", lambda event: var.set(2))
+			validBtns = []
+			for target in validTargets:
+				for btn in self.handZones[validTargets[0].ID].btnsDrawn:
+					if btn.card == target:
+						btn.var = var
+						btn.configure(bg="cyan2")
+						btn.unbind("<Button-1>")
+						btn.bind("<Button-1>", btn.tempLeftClick_Fusion)
+						validBtns.append(btn)
+						break
+			btnSelectConfirm.place(x=0.83*X, y=0.5*Y, anchor='c')
+			btnSelectConfirm.wait_variable(var)
+			btnSelectConfirm.destroy()
+			for btn in validBtns: #Reset the buttons' color and binding
+				btn.configure(bg=btn.colorOrig)
+				btn.unbind("<Button-1>")
+				btn.bind("<Button-1>", btn.leftClick)
+			if var.get() == 1: #var.get() == 2 means cancel the fusion
+				if self.fusionMaterials: self.resolveMove(self.fusionMaterials, None, "Fusion")
+				else: self.printInfo("Fusion requires other cards selected")
+			else:
+				self.UI = 0
+				self.fusionMaterials = []
+				
 	def wishforaCard(self, initiator):
 		self.UI = 3
 		self.lbl_wish.pack(fill=tk.X, side=tk.TOP)
@@ -590,7 +562,7 @@ class GUI_Common:
 				if btn1 is None: #如果施放的是法术，则不会找到对应这个法术的button，直接连接施法者和目标
 					btn1 = self.heroZones[self.subject.ID].btnsDrawn[0]
 				for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
-					if btn.card == self.target:
+					if btn.card == self.target or (isinstance(self.target, list) and btn.card in self.target):
 						btn2 = btn
 						break
 				lineID = self.canvas.connectBtns(btn1, btn2)

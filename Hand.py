@@ -8,7 +8,6 @@ import numpy as np
 
 import inspect
 
-
 def extractfrom(target, listObj):
 	try: return listObj.pop(listObj.index(target))
 	except: return None
@@ -29,9 +28,9 @@ class Hand_Deck:
 		self.decks = {1: [], 2: []}
 		self.noCards = {1: 0, 2: 0}
 		self.handUpperLimit = {1: 10, 2: 10}
-		if self.Game.heroes[1].Calss in SVClasses:
+		if self.Game.heroes[1].Class in SVClasses:
 			self.handUpperLimit[1] = 9
-		if self.Game.heroes[2].Calss in SVClasses:
+		if self.Game.heroes[2].Class in SVClasses:
 			self.handUpperLimit[2] = 9
 		self.initialDecks = {1: deck1 if deck1 else Default1,
 							 2: deck2 if deck2 else Default2}
@@ -434,8 +433,8 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 			
 			
-Default1 = [OathlessKnight, OathlessKnight, OathlessKnight, EntrancingBlow, EntrancingBlow, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher,
+Default1 = [VesperWitchhunter, VesperWitchhunter, VesperWitchhunter, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher,
 			]
 			
-Default2 = [EntrancingBlow, EntrancingBlow, EntrancingBlow, EntrancingBlow, PotionofIllusion, PotionofIllusion, Bamboozle, Bamboozle, ShadowjewelerHanar, ShadowjewelerHanar, TheLurkerBelow, TheLurkerBelow, RollingFireball, RollingFireball, SorcerersApprentice, HighAbbessAlura, CommandingShout, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron, PuzzleBoxofYoggSaron
+Default2 = [Terrorformer, Terrorformer, Terrorformer, AirboundBarrage, AirboundBarrage, VesperWitchhunter, VesperWitchhunter, VesperWitchhunter, SacredPlea, SacredPlea, RuinwebSpider, RuinwebSpider, XIErntzJustice, XIErntzJustice, 
 			]

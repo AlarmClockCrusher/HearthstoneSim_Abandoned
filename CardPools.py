@@ -6,18 +6,15 @@ from Dragons import *
 from Galakrond import *
 from DemonHunterInitiate import *
 from Outlands import *
-from Academy import *
-
 from SV_Basic import *
+from Academy import *
 
 BasicPowers = [DemonClaws, Shapeshift, SteadyShot, Fireblast, Reinforce, LesserHeal, DaggerMastery, TotemicCall, LifeTap, ArmorUp, ]
 
 UpgradedPowers = [DemonsBite, DireShapeshift, BallistaShot, FireblastRank2, TheSilverHand, Heal, PoisonedDaggers, TotemicSlam, SoulTap, TankUp, ]
-Classes = ['Demon Hunter', 'Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', "Forestcraft","Swordcraft","Runecraft","Drangoncraft","Shadowcraft","Bloodcraft","Havencraft","Portalcraft"]
-ClassesandNeutral = ['Demon Hunter', 'Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', 'Neutral',"Forestcraft","Swordcraft","Runecraft","Drangoncraft","Shadowcraft","Bloodcraft","Havencraft","Portalcraft" ]
-SVClasses = ["Forestcraft","Swordcraft","Runecraft","Drangoncraft","Shadowcraft","Bloodcraft","Havencraft","Portalcraft"]
-ClassDict = {'Demon Hunter': Illidan, 'Druid': Malfurion, 'Hunter': Rexxar, 'Mage': Jaina, 'Paladin': Uther, 'Priest': Anduin, 'Rogue': Valeera, 'Shaman': Thrall, 'Warlock': Guldan, 'Warrior': Garrosh,
-			 "Forestcraft":Arisa,"Swordcraft":Erika,"Runecraft":Isabelle,"Drangoncraft":Rowen,"Shadowcraft":Luna,"Bloodcraft":Urias,"Havencraft":Eris,"Portalcraft":Yuwan}
+Classes = ['Demon Hunter', 'Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', ]
+ClassesandNeutral = ['Demon Hunter', 'Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior', 'Neutral', ]
+ClassDict = {'Demon Hunter': Illidan, 'Druid': Malfurion, 'Hunter': Rexxar, 'Mage': Jaina, 'Paladin': Uther, 'Priest': Anduin, 'Rogue': Valeera, 'Shaman': Thrall, 'Warlock': Guldan, 'Warrior': Garrosh, }
 
 cardPool = {
 			"Basic~Neutral~Spell~0~The Coin~Uncollectible": TheCoin,
@@ -1221,6 +1218,13 @@ cardPool = {
 			"Outlands~Warrior~Minion~8~10~10~None~Kargath Prime~Rush~Legendary~Uncollectible": KargathPrime,
 			"Outlands~Warrior~Minion~5~4~5~Mech~Scrap Golem~Taunt~Deathrattle": ScrapGolem,
 			"Outlands~Warrior~Minion~7~5~8~None~Bloodboil Brute~Rush": BloodboilBrute,
+			"SV_Basic~Runecraft~4~3~3~Minion~None~Vesper, Witchhunter~Accelerate~Fanfare": VesperWitchhunter,
+			"SV_Basic~Runecraft~Spell~2~Vesper, Witchhunter~Uncollectible": VesperWitchhunter_Accelerate,
+			"SV_Basic~Havencraft~1~Amulet~None~Sacred Plea~Last Words": SacredPlea,
+			"SV_Basic~Bloodcraft~Minion~10~5~10~None~Ruinweb Spider~Crystallize": RuinwebSpider,
+			"SV_Basic~Bloodcraft~2~Amulet~None~Ruinweb Spider~Last Words": RuinwebSpider_Amulet,
+			"SV_Basic~Bloodcraft~Minion~10~11~8~Dragon~XI. Erntz, Justice~Ward": XIErntzJustice,
+			"SV_Basic~Forestcraft~Spell~1~Airbound Barrage": AirboundBarrage,
 			"Academy~Neutral~Minion~2~2~2~None~Transfer Student": TransferStudent,
 			"Academy~Neutral~Minion~0~1~1~Demon~Desk Imp": DeskImp,
 			"Academy~Neutral~Minion~1~1~1~None~Animated Broomstick~Rush~Battlecry": AnimatedBroomstick,
