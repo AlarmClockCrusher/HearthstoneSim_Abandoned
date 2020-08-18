@@ -84,17 +84,10 @@ class MoguCultist(Minion):
 	#强制要求场上有总共有7个魔古信徒，休眠物会让其效果无法触发
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		minions = self.Game.minionsonBoard(self.ID)
-		if len(minions) == 7:
-			allareMoguCultists = True
-			for minion in minions:
-				if minion.name != "Mogu Cultist":
-					allareMoguCultists = False
-					
-			if allareMoguCultists:
-				for minion in minions:
-					minion.dead = True
-				self.Game.gathertheDead()
-				self.Game.summon(HighkeeperRa(self.Game, self.ID), -1, self.ID)
+		if len(minions) == 7 and all(minion.name == "Mogu Cultist" for minion in minions):
+			self.Game.killMinion(None, minions)
+			self.Game.gathertheDead()
+			self.Game.summon(HighkeeperRa(self.Game, self.ID), -1, self.ID)
 		return None
 		
 class HighkeeperRa(Minion):
@@ -707,18 +700,18 @@ class Trig_DesertObelisk(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
-			char = None
+			enemy = None
 			if curGame.guides:
 				i, where = curGame.guides.pop(0)
-				if where: char = curGame.find(i, where)
+				if where: enemy = curGame.find(i, where)
 			else:
-				chars = curGame.charsAlive(3-self.entity.ID)
-				if chars:
-					char = npchoice(chars)
-					curGame.fixedGuides.append((char.position, "minion%d"%char.ID) if char.type == "Minion" else (char.ID, "hero"))
+				enemies = curGame.charsAlive(3-self.entity.ID)
+				if enemies:
+					enemy = npchoice(enemies)
+					curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
-			if char: self.entity.dealsDamage(char, 5)
+			if enemy: self.entity.dealsDamage(enemy, 5)
 			
 			
 class MortuaryMachine(Minion):
@@ -1430,7 +1423,7 @@ class Trig_PressurePlate(SecretTrigger):
 				minions = curGame.minionsAlive(3-self.entity.ID)
 				i = npchoice(minions).position if minions else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.minions[3-self.entity.ID][i].dead = True
+			if i > -1: curGame.killMinion(self.entity, curGame.minions[3-self.entity.ID][i])
 			
 			
 class DesertSpear(Weapon):
@@ -2251,7 +2244,7 @@ class Trig_SandhoofWaterbearer(TrigBoard):
 				chars = [char for char in curGame.charsAlive(self.entity.ID) if char.health < char.health_max]
 				if chars:
 					char = npchoice(chars)
-					curGame.fixedGuides.append((char.position, "minion%d"%char.ID) if char.type == "Minion" else (char.ID, "hero"))
+					curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
 			if char: self.entity.restoresHealth(char, 5 * (2 ** self.entity.countHealDouble()))
@@ -2313,8 +2306,7 @@ class WretchedReclaimer(Minion):
 			minion = type(target)(self.Game, target.ID)
 			PRINT(self.Game, "Wretched Reclaimer's battlecry destroys friendly minion %s and summons a copy of it"%target.name)
 			targetID, position = target.ID, target.position
-			if target.onBoard: target.dead = True
-			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
+			self.Game.killMinion(self, target)
 			self.Game.gathertheDead() #强制死亡需要在此插入死亡结算，并让随从离场
 			#如果目标之前是第4个(position=3)，则场上最后只要有3个随从或者以下，就会召唤到最右边。
 			#如果目标不在场上或者是第二次生效时已经死亡等被初始化，则position=-2会让新召唤的随从在场上最右边。
@@ -2377,7 +2369,7 @@ class PlagueofDeath(Spell):
 		minions = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
 		for minion in minions:
 			minion.getsSilenced()
-			minion.dead = True
+		self.Game.killMinion(self, minions)
 		return None
 		
 		
@@ -2980,20 +2972,19 @@ class PlagueofFlames(Spell):
 		if curGame.mode == 0:
 			PRINT(curGame, "Plague of Flames destroys all friendly minions and destroys a random enemy minion for each friendly minion destroyed.")
 			if curGame.guides:
-				for minion in curGame.minionsonBoard(self.ID): minion.dead = True
-				indices = curGame.guides.pop(0)
-				for i in indices: curGame.minions[3-self.ID][i].dead = True
+				curGame.killMinion(self, curGame.minionsonBoard(self.ID))
+				enemyMinions = curGame.minions[3-self.ID]
+				curGame.killMinion(self, [enemyMinions[i] for i in curGame.guides.pop(0)])
 			else:
-				num = 0 #不知道是否涉及强制死亡，还是只用把随从们设为dead即可
-				for minion in curGame.minionsonBoard(self.ID):
-					minion.dead = True
-					num += 1
+				ownMinions = curGame.minionsonBoard(self.ID)
+				num = len(ownMinions)
+				curGame.killMinion(self, ownMinions)
 				enemyMinions = curGame.minionsonBoard(3-self.ID)
 				if num > 0 and enemyMinions:
 					minions = npchoice(enemyMinions, min(num, len(enemyMinions)), replace=True)
 					indices = [minion.position for minion in minions]
 					curGame.fixedGuides.append(tuple(indices))
-					for minion in minions: minion.dead = True
+					curGame.killMinion(self, minions)
 				else:
 					curGame.fixedGuides.append(())
 		return None
@@ -3136,7 +3127,7 @@ class EVILRecruiter(Minion):
 			#假设消灭跟班之后会进行强制死亡结算，把跟班移除之后才召唤
 			#假设召唤的恶魔是在EVIL Recruiter的右边，而非死亡的跟班的原有位置
 			PRINT(self.Game, "EVIL Recruiter's battlecry destroys friendly Lackey %s to summon a 5/5 Demon"%target.name)
-			target.dead = True
+			self.Game.killMinion(self, target)
 			self.Game.gathertheDead()
 			self.Game.summon(EVILDemon(self.Game, self.ID), self.position+1, self.ID)
 		return target
@@ -3183,7 +3174,7 @@ class Impbalming(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Impbalming destroys minion %s and shuffles three 1/1 Imps into player's deck"%target.name)
-			target.dead = True
+			self.Game.killMinion(self, target)
 			self.Game.Hand_Deck.shuffleCardintoDeck([WorthlessImp_Uldum(self.Game, self.ID) for i in range(3)], self.ID)
 		return target
 		
@@ -3500,9 +3491,7 @@ class PlagueofWrath(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Plague of Wrath destroys all damaged minions.")
-		for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2):
-			if minion.health < minion.health_max:
-				minion.dead = True
+		self.Game.killMinion(self, [minion for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2) if minion.health < minion.health_max])
 		return None
 		
 		

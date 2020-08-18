@@ -2043,7 +2043,7 @@ class ConjurersCalling(Spell):
 			key = "%d-Cost Minions to Summon"%cost
 			PRINT(curGame, "Twinspell Conjurer's Calling is cast, destroys minion %s and summons two minions with the same cost"%target.name, cost)
 			targetID, position = target.ID, target.position
-			if target.onBoard: target.dead = True
+			if target.onBoard: curGame.killMinion(self, target)
 			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
 			#强制死亡需要在此插入死亡结算，并让随从离场
 			curGame.gathertheDead()
@@ -2081,7 +2081,7 @@ class ConjurersCalling2(Spell):
 			key = "%d-Cost Minions to Summon"%cost
 			PRINT(curGame, "Conjurer's Calling is cast, destroys minion %s and summons two minions with the same cost"%target.name, cost)
 			targetID, position = target.ID, target.position
-			if target.onBoard: target.dead = True
+			if target.onBoard: curGame.killMinion(self, target)
 			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
 			#强制死亡需要在此插入死亡结算，并让随从离场
 			curGame.gathertheDead()
@@ -2584,7 +2584,7 @@ class ForbiddenWords(Spell):
 			PRINT(self.Game, "Forbidden Words is cast, spends all of player's mana and destroys minion %s"%target.name)
 			self.Game.Counters.manaSpentonSpells[self.ID] += self.Game.Manas.manas[self.ID]
 			self.Game.Manas.manas[self.ID] = 0
-			target.dead = True
+			self.Game.killMinion(self, target)
 		return target
 		
 		
@@ -2609,7 +2609,7 @@ class DestroyaRandomEnemyMinion(Deathrattle_Minion):
 				i = npchoice(minions).position if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
-				curGame.minions[3-self.entity.ID].dead = True
+				curGame.killMinion(self.entity, curGame.minions[3-self.entity.ID])
 				
 				
 class MassResurrection(Spell):
@@ -2987,7 +2987,7 @@ class UnidentifiedContract(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Unidentified Contract is cast and destroys minion %s"%target.name)
-			target.dead = True
+			self.Game.killMinion(self, target)
 		return target
 		
 class AssassinsContract(Spell):
@@ -3005,7 +3005,7 @@ class AssassinsContract(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Assassin's Contract is cast and destroys minion %s"%target.name)
-			target.dead = True
+			self.Game.killMinion(self, target)
 		PRINT(self.Game, "Assassin's Contract also summons a 1/1 Patient Assassin")
 		self.Game.summon(PatientAssassin(self.Game, self.ID), -1, self.ID)
 		return target
@@ -3025,7 +3025,7 @@ class LucrativeContract(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Lucrative Contract is cast and destroys minion %s"%target.name)
-			target.dead = True
+			self.Game.killMinion(self, target)
 		PRINT(self.Game, "Lucrative Contract also adds two Coins to player's hand")
 		self.Game.Hand_Deck.addCardtoHand([TheCoin, TheCoin], self.ID, "type")
 		return target
@@ -3045,7 +3045,7 @@ class RecruitmentContract(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Recruitment Contract is cast and destroys minion %s"%target.name)
-			target.dead = True
+			self.Game.killMinion(self, target)
 		PRINT(self.Game, "Recruitment Contract also adds a copy of the minion to player's hand")
 		self.Game.Hand_Deck.addCardtoHand(type(target), self.ID, "type")
 		return target
@@ -3065,7 +3065,7 @@ class TurncoatContract(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Turncoat Contract is cast and destroys minion %s"%target.name)
-			target.dead = True
+			self.Game.killMinion(self, target)
 			if target.onBoard:
 				PRINT(self.Game, "Turncoat Contract also lets the minion deal its damage to adjacent minions")
 				adjacentMinions, distribution = self.Game.neighbors2(target)
@@ -3556,7 +3556,7 @@ class EVILGenius(Minion):
 		if target:
 			curGame = self.Game
 			PRINT(curGame, "EVIL Genius's battlecry destroys friendly minion %s and adds two lackeys to player's hand."%target.name)
-			target.dead = True
+			self.Game.killMinion(self, target)
 			if curGame.mode == 0:
 				if curGame.guides:
 					lackeys = curGame.guides.pop(0)
@@ -3673,7 +3673,7 @@ class DarkestHour(Spell):
 		friendlyMinions = curGame.minionsonBoard(self.ID)
 		boardSize = len(friendlyMinions)
 		PRINT(curGame, "Darkest Hour destroys all friendly minions and summons %d minions from deck."%boardSize)
-		for minion in friendlyMinions: minion.dead = True
+		curGame.killMinion(self, friendlyMinions)
 		#对于所有友方随从强制死亡，并令其离场，因为召唤的随从是在场上右边，不用记录死亡随从的位置
 		curGame.gathertheDead()
 		ownDeck = curGame.Hand_Deck.decks[self.ID]
@@ -3779,7 +3779,7 @@ class Trig_DieatEndofTurn(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "At the end of turn, minion %s affected by FelLord Betrug dies."%self.entity.name)
-		self.entity.dead = True
+		self.entity.Game.killMinion(None, self.entity)
 		
 """Warrior cards"""
 class ImproveMorale(Spell):
@@ -3981,7 +3981,7 @@ class Deal1to4DamagetoaRandomEnemy(Deathrattle_Minion):
 				targets = curGame.charsAlive(3-self.entity.ID)
 				if targets:
 					enemy, damage = npchoice(targets), nprandint(1, 5)
-					curGame.fixedGuides.append((enemy.position, "minion%d"%enemy.ID, damage) if enemy.type == "Minion" else (enemy.ID, "hero", damage))
+					curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID), damage))
 				else:
 					curGame.fixedGuides.append((0, '', 0))
 			if enemy:

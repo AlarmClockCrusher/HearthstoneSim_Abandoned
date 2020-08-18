@@ -324,9 +324,9 @@ class Hand_Deck:
 	def burialRite(self, ID, minion):
 		self.Game.summonfromHand(minion, ID, -1, ID)
 		minion.getsSilenced()
-		minion.dead = True
+		self.Game.killMinion(None, minion)
 		self.Game.sendSignal("BurialRite", ID, None, minion, 0, "")
-
+		
 	def discardAll(self, ID):
 		if self.hands[ID]:
 			cards, cost, isRightmostCardinHand = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True)
@@ -433,8 +433,8 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 			
 			
-Default1 = [VesperWitchhunter, VesperWitchhunter, VesperWitchhunter, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher,
+Default1 = [SellswordLucius, SellswordLucius, VesperWitchhunter, VesperWitchhunter, VesperWitchhunter, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher,
 			]
 			
-Default2 = [Terrorformer, Terrorformer, Terrorformer, AirboundBarrage, AirboundBarrage, VesperWitchhunter, VesperWitchhunter, VesperWitchhunter, SacredPlea, SacredPlea, RuinwebSpider, RuinwebSpider, XIErntzJustice, XIErntzJustice, 
+Default2 = [SellswordLucius, SellswordLucius, Terrorformer, Terrorformer, Terrorformer, AirboundBarrage, AirboundBarrage, VesperWitchhunter, VesperWitchhunter, VesperWitchhunter, SacredPlea, SacredPlea, RuinwebSpider, RuinwebSpider, XIErntzJustice, XIErntzJustice, 
 			]

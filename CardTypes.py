@@ -183,7 +183,7 @@ class Card:
 							or (targetType == "Minion" and (target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
 															and not ((self.type == "Power" or self.type == "Spell") and (target.marks["Evasive"] > 1 or (target.ID != self.ID and target.marks["Enemy Evasive"] > 1)))) \
 							or (targetType == "Amulet" and (target.ID == self.ID or target.marks["Enemy Effect Evasive"] < 1) \
-															and not ((self.type == "Power" or self.type == "Spell") and target.marks["Evasive"] > 1)) \
+															and not (self.type == "Spell" and target.marks["Evasive"] > 1)) \
 							or not targetType == "Dormant" or not targetType == "Power"
 							)
 			if not selectable: return False
@@ -1360,9 +1360,7 @@ class Spell(Card):
 							else: target = npchoice(targets)
 						else: target = None
 					else: target = None
-				if target:
-					if target.type == "Hero": i, where = target.ID, "hero"
-					else: i, where = target.position, "minion%d"%target.ID
+				if target: i, where = target.position, target.type+str(target.ID)
 				else: i, where = 0, ''
 				curGame.fixedGuides.append((i, where, choice))
 		if curGame.GUI:
@@ -1719,8 +1717,8 @@ class HeroPower(Card):
 	def appears(self):
 		self.heroPowerChances_base = 1
 		self.heroPowerTimes = 0
-		for trigger in self.trigsBoard:
-			trigger.connect()
+		for trig in self.trigsBoard:
+			trig.connect()
 		self.Game.sendSignal("HeroPowerAcquired", self.ID, self, None, 0, "")
 		self.Game.Manas.calcMana_Powers()
 		
@@ -1739,13 +1737,9 @@ class HeroPower(Card):
 		self.appears()
 		
 	def available(self): #只考虑没有抉择的技能，抉择技能需要自己定义
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.needTarget() and not self.findTargets("")[0][0]:
-			print("Hero Power %s needs target"%self.name, self.needTarget(), self.findTargets("")[0])
-			return False
-		return True
-		
+		return self.heroPowerTimes < self.heroPowerChances_base + self.heroPowerChances_extra \
+				and (not self.needTarget() or self.findTargets("")[0][0])
+				
 	def use(self, target=None, choice=0):
 		canUseHeroPower = False
 		if self.Game.Manas.affordable(self) == False:
@@ -1759,9 +1753,7 @@ class HeroPower(Card):
 			PRINT(self.Game, "*********\nHandling using Hero Power {} with target {}, with choice	{}\n*********".format(self.name, target, choice))
 			#支付费用，清除费用状态。
 			subIndex, subWhere = self.ID, "power"
-			if target:
-				if target.type == "Minion": tarIndex, tarWhere = target.position, "minion%d"%target.ID
-				else: tarIndex, tarWhere = target.ID, "hero"
+			if target: tarIndex, tarWhere = target.position, target.type+str(target.ID)
 			else: tarIndex, tarWhere = 0, ''
 			self.Game.Manas.payManaCost(self, self.mana)
 			if self.Game.GUI:
@@ -1849,6 +1841,7 @@ class Hero(Card):
 		self.attChances_base, self.attChances_extra, self.attTimes = 1, 0, 0
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.dead = False
+		self.position = self.ID
 		self.heroPower = type(self).heroPower(self.Game, self.ID) if type(self).heroPower else None
 		self.keyWords = {"Poisonous": 0} #Just as a placeholder
 		self.marks={"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
@@ -2002,6 +1995,7 @@ class Hero(Card):
 		#英雄牌进入战场。（本来是应该在使用阶段临近结束时移除旧英雄和旧技能，但是为了方便，在此时执行。）
 		#继承旧英雄的生命状态和护甲值。此时英雄的被冻结和攻击次数以及攻击机会也继承旧英雄。
 		#清除旧的英雄技能。
+		self.position = self.ID #这个只是为了方便定义(i, where)
 		self.Game.powers[self.ID].disappears()
 		self.Game.powers[self.ID].heroPower = None
 		self.Game.heroes[self.ID].onBoard = False
@@ -2048,6 +2042,7 @@ class Hero(Card):
 		#英雄牌进入战场。（本来是应该在使用阶段临近结束时移除旧英雄和旧技能，但是为了方便，在此时执行。）
 		#继承旧英雄的生命状态和护甲值。此时英雄的被冻结和攻击次数以及攻击机会也继承旧英雄。
 		#大王和炎魔之王在替换之前被定义，拥有15或者8点生命值。0点护甲值和英雄技能等也已定义完毕。
+		self.position = ID #这个只是为了方便定义(i, where)
 		game.heroes[ID] = self
 		game.heroes[ID].onBoard = True
 		if self.heroPower: self.heroPower.replaceHeroPower()

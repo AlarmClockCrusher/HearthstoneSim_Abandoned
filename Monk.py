@@ -450,7 +450,7 @@ class Liquor(Spell): #醉酿
 			if posinHand > -2 and not self.Game.Manas.manas[self.ID]: #Triggers Quaff
 				PRINT(self.Game, "Liquor's Quaff triggers and destroys minion %s"%target.name)
 				self.Game.sendSignal("QuaffTriggered", self.ID, None, None, 0, "")
-				target.dead = True
+				self.Game.killMinion(self, target)
 			elif target.onBoard: #假设只有当目标随从还在场上的时候会生效
 				PRINT(self.Game, "Liquor gives renders minion %s unable to attack for two turns"%target.name)
 				target.marks["Can't Attack"] += 1

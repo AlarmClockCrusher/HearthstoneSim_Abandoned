@@ -215,6 +215,7 @@ class GUI_Common:
 									self.update()
 							#如果选中的手牌是一个需要选择目标的SV法术
 							elif entity.index.startswith("SV_") and typewhenPlayed == "Spell" and entity.needTarget():
+								self.choice = 0
 								game.Discover.startSelect(entity, entity.findTargets("")[0])
 							#选中的手牌是需要目标的炉石卡
 							elif (typewhenPlayed != "Weapon" and entity.needTarget()) or (typewhenPlayed == "Weapon" and entity.requireTarget):
@@ -301,6 +302,7 @@ class GUI_Common:
 						#需要区分SV和炉石随从的目标选择。
 						subject = self.subject
 						if subject.index.startswith("SV_"): #能到这个阶段的都是有目标选择的随从
+							self.choice = 0
 							game.Discover.startSelect(subject, subject.findTargets("")[0])
 			#随从的打出位置和抉择选项已经在上一步选择，这里处理目标选择。
 			elif self.selectedSubject == "MinionPositionDecided":
@@ -385,11 +387,12 @@ class GUI_Common:
 				game.Discover.initiator.discoverDecided(entity, info)
 			elif selectedSubject == "SelectObj":
 				print("Selecting obj for SV card")
+				self.choice += 1
 				self.subject.targets.append(entity)
 				try: self.target.append(entity)
 				except: self.target = [entity]
 				if self.subject.needTarget():
-					game.Discover.startSelect(self.subject, self.subject.findTargets("")[0])
+					game.Discover.startSelect(self.subject, self.subject.findTargets("", self.choice)[0])
 				else: #如果目标选择完毕了，则不用再选择，直接开始打出结算
 					self.UI = 0
 					subject, target, position, choice = self.subject, self.subject.targets, self.position, -1
@@ -790,7 +793,7 @@ class GUI_Common:
 				if btn.card == subject:
 					pos1 = btn.x, btn.y
 					break
-			if not pos1: #如果施放的是法术，则不会找到对应这个法术的button，直接连接施法者和目标
+			if not pos1: #如果找不到对应这个subject的button，直接连接英雄和目标
 				btnHero = self.heroZones[subject.ID].btnsDrawn[0]
 				pos1 = btnHero.x, btnHero.y
 			for btn in self.boardZones[1].btnsDrawn + self.boardZones[2].btnsDrawn + self.heroZones[1].btnsDrawn + self.heroZones[2].btnsDrawn:
