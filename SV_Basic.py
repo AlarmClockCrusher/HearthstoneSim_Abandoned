@@ -1774,7 +1774,7 @@ class PlayfulNecromancer(SVMinion):
 class HellsUnleasher(SVMinion):
     Class, race, name = "Shadowcraft", "", "Hell's Unleasher"
     mana, attack, health = 4, 1, 1
-    index = "SV_Basic~Shadowcraft~Minion~4~1~1~None~Hell's Unleasher~deathrattle"
+    index = "SV_Basic~Shadowcraft~Minion~4~1~1~None~Hell's Unleasher~Deathrattle"
     requireTarget, keyWord, description = False, "", "Last Words: Summon a Lich."
     attackAdd, healthAdd = 2, 2
 
@@ -1817,7 +1817,7 @@ class CalloftheVoid(SVSpell):
 class Gravewaker(SVMinion):
     Class, race, name = "Shadowcraft", "", "Gravewaker"
     mana, attack, health = 5, 3, 3
-    index = "SV_Basic~Shadowcraft~Minion~5~3~3~None~Gravewaker~deathrattle"
+    index = "SV_Basic~Shadowcraft~Minion~5~3~3~None~Gravewaker~Deathrattle"
     requireTarget, keyWord, description = False, "", "Last Words: Summon a Zombie."
     attackAdd, healthAdd = 2, 2
 
@@ -1836,7 +1836,7 @@ class Deathrattle_Gravewaker(Deathrattle_Minion):
 class GhostlyRider(SVMinion):
     Class, race, name = "Shadowcraft", "", "Ghostly Rider"
     mana, attack, health = 6, 5, 5
-    index = "SV_Basic~Shadowcraft~Minion~6~5~5~None~Ghostly Rider~deathrattle"
+    index = "SV_Basic~Shadowcraft~Minion~6~5~5~None~Ghostly Rider~Deathrattle"
     requireTarget, keyWord, description = False, "Taunt", "Ward. Last Words: Give Ward to a random allied follower."
     attackAdd, healthAdd = 2, 2
 
@@ -1865,7 +1865,7 @@ class Deathrattle_GhostlyRider(Deathrattle_Minion):
 class UndeadKing(SVMinion):
     Class, race, name = "Shadowcraft", "", "Undead King"
     mana, attack, health = 7, 4, 4
-    index = "SV_Basic~Shadowcraft~Minion~7~4~4~None~Undead King~deathrattle"
+    index = "SV_Basic~Shadowcraft~Minion~7~4~4~None~Undead King~Deathrattle"
     requireTarget, keyWord, description = False, "", "Last Words: Summon twi Zombies."
     attackAdd, healthAdd = 2, 2
 
@@ -2357,7 +2357,7 @@ class Trig_Puppet(TrigBoard):
 class AnalyzingArtifact(SVMinion):
     Class, race, name = "Portalcraft", "Artifact", "Analyzing Artifact"
     mana, attack, health = 1, 2, 1
-    index = "SV_Basic~Portalcraft~Minion~1~2~1~Artifact~Analyzing Artifact~deathrattle~Uncollectible"
+    index = "SV_Basic~Portalcraft~Minion~1~2~1~Artifact~Analyzing Artifact~Deathrattle~Uncollectible"
     requireTarget, keyWord, description = False, "", "Last Words: Draw a card."
     attackAdd, healthAdd = 2, 2
 
@@ -2375,7 +2375,7 @@ class Deathrattle_AnalyzingArtifact(Deathrattle_Minion):
 class RadiantArtifact(SVMinion):
     Class, race, name = "Portalcraft", "Artifact", "Radiant Artifact"
     mana, attack, health = 5, 4, 3
-    index = "SV_Basic~Portalcraft~Minion~5~4~3~Artifact~Radiant Artifact~Charge~deathrattle~Uncollectible"
+    index = "SV_Basic~Portalcraft~Minion~5~4~3~Artifact~Radiant Artifact~Charge~Deathrattle~Uncollectible"
     requireTarget, keyWord, description = False, "Charge", "Storm. Last Words: If it is your turn, then put a random Artifact card from your deck into your hand. If it is your opponent's turn, draw a card."
     attackAdd, healthAdd = 2, 2
 
@@ -2532,7 +2532,7 @@ class Trig_ToySoldier(TrigBoard):
 class AutomatonKnight(SVMinion):
     Class, race, name = "Portalcraft", "", "Automaton Knight"
     mana, attack, health = 3, 3, 2
-    index = "SV_Basic~Portalcraft~Minion~3~3~2~None~Automaton Knight~deathrattle"
+    index = "SV_Basic~Portalcraft~Minion~3~3~2~None~Automaton Knight~Deathrattle"
     requireTarget, keyWord, description = False, "", "Last Words: Put a Puppet into your hand."
     attackAdd, healthAdd = 2, 2
 
@@ -2698,11 +2698,11 @@ SV_Basic_Indices = {
     "SV_Basic~Shadowcraft~Minion~3~2~3~None~Apprentice Necromancer~Battlecry~Necromancy": ApprenticeNecromancer,
     "SV_Basic~Shadowcraft~Minion~4~4~3~None~Elder Spartoi Soldier~Battlecry": ElderSpartoiSoldier,
     "SV_Basic~Shadowcraft~Minion~4~4~3~None~Playful Necromancer": PlayfulNecromancer,
-    "SV_Basic~Shadowcraft~Minion~4~1~1~None~Hell's Unleasher~deathrattle": HellsUnleasher,
+    "SV_Basic~Shadowcraft~Minion~4~1~1~None~Hell's Unleasher~Deathrattle": HellsUnleasher,
     "SV_Basic~Shadowcraft~Spell~4~Call of the Void": CalloftheVoid,
-    "SV_Basic~Shadowcraft~Minion~5~3~3~None~Gravewaker~deathrattle": Gravewaker,
-    "SV_Basic~Shadowcraft~Minion~6~5~5~None~Ghostly Rider~deathrattle": GhostlyRider,
-    "SV_Basic~Shadowcraft~Minion~7~4~4~None~Undead King~deathrattle": UndeadKing,
+    "SV_Basic~Shadowcraft~Minion~5~3~3~None~Gravewaker~Deathrattle": Gravewaker,
+    "SV_Basic~Shadowcraft~Minion~6~5~5~None~Ghostly Rider~Deathrattle": GhostlyRider,
+    "SV_Basic~Shadowcraft~Minion~7~4~4~None~Undead King~Deathrattle": UndeadKing,
     "SV_Basic~Bloodcraft~Minion~2~2~2~None~Nightmare~Battlecry": Nightmare,
     "SV_Basic~Bloodcraft~Minion~2~1~3~None~Sweetfang Vampire~Drain": SweetfangVampire,
     "SV_Basic~Bloodcraft~Spell~2~Blood Pact": BloodPact,
@@ -2729,15 +2729,15 @@ SV_Basic_Indices = {
     "SV_Basic~Havencraft~Amulet~5~None~Beastly Vow~Countdown~Last Words": BeastlyVow,
     "SV_Basic~Havencraft~Minion~7~5~5~None~Curate~Battlecry": Curate,
     "SV_Basic~Portalcraft~Minion~0~1~1~None~Puppet~Rush~Uncollectible": Puppet,
-    "SV_Basic~Portalcraft~Minion~1~2~1~Artifact~Analyzing Artifact~deathrattle~Uncollectible": AnalyzingArtifact,
-    "SV_Basic~Portalcraft~Minion~5~4~3~Artifact~Radiant Artifact~Charge~deathrattle~Uncollectible": RadiantArtifact,
+    "SV_Basic~Portalcraft~Minion~1~2~1~Artifact~Analyzing Artifact~Deathrattle~Uncollectible": AnalyzingArtifact,
+    "SV_Basic~Portalcraft~Minion~5~4~3~Artifact~Radiant Artifact~Charge~Deathrattle~Uncollectible": RadiantArtifact,
     "SV_Basic~Portalcraft~Minion~2~2~2~None~Puppeteer": Puppeteer,
     "SV_Basic~Portalcraft~Minion~2~2~2~None~Mechanized Servant~Battlecry": MechanizedServant,
     "SV_Basic~Portalcraft~Minion~2~2~2~None~Magisteel Lion~Battlecry": MagisteelLion,
     "SV_Basic~Portalcraft~Minion~2~2~2~None~Magisteel Puppet": MagisteelPuppet,
     "SV_Basic~Portalcraft~Spell~2~Dimension Cut": DimensionCut,
     "SV_Basic~Portalcraft~Minion~3~2~1~None~Toy Soldier": ToySoldier,
-    "SV_Basic~Portalcraft~Minion~3~3~2~None~Automaton Knight~deathrattle": AutomatonKnight,
+    "SV_Basic~Portalcraft~Minion~3~3~2~None~Automaton Knight~Deathrattle": AutomatonKnight,
     "SV_Basic~Portalcraft~Minion~4~4~3~None~Ironforged Fighter~Battlecry": IronforgedFighter,
     "SV_Basic~Portalcraft~Minion~4~3~4~None~Roan Winged Nexx": RoanWingedNexx,
     "SV_Basic~Portalcraft~Spell~4~Puppeteer's Strings": PuppeteersStrings,
