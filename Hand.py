@@ -67,6 +67,8 @@ class Hand_Deck:
 		# 如果卡组有双传说任务，则起手时都会上手
 		mainQuests = {1: [], 2: []}
 		mulliganSize = {1: 3, 2: 4}
+		if self.Game.heroes[2].Class in SVClasses:
+			mulliganSize[2] = 3
 		for ID in range(1, 3):
 			mainQuests[ID] = [card for card in self.decks[ID] if card.description.startswith("Quest")]
 			numQueststoDraw = min(len(mainQuests[ID]), mulliganSize[ID])
@@ -99,7 +101,8 @@ class Hand_Deck:
 				card.checkEvanescent()
 
 		if self.Game.GUI: self.Game.GUI.update()
-		self.addCardtoHand(TheCoin(self.Game, 2), 2)
+		if not self.Game.heroes[2].Class in SVClasses:
+			self.addCardtoHand(TheCoin(self.Game, 2), 2)
 		self.Game.Manas.calcMana_All()
 		for ID in range(1, 3):
 			for card in self.hands[ID] + self.decks[ID]:
@@ -135,8 +138,8 @@ class Hand_Deck:
 				for card in self.hands[1] + self.hands[2]:
 					card.effectCanTrigger()
 					card.checkEvanescent()
-
-		self.addCardtoHand(TheCoin(self.Game, 2), 2)
+		if not self.Game.heroes[2].Class in SVClasses:
+			self.addCardtoHand(TheCoin(self.Game, 2), 2)
 		self.Game.Manas.calcMana_All()
 		for ID in range(1, 3):
 			for card in self.hands[ID] + self.decks[ID]:
@@ -205,7 +208,7 @@ class Hand_Deck:
 	# 现在规则为如果要连续抽2张法术，则分两次检测牌库中的法术牌，然后随机抽一张。
 	# 如果这个规则是正确的，则在牌库只有一张夺灵者哈卡的堕落之血时，抽到这个法术之后会立即额外抽牌，然后再塞进去两张堕落之血，那么第二次抽法术可能会抽到新洗进去的堕落之血。
 	# Damage taken due to running out of card will keep increasing. Refilling the deck won't reset the damage you take next time you draw from empty deck
-	def drawCard(self, ID, card=None):
+	def drawCard(self, ID, card=None, type="Extra"):
 		game, GUI = self.Game, self.Game.GUI
 		if card is None:  # Draw from top of the deck.
 			PRINT(game, "Hero %d draws from the top of the deck" % ID)
@@ -213,13 +216,19 @@ class Hand_Deck:
 				card = self.decks[ID].pop()
 				mana = card.mana
 			else:
-				PRINT(game, "Hero%d's deck is empty and will take damage" % ID)
-				self.noCards[ID] += 1  # 如果在疲劳状态有卡洗入牌库，则疲劳值不会减少，在下次疲劳时，仍会从当前的非零疲劳值开始。
-				damage = self.noCards[ID]
-				if GUI: GUI.fatigueAni(ID, damage)
-				dmgTaker = game.scapegoat4(game.heroes[ID])
-				dmgTaker.takesDamage(None, damage, damageType="Ability")  # 疲劳伤害没有来源
-				return (None, 0)
+				if self.Game.heroes[ID].Class in SVClasses:
+					if self.Game.heroes[ID].status["Draw to Win"] > 0:
+						self.Game.heroes[3 - ID].dead = True
+					else:
+						self.Game.heroes[ID].dead = True
+				else:
+					PRINT(game, "Hero%d's deck is empty and will take damage" % ID)
+					self.noCards[ID] += 1  # 如果在疲劳状态有卡洗入牌库，则疲劳值不会减少，在下次疲劳时，仍会从当前的非零疲劳值开始。
+					damage = self.noCards[ID]
+					if GUI: GUI.fatigueAni(ID, damage)
+					dmgTaker = game.scapegoat4(game.heroes[ID])
+					dmgTaker.takesDamage(None, damage, damageType="Ability")  # 疲劳伤害没有来源
+					return (None, 0)
 		else:
 			if isinstance(card, (int, np.int32, np.int64)):
 				card = self.decks[ID].pop(card)
@@ -232,6 +241,8 @@ class Hand_Deck:
 			if GUI: btn = GUI.drawCardAni_1(card)
 			cardTracker = [card]  # 把这张卡放入一个列表，然后抽牌扳机可以对这个列表进行处理同时传递给其他抽牌扳机
 			game.sendSignal("CardDrawn", ID, None, cardTracker, mana, "")
+			if type != "Turn":
+				self.Game.Counters.numCardsExtraDrawThisTurn[ID] += 1
 			if cardTracker[0].type == "Spell" and "Casts When Drawn" in cardTracker[0].index:
 				PRINT(game, "%s is drawn and cast." % cardTracker[0].name)
 				if GUI: btn.remove()
@@ -273,7 +284,7 @@ class Hand_Deck:
 				game.sendSignal("CardEntersHand", ID, None, [card], 0, comment)
 				if byDiscover: game.sendSignal("PutinHandbyDiscover", ID, None, obj, 0, '')
 			else:
-				break
+				self.Game.Counters.shadows[ID] += 1
 		game.Manas.calcMana_All()
 		
 	def replaceCardDrawn(self, targetHolder, newCard):

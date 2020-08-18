@@ -424,7 +424,8 @@ class SVSpell(Spell):
 			self.Game.GUI.showOffBoardTrig(self)
 			self.Game.GUI.wait(500)
 		self.Game.sendSignal("SpellPlayed", self.ID, self, None, mana, "", choice)
-		#假设SV的法术在选取上不触发重导向扳机	
+		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
+		#假设SV的法术在选取上不触发重导向扳机
 		self.Game.gathertheDead()
 		self.Game.Counters.spellsonFriendliesThisGame[self.ID] += [self.index for obj in target if obj.ID == self.ID]
 		#假设SV的法术不受到"对相邻的法术也释放该法术"的影响

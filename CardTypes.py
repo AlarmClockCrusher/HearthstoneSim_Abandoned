@@ -1428,6 +1428,7 @@ class Spell(Card):
 			self.Game.GUI.wait(500)
 		#使用时步骤，触发伊利丹和紫罗兰老师等“每当你使用一张xx牌”的扳机
 		self.Game.sendSignal("SpellPlayed", self.ID, self, target if not isinstance(target, list) else None, mana, "", choice)
+		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
 		#获得过载和双生法术牌。
 		if self.overload > 0:
 			PRINT(self.Game, "%s is cast and Overloads %d mana crystals."%(self.name, self.overload))
@@ -1575,6 +1576,7 @@ class Secret(Spell):
 
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
 		self.Game.sendSignal("SpellPlayed", self.ID, self, None, mana, "", choice)
+		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		self.whenEffective(None, '', choice, posinHand)
 		# There is no need for another round of death resolution.
@@ -1647,6 +1649,7 @@ class Quest(Spell):
 
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
 		self.Game.sendSignal("SpellPlayed", self.ID, self, None, mana, "", choice)
+		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		self.whenEffective(None, '', choice, posinHand)
 		# There is no need for another round of death resolution.

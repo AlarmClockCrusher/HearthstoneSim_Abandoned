@@ -376,6 +376,7 @@ class Game:
 				self.GUI.wait(200, showLine=False)
 			self.sendSignal("MinionSummoned", self.turn, subject, None, 0, "")
 			self.sendSignal("MinionBeenSummoned", self.turn, subject, None, 0, "")
+			self.Counters.numMinionsSummonedThisGame[subject.ID] += 1
 			return subject
 		return None
 		
