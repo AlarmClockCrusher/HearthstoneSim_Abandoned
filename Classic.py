@@ -96,14 +96,8 @@ class HungryCrab(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Hungry Crab's battlecry destroys Murloc %s and gives minion +2/+2."%target.name)
-			if target.onBoard:
-				target.dead = True
-				self.buffDebuff(2, 2)
-			elif target.inHand:
-				self.Game.Hand_Deck.discardCard(target.ID, target)
-				self.buffDebuff(2, 2)
-			elif target.dead:
-				self.buffDebuff(2, 2)
+			self.Game.killMinion(self, target)
+			self.buffDebuff(2, 2)
 		return target
 		
 		
@@ -383,10 +377,9 @@ class Trig_Doomsayer(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "At the start of turn, %s destroys all minions"%self.entity.name)
-		for minion in self.entity.Game.minionsonBoard(1) + self.entity.Game.minionsonBoard(2):
-			minion.dead = True
-			
-			
+		self.entity.Game.killMinion(self.entity, self.entity.Game.minionsonBoard(1) + self.entity.Game.minionsonBoard(2))
+		
+		
 class FaerieDragon(Minion):
 	Class, race, name = "Neutral", "Dragon", "Faerie Dragon"
 	mana, attack, health = 2, 3, 2
@@ -420,20 +413,20 @@ class Trig_KnifeJuggler(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
-			char = None
+			enemy = None
 			if curGame.guides:
 				i, where = curGame.guides.pop(0)
-				if where: char = curGame.find(i, where)
+				if where: enemy = curGame.find(i, where)
 			else:
 				chars = curGame.charsAlive(3-self.entity.ID)
 				if chars:
-					char = npchoice(chars)
-					curGame.fixedGuides.append((char.position, "minion%d"%char.ID) if char.type == "Minion" else (char.ID, "hero"))
+					enemy = npchoice(chars)
+					curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
-			if char:
-				PRINT(curGame, "A friendly minion %s is summoned and Knife Juggler deals 1 damage to random enemy %s"%(subject.name, char.name))
-				self.entity.dealsDamage(char, 1)
+			if enemy:
+				PRINT(curGame, "A friendly minion %s is summoned and Knife Juggler deals 1 damage to random enemy %s"%(subject.name, enemy.name))
+				self.entity.dealsDamage(enemy, 1)
 				
 				
 class LootHoarder(Minion):
@@ -487,12 +480,10 @@ class MadBomber(Minion):
 					objs = curGame.charsAlive(self.ID, self) + curGame.charsAlive(3-self.ID)
 					if objs:
 						char = npchoice(objs)
-						curGame.fixedGuides.append((char.ID, "hero") if char.type == "Hero" else (char.position, "minion%d"%char.ID))
+						curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
-				if char:
-					PRINT(curGame, "Mad Bomber deals 1 damage to %s"%char.name)
-					self.dealsDamage(char, 1)
+				if char: self.dealsDamage(char, 1)
 				else: break
 		return None
 		
@@ -872,22 +863,20 @@ class Trig_Demolisher(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
-			char = None
+			enemy = None
 			if curGame.guides:
 				i, where = curGame.guides.pop(0)
-				if where: char = curGame.find(i, where)
+				if where: enemy = curGame.find(i, where)
 			else:
 				targets = curGame.charsAlive(3-self.entity.ID)
 				if targets:
-					char = npchoice(targets)
-					curGame.fixedGuides.append((char.position, "minion%d"%char.ID) if char.type == "Minion" else (char.ID, "hero"))
+					enemy = npchoice(targets)
+					curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
-			if char:
-				PRINT(curGame, "At the start of turn, Demolisher deals 1 damage to random enemy %s"%char.name)
-				self.entity.dealsDamage(char, 2)
-				
-				
+			if enemy: self.entity.dealsDamage(enemy, 2)
+			
+			
 class EarthenRingFarseer(Minion):
 	Class, race, name = "Neutral", "", "Earthen Ring Farseer"
 	mana, attack, health = 3, 3, 3
@@ -1449,8 +1438,7 @@ class BigGameHunter(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Big Game Hunter's battlecry destroys minion %s with 7 or more attack."%target.name)
-			if target.onBoard: target.dead = True
-			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
+			self.Game.killMinion(self, target)
 		return target
 		
 		
@@ -1648,10 +1636,10 @@ class StampedingKodo(Minion):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				targets = [i for i, minion in enumerate(curGame.minionsAlive(3-self.ID)) if minion.attack < 3]
+				targets = [minion for minion in curGame.minionsAlive(3-self.ID) if minion.attack < 3]
 				i = npchoice(targets).position if targets else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.minions[3-self.ID][i].dead = True
+			if i > -1: curGame.killMinion(self, curGame.minions[3-self.ID][i])
 		return None
 		
 		
@@ -1851,8 +1839,7 @@ class TheBlackKnight(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "The Black Knight's battlecry destroys minion %s with Taunt."%target.name)
-			if target.onBoard: target.dead = True
-			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
+			self.Game.killMinion(self, target)
 		return target
 		
 class WindfuryHarpy(Minion):
@@ -2143,8 +2130,7 @@ class Deathwing(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Deahtwing's battlecry destroys all other minions and discard all of player's hand.")
-		for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2):
-			if minion != self: minion.dead = True
+		self.Game.killMinion(self, [minion for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2) if minion != self])
 		self.Game.Hand_Deck.discardAll(self.ID)
 		return None
 		
@@ -2893,9 +2879,7 @@ class Trig_Misdirection(SecretTrigger):
 				except: pass
 				if targets:
 					target[1] = npchoice(targets)
-					if target[1].type == "Minion": i, where = target[1].position, "minion%d"%target[1].ID
-					else: i, where = target[1].ID, "hero"
-					curGame.fixedGuides.append((i, where))
+					curGame.fixedGuides.append((target[1].position, target[1].type+str(target[1].ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
 					
@@ -3003,9 +2987,7 @@ class DeadlyShot(Spell):
 				i = npchoice(minions) if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
-				minion = curGame.minions[3-self.ID][i]
-				PRINT(curGame, "Deadly shot is cast and kills enemy minion %s"%minion.name)
-				minion.dead = True
+				self.Game.killMinion(self, curGame.minions[3-self.ID][i])
 		return None
 		
 		
@@ -3321,7 +3303,7 @@ class Trig_Vaporize(SecretTrigger):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "When minion %s attacks player, Secret Vaporize is triggered and destroys it"%subject.name)
-		subject.dead = True
+		self.entity.Game.killMinion(self.entity, subject)
 		
 		
 class KirinTorMage(Minion):
@@ -3923,7 +3905,7 @@ class Trig_Lightwell(TrigBoard):
 				chars = [char for char in curGame.charsAlive(self.entity.ID) if char.health < char.health_max]
 				if chars:
 					char = npchoice(chars)
-					curGame.fixedGuides.append((char.position, "minion%d"%char.ID) if char.type == "Minion" else (char.ID, "hero"))
+					curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
 			if char:
@@ -4054,9 +4036,7 @@ class ShadowWordRuin(Spell):
 	description = "Destroy all minions with 5 or more Attack"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Shadow Word: Ruin is cast and destroys all minions with 5 or more Attack")
-		for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2):
-			if minion.attack > 4:
-				minion.dead = True
+		self.Game.killMinion(self, [minion for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2) if minion.attack > 4])
 		return None
 		
 		
@@ -4118,12 +4098,11 @@ class NatalieSeline(Minion):
 		if target:
 			PRINT(self.Game, "Natalie Seline's battlecry destroys minion %s and lets the minion gain its Health"%target.name)
 			healthGain = max(0, target.health)
-			if target.onBoard: target.dead = True
-			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
+			self.Game.killMinion(self, target)
 			self.buffDebuff(0, healthGain)
 		return target
 		
-	
+		
 """Rogue cards"""
 class Preparation(Spell):
 	Class, name = "Rogue", "Preparation"
@@ -4873,15 +4852,13 @@ class VoidTerror(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.onBoard: #Can't trigger if returned to hand already, since cards in hand don't have adjacent minions on board.
-			adjacentMinions, distribution = self.Game.neighbors2(self)
-			if adjacentMinions != []:
-				attackGain = 0
-				healthGain = 0
-				for minion in adjacentMinions:
+			neighbors, distribution = self.Game.neighbors2(self)
+			if neighbors:
+				attackGain, healthGain = 0, 0
+				for minion in neighbors:
 					attackGain += max(0, minion.attack)
 					healthGain += max(0, minion.health)
-					minion.dead = True
-					
+				self.Game.killMinion(self, neighbors)
 				PRINT(self.Game, "Void Terror's battlecry lets minion destroy adjacent minions and gain their stats.")
 				self.buffDebuff(attackGain, healthGain)
 		return None
@@ -4913,7 +4890,7 @@ class Shadowflame(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (max(0, target.attack) + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			target.dead = True
+			self.Game.killMinion(self, target)
 			PRINT(self.Game, "Shadowflame is cast, destroys friendly minion %s and deals %d damage to all enemy minions"%(target.name, damage))
 			targets = self.Game.minionsonBoard(3-self.ID)
 			self.dealsAOE(targets, [damage for minion in targets])
@@ -4969,7 +4946,7 @@ class SiphonSoul(Spell):
 		if target:
 			heal = 3 * (2 ** self.countHealDouble())
 			PRINT(self.Game, "Siphon Soul is cast and destroys minion %s. Then restores %d health to player."%(target.name, heal))
-			target.dead = True
+			self.Game.killMinion(self, target)
 			self.restoresHealth(self.Game.heroes[self.ID], heal)
 		return target
 		
@@ -4994,8 +4971,7 @@ class TwistingNether(Spell):
 	description = "Destroy all minions"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Twisting Nether is cast and destroys all minions.")
-		for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2):
-			minion.dead = True
+		self.Game.killMinion(self, self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2))
 		return None
 		
 #Won't trigger Knife Juggler, but will trigger Illidan Stormrage
@@ -5347,15 +5323,13 @@ class Brawl(Spell):
 				i, where = curGame.guides.pop(0)
 				if where:
 					survivor = curGame.find(i, where)
-					for minion in curGame.minionsonBoard(1) + curGame.minionsonBoard(2):
-						if minion != survivor: minion.dead = True
+					curGame.killMinion(self, [minion for minion in curGame.minionsonBoard(1) + curGame.minionsonBoard(2) if minion != survivor])
 			else:
 				minions = curGame.minionsonBoard(1) + curGame.minionsonBoard(2)
 				if len(minions) > 1:
 					survivor = npchoice(minions)
 					curGame.fixedGuides.append((survivor.position, "minion%d"%survivor.ID))
-					for minion in minions:
-						if minion != survivor: minion.dead = True
+					curGame.killMinion(self, [minion for minion in minions if minion != survivor])
 				else:
 					curGame.fixedGuides.append((0, ""))
 		return None

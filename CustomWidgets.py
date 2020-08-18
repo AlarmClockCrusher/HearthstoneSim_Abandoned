@@ -163,7 +163,7 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			game, self.colorOrig = card.Game, "red"
 			if card.ID == game.turn and game.Manas.affordable(card):
 				if (card.type == "Spell" and card.available()) or ((card.type == "Minion" or card.type == "Amulet") and game.space(card.ID) > 0) or card.type == "Weapon" or card.type == "Hero":
-					self.colorOrig = "blue" if card.evanescent else ("yellow" if card.effectViable else "green3")
+					self.colorOrig = "blue" if card.evanescent else ((card.effectViable if isinstance(card.effectViable, str) else "yellow") if card.effectViable else "green3")
 		else: self.colorOrig = "grey46" #Only is grey when it's opponent's card in 2PGUI in "Don't show opponent cards" mode
 		
 	def leftClick(self, event):

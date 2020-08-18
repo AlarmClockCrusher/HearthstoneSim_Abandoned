@@ -1855,12 +1855,8 @@ class ShadowWordDeath(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			if target.onBoard:
-				PRINT(self.Game, "Shadow Word: Death destroys minion %s with 3 or less Attack."%target.name)
-				target.dead = True
-			elif target.inHand: #Target in hand will be discarded.
-				PRINT(self.Game, "Shadow Word: Death discards the target %s returned to hand."%target.name)
-				self.Game.Hand_Deck.discardCard(target.ID, target)
+			PRINT(self.Game, "Shadow Word: Death destroys minion %s with 5 or more Attack."%target.name)
+			self.Game.killMinion(self, target)
 		return target
 		
 		
@@ -1878,12 +1874,8 @@ class ShadowWordPain(Spell):
 	#Target after returned to hand will be discarded.
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			if target.onBoard:
-				PRINT(self.Game, "Shadow Word: Pain destroys minion %s with 3 or less Attack."%target.name)
-				target.dead = True
-			elif target.inHand: #Target in hand will be discarded.
-				PRINT(self.Game, "Shadow Word: Pain discards the target %s returned to hand."%target.name)
-				self.Game.Hand_Deck.discardCard(target.ID, target)
+			PRINT(self.Game, "Shadow Word: Pain destroys minion %s with 3 or less Attack."%target.name)
+			self.Game.killMinion(self, target)
 		return target
 		
 		
@@ -2085,7 +2077,7 @@ class Assassinate(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Assassinate destroys enemy minion %s"%target.name)
-			target.dead = True
+			self.Game.killMinion(self, target)
 		return target
 		
 		
@@ -2102,10 +2094,8 @@ class Sprint(Spell):
 	description = "Draw 4 cards"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Sprint player draws 4 cards.")
-		self.Game.Hand_Deck.drawCard(self.ID)
-		self.Game.Hand_Deck.drawCard(self.ID)
-		self.Game.Hand_Deck.drawCard(self.ID)
-		self.Game.Hand_Deck.drawCard(self.ID)
+		for num in range(4):
+			self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
 """Shaman Cards"""
@@ -2307,7 +2297,7 @@ class SacrificialPact(Spell):
 		if target:
 			heal = 5 * (2 ** self.countHealDouble())
 			PRINT(self.Game, "Sacrificial Pact destroys Demon %s. Then restores %d heal to player."%(target.name, heal))
-			target.dead = True
+			self.Game.killMinion(self, target)
 			self.restoresHealth(self.Game.heroes[self.ID], heal)
 		return target
 		
@@ -2345,7 +2335,7 @@ class Trig_Corruption(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "At the start of player %d's turn, Corrupted minion %s dies."%(self.ID, self.entity.name))
-		self.entity.dead = True
+		self.entity.Game.killMinion(None, self.entity)
 		self.disconnect()
 		extractfrom(self, self.entity.trigsBoard)
 		
@@ -2560,7 +2550,7 @@ class Execute(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Execute destroys damaged minion %s"%target.name)
-			target.dead = True
+			self.Game.killMinion(self, target)
 		return target
 		
 		

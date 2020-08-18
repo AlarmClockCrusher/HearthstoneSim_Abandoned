@@ -131,10 +131,8 @@ class Game:
 			if amulet.selectionLegit(target, choice):
 				canPlayAmulet = True
 			else:
-				PRINT(self,
-					  "Invalid selection to play amulet {}, targeting {}, with choice {}".format(amulet.name, target,
-																								 choice))
-
+				PRINT(self, "Invalid selection to play amulet {}, targeting {}, with choice {}".format(amulet.name, target, choice))
+				
 		if canPlayAmulet:
 			PRINT(self,
 				  "	   *******\nHandling play amulet {} with target {}, with choice: {}\n	   *********".format(
@@ -161,13 +159,16 @@ class Game:
 			# 在打出序列的开始阶段决定是否要产生一个回响copy
 			if self.GUI: self.GUI.displayCard(amulet)
 			subIndex, subWhere = self.Hand_Deck.hands[amulet.ID].index(amulet), "hand%d" % amulet.ID
-			if target:
-				if target.type == "Minion":
-					tarIndex, tarWhere = target.position, "minion%d" % target.ID
-				else:
-					tarIndex, tarWhere = target.ID, "hero"
-			else:
-				tarIndex, tarWhere = 0, ''
+			if target: #因为护符是SV特有的卡牌类型，所以其目标选择一定是列表填充式的
+				tarIndex, tarWhere = [], []
+				for obj in target:
+					if obj.onBoard:
+						tarIndex.append(obj.position)
+						tarWhere.append(obj.type+str(obj.ID))
+					else:
+						tarIndex.append(self.Hand_Deck.hands[obj.ID].index(obj))
+						tarWhere.append("hand%d"%obj.ID)
+			else: tarIndex, tarWhere = 0, ''
 			amulet, mana, posinHand = self.Hand_Deck.extractfromHand(amulet, enemyCanSee=True)
 			amuletIndex = amulet.index
 			self.Manas.payManaCost(amulet, mana)  # 海魔钉刺者，古加尔和血色绽放的伤害生效。
@@ -205,8 +206,8 @@ class Game:
 				card.effectCanTrigger()
 				card.checkEvanescent()
 			PRINT(self, "Making move: playAmulet %d %s %d %s" % (subIndex, subWhere, tarIndex, tarWhere))
-			self.moves.append(("playAmulet", subIndex, subWhere, tarIndex, tarWhere, position, choice))
-
+			self.moves.append(("playAmulet", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), position, choice))
+			
 	#There probably won't be board size limit changing effects.
 	#Minions to die will still count as a placeholder on board. Only minions that have entered the tempDeads don't occupy space.
 	def space(self, ID):
@@ -251,21 +252,13 @@ class Game:
 					tarIndex, tarWhere = [], []
 					for obj in target:
 						if obj.onBoard:
-							if obj.type == "Minion":
-								tarIndex.append(obj.position)
-								tarWhere.append("minion%d"%obj.ID)
-							elif obj.type == "Hero":
-								tarIndex.append(obj.ID)
-								tarWhere.append("hero")
-							else: #obj.type = "Dormant"
-								tarIndex.append(obj.position)
-								tarWhere.append("amulet%d"%obj.ID)
+							tarIndex.append(obj.position)
+							tarWhere.append(obj.type+str(obj.ID))
 						else:
 							tarIndex.append(self.Hand_Deck.hands[obj.ID].index(obj))
 							tarWhere.append("hand%d"%obj.ID)
 				else: #非列表状态的target一定是炉石卡指定的
-					if target.type == "Minion": tarIndex, tarWhere = target.position, "minion%d"%target.ID
-					else: tarIndex, tarWhere = target.ID, "hero"
+					tarIndex, tarWhere = target.position, target.type+str(target.ID)
 			else: tarIndex, tarWhere = 0, ''
 			minion, mana, posinHand = self.Hand_Deck.extractfromHand(minion, enemyCanSee=True)
 			#如果打出的随从是SV中的爆能强化，激奏和结晶随从，则它们会返回自己的真正要打出的牌以及对应的费用
@@ -442,6 +435,16 @@ class Game:
 			return self.summon(self.Hand_Deck.extractfromDeck(i, ID)[0], position, initiatorID, comment)
 		return None
 		
+	def killMinion(self, subject, target):
+		if target:
+			if isinstance(target, list):
+				if self.GUI and subject: self.GUI.AOEAni(subject, target, ['X']*len(target), color="grey46")
+				for obj in target: target.dead = True
+			else:
+				if self.GUI and subject: self.GUI.targetingEffectAni(subject, target, 'X', color="grey46")
+				if target.onBoard: target.dead = True
+				elif target.inHand: self.Game.Hand_Deck.discardCard(target.ID, target) #如果随从在手牌中则将其丢弃
+				
 	def transform(self, target, newMinion):
 		ID = target.ID
 		if target in self.minions[ID]:
@@ -837,10 +840,8 @@ class Game:
 			#疯狂巨龙死亡之翼的连续攻击中，只有第一次目标选择被被市长改变，但之后的不会
 			if self.GUI: self.GUI.wait(275)
 			if verifySelectable:
-				if subject.type == "Minion": subIndex, subWhere = subject.position, "minion%d"%subject.ID
-				else: subIndex, subWhere = subject.ID, "hero"
-				if target.type  == "Minion": tarIndex, tarWhere = target.position, "minion%d"%target.ID
-				else: tarIndex, tarWhere = target.ID, "hero"
+				subIndex, subWhere = subject.position, subject.type+str(subject.ID)
+				tarIndex, tarWhere = target.position, target.type+str(target.ID)
 			#如果英雄的武器为蜡烛弓和角斗士的长弓，则优先给予攻击英雄免疫，防止一切攻击前步骤带来的伤害。
 			self.sendSignal("BattleStarted", self.turn, subject, target, 0, "") #这里的target没有什么意义，可以留为target
 			#在此，奥秘和健忘扳机会在此触发。需要记住初始的目标，然后可能会有诸多扳机可以对此初始信号响应。
@@ -941,8 +942,17 @@ class Game:
 			if self.GUI: self.GUI.displayCard(spell, notSecretBeingPlayed=False)
 			subIndex, subWhere = self.Hand_Deck.hands[spell.ID].index(spell), "hand%d"%spell.ID
 			if target:
-				if target.type == "Minion": tarIndex, tarWhere = target.position, "minion%d"%target.ID
-				else: tarIndex, tarWhere = target.ID, "hero"
+				if isinstance(target, list):
+					tarIndex, tarWhere = [], []
+					for obj in target:
+						if obj.onBoard:
+							tarIndex.append(obj.position)
+							tarWhere.append(obj.type+str(obj.ID))
+						else:
+							tarIndex.append(self.Hand_Deck.hands[obj.ID].index(obj))
+							tarWhere.append("hand%d"%obj.ID)
+				else: #非列表状态的target一定是炉石卡指定的
+					tarIndex, tarWhere = target.position, target.type+str(target.ID)
 			else: tarIndex, tarWhere = 0, ''
 			#支付法力值，结算血色绽放等状态。
 			spell, mana, posinHand = self.Hand_Deck.extractfromHand(spell, enemyCanSee=not spell.description.startswith("Secret:"))
@@ -1011,8 +1021,7 @@ class Game:
 			if self.GUI: self.GUI.displayCard(weapon)
 			subIndex, subWhere = self.Hand_Deck.hands[weapon.ID].index(weapon), "hand%d"%weapon.ID
 			if target:
-				if target.type == "Minion": tarIndex, tarWhere = target.position, "minion%d"%target.ID
-				else: tarIndex, tarWhere = target.ID, "hero"
+				tarIndex, tarWhere = target.position, target.type+str(target.ID)
 			else: tarIndex, tarWhere = 0, ''
 			#卡牌从手中离开，支付费用，费用状态移除，但是目前没有根据武器费用支付而产生响应的效果。
 			weapon, mana, posinHand = self.Hand_Deck.extractfromHand(weapon, enemyCanSee=True)
@@ -1148,15 +1157,17 @@ class Game:
 		return copies
 		
 	def find(self, i, where):
-		return {"minion1": self.minions[1],
-				"minion2": self.minions[2],
-				"amulet1": self.minions[1],
-				"amulet2": self.minions[2],
-				"hand1": self.Hand_Deck.hands[1],
-				"hand2": self.Hand_Deck.hands[2],
-				"hero": self.heroes, "power": self.powers,
-				"deck1": self.Hand_Deck.decks[1],
-				"deck2": self.Hand_Deck.decks[2],
+		return {"Minion1": self.minions[1],
+				"Minion2": self.minions[2],
+				"Amulet1": self.minions[1],
+				"Amulet2": self.minions[2],
+				"Hero1": self.heroes, #For heroes, their position is the same as their ID
+				"Hero2": self.heroes,
+				"Power": self.powers,
+				"Hand1": self.Hand_Deck.hands[1],
+				"Hand2": self.Hand_Deck.hands[2],
+				"Deck1": self.Hand_Deck.decks[1],
+				"Deck2": self.Hand_Deck.decks[2],
 				}[where][i]
 				
 	def evolvewithGuide(self, moves, guides):

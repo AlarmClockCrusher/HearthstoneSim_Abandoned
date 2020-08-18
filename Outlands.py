@@ -404,15 +404,13 @@ class TeronGorefiend(Minion):
 	#不知道两次触发战吼时亡语是否会记录两份，假设会
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Teron Gorefiend's battlecry destroys all friendly minions.")
-		minionsDestroyed = []
-		for minion in self.Game.minionsonBoard(self.ID):
-			if minion != self:
-				minion.dead = True
-				minionsDestroyed.append(type(minion))
-		if minionsDestroyed != []:
-			for trigger in self.deathrattles:
-				if type(trigger) == ResummonDestroyedMinionwithPlus1Plus1:
-					trigger.minionsDestroyed += minionsDestroyed
+		minionsDestroyed = [minion for minion in self.Game.minionsonBoard(self.ID) if minion != self]
+		if minionsDestroyed:
+			self.Game.killMinion(self, minionsDestroyed)
+			minionsDestroyed = [type(minion) for minion in minionsDestroyed]
+			for trig in self.deathrattles:
+				if type(trig) == ResummonDestroyedMinionwithPlus1Plus1:
+					trig.minionsDestroyed += minionsDestroyed
 		return None
 		
 class ResummonDestroyedMinionwithPlus1Plus1(Deathrattle_Minion):
@@ -518,16 +516,16 @@ class Trig_Magtheridon_Dormant(TrigBoard):
 		return self.entity.onBoard and type(target) == HellfireWarder and target.ID != self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "A Warder summoned dies. Magtheridon awakening progress: %d"%self.counter)
+		game = self.entity.Game
+		PRINT(game, "A Warder summoned dies. Magtheridon awakening progress: %d"%self.counter)
 		self.counter += 1
 		if self.counter > 2:
-			PRINT(self.entity.Game, "3 Warders died. Dormant Magtheridon destroys all minions and awakens")
-			for minion in self.entity.Game.minionsonBoard(1) + self.entity.Game.minionsonBoard(2):
-				minion.dead = True
+			PRINT(game, "3 Warders died. Dormant Magtheridon destroys all minions and awakens")
+			game.killMinion(self.entity, game.minionsonBoard(1) + game.minionsonBoard(2))
 			#假设不进行强制死亡
-			minion = Magtheridon(self.entity.Game, self.entity.ID)
+			minion = Magtheridon(game, self.entity.ID)
 			minion.firstTimeonBoard = False
-			self.entity.Game.transform(self.entity, minion)
+			game.transform(self.entity, minion)
 			
 class HellfireWarder(Minion):
 	Class, race, name = "Neutral", "", "Hellfire Warder"
@@ -1078,7 +1076,7 @@ class ImprisonedAntaen(Minion_Dormantfor2turns):
 					objs = curGame.charsAlive(3-self.ID)
 					if objs:
 						char = npchoice(objs)
-						curGame.fixedGuides.append((char.ID, "hero") if char.type == "Hero" else (char.position, "minion%d"%char.ID))
+						curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if char:
@@ -1155,7 +1153,7 @@ class Trig_PriestessofFury(TrigBoard):
 					targets = curGame.charsAlive(3-self.entity.ID)
 					if targets:
 						char = npchoice(targets)
-						curGame.fixedGuides.append((char.position, "minion%d"%char.ID) if char.type == "Minion" else (char.ID, "hero"))
+						curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if char:
@@ -1556,7 +1554,7 @@ class ImprisonedFelmaw(Minion_Dormantfor2turns):
 				targets = curGame.charsAlive(3-self.ID)
 				if targets:
 					enemy = npchoice(targets)
-					curGame.fixedGuides.append((enemy.position, "minion%d"%enemy.ID) if enemy.type == "Minion" else (enemy.ID, "hero"))
+					curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
 			if enemy:
@@ -1625,20 +1623,20 @@ class DealDamageEqualtoAttack(Deathrattle_Minion):
 		if curGame.mode == 0:
 			PRINT(curGame, "Deathrattle: Deal this minion's Attack damage randomly split among all enemies triggers")
 			for num in range(number):
-				char = None
+				enemy = None
 				if curGame.guides:
 					i, where = curGame.guides.pop(0)
-					if where: char = curGame.find(i, where)
+					if where: enemy = curGame.find(i, where)
 				else:
 					enemies = curGame.charsAlive(3-minion.ID)
 					if enemies:
-						char = npchoice(enemies)
-						curGame.fixedGuides.append((char.ID, "hero") if char.type == "Hero" else (char.position, "minion%d"%char.ID))
+						enemy = npchoice(enemies)
+						curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
-				if char:
-					PRINT(curGame, "Deathrattle deals 1 damage to random enemy %s"%char.name)
-					minion.dealsDamage(char, 1)
+				if enemy:
+					PRINT(curGame, "Deathrattle deals 1 damage to random enemy %s"%enemy.name)
+					minion.dealsDamage(enemy, 1)
 				else: break
 				
 				
@@ -1771,7 +1769,7 @@ class NagrandSlam(Spell):
 						targets = curGame.charsAlive(3-self.ID)
 						if targets:
 							enemy = npchoice(targets)
-							curGame.fixedGuides.append((enemy.ID, "hero") if enemy.type == "Hero" else (enemy.position, "minion%d"%enemy.ID))
+							curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
 						else:
 							curGame.fixedGuides.append((0, ''))
 					if enemy:
@@ -3466,13 +3464,10 @@ class KelidantheBreaker(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.justDrawn:
 			PRINT(self.Game, "Keli'dan the Breaker's battlecry destroys all other minions")
-			for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2):
-				if minion != self:
-					minion.dead = True
+			self.Game.killMinion(self, [minion for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2) if minion != self])
 		elif target: #Not just drawn this turn and target is designated
 			PRINT(self.Game, "Keli'dan the Breaker's battlecry destroys minion %s"%target.name)
-			if target.onBoard: target.dead = True
-			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
+			self.Game.killMinion(self, target)
 		return target
 		
 	def assistCreateCopy(self, recipient):

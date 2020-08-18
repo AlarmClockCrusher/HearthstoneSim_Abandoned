@@ -1946,8 +1946,7 @@ class Trig_KroluskBarkstripper(TrigBoard):
 				i = npchoice(minions).position if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
-				minion = curGame.minions[3-self.entity.ID][i]
-				minion.dead = True
+				curGame.killMinion(self.entity, curGame.minions[3-self.entity.ID][i])
 				
 				
 class TeachersPet(Minion):
@@ -2257,7 +2256,7 @@ class Trig_JandiceBarov(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "When %s takes damage, it dies"%self.entity.name)
-		self.entity.dead = True
+		self.entity.Game.killMinion(None, self.entity)
 		
 		
 class MozakiMasterDuelist(Minion):
@@ -2714,8 +2713,7 @@ class BrittleboneDestroyer(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and self.Game.Counters.heroChangedHealthThisTurn[self.ID]:
 			PRINT(self.Game, "Brittlebone Destroyer's battlecry destroys minion %s"%target.name)
-			if target.onBoard: target.dead = True
-			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
+			self.Game.killMinion(self, target)
 		return target
 		
 		
@@ -2947,7 +2945,7 @@ class Coerce(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Coerce destroys minion %s"%target.name)
-			target.dead = True
+			self.Game.killMinion(self, target)
 		return target
 		
 		
@@ -3060,7 +3058,7 @@ class SummonForsakenLilian(Deathrattle_Minion):
 				enemies = curGame.charsAlive(3-self.entity.ID)
 				if minion.onBoard and minion.health > 0 and not minion.dead and enemies:
 					enemy = npchoice(enemies)
-					curGame.fixedGuides.append((enemy.position, "minion%d"%enemy.ID) if enemy.type == "Minion" else (enemy.ID, "hero"))
+					curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
 			if enemy: #假设攻击会消耗攻击机会
@@ -4067,7 +4065,7 @@ class Trig_Troublemaker(TrigBoard):
 					targets = curGame.charsAlive(3-self.entity.ID)
 					if ruffians[num].onBoard and not ruffians[num].dead and ruffians[num].health > 0 and targets:
 						enemy = npchoice(targets)
-						curGame.fixedGuides.append((enemy.position, "minion%d"%enemy.ID) if enemy.type == "Minion" else (enemy.ID, "hero"))
+						curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if enemy: curGame.battle(ruffians[num], enemy, verifySelectable=False, resolveDeath=False)
