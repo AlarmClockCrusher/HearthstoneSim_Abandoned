@@ -380,6 +380,15 @@ class Hand_Deck:
 			self.Game.Counters.shadows[card.ID] += 1
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
 			self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
+
+	def banishCard(self, ID, card):
+		i = card if isinstance(card, (int, np.int32, np.int64)) else self.hands[ID].index(card)
+		card = self.hands[ID].pop(i)
+		card.leavesHand()
+		if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee=True)
+		PRINT(self.Game, f"Card {card.name} in player's hand is banished:")
+		self.Game.Manas.calcMana_All()
+		self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
 			
 	# 只能全部拿出手牌中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
 	def extractfromHand(self, card, ID=0, all=False, enemyCanSee=False):

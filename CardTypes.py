@@ -662,7 +662,7 @@ class Minion(Card):
 					  "Power Heal&Dmg x2": 0,  # Prophet Velen, Clockwork Automation
 					  "Spell Heal&Dmg x2": 0,
 					  "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
-					  "Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0,
+					  "Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0, "Disappear When Die": 0,
 					  "Next damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0,
 					  "Max Damage": -1
 					  }

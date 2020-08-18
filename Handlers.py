@@ -317,6 +317,7 @@ class Counters:
 		self.timesHeroTookDamage_inOwnTurn = {1:0, 2:0}
 		self.tempVengeance = {1:False, 2:False}
 		self.numCardsExtraDrawThisTurn = {1:0, 2:0}
+		self.numCardsExtraPlayedThisTurn = {1:0, 2:0}
 		
 	def turnEnds(self):
 		self.numElementalsPlayedLastTurn[self.Game.turn] = 0
@@ -339,9 +340,9 @@ class Counters:
 		self.heroAttackTimesThisTurn = {1:0, 2:0}
 		self.heroChangedHealthThisTurn = {1:False, 2:False}
 		self.powerUsedThisTurn = 0
-
-		self.amuletsDestroyedThisTurn = {1: [], 2: []}
 		self.numCardsExtraDrawThisTurn = {1: 0, 2: 0}
+		self.tempVengeance = {1: False, 2: False}
+		self.numCardsExtraPlayedThisTurn = {1: 0, 2: 0}
 		
 	#只有Game自己会引用Counters
 	def createCopy(self, recipientGame):

@@ -157,6 +157,7 @@ class Amulet(Dormant):
 		self.type, self.race = "Amulet", type(self).race
 		# 卡牌的费用和对于费用修改的效果列表在此处定义
 		self.mana, self.manaMods = type(self).mana, []
+		self.counter = -1
 		self.tempAttChanges = []  # list of tempAttChange, expiration timepoint
 		self.description = type(self).description
 		# 当一个实例被创建的时候，其needTarget被强行更改为returnTrue或者是returnFalse，不论定义中如何修改needTarget(self, choice=0)这个函数，都会被绕过。需要直接对returnTrue()函数进行修改。
@@ -331,7 +332,14 @@ class Amulet(Dormant):
 		# 结算阶段结束，处理死亡情况，不处理胜负问题。
 		self.Game.gathertheDead()
 		return target
-		
+
+	def countdown(self, number):
+		if self.counter > 0:
+			self.counter = max(0, self.counter - number)
+		if self.counter == 0:
+			PRINT(self.Game, f"{self.name}'s countdown is 0 and destroys itself")
+			self.Game.killMinion(None, self)
+
 	"""buffAura effect, Buff/Debuff, stat reset, copy"""
 	# 在原来的Game中创造一个Copy
 	def selfCopy(self, ID, mana=False):
@@ -360,6 +368,7 @@ class Amulet(Dormant):
 			Copy = type(self)(game, self.ID)
 			game.copiedObjs[self] = Copy
 			Copy.mana = self.mana
+			Copy.counter = self.counter
 			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
 			Copy.marks = copy.deepcopy(self.marks)
 			Copy.identity = copy.deepcopy(self.identity)

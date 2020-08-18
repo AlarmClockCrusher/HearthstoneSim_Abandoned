@@ -1207,7 +1207,7 @@ class DeckZone(tk.Frame):
 	def draw(self):
 		HD = self.GUI.Game.Hand_Deck
 		if self.btnsDrawn:
-			self.btnsDrawn[0]["text"] = "Hand: %d\n.\n.\nDeck: %d"%(len(HD.hands[self.ID]), len(HD.decks[self.ID]))
+			self.btnsDrawn[0]["text"] = "Hand: %d\nDeck: %d\nTurn: %d\nShadow: %d"%(len(HD.hands[self.ID]), len(HD.decks[self.ID]), self.GUI.Game.Counters.turns[self.ID] ,self.GUI.Game.Counters.shadows[self.ID])
 			self.btnsDrawn[0].configure(bg="green3"if self.GUI.Game.turn == self.ID else "red")
 		else:
 			color = "green3"if self.GUI.Game.turn == self.ID else "red"
