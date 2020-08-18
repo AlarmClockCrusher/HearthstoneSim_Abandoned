@@ -1060,7 +1060,7 @@ class BoardButton(tk.Canvas):
 			if value > 0: status += "%s:%d "%(key, value)
 		status += "\n\nPlayer 2 has:\n"
 		for key, value in game.status[2].items():
-			if value > 0: status += "%s:%d    "%(key, value)
+			if value > 0: status += "%s:%d	"%(key, value)
 		status += "\n\nTempTriggers:\n"
 		for obj in game.turnStartTrigger + game.turnEndTrigger:
 			status += type(obj).__name__ + ' '
