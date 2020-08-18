@@ -424,7 +424,7 @@ class ShadowverseAmulet(Dormant):
 
 class Evolve(HeroPower):
     mana, name, requireTarget = 0, "Evolve", True
-    index = "Shadowverse~Hero Power~0~Evolve"
+    index = "SV_Basic~Hero Power~0~Evolve"
     description = "Evolve an unevolved friendly minion."
 
     def available(self):
@@ -1251,7 +1251,454 @@ class MagnaBotanist(ShadowverseMinion):
 
 """Swordcraft cards"""
 
+
+class SteelcladKnight(ShadowverseMinion):
+    Class, race, name = "Swordcraft", "Officer", "Steelclad Knight"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Basic~Swordcraft~Minion~2~2~2~Officer~Steelclad Knight~Uncollectible"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+
+class HeavyKnight(ShadowverseMinion):
+    Class, race, name = "Swordcraft", "Officer", "Heavy Knight"
+    mana, attack, health = 1, 1, 2
+    index = "SV_Basic~Swordcraft~Minion~1~1~2~Officer~Heavy Knight~Uncollectible"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+
+class Knight(ShadowverseMinion):
+    Class, race, name = "Swordcraft", "Officer", "Knight"
+    mana, attack, health = 1, 1, 1
+    index = "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Knight~Uncollectible"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+
+class ShieldGuardian(ShadowverseMinion):
+    Class, race, name = "Swordcraft", "Officer", "Shield Guardian"
+    mana, attack, health = 1, 1, 1
+    index = "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Shield Guardian~Taunt~Uncollectible"
+    requireTarget, keyWord, description = False, "Taunt", "Ward"
+    attackAdd, healthAdd = 2, 2
+
+
+class Quickblader(ShadowverseMinion):
+    Class, race, name = "Swordcraft", "Officer", "Quickblader"
+    mana, attack, health = 1, 1, 1
+    index = "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Quickblader~Charge"
+    requireTarget, keyWord, description = False, "Charge", "Storm"
+    attackAdd, healthAdd = 2, 2
+
+
+class OathlessKnight(ShadowverseMinion):
+    Class, race, name = "Swordcraft", "Officer", "Oathless Knight"
+    mana, attack, health = 2, 1, 1
+    index = "SV_Basic~Swordcraft~Minion~2~1~1~Officer~Oathless Knight~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Summon a Knight."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self, "Oathless Knight's Fanfare summons a 1/1 Knight.")
+        self.Game.summonMinion([Knight(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+        return None
+
+
+class KunoichiTrainee(ShadowverseMinion):
+    Class, race, name = "Swordcraft", "Officer", "Kunoichi Trainee"
+    mana, attack, health = 2, 2, 1
+    index = "SV_Basic~Swordcraft~Minion~2~2~1~Officer~Kunoichi Trainee~Stealth"
+    requireTarget, keyWord, description = False, "Stealth", "Ambush."
+    attackAdd, healthAdd = 2, 2
+
+
+class AsceticKnight(ShadowverseMinion):
+    Class, race, name = "Swordcraft", "Officer", "Ascetic Knight"
+    mana, attack, health = 3, 1, 2
+    index = "SV_Basic~Swordcraft~Minion~3~1~2~Officer~Ascetic Knight~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Summon a Heavy Knight."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self, "Ascetic Knight's Fanfare summons a 1/2 Heavy Knight.")
+        self.Game.summonMinion([HeavyKnight(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+        return None
+
+
+class ForgeWeaponry(ShadowverseSpell):
+    Class, name = "Swordcraft", "Forge Weaponry"
+    requireTarget, mana = True, 3
+    index = "SV_Basic~Swordcraft~Spell~3~Forge Weaponry"
+    description = "Give +2/+2 to an allied follower. Rally (10): Give +4/+4 instead."
+
+    def available(self):
+        return self.selectableFriendlyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.ID == self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            if self.Game.Counters.numMinionsSummonedThisGame[self.ID] > 10:
+                PRINT(self.Game, f"Forge Weaponry gives +4/+4 to {target.name}.")
+                target.buffDebuff(4, 4)
+            else:
+                PRINT(self.Game, f"Forge Weaponry gives +2/+2 to {target.name}.")
+                target.buffDebuff(2, 2)
+
+        return target
+
+
+class WhiteGeneral(ShadowverseMinion):
+    Class, race, name = "Forestcraft", "Commander", "White General"
+    mana, attack, health = 4, 3, 3
+    index = "SV_Basic~Forestcraft~Minion~4~3~3~Commander~White General~Battlecry"
+    requireTarget, keyWord, description = True, "", "Fanfare: Give +2/+0 to an allied Officer follower."
+    attackAdd, healthAdd = 2, 2
+
+    def targetExists(self, choice=0):
+        for minion in self.Game.minionsonBoard(self.ID):
+            if "Officer" in minion.race:
+                return True
+        return False
+
+    def targetCorrect(self, target, choice=0):
+        return target.type == "Minion" and target.ID == self.ID and target.onBoard and "Officer" in target.race
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            target.buffDebuff(2, 0)
+            PRINT(self.Game, f"White General gives +2/+0 to {target.name}.")
+        return None
+
+
+class FloralFencer(ShadowverseMinion):
+    Class, race, name = "Swordcraft", "Officer", "Floral Fencer"
+    mana, attack, health = 4, 3, 4
+    index = "SV_Basic~Swordcraft~Minion~4~3~4~Officer~Floral Fencer"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 1, 1
+
+    def inHandEvolving(self, target=None):
+        PRINT(self, "Oathless Knight's Fanfare summons a 1/1 Knight and a 2/2 Steelclad Knight.")
+        self.Game.summonMinion([Knight(self.Game, self.ID), SteelcladKnight(self.Game, self.ID)],
+                               (-11, "totheRightEnd"), self.ID)
+        return None
+
+
+class RoyalBanner(ShadowverseAmulet):
+    Class, race, name = "Swordcraft", "Commander", "Royal Banner"
+    mana = 4
+    index = "SV_Basic~Swordcraft~Amulet~4~Commander~Royal Banner~Battlecry"
+    requireTarget, description = False, "Fanfare: Give +1/+0 to all allied Officer followers. Whenever an allied Officer follower comes into play, give it +1/+0."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_RoyalBanner(self)]
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self.Game, "Sage Commander's Fanfare gives +1/+0 to all allied Officer followers")
+        for minion in fixedList(self.Game.minionsonBoard(self.ID)):
+            if "Officer" in minion.race:
+                minion.buffDebuff(1, 0)
+        return None
+
+
+class Trig_RoyalBanner(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionBeenSummoned"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return subject.ID == self.entity.ID and self.entity.onBoard and "Officer" in target.race
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, f"A friendly minion {subject.name} is summoned and Royal Banner gives it +1/+0."
+        subject.buffDebuff(1, 0)
+
+
+class NinjaMaster(ShadowverseMinion):
+    Class, race, name = "Swordcraft", "Officer", "Ninja Master"
+    mana, attack, health = 5, 4, 4
+    index = "SV_Basic~Swordcraft~Minion~5~4~4~Officer~Ninja Master~Stealth"
+    requireTarget, keyWord, description = False, "Stealth", "Ambush."
+    attackAdd, healthAdd = 2, 2
+
+
+class SageCommander(ShadowverseMinion):
+    Class, race, name = "Swordcraft", "Commander", "Sage Commander"
+    mana, attack, health = 6, 4, 6
+    index = "SV_Basic~Swordcraft~Minion~6~4~6~Commander~Sage Commander~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Give +1/+1 to all other allied followers."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self.Game, "Sage Commander's Fanfare gives +1/+1 to all allied followers")
+        for minion in fixedList(self.Game.minionsonBoard(self.ID)):
+            minion.buffDebuff(1, 1)
+        return None
+
+
 """Runecraft cards"""
+class ClayGolem(ShadowverseMinion):
+    Class, race, name = "Runecraft", "", "Clay Golem"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Basic~Runecraft~Minion~2~2~2~None~Clay Golem~Uncollectible"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+class Snowman(ShadowverseMinion):
+    Class, race, name = "Runecraft", "", "Snowman"
+    mana, attack, health = 1, 1, 1
+    index = "SV_Basic~Runecraft~Minion~1~1~1~None~Snowman~Uncollectible"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+class EarthEssence(ShadowverseAmulet):
+    Class, race, name = "Runecraft", "Earth Sigil", "Earth Essence"
+    mana = 1
+    index = "SV_Basic~Runecraft~Amulet~1~Earth Sigil~Earth Essence~Uncollectible"
+    requireTarget, description = False, ""
+
+class GuardianGolem(ShadowverseMinion):
+    Class, race, name = "Runecraft", "", "Guardian Golem"
+    mana, attack, health = 4, 3, 3
+    index = "SV_Basic~Runecraft~Minion~4~3~3~None~Guardian Golem~Taunt~Uncollectible"
+    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    attackAdd, healthAdd = 2, 2
+
+class ScrapGolem(ShadowverseMinion):
+    Class, race, name = "Runecraft", "", "Scrap Golem"
+    mana, attack, health = 1, 0, 2
+    index = "SV_Basic~Runecraft~Minion~1~0~2~None~Scrap Golem~Taunt~Uncollectible"
+    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    attackAdd, healthAdd = 2, 2
+
+class ConjureGuardian(ShadowverseSpell):
+    Class, name = "Runecraft", "Conjure Guardian"
+    requireTarget, mana = False, 2
+    index = "SV_Basic~Runecraft~Spell~2~Conjure Guardian~Uncollectible"
+    description = "Summon a Guardian Golem."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self, "Conjure Golem summons a Guardian Golem")
+        self.Game.summonMinion([GuardianGolem(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+        return None
+
+class Trig_Spellboost(TrigHand):
+    def __init__(self, entity):
+        self.blank_init(entity, ["Spellboost"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.inHand and target.ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.progress += 1
+
+
+class Insight(ShadowverseSpell):
+    Class, name = "Runecraft", "Insight"
+    requireTarget, mana = False, 1
+    index = "SV_Basic~Runecraft~Spell~1~Insight"
+    description = "Draw a card."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self, "Insight let player draw a card.")
+        self.Game.Hand_Deck.drawCard(self.ID)
+        return None
+
+
+class SammyWizardsApprentice(ShadowverseMinion):
+    Class, race, name = "Runecraft", "", "Sammy, Wizard's Apprentice"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Basic~Runecraft~Minion~2~2~2~None~Sammy, Wizard's Apprentice~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Give +1/+1 to all other allied followers."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self, "Insight let both player draw a card.")
+        self.Game.Hand_Deck.drawCard(self.ID)
+        self.Game.Hand_Deck.drawCard(3 - self.ID)
+        return None
+
+
+class MagicMissile(ShadowverseSpell):
+    Class, name = "Runecraft", "Magic Missile"
+    requireTarget, mana = True, 2
+    index = "SV_Basic~Runecraft~Spell~2~Magic Missile"
+    description = "Deal 1 damage to an enemy. Draw a card."
+
+    def available(self):
+        return self.selectableEnemyExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return (target.type == "Minion" or target.type == "Hero") and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+            PRINT(self.Game, f"Unbridled Fury deals {damage} damage to enemy {target.name} and let player draw a card.")
+            self.dealsDamage(target, damage)
+            self.Game.Hand_Deck.drawCard(self.ID)
+        return target
+
+
+class ConjureGolem(ShadowverseSpell):
+    Class, name = "Runecraft", "Conjure Golem"
+    requireTarget, mana = False, 2
+    index = "SV_Basic~Runecraft~Spell~2~Conjure Golem"
+    description = "Summon a Clay Golem."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self, "Conjure Golem summons a Clay Golem")
+        self.Game.summonMinion([ClayGolem(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+        return None
+
+
+
+class WindBlast(ShadowverseSpell):
+    Class, name = "Runecraft", "Wind Blast"
+    requireTarget, mana = True, 2
+    index = "SV_Basic~Runecraft~Spell~2~Wind Blast~Spellboost"
+    description = "Deal 1 damage to an enemy follower. Spellboost: Deal 1 more."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsHand = [Trig_Spellboost(self)]  # 只有在手牌中才会升级
+        self.progress = 0
+
+    def available(self):
+        return self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            damage = (1 + self.progress + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+            PRINT(self.Game, f"Wind Blast deals {damage} damage to enemy {target.name}")
+            self.dealsDamage(target, damage)
+        return target
+
+
+
+class SummonSnow(ShadowverseSpell):
+    Class, name = "Runecraft", "Summon Snow"
+    requireTarget, mana = False, 3
+    index = "SV_Basic~Runecraft~Spell~2~Summon Snow~Spellboost"
+    description = "Summon 1 Snowman. Spellboost: Summon 1 more."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsHand = [Trig_Spellboost(self)]  # 只有在手牌中才会升级
+        self.progress = 0
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self, "Insight let player draw a card.")
+        self.Game.summonMinion([Snowman(self.Game, self.ID) for i in range(1 + self.progress)], (-11, "totheRightEnd"), self.ID)
+        return None
+
+class DemonflameMage(ShadowverseMinion):
+    Class, race, name = "Runecraft", "", "Demonflame Mage"
+    mana, attack, health = 4, 3, 4
+    index = "SV_Basic~Runecraft~Minion~4~3~4~None~Demonflame Mage"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 1, 1
+
+    def inHandEvolving(self, target=None):
+        PRINT(self, "Demonflame Mage's Evolve deals 1 damage to all enemy followers")
+        targets = self.Game.minionsonBoard(3 - self.ID)
+        self.dealsAOE(targets, [1 for obj in targets])
+        return None
+
+class ConjureTwosome(ShadowverseSpell):
+    Class, name = "Runecraft", "Conjure Twosome"
+    requireTarget, mana = False, 4
+    index = "SV_Basic~Runecraft~Spell~4~Conjure Twosome"
+    description = "Summon a Clay Golem."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self, "Conjure Twosome summons two Clay Golems")
+        self.Game.summonMinion([ClayGolem(self.Game, self.ID),ClayGolem(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+        return None
+
+class LightningShooter(ShadowverseMinion):
+    Class, race, name = "Runecraft", "", "Lightning Shooter"
+    mana, attack, health = 5, 3, 3
+    index = "SV_Basic~Runecraft~Minion~5~3~3~None~Lightning Shooter~Battlecry~Spellboost"
+    requireTarget, keyWord, description = True, "", "Fanfare: Deal 1 damage to an enemy follower. Spellboost: Deal 1 more."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsHand = [Trig_Spellboost(self)]  # 只有在手牌中才会升级
+        self.progress = 0
+
+    def targetExists(self, choice=0):
+        return self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        return target.type == "Minion" and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        numCardsPlayed = len(self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"])
+        if numCardsPlayed >= 2:
+            self.dealsDamage(target, 1 + self.progress)
+            PRINT(self.Game, f"Lightning Shooter deals 2 damage to {target.name}")
+        return None
+
+class FieryEmbrace(ShadowverseSpell):
+    Class, name = "Runecraft", "Fiery Embrace"
+    requireTarget, mana = True, 8
+    index = "SV_Basic~Runecraft~Spell~8~Fiery Embrace~Spellboost"
+    description = "Spellboost: Subtract 1 from the cost of this card. Destroy an enemy follower."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsHand = [Trig_Spellboost(self)]  # 只有在手牌中才会升级
+        self.progress = 0
+
+    def selfManaChange(self):
+        if self.inHand:
+            self.mana -= self.progress
+            self.mana = max(self.mana, 0)
+
+    def available(self):
+        return self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            PRINT(self.Game, f"Fiery Embrace destroys enemy {target.name}")
+            target.dead = True
+        return target
+
+class FlameDestroyer(ShadowverseMinion):
+    Class, race, name = "Runecraft", "", "Flame Destroyer"
+    mana, attack, health = 10, 7, 7
+    index = "SV_Basic~Runecraft~Minion~10~7~7~None~Flame Destroyer~Spellboost"
+    requireTarget, keyWord, description = True, "", "Spellboost: Subtract 1 from the cost of this card."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsHand = [Trig_Spellboost(self)]  # 只有在手牌中才会升级
+        self.progress = 0
+
+    def selfManaChange(self):
+        if self.inHand:
+            self.mana -= self.progress
+            self.mana = max(self.mana, 0)
 
 """Drangoncraft cards"""
 
