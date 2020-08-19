@@ -1,6 +1,6 @@
 from CardTypes import *
 from Triggers_Auras import *
-from SV_Basic import Evolve, SVMinion, SVSpell, Amulet, SVClasses, Classes, ClassesandNeutral
+from SV_Basic import *
 
 import copy
 
@@ -35,7 +35,7 @@ def PRINT(game, string, *args):
 class AirboundBarrage(SVSpell):
     Class, name = "Forestcraft", "Airbound Barrage"
     requireTarget, mana = True, 1
-    index = "SV_Basic~Forestcraft~Spell~1~Airbound Barrage"
+    index = "SV_Glory~Forestcraft~Spell~1~Airbound Barrage"
     description = "Return an allied follower or amulet to your hand. Then deal 3 damage to an enemy follower.(Can be played only when both a targetable allied card and enemy card are in play.)"
 
     def returnTrue(self, choice=0):
@@ -72,7 +72,7 @@ class AirboundBarrage(SVSpell):
 class SacredPlea(Amulet):
     Class, race, name = "Havencraft", "", "Sacred Plea"
     mana = 1
-    index = "SV_Basic~Havencraft~1~Amulet~None~Sacred Plea~Last Words"
+    index = "SV_Glory~Havencraft~1~Amulet~None~Sacred Plea~Last Words"
     requireTarget, description = False, "Countdown 3. Last Words: Draw 2 cards"
 
     def __init__(self, Game, ID):
@@ -107,7 +107,7 @@ class Draw2Cards(Deathrattle_Minion):
 class SellswordLucius(SVMinion):
     Class, race, name = "Swordcraft", "", "Sellsword Lucius"
     mana, attack, health = 1, 1, 1
-    index = "SV_Basic~Swordcraft~1~1~1~Minion~None~Sellsword Lucius~Enhance~Fanfare"
+    index = "SV_Glory~Swordcraft~1~1~1~Minion~None~Sellsword Lucius~Enhance~Fanfare"
     requireTarget, keyWord, description = True, "", "Fanfare: Enhance 5. Destroy an enemy follower"
 
     def getMana(self):
@@ -142,7 +142,7 @@ class SellswordLucius(SVMinion):
 class VesperWitchhunter_Accelerate(SVSpell):
     Class, name = "Runecraft", "Vesper, Witchhunter"
     requireTarget, mana = True, 2
-    index = "SV_Basic~Runecraft~Spell~2~Vesper, Witchhunter~Uncollectible"
+    index = "SV_Glory~Runecraft~Spell~2~Vesper, Witchhunter~Uncollectible"
     description = "Deal 1 damage to an enemy"
 
     def targetCorrect(self, target, choice=0):
@@ -160,7 +160,7 @@ class VesperWitchhunter_Accelerate(SVSpell):
 class VesperWitchhunter(SVMinion):
     Class, race, name = "Runecraft", "", "Vesper, Witchhunter"
     mana, attack, health = 4, 3, 3
-    index = "SV_Basic~Runecraft~4~3~3~Minion~None~Vesper, Witchhunter~Accelerate~Fanfare"
+    index = "SV_Glory~Runecraft~4~3~3~Minion~None~Vesper, Witchhunter~Accelerate~Fanfare"
     requireTarget, keyWord, description = True, "", "Accelerate 2: Deal 1 damage to an enemy. Fanfare: xxx. Deal 3 damage to an enemy minion, and deal 1 damage to the enemy hero"
     accelerateSpell = VesperWitchhunter_Accelerate
 
@@ -204,7 +204,7 @@ class VesperWitchhunter(SVMinion):
 class Terrorformer(SVMinion):
     Class, race, name = "Forestcraft", "", "Terrorformer"
     mana, attack, health = 6, 4, 4
-    index = "SV_Basic~Forestcraft~Minion~6~4~4~None~Terrorformer~Fusion~Fanfare"
+    index = "SV_Glory~Forestcraft~Minion~6~4~4~None~Terrorformer~Fusion~Fanfare"
     requireTarget, keyWord, description = True, "", "Fusion: Forestcraft followers that originally cost 2 play points or more. Whenever 2 or more cards are fused to this card at once, gain +2/+0 and draw a card. Fanfare: If at least 2 cards are fused to this card, gain Storm. Then, if at least 4 cards are fused to this card, destroy an enemy follower."
 
     def __init__(self, Game, ID):
@@ -254,7 +254,7 @@ class Terrorformer(SVMinion):
 class RuinwebSpider_Amulet(Amulet):
     Class, race, name = "Bloodcraft", "", "Ruinweb Spider"
     mana = 2
-    index = "SV_Basic~Bloodcraft~2~Amulet~None~Ruinweb Spider~Last Words"
+    index = "SV_Glory~Bloodcraft~2~Amulet~None~Ruinweb Spider~Last Words"
     requireTarget, description = False, "Countdown 3. Last Words: Draw 2 cards"
 
     def __init__(self, Game, ID):
@@ -296,7 +296,7 @@ class SummonaRuinwebSpider(Deathrattle_Minion):
 class RuinwebSpider(SVMinion):
     Class, race, name = "Bloodcraft", "", "Ruinweb Spider"
     mana, attack, health = 10, 5, 10
-    index = "SV_Basic~Bloodcraft~Minion~10~5~10~None~Ruinweb Spider~Crystallize"
+    index = "SV_Glory~Bloodcraft~Minion~10~5~10~None~Ruinweb Spider~Crystallize"
     requireTarget, keyWord, description = False, "", "Crystallize 2; Countdown 10 During you turn, whenever an Amulet enters your board, reduce this Amulets countdown by 1. Last Words: Summon a Ruinweb Spider"
     crystallizeAmulet = RuinwebSpider_Amulet
     attackAdd, healthAdd = 2, 2
@@ -361,7 +361,7 @@ class Trig_CantAttack4aTurn(TrigBoard):
 class XIErntzJustice(SVMinion):
     Class, race, name = "Bloodcraft", "Dragon", "XI. Erntz, Justice"
     mana, attack, health = 10, 11, 8
-    index = "SV_Basic~Bloodcraft~Minion~10~11~8~Dragon~XI. Erntz, Justice~Ward"
+    index = "SV_Glory~Bloodcraft~Minion~10~11~8~Dragon~XI. Erntz, Justice~Ward"
     requireTarget, keyWord, description = False, "Taunt", ""
     attackAdd, healthAdd = 2, 2
 
@@ -402,11 +402,11 @@ class XIErntzJustice(SVMinion):
 """DLC cards"""
 
 SV_Glory_Indices = {
-    "SV_Basic~Runecraft~4~3~3~Minion~None~Vesper, Witchhunter~Accelerate~Fanfare": VesperWitchhunter,
-    "SV_Basic~Runecraft~Spell~2~Vesper, Witchhunter~Uncollectible": VesperWitchhunter_Accelerate,
-    "SV_Basic~Havencraft~1~Amulet~None~Sacred Plea~Last Words": SacredPlea,
-    "SV_Basic~Bloodcraft~Minion~10~5~10~None~Ruinweb Spider~Crystallize": RuinwebSpider,
-    "SV_Basic~Bloodcraft~2~Amulet~None~Ruinweb Spider~Last Words": RuinwebSpider_Amulet,
-    "SV_Basic~Bloodcraft~Minion~10~11~8~Dragon~XI. Erntz, Justice~Ward": XIErntzJustice,
-    "SV_Basic~Forestcraft~Spell~1~Airbound Barrage": AirboundBarrage,
+    "SV_Glory~Runecraft~4~3~3~Minion~None~Vesper, Witchhunter~Accelerate~Fanfare": VesperWitchhunter,
+    "SV_Glory~Runecraft~Spell~2~Vesper, Witchhunter~Uncollectible": VesperWitchhunter_Accelerate,
+    "SV_Glory~Havencraft~1~Amulet~None~Sacred Plea~Last Words": SacredPlea,
+    "SV_Glory~Bloodcraft~Minion~10~5~10~None~Ruinweb Spider~Crystallize": RuinwebSpider,
+    "SV_Glory~Bloodcraft~2~Amulet~None~Ruinweb Spider~Last Words": RuinwebSpider_Amulet,
+    "SV_Glory~Bloodcraft~Minion~10~11~8~Dragon~XI. Erntz, Justice~Ward": XIErntzJustice,
+    "SV_Glory~Forestcraft~Spell~1~Airbound Barrage": AirboundBarrage,
 }

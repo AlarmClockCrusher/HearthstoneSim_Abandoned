@@ -53,7 +53,7 @@ class Evolve(HeroPower):
                 return True
             else:
                 hasFree = False
-                for minion in self.Game.minionsonBoard(self.ID):
+                for minion in self.Game.minionsAlive(self.ID):
                     if isinstance(minion, SVMinion) and minion.keyWords["Free Evolve"] > 0:
                         hasFree = True
                         break
@@ -145,6 +145,26 @@ class Yuwan(Hero):
 """Neutral cards"""
 
 
+class TrigInvocation(TrigDeck):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnStarts"])
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        if self.entity.Game.space(self.entity.ID) > 0:
+            curGame = self.entity.Game
+            if curGame.mode == 0:
+                if curGame.guides:
+                    i = curGame.guides.pop(0)
+                else:
+                    minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
+                               card.type == "Minion" and card.name == self.entity.name]
+                    i = npchoice(minions) if minions and curGame.space(self.entity.ID) > 0 else -1
+                    curGame.fixedGuides.append(i)
+                if i > -1:
+                    minion = curGame.summonfromDeck(i, self.entity.ID, -1, self.entity.ID)
+                    PRINT(self.entity.Game, f"{minion.name} is summoned from player {self.entity.ID}'s deck.")
+                    minion.afterInvocation(signal, ID, subject, target, number, comment)
+
 class Goblin(SVMinion):
     Class, race, name = "Neutral", "", "Goblin"
     mana, attack, health = 1, 1, 2
@@ -185,7 +205,7 @@ class Trig_WellofDestiny(TrigBoard):
             if curGame.guides:
                 i = curGame.guides.pop(0)
             else:
-                minions = curGame.minionsonBoard(self.entity.ID)
+                minions = curGame.minionsAlive(self.entity.ID)
                 try:
                     minions.remove(self.entity)
                 except:
@@ -238,12 +258,15 @@ class Trig_HarnessedFlameUnion(TrigBoard):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        minions = self.entity.Game.minionsonBoard(self.entity.ID)
+        minions = self.entity.Game.minionsAlive(self.entity.ID)
         for minion in minions:
             if minion.name == "Harnessed Glass":
                 minion.disappears(deathrattlesStayArmed=False)
                 self.entity.Game.removeMinionorWeapon(minion)
-                self.entity.Game.transform(self.entity, FlameandGlass(self.entity.Game, self.entity.ID))
+                self.entity.disappears(deathrattlesStayArmed=False)
+                self.entity.Game.removeMinionorWeapon(self.entity)
+                self.entity.Game.summon([FlameandGlass(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                        self.entity.ID)
                 break
 
 
@@ -268,7 +291,7 @@ class Trig_HarnessedGlass(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "When Harnessed Glass attacks, Deal 1 damage to all enemy followers.")
-        targets = self.entity.Game.minionsonBoard(3 - self.entity.ID)
+        targets = self.entity.Game.minionsAlive(3 - self.entity.ID)
         self.entity.dealsAOE(targets, [1 for obj in targets])
         self.entity.Game.gathertheDead()
         if not target.onBoard:
@@ -283,12 +306,15 @@ class Trig_HarnessedGlassUnion(TrigBoard):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        minions = self.entity.Game.minionsonBoard(self.entity.ID)
+        minions = self.entity.Game.minionsAlive(self.entity.ID)
         for minion in minions:
             if minion.name == "Harnessed Flame":
                 minion.disappears(deathrattlesStayArmed=False)
                 self.entity.Game.removeMinionorWeapon(minion)
-                self.entity.Game.transform(self.entity, FlameandGlass(self.entity.Game, self.entity.ID))
+                self.entity.disappears(deathrattlesStayArmed=False)
+                self.entity.Game.removeMinionorWeapon(self.entity)
+                self.entity.Game.summon([FlameandGlass(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                        self.entity.ID)
                 break
 
 
@@ -313,7 +339,7 @@ class Trig_FlameandGlass(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "When Flame and Glass attacks, Deal 7 damage to all enemies.")
-        targets = [self.entity.Game.heroes[3 - self.entity.ID]] + self.entity.Game.minionsonBoard(3 - self.entity.ID)
+        targets = [self.entity.Game.heroes[3 - self.entity.ID]] + self.entity.Game.minionsAlive(3 - self.entity.ID)
         self.entity.dealsAOE(targets, [7 for obj in targets])
         self.entity.Game.gathertheDead()
         if not target.onBoard:
@@ -386,7 +412,7 @@ class ElfGuard(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def effectCanTrigger(self):
-        return self.Game.combCards(self.ID) >= 2
+        self.effectViable = self.Game.combCards(self.ID) >= 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         numCardsPlayed = self.Game.combCards(self.ID)
@@ -549,7 +575,7 @@ class ElfTracker(SVMinion):
                     i, where = curGame.guides.pop(0)
                     if where: char = curGame.find(i, where)
                 else:
-                    objs = curGame.minionsonBoard(side)
+                    objs = curGame.minionsAlive(side)
                     if objs:
                         char = npchoice(objs)
                         curGame.fixedGuides.append((char.position, f"minion{side}"))
@@ -577,7 +603,7 @@ class MagnaBotanist(SVMinion):
         numCardsPlayed = self.Game.combCards(self.ID)
         if numCardsPlayed >= 2:
             PRINT(self.Game, "Magna Botanist's Fanfare Give +1/+1 to all allied followers")
-            for minion in fixedList(self.Game.minionsonBoard(self.ID)):
+            for minion in fixedList(self.Game.minionsAlive(self.ID)):
                 minion.buffDebuff(1, 1)
         return None
 
@@ -693,7 +719,7 @@ class WhiteGeneral(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def targetExists(self, choice=0):
-        for minion in self.Game.minionsonBoard(self.ID):
+        for minion in self.Game.minionsAlive(self.ID):
             if "Officer" in minion.race:
                 return True
         return False
@@ -736,7 +762,7 @@ class RoyalBanner(Amulet):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Sage Commander's Fanfare gives +1/+0 to all allied Officer followers")
-        for minion in fixedList(self.Game.minionsonBoard(self.ID)):
+        for minion in fixedList(self.Game.minionsAlive(self.ID)):
             if "Officer" in minion.race:
                 minion.buffDebuff(1, 0)
         return None
@@ -771,7 +797,7 @@ class SageCommander(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Sage Commander's Fanfare gives +1/+1 to all allied followers")
-        for minion in fixedList(self.Game.minionsonBoard(self.ID)):
+        for minion in fixedList(self.Game.minionsAlive(self.ID)):
             minion.buffDebuff(1, 1)
         return None
 
@@ -958,7 +984,7 @@ class DemonflameMage(SVMinion):
 
     def inHandEvolving(self, target=None):
         PRINT(self.Game, "Demonflame Mage's Evolve deals 1 damage to all enemy followers")
-        targets = self.Game.minionsonBoard(3 - self.ID)
+        targets = self.Game.minionsAlive(3 - self.ID)
         self.dealsAOE(targets, [1 for obj in targets])
         return None
 
@@ -1273,7 +1299,7 @@ class Conflagration(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-        targets = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
+        targets = self.Game.minionsAlive(1) + self.Game.minionsAlive(2)
         PRINT(self.Game, f"Conflagration deals {damage} damage to all minions.")
         self.dealsAOE(targets, [damage for minion in targets])
         return None
@@ -1501,7 +1527,7 @@ class Deathrattle_GhostlyRider(Deathrattle_Minion):
             if curGame.guides:
                 i = curGame.guides.pop(0)
             else:
-                minions = [minion.position for minion in curGame.minionsonBoard(self.entity.ID)]
+                minions = [minion.position for minion in curGame.minionsAlive(self.entity.ID)]
                 i = npchoice(minions) if minions else -1
                 curGame.fixedGuides.append(i)
             if i > -1:
@@ -1686,7 +1712,7 @@ class DemonicStorm(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-        targets = [self.Game.heroes[self.ID]] + self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2) + \
+        targets = [self.Game.heroes[self.ID]] + self.Game.minionsAlive(1) + self.Game.minionsAlive(2) + \
                   [self.Game.heroes[3 - self.ID]]
         PRINT(self.Game, f"Demonic Storm deals {damage} damage to all allies and enemies.")
         self.dealsAOE(targets, [damage for minion in targets])
@@ -2044,9 +2070,9 @@ class Deathrattle_RadiantArtifact(Deathrattle_Minion):
                 if curGame.guides:
                     i = curGame.guides.pop(0)
                 else:
-                    mechs = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
-                             card.type == "Minion" and "Artifact" in card.race]
-                    i = npchoice(mechs) if mechs else -1
+                    artifacts = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
+                                 card.type == "Minion" and "Artifact" in card.race]
+                    i = npchoice(artifacts) if artifacts else -1
                     curGame.fixedGuides.append(i)
                 if i > -1: curGame.Hand_Deck.drawCard(self.entity.ID, i)
         else:
@@ -2207,7 +2233,7 @@ class IronforgedFighter(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Ironforged Fighter shuffles 2 Radiant Artifacts into player's deck")
-        self.Game.Hand_Deck.shuffleCardintoDeck([AnalyzingArtifact(self.Game, self.ID) for i in range(2)], self.ID)
+        self.Game.Hand_Deck.shuffleCardintoDeck([RadiantArtifact(self.Game, self.ID) for i in range(2)], self.ID)
         return None
 
 
@@ -2239,7 +2265,7 @@ class PuppeteersStrings(SVSpell):
         PRINT(self.Game, "Puppeteer's Strings puts 3 Puppets into your hand.")
         self.Game.Hand_Deck.addCardtoHand([Puppet for i in range(3)], self.ID, "type")
         damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-        targets = self.Game.minionsonBoard(3 - self.ID)
+        targets = self.Game.minionsAlive(3 - self.ID)
         PRINT(self.Game, f"Puppeteer's Strings deals {damage} damage to all enemy followers.")
         self.dealsAOE(targets, [damage for minion in targets])
         return None
@@ -2259,9 +2285,9 @@ class BlackIronSoldier(SVMinion):
             if curGame.guides:
                 i = curGame.guides.pop(0)
             else:
-                mechs = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
-                         card.type == "Minion" and "Artifact" in card.race]
-                i = npchoice(mechs) if mechs else -1
+                artifacts = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
+                             card.type == "Minion" and "Artifact" in card.race]
+                i = npchoice(artifacts) if artifacts else -1
                 curGame.fixedGuides.append(i)
             if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return None

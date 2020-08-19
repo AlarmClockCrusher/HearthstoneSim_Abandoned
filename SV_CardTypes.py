@@ -53,7 +53,7 @@ class SVMinion(Minion):
 		
 	def willAccelerate(self):
 		return False
-		
+
 	#当费用不足以释放随从本体但又高于结晶费用X时，打出会以结晶方式打出，此时随从变形为一张护符打出在战场上，护符名为结晶：{随从名}，效果与随从本体无关。可能会具有本体不具有的额外种族。不会被本体减费影响，但若本体费用低于结晶费用则结晶无法触发。同一个随从可以同时具有结晶和爆能强化。
 	def willCrystallize(self):
 		return False
@@ -66,6 +66,9 @@ class SVMinion(Minion):
 	#优先判定能否激奏，如果可以，不再检测能否结晶。若不能激奏，则再检测是否能结晶
 	def getTypewhenPlayed(self):
 		return "Spell" if self.willAccelerate() else ("Amulet" if self.willCrystallize() else "Minion")
+
+	def afterInvocation(self, signal, ID, subject, target, number, comment):
+		return
 
 	def returnTrue(self, choice=0):  # 只有在还没有选择过目标的情况下才能继续选择
 		if self.needTarget:

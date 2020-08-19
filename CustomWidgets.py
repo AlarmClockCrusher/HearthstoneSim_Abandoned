@@ -162,14 +162,14 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		if not hasattr(GUI, "ID") or seeEnemyHand or GUI.ID == card.ID:
 			game, self.colorOrig = card.Game, "red"
 			if card.ID == game.turn and game.Manas.affordable(card):
-				if (card.type == "Spell" and card.available()) or ((card.type == "Minion" or card.type == "Amulet") and game.space(card.ID) > 0) or card.type == "Weapon" or card.type == "Hero":
+				if (card.type == "Spell" and card.available()) or ((card.type == "Minion" or card.type == "Amulet") and game.space(card.ID) > 0 and card.available()) or card.type == "Weapon" or card.type == "Hero":
 					self.colorOrig = "blue" if card.evanescent else ((card.effectViable if isinstance(card.effectViable, str) else "yellow") if card.effectViable else "green3")
 		else: self.colorOrig = "grey46" #Only is grey when it's opponent's card in 2PGUI in "Don't show opponent cards" mode
 		
 	def leftClick(self, event):
 		if self.GUI.UI < 3 and self.GUI.UI > -1: #只有不在发现或动画演示中才会响应
 			card, ID, game = self.card, self.card.ID, self.GUI.Game
-			if ID == game.turn and game.Manas.affordable(card) and ((card.type == "Spell" and card.available()) or ((card.type == "Minion" or card.type == "Amulet") and game.space(ID) > 0) or card.type == "Weapon" or card.type == "Hero"):
+			if ID == game.turn and game.Manas.affordable(card) and ((card.type == "Spell" and card.available()) or ((card.type == "Minion" or card.type == "Amulet") and game.space(ID) > 0 and card.available()) or card.type == "Weapon" or card.type == "Hero"):
 				self.selected = 1 - self.selected #在选中一张牌后再次选择它，会取消所有选择
 				if self.selected == 1:
 					self.configure(bg="white")

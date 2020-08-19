@@ -183,8 +183,8 @@ class Card:
 		targets = target if isinstance(target, list) else [target]
 		for target in targets:
 			targetType = target.type
-			selectable = target.onBoard \
-						and ( \
+			selectable = target.onBoard and targetType != "Dormant" and targetType != "Power" and \
+						 (
 							(targetType == "Hero" and (target.ID == self.ID or self.Game.status[target.ID]["Immune"] + target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
 														and not ((self.type == "Power" or self.type == "Spell") and self.Game.status[target.ID]["Evasive"] > 1)) \
 							#不能被法术或者英雄技能选择的随从是： 魔免随从 或者 是对敌方魔免且法术或英雄技能是敌方的
@@ -192,7 +192,7 @@ class Card:
 															and not ((self.type == "Power" or self.type == "Spell") and (target.marks["Evasive"] > 1 or (target.ID != self.ID and target.marks["Enemy Evasive"] > 1)))) \
 							or (targetType == "Amulet" and (target.ID == self.ID or target.marks["Enemy Effect Evasive"] < 1) \
 															and not (self.type == "Spell" and target.marks["Evasive"] > 1)) \
-							or not targetType == "Dormant" or not targetType == "Power"
+
 							)
 			if not selectable: return False
 		return True

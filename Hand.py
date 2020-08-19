@@ -460,9 +460,12 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 			
 			
-Default1 = [LightningShooter,LightningShooter,LightningShooter,LightningShooter,LightningShooter,
-			Insight,Insight,Insight,Insight,Insight,Insight,Insight,
-ElfMetallurgist,ElfMetallurgist,ElfMetallurgist
+Default1 = [
+	OathlessKnight,OathlessKnight,OathlessKnight,OathlessKnight,OathlessKnight,OathlessKnight,
+	OathlessKnight,OathlessKnight,OathlessKnight,OathlessKnight,OathlessKnight,OathlessKnight,
+XXIZelgeneaTheWorld,XXIZelgeneaTheWorld,XXIZelgeneaTheWorld,XXIZelgeneaTheWorld,XXIZelgeneaTheWorld,
+XXIZelgeneaTheWorld,XXIZelgeneaTheWorld,XXIZelgeneaTheWorld,XXIZelgeneaTheWorld,XXIZelgeneaTheWorld,
+
 			]
 			
 Default2 = [Goblin,

@@ -819,7 +819,7 @@ class ReclusivePonderer(SVMinion):
 #	 description = "Summon a Shield Guardian and Knight.Rally (15): Summon a Frontguard General instead of a Shield Guardian."
 #
 #	 def available(self):
-#		 return self.Game.spaceonBoard(self.ID)
+#		 return self.Game.space(self.ID)
 #
 #	 def effectCanTrigger(self):
 #		 self.effectViable = self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 15
@@ -843,7 +843,7 @@ class ReclusivePonderer(SVMinion):
 #	 description = "Choose an allied follower in play and summon a copy of it. Give it Rush, and banish it at the start of your next turn."
 #
 #	 def available(self):
-#		 return self.selectableFriendlyExists() and self.Game.spaceonBoard(self.ID)
+#		 return self.selectableFriendlyExists() and self.Game.space(self.ID)
 #
 #	 def targetCorrect(self, target, choice=0):
 #		 return target.cardType == "Minion" and target.ID == self.ID and target.onBoard
@@ -1490,7 +1490,7 @@ class ReclusivePonderer(SVMinion):
 #			 if card.cardType == "Minion" and isinstance(card, SVMinion) and \
 #					 card.mana == 1 and card.Class == "Swordcraft":
 #				 ones.append(card)
-#		 if ones != [] and self.Game.spaceonBoard(self.ID) > 0:
+#		 if ones != [] and self.Game.space(self.ID) > 0:
 #			 a = np.random.choice(ones)
 #			 self.Game.summonfromDeck(a, -1, self.ID)
 #			 PRINT(self, f"Courtly Dance summons {a.name} from deck.")
@@ -1498,7 +1498,7 @@ class ReclusivePonderer(SVMinion):
 #			 if card.cardType == "Minion" and isinstance(card, SVMinion) and \
 #					 card.mana == 2 and card.Class == "Swordcraft":
 #				 twos.append(card)
-#		 if twos != [] and self.Game.spaceonBoard(self.ID) > 0:
+#		 if twos != [] and self.Game.space(self.ID) > 0:
 #			 b = np.random.choice(twos)
 #			 self.Game.summonfromDeck(b, -1, self.ID)
 #			 PRINT(self, f"Courtly Dance summons {b.name} from deck.")
@@ -1507,7 +1507,7 @@ class ReclusivePonderer(SVMinion):
 #				 if card.cardType == "Minion" and isinstance(card, SVMinion) and \
 #						 card.mana == 3 and card.Class == "Swordcraft":
 #					 threes.append(card)
-#			 if threes != [] and self.Game.spaceonBoard(self.ID) > 0:
+#			 if threes != [] and self.Game.space(self.ID) > 0:
 #				 c = np.random.choice(threes)
 #				 self.Game.summonfromDeck(c, -1, self.ID)
 #				 PRINT(self, f"Courtly Dance summons {c.name} from deck.")
@@ -1587,12 +1587,12 @@ class ReclusivePonderer(SVMinion):
 #		 self.blank_init(entity, ["TurnStarts"])
 #
 #	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-#		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.spaceonBoard(self.entity.ID) > 0 and \
+#		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
 #				self.entity.Game.Counters.numMinionsSummonThisGame[self.entity.ID] >= 10 and \
 #				self.entity.name not in self.entity.Game.Counters.minionInvocationThisTurn
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#		 if self.entity.Game.spaceonBoard(self.entity.ID) > 0:
+#		 if self.entity.Game.space(self.entity.ID) > 0:
 #			 self.entity.Game.Counters.minionInvocationThisTurn.append(self.entity.name)
 #			 self.entity.Game.summonfromDeck(self.entity, -1, self.entity.ID)
 #			 PRINT(self, f"Fieran, Havensent Wind God is summoned from player {self.entity.ID}'s deck.")
@@ -1774,12 +1774,12 @@ class ReclusivePonderer(SVMinion):
 #		 self.blank_init(entity, ["TurnStarts"])
 #
 #	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-#		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.spaceonBoard(self.entity.ID) > 0 and \
+#		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
 #				self.entity.Game.Counters.numTurnPassedThisGame[self.entity.ID] == 10 and \
 #				self.entity.name not in self.entity.Game.Counters.minionInvocationThisTurn
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#		 if self.entity.Game.spaceonBoard(self.entity.ID) > 0:
+#		 if self.entity.Game.space(self.entity.ID) > 0:
 #			 self.entity.Game.summonfromDeck(self.entity, -1, self.entity.ID)
 #			 self.entity.Game.Counters.minionInvocationThisTurn.append(self.entity.name)
 #			 PRINT(self, f"XXI. Zelgenea, The World is summoned from player {self.entity.ID}'s deck.")
@@ -1916,7 +1916,7 @@ class ReclusivePonderer(SVMinion):
 #					 if card.cardType == "Minion" and isinstance(card, SVMinion) and \
 #							 "Levin" in card.race and card.Class == "Swordcraft" and card.name not in names:
 #						 minions.append(card)
-#				 if minions != [] and self.Game.spaceonBoard(self.ID) > 0:
+#				 if minions != [] and self.Game.space(self.ID) > 0:
 #					 m = np.random.choice(minions)
 #					 names.append(m.name)
 #					 self.Game.summonfromDeck(m, -1, self.ID)

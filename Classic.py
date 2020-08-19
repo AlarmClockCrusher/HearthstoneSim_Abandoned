@@ -2984,7 +2984,7 @@ class DeadlyShot(Spell):
 				i = curGame.guides.pop(0)
 			else:
 				minions = curGame.minionsAlive(3-self.ID)
-				i = npchoice(minions) if minions else -1
+				i = npchoice(minions).position if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
 				self.Game.killMinion(self, curGame.minions[3-self.ID][i])

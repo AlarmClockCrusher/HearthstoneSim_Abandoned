@@ -299,6 +299,8 @@ class Game:
 				target = minion.played(target, choice, mana, posinHand, comment)
 				if self.minionPlayed and self.minionPlayed.onBoard:
 					self.sendSignal("%sBeenSummoned"%typewhenPlayed, self.turn, self.minionPlayed, target, mana, "")
+					if typewhenPlayed=="Minion":
+						self.Counters.numMinionsSummonedThisGame[self.minionPlayed.ID] += 1
 				self.Counters.numCardsPlayedThisTurn[self.turn] += 1
 				#假设打出的随从被对面控制的话仍然会计为我方使用的随从。被对方变形之后仍记录打出的初始随从
 				self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(minionIndex)
@@ -511,6 +513,13 @@ class Game:
 	def combCards(self, ID):
 		return self.Counters.numCardsPlayedThisTurn[ID]
 
+	def getEvolutionPoint(self, ID):
+		point = 0
+		if self.heroes[ID].heroPower.name == "Evolve" and self.Counters.turns[ID] >= \
+				self.Counters.numEvolutionTurn[ID]:
+			point = self.Counters.numEvolutionPoint[ID]
+		return point
+
 	#The leftmost minion has position 0. Consider Dormant
 	def rearrangePosition(self):
 		for i, obj in enumerate(self.minions[1]): obj.position = i
@@ -662,7 +671,14 @@ class Game:
 				try: #TrigsDeck
 					trigs = [trig for trig in self.trigsDeck[triggerID][signal] if trig.canTrigger(signal, ID, subject, target, number, comment, choice)]
 					if trigs: hasResponder = True
-					for trig in trigs: trig.trigger(signal, ID, subject, target, number, comment, choice)
+					invocation = []
+					for trig in trigs:
+						if "Invocation" in type(trig).__name__:
+							if trig.entity.name not in invocation:
+								trig.trigger(signal, ID, subject, target, number, comment, choice)
+								invocation.append(trig.entity.name)
+						else:
+							trig.trigger(signal, ID, subject, target, number, comment, choice)
 				except: pass
 		return hasResponder
 
