@@ -28,14 +28,14 @@ def PRINT(game, string, *args):
         print("game's guide mode is 0\n", string)
 
 
-SVClasses = ["Forestcraft", "Swordcraft", "Runecraft", "Drangoncraft", "Shadowcraft", "Bloodcraft", "Havencraft",
+SVClasses = ["Forestcraft", "Swordcraft", "Runecraft", "Dragoncraft", "Shadowcraft", "Bloodcraft", "Havencraft",
              "Portalcraft"]
 Classes = ["Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin", "Priest", "Rogue", "Shaman", "Warlock",
            "Warrior",
-           "Forestcraft", "Swordcraft", "Runecraft", "Drangoncraft", "Shadowcraft", "Bloodcraft", "Havencraft",
+           "Forestcraft", "Swordcraft", "Runecraft", "Dragoncraft", "Shadowcraft", "Bloodcraft", "Havencraft",
            "Portalcraft"]
 ClassesandNeutral = ["Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin", "Priest", "Rogue", "Shaman",
-                     "Warlock", "Warrior", "Neutral", "Forestcraft", "Swordcraft", "Runecraft", "Drangoncraft",
+                     "Warlock", "Warrior", "Neutral", "Forestcraft", "Swordcraft", "Runecraft", "Dragoncraft",
                      "Shadowcraft", "Bloodcraft", "Havencraft", "Portalcraft"]
 
 
@@ -71,7 +71,7 @@ class Evolve(HeroPower):
         return False
 
     def effect(self, target, choice=0):
-        if target.marks["Free Evolve"] == 0:
+        if target.marks["Free Evolve"] < 1:
             self.Game.Counters.numEvolutionPoint[self.ID] -= 1
         target.evolve()
         target.inHandEvolving()
@@ -140,7 +140,6 @@ class Yuwan(Hero):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.health, self.health_max, self.armor = 20, 20, 0
-
 
 
 """Neutral cards"""
@@ -357,14 +356,13 @@ class WaterFairy(SVMinion):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.overload = 2
         self.deathrattles = [Deathrattle_WaterFairy(self)]
 
 
 class Deathrattle_WaterFairy(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "Water Fairy's Last Words put a Fairy into your hand.")
-        self.entity.Game.Hand_Deck.addCardtoHand(Fairy, self.entity.ID, "CreateUsingType")
+        self.entity.Game.Hand_Deck.addCardtoHand(Fairy, self.entity.ID, "type")
 
 
 class FairyWhisperer(SVMinion):
@@ -376,7 +374,7 @@ class FairyWhisperer(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Fairy Whisperer's Fanfare put a Fairy into your hand.")
-        self.Game.Hand_Deck.addCardtoHand([Fairy for i in range(2)], self.ID, "CreateUsingType")
+        self.Game.Hand_Deck.addCardtoHand([Fairy for i in range(2)], self.ID, "type")
         return None
 
 
@@ -407,7 +405,7 @@ class ElfMetallurgist(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def returnTrue(self, choice=0):
-        return self.Game.combCards(self.ID) >= 2
+        return self.Game.combCards(self.ID) >= 2 and not self.targets
 
     def effectCanTrigger(self):
         self.effectViable = self.Game.combCards(self.ID) >= 2
@@ -420,9 +418,9 @@ class ElfMetallurgist(SVMinion):
         return target.type == "Minion" and target.ID != self.ID and target.onBoard
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if isinstance(target, list): target = target[0]
         numCardsPlayed = self.Game.combCards(self.ID)
         if numCardsPlayed >= 2:
+            if isinstance(target, list): target = target[0]
             self.dealsDamage(target, 2)
             PRINT(self.Game, f"Elf Metallurgist deals 2 damage to {target.name}")
         return None
@@ -445,9 +443,10 @@ class SylvanJustice(SVSpell):
         if target:
             if isinstance(target, list): target = target[0]
             damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+            self.dealsDamage(target, damage)
             PRINT(self.Game,
                   f"Sylvan Justice deals {damage} damage to {target} and put a Fairy into your hand.")
-            self.Game.Hand_Deck.addCardtoHand(Fairy, self.ID, "CreateUsingType")
+            self.Game.Hand_Deck.addCardtoHand(Fairy, self.ID, "type")
         return target
 
 
@@ -472,7 +471,7 @@ class Trig_DarkElfFaure(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "Dark Elf Faure's Strike put a Fairy into your hand.")
-        self.entity.Game.Hand_Deck.addCardtoHand(Fairy, self.entity.ID, "CreateUsingType")
+        self.entity.Game.Hand_Deck.addCardtoHand(Fairy, self.entity.ID, "type")
 
 
 class Okami(SVMinion):
@@ -634,8 +633,8 @@ class OathlessKnight(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self, "Oathless Knight's Fanfare summons a 1/1 Knight.")
-        self.Game.summonMinion([Knight(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+        PRINT(self.Game, "Oathless Knight's Fanfare summons a 1/1 Knight.")
+        self.Game.summon([Knight(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
         return None
 
 
@@ -655,8 +654,8 @@ class AsceticKnight(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self, "Ascetic Knight's Fanfare summons a 1/2 Heavy Knight.")
-        self.Game.summonMinion([HeavyKnight(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+        PRINT(self.Game, "Ascetic Knight's Fanfare summons a 1/2 Heavy Knight.")
+        self.Game.summon([HeavyKnight(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
         return None
 
 
@@ -719,9 +718,9 @@ class FloralFencer(SVMinion):
     attackAdd, healthAdd = 1, 1
 
     def inHandEvolving(self, target=None):
-        PRINT(self, "Oathless Knight's Fanfare summons a 1/1 Knight and a 2/2 Steelclad Knight.")
-        self.Game.summonMinion([Knight(self.Game, self.ID), SteelcladKnight(self.Game, self.ID)],
-                               (-11, "totheRightEnd"), self.ID)
+        PRINT(self.Game, "Oathless Knight's Fanfare summons a 1/1 Knight and a 2/2 Steelclad Knight.")
+        self.Game.summon([Knight(self.Game, self.ID), SteelcladKnight(self.Game, self.ID)],
+                         (-1, "totheRightEnd"), self.ID)
         return None
 
 
@@ -826,8 +825,8 @@ class ConjureGuardian(SVSpell):
     description = "Summon a Guardian Golem."
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self, "Conjure Golem summons a Guardian Golem")
-        self.Game.summonMinion([GuardianGolem(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+        PRINT(self.Game, "Conjure Golem summons a Guardian Golem")
+        self.Game.summon([GuardianGolem(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
         return None
 
 
@@ -836,8 +835,7 @@ class Trig_Spellboost(TrigHand):
         self.blank_init(entity, ["Spellboost"])
 
     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-        if isinstance(target, list): target = target[0]
-        return self.entity.inHand and target.ID == self.entity.ID
+        return self.entity.inHand and subject.ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.progress += 1
@@ -850,7 +848,7 @@ class Insight(SVSpell):
     description = "Draw a card."
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self, "Insight let player draw a card.")
+        PRINT(self.Game, "Insight let player draw a card.")
         self.Game.Hand_Deck.drawCard(self.ID)
         return None
 
@@ -863,7 +861,7 @@ class SammyWizardsApprentice(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self, "Insight let both player draw a card.")
+        PRINT(self.Game, "Insight let both player draw a card.")
         self.Game.Hand_Deck.drawCard(self.ID)
         self.Game.Hand_Deck.drawCard(3 - self.ID)
         return None
@@ -899,8 +897,8 @@ class ConjureGolem(SVSpell):
     description = "Summon a Clay Golem."
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self, "Conjure Golem summons a Clay Golem")
-        self.Game.summonMinion([ClayGolem(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+        PRINT(self.Game, "Conjure Golem summons a Clay Golem")
+        self.Game.summon([ClayGolem(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
         return None
 
 
@@ -911,6 +909,7 @@ class WindBlast(SVSpell):
     description = "Deal 1 damage to an enemy follower. Spellboost: Deal 1 more."
 
     def __init__(self, Game, ID):
+        super().__init__(Game, ID)
         self.blank_init(Game, ID)
         self.trigsHand = [Trig_Spellboost(self)]
         self.progress = 0
@@ -938,14 +937,15 @@ class SummonSnow(SVSpell):
     description = "Summon 1 Snowman. Spellboost: Summon 1 more."
 
     def __init__(self, Game, ID):
+        super().__init__(Game, ID)
         self.blank_init(Game, ID)
         self.trigsHand = [Trig_Spellboost(self)]
         self.progress = 0
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self, "Insight let player draw a card.")
-        self.Game.summonMinion([Snowman(self.Game, self.ID) for i in range(1 + self.progress)], (-11, "totheRightEnd"),
-                               self.ID)
+        PRINT(self.Game, "Insight let player draw a card.")
+        self.Game.summon([Snowman(self.Game, self.ID) for i in range(1 + self.progress)], (-1, "totheRightEnd"),
+                         self.ID)
         return None
 
 
@@ -957,7 +957,7 @@ class DemonflameMage(SVMinion):
     attackAdd, healthAdd = 1, 1
 
     def inHandEvolving(self, target=None):
-        PRINT(self, "Demonflame Mage's Evolve deals 1 damage to all enemy followers")
+        PRINT(self.Game, "Demonflame Mage's Evolve deals 1 damage to all enemy followers")
         targets = self.Game.minionsonBoard(3 - self.ID)
         self.dealsAOE(targets, [1 for obj in targets])
         return None
@@ -970,9 +970,9 @@ class ConjureTwosome(SVSpell):
     description = "Summon a Clay Golem."
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self, "Conjure Twosome summons two Clay Golems")
-        self.Game.summonMinion([ClayGolem(self.Game, self.ID), ClayGolem(self.Game, self.ID)], (-11, "totheRightEnd"),
-                               self.ID)
+        PRINT(self.Game, "Conjure Twosome summons two Clay Golems")
+        self.Game.summon([ClayGolem(self.Game, self.ID), ClayGolem(self.Game, self.ID)], (-1, "totheRightEnd"),
+                         self.ID)
         return None
 
 
@@ -1009,6 +1009,7 @@ class FieryEmbrace(SVSpell):
     description = "Spellboost: Subtract 1 from the cost of this card. Destroy an enemy follower."
 
     def __init__(self, Game, ID):
+        super().__init__(Game, ID)
         self.blank_init(Game, ID)
         self.trigsHand = [Trig_Spellboost(self)]
         self.progress = 0
@@ -1051,7 +1052,7 @@ class FlameDestroyer(SVMinion):
             self.mana = max(self.mana, 0)
 
 
-"""Drangoncraft cards"""
+"""Dragoncraft cards"""
 
 
 class BuffAura_Overflow(AuraDealer_toMinion):
@@ -1094,9 +1095,9 @@ class BuffAura_Overflow(AuraDealer_toMinion):
 
 
 class BlazingBreath(SVSpell):
-    Class, name = "Drangoncraft", "Blazing Breath"
+    Class, name = "Dragoncraft", "Blazing Breath"
     requireTarget, mana = True, 1
-    index = "SV_Basic~Drangoncraft~Spell~1~Blazing Breath"
+    index = "SV_Basic~Dragoncraft~Spell~1~Blazing Breath"
     description = "Deal 2 damage to an enemy follower."
 
     def available(self):
@@ -1116,9 +1117,9 @@ class BlazingBreath(SVSpell):
 
 
 class Dragonrider(SVMinion):
-    Class, race, name = "Drangoncraft", "", "Dragonrider"
+    Class, race, name = "Dragoncraft", "", "Dragonrider"
     mana, attack, health = 2, 2, 2
-    index = "SV_Basic~Drangoncraft~Minion~2~2~2~None~Dragonrider"
+    index = "SV_Basic~Dragoncraft~Minion~2~2~2~None~Dragonrider"
     requireTarget, keyWord, description = False, "", "Gain +2/+0 if Overflow is active for you."
     attackAdd, healthAdd = 2, 2
 
@@ -1136,24 +1137,24 @@ class BuffAura_Dragonrider(BuffAura_Overflow):
 
 
 class DragonOracle(SVSpell):
-    Class, name = "Drangoncraft", "Dragon Oracle"
+    Class, name = "Dragoncraft", "Dragon Oracle"
     requireTarget, mana = False, 2
-    index = "SV_Basic~Drangoncraft~Spell~2~Dragon Oracle"
+    index = "SV_Basic~Dragoncraft~Spell~2~Dragon Oracle"
     description = "Gain an empty play point orb. Draw a card if Overflow is active for you."
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Dragon Oracle gives an empty play point orb")
         if self.Game.isOverflow(self.ID):
-            PRINT(self, "Dragon Oracle let player draw a card.")
+            PRINT(self.Game, "Dragon Oracle let player draw a card.")
             self.Game.Hand_Deck.drawCard(self.ID)
         self.Game.Manas.gainEmptyManaCrystal(1, self.ID)
         return None
 
 
 class FirstbornDragon(SVMinion):
-    Class, race, name = "Drangoncraft", "", "Firstborn Dragon"
+    Class, race, name = "Dragoncraft", "", "Firstborn Dragon"
     mana, attack, health = 3, 2, 3
-    index = "SV_Basic~Drangoncraft~Minion~3~2~3~None~Firstborn Dragon"
+    index = "SV_Basic~Dragoncraft~Minion~3~2~3~None~Firstborn Dragon"
     requireTarget, keyWord, description = False, "", "Gain Ward if Overflow is active for you."
     attackAdd, healthAdd = 2, 2
 
@@ -1165,26 +1166,22 @@ class FirstbornDragon(SVMinion):
 
 class BuffAura_FirstbornDragon(BuffAura_Overflow):
     def applies(self, subject):
-        if subject.Game.availableWeapon(subject.ID):
-            aura_Receiver = HasAura_Receiver(subject, self, "Taunt")
-            aura_Receiver.effectStart()
-        else:
-            for minion, aura_Receiver in self.auraAffected:
-                aura_Receiver.effectClear()
+        aura_Receiver = HasAura_Receiver(subject, self, "Taunt")
+        aura_Receiver.effectStart()
 
 
 class DeathDragon(SVMinion):
-    Class, race, name = "Drangoncraft", "", "Death Dragon"
+    Class, race, name = "Dragoncraft", "", "Death Dragon"
     mana, attack, health = 4, 4, 4
-    index = "SV_Basic~Drangoncraft~Minion~4~4~4~None~Death Dragon"
+    index = "SV_Basic~Dragoncraft~Minion~4~4~4~None~Death Dragon"
     requireTarget, keyWord, description = False, "", " "
     attackAdd, healthAdd = 2, 2
 
 
 class SerpentWrath(SVSpell):
-    Class, name = "Drangoncraft", "Serpent Wrath"
+    Class, name = "Dragoncraft", "Serpent Wrath"
     requireTarget, mana = True, 4
-    index = "SV_Basic~Drangoncraft~Spell~4~Serpent Wrath"
+    index = "SV_Basic~Dragoncraft~Spell~4~Serpent Wrath"
     description = "Deal 6 damage to an enemy follower."
 
     def available(self):
@@ -1204,9 +1201,9 @@ class SerpentWrath(SVSpell):
 
 
 class DisasterDragon(SVMinion):
-    Class, race, name = "Drangoncraft", "", "Disaster Dragon"
+    Class, race, name = "Dragoncraft", "", "Disaster Dragon"
     mana, attack, health = 5, 4, 5
-    index = "SV_Basic~Drangoncraft~Minion~5~4~5~None~Disaster Dragon"
+    index = "SV_Basic~Dragoncraft~Minion~5~4~5~None~Disaster Dragon"
     requireTarget, keyWord, description = False, "", "Strike: Gain +2/+0 until the end of the turn."
     attackAdd, healthAdd = 2, 2
 
@@ -1229,9 +1226,9 @@ class Trig_DisasterDragon(TrigBoard):
 
 
 class Dragonguard(SVMinion):
-    Class, race, name = "Drangoncraft", "", "Dragonguard"
+    Class, race, name = "Dragoncraft", "", "Dragonguard"
     mana, attack, health = 6, 5, 6
-    index = "SV_Basic~Drangoncraft~Minion~6~5~6~None~Dragonguard"
+    index = "SV_Basic~Dragoncraft~Minion~6~5~6~None~Dragonguard"
     requireTarget, keyWord, description = False, "", "Gain Ward if Overflow is active for you."
     attackAdd, healthAdd = 2, 2
 
@@ -1243,18 +1240,14 @@ class Dragonguard(SVMinion):
 
 class BuffAura_Dragonguard(BuffAura_Overflow):
     def applies(self, subject):
-        if subject.Game.availableWeapon(subject.ID):
-            aura_Receiver = HasAura_Receiver(subject, self, "Taunt")
-            aura_Receiver.effectStart()
-        else:
-            for minion, aura_Receiver in self.auraAffected:
-                aura_Receiver.effectClear()
+        aura_Receiver = HasAura_Receiver(subject, self, "Taunt")
+        aura_Receiver.effectStart()
 
 
 class DreadDragon(SVMinion):
-    Class, race, name = "Drangoncraft", "", "Dread Dragon"
+    Class, race, name = "Dragoncraft", "", "Dread Dragon"
     mana, attack, health = 7, 4, 4
-    index = "SV_Basic~Drangoncraft~Minion~7~4~4~None~Dread Dragon~Battlecry"
+    index = "SV_Basic~Dragoncraft~Minion~7~4~4~None~Dread Dragon~Battlecry"
     requireTarget, keyWord, description = True, "", "Fanfare: Deal 4 damage to an enemy follower."
     attackAdd, healthAdd = 2, 2
 
@@ -1272,16 +1265,16 @@ class DreadDragon(SVMinion):
         return None
 
 
-class Whirlwind(SVSpell):
-    Class, name = "Drangoncraft", "Whirlwind"
+class Conflagration(SVSpell):
+    Class, name = "Dragoncraft", "Conflagration"
     mana, requireTarget = 7, False
-    index = "SV_Basic~Drangoncraft~Spell~7~Whirlwind"
+    index = "SV_Basic~Dragoncraft~Spell~7~Conflagration"
     description = "Deal 4 damage to all followers."
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
         targets = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
-        PRINT(self.Game, f"Whirlwind deals {damage} damage to all minions.")
+        PRINT(self.Game, f"Conflagration deals {damage} damage to all minions.")
         self.dealsAOE(targets, [damage for minion in targets])
         return None
 
@@ -1324,11 +1317,11 @@ class Trig_Ghost(TrigBoard):
         self.blank_init(entity, ["TurnEnds"])
 
     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-        return self.entity.onBoard and subject.ID == self.entity.ID
+        return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "Ghost disappears.")
-        self.entity.Game.banishMinion(self, self.entity)
+        self.entity.Game.banishMinion(self.entity, self.entity)
 
 
 class SpartoiSergeant(SVMinion):
@@ -1388,10 +1381,13 @@ class ApprenticeNecromancer(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: Necromancy (4) - Summon a Zombie."
     attackAdd, healthAdd = 2, 2
 
+    def effectCanTrigger(self):
+        self.effectViable = self.Game.Counters.shadows[self.ID] >= 4
+
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.necromancy(self, self.ID, 4):
-            PRINT(self, "Apprentice Necromancer's Fanfare summons a 2/2 Zombie.")
-            self.Game.summonMinion([Zombie(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+            PRINT(self.Game, "Apprentice Necromancer's Fanfare summons a 2/2 Zombie.")
+            self.Game.summon([Zombie(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
         return None
 
 
@@ -1416,8 +1412,8 @@ class PlayfulNecromancer(SVMinion):
     attackAdd, healthAdd = 1, 1
 
     def inHandEvolving(self, target=None):
-        PRINT(self, "Playful Necromancer's Evolve summons two 1/1 Ghosts.")
-        self.Game.summonMinion([Ghost(self.Game, self.ID), Ghost(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+        PRINT(self.Game, "Playful Necromancer's Evolve summons two 1/1 Ghosts.")
+        self.Game.summon([Ghost(self.Game, self.ID), Ghost(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
 
 
 class HellsUnleasher(SVMinion):
@@ -1435,7 +1431,7 @@ class HellsUnleasher(SVMinion):
 class Deathrattle_HellsUnleasher(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "Last Words: Summon a Lich.")
-        self.entity.Game.summon(Lich(self.entity.Game, self.entity.ID), (-11, "totheRightEnd"),
+        self.entity.Game.summon([Lich(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
                                 self.entity.ID)
 
 
@@ -1444,6 +1440,9 @@ class CalloftheVoid(SVSpell):
     requireTarget, mana = True, 4
     index = "SV_Basic~Shadowcraft~Spell~4~Call of the Void"
     description = "Destroy an enemy follower. Necromancy (4): Summon a Lich."
+
+    def effectCanTrigger(self):
+        self.effectViable = self.Game.Counters.shadows[self.ID] >= 4
 
     def available(self):
         return self.selectableEnemyMinionExists()
@@ -1458,8 +1457,8 @@ class CalloftheVoid(SVSpell):
             PRINT(self.Game, f"Call of the Void destroys enemy {target.name}")
             self.Game.killMinion(self, target)
             if self.Game.necromancy(self, self.ID, 4):
-                PRINT(self, "Call of the Void summons a 4/4 Lich.")
-                self.Game.summonMinion([Lich(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+                PRINT(self.Game, "Call of the Void summons a 4/4 Lich.")
+                self.Game.summon([Lich(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
         return target
 
 
@@ -1478,7 +1477,7 @@ class Gravewaker(SVMinion):
 class Deathrattle_Gravewaker(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "Last Words: Summon a Zombie.")
-        self.entity.Game.summon(Zombie(self.entity.Game, self.entity.ID), (-11, "totheRightEnd"),
+        self.entity.Game.summon([Zombie(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
                                 self.entity.ID)
 
 
@@ -1527,7 +1526,7 @@ class Deathrattle_UndeadKing(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "Last Words: Summon two Zombies.")
         self.entity.Game.summon([Zombie(self.entity.Game, self.entity.ID), Zombie(self.entity.Game, self.entity.ID)],
-                                (-11, "totheRightEnd"),
+                                (-1, "totheRightEnd"),
                                 self.entity.ID)
 
 
@@ -1546,7 +1545,7 @@ class Nightmare(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isVengeance(self.ID):
-            PRINT(self, "Nightmare's Fanfare gives it +2/+0")
+            PRINT(self.Game, "Nightmare's Fanfare gives it +2/+0")
             self.buffDebuff(2, 0)
         return None
 
@@ -1607,9 +1606,8 @@ class CrazedExecutioner(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if self.Game.isVengeance(self.ID):
-            PRINT(self, "Crazed Executioner's Fanfare deals 2 damage to your leader")
-            self.dealsDamage(self.Game.heroes[self.ID], 2)
+        PRINT(self.Game, "Crazed Executioner's Fanfare deals 2 damage to your leader")
+        self.dealsDamage(self.Game.heroes[self.ID], 2)
         return None
 
 
@@ -1625,7 +1623,7 @@ class DarkGeneral(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isVengeance(self.ID):
-            PRINT(self, "Dark General's Fanfare gives it Storm")
+            PRINT(self.Game, "Dark General's Fanfare gives it Storm")
             self.getsKeyword("Charge")
         return None
 
@@ -1682,9 +1680,9 @@ class ImpLancer(SVMinion):
 
 class DemonicStorm(SVSpell):
     Class, name = "Bloodcraft", "Demonic Storm"
-    mana = False
+    mana, requireTarget = 6, False
     index = "SV_Basic~Bloodcraft~Spell~6~Demonic Storm"
-    requireTarget, keyWord, description = False, "", "Deal 3 damage to all allies and enemies."
+    description = "Deal 3 damage to all allies and enemies."
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1703,7 +1701,7 @@ class AbyssBeast(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def returnTrue(self, choice=0):
-        return self.Game.isVengeance(self.ID)
+        return self.Game.isVengeance(self.ID) and not self.targets
 
     def effectCanTrigger(self):
         self.effectViable = self.Game.isVengeance(self.ID)
@@ -1751,14 +1749,18 @@ class HolywingDragon(SVMinion):
 
 class Trig_Countdown(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        self.blank_init(entity, ["TurnStarts", "Countdown"])
+        self.counter = self.entity.counter
 
     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        PRINT(self.entity.Game, f"At the start of turn, {self.entity.name}'s countdown -1")
-        self.entity.countdown(1)
+        self.counter = self.entity.counter
+        if signal == "TurnStarts":
+            PRINT(self.entity.Game, f"At the start of turn, {self.entity.name}'s countdown -1")
+            self.entity.countdown(self.entity, 1)
+            self.counter = self.entity.counter
 
 
 class SummonPegasus(Amulet):
@@ -1777,7 +1779,7 @@ class SummonPegasus(Amulet):
 class Deathrattle_SummonPegasus(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "Last Words: Summon a Pegasus.")
-        self.entity.Game.summon(Pegasus(self.entity.Game, self.entity.ID), (-11, "totheRightEnd"),
+        self.entity.Game.summon([Pegasus(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
                                 self.entity.ID)
 
 
@@ -1808,7 +1810,7 @@ class HallowedDogma(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            target.countdown(2)
+            target.countdown(self, 2)
             PRINT(self.Game, f"Hallowed Dogma subtracts 2 from the Countdown of {target.name} and draw a card")
             self.Game.Hand_Deck.drawCard(self.ID)
             return target
@@ -1854,7 +1856,7 @@ class BeastlyVow(Amulet):
 class Deathrattle_BeastlyVow(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "Last Words: Summon a Holyflame Tiger.")
-        self.entity.Game.summon(HolyflameTiger(self.entity.Game, self.entity.ID), (-11, "totheRightEnd"),
+        self.entity.Game.summon([HolyflameTiger(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
                                 self.entity.ID)
 
 
@@ -1874,7 +1876,7 @@ class FeatherwyrmsDescent(Amulet):
 class Deathrattle_FeatherwyrmsDescent(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "Last Words: Summon a Holywing Dragon.")
-        self.entity.Game.summon(HolywingDragon(self.entity.Game, self.entity.ID), (-11, "totheRightEnd"),
+        self.entity.Game.summon([HolywingDragon(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
                                 self.entity.ID)
 
 
@@ -1902,10 +1904,10 @@ class GreaterPriestess(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self, "Greater Priestess's Fanfare subtracts 1 from the Countdown of all allied amulets")
+        PRINT(self.Game, "Greater Priestess's Fanfare subtracts 1 from the Countdown of all allied amulets")
         for amulet in self.Game.amuletsonBoard(self.ID):
             if "~Countdown" in amulet.index:
-                amulet.countdown(1)
+                amulet.countdown(self, 1)
         return None
 
 
@@ -1951,7 +1953,7 @@ class Deathrattle_DualFlames(Deathrattle_Minion):
         PRINT(self.entity.Game, "Last Words: Summon 2 Holyflame Tigers.")
         self.entity.Game.summon(
             [HolyflameTiger(self.entity.Game, self.entity.ID), HolyflameTiger(self.entity.Game, self.entity.ID)],
-            (-11, "totheRightEnd"), self.entity.ID)
+            (-1, "totheRightEnd"), self.entity.ID)
 
 
 class Curate(SVMinion):
@@ -1996,11 +1998,11 @@ class Trig_Puppet(TrigBoard):
         self.blank_init(entity, ["TurnStarts"])
 
     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-        return self.entity.onBoard and subject.ID == self.entity.ID
+        return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "Puppet destroys itself")
-        self.entity.Game.killMinion(self, self.entity)
+        self.entity.Game.killMinion(self.entity, self.entity)
 
 
 class AnalyzingArtifact(SVMinion):
@@ -2060,7 +2062,7 @@ class Puppeteer(SVMinion):
     attackAdd, healthAdd = 0, 0
 
     def inHandEvolving(self, target=None):
-        self.Game.Hand_Deck.addCardtoHand(Puppet, self.ID, "CreateUsingType")
+        self.Game.Hand_Deck.addCardtoHand(Puppet, self.ID, "type")
         curGame = self.Game
         PRINT(curGame, "Puppeteer's Evolve add a Puppet to your hand.")
         ownHand = curGame.Hand_Deck.hands[self.ID]
@@ -2073,7 +2075,7 @@ class Puppeteer(SVMinion):
                 curGame.fixedGuides.append(i)
             if i > -1:
                 PRINT(curGame, "Puppeteer's Evolve gives a random Puppet in your hand Bane")
-                ownHand[i].getKeywords("Bane")
+                ownHand[i].getsKeyword("Bane")
 
 
 class MechanizedServant(SVMinion):
@@ -2088,7 +2090,7 @@ class MechanizedServant(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isResonance(self.ID):
-            PRINT(self, "Mechanized Servant's Fanfare gives it Rush")
+            PRINT(self.Game, "Mechanized Servant's Fanfare gives it Rush")
             self.getsKeyword("Rush")
         return None
 
@@ -2114,7 +2116,7 @@ class MagisteelPuppet(SVMinion):
     attackAdd, healthAdd = 1, 1
 
     def inHandEvolving(self, target=None):
-        self.Game.Hand_Deck.addCardtoHand([Puppet, Puppet], self.ID, "CreateUsingType")
+        self.Game.Hand_Deck.addCardtoHand([Puppet, Puppet], self.ID, "type")
         PRINT(self.Game, "Magisteel Puppet's Evolve add 2 Puppets to your hand.")
 
 
@@ -2155,7 +2157,7 @@ class ToySoldier(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.Hand_Deck.addCardtoHand(Puppet, self.ID, "CreateUsingType")
+        self.Game.Hand_Deck.addCardtoHand(Puppet, self.ID, "type")
         PRINT(self.Game, "Toy Soldier's Fanfare add a Puppet to your hand.")
         return None
 
@@ -2171,7 +2173,7 @@ class Trig_ToySoldier(TrigBoard):
         self.blank_init(entity, ["MinionBeenSummoned"])
 
     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-        return subject.ID == self.entity.ID and self.entity.onBoard and target.name == "Puppet"
+        return subject.ID == self.entity.ID and self.entity.onBoard and subject.name == "Puppet"
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, f"A friendly Puppet is summoned and Toy Soldier gives it +1/+0.")
@@ -2193,7 +2195,7 @@ class AutomatonKnight(SVMinion):
 class Deathrattle_AutomatonKnight(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "Last Words: Put a Puppet into your hand.")
-        self.entity.Game.Hand_Deck.addCardtoHand(Puppet, self.entity.ID, "CreateUsingType")
+        self.entity.Game.Hand_Deck.addCardtoHand(Puppet, self.entity.ID, "type")
 
 
 class IronforgedFighter(SVMinion):
@@ -2235,7 +2237,7 @@ class PuppeteersStrings(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Puppeteer's Strings puts 3 Puppets into your hand.")
-        self.Game.Hand_Deck.addCardtoHand([Puppet for i in range(3)], self.ID, "CreateUsingType")
+        self.Game.Hand_Deck.addCardtoHand([Puppet for i in range(3)], self.ID, "type")
         damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
         targets = self.Game.minionsonBoard(3 - self.ID)
         PRINT(self.Game, f"Puppeteer's Strings deals {damage} damage to all enemy followers.")
@@ -2269,7 +2271,7 @@ SV_Basic_Indices = {
     "SV_Hero: Forestcraft": Arisa,
     "SV_Hero: Swordcraft": Erika,
     "SV_Hero: Runecraft": Isabelle,
-    "SV_Hero: Drangoncraft": Rowen,
+    "SV_Hero: Dragoncraft": Rowen,
     "SV_Hero: Shadowcraft": Luna,
     "SV_Hero: Bloodcraft": Urias,
     "SV_Hero: Havencraft": Eris,
@@ -2328,16 +2330,16 @@ SV_Basic_Indices = {
     "SV_Basic~Runecraft~Minion~5~3~3~None~Lightning Shooter~Battlecry~Spellboost": LightningShooter,
     "SV_Basic~Runecraft~Spell~8~Fiery Embrace~Spellboost": FieryEmbrace,
     "SV_Basic~Runecraft~Minion~10~7~7~None~Flame Destroyer~Spellboost": FlameDestroyer,
-    "SV_Basic~Drangoncraft~Spell~1~Blazing Breath": BlazingBreath,
-    "SV_Basic~Drangoncraft~Minion~2~2~2~None~Dragonrider": Dragonrider,
-    "SV_Basic~Drangoncraft~Spell~2~Dragon Oracle": DragonOracle,
-    "SV_Basic~Drangoncraft~Minion~3~2~3~None~Firstborn Dragon": FirstbornDragon,
-    "SV_Basic~Drangoncraft~Minion~4~4~4~None~Death Dragon": DeathDragon,
-    "SV_Basic~Drangoncraft~Spell~4~Serpent Wrath": SerpentWrath,
-    "SV_Basic~Drangoncraft~Minion~5~4~5~None~Disaster Dragon": DisasterDragon,
-    "SV_Basic~Drangoncraft~Minion~6~5~6~None~Dragonguard": Dragonguard,
-    "SV_Basic~Drangoncraft~Minion~7~4~4~None~Dread Dragon~Battlecry": DreadDragon,
-    "SV_Basic~Drangoncraft~Spell~7~Whirlwind": Whirlwind,
+    "SV_Basic~Dragoncraft~Spell~1~Blazing Breath": BlazingBreath,
+    "SV_Basic~Dragoncraft~Minion~2~2~2~None~Dragonrider": Dragonrider,
+    "SV_Basic~Dragoncraft~Spell~2~Dragon Oracle": DragonOracle,
+    "SV_Basic~Dragoncraft~Minion~3~2~3~None~Firstborn Dragon": FirstbornDragon,
+    "SV_Basic~Dragoncraft~Minion~4~4~4~None~Death Dragon": DeathDragon,
+    "SV_Basic~Dragoncraft~Spell~4~Serpent Wrath": SerpentWrath,
+    "SV_Basic~Dragoncraft~Minion~5~4~5~None~Disaster Dragon": DisasterDragon,
+    "SV_Basic~Dragoncraft~Minion~6~5~6~None~Dragonguard": Dragonguard,
+    "SV_Basic~Dragoncraft~Minion~7~4~4~None~Dread Dragon~Battlecry": DreadDragon,
+    "SV_Basic~Dragoncraft~Spell~7~Conflagration": Conflagration,
     "SV_Basic~Shadowcraft~Minion~2~2~2~None~Zombie~Uncollectible": Zombie,
     "SV_Basic~Shadowcraft~Minion~4~4~4~None~Lich~Uncollectible": Lich,
     "SV_Basic~Shadowcraft~Minion~1~1~1~None~Ghost~Charge~Uncollectible": Ghost,

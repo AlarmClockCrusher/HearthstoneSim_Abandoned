@@ -768,7 +768,7 @@ class ShadowSculptor(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 0:
-			numCardsPlayed = len(self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"])
+			numCardsPlayed = self.Game.combCards(self.ID)
 			PRINT(self.Game, "Shadow Sculptor's Combo triggers and lets player draw a card for each card they've played this turn")
 			for i in range(numCardsPlayed): self.Game.Hand_Deck.drawCard(self.ID)
 		return None

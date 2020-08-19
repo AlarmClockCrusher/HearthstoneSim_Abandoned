@@ -4286,7 +4286,7 @@ class EdwinVanCleef(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		#Dead minions or minions in deck can't be buffed or reset.
 		if self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 0:
-			numCardsPlayed = len(self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"])
+			numCardsPlayed = self.Game.combCards(self.ID)
 			PRINT(self.Game, "Edwin VanCleef's Combo triggers and gains +2/+2 for each card player played this turn.")
 			statGain = 2 * numCardsPlayed
 			self.buffDebuff(statGain, statGain)

@@ -790,6 +790,8 @@ class HeroPowerButton(tk.Button): #For Hero Powers that are on board
 		except: pass
 		
 	def represents(self, power):
+		if self.card.name == "Evolve":
+			return False
 		if not isinstance(power, self.cardInfo) or power.mana != self.mana: return False
 		trigs = [type(trig) for trig in power.trigsBoard]
 		counts = 0

@@ -38,7 +38,7 @@ def PRINT(game, string, *args):
 
 """Runecraft cards"""
 
-"""Drangoncraft cards"""
+"""Dragoncraft cards"""
 
 """Shadowcraft cards"""
 

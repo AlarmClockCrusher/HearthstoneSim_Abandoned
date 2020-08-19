@@ -35,7 +35,7 @@ class SVMinion(Minion):
 			self.health_0 += self.healthAdd
 			self.statReset(self.attack + self.attackAdd, self.health + self.healthAdd)
 			self.status["Evolved"] += 1
-			PRINT(self, self.name + " evolves.")
+			PRINT(self.Game, self.name + " evolves.")
 			self.Game.Counters.evolvedThisGame[self.ID] += 1
 			for card in self.Game.Hand_Deck.hands[self.ID]:
 				if isinstance(card, SVMinion) and "UB" in card.marks:
@@ -66,7 +66,13 @@ class SVMinion(Minion):
 	#优先判定能否激奏，如果可以，不再检测能否结晶。若不能激奏，则再检测是否能结晶
 	def getTypewhenPlayed(self):
 		return "Spell" if self.willAccelerate() else ("Amulet" if self.willCrystallize() else "Minion")
-		
+
+	def returnTrue(self, choice=0):  # 只有在还没有选择过目标的情况下才能继续选择
+		if self.needTarget:
+			return not self.targets
+		else:
+			return True
+
 	def findTargets(self, comment="", choice=0):
 		game, targets, indices, wheres = self.Game, [], [], []
 		for ID in range(1, 3):
@@ -181,7 +187,16 @@ class Amulet(Dormant):
 						"Charge": 0, "Rush": 0,
 						"Echo": 0
 						}
-		self.marks = {"Evasive": 0, "Enemy Effect Evasive": 0, "Can't Break": 0}
+		self.marks = {"Sweep": 0,
+					  "Evasive": 0, "Enemy Evasive": 0,
+					  "Can't Attack": 0, "Can't Attack Hero": 0,
+					  "Heal x2": 0,  # Crystalsmith Kangor
+					  "Power Heal&Dmg x2": 0,  # Prophet Velen, Clockwork Automation
+					  "Spell Heal&Dmg x2": 0,
+					  "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
+					  "Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0, "Disappear When Die": 0,
+					  "Next damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0,
+					  "Max Damage": -1}
 		self.status = {}
 		self.auras = {}
 		self.options = []  # For Choose One minions.
@@ -324,7 +339,7 @@ class Amulet(Dormant):
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		#假设不触发重导向扳机
 		num = 1
-		if "~Fanfare" in self.index and self.Game.status[self.ID]["Battlecry x2"] + self.Game.status[self.ID]["Shark Battlecry x2"] > 0:
+		if "~Battlecry" in self.index and self.Game.status[self.ID]["Battlecry x2"] + self.Game.status[self.ID]["Shark Battlecry x2"] > 0:
 			num = 2
 		for i in range(num):
 			target = self.whenEffective(target, "", choice, posinHand)
@@ -333,9 +348,10 @@ class Amulet(Dormant):
 		self.Game.gathertheDead()
 		return target
 
-	def countdown(self, number):
+	def countdown(self, subject, number):
 		if self.counter > 0:
 			self.counter = max(0, self.counter - number)
+			self.Game.sendSignal(self, "Countdown", self.ID, subject, self, number, "")
 		if self.counter == 0:
 			PRINT(self.Game, f"{self.name}'s countdown is 0 and destroys itself")
 			self.Game.killMinion(None, self)
@@ -399,6 +415,12 @@ class SVSpell(Spell):
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.targets = []
+
+	def returnTrue(self, choice=0):
+		if self.needTarget:
+			return not self.targets
+		else:
+			return True
 		
 	def willEnhance(self):
 		return False
@@ -436,12 +458,14 @@ class SVSpell(Spell):
 		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
 		#假设SV的法术在选取上不触发重导向扳机
 		self.Game.gathertheDead()
-		self.Game.Counters.spellsonFriendliesThisGame[self.ID] += [self.index for obj in target if obj.ID == self.ID]
+		if target:
+			self.Game.Counters.spellsonFriendliesThisGame[self.ID] += [self.index for obj in target if obj.ID == self.ID]
 		#假设SV的法术不受到"对相邻的法术也释放该法术"的影响
 		for i in range(repeatTimes):
-			for obj in target: #每个目标都会检测是否记录该法术的作用历史
-				if (obj.type == "Minion" or obj.type == "Amulet") and obj.onBoard:
-					obj.history["Spells Cast on This"].append(self.index)
+			if target:
+				for obj in target: #每个目标都会检测是否记录该法术的作用历史
+					if (obj.type == "Minion" or obj.type == "Amulet") and obj.onBoard:
+						obj.history["Spells Cast on This"].append(self.index)
 			target = self.whenEffective(target, comment, choice, posinHand)
 			
 		#仅触发风潮，星界密使等的光环移除扳机。“使用一张xx牌之后”的扳机不在这里触发，而是在Game的playSpell函数中结算。

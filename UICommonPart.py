@@ -402,6 +402,7 @@ class GUI_Common:
 					"Spell": lambda : game.playSpell(subject, target, choice),
 					"Amulet": lambda : game.playAmulet(subject, target, choice),
 					}[subject.type]()
+					self.update()
 			elif selectedSubject == "Fusion":
 				self.UI = 0
 				self.update()

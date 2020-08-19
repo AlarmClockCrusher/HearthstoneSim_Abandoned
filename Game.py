@@ -509,7 +509,7 @@ class Game:
 		return self.Manas.manasUpper[ID] >= 7
 
 	def combCards(self, ID):
-		return len(self.Counters.cardsPlayedThisTurn[ID]["Indices"]) + self.Counters.numCardsExtraPlayedThisTurn
+		return self.Counters.numCardsPlayedThisTurn[ID]
 
 	#The leftmost minion has position 0. Consider Dormant
 	def rearrangePosition(self):

@@ -389,7 +389,7 @@ class XIErntzJustice(SVMinion):
 
 """Runecraft cards"""
 
-"""Drangoncraft cards"""
+"""Dragoncraft cards"""
 
 """Shadowcraft cards"""
 
