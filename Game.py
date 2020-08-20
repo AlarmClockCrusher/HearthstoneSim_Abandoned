@@ -215,6 +215,7 @@ class Game:
 		return 7 - 2 * (self.heroes[ID].Class in SVClasses) - sum(minion.onBoard for minion in self.minions[ID])
 
 	def playMinion(self, minion, target, position, choice=0, comment=""):
+
 		ID, canPlayMinion = minion.ID, False
 		if not self.Manas.affordable(minion): PRINT(self, "Not enough mana to play minion %s"%minion.name)
 		#当场上没有空位且打出的随从不是一个有Accelerate的Shadowverse随从时，不能打出

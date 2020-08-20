@@ -77,6 +77,24 @@ class SVMinion(Minion):
 		else:
 			return True
 
+	def canSelect(self, target):
+		targets = target if isinstance(target, list) else [target]
+		for target in targets:
+			targetType = target.type
+			selectable = target.inHand or target.onBoard and targetType != "Dormant" and targetType != "Power" and \
+						 (
+							(targetType == "Hero" and (target.ID == self.ID or self.Game.status[target.ID]["Immune"] + target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
+														and not ((self.type == "Power" or self.type == "Spell") and self.Game.status[target.ID]["Evasive"] > 1)) \
+							#不能被法术或者英雄技能选择的随从是： 魔免随从 或者 是对敌方魔免且法术或英雄技能是敌方的
+							or (targetType == "Minion" and (target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] + target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
+															and not ((self.type == "Power" or self.type == "Spell") and (target.marks["Evasive"] > 1 or (target.ID != self.ID and target.marks["Enemy Evasive"] > 1)))) \
+							or (targetType == "Amulet" and (target.ID == self.ID or target.marks["Enemy Effect Evasive"] < 1) \
+															and not (self.type == "Spell" and target.marks["Evasive"] > 1)) \
+
+							)
+			if not selectable: return False
+		return True
+
 	def findTargets(self, comment="", choice=0):
 		game, targets, indices, wheres = self.Game, [], [], []
 		for ID in range(1, 3):
@@ -94,7 +112,7 @@ class SVMinion(Minion):
 			where = "hand%d"%ID
 			for i, card in enumerate(game.Hand_Deck.hands[ID]):
 				if self.targetCorrect(card, choice):
-					targets.append(obj)
+					targets.append(card)
 					indices.append(i)
 					wheres.append(where)
 					

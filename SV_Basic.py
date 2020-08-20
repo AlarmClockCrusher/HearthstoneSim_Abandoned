@@ -165,6 +165,7 @@ class TrigInvocation(TrigDeck):
                     PRINT(self.entity.Game, f"{minion.name} is summoned from player {self.entity.ID}'s deck.")
                     minion.afterInvocation(signal, ID, subject, target, number, comment)
 
+
 class Goblin(SVMinion):
     Class, race, name = "Neutral", "", "Goblin"
     mana, attack, health = 1, 1, 2
@@ -637,6 +638,88 @@ class ShieldGuardian(SVMinion):
     index = "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Shield Guardian~Taunt~Uncollectible"
     requireTarget, keyWord, description = False, "Taunt", "Ward"
     attackAdd, healthAdd = 2, 2
+
+
+class GildedBlade(SVSpell):
+    Class, name = "Swordcraft", "Gilded Blade"
+    requireTarget, mana = True, 1
+    index = "SV_Basic~Swordcraft~Spell~1~Gilded Blade~Uncollectible"
+    description = "Deal 1 damage to an enemy follower."
+
+    def available(self):
+        return self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.cardType == "Minion" and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+            PRINT(self.Game, f"Gilded Blade deals {damage} damage to minion {target.name}")
+            self.dealsDamage(target, damage)
+        return target
+
+
+class GildedGoblet(SVSpell):
+    Class, name = "Swordcraft", "Gilded Goblet"
+    requireTarget, mana = True, 1
+    index = "SV_Basic~Swordcraft~Spell~1~Gilded Goblet~Uncollectible"
+    description = "Restore 2 defense to an ally."
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.ID == self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            heal = 2 * (2 ** self.countHealDouble())
+            PRINT(self.Game, f"Gilded Goblet restores {heal} Health to {target.name}")
+            self.restoresHealth(target, heal)
+
+
+class GildedBoots(SVSpell):
+    Class, name = "Swordcraft", "Gilded Boots"
+    requireTarget, mana = True, 1
+    index = "SV_Basic~Swordcraft~Spell~1~Gilded Boots~Uncollectible"
+    description = "Give Rush to an allied follower."
+
+    def available(self):
+        return self.selectableFriendlyExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.cardType == "Minion" and target.ID == self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            PRINT(self.Game, f"Gilded Boots gives minion {target.name} Rush")
+            target.getsKeyword("Rush")
+        return target
+
+
+class GildedNecklace(SVSpell):
+    Class, name = "Swordcraft", "Gilded Necklace"
+    requireTarget, mana = True, 1
+    index = "SV_Basic~Swordcraft~Spell~1~Gilded Necklace~Uncollectible"
+    description = "Give +1/+1 to an allied follower."
+
+    def available(self):
+        return self.selectableFriendlyExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.cardType == "Minion" and target.ID == self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            PRINT(self.Game, f"Gilded Necklace gives minion {target.name} +1/+1")
+            target.buffDebuff(1, 1)
+        return target
 
 
 class Quickblader(SVMinion):
@@ -2324,6 +2407,10 @@ SV_Basic_Indices = {
     "SV_Basic~Swordcraft~Minion~1~1~2~Officer~Heavy Knight~Uncollectible": HeavyKnight,
     "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Knight~Uncollectible": Knight,
     "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Shield Guardian~Taunt~Uncollectible": ShieldGuardian,
+    "SV_Basic~Swordcraft~Spell~1~Gilded Blade~Uncollectible": GildedBlade,
+    "SV_Basic~Swordcraft~Spell~1~Gilded Goblet~Uncollectible": GildedGoblet,
+    "SV_Basic~Swordcraft~Spell~1~Gilded Boots~Uncollectible": GildedBoots,
+    "SV_Basic~Swordcraft~Spell~1~Gilded Necklace~Uncollectible": GildedNecklace,
     "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Quickblader~Charge": Quickblader,
     "SV_Basic~Swordcraft~Minion~2~1~1~Officer~Oathless Knight~Battlecry": OathlessKnight,
     "SV_Basic~Swordcraft~Minion~2~2~1~Officer~Kunoichi Trainee~Stealth": KunoichiTrainee,

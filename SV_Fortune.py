@@ -376,28 +376,32 @@ class Trig_TitanicShowdown(TrigBoard):
 
 class PureshotAngel_Accelerate(SVSpell):
     Class, name = "Neutral", "Pureshot Angel"
-    requireTarget, mana = True, 2
+    requireTarget, mana = False, 2
     index = "SV_Fortune~Neutral~Spell~2~Pureshot Angel~Accelerate~Uncollectible"
     description = "Deal 3 damage to an enemy"
 
-    def targetCorrect(self, target, choice=0):
-        if isinstance(target, list): target = target[0]
-        return target.type == "Minion" and target.ID != self.ID and target.onBoard
-
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if target:
-            if isinstance(target, list): target = target[0]
-            damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-            PRINT(self.Game, f"Pureshot Angel, as spell, deals {damage} damage to enemy {target.name}.")
-            self.dealsDamage(target, damage)
-        return target
+        curGame = self.Game
+        if curGame.mode == 0:
+            if curGame.guides:
+                i = curGame.guides.pop(0)
+            else:
+                minions = curGame.minionsAlive(3 - self.ID)
+                i = npchoice(minions).position if minions else -1
+                curGame.fixedGuides.append(i)
+            if i > -1:
+                damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+                PRINT(self.Game,
+                      f"Pureshot Angel's Fanfare deals {damage} damage to enemy minion {curGame.minions[3 - self.ID][i].name}")
+                self.dealsDamage(curGame.minions[3 - self.ID][i], damage)
+        return None
 
 
 class PureshotAngel(SVMinion):
     Class, race, name = "Neutral", "", "Pureshot Angel"
     mana, attack, health = 8, 6, 6
     index = "SV_Fortune~Neutral~Minion~8~6~6~None~Pureshot Angel~Battlecry~Accelerate"
-    requireTarget, keyWord, description = True, "", "Accelerate 2: Deal 1 damage to an enemy. Fanfare: xxx. Deal 3 damage to an enemy minion, and deal 1 damage to the enemy hero"
+    requireTarget, keyWord, description = False, "", "Accelerate 2: Deal 1 damage to an enemy. Fanfare: xxx. Deal 3 damage to an enemy minion, and deal 1 damage to the enemy hero"
     accelerateSpell = PureshotAngel_Accelerate
     attackAdd, healthAdd = 2, 2
 
@@ -414,24 +418,10 @@ class PureshotAngel(SVMinion):
     def effectCanTrigger(self):
         self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
 
-    def returnTrue(self, choice=0):
-        if self.willAccelerate():
-            return not self.targets
-        return False
-
-    def targetCorrect(self, target, choice=0):
-        if self.willAccelerate():
-            if isinstance(target, list): target = target[0]
-            return target.type == "Minion" and target.ID != self.ID and target.onBoard
-        return False
-
     def available(self):
         if self.willAccelerate():
-            return self.selectableEnemyMinionExists()
+            return self.Game.minionsAlive(3 - self.ID) > 0
         return True
-
-    def targetExists(self, choice=0):
-        return self.selectableEnemyMinionExists()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
@@ -1055,6 +1045,534 @@ class Trig_EndLionelWoodlandShadow(TrigBoard):
 
 """Swordcraft cards"""
 
+
+class ErnestaWeaponsHawker(SVMinion):
+    Class, race, name = "Swordcraft", "Officer", "Ernesta, Weapons Hawker"
+    mana, attack, health = 1, 1, 1
+    index = "SV_Fortune~Swordcraft~Minion~1~1~1~Officer~Ernesta, Weapons Hawker~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Rally (10) - Put a Dread Hound into your hand."
+    attackAdd, healthAdd = 2, 2
+
+    def effectCanTrigger(self):
+        self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 10
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 10:
+            self.Game.Hand_Deck.addCardtoHand(DreadHound(self.Game, self.ID), self.ID)
+        return None
+
+
+class DreadHound(SVMinion):
+    Class, race, name = "Swordcraft", "Officer", "Dread Hound"
+    mana, attack, health = 1, 4, 4
+    index = "SV_Fortune~Swordcraft~Minion~1~4~4~Officer~Dread Hound~Battlecry~Bane~Taunt~Uncollectible"
+    requireTarget, keyWord, description = False, "Bane,Taunt", "Bane.Ward.Fanfare: Give a random allied Ernesta, Weapons Hawker Last Words - Deal 4 damage to a random enemy follower."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        curGame = self.Game
+        if curGame.mode == 0:
+            minion = None
+            if curGame.guides:
+                i, where = curGame.guides.pop(0)
+                if where: minion = curGame.find(i, where)
+            else:
+                chars = self.Game.minionsAlive(self.ID)
+                targets = []
+                for t in chars:
+                    if t.name == "Ernesta, Weapons Hawker":
+                        targets.append(t)
+                if targets:
+                    minion = npchoice(targets)
+                    curGame.fixedGuides.append((minion.position, minion.type + str(minion.ID)))
+                else:
+                    curGame.fixedGuides.append((0, ''))
+            if minion:
+                PRINT(self.Game,
+                      f"Dread Hound's Fanfare gives {minion.name} Last Words - Deal 4 damage to a random enemy follower.")
+                deathrattle = Deathrattle_ErnestaWeaponsHawker(minion)
+                minion.deathrattles.append(deathrattle)
+                if minion.onBoard:
+                    deathrattle.connect()
+        return None
+
+
+class Deathrattle_ErnestaWeaponsHawker(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        curGame = self.entity.Game
+        if curGame.mode == 0:
+            enemy = None
+            if curGame.guides:
+                i, where = curGame.guides.pop(0)
+                if where: enemy = curGame.find(i, where)
+            else:
+                chars = curGame.minionsAlive(3 - self.entity.ID)
+                if chars:
+                    enemy = npchoice(chars)
+                    curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                else:
+                    curGame.fixedGuides.append((0, ''))
+            if enemy:
+                PRINT(self.entity.Game, f"Last Words: Deal 4 damage to {enemy.name}")
+                self.entity.dealsDamage(enemy, 4)
+
+
+class PompousSummons(SVSpell):
+    Class, name = "Swordcraft", "Pompous Summons"
+    requireTarget, mana = False, 1
+    index = "SV_Fortune~Swordcraft~Spell~1~Pompous Summons"
+    description = "Put a random Swordcraft follower from your deck into your hand.Rally (10): Put 2 random Swordcraft followers into your hand instead."
+
+    def effectCanTrigger(self):
+        self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 10
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        n = 2 if self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 10 else 1
+        for i in range(n):
+            curGame = self.Game
+            if curGame.mode == 0:
+                if curGame.guides:
+                    i = curGame.guides.pop(0)
+                else:
+                    minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
+                               card.type == "Minion" and card.Class == "Swordcraft"]
+                    i = npchoice(minions) if minions else -1
+                    curGame.fixedGuides.append(i)
+                if i > -1:
+                    curGame.Hand_Deck.drawCard(self.ID, i)
+                    PRINT(self.Game, f"Pompous Summons let you draw a Swordcraft minion.")
+        return None
+
+
+class DecisiveStrike(SVSpell):
+    Class, name = "Swordcraft", "Decisive Strike"
+    requireTarget, mana = True, 1
+    index = "SV_Fortune~Swordcraft~Spell~1~Decisive Strike~Enhance"
+    description = "Deal X damage to an enemy follower. X equals the attack of the highest-attack Commander follower in your hand.Enhance (5): Deal X damage to all enemy followers instead."
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] >= 5:
+            return 5
+        else:
+            return self.mana
+
+    def willEnhance(self):
+        return self.Game.Manas.manas[self.ID] >= 5
+
+    def effectCanTrigger(self):
+        self.effectViable = self.willEnhance()
+
+    def returnTrue(self, choice=0):
+        if self.willEnhance():
+            return True
+        return not self.targets
+
+    def targetExists(self, choice=0):
+        if self.willEnhance():
+            return False
+        return self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.ID != self.ID and target.onBoard
+
+    def available(self):
+        if self.willEnhance():
+            return True
+        return self.selectableEnemyMinionExists()
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        damage = 0
+        for card in self.Game.Hand_Deck.hands[self.ID]:
+            if card.type == "Minion" and "Commander" in card.race and card.attack > damage:
+                damage = card.attack
+        damage = (damage + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+        if comment == 5:
+            targets = self.Game.minionsonBoard(3 - self.ID)
+            self.dealsAOE(targets, damage)
+            PRINT(self.Game, f"Decisive Strike deals {damage} damage to all enemies")
+        else:
+            if isinstance(target, list): target = target[0]
+            PRINT(self.Game, f"Decisive Strike deals {damage} damage to minion {target.name}")
+            self.dealsDamage(target, damage)
+        return None
+
+
+class HonorableThief(SVMinion):
+    Class, race, name = "Swordcraft", "Officer", "Honorable Thief"
+    mana, attack, health = 2, 2, 1
+    index = "SV_Fortune~Swordcraft~Minion~2~2~1~Officer~Honorable Thief~Battlecry~Deathrattle"
+    requireTarget, keyWord, description = False, "", "Fanfare: Rally (7) - Evolve this follower. Last Words: Put a Gilded Boots into your hand."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.deathrattles = [Deathrattle_HonorableThief(self)]
+
+    def effectCanTrigger(self):
+        self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 7
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 7:
+            self.evolve()
+        return None
+
+
+class Deathrattle_HonorableThief(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Last Words: Add a 'GildedBoots' to your hand triggers.")
+        self.entity.Game.Hand_Deck.addCardtoHand(GildedBoots, self.entity.ID, "type")
+
+
+class ShieldPhalanx(SVSpell):
+    Class, name = "Swordcraft", "Shield Phalanx"
+    requireTarget, mana = False, 2
+    index = "SV_Fortune~Swordcraft~Spell~2~Shield Phalanx"
+    description = "Summon a Shield Guardian and Knight.Rally (15): Summon a Frontguard General instead of a Shield Guardian."
+
+    def effectCanTrigger(self):
+        self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 15
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 15:
+            PRINT(self.Game, "Shield Phalanx summons a Frontguard General and Knight.")
+            self.Game.summon([FrontguardGeneral(self.Game, self.ID), Knight(self.Game, self.ID)],
+                             (-1, "totheRightEnd"), self.ID)
+        else:
+            PRINT(self.Game, "Shield Phalanx summons a Shield Guardian and Knight.")
+            self.Game.summon([ShieldGuardian(self.Game, self.ID), Knight(self.Game, self.ID)],
+                             (-1, "totheRightEnd"), self.ID)
+        return None
+
+
+class FrontguardGeneral(SVMinion):
+    Class, race, name = "Swordcraft", "Commander", "Frontguard General"
+    mana, attack, health = 7, 5, 6
+    index = "SV_Fortune~Swordcraft~Minion~7~5~6~Commander~Frontguard General~Taunt~Deathrattle"
+    requireTarget, keyWord, description = False, "Taunt", "Ward.Last Words: Summon a Fortress Guard."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.deathrattles = [Deathrattle_FrontguardGeneral(self)]
+
+
+class Deathrattle_FrontguardGeneral(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self, "Last Words: Summon a Fortress Guard.")
+        self.entity.Game.summon([FortressGuard(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                self.entity.ID)
+
+
+class FortressGuard(SVMinion):
+    Class, race, name = "Swordcraft", "Officer", "Fortress Guard"
+    mana, attack, health = 3, 2, 3
+    index = "SV_Fortune~Swordcraft~Minion~3~2~3~Officer~Fortress Guard~Taunt~Uncollectible"
+    requireTarget, keyWord, description = False, "Taunt", "Ward"
+    attackAdd, healthAdd = 2, 2
+
+
+class EmpressofSerenity(SVMinion):
+    Class, race, name = "Swordcraft", "Commander", "Empress of Serenity"
+    mana, attack, health = 3, 2, 2
+    index = "SV_Fortune~Swordcraft~Minion~3~2~2~Commander~Empress of Serenity~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Summon a Shield Guardian.Enhance (5): Summon 3 instead.Enhance (10): Give +3/+3 to all allied Shield Guardians."
+    attackAdd, healthAdd = 2, 2
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] >= 5:
+            return 5
+        else:
+            return self.mana
+
+    def willEnhance(self):
+        return self.Game.Manas.manas[self.ID] >= 5
+
+    def effectCanTrigger(self):
+        self.effectViable = self.willEnhance()
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self.Game,
+              "Empress of Serenity's Fanfare summons a 1/1 Shield Guardian with Taunt.")
+        self.Game.summon([ShieldGuardian(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+        if comment >= 5:
+            PRINT(self.Game,
+                  "Empress of Serenity's Fanfare summons two 1/1 Shield Guardian with Taunt.")
+            self.Game.summon([ShieldGuardian(self.Game, self.ID) for i in range(2)], (-11, "totheRightEnd"),
+                             self.ID)
+            if comment == 10:
+                for minion in self.Game.minionsonBoard(self.ID):
+                    if type(minion) == ShieldGuardian:
+                        minion.buffDebuff(3, 3)
+                PRINT(self.Game,
+                      "Empress of Serenity's Fanfare give +3/+3 to all allied Shield Guardians.")
+        return None
+
+
+class VIIOluonTheChariot(SVMinion):
+    Class, race, name = "Swordcraft", "Commander", "VII. Oluon, The Chariot"
+    mana, attack, health = 3, 3, 3
+    index = "SV_Fortune~Swordcraft~Minion~3~3~3~Commander~VII. Oluon, The Chariot~Battlecry~Legendary"
+    requireTarget, keyWord, description = False, "", "Fanfare: Enhance (7) - Transform this follower into a VII. Oluon, Runaway Chariot.At the end of your turn, randomly activate 1 of the following effects.-Gain Ward.-Summon a Knight.-Deal 2 damage to the enemy leader."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_VIIOluonTheChariot(self)]
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] >= 7:
+            return 7
+        else:
+            return self.mana
+
+    def willEnhance(self):
+        return self.Game.Manas.manas[self.ID] >= 7
+
+    def effectCanTrigger(self):
+        self.effectViable = self.willEnhance()
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if comment == 7:
+            self.Game.transform(self, VIIOluonRunawayChariot(self.Game, self.ID))
+        return None
+
+
+class Trig_VIIOluonTheChariot(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        es = ["T", "H", "K"]
+        e = "T"
+        curGame = self.entity.Game
+        if curGame.mode == 0:
+            if curGame.guides:
+                i, e = curGame.guides.pop(0)
+            else:
+                e = np.random.choice(es)
+                curGame.fixedGuides.append((0, e))
+        if e == "T":
+            self.entity.getsKeyword("Taunt")
+            PRINT(self.entity.Game,
+                  "VII. Oluon, The Chariot get Ward")
+        elif e == "H":
+            self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 2)
+            PRINT(self.entity.Game,
+                  "VII. Oluon, The Chariot deals 2 damage to enemy hero")
+        elif e == "K":
+            PRINT(self.entity.Game,
+                  "VII. Oluon, The Chariot summons a 1/1 Shield Guardian with Ward.")
+            self.entity.Game.summon([Knight(self.entity.Game, self.entity.ID)], (-11, "totheRightEnd"),
+                                    self.entity.ID)
+
+
+class VIIOluonRunawayChariot(SVMinion):
+    Class, race, name = "Swordcraft", "Commander", "VII. Oluon, Runaway Chariot"
+    mana, attack, health = 7, 8, 16
+    index = "SV_Fortune~Swordcraft~Minion~7~8~16~Commander~VII. Oluon, Runaway Chariot~Uncollectible~Legendary"
+    requireTarget, keyWord, description = False, "", "Can't attack.At the end of your turn, randomly deal X damage to an enemy or another ally and then Y damage to this follower. X equals this follower's attack and Y equals the attack of the follower or leader damaged (leaders have 0 attack). Do this 2 times."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.marks["Can't Attack"] = 1
+        self.trigsBoard = [Trig_VIIOluonRunawayChariot(self)]
+
+
+class Trig_VIIOluonRunawayChariot(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        for i in range(2):
+            if self.entity.onBoard:
+                curGame = self.entity.Game
+                if curGame.mode == 0:
+                    char = None
+                    if curGame.guides:
+                        i, where = curGame.guides.pop(0)
+                        if where: char = curGame.find(i, where)
+                    else:
+                        objs = curGame.charsAlive(1) + curGame.charsAlive(2)
+                        objs.remove(self.entity)
+                        if objs:
+                            char = npchoice(objs)
+                            curGame.fixedGuides.append(
+                                (char.ID, "hero") if char.type == "Hero" else (char.position, f"minion{char.ID}"))
+                        else:
+                            curGame.fixedGuides.append((0, ''))
+                    print(char)
+                    if char:
+                        self.entity.dealsDamage(char, self.entity.attack)
+                        PRINT(self.entity.Game,
+                              f"VII. Oluon, Runaway Chariot deals {self.entity.attack} damage to {char.name}")
+                        damage = 0
+                        if char.type == "Minion":
+                            damage = char.attack
+                        char.dealsDamage(self.entity, damage)
+                        PRINT(self.entity.Game, f"{char.name} deals {damage} damage to VII. Oluon, Runaway Chariot ")
+                        self.entity.Game.gathertheDead()
+
+
+class PrudentGeneral(SVMinion):
+    Class, race, name = "Swordcraft", "Commander", "PrudentGeneral"
+    mana, attack, health = 4, 3, 4
+    index = "SV_Fortune~Swordcraft~Minion~4~3~4~Commander~Prudent General"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+    def inHandEvolving(self, target=None):
+        trigger = Trig_PrudentGeneral(self.Game.heroes[self.ID])
+        for t in self.Game.heroes[self.ID].trigsBoard:
+            if type(t) == type(trigger):
+                return
+        self.Game.heroes[self.ID].trigsBoard.append(trigger)
+        trigger.connect()
+
+
+class Trig_PrudentGeneral(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Prudent General's ability summons a 2/2 Steelclad Knight.")
+        self.entity.Game.summon([SteelcladKnight(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                self.entity.ID)
+
+
+class StrikelanceKnight(SVMinion):
+    Class, race, name = "Swordcraft", "Officer", "Strikelance Knight"
+    mana, attack, health = 5, 4, 5
+    index = "SV_Fortune~Swordcraft~Minion~5~4~5~Officer~Strikelance Knight~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: If an allied Commander card is in play, evolve this follower."
+    attackAdd, healthAdd = 2, 2
+
+    def effectCanTrigger(self):
+        minions = self.Game.minionsonBoard(self.ID)
+        for minion in minions:
+            if minion.onBoard and "Commander" in minion.race:
+                self.effectViable = True
+                return
+        self.effectViable = False
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        minions = self.Game.minionsonBoard(self.ID)
+        for minion in minions:
+            if minion.onBoard and "Commander" in minion.race:
+                self.evolve()
+                break
+
+
+class DiamondPaladin(SVMinion):
+    Class, race, name = "Swordcraft", "Commander", "Diamond Paladin"
+    mana, attack, health = 6, 4, 5
+    index = "SV_Fortune~Swordcraft~Minion~6~4~5~Commander~Diamond Paladin~Battlecry~Rush~Legendary"
+    requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: Enhance (8) - Gain the ability to evolve for 0 evolution points.During your turn, whenever this follower attacks and destroys an enemy follower, if this follower is not destroyed, recover 2 play points and gain the ability to attack 2 times this turn."
+    attackAdd, healthAdd = 2, 2
+
+    # TODO require target
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_DiamondPaladin(self)]
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] >= 8:
+            return 8
+        else:
+            return self.mana
+
+    def willEnhance(self):
+        return self.Game.Manas.manas[self.ID] >= 8
+
+    def effectCanTrigger(self):
+        self.effectViable = self.willEnhance()
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if comment == 8:
+            self.marks["Free Evolve"] += 1
+        return None
+
+    def inHandEvolving(self, target=None):
+        if target:
+            target.buffDebuff(-4, 0)
+            PRINT(self, f"Diamond Paladin's Fanfare give {target.name} -4/-0.")
+        return
+
+    def extraTargetCorrect(self, target, affair):
+        return target.type and target.type == "Minion" and target.ID != self.ID and target.onBoard
+
+
+class Trig_DiamondPaladin(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionAttackedMinion"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return subject == self.entity and self.entity.onBoard and (target.health < 1 or target.dead == True) and \
+               (self.entity.health > 0 and self.entity.dead == False)
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game,
+              f"After {self.entity.name} attacks and kills minion {target.name}, restore 2 mana and can attack 2 times per turn")
+        self.entity.getsKeyword("Windfury")
+        self.entity.Game.Manas.restoreManaCrystal(2, self.entity.ID)
+        trigger = Trig_EndDiamondPaladin(self.entity)
+        self.entity.trigsBoard.append(trigger)
+        if self.entity.onBoard:
+            trigger.connect()
+
+
+class Trig_EndDiamondPaladin(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.Keywords["Windfury"] = 0
+        for t in self.entity.trigsBoard:
+            if type(t) == Trig_EndDiamondPaladin:
+                t.disconnect()
+                self.entity.trigsBoard.remove(t)
+                break
+
+
+class SelflessNoble(SVMinion):
+    Class, race, name = "Swordcraft", "Commander", "Selfless Noble"
+    mana, attack, health = 9, 9, 7
+    index = "SV_Fortune~Swordcraft~Minion~9~9~7~Commander~Selfless Noble~Battlecry"
+    requireTarget, keyWord, description = True, "", "Fanfare: Discard a card. Gain +X/+X. X equals the original cost of the discarded card."
+    attackAdd, healthAdd = 2, 2
+
+    def returnTrue(self, choice=0):
+        return len(self.Game.Hand_Deck.hands[self.ID]) > 0 and not self.targets
+
+    def targetExists(self, choice=0):
+        return len(self.Game.Hand_Deck.hands[self.ID]) > 0
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.ID == self.ID and target.inHand and target != self
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if isinstance(target, list): target = target[0]
+        n = type(target).mana
+        self.Game.Hand_Deck.discardCard(self.ID, target)
+        self.buffDebuff(n, n)
+        PRINT(self.Game, f"Selfless Noble's Fanfare discard {target.name} and get +{n}/+{n}")
+
+
 """Runecraft cards"""
 
 """Dragoncraft cards"""
@@ -1272,6 +1790,104 @@ class LifeBanquet(SVSpell):
         return target
 
 
+class IlmisunaDiscordHawker(SVMinion):
+    Class, race, name = "Swordcraft", "Officer", "Ilmisuna, Discord Hawker"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Fortune~Swordcraft~Minion~2~2~2~Officer~Ilmisuna, Discord Hawker~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Rally (15) - Recover 1 evolution point."
+    attackAdd, healthAdd = 2, 2
+
+    # TODO require target
+
+    def effectCanTrigger(self):
+        self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 15
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 15:
+            self.Game.restoreEvolvePoint(self.ID)
+        return None
+
+    def inHandEvolving(self, target=None):
+        if target:
+            self.dealsDamage(target, len(self.Game.minionsonBoard[self.ID]))
+            PRINT(self,
+                  f"Ilmisuna, Discord Hawker's Evolve deals {len(self.Game.minionsonBoard[self.ID])} damage to {target.name} -4/-0.")
+        return
+
+
+class AlyaskaWarHawker(SVMinion):
+    Class, race, name = "Swordcraft", "Commander", "Alyaska, War Hawker"
+    mana, attack, health = 4, 4, 4
+    index = "SV_Fortune~Swordcraft~Minion~4~4~4~Commander~Alyaska, War Hawker~Legendary"
+    requireTarget, keyWord, description = False, "", "Reduce damage from effects to 0. When an allied Officer follower comes into play, gain the ability to evolve for 0 evolution points."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_AlyaskaWarHawker(self)]
+        self.marks["Enemy Effect Damage Immune"] = 1
+
+    def inHandEvolving(self, target=None):
+        PRINT(self.Game, "Alyaska, War Hawker's Evolve put a Exterminus Weapon into your hand.")
+        card = ExterminusWeapon(self.Game, self.ID)
+        self.Game.Hand_Deck.addCardtoHand(card, self.ID)
+        ManaMod(card, changeby=-self.Game.Counters.evolvedThisGame[self.ID], changeto=-1).applies()
+
+
+class Trig_AlyaskaWarHawker(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionSummoned"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and "Officer" in subject.race
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.marks["Free Evolve"] += 1
+        PRINT(self.entity.Game, f"Alyaska, War Hawker gain the ability to evolve for 0 evolution points.")
+
+
+class ExterminusWeapon(SVMinion):
+    Class, race, name = "Swordcraft", "Commander", "Exterminus Weapon"
+    mana, attack, health = 8, 6, 6
+    index = "SV_Fortune~Swordcraft~Minion~8~6~6~Commander~Exterminus Weapon~Battlecry~Deathrattle~Uncollectible~Legendary"
+    requireTarget, keyWord, description = True, "", "Fanfare: Destroy 2 enemy followers. Last Words: Deal 4 damage to the enemy leader."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.deathrattles = [Deathrattle_ExterminusWeapon(self)]
+
+    def returnTrue(self, choice=0):
+        n = 0
+        for m in self.Game.minionsAlive(3 - self.ID):
+            if self.canSelect(m):
+                n += 1
+        return len(self.targets) < min(2, n)
+
+    def targetExists(self, choice=0):
+        return self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list) and len(target) > 1:
+            target1, target2 = target[0], target[1]
+            return target1.type == "Minion" and target1.ID != self.ID and target1.onBoard and target2.type == "Minion" and target2.ID != self.ID and target2.onBoard
+        else:
+            if isinstance(target, list): target = target[0]
+            return target.type == "Minion" and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            self.Game.killMinion(self, target[0])
+            if len(target) > 1:
+                self.Game.killMinion(self, target[1])
+
+
+class Deathrattle_ExterminusWeapon(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Last Words: Deal 4 damage to the enemy leader.")
+        self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 4)
+
+
 SV_Fortune_Indices = {
     "SV_Fortune~Neutral~Minion~2~5~5~None~Cloud Gigas~Taunt": CloudGigas,
     "SV_Fortune~Neutral~Spell~2~Sudden Showers": SuddenShowers,
@@ -1301,9 +1917,29 @@ SV_Fortune_Indices = {
     "SV_Fortune~Forestcraft~Spell~1~Lionel, Woodland Shadow~Accelerate~Uncollectible": LionelWoodlandShadow,
     "SV_Fortune~Forestcraft~Minion~7~5~6~None~Lionel, Woodland Shadow~Battlecry~Accelerate": LionelWoodlandShadow,
 
+    "SV_Fortune~Swordcraft~Minion~1~1~1~Officer~Ernesta, Weapons Hawker~Battlecry": ErnestaWeaponsHawker,
+    "SV_Fortune~Swordcraft~Minion~1~4~4~Officer~Dread Hound~Battlecry~Bane~Taunt~Uncollectible": DreadHound,
+    "SV_Fortune~Swordcraft~Spell~1~Pompous Summons": PompousSummons,
+    "SV_Fortune~Swordcraft~Spell~1~Decisive Strike~Enhance": DecisiveStrike,
+    "SV_Fortune~Swordcraft~Minion~2~2~1~Officer~Honorable Thief~Battlecry~Deathrattle": HonorableThief,
+    "SV_Fortune~Swordcraft~Spell~2~Shield Phalanx": ShieldPhalanx,
+    "SV_Fortune~Swordcraft~Minion~7~5~6~Commander~Frontguard General~Taunt~Deathrattle": FrontguardGeneral,
+    "SV_Fortune~Swordcraft~Minion~3~2~3~Officer~Fortress Guard~Taunt~Uncollectible": FortressGuard,
+    "SV_Fortune~Swordcraft~Minion~3~2~2~Commander~Empress of Serenity~Battlecry": EmpressofSerenity,
+    "SV_Fortune~Swordcraft~Minion~3~3~3~Commander~VII. Oluon, The Chariot~Battlecry~Legendary": VIIOluonTheChariot,
+    "SV_Fortune~Swordcraft~Minion~7~8~16~Commander~VII. Oluon, Runaway Chariot~Uncollectible~Legendary": VIIOluonRunawayChariot,
+    "SV_Fortune~Swordcraft~Minion~4~3~4~Commander~Prudent General": PrudentGeneral,
+    "SV_Fortune~Swordcraft~Minion~5~4~5~Officer~Strikelance Knight~Battlecry": StrikelanceKnight,
+    "SV_Fortune~Swordcraft~Minion~6~4~5~Commander~Diamond Paladin~Battlecry~Rush~Legendary": DiamondPaladin,
+    "SV_Fortune~Swordcraft~Minion~9~9~7~Commander~Selfless Noble~Battlecry": SelflessNoble,
+
     "SV_Fortune~Neutral~Minion~5~3~5~None~Archangel of Evocation~Taunt~Battlecry": ArchangelofEvocation,
     "SV_Fortune~Forestcraft~Minion~3~1~5~None~Aerin, Forever Brilliant~Legendary": AerinForeverBrilliant,
     "SV_Fortune~Forestcraft~Minion~4~3~4~None~Furious Mountain Deity~Enhance~Battlecry": FuriousMountainDeity,
     "SV_Fortune~Forestcraft~Minion~8~8~8~None~Deepwood Anomaly~Battlecry~Legendary": DeepwoodAnomaly,
     "SV_Fortune~Forestcraft~Spell~3~Life Banquet": LifeBanquet,
+    "SV_Fortune~Swordcraft~Minion~2~2~2~Officer~Ilmisuna, Discord Hawker~Battlecry": IlmisunaDiscordHawker,
+    "SV_Fortune~Swordcraft~Minion~4~4~4~Commander~Alyaska, War Hawker~Legendary": AlyaskaWarHawker,
+    "SV_Fortune~Swordcraft~Minion~8~6~6~Commander~Exterminus Weapon~Battlecry~Deathrattle~Uncollectible~Legendary": ExterminusWeapon,
+
 }
