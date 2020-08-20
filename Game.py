@@ -446,7 +446,7 @@ class Game:
 			else:
 				if self.GUI and subject: self.GUI.targetingEffectAni(subject, target, 'X', color="grey46")
 				if target.onBoard: target.dead = True
-				elif target.inHand: self.Hand_Deck.banishCard(target.ID, target) #如果随从在手牌中则将其丢弃
+				elif target.inHand: self.Hand_Deck.discardCard(target.ID, target) #如果随从在手牌中则将其丢弃
 
 	def necromancy(self, subject, ID, number):
 		if self.Counters.shadows[ID] >= number:
@@ -492,13 +492,13 @@ class Game:
 				if self.GUI and subject: self.GUI.AOEAni(subject, target, ['○']*len(target), color="grey46")
 				for obj in target:
 					obj.disappears(deathrattlesStayArmed=False)
-					self.removeMinionorWeapon(target)
+					self.removeMinionorWeapon(obj)
 			else:
 				if self.GUI and subject: self.GUI.targetingEffectAni(subject, target, '○', color="grey46")
 				if target.onBoard:
 					target.disappears(deathrattlesStayArmed=False)
 					self.removeMinionorWeapon(target)
-				elif target.inHand: self.Hand_Deck.discardCard(target.ID, target) #如果随从在手牌中则将其丢弃
+				elif target.inHand: self.Hand_Deck.extractfromHand(target.ID, target) #如果随从在手牌中则将其丢弃
 
 
 	def isVengeance(self, ID):
@@ -519,6 +519,10 @@ class Game:
 				self.Counters.numEvolutionTurn[ID]:
 			point = self.Counters.numEvolutionPoint[ID]
 		return point
+
+	def restoreEvolvePoint(self, ID, number=1):
+		if self.heroes[ID].heroPower.name == "Evolve":
+			self.Counters.numEvolutionPoint[ID] = min(1 + ID, self.Counters.numEvolutionPoint[ID] + number)
 
 	#The leftmost minion has position 0. Consider Dormant
 	def rearrangePosition(self):

@@ -934,6 +934,9 @@ class Minion(Card):
 			if "Enemy Effect Damage Immune" in self.marks and self.marks[
 				"Enemy Effect Damage Immune"] > 0 and damageType == "ability":
 				damage = 0
+			if "Bane" in subject.keyWords and subject.keyWords[
+				"Bane"] > 0 and damageType == "Battle" and self.onBoard:
+				self.dead = True
 			if damage > 0:
 				if self.keyWords["Divine Shield"] > 0:
 					damage = 0
@@ -957,9 +960,6 @@ class Minion(Card):
 					# 随从的激怒，根据血量和攻击的状态改变都在这里触发。
 					for func in self.triggers["StatChanges"]: func()
 			else:
-				if "Bane" in subject.keyWords and subject.keyWords[
-					"Bane"] > 0 and damageType == "Battle" and self.onBoard:
-					self.dead = True
 				game.sendSignal("MinionTakes0Dmg", game.turn, subject, self, 0, "")
 				game.sendSignal("MinionTook0Damage", game.turn, subject, self, 0, "")
 		else:
@@ -1884,7 +1884,7 @@ class Hero(Card):
 		self.keyWords = {"Poisonous": 0} #Just as a placeholder
 		self.marks={"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
 					"Can't Be Attacked": 0, "Next damage 0": 0, "Max Damage": -1}
-		self.status = {"Frozen": 0, "Temp Stealth": 0}
+		self.status = {"Frozen": 0, "Temp Stealth": 0, "Draw to Win": 0}
 		self.triggers = {"Discarded": []}
 		self.identity = [np.random.rand(), np.random.rand()]
 		self.options = [] #For Choose One heroes

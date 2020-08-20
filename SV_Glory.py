@@ -198,56 +198,6 @@ class VesperWitchhunter(SVMinion):
         return target
 
 
-"""Mana 6 cards"""
-
-
-class Terrorformer(SVMinion):
-    Class, race, name = "Forestcraft", "", "Terrorformer"
-    mana, attack, health = 6, 4, 4
-    index = "SV_Glory~Forestcraft~Minion~6~4~4~None~Terrorformer~Fusion~Fanfare"
-    requireTarget, keyWord, description = True, "", "Fusion: Forestcraft followers that originally cost 2 play points or more. Whenever 2 or more cards are fused to this card at once, gain +2/+0 and draw a card. Fanfare: If at least 2 cards are fused to this card, gain Storm. Then, if at least 4 cards are fused to this card, destroy an enemy follower."
-
-    def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
-        self.fusion = 1
-        self.fusionMaterials = 0
-
-    def returnTrue(self, choice=0):  # 需要targets里面没有目标，且有3个融合素材
-        return not self.targets and self.fusionMaterials > 3
-
-    def targetCorrect(self, target, choice=0):
-        if isinstance(target, list): target = target[0]
-        return target.type == "Minion" and target.ID != self.ID and target.onBoard
-
-    def findFusionMaterials(self):
-        return [card for card in self.Game.Hand_Deck.hands[self.ID] if
-                card.type == "Minion" and card != self and type(card).mana > 1]
-
-    def effectCanTrigger(self):
-        self.effectViable = self.fusionMaterials > 1
-
-    def fusionDecided(self, objs):
-        if objs:
-            self.fusionMaterials += len(objs)
-            self.Game.Hand_Deck.extractfromHand(self, enemyCanSee=True)
-            for obj in objs: self.Game.Hand_Deck.extractfromHand(obj, enemyCanSee=True)
-            self.Game.Hand_Deck.addCardtoHand(self, self.ID)
-            if len(objs) > 1:
-                PRINT(self.Game,
-                      "Terrorformer's Fusion involves more than 1 minion. It gains +2/+0 and lets player draw a card")
-                self.buffDebuff(2, 0)
-                self.Game.Hand_Deck.drawCard(self.ID)
-            self.fusion = 0  # 一张卡每回合只有一次融合机会
-
-    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self.Game, "Terrorformer's Fanfare gives minion Storm as it has no less than 2 fusion materials")
-        self.getsKeyword("Charge")
-        if target and self.fusionMaterials > 3:
-            PRINT(self.Game, "Terrorformer's Fanfare destroys enemy follower" % target[0].name)
-            self.Game.killMinion(self, target[0])
-        return target
-
-
 """Mana 10 cards"""
 
 

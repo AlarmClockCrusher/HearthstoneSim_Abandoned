@@ -205,7 +205,7 @@ class Trig_WellofDestiny(TrigBoard):
             if curGame.guides:
                 i = curGame.guides.pop(0)
             else:
-                minions = curGame.minionsAlive(self.entity.ID)
+                minions = curGame.minionsonBoard(self.entity.ID)
                 try:
                     minions.remove(self.entity)
                 except:
@@ -258,7 +258,7 @@ class Trig_HarnessedFlameUnion(TrigBoard):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        minions = self.entity.Game.minionsAlive(self.entity.ID)
+        minions = self.entity.Game.minionsonBoard(self.entity.ID)
         for minion in minions:
             if minion.name == "Harnessed Glass":
                 minion.disappears(deathrattlesStayArmed=False)
@@ -291,11 +291,9 @@ class Trig_HarnessedGlass(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "When Harnessed Glass attacks, Deal 1 damage to all enemy followers.")
-        targets = self.entity.Game.minionsAlive(3 - self.entity.ID)
+        targets = self.entity.Game.minionsonBoard(3 - self.entity.ID)
         self.entity.dealsAOE(targets, [1 for obj in targets])
         self.entity.Game.gathertheDead()
-        if not target.onBoard:
-            self.entity.attTimes += 1
 
 
 class Trig_HarnessedGlassUnion(TrigBoard):
@@ -306,7 +304,7 @@ class Trig_HarnessedGlassUnion(TrigBoard):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        minions = self.entity.Game.minionsAlive(self.entity.ID)
+        minions = self.entity.Game.minionsonBoard(self.entity.ID)
         for minion in minions:
             if minion.name == "Harnessed Flame":
                 minion.disappears(deathrattlesStayArmed=False)
@@ -339,11 +337,9 @@ class Trig_FlameandGlass(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "When Flame and Glass attacks, Deal 7 damage to all enemies.")
-        targets = [self.entity.Game.heroes[3 - self.entity.ID]] + self.entity.Game.minionsAlive(3 - self.entity.ID)
+        targets = [self.entity.Game.heroes[3 - self.entity.ID]] + self.entity.Game.minionsonBoard(3 - self.entity.ID)
         self.entity.dealsAOE(targets, [7 for obj in targets])
         self.entity.Game.gathertheDead()
-        if not target.onBoard:
-            self.entity.attTimes += 1
 
 
 class Goliath(SVMinion):
@@ -471,7 +467,7 @@ class SylvanJustice(SVSpell):
             damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
             self.dealsDamage(target, damage)
             PRINT(self.Game,
-                  f"Sylvan Justice deals {damage} damage to {target} and put a Fairy into your hand.")
+                  f"Sylvan Justice deals {damage} damage to {target.name} and put a Fairy into your hand.")
             self.Game.Hand_Deck.addCardtoHand(Fairy, self.ID, "type")
         return target
 
@@ -603,7 +599,7 @@ class MagnaBotanist(SVMinion):
         numCardsPlayed = self.Game.combCards(self.ID)
         if numCardsPlayed >= 2:
             PRINT(self.Game, "Magna Botanist's Fanfare Give +1/+1 to all allied followers")
-            for minion in fixedList(self.Game.minionsAlive(self.ID)):
+            for minion in fixedList(self.Game.minionsonBoard(self.ID)):
                 minion.buffDebuff(1, 1)
         return None
 
@@ -762,7 +758,7 @@ class RoyalBanner(Amulet):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Sage Commander's Fanfare gives +1/+0 to all allied Officer followers")
-        for minion in fixedList(self.Game.minionsAlive(self.ID)):
+        for minion in fixedList(self.Game.minionsonBoard(self.ID)):
             if "Officer" in minion.race:
                 minion.buffDebuff(1, 0)
         return None
@@ -797,7 +793,7 @@ class SageCommander(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Sage Commander's Fanfare gives +1/+1 to all allied followers")
-        for minion in fixedList(self.Game.minionsAlive(self.ID)):
+        for minion in fixedList(self.Game.minionsonBoard(self.ID)):
             minion.buffDebuff(1, 1)
         return None
 
@@ -887,7 +883,7 @@ class SammyWizardsApprentice(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self.Game, "Insight let both player draw a card.")
+        PRINT(self.Game, "Sammy, Wizard's Apprentice's Fanfare let both player draw a card.")
         self.Game.Hand_Deck.drawCard(self.ID)
         self.Game.Hand_Deck.drawCard(3 - self.ID)
         return None
@@ -969,7 +965,7 @@ class SummonSnow(SVSpell):
         self.progress = 0
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self.Game, "Insight let player draw a card.")
+        PRINT(self.Game, f"Summon Snow summons {1 + self.progress} Snowmans")
         self.Game.summon([Snowman(self.Game, self.ID) for i in range(1 + self.progress)], (-1, "totheRightEnd"),
                          self.ID)
         return None
@@ -984,7 +980,7 @@ class DemonflameMage(SVMinion):
 
     def inHandEvolving(self, target=None):
         PRINT(self.Game, "Demonflame Mage's Evolve deals 1 damage to all enemy followers")
-        targets = self.Game.minionsAlive(3 - self.ID)
+        targets = self.Game.minionsonBoard(3 - self.ID)
         self.dealsAOE(targets, [1 for obj in targets])
         return None
 
@@ -1064,7 +1060,7 @@ class FlameDestroyer(SVMinion):
     Class, race, name = "Runecraft", "", "Flame Destroyer"
     mana, attack, health = 10, 7, 7
     index = "SV_Basic~Runecraft~Minion~10~7~7~None~Flame Destroyer~Spellboost"
-    requireTarget, keyWord, description = True, "", "Spellboost: Subtract 1 from the cost of this card."
+    requireTarget, keyWord, description = False, "", "Spellboost: Subtract 1 from the cost of this card."
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
@@ -1236,7 +1232,6 @@ class DisasterDragon(SVMinion):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.trigsBoard = [Trig_DisasterDragon(self)]
-        self.progress = 0
 
 
 class Trig_DisasterDragon(TrigBoard):
@@ -1299,7 +1294,7 @@ class Conflagration(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-        targets = self.Game.minionsAlive(1) + self.Game.minionsAlive(2)
+        targets = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
         PRINT(self.Game, f"Conflagration deals {damage} damage to all minions.")
         self.dealsAOE(targets, [damage for minion in targets])
         return None
@@ -1527,7 +1522,7 @@ class Deathrattle_GhostlyRider(Deathrattle_Minion):
             if curGame.guides:
                 i = curGame.guides.pop(0)
             else:
-                minions = [minion.position for minion in curGame.minionsAlive(self.entity.ID)]
+                minions = [minion.position for minion in curGame.minionsonBoard(self.entity.ID)]
                 i = npchoice(minions) if minions else -1
                 curGame.fixedGuides.append(i)
             if i > -1:
@@ -1712,7 +1707,7 @@ class DemonicStorm(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-        targets = [self.Game.heroes[self.ID]] + self.Game.minionsAlive(1) + self.Game.minionsAlive(2) + \
+        targets = [self.Game.heroes[self.ID]] + self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2) + \
                   [self.Game.heroes[3 - self.ID]]
         PRINT(self.Game, f"Demonic Storm deals {damage} damage to all allies and enemies.")
         self.dealsAOE(targets, [damage for minion in targets])
@@ -1953,7 +1948,7 @@ class AcolytesLight(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            health = target.health
+            health = target.health * (2 ** self.countHealDouble())
             PRINT(self.Game, f"Acolyte's Light banishes enemy {target.name}")
             self.Game.banishMinion(self, target)
             PRINT(self.Game, f"Acolyte's Light restores {health} to your leader")
@@ -2265,7 +2260,7 @@ class PuppeteersStrings(SVSpell):
         PRINT(self.Game, "Puppeteer's Strings puts 3 Puppets into your hand.")
         self.Game.Hand_Deck.addCardtoHand([Puppet for i in range(3)], self.ID, "type")
         damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-        targets = self.Game.minionsAlive(3 - self.ID)
+        targets = self.Game.minionsonBoard(3 - self.ID)
         PRINT(self.Game, f"Puppeteer's Strings deals {damage} damage to all enemy followers.")
         self.dealsAOE(targets, [damage for minion in targets])
         return None
