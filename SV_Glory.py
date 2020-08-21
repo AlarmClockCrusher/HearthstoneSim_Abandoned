@@ -201,7 +201,7 @@ class VesperWitchhunter(SVMinion):
 """Mana 10 cards"""
 
 
-class RuinwebSpider_Amulet(Amulet):
+class RuinwebSpider_Crystallize(Amulet):
     Class, race, name = "Bloodcraft", "", "Ruinweb Spider"
     mana = 2
     index = "SV_Glory~Bloodcraft~2~Amulet~None~Ruinweb Spider~Last Words"
@@ -209,11 +209,11 @@ class RuinwebSpider_Amulet(Amulet):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.trigsBoard = [Trig_RuinwebSpider_Amulet(self)]
+        self.trigsBoard = [Trig_RuinwebSpider_Crystallize(self)]
         self.deathrattles = [SummonaRuinwebSpider(self)]
 
 
-class Trig_RuinwebSpider_Amulet(TrigBoard):
+class Trig_RuinwebSpider_Crystallize(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts", "AmuletAppears"])
         self.counter = 10
@@ -248,7 +248,7 @@ class RuinwebSpider(SVMinion):
     mana, attack, health = 10, 5, 10
     index = "SV_Glory~Bloodcraft~Minion~10~5~10~None~Ruinweb Spider~Crystallize"
     requireTarget, keyWord, description = False, "", "Crystallize 2; Countdown 10 During you turn, whenever an Amulet enters your board, reduce this Amulets countdown by 1. Last Words: Summon a Ruinweb Spider"
-    crystallizeAmulet = RuinwebSpider_Amulet
+    crystallizeAmulet = RuinwebSpider_Crystallize
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
@@ -356,7 +356,7 @@ SV_Glory_Indices = {
     "SV_Glory~Runecraft~Spell~2~Vesper, Witchhunter~Uncollectible": VesperWitchhunter_Accelerate,
     "SV_Glory~Havencraft~1~Amulet~None~Sacred Plea~Last Words": SacredPlea,
     "SV_Glory~Bloodcraft~Minion~10~5~10~None~Ruinweb Spider~Crystallize": RuinwebSpider,
-    "SV_Glory~Bloodcraft~2~Amulet~None~Ruinweb Spider~Last Words": RuinwebSpider_Amulet,
+    "SV_Glory~Bloodcraft~2~Amulet~None~Ruinweb Spider~Last Words": RuinwebSpider_Crystallize,
     "SV_Glory~Bloodcraft~Minion~10~11~8~Dragon~XI. Erntz, Justice~Ward": XIErntzJustice,
     "SV_Glory~Forestcraft~Spell~1~Airbound Barrage": AirboundBarrage,
 }

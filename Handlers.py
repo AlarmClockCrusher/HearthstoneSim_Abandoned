@@ -318,6 +318,7 @@ class Counters:
 		self.timesHeroTookDamage_inOwnTurn = {1:0, 2:0}
 		self.tempVengeance = {1:False, 2:False}
 		self.numCardsExtraDrawThisTurn = {1:0, 2:0}
+		self.numBurialRiteThisGame = {1:0, 2:0}
 		self.numCardsExtraPlayedThisTurn = {1:0, 2:0}
 
 	def turnEnds(self):

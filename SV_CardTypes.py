@@ -432,7 +432,7 @@ class Amulet(Dormant):
             where = "hand%d" % ID
             for i, card in enumerate(game.Hand_Deck.hands[ID]):
                 if self.targetCorrect(card, choice):
-                    targets.append(obj)
+                    targets.append(card)
                     indices.append(i)
                     wheres.append(where)
 
@@ -476,10 +476,38 @@ class Amulet(Dormant):
     def countdown(self, subject, number):
         if self.counter > 0:
             self.counter = max(0, self.counter - number)
-            self.Game.sendSignal(self, "Countdown", self.ID, subject, self, number, "")
+            if number > 0:
+                self.Game.sendSignal(self, "Countdown", self.ID, subject, self, number, "")
+            else:
+                self.Game.sendSignal(self, "Countup", self.ID, subject, self, -number, "")
         if self.counter == 0:
             PRINT(self.Game, f"{self.name}'s countdown is 0 and destroys itself")
             self.Game.killMinion(None, self)
+
+    def canSelect(self, target):
+        targets = target if isinstance(target, list) else [target]
+        for target in targets:
+            targetType = target.type
+            selectable = target.inHand or target.onBoard and targetType != "Dormant" and targetType != "Power" and \
+                         (
+                                 (targetType == "Hero" and (
+                                         target.ID == self.ID or self.Game.status[target.ID]["Immune"] +
+                                         target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
+                                  and not ((self.type == "Power" or self.type == "Spell") and
+                                           self.Game.status[target.ID]["Evasive"] > 1)) \
+                                 # 不能被法术或者英雄技能选择的随从是： 魔免随从 或者 是对敌方魔免且法术或英雄技能是敌方的
+                                 or (targetType == "Minion" and (
+                                 target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] +
+                                 target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
+                                     and not ((self.type == "Power" or self.type == "Spell") and (
+                                         target.marks["Evasive"] > 1 or (
+                                         target.ID != self.ID and target.marks["Enemy Evasive"] > 1)))) \
+                                 or (targetType == "Amulet" and (
+                                 target.ID == self.ID or target.marks["Enemy Effect Evasive"] < 1) \
+                                     and not (self.type == "Spell" and target.marks["Evasive"] > 1))
+                             )
+            if not selectable: return False
+        return True
 
     """buffAura effect, Buff/Debuff, stat reset, copy"""
 

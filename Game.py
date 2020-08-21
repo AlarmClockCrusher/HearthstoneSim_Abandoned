@@ -210,8 +210,11 @@ class Game:
 			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
 				card.effectCanTrigger()
 				card.checkEvanescent()
-			PRINT(self, "Making move: playAmulet %d %s %d %s" % (subIndex, subWhere, tarIndex, tarWhere))
-			self.moves.append(("playAmulet", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), position, choice))
+			if not isinstance(tarIndex, list):
+				self.moves.append(
+					("playAmulet", subIndex, subWhere, tarIndex, tarWhere, position, choice))
+			else:
+				self.moves.append(("playAmulet", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), position, choice))
 
 	#There probably won't be board size limit changing effects.
 	#Minions to die will still count as a placeholder on board. Only minions that have entered the tempDeads don't occupy space.
@@ -538,6 +541,33 @@ class Game:
 				self.gathertheDead()
 			return True
 		return False
+
+	def reanimate(self, ID, mana):
+		if self.mode == 0:
+			type = None
+			if self.guides:
+				type = self.guides.pop(0)
+			else:
+				indices = self.Counters.minionsDiedThisGame[ID]
+				minions = {}
+				for index in indices:
+					try:
+						minions[self.cardPool[index].mana].append(self.cardPool[index])
+					except:
+						minions[self.cardPool[index].mana] = [self.cardPool[index]]
+				for i in range(mana, -1, -1):
+					if i in minions:
+						type = npchoice(minions[i])
+						self.fixedGuides.append(type)
+						break
+				else:
+					self.fixedGuides.append(None)
+			if type:
+				subject = type(self, ID)
+				self.summon([subject], (-1, "totheRightEnd"), ID)
+				self.sendSignal("Reanimate", ID, subject, None, mana, "")
+				return subject
+		return None
 
 	#The leftmost minion has position 0. Consider Dormant
 	def rearrangePosition(self):

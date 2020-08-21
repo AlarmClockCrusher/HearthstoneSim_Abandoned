@@ -1386,6 +1386,14 @@ class Conflagration(SVSpell):
 """Shadowcraft cards"""
 
 
+class Skeleton(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Skeleton"
+    mana, attack, health = 1, 1, 1
+    index = "SV_Basic~Shadowcraft~Minion~2~2~2~None~Skeleton~Uncollectible"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+
 class Zombie(SVMinion):
     Class, race, name = "Shadowcraft", "", "Zombie"
     mana, attack, health = 2, 2, 2
@@ -1853,11 +1861,11 @@ class HolywingDragon(SVMinion):
 
 class Trig_Countdown(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts", "Countdown"])
+        self.blank_init(entity, ["TurnStarts", "Countdown", "Countup"])
         self.counter = self.entity.counter
 
     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-        return self.entity.onBoard and ID == self.entity.ID
+        return self.entity.onBoard and (signal != "TurnStarts" or ID == self.entity.ID)
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.counter = self.entity.counter

@@ -1275,7 +1275,7 @@ class FortressGuard(SVMinion):
 class EmpressofSerenity(SVMinion):
     Class, race, name = "Swordcraft", "Commander", "Empress of Serenity"
     mana, attack, health = 3, 2, 2
-    index = "SV_Fortune~Swordcraft~Minion~3~2~2~Commander~Empress of Serenity~Battlecry"
+    index = "SV_Fortune~Swordcraft~Minion~3~2~2~Commander~Empress of Serenity~Battlecry~Enhance"
     requireTarget, keyWord, description = False, "", "Fanfare: Summon a Shield Guardian.Enhance (5): Summon 3 instead.Enhance (10): Give +3/+3 to all allied Shield Guardians."
     attackAdd, healthAdd = 2, 2
 
@@ -1557,10 +1557,10 @@ class SelflessNoble(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def returnTrue(self, choice=0):
-        return len(self.Game.Hand_Deck.hands[self.ID]) > 0 and not self.targets
+        return len(self.Game.Hand_Deck.hands[self.ID]) > 1 and not self.targets
 
     def targetExists(self, choice=0):
-        return len(self.Game.Hand_Deck.hands[self.ID]) > 0
+        return len(self.Game.Hand_Deck.hands[self.ID]) > 1
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
@@ -2162,10 +2162,10 @@ class SpringwellDragonKeeper(SVMinion):
 
     def returnTrue(self, choice=0):
         return len(self.targets) < 2 and len(
-            self.Game.Hand_Deck.hands[self.ID]) > 0 and self.selectableEnemyMinionExists(choice=1)
+            self.Game.Hand_Deck.hands[self.ID]) > 1 and self.selectableEnemyMinionExists(choice=1)
 
     def targetExists(self, choice=0):
-        return len(self.Game.Hand_Deck.hands[self.ID]) > 0 and self.selectableEnemyMinionExists(choice=1)
+        return len(self.Game.Hand_Deck.hands[self.ID]) > 1 and self.selectableEnemyMinionExists(choice=1)
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list):
@@ -2373,6 +2373,7 @@ class Trig_TurncoatDragons(TrigHand):
         self.entity.progress += 1
         self.entity.Game.Manas.calcMana_Single(self.entity)
 
+
 class CrimsonDragonsSorrow(SVMinion):
     Class, race, name = "Dragoncraft", "", "Crimson Dragon's Sorrow"
     mana, attack, health = 5, 4, 4
@@ -2391,10 +2392,10 @@ class CrimsonDragonsSorrow(SVMinion):
             self.mana = max(self.mana, 0)
 
     def returnTrue(self, choice=0):
-        return len(self.Game.Hand_Deck.hands[self.ID]) > 0 and not self.targets
+        return len(self.Game.Hand_Deck.hands[self.ID]) > 1 and not self.targets
 
     def targetExists(self, choice=0):
-        return len(self.Game.Hand_Deck.hands[self.ID]) > 0
+        return len(self.Game.Hand_Deck.hands[self.ID]) > 1
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
@@ -2443,10 +2444,10 @@ class TurncoatDragonSummoner(SVMinion):
         PRINT(self.Game, f"Selfless Noble's put a Crimson Dragon's Sorrow into your hand")
 
     def returnTrue(self, choice=0):
-        return len(self.Game.Hand_Deck.hands[self.ID]) > 0 and not self.targets
+        return len(self.Game.Hand_Deck.hands[self.ID]) > 1 and not self.targets
 
     def targetExists(self, choice=0):
-        return len(self.Game.Hand_Deck.hands[self.ID]) > 0
+        return len(self.Game.Hand_Deck.hands[self.ID]) > 1
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
@@ -2596,6 +2597,560 @@ class XIErntzJustice(SVMinion):
 
 
 """Shadowcraft cards"""
+
+
+class GhostlyMaid(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Ghostly Maid"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Ghostly Maid~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: If there are any allied amulets in play, summon a Ghost. Then, if there are at least 2 in play, evolve it."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if len(self.Game.amuletsonBoard(self.ID)) > 0:
+            minion = Ghost(self.Game, self.ID)
+            self.Game.summon([minion], (-1, "totheRightEnd"),
+                             self.ID)
+            PRINT(self.Game,
+                  f"Ghostly Maid's Fanfare summons a Ghost")
+            if len(self.Game.amuletsonBoard(self.ID)) >= 2:
+                minion.evolve()
+                PRINT(self.Game,
+                      f"Ghostly Maid's Fanfare let the Ghost evolve")
+        return None
+
+
+class BonenanzaNecromancer(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Bonenanza Necromancer"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Bonenanza Necromancer~Enhance~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Enhance (7) - Reanimate (10). Whenever you perform Burial Rite, draw a card."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_BonenanzaNecromancer(self)]
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] >= 7:
+            return 7
+        else:
+            return self.mana
+
+    def willEnhance(self):
+        return self.Game.Manas.manas[self.ID] >= 7
+
+    def effectCanTrigger(self):
+        self.effectViable = self.willEnhance()
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if comment == 7:
+            minion = self.Game.reanimate(self.ID, 10)
+            if minion:
+                PRINT(self.Game, f"Bonenanza Necromancer's Enhanced Fanfare summons {minion.name}")
+        return None
+
+
+class Trig_BonenanzaNecromancer(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["BurialRite"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Bonenanza Necromancer draw a card")
+        self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
+
+
+class SavoringSlash(SVSpell):
+    Class, name = "Shadowcraft", "Savoring Slash"
+    requireTarget, mana = True, 2
+    index = "SV_Fortune~Shadowcraft~Spell~2~Savoring Slash"
+    description = "Deal 3 damage to an enemy follower. Burial Rite: Draw a card."
+
+    def effectCanTrigger(self):
+        self.effectViable = not self.Game.Hand_Deck.noMinionsinHand(self.ID, self)
+
+    def returnTrue(self, choice=0):
+        if self.Game.Hand_Deck.noMinionsinHand(self.ID, self) or self.Game.space(self.ID) < 1:
+            return not self.targets
+        else:
+            return len(self.targets) < 2
+
+    def available(self):
+        return self.selectableEnemyMinionExists(choice=1)
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list):
+            if len(target) >= 2:
+                allied, enemy = target[0], target[1]
+                return allied.type == "Minion" and allied.inHand and allied.ID == self.ID and enemy.type == "Minion" and enemy.ID != self.ID and enemy.onBoard
+            else:
+                target = target[0]
+                return target.type == "Minion" and target.ID != self.ID and target.onBoard
+        else:
+            if self.targets or choice:  # When checking the 2nd target
+                return target.type == "Minion" and target.ID != self.ID and target.onBoard
+            else:  # When checking the 1st target
+                return target.type == "Minion" and target.ID == self.ID and target.inHand
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if len(target) >= 2:
+                allied, enemy = target[0], target[1]
+                PRINT(self.Game, f"Savoring Slash Burial Rite {allied.name} and draw a card.")
+                self.Game.Hand_Deck.burialRite(self.ID, allied)
+                self.Game.Hand_Deck.drawCard(self.ID)
+            else:
+                enemy = target[0]
+            damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+            PRINT(self.Game, f"Savoring Slash deals {damage} damage to enemy {enemy}.")
+            self.dealsDamage(enemy, damage)
+        return target
+
+
+class CoffinoftheUnknownSoul(Amulet):
+    Class, race, name = "Shadowcraft", "", "Coffin of the Unknown Soul"
+    mana = 2
+    index = "SV_Fortune~Shadowcraft~Amulet~2~None~Coffin of the Unknown Soul~Countdown~Battlecry~Last Words"
+    requireTarget, description = True, "Countdown (1)Fanfare: Burial Rite - Draw a card and add X to this amulet's Countdown. X equals half the original cost of the follower destroyed by Burial Rite (rounded down).Last Words: Summon a copy of the follower destroyed by Burial Rite."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.counter = 1
+        self.trigsBoard = [Trig_Countdown(self)]
+        self.deathrattles = [Deathrattle_CoffinoftheUnknownSoul(self)]
+
+    def effectCanTrigger(self):
+        self.effectViable = not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 1
+
+    def returnTrue(self, choice=0):
+        return not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(
+            self.ID) >= 1 and not self.targets
+
+    def targetExists(self, choice=0):
+        return not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 1
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.ID == self.ID and target.inHand and target != self and target.type == "Minion"
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            t = type(target)
+            self.Game.Hand_Deck.burialRite(self.ID, target)
+            PRINT(self.Game, f"Coffin of the Unknown Soul Burial Rite {t.name}")
+            for trigger in self.deathrattles:
+                if type(trigger) == Deathrattle_CoffinoftheUnknownSoul:
+                    trigger.chosenMinionType = t
+            self.countdown(self, -int(t.mana / 2))
+
+
+class Deathrattle_CoffinoftheUnknownSoul(Deathrattle_Minion):
+    def __init__(self, entity):
+        self.blank_init(entity)
+        self.chosenMinionType = None
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return target == self.entity and self.chosenMinionType
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, f"Last Words: Summon a chosen minion {self.chosenMinionType.name} triggers")
+        self.entity.Game.summon([self.chosenMinionType(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                self.entity.ID)
+
+    def selfCopy(self, newMinion):
+        trigger = type(self)(newMinion)
+        trigger.chosenMinionType = self.chosenMinionType
+        return trigger
+
+
+class SpiritCurator(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Spirit Curator"
+    mana, attack, health = 3, 3, 3
+    index = "SV_Fortune~Shadowcraft~Minion~3~3~3~None~Spirit Curator~Battlecry"
+    requireTarget, keyWord, description = True, "", "Fanfare: Burial Rite - Draw a card."
+    attackAdd, healthAdd = 2, 2
+
+    def effectCanTrigger(self):
+        self.effectViable = not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 1
+
+    def returnTrue(self, choice=0):
+        return not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(
+            self.ID) >= 1 and not self.targets
+
+    def targetExists(self, choice=0):
+        return not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 1
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.ID == self.ID and target.inHand and target != self and target.type == "Minion"
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            PRINT(self.Game, f"Spirit Curator's Fanfare Burial Rite {target.name} and draw a card.")
+            self.Game.Hand_Deck.burialRite(self.ID, target)
+            self.Game.Hand_Deck.drawCard(self.ID)
+
+
+class DeathFowl_Crystallize(Amulet):
+    Class, race, name = "Shadowcraft", "", "Crystallize: Death Fowl"
+    mana = 1
+    index = "SV_Fortune~Shadowcraft~Amulet~1~None~Death Fowl~Countdown~Crystallize~Deathrattle~Uncollectible"
+    requireTarget, description = False, "Countdown (3) Last Words: Gain 4 shadows."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.counter = 3
+        self.trigsBoard = [Trig_Countdown(self)]
+        self.deathrattles = [Deathrattle_DeathFowl_Crystallize(self)]
+
+
+class Deathrattle_DeathFowl_Crystallize(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Last Words: Gain 4 shadows.")
+        self.entity.Game.Counters.shadows[self.entity.ID] += 4
+
+
+class DeathFowl(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Death Fowl"
+    mana, attack, health = 4, 3, 3
+    index = "SV_Fortune~Shadowcraft~Minion~4~3~3~None~Death Fowl~Crystallize~Deathrattle"
+    requireTarget, keyWord, description = False, "", "Crystallize (1): Countdown (3) Last Words: Gain 4 shadows. Fanfare: Gain 4 shadows.Last Words: Draw a card."
+    crystallizeAmulet = DeathFowl_Crystallize
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.deathrattles = [Deathrattle_DeathFowl(self)]
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] < self.mana:
+            return 1
+        else:
+            return self.mana
+
+    def willCrystallize(self):
+        curMana = self.Game.Manas.manas[self.ID]
+        return self.mana > curMana >= 1
+
+    def effectCanTrigger(self):
+        self.effectViable = "sky blue" if self.willCrystallize() else False
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self.Game, "Death Fowl's Fanfare gains 4 shadows.")
+        self.Game.Counters.shadows[self.ID] += 4
+
+
+class Deathrattle_DeathFowl(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Last Words: Draw a card.")
+        self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
+
+
+class SoulBox(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Soul Box"
+    mana, attack, health = 5, 5, 4
+    index = "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Soul Box~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: If there are any allied amulets in play, evolve this follower."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if len(self.Game.amuletsonBoard(self.ID)) > 0:
+            self.evolve()
+        return None
+
+
+class VIMilteoTheLovers(SVMinion):
+    Class, race, name = "Shadowcraft", "", "VI. Milteo, The Lovers"
+    mana, attack, health = 5, 4, 4
+    index = "SV_Fortune~Shadowcraft~Minion~5~4~4~None~VI. Milteo, The Lovers~Battlecry~Deathrattle~Legendary"
+    requireTarget, keyWord, description = True, "", "Fanfare: Destroy 2 enemy followers. Last Words: Deal 4 damage to the enemy leader."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.deathrattles = [Deathrattle_VIMilteoTheLovers(self)]
+
+    def returnTrue(self, choice=0):
+        minions = 0
+        for card in self.Game.Hand_Deck.hands[self.ID]:
+            if card.type == "Minion" and card is not self:
+                minions += 1
+        return minions >= 2 and self.Game.space(self.ID) >= 2 and len(self.targets) < 2
+
+    def targetExists(self, choice=0):
+        minions = 0
+        for card in self.Game.Hand_Deck.hands[self.ID]:
+            if card.type == "Minion" and card is not self:
+                minions += 1
+        return minions >= 2 and self.Game.space(self.ID) >= 2
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list) and len(target) > 1:
+            target1, target2 = target[0], target[1]
+            return target1.type == "Minion" and target1.ID == self.ID and target1.inHand and target2.type == "Minion" and target2.ID == self.ID and target2.inHand and target1 != target2
+        else:
+            if isinstance(target, list): target = target[0]
+            return target.type == "Minion" and target.ID == self.ID and target.inHand
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target and len(target) >= 2:
+            PRINT(self.Game, f"VI. Milteo, The Lovers's Fanfare Burial Rite {target[0].name} and {target[1].name}")
+            self.Game.Hand_Deck.burialRite(self.ID, [target[0], target[1]], noSignal=True)
+            curGame = self.Game
+            if curGame.mode == 0:
+                if curGame.guides:
+                    a, b = curGame.guides.pop(0)
+                else:
+                    a, b = 0, 0
+                    numbers = [0, 1]
+                    for i in range(6):
+                        n = npchoice(numbers)
+                        a += n
+                        b += 1 - n
+                    curGame.fixedGuides.append((a, b))
+                minions = []
+                minions.append(self.Game.reanimate(self.ID, a))
+                minions.append(self.Game.reanimate(self.ID, b))
+                for minion in minions:
+                    if minion:
+                        PRINT(self.Game, f"VI. Milteo, The Lovers's Fanfare reanimate {minion}")
+            self.Game.Counters.numBurialRiteThisGame[self.ID] += 1
+            self.Game.sendSignal("BurialRite", self.ID, None, target[0], 0, "")
+            self.Game.Counters.numBurialRiteThisGame[self.ID] += 1
+            self.Game.sendSignal("BurialRite", self.ID, None, target[1], 0, "")
+        return target
+
+
+class Deathrattle_VIMilteoTheLovers(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Last Words: Draw 2 card.")
+        self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
+        self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
+
+
+class CloisteredSacristan_Crystallize(Amulet):
+    Class, race, name = "Shadowcraft", "", "Crystallize: Cloistered Sacristan"
+    mana = 2
+    index = "SV_Fortune~Shadowcraft~Amulet~2~None~Cloistered Sacristan~Countdown~Crystallize~Deathrattle~Uncollectible"
+    requireTarget, description = False, "Countdown (4) Whenever you perform Burial Rite, subtract 1 from this amulet's Countdown. Last Words: Summon a Cloistered Sacristan."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.counter = 4
+        self.trigsBoard = [Trig_Countdown(self), Trig_CloisteredSacristan_Crystallize]
+        self.deathrattles = [Deathrattle_CloisteredSacristan_Crystallize(self)]
+
+
+class Deathrattle_CloisteredSacristan_Crystallize(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.Game.summon([CloisteredSacristan(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                self.entity.ID)
+        PRINT(self.entity.Game,
+              f"Last Words: Summon a Cloistered Sacristan.")
+
+
+class Trig_CloisteredSacristan_Crystallize(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["BurialRite"])
+        self.counter = self.entity.counter
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, f"{self.entity.name}'s countdown -1")
+        self.entity.countdown(self.entity, 1)
+        self.counter = self.entity.counter
+
+
+class CloisteredSacristan(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Cloistered Sacristan"
+    mana, attack, health = 6, 5, 5
+    index = "SV_Fortune~Shadowcraft~Minion~6~5~5~None~Cloistered Sacristan~Taunt~Crystallize"
+    requireTarget, keyWord, description = False, "Taunt", "Crystallize (2): Countdown (4)Whenever you perform Burial Rite, subtract 1 from this amulet's Countdown.Last Words: Summon a Cloistered Sacristan.Ward."
+    crystallizeAmulet = DeathFowl_Crystallize
+    attackAdd, healthAdd = 2, 2
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] < self.mana:
+            return 2
+        else:
+            return self.mana
+
+    def willCrystallize(self):
+        curMana = self.Game.Manas.manas[self.ID]
+        return self.mana > curMana >= 2
+
+    def effectCanTrigger(self):
+        self.effectViable = "sky blue" if self.willCrystallize() else False
+
+    # TODO need target
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            PRINT(self.Game,
+                  f"Spirit Curator's Fanfare Burial Rite {target.name} and restores 3 defense to your leader")
+            self.Game.Hand_Deck.burialRite(self.ID, target)
+            self.restoresHealth(self.Game.heroes[self.ID], 3)
+
+
+class ConqueringDreadlord(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Conquering Dreadlord"
+    mana, attack, health = 8, 6, 6
+    index = "SV_Fortune~Shadowcraft~Minion~8~6~6~None~Conquering Dreadlord~Invocation~Legendary"
+    requireTarget, keyWord, description = False, "", "Invocation: When you perform Burial Rite, if it is your fifth, seventh, or ninth time this match, invoke this card, then return it to your hand.When this follower leaves play, or at the end of your turn, summon a Lich. (Transformation doesn't count as leaving play.)"
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_ConqueringDreadlord(self)]
+        self.trigsDeck = [Trig_InvocationConqueringDreadlord(self)]
+        self.disappearResponse = [self.whenDisppears]
+
+    def whenDisppears(self):
+        self.Game.summon([Lich(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        PRINT(self.Game,
+              f"When leave board, Conquering Dreadlord summons a Lich.")
+
+    def afterInvocation(self, signal, ID, subject, target, number, comment):
+        self.Game.returnMiniontoHand(self, deathrattlesStayArmed=False)
+
+
+class Trig_ConqueringDreadlord(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.Game.summon([Lich(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                self.entity.ID)
+        PRINT(self.entity.Game,
+              f"At the end of your turn, Conquering Dreadlord summons a Lich.")
+
+
+class Trig_InvocationConqueringDreadlord(TrigInvocation):
+    def __init__(self, entity):
+        self.blank_init(entity, ["BurialRite"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
+               self.entity.Game.Counters.numBurialRiteThisGame[self.entity.ID] in [5, 7, 9]
+
+
+class Deathbringer_Crystallize(Amulet):
+    Class, race, name = "Shadowcraft", "", "Crystallize: Deathbringer"
+    mana = 2
+    index = "SV_Fortune~Shadowcraft~Amulet~2~None~Deathbringer~Countdown~Crystallize~Battlecry~Deathrattle~Uncollectible"
+    requireTarget, description = False, "Countdown (3) Fanfare and Last Words: Transform a random enemy follower into a Skeleton."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.counter = 3
+        self.trigsBoard = [Trig_Countdown(self)]
+        self.deathrattles = [Deathrattle_Deathbringer_Crystallize(self)]
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        curGame = self.Game
+        if curGame.mode == 0:
+            enemy = None
+            if curGame.guides:
+                i, where = curGame.guides.pop(0)
+                if where: enemy = curGame.find(i, where)
+            else:
+                chars = curGame.minionsAlive(3 - self.ID)
+                if chars:
+                    enemy = npchoice(chars)
+                    curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                else:
+                    curGame.fixedGuides.append((0, ''))
+            if enemy:
+                PRINT(self.Game,
+                      f"Crystallize: Deathbringer's Fanfare transforms {enemy.name} into a Skeleton.")
+                self.Game.transform(enemy, Skeleton(self.Game, 3 - self.ID))
+
+
+class Deathrattle_Deathbringer_Crystallize(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        curGame = self.entity.Game
+        if curGame.mode == 0:
+            PRINT(self.entity.Game, f"Last Words: Transform a random enemy follower into a Skeleton.")
+            enemy = None
+            if curGame.guides:
+                i, where = curGame.guides.pop(0)
+                if where: enemy = curGame.find(i, where)
+            else:
+                chars = curGame.minionsAlive(3 - self.entity.ID)
+                if chars:
+                    enemy = npchoice(chars)
+                    curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                else:
+                    curGame.fixedGuides.append((0, ''))
+            if enemy:
+                self.entity.Game.transform(enemy, Skeleton(self.entity.Game, 3 - self.entity.ID))
+
+
+class Deathbringer(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Deathbringer"
+    mana, attack, health = 9, 7, 7
+    index = "SV_Fortune~Shadowcraft~Minion~9~7~7~None~Deathbringer~Crystallize"
+    requireTarget, keyWord, description = False, "", "Crystallize (2): Countdown (3) Fanfare and Last Words: Transform a random enemy follower into a Skeleton.At the end of your turn, destroy 2 random enemy followers and restore 5 defense to your leader."
+    crystallizeAmulet = Deathbringer_Crystallize
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_Deathbringer(self)]
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] < self.mana:
+            return 2
+        else:
+            return self.mana
+
+    def willCrystallize(self):
+        curMana = self.Game.Manas.manas[self.ID]
+        return self.mana > curMana >= 2
+
+    def effectCanTrigger(self):
+        self.effectViable = "sky blue" if self.willCrystallize() else False
+
+
+class Trig_Deathbringer(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        curGame = self.entity.Game
+        if curGame.mode == 0:
+            for n in range(2):
+                enemy = None
+                if curGame.guides:
+                    i, where = curGame.guides.pop(0)
+                    if where: enemy = curGame.find(i, where)
+                else:
+                    chars = curGame.minionsAlive(3 - self.entity.ID)
+                    if chars:
+                        enemy = npchoice(chars)
+                        curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                    else:
+                        curGame.fixedGuides.append((0, ''))
+                if enemy:
+                    PRINT(self.entity.Game, f"At the end of your turn, Deathbringer destroys {enemy.name}")
+                    self.entity.Game.killMinion(self.entity, enemy)
+        PRINT(self.entity.Game, f"At the end of your turn, Deathbringer restore 5 defense to your leader.")
+        self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], 5)
+
 
 """Bloodcraft cards"""
 
@@ -2991,7 +3546,7 @@ class AlchemicalCraftschief_Token(SVMinion):
 class AlchemicalCraftschief(SVMinion):
     Class, race, name = "Runecraft", "", "Alchemical Craftschief"
     mana, attack, health = 8, 4, 4
-    index = "SV_Fortune~Runecraft~Minion~8~4~4~None~Alchemical Craftschief~Charge~Accelerate"
+    index = "SV_Fortune~Runecraft~Minion~8~4~4~None~Alchemical Craftschief~Ward~Accelerate"
     requireTarget, keyWord, description = True, "Taunt", "Accelerate (2): Summon an Earth Essence. Put a 7-play point Alchemical Craftschief (without Accelerate) into your hand and subtract X from its cost. X equals the number of allied Earth Sigil amulets in play.Ward.Fanfare: Deal 4 damage to an enemy."
     accelerateSpell = AlchemicalCraftschief_Accelerate
     attackAdd, healthAdd = 2, 2
@@ -3106,6 +3661,93 @@ class EternalWhale(SVMinion):
             ManaMod(card, changeby=0, changeto=1).applies()
 
 
+class ForcedResurrection(SVSpell):
+    Class, name = "Shadowcraft", "Forced Resurrection"
+    requireTarget, mana = True, 2
+    index = "SV_Fortune~Shadowcraft~Spell~2~Forced Resurrection"
+    description = "Destroy a follower. Both players perform Reanimate (3)."
+
+    def available(self):
+        return self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+            PRINT(self.Game, f"Forced Resurrection deals {damage} damage to enemy {target.name}")
+            self.dealsDamage(target, damage)
+            minion = self.Game.reanimate(self.ID, 3)
+            if minion:
+                PRINT(self.Game, f"Forced Resurrection summons {minion.name}")
+            minion = self.Game.reanimate(3 - self.ID, 3)
+            if minion:
+                PRINT(self.Game, f"Forced Resurrection summons {minion.name}")
+        return target
+
+
+class NephthysGoddessofAmenta(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Nephthys, Goddess of Amenta"
+    mana, attack, health = 6, 5, 5
+    index = "SV_Fortune~Shadowcraft~Minion~6~5~5~None~Nephthys, Goddess of Amenta~Battlecry~Enhance~Legendary"
+    requireTarget, keyWord, description = False, "", "Fanfare: Put 2 random followers of different costs (excluding Nephthys, Goddess of Amenta) from your deck into play and destroy them. Enhance (10): Then, if allied followers that originally cost 1, 2, 3, 4, 5, 6, 7, 8, 9, and 10 play points have been destroyed, win the match."
+    attackAdd, healthAdd = 2, 2
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] >= 10:
+            return 10
+        else:
+            return self.mana
+
+    def willEnhance(self):
+        return self.Game.Manas.manas[self.ID] >= 10
+
+    def effectCanTrigger(self):
+        self.effectViable = self.willEnhance()
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        minions = []
+        curGame = self.Game
+        if curGame.mode == 0:
+            for num in range(2):
+                if curGame.guides:
+                    i = curGame.guides.pop(0)
+                else:
+                    cards = [i for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]) if
+                             card.type == "Minion"]
+                    i = npchoice(cards) if cards and curGame.space(self.ID) > 0 else -1
+                    curGame.fixedGuides.append(i)
+                if i > -1:
+                    minion = curGame.summonfromDeck(i, self.ID, -1, self.ID)
+                    if minion:
+                        minions.append(minion)
+                else:
+                    break
+        for minion in minions:
+            self.Game.killMinion(self, minion)
+            PRINT(curGame, f"Nephthys, Goddess of Amenta summons {minion.name} and destroys it")
+        self.Game.gathertheDead()
+        if comment == 10:
+            indices = self.Game.Counters.minionsDiedThisGame[self.ID]
+            minions = {}
+            for index in indices:
+                try:
+                    minions[self.Game.cardPool[index].mana].append(self.Game.cardPool[index])
+                except:
+                    minions[self.Game.cardPool[index].mana] = [self.Game.cardPool[index]]
+            quest = True
+            for i in range(1, 11):
+                if i not in minions:
+                    quest = False
+            if quest:
+                self.Game.heroes[3 - self.ID].dead = True
+                self.Game.gathertheDead(True)
+        return None
+
+
 SV_Fortune_Indices = {
     "SV_Fortune~Neutral~Minion~2~5~5~None~Cloud Gigas~Taunt": CloudGigas,
     "SV_Fortune~Neutral~Spell~2~Sudden Showers": SuddenShowers,
@@ -3185,6 +3827,21 @@ SV_Fortune_Indices = {
     "SV_Fortune~Dragoncraft~Spell~4~Dragon Impact": DragonImpact,
     "SV_Fortune~Dragoncraft~Minion~10~11~8~None~XI. Erntz, Justice~Ward~Legendary": XIErntzJustice,
 
+    "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Ghostly Maid~Battlecry": GhostlyMaid,
+    "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Bonenanza Necromancer~Enhance~Battlecry": BonenanzaNecromancer,
+    "SV_Fortune~Shadowcraft~Spell~2~Savoring Slash": SavoringSlash,
+    "SV_Fortune~Shadowcraft~Amulet~2~None~Coffin of the Unknown Soul~Countdown~Battlecry~Last Words": CoffinoftheUnknownSoul,
+    "SV_Fortune~Shadowcraft~Minion~3~3~3~None~Spirit Curator~Battlecry": SpiritCurator,
+    "SV_Fortune~Shadowcraft~Amulet~1~None~Death Fowl~Countdown~Crystallize~Deathrattle~Uncollectible": DeathFowl_Crystallize,
+    "SV_Fortune~Shadowcraft~Minion~4~3~3~None~Death Fowl~Crystallize~Deathrattle": DeathFowl,
+    "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Soul Box~Battlecry": SoulBox,
+    "SV_Fortune~Shadowcraft~Minion~5~4~4~None~VI. Milteo, The Lovers~Battlecry~Deathrattle~Legendary": VIMilteoTheLovers,
+    "SV_Fortune~Shadowcraft~Amulet~2~None~Cloistered Sacristan~Countdown~Crystallize~Deathrattle~Uncollectible": CloisteredSacristan_Crystallize,
+    "SV_Fortune~Shadowcraft~Minion~6~5~5~None~Cloistered Sacristan~Taunt~Crystallize": CloisteredSacristan,
+    "SV_Fortune~Shadowcraft~Minion~8~6~6~None~Conquering Dreadlord~Invocation~Legendary": ConqueringDreadlord,
+    "SV_Fortune~Shadowcraft~Amulet~2~None~Deathbringer~Countdown~Crystallize~Battlecry~Deathrattle~Uncollectible": Deathbringer_Crystallize,
+    "SV_Fortune~Shadowcraft~Minion~9~7~7~None~Deathbringer~Crystallize": Deathbringer,
+
     "SV_Fortune~Neutral~Minion~5~3~5~None~Archangel of Evocation~Taunt~Battlecry": ArchangelofEvocation,
     "SV_Fortune~Forestcraft~Minion~3~1~5~None~Aerin, Forever Brilliant~Legendary": AerinForeverBrilliant,
     "SV_Fortune~Forestcraft~Minion~4~3~4~None~Furious Mountain Deity~Enhance~Battlecry": FuriousMountainDeity,
@@ -3196,8 +3853,11 @@ SV_Fortune_Indices = {
     "SV_Fortune~Runecraft~Minion~2~1~2~None~Runie, Resolute Diviner~Spellboost~Battlecry~Legendary": RunieResoluteDiviner,
     "SV_Fortune~Runecraft~Spell~2~Alchemical Craftschief~Accelerate~Uncollectible": AlchemicalCraftschief,
     "SV_Fortune~Runecraft~Minion~7~4~4~None~Alchemical Craftschief~Ward~Battlecry~Uncollectible": AlchemicalCraftschief,
-    "SV_Fortune~Runecraft~Minion~8~4~4~None~Alchemical Craftschief~Charge~Accelerate": AlchemicalCraftschief,
+    "SV_Fortune~Runecraft~Minion~8~4~4~None~Alchemical Craftschief~Ward~Accelerate": AlchemicalCraftschief,
     "SV_Fortune~Dragoncraft~Spell~2~Whitefrost Whisper~Uncollectible~Legendary": WhitefrostWhisper,
     "SV_Fortune~Dragoncraft~Minion~3~1~3~None~Filene, Absolute Zero~Battlecry~Legendary": FileneAbsoluteZero,
     "SV_Fortune~Dragoncraft~Minion~6~5~7~None~Eternal Whale~Ward": EternalWhale,
+    "SV_Fortune~Shadowcraft~Spell~2~Forced Resurrection": ForcedResurrection,
+    "SV_Fortune~Shadowcraft~Minion~6~5~5~None~Nephthys, Goddess of Amenta~Battlecry~Enhance~Legendary": NephthysGoddessofAmenta,
+
 }
