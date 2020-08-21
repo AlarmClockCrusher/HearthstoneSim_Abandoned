@@ -944,6 +944,7 @@ class Trig_Spellboost(TrigHand):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.progress += 1
+        self.entity.Game.Manas.calcMana_Single(self.entity)
 
 
 class Insight(SVSpell):
@@ -1153,8 +1154,7 @@ class FlameDestroyer(SVMinion):
 
     def selfManaChange(self):
         if self.inHand:
-            self.mana -= self.progress
-            self.mana = max(self.mana, 0)
+            self.mana = max(self.mana - self.progress, 0)
 
 
 """Dragoncraft cards"""
@@ -1811,7 +1811,7 @@ class AbyssBeast(SVMinion):
         self.effectViable = self.Game.isVengeance(self.ID)
 
     def targetExists(self, choice=0):
-        return self.selectableEnemyMinionExists()
+        return self.selectableEnemyMinionExists() and self.Game.isVengeance(self.ID)
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]

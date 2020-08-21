@@ -1808,6 +1808,7 @@ class Evocation(Spell):
 				spell = spell(curGame, self.ID)
 				trigger = Trig_Evocation(spell)
 				spell.trigsHand.append(trigger)
+				trigger.connect()
 				curGame.Hand_Deck.addCardtoHand(spell, self.ID)
 		return None
 		

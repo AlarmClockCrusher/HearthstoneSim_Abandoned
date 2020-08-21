@@ -932,7 +932,7 @@ class Minion(Card):
 			if "Max Damage" in self.marks and self.marks["Max Damage"] >= 0:
 				damage = min(damage, self.marks["Max Damage"])
 			if "Enemy Effect Damage Immune" in self.marks and self.marks[
-				"Enemy Effect Damage Immune"] > 0 and damageType == "ability":
+				"Enemy Effect Damage Immune"] > 0 and damageType == "Ability":
 				damage = 0
 			if "Bane" in subject.keyWords and subject.keyWords[
 				"Bane"] > 0 and damageType == "Battle" and self.onBoard:
@@ -1986,7 +1986,7 @@ class Hero(Card):
 			if "Max Damage" in self.marks and self.marks["Max Damage"] >= 0:
 				damage = min(damage, self.marks["Max Damage"])
 			if "Enemy Effect Damage Immune" in self.marks and self.marks[
-				"Enemy Effect Damage Immune"] > 0 and damageType == "ability":
+				"Enemy Effect Damage Immune"] > 0 and damageType == "Ability":
 				damage = 0
 			if damage > 0:
 				damageHolder = [damage]

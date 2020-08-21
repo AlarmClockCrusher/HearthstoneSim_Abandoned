@@ -350,12 +350,14 @@ class Hand_Deck:
 	def discardAll(self, ID):
 		if self.hands[ID]:
 			cards, cost, isRightmostCardinHand = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True)
+			n = len(cards)
 			for card in cards:
 				PRINT(self.Game, "Card %s in player's hand is discarded:" % card.name)
 				for func in card.triggers["Discarded"]: func()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.Counters.shadows[card.ID] += 1
-				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
+				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, -1, "")
+			self.Game.sendSignal("PlayerDiscardsHand", ID, None, None, n, "")
 			self.Game.Manas.calcMana_All()
 			
 	def discardCard(self, ID, card=None):
@@ -364,24 +366,26 @@ class Hand_Deck:
 				card = npchoice(self.hands[ID])
 				card, cost, isRightmostCardinHand = self.extractfromHand(card, enemyCanSee=True)
 				PRINT(self.Game, "Card %s in player's hand is discarded:" % card.name)
+				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 1, "")
 				for func in card.triggers["Discarded"]: func()
 				self.Game.Manas.calcMana_All()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.Counters.shadows[card.ID] += 1
 				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
-				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
+
 		else:  # Discard a chosen card.
 			i = card if isinstance(card, (int, np.int32, np.int64)) else self.hands[ID].index(card)
 			card = self.hands[ID].pop(i)
 			card.leavesHand()
 			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee=True)
 			PRINT(self.Game, "Card %s in player's hand is discarded:" % card.name)
+			self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 1, "")
 			for func in card.triggers["Discarded"]: func()
 			self.Game.Manas.calcMana_All()
 			self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 			self.Game.Counters.shadows[card.ID] += 1
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
-			self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
+
 			
 	# 只能全部拿出手牌中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
 	def extractfromHand(self, card, ID=0, all=False, enemyCanSee=False):
@@ -454,38 +458,19 @@ class Hand_Deck:
 			
 			
 Default1 = [
-ErnestaWeaponsHawker,
-DreadHound,
-PompousSummons,
-DecisiveStrike,
-HonorableThief,
-ShieldPhalanx,
-FortressGuard,
-EmpressofSerenity,
 VIIOluonTheChariot,
-VIIOluonRunawayChariot,
-PrudentGeneral,
-StrikelanceKnight,
-DiamondPaladin,
-SelflessNoble,
-IlmisunaDiscordHawker,
-AlyaskaWarHawker,
-ErnestaWeaponsHawker,
-DreadHound,
-PompousSummons,
-DecisiveStrike,
-HonorableThief,
-ShieldPhalanx,
-FortressGuard,
-EmpressofSerenity,
 VIIOluonTheChariot,
-VIIOluonRunawayChariot,
-PrudentGeneral,
-StrikelanceKnight,
-DiamondPaladin,
-SelflessNoble,SelflessNoble,SelflessNoble,SelflessNoble,SelflessNoble,SelflessNoble,SelflessNoble,
-IlmisunaDiscordHawker,
-AlyaskaWarHawker,
+VIIOluonTheChariot,
+VIIOluonTheChariot,
+VIIOluonTheChariot,
+VIIOluonTheChariot,
+VIIOluonTheChariot,
+	PureshotAngel,
+	PureshotAngel,
+	PureshotAngel,
+	PureshotAngel,
+	PureshotAngel,
+	PureshotAngel,
 			]
 			
 Default2 = [Goblin,

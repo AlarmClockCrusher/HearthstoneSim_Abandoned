@@ -88,6 +88,7 @@ def findPicFilepath(card):
 	if "Accelerate" in name: name = name.replace("_Accelerate","")
 	if "Crystallize" in name: name = name.replace("_Crystallize","")
 	if "_Amulet" in name: name = name.replace("_Amulet","")
+	if "_Token" in name: name = name.replace("_Token","")
 	filepath = path + "%s.png"%name
 	return filepath
 	
@@ -111,6 +112,7 @@ def findPicFilepath_FullImg(card):
 	if "Accelerate" in name: name = name.replace("_Accelerate","")
 	if "Crystallize" in name: name = name.replace("_Crystallize","")
 	if "_Amulet" in name: name = name.replace("_Amulet","")
+	if "_Token" in name: name = name.replace("_Token", "")
 	filepath = path+"%s.png"%name
 	return filepath
 	
@@ -149,7 +151,7 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			if card.index.startswith("SV_") and hasattr(card, "fusion"):
 				self.bind("<Double-Button-1>", lambda event: game.Discover.startFusion(card, card.findFusionMaterials()))
 			#Info bookkeeping
-			self.cardInfo, self.mana = type(card), card.mana
+			self.cardInfo, self.mana = type(card), card.getMana()
 			if card.type == "Minion": self.attack, self.health = card.attack, card.health
 			elif card.type == "Weapon": self.attack, self.health = card.attack, card.durability
 			else: self.attack, self.health = 0, 0
@@ -206,7 +208,7 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		self.place(x=x, y=y, anchor='c')
 		if not hasattr(self.GUI, "ID") or seeEnemyHand or self.GUI.ID == card.ID:
 			CardLabel(btn=self, text=self.GUI.wrapText(card.name), fg="black").plot(x=x, y=y-CARD_Y/2)
-			CardLabel(btn=self, text=str(card.mana), fg="black").plot(x=x-0.39*CARD_X, y=y-0.22*CARD_Y)
+			CardLabel(btn=self, text=str(card.getMana()), fg="black").plot(x=x-0.39*CARD_X, y=y-0.22*CARD_Y)
 			#Minions and weapons have stats
 			if card.type == "Minion":
 				attack, attack_Enchant, health, health_max = card.attack, card.attack_Enchant, card.health, card.health_max
@@ -244,7 +246,7 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			self.configure(width=HandIconWidth)
 			self.configure(height=HandIconHeight)
 			CardLabel(btn=self, text=self.GUI.wrapText(card.name), fg="black").plot(x=self.x, y=self.y-CARD_Y/2)
-			CardLabel(btn=self, text=str(card.mana), fg="black").plot(x=self.x-0.39*CARD_X, y=self.y-0.22*CARD_Y)
+			CardLabel(btn=self, text=str(card.getMana()), fg="black").plot(x=self.x-0.39*CARD_X, y=self.y-0.22*CARD_Y)
 			#Minions and weapons have stats
 			if card.type == "Minion":
 				attack, attack_Enchant, health, health_max = card.attack, card.attack_Enchant, card.health, card.health_max
@@ -277,7 +279,7 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		
 	def represents(self, card):
 		if not hasattr(self.GUI, "ID") or seeEnemyHand or self.GUI.ID == card.ID: #If UI shows it
-			if not isinstance(card, self.cardInfo) or self.mana != card.mana: return False
+			if not isinstance(card, self.cardInfo) or self.mana != card.getMana(): return False
 			if card.type == "Minion": attack, health = card.attack, card.health
 			elif card.type == "Weapon": attack, health = card.attack, card.durability
 			else: attack, health = 0, 0

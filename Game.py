@@ -88,6 +88,11 @@ class Game:
 		if target: return [amulet for amulet in self.minions[ID] if amulet.type != "Dormant" and amulet.onBoard and amulet != target]
 		else: return [amulet for amulet in self.minions[ID] if amulet.type != "Dormant" and amulet.onBoard]
 
+	def earthsonBoard(self, ID, target=None):
+		if target: return [amulet for amulet in self.minions[ID] if amulet.type == "Amulet" and amulet.onBoard and "Earth Sigil" in amulet.race and amulet != target]
+		else: return [amulet for amulet in self.minions[ID] if amulet.type == "Amulet" and amulet.onBoard and "Earth Sigil" in amulet.race]
+
+
 	def neighbors2(self, target, countDormants=False):
 		targets, ID, pos, i = [], target.ID, target.position, 0
 		while pos > 0:
@@ -524,6 +529,15 @@ class Game:
 	def restoreEvolvePoint(self, ID, number=1):
 		if self.heroes[ID].heroPower.name == "Evolve":
 			self.Counters.numEvolutionPoint[ID] = min(1 + ID, self.Counters.numEvolutionPoint[ID] + number)
+
+	def earthRite(self, subject, ID, number=1):
+		earths = self.earthsonBoard(ID)
+		if len(earths) >= number:
+			for i in range(number):
+				self.killMinion(subject, earths[i])
+				self.gathertheDead()
+			return True
+		return False
 
 	#The leftmost minion has position 0. Consider Dormant
 	def rearrangePosition(self):
