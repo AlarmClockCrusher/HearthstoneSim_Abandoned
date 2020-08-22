@@ -3362,7 +3362,7 @@ class Darkglare(Minion):
 		
 class Trig_Darkglare(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroTookDamage"])
+		self.blank_init(entity, ["HeroTookDmg"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity.Game.heroes[self.entity.ID]

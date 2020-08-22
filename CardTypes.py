@@ -966,7 +966,7 @@ class Minion(Card):
 					for func in self.triggers["StatChanges"]: func()
 			else:
 				game.sendSignal("MinionTakes0Dmg", game.turn, subject, self, 0, "")
-				game.sendSignal("MinionTook0Damage", game.turn, subject, self, 0, "")
+				game.sendSignal("MinionTook0Dmg", game.turn, subject, self, 0, "")
 		else:
 			damage = 0
 		return damage
@@ -2010,7 +2010,7 @@ class Hero(Card):
 					game.Counters.damageonHeroThisTurn[self.ID] += damage
 					if sendDamageSignal:
 						game.sendSignal("HeroTakesDmg", game.turn, subject, self, damage, "")
-						game.sendSignal("HeroTookDamage", game.turn, subject, self, damage, "")
+						game.sendSignal("HeroTookDmg", game.turn, subject, self, damage, "")
 					if game.turn == self.ID:
 						game.Counters.timesHeroChangedHealth_inOwnTurn[self.ID] += 1
 						game.Counters.timesHeroTookDamage_inOwnTurn[self.ID] += 1
@@ -2018,7 +2018,7 @@ class Hero(Card):
 						game.sendSignal("HeroChangedHealthinTurn", self.ID, None, None, 0, "")
 			else:
 				game.sendSignal("HeroTakes0Dmg", game.turn, subject, self, 0, "")
-				game.sendSignal("HeroTook0Damage", game.turn, subject, self, 0, "")
+				game.sendSignal("HeroTook0Dmg", game.turn, subject, self, 0, "")
 		else:
 			damage = 0
 		return damage

@@ -142,10 +142,10 @@ class FieranHavensentWindGod(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.getEvolutionPoint(self.ID) > self.Game.getEvolutionPoint(3 - self.ID):
             self.buffDebuff(0, 2)
-            PRINT(self, f"Fieran, Havensent Wind God's Fanfare gives itself +0/+2.")
+            PRINT(self.Game, f"Fieran, Havensent Wind God's Fanfare gives itself +0/+2.")
             if target:
                 if isinstance(target, list): target = target[0]
-                PRINT(self, f"Fieran, Havensent Wind God deals 2 damage to minion {target.name}")
+                PRINT(self.Game, f"Fieran, Havensent Wind God deals 2 damage to minion {target.name}")
                 self.dealsDamage(target, 2)
         return None
 
@@ -233,7 +233,7 @@ class XXIZelgeneaTheWorld(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.heroes[self.ID].health < 15:
             self.restoresHealth(self.Game.heroes[self.ID], 5)
-            PRINT(self, f"XXI. Zelgenea, The World restores 5 Health to its leader.")
+            PRINT(self.Game, f"XXI. Zelgenea, The World restores 5 Health to its leader.")
             curGame = self.Game
             if curGame.mode == 0:
                 if curGame.guides:
@@ -251,7 +251,7 @@ class XXIZelgeneaTheWorld(SVMinion):
                     curGame.fixedGuides.append(i)
                 if i > -1:
                     self.Game.killMinion(self, curGame.minions[3 - self.ID][i])
-                    PRINT(self, f"XXI. Zelgenea, The World destroys {target.name}.")
+                    PRINT(self.Game, f"XXI. Zelgenea, The World destroys {target.name}.")
             self.Game.Hand_Deck.drawCard(self.ID)
             self.Game.Hand_Deck.drawCard(self.ID)
             PRINT(self.Game, f"XXI. Zelgenea, The World draw two cards.")
@@ -1259,7 +1259,7 @@ class FrontguardGeneral(SVMinion):
 
 class Deathrattle_FrontguardGeneral(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        PRINT(self, "Last Words: Summon a Fortress Guard.")
+        PRINT(self.entity.Game, "Last Words: Summon a Fortress Guard.")
         self.entity.Game.summon([FortressGuard(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
                                 self.entity.ID)
 
@@ -1507,7 +1507,7 @@ class DiamondPaladin(SVMinion):
     def inHandEvolving(self, target=None):
         if target:
             target.buffDebuff(-4, 0)
-            PRINT(self, f"Diamond Paladin's Fanfare give {target.name} -4/-0.")
+            PRINT(self.Game, f"Diamond Paladin's Fanfare give {target.name} -4/-0.")
         return
 
     def extraTargetCorrect(self, target, affair):
@@ -3374,17 +3374,17 @@ class Trig_EndContemptousDemon(TrigBoard):
 
 class Trig_EvolvedContemptousDemon(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["HeroTookDamage", "TurnEnds"])
+        self.blank_init(entity, ["HeroTookDmg","HeroTook0Dmg", "TurnEnds"])
         self.counter = 10
 
     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-        if signal == "HeroTookDamage":
+        if signal != "TurnEnds":
             return self.entity.onBoard and target == self.entity.Game.heroes[self.entity.ID] and ID == self.entity.ID
         else:
             return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        if signal == "HeroTookDamage":
+        if signal != "TurnEnds":
             curGame = self.entity.Game
             if curGame.mode == 0 and self.counter > 0:
                 enemy = None
@@ -3476,13 +3476,14 @@ class CurmudgeonOgre(SVMinion):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        n = 1
         if comment == 6:
-            n = 2
-        PRINT(self.Game, f"Curmudgeon Ogre's Fanfare gives +{n}/+{n} to all allied Bloodcraft followers")
-        for minion in fixedList(self.Game.minionsonBoard(self.ID, self)):
-            if minion.Class == "Bloodcraft":
-                minion.buffDebuff(n, n)
+            n = 1
+            if self.Game.isVengeance(self.ID):
+                n = 2
+            PRINT(self.Game, f"Curmudgeon Ogre's Fanfare gives +{n}/+{n} to all allied Bloodcraft followers")
+            for minion in fixedList(self.Game.minionsonBoard(self.ID, self)):
+                if minion.Class == "Bloodcraft":
+                    minion.buffDebuff(n, n)
         return target
 
 
@@ -3494,12 +3495,12 @@ class DireBond(Amulet):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.trigsBoard = [Trig_Countdown(self), Trig_DireBond(self)]
         self.counter = 3
+        self.trigsBoard = [Trig_Countdown(self), Trig_DireBond(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.dealsDamage(self.Game.heroes[self.ID], 6)
-        PRINT(self, f"Dire Bond 's Fanfare deals 6 damage to player")
+        PRINT(self.Game, f"Dire Bond 's Fanfare deals 6 damage to player")
 
 
 class Trig_DireBond(TrigBoard):
@@ -3523,13 +3524,13 @@ class DarholdAbyssalContract(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def returnTrue(self, choice=0):
-        return self.Game.isWrath() and not self.targets
+        return self.Game.isWrath(self.ID) and not self.targets
 
     def effectCanTrigger(self):
-        self.effectViable = self.Game.isWrath()
+        self.effectViable = self.Game.isWrath(self.ID)
 
     def targetExists(self, choice=0):
-        return self.selectableEnemyMinionExists() and self.Game.isWrath()
+        return self.selectableEnemyMinionExists() and self.Game.isWrath(self.ID)
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
@@ -3538,7 +3539,7 @@ class DarholdAbyssalContract(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            PRINT(self,
+            PRINT(self.Game,
                   f"Darhold, Abyssal Contract 's Fanfare destroys {target.name}, then deal 3 damage to the enemy leader.")
             self.Game.killMinion(self, target)
             self.dealsDamage(self.Game.heroes[3 - self.ID], 3)
@@ -3548,7 +3549,7 @@ class DarholdAbyssalContract(SVMinion):
         self.dealsDamage(self.Game.heroes[self.ID], 3)
         self.Game.summon([DireBond(self.Game, self.ID)], (-1, "totheRightEnd"),
                          self.ID)
-        PRINT(self, f"Darhold, Abyssal Contract 's Evolve deals 3 damage to your leader and summons a Dire Bond.")
+        PRINT(self.Game, f"Darhold, Abyssal Contract 's Evolve deals 3 damage to your leader and summons a Dire Bond.")
 
 
 class BurningConstriction(SVSpell):
@@ -3646,9 +3647,9 @@ class UnselfishGrace(Amulet):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.trigsBoard = [Trig_Countdown(self), Trig_DireBond(self)]
-        self.deathrattles = [Deathrattle_UnselfishGrace(self)]
         self.counter = 5
+        self.trigsBoard = [Trig_Countdown(self), Trig_UnselfishGrace(self)]
+        self.deathrattles = [Deathrattle_UnselfishGrace(self)]
 
 
 class Trig_UnselfishGrace(TrigBoard):
@@ -3700,7 +3701,7 @@ class Trig_InsatiableDesire(TrigBoard):
         PRINT(self.entity.Game,
               "At the start of your turn, draw a card and lose 1 play point")
         self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
-        self.entity.Game.Manas.payManaCost(None, 1)
+        self.entity.Game.Manas.payManaCost(self.entity, 1)
 
 
 class XIVLuzenTemperance_Accelerate(SVSpell):
@@ -3711,13 +3712,13 @@ class XIVLuzenTemperance_Accelerate(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isAvarice(self.ID):
-            self.Game.Hand_Deck.addCardtoHand(UnselfishGrace(self.Game, self.ID), self.ID)
-            PRINT(self.Game,
-                  "XIV. Luzen, Temperance, as a spell, puts an Unselfish Grace into your hand.")
-        else:
             self.Game.Hand_Deck.addCardtoHand(InsatiableDesire(self.Game, self.ID), self.ID)
             PRINT(self.Game,
                   "XIV. Luzen, Temperance, as a spell, puts an Insatiable Desire into your hand.")
+        else:
+            self.Game.Hand_Deck.addCardtoHand(UnselfishGrace(self.Game, self.ID), self.ID)
+            PRINT(self.Game,
+                  "XIV. Luzen, Temperance, as a spell, puts an Unselfish Grace into your hand.")
         return None
 
 
@@ -3796,7 +3797,7 @@ class BuffAura_XIVLuzenTemperance(AuraDealer_toMinion):
 
 class Trig_XIVLuzenTemperance(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["HeroTookDamage"])
+        self.blank_init(entity, ["HeroTookDmg","HeroTook0Dmg"])
 
     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and target == self.entity.Game.heroes[self.entity.ID]
@@ -4038,7 +4039,7 @@ class IlmisunaDiscordHawker(SVMinion):
     def inHandEvolving(self, target=None):
         if target:
             self.dealsDamage(target, len(self.Game.minionsonBoard[self.ID]))
-            PRINT(self,
+            PRINT(self.Game,
                   f"Ilmisuna, Discord Hawker's Evolve deals {len(self.Game.minionsonBoard[self.ID])} damage to {target.name} -4/-0.")
         return
 
@@ -4465,7 +4466,7 @@ class Baal(SVMinion):
                 card.type == "Minion" and card != self and card.Class == "Bloodcraft" and type(card).mana <= 3]
 
     def effectCanTrigger(self):
-        self.effectViable = self.fusionMaterials >= 2
+        self.effectViable = self.fusionMaterials >= 3
 
     def fusionDecided(self, objs):
         if objs:
