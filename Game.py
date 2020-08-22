@@ -513,6 +513,12 @@ class Game:
 	def isVengeance(self, ID):
 		return self.heroes[ID].health <= 10 or self.Counters.tempVengeance[ID]
 
+	def isAvarice(self, ID):
+		return self.Counters.numCardsExtraDrawThisTurn[ID] > 0
+
+	def isWrath(self, ID):
+		return self.Counters.timesHeroTookDamage_inOwnTurn[ID] >= 7
+
 	def isResonance(self, ID):
 		return len(self.Hand_Deck.decks[ID]) % 2 == 0
 

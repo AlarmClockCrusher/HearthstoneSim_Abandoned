@@ -664,7 +664,7 @@ class Minion(Card):
 					  "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
 					  "Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0, "Disappear When Die": 0,
 					  "Next damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0,
-					  "Max Damage": -1
+					  "Max Damage": []
 					  }
 		# Temp effects that vanish at certain points.
 		self.status = {"Immune": 0, "Frozen": 0, "Temp Stealth": 0, "Borrowed": 0,
@@ -929,8 +929,13 @@ class Minion(Card):
 			if "Next damage 0" in self.marks and self.marks["Next damage 0"] > 0:
 				damage = 0
 				self.marks["Next damage 0"] = 0
-			if "Max Damage" in self.marks and self.marks["Max Damage"] >= 0:
-				damage = min(damage, self.marks["Max Damage"])
+			if "Max Damage" in self.marks and self.marks["Max Damage"]:
+				if "Max Damage" in self.marks and self.marks["Max Damage"]:
+					mini = 100
+					for m in self.marks["Max Damage"]:
+						if m < mini:
+							mini = m
+					damage = min(damage, mini)
 			if "Enemy Effect Damage Immune" in self.marks and self.marks[
 				"Enemy Effect Damage Immune"] > 0 and damageType == "Ability":
 				damage = 0
@@ -1883,7 +1888,7 @@ class Hero(Card):
 		self.heroPower = type(self).heroPower(self.Game, self.ID) if type(self).heroPower else None
 		self.keyWords = {"Poisonous": 0} #Just as a placeholder
 		self.marks={"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
-					"Can't Be Attacked": 0, "Next damage 0": 0, "Max Damage": -1}
+					"Can't Be Attacked": 0, "Next damage 0": 0, "Max Damage": []}
 		self.status = {"Frozen": 0, "Temp Stealth": 0, "Draw to Win": 0}
 		self.triggers = {"Discarded": []}
 		self.identity = [np.random.rand(), np.random.rand()]
@@ -1983,8 +1988,12 @@ class Hero(Card):
 			if "Next damage 0" in self.marks and self.marks["Next damage 0"] > 0:
 				damage = 0
 				self.marks["Next damage 0"] = 0
-			if "Max Damage" in self.marks and self.marks["Max Damage"] >= 0:
-				damage = min(damage, self.marks["Max Damage"])
+			if "Max Damage" in self.marks and self.marks["Max Damage"]:
+				mini = 100
+				for m in self.marks["Max Damage"]:
+					if m < mini:
+						mini = m
+				damage = min(damage, mini)
 			if "Enemy Effect Damage Immune" in self.marks and self.marks[
 				"Enemy Effect Damage Immune"] > 0 and damageType == "Ability":
 				damage = 0

@@ -477,9 +477,10 @@ class Amulet(Dormant):
         if self.counter > 0:
             self.counter = max(0, self.counter - number)
             if number > 0:
-                self.Game.sendSignal(self, "Countdown", self.ID, subject, self, number, "")
-            else:
-                self.Game.sendSignal(self, "Countup", self.ID, subject, self, -number, "")
+                self.Game.sendSignal("Countdown", self.ID, subject, self, number, "")
+        for trig in self.trigsBoard:
+            if type(trig).__name__ == "Trig_Countdown":
+                trig.counter = self.counter
         if self.counter == 0:
             PRINT(self.Game, f"{self.name}'s countdown is 0 and destroys itself")
             self.Game.killMinion(None, self)

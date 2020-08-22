@@ -876,7 +876,7 @@ class SageCommander(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Sage Commander's Fanfare gives +1/+1 to all allied followers")
-        for minion in fixedList(self.Game.minionsonBoard(self.ID)):
+        for minion in fixedList(self.Game.minionsonBoard(self.ID, self)):
             minion.buffDebuff(1, 1)
         return None
 
@@ -1389,7 +1389,7 @@ class Conflagration(SVSpell):
 class Skeleton(SVMinion):
     Class, race, name = "Shadowcraft", "", "Skeleton"
     mana, attack, health = 1, 1, 1
-    index = "SV_Basic~Shadowcraft~Minion~2~2~2~None~Skeleton~Uncollectible"
+    index = "SV_Basic~Shadowcraft~Minion~1~1~1~None~Skeleton~Uncollectible"
     requireTarget, keyWord, description = False, "", ""
     attackAdd, healthAdd = 2, 2
 
@@ -1613,7 +1613,7 @@ class Deathrattle_GhostlyRider(Deathrattle_Minion):
             if curGame.guides:
                 i = curGame.guides.pop(0)
             else:
-                minions = [minion.position for minion in curGame.minionsonBoard(self.entity.ID)]
+                minions = [minion.position for minion in curGame.minionsAlive(self.entity.ID)]
                 i = npchoice(minions) if minions else -1
                 curGame.fixedGuides.append(i)
             if i > -1:
@@ -1643,6 +1643,14 @@ class Deathrattle_UndeadKing(Deathrattle_Minion):
 
 
 """Bloodcraft cards"""
+
+
+class ForestBat(SVMinion):
+    Class, race, name = "Bloodcraft", "", "Forest Bat"
+    mana, attack, health = 1, 1, 1
+    index = "SV_Basic~Shadowcraft~Minion~1~1~1~None~Fores tBat~Uncollectible"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
 
 
 class Nightmare(SVMinion):
@@ -1861,18 +1869,15 @@ class HolywingDragon(SVMinion):
 
 class Trig_Countdown(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts", "Countdown", "Countup"])
+        self.blank_init(entity, ["TurnStarts"])
         self.counter = self.entity.counter
 
     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-        return self.entity.onBoard and (signal != "TurnStarts" or ID == self.entity.ID)
+        return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.counter = self.entity.counter
-        if signal == "TurnStarts":
-            PRINT(self.entity.Game, f"At the start of turn, {self.entity.name}'s countdown -1")
-            self.entity.countdown(self.entity, 1)
-            self.counter = self.entity.counter
+        PRINT(self.entity.Game, f"At the start of turn, {self.entity.name}'s countdown -1")
+        self.entity.countdown(self.entity, 1)
 
 
 class SummonPegasus(Amulet):
@@ -2456,6 +2461,7 @@ SV_Basic_Indices = {
     "SV_Basic~Dragoncraft~Minion~6~5~6~None~Dragonguard": Dragonguard,
     "SV_Basic~Dragoncraft~Minion~7~4~4~None~Dread Dragon~Battlecry": DreadDragon,
     "SV_Basic~Dragoncraft~Spell~7~Conflagration": Conflagration,
+    "SV_Basic~Shadowcraft~Minion~1~1~1~None~Skeleton~Uncollectible": Skeleton,
     "SV_Basic~Shadowcraft~Minion~2~2~2~None~Zombie~Uncollectible": Zombie,
     "SV_Basic~Shadowcraft~Minion~4~4~4~None~Lich~Uncollectible": Lich,
     "SV_Basic~Shadowcraft~Minion~1~1~1~None~Ghost~Charge~Uncollectible": Ghost,
@@ -2470,6 +2476,7 @@ SV_Basic_Indices = {
     "SV_Basic~Shadowcraft~Minion~5~3~3~None~Gravewaker~Deathrattle": Gravewaker,
     "SV_Basic~Shadowcraft~Minion~6~5~5~None~Ghostly Rider~Deathrattle": GhostlyRider,
     "SV_Basic~Shadowcraft~Minion~7~4~4~None~Undead King~Deathrattle": UndeadKing,
+    "SV_Basic~Shadowcraft~Minion~1~1~1~None~Fores tBat~Uncollectible": ForestBat,
     "SV_Basic~Bloodcraft~Minion~2~2~2~None~Nightmare~Battlecry": Nightmare,
     "SV_Basic~Bloodcraft~Minion~2~1~3~None~Sweetfang Vampire~Drain": SweetfangVampire,
     "SV_Basic~Bloodcraft~Spell~2~Blood Pact": BloodPact,
