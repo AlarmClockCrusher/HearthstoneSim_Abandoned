@@ -94,7 +94,7 @@ class GUI_Common:
 			for btn in reversed(self.btnsDrawn):
 				if isinstance(btn, ChooseOneButton): btn.remove()
 			self.resetCardColors()
-			for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
+			for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2] + [self.Game.powers[1]] + [self.Game.powers[2]]:
 				if hasattr(card, "targets"): card.targets = []
 				
 	def wrapText(self, text, lengthLimit=10):
@@ -222,8 +222,11 @@ class GUI_Common:
 								self.highlightTargets(entity.findTargets("", self.choice)[0])
 				#不需目标的英雄技能当即使用。需要目标的进入目标选择界面。暂时不用考虑技能的抉择
 				elif selectedSubject == "Power":
+					if entity.name == "Evolve":
+						self.selectedSubject = "Power"
+						game.Discover.startSelect(entity, entity.findTargets("")[0])
 					#英雄技能会自己判定是否可以使用。
-					if entity.needTarget(): #selectedSubject之前是"Hero Power 1"或者"Hero Power 2"
+					elif entity.needTarget(): #selectedSubject之前是"Hero Power 1"或者"Hero Power 2"
 						self.selectedSubject = "Power"
 						self.highlightTargets(entity.findTargets("", self.choice)[0])
 					else:
@@ -401,6 +404,7 @@ class GUI_Common:
 					{"Minion": lambda : game.playMinion(subject, target, position, choice),
 					"Spell": lambda : game.playSpell(subject, target, choice),
 					"Amulet": lambda : game.playAmulet(subject, target, choice),
+					"Power": lambda : subject.use(target, choice),
 					}[subject.type]()
 					self.update()
 			elif selectedSubject == "Fusion":

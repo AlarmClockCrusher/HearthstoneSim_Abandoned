@@ -39,45 +39,6 @@ ClassesandNeutral = ["Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin
                      "Shadowcraft", "Bloodcraft", "Havencraft", "Portalcraft"]
 
 
-class Evolve(HeroPower):
-    mana, name, requireTarget = 0, "Evolve", True
-    index = "SV_Basic~Hero Power~0~Evolve"
-    description = "Evolve an unevolved friendly minion."
-
-    def available(self):
-        if self.selectableFriendlyMinionExists() and self.heroPowerTimes < self.heroPowerChances_base + \
-                self.heroPowerChances_extra and \
-                self.Game.Counters.turns[self.ID] >= \
-                self.Game.Counters.numEvolutionTurn[self.ID]:
-            if self.Game.Counters.numEvolutionPoint[self.ID] > 0:
-                return True
-            else:
-                hasFree = False
-                for minion in self.Game.minionsAlive(self.ID):
-                    if isinstance(minion, SVMinion) and minion.keyWords["Free Evolve"] > 0:
-                        hasFree = True
-                        break
-                return hasFree
-        return False
-
-    def targetCorrect(self, target, choice=0):
-        if target.type == "Minion" and target.ID == self.ID and target.onBoard \
-                and isinstance(target, SVMinion) and target.status["Evolved"] < 1 \
-                and target.marks["Can't Evolve"] == 0:
-            if self.Game.Counters.numEvolutionPoint[self.ID] == 0:
-                return target.marks["Free Evolve"] > 0
-            else:
-                return True
-        return False
-
-    def effect(self, target, choice=0):
-        if target.marks["Free Evolve"] < 1:
-            self.Game.Counters.numEvolutionPoint[self.ID] -= 1
-        target.evolve()
-        target.inHandEvolving()
-        return 0
-
-
 class Arisa(Hero):
     Class, name, heroPower = "Forestcraft", "Erika", Evolve
 
@@ -528,14 +489,21 @@ class RoseGardener(SVMinion):
     index = "SV_Basic~Forestcraft~Minion~4~4~3~None~Rose Gardener"
     requireTarget, keyWord, description = False, "", ""
     attackAdd, healthAdd = 1, 1
+    evolveRequireTarget = True
 
-    # TODO need target
+    def evolveTargetExists(self, choice=0):
+        return self.selectableEnemyMinionExists() or self.selectableEnemyMinionExists()
+
+    def evolveTargetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.onBoard and target != self
 
     def inHandEvolving(self, target=None):
-        if isinstance(target, list): target = target[0]
-        if target and target.onBoard:
-            PRINT(self.Game, f"Rose Gardener's Evolve returns {target.name} to owner's hand.")
-            self.Game.returnMiniontoHand(target, deathrattlesStayArmed=False)
+        if target:
+            if isinstance(target, list): target = target[0]
+            if target.onBoard:
+                PRINT(self.Game, f"Rose Gardener's Evolve returns {target.name} to owner's hand.")
+                self.Game.returnMiniontoHand(target, deathrattlesStayArmed=False)
 
 
 class Treant(SVMinion):
@@ -799,7 +767,7 @@ class WhiteGeneral(SVMinion):
 
     def targetExists(self, choice=0):
         for minion in self.Game.minionsAlive(self.ID):
-            if "Officer" in minion.race:
+            if "Officer" in minion.race and self.canSelect(minion):
                 return True
         return False
 
@@ -1754,8 +1722,14 @@ class WardrobeRaider(SVMinion):
     index = "SV_Basic~Bloodcraft~Minion~4~3~4~None~Wardrobe Raider"
     requireTarget, keyWord, description = False, "", ""
     attackAdd, healthAdd = 1, 1
+    evolveRequireTarget = True
 
-    # TODO need target
+    def evolveTargetExists(self, choice=0):
+        return self.selectableEnemyMinionExists()
+
+    def evolveTargetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.onBoard and target.ID != self.ID
 
     def inHandEvolving(self, target=None):
         if isinstance(target, list): target = target[0]
@@ -2003,8 +1977,17 @@ class PriestoftheCudgel(SVMinion):
     index = "SV_Basic~Havencraft~Minion~4~3~4~None~Priest of the Cudgel"
     requireTarget, keyWord, description = False, "", ""
     attackAdd, healthAdd = 1, 1
+    evolveRequireTarget = True
 
-    # TODO need target
+    def evolveTargetExists(self, choice=0):
+        for minion in self.Game.minionsAlive(3 - self.ID):
+            if minion.health <= 3 and self.canSelect(minion):
+                return True
+        return False
+
+    def evolveTargetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.onBoard and target.ID != self.ID and target.health <= 3
 
     def inHandEvolving(self, target=None):
         if isinstance(target, list): target = target[0]
@@ -2334,8 +2317,14 @@ class RoanWingedNexx(SVMinion):
     index = "SV_Basic~Portalcraft~Minion~4~3~4~None~Roan Winged Nexx"
     requireTarget, keyWord, description = False, "", ""
     attackAdd, healthAdd = 2, 2
+    evolveRequireTarget = True
 
-    # TODO need target
+    def evolveTargetExists(self, choice=0):
+        return self.selectableEnemyMinionExists() and self.Game.isResonance(self.ID)
+
+    def evolveTargetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.onBoard and target.ID != self.ID
 
     def inHandEvolving(self, target=None):
         if self.Game.isResonance(self.ID):

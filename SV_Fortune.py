@@ -123,10 +123,6 @@ class FieranHavensentWindGod(SVMinion):
         self.trigsBoard = [Trig_FieranHavensentWindGod(self)]
         self.trigsDeck = [Trig_InvocationFieranHavensentWindGod(self)]
 
-    def returnTrue(self, choice=0):
-        return self.Game.getEvolutionPoint(
-            self.ID) > self.Game.getEvolutionPoint(3 - self.ID) and not self.targets
-
     def effectCanTrigger(self):
         self.effectViable = self.Game.getEvolutionPoint(
             self.ID) > self.Game.getEvolutionPoint(3 - self.ID)
@@ -811,9 +807,6 @@ class Terrorformer(SVMinion):
         self.fusion = 1
         self.fusionMaterials = 0
 
-    def returnTrue(self, choice=0):  # 需要targets里面没有目标，且有3个融合素材
-        return not self.targets and self.fusionMaterials >= 4
-
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
         return self.fusionMaterials >= 4 and target.type == "Minion" and target.ID != self.ID and target.onBoard and "Taunt" not in target.race
@@ -972,9 +965,6 @@ class LionelWoodlandShadow(SVMinion):
 
     def effectCanTrigger(self):
         self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
-
-    def returnTrue(self, choice=0):
-        return not self.targets
 
     def available(self):
         if self.willAccelerate():
@@ -1161,11 +1151,6 @@ class DecisiveStrike(SVSpell):
 
     def effectCanTrigger(self):
         self.effectViable = self.willEnhance()
-
-    def returnTrue(self, choice=0):
-        if self.willEnhance():
-            return False
-        return not self.targets
 
     def targetExists(self, choice=0):
         if self.willEnhance():
@@ -1480,12 +1465,18 @@ class DiamondPaladin(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~6~4~5~Commander~Diamond Paladin~Battlecry~Rush~Legendary"
     requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: Enhance (8) - Gain the ability to evolve for 0 evolution points.During your turn, whenever this follower attacks and destroys an enemy follower, if this follower is not destroyed, recover 2 play points and gain the ability to attack 2 times this turn."
     attackAdd, healthAdd = 2, 2
-
-    # TODO require target
+    evolveRequireTarget = True
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.trigsBoard = [Trig_DiamondPaladin(self)]
+
+    def evolveTargetExists(self, choice=0):
+        return self.selectableEnemyMinionExists()
+
+    def evolveTargetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.onBoard and target.ID != self.ID
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] >= 8:
@@ -1506,6 +1497,7 @@ class DiamondPaladin(SVMinion):
 
     def inHandEvolving(self, target=None):
         if target:
+            if isinstance(target, list): target = target[0]
             target.buffDebuff(-4, 0)
             PRINT(self.Game, f"Diamond Paladin's Fanfare give {target.name} -4/-0.")
         return
@@ -1555,9 +1547,6 @@ class SelflessNoble(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~9~9~7~Commander~Selfless Noble~Battlecry"
     requireTarget, keyWord, description = True, "", "Fanfare: Discard a card. Gain +X/+X. X equals the original cost of the discarded card."
     attackAdd, healthAdd = 2, 2
-
-    def returnTrue(self, choice=0):
-        return len(self.Game.Hand_Deck.hands[self.ID]) > 1 and not self.targets
 
     def targetExists(self, choice=0):
         return len(self.Game.Hand_Deck.hands[self.ID]) > 1
@@ -1904,6 +1893,14 @@ class ImperatorofMagic(SVMinion):
     index = "SV_Fortune~Runecraft~Minion~4~2~2~None~Imperator of Magic~Battlecry~Enhance~EarthRite"
     requireTarget, keyWord, description = False, "", "Fanfare: Earth Rite - Summon an Emergency Summoning. Fanfare: Enhance (6) - Recover 1 evolution point."
     attackAdd, healthAdd = 2, 2
+    evolveRequireTarget = True
+
+    def evolveTargetExists(self, choice=0):
+        return self.selectableEnemyMinionExists()
+
+    def evolveTargetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.onBoard and target.ID != self.ID
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] >= 6:
@@ -1926,9 +1923,8 @@ class ImperatorofMagic(SVMinion):
             self.Game.restoreEvolvePoint(self.ID)
         return None
 
-    # TODO need target
-
     def inHandEvolving(self, target=None):
+        if isinstance(target, list): target = target[0]
         damage = 0
         for amulet in self.Game.Counters.amuletsDestroyedThisGame[self.ID]:
             if "Earth Sigil" in amulet.race:
@@ -2161,8 +2157,7 @@ class SpringwellDragonKeeper(SVMinion):
         self.effectViable = self.willEnhance()
 
     def returnTrue(self, choice=0):
-        return len(self.targets) < 2 and len(
-            self.Game.Hand_Deck.hands[self.ID]) > 1 and self.selectableEnemyMinionExists(choice=1)
+        return len(self.targets) < 2 and self.targetExists(choice)
 
     def targetExists(self, choice=0):
         return len(self.Game.Hand_Deck.hands[self.ID]) > 1 and self.selectableEnemyMinionExists(choice=1)
@@ -2391,9 +2386,6 @@ class CrimsonDragonsSorrow(SVMinion):
             self.mana -= self.progress
             self.mana = max(self.mana, 0)
 
-    def returnTrue(self, choice=0):
-        return len(self.Game.Hand_Deck.hands[self.ID]) > 1 and not self.targets
-
     def targetExists(self, choice=0):
         return len(self.Game.Hand_Deck.hands[self.ID]) > 1
 
@@ -2442,9 +2434,6 @@ class TurncoatDragonSummoner(SVMinion):
     def whenDiscard(self):
         self.Game.Hand_Deck.addCardtoHand(CrimsonDragonsSorrow, self.ID, "type")
         PRINT(self.Game, f"Selfless Noble's put a Crimson Dragon's Sorrow into your hand")
-
-    def returnTrue(self, choice=0):
-        return len(self.Game.Hand_Deck.hands[self.ID]) > 1 and not self.targets
 
     def targetExists(self, choice=0):
         return len(self.Game.Hand_Deck.hands[self.ID]) > 1
@@ -2725,10 +2714,6 @@ class CoffinoftheUnknownSoul(Amulet):
     def effectCanTrigger(self):
         self.effectViable = not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 1
 
-    def returnTrue(self, choice=0):
-        return not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(
-            self.ID) >= 1 and not self.targets
-
     def targetExists(self, choice=0):
         return not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 1
 
@@ -2776,10 +2761,6 @@ class SpiritCurator(SVMinion):
 
     def effectCanTrigger(self):
         self.effectViable = not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 1
-
-    def returnTrue(self, choice=0):
-        return not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(
-            self.ID) >= 1 and not self.targets
 
     def targetExists(self, choice=0):
         return not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 1
@@ -2898,11 +2879,7 @@ class VIMilteoTheLovers(SVMinion):
     def returnTrue(self, choice=0):
         if self.willEnhance():
             return False
-        minions = 0
-        for card in self.Game.Hand_Deck.hands[self.ID]:
-            if card.type == "Minion" and card is not self:
-                minions += 1
-        return minions >= 2 and self.Game.space(self.ID) >= 2 and len(self.targets) < 2
+        return self.targetExists(choice) and len(self.targets) < 2
 
     def targetExists(self, choice=0):
         minions = 0
@@ -2917,7 +2894,7 @@ class VIMilteoTheLovers(SVMinion):
             return target1.type == "Minion" and target1.ID == self.ID and target1.inHand and target2.type == "Minion" and target2.ID == self.ID and target2.inHand and target1 != target2
         else:
             if isinstance(target, list): target = target[0]
-            return target.type == "Minion" and target.ID == self.ID and target.inHand
+            return target.type == "Minion" and target.ID == self.ID and target.inHand and target not in self.targets
 
     def inEvolving(self):
         for t in self.deathrattles:
@@ -3042,6 +3019,14 @@ class CloisteredSacristan(SVMinion):
     requireTarget, keyWord, description = False, "Taunt", "Crystallize (2): Countdown (4)Whenever you perform Burial Rite, subtract 1 from this amulet's Countdown.Last Words: Summon a Cloistered Sacristan.Ward."
     crystallizeAmulet = DeathFowl_Crystallize
     attackAdd, healthAdd = 2, 2
+    evolveRequireTarget = True
+
+    def evolveTargetExists(self, choice=0):
+        return not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 1
+
+    def evolveTargetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.ID == self.ID and target.inHand and target != self and target.type == "Minion"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] < self.mana:
@@ -3056,13 +3041,11 @@ class CloisteredSacristan(SVMinion):
     def effectCanTrigger(self):
         self.effectViable = "sky blue" if self.willCrystallize() else False
 
-    # TODO need target
-
-    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+    def inHandEvolving(self, target=None):
         if target:
             if isinstance(target, list): target = target[0]
             PRINT(self.Game,
-                  f"Spirit Curator's Fanfare Burial Rite {target.name} and restores 3 defense to your leader")
+                  f"Spirit Curator's Evolve Burial Rite {target.name} and restores 3 defense to your leader")
             self.Game.Hand_Deck.burialRite(self.ID, target)
             self.restoresHealth(self.Game.heroes[self.ID], 3)
 
@@ -3374,7 +3357,7 @@ class Trig_EndContemptousDemon(TrigBoard):
 
 class Trig_EvolvedContemptousDemon(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["HeroTookDmg","HeroTook0Dmg", "TurnEnds"])
+        self.blank_init(entity, ["HeroTookDmg", "HeroTook0Dmg", "TurnEnds"])
         self.counter = 10
 
     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3522,9 +3505,6 @@ class DarholdAbyssalContract(SVMinion):
     index = "SV_Fortune~Bloodcraft~Minion~4~4~3~None~Darhold, Abyssal Contract~Battlecry~Legendary"
     requireTarget, keyWord, description = True, "", "Fanfare: If Wrath is active for you, destroy an enemy follower, then deal 3 damage to the enemy leader."
     attackAdd, healthAdd = 2, 2
-
-    def returnTrue(self, choice=0):
-        return self.Game.isWrath(self.ID) and not self.targets
 
     def effectCanTrigger(self):
         self.effectViable = self.Game.isWrath(self.ID)
@@ -3797,7 +3777,7 @@ class BuffAura_XIVLuzenTemperance(AuraDealer_toMinion):
 
 class Trig_XIVLuzenTemperance(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["HeroTookDmg","HeroTook0Dmg"])
+        self.blank_init(entity, ["HeroTookDmg", "HeroTook0Dmg"])
 
     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and target == self.entity.Game.heroes[self.entity.ID]
@@ -3811,6 +3791,9 @@ class Trig_XIVLuzenTemperance(TrigBoard):
 
 
 """Havencraft cards"""
+
+
+
 
 """Portalcraft cards"""
 
@@ -4025,8 +4008,14 @@ class IlmisunaDiscordHawker(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~2~2~2~Officer~Ilmisuna, Discord Hawker~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Rally (15) - Recover 1 evolution point."
     attackAdd, healthAdd = 2, 2
+    evolveRequireTarget = True
 
-    # TODO require target
+    def evolveTargetExists(self, choice=0):
+        return self.selectableEnemyMinionExists()
+
+    def evolveTargetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.onBoard and target.ID != self.ID
 
     def effectCanTrigger(self):
         self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 15
@@ -4038,6 +4027,7 @@ class IlmisunaDiscordHawker(SVMinion):
 
     def inHandEvolving(self, target=None):
         if target:
+            if isinstance(target, list): target = target[0]
             self.dealsDamage(target, len(self.Game.minionsonBoard[self.ID]))
             PRINT(self.Game,
                   f"Ilmisuna, Discord Hawker's Evolve deals {len(self.Game.minionsonBoard[self.ID])} damage to {target.name} -4/-0.")

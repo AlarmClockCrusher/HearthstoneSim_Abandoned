@@ -28,8 +28,175 @@ def PRINT(game, string, *args):
         print("game's guide mode is 0\n", string)
 
 
+def listRemove(listObj, obj):
+    l = []
+    for i in listObj:
+        if i != obj:
+            l.append(i)
+    return l
+
+
+class Evolve(HeroPower):
+    mana, name, requireTarget = 0, "Evolve", True
+    index = "SV_Basic~Hero Power~0~Evolve"
+    description = "Evolve an unevolved friendly minion."
+
+    def blank_init(self, Game, ID):
+        super().blank_init(Game, ID)
+        self.targets = []
+
+    def available(self):
+        if self.selectableFriendlyMinionExists() and self.heroPowerTimes < self.heroPowerChances_base + \
+                self.heroPowerChances_extra and \
+                self.Game.Counters.turns[self.ID] >= \
+                self.Game.Counters.numEvolutionTurn[self.ID]:
+            if self.Game.Counters.numEvolutionPoint[self.ID] > 0:
+                return True
+            else:
+                hasFree = False
+                for minion in self.Game.minionsAlive(self.ID):
+                    if isinstance(minion, SVMinion) and minion.marks["Free Evolve"] > 0:
+                        hasFree = True
+                        break
+                return hasFree
+        return False
+
+    def returnTrue(self, choice=0):
+        if not self.targets:
+            return True
+        else:
+            return self.targets[0].evolveReturnTrue(listRemove(self.targets, self.targets[0]), choice)
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list):
+            if target[0].type == "Minion" and target[0].ID == self.ID and target[0].onBoard \
+                    and isinstance(target[0], SVMinion) and target[0].status["Evolved"] < 1 \
+                    and target[0].marks["Can't Evolve"] == 0:
+                if self.Game.Counters.numEvolutionPoint[self.ID] == 0:
+                    return target[0].marks["Free Evolve"] > 0
+                else:
+                    return target[0].evolveTargetCorrect(listRemove(target, target[0]), choice)
+            return False
+        else:
+            if not self.targets and not choice:
+                if target.type == "Minion" and target.ID == self.ID and target.onBoard \
+                        and isinstance(target, SVMinion) and target.status["Evolved"] < 1 \
+                        and target.marks["Can't Evolve"] == 0:
+                    if self.Game.Counters.numEvolutionPoint[self.ID] == 0:
+                        return target.marks["Free Evolve"] > 0
+                    else:
+                        return True
+                return False
+            else:
+                return self.targets[0].evolveTargetCorrect(target, choice)
+
+    def effect(self, target, choice=0):
+        if target[0].marks["Free Evolve"] < 1:
+            self.Game.Counters.numEvolutionPoint[self.ID] -= 1
+        target[0].evolve()
+        target[0].inHandEvolving(listRemove(target, target[0]))
+        return 0
+
+    def canSelect(self, target):
+        targets = target if isinstance(target, list) else [target]
+        for target in targets:
+            targetType = target.type
+            selectable = target.inHand or not (
+                    not target.onBoard or not (targetType != "Dormant") or not (targetType != "Power") or not (
+                    not (not (not (not (targetType == "Hero") or not (
+                            target.ID == self.ID or self.Game.status[target.ID]["Immune"] +
+                            target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) or (
+                                           (self.type == "Power" or self.type == "Spell") and
+                                           self.Game.status[target.ID]["Evasive"] > 1))) and not (
+                            targetType == "Minion" and (
+                            target.ID == self.ID or target.status["Immune"] + target.keyWords[
+                        "Stealth"] +
+                            target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1)
+                            and not ((self.type == "Power" or self.type == "Spell") and (
+                            target.marks["Evasive"] > 1 or (
+                            target.ID != self.ID and target.marks["Enemy Evasive"] > 1)))))
+                    or (targetType == "Amulet" and (
+                    target.ID == self.ID or target.marks["Enemy Effect Evasive"] < 1)
+                        and not (self.type == "Spell" and target.marks["Evasive"] > 1))
+            ))
+            if not selectable: return False
+        return True
+
+    def findTargets(self, comment="", choice=0):
+        game, targets, indices, wheres = self.Game, [], [], []
+        for ID in range(1, 3):
+            hero = game.heroes[ID]
+            if self.targetCorrect(hero, choice) and (comment == "" or self.canSelect(hero)):
+                targets.append(hero)
+                indices.append(ID)
+                wheres.append("hero")
+            where = "minion%d" % ID
+            for obj in game.minionsandAmuletsonBoard(ID):
+                if self.targetCorrect(obj, choice) and (comment == "" or self.canSelect(obj)):
+                    targets.append(obj)
+                    indices.append(obj.position)
+                    wheres.append(where)
+            where = "hand%d" % ID
+            for i, card in enumerate(game.Hand_Deck.hands[ID]):
+                if self.targetCorrect(card, choice):
+                    targets.append(card)
+                    indices.append(i)
+                    wheres.append(where)
+
+        if targets:
+            return targets, indices, wheres
+        else:
+            return [None], [0], ['']
+
+    def use(self, target=None, choice=0):
+        if self.Game.GUI:
+            self.Game.GUI.displayCard(self)
+            self.Game.GUI.wait(500)
+        self.effect(target, choice)
+        self.Game.gathertheDead()
+        PRINT(self.Game, "Hero used ability %s" % self.name)
+        self.heroPowerTimes += 1
+        # 激励阶段，触发“每当你使用一次英雄技能”的扳机，如激励，虚空形态的技能刷新等。
+        self.Game.Counters.powerUsedThisTurn += 1
+        self.Game.sendSignal("HeroUsedAbility", self.ID, self, target[0], self.mana, "", choice)
+        # 激励阶段结束，处理死亡。此时可以进行胜负判定。
+        self.Game.gathertheDead(True)
+        for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
+            card.effectCanTrigger()
+            card.checkEvanescent()
+        subIndex, subWhere = self.ID, "power"
+        tarIndex, tarWhere = [], []
+        if target:  # 因为护符是SV特有的卡牌类型，所以其目标选择一定是列表填充式的
+            for obj in target:
+                if obj.onBoard:
+                    tarIndex.append(obj.position)
+                    tarWhere.append(obj.type + str(obj.ID))
+                else:
+                    tarIndex.append(self.Game.Hand_Deck.hands[obj.ID].index(obj))
+                    tarWhere.append("hand%d" % obj.ID)
+        self.Game.moves.append(("power", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
+        self.targets = []
+
+    def createCopy(self, game):
+        if self in game.copiedObjs:
+            return game.copiedObjs[self]
+        else:
+            Copy = type(self)(game, self.ID)
+            game.copiedObjs[self] = Copy
+            Copy.mana = self.mana
+            Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
+            Copy.heroPowerTimes = self.heroPowerTimes
+            Copy.heroPowerChances_base, Copy.heroPowerChances_extra = self.heroPowerChances_base, self.heroPowerChances_extra
+            Copy.options = [option.selfCopy(Copy) for option in self.options]
+            Copy.keyWords = copy.deepcopy(self.keyWords)
+            Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
+            self.assistCreateCopy(Copy)
+            return Copy
+
+
 class SVMinion(Minion):
     attackAdd, healthAdd = 2, 2
+    evolveRequireTarget = False
 
     def blank_init(self, Game, ID):
         super().blank_init(Game, ID)
@@ -56,6 +223,18 @@ class SVMinion(Minion):
     def inHandEvolving(self, target=None):
         return
 
+    def evolveTargetExists(self, choice=0):
+        return False
+
+    def evolveTargetCorrect(self, target, choice=0):
+        return False
+
+    def evolveReturnTrue(self, targets, choice=0):
+        if self.evolveRequireTarget:
+            return not targets and self.evolveTargetExists(choice)
+        else:
+            return False
+
     def willEnhance(self):
         return False
 
@@ -79,10 +258,10 @@ class SVMinion(Minion):
         return
 
     def returnTrue(self, choice=0):  # 只有在还没有选择过目标的情况下才能继续选择
-        if self.needTarget:
-            return not self.targets
+        if self.requireTarget:
+            return not self.targets and self.targetExists(choice)
         else:
-            return True
+            return False
 
     def canSelect(self, target):
         targets = target if isinstance(target, list) else [target]
@@ -268,6 +447,7 @@ class SVMinion(Minion):
             Copy.history = copy.deepcopy(self.history)
             Copy.attackAdd = self.attackAdd
             Copy.healthAdd = self.healthAdd
+            Copy.evolveRequireTarget = self.evolveRequireTarget
             self.assistCreateCopy(Copy)
             return Copy
 
@@ -506,7 +686,7 @@ class Amulet(Dormant):
                                  or (targetType == "Amulet" and (
                                  target.ID == self.ID or target.marks["Enemy Effect Evasive"] < 1) \
                                      and not (self.type == "Spell" and target.marks["Evasive"] > 1))
-                             )
+                         )
             if not selectable: return False
         return True
 
@@ -651,6 +831,6 @@ class SVSpell(Spell):
                                  or (targetType == "Amulet" and (
                                  target.ID == self.ID or target.marks["Enemy Effect Evasive"] < 1) \
                                      and not (self.type == "Spell" and target.marks["Evasive"] > 1))
-                             )
+                         )
             if not selectable: return False
         return True

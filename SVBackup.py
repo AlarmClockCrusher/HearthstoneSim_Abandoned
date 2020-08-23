@@ -1002,7 +1002,7 @@ class ReclusivePonderer(SVMinion):
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer~Valse, Champion Deadeye~Battlecry"
 #	 requireTarget, keyWord, description = True, "", "Fanfare: Enhance (6) - Banish an enemy follower or amulet."
-#	 evolveNeedTarget = True
+#	 evolveRequireTarget = True
 #
 #	 def effectCanTrigger(self):
 #		 self.effectViable = self.getMana() != self.mana
@@ -1041,7 +1041,7 @@ class ReclusivePonderer(SVMinion):
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Levin~Levin Archer"
 #	 requireTarget, keyWord, description = False, "", ""
-#	 evolveNeedTarget = True
+#	 evolveRequireTarget = True
 #
 #	 def inHandEvolving(self, target=None):
 #		 if target:
@@ -1821,7 +1821,7 @@ class ReclusivePonderer(SVMinion):
 #	 mana, attack, health = 5, 4, 4
 #	 index = "Shadowverse~Swordcraft~Minion~5~4~4~Commander~Amelia, the Silverflash~Battlecry"
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Randomly put 2 different Officer followers from your deck into your hand.Enhance (7): Gain the ability to evolve for 0 evolution points and the following effect - The next time this follower takes damage, reduce that damage to 0."
-#	 evolveNeedTarget = True
+#	 evolveRequireTarget = True
 #
 #	 def effectCanTrigger(self):
 #		 self.effectViable = self.getMana() != self.mana
@@ -1952,7 +1952,7 @@ class ReclusivePonderer(SVMinion):
 #	 mana, attack, health = 6, 4, 5
 #	 index = "Shadowverse~Swordcraft~Minion~6~4~5~Commander~Diamond Paladin~Battlecry~Rush"
 #	 requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: Enhance (8) - Gain the ability to evolve for 0 evolution points.During your turn, whenever this follower attacks and destroys an enemy follower, if this follower is not destroyed, recover 2 play points and gain the ability to attack 2 times this turn."
-#	 evolveNeedTarget = True
+#	 evolveRequireTarget = True
 #
 #	 def __init__(self, Game, ID):
 #		 self.blank_init(Game, ID)
