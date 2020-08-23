@@ -389,7 +389,7 @@ class ElfMetallurgist(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def returnTrue(self, choice=0):
-        return self.Game.combCards(self.ID) >= 2 and not self.targets
+        return self.Game.combCards(self.ID) >= 2 and self.targetExists(choice) and not self.targets
 
     def effectCanTrigger(self):
         self.effectViable = self.Game.combCards(self.ID) >= 2
@@ -402,8 +402,7 @@ class ElfMetallurgist(SVMinion):
         return target.type == "Minion" and target.ID != self.ID and target.onBoard
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        numCardsPlayed = self.Game.combCards(self.ID)
-        if numCardsPlayed >= 2:
+        if target:
             if isinstance(target, list): target = target[0]
             self.dealsDamage(target, 2)
             PRINT(self.Game, f"Elf Metallurgist deals 2 damage to {target.name}")
@@ -1070,9 +1069,10 @@ class LightningShooter(SVMinion):
         return target.type == "Minion" and target.ID != self.ID and target.onBoard
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if isinstance(target, list): target = target[0]
-        self.dealsDamage(target, 1 + self.progress)
-        PRINT(self.Game, f"Lightning Shooter deals {1 + self.progress} damage to {target.name}")
+        if target:
+            if isinstance(target, list): target = target[0]
+            self.dealsDamage(target, 1 + self.progress)
+            PRINT(self.Game, f"Lightning Shooter deals {1 + self.progress} damage to {target.name}")
         return None
 
 
@@ -1331,10 +1331,11 @@ class DreadDragon(SVMinion):
         return target.type == "Minion" and target.ID != self.ID and target.onBoard
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if isinstance(target, list): target = target[0]
-        self.dealsDamage(target, 4)
-        PRINT(self.Game, f"Dread Dragon deals 4 damage to {target.name}")
-        return None
+        if target:
+            if isinstance(target, list): target = target[0]
+            self.dealsDamage(target, 4)
+            PRINT(self.Game, f"Dread Dragon deals 4 damage to {target.name}")
+        return target
 
 
 class Conflagration(SVSpell):
@@ -1732,12 +1733,13 @@ class WardrobeRaider(SVMinion):
         return target.type == "Minion" and target.onBoard and target.ID != self.ID
 
     def inHandEvolving(self, target=None):
-        if isinstance(target, list): target = target[0]
-        if target and target.onBoard:
-            PRINT(self.Game,
-                  f"Wardrobe Raider's Evolve deals 2 damage to enemy {target.name} and restore 2 defense to your leader.")
-            self.dealsDamage(target, 2)
-            self.restoresHealth(self.Game.heroes[self.ID], 2)
+        if target:
+            if isinstance(target, list): target = target[0]
+            if target and target.onBoard:
+                PRINT(self.Game,
+                      f"Wardrobe Raider's Evolve deals 2 damage to enemy {target.name} and restore 2 defense to your leader.")
+                self.dealsDamage(target, 2)
+                self.restoresHealth(self.Game.heroes[self.ID], 2)
 
 
 class CrimsonPurge(SVSpell):
@@ -1808,10 +1810,11 @@ class AbyssBeast(SVMinion):
         return target.type == "Minion" and target.ID != self.ID and target.onBoard
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if isinstance(target, list): target = target[0]
-        self.dealsDamage(target, 5)
-        PRINT(self.Game, f"Abyss Beast deals 5 damage to {target.name}")
-        return None
+        if target:
+            if isinstance(target, list): target = target[0]
+            self.dealsDamage(target, 5)
+            PRINT(self.Game, f"Abyss Beast deals 5 damage to {target.name}")
+            return None
 
 
 """Havencraft cards"""
@@ -1822,6 +1825,14 @@ class Pegasus(SVMinion):
     mana, attack, health = 5, 5, 3
     index = "SV_Basic~Havencraft~Minion~5~5~3~None~Pegasus~Uncollectible"
     requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+
+class HolyFalcon(SVMinion):
+    Class, race, name = "Havencraft", "", "Holy Falcon"
+    mana, attack, health = 3, 2, 1
+    index = "SV_Basic~Havencraft~Minion~3~2~1~None~Holy Falcon~Charge~Uncollectible"
+    requireTarget, keyWord, description = False, "Charge", "Storm."
     attackAdd, healthAdd = 2, 2
 
 
@@ -1857,7 +1868,7 @@ class Trig_Countdown(TrigBoard):
 class SummonPegasus(Amulet):
     Class, race, name = "Havencraft", "", "Summon Pegasus"
     mana = 1
-    index = "SV_Basic~Havencraft~Amulet~1~None~Summon Pegasus~Countdown~Last Words"
+    index = "SV_Basic~Havencraft~Amulet~1~None~Summon Pegasus~Countdown~Deathrattle"
     requireTarget, description = False, "Countdown (4) Last Words: Summon a Pegasus."
 
     def __init__(self, Game, ID):
@@ -1873,6 +1884,24 @@ class Deathrattle_SummonPegasus(Deathrattle_Minion):
         self.entity.Game.summon([Pegasus(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
                                 self.entity.ID)
 
+class PinionPrayer(Amulet):
+    Class, race, name = "Havencraft", "", "Pinion Prayer"
+    mana = 1
+    index = "SV_Basic~Havencraft~Amulet~1~None~Pinion Prayer~Countdown~Deathrattle"
+    requireTarget, description = False, "Countdown (2) Last Words: Summon a Holy Falcon."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.counter = 2
+        self.trigsBoard = [Trig_Countdown(self)]
+        self.deathrattles = [Deathrattle_PinionPrayer(self)]
+
+
+class Deathrattle_PinionPrayer(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Last Words: Summon a Holy Falcon.")
+        self.entity.Game.summon([HolyFalcon(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                self.entity.ID)
 
 class SnakePriestess(SVMinion):
     Class, race, name = "Havencraft", "", "Snake Priestess"
@@ -1934,7 +1963,7 @@ class BlackenedScripture(SVSpell):
 class BeastlyVow(Amulet):
     Class, race, name = "Havencraft", "", "Beastly Vow"
     mana = 2
-    index = "SV_Basic~Havencraft~Amulet~2~None~Beastly Vow~Countdown~Last Words"
+    index = "SV_Basic~Havencraft~Amulet~2~None~Beastly Vow~Countdown~Deathrattle"
     requireTarget, description = False, "Countdown (2) Last Words: Summon a Holyflame Tiger."
 
     def __init__(self, Game, ID):
@@ -1954,7 +1983,7 @@ class Deathrattle_BeastlyVow(Deathrattle_Minion):
 class FeatherwyrmsDescent(Amulet):
     Class, race, name = "Havencraft", "", "Featherwyrm's Descent"
     mana = 3
-    index = "SV_Basic~Havencraft~Amulet~3~None~Featherwyrm's Descent~Countdown~Last Words"
+    index = "SV_Basic~Havencraft~Amulet~3~None~Featherwyrm's Descent~Countdown~Deathrattle"
     requireTarget, description = False, "Countdown (3) Last Words: Summon a Holywing Dragon."
 
     def __init__(self, Game, ID):
@@ -1990,8 +2019,8 @@ class PriestoftheCudgel(SVMinion):
         return target.type == "Minion" and target.onBoard and target.ID != self.ID and target.health <= 3
 
     def inHandEvolving(self, target=None):
-        if isinstance(target, list): target = target[0]
         if target and target.onBoard:
+            if isinstance(target, list): target = target[0]
             PRINT(self.Game, f"Priest of the Cudgel's banish enemy {target.name}")
             self.Game.banishMinion(self, target)
 
@@ -2038,7 +2067,7 @@ class AcolytesLight(SVSpell):
 class DualFlames(Amulet):
     Class, race, name = "Havencraft", "", "Beastly Vow"
     mana = 5
-    index = "SV_Basic~Havencraft~Amulet~5~None~Beastly Vow~Countdown~Last Words"
+    index = "SV_Basic~Havencraft~Amulet~5~None~Beastly Vow~Countdown~Deathrattle"
     requireTarget, description = False, "Countdown (2) Last Words: Summon 2 Holyflame Tigers."
 
     def __init__(self, Game, ID):
@@ -2071,10 +2100,11 @@ class Curate(SVMinion):
         return target.type in ["Minion", "Hero"] and target.ID == self.ID and target.onBoard
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if isinstance(target, list): target = target[0]
-        self.restoresHealth(target, 5)
-        PRINT(self.Game, f"Curate restores 5 defense to {target.name}")
-        return None
+        if target:
+            if isinstance(target, list): target = target[0]
+            self.restoresHealth(target, 5)
+            PRINT(self.Game, f"Curate restores 5 defense to {target.name}")
+        return target
 
 
 """Portalcraft cards"""
@@ -2327,7 +2357,7 @@ class RoanWingedNexx(SVMinion):
         return target.type == "Minion" and target.onBoard and target.ID != self.ID
 
     def inHandEvolving(self, target=None):
-        if self.Game.isResonance(self.ID):
+        if target:
             if isinstance(target, list): target = target[0]
             if target and target.onBoard:
                 PRINT(self.Game,
@@ -2480,16 +2510,16 @@ SV_Basic_Indices = {
     "SV_Basic~Havencraft~Minion~5~5~3~None~Pegasus~Uncollectible": Pegasus,
     "SV_Basic~Havencraft~Minion~4~4~4~None~Holyflame Tiger~Uncollectible": HolyflameTiger,
     "SV_Basic~Havencraft~Minion~6~6~6~None~Holywing Dragon~Uncollectible": HolywingDragon,
-    "SV_Basic~Havencraft~Amulet~1~None~Summon Pegasus~Countdown~Last Words": SummonPegasus,
+    "SV_Basic~Havencraft~Amulet~1~None~Summon Pegasus~Countdown~Deathrattle": SummonPegasus,
     "SV_Basic~Havencraft~Minion~2~1~3~None~Snake Priestess~Taunt": SnakePriestess,
     "SV_Basic~Havencraft~Spell~2~Hallowed Dogma": HallowedDogma,
     "SV_Basic~Havencraft~Spell~2~Blackened Scripture": BlackenedScripture,
-    "SV_Basic~Havencraft~Amulet~2~None~Beastly Vow~Countdown~Last Words": BeastlyVow,
-    "SV_Basic~Havencraft~Amulet~3~None~Featherwyrm's Descent~Countdown~Last Words": FeatherwyrmsDescent,
+    "SV_Basic~Havencraft~Amulet~2~None~Beastly Vow~Countdown~Deathrattle": BeastlyVow,
+    "SV_Basic~Havencraft~Amulet~3~None~Featherwyrm's Descent~Countdown~Deathrattle": FeatherwyrmsDescent,
     "SV_Basic~Havencraft~Minion~4~3~4~None~Priest of the Cudgel": PriestoftheCudgel,
     "SV_Basic~Havencraft~Minion~5~3~4~None~Greater Priestess~Battlecry": GreaterPriestess,
     "SV_Basic~Havencraft~Spell~5~Acolyte's Light": AcolytesLight,
-    "SV_Basic~Havencraft~Amulet~5~None~Beastly Vow~Countdown~Last Words": BeastlyVow,
+    "SV_Basic~Havencraft~Amulet~5~None~Beastly Vow~Countdown~Deathrattle": BeastlyVow,
     "SV_Basic~Havencraft~Minion~7~5~5~None~Curate~Battlecry": Curate,
     "SV_Basic~Portalcraft~Minion~0~1~1~None~Puppet~Rush~Uncollectible": Puppet,
     "SV_Basic~Portalcraft~Minion~1~2~1~Artifact~Analyzing Artifact~Deathrattle~Uncollectible": AnalyzingArtifact,

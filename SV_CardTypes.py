@@ -55,7 +55,8 @@ class Evolve(HeroPower):
             else:
                 hasFree = False
                 for minion in self.Game.minionsAlive(self.ID):
-                    if isinstance(minion, SVMinion) and minion.marks["Free Evolve"] > 0:
+                    if isinstance(minion, SVMinion) and minion.marks["Free Evolve"] > 0 and minion.status[
+                        "Evolved"] < 1:
                         hasFree = True
                         break
                 return hasFree

@@ -72,7 +72,7 @@ class AirboundBarrage(SVSpell):
 class SacredPlea(Amulet):
     Class, race, name = "Havencraft", "", "Sacred Plea"
     mana = 1
-    index = "SV_Glory~Havencraft~1~Amulet~None~Sacred Plea~Last Words"
+    index = "SV_Glory~Havencraft~1~Amulet~None~Sacred Plea~Deathrattle"
     requireTarget, description = False, "Countdown 3. Last Words: Draw 2 cards"
 
     def __init__(self, Game, ID):
@@ -204,7 +204,7 @@ class VesperWitchhunter(SVMinion):
 class RuinwebSpider_Crystallize(Amulet):
     Class, race, name = "Bloodcraft", "", "Ruinweb Spider"
     mana = 2
-    index = "SV_Glory~Bloodcraft~2~Amulet~None~Ruinweb Spider~Last Words"
+    index = "SV_Glory~Bloodcraft~2~Amulet~None~Ruinweb Spider~Deathrattle"
     requireTarget, description = False, "Countdown 3. Last Words: Draw 2 cards"
 
     def __init__(self, Game, ID):
@@ -354,9 +354,9 @@ class XIErntzJustice(SVMinion):
 SV_Glory_Indices = {
     "SV_Glory~Runecraft~4~3~3~Minion~None~Vesper, Witchhunter~Accelerate~Fanfare": VesperWitchhunter,
     "SV_Glory~Runecraft~Spell~2~Vesper, Witchhunter~Uncollectible": VesperWitchhunter_Accelerate,
-    "SV_Glory~Havencraft~1~Amulet~None~Sacred Plea~Last Words": SacredPlea,
+    "SV_Glory~Havencraft~1~Amulet~None~Sacred Plea~Deathrattle": SacredPlea,
     "SV_Glory~Bloodcraft~Minion~10~5~10~None~Ruinweb Spider~Crystallize": RuinwebSpider,
-    "SV_Glory~Bloodcraft~2~Amulet~None~Ruinweb Spider~Last Words": RuinwebSpider_Crystallize,
+    "SV_Glory~Bloodcraft~2~Amulet~None~Ruinweb Spider~Deathrattle": RuinwebSpider_Crystallize,
     "SV_Glory~Bloodcraft~Minion~10~11~8~Dragon~XI. Erntz, Justice~Ward": XIErntzJustice,
     "SV_Glory~Forestcraft~Spell~1~Airbound Barrage": AirboundBarrage,
 }

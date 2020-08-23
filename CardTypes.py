@@ -384,9 +384,9 @@ class Card:
 			for target, healActual in zip(targets_healed, healsConnected):
 				self.Game.sendSignal(target.type+"GetsHealed", self.Game.turn, self, target, healActual, "FullyHealed")
 				if target.type == "Hero":
-					containHero = True
+					containHero = target.ID
 			if containHero:
-				self.Game.sendSignal("AllCured", self.Game.turn, self, None, 0, "")
+				self.Game.sendSignal("AllCured", containHero, self, None, 0, "")
 			else:
 				self.Game.sendSignal("MinionsCured", self.Game.turn, self, None, 0, "")
 		return targets_healed, healsConnected, totalHealingDone

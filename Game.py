@@ -564,10 +564,8 @@ class Game:
 				for i in range(mana, -1, -1):
 					if i in minions:
 						type = npchoice(minions[i])
-						self.fixedGuides.append(type)
 						break
-				else:
-					self.fixedGuides.append(None)
+				self.fixedGuides.append(type)
 			if type:
 				subject = type(self, ID)
 				self.summon([subject], (-1, "totheRightEnd"), ID)

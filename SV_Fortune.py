@@ -183,14 +183,15 @@ class ResolveoftheFallen(SVSpell):
         return target.type in ["Minion", "Amulet"] and target.ID != self.ID and target.onBoard
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if isinstance(target, list): target = target[0]
-        self.Game.killMinion(self, target)
-        if self.Game.Counters.evolvedThisGame[self.ID] >= 3:
-            self.Game.Manas.restoreManaCrystal(3, self.ID)
-            if self.Game.Counters.evolvedThisGame[self.ID] >= 5:
-                self.Game.Hand_Deck.drawCard(self.ID)
-                self.Game.Hand_Deck.drawCard(self.ID)
-        return None
+        if target:
+            if isinstance(target, list): target = target[0]
+            self.Game.killMinion(self, target)
+            if self.Game.Counters.evolvedThisGame[self.ID] >= 3:
+                self.Game.Manas.restoreManaCrystal(3, self.ID)
+                if self.Game.Counters.evolvedThisGame[self.ID] >= 5:
+                    self.Game.Hand_Deck.drawCard(self.ID)
+                    self.Game.Hand_Deck.drawCard(self.ID)
+        return target
 
 
 class StarbrightDeity(SVMinion):
@@ -301,7 +302,7 @@ class Trig_InvocationXXIZelgeneaTheWorld(TrigInvocation):
 class TitanicShowdown(Amulet):
     Class, race, name = "Neutral", "", "Titanic Showdown"
     mana = 6
-    index = "SV_Fortune~Neutral~Amulet~6~None~Titanic Showdown~Countdown~Last Words"
+    index = "SV_Fortune~Neutral~Amulet~6~None~Titanic Showdown~Countdown~Deathrattle"
     requireTarget, description = False, "Countdown (2) Fanfare: Put a random follower that originally costs at least 9 play points from your deck into your hand. If any other allied Titanic Showdowns are in play, recover 4 play points and banish this amulet. Last Words: At the start of your next turn, put 5 random followers that originally cost at least 9 play points from your hand into play."
 
     def __init__(self, Game, ID):
@@ -1177,10 +1178,11 @@ class DecisiveStrike(SVSpell):
             self.dealsAOE(targets, [damage for obj in targets])
             PRINT(self.Game, f"Decisive Strike deals {damage} damage to all enemies")
         else:
-            if isinstance(target, list): target = target[0]
-            PRINT(self.Game, f"Decisive Strike deals {damage} damage to minion {target.name}")
-            self.dealsDamage(target, damage)
-        return None
+            if target:
+                if isinstance(target, list): target = target[0]
+                PRINT(self.Game, f"Decisive Strike deals {damage} damage to minion {target.name}")
+                self.dealsDamage(target, damage)
+        return target
 
 
 class HonorableThief(SVMinion):
@@ -1500,7 +1502,7 @@ class DiamondPaladin(SVMinion):
             if isinstance(target, list): target = target[0]
             target.buffDebuff(-4, 0)
             PRINT(self.Game, f"Diamond Paladin's Fanfare give {target.name} -4/-0.")
-        return
+        return target
 
     def extraTargetCorrect(self, target, affair):
         return target.type and target.type == "Minion" and target.ID != self.ID and target.onBoard
@@ -1562,6 +1564,7 @@ class SelflessNoble(SVMinion):
             self.Game.Hand_Deck.discardCard(self.ID, target)
             self.buffDebuff(n, n)
             PRINT(self.Game, f"Selfless Noble's Fanfare discard {target.name} and get +{n}/+{n}")
+        return target
 
 
 """Runecraft cards"""
@@ -1615,18 +1618,19 @@ class MagicalAugmentation(SVSpell):
         return self.selectableEnemyMinionExists()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if isinstance(target, list): target = target[0]
-        if self.Game.earthRite(self, self.ID, 2):
-            damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-            PRINT(self.Game, f"Magical Augmentation deals {damage} damage to minion {target.name} and draw 2 cards")
-            self.dealsDamage(target, damage)
-            self.Game.Hand_Deck.drawCard(self.ID)
-            self.Game.Hand_Deck.drawCard(self.ID)
-        else:
-            damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-            PRINT(self.Game, f"Magical Augmentation deals {damage} damage to minion {target.name}")
-            self.dealsDamage(target, damage)
-        return None
+        if target:
+            if isinstance(target, list): target = target[0]
+            if self.Game.earthRite(self, self.ID, 2):
+                damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+                PRINT(self.Game, f"Magical Augmentation deals {damage} damage to minion {target.name} and draw 2 cards")
+                self.dealsDamage(target, damage)
+                self.Game.Hand_Deck.drawCard(self.ID)
+                self.Game.Hand_Deck.drawCard(self.ID)
+            else:
+                damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+                PRINT(self.Game, f"Magical Augmentation deals {damage} damage to minion {target.name}")
+                self.dealsDamage(target, damage)
+        return target
 
 
 class CreativeConjurer(SVMinion):
@@ -1924,13 +1928,15 @@ class ImperatorofMagic(SVMinion):
         return None
 
     def inHandEvolving(self, target=None):
-        if isinstance(target, list): target = target[0]
-        damage = 0
-        for amulet in self.Game.Counters.amuletsDestroyedThisGame[self.ID]:
-            if "Earth Sigil" in amulet.race:
-                damage += 1
-        self.dealsDamage(target, damage)
-        PRINT(self.Game, f"Imperator of Magic's Evolve deals {damage} damage to {target.name}")
+        if target:
+            if isinstance(target, list): target = target[0]
+            damage = 0
+            for amulet in self.Game.Counters.amuletsDestroyedThisGame[self.ID]:
+                if "Earth Sigil" in amulet.race:
+                    damage += 1
+            self.dealsDamage(target, damage)
+            PRINT(self.Game, f"Imperator of Magic's Evolve deals {damage} damage to {target.name}")
+        return target
 
 
 class EmergencySummoning(Amulet):
@@ -2049,13 +2055,14 @@ class WitchSnap(SVSpell):
         return self.selectableEnemyMinionExists()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if isinstance(target, list): target = target[0]
-        damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-        PRINT(self.Game,
-              f"Witch Snap deals {damage} damage to minion {target.name} and put an Earth Essence to your hand")
-        self.dealsDamage(target, damage)
-        self.Game.Hand_Deck.addCardtoHand(EarthEssence, self.ID, "type")
-        return None
+        if target:
+            if isinstance(target, list): target = target[0]
+            damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+            PRINT(self.Game,
+                  f"Witch Snap deals {damage} damage to minion {target.name} and put an Earth Essence to your hand")
+            self.dealsDamage(target, damage)
+            self.Game.Hand_Deck.addCardtoHand(EarthEssence, self.ID, "type")
+        return target
 
 
 class AdamantineGolem(SVMinion):
@@ -2400,6 +2407,7 @@ class CrimsonDragonsSorrow(SVMinion):
             self.Game.Hand_Deck.drawCard(self.ID)
             self.Game.Hand_Deck.drawCard(self.ID)
             PRINT(self.Game, f"Selfless Noble's Fanfare discard {target.name} and draw 2 cards")
+        return target
 
 
 class AzureDragonsRage(SVMinion):
@@ -2449,6 +2457,7 @@ class TurncoatDragonSummoner(SVMinion):
             self.Game.Hand_Deck.addCardtoHand(AzureDragonsRage, self.ID, "type")
             PRINT(self.Game,
                   f"Selfless Noble's Fanfare discard {target.name} and put a Azure Dragon's Rage into your hand")
+        return target
 
 
 class DragonsNest(Amulet):
@@ -2517,28 +2526,30 @@ class DragonImpact(SVSpell):
         return target.ID == self.ID and target.inHand and target != self and target.type == "Minion" and target.Class == "Dragoncraft"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if isinstance(target, list): target = target[0]
-        target.getsKeyword("Rush")
-        target.buffDebuff(1, 1)
-        PRINT(self.Game,
-              f"Dragon Impact gives {target.name} +1/+1 and Rush")
-        curGame = self.Game
-        if curGame.mode == 0:
-            enemy = None
-            if curGame.guides:
-                i, where = curGame.guides.pop(0)
-                if where: enemy = curGame.find(i, where)
-            else:
-                chars = curGame.minionsAlive(3 - self.ID)
-                if chars:
-                    enemy = npchoice(chars)
-                    curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+        if target:
+            if isinstance(target, list): target = target[0]
+            target.getsKeyword("Rush")
+            target.buffDebuff(1, 1)
+            PRINT(self.Game,
+                  f"Dragon Impact gives {target.name} +1/+1 and Rush")
+            curGame = self.Game
+            if curGame.mode == 0:
+                enemy = None
+                if curGame.guides:
+                    i, where = curGame.guides.pop(0)
+                    if where: enemy = curGame.find(i, where)
                 else:
-                    curGame.fixedGuides.append((0, ''))
-            if enemy:
-                damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-                PRINT(self.Game, f"Dragon Impact deals {damage} damage to {enemy.name}")
-                self.dealsDamage(enemy, damage)
+                    chars = curGame.minionsAlive(3 - self.ID)
+                    if chars:
+                        enemy = npchoice(chars)
+                        curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                    else:
+                        curGame.fixedGuides.append((0, ''))
+                if enemy:
+                    damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+                    PRINT(self.Game, f"Dragon Impact deals {damage} damage to {enemy.name}")
+                    self.dealsDamage(enemy, damage)
+        return target
 
 
 class XIErntzJustice(SVMinion):
@@ -2594,6 +2605,9 @@ class GhostlyMaid(SVMinion):
     index = "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Ghostly Maid~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: If there are any allied amulets in play, summon a Ghost. Then, if there are at least 2 in play, evolve it."
     attackAdd, healthAdd = 2, 2
+
+    def effectCanTrigger(self):
+        self.effectViable = len(self.Game.amuletsonBoard(self.ID)) > 0
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if len(self.Game.amuletsonBoard(self.ID)) > 0:
@@ -2702,7 +2716,7 @@ class SavoringSlash(SVSpell):
 class CoffinoftheUnknownSoul(Amulet):
     Class, race, name = "Shadowcraft", "", "Coffin of the Unknown Soul"
     mana = 2
-    index = "SV_Fortune~Shadowcraft~Amulet~2~None~Coffin of the Unknown Soul~Countdown~Battlecry~Last Words"
+    index = "SV_Fortune~Shadowcraft~Amulet~2~None~Coffin of the Unknown Soul~Countdown~Battlecry~Deathrattle"
     requireTarget, description = True, "Countdown (1)Fanfare: Burial Rite - Draw a card and add X to this amulet's Countdown. X equals half the original cost of the follower destroyed by Burial Rite (rounded down).Last Words: Summon a copy of the follower destroyed by Burial Rite."
 
     def __init__(self, Game, ID):
@@ -2731,6 +2745,7 @@ class CoffinoftheUnknownSoul(Amulet):
                 if type(trigger) == Deathrattle_CoffinoftheUnknownSoul:
                     trigger.chosenMinionType = t
             self.countdown(self, -int(t.mana / 2))
+        return target
 
 
 class Deathrattle_CoffinoftheUnknownSoul(Deathrattle_Minion):
@@ -2775,6 +2790,7 @@ class SpiritCurator(SVMinion):
             PRINT(self.Game, f"Spirit Curator's Fanfare Burial Rite {target.name} and draw a card.")
             self.Game.Hand_Deck.burialRite(self.ID, target)
             self.Game.Hand_Deck.drawCard(self.ID)
+        return target
 
 
 class DeathFowl_Crystallize(Amulet):
@@ -2838,6 +2854,9 @@ class SoulBox(SVMinion):
     index = "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Soul Box~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: If there are any allied amulets in play, evolve this follower."
     attackAdd, healthAdd = 2, 2
+
+    def effectCanTrigger(self):
+        self.effectViable = len(self.Game.amuletsonBoard(self.ID)) > 0
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if len(self.Game.amuletsonBoard(self.ID)) > 0:
@@ -3048,6 +3067,7 @@ class CloisteredSacristan(SVMinion):
                   f"Spirit Curator's Evolve Burial Rite {target.name} and restores 3 defense to your leader")
             self.Game.Hand_Deck.burialRite(self.ID, target)
             self.restoresHealth(self.Game.heroes[self.ID], 3)
+        return target
 
 
 class ConqueringDreadlord(SVMinion):
@@ -3523,7 +3543,7 @@ class DarholdAbyssalContract(SVMinion):
                   f"Darhold, Abyssal Contract 's Fanfare destroys {target.name}, then deal 3 damage to the enemy leader.")
             self.Game.killMinion(self, target)
             self.dealsDamage(self.Game.heroes[3 - self.ID], 3)
-        return None
+        return target
 
     def inHandEvolving(self, target=None):
         self.dealsDamage(self.Game.heroes[self.ID], 3)
@@ -3793,6 +3813,549 @@ class Trig_XIVLuzenTemperance(TrigBoard):
 """Havencraft cards"""
 
 
+class JeweledBrilliance(SVSpell):
+    Class, name = "Havencraft", "Jeweled Brilliance"
+    mana, requireTarget = 1, False,
+    index = "SV_Fortune~Havencraft~Spell~1~Jeweled Brilliance"
+    description = "Put a random amulet from your deck into your hand."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        curGame = self.Game
+        if curGame.mode == 0:
+            PRINT(self.Game, "Jeweled Brilliance puts a random amulet from your deck into your hand")
+            if curGame.guides:
+                i = curGame.guides.pop(0)
+            else:
+                amulets = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
+                           card.type == "Amulet"]
+                i = npchoice(amulets) if amulets else -1
+                curGame.fixedGuides.append(i)
+            if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
+
+
+class StalwartFeatherfolk(SVMinion):
+    Class, race, name = "Havencraft", "", "Stalwart Featherfolk"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Fortune~Havencraft~Minion~2~2~2~None~Stalwart Featherfolk~Taunt~Battlecry"
+    requireTarget, keyWord, description = False, "Taunt", "Ward. Fanfare: If any allied amulets are in play, restore X defense to your leader. X equals the number of allied amulets in play."
+    attackAdd, healthAdd = 2, 2
+
+    def effectCanTrigger(self):
+        self.effectViable = len(self.Game.amuletsonBoard(self.ID)) > 0
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if len(self.Game.amuletsonBoard(self.ID)) > 0:
+            self.restoresHealth(self.Game.heroes[self.ID], len(self.Game.amuletsonBoard(self.ID)))
+            PRINT(self.Game,
+                  f"Stalwart Featherfolk's Fanfare restore {len(self.Game.amuletsonBoard(self.ID))} defense to your leader")
+
+        return None
+
+
+class PrismaplumeBird(SVMinion):
+    Class, race, name = "Havencraft", "", "Prismaplume Bird"
+    mana, attack, health = 2, 3, 1
+    index = "SV_Fortune~Havencraft~Minion~2~3~1~None~Prismaplume Bird~Deathrattle"
+    requireTarget, keyWord, description = False, "", "Last Words: Randomly summon a Summon Pegasus or Pinion Prayer."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.deathrattles = [Deathrattle_PrismaplumeBird(self)]
+
+
+class Deathrattle_PrismaplumeBird(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        es = ["S", "P"]
+        e = "S"
+        curGame = self.entity.Game
+        if curGame.mode == 0:
+            if curGame.guides:
+                i, e = curGame.guides.pop(0)
+            else:
+                e = np.random.choice(es)
+                curGame.fixedGuides.append((0, e))
+        if e == "S":
+            PRINT(self.entity.Game, "Last Words: Summon a Summon Pegasus.")
+            self.entity.Game.summon([SummonPegasus(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                    self.entity.ID)
+        elif e == "P":
+            PRINT(self.entity.Game, "Last Words: Summon a Pinion Prayer.")
+            self.entity.Game.summon([PinionPrayer(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                    self.entity.ID)
+
+
+class FourPillarTortoise(SVMinion):
+    Class, race, name = "Havencraft", "", "Four-Pillar Tortoise"
+    mana, attack, health = 3, 1, 4
+    index = "SV_Fortune~Havencraft~Minion~3~1~4~None~Four-Pillar Tortoise~Taunt~Battlecry"
+    requireTarget, keyWord, description = False, "Taunt", "Ward. Fanfare: Randomly put a 4-play point Havencraft follower or amulet from your deck into your hand."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        curGame = self.Game
+        if curGame.mode == 0:
+            PRINT(self.Game,
+                  "Four-Pillar Tortoise's Fanfare puts a 4-play point Havencraft follower or amulet from your deck into your hand.")
+            if curGame.guides:
+                i = curGame.guides.pop(0)
+            else:
+                minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
+                           card.type == "Minion" and card.mana == 4]
+                i = npchoice(minions) if minions else -1
+                curGame.fixedGuides.append(i)
+            if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
+
+
+class LorenasHolyWater(SVSpell):
+    Class, name = "Havencraft", "Lorena's Holy Water"
+    requireTarget, mana = True, 1
+    index = "SV_Fortune~Havencraft~Spell~1~Lorena's Holy Water~Uncollectible"
+    description = "Restore 3 defense to an ally. If at least 2 other cards were played this turn, recover 1 evolution point."
+
+    def targetExists(self, choice=0):
+        return self.selectableFriendlyExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type in ["Minion", "Hero"] and target.onBoard and target.ID == self.ID
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            heal = 2 * (2 ** self.countHealDouble())
+            self.restoresHealth(target, heal)
+            PRINT(self.Game,
+                  f"Lorena's Holy Water restores {heal} defense to {target.name} and draw a card")
+            self.Game.Hand_Deck.drawCard(self.ID)
+        return target
+
+
+class LorenaIronWilledPriest(SVMinion):
+    Class, race, name = "Havencraft", "", "Lorena, Iron-Willed Priest"
+    mana, attack, health = 3, 2, 3
+    index = "SV_Fortune~Havencraft~Minion~3~2~3~None~Lorena, Iron-Willed Priest~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Put a Lorena's Holy Water into your hand. During your turn, when defense is restored to your leader, if it's the second time this turn, gain the ability to evolve for 0 evolution points."
+    attackAdd, healthAdd = 2, 2
+    evolveRequireTarget = True
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.progress = 0
+        self.trigsBoard = [Trig_LorenaIronWilledPriest(self)]
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.Game.Hand_Deck.addCardtoHand(LorenasHolyWater, self.ID, "type")
+        PRINT(self.Game,
+              f"Lorena, Iron-Willed Priest's Fanfare puts a Lorena's Holy Water into your hand")
+
+    def inEvolving(self):
+        for trig in self.trigsBoard:
+            if type(trig) == Trig_LorenaIronWilledPriest:
+                trig.disconnect()
+                self.trigsBoard.remove(trig)
+
+    def evolveTargetExists(self, choice=0):
+        return self.selectableEnemyMinionExists()
+
+    def evolveTargetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.onBoard and target.ID != self.ID
+
+    def inHandEvolving(self, target=None):
+        if isinstance(target, list): target = target[0]
+        if target and target.onBoard:
+            damage = 0
+            for minion in self.Game.minionsAlive(self.ID):
+                if minion.attack > damage:
+                    damage = minion.attack
+            PRINT(self.Game,
+                  f"Lorena, Iron-Willed Priest's Evolve deals {damage} damage to enemy {target.name}")
+            self.dealsDamage(target, damage)
+        return target
+
+
+class Trig_LorenaIronWilledPriest(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["HeroGetsCured", "AllCured"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        if signal == "HeroGetsCured":
+            return subject.ID == self.entity.ID and self.entity.onBoard
+        else:
+            return ID == self.entity.ID and self.entity.onBoard
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.progress += 1
+        if self.entity.progress == 2:
+            self.entity.marks["Free Evolve"] += 1
+            PRINT(self.entity.Game,
+                  f"Lorena, Iron-Willed Priest's gain the ability to evolve for 0 evolution points.")
+
+
+class SarissaLuxflashSpear(SVMinion):
+    Class, race, name = "Havencraft", "", "Sarissa, Luxflash Spear"
+    mana, attack, health = 3, 2, 2
+    index = "SV_Fortune~Havencraft~Minion~3~2~2~None~Sarissa, Luxflash Spear~Battlecry~Enhance~Legendary"
+    requireTarget, keyWord, description = False, "", "Fanfare: The next time this follower takes damage, reduce that damage to 0.Enhance (6): Randomly summon a copy of 1 of the highest-cost allied followers that had Ward when they were destroyed this match.Whenever an allied follower with Ward is destroyed, gain +2/+2."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_SarissaLuxflashSpear(self)]
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] >= 6:
+            return 6
+        else:
+            return self.mana
+
+    def willEnhance(self):
+        return self.Game.Manas.manas[self.ID] >= 6
+
+    def effectCanTrigger(self):
+        self.effectViable = self.willEnhance()
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.marks["Next Damage 0"] += 1
+        PRINT(self.Game,
+              f"Sarissa, Luxflash Spear gain the ability The next time this follower takes damage, reduce that damage to 0.")
+        if comment == 6:
+            if self.Game.mode == 0:
+                type = None
+                if self.Game.guides:
+                    type = self.Game.guides.pop(0)
+                else:
+                    indices = self.Game.Counters.minionsDiedThisGame[self.ID]
+                    minions = {}
+                    for index in indices:
+                        if "~Taunt" in index:
+                            try:
+                                minions[self.Game.cardPool[index].mana].append(self.Game.cardPool[index])
+                            except:
+                                minions[self.Game.cardPool[index].mana] = [self.Game.cardPool[index]]
+                    if minions:
+                        for i in range(minions.keys()[len(minions) - 1], -1, -1):
+                            if i in minions:
+                                type = npchoice(minions[i])
+                                self.Game.fixedGuides.append(type)
+                                break
+                    else:
+                        self.Game.fixedGuides.append(None)
+                if type:
+                    subject = type(self.Game, self.ID)
+                    self.Game.summon([subject], (-1, "totheRightEnd"), self.ID)
+                    PRINT(self.Game,
+                          f"Sarissa, Luxflash Spear's Enhance Fanfare summons {subject.name}")
+        return None
+
+
+class Trig_SarissaLuxflashSpear(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionDies"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return target.ID == self.entity.ID and self.entity.onBoard and target.keyWords["Taunt"] > 0
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.buffDebuff(2, 2)
+        PRINT(self.entity.Game,
+              f"Sarissa, Luxflash Spear gain +2/+2")
+
+
+class PriestessofForesight(SVMinion):
+    Class, race, name = "Havencraft", "", "Priestess of Foresight"
+    mana, attack, health = 4, 2, 5
+    index = "SV_Fortune~Havencraft~Minion~4~2~5~None~Priestess of Foresight~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: If another allied follower with Ward is in play, destroy an enemy follower. Otherwise, gain Ward."
+    attackAdd, healthAdd = 2, 2
+
+    def returnTrue(self, choice=0):
+        for minion in self.Game.minionsAlive(self.ID):
+            if minion != self and minion.keyWords["Taunt"] > 0:
+                return self.targetExists(choice) and not self.targets
+        return False
+
+    def effectCanTrigger(self):
+        for minion in self.Game.minionsAlive(self.ID):
+            if minion != self and minion.keyWords["Taunt"] > 0:
+                self.effectViable = True
+                return
+
+    def targetExists(self, choice=0):
+        return self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            self.Game.killMinion(self, target)
+            PRINT(self.Game, f"Priestess of Foresight's Fanfare destroys {target.name}")
+            return target
+        hasTaunt = False
+        for minion in self.Game.minionsAlive(self.ID):
+            if minion != self and minion.keyWords["Taunt"] > 0:
+                hasTaunt = True
+                break
+        if not hasTaunt:
+            self.getsKeyword("Taunt")
+            PRINT(self.Game, f"Priestess of Foresight's Fanfare gains Ward")
+        return None
+
+
+class HolybrightAltar(Amulet):
+    Class, race, name = "Havencraft", "", "Holybright Altar"
+    mana = 4
+    index = "SV_Fortune~Havencraft~Amulet~4~None~Holybright Altar~Battlecry~Countdown~Deathrattle"
+    requireTarget, description = False, "Countdown (1) Fanfare: If an allied follower with Ward is in play, subtract 1 from this amulet's Countdown.Last Words: Summon a Holywing Dragon."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.counter = 1
+        self.trigsBoard = [Trig_Countdown(self)]
+        self.deathrattles = [Deathrattle_HolybrightAltar(self)]
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        hasTaunt = False
+        for minion in self.Game.minionsAlive(self.ID):
+            if minion != self and minion.keyWords["Taunt"] > 0:
+                hasTaunt = True
+                break
+        if hasTaunt:
+            self.countdown(self, 1)
+        return None
+
+
+class Deathrattle_HolybrightAltar(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Last Words: Summon a Holywing Dragon.")
+        self.entity.Game.summon([HolywingDragon(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                self.entity.ID)
+
+
+class ReverendAdjudicator(SVMinion):
+    Class, race, name = "Havencraft", "", "Reverend Adjudicator"
+    mana, attack, health = 5, 2, 3
+    index = "SV_Fortune~Havencraft~Minion~5~2~3~None~Reverend Adjudicator~Taunt~Battlecry"
+    requireTarget, keyWord, description = False, "Taunt", "Ward.Fanfare: Restore 2 defense to your leader. Draw a card.During your turn, whenever your leader's defense is restored, summon a Snake Priestess."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_ReverendAdjudicator(self)]
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.restoresHealth(self.Game.heroes[self.ID], 2)
+        PRINT(self.Game,
+              f"Reverend Adjudicator's Fanfare restores 2 defense to your leader and draw a card")
+        self.Game.Hand_Deck.drawCard(self.ID)
+
+    def inHandEvolving(self, target=None):
+        self.restoresHealth(self.Game.heroes[self.ID], 2)
+        PRINT(self.Game,
+              f"Reverend Adjudicator's Evolve restores 2 defense to your leader")
+
+
+class Trig_ReverendAdjudicator(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["HeroGetsCured", "AllCured"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        if signal == "HeroGetsCured":
+            return subject.ID == self.entity.ID and self.entity.onBoard
+        else:
+            return ID == self.entity.ID and self.entity.onBoard
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Reverend Adjudicator summons a Snake Priestess.")
+        self.entity.Game.summon([SnakePriestess(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                self.entity.ID)
+
+
+class SomnolentStrength(Amulet):
+    Class, race, name = "Havencraft", "", "Somnolent Strength"
+    mana = 2
+    index = "SV_Fortune~Havencraft~Amulet~2~None~Somnolent Strength~Countdown~Deathrattle~Uncollectible~Legendary"
+    requireTarget, description = False, "Countdown (3)At the end of your turn, give +0/+2 to a random allied follower.Last Words: Give -2/-0 to a random enemy follower."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.counter = 3
+        self.trigsBoard = [Trig_Countdown(self), Trig_SomnolentStrength(self)]
+        self.deathrattles = [Deathrattle_SomnolentStrength(self)]
+
+
+class Trig_SomnolentStrength(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        curGame = self.entity.Game
+        if curGame.mode == 0:
+            if curGame.guides:
+                i = curGame.guides.pop(0)
+            else:
+                minions = curGame.minionsonBoard(self.entity.ID)
+                try:
+                    minions.remove(self.entity)
+                except:
+                    pass
+                i = npchoice(minions).position if minions else -1
+                curGame.fixedGuides.append(i)
+            if i > -1:
+                minion = curGame.minions[self.entity.ID][i]
+                PRINT(self.entity.Game, "At the end of your turn, give +0/+2 to a random allied follower.")
+                minion.buffDebuff(0, 2)
+
+
+class Deathrattle_SomnolentStrength(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        curGame = self.entity.Game
+        if curGame.mode == 0:
+            if curGame.guides:
+                i = curGame.guides.pop(0)
+            else:
+                minions = curGame.minionsonBoard(3 - self.entity.ID)
+                try:
+                    minions.remove(self.entity)
+                except:
+                    pass
+                i = npchoice(minions).position if minions else -1
+                curGame.fixedGuides.append(i)
+            if i > -1:
+                minion = curGame.minions[3 - self.entity.ID][i]
+                PRINT(self.entity.Game, "Last Words: Give -2/-0 to a random enemy follower.")
+                minion.buffDebuff(-2, 0)
+
+
+class VIIISofinaStrength_Accelerate(SVSpell):
+    Class, name = "Havencraft", "VIII. Sofina, Strength"
+    requireTarget, mana = False, 2
+    index = "SV_Fortune~Havencraft~Spell~2~VIII. Sofina, Strength~Accelerate~Uncollectible~Legendary"
+    description = "Summon a Somnolent Strength."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self.Game, "VIII. Sofina, Strength's Accelerate Summon a Somnolent Strength.")
+        self.Game.summon([SomnolentStrength(self.Game, self.ID)], (-1, "totheRightEnd"),
+                         self.ID)
+        return None
+
+
+class VIIISofinaStrength(SVMinion):
+    Class, race, name = "Havencraft", "", "VIII. Sofina, Strength"
+    mana, attack, health = 5, 2, 6
+    index = "SV_Fortune~Havencraft~Minion~5~2~6~None~VIII. Sofina, Strength~Accelerate~Battlecry~Legendary"
+    requireTarget, keyWord, description = False, "", "Accelerate (2): Summon a Somnolent Strength.Fanfare: Give all other allied followers +1/+1 and Ward.While this follower is in play, all allied followers in play and that come into play can't take more than 3 damage at a time."
+    accelerateSpell = VIIISofinaStrength_Accelerate
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.auras["Buff Aura"] = BuffAura_VIIISofinaStrength(self)
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] < self.mana:
+            return 2
+        else:
+            return self.mana
+
+    def willAccelerate(self):
+        curMana = self.Game.Manas.manas[self.ID]
+        return self.mana > curMana >= 2
+
+    def effectCanTrigger(self):
+        self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self.Game, "VIII. Sofina, Strength's Fanfare gives +1/+1 and Ward to all allied followers")
+        for minion in fixedList(self.Game.minionsonBoard(self.ID, self)):
+            minion.buffDebuff(1, 1)
+            minion.getsKeyword("Taunt")
+        return None
+
+
+class BuffAura_VIIISofinaStrength(AuraDealer_toMinion):
+    def __init__(self, entity):
+        self.entity = entity
+        self.signals, self.auraAffected = ["MinionAppears"], []
+
+    # All minions appearing on the same side will be subject to the buffAura.
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and subject.ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.applies(signal, subject)
+
+    def applies(self, signal, subject):
+        subject.marks["Max Damage"].append(3)
+
+    def auraAppears(self):
+        for minion in self.entity.Game.minionsonBoard(self.entity.ID):
+            self.applies("MinionAppears", minion)
+
+    def auraDisappears(self):
+        for minion in self.entity.Game.minionsonBoard(self.entity.ID):
+            if 3 in minion.marks["Max Damage"]:
+                minion.marks["Max Damage"].remove(3)
+
+    def selfCopy(self, recipient):
+        return type(self)(recipient)
+
+
+class PuresongPriest_Accelerate(SVSpell):
+    Class, name = "Havencraft", "Puresong Priest"
+    requireTarget, mana = False, 1
+    index = "SV_Fortune~Havencraft~Spell~1~Puresong Priest~Accelerate~Uncollectible"
+    description = "Restore 1 defense to your leader. If an allied follower with Ward is in play, draw a card."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.restoresHealth(self.Game.heroes[self.ID], 1)
+        PRINT(self.Game,
+              f"Puresong Priest's Accelerate restores 1 defense to your leader")
+        hasTaunt = False
+        for minion in self.Game.minionsAlive(self.ID):
+            if minion != self and minion.keyWords["Taunt"] > 0:
+                hasTaunt = True
+                break
+        if hasTaunt:
+            self.Game.Hand_Deck.drawCard(self.ID)
+            PRINT(self.Game,
+                  f"Puresong Priest's Accelerate draw a card")
+        return None
+
+
+class PuresongPriest(SVMinion):
+    Class, race, name = "Havencraft", "", "Puresong Priest"
+    mana, attack, health = 6, 5, 5
+    index = "SV_Fortune~Havencraft~Minion~6~5~5~None~Puresong Priest~Accelerate~Battlecry"
+    requireTarget, keyWord, description = False, "", "Accelerate (1): Restore 1 defense to your leader. If an allied follower with Ward is in play, draw a card.Fanfare: Restore 4 defense to all allies."
+    accelerateSpell = PuresongPriest_Accelerate
+    attackAdd, healthAdd = 2, 2
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] < self.mana:
+            return 1
+        else:
+            return self.mana
+
+    def willAccelerate(self):
+        curMana = self.Game.Manas.manas[self.ID]
+        return self.mana > curMana >= 1
+
+    def effectCanTrigger(self):
+        self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        chars = self.Game.charsAlive(self.ID)
+        self.restoresAOE(chars, 4)
+        PRINT(self.Game, "Puresong Priest's Fanfare restores 4 defense to all allies.")
+        return None
 
 
 """Portalcraft cards"""
@@ -4031,7 +4594,7 @@ class IlmisunaDiscordHawker(SVMinion):
             self.dealsDamage(target, len(self.Game.minionsonBoard[self.ID]))
             PRINT(self.Game,
                   f"Ilmisuna, Discord Hawker's Evolve deals {len(self.Game.minionsonBoard[self.ID])} damage to {target.name} -4/-0.")
-        return
+        return target
 
 
 class AlyaskaWarHawker(SVMinion):
@@ -4171,7 +4734,7 @@ class AlchemicalCraftschief_Accelerate(SVSpell):
 class AlchemicalCraftschief_Token(SVMinion):
     Class, race, name = "Runecraft", "", "Alchemical Craftschief"
     mana, attack, health = 7, 4, 4
-    index = "SV_Fortune~Runecraft~Minion~7~4~4~None~Alchemical Craftschief~Ward~Battlecry~Uncollectible"
+    index = "SV_Fortune~Runecraft~Minion~7~4~4~None~Alchemical Craftschief~Taunt~Battlecry~Uncollectible"
     requireTarget, keyWord, description = True, "Taunt", "Accelerate (2): Summon an Earth Essence. Put a 7-play point Alchemical Craftschief (without Accelerate) into your hand and subtract X from its cost. X equals the number of allied Earth Sigil amulets in play.Ward.Fanfare: Deal 4 damage to an enemy."
     attackAdd, healthAdd = 2, 2
 
@@ -4183,16 +4746,17 @@ class AlchemicalCraftschief_Token(SVMinion):
         return self.selectableEnemyExists()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if isinstance(target, list): target = target[0]
-        self.dealsDamage(target, 4)
-        PRINT(self.Game, f"Alchemical Craftschief deals 4 damage to {target.name}")
+        if target:
+            if isinstance(target, list): target = target[0]
+            self.dealsDamage(target, 4)
+            PRINT(self.Game, f"Alchemical Craftschief deals 4 damage to {target.name}")
         return target
 
 
 class AlchemicalCraftschief(SVMinion):
     Class, race, name = "Runecraft", "", "Alchemical Craftschief"
     mana, attack, health = 8, 4, 4
-    index = "SV_Fortune~Runecraft~Minion~8~4~4~None~Alchemical Craftschief~Ward~Battlecry~Accelerate"
+    index = "SV_Fortune~Runecraft~Minion~8~4~4~None~Alchemical Craftschief~Taunt~Battlecry~Accelerate"
     requireTarget, keyWord, description = True, "Taunt", "Accelerate (2): Summon an Earth Essence. Put a 7-play point Alchemical Craftschief (without Accelerate) into your hand and subtract X from its cost. X equals the number of allied Earth Sigil amulets in play.Ward.Fanfare: Deal 4 damage to an enemy."
     accelerateSpell = AlchemicalCraftschief_Accelerate
     attackAdd, healthAdd = 2, 2
@@ -4225,9 +4789,10 @@ class AlchemicalCraftschief(SVMinion):
         return self.selectableEnemyExists()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if isinstance(target, list): target = target[0]
-        self.dealsDamage(target, 4)
-        PRINT(self.Game, f"Alchemical Craftschief deals 4 damage to {target.name}")
+        if target:
+            if isinstance(target, list): target = target[0]
+            self.dealsDamage(target, 4)
+            PRINT(self.Game, f"Alchemical Craftschief deals 4 damage to {target.name}")
         return target
 
 
@@ -4248,17 +4813,18 @@ class WhitefrostWhisper(SVSpell):
         return self.selectableEnemyMinionExists()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if isinstance(target, list): target = target[0]
-        if target.health < target.health_max:
-            self.Game.killMinion(self, target)
-            PRINT(self.Game,
-                  f"Whitefrost Whisper destroys minion {target.name}")
-        else:
-            damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-            PRINT(self.Game,
-                  f"Whitefrost Whisper deals {damage} damage to minion {target.name}")
-            self.dealsDamage(target, damage)
-        return None
+        if target:
+            if isinstance(target, list): target = target[0]
+            if target.health < target.health_max:
+                self.Game.killMinion(self, target)
+                PRINT(self.Game,
+                      f"Whitefrost Whisper destroys minion {target.name}")
+            else:
+                damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+                PRINT(self.Game,
+                      f"Whitefrost Whisper deals {damage} damage to minion {target.name}")
+                self.dealsDamage(target, damage)
+        return target
 
 
 class FileneAbsoluteZero(SVMinion):
@@ -4286,7 +4852,7 @@ class FileneAbsoluteZero(SVMinion):
 class EternalWhale(SVMinion):
     Class, race, name = "Dragoncraft", "", "Eternal Whale"
     mana, attack, health = 6, 5, 7
-    index = "SV_Fortune~Dragoncraft~Minion~6~5~7~None~Eternal Whale~Ward"
+    index = "SV_Fortune~Dragoncraft~Minion~6~5~7~None~Eternal Whale~Taunt"
     requireTarget, keyWord, description = False, "Taunt", "Ward.When this follower comes into play, deal 2 damage to the enemy leader.When this follower leaves play, put four 1-play point Eternal Whales into your deck. (Transformation doesn't count as leaving play.)"
     attackAdd, healthAdd = 2, 2
 
@@ -4310,7 +4876,7 @@ class EternalWhale(SVMinion):
 class EternalWhale_Token(SVMinion):
     Class, race, name = "Dragoncraft", "", "Eternal Whale"
     mana, attack, health = 1, 5, 7
-    index = "SV_Fortune~Dragoncraft~Minion~1~5~7~None~Eternal Whale~Ward~Uncollectible"
+    index = "SV_Fortune~Dragoncraft~Minion~1~5~7~None~Eternal Whale~Taunt~Uncollectible"
     requireTarget, keyWord, description = False, "Taunt", "Ward.When this follower comes into play, deal 2 damage to the enemy leader.When this follower leaves play, put four 1-play point Eternal Whales into your deck. (Transformation doesn't count as leaving play.)"
     attackAdd, healthAdd = 2, 2
 
@@ -4479,6 +5045,248 @@ class Baal(SVMinion):
         return target
 
 
+class ServantofDarkness(SVMinion):
+    Class, race, name = "Neutral", "", "Servant of Darkness"
+    mana, attack, health = 5, 13, 13
+    index = "SV_Fortune~Neutral~Minion~5~13~13~None~Servant of Darkness~Uncollectible~Legendary"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+
+class SilentRider(SVMinion):
+    Class, race, name = "Neutral", "", "Silent Rider"
+    mana, attack, health = 6, 8, 8
+    index = "SV_Fortune~Neutral~Minion~6~8~8~None~Silent Rider~Charge~Uncollectible~Legendary"
+    requireTarget, keyWord, description = False, "Charge", "Storm."
+    attackAdd, healthAdd = 2, 2
+
+
+class DissDamnation(SVSpell):
+    Class, name = "Neutral", "Dis's Damnation"
+    requireTarget, mana = True, 7
+    index = "SV_Fortune~Neutral~Spell~7~Dis's Damnation~Uncollectible~Legendary"
+    description = "Deal 7 damage to an enemy. Restore 7 defense to your leader."
+
+    def available(self):
+        return self.selectableEnemyExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return (target.type == "Minion" or target.type == "Hero") and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            damage = (7 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+            heal = 7 * (2 ** self.countHealDouble())
+            PRINT(self.Game,
+                  f"Dis's Damnation deals {damage} damage to enemy {target.name} and restore {heal} defense to your leader.")
+            self.dealsDamage(target, damage)
+            self.restoresHealth(self.Game.heroes[self.ID], heal)
+        return target
+
+
+class AstarothsReckoning(SVSpell):
+    Class, name = "Neutral", "Astaroth's Reckoning"
+    requireTarget, mana = False, 10
+    index = "SV_Fortune~Neutral~Spell~10~Astaroth's Reckoning~Uncollectible~Legendary"
+    description = "Deal 7 damage to an enemy. Restore 7 defense to your leader."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        damage = (self.Game.heroes[3 - self.ID].health - 1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+        PRINT(self.Game,
+              f"Dis's Damnation deals {damage} damage to enemy leader.")
+        self.dealsDamage(self.Game.heroes[3 - self.ID], damage)
+        return False
+
+
+class PrinceofDarkness(SVMinion):
+    Class, race, name = "Neutral", "", "Prince of Darkness"
+    mana, attack, health = 10, 6, 6
+    index = "SV_Fortune~Neutral~Minion~10~6~6~None~Prince of Darkness~Battlecry~Legendary"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.Game.Hand_Deck.extractfromDeck(None, self.ID, all=True)
+        cards = [
+            ServantofDarkness(self.Game, self.ID),
+            ServantofDarkness(self.Game, self.ID),
+            ServantofDarkness(self.Game, self.ID),
+            SilentRider(self.Game, self.ID),
+            SilentRider(self.Game, self.ID),
+            SilentRider(self.Game, self.ID),
+            DissDamnation(self.Game, self.ID),
+            DissDamnation(self.Game, self.ID),
+            DissDamnation(self.Game, self.ID),
+            AstarothsReckoning(self.Game, self.ID),
+        ]
+        self.Game.Hand_Deck.shuffleCardintoDeck(cards, self.ID)
+        PRINT(self.Game,
+              f"Prince of Darkness's Fanfare replaces your deck with an Apocalypse Deck.")
+        return None
+
+
+class DemonofPurgatory(SVMinion):
+    Class, race, name = "Neutral", "", "Demon of Purgatory"
+    mana, attack, health = 6, 9, 6
+    index = "SV_Fortune~Neutral~Minion~6~9~6~None~Demon of Purgatory~Battlecry~Uncollectible~Legendary"
+    requireTarget, keyWord, description = False, "", "Fanfare: Give the enemy leader the following effect - At the start of your next turn, discard a random card from your hand."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        trigger = Trig_DemonofPurgatory(self.Game.heroes[3 - self.ID])
+        # for t in self.entity.Game.heroes[self.entity.ID].trigsBoard:
+        #     if type(t) == type(trigger):
+        #         return
+        self.Game.heroes[3 - self.ID].trigsBoard.append(trigger)
+        trigger.connect()
+        return None
+
+
+class Trig_DemonofPurgatory(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnStarts"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game,
+              "At the start of your turn, discard a random card from your hand.")
+        curGame = self.entity.Game
+        if curGame.mode == 0:
+            if curGame.guides:
+                i = curGame.guides.pop(0)
+            else:
+                ownHand = curGame.Hand_Deck.hands[self.entity.ID]
+                i = nprandint(len(ownHand)) if ownHand else -1
+                curGame.fixedGuides.append(i)
+            if i > -1: curGame.Hand_Deck.discardCard(self.entity.ID, i)
+
+
+class ScionofDesire(SVMinion):
+    Class, race, name = "Neutral", "", "Servant of Darkness"
+    mana, attack, health = 4, 5, 5
+    index = "SV_Fortune~Neutral~Minion~4~5~5~None~Servant of Darkness~Uncollectible~Legendary"
+    requireTarget, keyWord, description = False, "", "At the end of your turn, destroy a random enemy follower. Restore X defense to your leader. X equals that follower's attack."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_ScionofDesire]
+
+
+class Trig_ScionofDesire(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        curGame = self.entity.Game
+        if curGame.mode == 0:
+            enemy = None
+            if curGame.guides:
+                i, where = curGame.guides.pop(0)
+                if where: enemy = curGame.find(i, where)
+            else:
+                chars = curGame.minionsAlive(3 - self.entity.ID)
+                if chars:
+                    enemy = npchoice(chars)
+                    curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                else:
+                    curGame.fixedGuides.append((0, ''))
+            if enemy:
+                heal = enemy.attack
+                PRINT(self.entity.Game,
+                      f"Scion of Desire destroys {enemy.name} and restores {heal} defense to your leader")
+                self.entity.Game.killMinion(self.entity, enemy)
+                self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], heal)
+
+
+class GluttonousBehemoth(SVMinion):
+    Class, race, name = "Neutral", "", "Gluttonous Behemoth"
+    mana, attack, health = 7, 7, 7
+    index = "SV_Fortune~Neutral~Minion~7~7~7~None~Gluttonous Behemoth~Uncollectible~Legendary"
+    requireTarget, keyWord, description = False, "", "At the end of your turn, deal 7 damage to the enemy leader."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_GluttonousBehemoth]
+
+    def inEvolving(self):
+        for trig in self.trigsBoard:
+            if type(trig) == Trig_GluttonousBehemoth:
+                trig.disconnect()
+                self.trigsBoard.remove(trig)
+        trigger = Trig_EvolvedGluttonousBehemoth(self)
+        self.trigsBoard.append(trigger)
+        trigger.connect()
+
+
+class Trig_GluttonousBehemoth(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 7)
+        PRINT(self.entity.Game, f"At the end of your turn, deal 7 damage to the enemy leader.")
+
+
+class Trig_EvolvedGluttonousBehemoth(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 9)
+        PRINT(self.entity.Game, f"At the end of your turn, deal 9 damage to the enemy leader.")
+
+
+class ScorpionofGreed(SVMinion):
+    Class, race, name = "Neutral", "", "Scorpion of Greed"
+    mana, attack, health = 6, 7, 6
+    index = "SV_Fortune~Neutral~Minion~6~7~6~None~Scorpion of Greed~Charge~Bane~Drain~Uncollectible~Legendary"
+    requireTarget, keyWord, description = False, "Charge,Bane,Drain", "Storm.Bane.Drain."
+    attackAdd, healthAdd = 2, 2
+
+
+class WrathfulIcefiend(SVMinion):
+    Class, race, name = "Neutral", "", "Wrathful Icefiend"
+    mana, attack, health = 2, 4, 4
+    index = "SV_Fortune~Neutral~Minion~2~4~4~None~Wrathful Icefiend~Battlecry~Uncollectible~Legendary"
+    requireTarget, keyWord, description = False, "", "Fanfare: Recover 2 evolution points."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.Game.restoreEvolvePoint(self.ID, 2)
+        PRINT(self.Game, f"Wrathful Icefiend's Fanfare recovers 2 evolution points.")
+
+
+class HereticalHellbeast(SVMinion):
+    Class, race, name = "Neutral", "", "Heretical Hellbeast"
+    mana, attack, health = 8, 8, 8
+    index = "SV_Fortune~Neutral~Minion~8~8~8~None~Heretical Hellbeast~Battlecry~Taunt~Uncollectible~Legendary"
+    requireTarget, keyWord, description = False, "Taunt", "Ward. Fanfare: Deal X damage to your leader. X equals the number of other followers in play. Then destroy all other followers."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        minions = self.Game.minionsAlive(self.ID, self) + self.Game.minionsAlive(3 - self.ID)
+        damage = len(minions)
+        self.dealsDamage(self.Game.heroes[self.ID], damage)
+        self.Game.killMinion(self, minions)
+        PRINT(self.Game,
+              f"Heretical Hellbeast's Fanfare deals {damage} damage to your leader and destroy all other followers.")
+
+
 SV_Fortune_Indices = {
     "SV_Fortune~Neutral~Minion~2~5~5~None~Cloud Gigas~Taunt": CloudGigas,
     "SV_Fortune~Neutral~Spell~2~Sudden Showers": SuddenShowers,
@@ -4487,7 +5295,7 @@ SV_Fortune_Indices = {
     "SV_Fortune~Natural~Spell~4~Resolve of the Fallen": ResolveoftheFallen,
     "SV_Fortune~Natural~Minion~5~3~4~None~Starbright Deity~Battlecry": StarbrightDeity,
     "SV_Fortune~Neutral~Minion~5~5~5~None~XXI. Zelgenea, The World~Battlecry~Invocation~Legendary": XXIZelgeneaTheWorld,
-    "SV_Fortune~Neutral~Amulet~6~None~Titanic Showdown~Countdown~Last Words": TitanicShowdown,
+    "SV_Fortune~Neutral~Amulet~6~None~Titanic Showdown~Countdown~Deathrattle": TitanicShowdown,
     "SV_Fortune~Neutral~Spell~2~Pureshot Angel~Accelerate~Uncollectible": PureshotAngel_Accelerate,
     "SV_Fortune~Neutral~Minion~8~6~6~None~Pureshot Angel~Battlecry~Accelerate": PureshotAngel,
 
@@ -4556,12 +5364,12 @@ SV_Fortune_Indices = {
     "SV_Fortune~Dragoncraft~Amulet~1~None~Dragon's Nest": DragonsNest,
     "SV_Fortune~Dragoncraft~Spell~3~Dragon Spawning": DragonSpawning,
     "SV_Fortune~Dragoncraft~Spell~4~Dragon Impact": DragonImpact,
-    "SV_Fortune~Dragoncraft~Minion~10~11~8~None~XI. Erntz, Justice~Ward~Legendary": XIErntzJustice,
+    "SV_Fortune~Dragoncraft~Minion~10~11~8~None~XI. Erntz, Justice~Taunt~Legendary": XIErntzJustice,
 
     "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Ghostly Maid~Battlecry": GhostlyMaid,
     "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Bonenanza Necromancer~Enhance~Battlecry": BonenanzaNecromancer,
     "SV_Fortune~Shadowcraft~Spell~2~Savoring Slash": SavoringSlash,
-    "SV_Fortune~Shadowcraft~Amulet~2~None~Coffin of the Unknown Soul~Countdown~Battlecry~Last Words": CoffinoftheUnknownSoul,
+    "SV_Fortune~Shadowcraft~Amulet~2~None~Coffin of the Unknown Soul~Countdown~Battlecry~Deathrattle": CoffinoftheUnknownSoul,
     "SV_Fortune~Shadowcraft~Minion~3~3~3~None~Spirit Curator~Battlecry": SpiritCurator,
     "SV_Fortune~Shadowcraft~Amulet~1~None~Death Fowl~Countdown~Crystallize~Deathrattle~Uncollectible": DeathFowl_Crystallize,
     "SV_Fortune~Shadowcraft~Minion~4~3~3~None~Death Fowl~Crystallize~Deathrattle": DeathFowl,
@@ -4601,12 +5409,12 @@ SV_Fortune_Indices = {
     "SV_Fortune~Swordcraft~Minion~8~6~6~Commander~Exterminus Weapon~Battlecry~Deathrattle~Uncollectible~Legendary": ExterminusWeapon,
     "SV_Fortune~Runecraft~Minion~2~1~2~None~Runie, Resolute Diviner~Spellboost~Battlecry~Legendary": RunieResoluteDiviner,
     "SV_Fortune~Runecraft~Spell~2~Alchemical Craftschief~Accelerate~Uncollectible": AlchemicalCraftschief_Accelerate,
-    "SV_Fortune~Runecraft~Minion~7~4~4~None~Alchemical Craftschief~Ward~Battlecry~Uncollectible": AlchemicalCraftschief_Token,
-    "SV_Fortune~Runecraft~Minion~8~4~4~None~Alchemical Craftschief~Ward~Battlecry~Accelerate": AlchemicalCraftschief,
+    "SV_Fortune~Runecraft~Minion~7~4~4~None~Alchemical Craftschief~Taunt~Battlecry~Uncollectible": AlchemicalCraftschief_Token,
+    "SV_Fortune~Runecraft~Minion~8~4~4~None~Alchemical Craftschief~Taunt~Battlecry~Accelerate": AlchemicalCraftschief,
     "SV_Fortune~Dragoncraft~Spell~2~Whitefrost Whisper~Uncollectible~Legendary": WhitefrostWhisper,
     "SV_Fortune~Dragoncraft~Minion~3~1~3~None~Filene, Absolute Zero~Battlecry~Legendary": FileneAbsoluteZero,
-    "SV_Fortune~Dragoncraft~Minion~6~5~7~None~Eternal Whale~Ward": EternalWhale,
-    "SV_Fortune~Dragoncraft~Minion~1~5~7~None~Eternal Whale~Ward~Uncollectible": EternalWhale_Token,
+    "SV_Fortune~Dragoncraft~Minion~6~5~7~None~Eternal Whale~Taunt": EternalWhale,
+    "SV_Fortune~Dragoncraft~Minion~1~5~7~None~Eternal Whale~Taunt~Uncollectible": EternalWhale_Token,
     "SV_Fortune~Shadowcraft~Spell~2~Forced Resurrection": ForcedResurrection,
     "SV_Fortune~Shadowcraft~Minion~6~5~5~None~Nephthys, Goddess of Amenta~Battlecry~Enhance~Legendary": NephthysGoddessofAmenta,
     "SV_Fortune~Bloodcraft~Spell~1~Nightscreech": Nightscreech,
