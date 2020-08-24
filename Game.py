@@ -550,9 +550,9 @@ class Game:
 
 	def reanimate(self, ID, mana):
 		if self.mode == 0:
-			type = None
+			t = None
 			if self.guides:
-				type = self.guides.pop(0)
+				t = self.guides.pop(0)
 			else:
 				indices = self.Counters.minionsDiedThisGame[ID]
 				minions = {}
@@ -563,10 +563,10 @@ class Game:
 						minions[self.cardPool[index].mana] = [self.cardPool[index]]
 				for i in range(mana, -1, -1):
 					if i in minions:
-						type = npchoice(minions[i])
+						t = npchoice(minions[i])
 						break
-				self.fixedGuides.append(type)
-			if type:
+				self.fixedGuides.append(t)
+			if t:
 				subject = type(self, ID)
 				self.summon([subject], (-1, "totheRightEnd"), ID)
 				self.sendSignal("Reanimate", ID, subject, None, mana, "")

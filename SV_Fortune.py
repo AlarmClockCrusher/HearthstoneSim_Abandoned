@@ -3005,7 +3005,7 @@ class CloisteredSacristan_Crystallize(Amulet):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.counter = 4
-        self.trigsBoard = [Trig_Countdown(self), Trig_CloisteredSacristan_Crystallize]
+        self.trigsBoard = [Trig_Countdown(self), Trig_CloisteredSacristan_Crystallize(self)]
         self.deathrattles = [Deathrattle_CloisteredSacristan_Crystallize(self)]
 
 
@@ -3020,7 +3020,6 @@ class Deathrattle_CloisteredSacristan_Crystallize(Deathrattle_Minion):
 class Trig_CloisteredSacristan_Crystallize(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["BurialRite"])
-        self.counter = self.entity.counter
 
     def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -3028,7 +3027,6 @@ class Trig_CloisteredSacristan_Crystallize(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, f"{self.entity.name}'s countdown -1")
         self.entity.countdown(self.entity, 1)
-        self.counter = self.entity.counter
 
 
 class CloisteredSacristan(SVMinion):
@@ -4869,8 +4867,6 @@ class EternalWhale(SVMinion):
         PRINT(self.Game, f"Eternal Whale leaves board and put four 1-play point Eternal Whales into your deck.")
         cards = [EternalWhale_Token(self.Game, self.ID) for i in range(4)]
         self.Game.Hand_Deck.shuffleCardintoDeck(cards, self.ID)
-        for card in cards:
-            ManaMod(card, changeby=0, changeto=1).applies()
 
 
 class EternalWhale_Token(SVMinion):
@@ -5090,7 +5086,7 @@ class AstarothsReckoning(SVSpell):
     Class, name = "Neutral", "Astaroth's Reckoning"
     requireTarget, mana = False, 10
     index = "SV_Fortune~Neutral~Spell~10~Astaroth's Reckoning~Uncollectible~Legendary"
-    description = "Deal 7 damage to an enemy. Restore 7 defense to your leader."
+    description = "Deal damage to the enemy leader until their defense drops to 1."
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         damage = (self.Game.heroes[3 - self.ID].health - 1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -5104,7 +5100,7 @@ class PrinceofDarkness(SVMinion):
     Class, race, name = "Neutral", "", "Prince of Darkness"
     mana, attack, health = 10, 6, 6
     index = "SV_Fortune~Neutral~Minion~10~6~6~None~Prince of Darkness~Battlecry~Legendary"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, keyWord, description = False, "", "Fanfare: Replace your deck with an Apocalypse Deck."
     attackAdd, healthAdd = 2, 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -5285,6 +5281,315 @@ class HereticalHellbeast(SVMinion):
         self.Game.killMinion(self, minions)
         PRINT(self.Game,
               f"Heretical Hellbeast's Fanfare deals {damage} damage to your leader and destroy all other followers.")
+
+
+class ViciousCommander(SVMinion):
+    Class, race, name = "Neutral", "", "Vicious Commander"
+    mana, attack, health = 3, 4, 4
+    index = "SV_Fortune~Neutral~Minion~3~4~4~None~Vicious Commander~Battlecry~Uncollectible~Legendary"
+    requireTarget, keyWord, description = True, "", "Fanfare: Deal 4 damage to an enemy follower."
+    attackAdd, healthAdd = 2, 2
+    evolveRequireTarget = True
+
+    def evolveTargetExists(self, choice=0):
+        return self.selectableEnemyMinionExists()
+
+    def evolveTargetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.onBoard and target.ID != self.ID
+
+    def inHandEvolving(self, target=None):
+        if target:
+            if isinstance(target, list): target = target[0]
+            PRINT(self.Game,
+                  f"Vicious Commander's Evolve deals 6 damage to enemy {target.name}")
+            self.dealsDamage(target, 6)
+
+    def targetExists(self, choice=0):
+        return self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            self.dealsDamage(target, 4)
+            PRINT(self.Game, f"Vicious Commander deals 4 damage to {target.name}")
+        return target
+
+
+class FlamelordofDeceit(SVMinion):
+    Class, race, name = "Neutral", "", "Flamelord of Deceit"
+    mana, attack, health = 5, 5, 5
+    index = "SV_Fortune~Neutral~Minion~5~5~5~None~Flamelord of Deceit~Battlecry~Charge~Uncollectible~Legendary"
+    requireTarget, keyWord, description = False, "Charge", "Storm.Fanfare: Banish all enemy amulets."
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.Game.banishMinion(self, self.Game.amuletsonBoard(3 - self.ID))
+        PRINT(self.Game, f"Flamelord of Deceit banishes all enemy amulets.")
+        return None
+
+
+class InfernalGaze(SVSpell):
+    Class, name = "Neutral", "Infernal Gaze"
+    requireTarget, mana = False, 1
+    index = "SV_Fortune~Neutral~Spell~1~Infernal Gaze~Uncollectible~Legendary"
+    description = "Until the start of your next turn, add 10 to the original cost of spells in your opponent's hand. (Only affects cards in hand at the time this effect is activated.)Draw a card."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        PRINT(self.Game,
+              "Infernal Gaze adds 10 to the cost of all spell cards in your opponent's hand until the start of your next turn. Draw a card.")
+        self.Game.Manas.CardAuras_Backup.append(ManaEffect_InfernalGaze(self.Game, 3 - self.ID))
+        self.Game.Hand_Deck.drawCard(self.ID)
+        return None
+
+
+class ManaEffect_InfernalGaze(TempManaEffect):
+    def __init__(self, Game, ID):
+        self.Game, self.ID = Game, ID
+        self.changeby, self.changeto = +10, -1
+        self.temporary = True
+        self.auraAffected = []
+
+    def applicable(self, target):
+        return target.ID == self.ID and target.type == "Spell"
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.applies(target[0])
+
+    # 持续整个回合的光环可以不必注册"ManaPaid"
+    def auraAppears(self):
+        for card in self.Game.Hand_Deck.hands[1]: self.applies(card)
+        for card in self.Game.Hand_Deck.hands[2]: self.applies(card)
+        self.Game.Manas.calcMana_All()
+
+    # auraDisappears()可以尝试移除ManaPaid，当然没有反应，所以不必专门定义
+    def selfCopy(self, game):
+        return type(self)(game, self.ID)
+
+
+class InfernalSurge(SVSpell):
+    Class, name = "Neutral", "Infernal Surge"
+    requireTarget, mana = False, 1
+    index = "SV_Fortune~Neutral~Spell~1~Infernal Surge~Uncollectible~Legendary"
+    description = "Draw 3 cards."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.Game.Hand_Deck.drawCard(self.ID)
+        self.Game.Hand_Deck.drawCard(self.ID)
+        self.Game.Hand_Deck.drawCard(self.ID)
+        PRINT(self.Game, "Infernal Surge draw 3 cards")
+
+
+class Heavenfall(SVSpell):
+    Class, name = "Neutral", "Heavenfall"
+    requireTarget, mana = True, 2
+    index = "SV_Fortune~Neutral~Spell~2~Heavenfall~Uncollectible~Legendary"
+    description = "Banish an enemy follower or amulet.Draw a card."
+
+    def available(self):
+        return self.selectableEnemyExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return (target.type == "Minion" or target.type == "Amulet") and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            PRINT(self.Game,
+                  f"Heavenfall banishes enemy {target.name} and draw a card")
+            self.Game.banishMinion(self, target)
+            self.Game.Hand_Deck.drawCard(self.ID)
+        return target
+
+
+class Earthfall(SVSpell):
+    Class, name = "Neutral", "Earthfall"
+    requireTarget, mana = False, 4
+    index = "SV_Fortune~Neutral~Spell~4~Earthfall~Uncollectible~Legendary"
+    description = "Destroy all non-Neutral followers."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        minions = []
+        for minion in self.Game.minionsAlive(1) + self.Game.minionsAlive(2):
+            if minion.Class != "Neutral":
+                minions.append(minion)
+        self.Game.killMinion(self, minions)
+        PRINT(self.Game,
+              f"Earthfall destroys all non-Neutral followers.")
+
+
+class PrinceofCocytus_Accelerate(SVSpell):
+    Class, name = "Neutral", "Prince of Cocytus"
+    requireTarget, mana = False, 3
+    index = "SV_Fortune~Neutral~Spell~3~Prince of Cocytus~Accelerate~Uncollectible~Legendary"
+    description = "Randomly put 4 different Cocytus cards into your deck."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        cards = [
+            DemonofPurgatory,
+            ScionofDesire,
+            GluttonousBehemoth,
+            ScorpionofGreed,
+            WrathfulIcefiend,
+            HereticalHellbeast,
+            ViciousCommander,
+            FlamelordofDeceit,
+            InfernalGaze,
+            InfernalSurge,
+            Heavenfall,
+            Earthfall,
+            AstarothsReckoning,
+        ]
+        curGame = self.Game
+        if curGame.mode == 0:
+            types = []
+            if curGame.guides:
+                types = list(curGame.guides.pop(0))
+            else:
+                while len(types) < 4:
+                    t = npchoice(cards)
+                    if t not in types:
+                        types.append(t)
+                curGame.fixedGuides.append(tuple(types))
+            if types:
+                cards = []
+                for t in types:
+                    cards.append(t(self.Game, self.ID))
+                    PRINT(self.Game,
+                          f"Prince of Cocytus's Accelerate put {t.name} into your deck")
+                self.Game.Hand_Deck.shuffleCardintoDeck(cards, self.ID)
+        return None
+
+
+class PrinceofCocytus(SVMinion):
+    Class, race, name = "Neutral", "", "Prince of Cocytus"
+    mana, attack, health = 9, 7, 7
+    index = "SV_Fortune~Neutral~Minion~9~7~7~None~Prince of Cocytus~Accelerate~Battlecry~Legendary"
+    requireTarget, keyWord, description = False, "", "Accelerate (3): Randomly put 4 different Cocytus cards into your deck.Fanfare: Replace your deck with a Cocytus Deck."
+    accelerateSpell = PrinceofCocytus_Accelerate
+    attackAdd, healthAdd = 2, 2
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] < self.mana:
+            return 3
+        else:
+            return self.mana
+
+    def willAccelerate(self):
+        curMana = self.Game.Manas.manas[self.ID]
+        return self.mana > curMana >= 3
+
+    def effectCanTrigger(self):
+        self.effectViable = "sky blue" if self.willAccelerate() else False
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.Game.Hand_Deck.extractfromDeck(None, self.ID, all=True)
+        cards = [
+            DemonofPurgatory(self.Game, self.ID),
+            ScionofDesire(self.Game, self.ID),
+            GluttonousBehemoth(self.Game, self.ID),
+            ScorpionofGreed(self.Game, self.ID),
+            WrathfulIcefiend(self.Game, self.ID),
+            HereticalHellbeast(self.Game, self.ID),
+            ViciousCommander(self.Game, self.ID),
+            FlamelordofDeceit(self.Game, self.ID),
+            InfernalGaze(self.Game, self.ID),
+            InfernalSurge(self.Game, self.ID),
+            Heavenfall(self.Game, self.ID),
+            Earthfall(self.Game, self.ID),
+            AstarothsReckoning(self.Game, self.ID),
+        ]
+        self.Game.Hand_Deck.shuffleCardintoDeck(cards, self.ID)
+        PRINT(self.Game,
+              f"Prince of Cocytus's Fanfare replaces your deck with a Cocytus Deck.")
+        return None
+
+
+class TempleofHeresy(Amulet):
+    Class, race, name = "Heavencraft", "", "Temple of Heresy"
+    mana = 1
+    index = "SV_Fortune~Heavencraft~Amulet~1~None~Temple of Heresy~Countdown~Deathrattle"
+    requireTarget, description = False, "Countdown (9)At the start of your turn, if you have more evolution points than your opponent, subtract 1 from this amulet's Countdown. (You have 0 evolution points on turns you are unable to evolve.)Last Words: Randomly put a Prince of Darkness or Prince of Cocytus into your hand and change its cost to 1."
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.counter = 9
+        self.trigsBoard = [Trig_Countdown(self), Trig_TempleofHeresy(self)]
+        self.deathrattles = [Deathrattle_TempleofHeresy(self)]
+
+
+class Deathrattle_TempleofHeresy(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        es = ["D", "C"]
+        e = "D"
+        curGame = self.entity.Game
+        if curGame.mode == 0:
+            if curGame.guides:
+                i, e = curGame.guides.pop(0)
+            else:
+                e = np.random.choice(es)
+                curGame.fixedGuides.append((0, e))
+        if e == "D":
+            card = PrinceofDarkness(self.entity.Game, self.entity.ID)
+            self.entity.Game.Hand_Deck.addCardtoHand([card], self.entity.ID, "type")
+            ManaMod(card, changeby=0, changeto=1).applies()
+            PRINT(self.entity.Game,
+                  f"Last Words: Put a Prince of Darkness into your hand and change its cost to 1.")
+        elif e == "C":
+            card = PrinceofCocytus(self.entity.Game, self.entity.ID)
+            self.entity.Game.Hand_Deck.addCardtoHand([card], self.entity.ID, "type")
+            ManaMod(card, changeby=0, changeto=1).applies()
+            PRINT(self.entity.Game,
+                  f"Last Words: Put a Prince of Cocytus into your hand and change its cost to 1.")
+
+
+class Trig_TempleofHeresy(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnStarts"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID and self.entity.Game.getEvolutionPoint(
+            self.entity.ID) > self.entity.Game.getEvolutionPoint(3 - self.entity.ID)
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, f"{self.entity.name}'s countdown -1")
+        self.entity.countdown(self.entity, 1)
+
+
+class RaRadianceIncarnate(SVMinion):
+    Class, race, name = "Havencraft", "", "Ra, Radiance Incarnate"
+    mana, attack, health = 5, 5, 5
+    index = "SV_Fortune~Havencraft~Minion~5~5~5~None~Ra, Radiance Incarnate~Taunt~Battlecry"
+    requireTarget, keyWord, description = False, "Taunt", "Ward. Fanfare: Give your leader the following effect - At the end of your turn, deal X damage to the enemy leader. X equals your current turn number minus 5 (no damage is dealt if X is less than 0). (This effect is not stackable and lasts for the rest of the match.)"
+    attackAdd, healthAdd = 2, 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        trigger = Trig_RaRadianceIncarnate(self.Game.heroes[self.ID])
+        for t in self.Game.heroes[self.ID].trigsBoard:
+            if type(t) == type(trigger):
+                return
+        self.Game.heroes[self.ID].trigsBoard.append(trigger)
+        trigger.connect()
+        return None
+
+
+class Trig_RaRadianceIncarnate(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+        self.counter = 3
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        turn = self.entity.Game.Counters.turns[self.entity.ID]
+        if turn >= 5:
+            self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], turn - 5)
 
 
 SV_Fortune_Indices = {
