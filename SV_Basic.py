@@ -1884,6 +1884,7 @@ class Deathrattle_SummonPegasus(Deathrattle_Minion):
         self.entity.Game.summon([Pegasus(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
                                 self.entity.ID)
 
+
 class PinionPrayer(Amulet):
     Class, race, name = "Havencraft", "", "Pinion Prayer"
     mana = 1
@@ -1902,6 +1903,7 @@ class Deathrattle_PinionPrayer(Deathrattle_Minion):
         PRINT(self.entity.Game, "Last Words: Summon a Holy Falcon.")
         self.entity.Game.summon([HolyFalcon(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
                                 self.entity.ID)
+
 
 class SnakePriestess(SVMinion):
     Class, race, name = "Havencraft", "", "Snake Priestess"
@@ -2182,6 +2184,82 @@ class Deathrattle_RadiantArtifact(Deathrattle_Minion):
         else:
             PRINT(self.entity.Game, "Last Words: Draw a card.")
             self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
+
+
+class BarrierArtifact(SVMinion):
+    Class, race, name = "Portalcraft", "Artifact", "Barrier Artifact"
+    mana, attack, health = 5, 4, 6
+    index = "SV_Basic~Portalcraft~Minion~5~4~6~Artifact~Barrier Artifact~Bane~Taunt~Uncollectible"
+    requireTarget, keyWord, description = False, "Bane,Taunt", "Bane.Ward."
+    attackAdd, healthAdd = 2, 2
+
+
+class KeenedgeArtifact(SVMinion):
+    Class, race, name = "Portalcraft", "Artifact", "Keenedge Artifact"
+    mana, attack, health = 5, 3, 4
+    index = "SV_Basic~Portalcraft~Minion~5~4~6~Artifact~Keenedge Artifact~Rush~Drain~Uncollectible"
+    requireTarget, keyWord, description = False, "Rush,Drain", "Rush.Drain."
+    attackAdd, healthAdd = 2, 2
+
+
+class AirstrikeArtifact(SVMinion):
+    Class, race, name = "Portalcraft", "Artifact", "Airstrike Artifact"
+    mana, attack, health = 5, 2, 2
+    index = "SV_Basic~Portalcraft~Minion~5~2~2~Artifact~Airstrike Artifact~Charge~Deathrattle~Uncollectible"
+    requireTarget, keyWord, description = False, "Charge", "Storm. Last Words: Deal 2 damage to the enemy leader."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.deathrattles = [Deathrattle_AirstrikeArtifact(self)]
+
+
+class Deathrattle_AirstrikeArtifact(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Last Words: Deal 2 damage to the enemy leader.")
+        self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 2)
+
+
+class Trig_ParadigmShift(TrigHand):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionDies"])
+
+    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+        return target.ID == self.entity.ID and self.entity.onBoard and "Artifact" in target.race
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.progress += 1
+        self.entity.Game.Manas.calcMana_Single(self.entity)
+
+
+class ParadigmShift(SVSpell):
+    Class, name = "Portalcraft", "Paradigm Shift"
+    requireTarget, mana = False, 7
+    index = "SV_Basic~Portalcraft~Spell~7~Paradigm Shift~Choose~Uncollectible"
+    description = "Whenever an allied Artifact follower is destroyed, subtract 1 from the cost of this card. Choose: Summon a Barrier Artifact, Keenedge Artifact, or Airstrike Artifact."
+
+    def __init__(self, Game, ID):
+        super().__init__(Game, ID)
+        self.blank_init(Game, ID)
+        self.trigsHand = [Trig_ParadigmShift(self)]
+        self.progress = 0
+
+    def selfManaChange(self):
+        if self.inHand:
+            self.mana -= self.progress
+            self.mana = max(self.mana, 0)
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.Game.options = [BarrierArtifact(self.Game, self.ID), KeenedgeArtifact(self.Game, self.ID),
+                             AirstrikeArtifact(self.Game, self.ID)]
+        self.Game.Discover.startDiscover(self)
+        return None
+
+    def discoverDecided(self, option, info):
+        self.Game.fixedGuides.append(type(option))
+        self.Game.summon([option], (-1, "totheRightEnd"), self.ID)
+        PRINT(self.Game,
+              f"Paradigm Shift summons a {option.name}")
 
 
 class Puppeteer(SVMinion):

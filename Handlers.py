@@ -320,6 +320,7 @@ class Counters:
 		self.numCardsExtraDrawThisTurn = {1:0, 2:0}
 		self.numBurialRiteThisGame = {1:0, 2:0}
 		self.numCardsExtraPlayedThisTurn = {1:0, 2:0}
+		self.artifactsDiedThisGame = {1: {}, 2: {}}
 
 	def turnEnds(self):
 		self.numElementalsPlayedLastTurn[self.Game.turn] = 0

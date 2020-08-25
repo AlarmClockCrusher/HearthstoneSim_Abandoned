@@ -552,7 +552,7 @@ class Game:
 		if self.mode == 0:
 			t = None
 			if self.guides:
-				t = self.guides.pop(0)
+				t = self.cardPool[self.guides.pop(0)]
 			else:
 				indices = self.Counters.minionsDiedThisGame[ID]
 				minions = {}
@@ -565,9 +565,9 @@ class Game:
 					if i in minions:
 						t = npchoice(minions[i])
 						break
-				self.fixedGuides.append(t)
+				self.fixedGuides.append(t.index)
 			if t:
-				subject = type(self, ID)
+				subject = t(self, ID)
 				self.summon([subject], (-1, "totheRightEnd"), ID)
 				self.sendSignal("Reanimate", ID, subject, None, mana, "")
 				return subject
@@ -777,6 +777,11 @@ class Game:
 						minion.disappears(deathrattlesStayArmed=True) #随从死亡时不会注销其死亡扳机，这些扳机会在触发之后自行注销
 						self.Counters.minionsDiedThisTurn[minion.ID].append(minion.index)
 						self.Counters.minionsDiedThisGame[minion.ID].append(minion.index)
+						if "Artifact" in minion.race:
+							if minion.index in self.Counters.artifactsDiedThisGame[minion.ID]:
+								self.Counters.artifactsDiedThisGame[minion.ID][minion.index] += 1
+							else:
+								self.Counters.artifactsDiedThisGame[minion.ID][minion.index] = 1
 						self.Counters.shadows[minion.ID] += 1
 				elif minion.dead: #The obj is Amulet and it's been marked dead
 					minion.dead = True

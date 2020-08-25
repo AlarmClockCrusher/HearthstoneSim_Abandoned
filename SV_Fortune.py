@@ -578,9 +578,7 @@ class TreacherousReversal(SVSpell):
     description = "Banish all cards in play.Banish all cards in your hand and deck.Put copies of the first 10 cards your opponent played this match (excluding XII. Wolfraud, Hanged Man and Treacherous Reversal) into your deck, in the order they were played.Transform the Reaper at the bottom of your deck into a Victory Card.Treat allied cards that have been destroyed this match as if they were banished.At the end of your opponent's next turn, put copies of each card in your opponent's hand into your hand (excluding XII. Wolfraud, Hanged Man and Treacherous Reversal)."
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        minions = self.Game.minionsandAmuletsonBoard(1) + self.Game.minionsandAmuletsonBoard(2)
-        for minion in minions:
-            self.Game.banishMinion(self, minion)
+        self.Game.banishMinion(self, self.Game.minionsandAmuletsonBoard(1) + self.Game.minionsandAmuletsonBoard(2))
         PRINT(self.Game, f"Treacherous Reversal banished all cards on board")
         self.Game.Hand_Deck.extractfromHand(None, self.ID, all=True)
         self.Game.Hand_Deck.extractfromDeck(None, self.ID, all=True)
@@ -1672,7 +1670,7 @@ class GolemSummoning(SVSpell):
 class LhynkalTheFool(SVMinion):
     Class, race, name = "Runecraft", "", "0. Lhynkal, The Fool"
     mana, attack, health = 2, 2, 2
-    index = "SV_Fortune~Runecraft~Minion~2~2~2~None~0. Lhynkal, The Fool~Battlecry~Legendary"
+    index = "SV_Fortune~Runecraft~Minion~2~2~2~None~0. Lhynkal, The Fool~Battlecry~Choose~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Choose - Put a Rite of the Ignorant or Scourge of the Omniscient into your hand."
     attackAdd, healthAdd = 2, 2
 
@@ -1847,8 +1845,7 @@ class MadcapConjuration(SVSpell):
                 self.Game.Hand_Deck.drawCard(self.ID)
             PRINT(self.Game, "Madcap Conjuration let player draw 5 cards")
         if types["Minion"] >= 2:
-            for minion in self.Game.minionsAlive(1) + self.Game.minionsAlive(2):
-                self.Game.killMinion(self, minion)
+            self.Game.killMinion(self, self.Game.minionsAlive(1) + self.Game.minionsAlive(2))
             PRINT(self.Game, "Madcap Conjuration destroys all minions")
         if types["Amulet"] >= 2:
             self.Game.summon([ClayGolem(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
@@ -1879,7 +1876,7 @@ class PiquantPotioneer(SVMinion):
     Class, race, name = "Runecraft", "", "Piquant Potioneer"
     mana, attack, health = 4, 3, 3
     index = "SV_Fortune~Runecraft~Minion~4~3~3~None~Piquant Potioneer~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Choose - Put a Rite of the Ignorant or Scourge of the Omniscient into your hand."
+    requireTarget, keyWord, description = False, "", "Fanfare: Deal 1 damage to all enemy followers. If you have 20 cards or less in your deck, deal 3 damage instead."
     attackAdd, healthAdd = 2, 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4020,9 +4017,9 @@ class SarissaLuxflashSpear(SVMinion):
               f"Sarissa, Luxflash Spear gain the ability The next time this follower takes damage, reduce that damage to 0.")
         if comment == 6:
             if self.Game.mode == 0:
-                type = None
+                t = None
                 if self.Game.guides:
-                    type = self.Game.guides.pop(0)
+                    t = self.Game.cardPool[self.Game.guides.pop(0)]
                 else:
                     indices = self.Game.Counters.minionsDiedThisGame[self.ID]
                     minions = {}
@@ -4035,13 +4032,13 @@ class SarissaLuxflashSpear(SVMinion):
                     if minions:
                         for i in range(minions.keys()[len(minions) - 1], -1, -1):
                             if i in minions:
-                                type = npchoice(minions[i])
-                                self.Game.fixedGuides.append(type)
+                                t = npchoice(minions[i])
+                                self.Game.fixedGuides.append(t.index)
                                 break
                     else:
                         self.Game.fixedGuides.append(None)
-                if type:
-                    subject = type(self.Game, self.ID)
+                if t:
+                    subject = t(self.Game, self.ID)
                     self.Game.summon([subject], (-1, "totheRightEnd"), self.ID)
                     PRINT(self.Game,
                           f"Sarissa, Luxflash Spear's Enhance Fanfare summons {subject.name}")
@@ -4357,6 +4354,83 @@ class PuresongPriest(SVMinion):
 
 
 """Portalcraft cards"""
+
+
+class ArtifactScan(SVSpell):
+    Class, name = "Portalcraft", "Artifact Scan"
+    requireTarget, mana = False, 0
+    index = "SV_Fortune~Portalcraft~Spell~0~Artifact Scan"
+    description = "Put copies of 2 random allied Artifact cards with different names destroyed this match into your hand. Then, if at least 6 allied Artifact cards with different names have been destroyed this match, change their costs to 0."
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if self.Game.mode == 0:
+            types = None
+            if self.Game.guides:
+                types = self.Game.guides.pop(0)
+                if types:
+                    types = list(types)
+            else:
+                indices = self.Game.Counters.artifactsDiedThisGame[self.ID].keys()
+                if len(indices) == 0:
+                    self.Game.fixedGuides.append(None)
+                    types = None
+                elif len(indices) == 1:
+                    self.Game.fixedGuides.append(tuple([indices[0]]))
+                    types = [indices[0]]
+                else:
+                    types = []
+                    while len(types) < 2:
+                        t = npchoice(indices)
+                        if t not in types:
+                            types.append(t)
+                    self.Game.fixedGuides.append(tuple(types))
+            if types:
+                minions = []
+                for t in types:
+                    minions.append(self.Game.cardPool[t](self.Game, self.ID))
+                self.Game.Hand_Deck.addCardtoHand(minions, self.ID)
+                PRINT(self.Game,
+                      f"Artifact Scan puts copies of 2 random allied Artifact cards with different names destroyed this match into your hand. ")
+                if len(self.Game.Counters.artifactsDiedThisGame[self.ID]) >= 6:
+                    for m in minions:
+                        ManaMod(m, changeby=0, changeto=0).applies()
+                    PRINT(self.Game,
+                          f"Artifact Scan changes their costs to 0.")
+
+class RoboticEngineer(SVMinion):
+    Class, race, name = "Portalcraft", "", "Robotic Engineer"
+    mana, attack, health = 1, 1, 1
+    index = "SV_Fortune~Portalcraft~Minion~1~1~1~None~Robotic Engineer~Deathrattle"
+    requireTarget, keyWord, description = False, "", "Last Words: Put a Paradigm Shift into your hand."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.deathrattles = [Deathrattle_RoboticEngineer(self)]
+
+
+class Deathrattle_RoboticEngineer(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Last Words: Put a Paradigm Shift into your hand.")
+        self.entity.Game.Hand_Deck.addCardtoHand(ParadigmShift, self.entity.ID, "type")
+
+class MarionetteExpert(SVMinion):
+    Class, race, name = "Portalcraft", "", "Marionette Expert"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Fortune~Portalcraft~Minion~2~2~2~None~Marionette Expert~Deathrattle"
+    requireTarget, keyWord, description = False, "", "Last Words: Put a Puppet into your hand."
+    attackAdd, healthAdd = 2, 2
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.deathrattles = [Deathrattle_MarionetteExpert(self)]
+
+
+class Deathrattle_MarionetteExpert(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        PRINT(self.entity.Game, "Last Words: Put a Puppet into your hand.")
+        self.entity.Game.Hand_Deck.addCardtoHand(Puppet, self.entity.ID, "type")
+
 
 """DLC cards"""
 
@@ -5641,7 +5715,7 @@ SV_Fortune_Indices = {
     "SV_Fortune~Runecraft~Spell~1~Magical Augmentation~EarthRite": MagicalAugmentation,
     "SV_Fortune~Runecraft~Minion~2~2~2~None~Creative Conjurer~Battlecry~EarthRite": CreativeConjurer,
     "SV_Fortune~Runecraft~Spell~2~Golem Summoning~Uncollectible": GolemSummoning,
-    "SV_Fortune~Runecraft~Minion~2~2~2~None~0. Lhynkal, The Fool~Battlecry~Legendary": LhynkalTheFool,
+    "SV_Fortune~Runecraft~Minion~2~2~2~None~0. Lhynkal, The Fool~Battlecry~Choose~Legendary": LhynkalTheFool,
     "SV_Fortune~Runecraft~Spell~4~Rite of the Ignorant~Uncollectible~Legendary": RiteoftheIgnorant,
     "SV_Fortune~Runecraft~Spell~2~Scourge of the Omniscient~Uncollectible~Legendary": ScourgeoftheOmniscient,
     "SV_Fortune~Runecraft~Spell~2~Authoring Tomorrow": AuthoringTomorrow,
