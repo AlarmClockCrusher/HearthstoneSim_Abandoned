@@ -514,7 +514,7 @@ class Game:
 		return self.heroes[ID].health <= 10 or self.Counters.tempVengeance[ID]
 
 	def isAvarice(self, ID):
-		return self.Counters.numCardsExtraDrawThisTurn[ID] > 0
+		return self.Counters.numCardsDrawnThisTurn[ID] >= 2
 
 	def isWrath(self, ID):
 		return self.Counters.timesHeroTookDamage_inOwnTurn[ID] >= 7
@@ -913,7 +913,7 @@ class Game:
 		self.sendSignal("TurnStarts", self.turn, None, None, 0, "")
 		self.gathertheDead(True)
 		#抽牌阶段之后的死亡处理可以涉及胜负裁定。
-		self.Hand_Deck.drawCard(self.turn, type="Turn")
+		self.Hand_Deck.drawCard(self.turn)
 		if self.turn == 2 and self.Counters.turns[2] == 1 and self.heroes[2].Class in SVClasses:
 			self.Hand_Deck.drawCard(self.turn)
 		self.gathertheDead(True) #There might be death induced by drawing cards.

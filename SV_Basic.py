@@ -357,7 +357,7 @@ class FairyWhisperer(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        PRINT(self.Game, "Fairy Whisperer's Fanfare put a Fairy into your hand.")
+        PRINT(self.Game, "Fairy Whisperer's Fanfare put 2 Fairies into your hand.")
         self.Game.Hand_Deck.addCardtoHand([Fairy for i in range(2)], self.ID, "type")
         return None
 
@@ -1201,6 +1201,8 @@ class Dragonrider(SVMinion):
         self.auras["Buff Aura"] = BuffAura_Dragonrider(self)
         self.activated = False
 
+    def effectCanTrigger(self):
+        self.effectViable = self.Game.isOverflow(self.ID)
 
 class BuffAura_Dragonrider(BuffAura_Overflow):
     def applies(self, subject):
@@ -1214,6 +1216,9 @@ class DragonOracle(SVSpell):
     requireTarget, mana = False, 2
     index = "SV_Basic~Dragoncraft~Spell~2~Dragon Oracle"
     description = "Gain an empty play point orb. Draw a card if Overflow is active for you."
+
+    def effectCanTrigger(self):
+        self.effectViable = self.Game.isOverflow(self.ID)
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Dragon Oracle gives an empty play point orb")
@@ -1236,6 +1241,8 @@ class FirstbornDragon(SVMinion):
         self.auras["Buff Aura"] = BuffAura_FirstbornDragon(self)
         self.activated = False
 
+    def effectCanTrigger(self):
+        self.effectViable = self.Game.isOverflow(self.ID)
 
 class BuffAura_FirstbornDragon(BuffAura_Overflow):
     def applies(self, subject):
@@ -2501,6 +2508,7 @@ SV_Basic_Indices = {
     "SV_Basic~Neutral~Minion~7~7~7~None~Flame and Glass~Charge~Uncollectible": FlameandGlass,
     "SV_Basic~Neutral~Minion~4~3~4~None~Goliath": Goliath,
     "SV_Basic~Neutral~Minion~5~2~6~None~Angelic Sword Maiden~Taunt": AngelicSwordMaiden,
+
     "SV_Basic~Forestcraft~Minion~1~1~1~None~Fairy~Uncollectible": Fairy,
     "SV_Basic~Forestcraft~Minion~1~1~1~None~Water Fairy~Deathrattle": WaterFairy,
     "SV_Basic~Forestcraft~Minion~2~1~1~None~Fairy Whisperer~Battlecry": FairyWhisperer,
@@ -2513,6 +2521,7 @@ SV_Basic_Indices = {
     "SV_Basic~Forestcraft~Minion~5~4~4~None~Treant~Battlecry": Treant,
     "SV_Basic~Forestcraft~Minion~6~4~5~None~Elf Tracker~Battlecry": ElfTracker,
     "SV_Basic~Forestcraft~Minion~6~5~5~None~Magna Botanist~Battlecry": MagnaBotanist,
+
     "SV_Basic~Swordcraft~Minion~2~2~2~Officer~Steelclad Knight~Uncollectible": SteelcladKnight,
     "SV_Basic~Swordcraft~Minion~1~1~2~Officer~Heavy Knight~Uncollectible": HeavyKnight,
     "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Knight~Uncollectible": Knight,
@@ -2531,6 +2540,7 @@ SV_Basic_Indices = {
     "SV_Basic~Swordcraft~Amulet~4~Commander~Royal Banner~Battlecry": RoyalBanner,
     "SV_Basic~Swordcraft~Minion~5~4~4~Officer~Ninja Master~Stealth": NinjaMaster,
     "SV_Basic~Swordcraft~Minion~6~4~6~Commander~Sage Commander~Battlecry": SageCommander,
+
     "SV_Basic~Runecraft~Minion~2~2~2~None~Clay Golem~Uncollectible": ClayGolem,
     "SV_Basic~Runecraft~Minion~1~1~1~None~Snowman~Uncollectible": Snowman,
     "SV_Basic~Runecraft~Amulet~1~Earth Sigil~Earth Essence~Uncollectible": EarthEssence,
@@ -2548,6 +2558,7 @@ SV_Basic_Indices = {
     "SV_Basic~Runecraft~Minion~5~3~3~None~Lightning Shooter~Battlecry~Spellboost": LightningShooter,
     "SV_Basic~Runecraft~Spell~8~Fiery Embrace~Spellboost": FieryEmbrace,
     "SV_Basic~Runecraft~Minion~10~7~7~None~Flame Destroyer~Spellboost": FlameDestroyer,
+
     "SV_Basic~Dragoncraft~Spell~1~Blazing Breath": BlazingBreath,
     "SV_Basic~Dragoncraft~Minion~2~2~2~None~Dragonrider": Dragonrider,
     "SV_Basic~Dragoncraft~Spell~2~Dragon Oracle": DragonOracle,
@@ -2558,6 +2569,7 @@ SV_Basic_Indices = {
     "SV_Basic~Dragoncraft~Minion~6~5~6~None~Dragonguard": Dragonguard,
     "SV_Basic~Dragoncraft~Minion~7~4~4~None~Dread Dragon~Battlecry": DreadDragon,
     "SV_Basic~Dragoncraft~Spell~7~Conflagration": Conflagration,
+
     "SV_Basic~Shadowcraft~Minion~1~1~1~None~Skeleton~Uncollectible": Skeleton,
     "SV_Basic~Shadowcraft~Minion~2~2~2~None~Zombie~Uncollectible": Zombie,
     "SV_Basic~Shadowcraft~Minion~4~4~4~None~Lich~Uncollectible": Lich,
@@ -2574,6 +2586,7 @@ SV_Basic_Indices = {
     "SV_Basic~Shadowcraft~Minion~6~5~5~None~Ghostly Rider~Deathrattle": GhostlyRider,
     "SV_Basic~Shadowcraft~Minion~7~4~4~None~Undead King~Deathrattle": UndeadKing,
     "SV_Basic~Shadowcraft~Minion~1~1~1~None~Fores tBat~Uncollectible": ForestBat,
+
     "SV_Basic~Bloodcraft~Minion~2~2~2~None~Nightmare~Battlecry": Nightmare,
     "SV_Basic~Bloodcraft~Minion~2~1~3~None~Sweetfang Vampire~Drain": SweetfangVampire,
     "SV_Basic~Bloodcraft~Spell~2~Blood Pact": BloodPact,
@@ -2585,10 +2598,13 @@ SV_Basic_Indices = {
     "SV_Basic~Bloodcraft~Minion~6~3~6~None~Imp Lancer~Charge": ImpLancer,
     "SV_Basic~Bloodcraft~Spell~6~Demonic Storm": DemonicStorm,
     "SV_Basic~Bloodcraft~Minion~7~5~6~None~Abyss Beast~Battlecry": AbyssBeast,
+
     "SV_Basic~Havencraft~Minion~5~5~3~None~Pegasus~Uncollectible": Pegasus,
+    "SV_Basic~Havencraft~Minion~3~2~1~None~Holy Falcon~Charge~Uncollectible": HolyFalcon,
     "SV_Basic~Havencraft~Minion~4~4~4~None~Holyflame Tiger~Uncollectible": HolyflameTiger,
     "SV_Basic~Havencraft~Minion~6~6~6~None~Holywing Dragon~Uncollectible": HolywingDragon,
     "SV_Basic~Havencraft~Amulet~1~None~Summon Pegasus~Countdown~Deathrattle": SummonPegasus,
+    "SV_Basic~Havencraft~Amulet~1~None~Pinion Prayer~Countdown~Deathrattle": PinionPrayer,
     "SV_Basic~Havencraft~Minion~2~1~3~None~Snake Priestess~Taunt": SnakePriestess,
     "SV_Basic~Havencraft~Spell~2~Hallowed Dogma": HallowedDogma,
     "SV_Basic~Havencraft~Spell~2~Blackened Scripture": BlackenedScripture,
@@ -2599,6 +2615,11 @@ SV_Basic_Indices = {
     "SV_Basic~Havencraft~Spell~5~Acolyte's Light": AcolytesLight,
     "SV_Basic~Havencraft~Amulet~5~None~Beastly Vow~Countdown~Deathrattle": BeastlyVow,
     "SV_Basic~Havencraft~Minion~7~5~5~None~Curate~Battlecry": Curate,
+
+    "SV_Basic~Portalcraft~Minion~5~4~6~Artifact~Barrier Artifact~Bane~Taunt~Uncollectible": BarrierArtifact,
+    "SV_Basic~Portalcraft~Minion~5~4~6~Artifact~Keenedge Artifact~Rush~Drain~Uncollectible": KeenedgeArtifact,
+    "SV_Basic~Portalcraft~Minion~5~2~2~Artifact~Airstrike Artifact~Charge~Deathrattle~Uncollectible": AirstrikeArtifact,
+    "SV_Basic~Portalcraft~Spell~7~Paradigm Shift~Choose~Uncollectible": ParadigmShift,
     "SV_Basic~Portalcraft~Minion~0~1~1~None~Puppet~Rush~Uncollectible": Puppet,
     "SV_Basic~Portalcraft~Minion~1~2~1~Artifact~Analyzing Artifact~Deathrattle~Uncollectible": AnalyzingArtifact,
     "SV_Basic~Portalcraft~Minion~5~4~3~Artifact~Radiant Artifact~Charge~Deathrattle~Uncollectible": RadiantArtifact,

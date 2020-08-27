@@ -1307,7 +1307,7 @@ class ReclusivePonderer(SVMinion):
 #		 if commanders >= 2:
 #			 PRINT(self, "Lady of the Lance's Fanfare give it Bane and reduce next damage to 0.")
 #			 self.getsKeyword("Poisonous")
-#			 self.marks["Next damage 0"] += 1
+#			 self.marks["Next Damage 0"] += 1
 #		 return None
 #
 #
@@ -1852,7 +1852,7 @@ class ReclusivePonderer(SVMinion):
 #					 PRINT(self, f"Amelia, the Silverflash's Fanfare let you draw {card.name}.")
 #		 if choice == 7:
 #			 self.getsKeyword("Free Evolve")
-#			 self.marks["Next damage 0"] = 1
+#			 self.marks["Next Damage 0"] = 1
 #		 return None
 #
 #	 def inHandEvolving(self, target=None):

@@ -317,7 +317,7 @@ class Counters:
 		self.amuletsDestroyedThisGame = {1:[], 2:[]}
 		self.timesHeroTookDamage_inOwnTurn = {1:0, 2:0}
 		self.tempVengeance = {1:False, 2:False}
-		self.numCardsExtraDrawThisTurn = {1:0, 2:0}
+		self.numCardsDrawnThisTurn = {1:0, 2:0}
 		self.numBurialRiteThisGame = {1:0, 2:0}
 		self.numCardsExtraPlayedThisTurn = {1:0, 2:0}
 		self.artifactsDiedThisGame = {1: {}, 2: {}}
@@ -343,7 +343,7 @@ class Counters:
 		self.heroAttackTimesThisTurn = {1:0, 2:0}
 		self.heroChangedHealthThisTurn = {1:False, 2:False}
 		self.powerUsedThisTurn = 0
-		self.numCardsExtraDrawThisTurn = {1: 0, 2: 0}
+		self.numCardsDrawnThisTurn = {1: 0, 2: 0}
 		self.tempVengeance = {1: False, 2: False}
 		self.numCardsExtraPlayedThisTurn = {1: 0, 2: 0}
 		self.evolvedThisTurn = {1: 0, 2: 0}

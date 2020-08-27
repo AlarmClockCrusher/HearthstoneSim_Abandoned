@@ -663,7 +663,7 @@ class Minion(Card):
 					  "Spell Heal&Dmg x2": 0,
 					  "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
 					  "Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0, "Disappear When Die": 0,
-					  "Next damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0,
+					  "Next Damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0,
 					  "Max Damage": []
 					  }
 		# Temp effects that vanish at certain points.
@@ -926,9 +926,9 @@ class Minion(Card):
 	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
 		game = self.Game
 		if self.status["Immune"] < 1:  # 随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
-			if "Next damage 0" in self.marks and self.marks["Next damage 0"] > 0:
+			if "Next Damage 0" in self.marks and self.marks["Next Damage 0"] > 0:
 				damage = 0
-				self.marks["Next damage 0"] = 0
+				self.marks["Next Damage 0"] = 0
 			if "Max Damage" in self.marks and self.marks["Max Damage"]:
 				if "Max Damage" in self.marks and self.marks["Max Damage"]:
 					mini = 100
@@ -1888,7 +1888,7 @@ class Hero(Card):
 		self.heroPower = type(self).heroPower(self.Game, self.ID) if type(self).heroPower else None
 		self.keyWords = {"Poisonous": 0} #Just as a placeholder
 		self.marks={"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
-					"Can't Be Attacked": 0, "Next damage 0": 0, "Max Damage": []}
+					"Can't Be Attacked": 0, "Next Damage 0": 0, "Max Damage": []}
 		self.status = {"Frozen": 0, "Temp Stealth": 0, "Draw to Win": 0}
 		self.triggers = {"Discarded": []}
 		self.identity = [np.random.rand(), np.random.rand()]
@@ -1985,9 +1985,9 @@ class Hero(Card):
 	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
 		game = self.Game
 		if game.status[self.ID]["Immune"] < 1:  # 随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
-			if "Next damage 0" in self.marks and self.marks["Next damage 0"] > 0:
+			if "Next Damage 0" in self.marks and self.marks["Next Damage 0"] > 0:
 				damage = 0
-				self.marks["Next damage 0"] = 0
+				self.marks["Next Damage 0"] = 0
 			if "Max Damage" in self.marks and self.marks["Max Damage"]:
 				mini = 100
 				for m in self.marks["Max Damage"]:
