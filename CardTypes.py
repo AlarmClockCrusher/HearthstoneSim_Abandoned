@@ -55,7 +55,7 @@ def copyListDictTuple(obj, recipient):
 			# 随从的列表中不会引用游戏
 			elif callable(value):
 				func_name = value.__qualname__.split('.')[1]
-				print("The value to copy is ", func_name)
+				# print("The value to copy is ", func_name)
 				objCopy[key] = getattr(recipient, func_name)
 			elif inspect.isclass(value):
 				objCopy[key] = value
@@ -664,7 +664,7 @@ class Minion(Card):
 					  "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
 					  "Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0, "Disappear When Die": 0,
 					  "Next Damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0,
-					  "Max Damage": []
+					  "Max Damage": [], "Deal Damage 0":0
 					  }
 		# Temp effects that vanish at certain points.
 		self.status = {"Immune": 0, "Frozen": 0, "Temp Stealth": 0, "Borrowed": 0,
@@ -938,6 +938,8 @@ class Minion(Card):
 					damage = min(damage, mini)
 			if "Enemy Effect Damage Immune" in self.marks and self.marks[
 				"Enemy Effect Damage Immune"] > 0 and damageType == "Ability":
+				damage = 0
+			if "Deal Damage 0" in subject.marks and subject.marks["Deal Damage 0"] > 0:
 				damage = 0
 			if "Bane" in subject.keyWords and subject.keyWords[
 				"Bane"] > 0 and damageType == "Battle" and self.onBoard:
@@ -1265,6 +1267,47 @@ class Minion(Card):
 			self.decideAttChances_base()
 
 	# self.statReset() can handle statbyAura
+
+	def loseAbilityInhand(self):
+		if self.inHand:
+			self.activated =False
+			# Remove the enrage/Lightspawn effects. And discard effect.
+			for key in self.triggers.keys():
+				self.triggers[key] = []
+			# Shut down minion's auras, if any. And clear them
+			for key, value in self.auras.items():
+				value.auraDisappears()
+			self.silenceResponse, self.appearResponse, self.disappearResponse = [], [], []
+			self.auras = {}
+			# 清除所有场上扳机,亡语扳机，手牌扳机和牌库扳机。然后将这些扳机全部清除
+			for trigger in self.trigsBoard + self.deathrattles + self.trigsHand + self.trigsDeck:
+				trigger.disconnect()
+			self.trigsBoard, self.deathrattles, self.trigsHand, self.trigsDeck = [], [], [], []
+			# 清除随从因为关键字光环获得的关键字：冲锋，突袭，超级风怒。这些关键字是否之后恢复由光环施加者决定。
+			# 暂时不清除随从身上的buffAura增益，统一留到最后的statReset()中处理。
+			CurrentKeywordAura_Receivers = fixedList(self.keyWordbyAura["Auras"])
+			for keywordAura_Receiver in CurrentKeywordAura_Receivers:
+				keywordAura_Receiver.effectClear()
+			# 清除随从身上的所有原有关键字。
+			for key, value in self.keyWords.items():
+				if value > 0:
+					self.keyWords[key] = 1
+					self.losesKeyword(key)
+				self.keyWords[key] = 0
+			# 清除随从身上的所有原有状态。
+			for key, value in self.status.items():
+				# If Borrowed when silenced, return it to the other side.
+				# The minion only remember one Borrowed state, even if repetitively moved between two sides.
+				if key == "Borrowed" and value > 0:
+					self.Game.minionSwitchSide(self, activity="Return")
+				self.status[key] = 0
+			# 清除随从身上的历史记录，主要为对该随从施放的法术和机械随从的磁力叠加历史。
+			for key in self.history.keys():
+				self.history[key] = []
+			# 随从被沉默不发出沉默信号，所有接受的keywordAura就地处理。
+			for keywordAura_Receiver in CurrentKeywordAura_Receivers:
+				keywordAura_Receiver.source.applies(self)
+			self.decideAttChances_base()
 
 	def getsSilenced(self):
 		self.loseAbility()
@@ -1888,7 +1931,7 @@ class Hero(Card):
 		self.heroPower = type(self).heroPower(self.Game, self.ID) if type(self).heroPower else None
 		self.keyWords = {"Poisonous": 0} #Just as a placeholder
 		self.marks={"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
-					"Can't Be Attacked": 0, "Next Damage 0": 0, "Max Damage": []}
+					"Can't Be Attacked": 0, "Next Damage 0": 0, "Max Damage": [], "Deal Damage 0": 0}
 		self.status = {"Frozen": 0, "Temp Stealth": 0, "Draw to Win": 0}
 		self.triggers = {"Discarded": []}
 		self.identity = [np.random.rand(), np.random.rand()]
@@ -1996,6 +2039,8 @@ class Hero(Card):
 				damage = min(damage, mini)
 			if "Enemy Effect Damage Immune" in self.marks and self.marks[
 				"Enemy Effect Damage Immune"] > 0 and damageType == "Ability":
+				damage = 0
+			if "Deal Damage 0" in subject.marks and subject.marks["Deal Damage 0"] > 0:
 				damage = 0
 			if damage > 0:
 				damageHolder = [damage]

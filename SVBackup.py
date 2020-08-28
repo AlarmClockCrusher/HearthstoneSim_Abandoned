@@ -1599,9 +1599,9 @@ class ReclusivePonderer(SVMinion):
 #
 #
 # class ResolveOfTheFallen(Spell):
-#	 Class, name = "Natural", "Resolve of the Fallen"
+#	 Class, name = "Neutral", "Resolve of the Fallen"
 #	 requireTarget, mana = True, 4
-#	 index = "Shadowverse~Natural~Spell~4~Resolve of the Fallen"
+#	 index = "Shadowverse~Neutral~Spell~4~Resolve of the Fallen"
 #	 description = "Destroy an enemy follower or amulet.If at least 3 allied followers have evolved this match, recover 3 play points.Then, if at least 5 have evolved, draw 2 cards."
 #
 #	 def available(self):

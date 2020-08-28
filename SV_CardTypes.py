@@ -498,7 +498,7 @@ class Amulet(Dormant):
                       "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
                       "Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0, "Disappear When Die": 0,
                       "Next Damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0,
-                      "Max Damage": -1}
+                      "Max Damage": [], "Deal Damage 0": 0}
         self.status = {}
         self.auras = {}
         self.options = []  # For Choose One minions.
@@ -747,9 +747,12 @@ class Amulet(Dormant):
 
 
 class SVSpell(Spell):
+    race = ""
+
     def __init__(self, Game, ID):
         super().__init__(Game, ID)
         self.targets = []
+        self.race = type(self).race
 
     def returnTrue(self, choice=0):
         if self.needTarget:

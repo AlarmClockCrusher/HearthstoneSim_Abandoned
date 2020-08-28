@@ -389,7 +389,7 @@ class GUI_Common:
 				self.update()
 				game.Discover.initiator.discoverDecided(entity, info)
 			elif selectedSubject == "SelectObj":
-				print("Selecting obj for SV card")
+				# print("Selecting obj for SV card")
 				self.choice += 1
 				self.subject.targets.append(entity)
 				try: self.target.append(entity)
@@ -451,7 +451,7 @@ class GUI_Common:
 					break
 		btnSelectConfirm.place(x=0.83*X, y=0.5*Y, anchor='c')
 		btnSelectConfirm.wait_variable(var)
-		print("btnSelectConfirm clicked, var is", var.get(), var.get())
+		# print("btnSelectConfirm clicked, var is", var.get(), var.get())
 		btnSelectConfirm.destroy()
 		for btn in validBtns:
 			btn.configure(bg=btn.colorOrig)

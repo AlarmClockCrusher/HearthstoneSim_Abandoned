@@ -567,8 +567,8 @@ class MinionButton(tk.Button):
 		self.GUI.cancelSelection()
 		self.card.STATUSPRINT()
 		self.GUI.displayCard(self.card)
-		print("This button of %s is in zone's btnsDrawn"%self.card.name, self in self.zone.btnsDrawn)
-		print("This boardZones' btnsDrawn", self.GUI.boardZones[1].btnsDrawn, self.GUI.boardZones[2].btnsDrawn)
+		# print("This button of %s is in zone's btnsDrawn"%self.card.name, self in self.zone.btnsDrawn)
+		# print("This boardZones' btnsDrawn", self.GUI.boardZones[1].btnsDrawn, self.GUI.boardZones[2].btnsDrawn)
 		
 	def tempLeftClick(self, event): #For Shadowverse
 		self.GUI.select = self.card

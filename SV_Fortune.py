@@ -167,9 +167,9 @@ class Trig_InvocationFieranHavensentWindGod(TrigInvocation):
 
 
 class ResolveoftheFallen(SVSpell):
-    Class, name = "Natural", "Resolve of the Fallen"
+    Class, name = "Neutral", "Resolve of the Fallen"
     requireTarget, mana = True, 4
-    index = "SV_Fortune~Natural~Spell~4~Resolve of the Fallen"
+    index = "SV_Fortune~Neutral~Spell~4~Resolve of the Fallen"
     description = "Destroy an enemy follower or amulet.If at least 3 allied followers have evolved this match, recover 3 play points.Then, if at least 5 have evolved, draw 2 cards."
 
     def effectCanTrigger(self):
@@ -195,9 +195,9 @@ class ResolveoftheFallen(SVSpell):
 
 
 class StarbrightDeity(SVMinion):
-    Class, race, name = "Natural", "", "Starbright Deity"
+    Class, race, name = "Neutral", "", "Starbright Deity"
     mana, attack, health = 5, 3, 4
-    index = "SV_Fortune~Natural~Minion~5~3~4~None~Starbright Deity~Battlecry"
+    index = "SV_Fortune~Neutral~Minion~5~3~4~None~Starbright Deity~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Put into your hand copies of the 3 left-most cards in your hand, in the order they were added."
     attackAdd, healthAdd = 2, 2
 
@@ -6195,8 +6195,8 @@ SV_Fortune_Indices = {
     "SV_Fortune~Neutral~Spell~2~Sudden Showers": SuddenShowers,
     "SV_Fortune~Neutral~Minion~4~4~3~None~Winged Courier~Deathrattle": WingedCourier,
     "SV_Fortune~Neutral~Minion~4~1~1~None~Fieran, Havensent Wind God~Battlecry~Invocation~Legendary": FieranHavensentWindGod,
-    "SV_Fortune~Natural~Spell~4~Resolve of the Fallen": ResolveoftheFallen,
-    "SV_Fortune~Natural~Minion~5~3~4~None~Starbright Deity~Battlecry": StarbrightDeity,
+    "SV_Fortune~Neutral~Spell~4~Resolve of the Fallen": ResolveoftheFallen,
+    "SV_Fortune~Neutral~Minion~5~3~4~None~Starbright Deity~Battlecry": StarbrightDeity,
     "SV_Fortune~Neutral~Minion~5~5~5~None~XXI. Zelgenea, The World~Battlecry~Invocation~Legendary": XXIZelgeneaTheWorld,
     "SV_Fortune~Neutral~Amulet~6~None~Titanic Showdown~Countdown~Deathrattle": TitanicShowdown,
     "SV_Fortune~Neutral~Spell~2~Pureshot Angel~Accelerate~Uncollectible": PureshotAngel_Accelerate,

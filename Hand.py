@@ -353,7 +353,7 @@ class Hand_Deck:
 			minions = [minions]
 		for minion in minions:
 			self.Game.summonfromHand(minion, ID, -1, ID)
-			minion.getsSilenced()
+			minion.loseAbilityInhand()
 		for minion in minions:
 			self.Game.killMinion(minion, minion)
 		self.Game.gathertheDead()
