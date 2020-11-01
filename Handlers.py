@@ -11,15 +11,15 @@ import inspect
 def extractfrom(target, listObj):
 	try: return listObj.pop(listObj.index(target))
 	except: return None
-	
+
 def fixedList(listObj):
 	return listObj[0:len(listObj)]
-	
+
 def PRINT(game, string, *args):
 	if game.GUI:
 		if not game.mode: game.GUI.printInfo(string)
 	elif not game.mode: print("game's guide mode is 0\n", string)
-	
+
 #对卡牌的费用机制的改变
 #主要参考贴（冰封王座BB还在的时候）：https://www.diyiyou.com/lscs/news/194867.html
 #
@@ -49,38 +49,38 @@ class Manas:
 		self.status = {1: {"Spells Cost Health Instead": 0},
 						2: {"Spells Cost Health Instead": 0}
 						}
-						
+
 	#If there is no setting mana aura, the mana is simply adding/subtracting.
 	#If there is setting mana aura
 		#The temp mana change aura works in the same way as ordinary mana change aura.
-	
+
 	'''When the setting mana aura disappears, the calcMana function
 	must be cited again for every card in its registered list.'''
 	def overloadMana(self, num, ID):
 		self.manasOverloaded[ID] += num
 		self.Game.sendSignal("ManaOverloaded", ID, None, None, 0, "")
 		self.Game.sendSignal("OverloadCheck", ID, None, None, 0, "")
-		
+
 	def unlockOverloadedMana(self, ID):
 		self.manas[ID] += self.manasLocked[ID]
 		self.manas[ID] = min(self.manas_UpperLimit[ID], self.manas[ID])
 		self.manasLocked[ID] = 0
 		self.manasOverloaded[ID] = 0
 		self.Game.sendSignal("OverloadCheck", ID, None, None, 0, "")
-		
+
 	def setManaCrystal(self, num, ID):
 		self.manasUpper[ID] = num
 		if self.manas[ID] > num:
 			self.manas[ID] = num
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
-		
+
 	def gainManaCrystal(self, num, ID):
 		self.manas[ID] += num
 		self.manas[ID] = min(self.manas_UpperLimit[ID], self.manas[ID])
 		self.manasUpper[ID] += num
 		self.manasUpper[ID] = min(self.manas_UpperLimit[ID], self.manasUpper[ID])
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
-		
+
 	def gainEmptyManaCrystal(self, num, ID):
 		if self.manasUpper[ID] + num <= self.manas_UpperLimit[ID]:
 			self.manasUpper[ID] += num
@@ -90,7 +90,7 @@ class Manas:
 			self.manasUpper[ID] = self.manas_UpperLimit[ID]
 			self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
 			return False
-			
+
 	def restoreManaCrystal(self, num, ID, restoreAll=False):
 		before = self.manas[ID]
 		if restoreAll:
@@ -101,19 +101,19 @@ class Manas:
 		after = self.manas[ID]
 		if after-before > 0:
 			self.Game.sendSignal("ManaXtlsRestore", ID, None, None, after-before, "")
-			
+
 	def destroyManaCrystal(self, num, ID):
 		self.manasUpper[ID] -= num
 		self.manasUpper[ID] = max(0, self.manasUpper[ID])
 		self.manas[ID] = min(self.manas[ID], self.manasUpper[ID])
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
-		
+
 	def affordable(self, subject):
 		ID = subject.ID
 		mana = subject.getMana()
 		return mana <= self.manas[ID] or (subject.type == "Spell" \
-					and (self.status[ID]["Spells Cost Health Instead"] > 0 and subject.mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.status[ID]["Immune"] > 0)) 
-					
+					and (self.status[ID]["Spells Cost Health Instead"] > 0 and subject.mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.status[ID]["Immune"] > 0))
+
 	def payManaCost(self, subject, mana):
 		ID, mana = subject.ID, max(0, mana)
 		if subject.type == "Spell" and self.status[ID]["Spells Cost Health Instead"] > 0:
@@ -125,7 +125,7 @@ class Manas:
 			self.Game.Counters.manaSpentonPlayingMinions[ID] += mana
 		elif subject.type == "Spell":
 			self.Game.Counters.manaSpentonSpells[ID] += mana
-			
+
 	#At the start of turn, player's locked mana crystals are removed.
 	#Overloaded manas will becomes the newly locked mana.
 	def turnStarts(self):
@@ -149,7 +149,7 @@ class Manas:
 				self.PowerAuras.append(tempAura)
 				tempAura.auraAppears()
 		self.calcMana_Powers()
-		
+
 	#Manas locked at this turn doesn't disappear when turn ends. It goes away at the start of next turn.
 	def turnEnds(self):
 		for aura in self.CardAuras + self.PowerAuras:
@@ -158,7 +158,7 @@ class Manas:
 				aura.auraDisappears()
 		self.calcMana_All()
 		self.calcMana_Powers()
-		
+
 	def calcMana_All(self, comment="HandOnly"):
 		#舍弃之前的卡牌的基础法力值设定
 		#卡牌的法力值计算：从卡牌的的基础法力值开始，把法力值光环和法力按照入场顺序进行排列，然后依次进行处理。最后卡牌如果有改变自己费用的能力，则其最后结算，得到最终的法力值。
@@ -169,7 +169,7 @@ class Manas:
 			cards = self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2] + self.Game.Hand_Deck.decks[1] + self.Game.Hand_Deck.decks[2]
 		for card in cards:
 			self.calcMana_Single(card)
-			
+
 	def calcMana_Single(self, card):
 		card.mana = type(card).mana
 		for manaMod in card.manaMods:
@@ -182,7 +182,7 @@ class Manas:
 			card.mana = 1
 		elif card.type == "Spell" and card.mana < 1 and "Echo" in card.index:
 			card.mana = 1
-			
+
 	def calcMana_Powers(self):
 		for ID in range(1, 3):
 			self.Game.powers[ID].mana = type(self.Game.powers[ID]).mana
@@ -190,7 +190,7 @@ class Manas:
 				manaMod.handleMana()
 			if self.Game.powers[ID].mana < 0:
 				self.Game.powers[ID].mana = 0
-				
+
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
 		for key, value in self.__dict__.items():
@@ -202,21 +202,21 @@ class Manas:
 				for aura in value:
 					Copy.__dict__[key].append(aura.createCopy(recipientGame))
 		return Copy
-		
-			
+
+
 class Secrets:
 	def __init__(self, Game):
 		self.Game = Game
 		self.secrets = {1:[], 2:[]}
 		self.mainQuests = {1: [], 2: []}
 		self.sideQuests = {1:[], 2:[]}
-		
+
 	def areaNotFull(self, ID):
 		return len(self.mainQuests[ID]) + len(self.sideQuests[ID]) + len(self.secrets[ID]) < 5
-		
+
 	def spaceinArea(self, ID):
 		return 5 - (len(self.mainQuests[ID]) + len(self.sideQuests[ID]) + len(self.secrets[ID]))
-		
+
 	def deploySecretsfromDeck(self, ID, num=1):
 		curGame = self.Game
 		for n in range(num):
@@ -229,7 +229,7 @@ class Secrets:
 					curGame.fixedGuides.append(i)
 				if i > -1: curGame.Hand_Deck.extractfromDeck(i, ID, enemyCanSee=False)[0].whenEffective()
 				else: break
-				
+
 	def extractSecrets(self, ID, index=0, all=False):
 		if all:
 			for secret in reversed(self.secrets[ID]):
@@ -246,7 +246,7 @@ class Secrets:
 				trigger.disconnect()
 			PRINT(self.Game, "Secret %s is removed"%secret.name)
 			return secret
-			
+
 	#secret can be type, index or real card.
 	def sameSecretExists(self, secret, ID):
 		if isinstance(secret, str):
@@ -258,7 +258,7 @@ class Secrets:
 				if deployedSecret.name == secret.name:
 					return True
 		return False
-			
+
 	#只有Game自己会引用Secrets
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
@@ -270,8 +270,8 @@ class Secrets:
 			for quest in self.sideQuests[ID]:
 				Copy.sideQuests[ID].append(quest.createCopy(recipientGame))
 		return Copy
-		
-		
+
+
 class Counters:
 	def __init__(self, Game):
 		self.Game = Game
@@ -286,7 +286,7 @@ class Counters:
 		self.cardsDiscardedThisGame = {1:[], 2:[]}
 		self.createdCardsPlayedThisGame = {1:0, 2:0}
 		self.spellsonFriendliesThisGame = {1:[], 2:[]}
-		
+
 		self.numSpellsPlayedThisTurn = {1: 0, 2: 0}
 		self.numMinionsPlayedThisTurn = {1: 0, 2: 0}
 		self.minionsDiedThisTurn = {1:[], 2:[]}
@@ -311,13 +311,17 @@ class Counters:
 		self.shadows = {1:0, 2:0}
 		self.turns = {1:1, 2:0}
 		self.evolvedThisGame = {1:0, 2:0}
+		self.evolvedThisTurn = {1:0, 2:0}
 		self.numMinionsSummonedThisGame = {1:0, 2:0}
 		self.amuletsDestroyedThisTurn = {1:[], 2:[]}
 		self.amuletsDestroyedThisGame = {1:[], 2:[]}
 		self.timesHeroTookDamage_inOwnTurn = {1:0, 2:0}
 		self.tempVengeance = {1:False, 2:False}
-		self.numCardsExtraDrawThisTurn = {1:0, 2:0}
-		
+		self.numCardsDrawnThisTurn = {1:0, 2:0}
+		self.numBurialRiteThisGame = {1:0, 2:0}
+		self.numCardsExtraPlayedThisTurn = {1:0, 2:0}
+		self.artifactsDiedThisGame = {1: {}, 2: {}}
+
 	def turnEnds(self):
 		self.numElementalsPlayedLastTurn[self.Game.turn] = 0
 		self.cardsPlayedLastTurn[self.Game.turn] = [] + self.cardsPlayedThisTurn[self.Game.turn]["Indices"]
@@ -339,10 +343,11 @@ class Counters:
 		self.heroAttackTimesThisTurn = {1:0, 2:0}
 		self.heroChangedHealthThisTurn = {1:False, 2:False}
 		self.powerUsedThisTurn = 0
+		self.numCardsDrawnThisTurn = {1: 0, 2: 0}
+		self.tempVengeance = {1: False, 2: False}
+		self.numCardsExtraPlayedThisTurn = {1: 0, 2: 0}
+		self.evolvedThisTurn = {1: 0, 2: 0}
 
-		self.amuletsDestroyedThisTurn = {1: [], 2: []}
-		self.numCardsExtraDrawThisTurn = {1: 0, 2: 0}
-		
 	#只有Game自己会引用Counters
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
@@ -359,12 +364,12 @@ class Counters:
 				#因为Counters内部的值除了Game都是数字组成的，可以直接deepcopy
 				Copy.__dict__[key] = value.createCopy(recipientGame)
 		return Copy
-		
+
 	def copyListDictTuple(self, obj, recipientGame):
 		if isinstance(obj, list):
 			objCopy = []
 			for element in obj:
-				#check if they're basic types, like int, str, bool, NoneType, 
+				#check if they're basic types, like int, str, bool, NoneType,
 				if isinstance(element, (type(None), int, float, str, bool)):
 					#Have tested that basic types can be appended and altering the original won't mess with the content in the list.
 					objCopy.append(element)
@@ -390,34 +395,34 @@ class Counters:
 			objCopy = self.copyListDictTuple(tupleTurnedList, recipientGame) #复制那个列表
 			objCopy = list(objCopy) #把那个列表转换回tuple
 		return objCopy
-		
-		
+
+
 class Discover:
 	def __init__(self, Game):
 		self.Game = Game
 		self.initiator = None
-		
+
 	def startDiscover(self, initiator, info=None):
 		if self.Game.GUI:
 			self.initiator = initiator
 			self.Game.GUI.update()
 			self.Game.GUI.waitforDiscover(info)
 			self.initiator, self.Game.options = None, []
-			
+
 	def startSelect(self, initiator, validTargets):
 		if self.Game.GUI:
 			self.initiator = initiator
 			self.Game.GUI.update()
 			self.Game.GUI.waitforSelect(validTargets)
 			self.initiator = None
-			
+
 	def startFusion(self, initiator, validTargets):
 		if self.Game.GUI:
 			self.initiator = initiator
 			self.Game.GUI.update()
 			self.Game.GUI.waitforFusion(validTargets)
 			self.initiator = None
-			
+
 	def typeCardName(self, initiator):
 		if self.Game.GUI:
 			self.initiator = initiator
@@ -425,8 +430,7 @@ class Discover:
 			self.Game.GUI.update()
 			self.Game.GUI.wishforaCard(initiator)
 			self.Game.options = []
-		
+
 	#除了Game本身，没有东西会在函数外引用Game.Discover
 	def createCopy(self, game):
 		return type(self)(game)
-		

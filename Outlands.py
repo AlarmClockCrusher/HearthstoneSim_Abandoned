@@ -1808,6 +1808,7 @@ class Evocation(Spell):
 				spell = spell(curGame, self.ID)
 				trigger = Trig_Evocation(spell)
 				spell.trigsHand.append(trigger)
+				trigger.connect()
 				curGame.Hand_Deck.addCardtoHand(spell, self.ID)
 		return None
 		
@@ -3361,7 +3362,7 @@ class Darkglare(Minion):
 		
 class Trig_Darkglare(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroTookDamage"])
+		self.blank_init(entity, ["HeroTookDmg"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity.Game.heroes[self.entity.ID]

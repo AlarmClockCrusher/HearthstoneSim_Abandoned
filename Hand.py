@@ -11,21 +11,21 @@ import inspect
 
 
 def extractfrom(target, listObj):
-    try:
-        return listObj.pop(listObj.index(target))
-    except:
-        return None
+	try:
+		return listObj.pop(listObj.index(target))
+	except:
+		return None
 
 
 def fixedList(listObj):
-    return listObj[0:len(listObj)]
+	return listObj[0:len(listObj)]
 
 
 def PRINT(game, string, *args):
-    if game.GUI:
-        if not game.mode: game.GUI.printInfo(string)
-    elif not game.mode:
-        print("game's guide mode is 0\n", string)
+	if game.GUI:
+		if not game.mode: game.GUI.printInfo(string)
+	elif not game.mode:
+		print("game's guide mode is 0\n", string)
 
 
 class Hand_Deck:
@@ -43,11 +43,11 @@ class Hand_Deck:
 							 2: deck2 if deck2 else Default2}
 		self.startingDeckIdentities = {1: [], 2: []}
 		self.startingHandIdentities = {1: [], 2: []}
-		
+
 	def initialize(self):
 		self.initializeDecks()
 		self.initializeHands()
-		
+
 	def initializeDecks(self):
 		for ID in range(1, 3):
 			Class = self.Game.heroes[ID].Class  # Hero's class
@@ -67,6 +67,8 @@ class Hand_Deck:
 		# 如果卡组有双传说任务，则起手时都会上手
 		mainQuests = {1: [], 2: []}
 		mulliganSize = {1: 3, 2: 4}
+		if self.Game.heroes[2].Class in SVClasses:
+			mulliganSize[2] = 3
 		for ID in range(1, 3):
 			mainQuests[ID] = [card for card in self.decks[ID] if card.description.startswith("Quest")]
 			numQueststoDraw = min(len(mainQuests[ID]), mulliganSize[ID])
@@ -99,7 +101,8 @@ class Hand_Deck:
 				card.checkEvanescent()
 
 		if self.Game.GUI: self.Game.GUI.update()
-		self.addCardtoHand(TheCoin(self.Game, 2), 2)
+		if not self.Game.heroes[2].Class in SVClasses:
+			self.addCardtoHand(TheCoin(self.Game, 2), 2)
 		self.Game.Manas.calcMana_All()
 		for ID in range(1, 3):
 			for card in self.hands[ID] + self.decks[ID]:
@@ -135,8 +138,8 @@ class Hand_Deck:
 				for card in self.hands[1] + self.hands[2]:
 					card.effectCanTrigger()
 					card.checkEvanescent()
-
-		self.addCardtoHand(TheCoin(self.Game, 2), 2)
+		if not self.Game.heroes[2].Class in SVClasses:
+			self.addCardtoHand(TheCoin(self.Game, 2), 2)
 		self.Game.Manas.calcMana_All()
 		for ID in range(1, 3):
 			for card in self.hands[ID] + self.decks[ID]:
@@ -169,6 +172,12 @@ class Hand_Deck:
 	def noMinionsinDeck(self, ID):
 		for card in self.decks[ID]:
 			if card.type == "Minion":
+				return False
+		return True
+
+	def noMinionsinHand(self, ID, minion=None):
+		for card in self.hands[ID]:
+			if card.type == "Minion" and card is not minion:
 				return False
 		return True
 
@@ -213,13 +222,23 @@ class Hand_Deck:
 				card = self.decks[ID].pop()
 				mana = card.mana
 			else:
-				PRINT(game, "Hero%d's deck is empty and will take damage" % ID)
-				self.noCards[ID] += 1  # 如果在疲劳状态有卡洗入牌库，则疲劳值不会减少，在下次疲劳时，仍会从当前的非零疲劳值开始。
-				damage = self.noCards[ID]
-				if GUI: GUI.fatigueAni(ID, damage)
-				dmgTaker = game.scapegoat4(game.heroes[ID])
-				dmgTaker.takesDamage(None, damage, damageType="Ability")  # 疲劳伤害没有来源
-				return (None, 0)
+				if self.Game.heroes[ID].Class in SVClasses:
+					if self.Game.heroes[ID].status["Draw to Win"] > 0:
+						self.Game.heroes[3 - ID].dead = True
+						self.Game.gathertheDead(True)
+						return
+					else:
+						self.Game.heroes[ID].dead = True
+						self.Game.gathertheDead(True)
+						return
+				else:
+					PRINT(game, "Hero%d's deck is empty and will take damage" % ID)
+					self.noCards[ID] += 1  # 如果在疲劳状态有卡洗入牌库，则疲劳值不会减少，在下次疲劳时，仍会从当前的非零疲劳值开始。
+					damage = self.noCards[ID]
+					if GUI: GUI.fatigueAni(ID, damage)
+					dmgTaker = game.scapegoat4(game.heroes[ID])
+					dmgTaker.takesDamage(None, damage, damageType="Ability")  # 疲劳伤害没有来源
+					return (None, 0)
 		else:
 			if isinstance(card, (int, np.int32, np.int64)):
 				card = self.decks[ID].pop(card)
@@ -232,6 +251,7 @@ class Hand_Deck:
 			if GUI: btn = GUI.drawCardAni_1(card)
 			cardTracker = [card]  # 把这张卡放入一个列表，然后抽牌扳机可以对这个列表进行处理同时传递给其他抽牌扳机
 			game.sendSignal("CardDrawn", ID, None, cardTracker, mana, "")
+			self.Game.Counters.numCardsDrawnThisTurn[ID] += 1
 			if cardTracker[0].type == "Spell" and "Casts When Drawn" in cardTracker[0].index:
 				PRINT(game, "%s is drawn and cast." % cardTracker[0].name)
 				if GUI: btn.remove()
@@ -252,7 +272,7 @@ class Hand_Deck:
 			PRINT(game, "Player's hand is full. The drawn card %s is milled" % card.name)
 			if GUI: GUI.millCardAni(card)
 			return (None, 0)
-			
+
 	# Will force the ID of the card to change.
 	def addCardtoHand(self, obj, ID, comment="", byDiscover=False, i=-1):
 		game, GUI = self.Game, self.Game.GUI
@@ -273,9 +293,9 @@ class Hand_Deck:
 				game.sendSignal("CardEntersHand", ID, None, [card], 0, comment)
 				if byDiscover: game.sendSignal("PutinHandbyDiscover", ID, None, obj, 0, '')
 			else:
-				break
+				self.Game.Counters.shadows[ID] += 1
 		game.Manas.calcMana_All()
-		
+
 	def replaceCardDrawn(self, targetHolder, newCard):
 		ID = targetHolder[0].ID
 		isPrimaryGalakrond = targetHolder[0] == self.Game.Counters.primaryGalakronds[ID]
@@ -327,49 +347,62 @@ class Hand_Deck:
 					curGame.fixedGuides.append(tuple(order))
 				self.decks[ID] = [newDeck[i] for i in order]
 			if sendSig: curGame.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
-			
-	def burialRite(self, ID, minion):
-		self.Game.summonfromHand(minion, ID, -1, ID)
-		minion.getsSilenced()
-		self.Game.killMinion(None, minion)
-		self.Game.sendSignal("BurialRite", ID, None, minion, 0, "")
-		
+
+	def burialRite(self, ID, minions, noSignal=False):
+		if not isinstance(minions, list):
+			minions = [minions]
+		for minion in minions:
+			self.Game.summonfromHand(minion, ID, -1, ID)
+			minion.loseAbilityInhand()
+		for minion in minions:
+			self.Game.killMinion(minion, minion)
+		self.Game.gathertheDead()
+		if not noSignal:
+			for minion in minions:
+				self.Game.Counters.numBurialRiteThisGame[ID] += 1
+				self.Game.sendSignal("BurialRite", ID, None, minion, 0, "")
+
+
 	def discardAll(self, ID):
 		if self.hands[ID]:
 			cards, cost, isRightmostCardinHand = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True)
+			n = len(cards)
 			for card in cards:
 				PRINT(self.Game, "Card %s in player's hand is discarded:" % card.name)
 				for func in card.triggers["Discarded"]: func()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.Counters.shadows[card.ID] += 1
-				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
+				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, -1, "")
+			self.Game.sendSignal("PlayerDiscardsHand", ID, None, None, n, "")
 			self.Game.Manas.calcMana_All()
-			
+
 	def discardCard(self, ID, card=None):
 		if card is None:  # Discard a random card.
 			if self.hands[ID]:
 				card = npchoice(self.hands[ID])
 				card, cost, isRightmostCardinHand = self.extractfromHand(card, enemyCanSee=True)
 				PRINT(self.Game, "Card %s in player's hand is discarded:" % card.name)
+				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 1, "")
 				for func in card.triggers["Discarded"]: func()
 				self.Game.Manas.calcMana_All()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.Counters.shadows[card.ID] += 1
 				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
-				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
+
 		else:  # Discard a chosen card.
 			i = card if isinstance(card, (int, np.int32, np.int64)) else self.hands[ID].index(card)
 			card = self.hands[ID].pop(i)
 			card.leavesHand()
 			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee=True)
 			PRINT(self.Game, "Card %s in player's hand is discarded:" % card.name)
+			self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 1, "")
 			for func in card.triggers["Discarded"]: func()
 			self.Game.Manas.calcMana_All()
 			self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 			self.Game.Counters.shadows[card.ID] += 1
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
-			self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 0, "")
-			
+
+
 	# 只能全部拿出手牌中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
 	def extractfromHand(self, card, ID=0, all=False, enemyCanSee=False):
 		if all:  # Extract the entire hand.
@@ -396,7 +429,7 @@ class Hand_Deck:
 			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee)
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
 			return card, cost, posinHand
-			
+
 	# 只能全部拿牌库中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
 	def extractfromDeck(self, card, ID=0, all=False, enemyCanSee=True):
 		if all:  # For replacing the entire deck or throwing it away.
@@ -412,7 +445,7 @@ class Hand_Deck:
 			card.leavesDeck()
 			if self.Game.GUI: self.Game.GUI.cardLeavesDeckAni(card, enemyCanSee=enemyCanSee)
 			return card, 0, False
-			
+
 	def removeDeckTopCard(self, ID):
 		try:  # Should have card most of the time.
 			card = self.decks[ID].pop(0)
@@ -421,7 +454,7 @@ class Hand_Deck:
 			return card
 		except:
 			return None
-			
+
 	def createCopy(self, game):
 		if self not in game.copiedObjs:
 			Copy = type(self)(game)
@@ -438,10 +471,227 @@ class Hand_Deck:
 			return Copy
 		else:
 			return game.copiedObjs[self]
-			
-			
-Default1 = [SellswordLucius, SellswordLucius, VesperWitchhunter, VesperWitchhunter, VesperWitchhunter, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher, ElvenArcher,
+
+
+Default1 = [
+CloudGigas,
+SuddenShowers,
+WingedCourier,
+FieranHavensentWindGod,
+ResolveoftheFallen,
+StarbrightDeity,
+XXIZelgeneaTheWorld,
+TitanicShowdown,
+PureshotAngel,
+LumberingCarapace,
+BlossomingArcher,
+SoothingSpell,
+XIIWolfraudHangedMan,
+ReclusivePonderer,
+ChipperSkipper,
+FairyAssault,
+OptimisticBeastmaster,
+Terrorformer,
+DeepwoodWolf,
+LionelWoodlandShadow,
+ErnestaWeaponsHawker,
+PompousSummons,
+DecisiveStrike,
+HonorableThief,
+ShieldPhalanx,
+FrontguardGeneral,
+EmpressofSerenity,
+VIIOluonTheChariot,
+PrudentGeneral,
+StrikelanceKnight,
+DiamondPaladin,
+SelflessNoble,
+JugglingMoggy,
+MagicalAugmentation,
+CreativeConjurer,
+LhynkalTheFool,
+AuthoringTomorrow,
+MadcapConjuration,
+ArcaneAuteur,
+PiquantPotioneer,
+ImperatorofMagic,
+HappyPig,
+SweetspellSorcerer,
+WitchSnap,
+AdamantineGolem,
+DragoncladLancer,
+SpringwellDragonKeeper,
+TropicalGrouper,
+WavecrestAngler,
+DraconicCall,
+IvoryDragon,
+Heliodragon,
+SlaughteringDragonewt,
+TurncoatDragonSummoner,
+DragonsNest,
+DragonSpawning,
+DragonImpact,
+XIErntzJustice,
+GhostlyMaid,
+BonenanzaNecromancer,
+SavoringSlash,
+CoffinoftheUnknownSoul,
+SpiritCurator,
+DeathFowl,
+SoulBox,
+VIMilteoTheLovers,
+CloisteredSacristan,
+ConqueringDreadlord,
+Deathbringer,
+SilverboltHunter,
+MoonriseWerewolf,
+WhiplashImp,
+ContemptousDemon,
+DarkSummons,
+TyrantofMayhem,
+CurmudgeonOgre,
+DireBond,
+DarholdAbyssalContract,
+BurningConstriction,
+VampireofCalamity,
+XIVLuzenTemperance,
+JeweledBrilliance,
+StalwartFeatherfolk,
+PrismaplumeBird,
+FourPillarTortoise,
+LorenaIronWilledPriest,
+SarissaLuxflashSpear,
+PriestessofForesight,
+HolybrightAltar,
+ReverendAdjudicator,
+VIIISofinaStrength,
+PuresongPriest,
+ArtifactScan,
+RoboticEngineer,
+MarionetteExpert,
+CatTuner,
+SteelslashTiger,
+XSlausWheelofFortune,
+InvertedManipulation,
+PowerliftingPuppeteer,
+DimensionDominator,
+MindSplitter,
+PopGoesthePoppet,
+ArchangelofEvocation,
+AerinForeverBrilliant,
+FuriousMountainDeity,
+DeepwoodAnomaly,
+LifeBanquet,
+IlmisunaDiscordHawker,
+AlyaskaWarHawker,
+RunieResoluteDiviner,
+AlchemicalCraftschief,
+FileneAbsoluteZero,
+EternalWhale,
+ForcedResurrection,
+NephthysGoddessofAmenta,
+Nightscreech,
+Baal,
+PrinceofDarkness,
+PrinceofCocytus,
+TempleofHeresy,
+RaRadianceIncarnate,
+LazuliGatewayHomunculus,
+LucilleKeeperofRelics,
 			]
-			
-Default2 = [SellswordLucius, SellswordLucius, Terrorformer, Terrorformer, Terrorformer, AirboundBarrage, AirboundBarrage, VesperWitchhunter, VesperWitchhunter, VesperWitchhunter, SacredPlea, SacredPlea, RuinwebSpider, RuinwebSpider, XIErntzJustice, XIErntzJustice, 
+
+Default2 = [Goblin,
+Fighter,
+WellofDestiny,
+MercenaryDrifter,
+HarnessedFlame,
+HarnessedGlass,
+Goliath,
+AngelicSwordMaiden,
+WaterFairy,
+FairyWhisperer,
+ElfGuard,
+ElfMetallurgist,
+SylvanJustice,
+DarkElfFaure,
+Okami,
+RoseGardener,
+Treant,
+ElfTracker,
+MagnaBotanist,
+Quickblader,
+OathlessKnight,
+KunoichiTrainee,
+AsceticKnight,
+ForgeWeaponry,
+WhiteGeneral,
+FloralFencer,
+RoyalBanner,
+NinjaMaster,
+SageCommander,
+Insight,
+SammyWizardsApprentice,
+MagicMissile,
+ConjureGolem,
+WindBlast,
+SummonSnow,
+DemonflameMage,
+ConjureTwosome,
+LightningShooter,
+FieryEmbrace,
+FlameDestroyer,
+BlazingBreath,
+Dragonrider,
+DragonOracle,
+FirstbornDragon,
+DeathDragon,
+SerpentWrath,
+DisasterDragon,
+Dragonguard,
+DreadDragon,
+Conflagration,
+SpartoiSergeant,
+Spectre,
+UndyingResentment,
+ApprenticeNecromancer,
+ElderSpartoiSoldier,
+PlayfulNecromancer,
+HellsUnleasher,
+CalloftheVoid,
+Gravewaker,
+GhostlyRider,
+UndeadKing,
+Nightmare,
+SweetfangVampire,
+BloodPact,
+RazoryClaw,
+CrazedExecutioner,
+DarkGeneral,
+WardrobeRaider,
+CrimsonPurge,
+ImpLancer,
+DemonicStorm,
+AbyssBeast,
+SummonPegasus,
+SnakePriestess,
+HallowedDogma,
+BlackenedScripture,
+BeastlyVow,
+FeatherwyrmsDescent,
+PriestoftheCudgel,
+GreaterPriestess,
+AcolytesLight,
+BeastlyVow,
+Curate,
+Puppeteer,
+MechanizedServant,
+MagisteelLion,
+MagisteelPuppet,
+DimensionCut,
+ToySoldier,
+AutomatonKnight,
+IronforgedFighter,
+RoanWingedNexx,
+PuppeteersStrings,
+BlackIronSoldier,
 			]

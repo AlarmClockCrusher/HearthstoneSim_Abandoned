@@ -1,7 +1,6 @@
 from CardTypes import *
 from Triggers_Auras import *
-from SV_Basic import Evolve, ShadowverseMinion, ShadowverseSpell, ShadowverseAmulet, AccelerateMinion, CrystallizeMinion, \
-    SVClasses, Classes, ClassesandNeutral
+from SV_Basic import *
 
 import copy
 
@@ -38,7 +37,7 @@ def PRINT(game, string, *args):
 
 """Runecraft cards"""
 
-"""Drangoncraft cards"""
+"""Dragoncraft cards"""
 
 """Shadowcraft cards"""
 
@@ -49,3 +48,7 @@ def PRINT(game, string, *args):
 """Portalcraft cards"""
 
 """DLC cards"""
+
+SV_Verdant_Indices = {
+
+}

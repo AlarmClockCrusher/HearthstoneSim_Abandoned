@@ -94,7 +94,7 @@ class GUI_Common:
 			for btn in reversed(self.btnsDrawn):
 				if isinstance(btn, ChooseOneButton): btn.remove()
 			self.resetCardColors()
-			for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
+			for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2] + [self.Game.powers[1]] + [self.Game.powers[2]]:
 				if hasattr(card, "targets"): card.targets = []
 				
 	def wrapText(self, text, lengthLimit=10):
@@ -222,8 +222,11 @@ class GUI_Common:
 								self.highlightTargets(entity.findTargets("", self.choice)[0])
 				#不需目标的英雄技能当即使用。需要目标的进入目标选择界面。暂时不用考虑技能的抉择
 				elif selectedSubject == "Power":
+					if entity.name == "Evolve":
+						self.selectedSubject = "Power"
+						game.Discover.startSelect(entity, entity.findTargets("")[0])
 					#英雄技能会自己判定是否可以使用。
-					if entity.needTarget(): #selectedSubject之前是"Hero Power 1"或者"Hero Power 2"
+					elif entity.needTarget(): #selectedSubject之前是"Hero Power 1"或者"Hero Power 2"
 						self.selectedSubject = "Power"
 						self.highlightTargets(entity.findTargets("", self.choice)[0])
 					else:
@@ -386,7 +389,7 @@ class GUI_Common:
 				self.update()
 				game.Discover.initiator.discoverDecided(entity, info)
 			elif selectedSubject == "SelectObj":
-				print("Selecting obj for SV card")
+				# print("Selecting obj for SV card")
 				self.choice += 1
 				self.subject.targets.append(entity)
 				try: self.target.append(entity)
@@ -401,7 +404,9 @@ class GUI_Common:
 					{"Minion": lambda : game.playMinion(subject, target, position, choice),
 					"Spell": lambda : game.playSpell(subject, target, choice),
 					"Amulet": lambda : game.playAmulet(subject, target, choice),
+					"Power": lambda : subject.use(target, choice),
 					}[subject.type]()
+					self.update()
 			elif selectedSubject == "Fusion":
 				self.UI = 0
 				self.update()
@@ -446,7 +451,7 @@ class GUI_Common:
 					break
 		btnSelectConfirm.place(x=0.83*X, y=0.5*Y, anchor='c')
 		btnSelectConfirm.wait_variable(var)
-		print("btnSelectConfirm clicked, var is", var.get(), var.get())
+		# print("btnSelectConfirm clicked, var is", var.get(), var.get())
 		btnSelectConfirm.destroy()
 		for btn in validBtns:
 			btn.configure(bg=btn.colorOrig)

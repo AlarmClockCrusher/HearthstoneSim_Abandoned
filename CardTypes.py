@@ -55,7 +55,7 @@ def copyListDictTuple(obj, recipient):
 			# 随从的列表中不会引用游戏
 			elif callable(value):
 				func_name = value.__qualname__.split('.')[1]
-				print("The value to copy is ", func_name)
+				# print("The value to copy is ", func_name)
 				objCopy[key] = getattr(recipient, func_name)
 			elif inspect.isclass(value):
 				objCopy[key] = value
@@ -183,8 +183,8 @@ class Card:
 		targets = target if isinstance(target, list) else [target]
 		for target in targets:
 			targetType = target.type
-			selectable = target.onBoard \
-						and ( \
+			selectable = target.onBoard and targetType != "Dormant" and targetType != "Power" and \
+						 (
 							(targetType == "Hero" and (target.ID == self.ID or self.Game.status[target.ID]["Immune"] + target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
 														and not ((self.type == "Power" or self.type == "Spell") and self.Game.status[target.ID]["Evasive"] > 1)) \
 							#不能被法术或者英雄技能选择的随从是： 魔免随从 或者 是对敌方魔免且法术或英雄技能是敌方的
@@ -192,7 +192,7 @@ class Card:
 															and not ((self.type == "Power" or self.type == "Spell") and (target.marks["Evasive"] > 1 or (target.ID != self.ID and target.marks["Enemy Evasive"] > 1)))) \
 							or (targetType == "Amulet" and (target.ID == self.ID or target.marks["Enemy Effect Evasive"] < 1) \
 															and not (self.type == "Spell" and target.marks["Evasive"] > 1)) \
-							or not targetType == "Dormant" or not targetType == "Power"
+
 							)
 			if not selectable: return False
 		return True
@@ -384,9 +384,9 @@ class Card:
 			for target, healActual in zip(targets_healed, healsConnected):
 				self.Game.sendSignal(target.type+"GetsHealed", self.Game.turn, self, target, healActual, "FullyHealed")
 				if target.type == "Hero":
-					containHero = True
+					containHero = target.ID
 			if containHero:
-				self.Game.sendSignal("AllCured", self.Game.turn, self, None, 0, "")
+				self.Game.sendSignal("AllCured", containHero, self, None, 0, "")
 			else:
 				self.Game.sendSignal("MinionsCured", self.Game.turn, self, None, 0, "")
 		return targets_healed, healsConnected, totalHealingDone
@@ -662,9 +662,9 @@ class Minion(Card):
 					  "Power Heal&Dmg x2": 0,  # Prophet Velen, Clockwork Automation
 					  "Spell Heal&Dmg x2": 0,
 					  "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
-					  "Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0,
-					  "Next damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0,
-					  "Max Damage": -1
+					  "Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0, "Disappear When Die": 0,
+					  "Next Damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0,
+					  "Max Damage": [], "Deal Damage 0":0
 					  }
 		# Temp effects that vanish at certain points.
 		self.status = {"Immune": 0, "Frozen": 0, "Temp Stealth": 0, "Borrowed": 0,
@@ -926,14 +926,24 @@ class Minion(Card):
 	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
 		game = self.Game
 		if self.status["Immune"] < 1:  # 随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
-			if "Next damage 0" in self.marks and self.marks["Next damage 0"] > 0:
+			if "Next Damage 0" in self.marks and self.marks["Next Damage 0"] > 0:
 				damage = 0
-				self.marks["Next damage 0"] = 0
-			if "Max Damage" in self.marks and self.marks["Max Damage"] >= 0:
-				damage = min(damage, self.marks["Max Damage"])
+				self.marks["Next Damage 0"] = 0
+			if "Max Damage" in self.marks and self.marks["Max Damage"]:
+				if "Max Damage" in self.marks and self.marks["Max Damage"]:
+					mini = 100
+					for m in self.marks["Max Damage"]:
+						if m < mini:
+							mini = m
+					damage = min(damage, mini)
 			if "Enemy Effect Damage Immune" in self.marks and self.marks[
-				"Enemy Effect Damage Immune"] > 0 and damageType == "ability":
+				"Enemy Effect Damage Immune"] > 0 and damageType == "Ability":
 				damage = 0
+			if "Deal Damage 0" in subject.marks and subject.marks["Deal Damage 0"] > 0:
+				damage = 0
+			if "Bane" in subject.keyWords and subject.keyWords[
+				"Bane"] > 0 and damageType == "Battle" and self.onBoard:
+				self.dead = True
 			if damage > 0:
 				if self.keyWords["Divine Shield"] > 0:
 					damage = 0
@@ -957,11 +967,8 @@ class Minion(Card):
 					# 随从的激怒，根据血量和攻击的状态改变都在这里触发。
 					for func in self.triggers["StatChanges"]: func()
 			else:
-				if "Bane" in subject.keyWords and subject.keyWords[
-					"Bane"] > 0 and damageType == "Battle" and self.onBoard:
-					self.dead = True
 				game.sendSignal("MinionTakes0Dmg", game.turn, subject, self, 0, "")
-				game.sendSignal("MinionTook0Damage", game.turn, subject, self, 0, "")
+				game.sendSignal("MinionTook0Dmg", game.turn, subject, self, 0, "")
 		else:
 			damage = 0
 		return damage
@@ -1261,6 +1268,47 @@ class Minion(Card):
 
 	# self.statReset() can handle statbyAura
 
+	def loseAbilityInhand(self):
+		if self.inHand:
+			self.activated =False
+			# Remove the enrage/Lightspawn effects. And discard effect.
+			for key in self.triggers.keys():
+				self.triggers[key] = []
+			# Shut down minion's auras, if any. And clear them
+			for key, value in self.auras.items():
+				value.auraDisappears()
+			self.silenceResponse, self.appearResponse, self.disappearResponse = [], [], []
+			self.auras = {}
+			# 清除所有场上扳机,亡语扳机，手牌扳机和牌库扳机。然后将这些扳机全部清除
+			for trigger in self.trigsBoard + self.deathrattles + self.trigsHand + self.trigsDeck:
+				trigger.disconnect()
+			self.trigsBoard, self.deathrattles, self.trigsHand, self.trigsDeck = [], [], [], []
+			# 清除随从因为关键字光环获得的关键字：冲锋，突袭，超级风怒。这些关键字是否之后恢复由光环施加者决定。
+			# 暂时不清除随从身上的buffAura增益，统一留到最后的statReset()中处理。
+			CurrentKeywordAura_Receivers = fixedList(self.keyWordbyAura["Auras"])
+			for keywordAura_Receiver in CurrentKeywordAura_Receivers:
+				keywordAura_Receiver.effectClear()
+			# 清除随从身上的所有原有关键字。
+			for key, value in self.keyWords.items():
+				if value > 0:
+					self.keyWords[key] = 1
+					self.losesKeyword(key)
+				self.keyWords[key] = 0
+			# 清除随从身上的所有原有状态。
+			for key, value in self.status.items():
+				# If Borrowed when silenced, return it to the other side.
+				# The minion only remember one Borrowed state, even if repetitively moved between two sides.
+				if key == "Borrowed" and value > 0:
+					self.Game.minionSwitchSide(self, activity="Return")
+				self.status[key] = 0
+			# 清除随从身上的历史记录，主要为对该随从施放的法术和机械随从的磁力叠加历史。
+			for key in self.history.keys():
+				self.history[key] = []
+			# 随从被沉默不发出沉默信号，所有接受的keywordAura就地处理。
+			for keywordAura_Receiver in CurrentKeywordAura_Receivers:
+				keywordAura_Receiver.source.applies(self)
+			self.decideAttChances_base()
+
 	def getsSilenced(self):
 		self.loseAbility()
 		# 沉默后的血量计算是求当前血量上限与实际血量的差，沉默后在基础血量上扣除该差值。（血量不能小于1）
@@ -1428,6 +1476,7 @@ class Spell(Card):
 			self.Game.GUI.wait(500)
 		#使用时步骤，触发伊利丹和紫罗兰老师等“每当你使用一张xx牌”的扳机
 		self.Game.sendSignal("SpellPlayed", self.ID, self, target if not isinstance(target, list) else None, mana, "", choice)
+		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
 		#获得过载和双生法术牌。
 		if self.overload > 0:
 			PRINT(self.Game, "%s is cast and Overloads %d mana crystals."%(self.name, self.overload))
@@ -1575,6 +1624,7 @@ class Secret(Spell):
 
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
 		self.Game.sendSignal("SpellPlayed", self.ID, self, None, mana, "", choice)
+		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		self.whenEffective(None, '', choice, posinHand)
 		# There is no need for another round of death resolution.
@@ -1647,6 +1697,7 @@ class Quest(Spell):
 
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
 		self.Game.sendSignal("SpellPlayed", self.ID, self, None, mana, "", choice)
+		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		self.whenEffective(None, '', choice, posinHand)
 		# There is no need for another round of death resolution.
@@ -1880,8 +1931,8 @@ class Hero(Card):
 		self.heroPower = type(self).heroPower(self.Game, self.ID) if type(self).heroPower else None
 		self.keyWords = {"Poisonous": 0} #Just as a placeholder
 		self.marks={"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
-					"Can't Be Attacked": 0, "Next damage 0": 0, "Max Damage": -1}
-		self.status = {"Frozen": 0, "Temp Stealth": 0}
+					"Can't Be Attacked": 0, "Next Damage 0": 0, "Max Damage": [], "Deal Damage 0": 0}
+		self.status = {"Frozen": 0, "Temp Stealth": 0, "Draw to Win": 0}
 		self.triggers = {"Discarded": []}
 		self.identity = [np.random.rand(), np.random.rand()]
 		self.options = [] #For Choose One heroes
@@ -1977,13 +2028,19 @@ class Hero(Card):
 	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
 		game = self.Game
 		if game.status[self.ID]["Immune"] < 1:  # 随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
-			if "Next damage 0" in self.marks and self.marks["Next damage 0"] > 0:
+			if "Next Damage 0" in self.marks and self.marks["Next Damage 0"] > 0:
 				damage = 0
-				self.marks["Next damage 0"] = 0
-			if "Max Damage" in self.marks and self.marks["Max Damage"] >= 0:
-				damage = min(damage, self.marks["Max Damage"])
+				self.marks["Next Damage 0"] = 0
+			if "Max Damage" in self.marks and self.marks["Max Damage"]:
+				mini = 100
+				for m in self.marks["Max Damage"]:
+					if m < mini:
+						mini = m
+				damage = min(damage, mini)
 			if "Enemy Effect Damage Immune" in self.marks and self.marks[
-				"Enemy Effect Damage Immune"] > 0 and damageType == "ability":
+				"Enemy Effect Damage Immune"] > 0 and damageType == "Ability":
+				damage = 0
+			if "Deal Damage 0" in subject.marks and subject.marks["Deal Damage 0"] > 0:
 				damage = 0
 			if damage > 0:
 				damageHolder = [damage]
@@ -1998,7 +2055,7 @@ class Hero(Card):
 					game.Counters.damageonHeroThisTurn[self.ID] += damage
 					if sendDamageSignal:
 						game.sendSignal("HeroTakesDmg", game.turn, subject, self, damage, "")
-						game.sendSignal("HeroTookDamage", game.turn, subject, self, damage, "")
+						game.sendSignal("HeroTookDmg", game.turn, subject, self, damage, "")
 					if game.turn == self.ID:
 						game.Counters.timesHeroChangedHealth_inOwnTurn[self.ID] += 1
 						game.Counters.timesHeroTookDamage_inOwnTurn[self.ID] += 1
@@ -2006,7 +2063,7 @@ class Hero(Card):
 						game.sendSignal("HeroChangedHealthinTurn", self.ID, None, None, 0, "")
 			else:
 				game.sendSignal("HeroTakes0Dmg", game.turn, subject, self, 0, "")
-				game.sendSignal("HeroTook0Damage", game.turn, subject, self, 0, "")
+				game.sendSignal("HeroTook0Dmg", game.turn, subject, self, 0, "")
 		else:
 			damage = 0
 		return damage
@@ -2121,279 +2178,7 @@ class Hero(Card):
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
 			self.assistCreateCopy(Copy)
 			return Copy
-			
-			
-class Hero(Card):
-	mana, weapon, description = 0, None, ""
-	Class, name, heroPower, armor = "Neutral", "InnKeeper", None, 0
-	index = ""
 
-	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-
-	def blank_init(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.mana, self.manaMods = type(self).mana, []
-		self.health_max, self.health = 30, 30
-		self.attack, self.attack_bare, self.armor = 0, 0, type(self).armor
-		self.name = type(self).name
-		self.index = type(self).index
-		self.type = "Hero"
-		self.weapon = type(self).weapon
-		self.description = type(self).description
-		self.Class = type(self).Class
-		self.attChances_base, self.attChances_extra, self.attTimes = 1, 0, 0
-		self.onBoard, self.inHand, self.inDeck = False, False, False
-		self.dead = False
-		self.heroPower = type(self).heroPower(self.Game, self.ID) if type(self).heroPower else None
-		self.keyWords = {"Poisonous": 0}  # Just as a placeholder
-		self.marks = {"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
-					  "Can't Be Attacked": 0, "Next damage 0": 0, "Max Damage": -1}
-		self.status = {"Frozen": 0, "Temp Stealth": 0, "Draw to Win":0}
-		self.triggers = {"Discarded": []}
-		self.identity = [np.random.rand(), np.random.rand()]
-		self.options = []  # For Choose One heroes
-		self.overload, self.chooseOne = 0, 0
-		self.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
-		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
-		self.effectViable, self.evanescent = False, False
-	"""Handle hero's attacks, attack chances, attack chances and frozen status."""
-		
-	def STATUSPRINT(self):
-		PRINT(self.Game, "Game is {}.".format(self.Game))
-		PRINT(self.Game,
-			  "Hero %d %s: Attacked times: %d.	Base att chances left: %d.	Extra att chances left: %d" % (
-				  self.ID, self.name, self.attTimes, self.attChances_base, self.attChances_extra))
-		if self.manaMods != []:
-			PRINT(self.Game, "\tCarries mana modification:")
-			for manaMod in self.manaMods:
-				if manaMod.changeby != 0:
-					PRINT(self.Game, "\t\tChanged by %d" % manaMod.changeby)
-				else:
-					PRINT(self.Game, "\t\tChanged to %d" % manaMod.changeto)
-		PRINT(self.Game, "\tHero %s is frozen	{},  has Temp Stealth {}".format(self.status["Frozen"],
-																				  self.status["Temp Stealth"]))
-		PRINT(self.Game, "Player status")
-		for key, value in self.Game.status[self.ID].items():
-			if value > 0:
-				PRINT(self.Game, "{}: {}".format(key, value))
-		if hasattr(self, "progress"):
-			PRINT(self.Game, "\tHero's progress is currently: %d" % self.progress)
-
-	def actionable(self):
-		return self.ID == self.Game.turn
-
-	# 不考虑冻结、零攻和自身有不能攻击的debuff的情况。
-
-	def decideAttChances_base(self):
-		weapon = self.Game.availableWeapon(self.ID)
-		self.attChances_base = 2 if weapon and weapon.keyWords["Windfury"] > 0 else 1
-
-	def getsFrozen(self):
-		self.status["Frozen"] += 1
-		PRINT(self.Game, "%s gets Frozen." % self.name)
-
-	def turnStarts(self, ID):
-		if ID == self.ID:
-			self.status["Temp Stealth"] = 0
-			if self.Game.status[self.ID]["Immune2NextTurn"] > 0:
-				self.Game.status[self.ID]["Immune"] -= self.Game.status[self.ID]["Immune2NextTurn"]
-				self.Game.status[self.ID]["Immune"] = max(0, self.Game.status[self.ID]["Immune"])
-				self.Game.status[self.ID]["Immune2NextTurn"] = 0
-			if self.Game.status[self.ID]["Evasive2NextTurn"] > 0:
-				self.Game.status[self.ID]["Evasive"] -= self.Game.status[self.ID]["Evasive2NextTurn"]
-				self.Game.status[self.ID]["Evasive2NextTurn"] = 0
-
-			weapon = self.Game.availableWeapon(self.ID)
-			self.bareAttack, self.attTimes, self.attChances_extra = 0, 0, 0
-			if weapon:
-				self.attack = self.bareAttack + max(0, weapon.attack)
-				PRINT(self.Game, "Hero %s's attack is now %d+%d" % (self.name, self.bareAttack, weapon.attack))
-			self.decideAttChances_base()
-
-	def turnEnds(self, ID):
-		if self.Game.status[self.ID]["ImmuneThisTurn"] > 0:
-			self.Game.status[self.ID]["Immune"] -= self.Game.status[self.ID]["ImmuneThisTurn"]
-			self.Game.status[self.ID]["Immune"] = max(0, self.Game.status[self.ID]["Immune"])
-			self.Game.status[self.ID]["ImmuneThisTurn"] = 0
-		# 一个角色只有在自己的回合结束时有剩余的攻击机会才能解冻
-		if ID == self.ID and self.status["Frozen"] > 0 and self.attChances_base + self.attChances_extra > self.attTimes:
-			self.status["Frozen"] = 0
-
-		self.attack, self.attack_bare = 0, 0  # 因为英雄没有跨回合的攻击力增加，所有攻击增益都会在回合结束时消失。
-		self.attTimes = 0
-
-	def gainTempAttack(self, attackGain):
-		self.attack_bare += attackGain
-		weapon = self.Game.availableWeapon(self.ID)
-		self.attack = self.attack_bare + max(0, weapon.attack) if weapon else self.attack_bare
-
-	def gainsArmor(self, armor):
-		self.armor += armor
-
-	"""Handle hero's being selectable by subjects or not. And hero's availability for battle."""
-
-	def canAttack(self):
-		if not self.actionable() or self.attack < 1 or self.status["Frozen"] > 0:
-			return False
-		if self.attChances_base + self.attChances_extra <= self.attTimes:
-			return False
-		return True
-
-	def canAttackTarget(self, target):
-		return self.canAttack() and target.selectablebyBattle(self)
-
-	# Heroes don't have Lifesteal.
-	def tryLifesteal(self, damage, damageType="None"):
-		pass
-
-	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
-		game = self.Game
-		if game.status[self.ID]["Immune"] < 1:  # 随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
-			if "Next damage 0" in self.marks and self.marks["Next damage 0"] > 0:
-				damage = 0
-				self.marks["Next damage 0"] = 0
-			if "Max Damage" in self.marks and self.marks["Max Damage"] >= 0:
-				damage = min(damage, self.marks["Max Damage"])
-			if "Enemy Effect Damage Immune" in self.marks and self.marks[
-				"Enemy Effect Damage Immune"] > 0 and damageType == "ability":
-				damage = 0
-			if damage > 0:
-				damageHolder = [damage]
-				game.sendSignal("FinalDmgonHero?", self.ID, subject, self, damageHolder, "")
-				damage = damageHolder[0]
-				if damage > 0:
-					if self.armor > damage:
-						self.armor -= damage
-					else:
-						self.health -= damage - self.armor
-						self.armor = 0
-					game.Counters.damageonHeroThisTurn[self.ID] += damage
-					if sendDamageSignal:
-						game.sendSignal("HeroTakesDmg", game.turn, subject, self, damage, "")
-						game.sendSignal("HeroTookDamage", game.turn, subject, self, damage, "")
-					if game.turn == self.ID:
-						game.Counters.timesHeroChangedHealth_inOwnTurn[self.ID] += 1
-						game.Counters.timesHeroTookDamage_inOwnTurn[self.ID] += 1
-						game.Counters.heroChangedHealthThisTurn[self.ID] = True
-						game.sendSignal("HeroChangedHealthinTurn", self.ID, None, None, 0, "")
-			else:
-				game.sendSignal("HeroTakes0Dmg", game.turn, subject, self, 0, "")
-				game.sendSignal("HeroTook0Damage", game.turn, subject, self, 0, "")
-		else:
-			damage = 0
-		return damage
-
-	def healthReset(self, health, health_max=False):
-		healthChanged = health != self.health
-		self.health = health
-		if health_max: self.health_max = health_max
-		if healthChanged and self.Game.turn == self.ID:
-			self.Game.Counters.timesHeroChangedHealth_inOwnTurn[self.ID] += 1
-			self.Game.Counters.heroChangedHealthThisTurn[self.ID] = True
-			self.Game.sendSignal("HeroChangedHealthinTurn", self.ID, None, None, 0, "")
-
-	# 专门被英雄牌使用，加拉克苏斯大王和拉格纳罗斯都不会调用该方法。
-	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):  # 英雄牌使用目前不存在触发发现的情况
-		# 使用阶段
-		# 英雄牌替换出的英雄的生命值，护甲和攻击机会都会继承当前英雄的值。
-		curHero = self.Game.heroes[self.ID]
-		self.health, self.health_max = curHero.health, curHero.health_max
-		self.attack_bare, self.attTimes, self.armor = curHero.attack_bare, curHero.attTimes, curHero.armor
-		# 英雄牌进入战场。（本来是应该在使用阶段临近结束时移除旧英雄和旧技能，但是为了方便，在此时执行。）
-		# 继承旧英雄的生命状态和护甲值。此时英雄的被冻结和攻击次数以及攻击机会也继承旧英雄。
-		# 清除旧的英雄技能。
-		self.Game.powers[self.ID].disappears()
-		self.Game.powers[self.ID].heroPower = None
-		self.Game.heroes[self.ID].onBoard = False
-		heroPower = self.heroPower  # 这个英雄技能必须存放起来，之后英雄还有可能被其他英雄替换，但是这个技能要到最后才登场。
-		self.Game.heroes[self.ID] = self  # 英雄替换。如果后续有埃克索图斯再次替换英雄，则最后的英雄是拉格纳罗斯。
-		self.Game.heroes[self.ID].onBoard = True
-		if self.Game.GUI:
-			self.Game.GUI.displayCard(self)
-			self.Game.GUI.wait(500)
-		# 使用时步骤，触发“每当你使用一张xx牌时”的扳机。
-		self.Game.sendSignal("HeroCardPlayed", self.ID, self, None, mana, "", choice)
-		# 英雄牌的最大生命值和现有生命值以及护甲被设定继承旧英雄的数值。并获得英雄牌上标注的护甲值。
-		self.gainsArmor(type(self).armor)
-		# 使用阶段结束，进行死亡结算，此时尚不进行胜负判定。
-		self.Game.gathertheDead()
-		# 结算阶段
-		# 获得新的英雄技能。注意，在此之前英雄有可能被其他英雄代替，如伊利丹飞刀打死我方的管理者埃克索图斯。
-		# 埃克索图斯可以替换英雄和英雄技能，然后本英雄牌在此处开始结算，再次替换英雄技能为正确的英雄牌技能。
-		heroPower.replaceHeroPower()
-		# 视铜须等的存在而结算战吼次数以及具体战吼。
-		# 不用返回主体，但是当沙德沃克调用时whenEffective函数的时候需要。
-		if self.Game.status[self.ID]["Battlecry x2"] > 0:
-			self.whenEffective(None, "", choice, posinHand)
-		self.whenEffective(None, "", choice, posinHand)
-		if self.weapon:  # 如果英雄牌本身带有武器，如迦拉克隆等。则装备那把武器
-			self.Game.equipWeapon(self.weapon(self.Game, self.ID))
-		weapon = self.Game.availableWeapon(self.ID)
-		if weapon and self.ID == self.Game.turn:
-			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare + max(0, weapon.attack)
-		else:
-			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare
-		self.Game.heroes[self.ID].decideAttChances_base()
-		# 结算阶段结束，处理死亡，此时尚不进行胜负判定。
-		self.Game.gathertheDead()
-
-	# 大王，炎魔之王拉格纳罗斯等替换英雄，此时没有战吼。
-	# 炎魔之王变身不会摧毁玩家的现有装备和奥秘。只会移除冰冻，免疫和潜行等状态。
-	def replaceHero(self, fromHeroCard=False):
-		# 英雄被替换
-		# 被替换的英雄失去所有护甲。
-		# 假设直接替换的英雄不会继承之前英雄获得的回合内攻击力增加。
-		game, ID = self.Game, self.ID
-		healthChanged = game.heroes[ID].health == self.health
-		self.attTimes = game.heroes[ID].attTimes
-		# 英雄牌进入战场。（本来是应该在使用阶段临近结束时移除旧英雄和旧技能，但是为了方便，在此时执行。）
-		# 继承旧英雄的生命状态和护甲值。此时英雄的被冻结和攻击次数以及攻击机会也继承旧英雄。
-		# 大王和炎魔之王在替换之前被定义，拥有15或者8点生命值。0点护甲值和英雄技能等也已定义完毕。
-		game.heroes[ID] = self
-		game.heroes[ID].onBoard = True
-		if self.heroPower: self.heroPower.replaceHeroPower()
-		if self.weapon:  # 如果英雄本身带有装备，则会替换当前的玩家装备（如加拉克苏斯大王）
-			game.equipWeapon(self.weapon(game, ID))
-		if fromHeroCard == False:  # 英雄牌被其他牌打出时不会取消当前玩家的免疫状态
-			# Hero's immune state is gone, except that given by Mal'Ganis
-			status = game.status[ID]
-			status["Immune"] -= status["Immune2NextTurn"] + status["ImmuneThisTurn"]
-			status["ImmuneThisTurn"] = status["Immune2NextTurn"] = 0
-
-		game.sendSignal("HeroReplaced", ID, None, self, 0, "")
-		if healthChanged and game.turn == ID:
-			game.Counters.timesHeroChangedHealth_inOwnTurn[ID] += 1
-			game.Counters.heroChangedHealthThisTurn[ID] = True
-			game.sendSignal("HeroChangedHealthinTurn", ID, None, None, 0, "")
-
-	def createCopy(self, game):
-		if self in game.copiedObjs:
-			return game.copiedObjs[self]
-		else:
-			Copy = type(self)(game, self.ID)
-			game.copiedObjs[self] = Copy
-			Copy.mana = self.mana
-			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
-			Copy.attack, Copy.attack_bare, Copy.armor = self.attack, self.attack_bare, self.armor
-			Copy.health_max, Copy.health = self.health_max, self.health
-			Copy.attChances_base, Copy.attChances_extra, Copy.attTimes = self.attChances_base, self.attChances_extra, self.attTimes
-			Copy.onBoard, Copy.inHand, Copy.inDeck = self.onBoard, self.inHand, self.inDeck
-			Copy.dead = self.dead
-			Copy.keyWords = copy.deepcopy(self.keyWords)
-			Copy.marks = copy.deepcopy(self.marks)
-			Copy.status = copy.deepcopy(self.status)
-			for key, value in self.triggers.items():
-				Copy.triggers[key] = [getattr(Copy, func.__qualname__.split(".")[1]) for func in value]
-			Copy.identity = copy.deepcopy(self.identity)
-			Copy.options = [option.selfCopy(Copy) for option in self.options]
-			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
-			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
-			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
-			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			self.assistCreateCopy(Copy)
-			return Copy
-			
 			
 class Weapon(Card):
 	Class, name, description = "Neutral", "Vanilla", ""

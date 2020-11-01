@@ -819,7 +819,7 @@ class ReclusivePonderer(SVMinion):
 #	 description = "Summon a Shield Guardian and Knight.Rally (15): Summon a Frontguard General instead of a Shield Guardian."
 #
 #	 def available(self):
-#		 return self.Game.spaceonBoard(self.ID)
+#		 return self.Game.space(self.ID)
 #
 #	 def effectCanTrigger(self):
 #		 self.effectViable = self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 15
@@ -843,7 +843,7 @@ class ReclusivePonderer(SVMinion):
 #	 description = "Choose an allied follower in play and summon a copy of it. Give it Rush, and banish it at the start of your next turn."
 #
 #	 def available(self):
-#		 return self.selectableFriendlyExists() and self.Game.spaceonBoard(self.ID)
+#		 return self.selectableFriendlyExists() and self.Game.space(self.ID)
 #
 #	 def targetCorrect(self, target, choice=0):
 #		 return target.cardType == "Minion" and target.ID == self.ID and target.onBoard
@@ -1002,7 +1002,7 @@ class ReclusivePonderer(SVMinion):
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer~Valse, Champion Deadeye~Battlecry"
 #	 requireTarget, keyWord, description = True, "", "Fanfare: Enhance (6) - Banish an enemy follower or amulet."
-#	 evolveNeedTarget = True
+#	 evolveRequireTarget = True
 #
 #	 def effectCanTrigger(self):
 #		 self.effectViable = self.getMana() != self.mana
@@ -1041,7 +1041,7 @@ class ReclusivePonderer(SVMinion):
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Levin~Levin Archer"
 #	 requireTarget, keyWord, description = False, "", ""
-#	 evolveNeedTarget = True
+#	 evolveRequireTarget = True
 #
 #	 def inHandEvolving(self, target=None):
 #		 if target:
@@ -1307,7 +1307,7 @@ class ReclusivePonderer(SVMinion):
 #		 if commanders >= 2:
 #			 PRINT(self, "Lady of the Lance's Fanfare give it Bane and reduce next damage to 0.")
 #			 self.getsKeyword("Poisonous")
-#			 self.marks["Next damage 0"] += 1
+#			 self.marks["Next Damage 0"] += 1
 #		 return None
 #
 #
@@ -1490,7 +1490,7 @@ class ReclusivePonderer(SVMinion):
 #			 if card.cardType == "Minion" and isinstance(card, SVMinion) and \
 #					 card.mana == 1 and card.Class == "Swordcraft":
 #				 ones.append(card)
-#		 if ones != [] and self.Game.spaceonBoard(self.ID) > 0:
+#		 if ones != [] and self.Game.space(self.ID) > 0:
 #			 a = np.random.choice(ones)
 #			 self.Game.summonfromDeck(a, -1, self.ID)
 #			 PRINT(self, f"Courtly Dance summons {a.name} from deck.")
@@ -1498,7 +1498,7 @@ class ReclusivePonderer(SVMinion):
 #			 if card.cardType == "Minion" and isinstance(card, SVMinion) and \
 #					 card.mana == 2 and card.Class == "Swordcraft":
 #				 twos.append(card)
-#		 if twos != [] and self.Game.spaceonBoard(self.ID) > 0:
+#		 if twos != [] and self.Game.space(self.ID) > 0:
 #			 b = np.random.choice(twos)
 #			 self.Game.summonfromDeck(b, -1, self.ID)
 #			 PRINT(self, f"Courtly Dance summons {b.name} from deck.")
@@ -1507,7 +1507,7 @@ class ReclusivePonderer(SVMinion):
 #				 if card.cardType == "Minion" and isinstance(card, SVMinion) and \
 #						 card.mana == 3 and card.Class == "Swordcraft":
 #					 threes.append(card)
-#			 if threes != [] and self.Game.spaceonBoard(self.ID) > 0:
+#			 if threes != [] and self.Game.space(self.ID) > 0:
 #				 c = np.random.choice(threes)
 #				 self.Game.summonfromDeck(c, -1, self.ID)
 #				 PRINT(self, f"Courtly Dance summons {c.name} from deck.")
@@ -1587,21 +1587,21 @@ class ReclusivePonderer(SVMinion):
 #		 self.blank_init(entity, ["TurnStarts"])
 #
 #	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-#		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.spaceonBoard(self.entity.ID) > 0 and \
+#		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
 #				self.entity.Game.Counters.numMinionsSummonThisGame[self.entity.ID] >= 10 and \
 #				self.entity.name not in self.entity.Game.Counters.minionInvocationThisTurn
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#		 if self.entity.Game.spaceonBoard(self.entity.ID) > 0:
+#		 if self.entity.Game.space(self.entity.ID) > 0:
 #			 self.entity.Game.Counters.minionInvocationThisTurn.append(self.entity.name)
 #			 self.entity.Game.summonfromDeck(self.entity, -1, self.entity.ID)
 #			 PRINT(self, f"Fieran, Havensent Wind God is summoned from player {self.entity.ID}'s deck.")
 #
 #
 # class ResolveOfTheFallen(Spell):
-#	 Class, name = "Natural", "Resolve of the Fallen"
+#	 Class, name = "Neutral", "Resolve of the Fallen"
 #	 requireTarget, mana = True, 4
-#	 index = "Shadowverse~Natural~Spell~4~Resolve of the Fallen"
+#	 index = "Shadowverse~Neutral~Spell~4~Resolve of the Fallen"
 #	 description = "Destroy an enemy follower or amulet.If at least 3 allied followers have evolved this match, recover 3 play points.Then, if at least 5 have evolved, draw 2 cards."
 #
 #	 def available(self):
@@ -1774,12 +1774,12 @@ class ReclusivePonderer(SVMinion):
 #		 self.blank_init(entity, ["TurnStarts"])
 #
 #	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-#		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.spaceonBoard(self.entity.ID) > 0 and \
+#		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
 #				self.entity.Game.Counters.numTurnPassedThisGame[self.entity.ID] == 10 and \
 #				self.entity.name not in self.entity.Game.Counters.minionInvocationThisTurn
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#		 if self.entity.Game.spaceonBoard(self.entity.ID) > 0:
+#		 if self.entity.Game.space(self.entity.ID) > 0:
 #			 self.entity.Game.summonfromDeck(self.entity, -1, self.entity.ID)
 #			 self.entity.Game.Counters.minionInvocationThisTurn.append(self.entity.name)
 #			 PRINT(self, f"XXI. Zelgenea, The World is summoned from player {self.entity.ID}'s deck.")
@@ -1821,7 +1821,7 @@ class ReclusivePonderer(SVMinion):
 #	 mana, attack, health = 5, 4, 4
 #	 index = "Shadowverse~Swordcraft~Minion~5~4~4~Commander~Amelia, the Silverflash~Battlecry"
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Randomly put 2 different Officer followers from your deck into your hand.Enhance (7): Gain the ability to evolve for 0 evolution points and the following effect - The next time this follower takes damage, reduce that damage to 0."
-#	 evolveNeedTarget = True
+#	 evolveRequireTarget = True
 #
 #	 def effectCanTrigger(self):
 #		 self.effectViable = self.getMana() != self.mana
@@ -1852,7 +1852,7 @@ class ReclusivePonderer(SVMinion):
 #					 PRINT(self, f"Amelia, the Silverflash's Fanfare let you draw {card.name}.")
 #		 if choice == 7:
 #			 self.getsKeyword("Free Evolve")
-#			 self.marks["Next damage 0"] = 1
+#			 self.marks["Next Damage 0"] = 1
 #		 return None
 #
 #	 def inHandEvolving(self, target=None):
@@ -1916,7 +1916,7 @@ class ReclusivePonderer(SVMinion):
 #					 if card.cardType == "Minion" and isinstance(card, SVMinion) and \
 #							 "Levin" in card.race and card.Class == "Swordcraft" and card.name not in names:
 #						 minions.append(card)
-#				 if minions != [] and self.Game.spaceonBoard(self.ID) > 0:
+#				 if minions != [] and self.Game.space(self.ID) > 0:
 #					 m = np.random.choice(minions)
 #					 names.append(m.name)
 #					 self.Game.summonfromDeck(m, -1, self.ID)
@@ -1952,7 +1952,7 @@ class ReclusivePonderer(SVMinion):
 #	 mana, attack, health = 6, 4, 5
 #	 index = "Shadowverse~Swordcraft~Minion~6~4~5~Commander~Diamond Paladin~Battlecry~Rush"
 #	 requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: Enhance (8) - Gain the ability to evolve for 0 evolution points.During your turn, whenever this follower attacks and destroys an enemy follower, if this follower is not destroyed, recover 2 play points and gain the ability to attack 2 times this turn."
-#	 evolveNeedTarget = True
+#	 evolveRequireTarget = True
 #
 #	 def __init__(self, Game, ID):
 #		 self.blank_init(Game, ID)

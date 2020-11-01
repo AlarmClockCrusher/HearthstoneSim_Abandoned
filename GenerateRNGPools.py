@@ -34,6 +34,11 @@ from Outlands import *
 from Monk import *
 from Academy import *
 from SV_Basic import *
+from SV_Glory import *
+from SV_Verdant import *
+from SV_Ultimate import *
+from SV_Uprooted import *
+from SV_Fortune import *
 
 def makeCardPool(monk=0, board="0 Random Game Board"):
 	cardPool, info = {}, ""
@@ -61,10 +66,7 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 	
 	cardPool.update(Outlands_Indices)
 	info += "from Outlands import *\n"
-	
-	cardPool.update(SV_Basic_Indices)
-	info += "from SV_Basic import *\n"
-	
+
 	if monk:
 		print("Including Monk")
 		cardPool.update(Monk_Indices)
@@ -101,7 +103,25 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 	Academy_Indices[transferStudent.index] = transferStudent
 	cardPool.update(Academy_Indices)
 	info += "from Academy import *\n"
-	
+
+	cardPool.update(SV_Basic_Indices)
+	info += "from SV_Basic import *\n"
+
+	cardPool.update(SV_Glory_Indices)
+	info += "from SV_Glory import *\n"
+
+	cardPool.update(SV_Verdant_Indices)
+	info += "from SV_Verdant import *\n"
+
+	cardPool.update(SV_Ultimate_Indices)
+	info += "from SV_Ultimate import *\n"
+
+	cardPool.update(SV_Uprooted_Indices)
+	info += "from SV_Uprooted import *\n"
+
+	cardPool.update(SV_Fortune_Indices)
+	info += "from SV_Fortune import *\n"
+
 	BasicPowers, UpgradedPowers, Classes, ClassesandNeutral, ClassDict = [], [], [], [], {}
 	for key in list(cardPool.keys()):
 		if "Hero: " in key:
