@@ -1049,7 +1049,7 @@ class Minion(Card):
 		target.history["Magnetic Upgrades"]["AttackGain"] += attack_orig
 		target.history["Magnetic Upgrades"]["HealthGain"] += health_orig
 		self.Game.minionPlayed = None
-
+		
 	# Specifically for battlecry resolution. Doesn't care if the target is in Stealth.
 	def targetCorrect(self, target, choice=0):
 		return (target.type == "Minion" or target.type == "Hero") and target.onBoard and target != self
