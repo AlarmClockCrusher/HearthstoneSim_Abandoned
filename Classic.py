@@ -2404,7 +2404,7 @@ class Bite(Spell):
 	description = "Give your hero +4 Attack this turn. Gain 4 Armor"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Bite is cast and gives player +4 armor and +4 attack this turn.")
-		self.Game.heroes[self.ID].gainTempAttack(4)
+		self.Game.heroes[self.ID].gainAttack(4)
 		self.Game.heroes[self.ID].gainsArmor(4)
 		return None
 		
@@ -3069,7 +3069,7 @@ class SavannahHighmane(Minion):
 		
 class Summon2Hyenas(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		pos = (self.entity.position, "totheRight") if self.entity in self.entity.Game.minions[self.entity.ID] else (-1, "totheRightEnd")
+		pos = (self.entity.position, "leftandRight") if self.entity in self.entity.Game.minions[self.entity.ID] else (-1, "totheRightEnd")
 		PRINT(self.entity, "Deathrattle: Summon two 2/2 Hyenas triggers.")
 		self.entity.Game.summon([Hyena_Classic(self.entity.Game, self.entity.ID) for i in range(2)], pos, self.entity.ID)
 		
@@ -3203,14 +3203,14 @@ class Counterspell(Secret):
 		
 class Trig_Counterspell(SecretTrigger):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TriggerCounterspell"])
+		self.blank_init(entity, ["SpellOKtoCast?"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return subject.ID != self.entity.ID
+		return subject.ID != self.entity.ID and subject
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Secret Counterspell Counters player's attempt to cast spell %s"%subject.name)
-		#But actually nothing happens in this trigger. The Game will simply skip all the resolution at the playSpell() function.
+		subject.pop()
 		
 		
 class IceBarrier(Secret):

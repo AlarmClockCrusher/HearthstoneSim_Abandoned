@@ -30,8 +30,8 @@ class Blur(Spell):
 	#不知道与博尔碎盾的结算是如何进行的。
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Blur is cast and player can't take any damage this turn")
-		trigger = BlurEffect(self.Game, self.ID)
-		trigger.connect()
+		trig = BlurEffect(self.Game, self.ID)
+		trig.connect()
 		return None
 		
 class BlurEffect:
@@ -83,7 +83,7 @@ class TwinSlice(Spell):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Twin Slice is cast and gives player +2 Attack this turn")
-		self.Game.heroes[self.ID].gainTempAttack(2)
+		self.Game.heroes[self.ID].gainAttack(2)
 		PRINT(self.Game, "Twin Slice puts a 'Second Slice' to player's hand")
 		self.Game.Hand_Deck.addCardtoHand(SecondSlice(self.Game, self.ID), self.ID)
 		return None
@@ -96,7 +96,7 @@ class SecondSlice(Spell):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Second Slice is cast and gives player +2 Attack this turn")
-		self.Game.heroes[self.ID].gainTempAttack(2)
+		self.Game.heroes[self.ID].gainAttack(2)
 		return None
 		
 		

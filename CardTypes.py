@@ -110,7 +110,6 @@ class Card:
 		return self
 		
 	def leavesHand(self, intoDeck=False):
-		self.onBoard, self.inHand, self.inDeck = False, False, False
 		#将注册了的场上、手牌和牌库扳机全部注销。
 		for trig in reversed(self.trigsBoard):
 			trig.disconnect()
@@ -127,8 +126,9 @@ class Card:
 			if hasattr(trig, "temp") and trig.temp: #If the trig is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
 				try: self.trigsDeck.remove(trig)
 				except: pass
+		self.onBoard, self.inHand, self.inDeck = False, False, False
 		#无论如果离开手牌，被移出还是洗回牌库，费用修改效果（如大帝-1）都会消失
-		for manaMod in fixedList(self.manaMods): manaMod.getsRemoved()
+		for manaMod in reversed(self.manaMods): manaMod.getsRemoved()
 		self.manaMods = []
 		
 	def entersDeck(self):
@@ -320,6 +320,9 @@ class Card:
 				#damage will not cause Lifesteal cycle.
 				dmgTaker = self.Game.scapegoat4(game.heroes[self.ID])
 				dmgTaker.takesDamage(self, heal, damageType="Ability")
+			elif game.status[self.ID]["Lifesteal Damages Enemy"] > 0:
+				dmgTaker = self.Game.scapegoat4(game.heroes[3-self.ID])
+				dmgTaker.takesDamage(self, heal, damageType="Ability")
 			else: #Heal is heal.
 				game.heroes[self.ID].getsHealed(self, heal)
 				
@@ -502,13 +505,12 @@ class Card:
 			else: #The attribute is a self-defined class. They will all have selfCopy methods
 				#A minion can't refernece another minion. The attributes here must be like triggers/deathrattles	
 				Copy.__dict__[key] = value.selfCopy(Copy)
-		Copy.ID = ID
+		Copy.ID, Copy.inOrigDeck, Copy.numOccurrence = ID, False, 0
 		return Copy
 		
 	#给非随从牌用的，目前也没有复制场上武器的牌
 	def selfCopy(self, ID):
 		Copy = self.hardCopy(ID)
-		Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
 		#复制一张牌的费用修改情况,移除来自光环影响的费用效果
 		for i in reversed(range(len(Copy.manaMods))):
 			if Copy.manaMods[i].source: Copy.manaMods.pop(i)
@@ -670,10 +672,8 @@ class Minion(Card):
 		self.status = {"Immune": 0, "Frozen": 0, "Temp Stealth": 0, "Borrowed": 0,
 					   "Evolved": 0,
 					   }
-		# 复制出一个游戏内的Copy时要重新设为初始值的attr
-		# First two are for card authenticity verification. The last is to check if the minion has ever left board.
-		# Princess Talanji needs to confirm if a card started in original deck.
-		self.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
+		#Keep track of the original cards that started in the deck
+		self.inOrigDeck, self.numOccurrence = False, 0
 		self.dead = False
 		self.effectViable, self.evanescent = False, False
 		self.newonthisSide, self.firstTimeonBoard = True, True  # firstTimeonBoard用于防止随从在休眠状态苏醒时再次休眠，一般用不上
@@ -682,12 +682,12 @@ class Minion(Card):
 		# self.sequence records the number of the minion's appearance. The first minion on board has a sequence of 0
 		self.sequence, self.position = -1, -2
 		self.attTimes, self.attChances_base, self.attChances_extra = 0, 0, 0
-
+		
 		self.auras = {}
 		self.options = []  # For Choose One minions.
 		self.overload, self.chooseOne, self.magnetic = 0, 0, 0
 		self.silenced = False
-
+		
 		self.triggers = {"Discarded": [], "StatChanges": [], "Drawn": []}
 		self.appearResponse, self.disappearResponse, self.silenceResponse = [], [], []
 		self.deathrattles = []  # 随从的亡语的触发方式与场上扳机一致，诸扳机之间与
@@ -722,7 +722,7 @@ class Minion(Card):
 		# The buffAuras/hasAuras will react to this signal.
 		self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, "")
 		for func in self.triggers["StatChanges"]: func()
-
+		
 	def disappears(self, deathrattlesStayArmed=True):  # The minion is about to leave board.
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		# Only the auras and disappearResponse will be invoked when the minion switches side.
@@ -1142,7 +1142,6 @@ class Minion(Card):
 		return sum(minion.marks["Heal x2"] > 0 for minion in self.Game.minions[self.ID])
 
 	"""buffAura effect, Buff/Debuff, stat reset, copy"""
-
 	# Generally invoked by buffAura_Receivers and buffDebuff.
 	def statChange(self, attGain, healthGain=0):
 		self.attack += attGain
@@ -1164,8 +1163,7 @@ class Minion(Card):
 			else:  # Minions can receive temp attack changes, too. And those will also vanish at the corresponding time point.
 				self.tempAttChanges.append((attackGain, attRevertTime))
 				self.statChange(attackGain, healthGain)
-				PRINT(self.Game, "{}".format(self.tempAttChanges))
-
+				
 	# Not all params can be False.
 	def statReset(self, newAttack=False, newHealth=False, attRevertTime=""):
 		if not self.inDeck and not self.dead:
@@ -1340,7 +1338,7 @@ class Minion(Card):
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.marks = copy.deepcopy(self.marks)
 			Copy.status = copy.deepcopy(self.status)
-			Copy.identity = copy.deepcopy(self.identity)
+			Copy.inOrigDeck, Copy.numOccurrence = self.inOrigDeck, self.numOccurrence
 			Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
 			if hasattr(self, "progress"): Copy.progress = self.progress
 			Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
@@ -1383,11 +1381,12 @@ class Spell(Card):
 		self.overload, self.chooseOne, self.twinSpell = 0, 0, 0
 		#法术也设置onBoard标签，但只是placeholder而已
 		self.onBoard, self.inHand, self.inDeck = False, False, False
-		self.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
+		self.inOrigDeck = False
 		#法术的triggersonBoard只是一个placeholder
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.options = [] #For Choose One spells
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
+		self.marks = {"Cost Health Instead": 0,}
 		self.triggers = {"Discarded": []}
 		self.effectViable, self.evanescent = False, False
 		
@@ -1565,12 +1564,13 @@ class Spell(Card):
 			Copy.mana = self.mana
 			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
 			Copy.inHand, Copy.inDeck = self.inHand, self.inDeck
-			Copy.identity = copy.deepcopy(self.identity)
+			Copy.inOrigDeck = self.inOrigDeck
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.keyWords = copy.deepcopy(self.keyWords)
+			Copy.marks = copy.deepcopy(self.marks)
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
 			for key, value in self.triggers.items():
 				Copy.triggers[key] = [getattr(Copy, func.__qualname__.split(".")[1]) for func in value]
@@ -1600,7 +1600,7 @@ class Secret(Spell):
 		self.overload, self.chooseOne, self.twinSpell = 0, 0, 0
 		# 法术也设置onBoard标签，但只是placeholder而已
 		self.onBoard, self.inHand, self.inDeck = False, False, False
-		self.identity = [np.random.rand(), np.random.rand()]
+		self.inOrigDeck = False
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.options = []  # For Choose One spells
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
@@ -1621,7 +1621,7 @@ class Secret(Spell):
 		self.whenEffective(None, "byOthers", choice=0, posinHand=-2)
 		# 使用后步骤，但是此时的扳机只会触发星界密使和风潮的状态移除，因为其他的使用后步骤都要求是玩家亲自打出。
 		self.Game.sendSignal("SpellBeenCast", self.ID, self, None, 0, "byOthers")
-
+		
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
 		self.Game.sendSignal("SpellPlayed", self.ID, self, None, mana, "", choice)
 		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
@@ -1663,7 +1663,7 @@ class Quest(Spell):
 		self.overload, self.chooseOne, self.twinSpell = 0, 0, 0
 		# 法术也设置onBoard标签，但只是placeholder而已
 		self.onBoard, self.inHand, self.inDeck = False, False, False
-		self.identity = [np.random.rand(), np.random.rand()]
+		self.inOrigDeck = False
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.options = []  # For Choose One spells
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
@@ -1738,7 +1738,7 @@ class Quest(Spell):
 			Copy.mana = self.mana
 			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
 			Copy.inHand, Copy.inDeck = self.inHand, self.inDeck
-			Copy.identity = copy.deepcopy(self.identity)
+			Copy.inOrigDeck = self.inOrigDeck
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
@@ -1918,6 +1918,7 @@ class Hero(Card):
 		self.mana, self.manaMods = type(self).mana, []
 		self.health_max, self.health = 30, 30
 		self.attack, self.attack_bare, self.armor = 0, 0, type(self).armor
+		self.tempAttChanges = []
 		self.name = type(self).name
 		self.index = type(self).index
 		self.type = "Hero"
@@ -1929,15 +1930,18 @@ class Hero(Card):
 		self.dead = False
 		self.position = self.ID
 		self.heroPower = type(self).heroPower(self.Game, self.ID) if type(self).heroPower else None
-		self.keyWords = {"Poisonous": 0} #Just as a placeholder
-		self.marks={"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
-					"Can't Be Attacked": 0, "Next Damage 0": 0, "Max Damage": [], "Deal Damage 0": 0}
+		self.keyWords = {"Windfury": 0, "Poisonous": 0}
+		self.statbyAura = [0, []] #Similar to minion's. But with only attack change
+		self.keyWordbyAura = {"Windfury": 0, "Auras": []}
+		self.marks = {"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
+					"Can't Be Attacked": 0, "Next Damage 0": 0, "Max Damage": [], "Deal Damage 0": 0,
+					"Cost Health Instead": 0,
+					}
 		self.status = {"Frozen": 0, "Temp Stealth": 0, "Draw to Win": 0}
 		self.triggers = {"Discarded": []}
-		self.identity = [np.random.rand(), np.random.rand()]
+		self.inOrigDeck = False
 		self.options = [] #For Choose One heroes
 		self.overload, self.chooseOne = 0, 0
-		self.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.effectViable, self.evanescent = False, False
 		
@@ -1985,9 +1989,7 @@ class Hero(Card):
 				
 			weapon = self.Game.availableWeapon(self.ID)
 			self.bareAttack, self.attTimes, self.attChances_extra = 0, 0, 0
-			if weapon:
-				self.attack = self.bareAttack + max(0, weapon.attack)
-				PRINT(self.Game, "Hero %s's attack is now %d+%d"%(self.name, self.bareAttack, weapon.attack))
+			self.calc_Attack()
 			self.decideAttChances_base()
 			
 	def turnEnds(self, ID):
@@ -1999,25 +2001,33 @@ class Hero(Card):
 		if ID == self.ID and self.status["Frozen"] > 0 and self.attChances_base + self.attChances_extra > self.attTimes:
 			self.status["Frozen"] = 0
 			
-		self.attack, self.attack_bare = 0, 0 #因为英雄没有跨回合的攻击力增加，所有攻击增益都会在回合结束时消失。
 		self.attTimes = 0
+		for attGain, revertTime in self.tempAttChanges:
+			self.attack_bare -= attGain
+		self.tempAttChanges = []
+		self.calc_Attack()
 		
-	def gainTempAttack(self, attackGain):
-		self.attack_bare += attackGain
-		weapon = self.Game.availableWeapon(self.ID)
-		self.attack = self.attack_bare + max(0, weapon.attack) if weapon else self.attack_bare
+	def gainAttack(self, attGain, revertTime="EndofTurn"):
+		self.attack_bare += attGain
+		if revertTime: self.tempAttChanges.append((attGain, revertTime))
+		self.calc_Attack()
+		
+	def calc_Attack(self):
+		if self.Game.turn == self.ID:
+			weapon = self.Game.availableWeapon(self.ID)
+			self.attack = self.attack_bare + max(0, weapon.attack) if weapon else self.attack_bare
+		else:
+			self.attack = self.attack_bare
+		self.Game.sendSignal("HeroAttCalc", self.ID, self, None, 0, "")
 		
 	def gainsArmor(self, armor):
 		self.armor += armor
 		
 	"""Handle hero's being selectable by subjects or not. And hero's availability for battle."""
 	def canAttack(self):
-		if not self.actionable() or self.attack < 1 or self.status["Frozen"] > 0:
-			return False
-		if self.attChances_base + self.attChances_extra <= self.attTimes:
-			return False
-		return True
-		
+		return self.actionable() and self.attack > 0 and self.status["Frozen"] < 1 \
+				and self.attChances_base + self.attChances_extra > self.attTimes
+				
 	def canAttackTarget(self, target):
 		return self.canAttack() and target.selectablebyBattle(self)
 		
@@ -2052,7 +2062,7 @@ class Hero(Card):
 					else:
 						self.health -= damage - self.armor
 						self.armor = 0
-					game.Counters.damageonHeroThisTurn[self.ID] += damage
+					game.Counters.dmgonHero_inOppoTurn[self.ID] += damage
 					if sendDamageSignal:
 						game.sendSignal("HeroTakesDmg", game.turn, subject, self, damage, "")
 						game.sendSignal("HeroTookDmg", game.turn, subject, self, damage, "")
@@ -2081,46 +2091,48 @@ class Hero(Card):
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""): #英雄牌使用目前不存在触发发现的情况
 	#使用阶段
 		#英雄牌替换出的英雄的生命值，护甲和攻击机会都会继承当前英雄的值。
-		curHero = self.Game.heroes[self.ID]
+		game, ID = self.Game, self.ID
+		curHero, heroes = game.heroes[ID], game.heroes
 		self.health, self.health_max = curHero.health, curHero.health_max
-		self.attack_bare, self.attTimes, self.armor = curHero.attack_bare, curHero.attTimes, curHero.armor
+		self.attack_bare, self.tempAttChanges, self.attTimes, self.armor = curHero.attack_bare, curHero.tempAttChanges, curHero.attTimes, curHero.armor
 		#英雄牌进入战场。（本来是应该在使用阶段临近结束时移除旧英雄和旧技能，但是为了方便，在此时执行。）
 		#继承旧英雄的生命状态和护甲值。此时英雄的被冻结和攻击次数以及攻击机会也继承旧英雄。
 		#清除旧的英雄技能。
-		self.position = self.ID #这个只是为了方便定义(i, where)
-		self.Game.powers[self.ID].disappears()
-		self.Game.powers[self.ID].heroPower = None
-		self.Game.heroes[self.ID].onBoard = False
+		self.position = ID #这个只是为了方便定义(i, where)
+		game.powers[ID].disappears()
+		game.powers[ID].heroPower = None
+		heroes[ID].onBoard = False
 		heroPower = self.heroPower #这个英雄技能必须存放起来，之后英雄还有可能被其他英雄替换，但是这个技能要到最后才登场。
-		self.Game.heroes[self.ID] = self #英雄替换。如果后续有埃克索图斯再次替换英雄，则最后的英雄是拉格纳罗斯。
-		self.Game.heroes[self.ID].onBoard = True
-		if self.Game.GUI:
-			self.Game.GUI.displayCard(self)
-			self.Game.GUI.wait(500)
+		heroes[ID] = self #英雄替换。如果后续有埃克索图斯再次替换英雄，则最后的英雄是拉格纳罗斯。
+		heroes[ID].onBoard = True
+		if game.GUI:
+			game.GUI.displayCard(self)
+			game.GUI.wait(500)
 		#使用时步骤，触发“每当你使用一张xx牌时”的扳机。
-		self.Game.sendSignal("HeroCardPlayed", self.ID, self, None, mana, "", choice)
+		game.sendSignal("HeroCardPlayed", ID, self, None, mana, "", choice)
 		#英雄牌的最大生命值和现有生命值以及护甲被设定继承旧英雄的数值。并获得英雄牌上标注的护甲值。
 		self.gainsArmor(type(self).armor)
+		game.sendSignal("HeroReplaced", ID, None, self, 0, "")
 		#使用阶段结束，进行死亡结算，此时尚不进行胜负判定。
-		self.Game.gathertheDead()
+		game.gathertheDead()
 	#结算阶段
 		#获得新的英雄技能。注意，在此之前英雄有可能被其他英雄代替，如伊利丹飞刀打死我方的管理者埃克索图斯。
 			#埃克索图斯可以替换英雄和英雄技能，然后本英雄牌在此处开始结算，再次替换英雄技能为正确的英雄牌技能。
 		heroPower.replaceHeroPower()
 		#视铜须等的存在而结算战吼次数以及具体战吼。
 		#不用返回主体，但是当沙德沃克调用时whenEffective函数的时候需要。
-		if self.Game.status[self.ID]["Battlecry x2"] > 0:
+		if game.status[ID]["Battlecry x2"] > 0:
 			self.whenEffective(None, "", choice, posinHand)
 		self.whenEffective(None, "", choice, posinHand)
 		if self.weapon: #如果英雄牌本身带有武器，如迦拉克隆等。则装备那把武器
-			self.Game.equipWeapon(self.weapon(self.Game, self.ID))
-		weapon = self.Game.availableWeapon(self.ID)
-		if weapon and self.ID == self.Game.turn:
-			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare + max(0, weapon.attack)
-		else: self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare
-		self.Game.heroes[self.ID].decideAttChances_base()
+			game.equipWeapon(self.weapon(game, ID))
+		weapon = game.availableWeapon(ID)
+		if weapon and ID == game.turn:
+			heroes[ID].attack = heroes[ID].attack_bare + max(0, weapon.attack)
+		else: heroes[ID].attack = heroes[ID].attack_bare
+		heroes[ID].decideAttChances_base()
 		#结算阶段结束，处理死亡，此时尚不进行胜负判定。
-		self.Game.gathertheDead()
+		game.gathertheDead()
 		
 	#大王，炎魔之王拉格纳罗斯等替换英雄，此时没有战吼。
 	#炎魔之王变身不会摧毁玩家的现有装备和奥秘。只会移除冰冻，免疫和潜行等状态。
@@ -2163,6 +2175,13 @@ class Hero(Card):
 			Copy.attack, Copy.attack_bare, Copy.armor = self.attack, self.attack_bare, self.armor
 			Copy.health_max, Copy.health = self.health_max, self.health
 			Copy.attChances_base, Copy.attChances_extra, Copy.attTimes = self.attChances_base, self.attChances_extra, self.attTimes
+			Copy.tempAttChanges = copy.deepcopy(self.tempAttChanges)
+			Copy.statbyAura = [self.statbyAura[0], [aura_Receiver.selfCopy(Copy) for aura_Receiver in self.statbyAura[1]]]
+			for key, value in self.keyWordbyAura.items():
+				if key != "Auras":
+					Copy.keyWordbyAura[key] = value
+				else:
+					Copy.keyWordbyAura[key] = [aura_Receiver.selfCopy(Copy) for aura_Receiver in self.keyWordbyAura["Auras"]]
 			Copy.onBoard, Copy.inHand, Copy.inDeck = self.onBoard, self.inHand, self.inDeck
 			Copy.dead = self.dead
 			Copy.keyWords = copy.deepcopy(self.keyWords)
@@ -2170,7 +2189,7 @@ class Hero(Card):
 			Copy.status = copy.deepcopy(self.status)
 			for key, value in self.triggers.items():
 				Copy.triggers[key] = [getattr(Copy, func.__qualname__.split(".")[1]) for func in value]
-			Copy.identity = copy.deepcopy(self.identity)
+			Copy.inOrigDeck = self.inOrigDeck
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
@@ -2178,16 +2197,16 @@ class Hero(Card):
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
 			self.assistCreateCopy(Copy)
 			return Copy
-
+			
 			
 class Weapon(Card):
 	Class, name, description = "Neutral", "Vanilla", ""
 	mana, attack, durability = 2, 2, 2
 	index = "Vanillar-Neutral-2-2-2-Weapon-Vanilla"
-
+	
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-
+		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.Class, self.name = type(self).Class, type(self).name
@@ -2199,7 +2218,7 @@ class Weapon(Card):
 		self.description = type(self).description
 		self.requireTarget = False
 		self.keyWords = {"Lifesteal": False, "Poisonous": False, "Windfury": False}
-		self.marks = {"Sweep": 0}
+		self.marks = {"Sweep": 0, "Cost Health Instead": 0,}
 		self.triggers = {"Discarded": []}
 		self.overload, self.chooseOne = 0, 0
 		self.onBoard, self.inHand, self.inDeck = False, False, False
@@ -2207,11 +2226,11 @@ class Weapon(Card):
 		self.sequence = -1
 		self.deathrattles = []
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
-		self.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
+		self.inOrigDeck = False
 		self.options = []  # For Choose One weapon, non-existent at this point.
 		self.auras = {}
 		self.effectViable, self.evanescent = False, False
-
+		
 	def STATUSPRINT(self):
 		PRINT(self.Game, "Game is {}.".format(self.Game))
 		PRINT(self.Game, "Weapon: %s. Description: %s" % (self.name, self.description))
@@ -2228,9 +2247,8 @@ class Weapon(Card):
 				PRINT(self.Game, "{}".format(trigger))
 		if hasattr(self, "progress"):
 			PRINT(self.Game, "\tWeapon's progress is currently: %d" % self.progress)
-
+			
 	"""Handle weapon entering/leaving board/hand/deck"""
-
 	# 武器进场并连接侦听器，比如公正之剑可以触发伊利丹的召唤，这个召唤又反过来触发公正之剑的buff效果。
 	def appears(self):
 		# 注意，此时武器还不能设为onBoard,因为之后可能会涉及亡语随从为英雄装备武器。
@@ -2245,17 +2263,17 @@ class Weapon(Card):
 		for value in self.auras.values():  # 目前似乎只用舔舔魔杖有武器光环
 			PRINT(self.Game, "Now starting weapon {}'s Aura {}".format(self.name, value))
 			value.auraAppears()
-
+			
 	def setasNewWeapon(self):
 		self.onBoard, self.dead = True, False
 		# 因为武器在之前已经被添加到武器列表，所以sequence需要-1，不然会导致错位
 		self.sequence = len(self.Game.minions[1]) + len(self.Game.minions[2]) + len(self.Game.weapons[1]) + len(
 			self.Game.weapons[2]) - 1
 		if self.ID == self.Game.turn:
-			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare + max(0, self.attack)
+			self.calc_Attack()
 			self.Game.heroes[self.ID].decideAttChances_base()
 		self.Game.sendSignal("WeaponEquipped", self.ID, self, None, 0, "")
-
+		
 	# Take care of the hero's attack chances and attack.
 	# The deathrattles will be left to gathertheDead() and deathHandle()
 	def destroyed(self):
@@ -2265,6 +2283,7 @@ class Weapon(Card):
 				self.Game.heroes[self.ID].decideAttChances_base()
 			self.onBoard, self.dead = False, True
 			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare
+			self.Game.sendSignal("HeroAttCalc", self.ID, self, None, 0, "")
 			# 移除武器对应的场上扳机，亡语扳机在deathrattles中保存
 			for trigger in self.trigsBoard:
 				trigger.disconnect()
@@ -2296,23 +2315,20 @@ class Weapon(Card):
 			for value in self.auras.values():
 				value.auraDisappears()
 			self.Game.sendSignal("WeaponRemoved", self.ID, self, None, 0, "")
-
+			
 	"""Handle the mana, durability and stat of weapon."""
-
 	# This method is invoked by Hero class, not a listner.
 	def loseDurability(self):
 		PRINT(self.Game, "Weapon %s loses 1 Durability" % self.name)
 		self.durability -= 1
-
+		
 	def gainStat(self, attack, durability):
 		self.attack += attack
 		self.durability += durability
-		if self.Game.turn == self.ID and self.onBoard:
-			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare + max(0, self.attack)
+		self.calc_Attack()
 		self.Game.sendSignal("WeaponAttChanges", self.ID, None, None, 0, "")
-
+		
 	"""Handle the weapon being played/equipped."""
-
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
 		# 使用阶段
 		# 武器进场并连接侦听器，比如公正之剑可以触发伊利丹的召唤，这个召唤又反过来触发公正之剑的buff效果。
@@ -2346,7 +2362,6 @@ class Weapon(Card):
 			target = self.whenEffective(target, "", choice, posinHand)
 		target = self.whenEffective(target, "", choice, posinHand)
 		# 消灭旧武器，并将列表前方的武器全部移除。
-
 		for weapon in self.Game.weapons[self.ID]:
 			if weapon != self:
 				# The removal of the preivous weapons will be left to the gathertheDead() method.
@@ -2360,7 +2375,7 @@ class Weapon(Card):
 		self.Game.gathertheDead()
 
 	# 完成阶段在Game.playWeapon中处理。
-
+	
 	"""Handle the weapon restoring health, dealing damage and dealing AOE effects."""
 
 	# 对于武器而言，dealsDamage()只有毁灭之刃可以使用，因为其他的武器造成伤害不是AOE伤害就是战斗伤害
@@ -2380,7 +2395,7 @@ class Weapon(Card):
 				Copy.triggers[key] = [getattr(Copy, func.__qualname__.split(".")[1]) for func in value]
 			Copy.onBoard, Copy.inHand, Copy.inDeck = self.onBoard, self.inHand, self.inDeck
 			Copy.sequence = self.sequence
-			Copy.identity = copy.deepcopy(self.identity)
+			Copy.inOrigDeck = self.inOrigDeck
 			Copy.statbyAura = [self.statbyAura[0],
 							   [aura_Receiver.selfCopy(Copy) for aura_Receiver in self.statbyAura[1]]]
 			for key, value in self.auras.items():

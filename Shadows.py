@@ -1139,7 +1139,7 @@ class Trig_BigBadArchmage(TrigBoard):
 			else:
 				minion = npchoice(curGame.RNGPools["6-Cost Minions to Summon"])
 				curGame.fixedGuides.append(minion)
-			PRINT(curGame, "Player casts a spell and Big Bad Archmage summons a random 6-Cost minion.")
+			PRINT(curGame, "At the end of turn, Big Bad Archmage summons a random 6-Cost minion.")
 			curGame.summon(minion(curGame, self.entity.ID), self.entity.position+1, self.entity.ID)
 			
 """Druid cards"""
@@ -2623,7 +2623,7 @@ class MassResurrection(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
-			PRINT(curGame, "Mass Resurrection is cast and summons 3 friendly minions that died this turn.")
+			PRINT(curGame, "Mass Resurrection is cast and summons 3 friendly minions that died this game.")
 			if curGame.guides:
 				minions = curGame.guides.pop(0)
 			else:
@@ -3738,11 +3738,9 @@ class ArchVillainRafaam(Minion):
 				deck = tuple(npchoice(minions, len(curGame.Hand_Deck.dekcs[self.ID]), replace=True))
 				curGame.fixedGuides.append(hand, deck)
 			if hand or deck:
-				curGame.Hand_Deck.extractfromDeck(0, self.ID, all=True)
 				curGame.Hand_Deck.extractfromHand(None, self.ID, all=True)
 				curGame.Hand_Deck.addCardtoHand(hand, self.ID, "type")
-				curGame.Hand_Deck[self.ID] = [card(curGame, self.ID) for card in deck]
-				for card in curGame.Hand_Deck[self.ID]: card.entersDeck()
+				curGame.Hand_Deck.replaceWholeDeck(self.ID, [card(curGame, self.ID) for card in deck])
 		return None
 		
 		

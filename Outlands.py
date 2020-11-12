@@ -1662,7 +1662,7 @@ class ZixorPrime(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		#假设已经死亡时不会召唤复制
-		if self.onBoard or self.inDeck:
+		if self.onBoard or self.inHand:
 			PRINT(self.Game, "Zixor Prime's battlecry summons 3 copies of the minion")
 			copies = [self.selfCopy(self.ID) for i in range(3)]
 			self.Game.summon(copies, (self.position, "totheRight"), self.ID)
@@ -2365,7 +2365,7 @@ class LadyLiadrin(Minion):
 				spells = curGame.Counters.spellsonFriendliesThisGame[self.ID]
 				spells = npchoice(spells, min(curGame.Hand_Deck.spaceinHand(self.ID), len(spells)), replace=False)
 				spells = tuple([curGame.cardPool[index] for index in spells])
-				curGame.fixedGuides.append(spells)
+				curGame.fixedGuides.append(spells) #Can be empty, and the empty tuple will simply add nothing to hand
 			PRINT(curGame, "Lady Liadrin's battlecry adds a copy of each spell player cast on friendly characters this game")
 			curGame.Hand_Deck.addCardtoHand(spells, self.ID, "type")
 		return None
@@ -2375,7 +2375,7 @@ class LibramofHope(Spell):
 	Class, name = "Paladin", "Libram of Hope"
 	requireTarget, mana = True, 9
 	index = "Outlands~Paladin~Spell~9~Libram of Hope"
-	description = "Reestore 8 Health. Summon an 8/8 with Guardian with Taunt and Divine Shield"
+	description = "Restore 8 Health. Summon an 8/8 with Guardian with Taunt and Divine Shield"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			heal = 8 * (2 ** self.countHealDouble())

@@ -11,7 +11,7 @@ import time
 def extractfrom(target, listObj):
 	try: return listObj.pop(listObj.index(target))
 	except: return None
-
+	
 def fixedList(listObj):
 	return listObj[0:len(listObj)]
 
@@ -26,7 +26,7 @@ statusDict = {"Immune": 0, "Immune2NextTurn": 0, "ImmuneThisTurn": 0,
 
 				"Power Sweep": 0, "Power Damage": 0, #Power Damage.
 				"Power Can Target Minions": 0,
-				"Heal to Damage": 0,
+				"Heal to Damage": 0, "Lifesteal Damages Enemy"
 				"Choose Both": 0,
 				"Battlecry x2": 0, "Shark Battlecry x2": 0,
 				"Deathrattle x2": 0, "Weapon Deathrattle x2": 0,
@@ -118,14 +118,10 @@ class Game:
 
 	def charsAlive(self, ID, target=None):
 		hero = self.heroes[ID]
-		if target:
-			objs = [obj for obj in self.minions[ID] if obj.type == "Minion" and obj != target and obj.onBoard and not obj.dead and obj.health > 0]
-			if hero.health > 0 and not hero.dead and hero != target: objs.append(hero)
-		else:
-			objs = [obj for obj in self.minions[ID] if obj.type == "Minion" and obj.onBoard and not obj.dead and obj.health > 0]
-			if hero.health > 0 and not hero.dead: objs.append(hero)
+		objs = [obj for obj in self.minions[ID] if obj.type == "Minion" and obj != target and obj.onBoard and not obj.dead and obj.health > 0]
+		if hero.health > 0 and not hero.dead and hero != target: objs.append(hero)
 		return objs
-
+		
 	def playAmulet(self, amulet, target, position, choice=0, comment=""):
 		ID, canPlayAmulet = amulet.ID, False
 		if not self.Manas.affordable(amulet):
@@ -223,7 +219,6 @@ class Game:
 		return 7 - 2 * (self.heroes[ID].Class in SVClasses) - sum(minion.onBoard for minion in self.minions[ID])
 
 	def playMinion(self, minion, target, position, choice=0, comment=""):
-
 		ID, canPlayMinion = minion.ID, False
 		if not self.Manas.affordable(minion): PRINT(self, "Not enough mana to play minion %s"%minion.name)
 		#当场上没有空位且打出的随从不是一个有Accelerate的Shadowverse随从时，不能打出
@@ -277,23 +272,34 @@ class Game:
 			#需要根据变形成的随从来进行不同的执行
 			if minion.type == "Spell": #Shadowverse Accelerate minion might become spell when played
 				self.minionPlayed, spell = None, minion
-				if self.Secrets.sameSecretExists("Classic~Mage~Spell~3~Counterspell~~Secret", 3-self.turn):
-					PRINT(self, "Player's spell %s played is Countered by Counterspell"%spell.name)
-					self.sendSignal("TriggerCounterspell", spell.ID, spell, target, 0, "")
-					self.Counters.numCardsPlayedThisTurn[self.turn] += 1 #即使被法术反制取消掉，仍然会触发连击
+				spellHolder, origSpell = [spell], spell
+				self.sendSignal("SpellOKtoCast?", self.turn, spellHolder, None, mana, "")
+				if not spellHolder: self.Counters.numCardsPlayedThisTurn[self.turn] += 1
 				else:
-					armedTrigs = self.armedTrigs("SpellBeenPlayed")
-					self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(spell.index)
-					self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
-					spell.played(target, choice, mana, posinHand, comment) #choice用于抉择选项，comment用于区分是GUI环境下使用还是AI分叉
-					self.Counters.numCardsPlayedThisTurn[self.turn] += 1
-					self.Counters.numSpellsPlayedThisTurn[self.turn] += 1
-					self.Counters.cardsPlayedThisGame[self.turn].append(spell.index)
-					#使用后步骤，触发“每当使用一张xx牌之后”的扳机，如狂野炎术士，西风灯神，星界密使的状态移除和伊莱克特拉风潮的状态移除。
-					if spell.identity not in self.Hand_Deck.startingDeckIdentities[self.turn]:
-						self.Counters.createdCardsPlayedThisGame[self.turn] += 1
-					self.sendSignal("SpellBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
-				self.Counters.shadows[spell.ID] += 1
+					if origSpell != spellHolder[0]: spellHolder[0].cast()
+					else:
+						armedTrigs = self.armedTrigs("SpellBeenPlayed")
+						self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(spell.index)
+						self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
+						spell.played(target, choice, mana, posinHand, comment) #choice用于抉择选项，comment用于区分是GUI环境下使用还是AI分叉
+						self.Counters.numCardsPlayedThisTurn[self.turn] += 1
+						self.Counters.numSpellsPlayedThisTurn[self.turn] += 1
+						self.Counters.cardsPlayedThisGame[self.turn].append(spell.index)
+						if "~Corrupted~" in spell.index: self.Counters.corruptedCardsPlayed[self.turn].append(spell.index)
+						#使用后步骤，触发“每当使用一张xx牌之后”的扳机，如狂野炎术士，西风灯神，星界密使的状态移除和伊莱克特拉风潮的状态移除。
+						if spell.identity not in self.Hand_Deck.startingDeckIdentities[self.turn]:
+							self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+						self.sendSignal("SpellBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
+						#完成阶段结束，处理亡语，此时可以处理胜负问题。
+						self.gathertheDead(True)
+						for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
+							card.effectCanTrigger()
+							card.checkEvanescent()
+					if not isinstance(tarIndex, list):
+						self.moves.append(("playSpell", subIndex, subWhere, tarIndex, tarWhere, choice))
+					else:
+						self.moves.append(("playSpell", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
+					self.Counters.shadows[spell.ID] += 1
 			else: #Normal or Enhance X or Crystallize X minion played
 				typewhenPlayed = minion.type
 				minionIndex = minion.index
@@ -315,6 +321,7 @@ class Game:
 				self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(minionIndex)
 				self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
 				self.Counters.cardsPlayedThisGame[self.turn].append(minionIndex)
+				if "~Corrupted~" in minion.index: self.Counters.corruptedCardsPlayed[self.turn].append(minionIndex)
 				#使用后步骤，触发镜像实体，狙击，顽石元素等“每当你使用一张xx牌”之后的扳机。
 				if self.minionPlayed and self.minionPlayed.type != "Dormant":
 					if self.minionPlayed.identity not in self.Hand_Deck.startingDeckIdentities[self.turn]:
@@ -456,7 +463,7 @@ class Game:
 				if self.GUI and subject: self.GUI.targetingEffectAni(subject, target, 'X', color="grey46")
 				if target.onBoard: target.dead = True
 				elif target.inHand: self.Hand_Deck.discardCard(target.ID, target) #如果随从在手牌中则将其丢弃
-
+				
 	def necromancy(self, subject, ID, number):
 		if self.Counters.shadows[ID] >= number:
 			self.Counters.shadows[ID] -= number
@@ -563,7 +570,7 @@ class Game:
 						minions[self.cardPool[index].mana] = [self.cardPool[index]]
 				for i in range(mana, -1, -1):
 					if i in minions:
-						t = npchoice(minions[i])
+						t = np.random.choice(minions[i])
 						break
 				self.fixedGuides.append(t.index)
 			if t:
@@ -677,19 +684,14 @@ class Game:
 		return [temp[order[i]] for i in range(len(order))], order
 
 	def armedTrigs(self, sig):
-		ID, trigs = self.mainPlayerID, []
-		try: trigs += self.trigsBoard[ID][sig]
-		except: pass
-		try: trigs += self.trigsHand[ID][sig]
-		except: pass
-		try: trigs += self.trigsDeck[ID][sig]
-		except: pass
-		try: trigs += self.trigsBoard[3-ID][sig]
-		except: pass
-		try: trigs += self.trigsHand[3-ID][sig]
-		except: pass
-		try: trigs += self.trigsDeck[3-ID][sig]
-		except: pass
+		trigs = []
+		for ID in [self.mainPlayerID, 3 - self.mainPlayerID]:
+			try: trigs += self.trigsBoard[ID][sig]
+			except: pass
+			try: trigs += self.trigsHand[ID][sig]
+			except: pass
+			try: trigs += self.trigsDeck[ID][sig]
+			except: pass
 		return trigs
 
 	#New signal processing can be interpolated during the processing of old signal
@@ -1002,7 +1004,7 @@ class Game:
 				self.sendSignal(subject.type+"Attacked"+target.type, self.turn, subject, target, 0, "")
 				if subject == self.heroes[1] or subject == self.heroes[2]:
 					self.Counters.heroAttackTimesThisTurn[subject.ID] += 1
-			#重置蜡烛弓，角斗士的长弓，以及傻子和市长的triggeredDuringBattle标识。
+			#重置蜡烛弓，角斗士的长弓，以及傻子和市长的trigedThisBattle标识。
 			if resetRedirectionTriggers: #这个选项目前只有让一个随从连续攻击其他目标时才会选择关闭，不会与角斗士的长弓冲突
 				self.sendSignal("BattleFinished", self.turn, subject, None, 0, "")
 			#战斗阶段结束，处理亡语，此时可以处理胜负问题。
@@ -1070,32 +1072,34 @@ class Game:
 			#被反制的法术不会被导演们重复施放
 			#很特殊的是，连击机制仍然可以通过被反制的法术触发。所以需要一个本回合打出过几张牌的计数器
 			#https://www.bilibili.com/video/av51236298?zw
-			if self.Secrets.sameSecretExists("Classic~Mage~Spell~3~Counterspell~~Secret", 3-self.turn):
-				PRINT(self, "Player's spell %s played is Countered by Counterspell"%spell.name)
-				self.sendSignal("TriggerCounterspell", spell.ID, spell, target, 0, "")
-				self.Counters.numCardsPlayedThisTurn[self.turn] += 1 #即使被法术反制取消掉，仍然会触发连击
+			spellHolder, origSpell = [spell], spell
+			self.sendSignal("SpellOKtoCast?", self.turn, spellHolder, None, mana, "")
+			if not spellHolder: self.Counters.numCardsPlayedThisTurn[self.turn] += 1
 			else:
-				armedTrigs = self.armedTrigs("SpellBeenPlayed")
-				self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(spell.index)
-				self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
-				spell.played(target, choice, mana, posinHand, comment) #choice用于抉择选项，comment用于区分是GUI环境下使用还是AI分叉
-				self.Counters.numCardsPlayedThisTurn[self.turn] += 1
-				self.Counters.numSpellsPlayedThisTurn[self.turn] += 1
-				self.Counters.cardsPlayedThisGame[self.turn].append(spell.index)
-				#使用后步骤，触发“每当使用一张xx牌之后”的扳机，如狂野炎术士，西风灯神，星界密使的状态移除和伊莱克特拉风潮的状态移除。
-				if spell.identity not in self.Hand_Deck.startingDeckIdentities[self.turn]:
-					self.Counters.createdCardsPlayedThisGame[self.turn] += 1
-				self.sendSignal("SpellBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
-				#完成阶段结束，处理亡语，此时可以处理胜负问题。
-				self.gathertheDead(True)
-				for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-					card.effectCanTrigger()
-					card.checkEvanescent()
-			if not isinstance(tarIndex, list):
-				self.moves.append(("playSpell", subIndex, subWhere, tarIndex, tarWhere, choice))
-			else:
-				self.moves.append(("playSpell", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
-			self.Counters.shadows[spell.ID] += 1
+				if origSpell != spellHolder[0]: spellHolder[0].cast()
+				else:
+					armedTrigs = self.armedTrigs("SpellBeenPlayed")
+					self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(spell.index)
+					self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
+					spell.played(target, choice, mana, posinHand, comment) #choice用于抉择选项，comment用于区分是GUI环境下使用还是AI分叉
+					self.Counters.numCardsPlayedThisTurn[self.turn] += 1
+					self.Counters.numSpellsPlayedThisTurn[self.turn] += 1
+					self.Counters.cardsPlayedThisGame[self.turn].append(spell.index)
+					if "~Corrupted~" in spell.index: self.Counters.corruptedCardsPlayed[self.turn].append(spell.index)
+					#使用后步骤，触发“每当使用一张xx牌之后”的扳机，如狂野炎术士，西风灯神，星界密使的状态移除和伊莱克特拉风潮的状态移除。
+					if spell.identity not in self.Hand_Deck.startingDeckIdentities[self.turn]:
+						self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+					self.sendSignal("SpellBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
+					#完成阶段结束，处理亡语，此时可以处理胜负问题。
+					self.gathertheDead(True)
+					for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
+						card.effectCanTrigger()
+						card.checkEvanescent()
+				if not isinstance(tarIndex, list):
+					self.moves.append(("playSpell", subIndex, subWhere, tarIndex, tarWhere, choice))
+				else:
+					self.moves.append(("playSpell", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
+				self.Counters.shadows[spell.ID] += 1
 
 	def availableWeapon(self, ID):
 		for weapon in self.weapons[ID]:
@@ -1140,6 +1144,7 @@ class Game:
 			self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(weaponIndex)
 			self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
 			self.Counters.cardsPlayedThisGame[self.turn].append(weaponIndex)
+			#if "~Corrupted~" in weaponIndex: self.Counters.corruptedCardsPlayed[self.turn].append(weaponIndex)
 			#完成阶段，触发“每当你使用一张xx牌”的扳机，如捕鼠陷阱和瑟拉金之种等。
 			if weapon.identity not in self.Hand_Deck.startingDeckIdentities[self.turn]:
 				self.Counters.createdCardsPlayedThisGame[self.turn] += 1

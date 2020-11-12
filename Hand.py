@@ -11,10 +11,8 @@ import inspect
 
 
 def extractfrom(target, listObj):
-	try:
-		return listObj.pop(listObj.index(target))
-	except:
-		return None
+	try: return listObj.pop(listObj.index(target))
+	except: return None
 
 
 def fixedList(listObj):
@@ -170,46 +168,23 @@ class Hand_Deck:
 		return True
 
 	def noMinionsinDeck(self, ID):
-		for card in self.decks[ID]:
-			if card.type == "Minion":
-				return False
-		return True
-
+		return not any(card.type == "Minion" for card in self.decks[ID])
+		
 	def noMinionsinHand(self, ID, minion=None):
-		for card in self.hands[ID]:
-			if card.type == "Minion" and card is not minion:
-				return False
-		return True
-
+		return not any(card.type == "Minion" and card is not minion for card in self.hands[ID])
+		
 	def holdingDragon(self, ID, minion=None):
-		if minion == None:  # When card not in hand and wants to check if a Dragon is in hand
-			for card in self.hands[ID]:
-				if card.type == "Minion" and "Dragon" in card.race:
-					return True
-		else:  # When the minion is inHand and wants to know if it can trigger after being played.
-			for card in self.hands[ID]:
-				if card.type == "Minion" and "Dragon" in card.race and card != minion:
-					return True
-		return False
-
+		return any(card.type == "Minion" and "Dragon" in card.race and card is not minion \
+				for card in self.hands[ID])
+				
 	def holdingSpellwith5CostorMore(self, ID):
-		for card in self.hands[ID]:
-			if card.type == "Spell" and card.mana >= 5:
-				return True
-		return False
-
+		return any(card.type == "Spell" and card.mana >= 5 for card in self.hands[ID])
+		
 	def holdingCardfromAnotherClass(self, ID, card=None):
 		Class = self.Game.heroes[ID].Class
-		if card:
-			for cardinHand in self.hands[ID]:
-				if Class not in cardinHand.Class and cardinHand.Class != "Neutral" and cardinHand != card:
-					return True
-		else:
-			for cardinHand in self.hands[ID]:
-				if Class not in cardinHand.Class and cardinHand.Class != "Neutral":
-					return True
-		return False
-
+		return any(Class not in cardinHand.Class and cardinHand.Class != "Neutral" and cardinHand is not card \
+						for cardinHand in self.hands[ID])
+						
 	# 抽牌一次只能一张，需要废除一次抽多张牌的功能，因为这个功能都是用于抽效果指定的牌。但是这些牌中如果有抽到时触发的技能，可能会导致马上抽牌把列表后面的牌提前抽上来
 	# 现在规则为如果要连续抽2张法术，则分两次检测牌库中的法术牌，然后随机抽一张。
 	# 如果这个规则是正确的，则在牌库只有一张夺灵者哈卡的堕落之血时，抽到这个法术之后会立即额外抽牌，然后再塞进去两张堕落之血，那么第二次抽法术可能会抽到新洗进去的堕落之血。
@@ -272,8 +247,8 @@ class Hand_Deck:
 			PRINT(game, "Player's hand is full. The drawn card %s is milled" % card.name)
 			if GUI: GUI.millCardAni(card)
 			return (None, 0)
-
-	# Will force the ID of the card to change.
+			
+	# Will force the ID of the card to change. obj can be an empty list/tuple
 	def addCardtoHand(self, obj, ID, comment="", byDiscover=False, i=-1):
 		game, GUI = self.Game, self.Game.GUI
 		if not isinstance(obj, (list, np.ndarray, tuple)):  # if the obj is not a list, turn it into a single-element list
@@ -295,13 +270,13 @@ class Hand_Deck:
 			else:
 				self.Game.Counters.shadows[ID] += 1
 		game.Manas.calcMana_All()
-
+		
 	def replaceCardDrawn(self, targetHolder, newCard):
 		ID = targetHolder[0].ID
 		isPrimaryGalakrond = targetHolder[0] == self.Game.Counters.primaryGalakronds[ID]
 		targetHolder[0] = newCard
 		if isPrimaryGalakrond: self.Game.Counters.primaryGalakronds[ID] = newCard
-
+		
 	def replaceCardinHand(self, card, newCard):
 		ID = card.ID
 		for i in range(len(self.hands[ID])):
@@ -311,7 +286,7 @@ class Hand_Deck:
 				self.Game.sendSignal("CardLeavesHand", ID, None, card, 0, "")
 				self.addCardtoHand(newCard, ID, "card", i)
 				break
-
+				
 	def replaceCardinDeck(self, card, newCard):
 		ID = card.ID
 		try:
@@ -321,7 +296,22 @@ class Hand_Deck:
 			self.decks[ID].insert(i, newCard)
 		except:
 			pass
-
+			
+	def replaceWholeDeck(self, ID, newCards):
+		self.extractfromDeck(0, ID, all=True)
+		self.decks[ID] = newCards
+		for card in newCards: card.entersDeck()
+		self.Game.sendSignal("DeckChanged", ID, None, None, 0, "")
+		
+	def replacePartofDeck(self, ID, indices, newCards):
+		for card in newCards: card.leavesDeck()
+		deck = self.decks[ID]
+		for i, oldCard, newCard in zip(indices, deck, newCards):
+			oldCard.leavesDeck()
+			deck[i] = newCard
+			newCard.entersDeck()
+		self.Game.sendSignal("DeckChanged", ID, None, None, 0, "")
+		
 	# All the cards shuffled will be into the same deck. If necessary, invoke this function for each deck.
 	# PlotTwist把手牌洗入牌库的时候，手牌中buff的随从两次被抽上来时buff没有了。
 	# 假设洗入牌库这个动作会把一张牌初始化
@@ -347,6 +337,7 @@ class Hand_Deck:
 					curGame.fixedGuides.append(tuple(order))
 				self.decks[ID] = [newDeck[i] for i in order]
 			if sendSig: curGame.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
+			curGame.sendSignal("DeckChanged", ID, None, None, 0, "")
 
 	def burialRite(self, ID, minions, noSignal=False):
 		if not isinstance(minions, list):
@@ -446,15 +437,15 @@ class Hand_Deck:
 			if self.Game.GUI: self.Game.GUI.cardLeavesDeckAni(card, enemyCanSee=enemyCanSee)
 			return card, 0, False
 
-	def removeDeckTopCard(self, ID):
-		try:  # Should have card most of the time.
-			card = self.decks[ID].pop(0)
-			card.leavesDeck()
-			PRINT(self.Game, "The top card %s in player %d's deck is removed" % (card.name, ID))
-			return card
-		except:
-			return None
-
+	def removeDeckTopCard(self, ID, num=1):
+		cards, i = [], 1
+		while True:
+			card = self.extractfromDeck(-1, ID)[0]
+			if i < num and card:
+				i += 1
+				cards.append(card)
+		return cards
+		
 	def createCopy(self, game):
 		if self not in game.copiedObjs:
 			Copy = type(self)(game)

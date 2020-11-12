@@ -209,6 +209,7 @@ class SecretTrigger(TrigBoard):
 			self.effect(signal, ID, subject, target, number, comment)
 		game.sendSignal("SecretRevealed", game.turn, secret, None, 0, "")
 		self.disconnect()
+		game.Counters.numSecretsTriggeredThisGame[secret.ID] += 1
 		try: game.Secrets.secrets[secret.ID].remove(secret)
 		except: pass
 		
@@ -648,7 +649,68 @@ class WeaponBuffAura_Receiver:
 	#武器的本体复制一定优先，其复制过程中会自行创建没有source的receiver，receiver自己没有必要创建createCopy方法
 	
 	
+class HeroBuffAura_Receiver:
+	def __init__(self, receiver, source):
+		self.source = source
+		self.receiver = receiver
+		
+	def effectStart(self):
+		self.receiver.gainAttack(2, '')
+		self.receiver.statbyAura[0] += 2
+		self.receiver.statbyAura[1].append(self)
+		self.source.auraAffected.append((self.receiver, self))
+	#Cleanse the aura_Receiver from the receiver and delete the (receiver, aura_Receiver) from source aura's list.
+	def effectClear(self):
+		self.receiver.gainAttack(-2, '')
+		self.receiver.statbyAura[0] -= 2
+		try: self.receiver.statbyAura[1].remove(self)
+		except: pass
+		try: self.source.auraAffected.remove((self.receiver, self))
+		except: pass
+	#Invoke when the receiver is copied and because the aura_Dealer won't have reference to this copied receiver,
+	#remove this copied aura_Receiver from copied receiver's statbyAura[2].
+	def effectDiscard(self):
+		self.receiver.gainAttack(-2, '')
+		self.receiver.statbyAura[0] -= 2
+		try: self.receiver.statbyAura[1].remove(self)
+		except: pass
+		
+	def selfCopy(self, recipient):
+		return type(self)(recipient, self.source)
+	#武器的本体复制一定优先，其复制过程中会自行创建没有source的receiver，receiver自己没有必要创建createCopy方法
 	
+class HeroWindfuryAura_Receiver:
+	def __init__(self, receiver, source):
+		self.source = source #The aura.
+		self.receiver = receiver
+		
+	def effectStart(self):
+		self.receiver.keyWordbyAura["Windfury"] += 1
+		self.receiver.keyWords["Windfury"] += 1
+		self.receiver.keyWordbyAura["Auras"].append(self)
+		self.source.auraAffected.append((self.receiver, self))
+		
+	#The aura on the receiver is cleared and the source will remove this receiver and aura_Receiver from it's list.
+	def effectClear(self):
+		self.receiver.keyWordbyAura["Windfury"] -= 1
+		self.receiver.keyWords["Windfury"] -= 1
+		try: self.receiver.keyWordbyAura["Auras"].remove(self)
+		except: pass
+		try: self.source.auraAffected.remove((self.receiver, self))
+		except: pass
+		
+	#After a receiver is deep copied, it will also copy this aura_Receiver, simply remove it.
+	#The aura_Dealer won't have reference to this copied aura.
+	def effectDiscard(self):
+		self.receiver.keyWordbyAura["Windfury"] -= 1
+		self.receiver.keyWords["Windfury"] -= 1
+		try: self.receiver.keyWordbyAura["Auras"].remove(self)
+		except: pass
+		
+	def selfCopy(self, recipient):
+		return type(self)(recipient, self.source, self.keyWord)
+		
+		
 class ManaMod:
 	def __init__(self, card, changeby=0, changeto=-1, source=None, lowerbound=0):
 		self.card = card
@@ -660,7 +722,7 @@ class ManaMod:
 			self.card.mana += self.changeby
 			self.card.mana = max(self.lowerbound, self.card.mana) #用于召唤传送门的随从减费不小于1的限制。
 		elif self.changeto >= 0: self.card.mana = self.changeto
-			
+		
 	def applies(self):
 		self.card.manaMods.append(self) #需要让卡牌自己也带有一个检测的光环，离开手牌或者牌库中需要清除。
 		if self.card in self.card.Game.Hand_Deck.hands[self.card.ID] or self.card in self.card.Game.Hand_Deck.decks[self.card.ID]:

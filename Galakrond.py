@@ -107,7 +107,7 @@ class FrenziedFelwing(Minion):
 		
 	def selfManaChange(self):
 		if self.inHand:
-			manaReduction = self.Game.Counters.damageonHeroThisTurn[3-self.ID]
+			manaReduction = self.Game.Counters.dmgonHero_inOppoTurn[3-self.ID]
 			PRINT(self.Game, "Frenzied Felwig reduces its own cost by (%d)"%manaReduction)
 			self.mana -= manaReduction
 			self.mana = max(0, self.mana)

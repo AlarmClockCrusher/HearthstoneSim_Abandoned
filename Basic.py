@@ -67,7 +67,7 @@ class DemonClaws(HeroPower):
 	description = "+1 Attack this turn"
 	def effect(self, target=None, choice=0):
 		PRINT(self.Game, "Hero Power Demon Claws gives player +1 Attack this turn")
-		self.Game.heroes[self.ID].gainTempAttack(1)
+		self.Game.heroes[self.ID].gainAttack(1)
 		return 0
 		
 class DemonsBite(HeroPower):
@@ -76,7 +76,7 @@ class DemonsBite(HeroPower):
 	description = "+1 Attack this turn"
 	def effect(self, target=None, choice=0):
 		PRINT(self.Game, "Hero Power Demon's Bite gives player +2 Attack this turn")
-		self.Game.heroes[self.ID].gainTempAttack(2)
+		self.Game.heroes[self.ID].gainAttack(2)
 		return 0
 		
 #Druid basic and upgraded powers
@@ -87,7 +87,7 @@ class Shapeshift(HeroPower):
 	def effect(self, target=None, choice=0):
 		PRINT(self.Game, "Hero Power Shapeshift gives lets player gain 1 Armor and 1 Attack this turn")
 		self.Game.heroes[self.ID].gainsArmor(1)
-		self.Game.heroes[self.ID].gainTempAttack(1)
+		self.Game.heroes[self.ID].gainAttack(1)
 		return 0
 		
 class DireShapeshift(HeroPower):
@@ -97,7 +97,7 @@ class DireShapeshift(HeroPower):
 	def effect(self, target=None, choice=0):
 		PRINT(self.Game, "Hero Power Dire Shapeshift gives lets player gain 2 Armor and 2 Attack this turn")
 		self.Game.heroes[self.ID].gainsArmor(2)
-		self.Game.heroes[self.ID].gainTempAttack(2)
+		self.Game.heroes[self.ID].gainAttack(2)
 		return 0
 		
 #Hunter basic and upgraded powers
@@ -848,7 +848,7 @@ class ShadowhoofSlayer(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Shadowhoof Slayer's battlecry gives player +1 Attack this turn")
-		self.Game.heroes[self.ID].gainTempAttack(1)
+		self.Game.heroes[self.ID].gainAttack(1)
 		return None
 		
 		
@@ -859,7 +859,7 @@ class ChaosStrike(Spell):
 	description = "Give your hero +2 Attack this turn. Draw a card"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Chaos Strike is cast, gives player +2 Attack this turn and lets player draw a card")
-		self.Game.heroes[self.ID].gainTempAttack(2)
+		self.Game.heroes[self.ID].gainAttack(2)
 		self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
@@ -869,7 +869,7 @@ class SightlessWatcher(Minion):
 	mana, attack, health = 2, 3, 2
 	index = "Basic~Demon Hunter~Minion~2~3~2~Demon~Sightless Watcher~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Look at 3 cards in your deck. Choose one to put on top"
-		
+	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		ownDeck = curGame.Hand_Deck.decks[self.ID]
@@ -1012,7 +1012,7 @@ class InnerDemon(Spell):
 	description = "Give your hero +8 Attack this turn"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Inner Demon is cast and gives player +8 Attack this turn")
-		self.Game.heroes[self.ID].gainTempAttack(8)
+		self.Game.heroes[self.ID].gainAttack(8)
 		return None
 		
 """Druid cards"""
@@ -1048,7 +1048,7 @@ class Claw(Spell):
 	description = "Give your hero +2 Attack this turn. Gain 2 Armor"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Claw hero %d %s gains 2 Sttack and 2 Armor"%(self.ID, self.Game.heroes[self.ID].name))
-		self.Game.heroes[self.ID].gainTempAttack(2)
+		self.Game.heroes[self.ID].gainAttack(2)
 		self.Game.heroes[self.ID].gainsArmor(2)
 		return None
 		
@@ -1094,7 +1094,7 @@ class SavageRoar(Spell):
 	description = "Give your characters +2 Attack this turn"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Savage Roar gives all friendly characters +2 Attack this turn.")
-		self.Game.heroes[self.ID].gainTempAttack(2)
+		self.Game.heroes[self.ID].gainAttack(2)
 		for minion in fixedList(self.Game.minionsonBoard(self.ID)):
 			minion.buffDebuff(2, 0, "EndofTurn")
 		return None
@@ -1224,7 +1224,7 @@ class Tracking(Spell):
 		curGame = self.Game
 		numCardsLeft = len(curGame.Hand_Deck.decks[self.ID])
 		if numCardsLeft == 1:
-			PRINT(curGame, "Tracking player draws the only remaining card from deck.")					
+			PRINT(curGame, "Tracking lets player draw the only remaining card from deck.")					
 			curGame.Hand_Deck.drawCard(self.ID)
 		elif numCardsLeft > 1:
 			if curGame.mode == 0:
@@ -2070,9 +2070,7 @@ class Assassinate(Spell):
 		return self.selectableEnemyMinionExists()
 		
 	def targetCorrect(self, target, choice=0):
-		if target.type == "Minion" and target.ID != self.ID and target.onBoard:
-			return True
-		return False
+		return target.type == "Minion" and target.ID != self.ID and target.onBoard:
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -2169,7 +2167,7 @@ class RockbiterWeapon(Spell):
 		if target:
 			PRINT(self.Game, "Rockbiter Weapon gives friendly %s +3 Attack this turn."%target.name)
 			if target.type == "Hero":
-				target.gainTempAttack(3)
+				target.gainAttack(3)
 			else:
 				target.buffDebuff(3, 0, "EndofTurn")
 		return target
@@ -2585,7 +2583,7 @@ class HeroicStrike(Spell):
 	description = "Give your hero +4 Attack this turn"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Heroic Strike gives hero +4 Attack.")
-		self.Game.heroes[self.ID].gainTempAttack(4)
+		self.Game.heroes[self.ID].gainAttack(4)
 		return None
 		
 		

@@ -109,17 +109,21 @@ class Manas:
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
 
 	def affordable(self, subject):
-		ID = subject.ID
-		mana = subject.getMana()
-		return mana <= self.manas[ID] or (subject.type == "Spell" \
-					and (self.status[ID]["Spells Cost Health Instead"] > 0 and subject.mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.status[ID]["Immune"] > 0))
-
+		ID, mana = subject.ID, subject.getMana()
+		if self.cardCostsHealth(subject):
+			return mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.status[ID]["Immune"] > 0
+		else: return mana <= self.manas[ID]
+		
+	def cardCostsHealth(subject):
+		return subject.marks["Cost Health Instead"] > 0 or (subject.type == "Spell" and self.status[ID]["Spells Cost Health Instead"] > 0)
+		
 	def payManaCost(self, subject, mana):
 		ID, mana = subject.ID, max(0, mana)
-		if subject.type == "Spell" and self.status[ID]["Spells Cost Health Instead"] > 0:
+		if self.cardCostsHealth(subject):
 			dmgTaker = self.Game.scapegoat4(self.Game.heroes[ID])
 			dmgTaker.takesDamage(None, mana, damageType="Ability")
 		else: self.manas[ID] -= mana
+		subject.marks["Cost Health Instead"] = 0 #Cleanse the "Cost Health Instead" mark on the card played
 		self.Game.sendSignal("ManaPaid", ID, subject, None, mana, "")
 		if subject.type == "Minion":
 			self.Game.Counters.manaSpentonPlayingMinions[ID] += mana
@@ -250,15 +254,10 @@ class Secrets:
 	#secret can be type, index or real card.
 	def sameSecretExists(self, secret, ID):
 		if isinstance(secret, str):
-			for deployedSecret in self.secrets[ID]:
-				if deployedSecret.index == secret:
-					return True
+			return any(obj.index == secret for obj in self.secrets[ID])
 		else: #If secret is real card or type
-			for deployedSecret in self.secrets[ID]:
-				if deployedSecret.name == secret.name:
-					return True
-		return False
-
+			return any(obj.name == secret.name for obj in self.secrets[ID])
+			
 	#只有Game自己会引用Secrets
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
@@ -293,7 +292,7 @@ class Counters:
 		self.numCardsPlayedThisTurn = {1:0, 2:0} #Specifically for Combo. Because even Countered spells can trigger Combos
 		self.cardsPlayedThisTurn = {1: {"Indices": [], "ManasPaid": []},
 									2: {"Indices": [], "ManasPaid": []}} #For Combo and Secret.
-		self.damageonHeroThisTurn = {1:0, 2:0}
+		self.dmgonHero_inOppoTurn = {1:0, 2:0}
 		self.damageDealtbyHeroPower = {1:0, 2:0}
 		self.numElementalsPlayedLastTurn = {1:0, 2:0}
 		self.spellsPlayedLastTurn = {1:[], 2:[]}
@@ -305,6 +304,8 @@ class Counters:
 		self.timesHeroChangedHealth_inOwnTurn = {1:0, 2:0}
 		self.heroChangedHealthThisTurn = {1:False, 2:False}
 		self.powerUsedThisTurn = 0
+		self.corruptedCardsPlayed = {1:[], 2:[]} #For darkmoon YShaarj.
+		self.numSecretsTriggeredThisGame = {1:0, 2:0}
 		#Shadowverse Counters
 		self.numEvolutionTurn = {1:5, 2:4}
 		self.numEvolutionPoint = {1:2, 2:3}
@@ -337,7 +338,7 @@ class Counters:
 		self.numCardsPlayedThisTurn = {1:0, 2:0}
 		self.numMinionsPlayedThisTurn = {1:0, 2:0}
 		self.numSpellsPlayedThisTurn = {1:0, 2:0}
-		self.damageonHeroThisTurn = {1:0, 2:0}
+		self.dmgonHero_inOppoTurn[self.Game.turn] = 0
 		self.minionsDiedThisTurn = {1:[], 2:[]}
 		self.amuletsDestroyedThisTurn = {1:[], 2:[]}
 		self.heroAttackTimesThisTurn = {1:0, 2:0}

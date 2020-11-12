@@ -75,7 +75,7 @@ def invokeGalakrond(Game, ID):
 		elif "Warrior" in Class:
 			if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheUnbreakable(Game, ID), linger=False)
 			PRINT(Game, "On Invocation, Galakrond gives player +3 Attach this turn")
-			Game.heroes[ID].gainTempAttack(3)
+			Game.heroes[ID].gainAttack(3)
 	#invocation counter increases and upgrade the galakronds
 	Game.Counters.invocationCounts[ID] += 1
 	for card in fixedList(Game.Hand_Deck.hands[ID]):
@@ -141,6 +141,7 @@ class Galakrond_Hero(Hero):
 		if self.Game.Counters.primaryGalakronds[self.ID] == None:
 			self.Game.Counters.primaryGalakronds[self.ID] = self
 		self.Game.sendSignal("HeroCardPlayed", self.ID, self, None, mana, "", choice)
+		self.Game.sendSignal("HeroReplaced", self.ID, None, self, 0, "")
 		self.gainsArmor(type(self).armor)
 		self.Game.gathertheDead()
 		heroPower.replaceHeroPower()
@@ -757,7 +758,7 @@ class ZulDrakRitualist(Minion):
 		curGame = self.Game
 		if curGame.mode == 0:
 			if curGame.guides:
-				minions = list(curGame.pop(0)[2])
+				minions = curGame.guides.pop(0)
 			else:
 				minions = npchoice(curGame.RNGPools["1-Cost Minions to Summon"], 3, replace=True)
 				curGame.fixedGuides.append(tuple(minions))
@@ -2455,16 +2456,16 @@ class Trig_Sanctuary(QuestTrigger):
 		self.blank_init(entity, ["TurnStarts"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return ID == self.entity.ID #在我方回合开始时会触发
+		#在我方回合开始时会触发
+		return ID == self.entity.ID and self.entity.Game.Counters.dmgonHero_inOppoTurn[self.entity.ID] == 0
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.entity.Game.Counters.damageonHeroThisTurn[self.entity.ID] == 0:
-			PRINT(self.entity.Game, "Player ends turn with without taking damage this turn and gains Reward: Summon a 4/6 with Taunt")
-			self.disconnect()
-			try: self.entity.Game.Secrets.sideQuests[self.entity.ID].remove(self.entity)
-			except: pass
-			self.entity.Game.summon(IndomitableChampion(self.entity.Game, self.entity.ID), -1, self.entity.ID)
-			
+		PRINT(self.entity.Game, "Player ends turn with without taking damage this turn and gains Reward: Summon a 4/6 with Taunt")
+		self.disconnect()
+		try: self.entity.Game.Secrets.sideQuests[self.entity.ID].remove(self.entity)
+		except: pass
+		self.entity.Game.summon(IndomitableChampion(self.entity.Game, self.entity.ID), -1, self.entity.ID)
+		
 class IndomitableChampion(Minion):
 	Class, race, name = "Paladin", "", "Indomitable Champion"
 	mana, attack, health = 4, 3, 6
@@ -2936,7 +2937,7 @@ class GalakrondtheUnspeakable(Galakrond_Hero):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				minions = curGame.minionsonBoard(3-self.ID)
+				minions = curGame.minionsAlive(3-self.ID)
 				i = npchoice(minions).position if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1: curGame.minions[3-self.ID][i].dead = True
@@ -2953,16 +2954,15 @@ class GalakrondtheApocalypes_Priest(Galakrond_Hero):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
+		PRINT(curGame, "Galakrond, the Apocalypes's battlecry destroys 2 random enemy minions.")
 		if curGame.mode == 0:
-			PRINT(curGame, "Galakrond, the Apocalypes's battlecry destroys 2 random enemy minions.")
-			minions = curGame.minionsonBoard(3-self.ID)
-			if minions:
-				if curGame.guides:
-					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
-				else:
-					minions = list(npchoice(minions, min(2, len(minions)), replace=False))
-					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
-				for minion in minions: minion.dead = True
+			if curGame.guides:
+				minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
+			else:
+				minions = curGame.minionsAlive(3-self.ID)
+				minions = npchoice(minions, min(2, len(minions), replace=False) if minions else ()
+				indices = tuple(minion.position for minion in minions)
+			for minion in minions: curGame.killMinion(self, minion)
 		return None
 		
 class GalakrondAzerothsEnd_Priest(Galakrond_Hero):
@@ -2975,18 +2975,17 @@ class GalakrondAzerothsEnd_Priest(Galakrond_Hero):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
+		PRINT(curGame, "Galakrond, Azeroth's End's battlecry destroys 4 random enemy minions.")
 		if curGame.mode == 0:
-			PRINT(curGame, "Galakrond, Azeroth's End's battlecry destroys 4 random enemy minions.")
-			minions = curGame.minionsonBoard(3-self.ID)
-			if minions:
-				if curGame.guides:
-					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
-				else:
-					minions = list(npchoice(minions, min(4, len(minions)), replace=False))
-					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
-				for minion in minions: minion.dead = True
-			PRINT(curGame, "Galakrond, Azeroth's End's battlecry equips a 5/2 Claw for player")
-			curGame.equipWeapon(DragonClaw(curGame, self.ID))
+			if curGame.guides:
+				minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
+			else:
+				minions = curGame.minionsAlive(3-self.ID)
+				minions = npchoice(minions, min(4, len(minions), replace=False) if minions else ()
+				indices = tuple(minion.position for minion in minions)
+			for minion in minions: curGame.killMinion(self, minion)
+		PRINT(curGame, "Galakrond, Azeroth's End's battlecry equips a 5/2 Claw for player")
+		curGame.equipWeapon(DragonClaw(curGame, self.ID))
 		return None
 		
 class DragonClaw(Weapon):
@@ -4249,7 +4248,7 @@ class GalakrondsMight(HeroPower):
 	description = "Give your hero +3 Attack this turn"
 	def effect(self, target=None, choice=0):
 		PRINT(self.Game, "Hero Power Galakrond's Might gives player +3 Attack this turn")
-		self.Game.heroes[self.ID].gainTempAttack(3)
+		self.Game.heroes[self.ID].gainAttack(3)
 		return 0
 		
 class GalakrondtheUnbreakable(Galakrond_Hero):

@@ -1355,7 +1355,7 @@ class SoulshardLapidary(Minion):
 			if isinstance(card, SoulFragment):
 				self.Game.Hand_Deck.extractfromDeck(i, self.ID)
 				PRINT(self.Game, "Soulshard Lapidary's battlecry destroys a Soul Fragment in player's deck and gives player +5 Attack this turn")
-				self.Game.heroes[self.ID].gainTempAttack(5)
+				self.Game.heroes[self.ID].gainAttack(5)
 				break
 		return None
 		
