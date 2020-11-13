@@ -759,12 +759,12 @@ class Trig_AlarmoBot(TrigBoard):
 			if i > -1:
 				PRINT(curGame, "At the start of turn, Alarm-o-Bot swaps with random minion in player's hand")
 				#需要先把报警机器人自己从场上移回手牌
-				ID, identity, pos = minion.ID, minion.identity, minion.position
+				ID, inOrigDeck, pos = minion.ID, minion.inOrigDeck, minion.position
 				minion.disappears(deathrattlesStayArmed=False)
 				self.removeMinionorWeapon(minion)
 				minion.__init__(self, ID)
+				minion.inOrigDeck = inOrigDeck
 				PRINT(curGame, "%s has been reset after returned to owner's hand. All enchantments lost."%minion.name)
-				minion.identity[0], minion.identity[1] = identity[0], identity[1]
 				#下面节选自Hand.py的addCardtoHand方法，但是要跳过手牌已满的检测
 				ownHand.append(minion)
 				minion.entersHand()
@@ -2833,8 +2833,9 @@ class Trig_FreezingTrap(SecretTrigger):
 		self.blank_init(entity, ["MinionAttacksMinion", "MinionAttacksHero"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.ID != self.entity.Game.turn and subject.type == "Minion" and subject.ID != self.entity.ID
-		
+		return self.entity.ID != self.entity.Game.turn and subject.type == "Minion" and subject.ID != self.entity.ID \
+				and subject.onBoard and subject.health > 0 and not subject.dead #The attacker must be onBoard and alive to be returned to hand
+				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "When enemy minion %s attacks, Secret Freezing Trap is triggered and returns it to its owner's hand."%subject.name)
 		#假设那张随从在进入手牌前接受-2费效果。可以被娜迦海巫覆盖。
@@ -2857,7 +2858,8 @@ class Trig_Misdirection(SecretTrigger):
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0): #target here holds the actual target object
 		#The target needs to be your hero
-		if self.entity.ID != self.entity.Game.turn and target[0].type == "Hero" and target[0].ID == self.entity.ID:
+		if self.entity.ID != self.entity.Game.turn and target[0].type == "Hero" and target[0].ID == self.entity.ID \
+			and subject.onBoard and subject.health > 0 and not subject.dead: #The attacker must be onBoard and alive to continue
 			targets = self.entity.Game.charsAlive(1) + self.entity.Game.charsAlive(2)
 			extractfrom(subject, targets)
 			extractfrom(target[1], targets)

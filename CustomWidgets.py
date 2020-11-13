@@ -334,7 +334,7 @@ class HandZone:
 				
 	#This function is EXCLUSIVE for single-player GUI replay
 	def redraw(self):
-		#Clear all the buttons drawn. 
+		#Clear all the buttons drawn.
 		for btn in reversed(self.btnsDrawn): btn.remove()
 		#Redraw all the hands
 		game, ownHand = self.GUI.Game, self.GUI.Game.Hand_Deck.hands[self.ID]
@@ -935,7 +935,7 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 			if hasattr(trig, "counter"): self.counts += trig.counter
 			
 	def decideColorOrig(self, GUI, card):
-		self.colorOrig = "red" if not(card.description.startswith("Secret:") and card.ID == GUI.Game.turn) \
+		self.colorOrig = "red" if card.description.startswith("Secret:") and card.ID == GUI.Game.turn \
 						else {"Paladin": "yellow", "Hunter": "green3", "Rogue": "grey", "Mage": "purple3"}[card.Class]
 						
 	def rightClick(self, event):

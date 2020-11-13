@@ -2070,7 +2070,7 @@ class Assassinate(Spell):
 		return self.selectableEnemyMinionExists()
 		
 	def targetCorrect(self, target, choice=0):
-		return target.type == "Minion" and target.ID != self.ID and target.onBoard:
+		return target.type == "Minion" and target.ID != self.ID and target.onBoard
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:

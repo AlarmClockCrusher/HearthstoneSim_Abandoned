@@ -7,7 +7,7 @@ from Shadows import EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, 
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
-import numpy as np
+from numpy import inf as npinf
 from collections import Counter as cnt
 import copy
 
@@ -818,7 +818,7 @@ class BothPlayersSummonLowestCostMinionfromHand(Deathrattle_Minion):
 				if curGame.guides:
 					i = curGame.guides.pop(0)
 				else: #假设是依次召唤，如果召唤前一个随从时进行了某些结算，则后面的召唤可能受之影响
-					minions, highestCost = [], np.inf
+					minions, highestCost = [], npinf
 					for i, card in enumerate(curGame.Hand_Deck.hands[ID]):
 						if card.type == "Minion":
 							if card.mana < highestCost: minions, highestCost = [i], card.mana
@@ -2381,29 +2381,25 @@ class BazaarBurglary(Quest):
 	description = "Quest: Add 4 cards from other classes to your hand. Reward: Ancient Blades"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.cardsfromOtherClasses = [] #存放置入手牌的来自其他职业的牌的identity
 		self.trigsBoard = [Trig_BazaarBurglary(self)]
 		
 class Trig_BazaarBurglary(QuestTrigger):
 	def __init__(self, entity):
 		#置入手牌扳机。抽到不同职业牌，回响牌，抽到时施放的法术都可以触发扳机。
-		self.blank_init(entity, ["CardEntersHand", "CardDrawn"]) #抽到时施放的法术没有被处理成置入手牌
+		self.blank_init(entity, ["CardEntersHand", "SpellCastWhenDrawn"]) #抽到时施放的法术没有被处理成置入手牌
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return target[0].ID == self.entity.ID and target[0].Class != "Neutral" and target[0].Class != self.entity.Game.heroes[self.entity.ID].Class
+		return target[0].ID == self.entity.ID and target[0].Class != "Neutral" and self.entity.Game.heroes[self.entity.ID].Class not in target[0].Class
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		if target[0].identity not in self.entity.cardsfromOtherClasses:
-			#之所以用牌的identity来作为标识的原因是随从在下场后被闷棍返回手牌之后仍然可以视为作为进度。所以需要用不同的identity加以区分
-			self.entity.cardsfromOtherClasses.append(target[0].identity)
-			self.counter += 1
-			PRINT(self.entity.Game, "A card from another Class %s is put into player's hand, Quest Bazaar Burglary progresses by 1. Current progress: %d"%(target[0].name, self.counter))
-			if self.counter > 3:
-				PRINT(self.entity.Game, "The 4th card from another Class is put into player's hand. Player gains Reward: Ancient Blades.")
-				self.disconnect()
-				try: self.entity.Game.Secrets.mainQuests[self.entity.ID].remove(self.entity)
-				except: pass
-				AncientBlades(self.entity.Game, self.entity.ID).replaceHeroPower()
+		self.counter += 1
+		PRINT(self.entity.Game, "A card from another Class %s is put into player's hand, Quest Bazaar Burglary progresses by 1. Current progress: %d"%(target[0].name, self.counter))
+		if self.counter > 3:
+			PRINT(self.entity.Game, "The 4th card from another Class is put into player's hand. Player gains Reward: Ancient Blades.")
+			self.disconnect()
+			try: self.entity.Game.Secrets.mainQuests[self.entity.ID].remove(self.entity)
+			except: pass
+			AncientBlades(self.entity.Game, self.entity.ID).replaceHeroPower()
 				
 class AncientBlades(HeroPower):
 	mana, name, requireTarget = 2, "Ancient Blades", False
@@ -3074,7 +3070,7 @@ class ExpiredMerchant(Minion):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				cards, highestCost = [], -np.inf
+				cards, highestCost = [], -npinf
 				for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]):
 					if card.mana > highestCost: cards, highestCost = [i], card.mana
 					elif card.mana == highestCost: cards.append(i)

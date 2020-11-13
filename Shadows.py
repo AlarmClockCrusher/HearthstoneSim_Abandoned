@@ -7,7 +7,7 @@ from Classic import PatientAssassin
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
-import numpy as np
+from numpy import inf as npinf
 
 import copy
 #extract an element from the list
@@ -2417,7 +2417,7 @@ class CalltoAdventure(Spell):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				minions, lowestCost = [], np.inf
+				minions, lowestCost = [], npinf
 				for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]):
 					if card.type == "Minion":
 						if card.mana < lowestCost: minions, lowestCost = [i], card.mana
@@ -3609,16 +3609,7 @@ class PlotTwist(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Plot Twist is cast and shuffles all of player's hand into deck. Then draw that many cards.")
 		handSize = len(self.Game.Hand_Deck.hands[self.ID])
-		cardstoShuffle = self.Game.Hand_Deck.extractfromHand(None, self.ID, all=True)[0] #Extract all cards.
-		#Remove all the temp effects on cards in hand, e.g, TheSoularium and the echo trigger
-		for card in cardstoShuffle:
-			for trig in card.trigsBoard + card.trigsHand + card.trigsDeck:
-				trig.disconnect()
-			identity = card.identity
-			card.__init__(self.Game, self.ID)
-			card.identity = identity
-		
-		self.Game.Hand_Deck.shuffleCardintoDeck(cardstoShuffle, self.ID) #Initiated by self.
+		self.Game.Hand_Deck.shufflefromHand2Deck(0, self.ID, self.ID, all=True)
 		for i in range(handSize): self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		

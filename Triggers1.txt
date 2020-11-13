@@ -1,0 +1,113 @@
+class Trig_Corrupt(TrigHand):
+	def __init__(self, entity, corruptedType):
+		self.blank_init(entity, ["ManaPaid"])
+		self.corruptedType = corruptedType
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.inHand and ID == self.entity.ID and number > self.entity.mana
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		card = self.entity
+		newCard = self.corruptedType(card.Game, card.ID)
+		#Buff and mana effects, etc, will be preserved
+		#Buff to cards in hand will always be permanent or temporary, not from Auras
+		if newCard == "Minion":
+			#Temporary attack changes on minions are NOT included in attack_Enchant
+			attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_Enchant - card.health_0
+			newCard.buffDebuff(attBuff, healthBuff)
+			for attGain, attRevertTime in card.tempAttChanges:
+				newCard.buffDebuff(attGain, 0, attRevertTime)
+		elif newCard == "Weapon": #Only applicable to Felsteel Executioner
+			attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_Enchant - card.health_0
+			#Assume temporary attack changes applied on a minion won't carry over to the weapon
+			newCard.gainStat(attBuff, healthBuff)
+		#Find keywords the new card doesn't have
+		keyWords = newCard.keyWords.keys()
+		for key, value in newCard.keyWords.items():
+			if value < 1 and card.keyWords[key] > 0: newCard.keyWords[key] = 1
+		for key, value in newCard.marks.items():
+			if value < 1 and card.marks[key] > 0: newCard.marks[key] = 1
+		newCard.trigsHand += [trig for trig in card.trigsHand if not isinstance(trig, Trig_Corrupt)]
+		#There are no Corrupted cards with predefined Deathrattles
+		newCard.deathrattles = [type(deathrattle)(newCard) for deathrattle in card.deathrattles]
+		#Mana modifications
+		newCard.manaMods = [manaMod.selfCopy(newCard) for manaMod in card.manaMods]
+		
+		card.Game.Hand_Deck.replaceCardinHand(card, newCard)
+		
+"""Mana 1 cards"""
+class Trig_OptimisticOgre(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionAttacksMinion", "MinionAttacksHero", "BattleFinished"])
+		self.trigedThisBattle = False
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		#The trigger can be reset any time by "BattleFinished".
+		#Otherwise, can only trigger if there are enemies other than the target.
+		#游荡怪物配合误导可能会将对英雄的攻击目标先改成对召唤的随从，然后再发回敌方英雄，说明攻击一个错误的敌人应该也是游戏现记录的目标之外的角色。
+		return not signal.startswith("Minion") or (subject == self.entity and self.entity.onBoard and target[1] and not self.trigedThisBattle \
+													and self.entity.Game.charsAlive(3-subject.ID, target[1]) \
+													)
+													
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.entity.onBoard:
+			if signal == "BattleFinished": #Reset the Forgetful for next battle event.
+				self.trigedThisBattle = False
+			elif target: #Attack signal
+				curGame, side = self.entity.Game, 3- self.entity.ID
+				if curGame.mode == 0:
+					char, redirect = None, 0
+					if curGame.guides:
+						i, where, redirect = curGame.guides.pop(0)
+						if where: char = curGame.find(i, where)
+					else:
+						otherEnemies = curGame.charsAlive(side, target[1])
+						if otherEnemies:
+							char, redirect = npchoice(otherEnemies), nprandint(2)
+							curGame.fixedGuides.append((char.position, char.type+str(char.ID), redirect))
+						else:
+							curGame.fixedGuides.append((0, '', 0))
+					if char and redirect: #Redirect is 0/1, indicating whether the attack will redirect or not
+						#玩家命令的一次攻击中只能有一次触发机会。只要满足进入50%判定的条件，即使没有最终生效，也不能再次触发。
+						target[1], self.trigedThisBattle = char, True
+						
+"""Mana 6 cards"""
+class Trig_CThun:
+	def __init__(self, Game, ID):
+		self.Game, self.ID = Game, ID
+		self.temp = False
+		self.piece = []
+		
+	def connect(self):
+		try: self.Game.trigsBoard[self.ID]["CThunPiece"].append(self)
+		except: self.Game.trigsBoard[self.ID]["CThunPiece"] = [self]
+		
+	def disconnect(self):
+		try: self.Game.trigsBoard[self.ID]["CThunPiece"].remove(self)
+		except: pass
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return subject.ID == self.ID and subject == self.spellDiscovered
+		
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrigger(signal, ID, subject, target, number, comment):
+			if self.Game.GUI: self.Game.GUI.showOffBoardTrig(CThuntheShattered(self.Game, self.ID), linger=False)
+			self.effect(signal, ID, subject, target, number, comment)
+			
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		if ID == self.ID and number not in self.pieces:
+			self.pieces.append(number)
+			if len(self.pieces) > 3:
+				PRINT("Player %d's C'Thun is completed and shuffles into the deck"%ID)
+				self.Game.Hand_Deck.shuffleCardintoDeck(CThuntheShattered(self.Game, ID), ID)
+				self.disconnect()
+				
+	def createCopy(self, game): #不是纯的只在回合结束时触发，需要完整的createCopy
+		if self not in game.copiedObjs: #这个扳机没有被复制过
+			trigCopy = type(self)(game, self.ID)
+			trigCopy.pieces = [i for i in self.pieces]
+			game.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return game.copiedObjs[self]
+			

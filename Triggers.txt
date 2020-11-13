@@ -1,0 +1,734 @@
+Inspecting Darkmoon.py
+class Trig_Corrupt(TrigHand):
+	def __init__(self, entity, corruptedType):
+		self.blank_init(entity, ["ManaPaid"])
+		self.corruptedType = corruptedType
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.inHand and ID == self.entity.ID and number > self.entity.mana
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		card = self.entity
+		newCard = self.corruptedType(card.Game, card.ID)
+		#Buff and mana effects, etc, will be preserved
+		#Buff to cards in hand will always be permanent or temporary, not from Auras
+		if newCard == "Minion":
+			#Temporary attack changes on minions are NOT included in attack_Enchant
+			attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_Enchant - card.health_0
+			newCard.buffDebuff(attBuff, healthBuff)
+			for attGain, attRevertTime in card.tempAttChanges:
+				newCard.buffDebuff(attGain, 0, attRevertTime)
+		elif newCard == "Weapon": #Only applicable to Felsteel Executioner
+			attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_Enchant - card.health_0
+			#Assume temporary attack changes applied on a minion won't carry over to the weapon
+			newCard.gainStat(attBuff, healthBuff)
+		#Find keywords the new card doesn't have
+		keyWords = newCard.keyWords.keys()
+		for key, value in newCard.keyWords.items():
+			if value < 1 and card.keyWords[key] > 0: newCard.keyWords[key] = 1
+		for key, value in newCard.marks.items():
+			if value < 1 and card.marks[key] > 0: newCard.marks[key] = 1
+		newCard.trigsHand += [trig for trig in card.trigsHand if not isinstance(trig, Trig_Corrupt)]
+		#There are no Corrupted cards with predefined Deathrattles
+		newCard.deathrattles = [type(deathrattle)(newCard) for deathrattle in card.deathrattles]
+		#Mana modifications
+		newCard.manaMods = [manaMod.selfCopy(newCard) for manaMod in card.manaMods]
+		
+		card.Game.Hand_Deck.replaceCardinHand(card, newCard)
+		
+"""Mana 1 cards"""
+class Trig_EndlessCorrupt(TrigHand):
+	def __init__(self, entity, corruptedType):
+		self.blank_init(entity, ["ManaPaid"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.inHand and ID == self.entity.ID and number > self.entity.mana
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		card = self.entity
+		stat = int(type(card).__name__.split('_')[2])
+		newIndex = "Darkmoon~Neutral~2~%d~%d~Minion~None~Horrendous Growth~Corrupted~Uncollectible"%(stat, stat)
+		subclass = type("HorrendousGrowthCorrupt_Mutable_"+str(stat), (HorrendousGrowthCorrupt_Mutable_3, ),
+						{"attack": stat, "health": stat, "index": newIndex}
+						)
+		self.Game.cardPool[newIndex] = subclass
+		#The buffs on the cards carry over
+		newCard = subclass(card.Game, card.ID)
+		#Buff and mana effects, etc, will be preserved
+		#Buff to cards in hand will always be permanent or temporary, not from Auras
+		#Temporary attack changes on minions are NOT included in attack_Enchant
+		attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_Enchant - card.health_0
+		newCard.buffDebuff(attBuff, healthBuff)
+		for attGain, attRevertTime in card.tempAttChanges:
+			newCard.buffDebuff(attGain, 0, attRevertTime)
+		#Find keywords the new card doesn't have
+		keyWords = newCard.keyWords.keys()
+		#Since the Horrendous Growth has no predefined keywords, it can simply copy the predecessors
+		newCard.keyWords, newCard.marks = copy.deepcopy(card.keyWords), copy.deepcopy(card.marks)
+		newCard.trigsHand += [trig for trig in card.trigsHand if not isinstance(trig, Trig_Corrupt)]
+		#There are no Corrupted cards with predefined Deathrattles
+		newCard.deathrattles = [type(deathrattle)(newCard) for deathrattle in card.deathrattles]
+		#Mana modifications
+		newCard.manaMods = [manaMod.selfCopy(newCard) for manaMod in card.manaMods]
+		
+		card.Game.Hand_Deck.replaceCardinHand(card, newCard)
+		
+		
+class Trig_ParadeLeader:
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionBeenSummoned"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and subject != self.entity and subject.ID == self.entity.ID and subject.keyWords["Rush"] > 0
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "After player summons Rush minion %s, Parade Leader gives it +2 Attack"%subject.name)
+		subject.buffDebuff(2, 0)
+		
+		
+class Trig_OptimisticOgre(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionAttacksMinion", "MinionAttacksHero", "BattleFinished"])
+		self.trigedThisBattle = False
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		#The trigger can be reset any time by "BattleFinished".
+		#Otherwise, can only trigger if there are enemies other than the target.
+		#游荡怪物配合误导可能会将对英雄的攻击目标先改成对召唤的随从，然后再发回敌方英雄，说明攻击一个错误的敌人应该也是游戏现记录的目标之外的角色。
+		return not signal.startswith("Minion") or (subject == self.entity and self.entity.onBoard and target[1] and not self.trigedThisBattle \
+													and self.entity.Game.charsAlive(3-subject.ID, target[1]) \
+													)
+													
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.entity.onBoard:
+			if signal == "BattleFinished": #Reset the Forgetful for next battle event.
+				self.trigedThisBattle = False
+			elif target: #Attack signal
+				curGame, side = self.entity.Game, 3- self.entity.ID
+				if curGame.mode == 0:
+					char, redirect = None, 0
+					if curGame.guides:
+						i, where, redirect = curGame.guides.pop(0)
+						if where: char = curGame.find(i, where)
+					else:
+						otherEnemies = curGame.charsAlive(side, target[1])
+						if otherEnemies:
+							char, redirect = npchoice(otherEnemies), nprandint(2)
+							curGame.fixedGuides.append((char.position, char.type+str(char.ID), redirect))
+						else:
+							curGame.fixedGuides.append((0, '', 0))
+					if char and redirect: #Redirect is 0/1, indicating whether the attack will redirect or not
+						#玩家命令的一次攻击中只能有一次触发机会。只要满足进入50%判定的条件，即使没有最终生效，也不能再次触发。
+						target[1], self.trigedThisBattle = char, True
+						
+"""Mana 6 cards"""
+class Trig_CThun:
+	def __init__(self, Game, ID):
+		self.Game, self.ID = Game, ID
+		self.temp = False
+		self.piece = []
+		
+	def connect(self):
+		try: self.Game.trigsBoard[self.ID]["CThunPiece"].append(self)
+		except: self.Game.trigsBoard[self.ID]["CThunPiece"] = [self]
+		
+	def disconnect(self):
+		try: self.Game.trigsBoard[self.ID]["CThunPiece"].remove(self)
+		except: pass
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return subject.ID == self.ID and subject == self.spellDiscovered
+		
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrigger(signal, ID, subject, target, number, comment):
+			if self.Game.GUI: self.Game.GUI.showOffBoardTrig(CThuntheShattered(self.Game, self.ID), linger=False)
+			self.effect(signal, ID, subject, target, number, comment)
+			
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		if ID == self.ID and number not in self.pieces:
+			self.pieces.append(number)
+			if len(self.pieces) > 3:
+				PRINT("Player %d's C'Thun is completed and shuffles into the deck"%ID)
+				self.Game.Hand_Deck.shuffleCardintoDeck(CThuntheShattered(self.Game, ID), ID)
+				self.disconnect()
+				
+	def createCopy(self, game): #不是纯的只在回合结束时触发，需要完整的createCopy
+		if self not in game.copiedObjs: #这个扳机没有被复制过
+			trigCopy = type(self)(game, self.ID)
+			trigCopy.pieces = [i for i in self.pieces]
+			game.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return game.copiedObjs[self]
+			
+class Trig_RedeemedPariah(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionBeenPlayed", "SpellBeenPlayed", "WeaponBeenPlayed", "HeroCardBeenPlayed"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and subject.ID == self.entity.ID and "~Outcast" in subject.index
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "Player plays an Outcast card and Redeemed Pariah gains +1/+1.")
+		self.entity.buffDebuff(1, 1)
+		
+		
+class Trig_BladedLady(TrigHand):
+	def __init__(self, entity):
+		self.blank_init(entity, ["HeroAttCalc"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.inHand and ID == self.entity.ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.entity.Game.Manas.calcMana_Single(self.entity)
+		
+		
+class Trig_UmbralOwl(TrigHand):
+	def __init__(self, entity):
+		#假设这个费用改变扳机在“当你使用一张法术之后”。不需要预检测
+		self.blank_init(entity, ["SpellBeenPlayed"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.inHand and subject.ID == self.entity.ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.entity.Game.Manas.calcMana_Single(self.entity)
+		
+		
+class Trig_OpentheCages(SecretTrigger):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnStarts"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0): #target here holds the actual target object
+		secret = self.entity
+		return secret.ID == ID and len(secret.Game.minionsonBoard(secret.ID)) > 1 and secret.Game.space(secret.ID) > 0
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		curGame = self.entity.Game
+		PRINT(curGame, "At the start of player's turn, Secret Open the Cages is triggered and summons an Animal Companion.")
+		if curGame.mode == 0:
+			if curGame.guides:
+				companion = curGame.guides.pop(0)
+			else:
+				companion = npchoice([Huffer, Leokk, Misha])
+				curGame.fixedGuides.append(companion)
+			PRINT(curGame, "Animal Companion is cast and summons random Animal Companion %s"%companion.name)
+			curGame.summon(companion(curGame, self.entity.ID), -1, self.entity.ID)
+			
+			
+class Trig_RinlingsRifle(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		weapon, curGame = self.entity, self.entity.Game
+		if curGame.mode == 0:
+			PRINT(curGame, "After player attacks, Rinling's Rifle lets player Discover a Secret and cast it")
+			if curGame.guides:
+				curGame.guides.pop(0)(curGame, weapon.ID).cast()
+			else:
+				PRINT(curGame, "After player plays a Secret, Rinling's Rifle lets player Discover a spell")
+				key = classforDiscover(weapon)+" Secrets"
+				secrets = npchoice(curGame.RNGPools[key], 3, replace=False)
+				curGame.options = [secrets(curGame, weapon.ID) for secrets in spells]
+				curGame.Discover.startDiscover(weapon)
+				
+				
+class Trig_TramplingRhino(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionAttackedMinion"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and subject == self.entity and self.entity.health > 0 and self.entity.dead == False and target.health < 0
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		excessDmg = -target.health
+		PRINT(self.entity.Game, "After Trampling Rhino attacks and kills a minion %s, it deals the excess damage to the enemy hero."%target.name)
+		self.entity.dealsDamage(self.entity.Game.heroes[3-self.entity.ID], excessDmg)
+		
+		
+class Trig_GameMaster(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnStarts", "TurnEnds", "ManaPaid"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and ("Turn" in signal and ID == self.entity.ID) \
+			or (signal == "ManaPaid" and subject.type == "Minion" and subject.ID == self.entity.ID)
+			
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		if "Turn" in signal: #回合开始结束时总会强制关闭然后启动一次光环。这样，即使回合开始或者结束发生了随从的控制变更等情况，依然可以保证光环的正确
+			PRINT(self.entity.Game, "At the start of turn, Game Master restarts the mana aura and reduces the cost of the first Secret to (1).")
+			self.entity.auras["Mana Aura"].auraDisappears()
+			self.entity.auras["Mana Aura"].auraAppears()
+			self.entity.checkAuraCorrectness()
+		else: #signal == "ManaPaid"
+			self.entity.auras["Mana Aura"].auraDisappears()
+			
+			
+class Trig_RiggedFaireGame(SecretTrigger):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnEnds"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0): #target here holds the actual target object
+		return self.entity.ID != ID and self.entity.Game.Counters.dmgonHero_inOppoTurn[self.entity.ID] == 0
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "Player took no damage in opponent's turn, Secret Rigged Faire Game is triggered and player draws 3 cards.")
+		self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
+		
+		
+class Trig_OhMyYogg(SecretTrigger):
+	def __init__(self, entity):
+		self.blank_init(entity, ["SpellOKtoCast?"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return subject.ID != self.entity.ID and subject
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		curGame = self.entity.Game
+		PRINT(curGame, "Secret Oh My Yogg! turns the spell %s the opponent plays into a randomly cast one of the same cost%s"%subject[0].name)
+		if curGame.mode == 0:
+			if curGame.guides:
+				newSpell = curGame.guides.pop(0)
+			else:
+				newSpell = npchoice(curGame.RNGPools["%d-Cost Spells"%number])
+				curGame.fixedGuides.append(newSpell)
+			subject[0] = newSpell(curGame, self.entity.ID)
+			
+			
+class Trig_CarnivalBarker(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionSummoned"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and subject.ID == self.entity.ID and subject.health == 1 and subject != self.entity
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "A friendly 1-Health minion %s is summoned and Carnival Barker gains +1/+2"%subject.name)
+		subject.buffDebuff(1, 2)
+		
+		
+class Trig_NazmaniBloodweaver(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["SpellBeenPlayed"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and subject.ID == self.entity.ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		curGame = self.entity.Game
+		if curGame.mode == 0:
+			PRINT(curGame, "After player casts spell, Nazmani Bloodweaver reduces the Cost of a random card in player's hand by (1)")
+			if curGame.guides:
+				i = curGame.guides.pop(0)
+			else:
+				num = len(curGame.Hand_Deck.hands[self.entity.ID])
+				i = nprandint(num) if num else -1
+			if i > -1:
+				ManaMod(curGame.Hand_Deck.hands[self.entity.ID][i], changeby=-1, changeto=-1).applies()
+				
+				
+class Trig_BloodofGhuun(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnEnds"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and ID == self.entity.ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		minion = self.entity
+		curGame = minion.Game
+		if curGame.mode == 0:
+			PRINT(curGame, "At the end of turn, Blood of G'huun summons a 5/5 copy of a minion in played's deck")
+			if curGame.guides:
+				i = curGame.guides.pop(0)
+			else:
+				minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[minion.ID]) if card.type == "Minion"]
+				i = npchoice(minions) if minions and curGame.space(minion.ID) > 0 else -1
+				curGame.fixedGuides.append(i)
+			if i > -1:
+				Copy = curGame.Hand_Deck.decks[minion.ID][i].selfCopy(minion.ID, 5, 5)
+				curGame.summon(Copy, minion.position+1, minion.ID)
+			
+"""Rogue cards"""
+class Trig_ShadowClone(SecretTrigger):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionAttackedHero"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.ID != self.entity.Game.turn and target == self.entity.Game.heroes[self.entity.ID]
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "After a minion %s attacks player, Secret Shadow Clone is triggered and summons a copy of it with Stealth"%subject.name)
+		Copy = subject.selfCopy(self.entity.ID)
+		self.entity.Game.summon(Copy, -1, self.entity.ID)
+		
+		
+class Trig_MalevolentStrike(TrigHand):
+	def __init__(self, entity):
+		self.blank_init(entity, ["DeckCheck"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.inHand and ID == self.entity.ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.entity.Game.Manas.calcMana_Single(self.entity)
+		
+		
+class Trig_GrandTotemEysor(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnEnds"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and ID == self.entity.ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		curGame, side = self.entity.Game, self.entity.ID
+		PRINT(curGame, "At the end of turn, Master Swordsmith gvies another random friendly minion %s +1 Attack."%minion.name)
+		for obj in curGame.minionsonBoard(side):
+			if "Totem" in obj.race and obj != self.entity:
+				obj.buffDebuff(1, 1)
+		for card in curGame.Hand_Deck.hands[side] + curGame.Hand_Deck.decks[side]:
+			if obj.type == "Minion" and "Totem" in obj.race:
+				obj.buffDebuff(1, 1)
+				
+				
+class Trig_Magicfin(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionDies"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and target != self.entity and target.ID == self.entity.ID and "Murloc" in target.race #Technically, minion has to disappear before dies. But just in case.
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		curGame = self.entity.Game
+		PRINT(curGame, "A friendly Murloc %s dies and Magicfin adds a random Legendary minion to player's hand."%target.name)
+		if curGame.mode == 0:
+			if curGame.guides:
+				minion = curGame.guides.pop(0)
+			else:
+				minion = npchoice(curGame.RNGPools["Legendary Minions"])
+				curGame.fixedGuides.append(minion)
+			curGame.Hand_Deck.addCardtoHand(minion, self.entity.ID, "type")
+			
+			
+class Trig_WhackaGnollHammer(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		curGame = self.entity.Game
+		PRINT(curGame, "After player attacks, weapon  gives a random friendly minion +1/+1")
+		if curGame.mode == 0:
+			if curGame.guides:
+				i, where = curGame.guidies.pop(0)
+			else:
+				minions = curGame.minionsonBoard(self.entity.ID)
+				i = npchoice(minions).position if minions else -1
+				curGame.fixedGuides.append(i)
+			if i > -1: curGame.minions[self.entity.ID][i].buffDebuff(1, 1)
+			
+			
+class Trig_ManariMosher:
+	def __init__(self, entity):
+		self.entity, self.signals, self.temp = entity, ["TurnStarts", "TurnEnds"], False
+		
+	def connect(self):
+		if self.entity.onBoard: trigs = self.entity.Game.trigsBoard[self.entity.ID]
+		else: trigs = self.entity.Game.trigsHand[self.entity.ID]
+		for sig in self.signals:
+			try: trigs[sig].append(self)
+			except: trigs[self.entity.ID][sig] = [self]
+			
+	def disconnect(self):
+		for sig in self.signals:
+			try: self.entity.Game.trigsHand[self.entity.ID][sig].remove(self)
+			except: pass
+			try: self.entity.Game.trigsBoard[self.entity.ID][sig].remove(self)
+			except: pass
+			
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrigger(signal, ID, subject, target, number, comment):
+			if self.entity.Game.GUI: self.entity.Game.GUI.triggerBlink(self.entity)
+			self.effect(signal, ID, subject, target, number, comment)
+			
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return True #This triggers at either player's turn end and start
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		minion = self.entity
+		minion.losesKeyword("Lifesteal")
+		for sig in self.signals:
+			try: minion.Game.trigsHand[minion.ID][sig].remove(self)
+			except: pass
+			try: minion.Game.trigsBoard[minion.ID][sig].remove(self)
+			except: pass
+		try: minion.trigsBoard.remove(self)
+		except: pass
+		try: minion.trigsHand.remove(self)
+		except: pass
+		
+	def selfCopy(self, recipient):
+		return type(self)(recipient)
+		
+	def createCopy(self, game):
+		if self not in game.copiedObjs: #这个扳机没有被复制过
+			entityCopy = self.entity.createCopy(game)
+			trigCopy = type(self)(entityCopy)
+			game.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return game.copiedObjs[self]
+			
+			
+class Trig_ETCGodofMetal(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionAttackedMinion", "MinionAttackedHero"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return subject.ID == self.entity.ID and subject.keyWords["Rush"] > 0 and self.entity.onBoard
+		
+	#不知道攻击具有受伤时召唤一个随从的扳机的随从时，飞刀能否对这个友方角色造成伤害
+	#目前的写法是这个战斗结束信号触发在受伤之后
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "After friendly minion %s attacks, E.T.C., God of Metal deals 2 damage to the enemy hero"%subject.name)
+		self.entity.dealsDamage(self.entity.Game.heroes[3-self.entity.ID], 2)
+		
+		
+class Trig_RingmastersBaton(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		curGame = self.entity.Game
+		ownHand = curGame.Hand_Deck.hands[self.entity.ID]
+		PRINT(curGame, "After player attacks, weapon Ringmaster's Baton gives a Mech, Dragon, and Pirate in player's hand +1/+1")
+		if curGame.mode == 0:
+			if curGame.guides:
+				i, j, k = curGame.guidies.pop(0)
+			else:
+				mechs = [i for i, card in enumerate(ownHand) if card.type == "Minion" and "Mech" in card.race]
+				dragons = [i for i, card in enumerate(ownHand) if card.type == "Minion" and "Dragon" in card.race]
+				pirates = [i for i, card in enumerate(ownHand) if card.type == "Minion" and "Pirate" in card.race]
+				i = npchoice(mechs) if mechs else -1
+				j = npchoice(dragons) if dragons else -1
+				k = npchoice(pirates) if pirates else -1
+				curGame.fixedGuides.append((i, j, k))
+			if i + j + k > -3:
+				PRINT(curGame, "Ringmaster's Baton gives a Mech, Dragon, and Pirate in player's hand +1/+1")
+				ownHand[i].buffDebuff(1, 1)
+				ownHand[j].buffDebuff(1, 1)
+				ownHand[k].buffDebuff(1, 1)
+				
+				
+class Trig_TentThrasher(TrigHand):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionAppears", "MinionDisappears"])
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.inHand and ID == self.entity.ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.entity.Game.Manas.calcMana_Single(self.entity)
+		
+		
+Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battlecry": SafetyInspector,
+					"Darkmoon~Neutral~Minion~2~1~2~None~Costumed Entertainer~Battlecry": CostumedEntertainer,
+					"Darkmoon~Neutral~Minion~2~2~2~None~Horrendous Growth": HorrendousGrowth,
+					"Darkmoon~Neutral~Minion~2~2~2~None~Horrendous Growth~Corrupted~Uncollectible": HorrendousGrowthCorrupt_Mutable_3,
+					"Darkmoon~Neutral~Minion~2~2~2~None~Parade Leader": ParadeLeader,
+					"Darkmoon~Neutral~Minion~2~2~3~Murloc~Prize Vendor~Battlecry": PrizeVendor,
+					"Darkmoon~Neutral~Minion~2~5~1~Elemental~Rock Rager~Taunt": RockRager,
+					"Darkmoon~Neutral~Minion~2~3~2~None~Showstopper~Deathrattle": Showstopper,
+					"Darkmoon~Neutral~Minion~2~2~1~None~Wriggling Horror~Battlecry": WrigglingHorror,
+					"Darkmoon~Neutral~Minion~3~2~4~None~Banana Vendor~Battlecry": BananaVendor,
+					#"Darkmoon~Neutral~Spell~1~Bananas~Uncollectible": Bananas_Darkmoon,
+					"Darkmoon~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield": DarkmoonDirigible,
+					"Darkmoon~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield~Rush~Corrupted~Uncollectible": DarkmoonDirigible_Corrupt,
+					"Darkmoon~Neutral~Minion~3~0~5~None~Darkmoon Statue": DarkmoonStatue,
+					"Darkmoon~Neutral~Minion~3~4~5~None~Darkmoon Statue~Corrupted~Uncollectible": DarkmoonStatue_Corrupt,
+					"Darkmoon~Neutral~Minion~3~3~2~Elemental~Gyreworm~Battlecry": Gyreworm,
+					"Darkmoon~Neutral~Minion~3~2~2~None~Inconspicuous Rider~Battlecry": InconspicuousRider,
+					"Darkmoon~Neutral~Minion~3~4~4~None~K'thir Ritualist~Taunt~Battlecry": KthirRitualist,
+					"Darkmoon~Neutral~Minion~4~4~5~Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem~Circus Amalgam~Taunt": CircusAmalgam,
+					"Darkmoon~Neutral~Minion~4~3~4~None~Circus Medic~Battlecry": CircusMedic,
+					"Darkmoon~Neutral~Minion~4~3~4~None~Circus Medic~Battlecry~Corrupted~Uncollectible": CircusMedic_Corrupt,
+					"Darkmoon~Neutral~Minion~4~3~5~Elemental~Fantastic Firebird~Windfury": FantasticFirebird,
+					"Darkmoon~Neutral~Minion~4~3~4~None~Knife Vendor~Battlecry": KnifeVendor,
+					"Darkmoon~Neutral~Minion~5~3~2~None~Derailed Coaster~Battlecry": DerailedCoaster,
+					"Darkmoon~Neutral~Minion~1~1~1~None~Darkmoon Rider~Rush~Uncollectible": DarkmoonRider,
+					"Darkmoon~Neutral~Minion~5~4~4~Beast~Fleethoof Pearltusk~Rush": FleethoofPearltusk,
+					"Darkmoon~Neutral~Minion~5~8~8~Beast~Fleethoof Pearltusk~Rush~Corrupted~Uncollectible": FleethoofPearltusk_Corrupt,
+					"Darkmoon~Neutral~Minion~5~6~7~None~Optimistic Ogre": OptimisticOgre,
+					"Darkmoon~Neutral~Minion~6~6~3~Mech~Claw Machine~Rush~Deathrattle": ClawMachine,
+					"Darkmoon~Neutral~Minion~7~4~4~None~Silas Darkmoon~Battlecry~Legendary": SilasDarkmoon,
+					"Darkmoon~Neutral~Minion~7~6~6~None~Strongman~Taunt": Strongman,
+					"Darkmoon~Neutral~Minion~0~6~6~None~Strongman~Taunt~Corrupted~Uncollectible": Strongman_Corrupt,
+					"Darkmoon~Neutral~Minion~9~4~4~None~Carnival Clown~Taunt~Battlecry": CarnivalClown,
+					"Darkmoon~Neutral~Minion~9~4~4~None~Carnival Clown~Taunt~Battlecry~Corrupted~Uncollectible": CarnivalClown_Corrupt,
+					"Darkmoon~Neutral~Spell~5~Body of C'Thun~Uncollectible": BodyofCThun,
+					"Darkmoon~Neutral~Minion~6~6~6~None~Body of C'Thun~Taunt~Uncollectible": BodyofCThun_Minion,
+					"Darkmoon~Neutral~Spell~5~Eye of C'Thun~Uncollectible": EyeofCThun,
+					"Darkmoon~Neutral~Spell~5~Heart of C'Thun~Uncollectible": HeartofCThun,
+					"Darkmoon~Neutral~Spell~5~Maw of C'Thun~Uncollectible": MawofCThun,
+					"Darkmoon~Neutral~Minion~10~6~6~None~C'Thun, the Shattered~Battlecry~Start of Game~Legendary": CThuntheShattered,
+					"Darkmoon~Neutral~Minion~10~1~1~Beast~Darkmoon Rabbit~Rush~Poisonous": DarkmoonRabbit,
+					"Darkmoon~Neutral~Minion~10~5~7~None~N'Zoth, God of the Deep~Battlecry~Legendary": NZothGodoftheDeep,
+					"Darkmoon~Neutral~Minion~10~7~5~None~Yogg-Saron, Master of Fate~Battlecry~Legendary": YoggSaronMasterofFate,
+					"Darkmoon~Neutral~Minion~10~10~10~None~Y'Shaarj, the Defiler~Battlecry~Legendary": YShaarjtheDefiler,
+					#Demon Hunter Cards
+					"Darkmoon~Demon Hunter~Spell~1~Felscream Blast~Lifesteal": FelscreamBlast,
+					"Darkmoon~Demon Hunter~Spell~1~Throw Glaive": ThrowGlaive,
+					"Darkmoon~Demon Hunter~Minion~2~2~3~None~Redeemed Pariah": RedeemedPariah,
+					"Darkmoon~Demon Hunter~Spell~3~Acrobatics": Acrobatics,
+					"Darkmoon~Demon Hunter~Weapon~3~3~2~Dreadlord's Bite~Outcast": DreadlordsBite,
+					"Darkmoon~Demon Hunter~Minion~3~4~3~Elemental~Felsteel Executioner": FelsteelExecutioner,
+					"Darkmoon~Demon Hunter~Weapon~3~4~3~Felsteel Executioner~Corrupted~Uncollectible": FelsteelExecutioner_Corrupt,
+					"Darkmoon~Demon Hunter~Minion~3~3~4~None~Line Hopper": LineHopper,
+					"Darkmoon~Demon Hunter~Minion~3~2~5~Demon~Insatiable Felhound~Taunt": InsatiableFelhound,
+					"Darkmoon~Demon Hunter~Minion~3~3~6~Demon~Insatiable Felhound~Taunt~Lifesteal~Corrupt~Uncollectible": InsatiableFelhound_Corrupt,
+					"Darkmoon~Demon Hunter~Spell~3~Relentless Persuit": RelentlessPersuit,
+					"Darkmoon~Demon Hunter~Minion~3~4~1~None~Stiltstepper~Battlecry": Stiltstepper,
+					"Darkmoon~Demon Hunter~Minion~4~2~6~None~Il'gynoth~Lifesteal~Legendary": Ilgynoth,
+					"Darkmoon~Demon Hunter~Minion~4~3~3~None~Renowned Performer~Rush~Deathrattle": RenownedPerformer,
+					"Darkmoon~Demon Hunter~Minion~1~1~1~None~Performer's Assistant~Taunt~Uncollectible": PerformersAssistant,
+					"Darkmoon~Demon Hunter~Minion~5~5~3~None~Zai, the Incredible~Battlecry": ZaitheIncredible,
+					"Darkmoon~Demon Hunter~Minion~6~6~6~Demon~Bladed Lady~Rush": BladedLady,
+					"Darkmoon~Demon Hunter~Spell~7~Expendable Performers": ExpendablePerformers,
+					#Druid Cards
+					"Darkmoon~Druid~Spell~2~Guess the Weight": GuesstheWeight,
+					"Darkmoon~Druid~Spell~2~Lunar Eclipse": LunarEclipse,
+					"Darkmoon~Druid~Spell~2~Solar Eclipse": SolarEclipse,
+					"Darkmoon~Druid~Minion~3~2~2~None~Faire Arborist~Choose One": FaireArborist,
+					"Darkmoon~Druid~Minion~3~2~2~None~Faire Arborist~Corrupted~Uncollectible": FaireArborist_Corrupt,
+					"Darkmoon~Druid~Spell~3~Moontouched Amulet": MoontouchedAmulet,
+					"Darkmoon~Druid~Spell~3~Moontouched Amulet~Corrupted~Uncollectible": MoontouchedAmulet_Corrupt,
+					"Darkmoon~Druid~Minion~4~2~2~None~Kiri, Chosen of Elune~Battlecry~Legendary": KiriChosenofElune,
+					"Darkmoon~Druid~Minion~5~4~6~None~Greybough~Taunt~Deathrattle~Legendary": Greybough,
+					"Darkmoon~Druid~Minion~7~4~4~Beast~Umbral Owl~Rush": UmbralOwl,
+					"Darkmoon~Druid~Spell~8~Cenarion Ward": CenarionWard,
+					"Darkmoon~Druid~Minion~9~10~10~Elemental~Fizzy Elemental~Rush~Taunt": FizzyElemental,
+					#Hunter Cards
+					"Darkmoon~Hunter~Minion~1~1~1~None~Mystery Winner~Battlecry": MysteryWinner,
+					"Darkmoon~Hunter~Minion~2~1~5~Beast~Dancing Cobra": DancingCobra,
+					"Darkmoon~Hunter~Minion~2~1~5~Beast~Dancing Cobra~Poisonous~Corrupted~Uncollectible": DancingCobra_Corrupt,
+					"Darkmoon~Hunter~Spell~2~Don't Feed the Animals": DontFeedtheAnimals,
+					"Darkmoon~Hunter~Spell~2~Don't Feed the Animals~Corrupted~Uncollectible": DontFeedtheAnimals_Corrupt,
+					"Darkmoon~Hunter~Spell~2~Open the Cages~~Secret": OpentheCages,
+					"Darkmoon~Hunter~Spell~3~Petting Zoo": PettingZoo,
+					"Darkmoon~Hunter~Minion~3~3~3~Beast~Darkmoon Strider~Uncollectible": DarkmoonStrider,
+					"Darkmoon~Hunter~Weapon~4~2~2~Rinling's Rifle~Legendary": RinlingsRifle,
+					"Darkmoon~Hunter~Minion~5~5~5~Beast~Trampling Rhino~Rush": TramplingRhino,
+					"Darkmoon~Hunter~Minion~6~4~4~None~Maxima Blastenheimer~Battlecry~Legendary": MaximaBlastenheimer,
+					"Darkmoon~Hunter~Minion~7~8~5~Mech~Darkmoon Tonk~Deathrattle": DarkmoonTonk,
+					"Darkmoon~Hunter~Spell~8~Jewel of N'Zoth": JewelofNZoth,
+					#Mage Cards
+					"Darkmoon~Mage~Minion~2~3~2~Elemental~Confection Cyclone~Battlecry": ConfectionCyclone,
+					"Darkmoon~Mage~Minion~1~1~1~Elemental~Sugar Elemental~Uncollectible": SugarElemental,
+					"Darkmoon~Mage~Spell~2~Deck of Lunacy~Legendary": DeckofLunacy,
+					"Darkmoon~Mage~Minion~2~2~2~None~Game Master": GameMaster,
+					"Darkmoon~Mage~Spell~3~Rigged Faire Game~~Secret": RiggedFaireGame,
+					"Darkmoon~Mage~Minion~4~4~4~None~Occult Conjurer~Battlecry": OccultConjurer,
+					"Darkmoon~Mage~Spell~4~Ring Toss": RingToss,
+					"Darkmoon~Mage~Spell~4~Ring Toss~Corrupted~Uncollectible": RingToss_Corrupt,
+					"Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry": FireworkElemental,
+					"Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry~Corrupted~Uncollectible": FireworkElemental,
+					"Darkmoon~Mage~Minion~6~5~5~None~Sayge, Seer of Darkmoon~Battlecry~Legendary": SaygeSeerofDarkmoon,
+					"Darkmoon~Mage~Spell~7~Mask of C'Thun": MaskofCThun,
+					"Darkmoon~Mage~Spell~8~Grand Finale": GrandFinale,
+					"Darkmoon~Mage~Minion~8~8~8~Elemental~Exploding Sparkler~Uncollectible": ExplodingSparkler,
+					#Paladin Cards
+					"Darkmoon~Paladin~Spell~1~Oh My Yogg!~~Secret": OhMyYogg,
+					"Darkmoon~Paladin~Minion~2~2~3~Murloc~Redscale Dragontamer~Battlecry": RedscaleDragontamer,
+					"Darkmoon~Paladin~Spell~2~Snack Run": SnackRun,
+					"Darkmoon~Paladin~Minion~3~3~2~None~Carnival Barker": CarnivalBarker,
+					"Darkmoon~Paladin~Spell~3~Day at the Faire": DayattheFaire,
+					"Darkmoon~Paladin~Spell~3~Day at the Faire~Corrupted~Uncollectible": DayattheFaire_Corrupt,
+					"Darkmoon~Paladin~Minion~4~3~5~None~Balloon Merchant~Battlecry": BalloonMerchant,
+					"Darkmoon~Paladin~Minion~5~5~5~Mech~Carousel Gryphon~Divine Shield": CarouselGryphon,
+					"Darkmoon~Paladin~Minion~5~8~8~Mech~Carousel Gryphon~Divine Shield~Taunt~Corrupted~Uncollectible": CarouselGryphon_Corrupt,
+					"Darkmoon~Paladin~Minion~5~5~5~Demon~Lothraxion the Redeemed~Battlecry~Legendary": LothraxiontheRedeemed,
+					"Darkmoon~Paladin~Weapon~6~3~3~Hammer of the Naaru~Battlecry": HammeroftheNaaru,
+					"Darkmoon~Paladin~Minion~6~6~6~None~Holy Elemental~Taunt~Uncollectible": HolyElemental,
+					"Darkmoon~Paladin~Minion~8~7~5~None~High Exarch Yrel~Battlecry~Legendary": HighExarchYrel,
+					#Priest Cards
+					"Darkmoon~Priest~Spell~2~Insight": Insight,
+					"Darkmoon~Priest~Spell~2~Insight~Corrupted~Uncollectible": Insight_Corrupt,
+					"Darkmoon~Priest~Minion~3~4~3~None~Fairground Fool~Taunt": FairgroundFool,
+					"Darkmoon~Priest~Minion~3~4~7~None~Fairground Fool~Taunt~Corrupted~Uncollectible": FairgroundFool_Corrupt,
+					"Darkmoon~Priest~Minion~3~2~5~None~Nazmani Bloodweaver": NazmaniBloodweaver,
+					"Darkmoon~Priest~Spell~3~Palm Reading": PalmReading,
+					"Darkmoon~Priest~Spell~4~Auspicious Spirits": AuspiciousSpirits,
+					"Darkmoon~Priest~Spell~4~Auspicious Spirits~Corrupted~Uncollectible": AuspiciousSpirits_Corrupt,
+					"Darkmoon~Priest~Minion~4~4~4~None~The Nameless One~Battlecry~Legendary": TheNamelessOne,
+					"Darkmoon~Priest~Minion~5~3~3~None~Fortune Teller~Taunt~Battlecry": FortuneTeller,
+					"Darkmoon~Priest~Spell~8~Idol of Y'Shaarj": IdolofYShaarj,
+					"Darkmoon~Priest~Minion~8~8~8~None~G'huun the Blood God~Battlecry~Legendary": GhuuntheBloodGod,
+					"Darkmoon~Priest~Minion~9~8~8~Elemental~Blood of G'huun~Taunt": BloodofGhuun,
+					#Rogue Cards
+					"Darkmoon~Rogue~Minion~1~2~1~Pirate~Prize Plunderer~Combo": PrizePlunderer,
+					"Darkmoon~Rogue~Minion~2~3~2~None~Foxy Fraud~Battlecry": FoxyFraud,
+					"Darkmoon~Rogue~Spell~2~Shadow Clone~~Secret": ShadowClone,
+					"Darkmoon~Rogue~Minion~2~3~2~None~Sweet Tooth": SweetTooth,
+					"Darkmoon~Priest~Minion~2~5~2~None~Sweet Tooth~Stealth~Corrupted~Uncollectible": SweetTooth_Corrupt,
+					"Darkmoon~Rogue~Spell~2~Swindle": Swindle,
+					"Darkmoon~Rogue~Minion~2~3~2~None~Tenwu of the Red Smoke~Battlecry~Legendary": TenwuoftheRedSmoke,
+					"Darkmoon~Rogue~Spell~3~Cloak of Shadows": CloakofShadows,
+					"Darkmoon~Rogue~Minion~3~4~3~None~Ticket Master~Battlecry": TicketMaster,
+					"Darkmoon~Rogue~Spell~3~Tickets~Casts When Drawn~Uncollectible": Tickets,
+					"Darkmoon~Rogue~Minion~3~3~3~None~Plush Bear~Uncollectible": PlushBear,
+					"Darkmoon~Rogue~Spell~5~Malevolent Strike": MalevolentStrike,
+					"Darkmoon~Rogue~Minion~6~5~7~None~Grand Empress Shek'zara~Battlecry~Legendary": GrandEmpressShekzara,
+					#Shaman Cards
+					"Darkmoon~Shaman~Spell~1~Revolve": Revolve,
+					"Darkmoon~Shaman~Minion~2~2~2~Elemental~Cagematch Custodian~Battlecry": CagematchCustodian,
+					"Darkmoon~Shaman~Spell~2~Deathmatch Pavilion": DeathmatchPavilion,
+					"Darkmoon~Shaman~Minion~2~3~2~None~Pavilion Duelist~Uncollectible": PavilionDuelist,
+					"Darkmoon~Shaman~Minion~3~0~4~Totem~Grand Totem Eys'or~Legendary": GrandTotemEysor,
+					"Darkmoon~Shaman~Minion~3~3~4~Murloc~Magicfin": Magicfin,
+					"Darkmoon~Shaman~Minion~3~1~2~None~Pit Master~Battlecry": PitMaster,
+					"Darkmoon~Shaman~Minion~3~1~2~None~Pit Master~Battlecry~Corrupted~Uncollectible": PitMaster_Corrupt,
+					"Darkmoon~Shaman~Spell~3~Stormstrike": Stormstrike,
+					"Darkmoon~Shaman~Weapon~3~3~2~Whack-a-Gnoll Hammer": WhackaGnollHammer,
+					"Darkmoon~Shaman~Spell~4~Dunk Tank": DunkTank,
+					"Darkmoon~Shaman~Spell~4~Dunk Tank~Corrupted~Uncollectible": DunkTank_Corrupt,
+					"Darkmoon~Shaman~Minion~5~4~5~None~Inara Stormcrash~Legendary": InaraStormcrash,
+					#Warlock Cards
+					"Darkmoon~Warlock~Spell~1~Wicked Whispers": WickedWhispers,
+					"Darkmoon~Warlock~Minion~2~1~5~Demon~Midway Maniac~Taunt": MidwayManiac,
+					"Darkmoon~Warlock~Spell~3~Free Admission": FreeAdmission,
+					"Darkmoon~Warlock~Minion~3~3~4~Demon~Man'ari Mosher~Battlecry": ManariMosher,
+					"Darkmoon~Warlock~Spell~4~Cascading Disaster": CascadingDisaster,
+					"Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted~Uncollectible": CascadingDisaster_Corrupt,
+					"Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted2~Uncollectible": CascadingDisaster_Corrupt2,
+					"Darkmoon~Warlock~Minion~3~3~3~None~Revenant Pascal~Battlecry": RevenantPascal,
+					"Darkmoon~Warlock~Minion~4~4~3~Demon~Fire Breather~Battlecry": FireBreather,
+					"Darkmoon~Warlock~Spell~6~Deck of Chaos~Legendary": DeckofChaos,
+					"Darkmoon~Warlock~Minion~6~6~4~Demon~Ring Matron~Taunt~Deathrattle": RingMatron,
+					"Darkmoon~Warlock~Minion~2~3~2~Demon~Fiery Imp~Uncollectible": FieryImp,
+					"Darkmoon~Warlock~Minion~6~8~8~Demon~Tickatus~Battlecry~Legendary": Tickatus,
+					"Darkmoon~Warlock~Minion~6~8~8~Demon~Tickatus~Battlecry~Corrupted~Legendary~Uncollectible": Tickatus_Corrupt,
+					#Warrior Cards
+					"Darkmoon~Warrior~Spell~1~Stage Dive": StageDive,
+					"Darkmoon~Warrior~Spell~1~Stage Dive~Corrupted~Uncollectible": StageDive_Corrupt,
+					"Darkmoon~Warrior~Minion~2~1~3~Mech~Bumper Car~Rush~Deathrattle": BumperCar,
+					"Darkmoon~Warrior~Minion~2~1~4~None~E.T.C., God of Metal~Legendary": ETCGodofMetal,
+					"Darkmoon~Warrior~Spell~2~Minefield": Minefield,
+					"Darkmoon~Warrior~Weapon~2~1~3~Ringmaster's Baton": RingmastersBaton,
+					"Darkmoon~Warrior~Minion~2~3~2~Mech~Stage Hand~Battlecry": StageHand,
+					"Darkmoon~Warrior~Spell~3~Feat of Strength": FeatofStrength,
+					"Darkmoon~Warrior~Minion~4~2~5~Pirate~Sword Eater~Taunt~Battlecry": SwordEater,
+					"Darkmoon~Warrior~Weapon~3~3~2~Jawbreaker~Uncollectible": Jawbreaker,
+					"Darkmoon~Warrior~Minion~5~3~5~None~Ringmaster Whatley~Battlecry~Legendary": RingmasterWhatley,
+					"Darkmoon~Warrior~Minion~5~5~5~Dragon~Tent Thrasher~Rush": TentThrasher,
+					}

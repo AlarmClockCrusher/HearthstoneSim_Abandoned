@@ -46,7 +46,7 @@ def invokeGalakrond(Game, ID):
 		Class = primaryGalakrond.Class
 		if "Priest" in Class:
 			if Game.mode == 0:
-				if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheUnspeakable(Game, ID), linger=False)
+				if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheUnbreakable(Game, ID), linger=False)
 				if Game.guides:
 					minion = Game.guides.pop(0)
 				else:
@@ -2383,7 +2383,7 @@ class Trig_ManaGiant(TrigHand):
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.inHand and subject.ID == self.entity.ID and subject.identity not in self.entity.Game.Hand_Deck.startingDeckIdentities[self.entity.ID]
+		return self.entity.inHand and subject.ID == self.entity.ID and not subject.inOrigDeck
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.Game.Manas.calcMana_Single(self.entity)
@@ -2796,15 +2796,15 @@ class SummonCopyofaChosenMinion(Deathrattle_Minion):
 		return target == self.entity and self.chosenMinionType
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "Deathrattle: Summon a chosen minion %s triggers"%self.chosenMinionType.name)
-		#随从的identity的前两个是用于鉴别是否是卡片生成的，第三个用于区别这个随从有没有被返回过手牌。
-		self.entity.Game.summon(self.chosenMinionType(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		minion = self.entity
+		PRINT(minion.Game, "Deathrattle: Summon a chosen minion %s triggers"%self.chosenMinionType.name)
+		minion.Game.summon(self.chosenMinionType(minion.Game, minion.ID), minion.position+1, minion.ID)
 		
 	#巫毒娃娃的亡语结果被复制，还会杀死同一个被诅咒的随从。
-	def selfCopy(self, newMinion):
-		trigger = type(self)(newMinion)
-		trigger.chosenMinionType = self.chosenMinionType
-		return trigger
+	def selfCopy(self, recipient):
+		trig = type(self)(recipient)
+		trig.chosenMinionType = self.chosenMinionType
+		return trig
 		
 		
 class FateWeaver(Minion):
@@ -2960,8 +2960,8 @@ class GalakrondtheApocalypes_Priest(Galakrond_Hero):
 				minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 			else:
 				minions = curGame.minionsAlive(3-self.ID)
-				minions = npchoice(minions, min(2, len(minions), replace=False) if minions else ()
-				indices = tuple(minion.position for minion in minions)
+				minions = npchoice(minions, min(2, len(minions)), replace=False) if minions else ()
+				curGame.fixedGuides.append(tuple(minion.position for minion in minions))
 			for minion in minions: curGame.killMinion(self, minion)
 		return None
 		
@@ -2981,8 +2981,8 @@ class GalakrondAzerothsEnd_Priest(Galakrond_Hero):
 				minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 			else:
 				minions = curGame.minionsAlive(3-self.ID)
-				minions = npchoice(minions, min(4, len(minions), replace=False) if minions else ()
-				indices = tuple(minion.position for minion in minions)
+				minions = npchoice(minions, min(4, len(minions)), replace=False) if minions else ()
+				curGame.fixedGuides.append(tuple(minion.position for minion in minions))
 			for minion in minions: curGame.killMinion(self, minion)
 		PRINT(curGame, "Galakrond, Azeroth's End's battlecry equips a 5/2 Claw for player")
 		curGame.equipWeapon(DragonClaw(curGame, self.ID))
@@ -3187,12 +3187,8 @@ class Stowaway(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: If there are cards in your deck that didn't start there, draw 2 of them"
 	
 	def effectCanTrigger(self):
-		self.effectViable = False
-		for card in self.Game.Hand_Deck.decks[self.ID]:
-			if card.identity not in self.Game.Hand_Deck.startingDeckIdentities[self.ID]:
-				self.effectViable = True
-				break
-				
+		return any(not card.inOrigDeck for card in self.Game.Hand_Deck.decks[self.ID])
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		HD = curGame.Hand_Deck
@@ -3202,7 +3198,7 @@ class Stowaway(Minion):
 				if curGame.guides:
 					i = curGame.guides.pop(0)
 				else:
-					createdCards = [i for i, card in enumerate(HD.decks[self.ID]) if card.identity not in HD.startingDeckIdentities[self.ID]]
+					createdCards = [i for i, card in enumerate(HD.decks[self.ID]) if not card.inOrigDeck]
 					i = npchoice(createdCards) if createdCards else -1
 					curGame.fixedGuides.append(i)
 				if i > -1: HD.drawCard(self.ID, i)

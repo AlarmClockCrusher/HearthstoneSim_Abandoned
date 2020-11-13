@@ -1,14 +1,33 @@
 from CardTypes import *
 from Triggers_Auras import *
 
-from Basic import IllidariInitiate, Huffer, Leokk, Misha
-from Classic import YourNextSpellCosts2LessThisTurn
+from Basic import IllidariInitiate, Huffer, Leokk, Misha, SilverHandRecruit
+from Classic import YourNextSpellCosts2LessThisTurn, Bananas, Treant_Classic, Pyroblast
 
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
+from numpy import inf as npinf
 from collections import Counter as cnt
 import copy
 
+def extractfrom(target, listObj):
+	try: return listObj.pop(listObj.index(target))
+	except: return None
+	
+def fixedList(listObj):
+	return listObj[0:len(listObj)]
+	
+def PRINT(game, string, *args):
+	if game.GUI:
+		if not game.mode: game.GUI.printInfo(string)
+	elif not game.mode: print("game's guide mode is 0\n", string)
+
+def classforDiscover(initiator):
+	Class = initiator.Game.heroes[initiator.ID].Class
+	if Class != "Neutral": return Class #如果发现的发起者的职业不是中立，则返回那个职业
+	elif initiator.Class != "Neutral": return initiator.Class #如果玩家职业是中立，但卡牌职业不是中立，则发现以那个卡牌的职业进行
+	else: return npchoice(initiator.Game.Classes) #如果玩家职业和卡牌职业都是中立，则随机选取一个职业进行发现。
+	
 """Madness at the Darkmoon Faire"""
 class Trig_Corrupt(TrigHand):
 	def __init__(self, entity, corruptedType):
@@ -21,32 +40,49 @@ class Trig_Corrupt(TrigHand):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		card = self.entity
 		newCard = self.corruptedType(card.Game, card.ID)
-		#Buff and mana effects, etc, will be preserved
-		#Buff to cards in hand will always be permanent or temporary, not from Auras
-		if newCard == "Minion":
-			#Temporary attack changes on minions are NOT included in attack_Enchant
-			attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_Enchant - card.health_0
-			newCard.buffDebuff(attBuff, healthBuff)
-			for attGain, attRevertTime in card.tempAttChanges:
-				newCard.buffDebuff(attGain, 0, attRevertTime)
-		elif newCard == "Weapon": #Only applicable to Felsteel Executioner
-			attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_Enchant - card.health_0
-			#Assume temporary attack changes applied on a minion won't carry over to the weapon
-			newCard.gainStat(attBuff, healthBuff)
-		#Find keywords the new card doesn't have
-		keyWords = newCard.keyWords.keys()
-		for key, value in newCard.keyWords.items():
-			if value < 1 and card.keyWords[key] > 0: newCard.keyWords[key] = 1
-		for key, value in newCard.marks.items():
-			if value < 1 and card.marks[key] > 0: newCard.marks[key] = 1
-		newCard.trigsHand += [trig for trig in card.trigsHand if not isinstance(trig, Trig_Corrupt)]
-		#There are no Corrupted cards with predefined Deathrattles
-		newCard.deathrattles = [type(deathrattle)(newCard) for deathrattle in card.deathrattles]
-		#Mana modifications
-		newCard.manaMods = [manaMod.selfCopy(newCard) for manaMod in card.manaMods]
-		
+		try:
+			#Buff and mana effects, etc, will be preserved
+			#Buff to cards in hand will always be permanent or temporary, not from Auras
+			if newCard.type == "Minion":
+				#Temporary attack changes on minions are NOT included in attack_Enchant
+				attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_max - card.health_0
+				newCard.buffDebuff(attBuff, healthBuff)
+				for attGain, attRevertTime in card.tempAttChanges:
+					newCard.buffDebuff(attGain, 0, attRevertTime)
+				#There are no Corrupted cards with predefined Deathrattles, and given Deathrattles are very simple
+				newCard.deathrattles = [type(deathrattle)(newCard) for deathrattle in card.deathrattles]
+			elif newCard.type == "Weapon": #Only applicable to Felsteel Executioner
+				attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_max - card.health_0
+				#Assume temporary attack changes applied on a minion won't carry over to the weapon
+				newCard.gainStat(attBuff, healthBuff)
+			#Keep the keywords and marks consistent
+			for key, value in newCard.keyWords.items(): #Find keywords the new card doesn't have
+				if value < 1 and card.keyWords[key] > 0: newCard.keyWords[key] = 1
+			for key, value in newCard.marks.items():
+				try:
+					if value < 1 and card.marks[key] > 0: newCard.marks[key] = 1
+				except: pass
+			#Inhand triggers and mana modifications
+			newCard.trigsHand += [trig for trig in card.trigsHand if not isinstance(trig, Trig_Corrupt)]
+			newCard.manaMods = [manaMod.selfCopy(newCard) for manaMod in card.manaMods]
+		except Exception as e:
+			print(e, card, newCard)
+		print("Corruption of ", card, newCard)
 		card.Game.Hand_Deck.replaceCardinHand(card, newCard)
 		
+	def selfCopy(self, recipient):
+		return type(self)(recipient)
+		
+	def createCopy(self, game):
+		if self not in game.copiedObjs: #这个扳机没有被复制过
+			entityCopy = self.entity.createCopy(game)
+			trigCopy = type(self)(entityCopy, self.corruptedType)
+			game.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return game.copiedObjs[self]
+			
+			
 """Mana 1 cards"""
 class SafetyInspector(Minion):
 	Class, race, name = "Neutral", "", "Safety Inspector"
@@ -62,22 +98,14 @@ class SafetyInspector(Minion):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				cards, lowestCost = [], np.inf
+				cards, lowestCost = [], npinf
 				for i, card in enumerate(ownHand):
-					if card.mana < lowestCost:
-						cards, lowestCost = [i], card.mana
-					elif card.mana == lowestCost:
-						cards.append(i)
+					if card.mana < lowestCost: cards, lowestCost = [i], card.mana
+					elif card.mana == lowestCost: cards.append(i)
 				i = npchoice(cards) if cards else -1
 				curGame.fixedGuides.append(i)
-			if i > -1:
-				card = ownHand[i]
-				for trig in card.trigsBoard + card.trigsHand + card.trigsDeck:
-					trig.disconnect()
-				inOrigDeck = card.inOrigDeck
-				card.__init__(curGame, self.ID)
-				card.inOrigDeck = inOrigDeck
-				curGame.Hand_Deck.shuffleCardintoDeck(card, self,ID)
+			print("SafetyInspector index", i)
+			if i > -1: curGame.Hand_Deck.shufflefromHand2Deck(i, ID=self.ID, initiatorID=self.ID, all=False)
 		#Assume that player draws even if no card is shuffled
 		curGame.Hand_Deck.drawCard(self.ID)
 		return None
@@ -113,19 +141,19 @@ class HorrendousGrowth(Minion):
 	requireTarget, keyWord, description = False, "", "Corrupt: Gain +1/+1. Can be Corrupted endlessly"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trig_Corrupt(self, HorrendousGrowth_Corrupted_3)] #只有在手牌中才会升级
+		self.trigsHand = [Trig_Corrupt(self, HorrendousGrowthCorrupt_Mutable_3)] #只有在手牌中才会升级
 		
-class HorrendousGrowth_Corrupted_Mutable_3(Minion):
+class HorrendousGrowthCorrupt_Mutable_3(Minion):
 	Class, race, name = "Neutral", "", "Horrendous Growth"
-	mana, attack, health = 2, 2, 2
-	index = "Darkmoon~Neutral~Minion~2~2~2~None~Horrendous Growth~Corrupted~Uncollectible"
+	mana, attack, health = 2, 3, 3
+	index = "Darkmoon~Neutral~Minion~2~3~3~None~Horrendous Growth~Corrupted~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Corrupt: Gain +1/+1. Can be Corrupted endlessly"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsHand = [Trig_EndlessCorrupt(self)] #只有在手牌中才会升级
 		
 class Trig_EndlessCorrupt(TrigHand):
-	def __init__(self, entity, corruptedType):
+	def __init__(self, entity):
 		self.blank_init(entity, ["ManaPaid"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
@@ -133,18 +161,19 @@ class Trig_EndlessCorrupt(TrigHand):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		card = self.entity
-		stat = int(type(card).__name__.split('_')[2])
+		stat = int(type(card).__name__.split('_')[-1])
+		print("Creating a %d Horrendous Growth"%stat)
 		newIndex = "Darkmoon~Neutral~2~%d~%d~Minion~None~Horrendous Growth~Corrupted~Uncollectible"%(stat, stat)
-		subclass = type("HorrendousGrowth_Corrupted_Mutable_"+str(stat), (HorrendousGrowth_Corrupted_Mutable_3, ),
+		subclass = type("HorrendousGrowthCorrupt_Mutable_"+str(stat), (HorrendousGrowthCorrupt_Mutable_3, ),
 						{"attack": stat, "health": stat, "index": newIndex}
 						)
-		self.Game.cardPool[newIndex] = subclass
+		card.Game.cardPool[newIndex] = subclass
 		#The buffs on the cards carry over
 		newCard = subclass(card.Game, card.ID)
 		#Buff and mana effects, etc, will be preserved
 		#Buff to cards in hand will always be permanent or temporary, not from Auras
 		#Temporary attack changes on minions are NOT included in attack_Enchant
-		attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_Enchant - card.health_0
+		attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_max - card.health_0
 		newCard.buffDebuff(attBuff, healthBuff)
 		for attGain, attRevertTime in card.tempAttChanges:
 			newCard.buffDebuff(attGain, 0, attRevertTime)
@@ -152,7 +181,7 @@ class Trig_EndlessCorrupt(TrigHand):
 		keyWords = newCard.keyWords.keys()
 		#Since the Horrendous Growth has no predefined keywords, it can simply copy the predecessors
 		newCard.keyWords, newCard.marks = copy.deepcopy(card.keyWords), copy.deepcopy(card.marks)
-		newCard.trigsHand += [trig for trig in card.trigsHand if not isinstance(trig, Trig_Corrupt)]
+		newCard.trigsHand += [trig for trig in card.trigsHand if not isinstance(trig, Trig_EndlessCorrupt)]
 		#There are no Corrupted cards with predefined Deathrattles
 		newCard.deathrattles = [type(deathrattle)(newCard) for deathrattle in card.deathrattles]
 		#Mana modifications
@@ -163,14 +192,14 @@ class Trig_EndlessCorrupt(TrigHand):
 		
 class ParadeLeader(Minion):
 	Class, race, name = "Neutral", "", "Parade Leader"
-	mana, attack, health = 2, 2, 2
-	index = "Darkmoon~Neutral~Minion~2~2~2~None~Parade Leader"
+	mana, attack, health = 2, 2, 3
+	index = "Darkmoon~Neutral~Minion~2~2~3~None~Parade Leader"
 	requireTarget, keyWord, description = False, "", "After you summon a Rush minion, give it +2 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsHand = [Trig_ParadeLeader(self)] #只有在手牌中才会升级
 		
-class Trig_ParadeLeader:
+class Trig_ParadeLeader(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenSummoned"])
 		
@@ -242,27 +271,9 @@ class BananaVendor(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Banana Vendor's battlecry adds 2 Bananas to each player's hand")
-		self.Game.Hand_Deck.addCardtoHand([Bananas_Darkmoon, Bananas_Darkmoon], self.ID, "type")
-		self.Game.Hand_Deck.addCardtoHand([Bananas_Darkmoon, Bananas_Darkmoon], 3-self.ID, "type")
+		self.Game.Hand_Deck.addCardtoHand([Bananas, Bananas], self.ID, "type")
+		self.Game.Hand_Deck.addCardtoHand([Bananas, Bananas], 3-self.ID, "type")
 		return None
-		
-class Bananas_Darkmoon(Spell):
-	Class, name = "Neutral", "Bananas"
-	requireTarget, mana = True, 1
-	index = "Darkmoon~Neutral~Spell~1~Bananas~Uncollectible"
-	description = "Give a minion +1/+1"
-	def available(self):
-		return self.selectableMinionExists()
-		
-	def targetCorrect(self, target, choice=0):
-		return target.type == "Minion" and target.onBoard
-		
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if target:
-			PRINT(self.Game, "Bananas is cast and gives minion %s +1/+1."%target.name)
-			target.buffDebuff(1, 1)
-		return target
-		
 		
 class DarkmoonDirigible(Minion):
 	Class, race, name = "Neutral", "Mech", "Darkmoon Dirigible"
@@ -271,9 +282,9 @@ class DarkmoonDirigible(Minion):
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield. Corrupt: Gain Rush"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trig_Corrupt(self, DarkmoonDirigible_Corrupted)] #只有在手牌中才会升级
+		self.trigsHand = [Trig_Corrupt(self, DarkmoonDirigible_Corrupt)] #只有在手牌中才会升级
 		
-class DarkmoonDirigible_Corrupted(Minion):
+class DarkmoonDirigible_Corrupt(Minion):
 	Class, race, name = "Paladin", "Mech", "Darkmoon Dirigible"
 	mana, attack, health = 3, 3, 2
 	index = "Darkmoon~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield~Rush~Corrupted~Uncollectible"
@@ -287,10 +298,10 @@ class DarkmoonStatue(Minion):
 	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack. Corrupt: This gains +4 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trig_Corrupt(self, DarkmoonStatue_Corrupted)] #只有在手牌中才会升级
+		self.trigsHand = [Trig_Corrupt(self, DarkmoonStatue_Corrupt)] #只有在手牌中才会升级
 		self.auras["Buff Aura"] = BuffAura_Dealer_All(self, 1, 0)
 		
-class DarkmoonStatue_Corrupted(Minion):
+class DarkmoonStatue_Corrupt(Minion):
 	Class, race, name = "Paladin", "", "Darkmoon Statue"
 	mana, attack, health = 3, 4, 5
 	index = "Darkmoon~Neutral~Minion~3~4~5~None~Darkmoon Statue~Corrupted~Uncollectible"
@@ -325,7 +336,7 @@ class InconspicuousRider(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Cast a Secret from your deck"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(curGame, "Inconspicuous Rider's casts a Secret from player's deck")
+		PRINT(self.Game, "Inconspicuous Rider's casts a Secret from player's deck")
 		self.Game.Secrets.deploySecretsfromDeck(self.ID)
 		return None
 		
@@ -367,7 +378,7 @@ class CircusMedic(Minion):
 	requireTarget, keyWord, description = True, "", "Battlecry: Restore 4 Health. Corrupt: Deal 4 damage instead"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trig_Corrupt(self, CircusMedic_Corrupted)] #只有在手牌中才会升级
+		self.trigsHand = [Trig_Corrupt(self, CircusMedic_Corrupt)] #只有在手牌中才会升级
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -376,7 +387,7 @@ class CircusMedic(Minion):
 			self.restoresHealth(target, heal)
 		return target
 		
-class CircusMedic_Corrupted(Minion):
+class CircusMedic_Corrupt(Minion):
 	Class, race, name = "Neutral", "", "Circus Medic"
 	mana, attack, health = 4, 3, 4
 	index = "Darkmoon~Neutral~Minion~4~3~4~None~Circus Medic~Battlecry~Corrupted~Uncollectible"
@@ -418,13 +429,13 @@ class DerailedCoaster(Minion):
 		curGame = self.Game
 		PRINT(curGame, "Derailed Coaster's battlecry summons a 1/1 Rider with Rush for each minion in player's hand")
 		num = sum(card.type == "Minion" for card in curGame.Hand_Deck.hands[self.ID])
-		if num: curGame.summon([Rider(curGame, self.ID) for i in range(num)], (self.position, "totheRight"), self.ID)
+		if num: curGame.summon([DarkmoonRider(curGame, self.ID) for i in range(num)], (self.position, "totheRight"), self.ID)
 		return None
 		
-class (Minion):
-	Class, race, name = "Neutral", "", "Rider"
+class DarkmoonRider(Minion):
+	Class, race, name = "Neutral", "", "Darkmoon Rider"
 	mana, attack, health = 1, 1, 1
-	index = "Darkmoon~Neutral~Minion~1~1~1~None~Rider~Rush~Uncollectible"
+	index = "Darkmoon~Neutral~Minion~1~1~1~None~Darkmoon Rider~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	
 #Assume corrupted card don't inherit any buff/debuff
@@ -436,9 +447,9 @@ class FleethoofPearltusk(Minion):
 	requireTarget, keyWord, description = False, "Rush", "Rush. Corrupt: Gain +4/+4"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trig_Corrupt(self, FleethoofPearltusk_Corrupted)] #只有在手牌中才会升级
+		self.trigsHand = [Trig_Corrupt(self, FleethoofPearltusk_Corrupt)] #只有在手牌中才会升级
 		
-class FleethoofPearltusk_Corrupted(Minion):
+class FleethoofPearltusk_Corrupt(Minion):
 	Class, race, name = "Neutral", "Beast", "Fleethoof Pearltusk"
 	mana, attack, health = 5, 8, 8
 	index = "Darkmoon~Neutral~Minion~5~8~8~Beast~Fleethoof Pearltusk~Rush~Corrupted~Uncollectible"
@@ -448,13 +459,13 @@ class FleethoofPearltusk_Corrupted(Minion):
 class OptimisticOgre(Minion):
 	Class, race, name = "Neutral", "", "Optimistic Ogre"
 	mana, attack, health = 5, 6, 7
-	index = "Darkmoon~Neutral~5~6~7~Minion~None~Optimistic Ogre"
+	index = "Darkmoon~Neutral~Minion~5~6~7~None~Optimistic Ogre"
 	requireTarget, keyWord, description = False, "", "50% chance to attack the correct enemy"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggersonBoard = [Trigger_OptimisticOgre(self)]
+		self.trigsBoard = [Trig_OptimisticOgre(self)]
 		
-class Trigger_OptimisticOgre(TriggeronBoard):
+class Trig_OptimisticOgre(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttacksMinion", "MinionAttacksHero", "BattleFinished"])
 		self.trigedThisBattle = False
@@ -477,7 +488,7 @@ class Trigger_OptimisticOgre(TriggeronBoard):
 					char, redirect = None, 0
 					if curGame.guides:
 						i, where, redirect = curGame.guides.pop(0)
-						if char = curGame.find(i, where)
+						if where: char = curGame.find(i, where)
 					else:
 						otherEnemies = curGame.charsAlive(side, target[1])
 						if otherEnemies:
@@ -487,6 +498,7 @@ class Trigger_OptimisticOgre(TriggeronBoard):
 							curGame.fixedGuides.append((0, '', 0))
 					if char and redirect: #Redirect is 0/1, indicating whether the attack will redirect or not
 						#玩家命令的一次攻击中只能有一次触发机会。只要满足进入50%判定的条件，即使没有最终生效，也不能再次触发。
+						PRINT(curGame, "Optimistic Ogre redirects its attack onto %s"%char.name)
 						target[1], self.trigedThisBattle = char, True
 						
 """Mana 6 cards"""
@@ -522,6 +534,79 @@ class SilasDarkmoon(Minion):
 	index = "Darkmoon~Neutral~Minion~7~4~4~None~Silas Darkmoon~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Choose a direction to rotate all minions"
 	
+	def prepMinionstoSwap(self, minions):
+		for minion in minions:
+			if minion:
+				minion.disappears(deathrattlesStayArmed=False)
+				self.Game.minions[minion.ID].remove(minion)
+				minion.ID = 3 - minion.ID
+				
+	def swappedMinionsAppear(self, minions):
+		self.Game.rearrangePosition()
+		#假设归还或者是控制对方随从的时候会清空所有暂时控制的标志，并取消回合结束归还随从的扳机
+		for minion in minions:
+			if minion:
+				minion.appears()
+				minion.status["Borrowed"] = 0
+				for trig in reversed(minion.trigsBoard):
+					if isinstance(trig, Trig_Borrow):
+						trig.disconnect()
+						minion.trigsBoard.remove(trig)
+				minion.afterSwitchSide(activity="Permanent")
+				
+	def rotateAllMinions(self, perspectiveID=1, giveOwnLeft=1):
+		miniontoGive, miniontoTake = None, None
+		ownMinions = self.Game.minionsonBoard(perspectiveID)
+		enemyMinions = self.Game.minionsonBoard(3-perspectiveID)
+		if giveOwnLeft: ownIndex, enemyIndex = 0, -1  #Give your leftmost and take enemy's rightmost
+		else: ownIndex, enemyIndex = -1, 0 #Give your rightmost and take enemy's leftmost
+		if ownMinions: miniontoGive = self.Game.minions[perspectiveID][ownMinions[ownIndex].position]
+		if enemyMinions: miniontoTake = self.Game.minions[3-perspectiveID][enemyMinions[enemyIndex].position]
+		
+		self.prepMinionstoSwap([miniontoGive, miniontoTake])
+		if giveOwnLeft: #Add minions to your rightmost and enemy's leftmost
+			self.Game.minions[perspectiveID].append(miniontoTake)
+			self.Game.minions[3-perspectiveID].insert(0, miniontoGive)
+		else: #Add minions to your leftmost and enemy's rightmost
+			self.Game.minions[perspectiveID].insert(0, miniontoTake)
+			self.Game.minions[3-perspectiveID].append(miniontoGive)
+		self.swappedMinionsAppear([miniontoGive, miniontoTake])	
+		
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+		curGame = self.Game
+		if self.ID == curGame.turn:
+			if curGame.mode == 0:
+				if curGame.guides:
+					PRINT(curGame, "Silas Darkmoon's battlecry rotates the minions")
+					self.rotateAllMinions(self.ID, curGame.guides.pop(0))
+				else:
+					if "byOthers" in comment:
+						giveOwnLeft = nprandint(2)
+						PRINT(curGame, "Silas Darkmoon's battlecry randomly rotates the minions")
+						curGame.fixedGuides.append(giveOwnLeft)
+						self.rotateAllMinions(self.ID, giveOwnLeft)
+					else:
+						PRINT(curGame, "Silas Darkmoon's battlecry lets player choose a direction to rotate the minions")
+						curGame.options = [RotateThisWay(curGame, self.ID), RotateThatWay(curGame, self.ID)]
+						curGame.Discover.startDiscover(self)
+		return None
+	#RotateThisWay give your leftmost minion
+	def discoverDecided(self, option, info):
+		giveOwnLeft = 1 if isinstance(option, RotateThisWay) else 0
+		self.Game.fixedGuides.append(giveOwnLeft)
+		self.rotateAllMinions(self.ID, giveOwnLeft)
+		
+class RotateThisWay:
+	def __init__(self, firstCost, secondCost):
+		self.name = "Rotate This Way"
+		self.description = "Give your LEFTMOST minion"
+		
+class RotateThatWay:
+	def __init__(self, firstCost, secondCost):
+		self.name = "Rotate That Way"
+		self.description = "Give your RIGHTMOST minion"
+		
+		
 class Strongman(Minion):
 	Class, race, name = "Neutral", "", "Strongman"
 	mana, attack, health = 7, 6, 6
@@ -580,7 +665,7 @@ class Trig_CThun:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.temp = False
-		self.piece = []
+		self.pieces = []
 		
 	def connect(self):
 		try: self.Game.trigsBoard[self.ID]["CThunPiece"].append(self)
@@ -591,7 +676,7 @@ class Trig_CThun:
 		except: pass
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return subject.ID == self.ID and subject == self.spellDiscovered
+		return subject.ID == self.ID
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):
@@ -625,10 +710,10 @@ class BodyofCThun(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Body of C'Thun summons a 6/6 Body of C'Thun")
-		self.Game.summon(BodyofCThun(self.Game, self.ID), -1, self.ID)
+		self.Game.summon(BodyofCThun_Minion(self.Game, self.ID), -1, self.ID)
 		#Assume the spell effect will increase the counter
 		if "CThunPiece" not in self.Game.trigsBoard[self.ID]:
-			Trig_CThun.connect()
+			Trig_CThun(self.Game, self.ID).connect()
 		self.Game.sendSignal("CThunPiece", self.ID, None, None, 1, "")
 		return None
 		
@@ -664,7 +749,7 @@ class EyeofCThun(Spell):
 					self.dealsDamage(char, 1)
 				else: break
 		if "CThunPiece" not in self.Game.trigsBoard[self.ID]:
-			Trig_CThun.connect()
+			Trig_CThun(self.Game, self.ID).connect()
 		self.Game.sendSignal("CThunPiece", self.ID, None, None, 2, "")
 		return None
 		
@@ -679,36 +764,48 @@ class HeartofCThun(Spell):
 		PRINT(self.Game, "Heart of C'Thun deals %d damage to all minions."%damage)
 		self.dealsAOE(targets, [damage] * len(targets))
 		if "CThunPiece" not in self.Game.trigsBoard[self.ID]:
-			Trig_CThun.connect()
+			Trig_CThun(self.Game, self.ID).connect()
 		self.Game.sendSignal("CThunPiece", self.ID, None, None, 3, "")
 		return None
 		
 class MawofCThun(Spell):
 	Class, name = "Neutral", "Maw of C'Thun"
-	requireTarget, mana = False, 5
+	requireTarget, mana = True, 5
 	index = "Darkmoon~Neutral~Spell~5~Maw of C'Thun~Uncollectible"
 	description = "Destroy a minion"
+	def available(self):
+		return self.selectableMinionExists()
+		
+	def targetCorrect(self, target, choice=0):
+		return target.type == "Minion" and target.onBoard
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			PRINT(self.Game, "Maw of C'Thun destroys minion %s"%target.name)
 			self.Game.killMinion(self, target)
 		#Assume the counter still works even if there is no target designated
 		if "CThunPiece" not in self.Game.trigsBoard[self.ID]:
-			Trig_CThun.connect()
+			Trig_CThun(self.Game, self.ID).connect()
 		self.Game.sendSignal("CThunPiece", self.ID, None, None, 4, "")
 		return None
 		
+#https://www.iyingdi.com/web/article/search/108538
+#克苏恩不会出现在起手手牌中，只能在之后抽到碎片
+#不在衍生池中，不能被随机发生和召唤等
+#碎片是可以在第一次抽牌中抽到的，计入“开始时不在牌库中的牌”
+#带克苏恩会影响巴库的触发，不影响狼王
+#四张不同的碎片被打出后才会触发洗入克苏恩的效果，可以被法术反制
 class CThuntheShattered(Minion):
 	Class, race, name = "Neutral", "", "C'Thun, the Shattered"
 	mana, attack, health = 10, 6, 6
 	index = "Darkmoon~Neutral~Minion~10~6~6~None~C'Thun, the Shattered~Battlecry~Start of Game~Legendary"
 	requireTarget, keyWord, description = False, "", "Start of Game: Break into pieces. Battlecry: Deal 30 damage randomly split among all enemies"
-	
+	#WON't show up in the starting hand
 	def startofGame(self):
 		#Remove the card from deck. Assume the final card WON't count as deck original card 
 		curGame, ID = self.Game, self.ID
 		curGame.Hand_Deck.extractfromDeck(self, ID=0, all=False, enemyCanSee=True)
-		curGame.Hand_Deck.shuffleCardintoDeck([BodyofCThun(curGame, ID), EyeofCThun(curGame, ID), HeartofCThun(curGame ID), MawofCThun(curGame, ID)], ID)
+		curGame.Hand_Deck.shuffleCardintoDeck([BodyofCThun(curGame, ID), EyeofCThun(curGame, ID), HeartofCThun(curGame, ID), MawofCThun(curGame, ID)], ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		side, curGame = 3-self.ID, self.Game
@@ -747,7 +844,7 @@ class NZothGodoftheDeep(Minion):
 	mana, attack, health = 10, 5, 7
 	index = "Darkmoon~Neutral~Minion~10~5~7~None~N'Zoth, God of the Deep~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Resurrect a friendly minion of each minion type"
-	#The mana effect should be carried by each card, since card copied to opponent should also cost (0).
+	#A single Amalgam minion won't be resurrected multiple times
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame, ID = self.Game, self.ID
 		if curGame.mode == 0:
@@ -755,72 +852,166 @@ class NZothGodoftheDeep(Minion):
 				minions = curGame.guides.pop(0)
 			else: #First, categorize. Second, from each type, select one.
 				minions, pool = [], curGame.Counters.minionsDiedThisGame[ID]
-				types = {"Beast": [], "Pirate": [], "Elemental": [], "Mech": [], "Dragon": [], "Totem": [], "Demon": [], "Murloc": []}
-				for minion in pool:
-					race = minion.index.split('~')[6]
-					if race != "None": #Has single race
-						if len(race) < 10: types[race].append(minion.index)
-						else:
-							for s in race.split(','): types[s].append(minion.index)
-				for race in types.keys():
-					minions += npchoice(cards, min(1, len(types[race])), replace=False)
-				minions = tuple([curGame.cardPool[index] for index in cards])
-				curGame.fixedGuides.append(cards) #Can be empty, and the empty tuple will simply add nothing to hand
+				types = {"Beast": [], "Pirate": [], "Elemental": [], "Mech": [], "Dragon": [], "Totem": [], "Demon": [], "Murloc": [], "All": []}
+				#假设机制如下 ，在依次决定几个种族召唤随从，融合怪的随从池和单一种族的随从池合并计算随机。这个种族下如果没有召唤出一个融合怪，则它可以继续等待，如果召唤出来了，则将其移出随从池
+				for index in pool:
+					race = index.split('~')[6]
+					if race != "None": types[race if len(race) < 10 else "All"].append(index)
+				for race in ["Elemental", "Mech", "Demon", "Murloc", "Dragon", "Beast", "Pirate", "Totem"]: #假设种族顺序是与融合怪的牌面描述 一致的
+					a, b = len(types[race]), len(types["All"])
+					if a or b:
+						p1 = a / (a + b)
+						isAmalgam = npchoice([0, 1], p=[p1, 1-p1])
+						index = types["All"].pop(nprandint(b)) if isAmalgam else types[race][nprandint(a)]
+						minions.append(curGame.cardPool[index])
+				curGame.fixedGuides.append(tuple(minions)) #Can be empty, and the empty tuple will simply add nothing to hand
 			PRINT(curGame, "N'Zoth, God of the Deep's battlecry adds a copy of each corrupted card player played this game. And they cost (0) this turn")
-			if cards:
-				cards = [card(curGame, ID) for card in cards]
-				curGame.Hand_Deck.addCardtoHand(cards, ID)
-				for card in cards:
-					Cost0ThisTurn(card).applies()
+			if minions: curGame.summon([minion(curGame, ID) for minion in minions], (self.position, "totheRight"), ID)
 		return None
 		
-class CurseofFlesh(Spell):
-	Class, name = "Neutral", "Curse of Flesh"
-	requireTarget, mana = False, 0
-	index = "Darkmoon~Neutral~Spell~0~Curse of Flesh~Uncollectible"
-	description = "Fill the board with random minions, then give your Rush"
-	
-class DevouringHunger(Spell):
-	Class, name = "Neutral", "Devouring Hunger"
-	requireTarget, mana = False, 0
-	index = "Darkmoon~Neutral~Spell~0~Devouring Hunger~Uncollectible"
-	description = "Destroy all other minions. Gain their Attack and Health"
-	
-class HandofFate(Spell):
-	Class, name = "Neutral", "Hand of Fate"
-	requireTarget, mana = False, 0
-	index = "Darkmoon~Neutral~Spell~0~Hand of Fate~Uncollectible"
-	description = "Fill your hand with random spells. They cost (0) this turn"
-	
-class MindflayerGoggles(Spell):
-	Class, name = "Neutral", "Mindflayer Goggles"
-	requireTarget, mana = False, 0
-	index = "Darkmoon~Neutral~Spell~0~Mindflayer Goggles~Uncollectible"
-	description = "Take control of three random enemy minions"
-	
-class Mysterybox(Spell):
-	Class, name = "Neutral", "Mysterybox"
-	requireTarget, mana = False, 0
-	index = "Darkmoon~Neutral~Spell~0~Mysterybox~Uncollectible"
-	description = "Cast a random spell for each spell you've cast this game(targets chosen randomly)"
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(curGame, "Rod of Roasting casts 'Pyroblast' randomly until a player dies")
-		while True:
-			minions = curGame.minionsAlive(1) + curGame.minionsAlive(2)
-			heroes = [hero for hero in curGame.heroes.values() if hero.health > 0 and not hero.dead]
-			#Stop if not both players are alive, or (players are alive but there are no living minions and players are immune)
-			#In principle, if both players have Immune or Blur effect, this shouldn't go into an infinite loop. But Blur is rare
-			if len(heroes) < 2 or (not minions and curGame.status[1]["Immune"] and curGame.status[2]["Immune"]):
-				break
-			Pyroblast(curGame, self.ID).cast()
+		
+class CurseofFlesh:
+	poolIdentifier = "Minions to Summon"
+	@classmethod
+	def generatePool(cls, Game):
+		minions = []
+		for key, value in Game.MinionsofCost.items(): #value is still a dict: {index: type}
+			minions += list(value.values())
+		try: minions.remove(YoggSaronMasterofFate)
+		except: pass
+		return "Minions to Summon", minions
+		
+	def __init__(self, Game, ID, yogg):
+		self.Game, self.ID = Game, ID
+		self.name = "Curse of Flesh"
+		self.description = "Fill the board with random minions, then give yours Rush"
+		self.yogg = yogg
+		
+	def cast(self, target=None, comment="", preferedTarget=None):
+		curGame = self.Game
+		PRINT(self.Game, "Curse of Flesh fills the board with random minions, then gives player's summon minions Rush")
+		if curGame.mode == 0:
+			if curGame.guides:
+				minions1, minions2 = curGame.guides.pop(0)
+			else:
+				minions1 = npchoice(curGame.RNGPools["Minions to Summon"], curGame.space(1), replace=True)
+				minions2 = npchoice(curGame.RNGPools["Minions to Summon"], curGame.space(2), replace=True)
+				curGame.fixedGuides.append((tuple(minions1), tuple(minions2)))
+			if self.ID == 1: ownMinions, enemyMinions = [minions1, minions2]
+			else: ownMinions, enemyMinions = [minions2, minions1]
+			if ownMinions:
+				ownMinions = [minion(self.Game, self.ID) for minion in ownMinions]
+				self.Game.summon(ownMinions, (self.yogg.position, "totheRight"), self.ID)
+			if enemyMinions:
+				enemyMinions = [minion(self.Game, 3-self.ID) for minion in enemyMinions]
+				self.Game.summon(enemyMinions, (-1, "totheRightEnd"), self.ID)
+			for minion in ownMinions: #Give the minion you summon Rush
+				if minion.onBoard: minion.getsKeyword("Rush")
+				
+class DevouringHunger:
+	def __init__(self, Game, ID, yogg):
+		self.Game, self.ID = Game, ID
+		self.name = "Devouring Hunger"
+		self.description = "Destroy all other minions. Gain their Attack and Health"
+		self.yogg = yogg
+		
+	def cast(self, target=None, comment="", preferedTarget=None):
+		PRINT(self.Game, "Devouring Hunter destroys all other minions and give the minion their Attack and Health")
+		attGain, healthGain = 0, 0
+		for minion in self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2):
+			if minion != self.yogg:
+				attGain += max(0, minion.attack)
+				healthGain += max(0, minion.health)
+				self.Game.killMinion(self.yogg, minion)
+		if self.yogg.onBoard or self.yogg.inHand: self.yogg.buffDebuff(attGain, healthGain)
+		
+class HandofFate:
+	poolIdentifier = "Spells"
+	@classmethod
+	def generatePool(cls, Game):
+		spells = []
+		for Class in Game.Classes:
+			spells += [value for key, value in Game.ClassCards[Class].items() if "~Spell~" in key]
+		return "Spells", spells
+		
+	def __init__(self, Game, ID, yogg):
+		self.Game, self.ID = Game, ID
+		self.name = "Hand of Fate"
+		self.description = "Fill your hand with random spells. They cost (0) this turn"
+		self.yogg = yogg
+		
+	def cast(self, target=None, comment="", preferedTarget=None):
+		curGame = self.Game
+		PRINT(self.Game, "Hand of Fate fills player's hand with random spells. They cost (0) this turn")
+		if curGame.mode == 0:
+			if curGame.guides:
+				spells = curGame.guides.pop(0)
+			else:
+				spells = npchoice(curGame.RNGPools["Spells"], curGame.Hand_Deck.spaceinHand(self.ID), replace=True)
+				curGame.fixedGuides.append(spells)
+			spells = [spell(curGame, self.ID) for spell in spells]
+			curGame.Hand_Deck.addCardtoHand(spells, self.ID)
+			for spell in spells:
+				if spell.inHand: Cost0ThisTurn(spell).applies()
+				
+class MindflayerGoggles:
+	def __init__(self, Game, ID, yogg):
+		self.Game, self.ID = Game, ID
+		self.name = "Mindflayer Goggles"
+		self.description = "Take control of three random enemy minions"
+		self.yogg = yogg
+		
+	def cast(self, target=None, comment="", preferedTarget=None):
+		curGame, side = self.Game, 3 - self.ID
+		PRINT(curGame, "Mindflayer Goggles takes control of 3 random enemy minions")
+		if curGame.mode == 0:
+			for num in range(3):
+				if curGame.guides:
+					i = curGame.guides.pop(0)
+				else:
+					minions = curGame.minionsAlive(side)
+					minions = npchoice(minions).position if minions else -1
+					curGame.fixedGuides.append(i)
+				if i > -1: curGame.minionSwitchSide(curGame.minions[side][i])
 		return None
 		
-class RodofRoasting(Spell):
-	Class, name = "Neutral", "Rod of Roasting"
-	requireTarget, mana = False, 0
-	index = "Darkmoon~Neutral~Spell~0~Rod of Roasting~Uncollectible"
-	description = "Cast 'Pyroblast' randomly until a player dies"
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+class Mysterybox:
+	poolIdentifier = "Spells"
+	@classmethod
+	def generatePool(cls, Game):
+		spells = []
+		for Class in Game.Classes:
+			spells += [value for key, value in Game.ClassCards[Class].items() if "~Spell~" in key]
+		return "Spells", spells
+		
+	def __init__(self, Game, ID, yogg):
+		self.Game, self.ID = Game, ID
+		self.name = "Mysterybox"
+		self.description = "Cast a random spell for each spell you've cast this game(targets chosen randomly)"
+		self.yogg = yogg
+		
+	def cast(self, target=None, comment="", preferedTarget=None):
+		curGame = self.Game
+		PRINT(self.Game, "Mysterybox cast a random spell for each spell player played this game, with randomly chosen targets")
+		if curGame.mode == 0:
+			if curGame.guides:
+				spells = curGame.guides.pop(0)
+			else:
+				num = sum("~Spell~" in index for index in curGame.Counters.cardsPlayedThisGame[self.ID])
+				spells = npchoice(curGame.RNGPools["Spells"], num, replace=True)
+				curGame.fixedGuides.append(spells)
+			spells = [spell(curGame, self.ID) for spell in spells]
+			for spell in spells: spell.cast()
+			
+class RodofRoasting:
+	def __init__(self, Game, ID, yogg):
+		self.Game, self.ID = Game, ID
+		self.name = "Rod of Roasting"
+		self.description = "Cast 'Pyroblast' randomly until a player dies"
+		self.yogg = yogg
+		
+	def cast(self, target=None, comment="", preferedTarget=None):
+		curGame = self.Game
 		PRINT(curGame, "Rod of Roasting casts 'Pyroblast' randomly until a player dies")
 		while True:
 			minions = curGame.minionsAlive(1) + curGame.minionsAlive(2)
@@ -837,7 +1028,9 @@ class YoggSaronMasterofFate(Minion):
 	mana, attack, health = 10, 7, 5
 	index = "Darkmoon~Neutral~Minion~10~7~5~None~Yogg-Saron, Master of Fate~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you've cast 10 spells this game, spin the Wheel of Yogg-Saron"
-	
+	def effectCanTrigger(self):
+		self.effectViable = sum("~Spell~" in index for index in self.Game.Counters.cardsPlayedThisGame[self.ID]) > 9
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
@@ -845,16 +1038,19 @@ class YoggSaronMasterofFate(Minion):
 				wheel = curGame.guides.pop(0)
 			else:
 				if sum("~Spell~" in index for index in curGame.Counters.cardsPlayedThisGame[self.ID]) > 9:
-					wheel = curGame.Counters.spellsonFriendliesThisGame[ID]
-				cards = npchoice([], , replace=False)
-				cards = tuple([curGame.cardPool[index] for index in cards])
-				curGame.fixedGuides.append(cards) #Can be empty, and the empty tuple will simply add nothing to hand
-			PRINT(curGame, "Y'Shaarj, the Defiler's battlecry adds a copy of each corrupted card player played this game. And they cost (0) this turn")
-			if cards:
-				cards = [card(curGame, ID) for card in cards]
-				curGame.Hand_Deck.addCardtoHand(cards, ID)
-				for card in cards:
-					Cost0ThisTurn(card).applies()
+					#CurseofFlesh "Fill the board with random minions, then give your Rush"
+					#DevouringHunger "Destroy all other minions. Gain their Attack and Health"
+					#HandofFate "Fill your hand with random spells. They cost (0) this turn"
+					#MindflayerGoggles "Take control of three random enemy minions"
+					#Mysterybox "Cast a random spell for each spell you've cast this game(targets chosen randomly)"
+					#RodofRoasting "Cast 'Pyroblast' randomly until a player dies"
+					wheel = npchoice([CurseofFlesh, DevouringHunger, HandofFate, MindflayerGoggles, Mysterybox, RodofRoasting], 
+									p=[[0.19, 0.19, 0.19, 0.19, 0.19, 0.05]])
+				else: wheel = None
+				curGame.fixedGuides.append(wheel)
+			if wheel:
+				PRINT(curGame, "Yogg-Saron, Master of Fate's battlecry casts %s"%wheel.name)
+				wheel(curGame, self.ID, self).cast()
 		return None
 		
 class YShaarjtheDefiler(Minion):
@@ -943,7 +1139,7 @@ class FelscreamBlast(Spell):
 		return target
 		
 		
-class ThrowGlaive(Minion):
+class ThrowGlaive(Spell):
 	Class, name = "Demon Hunter", "Throw Glaive"
 	requireTarget, mana = True, 1
 	index = "Darkmoon~Demon Hunter~Spell~1~Throw Glaive"
@@ -1026,7 +1222,7 @@ class AcrobaticsEffect:
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):
-			if self.Game.GUI: self.Game.GUI.showOffBoardTrig(AcrobaticsEffect(self.Game, self.ID), linger=False)
+			if self.Game.GUI: self.Game.GUI.showOffBoardTrig(Acrobatics(self.Game, self.ID), linger=False)
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1064,7 +1260,7 @@ class DreadlordsBite(Weapon):
 		if posinHand == 0 or posinHand == -1:
 			PRINT(self.Game, "Dreadlord's Bite's Outcast triggers and deals 1 damage to all enemies")
 			enemies = [self.Game.heroes[3-self.ID]] + self.Game.minionsonBoard(3-self.ID)
-			self.dealsDamage(enemies, [1] * len(enemies))
+			self.dealsAOE(enemies, [1] * len(enemies))
 		return None
 		
 		
@@ -1183,7 +1379,7 @@ class StiltstepperEffect:
 		else: #一个扳机被复制过了，则其携带者也被复制过了
 			return game.copiedObjs[self]
 			
-			
+#Even if hero is full health, the Lifesteal will still deal damage
 class Ilgynoth(Minion):
 	Class, race, name = "Demon Hunter", "", "Il'gynoth"
 	mana, attack, health = 4, 2, 6
@@ -1217,7 +1413,7 @@ class Summon2Assistants(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
 		pos = (minion.position, "leftandRight") if minion in minion.Game.minions[minion.ID] else (-1, "totheRightEnd")
-		PRINT(minion, "Deathrattle: Summon two 1/1 Assistants with Taunt triggers.")
+		PRINT(minion.Game, "Deathrattle: Summon two 1/1 Assistants with Taunt triggers.")
 		minion.Game.summon([PerformersAssistant(minion.Game, minion.ID) for i in range(2)], pos, minion.ID)
 		
 class PerformersAssistant(Minion):
@@ -1274,13 +1470,14 @@ class ExpendablePerformers(Spell):
 	description = "Summon seven 1/1 Illidari with Rush. If they all die this turn, summon seven more"
 	def available(self):
 		return self.Game.space(self.ID) > 0
-		#Assume you have to make all 7 die in order to summon again
+	#Don't need to all 7 Illidari to be summoned and die
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Expendable Performers summons seven 1/1 Illidari with Rush")
 		minions = [IllidariInitiate(self.Game, self.ID) for i in range(7)]
 		self.Game.summon(minions, (-1, "totheRightEnd"), self.ID)
-		if all(minion.onBoard for minion in minions):
-			Trig_ExpendablePerformers(self.Game, self.ID).connect()
+		minions = [minion for minion in minions if minion.onBoard]
+		if minions: #But there should be at least 1 Illidari summoned
+			ExpendablePerformersEffect(self.Game, self.ID, minions).connect()
 		return None
 		
 class ExpendablePerformersEffect:
@@ -1419,7 +1616,7 @@ class SolarEclipse(Spell):
 	description = "Your next spell this turn casts twice"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Solar Eclipse takes effect. Player's next spell this turn casts twice.")
-		self.Game.playerStatus[self.ID]["Spells x2"] += 1
+		self.Game.status[self.ID]["Spells x2"] += 1
 		trig = SolarEclipseEffect(self.Game, self.ID)
 		trig.connect()
 		return None
@@ -1444,7 +1641,7 @@ class SolarEclipseEffect:
 		except: pass
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.Game.playerStatus[self.ID]["Spells x2"] -= 1
+		self.Game.status[self.ID]["Spells x2"] -= 1
 		self.disconnect()
 		
 	def turnEndTrigger(self):
@@ -1475,7 +1672,7 @@ class FaireArborist(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if choice != 0: #"ChooseBoth" aura gives choice of -1
 			PRINT(self.Game, "Faire Arborist summons a 2/2 Treant")
-			self.Game.summon(Treant_Darkmoon(self.Game, self.ID), self.position+1, self.ID)
+			self.Game.summon(Treant_Classic(self.Game, self.ID), self.position+1, self.ID)
 		if choice < 1:
 			PRINT(self.Game, "Faire Arborist let's player draw a card")
 			self.Game.Hand_Deck.drawCard(self.ID)
@@ -1489,16 +1686,10 @@ class FaireArborist_Corrupt(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Faire Arborist summons a 2/2 Treant and lets player draw a card")
-		self.Game.summon(Treant_Darkmoon(self.Game, self.ID), self.position+1, self.ID)
+		self.Game.summon(Treant_Classic(self.Game, self.ID), self.position+1, self.ID)
 		self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
-class Treant_Darkmoon(Minion):
-	Class, race, name = "Druid", "", "Treant"
-	mana, attack, health = 2, 2, 2
-	index = "Darkmoon~Druid~Minion~2~2~2~None~Treant~Uncollectible"
-	requireTarget, keyWord, description = False, "", ""
-	
 class PrunetheFruit_Option(ChooseOneOption):
 	name, description = "Prune the Fruit", "Draw a card"
 	
@@ -1570,7 +1761,7 @@ class GiveaFriendlyDeathrattleSummonGreybough(Deathrattle_Minion):
 				minion = curGame.minions[self.entity.ID][i]
 				trig = SummonGreybough(minion)
 				minion.deathrattles.append(trig)
-				trigger.connect()
+				trig.connect()
 				
 class SummonGreybough(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1660,7 +1851,8 @@ class MysteryWinner(Minion):
 					PRINT(curGame, "Mystery Winner's battlecry adds a Secret to player's hand")
 					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 				else:
-					key = classforDiscover(self) + " Secrets"
+					HeroClass = curGame.heroes[self.ID].Class
+					key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Hunter Secrets"
 					if "byOthers" in comment:
 						secret = npchoice(curGame.RNGPools[key])
 						curGame.fixedGuides.append(secret)
@@ -1668,7 +1860,7 @@ class MysteryWinner(Minion):
 						curGame.Hand_Deck.addCardtoHand(secret, self.ID, "type", byDiscover=True)
 					else:
 						PRINT(curGame, "Mystery Winner's battlecry lets player discover a Secret.")
-						minions = npchoice(curGame.RNGPools[key], 3, replace=False)
+						secrets = npchoice(curGame.RNGPools[key], 3, replace=False)
 						curGame.options = [secret(curGame, self.ID) for secret in secrets]
 						curGame.Discover.startDiscover(self)
 		return None
@@ -1813,10 +2005,14 @@ class Trig_RinlingsRifle(TrigBoard):
 			if curGame.guides:
 				curGame.guides.pop(0)(curGame, weapon.ID).cast()
 			else:
-				PRINT(curGame, "After player plays a Secret, Rinling's Rifle lets player Discover a spell")
-				key = classforDiscover(weapon)+" Secrets"
-				secrets = npchoice(curGame.RNGPools[key], 3, replace=False)
-				curGame.options = [secrets(curGame, weapon.ID) for secrets in spells]
+				HeroClass = curGame.heroes[weapon.ID].Class
+				key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Hunter Secrets"
+				secrets = curGame.RNGPools[key]
+				for secret in curGame.Secrets.secrets[weapon.ID]:
+					try: secrets.remove(type(secret)) #Deployed Secrets won't show up in the options
+					except: pass
+				secrets = npchoice(secrets, min(len(secrets), 3), replace=False)
+				curGame.options = [secret(curGame, weapon.ID) for secret in secrets]
 				curGame.Discover.startDiscover(weapon)
 				
 				
@@ -1834,14 +2030,14 @@ class Trig_TramplingRhino(TrigBoard):
 		self.blank_init(entity, ["MinionAttackedMinion"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and subject == self.entity and self.entity.health > 0 and self.entity.dead == False and target.health < 0
+		return self.entity.onBoard and subject == self.entity and target.health < 0
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		excessDmg = -target.health
 		PRINT(self.entity.Game, "After Trampling Rhino attacks and kills a minion %s, it deals the excess damage to the enemy hero."%target.name)
 		self.entity.dealsDamage(self.entity.Game.heroes[3-self.entity.ID], excessDmg)
 		
-		
+#Even minions with "Can't attack heroes" still attack hero under her command
 class MaximaBlastenheimer(Minion):
 	Class, race, name = "Hunter", "", "Maxima Blastenheimer"
 	mana, attack, health = 6, 4, 4
@@ -1864,7 +2060,6 @@ class MaximaBlastenheimer(Minion):
 					#verifySelectable is exclusively for player ordering chars to attack
 					curGame.battle(minion, curGame.heroes[3-self.ID], verifySelectable=False, useAttChance=True, resolveDeath=False, resetRedirectionTriggers=True)
 					if minion.onBoard: curGame.killMinion(self, minion)
-					curGame.gathertheDead()
 		return None
 		
 		
@@ -1953,7 +2148,7 @@ class DeckofLunacy(Spell):
 		spells = {mana: [] for mana in range(3, 11)}
 		for Class in Game.Classes:
 			for key, value in Game.ClassCards[Class].items():
-				if "~Spell~" in key:
+				if "~Spell~" in key and 2 < value.mana < 11:
 					spells[value.mana].append(value)
 		return ["%d-Cost Spells"%cost for cost in spells.keys()], list(spells.values())
 		
@@ -1973,42 +2168,114 @@ class DeckofLunacy(Spell):
 			if indices:
 				newCards = [card(curGame, ID) for card in newCards]
 				for card, cost in zip(newCards, costs):
-					ManaMod(card, changeby=-1, changeto=cost).applies()
+					ManaMod(card, changeby=0, changeto=cost).applies()
 				curGame.Hand_Deck.replacePartofDeck(ID, indices, newCards)
 		return None
 		
 		
 class GameMaster(Minion):
 	Class, race, name = "Mage", "", "Game Master"
-	mana, attack, health = 2, 2, 2
-	index = "Darkmoon~Mage~Minion~2~2~2~None~Game Master"
+	mana, attack, health = 2, 2, 3
+	index = "Darkmoon~Mage~Minion~2~2~3~None~Game Master"
 	requireTarget, keyWord, description = False, "", "The first Secret you play each turn costs (1)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=0, changeto=-1)
-		self.trigsBoard = [Trig_GameMaster(self)]
-		#随从的光环启动在顺序上早于appearResponse,关闭同样早于disappearResponse
-		self.appearResponse = [self.checkAuraCorrectness]
-		self.disappearResponse = [self.deactivateAura]
-		self.silenceResponse = [self.deactivateAura]
+		self.auras["Mana Aura"] = YourFirstSecretEachTurnCosts1(self)
 		
 	def manaAuraApplicable(self, target):
 		return target.ID == self.ID and target.description.startswith("Secret:")
 		
-	def checkAuraCorrectness(self): #负责光环在随从登场时无条件启动之后的检测。如果光环的启动条件并没有达成，则关掉光环
-		if self.Game.turn != self.ID or any(index.endswith("~~Secret") for index in self.Game.Counters.cardsPlayedThisTurn[self.ID]["Indices"]):
-			self.auras["Mana Aura"].auraDisappears()
-			
-	def deactivateAura(self): #随从被沉默时优先触发disappearResponse,提前关闭光环，之后auraDisappears可以再调用一次，但是没有作用而已
-		self.auras["Mana Aura"].auraDisappears()
+class YourFirstSecretEachTurnCosts1(ManaAura_Dealer):
+	def __init__(self, entity):
+		self.entity = entity
+		self.auraAffected = [] #A list of (card, aura_Receiver)
+		self.signals = ["CardEntersHand", "ManaPaid", "TurnStarts", "TurnEnds"]
+		self.activated = False
 		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.entity.onBoard:
+			if signal[0] == "T": return True #Automatically check at the start and end of turns
+			elif signal[0] == "M": #Only mana paid for Secrets can trigger this
+				return ID == self.entity.ID and subject.description.startswith("Secret:")
+			else: #Card enters hand
+				return self.entity.Game.turn == ID and self.activated and self.entity.manaAuraApplicable(target[0])
+		return False
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		if signal[0] == 'C': #When card enters hand, apply aura if the aura_dealer is on
+			if self.entity.Game.turn == ID and self.activated:  self.applies(target[0])
+		#At the end of turn/When friendly Secret is played, it always turns off the mana
+		elif signal[0] == "M" or signal == "TurnEnds": #When mana is paid, check if the aura should be turned off
+			for card, manaMod in fixedList(self.auraAffected):
+				manaMod.getsRemoved()
+			self.auraAffected = []
+			self.activated = False
+			self.entity.Game.Manas.calcMana_All()
+		elif ID == self.entity.ID: #Start of the your turn. No need to check the Secrets, since you start fresh
+			self.activated = True
+			for card in self.entity.Game.Hand_Deck.hands[ID]: self.applies(card)
+			
+	def applies(self, target): #This target is NOT holder. Only invoked when aura is on
+		if self.manaAuraApplicable(target):
+			PRINT(self.entity.Game, "Card %s gains the Changeby %d/Changeto %d mana change from %s"%(target.name, 0, 1, self.entity.name))
+			manaMod = ManaMod(target, 0, 1, self, 0)
+			manaMod.applies()
+			self.auraAffected.append((target, manaMod))
+			
+	def auraAppears(self):
+		game, ID = self.entity.Game, self.entity.ID
+		#If the aura appears on your turn and you haven't played any Secrets this turn
+		if game.turn == ID and not any(index.endswith("~~Secret") for index in game.Counters.cardsPlayedThisTurn[ID]["Indices"]):
+			for card in game.Hand_Deck.hands[ID]: self.applies(card)
+			self.activated = True
+		for sig in self.signals:
+			try: game.trigsBoard[ID][sig].append(self)
+			except: game.trigsBoard[ID][sig] = [self]
+		game.Manas.calcMana_All()
+		
+	#When the aura object is no longer referenced, it vanishes automatically.
+	def auraDisappears(self):
+		minion = self.entity
+		game, ID = minion.Game, minion.ID
+		for card, manaMod in fixedList(self.auraAffected):
+			manaMod.getsRemoved()
+		self.auraAffected = []
+		self.activated = False
+		for sig in self.signals:
+			try: game.trigsBoard[ID][sig].remove(self)
+			except: pass
+		game.Manas.calcMana_All()
+		
+	def selfCopy(self, recipient): #The recipient is the entity that deals the Aura.
+		return type(self)(recipient)
+		
+	#可以在复制场上扳机列表的时候被调用
+	#可以调用这个函数的时候，一定是因为要复制一个随从的费用光环，那个随从的复制已经创建完毕，可以在复制字典中查到
+	def createCopy(self, game):
+		if self not in game.copiedObjs:
+			entityCopy = self.entity.createCopy(game)
+			Copy = self.selfCopy(entityCopy)
+			game.copiedObjs[self] = Copy
+			Copy.activated = self.activated
+			for card, manaMod in self.auraAffected: #从自己的auraAffected里面复制内容出去
+				cardCopy = card.createCopy(game)
+				#重点是复制一个随从是，它自己会携带一个费用改变，这个费用改变怎么追踪到
+				manaModIndex = card.manaMods.index(manaMod)
+				manaModCopy = cardCopy.manaMods[manaModIndex]
+				manaModCopy.source = Copy #在处理函数之前，所有的费用状态都已经被一次性复制完毕，它们的来源被迫留为None,需要在这里补上
+				Copy.auraAffected.append((cardCopy, manaModCopy))
+			return Copy
+		else:
+			return game.copiedObjs[self]
+			
+			
 class Trig_GameMaster(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts", "TurnEnds", "ManaPaid"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ("Turn" in signal and ID == self.entity.ID) \
-			or (signal == "ManaPaid" and subject.type == "Minion" and subject.ID == self.entity.ID)
+			or (signal == "ManaPaid" and subject.description.startswith("Secret:") and subject.ID == self.entity.ID)
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		if "Turn" in signal: #回合开始结束时总会强制关闭然后启动一次光环。这样，即使回合开始或者结束发生了随从的控制变更等情况，依然可以保证光环的正确
@@ -2076,7 +2343,7 @@ class RingToss(Spell):
 		
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trig_Corrupt(self, RingToss_Corrupted)] #只有在手牌中才会升级
+		self.trigsHand = [Trig_Corrupt(self, RingToss_Corrupt)] #只有在手牌中才会升级
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -2086,7 +2353,8 @@ class RingToss(Spell):
 					PRINT(curGame, "Ring Toss casts a Secret")
 					curGame.guides.pop(0)(self.Game, self.ID).cast()
 				else:
-					key = classforDiscover(self) + " Secrets"
+					HeroClass = curGame.heroes[self.ID].Class
+					key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Hunter Secrets"
 					if self.ID != curGame.turn or "byOthers" in comment:
 						secret = npchoice(curGame.RNGPools[key])
 						curGame.fixedGuides.append(secret)
@@ -2103,7 +2371,7 @@ class RingToss(Spell):
 		self.Game.fixedGuides.append(type(option))
 		option.cast()
 		
-class RingToss_Corrupted(Spell):
+class RingToss_Corrupt(Spell):
 	Class, name = "Mage", "Ring Toss"
 	requireTarget, mana = False, 4
 	index = "Darkmoon~Mage~Spell~4~Ring Toss~Corrupted~Uncollectible"
@@ -2117,7 +2385,8 @@ class RingToss_Corrupted(Spell):
 						PRINT(curGame, "Ring Toss casts a Secret")
 						curGame.guides.pop(0)(self.Game, self.ID).cast()
 					else:
-						key = classforDiscover(self) + " Secrets"
+						HeroClass = curGame.heroes[self.ID].Class
+						key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Hunter Secrets"
 						if self.ID != curGame.turn or "byOthers" in comment:
 							secret = npchoice(curGame.RNGPools[key])
 							curGame.fixedGuides.append(secret)
@@ -2142,7 +2411,7 @@ class FireworkElemental(Minion):
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal 3 damage to a minion. Corrupt: Deal 12 damage instead"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trig_Corrupt(self, FireworkElemental_Corrupted)] #只有在手牌中才会升级
+		self.trigsHand = [Trig_Corrupt(self, FireworkElemental_Corrupt)] #只有在手牌中才会升级
 		
 	def targetCorrect(self, target, choice=0):
 		return target.type == "Minion" and target.onBoard
@@ -2153,7 +2422,7 @@ class FireworkElemental(Minion):
 			self.dealsDamage(target, 3)
 		return target
 		
-class FireworkElemental(Minion):
+class FireworkElemental_Corrupt(Minion):
 	Class, race, name = "Mage", "Elemental", "Firework Elemental"
 	mana, attack, health = 5, 3, 5
 	index = "Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry~Corrupted~Uncollectible"
@@ -2260,7 +2529,8 @@ class Trig_OhMyYogg(SecretTrigger):
 		self.blank_init(entity, ["SpellOKtoCast?"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return subject.ID != self.entity.ID and subject
+		print("Test oh my yogg trigger", subject[0].ID != self.entity.ID and subject)
+		return subject[0].ID != self.entity.ID and subject
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
@@ -2339,7 +2609,7 @@ class SnackRun(Spell):
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		PRINT(self.Game, "Snack Run restores %d Health to player"%cost)
 		heal = cost * (2 ** self.countHealDouble())
-		self.restoresHealth(curGame.heroes[self.ID], heal)
+		self.restoresHealth(self.Game.heroes[self.ID], heal)
 		
 		
 class CarnivalBarker(Minion):
@@ -2403,7 +2673,7 @@ class BalloonMerchant(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Give your Silver Hand Recruits +1 Attack and Divine Shield"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(curGame, "Balloon Merchant's battlecry gvies player's Silver Hand Recruits +1 Attack and Divine Shield")
+		PRINT(self.Game, "Balloon Merchant's battlecry gvies player's Silver Hand Recruits +1 Attack and Divine Shield")
 		for minion in self.Game.minionsonBoard(self.ID):
 			if minion.name == "Silver Hand Recruit":
 				minion.buffDebuff(1, 0)
@@ -2418,9 +2688,9 @@ class CarouselGryphon(Minion):
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield. Corrupt: Gain +3/+3 and Taunt"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trig_Corrupt(self, CarouselGryphon_Corrupted)] #只有在手牌中才会升级
+		self.trigsHand = [Trig_Corrupt(self, CarouselGryphon_Corrupt)] #只有在手牌中才会升级
 		
-class CarouselGryphon_Corrupted(Minion):
+class CarouselGryphon_Corrupt(Minion):
 	Class, race, name = "Paladin", "Mech", "Carousel Gryphon"
 	mana, attack, health = 5, 8, 8
 	index = "Darkmoon~Paladin~Minion~5~8~8~Mech~Carousel Gryphon~Divine Shield~Taunt~Corrupted~Uncollectible"
@@ -2434,12 +2704,12 @@ class LothraxiontheRedeemed(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: For the rest of the game, after you summon a Silver Hand Recruit, give it Divine Shield"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(curGame, "Lothraxion the Redeemed's battlecry gives every Silver Hand Recruit summoned by player for the rest of the turn")
+		PRINT(self.Game, "Lothraxion the Redeemed's battlecry gives every Silver Hand Recruit summoned by player for the rest of the turn")
 		LothraxiontheRedeemedEffect(self.Game, self.ID).connect()
 		return None
 		
 class LothraxiontheRedeemedEffect:
-	def __init__(self, Game, ID, cardDrawn):
+	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.temp = False
 		#Assume the trig is when the card is played
@@ -2497,9 +2767,12 @@ class HighExarchYrel(Minion):
 	index = "Darkmoon~Paladin~Minion~8~7~5~None~High Exarch Yrel~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no Neutral cards, gain Rush, Lifesteal, Taunt, and Divine Shield"
 	
+	def effectCanTrigger(self):
+		self.effectViable = all(card.Class != "Neutral" for card in self.Game.Hand_Deck.decks[self.ID])
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if all(card.Class != "Neutral" for card in self.Game.Hand_Deck.decks[self.ID]):
-			PRINT(curGame, "High Exarch Yrel's battlecry gvies the minion Rush, Lifesteal, Taunt, and Divine Shield")
+			PRINT(self.Game, "High Exarch Yrel's battlecry gvies the minion Rush, Lifesteal, Taunt, and Divine Shield")
 			self.getsKeyword("Rush")
 			self.getsKeyword("Lifesteal")
 			self.getsKeyword("Taunt")
@@ -2690,7 +2963,7 @@ class TheNamelessOne(Minion):
 	Class, race, name = "Priest", "", "The Nameless One"
 	mana, attack, health = 4, 4, 4
 	index = "Darkmoon~Priest~Minion~4~4~4~None~The Nameless One~Battlecry~Legendary"
-	requireTarget, keyWord, description = True, "", "Battlecry: Choose a minion. Become a copy of it, then Silence it"
+	requireTarget, keyWord, description = True, "", "Battlecry: Choose a minion. Become a 4/4 copy of it, then Silence it"
 	
 	def targetExists(self, choice=0):
 		return self.selectableMinionExists()
@@ -2702,7 +2975,7 @@ class TheNamelessOne(Minion):
 		if target:
 			PRINT(self.Game, "The Nameless One's battlecry transforms minion into a copy of %s"%target.name)
 			if not self.dead and self.Game.minionPlayed == self and (self.onBoard or self.inHand): #战吼触发时自己不能死亡。
-				Copy = target.selfCopy(self.ID) if target.onBoard or target.inHand else type(target)(self.Game, self.ID)
+				Copy = target.selfCopy(self.ID, 4, 4) if target.onBoard or target.inHand else type(target)(self.Game, self.ID)
 				self.Game.transform(self, Copy)
 			target.getsSilenced()
 		return target
@@ -2748,14 +3021,14 @@ class IdolofYShaarj(Spell):
 		
 class GhuuntheBloodGod(Minion):
 	Class, race, name = "Priest", "", "G'huun the Blood God"
-	mana, attack, health = 8, 8, 8
+	mana, attack, health = 1, 8, 8
 	index = "Darkmoon~Priest~Minion~8~8~8~None~G'huun the Blood God~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Draw 2 cards. They cost Health instead of Mana"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "G'huun the Blood God's battlecry lets player draw 2 cards. Those cost Health instead of mana")
-		card1 = self.Game.Hand_Deck.drawCard(self.ID)
-		card2 = self.Game.Hand_Deck.drawCard(self.ID)
+		card1 = self.Game.Hand_Deck.drawCard(self.ID)[0]
+		card2 = self.Game.Hand_Deck.drawCard(self.ID)[0]
 		if card1: card1.marks["Cost Health Instead"] = 1
 		if card2: card2.marks["Cost Health Instead"] = 1
 		return None
@@ -2884,7 +3157,7 @@ class SweetTooth_Corrupt(Minion):
 class Swindle(Spell):
 	Class, name = "Rogue", "Swindle"
 	requireTarget, mana = False, 2
-	index = "Darkmoon~Rogue~Spell~2~Swindle"
+	index = "Darkmoon~Rogue~Spell~2~Swindle~Combo"
 	description = "Draw a spell. Combo: And a minion"
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 0
@@ -2925,8 +3198,42 @@ class TenwuoftheRedSmoke(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and target.onBoard:
 			PRINT(self.Game, "Tenwu of the Red Smoke's battlecry returns friendly minion %s to player's hand."%target.name)
-			self#.Game.returnMiniontoHand(target)
+			self.Game.returnMiniontoHand(target)
+			if target.inHand: Cost1LessThisTurn(target).applies()
 		return target
+		
+class Cost1LessThisTurn:
+	def __init__(self, card):
+		self.card = card
+		#Don't need changeby and changedto or lowerBound
+		self.source = None
+		
+	def handleMana(self):
+		if self.card.mana > 0: self.card.mana -= 1
+		
+	def applies(self):
+		card = self.card
+		card.manaMods.append(self)
+		if card in card.Game.Hand_Deck.hands[card.ID]:
+			try: card.Game.trigsBoard[card.ID]["TurnEnds"].append(self)
+			except: card.Game.trigsBoard[card.ID]["TurnEnds"] = [self]
+			card.Game.Manas.calcMana_Single(card)
+			
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.card.inHand
+		
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		self.getsRemoved()
+		self.card.Game.Manas.calcMana_Single(self.card)
+		
+	def getsRemoved(self):
+		try: self.card.Game.trigsBoard[self.card.ID]["TurnEnds"].remove(self)
+		except: pass
+		try: self.card.manaMods.remove(self)
+		except: pass
+		
+	def selfCopy(self, recipient):
+		return Cost1LessThisTurn(recipient)
 		
 		
 class CloakofShadows(Spell):
@@ -2968,7 +3275,7 @@ class PlushBear(Minion):
 	requireTarget, keyWord, description = False, "", ""
 	
 	
-class MalevolentStrike(Minion):
+class MalevolentStrike(Spell):
 	Class, name = "Rogue", "Malevolent Strike"
 	requireTarget, mana = True, 5
 	index = "Darkmoon~Rogue~Spell~5~Malevolent Strike"
@@ -2979,15 +3286,14 @@ class MalevolentStrike(Minion):
 		
 	def selfManaChange(self):
 		if self.inHand:
-			num = 
-			self.mana -= num
+			self.mana -= sum(not card.inOrigDeck for card in self.Game.Hand_Deck.decks[self.ID])
 			self.mana = max(0, self.mana)
 		
 	def available(self):
 		return self.selectableMinionExists()
 		
 	def targetCorrect(self, target, choice=0):
-		return target.type == "Minion" and target.onBoard:
+		return target.type == "Minion" and target.onBoard
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -2997,15 +3303,15 @@ class MalevolentStrike(Minion):
 		
 class Trig_MalevolentStrike(TrigHand):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionAppears", "MinionDisappears"])
+		self.blank_init(entity, ["DeckCheck"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.inHand
+		return self.entity.inHand and ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.Game.Manas.calcMana_Single(self.entity)
-	
-	
+		
+		
 class GrandEmpressShekzara(Minion):
 	Class, race, name = "Rogue", "", "Grand Empress Shek'zara"
 	mana, attack, health = 6, 5, 7
@@ -3118,7 +3424,7 @@ class DeathmatchPavilion(Spell):
 		curGame = self.Game
 		PRINT(curGame, "Deathmatch Pavilion summons a 3/2 Duelist")
 		curGame.summon(PavilionDuelist(curGame, self.ID), -1, self.ID)
-		if curGame.Counters.heroAttackTimesThisTurn[self.ID] > 0
+		if curGame.Counters.heroAttackTimesThisTurn[self.ID] > 0:
 			PRINT(curGame, "As player attacked this turn, Deathmatch Pavilion summons another 3/2 Duelist")
 			curGame.summon(PavilionDuelist(curGame, self.ID), -1, self.ID)
 		return None
@@ -3148,13 +3454,13 @@ class Trig_GrandTotemEysor(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame, side = self.entity.Game, self.entity.ID
-		PRINT(curGame, "At the end of turn, Master Swordsmith gvies another random friendly minion %s +1 Attack."%minion.name)
+		PRINT(curGame, "At the end of turn, Grand Totem Eys'or gives +1/+1 to all other Totems in player's hand, deck and battlefield")
 		for obj in curGame.minionsonBoard(side):
 			if "Totem" in obj.race and obj != self.entity:
 				obj.buffDebuff(1, 1)
 		for card in curGame.Hand_Deck.hands[side] + curGame.Hand_Deck.decks[side]:
-			if obj.type == "Minion" and "Totem" in obj.race:
-				obj.buffDebuff(1, 1)
+			if card.type == "Minion" and "Totem" in card.race:
+				card.buffDebuff(1, 1)
 				
 				
 class Magicfin(Minion):
@@ -3324,7 +3630,7 @@ class HeroBuffAura_InaraStormcrash:
 		self.auraAffected = []
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and ("Turn" in signal or subject.ID == minion.ID)
+		return self.entity.onBoard and ("Turn" in signal or subject.ID == self.entity.ID)
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):
@@ -3361,7 +3667,7 @@ class HeroBuffAura_InaraStormcrash:
 		for hero, aura_Receiver in fixedList(self.auraAffected):
 			aura_Receiver.effectClear()
 		self.auraAffected = []
-		trigsBoard = curGame.trigsBoard[self.entity.ID]
+		trigsBoard = self.entity.Game.trigsBoard[self.entity.ID]
 		for sig in ["HeroReplaced", "TurnStarts", "TurnEnds"]:
 			try: trigsBoard[sig].remove(self)
 			except: pass
@@ -3401,7 +3707,7 @@ class WickedWhispers(Spell):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				cards, lowestCost = [], np.inf
+				cards, lowestCost = [], npinf
 				for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]):
 					if card.mana < lowestCost: cards, lowestCost = [i], card.mana
 					elif card.mana == lowestCost: cards.append(i)
@@ -3430,26 +3736,27 @@ class FreeAdmission(Spell):
 		PRINT(curGame, "Free Admission lets player draw two minions.")
 		cards = [None, None]
 		if curGame.mode == 0:
-		for num in range(2):
-			if curGame.guides:
-				i = curGame.guides.pop(0)
-			else:
-				minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if card.type == "Minion"]
-				i = npchoice(minions) if minions else -1
-				curGame.fixedGuides.append(i)
-			if i > -1:
-				cards[num] = curGame.Hand_Deck.drawCard(self.entity.ID, i)[0]
-		if cards[0] and "Demon" in cards[0].race and cards[1] and "Demon" in cards[1].race:
-			PRINT(curGame, "Both minions drawn are Demons. Free Admission reduce their Cost by (2)")
-			ManaMod(cards[0], changeby=-2, changeto=-1).applies()
-			ManaMod(cards[1], changeby=-2, changeto=-1).applies()
-			
-			
+			for num in range(2):
+				if curGame.guides:
+					i = curGame.guides.pop(0)
+				else:
+					minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if card.type == "Minion"]
+					i = npchoice(minions) if minions else -1
+					curGame.fixedGuides.append(i)
+				if i > -1:
+					cards[num] = curGame.Hand_Deck.drawCard(self.ID, i)[0]
+			if cards[0] and "Demon" in cards[0].race and cards[1] and "Demon" in cards[1].race:
+				PRINT(curGame, "Both minions drawn are Demons. Free Admission reduce their Cost by (2)")
+				ManaMod(cards[0], changeby=-2, changeto=-1).applies()
+				ManaMod(cards[1], changeby=-2, changeto=-1).applies()
+		return None
+		
+		
 class ManariMosher(Minion):
 	Class, race, name = "Warlock", "Demon", "Man'ari Mosher"
 	mana, attack, health = 3, 3, 4
 	index = "Darkmoon~Warlock~Minion~3~3~4~Demon~Man'ari Mosher~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Give a friendly Demon +3 Attack and Lifesteal this turn"
+	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly Demon +3 Attack and Lifesteal this turn"
 	def targetExists(self, choice=0):
 		return self.selectableMinionExists()
 		
@@ -3461,12 +3768,13 @@ class ManariMosher(Minion):
 			PRINT(self.Game, "Man'ari Mosher's battlecry gives friendly Demon %s +3 attack and Lifesteal this turn."%target.name)
 			target.buffDebuff(3, 0, "EndofTurn")
 			target.getsKeyword("Lifesteal")
-			trig = Trig_ManariMosher(target)
-			target.
+			trig = ManariMosherEffect(target)
+			target.trigsBoard.append(trig)
+			target.trigsHand.append(trig) #The target might be in hand. Need to reset correctly even if it's in hand
 			trig.connect()
 		return target
 		
-class Trig_ManariMosher:
+class ManariMosherEffect:
 	def __init__(self, entity):
 		self.entity, self.signals, self.temp = entity, ["TurnStarts", "TurnEnds"], False
 		
@@ -3558,8 +3866,8 @@ class CascadingDisaster_Corrupt(Spell):
 				minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 			else:
 				minions = curGame.minionsAlive(3-self.ID)
-				minions = npchoice(minions, min(2, len(minions), replace=False) if minions else ()
-				indices = tuple(minion.position for minion in minions)
+				minions = npchoice(minions, min(2, len(minions)), replace=False) if minions else ()
+				curGame.fixedGuides.append(tuple(minion.position for minion in minions))
 			for minion in minions: curGame.killMinion(self, minion)
 		return None
 		
@@ -3576,8 +3884,8 @@ class CascadingDisaster_Corrupt2(Spell):
 				minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 			else:
 				minions = curGame.minionsAlive(3-self.ID)
-				minions = npchoice(minions, min(3, len(minions), replace=False) if minions else ()
-				indices = tuple(minion.position for minion in minions)
+				minions = npchoice(minions, min(3, len(minions)), replace=False) if minions else ()
+				curGame.fixedGuides.append(tuple(minion.position for minion in minions))
 			for minion in minions: curGame.killMinion(self, minion)
 		return None
 		
@@ -3591,7 +3899,7 @@ class RevenantPascal(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Revenant Pascal's battlecry destroys a mana crystal for both players.")
 		self.Game.Manas.destroyManaCrystal(1, self.ID)
-		self.Game.Manas.destroyManaCrystal(2, self.ID)
+		self.Game.Manas.destroyManaCrystal(1, 3-self.ID)
 		return None
 		
 		
@@ -3897,7 +4205,7 @@ class RingmasterWhatley(Minion):
 				if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
 		return None
 		
-		
+#All type can only count as one of the 8 races.
 class TentThrasher(Minion):
 	Class, race, name = "Warrior", "Dragon", "Tent Thrasher"
 	mana, attack, health = 5, 5, 5
@@ -3910,7 +4218,7 @@ class TentThrasher(Minion):
 	def selfManaChange(self):
 		if self.inHand:
 			races = cnt([minion.race for minion in self.Game.minionsonBoard(self.ID)])
-			del races[""]
+			del races[""] #There are at most 7 minions on board. The "All" type can always reduce the cost by 1
 			#del races["Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem"]
 			self.mana -= sum(value > 0 for value in races.values())
 			self.mana = max(0, self.mana)
@@ -3920,41 +4228,42 @@ class Trig_TentThrasher(TrigHand):
 		self.blank_init(entity, ["MinionAppears", "MinionDisappears"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.inHand and ID == self.entity.ID
+		if 'A' in signal: return self.entity.inHand and ID == self.entity.ID and subject.race
+		else: return self.entity.inHand and ID == self.entity.ID and target.race
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.Game.Manas.calcMana_Single(self.entity)
 		
 		
-Darkmoon_Indices = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battlecry": SafetyInspector,
+Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battlecry": SafetyInspector,
 					"Darkmoon~Neutral~Minion~2~1~2~None~Costumed Entertainer~Battlecry": CostumedEntertainer,
 					"Darkmoon~Neutral~Minion~2~2~2~None~Horrendous Growth": HorrendousGrowth,
-					"Darkmoon~Neutral~Minion~2~2~2~None~Horrendous Growth~Corrupted~Uncollectible": HorrendousGrowth_Corrupted_Mutable_3,
-					"Darkmoon~Neutral~Minion~2~2~2~None~Parade Leader": ParadeLeader,
+					"Darkmoon~Neutral~Minion~2~2~2~None~Horrendous Growth~Corrupted~Uncollectible": HorrendousGrowthCorrupt_Mutable_3,
+					"Darkmoon~Neutral~Minion~2~2~3~None~Parade Leader": ParadeLeader,
 					"Darkmoon~Neutral~Minion~2~2~3~Murloc~Prize Vendor~Battlecry": PrizeVendor,
 					"Darkmoon~Neutral~Minion~2~5~1~Elemental~Rock Rager~Taunt": RockRager,
 					"Darkmoon~Neutral~Minion~2~3~2~None~Showstopper~Deathrattle": Showstopper,
 					"Darkmoon~Neutral~Minion~2~2~1~None~Wriggling Horror~Battlecry": WrigglingHorror,
 					"Darkmoon~Neutral~Minion~3~2~4~None~Banana Vendor~Battlecry": BananaVendor,
-					"Darkmoon~Neutral~Spell~1~Bananas~Uncollectible": Bananas_Darkmoon,
 					"Darkmoon~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield": DarkmoonDirigible,
-					"Darkmoon~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield~Rush~Corrupted~Uncollectible": DarkmoonDirigible_Corrupted,
+					"Darkmoon~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield~Rush~Corrupted~Uncollectible": DarkmoonDirigible_Corrupt,
 					"Darkmoon~Neutral~Minion~3~0~5~None~Darkmoon Statue": DarkmoonStatue,
-					"Darkmoon~Neutral~Minion~3~4~5~None~Darkmoon Statue~Corrupted~Uncollectible": DarkmoonStatue_Corrupted,
+					"Darkmoon~Neutral~Minion~3~4~5~None~Darkmoon Statue~Corrupted~Uncollectible": DarkmoonStatue_Corrupt,
 					"Darkmoon~Neutral~Minion~3~3~2~Elemental~Gyreworm~Battlecry": Gyreworm,
 					"Darkmoon~Neutral~Minion~3~2~2~None~Inconspicuous Rider~Battlecry": InconspicuousRider,
 					"Darkmoon~Neutral~Minion~3~4~4~None~K'thir Ritualist~Taunt~Battlecry": KthirRitualist,
 					"Darkmoon~Neutral~Minion~4~4~5~Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem~Circus Amalgam~Taunt": CircusAmalgam,
 					"Darkmoon~Neutral~Minion~4~3~4~None~Circus Medic~Battlecry": CircusMedic,
-					"Darkmoon~Neutral~Minion~4~3~4~None~Circus Medic~Battlecry~Corrupted~Uncollectible": CircusMedic_Corrupted,
+					"Darkmoon~Neutral~Minion~4~3~4~None~Circus Medic~Battlecry~Corrupted~Uncollectible": CircusMedic_Corrupt,
 					"Darkmoon~Neutral~Minion~4~3~5~Elemental~Fantastic Firebird~Windfury": FantasticFirebird,
 					"Darkmoon~Neutral~Minion~4~3~4~None~Knife Vendor~Battlecry": KnifeVendor,
 					"Darkmoon~Neutral~Minion~5~3~2~None~Derailed Coaster~Battlecry": DerailedCoaster,
-					"Darkmoon~Neutral~Minion~1~1~1~None~Rider~Rush~Uncollectible": ,
+					"Darkmoon~Neutral~Minion~1~1~1~None~Darkmoon Rider~Rush~Uncollectible": DarkmoonRider,
 					"Darkmoon~Neutral~Minion~5~4~4~Beast~Fleethoof Pearltusk~Rush": FleethoofPearltusk,
-					"Darkmoon~Neutral~Minion~5~8~8~Beast~Fleethoof Pearltusk~Rush~Corrupted~Uncollectible": FleethoofPearltusk_Corrupted,
-					"Darkmoon~Neutral~5~6~7~Minion~None~Optimistic Ogre": OptimisticOgre,
+					"Darkmoon~Neutral~Minion~5~8~8~Beast~Fleethoof Pearltusk~Rush~Corrupted~Uncollectible": FleethoofPearltusk_Corrupt,
+					"Darkmoon~Neutral~Minion~5~6~7~None~Optimistic Ogre": OptimisticOgre,
 					"Darkmoon~Neutral~Minion~6~6~3~Mech~Claw Machine~Rush~Deathrattle": ClawMachine,
+					"Darkmoon~Neutral~Minion~7~4~4~None~Silas Darkmoon~Battlecry~Legendary": SilasDarkmoon,
 					"Darkmoon~Neutral~Minion~7~6~6~None~Strongman~Taunt": Strongman,
 					"Darkmoon~Neutral~Minion~0~6~6~None~Strongman~Taunt~Corrupted~Uncollectible": Strongman_Corrupt,
 					"Darkmoon~Neutral~Minion~9~4~4~None~Carnival Clown~Taunt~Battlecry": CarnivalClown,
@@ -3994,7 +4303,6 @@ Darkmoon_Indices = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battlec
 					"Darkmoon~Druid~Spell~2~Solar Eclipse": SolarEclipse,
 					"Darkmoon~Druid~Minion~3~2~2~None~Faire Arborist~Choose One": FaireArborist,
 					"Darkmoon~Druid~Minion~3~2~2~None~Faire Arborist~Corrupted~Uncollectible": FaireArborist_Corrupt,
-					"Darkmoon~Druid~Minion~2~2~2~None~Treant~Uncollectible": Treant_Darkmoon,
 					"Darkmoon~Druid~Spell~3~Moontouched Amulet": MoontouchedAmulet,
 					"Darkmoon~Druid~Spell~3~Moontouched Amulet~Corrupted~Uncollectible": MoontouchedAmulet_Corrupt,
 					"Darkmoon~Druid~Minion~4~2~2~None~Kiri, Chosen of Elune~Battlecry~Legendary": KiriChosenofElune,
@@ -4020,11 +4328,11 @@ Darkmoon_Indices = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battlec
 					"Darkmoon~Mage~Minion~2~3~2~Elemental~Confection Cyclone~Battlecry": ConfectionCyclone,
 					"Darkmoon~Mage~Minion~1~1~1~Elemental~Sugar Elemental~Uncollectible": SugarElemental,
 					"Darkmoon~Mage~Spell~2~Deck of Lunacy~Legendary": DeckofLunacy,
-					"Darkmoon~Mage~Minion~2~2~2~None~Game Master": GameMaster,
+					"Darkmoon~Mage~Minion~2~2~3~None~Game Master": GameMaster,
 					"Darkmoon~Mage~Spell~3~Rigged Faire Game~~Secret": RiggedFaireGame,
 					"Darkmoon~Mage~Minion~4~4~4~None~Occult Conjurer~Battlecry": OccultConjurer,
 					"Darkmoon~Mage~Spell~4~Ring Toss": RingToss,
-					"Darkmoon~Mage~Spell~4~Ring Toss~Corrupted~Uncollectible": RingToss_Corrupted,
+					"Darkmoon~Mage~Spell~4~Ring Toss~Corrupted~Uncollectible": RingToss_Corrupt,
 					"Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry": FireworkElemental,
 					"Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry~Corrupted~Uncollectible": FireworkElemental,
 					"Darkmoon~Mage~Minion~6~5~5~None~Sayge, Seer of Darkmoon~Battlecry~Legendary": SaygeSeerofDarkmoon,
@@ -4040,7 +4348,7 @@ Darkmoon_Indices = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battlec
 					"Darkmoon~Paladin~Spell~3~Day at the Faire~Corrupted~Uncollectible": DayattheFaire_Corrupt,
 					"Darkmoon~Paladin~Minion~4~3~5~None~Balloon Merchant~Battlecry": BalloonMerchant,
 					"Darkmoon~Paladin~Minion~5~5~5~Mech~Carousel Gryphon~Divine Shield": CarouselGryphon,
-					"Darkmoon~Paladin~Minion~5~8~8~Mech~Carousel Gryphon~Divine Shield~Taunt~Corrupted~Uncollectible": CarouselGryphon_Corrupted,
+					"Darkmoon~Paladin~Minion~5~8~8~Mech~Carousel Gryphon~Divine Shield~Taunt~Corrupted~Uncollectible": CarouselGryphon_Corrupt,
 					"Darkmoon~Paladin~Minion~5~5~5~Demon~Lothraxion the Redeemed~Battlecry~Legendary": LothraxiontheRedeemed,
 					"Darkmoon~Paladin~Weapon~6~3~3~Hammer of the Naaru~Battlecry": HammeroftheNaaru,
 					"Darkmoon~Paladin~Minion~6~6~6~None~Holy Elemental~Taunt~Uncollectible": HolyElemental,
@@ -4065,7 +4373,7 @@ Darkmoon_Indices = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battlec
 					"Darkmoon~Rogue~Spell~2~Shadow Clone~~Secret": ShadowClone,
 					"Darkmoon~Rogue~Minion~2~3~2~None~Sweet Tooth": SweetTooth,
 					"Darkmoon~Priest~Minion~2~5~2~None~Sweet Tooth~Stealth~Corrupted~Uncollectible": SweetTooth_Corrupt,
-					"Darkmoon~Rogue~Spell~2~Swindle": Swindle,
+					"Darkmoon~Rogue~Spell~2~Swindle~Combo": Swindle,
 					"Darkmoon~Rogue~Minion~2~3~2~None~Tenwu of the Red Smoke~Battlecry~Legendary": TenwuoftheRedSmoke,
 					"Darkmoon~Rogue~Spell~3~Cloak of Shadows": CloakofShadows,
 					"Darkmoon~Rogue~Minion~3~4~3~None~Ticket Master~Battlecry": TicketMaster,

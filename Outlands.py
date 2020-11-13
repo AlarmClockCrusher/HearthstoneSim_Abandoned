@@ -5,6 +5,7 @@ from Basic import FieryWarAxe, ExcessMana
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
+from numpy import inf as npinf
 
 def extractfrom(target, listObj):
 	try: return listObj.pop(listObj.index(target))
@@ -3385,7 +3386,7 @@ class NightshadeMatron(Minion):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				cards, highestCost = [], -np.inf
+				cards, highestCost = [], -npinf
 				for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]):
 					if card.mana > highestCost: cards, highestCost = [i], card.mana
 					elif card.mana == highestCost: cards.append(i)

@@ -657,17 +657,18 @@ class Minion(Card):
 			for key in type(self).keyWord.split(","):
 				self.keyWords[key.strip()] = 1
 		# Some state of the minion represented by the marks
-		self.marks = {"Sweep": 0,
-					  "Evasive": 0, "Enemy Evasive": 0,
-					  "Can't Attack": 0, "Can't Attack Hero": 0,
-					  "Heal x2": 0,  # Crystalsmith Kangor
-					  "Power Heal&Dmg x2": 0,  # Prophet Velen, Clockwork Automation
-					  "Spell Heal&Dmg x2": 0,
-					  "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
-					  "Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0, "Disappear When Die": 0,
-					  "Next Damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0,
-					  "Max Damage": [], "Deal Damage 0":0
-					  }
+		self.marks = {"Cost Health Instead": 0,
+					"Sweep": 0,
+					"Evasive": 0, "Enemy Evasive": 0,
+					"Can't Attack": 0, "Can't Attack Hero": 0,
+					"Heal x2": 0,  # Crystalsmith Kangor
+					"Power Heal&Dmg x2": 0,  # Prophet Velen, Clockwork Automation
+					"Spell Heal&Dmg x2": 0,
+					"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
+					"Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0, "Disappear When Die": 0,
+					"Next Damage 0": 0, "Ignore Taunt": 0, "UB": 10, "Can't Evolve": 0, "Free Evolve": 0,
+					"Max Damage": [], "Deal Damage 0":0
+					}
 		# Temp effects that vanish at certain points.
 		self.status = {"Immune": 0, "Frozen": 0, "Temp Stealth": 0, "Borrowed": 0,
 					   "Evolved": 0,
@@ -1198,7 +1199,7 @@ class Minion(Card):
 			if Copy.manaMods[size - 1 - i].source:
 				Copy.manaMods.pop(size - 1 - i)
 		# 在一个游戏中复制出新实体的时候需要把这些值重置
-		Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
+		Copy.inOrigDeck, Copy.numOccurrence = False, 0
 		Copy.dead = False
 		Copy.effectViable, Copy.evanescent = False, False
 		Copy.newonthisSide, Copy.firstTimeonBoard = True, True  # firstTimeonBoard用于防止随从在休眠状态苏醒时再次休眠，一般用不上
@@ -1212,12 +1213,11 @@ class Minion(Card):
 		if attack != False or health != False:
 			Copy.statReset(attack, health)
 		if mana:
-			for manaMod in Copy.manaMods:
-				manaMod.getsRemoved()
+			for manaMod in reversed(Copy.manaMods): manaMod.getsRemoved()
 			Copy.manaMods = []
 			ManaMod(Copy, changeby=0, changeto=mana).applies()
 		return Copy
-
+		
 	# 破法者因为阿努巴尔潜伏者的亡语被返回手牌，之后被沉默，但是仍然可以触发其战吼
 	# 在手牌中时不能接受沉默。已经用紫罗兰老师测试过了，仍然可以触发其扳机，没有沉默标记
 	def loseAbility(self):
@@ -1604,6 +1604,7 @@ class Secret(Spell):
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.options = []  # For Choose One spells
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
+		self.marks = {"Cost Health Instead": 0, }
 		self.triggers = {"Discarded": []}
 		self.effectViable, self.evanescent = False, False
 
@@ -1667,6 +1668,7 @@ class Quest(Spell):
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.options = []  # For Choose One spells
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
+		self.marks = {"Cost Health Instead": 0, }
 		self.triggers = {"Discarded": []}
 		self.effectViable, self.evanescent = False, False
 
@@ -1773,9 +1775,8 @@ class HeroPower(Card):
 		self.chooseOne = 0
 		self.onBoard = True
 		self.options = [] #For Choose One
-		self.keyWords = {"Lifesteal": 0,
-						"Poisonous": 0 #As a placeholder
-						}
+		self.keyWords = {"Lifesteal": 0, "Poisonous": 0, }
+		self.marks = {"Cost Health Instead": 0,}
 		self.trigsBoard = []
 		
 	def STATUSPRINT(self):
@@ -1827,58 +1828,61 @@ class HeroPower(Card):
 				and (not self.needTarget() or self.findTargets("")[0][0])
 				
 	def use(self, target=None, choice=0):
-		canUseHeroPower = False
-		if self.Game.Manas.affordable(self) == False:
-			PRINT(self.Game, "Not enough mana to use the Hero Power %s"%self.name)
-		else:
-			if self.available() and self.selectionLegit(target, choice):
-				canUseHeroPower = True
-			else: PRINT(self.Game, "Invalid selection to use Hero Power {} on target {}, with choice {}".format(self.name, target, choice))
-			
-		if canUseHeroPower:
-			PRINT(self.Game, "*********\nHandling using Hero Power {} with target {}, with choice	{}\n*********".format(self.name, target, choice))
-			#支付费用，清除费用状态。
-			subIndex, subWhere = self.ID, "power"
-			if target: tarIndex, tarWhere = target.position, target.type+str(target.ID)
-			else: tarIndex, tarWhere = 0, ''
-			self.Game.Manas.payManaCost(self, self.mana)
-			if self.Game.GUI:
-				self.Game.GUI.displayCard(self)
-				self.Game.GUI.wait(500)
-			#如果有指向，则触发指向扳机（目前只有市长）
-			targetHolder = [target]
-			self.Game.sendSignal("HeroPowerTargetDecision", self.ID, self, targetHolder, 0, "", choice)
-			if target != targetHolder[0] and self.Game.GUI:
-				target = targetHolder[0]
-				self.Game.GUI.target = target
-				self.Game.GUI.wait(500) #If the target is changed, show 0.4 more seconds
-			else: target = targetHolder[0]
-			
-			minionsKilled = 0
-			if target and target.type == "Minion" and self.Game.status[self.ID]["Power Sweep"] > 0:
-				targets = self.Game.neighbors2(target)[0]
-				minionsKilled += self.effect(target, choice)
-				if targets != []:
-					PRINT(self.Game, "%s will also be cast upon minions adjacent to the target minion %s"%(self.name, target.name))
-					for minion in targets: minionsKilled += self.effect(minion, choice)
-			else: minionsKilled += self.effect(target, choice)
+		try:
+			canUseHeroPower = False
+			if self.Game.Manas.affordable(self) == False:
+				PRINT(self.Game, "Not enough mana to use the Hero Power %s"%self.name)
+			else:
+				if self.available() and self.selectionLegit(target, choice):
+					canUseHeroPower = True
+				else: PRINT(self.Game, "Invalid selection to use Hero Power {} on target {}, with choice {}".format(self.name, target, choice))
 				
-			#结算阶段结束，处理死亡，此时尚不进行胜负判定。
-			#假设触发英雄技能消灭随从的扳机在死亡结算开始之前进行结算。（可能不对，但是相对比较符合逻辑。）
-			if minionsKilled > 0:
-				self.Game.sendSignal("HeroPowerKilledMinion", self.Game.turn, self, None, minionsKilled, "")
-			self.Game.gathertheDead()
-			PRINT(self.Game, "Hero used ability %s"%self.name)
-			self.heroPowerTimes += 1
-			#激励阶段，触发“每当你使用一次英雄技能”的扳机，如激励，虚空形态的技能刷新等。
-			self.Game.Counters.powerUsedThisTurn += 1
-			self.Game.sendSignal("HeroUsedAbility", self.ID, self, target, self.mana, "", choice)
-			#激励阶段结束，处理死亡。此时可以进行胜负判定。
-			self.Game.gathertheDead(True)
-			for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
-				card.effectCanTrigger()
-				card.checkEvanescent()
-			self.Game.moves.append(("power", subIndex, subWhere, tarIndex, tarWhere, choice))
+			if canUseHeroPower:
+				PRINT(self.Game, "*********\nHandling using Hero Power {} with target {}, with choice	{}\n*********".format(self.name, target, choice))
+				#支付费用，清除费用状态。
+				subIndex, subWhere = self.ID, "Power"
+				if target: tarIndex, tarWhere = target.position, target.type+str(target.ID)
+				else: tarIndex, tarWhere = 0, ''
+				self.Game.Manas.payManaCost(self, self.mana)
+				if self.Game.GUI:
+					self.Game.GUI.displayCard(self)
+					self.Game.GUI.wait(500)
+				#如果有指向，则触发指向扳机（目前只有市长）
+				targetHolder = [target]
+				self.Game.sendSignal("HeroPowerTargetDecision", self.ID, self, targetHolder, 0, "", choice)
+				if target != targetHolder[0] and self.Game.GUI:
+					target = targetHolder[0]
+					self.Game.GUI.target = target
+					self.Game.GUI.wait(500) #If the target is changed, show 0.4 more seconds
+				else: target = targetHolder[0]
+				
+				minionsKilled = 0
+				if target and target.type == "Minion" and self.Game.status[self.ID]["Power Sweep"] > 0:
+					targets = self.Game.neighbors2(target)[0]
+					minionsKilled += self.effect(target, choice)
+					if targets != []:
+						PRINT(self.Game, "%s will also be cast upon minions adjacent to the target minion %s"%(self.name, target.name))
+						for minion in targets: minionsKilled += self.effect(minion, choice)
+				else: minionsKilled += self.effect(target, choice)
+					
+				#结算阶段结束，处理死亡，此时尚不进行胜负判定。
+				#假设触发英雄技能消灭随从的扳机在死亡结算开始之前进行结算。（可能不对，但是相对比较符合逻辑。）
+				if minionsKilled > 0:
+					self.Game.sendSignal("HeroPowerKilledMinion", self.Game.turn, self, None, minionsKilled, "")
+				self.Game.gathertheDead()
+				PRINT(self.Game, "Hero used ability %s"%self.name)
+				self.heroPowerTimes += 1
+				#激励阶段，触发“每当你使用一次英雄技能”的扳机，如激励，虚空形态的技能刷新等。
+				self.Game.Counters.powerUsedThisTurn += 1
+				self.Game.sendSignal("HeroUsedAbility", self.ID, self, target, self.mana, "", choice)
+				#激励阶段结束，处理死亡。此时可以进行胜负判定。
+				self.Game.gathertheDead(True)
+				for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
+					card.effectCanTrigger()
+					card.checkEvanescent()
+				self.Game.moves.append(("Power", subIndex, subWhere, tarIndex, tarWhere, choice))
+		except Exception as e:
+			print(e)
 			
 	def effect(self, target, choice=0):
 		return 0
@@ -1989,9 +1993,9 @@ class Hero(Card):
 				
 			weapon = self.Game.availableWeapon(self.ID)
 			self.bareAttack, self.attTimes, self.attChances_extra = 0, 0, 0
-			self.calc_Attack()
 			self.decideAttChances_base()
-			
+		self.calc_Attack()
+		
 	def turnEnds(self, ID):
 		if self.Game.status[self.ID]["ImmuneThisTurn"] > 0:
 			self.Game.status[self.ID]["Immune"] -= self.Game.status[self.ID]["ImmuneThisTurn"]
@@ -2032,7 +2036,7 @@ class Hero(Card):
 		return self.canAttack() and target.selectablebyBattle(self)
 		
 	#Heroes don't have Lifesteal.
-	def tryLifesteal(self, damage,damageType="None"):
+	def tryLifesteal(self, damage, damageType="None"):
 		pass
 		
 	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
@@ -2217,7 +2221,7 @@ class Weapon(Card):
 		self.durability = type(self).durability  # 将来会处理有buff的武器洗入牌库的问题，如弑君
 		self.description = type(self).description
 		self.requireTarget = False
-		self.keyWords = {"Lifesteal": False, "Poisonous": False, "Windfury": False}
+		self.keyWords = {"Lifesteal": 0, "Poisonous": 0, "Windfury": 0}
 		self.marks = {"Sweep": 0, "Cost Health Instead": 0,}
 		self.triggers = {"Discarded": []}
 		self.overload, self.chooseOne = 0, 0
@@ -2265,14 +2269,13 @@ class Weapon(Card):
 			value.auraAppears()
 			
 	def setasNewWeapon(self):
+		curGame = self.Game
 		self.onBoard, self.dead = True, False
 		# 因为武器在之前已经被添加到武器列表，所以sequence需要-1，不然会导致错位
-		self.sequence = len(self.Game.minions[1]) + len(self.Game.minions[2]) + len(self.Game.weapons[1]) + len(
-			self.Game.weapons[2]) - 1
-		if self.ID == self.Game.turn:
-			self.calc_Attack()
-			self.Game.heroes[self.ID].decideAttChances_base()
-		self.Game.sendSignal("WeaponEquipped", self.ID, self, None, 0, "")
+		self.sequence = len(curGame.minions[1]) + len(curGame.minions[2]) + len(curGame.weapons[1]) + len(curGame.weapons[2]) - 1
+		curGame.heroes[self.ID].calc_Attack()
+		curGame.heroes[self.ID].decideAttChances_base()
+		curGame.sendSignal("WeaponEquipped", self.ID, self, None, 0, "")
 		
 	# Take care of the hero's attack chances and attack.
 	# The deathrattles will be left to gathertheDead() and deathHandle()
@@ -2308,7 +2311,7 @@ class Weapon(Card):
 			if self.keyWords["Windfury"] > 0:
 				self.Game.heroes[self.ID].decideAttChances_base()
 			self.onBoard = False
-			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare
+			self.Game.heroes[self.ID].calc_Attack()
 			# 移除武器对应的场上扳机，亡语扳机在deathrattles中保存
 			for trigger in self.trigsBoard:
 				trigger.disconnect()
@@ -2325,7 +2328,7 @@ class Weapon(Card):
 	def gainStat(self, attack, durability):
 		self.attack += attack
 		self.durability += durability
-		self.calc_Attack()
+		self.heroes[self.ID].calc_Attack()
 		self.Game.sendSignal("WeaponAttChanges", self.ID, None, None, 0, "")
 		
 	"""Handle the weapon being played/equipped."""

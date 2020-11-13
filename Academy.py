@@ -11,6 +11,7 @@ from Outlands import Minion_Dormantfor2turns
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
+from numpy import inf as npinf
 
 #Scholomance Academy
 def extractfrom(target, listObj):
@@ -62,6 +63,7 @@ def indexHasClass(index, Class):
 巨龙降临	战吼：发现一张龙牌
 外域的灰烬	休眠两回合。唤醒时，随机对两个敌方随从造成3点伤害。
 通灵学园	战吼：将一张双职业卡牌置入你的手牌
+暗月马戏团 腐蚀： 获得+2/+2
 """
 class TransferStudent(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
@@ -1209,24 +1211,14 @@ class Glide(Spell):
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Hand_Deck.outcastcanTrigger(self)
 		
-	def shuffleHandintoDeck_Draw4(self, ID):
-		HD = self.Game.Hand_Deck
-		cards = HD.extractfromHand(None, ID, all=True)[0] #Extract all cards.
-		for card in cards: #Cards will lose all status when shuffled into hand
-			for trig in card.trigsBoard + card.trigsHand + card.trigsDeck:
-				trig.disconnect()
-			identity = card.identity
-			card.__init__(self.Game, ID)
-			card.identity = identity
-		HD.shuffleCardintoDeck(cards, ID) #Initiated by self.
-		for i in range(4): HD.drawCard(ID)
-		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Glide shuffles player's hand into deck and then let player draw 4 cards")
-		Glide.shuffleHandintoDeck_Draw4(self, self.ID)
+		self.Game.Hand_Deck.shufflefromHand2Deck(0, self.ID, self.ID, all=True)
+		for i in range(4): HD.drawCard(self.ID)
 		if posinHand == 0 or posinHand == -1:
 			PRINT(self.Game, "Glide's Outcast triggers and does the same for the opponent")
-			Glide.shuffleHandintoDeck_Draw4(self, 3-self.ID)
+			self.Game.Hand_Deck.shufflefromHand2Deck(0, 3-self.ID, self.ID, all=True)
+			for i in range(4): HD.drawCard(3-self.ID)
 		return None
 		
 		
@@ -1261,13 +1253,6 @@ class StarStudentStelina(Minion):
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Hand_Deck.outcastcanTrigger(self)
 		
-	def shuffleOneHandintoDeck(self, i):
-		card = self.Game.Hand_Deck.extractfromHand(i, 3-self.ID, all=False, enemyCanSee=True)[0]
-		identity = card.identity
-		card.__init__(self.Game, 3-self.ID)
-		card.identity = identity
-		self.Game.Hand_Deck.shuffleCardintoDeck(card, 3-self.ID)
-		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if posinHand == 0 or posinHand == -1:
 			curGame = self.Game
@@ -1276,7 +1261,7 @@ class StarStudentStelina(Minion):
 					i = curGame.guides.pop(0)
 					if i > -1:
 						PRINT(curGame, "Star Student Stelina's Outcast triggers and shuffle an opponent's card into their deck")
-						StarStudentStelina.shuffleOneHandintoDeck(self, i)
+						self.Game.Hand_Deck.shufflefromHand2Deck(i, 3-self.ID, self.ID, all=False)
 				else:
 					enemyHand = curGame.Hand_Deck.hands[3-self.ID]
 					if enemyHand:
@@ -1286,12 +1271,9 @@ class StarStudentStelina(Minion):
 		return None
 		
 	def discoverDecided(self, option, info):
-		for i, card in enumerate(self.Game.Hand_Deck.hands[3-self.ID]):
-			if card == option:
-				index = i
-				self.Game.fixedGuides.append(i)
-				break
-		StarStudentStelina.shuffleOneHandintoDeck(self, index)
+		i = self.Game.Hand_Deck.hands[3-self.ID].index(option)
+		self.Game.fixedGuides.append(i)
+		self.Game.Hand_Deck.shufflefromHand2Deck(i, 3-self.ID, self.ID, all=False)
 		
 		
 class VilefiendTrainer(Minion):
@@ -2859,11 +2841,11 @@ class SecretPassage(Spell):
 				for card in hand:
 					for trig in card.trigsBoard + card.trigsHand + card.trigsDeck:
 						trig.disconnect()
-					identity = card.identity
+					inOrigDeck = card.inOrigDeck
 					card.__init__(self.Game, self.ID)
-					card.identity = identity
+					card.inOrigDeck = inOrigDeck
 				#Create a turnStartTrigger, it remembers all the current cards in hand.
-				trigSwap = SwapSecretPassageBack(self.Game, self.ID)
+				trigSwap = SecretPassageEffect(self.Game, self.ID)
 				trigSwap.cardsHand2Deck = hand
 				trigSwap.cardsDeck2Hand = cardsfromDeck
 				HD.shuffleCardintoDeck(hand, self.ID, enemyCanSee=False, sendSig=False)
@@ -2871,7 +2853,7 @@ class SecretPassage(Spell):
 				self.Game.turnStartTrigger.insert(0, trigSwap)
 		return None
 		
-class SwapSecretPassageBack:
+class SecretPassageEffect:
 	def __init__(self, Game, playerID):
 		self.Game, self.playerID = Game, playerID
 		self.cardsHand2Deck, self.cardsDeck2Hand = [], []
@@ -3584,7 +3566,7 @@ class Felosophy(Spell):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				demons, highestCost = [], np.inf
+				demons, highestCost = [], npinf
 				for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]):
 					if card.type == "Minion" and "Demon" in card.race:
 						if card.mana < highestCost: demons, highestCost = [i], card.mana

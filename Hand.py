@@ -37,11 +37,8 @@ class Hand_Deck:
 			self.handUpperLimit[1] = 9
 		if self.Game.heroes[2].Class in SVClasses:
 			self.handUpperLimit[2] = 9
-		self.initialDecks = {1: deck1 if deck1 else Default1,
-							 2: deck2 if deck2 else Default2}
-		self.startingDeckIdentities = {1: [], 2: []}
-		self.startingHandIdentities = {1: [], 2: []}
-
+		self.initialDecks = {1: deck1 if deck1 else Default1, 2: deck2 if deck2 else Default2}
+		
 	def initialize(self):
 		self.initializeDecks()
 		self.initializeHands()
@@ -57,10 +54,14 @@ class Hand_Deck:
 					if self.Game.Counters.primaryGalakronds[ID] is None or (
 							self.Game.Counters.primaryGalakronds[ID].Class != Class and card.Class == Class):
 						self.Game.Counters.primaryGalakronds[ID] = card
+				card.inOrigDeck = True
 				self.decks[ID].append(card)
-				self.startingDeckIdentities[ID].append(card.identity)
 			npshuffle(self.decks[ID])
-
+			for i, card in enumerate(self.decks[ID]): #克苏恩一定不会出现在起始手牌中，只会沉在牌库底，然后等待效果触发后的洗牌
+				if card.name == "C'Thun, the Shattered":
+					self.decks[ID].insert(0, self.decks[ID].pop(i))
+					break
+					
 	def initializeHands(self):  # 起手要换的牌都已经从牌库中移出到mulligan列表中，
 		# 如果卡组有双传说任务，则起手时都会上手
 		mainQuests = {1: [], 2: []}
@@ -93,7 +94,6 @@ class Hand_Deck:
 			# 手牌和牌库中的牌调用entersHand和entersDeck,注册手牌和牌库扳机
 			self.hands[ID] = [card.entersHand() for card in self.Game.mulligans[ID]]
 			self.Game.mulligans[ID] = []
-			self.startingHandIdentities[ID] = [card.identity for card in self.hands[ID]]  # Record starting hand
 			for card in self.hands[1] + self.hands[2]:
 				card.effectCanTrigger()
 				card.checkEvanescent()
@@ -132,7 +132,6 @@ class Hand_Deck:
 			self.Game.mulligans[ID] = []
 		for ID in range(1, 3):
 			for card in self.hands[ID]:
-				self.startingHandIdentities[ID].append(card.identity)
 				for card in self.hands[1] + self.hands[2]:
 					card.effectCanTrigger()
 					card.checkEvanescent()
@@ -231,6 +230,7 @@ class Hand_Deck:
 				PRINT(game, "%s is drawn and cast." % cardTracker[0].name)
 				if GUI: btn.remove()
 				cardTracker[0].whenEffective()
+				game.sendSignal("SpellCastWhenDrawn", ID, None, cardTracker[0], mana, "")
 				self.drawCard(ID)
 				cardTracker[0].afterDrawingCard()
 			else:  # 抽到的牌可以加入手牌。
@@ -249,21 +249,23 @@ class Hand_Deck:
 			return (None, 0)
 			
 	# Will force the ID of the card to change. obj can be an empty list/tuple
-	def addCardtoHand(self, obj, ID, comment="", byDiscover=False, i=-1):
+	def addCardtoHand(self, obj, ID, comment="", byDiscover=False, pos=-1, showAni=True):
 		game, GUI = self.Game, self.Game.GUI
 		if not isinstance(obj, (list, np.ndarray, tuple)):  # if the obj is not a list, turn it into a single-element list
 			obj = [obj]
 		morethan3 = len(obj) > 2
 		for card in obj:
 			if self.handNotFull(ID):
-				if comment == "type":
-					card = card(game, ID)
-				elif comment == "index":
-					card = game.cardPool[card](game, ID)
+				if comment == "type": card = card(game, ID)
+				elif comment == "index": card = game.cardPool[card](game, ID)
 				card.ID = ID
-				if GUI: btn = GUI.cardEntersHandAni_1(card)
-				self.hands[ID].insert(i + 100 * (i < 0), card)
-				if GUI: GUI.cardEntersHandAni_2(btn, i, steps=5 if morethan3 else 10)
+				if showAni:
+					if GUI: btn = GUI.cardEntersHandAni_1(card)
+					self.hands[ID].insert(pos + 100 * (pos < 0), card)
+					if GUI: GUI.cardEntersHandAni_2(btn, pos, steps=5 if morethan3 else 10)
+				else:
+					self.hands[ID].insert(pos + 100 * (pos < 0), card)
+					if GUI: GUI.cardReplacedinHand_Refresh(ID)
 				card = card.entersHand()
 				game.sendSignal("CardEntersHand", ID, None, [card], 0, comment)
 				if byDiscover: game.sendSignal("PutinHandbyDiscover", ID, None, obj, 0, '')
@@ -279,29 +281,25 @@ class Hand_Deck:
 		
 	def replaceCardinHand(self, card, newCard):
 		ID = card.ID
-		for i in range(len(self.hands[ID])):
-			if self.hands[ID][i] == card:
-				card.leavesHand()
-				self.hands[ID].pop(i)
-				self.Game.sendSignal("CardLeavesHand", ID, None, card, 0, "")
-				self.addCardtoHand(newCard, ID, "card", i)
-				break
-				
+		i = self.hands[ID].index(card)
+		card.leavesHand()
+		self.hands[ID].pop(i)
+		self.addCardtoHand(newCard, ID, "", byDiscover=False, pos=i, showAni=False)
+		
 	def replaceCardinDeck(self, card, newCard):
 		ID = card.ID
 		try:
 			i = self.decks[ID].index(card)
 			card.leavesDeck()
-			self.decks[ID].pop(i)
-			self.decks[ID].insert(i, newCard)
-		except:
-			pass
-			
+			self.decks[ID][i] = newCard
+			self.Game.sendSignal("DeckCheck", ID, None, None, 0, "")
+		except: pass
+		
 	def replaceWholeDeck(self, ID, newCards):
 		self.extractfromDeck(0, ID, all=True)
 		self.decks[ID] = newCards
 		for card in newCards: card.entersDeck()
-		self.Game.sendSignal("DeckChanged", ID, None, None, 0, "")
+		self.Game.sendSignal("DeckCheck", ID, None, None, 0, "")
 		
 	def replacePartofDeck(self, ID, indices, newCards):
 		for card in newCards: card.leavesDeck()
@@ -310,7 +308,7 @@ class Hand_Deck:
 			oldCard.leavesDeck()
 			deck[i] = newCard
 			newCard.entersDeck()
-		self.Game.sendSignal("DeckChanged", ID, None, None, 0, "")
+		self.Game.sendSignal("DeckCheck", ID, None, None, 0, "")
 		
 	# All the cards shuffled will be into the same deck. If necessary, invoke this function for each deck.
 	# PlotTwist把手牌洗入牌库的时候，手牌中buff的随从两次被抽上来时buff没有了。
@@ -319,7 +317,7 @@ class Hand_Deck:
 		if obj:
 			curGame = self.Game
 			if curGame.GUI: curGame.GUI.shuffleCardintoDeckAni(obj, enemyCanSee)
-			if isinstance(obj, (list, np.ndarray)):
+			if isinstance(obj, (list, tuple, np.ndarray)):
 				ID = obj[0].ID
 				newDeck = self.decks[ID] + obj
 				for card in obj: card.entersDeck()
@@ -337,8 +335,24 @@ class Hand_Deck:
 					curGame.fixedGuides.append(tuple(order))
 				self.decks[ID] = [newDeck[i] for i in order]
 			if sendSig: curGame.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
-			curGame.sendSignal("DeckChanged", ID, None, None, 0, "")
-
+			curGame.sendSignal("DeckCheck", ID, None, None, 0, "")
+	
+	#Given the index in hand. Can't shuffle multiple cards except for whole hand
+	def shufflefromHand2Deck(self, i, ID, initiatorID, all=True):
+		if all:
+			hand = self.extractfromHand(None, ID, all=True, enemyCanSee=False)[0]
+			for card in hand:
+				inOrigDeck = card.inOrigDeck
+				card.__init__(self.Game, ID)
+				card.inOrigDeck = inOrigDeck
+			self.shuffleCardintoDeck(hand, initiatorID, enemyCanSee=False, sendSig=True)
+		elif i:
+			card = self.extractfromHand(i, ID, all, enemyCanSee=False)[0]
+			inOrigDeck = card.inOrigDeck
+			card.__init__(self.Game, ID)
+			card.inOrigDeck = inOrigDeck
+			self.shuffleCardintoDeck(card, initiatorID, enemyCanSee=False, sendSig=True)
+			
 	def burialRite(self, ID, minions, noSignal=False):
 		if not isinstance(minions, list):
 			minions = [minions]
@@ -392,8 +406,7 @@ class Hand_Deck:
 			self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 			self.Game.Counters.shadows[card.ID] += 1
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
-
-
+			
 	# 只能全部拿出手牌中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
 	def extractfromHand(self, card, ID=0, all=False, enemyCanSee=False):
 		if all:  # Extract the entire hand.
@@ -438,19 +451,17 @@ class Hand_Deck:
 			return card, 0, False
 
 	def removeDeckTopCard(self, ID, num=1):
-		cards, i = [], 1
-		while True:
+		cards, i = [], 0
+		while i < num:
 			card = self.extractfromDeck(-1, ID)[0]
-			if i < num and card:
-				i += 1
-				cards.append(card)
+			i += 1
+			if card: cards.append(card)
 		return cards
 		
 	def createCopy(self, game):
 		if self not in game.copiedObjs:
 			Copy = type(self)(game)
 			game.copiedObjs[self] = Copy
-			Copy.startingDeckIdentities, Copy.startingHandIdentities = self.startingDeckIdentities, self.startingHandIdentities
 			Copy.initialDecks = self.initialDecks
 			Copy.hands, Copy.decks = {1: [], 2: []}, {1: [], 2: []}
 			Copy.knownDecks = {1: {"to self": []}, 2: {"to self": []}}
@@ -464,225 +475,20 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 
 
-Default1 = [
-CloudGigas,
-SuddenShowers,
-WingedCourier,
-FieranHavensentWindGod,
-ResolveoftheFallen,
-StarbrightDeity,
-XXIZelgeneaTheWorld,
-TitanicShowdown,
-PureshotAngel,
-LumberingCarapace,
-BlossomingArcher,
-SoothingSpell,
-XIIWolfraudHangedMan,
-ReclusivePonderer,
-ChipperSkipper,
-FairyAssault,
-OptimisticBeastmaster,
-Terrorformer,
-DeepwoodWolf,
-LionelWoodlandShadow,
-ErnestaWeaponsHawker,
-PompousSummons,
-DecisiveStrike,
-HonorableThief,
-ShieldPhalanx,
-FrontguardGeneral,
-EmpressofSerenity,
-VIIOluonTheChariot,
-PrudentGeneral,
-StrikelanceKnight,
-DiamondPaladin,
-SelflessNoble,
-JugglingMoggy,
-MagicalAugmentation,
-CreativeConjurer,
-LhynkalTheFool,
-AuthoringTomorrow,
-MadcapConjuration,
-ArcaneAuteur,
-PiquantPotioneer,
-ImperatorofMagic,
-HappyPig,
-SweetspellSorcerer,
-WitchSnap,
-AdamantineGolem,
-DragoncladLancer,
-SpringwellDragonKeeper,
-TropicalGrouper,
-WavecrestAngler,
-DraconicCall,
-IvoryDragon,
-Heliodragon,
-SlaughteringDragonewt,
-TurncoatDragonSummoner,
-DragonsNest,
-DragonSpawning,
-DragonImpact,
-XIErntzJustice,
-GhostlyMaid,
-BonenanzaNecromancer,
-SavoringSlash,
-CoffinoftheUnknownSoul,
-SpiritCurator,
-DeathFowl,
-SoulBox,
-VIMilteoTheLovers,
-CloisteredSacristan,
-ConqueringDreadlord,
-Deathbringer,
-SilverboltHunter,
-MoonriseWerewolf,
-WhiplashImp,
-ContemptousDemon,
-DarkSummons,
-TyrantofMayhem,
-CurmudgeonOgre,
-DireBond,
-DarholdAbyssalContract,
-BurningConstriction,
-VampireofCalamity,
-XIVLuzenTemperance,
-JeweledBrilliance,
-StalwartFeatherfolk,
-PrismaplumeBird,
-FourPillarTortoise,
-LorenaIronWilledPriest,
-SarissaLuxflashSpear,
-PriestessofForesight,
-HolybrightAltar,
-ReverendAdjudicator,
-VIIISofinaStrength,
-PuresongPriest,
-ArtifactScan,
-RoboticEngineer,
-MarionetteExpert,
-CatTuner,
-SteelslashTiger,
-XSlausWheelofFortune,
-InvertedManipulation,
-PowerliftingPuppeteer,
-DimensionDominator,
-MindSplitter,
-PopGoesthePoppet,
-ArchangelofEvocation,
-AerinForeverBrilliant,
-FuriousMountainDeity,
-DeepwoodAnomaly,
-LifeBanquet,
-IlmisunaDiscordHawker,
-AlyaskaWarHawker,
-RunieResoluteDiviner,
-AlchemicalCraftschief,
-FileneAbsoluteZero,
-EternalWhale,
-ForcedResurrection,
-NephthysGoddessofAmenta,
-Nightscreech,
-Baal,
-PrinceofDarkness,
-PrinceofCocytus,
-TempleofHeresy,
-RaRadianceIncarnate,
-LazuliGatewayHomunculus,
-LucilleKeeperofRelics,
+Default1 = [SafetyInspector, HorrendousGrowth, ParadeLeader, IdolofYShaarj, GhuuntheBloodGod, BloodofGhuun,
+			InconspicuousRider, CarnivalClown, YoggSaronMasterofFate, YShaarjtheDefiler, RinlingsRifle, PettingZoo, 
+			OpentheCages, ShadowClone, NetherwindPortal
 			]
 
-Default2 = [Goblin,
-Fighter,
-WellofDestiny,
-MercenaryDrifter,
-HarnessedFlame,
-HarnessedGlass,
-Goliath,
-AngelicSwordMaiden,
-WaterFairy,
-FairyWhisperer,
-ElfGuard,
-ElfMetallurgist,
-SylvanJustice,
-DarkElfFaure,
-Okami,
-RoseGardener,
-Treant,
-ElfTracker,
-MagnaBotanist,
-Quickblader,
-OathlessKnight,
-KunoichiTrainee,
-AsceticKnight,
-ForgeWeaponry,
-WhiteGeneral,
-FloralFencer,
-RoyalBanner,
-NinjaMaster,
-SageCommander,
-Insight,
-SammyWizardsApprentice,
-MagicMissile,
-ConjureGolem,
-WindBlast,
-SummonSnow,
-DemonflameMage,
-ConjureTwosome,
-LightningShooter,
-FieryEmbrace,
-FlameDestroyer,
-BlazingBreath,
-Dragonrider,
-DragonOracle,
-FirstbornDragon,
-DeathDragon,
-SerpentWrath,
-DisasterDragon,
-Dragonguard,
-DreadDragon,
-Conflagration,
-SpartoiSergeant,
-Spectre,
-UndyingResentment,
-ApprenticeNecromancer,
-ElderSpartoiSoldier,
-PlayfulNecromancer,
-HellsUnleasher,
-CalloftheVoid,
-Gravewaker,
-GhostlyRider,
-UndeadKing,
-Nightmare,
-SweetfangVampire,
-BloodPact,
-RazoryClaw,
-CrazedExecutioner,
-DarkGeneral,
-WardrobeRaider,
-CrimsonPurge,
-ImpLancer,
-DemonicStorm,
-AbyssBeast,
-SummonPegasus,
-SnakePriestess,
-HallowedDogma,
-BlackenedScripture,
-BeastlyVow,
-FeatherwyrmsDescent,
-PriestoftheCudgel,
-GreaterPriestess,
-AcolytesLight,
-BeastlyVow,
-Curate,
-Puppeteer,
-MechanizedServant,
-MagisteelLion,
-MagisteelPuppet,
-DimensionCut,
-ToySoldier,
-AutomatonKnight,
-IronforgedFighter,
-RoanWingedNexx,
-PuppeteersStrings,
-BlackIronSoldier,
+#FelscreamBlast, RedeemedPariah, Acrobatics, DreadlordsBite, , LineHopper, 
+#			BladedLady, 
+#			WhackaGnollHammer, DunkTank, InaraStormcrash, WickedWhispers, FreeAdmission, ManariMosher, DeckofChaos, 
+			
+			
+# ,
+#			AuspiciousSpirits, FoxyFraud, 
+#			RingMatron, Tickatus, StageDive, ETCGodofMetal, RingmastersBaton, 
+#			RingmasterWhatley,
+Default2 = [KiriChosenofElune, MaskofCThun, OhMyYogg, OhMyYogg, SwordEater, CThuntheShattered,
+			LothraxiontheRedeemed, HighExarchYrel, Insight, NazmaniBloodweaver, GrandEmpressShekzara, 
 			]

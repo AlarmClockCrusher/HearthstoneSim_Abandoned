@@ -741,6 +741,9 @@ class GUI_Common:
 		self.handZones[btn.card.ID].btnsDrawn.insert(i, btn)
 		self.handZones[btn.card.ID].draw(cardMoving2=i, steps=steps)
 		
+	def cardReplacedinHand_Refresh(self, ID):
+		self.handZones[ID].redraw()
+		
 	def cardsLeaveHandAni(self, cards, enemyCanSee=True):
 		ownID = self.ID if hasattr(self, "ID") else 1
 		if not isinstance(cards, (list, tuple)): cards = [cards]

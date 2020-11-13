@@ -114,8 +114,8 @@ class Manas:
 			return mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.status[ID]["Immune"] > 0
 		else: return mana <= self.manas[ID]
 		
-	def cardCostsHealth(subject):
-		return subject.marks["Cost Health Instead"] > 0 or (subject.type == "Spell" and self.status[ID]["Spells Cost Health Instead"] > 0)
+	def cardCostsHealth(self, subject):
+		return subject.marks["Cost Health Instead"] > 0# or (subject.type == "Spell" and self.status[subject.ID]["Spells Cost Health Instead"] > 0)
 		
 	def payManaCost(self, subject, mana):
 		ID, mana = subject.ID, max(0, mana)

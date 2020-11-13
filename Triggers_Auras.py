@@ -260,7 +260,6 @@ class Trig_WorgenShift_FromHuman(TrigHand):
 		PRINT(self.entity.Game, "At the end of turn, %s transforms for into a worgen"%self.entity.name)
 		worgen = self.worgenType(self.entity.Game, self.entity.ID)
 		worgen.statReset(self.entity.health_max, self.entity.attack_Enchant)
-		worgen.identity = self.entity.identity
 		#狼人形态会复制人形态的场上扳机，但是目前没有给随从外加手牌和牌库扳机的机制。
 		#目前不考虑狼人牌在变形前保有的临时攻击力buff
 		worgen.trigsBoard = self.entity.trigsBoard
@@ -280,7 +279,6 @@ class Trig_WorgenShift_FromWorgen(TrigHand):
 		PRINT(self.entity.Game, "At the end of turn, %s transforms for into a worgen"%self.entity.name)
 		human = self.humanType(self.entity.Game, self.entity.ID)
 		human.statReset(self.entity.health_max, self.entity.attack_Enchant)
-		human.identity = self.entity.identity
 		#狼人形态会复制人形态获得的场上扳机，但是目前没有给随从外加手牌和牌库扳机的机制。
 		#目前不考虑狼人牌在变形前保有的临时攻击力buff
 		human.trigsBoard = self.entity.trigsBoard
