@@ -939,7 +939,7 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 			self.colorOrig = {"Paladin": "gold", "Hunter": "green3", "Rogue": "grey", "Mage": "magenta3"}[card.Class]
 		elif card.description.startswith("Quest:"):
 			self.colorOrig = "goldenrod1"
-		elif card.description.startswith("Quest:"):
+		elif card.description.startswith("Sidequest:"):
 			self.colorOrig = "magenta2"
 		else:
 			self.colorOrig = "red"

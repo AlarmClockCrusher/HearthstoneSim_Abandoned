@@ -454,13 +454,13 @@ class Game:
 
 	def killMinion(self, subject, target):
 		if target:
-			if isinstance(target, list):
-				if self.GUI and subject: self.GUI.AOEAni(subject, target, ['X']*len(target), color="grey46")
-				for obj in target: obj.dead = True
-			else:
+			if isinstance(target, Card):
 				if self.GUI and subject: self.GUI.targetingEffectAni(subject, target, 'X', color="grey46")
 				if target.onBoard: target.dead = True
 				elif target.inHand: self.Hand_Deck.discardCard(target.ID, target) #如果随从在手牌中则将其丢弃
+			else:
+				if self.GUI and subject: self.GUI.AOEAni(subject, target, ['X']*len(target), color="grey46")
+				for obj in target: obj.dead = True
 				
 	def necromancy(self, subject, ID, number):
 		if self.Counters.shadows[ID] >= number:

@@ -448,6 +448,8 @@ class Hand_Deck:
 			if not isinstance(card, (int, np.int32, np.int64)):
 				card = extractfrom(card, self.decks[card.ID])
 			else:
+				if not self.decks[ID]:
+					return None, 0, False
 				card = self.decks[ID].pop(card)
 			card.leavesDeck()
 			if self.Game.GUI: self.Game.GUI.cardLeavesDeckAni(card, enemyCanSee=enemyCanSee)

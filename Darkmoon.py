@@ -35,7 +35,7 @@ class Trig_Corrupt(TrigHand):
 		self.corruptedType = corruptedType
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.inHand and ID == self.entity.ID and number > self.entity.mana
+		return self.entity.inHand and ID == self.entity.ID and number > self.entity.mana and subject.type != "Power"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		card = self.entity
@@ -3829,7 +3829,7 @@ class CascadingDisaster_Corrupt(Spell):
 class CascadingDisaster_Corrupt2(Spell):
 	Class, name = "Warlock", "Cascading Disaster"
 	requireTarget, mana = False, 4
-	index = "Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted2~Uncollectible"
+	index = "Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted~Uncollectible"
 	description = "Corrupted. Destroy 3 random enemy minions"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		curGame = self.Game
@@ -4351,7 +4351,7 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Warlock~Minion~3~3~4~Demon~Man'ari Mosher~Battlecry": ManariMosher,
 					"Darkmoon~Warlock~Spell~4~Cascading Disaster": CascadingDisaster,
 					"Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted~Uncollectible": CascadingDisaster_Corrupt,
-					"Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted2~Uncollectible": CascadingDisaster_Corrupt2,
+					"Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted~Uncollectible": CascadingDisaster_Corrupt2,
 					"Darkmoon~Warlock~Minion~3~3~3~None~Revenant Rascal~Battlecry": RevenantRascal,
 					"Darkmoon~Warlock~Minion~4~4~3~Demon~Fire Breather~Battlecry": FireBreather,
 					"Darkmoon~Warlock~Spell~6~Deck of Chaos~Legendary": DeckofChaos,
