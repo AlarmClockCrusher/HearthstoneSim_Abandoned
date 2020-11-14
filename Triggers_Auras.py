@@ -148,6 +148,7 @@ class Deathrattle_Minion(TrigBoard):
 	def blank_init(self, entity):
 		self.entity = entity
 		self.signals = ["MinionDies", "TrigDeathrattle"]
+		self.inherent = True
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		minion, game = self.entity, self.entity.Game
@@ -174,6 +175,7 @@ class Deathrattle_Weapon(TrigBoard):
 	def blank_init(self, entity):
 		self.entity = entity
 		self.signals = ["WeaponDestroyed"]
+		self.inherent = True
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		weapon, game = self.entity, self.entity.Game
@@ -197,6 +199,7 @@ class SecretTrigger(TrigBoard):
 		
 	def blank_init(self, entity, signals):
 		self.entity, self.signals = entity, signals
+		self.inherent = True
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		secret, game = self.entity, self.entity.Game
@@ -218,6 +221,7 @@ class SecretTrigger(TrigBoard):
 class Trig_Borrow(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
+		self.inherent = True
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		#只有当前要结束的回合的ID与自身ID相同的时候可以触发，于是即使有多个同类扳机也只有一个会触发。
@@ -265,6 +269,7 @@ class Trig_WorgenShift_FromHuman(TrigHand):
 		self.blank_init(entity, ["TurnEnds"])
 		self.worgenType = worgenType
 		self.makesCardEvanescent = True
+		self.inherent = True
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and ID == self.entity.ID
@@ -284,6 +289,7 @@ class Trig_WorgenShift_FromWorgen(TrigHand):
 		self.blank_init(entity, ["TurnEnds"])
 		self.humanType = humanType
 		self.makesCardEvanescent = True
+		self.inherent = True
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and ID == self.entity.ID
@@ -306,6 +312,7 @@ class QuestTrigger(TrigBoard):
 		self.entity, self.signals = entity, signals
 		self.accomplished = False
 		self.counter = 0
+		self.inherent = True
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):

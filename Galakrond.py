@@ -1127,6 +1127,6 @@ Galakrond_Indices = {"Galakrond~Neutral~Minion~3~2~2~None~Skydiving Instructor~B
 					"Galakrond~Warrior~Spell~1~Boom Squad": BoomSquad,
 					"Galakrond~Warrior~Minion~1~1~3~Pirate~Risky Skipper": RiskySkipper,
 					"Galakrond~Warrior~Minion~3~2~3~None~Bomb Wrangler": BombWrangler,
-					"Galakrond~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible": BoomBot_Dragons
+					"Galakrond~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible": BoomBot
 					}
 					
