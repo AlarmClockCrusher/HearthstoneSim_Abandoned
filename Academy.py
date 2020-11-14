@@ -374,23 +374,18 @@ class TourGuide(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Tour Guide's battlecry makes player's next Hero Power cost (0).")
-		tempAura = YourNextHeroPowerCosts0(self.Game, self.ID)
-		self.Game.Manas.CardAuras.append(tempAura)
+		tempAura = GameManaAura_NextHeroPower0(self.Game, self.ID)
+		self.Game.Manas.PowerAuras.append(tempAura)
 		tempAura.auraAppears()
 		return None
 		
-class YourNextHeroPowerCosts0(TempManaEffect_Power):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = 0, 0
-		#这个效果不会随着回合更替而消失，所以没有temporary属性
-		self.auraAffected = []
+class GameManaAura_NextHeroPower0(TempManaEffect_Power):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, 0, 0)
+		self.temporary = False
 		
 	def applicable(self, target):
 		return target.ID == self.ID
-		
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
 		
 """Mana 2 Cards"""
 class CultNeophyte(Minion):
@@ -401,34 +396,16 @@ class CultNeophyte(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Cult Neophyte's battlecry makes enemy spell cards cost (1) more next turn.")
-		self.Game.Manas.CardAuras_Backup.append(YourSpellsCost1MoreThisTurn(self.Game, 3-self.ID))
+		self.Game.Manas.CardAuras_Backup.append(GameManaAura_InTurnSpell1More(self.Game, 3-self.ID))
 		return None
 		
-class YourSpellsCost1MoreThisTurn(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = +1, -1
-		self.temporary = True
-		self.auraAffected = []
+class GameManaAura_InTurnSpell1More(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, +1, -1)
+		self.signals = ["CardEntersHand"]
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Spell"
-		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.applies(target[0])
-		
-	#持续整个回合的光环可以不必注册"ManaPaid"
-	def auraAppears(self):
-		for card in self.Game.Hand_Deck.hands[1]: self.applies(card)
-		for card in self.Game.Hand_Deck.hands[2]: self.applies(card)
-		
-		try: self.Game.trigsBoard[self.ID]["CardEntersHand"].append(self)
-		except: self.Game.trigsBoard[self.ID]["CardEntersHand"] = [self]
-		self.Game.Manas.calcMana_All()
-		
-	#auraDisappears()可以尝试移除ManaPaid，当然没有反应，所以不必专门定义
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
 		
 		
 class ManafeederPanthara(Minion):
@@ -1498,7 +1475,7 @@ class NatureStudies(Spell):
 					curGame.options = [spell(curGame, self.ID) for spell in spells]
 					curGame.Discover.startDiscover(self)
 		PRINT(curGame, "Nature Studies makes player's next spell cost (1) less")
-		tempAura = YourNextSpellCosts1Less(self.Game, self.ID)
+		tempAura = GameManaAura_NextSpell1Less(self.Game, self.ID)
 		self.Game.Manas.CardAuras.append(tempAura)
 		tempAura.auraAppears()
 		return None
@@ -1507,18 +1484,13 @@ class NatureStudies(Spell):
 		self.Game.fixedGuides.append(type(option))
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
-class YourNextSpellCosts1Less(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = -1, -1
-		#研习法术的光环都是跨回合的，所以没有temporary
-		self.auraAffected = []
+class GameManaAura_NextSpell1Less(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, -1, -1)
+		self.temporary = False
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Spell"
-		
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
 		
 		
 class PartnerAssignment(Spell):
@@ -1753,7 +1725,7 @@ class CarrionStudies(Spell):
 					curGame.options = [minion(curGame, self.ID) for minion in minions]
 					curGame.Discover.startDiscover(self)
 		PRINT(curGame, "Carrion Studies makes player's next Deathrattle minion cost (1) less")
-		tempAura = YourNextDeathrattleMinionCosts1Less(self.Game, self.ID)
+		tempAura = GameManaAura_NextDeathrattleMinion1Less(self.Game, self.ID)
 		self.Game.Manas.CardAuras.append(tempAura)
 		tempAura.auraAppears()
 		return None
@@ -1762,18 +1734,13 @@ class CarrionStudies(Spell):
 		self.Game.fixedGuides.append(type(option))
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
-class YourNextDeathrattleMinionCosts1Less(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = -1, -1
-		#研习法术的光环都是跨回合的，所以没有temporary
-		self.auraAffected = []
+class GameManaAura_NextDeathrattleMinion1Less(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, -1, -1)
+		self.temporary = False
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Minion" and target.deathrattles
-		
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
 		
 		
 class Overwhelm(Spell):
@@ -2553,7 +2520,7 @@ class DraconicStudies(Spell):
 					curGame.options = [minion(curGame, self.ID) for minion in minions]
 					curGame.Discover.startDiscover(self)
 		PRINT(curGame, "Draconic Studies makes player's next Dragon cost (1) less")
-		tempAura = YourNextDragonCosts1Less(self.Game, self.ID)
+		tempAura = GameManaAura_NextDragon1Less(self.Game, self.ID)
 		self.Game.Manas.CardAuras.append(tempAura)
 		tempAura.auraAppears()
 		return None
@@ -2562,18 +2529,13 @@ class DraconicStudies(Spell):
 		self.Game.fixedGuides.append(type(option))
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
-class YourNextDragonCosts1Less(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = -1, -1
-		#研习法术的光环都是跨回合的，所以没有temporary
-		self.auraAffected = []
+class GameManaAura_NextDragon1Less(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, -1, -1)
+		self.temporary = False
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Minion" and "Dragon" in target.race
-		
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
 		
 		
 class FrazzledFreshman(Minion):
@@ -2657,7 +2619,7 @@ class PowerWordFeast(Spell):
 class Trig_PowerWordFeast(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
-		self.temp = True
+		self.inherent = False
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard #Even if the current turn is not minion's owner's turn
@@ -2979,11 +2941,8 @@ class WeaponBuffAura:
 		WeaponBuffAura_Receiver(subject, self).effectStart()
 		
 	def auraAppears(self):
-		#在随从自己登场时，就会尝试开始这个光环，但是如果没有激怒，则无事发生。
 		weapon = self.entity.Game.availableWeapon(self.entity.ID)
-		#这个Aura_Dealer可以由激怒和出场两个方式来控制。
-		if weapon and weapon not in self.auraAffected:
-			self.applies(weapon)
+		if weapon: self.applies(weapon)
 		try: self.entity.Game.trigsBoard[self.entity.ID]["WeaponEquipped"].append(self)
 		except: self.entity.Game.trigsBoard[self.entity.ID]["WeaponEquipped"] = [self]
 		
@@ -3208,7 +3167,7 @@ class PrimordialStudies(Spell):
 					curGame.options = [minion(curGame, self.ID) for minion in minions]
 					curGame.Discover.startDiscover(self)
 		PRINT(curGame, "Primordial Studies makes player's next Deathrattle minion cost (1) less")
-		tempAura = YourNextSpellDamageMinionCosts1Less(self.Game, self.ID)
+		tempAura = GameManaAura_NextSpellDamageMinion1Less(self.Game, self.ID)
 		self.Game.Manas.CardAuras.append(tempAura)
 		tempAura.auraAppears()
 		return None
@@ -3217,18 +3176,13 @@ class PrimordialStudies(Spell):
 		self.Game.fixedGuides.append(type(option))
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
-class YourNextSpellDamageMinionCosts1Less(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = -1, -1
-		#研习法术的光环都是跨回合的，所以没有temporary
-		self.auraAffected = []
+class GameManaAura_NextSpellDamageMinion1Less(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, -1, -1)
+		self.temporary = False
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Minion" and target.keyWords["Spell Damage"] > 0
-		
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
 		
 		
 class DiligentNotetaker(Minion):
@@ -3340,15 +3294,14 @@ class InstructorFireheart(Minion):
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.ID == self.Game.turn:
-			trig = FireheartEffect(self.Game, self.ID)
+			trig = Fireheart_Effect(self.Game, self.ID)
 			trig.connect()
 			trig.effect(signal='', ID=0, subject=None, target=None, number=0, comment=comment, choice=0)
 		return None
 		
-class FireheartEffect:
+class Fireheart_Effect:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
-		self.temp = False
 		self.spellDiscovered = None
 		
 	def connect(self):
@@ -3528,7 +3481,7 @@ class DemonicStudies(Spell):
 					curGame.options = [minion(curGame, self.ID) for minion in minions]
 					curGame.Discover.startDiscover(self)
 		PRINT(curGame, "Demonic Studies makes player's next Demon cost (1) less")
-		tempAura = YourNextDemonCosts1Less(self.Game, self.ID)
+		tempAura = GameManaAura_NextDemon1Less(self.Game, self.ID)
 		self.Game.Manas.CardAuras.append(tempAura)
 		tempAura.auraAppears()
 		return None
@@ -3537,18 +3490,13 @@ class DemonicStudies(Spell):
 		self.Game.fixedGuides.append(type(option))
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
-class YourNextDemonCosts1Less(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = -1, -1
-		#研习法术的光环都是跨回合的，所以没有temporary
-		self.auraAffected = []
+class GameManaAura_NextDemon1Less(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, -1, -1)
+		self.temporary = False
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Minion" and "Demon" in target.race
-		
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
 		
 		
 class Felosophy(Spell):
@@ -3802,7 +3750,7 @@ class AthleticStudies(Spell):
 					curGame.options = [minion(curGame, self.ID) for minion in minions]
 					curGame.Discover.startDiscover(self)
 		PRINT(curGame, "Athletic Studies makes player's next Rush minion cost (1) less")
-		tempAura = YourNextRushMinionCosts1Less(self.Game, self.ID)
+		tempAura = GameManaAura_NextRushMinion1Less(self.Game, self.ID)
 		self.Game.Manas.CardAuras.append(tempAura)
 		tempAura.auraAppears()
 		return None
@@ -3811,18 +3759,13 @@ class AthleticStudies(Spell):
 		self.Game.fixedGuides.append(type(option))
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
-class YourNextRushMinionCosts1Less(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = -1, -1
-		#研习法术的光环都是跨回合的，所以没有temporary
-		self.auraAffected = []
+class GameManaAura_NextRushMinion1Less(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, -1, -1)
+		self.temporary = False
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Minion" and target.keyWords["Rush"] > 0
-		
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
 		
 		
 class ShieldofHonor(Spell):
@@ -3981,7 +3924,7 @@ class Trig_ReapersScythe(TrigBoard):
 class Trig_SweepThisTurn(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
-		self.temp = True
+		self.inherent = False
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard #Even if the current turn is not minion's owner's turn

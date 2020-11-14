@@ -153,34 +153,16 @@ class BoompistolBully(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Boompistol Bully's battlecry makes enemy Battlecry cards cost (5) more next turn.")
-		self.Game.Manas.CardAuras_Backup.append(BattlecryCardsCost5MoreNextTurn(self.Game, 3-self.ID))
+		self.Game.Manas.CardAuras_Backup.append(GameManaAura_InTurnBattlecry5More(self.Game, 3-self.ID))
 		return None
 		
-class BattlecryCardsCost5MoreNextTurn(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = +5, -1
-		self.temporary = True
-		self.auraAffected = []
+class GameManaAura_InTurnBattlecry5More(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, +5, -1)
+		self.signals = ["CardEntersHand"]
 		
 	def applicable(self, subject):
 		return subject.ID == self.ID and "~Battlecry" in subject.index
-		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.applies(target[0])
-		
-	#持续整个回合的光环可以不必注册"ManaPaid"
-	def auraAppears(self):
-		for card in self.Game.Hand_Deck.hands[1]: self.applies(card)
-		for card in self.Game.Hand_Deck.hands[2]: self.applies(card)
-			
-		try: self.Game.trigsBoard[self.ID]["CardEntersHand"].append(self)
-		except: self.Game.trigsBoard[self.ID]["CardEntersHand"] = [self]
-		self.Game.Manas.calcMana_All()
-		
-	#auraDisappears()可以尝试移除ManaPaid，当然没有反应，所以不必专门定义
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
 		
 		
 class GrandLackeyErkh(Minion):
@@ -924,7 +906,7 @@ class TwistedKnowledge(Spell):
 						card = npchoice(curGame.RNGPools["Warlock Cards"])
 						curGame.fixedGuides.append(card)
 						PRINT(curGame, "Twisted Knowledge is cast and adds a random Warlock card to player's hand")
-						curGame.Hand_Deck.addCardtoHand(curGame, self.ID, "type", byDiscover=True)
+						curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True)
 					else:
 						cards = npchoice(curGame.RNGPools["Warlock Cards"], 3, replace=False)
 						PRINT(curGame, "Twisted Knowledge lets player Discover a Warlock card")
@@ -967,7 +949,7 @@ class ChaosGazer(Minion):
 class Trig_CorruptedHand(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
-		self.temp = True
+		self.inherent = False
 		self.makesCardEvanescent = True
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):

@@ -516,7 +516,7 @@ class ManaWraith(Minion):
 	requireTarget, keyWord, description = False, "", "ALL minions cost (1) more"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=+1, changeto=-1)
+		self.auras["Mana Aura"] = ManaAura(self, changeby=+1, changeto=-1)
 		
 	def manaAuraApplicable(self, subject):
 		return subject.type == "Minion"
@@ -564,36 +564,20 @@ class MillhouseManastorm(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Millhouse Manastorm's battlecry makes enemy spells cost 0 next turn.")
-		tempAura = SpellsCost0NextTurn(self.Game, 3-self.ID)
+		tempAura = GameManaAura_InTurnSpells0(self.Game, 3-self.ID)
 		self.Game.Manas.CardAuras.append(tempAura)
 		tempAura.auraAppears()
 		return None
 		
-class SpellsCost0NextTurn(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = 0, 0
-		self.temporary = True
-		self.auraAffected = []
+class GameManaAura_InTurnSpells0(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, 0, 0)
+		self.signals = ["CardEntersHand"]
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Spell"
 		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.applies(target[0])
-	#持续整个回合的光环可以不必注册"ManaPaid"
-	def auraAppears(self):
-		for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
-			self.applies(card)
-		try: self.entity.Game.trigsBoard[self.entity.ID]["CardEntersHand"].append(self)
-		except: self.entity.Game.trigsBoard[self.entity.ID]["CardEntersHand"] = [self]
-		self.Game.Manas.calcMana_All()
 		
-	#auraDisappears()可以尝试移除ManaPaid，当然没有反应，所以不必专门定义
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
-		
-	
 class NatPagle(Minion):
 	Class, race, name = "Neutral", "", "Nat Pagle"
 	mana, attack, health = 2, 0, 4
@@ -633,46 +617,26 @@ class PintSizedSummoner(Minion):
 	requireTarget, keyWord, description = False, "", "The first minion you play each turn costs (1) less"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=-1, changeto=-1)
-		self.trigsBoard = [Trig_PintsizedSummoner(self)]
-		#随从的光环启动在顺序上早于appearResponse,关闭同样早于disappearResponse
-		self.appearResponse = [self.checkAuraCorrectness]
-		self.disappearResponse = [self.deactivateAura]
-		self.silenceResponse = [self.deactivateAura]
+		self.auras["Mana Aura"] = ManaAura_1stMinion1Less(self)
 		
-	def manaAuraApplicable(self, target):
+class GameManaAura_InTurn1stMinion1Less(TempManaEffect):
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID, -1, -1)
+		
+	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Minion"
 		
-	def checkAuraCorrectness(self): #负责光环在随从登场时无条件启动之后的检测。如果光环的启动条件并没有达成，则关掉光环
-		if self.Game.turn != self.ID or self.Game.Counters.numMinionsPlayedThisTurn[self.ID] != 0:
-			PRINT(self.Game, "Pint-Sized Summoner's mana aura is incorrectly activated. It will be shut down")
-			self.auras["Mana Aura"].auraDisappears()
-			
-	def deactivateAura(self): #随从被沉默时优先触发disappearResponse,提前关闭光环，之后auraDisappears可以再调用一次，但是没有作用而已
-		PRINT(self.Game, "Pint-Sized Summoner's mana aura is removed. Player's first minion each turn no longer costs 1 less.")
-		self.auras["Mana Aura"].auraDisappears()
+class ManaAura_1stMinion1Less(ManaAura_1UsageEachTurn):
+	def auraAppears(self):
+		game, ID = self.entity.Game, self.entity.ID
+		if game.turn == ID and game.Counters.numMinionsPlayedThisTurn[ID] < 1:
+			self.aura = GameManaAura_InTurn1stMinion1Less(game, ID)
+			game.Manas.CardAuras.append(self.aura)
+			self.aura.auraAppears()
+		try: game.trigsBoard[ID]["TurnStarts"].append(self)
+		except: game.trigsBoard[ID]["TurnStarts"] = [self]
 		
-class Trig_PintsizedSummoner(TrigBoard):
-	def __init__(self, entity):
-		self.blank_init(entity, ["TurnStarts", "TurnEnds", "ManaPaid"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if "Turn" in signal and self.entity.onBoard and ID == self.entity.ID:
-			return True
-		if signal == "ManaPaid" and self.entity.onBoard and subject.type == "Minion" and subject.ID == self.entity.ID:
-			return True
-		return False
-		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		if "Turn" in signal: #回合开始结束时总会强制关闭然后启动一次光环。这样，即使回合开始或者结束发生了随从的控制变更等情况，依然可以保证光环的正确
-			PRINT(self.entity.Game, "At the start of turn, %s restarts the mana aura and reduces the cost of the first minion by (1)."%self.entity.name)
-			self.entity.auras["Mana Aura"].auraDisappears()
-			self.entity.auras["Mana Aura"].auraAppears()
-			self.entity.checkAuraCorrectness()
-		else: #signal == "ManaPaid"
-			self.entity.auras["Mana Aura"].auraDisappears()
-			
-			
 class SunfuryProtector(Minion):
 	Class, race, name = "Neutral", "", "Sunfury Protector"
 	mana, attack, health = 2, 2, 3
@@ -1583,15 +1547,14 @@ class WeaponBuffAura_SpitefulSmith:
 		
 	def auraAppears(self):
 		#在随从自己登场时，就会尝试开始这个光环，但是如果没有激怒，则无事发生。
-		if self.entity.health < self.entity.health_max:
-			self.entity.activated = True
-			weapon = self.entity.Game.availableWeapon(self.entity.ID)
+		minion = self.entity
+		if minion.health < minion.health_max:
+			minion.activated = True
+			weapon = minion.Game.availableWeapon(minion.ID)
 			#这个Aura_Dealer可以由激怒和出场两个方式来控制。
-			if weapon and weapon not in self.auraAffected:
-				self.applies(weapon)
-				
-			try: self.entity.Game.trigsBoard[self.entity.ID]["WeaponEquipped"].append(self)
-			except: self.entity.Game.trigsBoard[self.entity.ID]["WeaponEquipped"] = [self]
+			if weapon: self.applies(weapon)
+			try: minion.Game.trigsBoard[minion.ID]["WeaponEquipped"].append(self)
+			except: minion.Game.trigsBoard[minion.ID]["WeaponEquipped"] = [self]
 			
 	def auraDisappears(self):
 		for weapon, aura_Receiver in fixedList(self.auraAffected):
@@ -1657,7 +1620,7 @@ class VentureCoMercenary(Minion):
 	requireTarget, keyWord, description = False, "", "Your minions cost (3) more"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=+3, changeto=-1)
+		self.auras["Mana Aura"] = ManaAura(self, changeby=+3, changeto=-1)
 		
 	def manaAuraApplicable(self, subject): #ID用于判定是否是我方手中的随从
 		return subject.type == "Minion" and subject.ID == self.ID
@@ -3187,7 +3150,7 @@ class SorcerersApprentice(Minion):
 	requireTarget, keyWord, description = False, "", "Your spells cost (1) less"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=-1, changeto=-1)
+		self.auras["Mana Aura"] = ManaAura(self, changeby=-1, changeto=-1)
 		
 	def manaAuraApplicable(self, subject): #ID用于判定是否是我方手中的随从
 		return subject.type == "Spell" and subject.ID == self.ID
@@ -3316,23 +3279,17 @@ class KirinTorMage(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Kirin Tor Mage's battlecry makes player's next secret this turn cost 0.")
-		tempAura = YourNextSecretCosts0ThisTurn(self.Game, self.ID)
+		tempAura = GameManaAura_InTurnNextSecret0(self.Game, self.ID)
 		self.Game.Manas.CardAuras.append(tempAura)
 		tempAura.auraAppears()
 		return None
 		
-class YourNextSecretCosts0ThisTurn(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = 0, 0
-		self.temporary = True
-		self.auraAffected = []
+class GameManaAura_InTurnNextSecret0(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, 0, 0)
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.description.startswith("Secret:")
-		
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
 		
 		
 class ConeofCold(Spell):
@@ -4114,23 +4071,17 @@ class Preparation(Spell):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Preparation is cast and next spell this turn costs 2 less.")
-		tempAura = YourNextSpellCosts2LessThisTurn(self.Game, self.ID)
+		tempAura = GameManaAura_InTurnNextSpell2Less(self.Game, self.ID)
 		self.Game.Manas.CardAuras.append(tempAura)
 		tempAura.auraAppears()
 		return None
 		
-class YourNextSpellCosts2LessThisTurn(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = -2, -1
-		self.temporary = True
-		self.auraAffected = []
+class GameManaAura_InTurnNextSpell2Less(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, -2, -1)
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Spell"
-		
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
 		
 		
 class Shadowstep(Spell):
@@ -4828,7 +4779,7 @@ class SummoningPortal(Minion):
 	requireTarget, keyWord, description = False, "", "Your minions cost (2) less, but not less than (1)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=-2, changeto=-1, lowerbound=1)
+		self.auras["Mana Aura"] = ManaAura(self, changeby=-2, changeto=-1, lowerbound=1)
 		
 	def manaAuraApplicable(self, subject): #ID用于判定是否是我方手中的随从
 		return subject.type == "Minion" and subject.ID == self.ID
@@ -5150,16 +5101,15 @@ class CommandingShout(Spell):
 	description = "Your minions can't be reduced below 1 Health this turn. Draw a card"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Commanding Shout will prevent player's minions' health be reduced below 1 this turn. Player draws a card.")
-		trigger = CommandingShoutEffect(self.Game, self.ID)
+		trigger = CommandingShout_Effect(self.Game, self.ID)
 		trigger.connect()
 		self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
-class CommandingShoutEffect:
+class CommandingShout_Effect:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.signals = ["FinalDmgonMinion?"]
-		self.temp = False
 		
 	def connect(self):
 		try: self.Game.trigsBoard[self.ID]["FinalDmgonMinion?"].append(self)

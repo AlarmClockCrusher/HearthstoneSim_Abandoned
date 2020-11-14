@@ -17,7 +17,7 @@ class TrigBoard:
 		self.blank_init(entity, [])
 		
 	def blank_init(self, entity, signals):
-		self.entity, self.signals, self.temp = entity, signals, False
+		self.entity, self.signals, self.inherent = entity, signals, True
 		
 	def connect(self):
 		for sig in self.signals:
@@ -64,7 +64,7 @@ class TrigHand:
 		self.blank_init(entity, [])
 		
 	def blank_init(self, entity, signals):
-		self.entity, self.signals, self.temp = entity, signals, False
+		self.entity, self.signals, self.inherent = entity, signals, True
 		
 	def connect(self):
 		for sig in self.signals:
@@ -105,7 +105,7 @@ class TrigDeck:
 		self.blank_init(entity, [])
 		
 	def blank_init(self, entity, signals):
-		self.entity, self.signals, self.temp = entity, signals, False
+		self.entity, self.signals, self.inherent = entity, signals, True
 		
 	def connect(self):
 		for sig in self.signals:
@@ -236,7 +236,7 @@ class Trig_Borrow(TrigBoard):
 class Trig_Echo(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
-		self.temp = True
+		self.inherent = False
 		self.makesCardEvanescent = True
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
@@ -245,6 +245,19 @@ class Trig_Echo(TrigHand):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "At the end of turn, Echo card %s disappears."%self.entity.name)
 		self.entity.Game.Hand_Deck.extractfromHand(self.entity)
+		
+		
+class Trig_DieatEndofTurn(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnEnds"])
+		self.inherent = False
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard #Even if the current turn is not the minion's owner's turn
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "At the end of turn, minion %s affected by FelLord Betrug dies."%self.entity.name)
+		self.entity.Game.killMinion(None, self.entity)
 		
 		
 class Trig_WorgenShift_FromHuman(TrigHand):
@@ -300,6 +313,9 @@ class QuestTrigger(TrigBoard):
 			self.effect(signal, ID, subject, target, number, comment)
 			
 			
+			
+			
+"""Auras"""
 class BuffAura_Receiver:
 	#Source is the Aura not the entity that creates the aura.
 	def __init__(self, receiver, source, attGain, healthGain):
@@ -544,8 +560,7 @@ class HasAura_Receiver:
 		
 	#The aura on the receiver is cleared and the source will remove this receiver and aura_Receiver from it's list.
 	def effectClear(self):
-		if self.receiver.keyWordbyAura[self.keyWord] > 0:
-			self.receiver.keyWordbyAura[self.keyWord] -= 1
+		self.receiver.keyWordbyAura[self.keyWord] -= 1
 		self.receiver.losesKeyword(self.keyWord)
 		try: self.receiver.keyWordbyAura["Auras"].remove(self)
 		except: pass
@@ -557,7 +572,8 @@ class HasAura_Receiver:
 	def effectDiscard(self):
 		self.receiver.keyWordbyAura[self.keyWord] -= 1
 		self.receiver.losesKeyword(self.keyWord)
-		extractfrom(self, self.receiver.keyWordbyAura["Auras"])
+		try: self.receiver.keyWordbyAura["Auras"].remove(self)
+		except: pass
 		
 	def selfCopy(self, recipient):
 		return type(self)(recipient, self.source, self.keyWord)
@@ -665,44 +681,30 @@ class HeroBuffAura_Receiver:
 		except: pass
 		try: self.source.auraAffected.remove((self.receiver, self))
 		except: pass
-	#Invoke when the receiver is copied and because the aura_Dealer won't have reference to this copied receiver,
-	#remove this copied aura_Receiver from copied receiver's statbyAura[2].
-	def effectDiscard(self):
-		self.receiver.gainAttack(-2, '')
-		self.receiver.statbyAura[0] -= 2
-		try: self.receiver.statbyAura[1].remove(self)
-		except: pass
 		
 	def selfCopy(self, recipient):
 		return type(self)(recipient, self.source)
 	#武器的本体复制一定优先，其复制过程中会自行创建没有source的receiver，receiver自己没有必要创建createCopy方法
 	
-class HeroWindfuryAura_Receiver:
-	def __init__(self, receiver, source):
+class HeroHasAura_Receiver:
+	def __init__(self, receiver, source, keyWord):
 		self.source = source #The aura.
 		self.receiver = receiver
+		self.keyWord = keyWord
 		
 	def effectStart(self):
-		self.receiver.keyWordbyAura["Windfury"] += 1
-		self.receiver.keyWords["Windfury"] += 1
+		self.receiver.keyWordbyAura[self.keyWord] += 1
+		self.receiver.getsKeyword(self.keyWord)
 		self.receiver.keyWordbyAura["Auras"].append(self)
 		self.source.auraAffected.append((self.receiver, self))
 		
 	#The aura on the receiver is cleared and the source will remove this receiver and aura_Receiver from it's list.
 	def effectClear(self):
-		self.receiver.keyWordbyAura["Windfury"] -= 1
-		self.receiver.keyWords["Windfury"] -= 1
+		self.receiver.keyWordbyAura[self.keyWord] -= 1
+		self.receiver.losesKeyword(self.keyWord)
 		try: self.receiver.keyWordbyAura["Auras"].remove(self)
 		except: pass
 		try: self.source.auraAffected.remove((self.receiver, self))
-		except: pass
-		
-	#After a receiver is deep copied, it will also copy this aura_Receiver, simply remove it.
-	#The aura_Dealer won't have reference to this copied aura.
-	def effectDiscard(self):
-		self.receiver.keyWordbyAura["Windfury"] -= 1
-		self.receiver.keyWords["Windfury"] -= 1
-		try: self.receiver.keyWordbyAura["Auras"].remove(self)
 		except: pass
 		
 	def selfCopy(self, recipient):
@@ -740,7 +742,7 @@ class ManaMod:
 #随从发出的光环由随从自己控制光环的开关。
 #不寄存于随从身上的光环一般用于一次性的费用结算。而洛欧塞布等持续一个回合的光环没有任何扳机而已
 #永久费用光环另行定义
-class ManaAura_Dealer:
+class ManaAura:
 	def __init__(self, entity, changeby=0, changeto=-1, lowerbound=0):
 		self.blank_init(entity, changeby, changeto, lowerbound)
 		
@@ -815,30 +817,28 @@ class ManaAura_Dealer:
 			return game.copiedObjs[self]
 			
 			
+#TempManaEffects are supposed be single-usage and expires. But they can be modified to last longer, etc.
 class TempManaEffect:
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, 0, -1)
+		
+	def blank_init(self, Game, ID, changeby, changeto):
 		self.Game, self.ID = Game, ID
 		self.changeby, self.changeto = changeby, changeto
 		self.temporary = True
 		self.auraAffected = []
+		self.signals = ["CardEntersHand", "ManaPaid"]
 		
 	def applicable(self, target):
 		return True
 	#signal有"CardEntersHand"和"ManaPaid",只要它们满足applicable就可以触发。
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if signal == "CardEntersHand":
-			return self.applicable(target[0])
-		return subject.ID == self.ID and self.applicable(subject)
+		return self.applicable(target[0] if signal[0] == "C" else subject)
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			self.effect(signal, ID, subject, target, number, comment)
-			
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		if signal == "CardEntersHand":
-			self.applies(target[0])
-		else: #signal == "ManaPaid"
-			self.auraDisappears()
+		if self.applicable(target[0] if signal[0] == "C" else subject):
+			if signal[0] == "C": self.applies(target[0])
+			else: self.auraDisappears() #"ManaPaid" check is done in the canTrigger. Here it always turns off the disposable aura
 			
 	def applies(self, subject):
 		if self.applicable(subject):
@@ -850,11 +850,9 @@ class TempManaEffect:
 		game = self.Game
 		for card in game.Hand_Deck.hands[1]: self.applies(card)
 		for card in game.Hand_Deck.hands[2]: self.applies(card)
-		
-		try: game.trigsBoard[self.ID]["CardEntersHand"].append(self)
-		except: game.trigsBoard[self.ID]["CardEntersHand"] = [self]
-		try: game.trigsBoard[self.ID]["ManaPaid"].append(self)
-		except: game.trigsBoard[self.ID]["ManaPaid"] = [self]
+		for sig in self.signals:
+			try: game.trigsBoard[self.ID][sig].append(self)
+			except: game.trigsBoard[self.ID][sig] = [self]
 		game.Manas.calcMana_All()
 		
 	def auraDisappears(self):
@@ -863,10 +861,9 @@ class TempManaEffect:
 		self.auraAffected = []
 		try: self.Game.Manas.CardAuras.remove(self)
 		except: pass
-		try: self.Game.trigsBoard[self.ID]["CardEntersHand"].remove(self)
-		except: pass
-		try: self.Game.trigsBoard[self.ID]["ManaPaid"].remove(self)
-		except: pass
+		for sig in self.signals:
+			try: self.Game.trigsBoard[self.ID][sig].remove(self)
+			except: pass
 		self.Game.Manas.calcMana_All()
 		
 	def selfCopy(self, game):
@@ -887,12 +884,58 @@ class TempManaEffect:
 			return game.copiedObjs[self]
 			
 			
+class ManaAura_1UsageEachTurn: #For Pint-sized Summoner, Kalecgos, etc
+	def __init__(self, entity):
+		self.entity = entity
+		self.aura = None
+	#只要是有满足条件的卡牌进入手牌，就会触发这个光环。target是承载这个牌的列表。
+	#applicable不需要询问一张牌是否在手牌中。光环只会处理在手牌中的卡牌
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and ID == self.entity.ID
+		
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrigger(signal, ID, subject, target, number, comment):
+			self.aura.auraAppears()
+			
+	def auraAppears(self):
+		game, ID = self.entity.Game, self.entity.ID
+		if game.turn == ID and game.Counters.numMinionsPlayedThisTurn[ID] < 1:
+			self.aura = ThisTurnYour1stMinion1Less(game, ID)
+			self.aura.auraAppears()
+		try: game.trigsBoard[ID]["TurnStarts"].append(self)
+		except: game.trigsBoard[ID]["TurnStarts"] = [self]
+		#self.aura.auraAppears will handle the calcMana_All()
+		#When the aura object is no longer referenced, it vanishes automatically.
+	def auraDisappears(self):
+		if self.aura:
+			self.aura.auraDisappears() #这个光环只负责（尝试）关掉它的TempManaEffect
+			self.aura = None
+		try: self.entity.Game.trigsBoard[self.entity.ID]["TurnStarts"].remove(self)
+		except: pass
+		
+	def selfCopy(self, recipient): #The recipient is the entity that deals the Aura.
+		return type(self)(recipient)
+		
+	def createCopy(self, game):
+		if self not in game.copiedObjs:
+			entityCopy = self.entity.createCopy(game)
+			trigCopy = self.selfCopy(entityCopy)
+			if self.aura: trigCopy.aura = self.aura.createCopy(game)
+			return trigCopy
+		else:
+			return game.copiedObjs[self]
+			
+			
 class TempManaEffect_Power:
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, 0, -1)
+		
+	def blank_init(self, Game, ID, changeby, changeto):
 		self.Game, self.ID = Game, ID
 		self.changeby, self.changeto = changeby, changeto
 		self.temporary = True
 		self.auraAffected = []
+		self.signals = ["HeroPowerAcquired", "ManaPaid"]
 		
 	def applicable(self, target):
 		return True
@@ -901,15 +944,11 @@ class TempManaEffect_Power:
 		return self.applicable(subject) #Hero Power的出现是不传递holder而是直接传递subject
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			self.effect(signal, ID, subject, target, number, comment)
-			
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		if signal == "HeroPowerAcquired":
-			self.applies(subject)
-		elif subject == self.Game.powers[self.ID]:
-			self.auraDisappears()
-			
+		if self.applicable(subject):
+			if signal[0] == "H": self.applies(subject)
+			elif subject == self.Game.powers[self.ID]: #Mana Paid consumes the aura
+				self.auraDisappears()
+				
 	def applies(self, subject):
 		if self.applicable(subject):
 			manaMod = ManaMod(subject, self.changeby, self.changeto, self)
@@ -920,10 +959,9 @@ class TempManaEffect_Power:
 		game = self.Game
 		self.applies(game.powers[1])
 		self.applies(game.powers[2])
-		try: game.trigsBoard[self.ID]["HeroPowerAcquired"].append(self)
-		except: game.trigsBoard[self.ID]["HeroPowerAcquired"] = [self]
-		try: game.trigsBoard[self.ID]["ManaPaid"].append(self)
-		except: game.trigsBoard[self.ID]["ManaPaid"] = [self]
+		for sig in self.signals:
+			try: game.trigsBoard[self.ID][sig].append(self)
+			except: game.trigsBoard[self.ID][sig] = [self]
 		self.Game.Manas.calcMana_Powers()
 		
 	def auraDisappears(self):
@@ -932,10 +970,9 @@ class TempManaEffect_Power:
 		self.auraAffected = []
 		try: self.Game.Manas.PowerAuras.remove(self)
 		except: pass
-		try: self.Game.trigsBoard[self.ID]["HeroPowerAcquired"].remove(self)
-		except: pass
-		try: self.Game.trigsBoard[self.ID]["ManaPaid"].remove(self)
-		except: pass
+		for sig in self.signals:
+			try: self.Game.trigsBoard[self.ID][sig].remove(self)
+			except: pass
 		self.Game.Manas.calcMana_Powers()
 		
 	def selfCopy(self, game):

@@ -113,19 +113,13 @@ class Card:
 		#将注册了的场上、手牌和牌库扳机全部注销。
 		for trig in reversed(self.trigsBoard):
 			trig.disconnect()
-			if hasattr(trig, "temp") and trig.temp: #If the trig is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				try: self.trigsBoard.remove(trig)
-				except: pass
+			if not trig.inherent: #If the trig is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
+				self.trigsBoard.remove(trig)
 		for trig in reversed(self.trigsHand):
 			trig.disconnect()
-			if hasattr(trig, "temp") and trig.temp: #If the trig is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				try: self.trigsHand.remove(trig)
-				except: pass
-		for trig in reversed(self.trigsDeck):
+			if not trig.inherent: self.trigsHand.remove(trig)
+		for trig in reversed(self.trigsDeck): #没有给卡牌施加外来扳机的机制
 			trig.disconnect()
-			if hasattr(trig, "temp") and trig.temp: #If the trig is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				try: self.trigsDeck.remove(trig)
-				except: pass
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		#无论如果离开手牌，被移出还是洗回牌库，费用修改效果（如大帝-1）都会消失
 		for manaMod in reversed(self.manaMods): manaMod.getsRemoved()
@@ -138,23 +132,19 @@ class Card:
 		for trig in self.trigsDeck: trig.connect()
 			
 	def leavesDeck(self, intoHand=True):
-		self.onBoard, self.inHand, self.inDeck = False, False, False
 		#将注册了的场上、手牌和牌库扳机全部注销。
-		for trigger in self.trigsBoard:
-			trigger.disconnect()
-			if hasattr(trigger, "temp") and trigger.temp: #If the trigger is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				extractfrom(trigger, self.trigsBoard)
-		for trigger in self.trigsHand:
-			trigger.disconnect()
-			if hasattr(trigger, "temp") and trigger.temp: #If the trigger is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				extractfrom(trigger, self.trigsHand)
-		for trigger in self.trigsDeck:
-			trigger.disconnect()
-			if hasattr(trigger, "temp") and trigger.temp: #If the trigger is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				extractfrom(trigger, self.trigsDeck)
-		if intoHand == False: #离开牌库时，只有去往手牌中时费用修改效果不会丢失。
-			for manaMod in self.manaMods:
-				manaMod.getsRemoved()
+		for trig in reversed(self.trigsBoard):
+			trig.disconnect()
+			if not trig.inherent: #If the trig is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
+				self.trigsBoard.remove(trig)
+		for trig in reversed(self.trigsHand):
+			trig.disconnect()
+			if not trig.inherent: self.trigsHand.remove(trig)
+		for trig in reversed(self.trigsDeck): #没有给卡牌施加外来扳机的机制
+			trig.disconnect()
+		self.onBoard, self.inHand, self.inDeck = False, False, False
+		if not intoHand: #离开牌库时，只有去往手牌中时费用修改效果不会丢失。
+			for manaMod in self.manaMods: manaMod.getsRemoved()
 			self.manaMods = []
 			
 	"""Handle the target selection. All methods belong to minions. Other types will define their own methods."""
@@ -744,11 +734,10 @@ class Minion(Card):
 				trigger.disconnect()
 		# 如果随从有离场时需要触发的函数，在此处理
 		for func in self.disappearResponse: func()
-		# Let buffAura_Receivers remove themselves
-		while self.statbyAura[2] != []:
+		# Let buffAura_Receivers and hasAura_Receivers remove themselves
+		while self.statbyAura[2]:
 			self.statbyAura[2][0].effectClear()
-		# Let hasAura_Receivers remove themselves
-		while self.keyWordbyAura["Auras"] != []:
+		while self.keyWordbyAura["Auras"]:
 			self.keyWordbyAura["Auras"][0].effectClear()
 		self.activated = False
 		self.Game.sendSignal("MinionDisappears", self.ID, None, self, 0, "")
@@ -930,15 +919,9 @@ class Minion(Card):
 			if "Next Damage 0" in self.marks and self.marks["Next Damage 0"] > 0:
 				damage = 0
 				self.marks["Next Damage 0"] = 0
-			if "Max Damage" in self.marks and self.marks["Max Damage"]:
-				if "Max Damage" in self.marks and self.marks["Max Damage"]:
-					mini = 100
-					for m in self.marks["Max Damage"]:
-						if m < mini:
-							mini = m
-					damage = min(damage, mini)
-			if "Enemy Effect Damage Immune" in self.marks and self.marks[
-				"Enemy Effect Damage Immune"] > 0 and damageType == "Ability":
+			if self.marks["Max Damage"]:
+				damage = min(min(self.marks["Max Damage"]), damage)
+			if self.marks["Enemy Effect Damage Immune"] > 0 and damageType == "Ability":
 				damage = 0
 			if "Deal Damage 0" in subject.marks and subject.marks["Deal Damage 0"] > 0:
 				damage = 0
@@ -1019,11 +1002,11 @@ class Minion(Card):
 				marks_orig[key] = value
 		# 将随从携带的扳机也记录,磁力随从是没有手牌扳机和场上扳机的
 		triggers_orig, deathrattles_orig = [], []
-		for trigger in Copy.trigsBoard:
-			if trigger.temp == False:  # 临时扳机不会被记录和赋予，如腐蚀术
-				triggers_orig.append(type(trigger))
-		for trigger in Copy.deathrattles:
-			deathrattles_orig.append(type(trigger))
+		for trig in Copy.trigsBoard:
+			if trig.inherent:  # 外来扳机不会被记录和赋予，如腐蚀术
+				trig.append(type(trig))
+		for trig in Copy.deathrattles:
+			deathrattles_orig.append(type(trig))
 		# 磁力随从没有triggers[]的方法，如激怒等
 		# 将关键字赋予随从
 		for key, value in keyWords_orig.items():
@@ -1507,8 +1490,7 @@ class Spell(Card):
 					PRINT(self.Game, "%s is played and Overloads %d mana crystals."%(self.name, self.overload))
 					self.Game.Manas.overloadMana(self.overload, self.ID)
 				if self.twinSpell > 0:
-					PRINT(self.Game, "Twinspell %s is cast and adds a another copy to player's hand, pos"%(self.name, posinHand))
-					self.Game.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, "type", posinHand)
+					self.Game.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, comment="type", byDiscover=False, pos=posinHand)
 					
 			#When the target is an onBoard minion, Zentimo is still onBoard and has adjacent minions next to it.
 			if target and target.type == "Minion" and target.onBoard and sweep > 0 and self.Game.neighbors2(target)[0]:
@@ -1974,7 +1956,7 @@ class Hero(Card):
 		
 	def decideAttChances_base(self):
 		weapon = self.Game.availableWeapon(self.ID)
-		self.attChances_base = 2 if weapon and weapon.keyWords["Windfury"] > 0 else 1
+		self.attChances_base = 2 if self.keyWords["Windfury"] > 0 or (weapon and weapon.keyWords["Windfury"] > 0) else 1
 		
 	def getsFrozen(self):
 		self.status["Frozen"] += 1
@@ -2027,6 +2009,14 @@ class Hero(Card):
 	def gainsArmor(self, armor):
 		self.armor += armor
 		
+	def getsKeyword(self, keyWord): #目前只有风怒这一个选项
+		self.keyWords[keyWord] += 1
+		self.decideAttChances_base()
+		
+	def losesKeyword(self, keyWord):
+		self.keyWords[keyWord] -= 1
+		self.decideAttChances_base()
+		
 	"""Handle hero's being selectable by subjects or not. And hero's availability for battle."""
 	def canAttack(self):
 		return self.actionable() and self.attack > 0 and self.status["Frozen"] < 1 \
@@ -2054,7 +2044,7 @@ class Hero(Card):
 			if "Enemy Effect Damage Immune" in self.marks and self.marks[
 				"Enemy Effect Damage Immune"] > 0 and damageType == "Ability":
 				damage = 0
-			if "Deal Damage 0" in subject.marks and subject.marks["Deal Damage 0"] > 0:
+			if subject and "Deal Damage 0" in subject.marks and subject.marks["Deal Damage 0"] > 0:
 				damage = 0
 			if damage > 0:
 				damageHolder = [damage]
@@ -2094,18 +2084,23 @@ class Hero(Card):
 	#专门被英雄牌使用，加拉克苏斯大王和拉格纳罗斯都不会调用该方法。
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""): #英雄牌使用目前不存在触发发现的情况
 	#使用阶段
-		#英雄牌替换出的英雄的生命值，护甲和攻击机会都会继承当前英雄的值。
+		#英雄牌替换出的英雄的生命值，护甲和攻击机会等数值都会继承当前英雄的值。
 		game, ID = self.Game, self.ID
-		curHero, heroes = game.heroes[ID], game.heroes
-		self.health, self.health_max = curHero.health, curHero.health_max
-		self.attack_bare, self.tempAttChanges, self.attTimes, self.armor = curHero.attack_bare, curHero.tempAttChanges, curHero.attTimes, curHero.armor
+		oldHero = game.heroes[ID]
+		self.health, self.health_max, self.armor = oldHero.health, oldHero.health_max, oldHero.armor
+		self.attack_bare, self.tempAttChanges, self.attTimes, self.armor = oldeHero.attack_bare, oldeHero.tempAttChanges, oldeHero.attTimes, oldeHero.armor
+		self.onBoard, oldHero.onBoard, self.position = True, False, ID #这个只是为了方便定义(i, where)
 		#英雄牌进入战场。（本来是应该在使用阶段临近结束时移除旧英雄和旧技能，但是为了方便，在此时执行。）
 		#继承旧英雄的生命状态和护甲值。此时英雄的被冻结和攻击次数以及攻击机会也继承旧英雄。
 		#清除旧的英雄技能。
-		self.position = ID #这个只是为了方便定义(i, where)
 		game.powers[ID].disappears()
 		game.powers[ID].heroPower = None
 		heroes[ID].onBoard = False
+		#旧英雄在消失前需要归还其所有的光环buff效果，目前只有Inara Stormcrash的+2攻和风怒
+		while self.statbyAura[1]:
+			self.statbyAura[1][0].effectClear()
+		while self.keyWordbyAura["Auras"]:
+			self.keyWordbyAura["Auras"][0].effectClear()
 		heroPower = self.heroPower #这个英雄技能必须存放起来，之后英雄还有可能被其他英雄替换，但是这个技能要到最后才登场。
 		heroes[ID] = self #英雄替换。如果后续有埃克索图斯再次替换英雄，则最后的英雄是拉格纳罗斯。
 		heroes[ID].onBoard = True
@@ -2116,7 +2111,7 @@ class Hero(Card):
 		game.sendSignal("HeroCardPlayed", ID, self, None, mana, "", choice)
 		#英雄牌的最大生命值和现有生命值以及护甲被设定继承旧英雄的数值。并获得英雄牌上标注的护甲值。
 		self.gainsArmor(type(self).armor)
-		game.sendSignal("HeroReplaced", ID, None, self, 0, "")
+		game.sendSignal("HeroReplaced", ID, self, None, 0, "")
 		#使用阶段结束，进行死亡结算，此时尚不进行胜负判定。
 		game.gathertheDead()
 	#结算阶段
@@ -2126,15 +2121,12 @@ class Hero(Card):
 		#视铜须等的存在而结算战吼次数以及具体战吼。
 		#不用返回主体，但是当沙德沃克调用时whenEffective函数的时候需要。
 		if game.status[ID]["Battlecry x2"] > 0:
-			self.whenEffective(None, "", choice, posinHand)
-		self.whenEffective(None, "", choice, posinHand)
+			self.whenEffective(None, "", choice)
+		self.whenEffective(None, "", choice)
 		if self.weapon: #如果英雄牌本身带有武器，如迦拉克隆等。则装备那把武器
 			game.equipWeapon(self.weapon(game, ID))
-		weapon = game.availableWeapon(ID)
-		if weapon and ID == game.turn:
-			heroes[ID].attack = heroes[ID].attack_bare + max(0, weapon.attack)
-		else: heroes[ID].attack = heroes[ID].attack_bare
-		heroes[ID].decideAttChances_base()
+		self.calc_Attack()
+		self.decideAttChances_base()
 		#结算阶段结束，处理死亡，此时尚不进行胜负判定。
 		game.gathertheDead()
 		
@@ -2145,24 +2137,28 @@ class Hero(Card):
 		#被替换的英雄失去所有护甲。
 		#假设直接替换的英雄不会继承之前英雄获得的回合内攻击力增加。
 		game, ID = self.Game, self.ID
-		healthChanged = game.heroes[ID].health == self.health
-		self.attTimes = game.heroes[ID].attTimes
+		healthChanged = game.heroes[ID].health == self.health #目前只有大王和拉格纳罗斯会改变英雄的血量
+		self.onBoard, self.position, self.attTimes = True, ID, game.heroes[ID].attTimes
+		#旧英雄在消失前需要归还其所有的光环buff效果，目前只有Inara Stormcrash的+2攻和风怒
+		while self.statbyAura[1]:
+			self.statbyAura[1][0].effectClear()
+		while self.keyWordbyAura["Auras"]:
+			self.keyWordbyAura["Auras"][0].effectClear()
 		#英雄牌进入战场。（本来是应该在使用阶段临近结束时移除旧英雄和旧技能，但是为了方便，在此时执行。）
 		#继承旧英雄的生命状态和护甲值。此时英雄的被冻结和攻击次数以及攻击机会也继承旧英雄。
 		#大王和炎魔之王在替换之前被定义，拥有15或者8点生命值。0点护甲值和英雄技能等也已定义完毕。
-		self.position = ID #这个只是为了方便定义(i, where)
 		game.heroes[ID] = self
-		game.heroes[ID].onBoard = True
 		if self.heroPower: self.heroPower.replaceHeroPower()
 		if self.weapon: #如果英雄本身带有装备，则会替换当前的玩家装备（如加拉克苏斯大王）
-			game.equipWeapon(self.weapon(game, ID))
-		if fromHeroCard == False: #英雄牌被其他牌打出时不会取消当前玩家的免疫状态
+			game.equipWeapon(self.weapon(game, ID)) #装备武器本身就会处理英雄攻击力的变化
+		else: self.calc_Attack()
+		if not fromHeroCard: #英雄牌被其他牌打出时不会取消当前玩家的免疫状态
 			#Hero's immune state is gone, except that given by Mal'Ganis
 			status = game.status[ID]
 			status["Immune"] -= status["Immune2NextTurn"] + status["ImmuneThisTurn"]
 			status["ImmuneThisTurn"] = status["Immune2NextTurn"] = 0
-			
-		game.sendSignal("HeroReplaced", ID, None, self, 0, "")
+		#Send signal to notify auras that change hero status, e.g., Inara Stormcrash
+		game.sendSignal("HeroReplaced", ID, self, None, 0, "")
 		if healthChanged and game.turn == ID:
 			game.Counters.timesHeroChangedHealth_inOwnTurn[ID] += 1
 			game.Counters.heroChangedHealthThisTurn[ID] = True

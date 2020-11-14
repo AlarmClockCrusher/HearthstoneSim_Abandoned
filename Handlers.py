@@ -140,26 +140,28 @@ class Manas:
 		self.manas[ID] = max(0, self.manasUpper[ID] - self.manasLocked[ID] - self.manas_withheld[ID])
 		self.Game.sendSignal("OverloadCheck", ID, None, None, 0, "")
 		#卡牌的费用光环加载
-		for aura in self.CardAuras_Backup:
-			if aura.ID == self.Game.turn:
-				tempAura = extractfrom(aura, self.CardAuras_Backup)
+		i = 0
+		while i < len(self.CardAuras_Backup):
+			if self.CardAuras_Backup[i].ID == self.Game.turn:
+				tempAura = self.CardAuras_Backup.pop(i)
 				self.CardAuras.append(tempAura)
 				tempAura.auraAppears()
+			else: i += 1 #只有在当前aura无法启动时才会去到下一个位置继续检测，否则在pop之后可以在原位置检测
 		self.calcMana_All()
 		#英雄技能的费用光环加载
-		for aura in self.PowerAuras_Backup:
-			if aura.ID == self.Game.turn:
-				tempAura = extractfrom(aura, self.PowerAuras_Backup)
+		i = 0
+		while i < len(self.PowerAuras_Backup):
+			if self.PowerAuras_Backup[i].ID == self.Game.turn:
+				tempAura = self.PowerAuras_Backup.pop(i)
 				self.PowerAuras.append(tempAura)
 				tempAura.auraAppears()
+			else: i += 1
 		self.calcMana_Powers()
 
 	#Manas locked at this turn doesn't disappear when turn ends. It goes away at the start of next turn.
 	def turnEnds(self):
 		for aura in self.CardAuras + self.PowerAuras:
-			if hasattr(aura, "temporary") and aura.temporary:
-				PRINT(self.Game, "{} expires at the end of turn.".format(aura))
-				aura.auraDisappears()
+			if aura.temporary: aura.auraDisappears()
 		self.calcMana_All()
 		self.calcMana_Powers()
 
@@ -167,33 +169,26 @@ class Manas:
 		#舍弃之前的卡牌的基础法力值设定
 		#卡牌的法力值计算：从卡牌的的基础法力值开始，把法力值光环和法力按照入场顺序进行排列，然后依次进行处理。最后卡牌如果有改变自己费用的能力，则其最后结算，得到最终的法力值。
 		#对卡牌的法力值增减和赋值以及法力值光环做平等的处理。
-		if comment == "HandOnly":
-			cards = self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]
-		else: #comment == "IncludingDeck"
-			cards = self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2] + self.Game.Hand_Deck.decks[1] + self.Game.Hand_Deck.decks[2]
-		for card in cards:
-			self.calcMana_Single(card)
-
+		cards = self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]
+		if comment == "IncludingDeck":
+			cards += self.Game.Hand_Deck.decks[1] + self.Game.Hand_Deck.decks[2]
+		for card in cards: self.calcMana_Single(card)
+		
 	def calcMana_Single(self, card):
 		card.mana = type(card).mana
-		for manaMod in card.manaMods:
-			manaMod.handleMana()
+		for manaMod in card.manaMods: manaMod.handleMana()
 		#随从的改变自己法力值的效果在此结算。如果卡牌有回响，则其法力值不能减少至0
 		card.selfManaChange()
 		if card.mana < 0: #费用修改不能把卡的费用降为0
 			card.mana = 0
-		if card.type == "Minion" and card.mana < 1 and card.keyWords["Echo"] > 0:
+		if card.mana < 1 and ((card.type == "Minion" and card.keyWords["Echo"] > 0) or (card.type == "Spell" and "Echo" in card.index)):
 			card.mana = 1
-		elif card.type == "Spell" and card.mana < 1 and "Echo" in card.index:
-			card.mana = 1
-
+			
 	def calcMana_Powers(self):
 		for ID in range(1, 3):
 			self.Game.powers[ID].mana = type(self.Game.powers[ID]).mana
-			for manaMod in self.Game.powers[ID].manaMods:
-				manaMod.handleMana()
-			if self.Game.powers[ID].mana < 0:
-				self.Game.powers[ID].mana = 0
+			for manaMod in self.Game.powers[ID].manaMods: manaMod.handleMana()
+			if self.Game.powers[ID].mana < 0: self.Game.powers[ID].mana = 0
 
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)

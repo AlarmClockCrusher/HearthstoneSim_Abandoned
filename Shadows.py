@@ -2109,7 +2109,7 @@ class KirinTorTricaster(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.keyWords["Spell Damage"] = 3
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, +1, -1)
+		self.auras["Mana Aura"] = ManaAura(self, +1, -1)
 		
 	def manaAuraApplicable(self, subject):
 		return subject.ID == self.ID and subject.type == "Spell"
@@ -2193,12 +2193,7 @@ class Kalecgos(Minion):
 				
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=0, changeto=0)
-		self.trigsBoard = [Trig_Kalecgos(self)]
-		#随从的光环启动在顺序上早于appearResponse,关闭同样早于disappearResponse
-		self.appearResponse = [self.checkAuraCorrectness]
-		self.disappearResponse = [self.deactivateAura]
-		self.silenceResponse = [self.deactivateAura]
+		self.auras["Mana Aura"] = ManaAura_1stSpell0(self)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -2225,40 +2220,24 @@ class Kalecgos(Minion):
 		self.Game.fixedGuides.append(type(option))
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
-	def manaAuraApplicable(self, subject):
-		return subject.ID == self.ID and subject.type == "Spell"
+class GameManaAura_InTurn1stSpell0(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, 0, 0)
 		
-	def checkAuraCorrectness(self): #负责光环在随从登场时无条件启动之后的检测。如果光环的启动条件并没有达成，则关掉光环
-		if self.Game.turn != self.ID or self.Game.Counters.numSpellsPlayedThisTurn[self.ID] != 0:
-			PRINT(self.Game, "Kalecgos's mana aura is incorrectly activated. It will be shut down")
-			self.auras["Mana Aura"].auraDisappears()
-			
-	def deactivateAura(self):
-		PRINT(self.Game, "Kalecgos's mana aura is removed. Player's first spell each turn no longer costs (0).")
-		self.auras["Mana Aura"].auraDisappears()
+	def applicable(self, target):
+		return target.ID == self.ID and target.type == "Spell"
 		
-#法术反制实际上不会消耗卡雷苟斯的光环，但是会消耗暮陨者艾维娜的光环，但是在此统一为会消耗。卡雷苟斯的光环显然是程序员自己没有参考之前的同类型光环然后自己写的。
-class Trig_Kalecgos(TrigBoard):
-	def __init__(self, entity):
-		self.blank_init(entity, ["TurnStarts", "TurnEnds", "ManaPaid"])
+class ManaAura_1stSpell0(ManaAura_1UsageEachTurn):
+	def auraAppears(self):
+		game, ID = self.entity.Game, self.entity.ID
+		if game.turn == ID and game.Counters.numSpellsPlayedThisTurn[ID] < 1:
+			self.aura = GameManaAura_InTurn1stSpell0(game, ID)
+			game.Manas.CardAuras.append(self.aura)
+			self.aura.auraAppears()
+		try: game.trigsBoard[ID]["TurnStarts"].append(self)
+		except: game.trigsBoard[ID]["TurnStarts"] = [self]
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if "Turn" in signal and self.entity.onBoard:
-			return True
-		if signal == "ManaPaid" and self.entity.onBoard and subject.type == "Spell" and subject.ID == self.entity.ID:
-			return True
-		return False
 		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		if "Turn" in signal: #回合开始结束时总会强制关闭然后启动一次光环。这样，即使回合开始或者结束发生了随从的控制变更等情况，依然可以保证光环的正确
-			PRINT(self.entity.Game, "At the start/end of turn, %s attempts to restarts the mana aura and reduces the cost of the first card to (0)."%self.entity.name)
-			self.entity.auras["Mana Aura"].auraDisappears()
-			self.entity.auras["Mana Aura"].auraAppears()
-			self.entity.checkAuraCorrectness()
-		else: #signal == "ManaPaid" or signal == "TurnEnds"
-			self.entity.auras["Mana Aura"].auraDisappears()
-			
-			
 class NeverSurrender(Secret):
 	Class, name = "Paladin", "Never Surrender!"
 	requireTarget, mana = False, 1
@@ -3431,7 +3410,7 @@ class Scargil(Minion):
 	requireTarget, keyWord, description = False, "", "Your Murlocs cost (1)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=0, changeto=1)
+		self.auras["Mana Aura"] = ManaAura(self, changeby=0, changeto=1)
 		
 	def manaAuraApplicable(self, subject):
 		return subject.ID == self.ID and subject.type == "Minion" and "Murloc" in subject.race
@@ -3747,6 +3726,7 @@ class FelLordBetrug(Minion):
 class Trig_FelLordBetrug(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["CardDrawn"])
+		self.inherent = False
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and target[0].type == "Minion" and target[0].ID == self.entity.ID
@@ -3757,18 +3737,6 @@ class Trig_FelLordBetrug(TrigBoard):
 		minion.keyWords["Rush"] = 1
 		minion.trigsBoard.append(Trig_DieatEndofTurn(minion))
 		self.entity.Game.summon(minion, self.entity.position+1, self.entity.ID)
-		
-class Trig_DieatEndofTurn(TrigBoard):
-	def __init__(self, entity):
-		self.blank_init(entity, ["TurnEnds"])
-		self.temp = True
-		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard #Even if the current turn is not the minion's owner's turn
-		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "At the end of turn, minion %s affected by FelLord Betrug dies."%self.entity.name)
-		self.entity.Game.killMinion(None, self.entity)
 		
 """Warrior cards"""
 class ImproveMorale(Spell):

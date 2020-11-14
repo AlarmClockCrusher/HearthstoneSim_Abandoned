@@ -6,6 +6,7 @@ from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 import numpy as np
+from collections import Counter as cnt
 
 import inspect
 
@@ -158,14 +159,14 @@ class Hand_Deck:
 		return posinHand == 0 or posinHand == len(self.hands[card.ID]) - 1
 
 	def noDuplicatesinDeck(self, ID):
+		#typeCounter = cnt((type(card) for card in self.decks[ID]))
+		#return all(typeCounter.values())
 		record = []
 		for card in self.decks[ID]:
-			if type(card) not in record:
-				record.append(type(card))
-			else:
-				return False
+			if type(card) not in record: record.append(type(card))
+			else: return False
 		return True
-
+		
 	def noMinionsinDeck(self, ID):
 		return not any(card.type == "Minion" for card in self.decks[ID])
 		
@@ -212,7 +213,7 @@ class Hand_Deck:
 					if GUI: GUI.fatigueAni(ID, damage)
 					dmgTaker = game.scapegoat4(game.heroes[ID])
 					dmgTaker.takesDamage(None, damage, damageType="Ability")  # 疲劳伤害没有来源
-					return (None, 0)
+					return (None, -1) #假设疲劳时返回的数值是负数，从而可以区分爆牌（爆牌时仍然返回那个牌的法力值）和疲劳
 		else:
 			if isinstance(card, (int, np.int32, np.int64)):
 				card = self.decks[ID].pop(card)
@@ -231,7 +232,9 @@ class Hand_Deck:
 				if GUI: btn.remove()
 				cardTracker[0].whenEffective()
 				game.sendSignal("SpellCastWhenDrawn", ID, None, cardTracker[0], mana, "")
-				self.drawCard(ID)
+				#抽到之后施放的法术如果检测到玩家处于濒死状态，则不会再抽一张。如果玩家有连续抽牌的过程，则执行下次抽牌
+				if game.heroes[ID].health > 0 and not game.heroes[ID].dead:
+					self.drawCard(ID)
 				cardTracker[0].afterDrawingCard()
 			else:  # 抽到的牌可以加入手牌。
 				if cardTracker[0].type == "Minion" or cardTracker[0].type == "Amulet" and cardTracker[0].triggers["Drawn"] != []:
@@ -246,7 +249,7 @@ class Hand_Deck:
 		else:
 			PRINT(game, "Player's hand is full. The drawn card %s is milled" % card.name)
 			if GUI: GUI.millCardAni(card)
-			return (None, 0)
+			return (None, mana) #假设即使爆牌也可以得到要抽的那个牌的费用，用于神圣愤怒
 			
 	# Will force the ID of the card to change. obj can be an empty list/tuple
 	def addCardtoHand(self, obj, ID, comment="", byDiscover=False, pos=-1, showAni=True):
@@ -410,15 +413,15 @@ class Hand_Deck:
 	# 只能全部拿出手牌中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
 	def extractfromHand(self, card, ID=0, all=False, enemyCanSee=False):
 		if all:  # Extract the entire hand.
-			temp = self.hands[ID]
-			if temp:
+			cardsOut = self.hands[ID]
+			if cardsOut:
 				self.hands[ID] = []
-				for card in temp:
+				for card in cardsOut:
 					card.leavesHand()
 					self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
 				# 一般全部取出手牌的时候都是直接洗入牌库，一般都不可见
-				if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(temp, False)
-			return temp, 0, -2  # -2 means the posinHand doesn't have real meaning.
+				if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(cardsOut, False)
+			return cardsOut, 0, -2  # -2 means the posinHand doesn't have real meaning.
 		else:
 			if not isinstance(card, (int, np.int32, np.int64)):
 				# Need to keep track of the card's location in hand.
@@ -437,10 +440,10 @@ class Hand_Deck:
 	# 只能全部拿牌库中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
 	def extractfromDeck(self, card, ID=0, all=False, enemyCanSee=True):
 		if all:  # For replacing the entire deck or throwing it away.
-			temp = self.decks[ID]
+			cardsOut = self.decks[ID]
 			self.decks[ID] = []
-			for card in temp: card.leavesDeck()
-			return temp, 0, False
+			for card in cardsOut: card.leavesDeck()
+			return cardsOut, 0, False
 		else:
 			if not isinstance(card, (int, np.int32, np.int64)):
 				card = extractfrom(card, self.decks[card.ID])
@@ -475,20 +478,8 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 
 
-Default1 = [SafetyInspector, HorrendousGrowth, ParadeLeader, IdolofYShaarj, GhuuntheBloodGod, BloodofGhuun,
-			InconspicuousRider, CarnivalClown, YoggSaronMasterofFate, YShaarjtheDefiler, RinlingsRifle, PettingZoo, 
-			OpentheCages, ShadowClone, NetherwindPortal
+Default1 = [InaraStormcrash, InaraStormcrash, InaraStormcrash, InaraStormcrash, InaraStormcrash, InaraStormcrash, InaraStormcrash, InaraStormcrash
 			]
 
-#FelscreamBlast, RedeemedPariah, Acrobatics, DreadlordsBite, , LineHopper, 
-#			BladedLady, 
-#			WhackaGnollHammer, DunkTank, InaraStormcrash, WickedWhispers, FreeAdmission, ManariMosher, DeckofChaos, 
-			
-			
-# ,
-#			AuspiciousSpirits, FoxyFraud, 
-#			RingMatron, Tickatus, StageDive, ETCGodofMetal, RingmastersBaton, 
-#			RingmasterWhatley,
-Default2 = [KiriChosenofElune, MaskofCThun, OhMyYogg, OhMyYogg, SwordEater, CThuntheShattered,
-			LothraxiontheRedeemed, HighExarchYrel, Insight, NazmaniBloodweaver, GrandEmpressShekzara, 
+Default2 = [InaraStormcrash, InaraStormcrash, InaraStormcrash, InaraStormcrash, InaraStormcrash, InaraStormcrash, InaraStormcrash, InaraStormcrash
 			]

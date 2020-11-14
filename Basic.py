@@ -2325,7 +2325,7 @@ class Corruption(Spell):
 class Trig_Corruption(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
-		self.temp = True
+		self.inherent = False
 		self.ID = 1
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2521,7 +2521,7 @@ class Charge(Spell):
 class Trig_Charge(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
-		self.temp = True
+		self.inherent = False
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard #Even if the current turn is not minion's owner's turn

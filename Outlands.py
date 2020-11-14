@@ -719,7 +719,7 @@ class KaelthasSunstrider(Minion):
 	requireTarget, keyWord, description = False, "", "Every third spell you cast each turn costs (0)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=0, changeto=0)
+		self.auras["Mana Aura"] = ManaAura(self, changeby=0, changeto=0)
 		self.trigsBoard = [Trig_KaelthasSunstrider(self)]
 		#随从的光环启动在顺序上早于appearResponse,关闭同样早于disappearResponse
 		self.appearResponse = [self.checkAuraCorrectness]
@@ -1507,7 +1507,7 @@ class YsielWindsinger(Minion):
 	requireTarget, keyWord, description = False, "", "Your spells cost (1)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=0, changeto=1)
+		self.auras["Mana Aura"] = ManaAura(self, changeby=0, changeto=1)
 		
 	def manaAuraApplicable(self, subject): #ID用于判定是否是我方手中的随从
 		return subject.type == "Spell" and subject.ID == self.ID
@@ -1816,7 +1816,7 @@ class Evocation(Spell):
 class Trig_Evocation(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
-		self.temp = True
+		self.inherent = False
 		self.makesCardEvanescent = True
 		
 	#They will be discarded at the end of any turn
@@ -3319,7 +3319,7 @@ class KanrethadEbonlocke(Minion):
 	requireTarget, keyWord, description = False, "", "Your Demons cost (1) less. Deathrattle: Shuffle 'Kanrethad Prime' into your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=-1, changeto=-1)
+		self.auras["Mana Aura"] = ManaAura(self, changeby=-1, changeto=-1)
 		self.deathrattles = [ShuffleKanrethadPrimeintoYourDeck(self)]
 		
 	def manaAuraApplicable(self, subject): #ID用于判定是否是我方手中的随从

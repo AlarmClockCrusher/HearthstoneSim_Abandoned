@@ -1266,7 +1266,7 @@ class Game:
 				"Minion2": self.minions[2],
 				"Amulet1": self.minions[1],
 				"Amulet2": self.minions[2],
-				"Hero1": self.heroes, #For heroes, their position is the same as their ID
+				"Hero1": self.heroes, #For heroes, their position is kept the same as their ID
 				"Hero2": self.heroes,
 				"Power": self.powers,
 				"Hand1": self.Hand_Deck.hands[1],

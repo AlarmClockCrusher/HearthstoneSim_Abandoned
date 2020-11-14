@@ -393,7 +393,7 @@ class GenerousMummy(Minion):
 	requireTarget, keyWord, description = False, "Reborn", "Reborn. Your opponent's cards cost (1) less"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura_Dealer(self, changeby=-1, changeto=-1)
+		self.auras["Mana Aura"] = ManaAura(self, changeby=-1, changeto=-1)
 		
 	def manaAuraApplicable(self, subject):
 		return subject.ID != self.ID

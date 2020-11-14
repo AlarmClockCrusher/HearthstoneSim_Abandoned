@@ -118,45 +118,55 @@ class Galakrond_Hero(Hero):
 			trigger.connect()
 			
 	def replaceHero(self, fromHeroCard=False):
-		self.attTimes = self.Game.heroes[self.ID].attTimes
-		self.Game.heroes[self.ID] = self
-		self.Game.heroes[self.ID].onBoard = True
-		if self.Game.Counters.primaryGalakronds[self.ID] == None:
-			self.Game.Counters.primaryGalakronds[self.ID] = self
+		game, ID = self.Game, self.ID
+		self.onBoard, self.position, self.attTimes = True, ID, game.heroes[ID].attTimes
+		while self.statbyAura[1]:
+			self.statbyAura[1][0].effectClear()
+		while self.keyWordbyAura["Auras"]:
+			self.keyWordbyAura["Auras"][0].effectClear()
+			
+		game.heroes[ID] = self
+		if game.Counters.primaryGalakronds[ID] is None: #迦拉克隆的打出不会影响当前的主迦拉克隆？
+			game.Counters.primaryGalakronds[ID] = self
 		self.heroPower.replaceHeroPower()
-		self.Game.sendSignal("HeroReplaced", self.ID, None, self, 0, "")
+		game.sendSignal("HeroReplaced", ID, self, None, 0, "")
+		self.calc_Attack() #因为没有装备武器所以需要自己处理攻击力的变化
 		
 	def played(self, target=None, choice=0, mana=0, posinHand=0, comment=""): #英雄牌使用不存在触发发现的情况
-		self.health = self.Game.heroes[self.ID].health
-		self.health_max = self.Game.heroes[self.ID].health_max
-		self.armor = self.Game.heroes[self.ID].armor
-		self.attack_bare = self.Game.heroes[self.ID].attack_bare
-		self.attTimes = self.Game.heroes[self.ID].attTimes
-		self.Game.powers[self.ID].disappears()
-		self.Game.powers[self.ID].heroPower = None
-		self.Game.heroes[self.ID].onBoard = False
+		game, ID = self.Game, self.ID
+		oldHero = game.heroes[ID]
+		self.health, self.health_max, self.armor = oldHero.health, oldHero.health_max, oldHero.armor
+		self.attack_bare, self.tempAttChanges, self.attTimes, self.armor = oldeHero.attack_bare, oldeHero.tempAttChanges, oldeHero.attTimes, oldeHero.armor
+		self.onBoard, oldHero.onBoard, self.position = True, False, ID #这个只是为了方便定义(i, where)
+		while self.statbyAura[1]:
+			self.statbyAura[1][0].effectClear()
+		while self.keyWordbyAura["Auras"]:
+			self.keyWordbyAura["Auras"][0].effectClear()
+			
+		game.powers[ID].disappears()
+		game.powers[ID].heroPower = None
 		heroPower = self.heroPower #这个英雄技能必须存放起来，之后英雄还有可能被其他英雄替换，但是这个技能要到最后才登场。
-		self.Game.heroes[self.ID] = self #英雄替换。如果后续有埃克索图斯再次替换英雄，则最后的英雄是拉格纳罗斯。
-		self.Game.heroes[self.ID].onBoard = True
-		if self.Game.Counters.primaryGalakronds[self.ID] == None:
-			self.Game.Counters.primaryGalakronds[self.ID] = self
-		self.Game.sendSignal("HeroCardPlayed", self.ID, self, None, mana, "", choice)
-		self.Game.sendSignal("HeroReplaced", self.ID, None, self, 0, "")
-		self.gainsArmor(type(self).armor)
-		self.Game.gathertheDead()
+		game.heroes[ID] = self #英雄替换。如果后续有埃克索图斯再次替换英雄，则最后的英雄是拉格纳罗斯。
+		#The only difference between the normal hero card being played
+		if game.Counters.primaryGalakronds[ID] == None:
+			game.Counters.primaryGalakronds[ID] = self
+		if game.GUI:
+			game.GUI.displayCard(self)
+			game.GUI.wait(500)
+		game.sendSignal("HeroCardPlayed", ID, self, None, mana, "", choice)
+		#Guaranteed to be 5 Armor gained
+		self.gainsArmor(5)
+		game.sendSignal("HeroReplaced", ID, self, None, 0, "")
+		game.gathertheDead()
+		
 		heroPower.replaceHeroPower()
-		if self.Game.status[self.ID]["Battlecry x2"] > 0:
+		if game.status[ID]["Battlecry x2"] > 0:
 			self.whenEffective(None, "", choice)
 		self.whenEffective(None, "", choice)
-		if self.weapon: #如果英雄牌本身带有武器，如迦拉克隆等。则装备那把武器
-			self.Game.equipWeapon(self.weapon(self.Game, self.ID))
-		weapon = self.Game.availableWeapon(self.ID)
-		if weapon and self.ID == self.Game.turn:
-			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare + max(0, weapon.attack)
-		else:
-			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare
-		self.Game.heroes[self.ID].decideAttChances_base()
-		self.Game.gathertheDead()
+		#迦拉克隆本身是没有武器的，其战吼会装备武器
+		self.calc_Attack()
+		self.decideAttChances_base()
+		game.gathertheDead()
 		
 		
 """Mana 1 cards"""
@@ -422,21 +432,16 @@ class BlowtorchSaboteur(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Blowtorch's Saboteur's battlecry makes the opponent's next Hero Power cost (3)")
-		self.Game.Manas.PowerAuras_Backup.append(YourOpponentsNextHeroPowerCosts3(self.Game, 3-self.ID))
+		self.Game.Manas.PowerAuras_Backup.append(GameManaAura_NextHeroPower3(self.Game, 3-self.ID))
 		return None
 		
-class YourOpponentsNextHeroPowerCosts3(TempManaEffect_Power):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = 0, 3
-		#这个效果不会随着回合更替而消失，所以没有temporary属性
-		self.auraAffected = []
+class GameManaAura_NextHeroPower3(TempManaEffect_Power):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, 0, 3)
+		self.temporary = False
 		
 	def applicable(self, target):
 		return target.ID == self.ID
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient, self.ID)
 		
 		
 class DreadRaven(Minion):
@@ -2344,23 +2349,17 @@ class Dragoncaster(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Hand_Deck.holdingDragon(self.ID):
 			PRINT(self.Game, "Dragoncaster's battlecry makes player's next spell cost (0) this turn.")
-			tempAura = YourNextSpellCosts0ThisTurn(self.Game, self.ID)
+			tempAura = GameManaAura_InTurnNextSpell0(self.Game, self.ID)
 			self.Game.Manas.CardAuras.append(tempAura)
 			tempAura.auraAppears()
 		return None
 		
-class YourNextSpellCosts0ThisTurn(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = 0, 0
-		self.temporary = True
-		self.auraAffected = []
+class GameManaAura_InTurnNextSpell0(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, 0, 0)
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Spell"
-		
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
 		
 		
 class ManaGiant(Minion):
