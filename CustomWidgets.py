@@ -935,9 +935,15 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 			if hasattr(trig, "counter"): self.counts += trig.counter
 			
 	def decideColorOrig(self, GUI, card):
-		self.colorOrig = "red" if card.description.startswith("Secret:") and card.ID == GUI.Game.turn \
-						else {"Paladin": "yellow", "Hunter": "green3", "Rogue": "grey", "Mage": "purple3"}[card.Class]
-						
+		if card.description.startswith("Secret:") and card.ID != GUI.Game.turn:
+			self.colorOrig = {"Paladin": "gold", "Hunter": "green3", "Rogue": "grey", "Mage": "magenta3"}[card.Class]
+		elif card.description.startswith("Quest:"):
+			self.colorOrig = "goldenrod1"
+		elif card.description.startswith("Quest:"):
+			self.colorOrig = "magenta2"
+		else:
+			self.colorOrig = "red"
+
 	def rightClick(self, event):
 		self.GUI.cancelSelection()
 		self.card.STATUSPRINT()

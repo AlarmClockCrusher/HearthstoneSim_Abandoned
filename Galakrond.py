@@ -1051,9 +1051,9 @@ class Trig_BombWrangler(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Whenever %s takes damage, it summons a 1/1 Boom Bot"%self.entity.name)
-		self.entity.Game.summon(BoomBot(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summon(BoomBot_Dragons(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		
-class BoomBot(Minion):
+class BoomBot_Dragons(Minion):
 	Class, race, name = "Neutral", "Mech", "Boom Bot"
 	mana, attack, health = 1, 1, 1
 	index = "Galakrond~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible"
@@ -1127,6 +1127,6 @@ Galakrond_Indices = {"Galakrond~Neutral~Minion~3~2~2~None~Skydiving Instructor~B
 					"Galakrond~Warrior~Spell~1~Boom Squad": BoomSquad,
 					"Galakrond~Warrior~Minion~1~1~3~Pirate~Risky Skipper": RiskySkipper,
 					"Galakrond~Warrior~Minion~3~2~3~None~Bomb Wrangler": BombWrangler,
-					"Galakrond~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible": BoomBot
+					"Galakrond~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible": BoomBot_Dragons
 					}
 					

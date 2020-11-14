@@ -2282,7 +2282,9 @@ class Trig_RiggedFaireGame(SecretTrigger):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Player took no damage in opponent's turn, Secret Rigged Faire Game is triggered and player draws 3 cards.")
 		self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
-		
+		self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
+		self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
+
 		
 class OccultConjurer(Minion):
 	Class, race, name = "Mage", "", "Occult Conjurer"
