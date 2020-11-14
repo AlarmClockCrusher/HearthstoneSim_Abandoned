@@ -235,7 +235,7 @@ class Showstopper(Minion):
 	Class, race, name = "Neutral", "", "Showstopper"
 	mana, attack, health = 2, 3, 2
 	index = "Darkmoon~Neutral~Minion~2~3~2~None~Showstopper~Deathrattle"
-	requireTarget, keyWord, description = False, "Deathrattle", "Deathrattle: Silence all minions"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Silence all minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [SilenceAllMinions(self)]
@@ -1084,7 +1084,7 @@ class RodofRoasting(Spell):
 		
 class YoggSaronMasterofFate(Minion):
 	Class, race, name = "Neutral", "", "Yogg-Saron, Master of Fate"
-	mana, attack, health = 1, 7, 5
+	mana, attack, health = 10, 7, 5
 	index = "Darkmoon~Neutral~Minion~10~7~5~None~Yogg-Saron, Master of Fate~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you've cast 10 spells this game, spin the Wheel of Yogg-Saron"
 	def effectCanTrigger(self):
@@ -1367,13 +1367,13 @@ class InsatiableFelhound_Corrupt(Minion):
 	requireTarget, keyWord, description = False, "Taunt,Lifesteal", "Taunt, Lifesteal"
 	
 	
-class RelentlessPersuit(Spell):
-	Class, name = "Demon Hunter", "Relentless Persuit"
+class RelentlessPursuit(Spell):
+	Class, name = "Demon Hunter", "Relentless Pursuit"
 	requireTarget, mana = False, 3
-	index = "Darkmoon~Demon Hunter~Spell~3~Relentless Persuit"
+	index = "Darkmoon~Demon Hunter~Spell~3~Relentless Pursuit"
 	description = "Give your hero +4 Attack and Immune this turn"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Relentless Persuit gives player +4 Attack and Immune this turn")
+		PRINT(self.Game, "Relentless Pursuit gives player +4 Attack and Immune this turn")
 		self.Game.heroes[self.ID].gainAttack(4)
 		self.Game.status[self.ID]["Immune"] += 1
 		self.Game.status[self.ID]["ImmuneThisTurn"] += 1
@@ -2186,17 +2186,17 @@ class ConfectionCyclone(Minion):
 	Class, race, name = "Mage", "Elemental", "Confection Cyclone"
 	mana, attack, health = 2, 3, 2
 	index = "Darkmoon~Mage~Minion~2~3~2~Elemental~Confection Cyclone~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Add two 1/1 Sugar Elementals to your hand"
+	requireTarget, keyWord, description = False, "", "Battlecry: Add two 1/2 Sugar Elementals to your hand"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Confection Cyclone's battlecry adds two 1/1 Sugar Elementals to player's hand")
+		PRINT(self.Game, "Confection Cyclone's battlecry adds two 1/2 Sugar Elementals to player's hand")
 		self.Game.Hand_Deck.addCardtoHand([SugarElemental, SugarElemental], self.ID, "type")
 		return None
 		
 class SugarElemental(Minion):
 	Class, race, name = "Mage", "Elemental", "Sugar Elemental"
-	mana, attack, health = 1, 1, 1
-	index = "Darkmoon~Mage~Minion~1~1~1~Elemental~Sugar Elemental~Uncollectible"
+	mana, attack, health = 1, 1, 2
+	index = "Darkmoon~Mage~Minion~1~1~2~Elemental~Sugar Elemental~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	
 	
@@ -2729,7 +2729,7 @@ class HammeroftheNaaru(Weapon):
 class HolyElemental(Minion):
 	Class, race, name = "Paladin", "Elemental", "Holy Elemental"
 	mana, attack, health = 6, 6, 6
-	index = "Darkmoon~Paladin~Minion~6~6~6~None~Holy Elemental~Taunt~Uncollectible"
+	index = "Darkmoon~Paladin~Minion~6~6~6~Elemental~Holy Elemental~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	
 	
@@ -2954,9 +2954,9 @@ class TheNamelessOne(Minion):
 		
 		
 class FortuneTeller(Minion):
-	Class, race, name = "Priest", "", "Fortune Teller"
+	Class, race, name = "Priest", "Mech", "Fortune Teller"
 	mana, attack, health = 5, 3, 3
-	index = "Darkmoon~Priest~Minion~5~3~3~None~Fortune Teller~Taunt~Battlecry"
+	index = "Darkmoon~Priest~Minion~5~3~3~Mech~Fortune Teller~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Gain +1/+1 for each spell in your hand"
 	#For self buffing effects, being dead and removed before battlecry will prevent the battlecry resolution.
 	#If this minion is returned hand before battlecry, it can still buff it self according to living friendly minions.
@@ -2992,7 +2992,7 @@ class IdolofYShaarj(Spell):
 		
 class GhuuntheBloodGod(Minion):
 	Class, race, name = "Priest", "", "G'huun the Blood God"
-	mana, attack, health = 1, 8, 8
+	mana, attack, health = 8, 8, 8
 	index = "Darkmoon~Priest~Minion~8~8~8~None~G'huun the Blood God~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Draw 2 cards. They cost Health instead of Mana"
 	
@@ -3507,15 +3507,15 @@ class Stormstrike(Spell):
 		return target
 		
 		
-class WhackaGnollHammer(Weapon):
-	Class, name, description = "Shaman", "Whack-a-Gnoll Hammer", "After your hero attacks, give a random friendly minion +1/+1"
+class WhackAGnollHammer(Weapon):
+	Class, name, description = "Shaman", "Whack-A-Gnoll Hammer", "After your hero attacks, give a random friendly minion +1/+1"
 	mana, attack, durability = 3, 3, 2
-	index = "Darkmoon~Shaman~Weapon~3~3~2~Whack-a-Gnoll Hammer"
+	index = "Darkmoon~Shaman~Weapon~3~3~2~Whack-A-Gnoll Hammer"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsBoard = [Trig_WhackaGnollHammer(self)]
+		self.trigsBoard = [Trig_WhackAGnollHammer(self)]
 		
-class Trig_WhackaGnollHammer(TrigBoard):
+class Trig_WhackAGnollHammer(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
@@ -3843,14 +3843,14 @@ class CascadingDisaster_Corrupt2(Spell):
 		return None
 		
 		
-class RevenantPascal(Minion):
-	Class, race, name = "Warlock", "", "Revenant Pascal"
+class RevenantRascal(Minion):
+	Class, race, name = "Warlock", "", "Revenant Rascal"
 	mana, attack, health = 3, 3, 3
-	index = "Darkmoon~Warlock~Minion~3~3~3~None~Revenant Pascal~Battlecry"
+	index = "Darkmoon~Warlock~Minion~3~3~3~None~Revenant Rascal~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Destroy a Mana Crystal for both players"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Revenant Pascal's battlecry destroys a mana crystal for both players.")
+		PRINT(self.Game, "Revenant Rascal's battlecry destroys a mana crystal for both players.")
 		self.Game.Manas.destroyManaCrystal(1, self.ID)
 		self.Game.Manas.destroyManaCrystal(1, 3-self.ID)
 		return None
@@ -4132,7 +4132,7 @@ class Jawbreaker(Weapon):
 	
 class RingmasterWhatley(Minion):
 	Class, race, name = "Warrior", "", "Ringmaster Whatley"
-	mana, attack, health = 1, 3, 5
+	mana, attack, health = 5, 3, 5
 	index = "Darkmoon~Warrior~Minion~5~3~5~None~Ringmaster Whatley~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Draw a Mech, Dragon, and Pirate"
 	
@@ -4151,14 +4151,14 @@ class RingmasterWhatley(Minion):
 		return None
 		
 #All type can only count as one of the 8 races.
-class TentThrasher(Minion):
-	Class, race, name = "Warrior", "Dragon", "Tent Thrasher"
+class TentTrasher(Minion):
+	Class, race, name = "Warrior", "Dragon", "Tent Trasher"
 	mana, attack, health = 5, 5, 5
-	index = "Darkmoon~Warrior~Minion~5~5~5~Dragon~Tent Thrasher~Rush"
+	index = "Darkmoon~Warrior~Minion~5~5~5~Dragon~Tent Trasher~Rush"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Costs (1) less for each friendly minion with a unique minion type"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trig_TentThrasher(self)]
+		self.trigsHand = [Trig_TentTrasher(self)]
 		
 	def selfManaChange(self):
 		if self.inHand:
@@ -4168,7 +4168,7 @@ class TentThrasher(Minion):
 			self.mana -= sum(value > 0 for value in races.values())
 			self.mana = max(0, self.mana)
 			
-class Trig_TentThrasher(TrigHand):
+class Trig_TentTrasher(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAppears", "MinionDisappears"])
 		
@@ -4183,7 +4183,7 @@ class Trig_TentThrasher(TrigHand):
 Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battlecry": SafetyInspector,
 					"Darkmoon~Neutral~Minion~2~1~2~None~Costumed Entertainer~Battlecry": CostumedEntertainer,
 					"Darkmoon~Neutral~Minion~2~2~2~None~Horrendous Growth": HorrendousGrowth,
-					"Darkmoon~Neutral~Minion~2~2~2~None~Horrendous Growth~Corrupted~Uncollectible": HorrendousGrowthCorrupt_Mutable_3,
+					"Darkmoon~Neutral~Minion~2~3~3~None~Horrendous Growth~Corrupted~Uncollectible": HorrendousGrowthCorrupt_Mutable_3,
 					"Darkmoon~Neutral~Minion~2~2~3~None~Parade Leader": ParadeLeader,
 					"Darkmoon~Neutral~Minion~2~2~3~Murloc~Prize Vendor~Battlecry": PrizeVendor,
 					"Darkmoon~Neutral~Minion~2~5~1~Elemental~Rock Rager~Taunt": RockRager,
@@ -4236,7 +4236,7 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Demon Hunter~Minion~3~3~4~None~Line Hopper": LineHopper,
 					"Darkmoon~Demon Hunter~Minion~3~2~5~Demon~Insatiable Felhound~Taunt": InsatiableFelhound,
 					"Darkmoon~Demon Hunter~Minion~3~3~6~Demon~Insatiable Felhound~Taunt~Lifesteal~Corrupt~Uncollectible": InsatiableFelhound_Corrupt,
-					"Darkmoon~Demon Hunter~Spell~3~Relentless Persuit": RelentlessPersuit,
+					"Darkmoon~Demon Hunter~Spell~3~Relentless Pursuit": RelentlessPursuit,
 					"Darkmoon~Demon Hunter~Minion~3~4~1~None~Stiltstepper~Battlecry": Stiltstepper,
 					"Darkmoon~Demon Hunter~Minion~4~2~6~None~Il'gynoth~Lifesteal~Legendary": Ilgynoth,
 					"Darkmoon~Demon Hunter~Minion~4~3~3~None~Renowned Performer~Rush~Deathrattle": RenownedPerformer,
@@ -4273,7 +4273,7 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Hunter~Spell~8~Jewel of N'Zoth": JewelofNZoth,
 					#Mage Cards
 					"Darkmoon~Mage~Minion~2~3~2~Elemental~Confection Cyclone~Battlecry": ConfectionCyclone,
-					"Darkmoon~Mage~Minion~1~1~1~Elemental~Sugar Elemental~Uncollectible": SugarElemental,
+					"Darkmoon~Mage~Minion~1~1~2~Elemental~Sugar Elemental~Uncollectible": SugarElemental,
 					"Darkmoon~Mage~Spell~2~Deck of Lunacy~Legendary": DeckofLunacy,
 					"Darkmoon~Mage~Minion~2~2~3~None~Game Master": GameMaster,
 					"Darkmoon~Mage~Spell~3~Rigged Faire Game~~Secret": RiggedFaireGame,
@@ -4281,7 +4281,7 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Mage~Spell~4~Ring Toss": RingToss,
 					"Darkmoon~Mage~Spell~4~Ring Toss~Corrupted~Uncollectible": RingToss_Corrupt,
 					"Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry": FireworkElemental,
-					"Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry~Corrupted~Uncollectible": FireworkElemental,
+					"Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry~Corrupted~Uncollectible": FireworkElemental_Corrupt,
 					"Darkmoon~Mage~Minion~6~5~5~None~Sayge, Seer of Darkmoon~Battlecry~Legendary": SaygeSeerofDarkmoon,
 					"Darkmoon~Mage~Spell~7~Mask of C'Thun": MaskofCThun,
 					"Darkmoon~Mage~Spell~8~Grand Finale": GrandFinale,
@@ -4298,7 +4298,7 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Paladin~Minion~5~8~8~Mech~Carousel Gryphon~Divine Shield~Taunt~Corrupted~Uncollectible": CarouselGryphon_Corrupt,
 					"Darkmoon~Paladin~Minion~5~5~5~Demon~Lothraxion the Redeemed~Battlecry~Legendary": LothraxiontheRedeemed,
 					"Darkmoon~Paladin~Weapon~6~3~3~Hammer of the Naaru~Battlecry": HammeroftheNaaru,
-					"Darkmoon~Paladin~Minion~6~6~6~None~Holy Elemental~Taunt~Uncollectible": HolyElemental,
+					"Darkmoon~Paladin~Minion~6~6~6~Elemental~Holy Elemental~Taunt~Uncollectible": HolyElemental,
 					"Darkmoon~Paladin~Minion~8~7~5~None~High Exarch Yrel~Battlecry~Legendary": HighExarchYrel,
 					#Priest Cards
 					"Darkmoon~Priest~Spell~2~Insight": Insight,
@@ -4310,7 +4310,7 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Priest~Spell~4~Auspicious Spirits": AuspiciousSpirits,
 					"Darkmoon~Priest~Spell~4~Auspicious Spirits~Corrupted~Uncollectible": AuspiciousSpirits_Corrupt,
 					"Darkmoon~Priest~Minion~4~4~4~None~The Nameless One~Battlecry~Legendary": TheNamelessOne,
-					"Darkmoon~Priest~Minion~5~3~3~None~Fortune Teller~Taunt~Battlecry": FortuneTeller,
+					"Darkmoon~Priest~Minion~5~3~3~Mech~Fortune Teller~Taunt~Battlecry": FortuneTeller,
 					"Darkmoon~Priest~Spell~8~Idol of Y'Shaarj": IdolofYShaarj,
 					"Darkmoon~Priest~Minion~8~8~8~None~G'huun the Blood God~Battlecry~Legendary": GhuuntheBloodGod,
 					"Darkmoon~Priest~Minion~9~8~8~Elemental~Blood of G'huun~Taunt": BloodofGhuun,
@@ -4338,7 +4338,7 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Shaman~Minion~3~1~2~None~Pit Master~Battlecry": PitMaster,
 					"Darkmoon~Shaman~Minion~3~1~2~None~Pit Master~Battlecry~Corrupted~Uncollectible": PitMaster_Corrupt,
 					"Darkmoon~Shaman~Spell~3~Stormstrike": Stormstrike,
-					"Darkmoon~Shaman~Weapon~3~3~2~Whack-a-Gnoll Hammer": WhackaGnollHammer,
+					"Darkmoon~Shaman~Weapon~3~3~2~Whack-A-Gnoll Hammer": WhackAGnollHammer,
 					"Darkmoon~Shaman~Spell~4~Dunk Tank": DunkTank,
 					"Darkmoon~Shaman~Spell~4~Dunk Tank~Corrupted~Uncollectible": DunkTank_Corrupt,
 					"Darkmoon~Shaman~Minion~5~4~5~None~Inara Stormcrash~Legendary": InaraStormcrash,
@@ -4350,7 +4350,7 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Warlock~Spell~4~Cascading Disaster": CascadingDisaster,
 					"Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted~Uncollectible": CascadingDisaster_Corrupt,
 					"Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted2~Uncollectible": CascadingDisaster_Corrupt2,
-					"Darkmoon~Warlock~Minion~3~3~3~None~Revenant Pascal~Battlecry": RevenantPascal,
+					"Darkmoon~Warlock~Minion~3~3~3~None~Revenant Rascal~Battlecry": RevenantRascal,
 					"Darkmoon~Warlock~Minion~4~4~3~Demon~Fire Breather~Battlecry": FireBreather,
 					"Darkmoon~Warlock~Spell~6~Deck of Chaos~Legendary": DeckofChaos,
 					"Darkmoon~Warlock~Minion~6~6~4~Demon~Ring Matron~Taunt~Deathrattle": RingMatron,
@@ -4369,5 +4369,5 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Warrior~Minion~4~2~5~Pirate~Sword Eater~Taunt~Battlecry": SwordEater,
 					"Darkmoon~Warrior~Weapon~3~3~2~Jawbreaker~Uncollectible": Jawbreaker,
 					"Darkmoon~Warrior~Minion~5~3~5~None~Ringmaster Whatley~Battlecry~Legendary": RingmasterWhatley,
-					"Darkmoon~Warrior~Minion~5~5~5~Dragon~Tent Thrasher~Rush": TentThrasher,
+					"Darkmoon~Warrior~Minion~5~5~5~Dragon~Tent Trasher~Rush": TentTrasher,
 					}

@@ -1,6 +1,6 @@
 from CardTypes import *
 from Triggers_Auras import *
-from Basic import FieryWarAxe, ExcessMana
+from Basic import FieryWarAxe, ExcessMana, WaterElemental
 
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
@@ -608,9 +608,9 @@ class SummonaRustedDevil(Deathrattle_Minion):
 		self.entity.Game.summon(RustedDevil(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		
 class RustedDevil(Minion):
-	Class, race, name = "Neutral", "", "Rusted Devil"
+	Class, race, name = "Neutral", "Demon", "Rusted Devil"
 	mana, attack, health = 1, 1, 1
-	index = "Outlands~Neutral~Minion~1~1~1~None~Rusted Devil~Uncollectible"
+	index = "Outlands~Neutral~Minion~1~1~1~Demon~Rusted Devil~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	
 	
@@ -716,10 +716,10 @@ class KaelthasSunstrider(Minion):
 	Class, race, name = "Neutral", "", "Kael'thas Sunstrider"
 	mana, attack, health = 7, 4, 7
 	index = "Outlands~Neutral~Minion~7~4~7~None~Kael'thas Sunstrider~Legendary"
-	requireTarget, keyWord, description = False, "", "Every third spell you cast each turn costs (0)"
+	requireTarget, keyWord, description = False, "", "Every third spell you cast each turn costs (1)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura(self, changeby=0, changeto=0)
+		self.auras["Mana Aura"] = ManaAura(self, changeby=0, changeto=1)
 		self.trigsBoard = [Trig_KaelthasSunstrider(self)]
 		#随从的光环启动在顺序上早于appearResponse,关闭同样早于disappearResponse
 		self.appearResponse = [self.checkAuraCorrectness]
@@ -1312,20 +1312,20 @@ class MsshifnPrime(Minion):
 		
 class FungalGuardian(Minion):
 	Class, race, name = "Druid", "", "Fungal Guardian"
-	mana, attack, health = 9, 9, 9
-	index = "Outlands~Druid~Minion~9~9~9~None~Fungal Guardian~Taunt~Uncollectible"
+	mana, attack, health = 10, 9, 9
+	index = "Outlands~Druid~Minion~10~9~9~None~Fungal Guardian~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	
 class FungalBruiser(Minion):
 	Class, race, name = "Druid", "", "Fungal Bruiser"
-	mana, attack, health = 9, 9, 9
-	index = "Outlands~Druid~Minion~9~9~9~None~Fungal Bruiser~Rush~Uncollectible"
+	mana, attack, health = 10, 9, 9
+	index = "Outlands~Druid~Minion~10~9~9~None~Fungal Bruiser~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	
 class FungalGargantuan(Minion):
 	Class, race, name = "Druid", "", "Fungal Gargantuan"
-	mana, attack, health = 9, 9, 9
-	index = "Outlands~Druid~Minion~9~9~9~None~Fungal Gargantuan~Taunt~Rush~Uncollectible"
+	mana, attack, health = 10, 9, 9
+	index = "Outlands~Druid~Minion~10~9~9~None~Fungal Gargantuan~Taunt~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt,Rush", "Taunt, Rush"
 	
 class MsshifnAttac_Option(ChooseOneOption):
@@ -1788,8 +1788,8 @@ class Clefthoof(Minion):
 """Mage cards"""
 class Evocation(Spell):
 	Class, name = "Mage", "Evocation"
-	requireTarget, mana = False, 1
-	index = "Outlands~Mage~Spell~1~Evocation~Legendary"
+	requireTarget, mana = False, 2
+	index = "Outlands~Mage~Spell~2~Evocation~Legendary"
 	description = "Fill your hand with random Mage spells. At the end of your turn, discard them"
 	poolIdentifier = "Mage Spells"
 	@classmethod
@@ -1932,8 +1932,8 @@ class ShuffleSolarianPrimeintoYourDeck(Deathrattle_Minion):
 		
 class SolarianPrime(Minion):
 	Class, race, name = "Mage", "Demon", "Solarian Prime"
-	mana, attack, health = 7, 7, 7
-	index = "Outlands~Mage~Minion~7~7~7~Demon~Solarian Prime~Spell Damage~Battlecry~Legendary~Uncollectible"
+	mana, attack, health = 9, 7, 7
+	index = "Outlands~Mage~Minion~9~7~7~Demon~Solarian Prime~Spell Damage~Battlecry~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1. Battlecry: Cast 5 random Mage spells (target enemies if possible)"
 	poolIdentifier = "Mage Spells"
 	@classmethod
@@ -2085,29 +2085,8 @@ class DeepFreeze(Spell):
 			PRINT(self.Game, "Deep Freeze is cast and Freezes enemy %s"%target.name)
 			target.getsFrozen()
 		PRINT(self.Game, "Deep Freeze summons two 3/6 Water Elementals")
-		self.Game.summon([WaterElemental_Outlands(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
+		self.Game.summon([WaterElemental(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
 		return target
-		
-class WaterElemental_Outlands(Minion):
-	Class, race, name = "Mage", "Elemental", "Water Elemental"
-	mana, attack, health = 4, 3, 6
-	index = "Outlands~Mage~Minion~4~3~6~Elemental~Water Elemental~Uncollectible"
-	requireTarget, keyWord, description = False, "", "Freeze any character damaged by this minion"
-	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-		self.trigsBoard = [Trig_WaterElemental(self)]
-		
-class Trig_WaterElemental(TrigBoard):
-	def __init__(self, entity):
-		self.blank_init(entity, ["MinionTakesDmg", "HeroTakesDmg"])
-		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return subject == self.entity
-		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "%s deals damage to %s and freezes it."%(self.entity.name, target.name))
-		target.getsFrozen()
-		
 		
 """Paladin cards"""
 class ImprisonedSungill(Minion_Dormantfor2turns):
@@ -3354,9 +3333,9 @@ class KanrethadPrime(Minion):
 		
 class Darkglare(Minion):
 	Class, race, name = "Warlock", "Demon", "Darkglare"
-	mana, attack, health = 3, 3, 4
-	index = "Outlands~Warlock~Minion~3~3~4~Demon~Darkglare"
-	requireTarget, keyWord, description = False, "", "After your hero takes damage, refresh 2 Mana Crystals"
+	mana, attack, health = 2, 2, 3
+	index = "Outlands~Warlock~Minion~2~2~3~Demon~Darkglare"
+	requireTarget, keyWord, description = False, "", "After your hero takes damage, refresh a Mana Crystals"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Darkglare(self)]
@@ -3369,8 +3348,8 @@ class Trig_Darkglare(TrigBoard):
 		return target == self.entity.Game.heroes[self.entity.ID]
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "After player takes damage, %s refreshes 2 of player's Mana Crystals"%self.entity.name)
-		self.entity.Game.Manas.restoreManaCrystal(2, self.entity.ID)
+		PRINT(self.entity.Game, "After player takes damage, Darkglare refreshes 2 of player's Mana Crystals")
+		self.entity.Game.Manas.restoreManaCrystal(1, self.entity.ID)
 		
 		
 class NightshadeMatron(Minion):
@@ -3767,7 +3746,7 @@ Outlands_Indices = {"Outlands~Neutral~Minion~1~2~1~None~Ethereal Augmerchant~Bat
 					"Outlands~Neutral~Minion~4~4~3~None~Maiev Shadowsong~Battlecry~Legendary": MaievShadowsong,
 					"Outlands~Neutral~Minion~4~3~3~Mech~Replicat-o-tron": Replicatotron,
 					"Outlands~Neutral~Minion~4~3~3~None~Rustsworn Cultist~Battlecry": RustswornCultist,
-					"Outlands~Neutral~Minion~1~1~1~None~Rusted Devil~Uncollectible": RustedDevil,
+					"Outlands~Neutral~Minion~1~1~1~Demon~Rusted Devil~Uncollectible": RustedDevil,
 					"Outlands~Neutral~Minion~5~7~3~Elemental~Al'ar~Deathrattle~Legendary": Alar,
 					"Outlands~Neutral~Minion~1~0~3~None~Ashes of Al'ar~Legendary~Uncollectible": AshesofAlar,
 					"Outlands~Neutral~Minion~5~1~8~None~Ruststeed Raider~Taunt~Rush~Battlecry": RuststeedRaider,
@@ -3800,9 +3779,9 @@ Outlands_Indices = {"Outlands~Neutral~Minion~1~2~1~None~Ethereal Augmerchant~Bat
 					"Outlands~Druid~Spell~2~Ironbark": Ironbark,
 					"Outlands~Druid~Minion~3~3~4~None~Archspore Msshi'fn~Taunt~Deathrattle~Legendary": ArchsporeMsshifn,
 					"Outlands~Druid~Minion~10~9~9~None~Msshi'fn Prime~Taunt~Choose One~Legendary~Uncollectible": MsshifnPrime,
-					"Outlands~Druid~Minion~9~9~9~None~Fungal Guardian~Taunt~Uncollectible": FungalGuardian,
-					"Outlands~Druid~Minion~9~9~9~None~Fungal Bruiser~Rush~Uncollectible": FungalBruiser,
-					"Outlands~Druid~Minion~9~9~9~None~Fungal Gargantuan~Taunt~Rush~Uncollectible": FungalGargantuan,
+					"Outlands~Druid~Minion~10~9~9~None~Fungal Guardian~Taunt~Uncollectible": FungalGuardian,
+					"Outlands~Druid~Minion~10~9~9~None~Fungal Bruiser~Rush~Uncollectible": FungalBruiser,
+					"Outlands~Druid~Minion~10~9~9~None~Fungal Gargantuan~Taunt~Rush~Uncollectible": FungalGargantuan,
 					"Outlands~Druid~Spell~3~Bogbeam": Bogbeam,
 					"Outlands~Druid~Minion~3~3~3~Demon~Imprisoned Satyr": ImprisonedSatyr,
 					"Outlands~Druid~Spell~4~Germination": Germination,
@@ -3823,18 +3802,17 @@ Outlands_Indices = {"Outlands~Neutral~Minion~1~2~1~None~Ethereal Augmerchant~Bat
 					"Outlands~Hunter~Minion~8~5~5~None~Beastmaster Leoroxx~Battlecry~Legendary": BeastmasterLeoroxx,
 					"Outlands~Hunter~Spell~10~Nagrand Slam": NagrandSlam,
 					"Outlands~Hunter~Minion~4~3~5~Beast~Clefthoof~Uncollectible": Clefthoof,
-					"Outlands~Mage~Spell~1~Evocation~Legendary": Evocation,
+					"Outlands~Mage~Spell~2~Evocation~Legendary": Evocation,
 					"Outlands~Mage~Spell~1~Font of Power": FontofPower,
 					"Outlands~Mage~Minion~2~2~3~None~Apexis Smuggler": ApexisSmuggler,
 					"Outlands~Mage~Minion~2~3~2~None~Astromancer Solarian~Spell Damage~Deathrattle~Legendary": AstromancerSolarian,
-					"Outlands~Mage~Minion~7~7~7~Demon~Solarian Prime~Spell Damage~Battlecry~Legendary~Uncollectible": SolarianPrime,
+					"Outlands~Mage~Minion~9~7~7~Demon~Solarian Prime~Spell Damage~Battlecry~Legendary~Uncollectible": SolarianPrime,
 					"Outlands~Mage~Spell~2~Incanter's Flow": IncantersFlow,
 					"Outlands~Mage~Minion~2~3~1~None~Starscryer~Deathrattle": Starscryer,
 					"Outlands~Mage~Minion~3~4~5~Demon~Imprisoned Observer": ImprisonedObserver,
 					"Outlands~Mage~Spell~3~Netherwind Portal~~Secret": NetherwindPortal,
 					"Outlands~Mage~Spell~5~Apexis Blast": ApexisBlast,
 					"Outlands~Mage~Spell~8~Deep Freeze": DeepFreeze,
-					"Outlands~Mage~Minion~4~3~6~Elemental~Water Elemental~Uncollectible": WaterElemental_Outlands,
 					"Outlands~Paladin~Minion~1~2~1~Murloc~Imprisoned Sungill": ImprisonedSungill,
 					"Outlands~Paladin~Minion~1~1~1~Murloc~Sungill Streamrunner~Uncollectible": SungillStreamrunner,
 					"Outlands~Paladin~Minion~1~1~3~None~Aldor Attendant~Battlecry": AldorAttendant,
@@ -3889,7 +3867,7 @@ Outlands_Indices = {"Outlands~Neutral~Minion~1~2~1~None~Ethereal Augmerchant~Bat
 					"Outlands~Warlock~Minion~2~3~3~Demon~Imprisoned Scrap Imp": ImprisonedScrapImp,
 					"Outlands~Warlock~Minion~2~3~2~None~Kanrethad Ebonlocke~Deathrattle~Legendary": KanrethadEbonlocke,
 					"Outlands~Warlock~Minion~8~7~6~Demon~Kanrethad Prime~Battlecry~Legendary~Uncollectible": KanrethadPrime,
-					"Outlands~Warlock~Minion~3~3~4~Demon~Darkglare": Darkglare,
+					"Outlands~Warlock~Minion~2~2~3~Demon~Darkglare": Darkglare,
 					"Outlands~Warlock~Minion~4~5~5~Demon~Nightshade Matron~Rush~Battlecry": NightshadeMatron,
 					"Outlands~Warlock~Spell~4~The Dark Portal": TheDarkPortal,
 					"Outlands~Warlock~Spell~6~Hand of Gul'dan": HandofGuldan,

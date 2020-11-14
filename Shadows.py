@@ -944,8 +944,8 @@ class Trig_ExoticMountseller(TrigBoard):
 		
 class TunnelBlaster(Minion):
 	Class, race, name = "Neutral", "", "Tunnel Blaster"
-	mana, attack, health = 7, 3, 8
-	index = "Shadows~Neutral~Minion~7~3~8~None~Tunnel Blaster~Taunt~Deathrattle"
+	mana, attack, health = 7, 3, 7
+	index = "Shadows~Neutral~Minion~7~3~7~None~Tunnel Blaster~Taunt~Deathrattle"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Deal 3 damage to all minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -2785,9 +2785,9 @@ class EVILMiscreant(Minion):
 		
 		
 class HenchClanBurglar(Minion):
-	Class, race, name = "Rogue", "", "Hench-Clan Burglar"
+	Class, race, name = "Rogue", "Pirate", "Hench-Clan Burglar"
 	mana, attack, health = 4, 4, 3
-	index = "Shadows~Rogue~Minion~4~4~3~None~Hench-Clan Burglar~Battlecry"
+	index = "Shadows~Rogue~Minion~4~4~3~Pirate~Hench-Clan Burglar~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a spell from another class"
 	poolIdentifier = "Druid Spells"
 	@classmethod
@@ -4041,7 +4041,7 @@ Shadows_Indices = {"Shadows~Neutral~Minion~1~1~1~None~Potion Vendor~Battlecry": 
 					"Shadows~Neutral~Minion~7~6~6~None~Chef Nomi~Battlecry~Legendary": ChefNomi,
 					"Shadows~Neutral~Minion~6~6~6~Elemental~Greasefire Elemental~Uncollectible": GreasefireElemental,
 					"Shadows~Neutral~Minion~7~5~8~None~Exotic Mountseller": ExoticMountseller,
-					"Shadows~Neutral~Minion~7~3~8~None~Tunnel Blaster~Taunt~Deathrattle": TunnelBlaster,
+					"Shadows~Neutral~Minion~7~3~7~None~Tunnel Blaster~Taunt~Deathrattle": TunnelBlaster,
 					"Shadows~Neutral~Minion~7~3~5~None~Underbelly Ooze": UnderbellyOoze,
 					"Shadows~Neutral~Minion~8~3~12~None~Batterhead~Rush": Batterhead,
 					"Shadows~Neutral~Minion~8~4~4~None~Heroic Innkeeper~Taunt~Battlecry": HeroicInnkeeper,
@@ -4124,7 +4124,7 @@ Shadows_Indices = {"Shadows~Neutral~Minion~1~1~1~None~Potion Vendor~Battlecry": 
 					#Rogue
 					"Shadows~Rogue~Spell~1~Daring Escape": DaringEscape,
 					"Shadows~Rogue~Minion~3~1~4~None~EVIL Miscreant~Combo": EVILMiscreant,
-					"Shadows~Rogue~Minion~4~4~3~None~Hench-Clan Burglar~Battlecry": HenchClanBurglar,
+					"Shadows~Rogue~Minion~4~4~3~Pirate~Hench-Clan Burglar~Battlecry": HenchClanBurglar,
 					"Shadows~Rogue~Spell~1~Togwaggle's Scheme": TogwagglesScheme,
 					"Shadows~Rogue~Minion~2~2~3~None~Underbelly Fence~Battlecry": UnderbellyFence,
 					"Shadows~Rogue~Spell~4~Vendetta": Vendetta,

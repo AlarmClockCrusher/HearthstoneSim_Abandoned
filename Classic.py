@@ -1649,8 +1649,8 @@ class SummonBaineBloodhoof(Deathrattle_Minion):
 		
 class BaineBloodhoof(Minion):
 	Class, race, name = "Neutral", "", "Baine Bloodhoof"
-	mana, attack, health = 6, 4, 5
-	index = "Classic~Neutral~Minion~6~4~5~None~Baine Bloodhoof~Legendary~Uncollectible"
+	mana, attack, health = 4, 4, 5
+	index = "Classic~Neutral~Minion~4~4~5~None~Baine Bloodhoof~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	
 	
@@ -1740,9 +1740,9 @@ class Trig_Xavius(TrigBoard):
 		self.entity.Game.summon(XavianSatyr(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)		
 		
 class XavianSatyr(Minion):
-	Class, race, name = "Neutral", "Elemental", "Xavian Satyr"
+	Class, race, name = "Neutral", "Demon", "Xavian Satyr"
 	mana, attack, health = 1, 2, 1
-	index = "Classic~Neutral~Minion~1~2~1~Elemental~Xavian Satyr~Uncollectible"
+	index = "Classic~Neutral~Minion~1~2~1~Demon~Xavian Satyr~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	
 	
@@ -3983,8 +3983,8 @@ class Mindgames(Spell):
 		
 class ShadowofNothing(Minion):
 	Class, race, name = "Priest", "", "Shadow of Nothing"
-	mana, attack, health = 1, 0, 1
-	index = "Classic~Priest~Minion~1~0~1~None~Shadow of Nothing~Uncollectible"
+	mana, attack, health = 0, 0, 1
+	index = "Classic~Priest~Minion~0~0~1~None~Shadow of Nothing~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Mindgames whiffed! Your opponent had no minions!"
 	
 	
@@ -5426,13 +5426,13 @@ Classic_Indices = {"Classic~Neutral~Minion~0~1~1~None~Wisp": Wisp,
 					"Classic~Neutral~Minion~5~7~6~None~Venture Co. Mercenary": VentureCoMercenary,
 					"Classic~Neutral~Minion~6~4~2~None~Argent Commander~Divine Shield~Charge": ArgentCommander,
 					"Classic~Neutral~Minion~6~4~5~None~Cairne Bloodhoof~Deathrattle~Legendary": CairneBloodhoof,
-					"Classic~Neutral~Minion~6~4~5~None~Baine Bloodhoof~Legendary~Uncollectible": BaineBloodhoof,
+					"Classic~Neutral~Minion~4~4~5~None~Baine Bloodhoof~Legendary~Uncollectible": BaineBloodhoof,
 					"Classic~Neutral~Minion~6~5~5~Elemental~Frost Elemental~Battlecry": FrostElemental,
 					"Classic~Neutral~Minion~6~4~4~None~Gadgetzan Auctioneer": GadgetzanAuctioneer,
 					"Classic~Neutral~Minion~6~4~4~None~Hogger~Legendary": Hogger,
 					"Classic~Neutral~Minion~2~2~2~None~Gnoll~Taunt~Uncollectible": Gnoll,
 					"Classic~Neutral~Minion~6~7~5~Demon~Xavius~Legendary": Xavius,
-					"Classic~Neutral~Minion~1~2~1~Elemental~Xavian Satyr~Uncollectible": XavianSatyr,
+					"Classic~Neutral~Minion~1~2~1~Demon~Xavian Satyr~Uncollectible": XavianSatyr,
 					"Classic~Neutral~Minion~6~5~4~None~Priestess of Elune~Battlecry": PriestessofElune,
 					"Classic~Neutral~Minion~6~4~5~None~Sunwalker~Divine Shield~Taunt": Sunwalker,
 					"Classic~Neutral~Minion~6~9~7~Beast~The Beast~Deathrattle~Legendary": TheBeast,
@@ -5553,7 +5553,7 @@ Classic_Indices = {"Classic~Neutral~Minion~0~1~1~None~Wisp": Wisp,
 					"Classic~Priest~Spell~4~Mass Dispel": MassDispel,
 					"Classic~Priest~Spell~4~Mindgames": Mindgames,
 					"Classic~Priest~Spell~4~Shadow Word: Ruin": ShadowWordRuin,
-					"Classic~Priest~Minion~1~0~1~None~Shadow of Nothing~Uncollectible": ShadowofNothing,
+					"Classic~Priest~Minion~0~0~1~None~Shadow of Nothing~Uncollectible": ShadowofNothing,
 					"Classic~Priest~Minion~6~4~5~None~Cabal Shadow Priest~Battlecry": CabalShadowPriest,
 					"Classic~Priest~Minion~5~5~6~None~Temple Enforcer~Battlecry": TempleEnforcer,
 					"Classic~Priest~Minion~8~8~1~None~Natalie Seline~Battlecry": NatalieSeline,

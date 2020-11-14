@@ -188,7 +188,7 @@ class Fishflinger(Minion):
 class InjuredTolvir(Minion):
 	Class, race, name = "Neutral", "", "Injured Tol'vir"
 	mana, attack, health = 2, 2, 6
-	index = "Uldum~Neutral~Minion~2~2~6~None~Injured Tol'vir~Battlecry"
+	index = "Uldum~Neutral~Minion~2~2~6~None~Injured Tol'vir~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Deal 3 damage to this minion"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -801,9 +801,9 @@ class WastelandAssassin(Minion):
 	
 """Mana 6 cards"""
 class BlatantDecoy(Minion):
-	Class, race, name = "Neutral", "Mech", "Blatant Decoy"
+	Class, race, name = "Neutral", "", "Blatant Decoy"
 	mana, attack, health = 6, 5, 5
-	index = "Uldum~Neutral~Minion~6~5~5~Mech~Blatant Decoy~Deathrattle"
+	index = "Uldum~Neutral~Minion~6~5~5~None~Blatant Decoy~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Each player summons the lowest Cost minion from their hand"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -987,7 +987,7 @@ class GiveAllMinionsinHandPlus3Plus3(Deathrattle_Minion):
 class ColossusoftheMoon(Minion):
 	Class, race, name = "Neutral", "", "Colossus of the Moon"
 	mana, attack, health = 10, 10, 10
-	index = "Uldum~Neutral~Minion~10~10~10~None~Colossus of the Moon~Devine Shield~Reborn~Legendary"
+	index = "Uldum~Neutral~Minion~10~10~10~None~Colossus of the Moon~Divine Shield~Reborn~Legendary"
 	requireTarget, keyWord, description = False, "Divine Shield,Reborn", "Divine Shield, Reborn"
 	
 	
@@ -1477,8 +1477,8 @@ class HuntersPack(Spell):
 		
 class HyenaAlpha(Minion):
 	Class, race, name = "Hunter", "Beast", "Hyena Alpha"
-	mana, attack, health = 4, 2, 3
-	index = "Uldum~Hunter~Minion~4~2~3~Beast~Hyena Alpha~Battlecry"
+	mana, attack, health = 4, 3, 3
+	index = "Uldum~Hunter~Minion~4~3~3~Beast~Hyena Alpha~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Secret, summon two 2/2 Hyenas"
 	
 	def effectCanTrigger(self):
@@ -3559,7 +3559,7 @@ Uldum_Indices = {"Uldum~Neutral~Minion~1~1~2~None~Beaming Sidekick~Battlecry": B
 				"Uldum~Neutral~Minion~1~1~1~Beast~Locust~Rush~Uncollectible": Locust,
 				"Uldum~Neutral~Minion~2~2~3~None~Dwarven Archaeologist": DwarvenArchaeologist,
 				"Uldum~Neutral~Minion~2~3~2~Murloc~Fishflinger~Battlecry": Fishflinger,
-				"Uldum~Neutral~Minion~2~2~6~None~Injured Tol'vir~Battlecry": InjuredTolvir,
+				"Uldum~Neutral~Minion~2~2~6~None~Injured Tol'vir~Taunt~Battlecry": InjuredTolvir,
 				"Uldum~Neutral~Minion~2~2~1~None~Kobold Sandtrooper~Deathrattle": KoboldSandtrooper,
 				"Uldum~Neutral~Minion~2~2~3~None~Neferset Ritualist~Battlecry": NefersetRitualist,
 				"Uldum~Neutral~Minion~2~2~3~None~Questing Explorer~Battlecry": QuestingExplorer,
@@ -3588,7 +3588,7 @@ Uldum_Indices = {"Uldum~Neutral~Minion~1~1~2~None~Beaming Sidekick~Battlecry": B
 				"Uldum~Neutral~Minion~5~8~8~Mech~Mortuary Machine": MortuaryMachine,
 				"Uldum~Neutral~Minion~5~4~5~None~Phalanx Commander": PhalanxCommander,
 				"Uldum~Neutral~Minion~5~4~2~None~Wasteland Assassin~Stealth~Reborn": WastelandAssassin,
-				"Uldum~Neutral~Minion~6~5~5~Mech~Blatant Decoy~Deathrattle": BlatantDecoy,
+				"Uldum~Neutral~Minion~6~5~5~None~Blatant Decoy~Deathrattle": BlatantDecoy,
 				"Uldum~Neutral~Minion~6~3~4~None~Khartut Defender~Taunt~Reborn~Deathrattle": KhartutDefender,
 				"Uldum~Neutral~Minion~7~6~6~Elemental~Siamat~Battlecry~Legendary": Siamat,
 				"Uldum~Neutral~Minion~7~3~9~Beast~Wasteland Scorpid~Poisonous": WastelandScorpid,
@@ -3596,7 +3596,7 @@ Uldum_Indices = {"Uldum~Neutral~Minion~1~1~2~None~Beaming Sidekick~Battlecry": B
 				"Uldum~Neutral~Minion~8~8~8~Beast~Octosari~Deathrattle~Legendary": Octosari,
 				"Uldum~Neutral~Minion~8~5~6~Beast~Pit Crocolisk~Battlecry": PitCrocolisk,
 				"Uldum~Neutral~Minion~9~9~6~None~Anubisath Warbringer~Deathrattle": AnubisathWarbringer,
-				"Uldum~Neutral~Minion~10~10~10~None~Colossus of the Moon~Devine Shield~Reborn~Legendary": ColossusoftheMoon,
+				"Uldum~Neutral~Minion~10~10~10~None~Colossus of the Moon~Divine Shield~Reborn~Legendary": ColossusoftheMoon,
 				"Uldum~Neutral~Minion~10~5~5~None~King Phaoris~Battlecry~Legendary": KingPhaoris,
 				"Uldum~Neutral~Minion~10~10~10~None~Living Monument~Taunt": LivingMonument,
 				"Uldum~Druid~Spell~1~Untapped Potential~~Quest~Legendary": UntappedPotential,
@@ -3619,7 +3619,7 @@ Uldum_Indices = {"Uldum~Neutral~Minion~1~1~2~None~Beaming Sidekick~Battlecry": B
 				"Uldum~Hunter~Spell~2~Pressure Plate~~Secret": PressurePlate,
 				"Uldum~Hunter~Weapon~3~1~3~Desert Spear": DesertSpear,
 				"Uldum~Hunter~Spell~3~Hunter's Pack": HuntersPack,
-				"Uldum~Hunter~Minion~4~2~3~Beast~Hyena Alpha~Battlecry": HyenaAlpha,
+				"Uldum~Hunter~Minion~4~3~3~Beast~Hyena Alpha~Battlecry": HyenaAlpha,
 				"Uldum~Hunter~Minion~2~2~2~Beast~Hyena~Uncollectible": Hyena_Uldum,
 				"Uldum~Hunter~Minion~3~4~3~None~Ramkahen Wildtamer~Battlecry": RamkahenWildtamer,
 				"Uldum~Hunter~Spell~6~Swarm of Locusts": SwarmofLocusts,

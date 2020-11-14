@@ -918,7 +918,7 @@ class CoordinatedStrike(Spell):
 class IllidariInitiate(Minion):
 	Class, race, name = "Demon Hunter", "", "Illidari Initiate"
 	mana, attack, health = 1, 1, 1
-	index = "Basic~Demon Hunter~Minion~1~1~1~None~Illidari Initiate~Uncollectible"
+	index = "Basic~Demon Hunter~Minion~1~1~1~None~Illidari Initiate~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	
 class SatyrOverseer(Minion):
@@ -1468,8 +1468,8 @@ class MirrorImage(Spell):
 		
 class MirrorImage_Minion(Minion):
 	Class, race, name = "Mage", "", "Mirror Image"
-	mana, attack, health = 1, 0, 2
-	index = "Basic~Mage~Minion~1~0~2~None~Mirror Image~Taunt~Uncollectible"
+	mana, attack, health = 0, 0, 2
+	index = "Basic~Mage~Minion~0~0~2~None~Mirror Image~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	
 	
@@ -2224,8 +2224,8 @@ class Hex(Spell):
 		
 class Frog(Minion):
 	Class, race, name = "Neutral", "Beast", "Frog"
-	mana, attack, health = 1, 0, 1
-	index = "Basic~Neutral~Minion~1~0~1~Beast~Frog~Taunt~Uncollectible"
+	mana, attack, health = 0, 0, 1
+	index = "Basic~Neutral~Minion~0~0~1~Beast~Frog~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	
 	
@@ -2715,7 +2715,7 @@ Basic_Indices = { #Heroes and standard Hero Powers
 				"Basic~Demon Hunter~Minion~2~3~2~Demon~Sightless Watcher~Battlecry": SightlessWatcher,
 				"Basic~Demon Hunter~Weapon~3~2~2~Aldrachi Warblades~Lifesteal": AldrachiWarblades,
 				"Basic~Demon Hunter~Spell~3~Coordinated Strike": CoordinatedStrike,
-				"Basic~Demon Hunter~Minion~1~1~1~None~Illidari Initiate~Uncollectible": IllidariInitiate,
+				"Basic~Demon Hunter~Minion~1~1~1~None~Illidari Initiate~Rush~Uncollectible": IllidariInitiate,
 				"Basic~Demon Hunter~Minion~3~4~2~Demon~Satyr Overseer": SatyrOverseer,
 				"Basic~Demon Hunter~Minion~2~2~2~Demon~Illidari Satyr~Uncollectible": IllidariSatyr,
 				"Basic~Demon Hunter~Spell~3~Soul Cleave": SoulCleave,
@@ -2751,7 +2751,7 @@ Basic_Indices = { #Heroes and standard Hero Powers
 				#Mage
 				"Basic~Mage~Spell~1~Arcane Missiles": ArcaneMissiles,
 				"Basic~Mage~Spell~1~Mirror Image": MirrorImage,
-				"Basic~Mage~Minion~1~0~2~None~Mirror Image~Taunt~Uncollectible": MirrorImage_Minion,
+				"Basic~Mage~Minion~0~0~2~None~Mirror Image~Taunt~Uncollectible": MirrorImage_Minion,
 				"Basic~Mage~Spell~2~Arcane Explosion": ArcaneExplosion,
 				"Basic~Mage~Spell~2~Frostbolt": Frostbolt,
 				"Basic~Mage~Spell~3~Arcane Intellect": ArcaneIntellect,
@@ -2804,7 +2804,7 @@ Basic_Indices = { #Heroes and standard Hero Powers
 				"Basic~Shaman~Spell~2~Windfury": Windfury,
 				"Basic~Shaman~Minion~3~0~3~Totem~Flametongue Totem": FlametongueTotem,
 				"Basic~Shaman~Spell~4~Hex": Hex,
-				"Basic~Neutral~Minion~1~0~1~Beast~Frog~Taunt~Uncollectible": Frog,
+				"Basic~Neutral~Minion~0~0~1~Beast~Frog~Taunt~Uncollectible": Frog,
 				"Basic~Shaman~Minion~4~3~3~None~Windspeaker~Battlecry": Windspeaker,
 				"Basic~Shaman~Spell~5~Bloodlust": Bloodlust,
 				"Basic~Shaman~Minion~6~6~5~Elemental~Fire Elemental~Battlecry": FireElemental,

@@ -687,9 +687,9 @@ class AddaSpectralFlyer2YourHand(Deathrattle_Minion):
 		self.entity.Game.Hand_Deck.addCardtoHand(SpectralFlyer, self.entity.ID, "type")
 		
 class SpectralFlyer(Minion):
-	Class, race, name = "Neutral", "", "Spectral Flyer"
+	Class, race, name = "Neutral", "Murloc", "Spectral Flyer"
 	mana, attack, health = 4, 4, 3
-	index = "Academy~Neutral~Minion~4~4~3~None~Spectral Flyer~Rush~Uncollectible"
+	index = "Academy~Neutral~Minion~4~4~3~Murloc~Spectral Flyer~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	
 	
@@ -1866,9 +1866,9 @@ class BecomeaCopyofBeast_Option(ChooseOneOption):
 		
 		
 class KroluskBarkstripper(Minion):
-	Class, race, name = "Hunter", "", "Krolusk Barkstripper"
+	Class, race, name = "Hunter", "Beast", "Krolusk Barkstripper"
 	mana, attack, health = 4, 3, 5
-	index = "Academy~Hunter~Minion~4~3~5~None~Krolusk Barkstripper"
+	index = "Academy~Hunter~Minion~4~3~5~Beast~Krolusk Barkstripper"
 	requireTarget, keyWord, description = False, "", "Spellburst: Destroy a random enemy minion"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -1926,8 +1926,8 @@ class Summona3CostBeast(Deathrattle_Minion):
 			
 class GuardianAnimals(Spell):
 	Class, name = "Hunter,Druid", "Guardian Animals"
-	requireTarget, mana = False, 7
-	index = "Academy~Hunter,Druid~Spell~7~Guardian Animals"
+	requireTarget, mana = False, 8
+	index = "Academy~Hunter,Druid~Spell~8~Guardian Animals"
 	description = "Summon two Beasts that cost (5) or less from your deck. Give them Rush"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -2547,8 +2547,8 @@ class FrazzledFreshman(Minion):
 	
 class MindrenderIllucia(Minion):
 	Class, race, name = "Priest", "", "Mindrender Illucia"
-	mana, attack, health = 2, 1, 3
-	index = "Academy~Priest~Minion~2~1~3~None~Mindrender Illucia~Battlecry~Legendary"
+	mana, attack, health = 3, 1, 3
+	index = "Academy~Priest~Minion~3~1~3~None~Mindrender Illucia~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Swap hands and decks with your opponent until your next turn"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2663,8 +2663,8 @@ class BrittleboneDestroyer(Minion):
 		
 class CabalAcolyte(Minion):
 	Class, race, name = "Priest", "", "Cabal Acolyte"
-	mana, attack, health = 4, 2, 6
-	index = "Academy~Priest~Minion~4~2~6~None~Cabal Acolyte~Taunt"
+	mana, attack, health = 4, 2, 4
+	index = "Academy~Priest~Minion~4~2~4~None~Cabal Acolyte~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Spellburst: Gain control of a random enemy minion with 2 or less Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -2782,18 +2782,18 @@ class SecretPassage(Spell):
 	Class, name = "Rogue", "Secret Passage"
 	requireTarget, mana = False, 1
 	index = "Academy~Rogue~Spell~1~Secret Passage"
-	description = "Replace your hand with 5 cards from your deck. Swap back next turn"
+	description = "Replace your hand with 4 cards from your deck. Swap back next turn"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		HD = curGame.Hand_Deck
 		if curGame.mode == 0:
-			PRINT(curGame, "Secret Passage swaps player's hand with 5 cards from deck.")
+			PRINT(curGame, "Secret Passage swaps player's hand with 4 cards from deck.")
 			if curGame.guides:
 				indices = list(curGame.guides.pop(0))
 			else:
 				deckSize = len(HD.decks[self.ID])
 				cards = list(range(deckSize))
-				indices = tuple(npchoice(cards, min(deckSize, 5), replace=False) if cards else [])
+				indices = tuple(npchoice(cards, min(deckSize, 4), replace=False) if cards else [])
 				curGame.fixedGuides.append(indices)
 			if indices:
 				cardsfromDeck = []
@@ -3412,12 +3412,12 @@ class Trig_RasFrostwhisper(TrigBoard):
 		
 class TotemGoliath(Minion):
 	Class, race, name = "Shaman", "Totem", "Totem Goliath"
-	mana, attack, health = 5, 4, 5
-	index = "Academy~Shaman~Minion~5~4~5~Totem~Totem Goliath~Deathrattle"
-	requireTarget, keyWord, description = False, "", "Deathrattle: Summon all four basic totems. Overload: (2)"
+	mana, attack, health = 5, 5, 5
+	index = "Academy~Shaman~Minion~5~5~5~Totem~Totem Goliath~Deathrattle"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Summon all four basic totems. Overload: (1)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.overload = 2
+		self.overload = 1
 		self.deathrattles = [SummonAllBasicTotems(self)]
 		
 class SummonAllBasicTotems(Deathrattle_Minion):
@@ -3690,8 +3690,8 @@ class ReleasedSoul(Minion):
 	
 class ArchwitchWillow(Minion):
 	Class, race, name = "Warlock", "", "Archwitch Willow"
-	mana, attack, health = 9, 7, 7
-	index = "Academy~Warlock~Minion~9~7~7~None~Archwitch Willow~Battlecry~Legendary"
+	mana, attack, health = 8, 5, 5
+	index = "Academy~Warlock~Minion~8~5~5~None~Archwitch Willow~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a random Demon from your hand and deck"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4149,7 +4149,7 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Neutral~Minion~4~3~6~Dragon~Crimson Hothead": CrimsonHothead,
 					"Academy~Neutral~Minion~4~5~1~Elemental~Divine Rager~Divine Shield": DivineRager,
 					"Academy~Neutral~Minion~4~4~3~Murloc~Fishy Flyer~Rush~Deathrattle": FishyFlyer,
-					"Academy~Neutral~Minion~4~4~3~None~Spectral Flyer~Rush~Uncollectible": SpectralFlyer,
+					"Academy~Neutral~Minion~4~4~3~Murloc~Spectral Flyer~Rush~Uncollectible": SpectralFlyer,
 					"Academy~Neutral~Minion~4~4~5~None~Lorekeeper Polkelt~Battlecry~Legendary": LorekeeperPolkelt,
 					"Academy~Neutral~Minion~4~2~5~None~Wretched Tutor": WretchedTutor,
 					"Academy~Neutral~Minion~5~4~6~None~Headmaster Kel'Thuzad~Legendary": HeadmasterKelThuzad,
@@ -4209,9 +4209,9 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Hunter~Minion~4~4~4~None~Hapless Handler~Uncollectible": HaplessHandler,
 					"Academy~Hunter~Minion~3~3~4~None~Professor Slate~Legendary": ProfessorSlate,
 					"Academy~Hunter,Druid~Minion~3~3~3~None~Shan'do Wildclaw~Choose One~Legendary": ShandoWildclaw,
-					"Academy~Hunter~Minion~4~3~5~None~Krolusk Barkstripper": KroluskBarkstripper,
+					"Academy~Hunter~Minion~4~3~5~Beast~Krolusk Barkstripper": KroluskBarkstripper,
 					"Academy~Hunter,Druid~Minion~5~4~5~Beast~Teacher's Pet~Taunt~Deathrattle": TeachersPet,
-					"Academy~Hunter,Druid~Spell~7~Guardian Animals": GuardianAnimals,
+					"Academy~Hunter,Druid~Spell~8~Guardian Animals": GuardianAnimals,
 					
 					"Academy~Mage,Rogue~Spell~1~Brain Freeze~Combo": BrainFreeze,
 					"Academy~Mage~Minion~1~1~3~None~Lab Partner~Spell Damage": LabPartner,
@@ -4238,10 +4238,10 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Priest,Warlock~Spell~0~Raise Dead": RaiseDead,
 					"Academy~Priest~Spell~1~Draconic Studies": DraconicStudies,
 					"Academy~Priest~Minion~1~1~4~None~Frazzled Freshman": FrazzledFreshman,
-					"Academy~Priest~Minion~2~1~3~None~Mindrender Illucia~Battlecry~Legendary": MindrenderIllucia,
+					"Academy~Priest~Minion~3~1~3~None~Mindrender Illucia~Battlecry~Legendary": MindrenderIllucia,
 					"Academy~Priest~Spell~2~Power Word: Feast": PowerWordFeast,
 					"Academy~Priest,Warlock~Minion~4~3~3~None~Brittlebone Destroyer~Battlecry": BrittleboneDestroyer,
-					"Academy~Priest~Minion~4~2~6~None~Cabal Acolyte~Taunt": CabalAcolyte,
+					"Academy~Priest~Minion~4~2~4~None~Cabal Acolyte~Taunt": CabalAcolyte,
 					"Academy~Priest,Warlock~Minion~4~3~6~None~Disciplinarian Gandling~Legendary": DisciplinarianGandling,
 					"Academy~Priest,Warlock~Minion~4~4~4~None~Failed Student~Uncollectible": FailedStudent,
 					"Academy~Priest~Spell~6~Initiation": Initiation,
@@ -4268,7 +4268,7 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Shaman~Spell~3~Molten Blast": MoltenBlast,
 					"Academy~Shaman~Minion~1~1~1~Elemental~Molten Elemental~Uncollectible": MoltenElemental,
 					"Academy~Shaman,Mage~Minion~5~3~6~None~Ras Frostwhisper~Legendary": RasFrostwhisper,
-					"Academy~Shaman~Minion~5~4~5~Totem~Totem Goliath~Deathrattle": TotemGoliath,
+					"Academy~Shaman~Minion~5~5~5~Totem~Totem Goliath~Deathrattle": TotemGoliath,
 					"Academy~Shaman~Spell~8~Tidal Wave": TidalWave,
 					
 					"Academy~Warlock,Demon Hunter~Spell~0~Soul Fragment~Casts When Drawn~Uncollectible": SoulFragment,
@@ -4283,7 +4283,7 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Warlock~Minion~5~4~5~Demon~Void Drinker~Taunt~Battlecry": VoidDrinker,
 					"Academy~Warlock,Demon Hunter~Minion~7~5~5~None~Soulciologist Malicia~Battlecry~Legendary": SoulciologistMalicia,
 					"Academy~Warlock,Demon Hunter~Minion~3~3~3~None~Released Soul~Rush~Uncollectible": ReleasedSoul,
-					"Academy~Warlock~Minion~9~7~7~None~Archwitch Willow~Battlecry~Legendary": ArchwitchWillow,
+					"Academy~Warlock~Minion~8~5~5~None~Archwitch Willow~Battlecry~Legendary": ArchwitchWillow,
 					
 					"Academy~Warrior~Spell~1~Athletic Studies": AthleticStudies,
 					"Academy~Warrior,Paladin~Spell~1~Shield of Honor": ShieldofHonor,

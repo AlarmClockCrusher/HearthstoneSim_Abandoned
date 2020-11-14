@@ -903,9 +903,9 @@ class FacelessCorruptor(Minion):
 		
 		
 class KoboldStickyfinger(Minion):
-	Class, race, name = "Neutral", "", "Kobold Stickyfinger"
+	Class, race, name = "Neutral", "Pirate", "Kobold Stickyfinger"
 	mana, attack, health = 5, 4, 4
-	index = "Dragons~Neutral~Minion~5~4~4~None~Kobold Stickyfinger~Battlecry"
+	index = "Dragons~Neutral~Minion~5~4~4~Pirate~Kobold Stickyfinger~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Steal your opponent's weapon"
 	
 	def effectCanTrigger(self):
@@ -4395,7 +4395,7 @@ Dragons_Indices = {"Dragons~Neutral~Minion~1~2~2~None~Blazing Battlemage": Blazi
 					"Dragons~Neutral~Minion~5~0~3~None~Chromatic Egg~Battlecry~Deathrattle": ChromaticEgg,
 					"Dragons~Neutral~Minion~5~3~5~Dragon~Cobalt Spellkin~Battlecry": CobaltSpellkin,
 					"Dragons~Neutral~Minion~5~4~4~None~Faceless Corruptor~Rush~Battlecry": FacelessCorruptor,
-					"Dragons~Neutral~Minion~5~4~4~None~Kobold Stickyfinger~Battlecry": KoboldStickyfinger,
+					"Dragons~Neutral~Minion~5~4~4~Pirate~Kobold Stickyfinger~Battlecry": KoboldStickyfinger,
 					"Dragons~Neutral~Minion~5~5~5~None~Platebreaker~Battlecry": Platebreaker,
 					"Dragons~Neutral~Minion~5~4~5~None~Shield of Galakrond~Taunt~Battlecry": ShieldofGalakrond,
 					"Dragons~Neutral~Minion~5~3~3~Murloc~Skyfin~Battlecry": Skyfin,
