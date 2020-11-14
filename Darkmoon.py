@@ -71,7 +71,7 @@ class Trig_Corrupt(TrigHand):
 		card.Game.Hand_Deck.replaceCardinHand(card, newCard)
 		
 	def selfCopy(self, recipient):
-		return type(self)(recipient, corruptedType)
+		return type(self)(recipient, self.corruptedType)
 		
 	def createCopy(self, game):
 		if self not in game.copiedObjs: #这个扳机没有被复制过
@@ -1661,7 +1661,7 @@ class LunarEclipse(Spell):
 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			PRINT(self.Game, "Lunar Eclipse deals %d damage to minion %s. Player's next spell this turn costs (2) less"%(damage, target.name))
 			self.dealsDamage(target, damage)
-			tempAura = YourNextSpellCosts2LessThisTurn(self.Game, self.ID)
+			tempAura = GameManaAura_InTurnNextSpell2Less(self.Game, self.ID)
 			self.Game.Manas.CardAuras.append(tempAura)
 			tempAura.auraAppears()
 		return target

@@ -2088,22 +2088,22 @@ class Hero(Card):
 		game, ID = self.Game, self.ID
 		oldHero = game.heroes[ID]
 		self.health, self.health_max, self.armor = oldHero.health, oldHero.health_max, oldHero.armor
-		self.attack_bare, self.tempAttChanges, self.attTimes, self.armor = oldeHero.attack_bare, oldeHero.tempAttChanges, oldeHero.attTimes, oldeHero.armor
+		self.attack_bare, self.tempAttChanges, self.attTimes, self.armor = oldHero.attack_bare, oldHero.tempAttChanges, oldHero.attTimes, oldHero.armor
 		self.onBoard, oldHero.onBoard, self.position = True, False, ID #这个只是为了方便定义(i, where)
 		#英雄牌进入战场。（本来是应该在使用阶段临近结束时移除旧英雄和旧技能，但是为了方便，在此时执行。）
 		#继承旧英雄的生命状态和护甲值。此时英雄的被冻结和攻击次数以及攻击机会也继承旧英雄。
 		#清除旧的英雄技能。
 		game.powers[ID].disappears()
 		game.powers[ID].heroPower = None
-		heroes[ID].onBoard = False
+		game.heroes[ID].onBoard = False
 		#旧英雄在消失前需要归还其所有的光环buff效果，目前只有Inara Stormcrash的+2攻和风怒
 		while self.statbyAura[1]:
 			self.statbyAura[1][0].effectClear()
 		while self.keyWordbyAura["Auras"]:
 			self.keyWordbyAura["Auras"][0].effectClear()
 		heroPower = self.heroPower #这个英雄技能必须存放起来，之后英雄还有可能被其他英雄替换，但是这个技能要到最后才登场。
-		heroes[ID] = self #英雄替换。如果后续有埃克索图斯再次替换英雄，则最后的英雄是拉格纳罗斯。
-		heroes[ID].onBoard = True
+		game.heroes[ID] = self #英雄替换。如果后续有埃克索图斯再次替换英雄，则最后的英雄是拉格纳罗斯。
+		game.heroes[ID].onBoard = True
 		if game.GUI:
 			game.GUI.displayCard(self)
 			game.GUI.wait(500)
@@ -2324,9 +2324,12 @@ class Weapon(Card):
 	def gainStat(self, attack, durability):
 		self.attack += attack
 		self.durability += durability
-		self.heroes[self.ID].calc_Attack()
+		self.Game.heroes[self.ID].calc_Attack()
 		self.Game.sendSignal("WeaponAttChanges", self.ID, None, None, 0, "")
-		
+
+	def countHealDouble(self):  # 随从和武器的治疗效果
+		return sum(minion.marks["Heal x2"] > 0 for minion in self.Game.minions[self.ID])
+
 	"""Handle the weapon being played/equipped."""
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
 		# 使用阶段
