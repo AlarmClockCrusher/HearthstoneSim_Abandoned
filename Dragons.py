@@ -481,8 +481,8 @@ class BuffAura_DreadRaven(AuraDealer_toMinion):
 	def auraAppears(self):
 		self.applies(self.entity)
 		for sig in self.signals:
-			try: self.minion.Game.trigsBoard[self.minion.ID][sig].append(self)
-			except: self.minion.Game.trigsBoard[self.minion.ID][sig] = [self]
+			try: self.entity.Game.trigsBoard[self.entity.ID][sig].append(self)
+			except: self.entity.Game.trigsBoard[self.entity.ID][sig] = [self]
 			
 	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
@@ -2065,7 +2065,7 @@ class AzureExplorer(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		if self.ID == curGame.tur:
+		if self.ID == curGame.turn:
 			if curGame.mode == 0:
 				if curGame.guides:
 					PRINT(curGame, "Azure Explorer's battlecry adds a Dragon to player's hand")

@@ -1191,11 +1191,11 @@ class Glide(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Glide shuffles player's hand into deck and then let player draw 4 cards")
 		self.Game.Hand_Deck.shufflefromHand2Deck(0, self.ID, self.ID, all=True)
-		for i in range(4): HD.drawCard(self.ID)
+		for i in range(4): self.Game.Hand_Deck.drawCard(self.ID)
 		if posinHand == 0 or posinHand == -1:
 			PRINT(self.Game, "Glide's Outcast triggers and does the same for the opponent")
 			self.Game.Hand_Deck.shufflefromHand2Deck(0, 3-self.ID, self.ID, all=True)
-			for i in range(4): HD.drawCard(3-self.ID)
+			for i in range(4): self.Game.Hand_Deck.drawCard(3-self.ID)
 		return None
 		
 		
@@ -2832,9 +2832,9 @@ class SecretPassageEffect:
 		for card in cardstoReturn2Deck:
 			for trig in card.trigsBoard + card.trigsHand + card.trigsDeck:
 				trig.disconnect()
-			identity = card.identity
+			# identity = card.identity
 			card.__init__(self.Game, self.playerID)
-			card.identity = identity
+			# card.identity = identity
 		HD.shuffleCardintoDeck(cardstoReturn2Deck, self.playerID, enemyCanSee=False, sendSig=False)
 		HD.addCardtoHand(cardstoReturn2Hand, self.playerID)
 		
