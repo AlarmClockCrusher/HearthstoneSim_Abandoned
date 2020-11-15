@@ -553,7 +553,7 @@ class Dormant(Card):
 		self.auras = {}
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 
-	def appears(self):
+	def appears(self, firstTime=True):
 		PRINT(self.Game, "Permanent %s appears on board." % self.name)
 		self.onBoard, self.inHand, self.inDeck = True, False, False
 		self.dead = False
