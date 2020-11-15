@@ -625,6 +625,7 @@ class Game:
 			#如onBoard为False，则disappears已被调用过了。主要适用于触发死亡扳机中的区域移动效果
 			self.removeMinionorWeapon(target)
 			target.reset(ID) #永恒祭司的亡语会备份一套enchantment，在调用该函数之后将初始化过的本体重新增益
+			target.numOccurrence += 1
 			PRINT(self, "%s has been reset after returned to deck %d. All enchantments lost"%(target.name, ID))
 			target.inOrigDeck, target.numOccurrence = inOrigDeck, numOccurrence + 1
 			self.Hand_Deck.shuffleCardintoDeck(target, initiatorID)
