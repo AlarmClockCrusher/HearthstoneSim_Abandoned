@@ -2277,15 +2277,19 @@ class RingToss(Spell):
 					curGame.guides.pop(0)(self.Game, self.ID).cast()
 				else:
 					HeroClass = curGame.heroes[self.ID].Class
-					key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Hunter Secrets"
+					key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Mage Secrets"
+					secrets = self.rngPool(key)
+					for secret in curGame.Secrets.secrets[self.ID]:
+						try: secrets.remove(type(secret)) #Deployed Secrets won't show up in the options
+						except: pass
 					if self.ID != curGame.turn or "byOthers" in comment:
-						secret = npchoice(self.rngPool(key))
+						secret = npchoice(secrets)
 						curGame.fixedGuides.append(secret)
 						PRINT(curGame, "Ring Toss casts a random Secret")
 						secret(self.Game, self.ID).cast()
 					else:
 						PRINT(curGame, "Ring Toss lets player discover a Secret to cast")
-						secrets = npchoice(self.rngPool(key), 3, replace=False)
+						secrets = npchoice(secrets, min(len(secrets), 3), replace=False)
 						curGame.options = [secret(curGame, self.ID) for secret in secrets]
 						curGame.Discover.startDiscover(self)
 		return None
@@ -2309,15 +2313,19 @@ class RingToss_Corrupt(Spell):
 						curGame.guides.pop(0)(self.Game, self.ID).cast()
 					else:
 						HeroClass = curGame.heroes[self.ID].Class
-						key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Hunter Secrets"
+						key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Mage Secrets"
+						secrets = self.rngPool(key)
+						for secret in curGame.Secrets.secrets[self.ID]:
+							try: secrets.remove(type(secret)) #Deployed Secrets won't show up in the options
+							except: pass
 						if self.ID != curGame.turn or "byOthers" in comment:
-							secret = npchoice(self.rngPool(key))
+							secret = npchoice(secrets)
 							curGame.fixedGuides.append(secret)
 							PRINT(curGame, "Ring Toss casts a random Secret")
 							secret(self.Game, self.ID).cast()
 						else:
 							PRINT(curGame, "Ring Toss lets player discover a Secret to cast")
-							secrets = npchoice(self.rngPool(key), 3, replace=False)
+							secrets = npchoice(secrets, min(len(secrets), 3), replace=False)
 							curGame.options = [secret(curGame, self.ID) for secret in secrets]
 							curGame.Discover.startDiscover(self)
 		return None

@@ -626,7 +626,7 @@ class Minion(Card):
 
 	def reset(self, ID): #如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化
 		inOrigDeck, numOccurrence = self.inOrigDeck, self.numOccurrence
-		att_0, health_0 = self.att_0, self.health_0
+		att_0, health_0 = self.attack_0, self.health_0
 		self.blank_init(self.Game, ID)
 		self.attack_0 = self.attack = self.attack_Enchant = att_0
 		self.health_0 = self.health = self.health_max = health_0
