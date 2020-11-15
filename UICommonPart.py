@@ -510,8 +510,8 @@ class GUI_Common:
 			btnTypeConfirm.wait_variable(var)
 			cardName = self.wish.get()
 			self.wish.delete(0, "end")
-			if cardName in self.RNGPools["Basic and Classic Card Index"]:
-				card = self.rngPool["Basic and Classic Card Index"][cardName]
+			if cardName in self.Game.RNGPools["Basic and Classic Card Index"]:
+				card = self.Game.RNGPools["Basic and Classic Card Index"][cardName]
 				self.Game.fixedGuides.append(card)
 				self.Game.Hand_Deck.addCardtoHand(card, initiator.ID, "type")
 				break
@@ -532,7 +532,7 @@ class GUI_Common:
 						self.printInfo("Class input wrong. Returning to search by name")
 					else:
 						self.printInfo("Showing %s cards"%className)
-						for value in self.rngPool["Basic and Classic %s Cards"%className]:
+						for value in self.Game.RNGPools["Basic and Classic %s Cards"%className]:
 							self.printInfo("{}:   Mana {},  Description {}".format(value.name, value.mana, value.description))
 						self.printInfo("Returning to search by card name")
 				else:
@@ -546,6 +546,7 @@ class GUI_Common:
 		
 	def displayCard(self, card, notSecretBeingPlayed=True):
 		if card:
+			#如果打出的牌不是一个正在打出的奥秘或者（是奥秘但是是我方奥秘，或者游戏可以显示对方的信息）， 则直接显示打出的奥秘牌
 			if notSecretBeingPlayed or not hasattr(self, "ID") or card.ID == self.ID or not card.description.startswith("Secret:") or seeEnemyHand:
 				img = PIL.Image.open(findPicFilepath_FullImg(card))#.resize(((270, 360)))
 			else: img = PIL.Image.open("Images\\%sSecret.png"%card.Class)

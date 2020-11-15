@@ -342,7 +342,7 @@ class Hand_Deck:
 	#Given the index in hand. Can't shuffle multiple cards except for whole hand
 	def shufflefromHand2Deck(self, i, ID, initiatorID, all=True):
 		if all:
-			hand = self.extractfromHand(None, ID, all=True, enemyCanSee=False)[0]
+			hand = self.extractfromHand(None, ID, all, enemyCanSee=False)[0]
 			for card in hand: card.reset(ID)
 			self.shuffleCardintoDeck(hand, initiatorID, enemyCanSee=False, sendSig=True)
 		elif i:

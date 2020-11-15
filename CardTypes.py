@@ -1464,6 +1464,7 @@ class Spell(Card):
 		#判定该法术是否会因为风潮的光环存在而释放两次。发现的子游戏中不会两次触发，直接跳过
 		repeatTimes = 2 if self.Game.status[self.ID]["Spells x2"] > 0 else 1
 		if self.Game.GUI:
+			curGame.GUI.displayCard(self)
 			self.Game.GUI.showOffBoardTrig(self)
 			self.Game.GUI.wait(500)
 		#使用时步骤，触发伊利丹和紫罗兰老师等“每当你使用一张xx牌”的扳机
@@ -1608,14 +1609,18 @@ class Secret(Spell):
 
 	def cast(self, target=None, comment="byOthers"):
 		if self.Game.GUI:
-			self.Game.GUI.displayCard(self)
-			self.Game.GUI.target = None
+			self.Game.GUI.displayCard(self, notSecretBeingPlayed=False)
+			self.Game.GUI.showOffBoardTrig(self)
 			self.Game.GUI.wait(500)
 		self.whenEffective(None, "byOthers", choice=0, posinHand=-2)
 		# 使用后步骤，但是此时的扳机只会触发星界密使和风潮的状态移除，因为其他的使用后步骤都要求是玩家亲自打出。
 		self.Game.sendSignal("SpellBeenCast", self.ID, self, None, 0, "byOthers")
 		
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
+		if self.Game.GUI:
+			self.Game.GUI.displayCard(self, notSecretBeingPlayed=False)
+			self.Game.GUI.showOffBoardTrig(self)
+			self.Game.GUI.wait(500)
 		self.Game.sendSignal("SpellPlayed", self.ID, self, None, mana, "", choice)
 		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
@@ -1683,13 +1688,17 @@ class Quest(Spell):
 	def cast(self, target=None, comment="byOthers"):
 		if self.Game.GUI:
 			self.Game.GUI.displayCard(self)
-			self.Game.GUI.target = None
+			self.Game.GUI.showOffBoardTrig(self)
 			self.Game.GUI.wait(500)
 		self.whenEffective(None, "byOthers", choice=0, posinHand=-2)
 		# 使用后步骤，但是此时的扳机只会触发星界密使和风潮的状态移除，因为其他的使用后步骤都要求是玩家亲自打出。
 		self.Game.sendSignal("SpellBeenCast", self.ID, self, None, 0, "byOthers")
 
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
+		if self.Game.GUI:
+			self.Game.GUI.displayCard(self)
+			self.Game.GUI.showOffBoardTrig(self)
+			self.Game.GUI.wait(500)
 		self.Game.sendSignal("SpellPlayed", self.ID, self, None, mana, "", choice)
 		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
@@ -1697,7 +1706,7 @@ class Quest(Spell):
 		# There is no need for another round of death resolution.
 		self.Game.sendSignal("SpellBeenCast", self.ID, self, None, 0, "")
 		self.Game.Counters.hasPlayedQuestThisGame[self.ID] = True
-
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		questcanRegister = True
 		if self.Game.Secrets.areaNotFull(self.ID):
@@ -1925,6 +1934,7 @@ class Hero(Card):
 		self.type = "Hero"
 		self.weapon = type(self).weapon
 		self.description = type(self).description
+		self.requireTarget = False
 		self.Class = type(self).Class
 		self.attChances_base, self.attChances_extra, self.attTimes = 1, 0, 0
 		self.onBoard, self.inHand, self.inDeck = False, False, False

@@ -2165,7 +2165,7 @@ class DeckofLunacy(Spell):
 		PRINT(curGame, "Deck of Lunacy transforms spells in player's deck into ones that cost (3) more")
 		if curGame.mode == 0:
 			if curGame.guides:
-				indices, newCardsm, costs = curGame.guides.pop(0)
+				indices, newCards, costs = curGame.guides.pop(0)
 			else:
 				indices, newCards, costs = [], [], []
 				for i, card in enumerate(curGame.Hand_Deck.decks[ID]):
@@ -3170,12 +3170,17 @@ class CloakofShadows(Spell):
 class TicketMaster(Minion):
 	Class, race, name = "Rogue", "", "Ticket Master"
 	mana, attack, health = 3, 4, 3
-	index = "Darkmoon~Rogue~Minion~3~4~3~None~Ticket Master~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle 3 Tickets into your deck. When drawn, summon a 3/3 Plush Bear"
-	
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Ticket Master's battlecry shuffles 3 Tickets into player's deck. When its drawn, it summons a 3/3 Plush Bear.")
-		self.Game.Hand_Deck.shuffleCardintoDeck([Tickets(self.Game, self.ID) for i in range(3)], self.ID)
+	index = "Darkmoon~Rogue~Minion~3~4~3~None~Ticket Master~Deathrattle"
+	requireTarget, keyWord, description = False, "", "Deathrattle: Shuffle 3 Tickets into your deck. When drawn, summon a 3/3 Plush Bear"
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.deathrattles = [Shuffle3TicketsintoYourDeck(self)]
+		
+class Shuffle3TicketsintoYourDeck(Deathrattle_Minion):
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		game, ID = self.entity.Game, self.entity.ID
+		PRINT(game, "Ticket Master's battlecry shuffles 3 Tickets into player's deck. When its drawn, it summons a 3/3 Plush Bear.")
+		game.Hand_Deck.shuffleCardintoDeck([Tickets(game, ID) for i in range(3)], ID)
 		return None
 		
 class Tickets(Spell):

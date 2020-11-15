@@ -45,6 +45,12 @@ BoardIndex = ["0 Random Game Board",
 			"24 Outlands", "25 Scholomance Academy", "26 Darkmoon Faire",
 			]
 			
+folderNameTable = {"Basic":"Basic", "Classic": "Classic",
+					"GVG": "Pre_Dalaran", "Kobolds": "Pre_Dalaran", "Boomsday": "Pre_Dalaran",
+					"Shadows": "Shadows", "Uldum": "Uldum", "Dragons": "Dragons", "Galakrond": "Galakrond",
+					"DHInitiate": "DHInitiate", "Outlands": "Outlands", "Academy": "Academy", "Darkmoon": "Darkmoon",
+					}
+					
 from tkinter import messagebox
 import tkinter as tk
 import PIL.Image, PIL.ImageTk
@@ -69,11 +75,6 @@ def extractfrom(target, listObj):
 	except: return None
 	
 def findPicFilepath(card):
-	folderNameTable = {"Basic":"Basic", "Classic": "Classic",
-						 "GVG": "Pre_Dalaran", "Kobolds": "Pre_Dalaran", "Boomsday": "Pre_Dalaran",
-						"Shadows": "Shadows", "Uldum": "Uldum", "Dragons": "Dragons", "Galakrond": "Galakrond",
-						"DHInitiate": "DHInitiate", "Outlands": "Outlands", "Academy": "Academy", "Darkmoon": "Darkmoon",
-						}
 	if card.type == "Dormant": #休眠的随从会主动查看自己携带的originalMinion的名字和index
 		index = card.originalMinion.index
 		folderName = folderNameTable[index.split('~')[0] ]
@@ -101,15 +102,17 @@ def findPicFilepath(card):
 def findPicFilepath_FullImg(card):
 	if card.type == "Dormant": #休眠的随从会主动查看自己携带的originalMinion的名字和index
 		index = card.originalMinion.index
+		folderName = folderNameTable[index.split('~')[0] ]
 		if inspect.isclass(card.originalMinion):
 			name = card.originalMinion.__name__
 		else: #Instances don't have __name__
 			name = type(card.originalMinion).__name__
-		path = "Images\\%s\\"%index.split('~')[0]
+		path = "Images\\%s\\"%folderName
 	else: #type == "Weapon", "Minion", "Spell", "Hero", "Power"
 		index, name = card.index, type(card).__name__
 		if card.type != "Hero" and card.type != "Power":
-			path = "Images\\%s\\"%index.split('~')[0]
+			folderName = folderNameTable[index.split('~')[0] ]
+			path = "Images\\%s\\"%folderName
 		else: path = "Images\\HerosandPowers\\"
 		
 	name = name.split("_")[0] if "Mutable" in name else name
@@ -117,9 +120,10 @@ def findPicFilepath_FullImg(card):
 		name += "_1"
 	if "Accelerate" in name: name = name.replace("_Accelerate","")
 	if "Crystallize" in name: name = name.replace("_Crystallize","")
-	if "_Token" in name: name = name.replace("_Token", "")
-	filepath = path+"%s.png"%name
+	if "_Token" in name: name = name.replace("_Token","")
+	filepath = path + "%s.png"%name
 	return filepath
+	
 	
 	
 class CardLabel(tk.Label):
