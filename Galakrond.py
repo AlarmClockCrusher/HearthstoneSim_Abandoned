@@ -1,7 +1,7 @@
 from CardTypes import *
 from Triggers_Auras import *
-from Basic import TheCoin
-from Dragons import Lackeys
+from Basic import TheCoin, SilverHandRecruit
+from AcrossPacks import BoomBot, Lackeys
 
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
@@ -388,7 +388,7 @@ class Trig_ChopshopCopter(TrigBoard):
 			if curGame.guides:
 				mech = curGame.guides.pop(0)
 			else:
-				mech = npchoice(curGame.RNGPools["Mechs"])
+				mech = npchoice(self.rngPool("Mechs"))
 				curGame.fixedGuides.append(mech)
 			PRINT(curGame, "After a friendly minion died, Chopshop Copter adds a random Mech to player's hand")
 			curGame.Hand_Deck.addCardtoHand(mech, self.entity.ID, "type")
@@ -493,7 +493,7 @@ class Trig_WhatDoesThisDo(TrigBoard):
 			if curGame.guides:
 				spell = curGame.guides.pop(0)
 			else:
-				spell = npchoice(curGame.RNGPools["Spells"])
+				spell = npchoice(self.rngPool("Spells"))
 				curGame.fixedGuides.append(spell)
 			PRINT(curGame, "Hero Power What Does This Do? casts spell %s"%spell.name)
 			spell(curGame, self.entity.ID).cast()
@@ -537,7 +537,9 @@ class AirRaid(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Air Raid is cast and summons two 1/1 Silve Hand Recruits")
-		self.Game.summon([SilverHandRecruit_Dragons(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
+		minions = [SilverHandRecruit(self.Game, self.ID) for i in range(2)]
+		for minion in minions: minion.keyWords["Taunt"] += 1
+		self.Game.summon(minions, (-1, "totheRightEnd"), self.ID)
 		return None
 		
 class AirRaid2(Spell):
@@ -548,17 +550,12 @@ class AirRaid2(Spell):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Air Raid is cast and summons two 1/1 Silve Hand Recruits")
-		self.Game.summon([SilverHandRecruit_Dragons(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
+		minions = [SilverHandRecruit(self.Game, self.ID) for i in range(2)]
+		for minion in minions: minion.keyWords["Taunt"] += 1
+		self.Game.summon(minions, (-1, "totheRightEnd"), self.ID)
 		return None
 		
 		
-class SilverHandRecruit_Dragons(Minion):
-	Class, race, name = "Paladin", "", "Silver Hand Recruit"
-	mana, attack, health = 1, 1, 1
-	index = "Galakrond~Paladin~Minion~1~1~1~None~Silver Hand Recruit~Taunt~Uncollectible"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt"
-	
-	
 class Scalelord(Minion):
 	Class, race, name = "Paladin", "Dragon", "Scalelord"
 	mana, attack, health = 5, 5, 6
@@ -661,14 +658,14 @@ class DarkProphecy(Spell):
 			else:
 				key = "2-Cost Minions as " + classforDiscover(self)
 				if self.ID != curGame.turn or "byOthers" in comment:
-					minion = npchoice(curGame.RNGPools[key])
+					minion = npchoice(self.rngPool(key))
 					curGame.fixedGuides.append(minion)
 					PRINT(curGame, "Dark Prophecy is cast and summons a random 2-Cost minion and gives it +3 Health")
 					minion = minion(curGame, self.ID)
 					minion.buffDebuff(0, 3)
 					curGame.summon(minion, -1, self.ID)
 				else:
-					minions = npchoice(curGame.RNGPools[key], 3, replace=False)
+					minions = npchoice(self.rngPool(key), 3, replace=False)
 					PRINT(curGame, "Dark Prophecy lets player Discover a 2-Cost minion to summon and gain +3 Health")
 					curGame.options = [minion(curGame, self.ID) for minion in minions]
 					curGame.Discover.startDiscover(self)
@@ -722,13 +719,13 @@ class Waxmancy(Spell):
 				key = "Battlecry Minions as " + classforDiscover(self)
 				if self.ID != curGame.turn or "byOthers" in comment:
 					PRINT(curGame, "Waxmancy is cast and adds a random Battlecry minion to player's hand. It costs (2) less")
-					minion = npchoice(curGame.RNGPools[key])
+					minion = npchoice(self.rngPool(key))
 					curGame.fixedGuides.append(minion)
 					minion = minion(curGame, self.ID)
 					ManaMod(minion, changeby=-2, changeto=-1).applies()
 					curGame.Hand_Deck.addCardtoHand(minion, self.ID, byDiscover=True)
 				else:
-					minions = npchoice(curGame.RNGPools[key], 3, replace=False)
+					minions = npchoice(self.rngPool(key), 3, replace=False)
 					PRINT(curGame, "Waxmancy lets player Discover a Battlecry minion. It costs (2) less")
 					curGame.options = [minion(curGame, self.ID) for minion in minions]
 					curGame.Discover.startDiscover(self)
@@ -784,7 +781,7 @@ class ExplosiveEvolution(Spell):
 					cost = type(target).mana + 3
 					while cost not in curGame.MinionsofCost:
 						cost -= 1
-					newMinion = npchoice(curGame.RNGPools["%d-Cost Minions to Summon"%cost])
+					newMinion = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost))
 					curGame.fixedGuides.append(newMinion)
 				newMinion = newMinion(curGame, target.ID)
 				curGame.transform(target, newMinion)
@@ -849,8 +846,8 @@ class Trig_TheFistofRaden(TrigBoard):
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
 			else:
-				s = "%d-Cost Legendary Minions to Summon"%number
-				minion = npchoice(curGame.RNGPools[s]) if s in curGame.RNGPools and curGame.space(self.entity.ID) > 0 else None
+				key = "%d-Cost Legendary Minions to Summon"%number
+				minion = npchoice(self.rngPool(key)) if key in curGame.RNGPools and curGame.space(self.entity.ID) > 0 else None
 				curGame.fixedGuides.append(minion)
 			if minion:
 				curGame.summon(minion(curGame, self.entity.ID), -1, self.entity.ID)
@@ -903,12 +900,12 @@ class TwistedKnowledge(Spell):
 					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 				else:
 					if self.ID != curGame.turn or "byOthers" in comment:
-						card = npchoice(curGame.RNGPools["Warlock Cards"])
+						card = npchoice(self.rngPool("Warlock Cards"))
 						curGame.fixedGuides.append(card)
 						PRINT(curGame, "Twisted Knowledge is cast and adds a random Warlock card to player's hand")
 						curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True)
 					else:
-						cards = npchoice(curGame.RNGPools["Warlock Cards"], 3, replace=False)
+						cards = npchoice(self.rngPool("Warlock Cards"), 3, replace=False)
 						PRINT(curGame, "Twisted Knowledge lets player Discover a Warlock card")
 						curGame.options = [card(curGame, self.ID) for card in cards]
 						curGame.Discover.startDiscover(self)
@@ -994,13 +991,13 @@ class BoomSquad(Spell):
 				Class = classforDiscover(self)
 				key_Mech, key_Dragon = "Mechs as " + Class, "Dragons as " + Class
 				if self.ID != curGame.turn or "byOthers" in comment:
-					mixedPool = [Lackeys, curGame.RNGPools[key_Mech], curGame.RNGPools[key_Dragon]]
+					mixedPool = [Lackeys, self.rngPool(key_Mech), self.rngPool(key_Dragon)]
 					card = npchoice(mixedPool[nprandint(3)])
 					curGame.fixedGuides.append(card)
 					PRINT(curGame, "Boom Squad is cast and adds a random Lackey, Mech, or Dragon card to player's hand")
 					curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True)
 				else:
-					cards = [npchoice(Lackeys), npchoice(curGame.RNGPools[key_Mech]), npchoice(curGame.RNGPools[key_Dragon])]
+					cards = [npchoice(Lackeys), npchoice(self.rngPool(key_Mech)), npchoice(self.rngPool(key_Dragon))]
 					PRINT(curGame, "Boom Squad lets player Discover a Lackey, Mech or Dragon")
 					curGame.options = [card(curGame, self.ID) for card in cards]
 					curGame.Discover.startDiscover(self)
@@ -1051,36 +1048,8 @@ class Trig_BombWrangler(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Whenever %s takes damage, it summons a 1/1 Boom Bot"%self.entity.name)
-		self.entity.Game.summon(BoomBot_Dragons(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summon(BoomBot(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		
-class BoomBot_Dragons(Minion):
-	Class, race, name = "Neutral", "Mech", "Boom Bot"
-	mana, attack, health = 1, 1, 1
-	index = "Galakrond~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible"
-	requireTarget, keyWord, description = False, "", "Deathrattle: Deal 1~4 damage to a random enemy"
-	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-		self.deathrattles = [Deal1to4DamagetoaRandomEnemy(self)]
-		
-class Deal1to4DamagetoaRandomEnemy(Deathrattle_Minion):
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		curGame = self.entity.Game
-		if curGame.mode == 0:
-			enemy = None
-			PRINT(curGame, "Deathrattle: Deal 1~4 damage to a random enemy triggers.")
-			if curGame.guides:
-				i, where, damage = curGame.guides.pop(0)
-				if where: enemy = curGame.find(i, where)
-			else:
-				targets = curGame.charsAlive(3-self.entity.ID)
-				if targets:
-					enemy, damage = npchoice(targets), nprandint(1, 5)
-					curGame.fixedGuides.append((enemy.position, "minion%d"%enemy.ID, damage) if enemy.type == "Minion" else (enemy.ID, "hero", damage))
-				else:
-					curGame.fixedGuides.append((0, '', 0))
-			if enemy:
-				self.entity.dealsDamage(enemy, damage)
-				
 				
 Galakrond_Indices = {"Galakrond~Neutral~Minion~3~2~2~None~Skydiving Instructor~Battlecry": SkydivingInstructor,
 					"Galakrond~Neutral~Minion~5~3~4~Elemental~Hailbringer~Battlecry": Hailbringer,
@@ -1109,7 +1078,6 @@ Galakrond_Indices = {"Galakrond~Neutral~Minion~3~2~2~None~Skydiving Instructor~B
 					"Galakrond~Paladin~Minion~2~2~2~Mech~Shotbot~Reborn": Shotbot,
 					"Galakrond~Paladin~Spell~2~Air Raid~Twinspell": AirRaid,
 					"Galakrond~Paladin~Spell~2~Air Raid~Uncollectible": AirRaid2,
-					"Galakrond~Paladin~Minion~1~1~1~None~Silver Hand Recruit~Taunt~Uncollectible": SilverHandRecruit_Dragons,
 					"Galakrond~Paladin~Minion~5~5~6~Dragon~Scalelord~Battlecry": Scalelord,
 					"Galakrond~Priest~Minion~6~4~4~Dragon~Aeon Reaver~Battlecry": AeonReaver,
 					"Galakrond~Priest~Minion~1~1~1~None~Cleric of Scales~Battlecry": ClericofScales,
@@ -1127,6 +1095,5 @@ Galakrond_Indices = {"Galakrond~Neutral~Minion~3~2~2~None~Skydiving Instructor~B
 					"Galakrond~Warrior~Spell~1~Boom Squad": BoomSquad,
 					"Galakrond~Warrior~Minion~1~1~3~Pirate~Risky Skipper": RiskySkipper,
 					"Galakrond~Warrior~Minion~3~2~3~None~Bomb Wrangler": BombWrangler,
-					"Galakrond~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible": BoomBot_Dragons
 					}
 					

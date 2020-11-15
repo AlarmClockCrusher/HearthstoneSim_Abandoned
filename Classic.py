@@ -723,11 +723,11 @@ class Trig_AlarmoBot(TrigBoard):
 			if i > -1:
 				PRINT(curGame, "At the start of turn, Alarm-o-Bot swaps with random minion in player's hand")
 				#需要先把报警机器人自己从场上移回手牌
-				ID, inOrigDeck, pos = minion.ID, minion.inOrigDeck, minion.position
+				ID, pos = minion.ID, minion.position
 				minion.disappears(deathrattlesStayArmed=False)
-				self.removeMinionorWeapon(minion)
-				minion.__init__(self, ID)
-				minion.inOrigDeck = inOrigDeck
+				curGame.removeMinionorWeapon(minion)
+				minion.reset(ID)
+				minion.numOccurrence += 1
 				PRINT(curGame, "%s has been reset after returned to owner's hand. All enchantments lost."%minion.name)
 				#下面节选自Hand.py的addCardtoHand方法，但是要跳过手牌已满的检测
 				ownHand.append(minion)
@@ -788,7 +788,7 @@ class Brightwing(Minion):
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
 			else:
-				minion = npchoice(curGame.RNGPools["Legendary Minions"])
+				minion = npchoice(self.rngPool("Legendary Minions"))
 				curGame.fixedGuides.append(minion)
 			PRINT(curGame, "Brightwing's battlecry adds random Legendary minion to player's hand.")
 			curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type")
@@ -1828,7 +1828,7 @@ class BarrensStablehand(Minion):
 			if curGame.guides:
 				beast = curGame.guides.pop(0)
 			else:
-				beast = npchoice(curGame.RNGPools["Beasts to Summon"])
+				beast = npchoice(self.rngPool("Beasts to Summon"))
 				curGame.fixedGuides.append(beast)
 			PRINT(curGame, "Barrens Stablehand's battlecry summons random Beast %s"%beast.name)
 			curGame.summon(beast(curGame, self.ID), self.position+1, self.ID)
@@ -2448,7 +2448,7 @@ class DruidoftheClaw(Minion):
 		
 	def played(self, target=None, choice=0, mana=0, posinHand=0, comment=""):
 		self.statReset(self.attack_Enchant, self.health_max)
-		self.appears()
+		self.appears(firstTime=True)
 		if choice < 0: minion = DruidoftheClaw_Both(self.Game, self.ID)
 		elif choice == 0: minion = DruidoftheClaw_Charge(self.Game, self.ID)
 		else: minion = DruidoftheClaw_Taunt(self.Game, self.ID)
@@ -3093,7 +3093,7 @@ class TomeofIntellect(Spell):
 			if curGame.guides:
 				spell = curGame.guides.pop(0)
 			else:
-				spell = npchoice(curGame.RNGPools["Mage Spells"])
+				spell = npchoice(self.rngPool("Mage Spells"))
 				curGame.fixedGuides.append(spell)
 			PRINT(curGame, "Tome of Intellect is cast and adds a random Mage card to player's hand.")	
 			curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
@@ -3171,7 +3171,7 @@ class Trig_Counterspell(SecretTrigger):
 		self.blank_init(entity, ["SpellOKtoCast?"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return subject.ID != self.entity.ID and subject
+		return ID != self.entity.ID and subject
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Secret Counterspell Counters player's attempt to cast spell %s"%subject.name)
@@ -3662,7 +3662,7 @@ class HolyWrath(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		#drawCard() method returns a tuple (card, mana)
 		card = self.Game.Hand_Deck.drawCard(self.ID)
-		if card[0] == None:
+		if card[0] is None:
 			PRINT(self.Game, "Holy Wrath lets player draw a card but it can't deal damage.")
 		else:
 			if target:
@@ -3926,9 +3926,9 @@ class ShadowMadness(Spell):
 		
 				
 class Lightspawn(Minion):
-	Class, race, name = "Priest", "", "Lightspawn"
+	Class, race, name = "Priest", "Elemental", "Lightspawn"
 	mana, attack, health = 4, 0, 5
-	index = "Classic~Priest~Minion~4~0~5~None~Lightspawn"
+	index = "Classic~Priest~Minion~4~0~5~Elemental~Lightspawn"
 	requireTarget, keyWord, description = False, "", "This minion's Attack is always equal to its Health"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -4122,10 +4122,10 @@ class Pilfer(Spell):
 			if curGame.guides:
 				card = curGame.guides.pop(0)
 			else:
-				classes = fixedList(curGame.RNGPools["Classes"])
+				classes = fixedList(self.rngPool("Classes"))
 				try: classes.remove(curGame.heroes[self.ID].Class)
 				except: pass
-				card = npchoice(curGame.RNGPools["%s Cards"%npchoice(classes)])
+				card = npchoice(self.rngPool("%s Cards"%npchoice(classes)))
 				curGame.fixedGuides.append(card)
 			PRINT(curGame, "Pilfer is cast and adds a random card from another class to player's hand.")
 			curGame.Hand_Deck.addCardtoHand(card, self.ID, "type")
@@ -4702,7 +4702,7 @@ class CalloftheVoid(Spell):
 			if curGame.guides:
 				demon = curGame.guides.pop(0)
 			else:
-				demon = npchoice(curGame.RNGPools["Demons"])
+				demon = npchoice(self.rngPool("Demons"))
 				curGame.fixedGuides.append(demon)
 			PRINT(curGame, "Call of the Void is cast and adds a random Demon to player's hand.")	
 			curGame.Hand_Deck.addCardtoHand(demon, self.ID, "type")
@@ -4877,7 +4877,7 @@ class BaneofDoom(Spell):
 					if curGame.guides:
 						demon = curGame.guides.pop(0)
 					else:
-						demon = npchoice(curGame.RNGPools["Demons to Summon"])
+						demon = npchoice(self.rngPool("Demons to Summon"))
 						curGame.fixedGuides.append(demon)
 					PRINT(curGame, "Bane of Doom kills the target minion and summons random demon %s."%demon.name)
 					curGame.summon(demon(curGame, self.ID), -1, self.ID)
@@ -5038,7 +5038,7 @@ class Upgrade(Spell):
 	description = "If your have a weapon, give it +1/+1. Otherwise, equip a 1/3 weapon"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		weapon = self.Game.availableWeapon(self.ID)
-		if weapon == None:
+		if weapon is None:
 			PRINT(self.Game, "Upgrade! is cast and player equips a 1/3 weapon.")
 			self.Game.equipWeapon(HeavyAxe(self.Game, self.ID))
 		else:
@@ -5549,7 +5549,7 @@ Classic_Indices = {"Classic~Neutral~Minion~0~1~1~None~Wisp": Wisp,
 					"Classic~Priest~Minion~2~0~5~None~Lightwell": Lightwell,
 					"Classic~Priest~Spell~2~Thoughtsteal": Thoughtsteal,
 					"Classic~Priest~Spell~3~Shadow Madness": ShadowMadness,
-					"Classic~Priest~Minion~4~0~5~None~Lightspawn": Lightspawn,
+					"Classic~Priest~Minion~4~0~5~Elemental~Lightspawn": Lightspawn,
 					"Classic~Priest~Spell~4~Mass Dispel": MassDispel,
 					"Classic~Priest~Spell~4~Mindgames": Mindgames,
 					"Classic~Priest~Spell~4~Shadow Word: Ruin": ShadowWordRuin,

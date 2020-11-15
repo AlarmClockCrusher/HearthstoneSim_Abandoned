@@ -22,9 +22,9 @@ from PIL import Image
 #		im1 = im.crop((100, 90, 270, 260)) 
 #		im1.save('Crops\\'+filename)
 
-singlefilename = "WyrmWeaver.png"
+singlefilename = "TransferStudent_Darkmoon_Corrupt.png"
 im = Image.open(singlefilename)
 ## Size of the image in pixels (size of orginal image) 
-im1 = im.crop((100, 85, 275, 260))
+im1 = im.crop((55, 40, 145, 135))
 im1.show()
 im1.save("Crops\\"+singlefilename)

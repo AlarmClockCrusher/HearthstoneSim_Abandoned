@@ -6,7 +6,6 @@ from SV_Basic import SVClasses
 
 import numpy as np
 import copy
-import time
 
 def extractfrom(target, listObj):
 	try: return listObj.pop(listObj.index(target))
@@ -42,7 +41,7 @@ class Game:
 		self.GUI = GUI
 
 	def initialize(self, cardPool, MinionsofCost, RNGPools, hero1=None, hero2=None, deck1=[], deck2=[]):
-		self.heroes = {1:(Illidan if hero1 == None else hero1)(self, 1), 2:(Anduin if hero2 == None else hero2)(self, 2)}
+		self.heroes = {1:(Illidan if hero1 is None else hero1)(self, 1), 2:(Anduin if hero2 is None else hero2)(self, 2)}
 		self.powers = {1:self.heroes[1].heroPower, 2:self.heroes[2].heroPower}
 		self.heroes[1].onBoard, self.heroes[2].onBoard = True, True
 		#Multipole weapons can coexitst at minions in lists. The newly equipped weapons are added to the lists
@@ -379,6 +378,7 @@ class Game:
 				self.summon(newSubjects, newPositions, subject[0].ID, comment="")
 
 	#不考虑卡德加带来的召唤数量翻倍。用于被summonMinion引用。
+	#returns the single minion summoned. Used for anchoring the position of the original minion summoned during doubling
 	def summonSingle(self, subject, position):
 		ID = subject.ID
 		if self.space(ID) > 0:
@@ -386,7 +386,7 @@ class Game:
 			self.minions[subject.ID].insert(position+100*(position<0), subject)  #If position is too large, the insert() simply puts it at the end.
 			self.rearrangePosition()
 			self.rearrangeSequence()
-			subject.appears()
+			subject.appears(firstTime=True)
 			if self.GUI:
 				self.GUI.update()
 				self.GUI.wait(200, showLine=False)
@@ -397,12 +397,13 @@ class Game:
 		return None
 
 	#只能为同一方召唤随从，如有需要，则多次引用这个函数即可。subject不能是空的
-	#注意，卡德加的机制是2 ** n倍。每次翻倍会出现多召唤1个，2个，4个的情况。目前不需要处理3个卡德加的情况，因为7个格子放不下。
+	#注意，卡德加的机制是2 ** n倍。每次翻倍会出现多召唤1个，2个，4个的情况。
+	#return the first minion summoned, even if subject is list. Return None if no space left
 	def summon(self, subject, position, initiatorID, comment="Enablex2"):
 		if not isinstance(subject, (list, np.ndarray)): #Summon a single minion
 			ID, timesofx2 = subject.ID, self.status[initiatorID]["Summon x2"]
 			if not comment: timesofx2 = 0 #如果是英雄技能进行的召唤，则不会翻倍。
-			if timesofx2 > 0: #最多只需要处理场上有3个卡德加的情况，再多了就放不下了
+			if timesofx2 > 0:
 				numCopies = 2 ** timesofx2 - 1
 				copies = [subject.selfCopy(ID) for i in range(numCopies)]
 				minionSummoned = self.summonSingle(subject, position)
@@ -469,7 +470,7 @@ class Game:
 			return True
 		return False
 
-	def transform(self, target, newMinion):
+	def transform(self, target, newMinion, firstTime=True):
 		ID = target.ID
 		if target in self.minions[ID]:
 			pos = target.position
@@ -481,7 +482,7 @@ class Game:
 			self.minions[ID].insert(pos, newMinion)
 			self.rearrangePosition()
 			PRINT(self, "{} has been transformed into {}".format(target.name, newMinion.name))
-			newMinion.appears()
+			newMinion.appears(firstTime)
 		elif target in self.Hand_Deck.hands[target.ID]:
 			PRINT(self, "Minion {} in hand is transformed into {}".format(target.name, newMinion.name))
 			if self.minionPlayed == target: self.minionPlayed = newMinion
@@ -590,28 +591,26 @@ class Game:
 		for i, obj in zip(np.asarray([obj.sequence for obj in objs]).argsort().argsort(), objs): obj.sequence = i
 
 	def returnMiniontoHand(self, target, deathrattlesStayArmed=False, manaMod=None):
-		if target in self.minions[target.ID]: #如果随从仍在随从列表中
-			if self.Hand_Deck.handNotFull(target.ID):
-				ID, inOrigDeck, numOccurrence = target.ID, target.inOrigDeck, target.numOccurrence
+		ID = target.ID
+		if target in self.minions[ID]: #如果随从仍在随从列表中
+			if self.Hand_Deck.handNotFull(ID):
 				#如果onBoard仍为True，则其仍计为场上存活的随从，需调用disappears以注销各种扳机。
 				if target.onBoard: #随从存活状态下触发死亡扳机的区域移动效果时，不会注销其他扳机
 					target.disappears(deathrattlesStayArmed)
 				#如onBoard为False,则disappears已被调用过了。主要适用于触发死亡扳机中的区域移动效果
 				self.removeMinionorWeapon(target)
-				target.__init__(self, ID)
-				PRINT(self, "%s has been reset after returned to owner's hand. All enchantments lost."%target.name)
-				target.inOrigDeck, target.numOccurrence = inOrigDeck, numOccurrence + 1
+				target.reset(ID)
+				target.numOccurrence += 1
 				if manaMod: manaMod.applies()
 				self.Hand_Deck.addCardtoHand(target, ID)
 				return target
 			else: #让还在场上的活着的随从返回一个满了的手牌只会让其死亡
 				if target.onBoard:
-					PRINT(self, "%s dies because player's hand is full."%target.name)
 					target.dead = True
 				return None #如果随从这时已死亡，则满手牌下不会有任何事情发生。
 		elif target.inDeck: #如果目标阶段已经在牌库中了，将一个基础复制置入其手牌。
-			Copy = type(target)(self, target.ID)
-			self.Hand_Deck.addCardtoHand(Copy, target.ID)
+			Copy = type(target)(self, ID)
+			self.Hand_Deck.addCardtoHand(Copy, ID)
 			return Copy
 		elif target.inHand: return target
 		else: return None #The target is dead and removed already
@@ -625,13 +624,13 @@ class Game:
 				target.disappears(deathrattlesStayArmed)
 			#如onBoard为False，则disappears已被调用过了。主要适用于触发死亡扳机中的区域移动效果
 			self.removeMinionorWeapon(target)
-			target.__init__(self, ID) #永恒祭司的亡语会备份一套enchantment，在调用该函数之后将初始化过的本体重新增益
+			target.reset(ID) #永恒祭司的亡语会备份一套enchantment，在调用该函数之后将初始化过的本体重新增益
 			PRINT(self, "%s has been reset after returned to deck %d. All enchantments lost"%(target.name, ID))
 			target.inOrigDeck, target.numOccurrence = inOrigDeck, numOccurrence + 1
 			self.Hand_Deck.shuffleCardintoDeck(target, initiatorID)
 			return target
 		elif target.inHand: #如果随从已进入手牌，仍会将其强行洗入牌库
-			self.Hand_Deck.shuffleCardintoDeck(self.Hand_Deck.extractfromHand(target)[0])
+			self.Hand_Deck.shuffleCardintoDeck(self.Hand_Deck.extractfromHand(target)[0], initiatorID)
 			return target
 		else: return None
 
@@ -652,8 +651,7 @@ class Game:
 				target.ID = 3 - target.ID
 				self.minions[target.ID].append(target)
 				self.rearrangePosition() #The appearance sequence stays intact.
-				target.appears()
-
+				target.appears(firstTime=False) #控制权的变更不会触发水晶核心以及休眠随从的再次休眠等
 				#Possible activities are "Permanent" "Borrow" "Return"
 				#每个随从只有携带一个回合结束后将随从归为对方的turnEndTrigger
 				#被暂时控制的随从如果被无面操纵者复制，复制者也可以攻击，回合时，连同复制者一并归还对面。
@@ -835,7 +833,7 @@ class Game:
 				PRINT(self, "\tCharacter: {}	Attack when dies: {}".format(self.deads[0][i].name, self.deads[1][i]))
 			while self.deads != [[], []]:
 				self.resolvingDeath = True
-				objtoDie, attackwhenDies = self.deads[0][0], self.deads[1][0]
+				objtoDie, attackwhenDies = self.deads[0][0], self.deads[1][0] #留着这个attackwhenDies是因为随从可能会因为光环的失去而产生攻击力的变化
 				#For now, assume Tirion Fordring's deathrattle equipping Ashbringer won't trigger player's weapon's deathrattles right away.
 				#weapons with regard to deathrattle triggering is handled the same way as minions.
 				PRINT(self, "Now handling the death/destruction of {}".format(objtoDie.name))
@@ -845,7 +843,7 @@ class Game:
 				if objtoDie.type == "Minion" and objtoDie.keyWords["Reborn"] > 0: rebornMinions.append(objtoDie)
 				objtoDie.deathResolution(attackwhenDies, armedTrigs_WhenDies, armedTrigs_AfterDied)
 				self.removeMinionorWeapon(objtoDie) #结算完一个随从的亡语之后将其移除。
-				objtoDie.__init__(self, objtoDie.ID)
+				objtoDie.reset(objtoDie.ID)
 				objtoDie.dead = True
 				self.deads[0].pop(0)
 				self.deads[1].pop(0)
@@ -1297,6 +1295,6 @@ class Game:
 			"playAmulet": lambda: self.playAmulet(sub, tar, move[5], move[6]),
 			"playWeapon": lambda: self.playWeapon(sub, tar, move[5]),
 			"playSpell": lambda: self.playSpell(sub, tar, move[5]),
-			"playHero": lambda: self.playHero(sub, tar, move[5]),
+			"playHero": lambda: self.playHero(sub, move[5]),
 			}[move[0]]()
 			if self.GUI: self.GUI.subject, self.GUI.target = None, None

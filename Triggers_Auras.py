@@ -41,6 +41,12 @@ class TrigBoard:
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		pass
 		
+	def rngPool(self, identifier):
+		pool = self.entity.Game.rngPool[identifier]
+		try: pool.remove(type(self.entity))
+		except: pass
+		return pool
+		
 	#一般只有需要额外定义ID的回合开始和结束扳机需要有自己的selfCopy函数
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
@@ -87,6 +93,12 @@ class TrigHand:
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		pass
 		
+	def rngPool(self, identifier):
+		pool = self.entity.Game.RNGPools[identifier]
+		try: pool.remove(type(self.entity))
+		except: pass
+		return pool
+		
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
 		
@@ -126,6 +138,12 @@ class TrigDeck:
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		pass
+		
+	def rngPool(self, identifier):
+		pool = self.entity.Game.RNGPools[identifier]
+		try: pool.remove(type(self.entity))
+		except: pass
+		return pool
 		
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
@@ -251,6 +269,60 @@ class Trig_Echo(TrigHand):
 		self.entity.Game.Hand_Deck.extractfromHand(self.entity)
 		
 		
+class Trig_Corrupt(TrigHand):
+	def __init__(self, entity, corruptedType):
+		self.blank_init(entity, ["ManaPaid"])
+		self.corruptedType = corruptedType
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.inHand and ID == self.entity.ID and number > self.entity.mana and subject.type != "Power"
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		card = self.entity
+		newCard = self.corruptedType(card.Game, card.ID)
+		try:
+			#Buff and mana effects, etc, will be preserved
+			#Buff to cards in hand will always be permanent or temporary, not from Auras
+			if newCard.type == "Minion":
+				#Temporary attack changes on minions are NOT included in attack_Enchant
+				attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_max - card.health_0
+				newCard.buffDebuff(attBuff, healthBuff)
+				for attGain, attRevertTime in card.tempAttChanges:
+					newCard.buffDebuff(attGain, 0, attRevertTime)
+				#There are no Corrupted cards with predefined Deathrattles, and given Deathrattles are very simple
+				newCard.deathrattles = [type(deathrattle)(newCard) for deathrattle in card.deathrattles]
+			elif newCard.type == "Weapon": #Only applicable to Felsteel Executioner
+				attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_max - card.health_0
+				#Assume temporary attack changes applied on a minion won't carry over to the weapon
+				newCard.gainStat(attBuff, healthBuff)
+			#Keep the keywords and marks consistent
+			for key, value in newCard.keyWords.items(): #Find keywords the new card doesn't have
+				if value < 1 and card.keyWords[key] > 0: newCard.keyWords[key] = 1
+			for key, value in newCard.marks.items():
+				try:
+					if value < 1 and card.marks[key] > 0: newCard.marks[key] = 1
+				except: pass
+			#Inhand triggers and mana modifications
+			newCard.trigsHand += [trig for trig in card.trigsHand if not isinstance(trig, Trig_Corrupt)]
+			newCard.manaMods = [manaMod.selfCopy(newCard) for manaMod in card.manaMods]
+		except Exception as e:
+			print(e, card, newCard)
+		print("Corruption of ", card, newCard)
+		card.Game.Hand_Deck.replaceCardinHand(card, newCard)
+		
+	def selfCopy(self, recipient):
+		return type(self)(recipient, self.corruptedType)
+		
+	def createCopy(self, game):
+		if self not in game.copiedObjs: #这个扳机没有被复制过
+			entityCopy = self.entity.createCopy(game)
+			trigCopy = type(self)(entityCopy, self.corruptedType)
+			game.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return game.copiedObjs[self]
+			
+			
 class Trig_DieatEndofTurn(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
@@ -363,6 +435,9 @@ class BuffAura_Receiver:
 	
 	
 class AuraDealer_toMinion:
+	def __init__(self):
+		self.entity = None
+
 	def applicable(self, target):
 		return self.entity.applicable(target)
 		
@@ -622,18 +697,18 @@ class MechsHaveRush(AuraDealer_toMinion):
 			aura_Receiver.effectStart()
 			
 	def auraAppears(self):
-		PRINT(self.entity.Game, "Dr. Boom. Mad Genius' aura starts it's effect.")
+		PRINT(self.Game, "Dr. Boom. Mad Genius' aura starts it's effect.")
 		for minion in self.Game.minionsonBoard(self.ID):
 			self.applies(minion)
 			
-		try: self.entity.Game.trigsBoard[self.ID]["MinionAppears"].append(self)
-		except: self.entity.Game.trigsBoard[self.ID]["MinionAppears"] = [self]
+		try: self.Game.trigsBoard[self.ID]["MinionAppears"].append(self)
+		except: self.Game.trigsBoard[self.ID]["MinionAppears"] = [self]
 		
 	def auraDisappears(self):
 		pass
 		
-	def selfCopy(self, recipient):
-		return type(self)(recipient, self.ID)
+	def selfCopy(self, game):
+		return type(self)(game, self.ID)
 	#可以通过AuraDealer_toMinion的createCopy方法复制
 	
 #Currently only Spiteful Smith has this aura
@@ -905,9 +980,10 @@ class ManaAura_1UsageEachTurn: #For Pint-sized Summoner, Kalecgos, etc
 			self.aura.auraAppears()
 			
 	def auraAppears(self):
+		pass
 		game, ID = self.entity.Game, self.entity.ID
 		if game.turn == ID and game.Counters.numMinionsPlayedThisTurn[ID] < 1:
-			self.aura = ThisTurnYour1stMinion1Less(game, ID)
+			self.aura = TempManaEffect(game, ID)
 			self.aura.auraAppears()
 		try: game.trigsBoard[ID]["TurnStarts"].append(self)
 		except: game.trigsBoard[ID]["TurnStarts"] = [self]
@@ -998,4 +1074,3 @@ class TempManaEffect_Power:
 			return Copy
 		else:
 			return game.copiedObjs[self]
-			

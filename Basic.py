@@ -3,7 +3,6 @@ from Triggers_Auras import *
 
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
-from numpy.random import shuffle as npshuffle
 
 def extractfrom(target, listObj):
 	try: return listObj.pop(listObj.index(target))
@@ -461,7 +460,6 @@ class SilverHandRecruit(Minion):
 	mana, attack, health = 1, 1, 1
 	index = "Basic~Paladin~Minion~1~1~1~None~Silver Hand Recruit~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
-	
 	
 """Mana 2 minions"""
 class AcidicSwampOoze(Minion):
@@ -1967,7 +1965,7 @@ class DeadlyPoison(Spell):
 	index = "Basic~Rogue~Spell~1~Deadly Poison"
 	description = "Give your weapon +2 Attack"
 	def available(self):
-		if self.Game.availableWeapon(self.ID) == None:
+		if self.Game.availableWeapon(self.ID) is None:
 			return False
 		return True
 		

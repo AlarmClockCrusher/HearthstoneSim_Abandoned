@@ -132,10 +132,9 @@ class Hand_Deck:
 			for card in self.decks[ID]: card.entersDeck()
 			self.Game.mulligans[ID] = []
 		for ID in range(1, 3):
-			for card in self.hands[ID]:
-				for card in self.hands[1] + self.hands[2]:
-					card.effectCanTrigger()
-					card.checkEvanescent()
+			for card in self.hands[1] + self.hands[2]:
+				card.effectCanTrigger()
+				card.checkEvanescent()
 		if not self.Game.heroes[2].Class in SVClasses:
 			self.addCardtoHand(TheCoin(self.Game, 2), 2)
 		self.Game.Manas.calcMana_All()
@@ -213,7 +212,7 @@ class Hand_Deck:
 					if GUI: GUI.fatigueAni(ID, damage)
 					dmgTaker = game.scapegoat4(game.heroes[ID])
 					dmgTaker.takesDamage(None, damage, damageType="Ability")  # 疲劳伤害没有来源
-					return (None, -1) #假设疲劳时返回的数值是负数，从而可以区分爆牌（爆牌时仍然返回那个牌的法力值）和疲劳
+					return None, -1 #假设疲劳时返回的数值是负数，从而可以区分爆牌（爆牌时仍然返回那个牌的法力值）和疲劳
 		else:
 			if isinstance(card, (int, np.int32, np.int64)):
 				card = self.decks[ID].pop(card)
@@ -344,16 +343,11 @@ class Hand_Deck:
 	def shufflefromHand2Deck(self, i, ID, initiatorID, all=True):
 		if all:
 			hand = self.extractfromHand(None, ID, all=True, enemyCanSee=False)[0]
-			for card in hand:
-				inOrigDeck = card.inOrigDeck
-				card.__init__(self.Game, ID)
-				card.inOrigDeck = inOrigDeck
+			for card in hand: card.reset(ID)
 			self.shuffleCardintoDeck(hand, initiatorID, enemyCanSee=False, sendSig=True)
 		elif i:
 			card = self.extractfromHand(i, ID, all, enemyCanSee=False)[0]
-			inOrigDeck = card.inOrigDeck
-			card.__init__(self.Game, ID)
-			card.inOrigDeck = inOrigDeck
+			card.reset(ID)
 			self.shuffleCardintoDeck(card, initiatorID, enemyCanSee=False, sendSig=True)
 			
 	def burialRite(self, ID, minions, noSignal=False):

@@ -1,13 +1,12 @@
 from CardTypes import *
 from Triggers_Auras import *
 
-from Basic import Trig_Corruption
-from Shadows import EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey, DraconicLackey, Lackeys
+from AcrossPacks import Lackeys
 
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
-from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
+
 from collections import Counter as cnt
 import copy
 
@@ -70,7 +69,7 @@ class Adda1CostMiniontoYourHand(Deathrattle_Minion):
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
 			else:
-				minion = npchoice(curGame.RNGPools["1-Cost Minions"])
+				minion = npchoice(self.rngPool("1-Cost Minions"))
 				curGame.fixedGuides.append(minion)
 			PRINT(curGame, "Deathrattle: Add a random 1-cost minion to your hand triggers.")
 			curGame.Hand_Deck.addCardtoHand(minion, self.entity.ID, "type")
@@ -177,7 +176,7 @@ class Fishflinger(Minion):
 			if curGame.guides:
 				murloc1, murloc2 = curGame.guides.pop(0)
 			else:
-				murloc1, murloc2 = npchoice(curGame.RNGPools["Murlocs"], 2, replace=True)
+				murloc1, murloc2 = npchoice(self.rngPool("Murlocs"), 2, replace=False)
 				curGame.fixedGuides.append((murloc1, murloc2))
 			PRINT(curGame, "Fishflinger's battlecry adds a random Murloc to each player's hand.")
 			curGame.Hand_Deck.addCardtoHand(murloc1, self.ID, "type")
@@ -356,7 +355,7 @@ class ZephrystheGreat(Minion):
 					HD.addCardtoHand(curGame.guides.pop(0), self.ID, "type")
 				else:
 					if "byOthers" in comment:
-						card = npchoice(curGame.RNGPools["Basic and Classic Cards"])
+						card = npchoice(self.rngPool("Basic and Classic Cards"))
 						curGame.fixedGuides.append(card)
 						PRINT(curGame, "Zephrys the Great's battlecry adds a random Basic or Classic card to player's hand")
 						curGame.Hand_Deck.addCardtoHand(card, self.ID, "type")
@@ -422,12 +421,12 @@ class GoldenScarab(Minion):
 				else:
 					key = "4-Cost Cards as "+classforDiscover(self)
 					if "byOthers" in comment:
-						card = npchoice(curGame.RNGPools[key])
+						card = npchoice(self.rngPool(key))
 						curGame.fixedGuides.append(card)
 						PRINT(curGame, "Golden Scarab's battlecry adds a random 4-Ccost card to player's hand")
 						curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True)
 					else:
-						cards = npchoice(curGame.RNGPools[key], 3, replace=False)
+						cards = npchoice(self.rngPool(key), 3, replace=False)
 						curGame.options = [card(curGame, self.ID) for card in cards]
 						PRINT(curGame, "Golden Scarab's battlecry lets player discover a 4-Ccost card")
 						curGame.Discover.startDiscover(self)
@@ -530,12 +529,12 @@ class VulperaScoundrel(Minion):
 				else:
 					key = classforDiscover(self)+" Spells"
 					if "byOthers" in comment:
-						spell = npchoice(curGame.RNGPools[key])
+						spell = npchoice(self.rngPool(key))
 						curGame.fixedGuides.append(spell)
 						PRINT(curGame, "Vulpera Scoundrel's battlecry adds a random spell to player's hand")
 						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type", byDiscover=True)
 					else:
-						spells = npchoice(curGame.RNGPools[key], 3, replace=False)
+						spells = npchoice(self.rngPool(key), 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
 						curGame.options.append(MysteryChoice())
 						PRINT(curGame, "Vulpera Scoundrel's battlecry lets player Discover a spell or a Mystery Choice")
@@ -548,7 +547,7 @@ class VulperaScoundrel(Minion):
 			curGame.fixedGuides.append(type(option))
 			curGame.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		else:
-			spell = npchoice(curGame.RNGPools[classforDiscover(self)+" Spells"])
+			spell = npchoice(self.rngPool(classforDiscover(self)+" Spells"))
 			curGame.fixedGuides.append(spell)
 			curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
 			
@@ -1015,7 +1014,7 @@ class KingPhaoris(Minion):
 						cost = card.mana
 						while cost not in self.Game.MinionsofCost:
 							cost -= 1
-						minions.append(npchoice(curGame.RNGPools["%d-Cost Minions to Summon"%cost]))
+						minions.append(npchoice(self.rngPool("%d-Cost Minions to Summon"%cost)))
 				curGame.fixedGuides.append(tuple(minions))
 			if minions:
 				curGame.summon([minion(curGame, self.ID) for minion in minions], (self.position+1, "totheRight"), self.ID)
@@ -1098,12 +1097,12 @@ class WorthyExpedition(Spell):
 				curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 			else:
 				if self.ID != curGame.turn or "byOthers" in comment:
-					card = npchoice(curGame.RNGPools["Choose One Cards"])
+					card = npchoice(self.rngPool("Choose One Cards"))
 					curGame.fixedGuides.append(card)
 					PRINT(curGame, "Worthy Expedition is cast and adds a random Choose One card to player's hand")
 					curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True)
 				else:
-					cards = npchoice(curGame.RNGPools["Choose One Cards"], 3, replace=False)
+					cards = npchoice(self.rngPool("Choose One Cards"), 3, replace=False)
 					curGame.options = [card(curGame, self.ID) for card in cards]
 					curGame.Discover.startDiscover(self)
 		return None
@@ -1468,7 +1467,7 @@ class HuntersPack(Spell):
 			if curGame.guides:
 				cards = list(curGame.guides.pop(0))
 			else:
-				cards = (npchoice(curGame.RNGPools["Hunter Beasts"]), npchoice(curGame.RNGPools["Hunter Secrets"]), npchoice(curGame.RNGPools["Hunter Weapons"]))
+				cards = (npchoice(self.rngPool("Hunter Beasts")), npchoice(self.rngPool("Hunter Secrets")), npchoice(self.rngPool("Hunter Weapons")))
 				curGame.fixedGuides.append(cards)
 			PRINT(curGame, "Hunter's Pack is cast and adds a random Hunter Beast, Secret, and Weapon to player's hand")
 			curGame.Hand_Deck.addCardtoHand(cards, self.ID, "type")
@@ -1644,7 +1643,7 @@ class AscendantScroll(HeroPower):
 			if curGame.guides:
 				spell = curGame.guides.pop(0)
 			else:
-				spell = npchoice(curGame.RNGPools["Mage Spells"])
+				spell = npchoice(self.rngPool("Mage Spells"))
 				curGame.fixedGuides.append(spell)
 			spell = spell(curGame, self.ID)
 			ManaMod(spell, changeby=-2, changeto=-1).applies()
@@ -1767,7 +1766,7 @@ class Trig_DuneSculptor(TrigBoard):
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
 			else:
-				minion = npchoice(curGame.RNGPools["Mage Minions"])
+				minion = npchoice(self.rngPool("Mage Minions"))
 				curGame.fixedGuides.append(minion)
 			PRINT(curGame, "After player casts spell, Dune Sculptor adds a random Mage minion to player's hand")
 			curGame.Hand_Deck.addCardtoHand(minion, self.entity.ID, "type")
@@ -1879,7 +1878,7 @@ class PuzzleBoxofYoggSaron(Spell):
 				if curGame.guides:
 					spell = curGame.guides.pop(0)
 				else:
-					spell = npchoice(curGame.RNGPools["Spells"])
+					spell = npchoice(self.rngPool("Spells"))
 					curGame.fixedGuides.append(spell)
 				PRINT(curGame, "%d. Puzzle Box of Yogg-Saron is cast and casts random spell %s"%(i, spell.name))
 				spell(curGame, self.ID).cast()
@@ -2454,7 +2453,7 @@ class PharaohCat(Minion):
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
 			else:
-				minion = npchoice(curGame.RNGPools["Reborn Minions"])
+				minion = npchoice(self.rngPool("Reborn Minions"))
 				curGame.fixedGuides.append(minion)
 			curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type")
 		return None
@@ -2499,10 +2498,10 @@ class CleverDisguise(Spell):
 			if curGame.guides:
 				spells = curGame.guides.pop(0)
 			else:
-				classes = fixedList(curGame.RNGPools["Classes"])
+				classes = fixedList(self.rngPool("Classes"))
 				try: classes.remove(curGame.heroes[self.ID].Class)
 				except: pass
-				pool = curGame.RNGPools["%s Spells"%npchoice(classes)]
+				pool = self.rngPool("%s Spells"%npchoice(classes))
 				spells = [npchoice(pool) for i in range(2)]
 				curGame.fixedGuides.append(tuple(spells))
 			curGame.Hand_Deck.addCardtoHand(spells, self.ID, "type")
@@ -2538,7 +2537,7 @@ class Trig_WhirlkickMaster(TrigBoard):
 			if curGame.guides:
 				card = curGame.guides.pop(0)
 			else:
-				card = npchoice(curGame.RNGPools["Combo Cards"])
+				card = npchoice(self.rngPool("Combo Cards"))
 				curGame.fixedGuides.append(card)
 			curGame.Hand_Deck.addCardtoHand(card, self.entity.ID, "type")
 			
@@ -2599,10 +2598,10 @@ class BazaarMugger(Minion):
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
 			else:
-				classes = fixedList(curGame.RNGPools["Classes"])
+				classes = fixedList(self.rngPool("Classes"))
 				try: classes.remove(self.Game.heroes[self.ID].Class)
 				except: pass
-				minion = npchoice(curGame.RNGPools[npchoice(classes)+" Minions"])
+				minion = npchoice(self.rngPool(npchoice(classes)+" Minions"))
 				curGame.fixedGuides.append(minion)
 			curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type")
 		return None
@@ -2705,10 +2704,10 @@ class HeartofVirnaal(HeroPower):
 	def effect(self, target=None, choice=0):
 		PRINT(self.Game, "Hero Power Heart of Vir'naal makes player's Battlecries trigger twice this turn.")
 		self.Game.status[self.ID]["Battlecry x2"] += 1
-		self.Game.turnEndTrigger.append(BattlecryTriggerTwiceEffectDisappears(self.Game, self.ID))
+		self.Game.turnEndTrigger.append(HeartofVirnaal_Effect(self.Game, self.ID))
 		return 0
 		
-class BattlecryTriggerTwiceEffectDisappears:
+class HeartofVirnaal_Effect:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		
@@ -2797,7 +2796,7 @@ class PlagueofMurlocs(Spell):
 			if curGame.guides:
 				murlocs = curGame.guides.pop(0)
 			else:
-				murlocs = tuple(npchoice(curGame.RNGPools["Murlocs"], len(minions), replace=True))
+				murlocs = tuple(npchoice(self.rngPool("Murlocs"), len(minions), replace=True))
 				curGame.fixedGuides.append(murlocs)
 			for minion, murloc in zip(minions, murlocs):
 				curGame.transform(minion, murloc(curGame, minion.ID))
@@ -3209,7 +3208,7 @@ class Trig_DiseasedVulture(TrigBoard):
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
 			else:
-				minion = npchoice(curGame.RNGPools["3-Cost Minions to Summon"])
+				minion = npchoice(self.rngPool("3-Cost Minions to Summon"))
 				curGame.fixedGuides.append(minion)
 			curGame.summon(minion(curGame, self.entity.ID), self.entity.position+1, self.entity.ID)
 			
@@ -3260,9 +3259,9 @@ class YourLackeysareAlways44(AuraDealer_toMinion):
 		return target.ID == self.ID and target.name.endswith("Lackey")
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if signal == "MinionAppears":
-			return self.applicable(subject)
-		elif signal == "CardEntersHand":
+		if signal[0] == 'M': #"MinionAppears" #只有随从在从其他位置进入场上的时候可以进行修改，而从休眠中苏醒或者控制权改变不会触发改变
+			return comment and self.applicable(subject)
+		elif signal[0] == 'C':
 			return self.applicable(target[0]) #The target here is a holder
 		#else: #signal == "CardShuffled"
 		#	if isinstance(target, (list, ndarray)):
@@ -3290,7 +3289,7 @@ class YourLackeysareAlways44(AuraDealer_toMinion):
 			self.applies(card)
 			
 		for sig in self.signals:
-			try: self.Game.trigsBoard[self.ID][sig].append(self)
+			try: self.Game.trigsBoard[self.ID][sig].insert(0, self) #假设这种光环总是添加到最前面，保证它可以在其他的普通光环生效之前作用
 			except: self.Game.trigsBoard[self.ID][sig] = [self]
 			
 	#可以通过AuraDealer_toMinion的createCopy方法复制
@@ -3396,12 +3395,12 @@ class FrightenedFlunky(Minion):
 			else:
 				key = "Taunt Minions as " + classforDiscover(self)
 				if "byOthers" in comment:
-					minion = npchoice(curGame.RNGPools[key])
+					minion = npchoice(self.rngPool(key))
 					curGame.fixedGuides.append(minion)
 					PRINT(curGame, "Frightened Flunky's battlecry adds a random Taunt minion to player's hand")
 					curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type", byDiscover=True)
 				else:
-					minions = npchoice(curGame.RNGPools[key], 3, replace=False)
+					minions = npchoice(self.rngPool(key), 3, replace=False)
 					curGame.options = [minion(curGame, self.ID) for minion in minions]
 					PRINT(curGame, "Frightened Flunky's battlecry lets player discover a Taunt minion")
 					curGame.Discover.startDiscover(self)
@@ -3554,7 +3553,6 @@ Uldum_Indices = {"Uldum~Neutral~Minion~1~1~2~None~Beaming Sidekick~Battlecry": B
 				"Uldum~Neutral~Minion~1~1~1~None~Mogu Cultist~Battlecry": MoguCultist,
 				"Uldum~Neutral~Minion~10~20~20~None~Highkeeper Ra~Legendary~Uncollectible": HighkeeperRa,
 				"Uldum~Neutral~Minion~1~1~1~Murloc~Murmy~Reborn": Murmy,
-				"Uldum~Neutral~Minion~1~1~1~None~Titanic Lackey~Battlecry~Uncollectible": TitanicLackey,
 				"Uldum~Neutral~Minion~2~2~1~None~Bug Collector~Battlecry": BugCollector,
 				"Uldum~Neutral~Minion~1~1~1~Beast~Locust~Rush~Uncollectible": Locust,
 				"Uldum~Neutral~Minion~2~2~3~None~Dwarven Archaeologist": DwarvenArchaeologist,

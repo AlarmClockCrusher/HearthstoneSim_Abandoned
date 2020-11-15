@@ -1,40 +1,248 @@
+class Trig_Corruption(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnStarts"])
+		self.inherent = False
+		self.ID = 1
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and ID == self.ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "At the start of player %d's turn, Corrupted minion %s dies."%(self.ID, self.entity.name))
+		self.entity.Game.killMinion(None, self.entity)
+		self.disconnect()
+		extractfrom(self, self.entity.trigsBoard)
+		
+	def selfCopy(self, recipient):
+		trig = type(self)(recipient)
+		trig.ID = self.ID
+		return trig
+		
+class Trig_Charge(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnEnds"])
+		self.inherent = False
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard #Even if the current turn is not minion's owner's turn
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "At the end of turn, minion %s can attack hero again."%self.entity.name)
+		self.entity.marks["Can't Attack Hero"] -= 1
+		self.disconnect()
+		try: self.entity.trigsBoard.remove(self)
+		except: pass
+		
+		
+Inspecting Classic.py
+class Trig_Redemption(SecretTrigger):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionDies"])
+		self.triggered = False
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.ID != self.entity.Game.turn and target.ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and not self.triggered
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "When friendly minion %s dies, Secret Redemption returns it to life with 1 Health."%target.name)
+		self.triggered = True
+		minion = type(target)(self.entity.Game, self.entity.ID)
+		minion.health = 1
+		self.entity.Game.summon(minion, -1, self.entity.ID)
+		
+	def createCopy(self, game):
+		if self not in game.copiedObjs: #这个扳机没有被复制过
+			entityCopy = self.entity.createCopy(game)
+			trigCopy = self.selfCopy(entityCopy)
+			trigCopy.triggered = self.triggered
+			game.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return game.copiedObjs[self]
+			
+			
+class Trig_FelLordBetrug(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["CardDrawn"])
+		self.inherent = False
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and target[0].type == "Minion" and target[0].ID == self.entity.ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "Whenever player draws minion %s, %s summons a copy of it that has Rush and dies at the end of turn."%(target[0].name, self.entity.name))
+		minion = target[0].selfCopy(self.entity.ID)
+		minion.keyWords["Rush"] = 1
+		minion.trigsBoard.append(Trig_DieatEndofTurn(minion))
+		self.entity.Game.summon(minion, self.entity.position+1, self.entity.ID)
+		
+"""Warrior cards"""
+class Trig_CorruptedHand(TrigHand):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnEnds"])
+		self.inherent = False
+		self.makesCardEvanescent = True
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		#被腐蚀的卡只会在其拥有者的回合结束时才会被丢弃
+		return self.entity.inHand and self.entity.ID == ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "At the end of turn, corrupted card %s is discarded from hand."%self.entity.name)
+		self.entity.Game.Hand_Deck.discardCard(self.entity.ID, self.entity)
+		
+		
+"""Warrior cards"""
+class Trig_Evocation(TrigHand):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnEnds"])
+		self.inherent = False
+		self.makesCardEvanescent = True
+		
+	#They will be discarded at the end of any turn
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.inHand
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "At the end of turn, spell %s created by Evocation is discarded"%self.entity.name)
+		self.entity.Game.Hand_Deck.discardCard(self.entity.ID, self.entity)
+		
+		
+class Trig_HeadmasterKelThuzad(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["SpellPlayed", "SpellBeenPlayed", "MinionDied"])
+		self.minionsKilled = []
+		self.enabled = False
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if signal == "MinionDied": return self.enabled
+		else: return self.entity.onBoard and subject.ID == self.entity.ID
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		if signal == "SpellPlayed": self.enabled = True
+		elif signal == "MinionDied": self.minionsKilled.append(type(target))
+		else:
+			self.disconnect()
+			try: self.entity.trigsBoard.remove(self)
+			except: pass
+			minion = self.entity
+			PRINT(minion.Game, "After player casts a spell, Headmaster Kel'Thuzad summons all minions killed by it.")
+			if self.minionsKilled:
+				minion.Game.summon([minionKilled(minion.Game, minion.ID) for minionKilled in self.minionsKilled], (minion.position, "totheRight"), minion.ID)
+			
+	def createCopy(self, game):
+		if self not in game.copiedObjs: #这个扳机没有被复制过
+			entityCopy = self.entity.createCopy(game)
+			trigCopy = self.selfCopy(entityCopy)
+			trigCopy.enabled = self.enabled
+			trigCopy.minionsKilled = fixedList(self.minionsKilled)
+			game.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return game.copiedObjs[self]
+			
+			
+class Trig_JandiceBarov(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["MinionTakesDmg"])
+		self.hide = True
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and target == self.entity
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		PRINT(self.entity.Game, "When %s takes damage, it dies"%self.entity.name)
+		self.entity.Game.killMinion(None, self.entity)
+		
+		
+class Trig_PowerWordFeast(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnEnds"])
+		self.inherent = False
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard #Even if the current turn is not minion's owner's turn
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.disconnect()
+		try: self.entity.trigsBoard.remove(self)
+		except: pass
+		PRINT(self.entity.Game, "At the end of turn, minion %s is restored to full Health."%self.entity.name)
+		heal = self.entity.health_max * (2 ** self.entity.countHealDouble())
+		spell = PowerWordFeast(self.entity.Game, self.entity.ID)
+		spell.restoresHealth(self.entity, heal)
+		
+		
+class Trig_SweepThisTurn(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnEnds"])
+		self.inherent = False
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard #Even if the current turn is not minion's owner's turn
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.disconnect()
+		try: self.entity.trigsBoard.remove(self)
+		except: pass
+		PRINT(self.entity.Game, "At the end of turn, Reaper's Scythe loses 'Damages adjacent minions'.")
+		self.entity.marks["Sweep"] -= 1
+		
+		
 class Trig_Corrupt(TrigHand):
 	def __init__(self, entity, corruptedType):
 		self.blank_init(entity, ["ManaPaid"])
 		self.corruptedType = corruptedType
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.inHand and ID == self.entity.ID and number > self.entity.mana
+		return self.entity.inHand and ID == self.entity.ID and number > self.entity.mana and subject.type != "Power"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		card = self.entity
 		newCard = self.corruptedType(card.Game, card.ID)
-		#Buff and mana effects, etc, will be preserved
-		#Buff to cards in hand will always be permanent or temporary, not from Auras
-		if newCard == "Minion":
-			#Temporary attack changes on minions are NOT included in attack_Enchant
-			attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_Enchant - card.health_0
-			newCard.buffDebuff(attBuff, healthBuff)
-			for attGain, attRevertTime in card.tempAttChanges:
-				newCard.buffDebuff(attGain, 0, attRevertTime)
-		elif newCard == "Weapon": #Only applicable to Felsteel Executioner
-			attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_Enchant - card.health_0
-			#Assume temporary attack changes applied on a minion won't carry over to the weapon
-			newCard.gainStat(attBuff, healthBuff)
-		#Find keywords the new card doesn't have
-		keyWords = newCard.keyWords.keys()
-		for key, value in newCard.keyWords.items():
-			if value < 1 and card.keyWords[key] > 0: newCard.keyWords[key] = 1
-		for key, value in newCard.marks.items():
-			if value < 1 and card.marks[key] > 0: newCard.marks[key] = 1
-		newCard.trigsHand += [trig for trig in card.trigsHand if not isinstance(trig, Trig_Corrupt)]
-		#There are no Corrupted cards with predefined Deathrattles
-		newCard.deathrattles = [type(deathrattle)(newCard) for deathrattle in card.deathrattles]
-		#Mana modifications
-		newCard.manaMods = [manaMod.selfCopy(newCard) for manaMod in card.manaMods]
-		
+		try:
+			#Buff and mana effects, etc, will be preserved
+			#Buff to cards in hand will always be permanent or temporary, not from Auras
+			if newCard.type == "Minion":
+				#Temporary attack changes on minions are NOT included in attack_Enchant
+				attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_max - card.health_0
+				newCard.buffDebuff(attBuff, healthBuff)
+				for attGain, attRevertTime in card.tempAttChanges:
+					newCard.buffDebuff(attGain, 0, attRevertTime)
+				#There are no Corrupted cards with predefined Deathrattles, and given Deathrattles are very simple
+				newCard.deathrattles = [type(deathrattle)(newCard) for deathrattle in card.deathrattles]
+			elif newCard.type == "Weapon": #Only applicable to Felsteel Executioner
+				attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_max - card.health_0
+				#Assume temporary attack changes applied on a minion won't carry over to the weapon
+				newCard.gainStat(attBuff, healthBuff)
+			#Keep the keywords and marks consistent
+			for key, value in newCard.keyWords.items(): #Find keywords the new card doesn't have
+				if value < 1 and card.keyWords[key] > 0: newCard.keyWords[key] = 1
+			for key, value in newCard.marks.items():
+				try:
+					if value < 1 and card.marks[key] > 0: newCard.marks[key] = 1
+				except: pass
+			#Inhand triggers and mana modifications
+			newCard.trigsHand += [trig for trig in card.trigsHand if not isinstance(trig, Trig_Corrupt)]
+			newCard.manaMods = [manaMod.selfCopy(newCard) for manaMod in card.manaMods]
+		except Exception as e:
+			print(e, card, newCard)
+		print("Corruption of ", card, newCard)
 		card.Game.Hand_Deck.replaceCardinHand(card, newCard)
 		
+	def selfCopy(self, recipient):
+		return type(self)(recipient, self.corruptedType)
+		
+	def createCopy(self, game):
+		if self not in game.copiedObjs: #这个扳机没有被复制过
+			entityCopy = self.entity.createCopy(game)
+			trigCopy = type(self)(entityCopy, self.corruptedType)
+			game.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return game.copiedObjs[self]
+			
+			
 """Mana 1 cards"""
 class Trig_OptimisticOgre(TrigBoard):
 	def __init__(self, entity):
@@ -69,14 +277,14 @@ class Trig_OptimisticOgre(TrigBoard):
 							curGame.fixedGuides.append((0, '', 0))
 					if char and redirect: #Redirect is 0/1, indicating whether the attack will redirect or not
 						#玩家命令的一次攻击中只能有一次触发机会。只要满足进入50%判定的条件，即使没有最终生效，也不能再次触发。
+						PRINT(curGame, "Optimistic Ogre redirects its attack onto %s"%char.name)
 						target[1], self.trigedThisBattle = char, True
 						
 """Mana 6 cards"""
 class Trig_CThun:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
-		self.temp = False
-		self.piece = []
+		self.pieces = ["Body", "Eye", "Heart", "Maw"]
 		
 	def connect(self):
 		try: self.Game.trigsBoard[self.ID]["CThunPiece"].append(self)
@@ -87,7 +295,8 @@ class Trig_CThun:
 		except: pass
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return subject.ID == self.ID and subject == self.spellDiscovered
+		print("Checking if CThun piece", ID == self.ID)
+		return ID == self.ID
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrigger(signal, ID, subject, target, number, comment):
@@ -96,16 +305,18 @@ class Trig_CThun:
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		if ID == self.ID and number not in self.pieces:
-			self.pieces.append(number)
-			if len(self.pieces) > 3:
-				PRINT("Player %d's C'Thun is completed and shuffles into the deck"%ID)
+			try: self.pieces.remove(comment)
+			except: pass
+			PRINT(self.Game, "Player {}'s C'Thun has {} missing".format(ID, self.pieces))
+			if not self.pieces:
+				PRINT(self.Game, "Player %d's C'Thun is completed and shuffles into the deck"%ID)
 				self.Game.Hand_Deck.shuffleCardintoDeck(CThuntheShattered(self.Game, ID), ID)
 				self.disconnect()
 				
 	def createCopy(self, game): #不是纯的只在回合结束时触发，需要完整的createCopy
 		if self not in game.copiedObjs: #这个扳机没有被复制过
 			trigCopy = type(self)(game, self.ID)
-			trigCopy.pieces = [i for i in self.pieces]
+			trigCopy.pieces = [s for s in self.pieces]
 			game.copiedObjs[self] = trigCopy
 			return trigCopy
 		else: #一个扳机被复制过了，则其携带者也被复制过了

@@ -42,7 +42,7 @@ BoardIndex = ["0 Random Game Board",
 			#"14 Un'Goro", "15 Frozen Throne", "16 Kobolds",
 			#"17 Witchwood", "18 Boomsday Lab", "19 Rumble",
 			"20 Dalaran", "21 Uldum Desert", "22 Uldum Oasis", "23 Dragons",
-			"24 Outlands", "25 Scholomance Academy",
+			"24 Outlands", "25 Scholomance Academy", "26 Darkmoon Faire",
 			]
 			
 from tkinter import messagebox
@@ -69,17 +69,24 @@ def extractfrom(target, listObj):
 	except: return None
 	
 def findPicFilepath(card):
+	folderNameTable = {"Basic":"Basic", "Classic": "Classic",
+						 "GVG": "Pre_Dalaran", "Kobolds": "Pre_Dalaran", "Boomsday": "Pre_Dalaran",
+						"Shadows": "Shadows", "Uldum": "Uldum", "Dragons": "Dragons", "Galakrond": "Galakrond",
+						"DHInitiate": "DHInitiate", "Outlands": "Outlands", "Academy": "Academy", "Darkmoon": "Darkmoon",
+						}
 	if card.type == "Dormant": #休眠的随从会主动查看自己携带的originalMinion的名字和index
 		index = card.originalMinion.index
+		folderName = folderNameTable[index.split('~')[0] ]
 		if inspect.isclass(card.originalMinion):
 			name = card.originalMinion.__name__
 		else: #Instances don't have __name__
 			name = type(card.originalMinion).__name__
-		path = "Crops\\%s\\"%index.split('~')[0]
+		path = "Crops\\%s\\"%folderName
 	else: #type == "Weapon", "Minion", "Spell", "Hero", "Power"
 		index, name = card.index, type(card).__name__
 		if card.type != "Hero" and card.type != "Power":
-			path = "Crops\\%s\\"%index.split('~')[0]
+			folderName = folderNameTable[index.split('~')[0] ]
+			path = "Crops\\%s\\"%folderName
 		else: path = "Crops\\HerosandPowers\\"
 		
 	name = name.split("_")[0] if "Mutable" in name else name
@@ -1045,6 +1052,7 @@ class BoardButton(tk.Canvas):
 				"23 Dragons": "Battlecry: Discover a Dragon",
 				"24 Outlands": "Dormant for 2 turns. When this awakens, deal 3 damage to 2 random enemy minions",
 				"25 Scholomance Academy": "Add a Dual class card to your hand",
+				"26 Darkmoon Faire": "Corrupt: Gain +2/+2",
 				}[self.boardInfo]
 		self.effectIDs = []
 		

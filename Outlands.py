@@ -32,20 +32,22 @@ class Minion_Dormantfor2turns(Minion):
 	mana, attack, health = 5, 5, 5
 	index = "Vanilla~Neutral~Minion~5~5~5~None~Imprisoned Vanilla"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, do something"
-	
-	def appears(self):
+	#出现即休眠的随从的played过程非常简单
+	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
+		self.statReset(self.attack_Enchant, self.health_max)
+		self.appears(firstTime=True) #打出时一定会休眠，同时会把Game.minionPlayed变为None
+		return None #没有目标可以返回
+		
+	def appears(self, firstTime=True):
 		PRINT(self.Game, "%s appears on board"%self.name)
-		self.newonthisSide = True
 		self.onBoard, self.inHand, self.inDeck = True, False, False
-		self.dead = False
+		self.newonthisSide, self.dead = True, False
 		self.mana = type(self).mana #Restore the minion's mana to original value.
 		self.decideAttChances_base() #Decide base att chances, given Windfury and Mega Windfury
 		#没有光环，目前炉石没有给随从人为添加光环的效果, 不可能在把手牌中获得的扳机带入场上，因为会在变形中丢失
 		#The buffAuras/hasAuras will react to this signal.
-		if self.firstTimeonBoard: #用activated来标记随从能否出现在场上而不休眠，第一次出现时，activated为False
-			#假设第一次出现时，会进入休眠状态，生成的Dormant不保存这个初始随从
-			PRINT(self.Game, "%a starts as a Dormant"%self.name)
-			self.Game.transform(self, ImprisonedDormantForm(self.Game, self.ID, self))
+		if firstTime: #首次出场时会进行休眠，而且休眠状态会保持之前的随从buff
+			self.Game.transform(self, ImprisonedDormantForm(self.Game, self.ID, self), firstTime=True)
 		else: #只有不是第一次出现在场上时才会执行这些函数
 			for value in self.auras.values():
 				value.auraAppears()
@@ -55,7 +57,7 @@ class Minion_Dormantfor2turns(Minion):
 			#Mainly mana aura minions, e.g. Sorcerer's Apprentice.
 			for func in self.appearResponse: func()
 			#The buffAuras/hasAuras will react to this signal.
-			self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, "")
+			self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, comment=firstTime)
 			for func in self.triggers["StatChanges"]: func()
 			
 	def awakenEffect(self):
@@ -64,18 +66,18 @@ class Minion_Dormantfor2turns(Minion):
 class ImprisonedDormantForm(Dormant):
 	Class, name = "Neutral", "Imprisoned Vanilla"
 	description = "Awakens after 2 turns"
-	def __init__(self, Game, ID, originalMinion=None):
+	def __init__(self, Game, ID, prisoner=None):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_ImprisonedDormantForm(self)]
-		self.originalMinion = originalMinion
-		if originalMinion: #When creating a copy, this is left blank temporarily
-			self.Class = originalMinion.Class
-			self.name = "Dormant " + originalMinion.name
-			self.description = originalMinion.description
-			self.index = originalMinion.index
+		self.prisoner = prisoner
+		if prisoner: #When creating a copy, this is left blank temporarily
+			self.Class = prisoner.Class
+			self.name = "Dormant " + prisoner.name
+			self.description = prisoner.description
+			self.index = prisoner.index
 			
 	def assistCreateCopy(self, Copy):
-		Copy.originalMinion = self.originalMinion.createCopy(Copy.Game)
+		Copy.prisoner = self.prisoner.createCopy(Copy.Game)
 		Copy.name, Copy.Class, Copy.description = self.name, self.Class, self.description
 		
 class Trig_ImprisonedDormantForm(TrigBoard):
@@ -91,49 +93,10 @@ class Trig_ImprisonedDormantForm(TrigBoard):
 		if self.counter < 1:
 			PRINT(self.entity.Game, "%s awakens and triggers its effect"%self.entity.name)
 			#假设唤醒的Imprisoned Vanilla可以携带buff
-			originalMinion = self.entity.originalMinion
-			originalMinion.firstTimeonBoard = False
-			self.entity.Game.transform(self.entity, originalMinion)
-			if hasattr(originalMinion, "awakenEffect"):
-				originalMinion.awakenEffect()
+			self.entity.Game.transform(self.entity, self.entity.prisoner, firstTime=False)
+			if hasattr(prisoner, "awakenEffect"):
+				prisoner.awakenEffect()
 				
-			
-class Minion_DormantuntilTrig(Minion):
-	Class, race, name = "Neutral", "", "Dormant to be awakened"
-	mana, attack, health = 4, 4, 4
-	index = "Vanilla~Neutral~Minion~5~5~5~None~Dormant to be awakened"
-	requireTarget, keyWord, description = False, "", "Dormant to be awakened by something"
-	
-	def appears(self):
-		PRINT(self.Game, "%s appears on board."%self.name)
-		self.newonthisSide = True
-		self.onBoard, self.inHand, self.inDeck = True, False, False
-		self.dead = False
-		self.mana = type(self).mana #Restore the minion's mana to original value.
-		self.decideAttChances_base() #Decide base att chances, given Windfury and Mega Windfury
-		#没有光环，目前炉石没有给随从人为添加光环的效果, 不可能在把手牌中获得的扳机带入场上，因为会在变形中丢失
-		#The buffAuras/hasAuras will react to this signal.
-		if self.firstTimeonBoard: #用activated来标记随从能否出现在场上而不休眠，第一次出现时，activated为False
-			#假设第一次出现时，会进入休眠状态，生成的Dormant不会保存这个初始随从
-			PRINT(self.Game, "%s starts as a Dormant"%self.name)
-			#pos, identity = self.position, self.identity
-			#self.__init__(self.Game, self.ID)
-			#self.position = pos
-			#self.identity[0], self.identity[1] = identity[0], identity[1]
-			self.Game.transform(self, self.dormantForm(self.Game, self.ID))
-		else: #只有不是第一次出现在场上时才会执行这些函数
-			for value in self.auras.values():
-				value.auraAppears()
-			#随从入场时将注册其场上扳机和亡语扳机
-			for trigger in self.trigsBoard + self.deathrattles:
-				trigger.connect() #把(obj, signal)放入Game.triggersonBoard中
-			#Mainly mana aura minions, e.g. Sorcerer's Apprentice.
-			for func in self.appearResponse: func()
-			#The buffAuras/hasAuras will react to this signal.
-			self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, "")
-			for func in self.triggers["StatChanges"]: func()
-			
-			
 """Mana 1 cards"""
 class EtherealAugmerchant(Minion):
 	Class, race, name = "Neutral", "", "Ethereal Augmerchant"
@@ -486,15 +449,37 @@ class FelfinNavigator(Minion):
 		return None
 		
 		
-class Magtheridon(Minion_DormantuntilTrig):
+class Magtheridon(Minion):
 	Class, race, name = "Neutral", "Demon", "Magtheridon"
 	mana, attack, health = 4, 12, 12
 	index = "Outlands~Neutral~Minion~4~12~12~Demon~Magtheridon~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Dormant. Battlecry: Summon three 1/3 enemy Warders. When they die, destroy all minions and awaken"
-	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-		self.dormantForm = Magtheridon_Dormant
+	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
+		self.statReset(self.attack_Enchant, self.health_max)
+		self.appears(firstTime=True)
+		#理论上不会有任何角色死亡,可以跳过死亡结算
+		num, status = 1, self.Game.status[self.ID]
+		if "~Battlecry" in self.index and ["Battlecry x2"] + status["Shark Battlecry x2"] > 0:
+			num = 2
+		for i in range(num):
+			self.whenEffective(target, "", choice, posinHand)
+		self.Game.gathertheDead()
+		return None
 		
+	def appears(self, firstTime=True):
+		PRINT(self.Game, "Magtheridon appears on board.")
+		self.newonthisSide, self.dead = True, False
+		self.onBoard, self.inHand, self.inDeck = True, False, False
+		self.mana = type(self).mana #Restore the minion's mana to original value.
+		self.decideAttChances_base() #Decide base att chances, given Windfury and Mega Windfury
+		if firstTime: #首次出场时会进行休眠，而且休眠状态会保持之前的随从buff。休眠体由每个不同的随从自己定义
+			self.Game.transform(self, self.dormantForm(self.Game, self.ID, self), firstTime=True)
+		else: #只有不是第一次出现在场上时才会执行这些函数
+			for trigger in self.trigsBoard + self.deathrattles:
+				trigger.connect() #把(obj, signal)放入Game.triggersonBoard中
+			self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, comment=firstTime)
+			for func in self.triggers["StatChanges"]: func()
+			
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Magtheridon's battlecry summons three 1/3 enemy Warders")
 		self.Game.summon([HellfireWarder(self.Game, 3-self.ID) for i in range(3)], (-1, "totheRightEnd"), self.ID)
@@ -503,10 +488,14 @@ class Magtheridon(Minion_DormantuntilTrig):
 class Magtheridon_Dormant(Dormant):
 	Class, name = "Neutral", "Dormant Magtheridon"
 	description = "Destroy 3 Warders to destroy all minions and awaken this"
-	def __init__(self, Game, ID):
+	def __init__(self, Game, ID, prisoner=None):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Magtheridon_Dormant(self)]
-		self.originalMinion = Magtheridon
+		self.prisoner = prisoner
+		
+	def assistCreateCopy(self, Copy):
+		Copy.prisoner = self.prisoner.createCopy(Copy.Game)
+		Copy.name, Copy.Class, Copy.description = self.name, self.Class, self.description
 		
 class Trig_Magtheridon_Dormant(TrigBoard):
 	def __init__(self, entity):
@@ -524,9 +513,7 @@ class Trig_Magtheridon_Dormant(TrigBoard):
 			PRINT(game, "3 Warders died. Dormant Magtheridon destroys all minions and awakens")
 			game.killMinion(self.entity, game.minionsonBoard(1) + game.minionsonBoard(2))
 			#假设不进行强制死亡
-			minion = Magtheridon(game, self.entity.ID)
-			minion.firstTimeonBoard = False
-			game.transform(self.entity, minion)
+			game.transform(self.entity, self.entity.prisoner, firstTime=False)
 			
 class HellfireWarder(Minion):
 	Class, race, name = "Neutral", "", "Hellfire Warder"
@@ -551,7 +538,7 @@ class MaievShadowsong(Minion):
 		if target and target.onBoard and target.type == "Minion":
 			PRINT(self.Game, "Maiev Shadowsong's battlecry lets minion %s go Dormant for 2 turns"%target.name)
 			dormantForm = ImprisonedDormantForm(self.Game, target.ID, target) #假设让随从休眠可以保留其初始状态
-			self.Game.transform(target, dormantForm)
+			self.Game.transform(target, dormantForm, firstTime=True)
 		return dormantForm
 		
 		
@@ -922,12 +909,12 @@ class Netherwalker(Minion):
 					key = "Demons as "+classforDiscover(self)
 					if "byOthers" in comment:
 						PRINT(curGame, "Netherwalker's battlecry adds a random Demon to player's hand.")
-						demon = npchoice(curGame.RNGPools[key])
+						demon = npchoice(self.rngPool(key))
 						curGame.fixedGuides.append(demon)
 						curGame.Hand_Deck.addCardtoHand(demon, self.ID, "type", byDiscover=True)
 					else:
 						PRINT(curGame, "Netherwalker's battlecry lets player Discover a Demon")
-						demons = npchoice(curGame.RNGPools[key], 3, replace=False)
+						demons = npchoice(self.rngPool(key), 3, replace=False)
 						curGame.options = [demon(curGame, self.ID) for demon in demons]
 						curGame.Discover.startDiscover(self)
 		return None
@@ -1494,7 +1481,7 @@ class Trig_MarshHydra(TrigBoard):
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
 			else:
-				minion = npchoice(curGame.RNGPools["8-Cost Minions"])
+				minion = npchoice(self.rngPool("8-Cost Minions"))
 				curGame.fixedGuides.append(minion)
 			PRINT(curGame, "After Marsh Hydra attacks, it adds a random 8-Cost minion into player's hand")
 			curGame.Hand_Deck.addCardtoHand(minion, self.entity.ID, "type")
@@ -1804,7 +1791,7 @@ class Evocation(Spell):
 				if curGame.guides:
 					spell = curGame.guides.pop(0)
 				else:
-					spell = npchoice(curGame.RNGPools["Mage Spells"])
+					spell = npchoice(self.rngPool("Mage Spells"))
 					curGame.fixedGuides.append(spell)
 				spell = spell(curGame, self.ID)
 				trigger = Trig_Evocation(spell)
@@ -1848,7 +1835,7 @@ class FontofPower(Spell):
 				if curGame.guides:
 					minions = list(curGame.guides.pop(0))
 				else:
-					minions = npchoice(curGame.RNGPools["Mage Minions"], 3, replace=False)
+					minions = npchoice(self.rngPool("Mage Minions"), 3, replace=False)
 					curGame.fixedGuides.append(tuple(minions))
 				PRINT(curGame, "Font of Power is cast and adds 3 random Mage minions to player's hand, as there're no minion in player's deck")
 				curGame.Hand_Deck.addCardtoHand(minions, self.ID, "type")
@@ -1860,13 +1847,13 @@ class FontofPower(Spell):
 					curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type", byDiscover=True)
 				else:
 					if self.ID != curGame.turn or "byOthers" in comment:
-						minion = npchoice(curGame.RNGPools["Mage Minions"])
+						minion = npchoice(self.rngPool("Mage Minions"))
 						curGame.fixedGuides.append(minion)
 						PRINT(curGame, "Font of Power is cast and adds a random Mage minion to player's hand")
 						curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type", byDiscover=True)
 					else:
 						PRINT(curGame, "Font of Power is cast and lets player discover a Mage Minion.")
-						minions = npchoice(curGame.RNGPools["Mage Minions"], 3, replace=False)
+						minions = npchoice(self.rngPool("Mage Minions"), 3, replace=False)
 						curGame.options = [minion(curGame, self.ID) for minion in minions]
 						curGame.Discover.startDiscover(self)
 		return None
@@ -1911,7 +1898,7 @@ class Trig_ApexisSmuggler(TrigBoard):
 			else:
 				PRINT(curGame, "After player plays a Secret, Apexis Smuggler lets player Discover a spell")
 				key = classforDiscover(minion)+" Spells"
-				spells = npchoice(curGame.RNGPools[key], 3, replace=False)
+				spells = npchoice(self.rngPool(key), 3, replace=False)
 				curGame.options = [spell(curGame, minion.ID) for spell in spells]
 				curGame.Discover.startDiscover(minion)
 				
@@ -1949,7 +1936,7 @@ class SolarianPrime(Minion):
 					mageSpell = curGame.guides.pop(0)
 					PRINT(curGame, "Solarian Prime's battlecry casts spell %s"%mageSpell.name)
 				else:
-					mageSpell = npchoice(curGame.RNGPools["Mage Spells"])
+					mageSpell = npchoice(self.rngPool("Mage Spells"))
 					curGame.fixedGuides.append(mageSpell)
 				mageSpell(curGame, self.ID).cast(None, "enemy1st")
 				curGame.gathertheDead()
@@ -2032,7 +2019,7 @@ class Trig_NetherwindPortal(SecretTrigger):
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
 			else:
-				minion = npchoice(curGame.RNGPools["4-Cost Minions to Summon"])
+				minion = npchoice(self.rngPool("4-Cost Minions to Summon"))
 				curGame.fixedGuides.append(minion)
 			PRINT(curGame, "After the opponent casts a spell, Secret Netherwind Portal is triggered and summons a random 4-Cost minion")
 			curGame.summon(minion(curGame, self.entity.ID), -1, self.entity.ID)
@@ -2061,7 +2048,7 @@ class ApexisBlast(Spell):
 				if curGame.guides:
 					minion = curGame.guides.pop(0)
 				else:
-					minion = npchoice(curGame.RNGPools["5-Cost Minions to Summon"]) if curGame.Hand_Deck.noMinionsinDeck(self.ID) else None
+					minion = npchoice(self.rngPool("5-Cost Minions to Summon")) if curGame.Hand_Deck.noMinionsinDeck(self.ID) else None
 					curGame.fixedGuides.append(minion)
 				if minion:
 					PRINT(curGame, "Because player has no minions in deck, Apexis Blast summons a random 5-Cost minion")
@@ -2229,7 +2216,7 @@ class MurgurglePrime(Minion):
 			if curGame.guides:
 				murlocs = list(curGame.guides.pop(0))
 			else:
-				murlocs = tuple(npchoice(curGame.RNGPools["Murlocs to Summon"], 4, replace=True))
+				murlocs = tuple(npchoice(self.rngPool("Murlocs to Summon"), 4, replace=True))
 				curGame.fixedGuides.append(murlocs)
 			PRINT(curGame, "Murgurgle Prime's battlecry summons 4 random Murlocs and gives them Divine Shield")
 			murlocs = [murloc(curGame, self.ID) for murloc in murlocs]
@@ -2293,7 +2280,7 @@ class Trig_UnderlightAnglingRod(TrigBoard):
 			if curGame.guides:
 				murloc = curGame.guides.pop(0)
 			else:
-				murloc = npchoice(curGame.RNGPools["Murlocs"])
+				murloc = npchoice(self.rngPool("Murlocs"))
 				curGame.fixedGuides.append(murloc)
 			PRINT(curGame, "After player attacks, weapon %s adds a random Murloc to player's hand."%self.entity.name)
 			curGame.Hand_Deck.addCardtoHand(murloc, self.entity.ID, "type")
@@ -2426,12 +2413,12 @@ class Renew(Spell):
 					key = classforDiscover(self)+" Spells"
 					if self.ID != curGame.turn or "byOthers" in comment:
 						PRINT(curGame, "Renew adds a random spell to player's hand")
-						spell = npchoice(curGame.RNGPools[key])
+						spell = npchoice(self.rngPool(key))
 						curGame.fixedGuides.append(spell)
 						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type", byDiscover=True)
 					else:
 						PRINT(curGame, "Renew lets player discover a spell")
-						spells = npchoice(curGame.RNGPools[key], 3, replace=False)
+						spells = npchoice(self.rngPool(key), 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
 						curGame.Discover.startDiscover(self)
 		return target
@@ -2485,7 +2472,7 @@ class Trig_SethekkVeilweaver(TrigBoard):
 			if curGame.guides:
 				spell = curGame.guides.pop(0)
 			else:
-				spell = npchoice(curGame.RNGPools["Priest Spells"])
+				spell = npchoice(self.rngPool("Priest Spells"))
 				curGame.fixedGuides.append(spell)
 			PRINT(curGame, "After player casts spell %s on minion %s, Sethekk Veilweaver adds a random Priest spell to player's hand"%(subject.name, target.name))
 			curGame.Hand_Deck.addCardtoHand(spell, self.entity.ID, "type")
@@ -2590,7 +2577,7 @@ class Trig_SkeletalDragon(TrigBoard):
 			if curGame.guides:
 				dragon = curGame.guides.pop(0)
 			else:
-				dragon = npchoice(curGame.RNGPools["Dragons"])
+				dragon = npchoice(self.rngPool("Dragons"))
 				curGame.fixedGuides.append(dragon)
 			PRINT(curGame, "At the end of turn, Skeletal Dragon adds a random Dragon to player's hand")
 			curGame.Hand_Deck.addCardtoHand(dragon, self.entity.ID, "type")
@@ -2732,7 +2719,7 @@ class Trig_Bamboozle(SecretTrigger):
 				cost = type(target[0]).mana + 3
 				while cost not in curGame.MinionsofCost:
 					cost -= 1
-				newMinion = npchoice(curGame.RNGPools["%d-Cost Minions to Summon"%cost])
+				newMinion = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost))
 				curGame.fixedGuides.append(newMinion)
 			PRINT(curGame, "When friendly minion %s is attacked, Secret Bamboozle triggers and transforms it into a random one that costs (3) more"%target[0].name)
 			#不知道如果攻击目标已经被导离这个目标随从之后是否会把目标重导向回它，假设不会
@@ -2808,7 +2795,7 @@ class Trig_ShadowjewelerHanar(TrigBoard):
 					try: ClasseswithSecrets.remove(subject.Class)
 					except: pass
 					Classes = npchoice(ClasseswithSecrets, 3, replace=False)
-					secrets = [npchoice(curGame.RNGPools[Class+" Secrets"]) for Class in Classes]
+					secrets = [npchoice(self.rngPool(Class+" Secrets")) for Class in Classes]
 					curGame.options = [secret(curGame, minion.ID) for secret in secrets]
 					curGame.Discover.startDiscover(minion)
 					
@@ -2925,7 +2912,7 @@ class BogstrokClacker(Minion):
 						cost = type(minion).mana + 3
 						while cost not in curGame.MinionsofCost:
 							cost -= 1
-						newMinions.append(npchoice(curGame.RNGPools["%d-Cost Minions to Summon"%cost]))
+						newMinions.append(npchoice(self.rngPool("%d-Cost Minions to Summon"%cost)))
 					curGame.fixedGuides.append(tuple(newMinions))
 				for minion, newMinion in zip(minions, newMinions):
 					curGame.transform(minion, newMinion(curGame, self.ID))
@@ -2996,12 +2983,12 @@ class Marshspawn(Minion):
 					key = classforDiscover(self)+" Spells"
 					if "byOthers" in comment:
 						PRINT(curGame, "Marshspawn's battlecry adds a random spell to player's hand")
-						spell = npchoice(curGame.RNGPools[key])
+						spell = npchoice(self.rngPool(key))
 						curGame.fixedGuides.append(spell)
 						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type", byDiscover=True)
 					else:
 						PRINT(curGame, "Marshspawn's battlecry lets player discover a spell")
-						spells = npchoice(curGame.RNGPools[key], 3, replace=False)
+						spells = npchoice(self.rngPool(key), 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
 						curGame.Discover.startDiscover(self)
 		return None
@@ -3035,7 +3022,7 @@ class SerpentshrinePortal(Spell):
 				if curGame.guides:
 					minion = curGame.guides.pop(0)
 				else:
-					minion = npchoice(curGame.RNGPools["3-Cost Minions to Summon"])
+					minion = npchoice(self.rngPool("3-Cost Minions to Summon"))
 					curGame.fixedGuides.append(minion)
 				PRINT(curGame, "Serpentshrine Portal summons a random 3-Cost minion")
 				curGame.summon(minion(curGame, self.ID), -1, self.ID)
@@ -3143,7 +3130,7 @@ class Trig_BoggspineKnuckles(TrigBoard):
 					cost = type(minion).mana + 1
 					while cost not in curGame.MinionsofCost:
 						cost -= 1
-					newMinion = npchoice(curGame.RNGPools["%d-Cost Minions to Summon"%cost])
+					newMinion = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost))
 					curGame.fixedGuides.append(newMinion)
 				curGame.transform(minion, newMinion(curGame, minion.ID))
 				
@@ -3233,7 +3220,7 @@ class ShadowCouncil(Spell):
 			if curGame.guides:
 				demons = curGame.guides.pop(0)
 			else:
-				demons = tuple(npchoice(curGame.RNGPools["Demons"], len(curGame.Hand_Deck.hands[self.ID]), replace=True))
+				demons = tuple(npchoice(self.rngPool("Demons"), len(curGame.Hand_Deck.hands[self.ID]), replace=True))
 				curGame.fixedGuides.append(demons)
 			if demons:
 				demons = [demon(curGame, self.ID) for demon in demons]

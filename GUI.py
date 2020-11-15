@@ -1,4 +1,4 @@
-import tkinter as tk
+import tkinter as BoomBot
 
 from CustomWidgets import *
 from UICommonPart import GUI_Common

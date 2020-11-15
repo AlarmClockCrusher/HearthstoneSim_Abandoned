@@ -1,7 +1,3 @@
-import copy
-from Triggers_Auras import ManaMod
-import numpy as np
-
 def concatenateDicts(dict1, dict2):
 	for key in dict2.keys():
 		dict1[key] = copy.deepcopy(dict2[key]) if key not in dict1 else concatenateDicts(dict1[key], dict2[key])
@@ -18,13 +14,14 @@ def canBeGenerated(cardType):
 	return not cardType.index.startswith("SV_") and not cardType.description.startswith("Quest:") and \
 			not ("Galakrond" in cardType.name or "Galakrond" in cardType.description or "Invoke" in cardType.description or "invoke" in cardType.description)
 			
-			
+		
 class PoolManager:
 	def __init__(self):
 		self.cardPool = {}
 		
 from Basic import *
 from Classic import *
+from AcrossPacks import *
 from Shadows import *
 from Uldum import *
 from Dragons import *
@@ -50,6 +47,9 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 	
 	cardPool.update(Classic_Indices)
 	info += "from Classic import *\n"
+	
+	cardPool.update(AcrossPacks_Indices)
+	info += "from AcrossPacks import *\n"
 	
 	cardPool.update(Shadows_Indices)
 	info += "from Shadows import *\n"
@@ -94,6 +94,7 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 		"23 Dragons": TransferStudent_Dragons,
 		"24 Outlands": TransferStudent_Outlands,
 		"25 Scholomance Academy": TransferStudent_Academy,
+		"26 Darkmoon Faire": TransferStudent_Darkmoon,
 		}
 	if board == "0 Random Game Board": board = np.random.choice(list(transferStudentPool))
 	transferStudent = transferStudentPool[board]
@@ -266,16 +267,16 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 		
 		#把RNGPool写入python里面
 		out_file.write("RNGPools = {\n")
-		for poolIdentifier, obj in RNGPools.items():
-			if type(obj) == type([]):
+		for poolIdentifier, objs in RNGPools.items():
+			if isinstance(objs, list):
 				#出来就休眠的随从现在不能出现在召唤池中
 				if poolIdentifier.endswith(" to Summon"):
-					try: obj.remove(Magtheridon)
+					try: objs.remove(Magtheridon)
 					except: pass
 					#extractfrom(TheDarkness, obj)
 				out_file.write("\t\t'%s': ["%poolIdentifier)
 				i = 0
-				for obj in obj:
+				for obj in objs:
 					try: out_file.write(obj.__name__+', ')
 					except: out_file.write("'%s', "%obj)
 					i += 1

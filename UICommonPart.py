@@ -510,8 +510,8 @@ class GUI_Common:
 			btnTypeConfirm.wait_variable(var)
 			cardName = self.wish.get()
 			self.wish.delete(0, "end")
-			if cardName in self.Game.RNGPools["Basic and Classic Card Index"]:
-				card = self.Game.RNGPools["Basic and Classic Card Index"][cardName]
+			if cardName in self.rngPool["Basic and Classic Card Index"]:
+				card = self.rngPool["Basic and Classic Card Index"][cardName]
 				self.Game.fixedGuides.append(card)
 				self.Game.Hand_Deck.addCardtoHand(card, initiator.ID, "type")
 				break
@@ -532,7 +532,7 @@ class GUI_Common:
 						self.printInfo("Class input wrong. Returning to search by name")
 					else:
 						self.printInfo("Showing %s cards"%className)
-						for value in self.Game.RNGPools["Basic and Classic %s Cards"%className]:
+						for value in self.rngPool["Basic and Classic %s Cards"%className]:
 							self.printInfo("{}:   Mana {},  Description {}".format(value.name, value.mana, value.description))
 						self.printInfo("Returning to search by card name")
 				else:

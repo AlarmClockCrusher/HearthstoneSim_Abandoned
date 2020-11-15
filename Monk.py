@@ -312,7 +312,7 @@ class WiseLorewalkerCho(Minion): #睿智的游学者周卓
 			Class = "Monk" if self.Game.heroes[self.ID].Class == "Neutral" else self.Game.heroes[self.ID].Class
 			#需要把所有的职业捋一遍，出一个dict
 			mana = self.Game.Manas.manas[self.ID]
-			spells, pool = {}, self.Game.RNGPools["%d-Cost Spells"%mana]
+			spells, pool = {}, self.rngPool["%d-Cost Spells"%mana]
 			for spell in pool:
 				for spellClass in spell.Class.split(','):
 					if spellClass in spells: spells[spellClass].append(spell)

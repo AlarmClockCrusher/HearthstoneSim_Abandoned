@@ -1,12 +1,12 @@
 from hearthstone import deckstrings
 import json
-import re
+#import re
 import string
 from CardPools import *
-import sys
 
 cardType2jsonType = {"Minion": "MINION", "Spell": "SPELL", "Weapon": "WEAPON", "Hero": "HERO"}
-Pack2jsonSet = {"Basic": "CORE", "Classic": "EXPERT1", 
+Pack2jsonSet = {"Basic": "CORE", "Classic": "EXPERT1",
+				"GVG": "GVG", "Kobolds": "LOOTAPALOOZA", "Boomsday": "BOOMSDAY",
 				"Shadows": "DALARAN", "Uldum": "ULDUM", "Dragons": "DRAGONS", "Galakrond": "YEAR_OF_THE_DRAGON",
 				"DHInitiate": "DEMON_HUNTER_INITIATE", "Outlands": "BLACK_TEMPLE", "Academy": "SCHOLOMANCE", "Darkmoon": "DARKMOON_FAIRE",
 				}
@@ -89,12 +89,14 @@ def checktheStatsofCards():
 				print("Didn't find a match of the card {}/{}".format(value.__name__, value.name))
 				print("Possible matches")
 				print(cardInfo)
+				continue
 			if not (int(cardInfo["cost"]) == value.mana == int(words[3])):
 					print(value, " has a wrong mana {}|{}|{}".format(cardInfo["cost"], value.mana, int(words[3])))
-			cardType = words[2]
 		except Exception as e:
 			print("stopped at step 1 {}".format(value, e))
 			continue
+		#Will check the type of the cards (Minion, Spell, etc)
+		cardType = words[2]
 		try:
 			if cardType == "Minion":
 				if value.name != words[7]:
@@ -138,7 +140,7 @@ def checktheStatsofCards():
 					
 		except Exception as e:
 			#print("When checking ", value, e)
-			exceptionList.append((value, e))
+			exceptionList.append((value, cardType, e))
 	return exceptionList
 			
 if __name__ == "__main__":

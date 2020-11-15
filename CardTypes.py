@@ -6,7 +6,7 @@ from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 import numpy as np
 
-from Triggers_Auras import Trig_Echo, ManaMod
+from Triggers_Auras import ManaMod
 
 
 def extractfrom(target, listObj):
@@ -418,6 +418,12 @@ class Card:
 					game.sendSignal("HeroChangedHealthinTurn", self.ID, None, None, 0, "")
 		return healActual
 		
+	def rngPool(self, identifier):
+		pool = self.Game.RNGPools[identifier]
+		try: pool.remove(type(self))
+		except: pass
+		return pool
+		
 	"""Handle the battle options for minions and heroes."""
 	#Will only be used to find a selectable attack target
 	def findBattleTargets(self):
@@ -594,7 +600,7 @@ class Dormant(Card):
 			for key, value in self.auras.items():
 				PRINT(self.Game, "{}: {}".format(key, value))
 		if hasattr(self, "progress"):
-			PRINT(self.Game, "\tDormant's progress is currently: %d" % self.progress)
+			PRINT(self.Game, "\tDormant's progress is currently: {}".format(self.progress))
 
 	def createCopy(self, game):
 		if self in game.copiedObjs:
@@ -618,19 +624,23 @@ class Minion(Card):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 
+	def reset(self, ID): #如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化
+		inOrigDeck, numOccurrence = self.inOrigDeck, self.numOccurrence
+		att_0, health_0 = self.att_0, self.health_0
+		self.blank_init(self.Game, ID)
+		self.attack_0 = self.attack = self.attack_Enchant = att_0
+		self.health_0 = self.health = self.health_max = health_0
+		self.inOrigDeck, self.numOccurrence = inOrigDeck, numOccurrence
+		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.Class, self.name = type(self).Class, type(self).name
 		self.type, self.race = "Minion", type(self).race
 		# 卡牌的费用和对于费用修改的效果列表在此处定义
 		self.mana, self.manaMods = type(self).mana, []
-		self.attack, self.attack_0 = type(self).attack, type(self).attack
-		self.health_0, self.health, self.health_max = type(self).health, type(self).health, type(self).health
+		self.attack_0 = self.attack = self.attack_Enchant = type(self).attack
+		self.health_0 = self.health = self.health_max = type(self).health
 		self.tempAttChanges = []  # list of tempAttChange, expiration timepoint
-		# The stat of a minion are classified as:
-		# self.attack_0; self.attack_Enchant; self.attack(affected by buffAura and tempChange)
-		# self.attack_0; self.health_max; self.health, self.health_max.
-		self.attack_Enchant, self.health_max = self.attack, self.health
 		self.statbyAura = [0, 0,
 						   []]  # 激怒的攻击力变化直接被记录在第一个元素中，不涉及buffAura_Receiver, The list contains all the Aura Objs put on this minion.
 		self.keyWordbyAura = {"Charge": 0, "Rush": 0, "Mega Windfury": 0, "Free Evolve": 0,
@@ -665,9 +675,8 @@ class Minion(Card):
 					   }
 		#Keep track of the original cards that started in the deck
 		self.inOrigDeck, self.numOccurrence = False, 0
-		self.dead = False
+		self.newonthisSide, self.dead = True, False
 		self.effectViable, self.evanescent = False, False
-		self.newonthisSide, self.firstTimeonBoard = True, True  # firstTimeonBoard用于防止随从在休眠状态苏醒时再次休眠，一般用不上
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.activated = False  # This mark is for minion state change, such as enrage.
 		# self.sequence records the number of the minion's appearance. The first minion on board has a sequence of 0
@@ -695,7 +704,7 @@ class Minion(Card):
 
 	"""Handle the trigsBoard/inHand/inDeck of minions based on its move"""
 
-	def appears(self):
+	def appears(self, firstTime=True):
 		PRINT(self.Game, "%s appears on board." % self.name)
 		self.newonthisSide = True
 		self.onBoard, self.inHand, self.inDeck = True, False, False
@@ -708,10 +717,10 @@ class Minion(Card):
 		# 随从入场时将注册其场上扳机和亡语扳机
 		for trigger in self.trigsBoard + self.deathrattles:
 			trigger.connect()  # 把(obj, signal)放入Game.triggersonBoard中
+		# The buffAuras/hasAuras will react to this signal.
+		self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, comment=firstTime)
 		# Mainly mana aura minions, e.g. Sorcerer's Apprentice.
 		for func in self.appearResponse: func()
-		# The buffAuras/hasAuras will react to this signal.
-		self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, "")
 		for func in self.triggers["StatChanges"]: func()
 		
 	def disappears(self, deathrattlesStayArmed=True):  # The minion is about to leave board.
@@ -786,10 +795,9 @@ class Minion(Card):
 
 	def STATUSPRINT(self):
 		PRINT(self.Game, "Game is {}.".format(self.Game))
-		PRINT(self.Game,
-			  "Minion: %s. ID: %d Race: %s\nDescription: %s" % (self.name, self.ID, self.race, self.description))
+		PRINT(self.Game, "Minion: %s. ID: %d" % (self.name, self.ID))
 		if self.manaMods != []:
-			PRINT(self.Game, "\tCarries mana modification:")
+			PRINT(self.Game, "\tMana modification:")
 			for manaMod in self.manaMods:
 				if manaMod.changeby != 0:
 					PRINT(self.Game, "\t\tChanged by %d" % manaMod.changeby)
@@ -836,7 +844,7 @@ class Minion(Card):
 			for trigger in self.deathrattles:
 				PRINT(self.Game, "\t{}".format(type(trigger)))
 		if hasattr(self, "progress"):
-			PRINT(self.Game, "\tMinion's progress is currently: %d" % self.progress)
+			PRINT(self.Game, "\tMinion's progress is currently: {}".format(self.progress))
 
 	# 判定随从是否处于刚在我方场上登场，以及暂时控制、冲锋、突袭等。
 	def actionable(self):
@@ -1054,7 +1062,7 @@ class Minion(Card):
 		# 即使该随从在手牌中的生命值为0或以下，打出时仍会重置为无伤状态。
 		self.statReset(self.attack_Enchant, self.health_max)
 		# 此时，随从可以开始建立光环，建立侦听，同时接受其他光环。例如： 打出暴风城勇士之后，光环在Illidan的召唤之前给随从加buff，同时之后打出的随从也是先接受光环再触发Illidan。
-		self.appears()
+		self.appears(firstTime=True)
 		# 使用阶段
 		# 使用时步骤,触发“每当你使用一张xx牌”的扳机,如伊利丹，任务达人，无羁元素和魔能机甲等
 		# 触发信号依次得到主玩家的场上，手牌和牌库的侦听器的响应，之后是副玩家的侦听器响应。
@@ -1183,18 +1191,15 @@ class Minion(Card):
 				Copy.manaMods.pop(size - 1 - i)
 		# 在一个游戏中复制出新实体的时候需要把这些值重置
 		Copy.inOrigDeck, Copy.numOccurrence = False, 0
-		Copy.dead = False
+		Copy.newonthisSide, Copy.dead = True, False
 		Copy.effectViable, Copy.evanescent = False, False
-		Copy.newonthisSide, Copy.firstTimeonBoard = True, True  # firstTimeonBoard用于防止随从在休眠状态苏醒时再次休眠，一般用不上
 		Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False
 		Copy.activated = False
 		Copy.sequence, Copy.position = -1, -2
 		Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = 0, 0, 0
-
 		Copy.decideAttChances_base()
 		# 如果要生成一个x/x/x的复制
-		if attack != False or health != False:
-			Copy.statReset(attack, health)
+		if attack or health: Copy.statReset(attack, health)
 		if mana:
 			for manaMod in reversed(Copy.manaMods): manaMod.getsRemoved()
 			Copy.manaMods = []
@@ -1325,7 +1330,7 @@ class Minion(Card):
 			Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
 			if hasattr(self, "progress"): Copy.progress = self.progress
 			Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
-			Copy.newonthisSide, Copy.firstTimeonBoard = self.newonthisSide, self.firstTimeonBoard
+			Copy.newonthisSide = self.newonthisSide
 			Copy.sequence, Copy.position = self.sequence, self.position
 			Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
@@ -1353,6 +1358,11 @@ class Spell(Card):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		
+	def reset(self, ID):
+		inOrigDeck = self.inOrigDeck
+		self.blank_init(self.Game, ID)
+		self.inOrigDeck = inOrigDeck
+		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.Class, self.name = type(self).Class, type(self).name
@@ -1375,7 +1385,7 @@ class Spell(Card):
 		
 	def STATUSPRINT(self):
 		PRINT(self.Game, "Game is {}.".format(self.Game))
-		PRINT(self.Game, "Spell: %s. Description: %s"%(self.name, self.description))
+		PRINT(self.Game, "Spell: %s."%self.name)
 		if self.manaMods != []:
 			PRINT(self.Game, "\tCarries mana modification:")
 			for manaMod in self.manaMods:
@@ -1594,7 +1604,7 @@ class Secret(Spell):
 		return self.Game.Secrets.areaNotFull(self.ID) and not self.Game.Secrets.sameSecretExists(self, self.ID)
 
 	def selectionLegit(self, target, choice=0):
-		return target == None
+		return target is None
 
 	def cast(self, target=None, comment="byOthers"):
 		if self.Game.GUI:
@@ -1668,7 +1678,7 @@ class Quest(Spell):
 		return False
 
 	def selectionLegit(self, target, choice=0):
-		return target == None
+		return target is None
 
 	def cast(self, target=None, comment="byOthers"):
 		if self.Game.GUI:
@@ -1898,6 +1908,11 @@ class Hero(Card):
 	index = ""
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
+		
+	def reset(self, ID):
+		inOrigDeck = self.inOrigDeck
+		self.blank_init(self.Game, ID)
+		self.inOrigDeck = inOrigDeck
 		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -2207,6 +2222,11 @@ class Weapon(Card):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		
+	def reset(self, ID):
+		inOrigDeck = self.inOrigDeck
+		self.blank_init(self.Game, ID)
+		self.inOrigDeck = inOrigDeck
+		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.Class, self.name = type(self).Class, type(self).name
@@ -2233,7 +2253,7 @@ class Weapon(Card):
 		
 	def STATUSPRINT(self):
 		PRINT(self.Game, "Game is {}.".format(self.Game))
-		PRINT(self.Game, "Weapon: %s. Description: %s" % (self.name, self.description))
+		PRINT(self.Game, "Weapon: %s" % self.name)
 		if self.manaMods != []:
 			PRINT(self.Game, "\tCarries mana modification:")
 			for manaMod in self.manaMods:
@@ -2246,7 +2266,7 @@ class Weapon(Card):
 			for trigger in self.trigsBoard:
 				PRINT(self.Game, "{}".format(trigger))
 		if hasattr(self, "progress"):
-			PRINT(self.Game, "\tWeapon's progress is currently: %d" % self.progress)
+			PRINT(self.Game, "\tWeapon's progress: %d" % self.progress)
 			
 	"""Handle weapon entering/leaving board/hand/deck"""
 	# 武器进场并连接侦听器，比如公正之剑可以触发伊利丹的召唤，这个召唤又反过来触发公正之剑的buff效果。
@@ -2299,8 +2319,8 @@ class Weapon(Card):
 		self.Game.sendSignal("WeaponRemoved", self.ID, None, self, 0, "")
 		for trigger in self.deathrattles:
 			trigger.disconnect()
-		self.__init__(self.Game, self.ID)
-
+		self.reset(self.ID)
+		
 	def disappears(self):
 		if self.onBoard:  # 只有装备着的武器才会触发，以防连续触发。
 			PRINT(self.Game, "Weapon %s leaves board" % self.name)

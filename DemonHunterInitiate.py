@@ -30,11 +30,10 @@ class Blur(Spell):
 	#不知道与博尔碎盾的结算是如何进行的。
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Blur is cast and player can't take any damage this turn")
-		trig = BlurEffect(self.Game, self.ID)
-		trig.connect()
+		Blur_Effect(self.Game, self.ID).connect()
 		return None
 		
-class BlurEffect:
+class Blur_Effect:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.signals = ["FinalDmgonHero?"]
@@ -429,7 +428,7 @@ class CommandtheIllidari(Spell):
 class WrathspikeBrute(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Wrathspike Brute"
 	mana, attack, health = 5, 2, 6
-	index = "DHInitiate~Demon Hunter~Minion~5~2~6~Demon~Wrathspike Brute"
+	index = "DHInitiate~Demon Hunter~Minion~5~2~6~Demon~Wrathspike Brute~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. After this is attacked, deal 1 damage to all enemies"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -503,7 +502,7 @@ class Nethrandamus(Minion):
 				cost = self.progress
 				while cost not in curGame.MinionsofCost: #假设计数过高，超出了费用范围，则取最高的可选费用
 					cost -= 1
-				minions = npchoice(curGame.RNGPools["%d-Cost Minions to Summon"%cost], 2, replace=True)
+				minions = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost), 2, replace=False)
 				curGame.fixedGuides.append(tuple(minions))
 			PRINT(curGame, "Nethrandamus' battlecry summons two random %d-Cost minions."%self.progress)
 			pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
@@ -540,7 +539,7 @@ DemonHunterInit_Indices = {"DHInitiate~Demon Hunter~Spell~0~Blur": Blur,
 							"DHInitiate~Demon Hunter~Minion~4~4~4~None~Raging Felscreamer~Battlecry": RagingFelscreamer,
 							"DHInitiate~Demon Hunter~Spell~4~Soul Split": SoulSplit,
 							"DHInitiate~Demon Hunter~Spell~5~Command the Illidari": CommandtheIllidari,
-							"DHInitiate~Demon Hunter~Minion~5~2~6~Demon~Wrathspike Brute": WrathspikeBrute,
+							"DHInitiate~Demon Hunter~Minion~5~2~6~Demon~Wrathspike Brute~Taunt": WrathspikeBrute,
 							"DHInitiate~Demon Hunter~Weapon~7~4~3~Flamereaper": Flamereaper,
 							"DHInitiate~Demon Hunter~Minion~8~5~10~Demon~Hulking Overfiend~Rush": HulkingOverfiend,
 							"DHInitiate~Demon Hunter~Minion~9~8~8~Dragon~Nethrandamus~Battlecry~Legendary": Nethrandamus,
