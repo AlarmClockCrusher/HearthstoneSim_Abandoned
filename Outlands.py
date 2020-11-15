@@ -1939,7 +1939,7 @@ class SolarianPrime(Minion):
 					mageSpell = npchoice(self.rngPool("Mage Spells"))
 					curGame.fixedGuides.append(mageSpell)
 				mageSpell(curGame, self.ID).cast(None, "enemy1st")
-				curGame.gathertheDead()
+				curGame.gathertheDead(decideWinner=True)
 		return None
 		
 		

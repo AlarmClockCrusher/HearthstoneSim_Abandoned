@@ -989,8 +989,10 @@ class Mysterybox(Spell):
 				spells = npchoice(self.rngPool("Spells"), num, replace=True)
 				curGame.fixedGuides.append(spells)
 			spells = [spell(curGame, self.ID) for spell in spells]
-			for spell in spells: spell.cast()
-			
+			for spell in spells:
+				spell.cast()
+				curGame.gathertheDead(decideWinner=True)
+				
 class RodofRoasting(Spell):
 	Class, name = "Neutral", "Rod of Roasting"
 	requireTarget, mana = False, 0

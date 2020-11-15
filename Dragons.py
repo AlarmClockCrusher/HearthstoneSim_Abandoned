@@ -3036,7 +3036,7 @@ class MurozondtheInfinite(Minion):
 					#Replaying Hero Cards can only replace your hero and Hero Power, no battlecry will be triggered
 					PRINT(curGame, "******Murozond the Infinite's battlecry replaces player's hero with %s"%card.name)
 					card.replaceHero()
-				curGame.gathertheDead()
+				curGame.gathertheDead(decideWinner=True)
 		return None
 		
 """Rogue cards"""

@@ -1882,7 +1882,7 @@ class PuzzleBoxofYoggSaron(Spell):
 					curGame.fixedGuides.append(spell)
 				PRINT(curGame, "%d. Puzzle Box of Yogg-Saron is cast and casts random spell %s"%(i, spell.name))
 				spell(curGame, self.ID).cast()
-				curGame.gathertheDead()
+				curGame.gathertheDead(decideWinner=True)
 		return None
 		
 		
