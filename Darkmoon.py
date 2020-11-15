@@ -691,7 +691,7 @@ class EyeofCThun(Spell):
 					objs = curGame.charsAlive(side)
 					if objs:
 						char = npchoice(objs)
-						curGame.fixedGuides.append((side, "hero") if char.type == "Hero" else (char.position, "minion%d"%side))
+						curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if char:
@@ -769,7 +769,7 @@ class CThuntheShattered(Minion):
 					objs = curGame.charsAlive(side)
 					if objs:
 						char = npchoice(objs)
-						curGame.fixedGuides.append((side, "hero") if char.type == "Hero" else (char.position, "minion%d"%side))
+						curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if char:

@@ -130,14 +130,14 @@ class Evolve(HeroPower):
             if self.targetCorrect(hero, choice) and (comment == "" or self.canSelect(hero)):
                 targets.append(hero)
                 indices.append(ID)
-                wheres.append("hero")
-            where = "minion%d" % ID
+                wheres.append("Hero")
+            where = "Minion%d" % ID
             for obj in game.minionsandAmuletsonBoard(ID):
                 if self.targetCorrect(obj, choice) and (comment == "" or self.canSelect(obj)):
                     targets.append(obj)
                     indices.append(obj.position)
                     wheres.append(where)
-            where = "hand%d" % ID
+            where = "Hand%d" % ID
             for i, card in enumerate(game.Hand_Deck.hands[ID]):
                 if self.targetCorrect(card, choice):
                     targets.append(card)
@@ -165,7 +165,7 @@ class Evolve(HeroPower):
         for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
             card.effectCanTrigger()
             card.checkEvanescent()
-        subIndex, subWhere = self.ID, "power"
+        subIndex, subWhere = self.ID, "Power"
         tarIndex, tarWhere = [], []
         if target:  # 因为护符是SV特有的卡牌类型，所以其目标选择一定是列表填充式的
             for obj in target:
@@ -174,8 +174,8 @@ class Evolve(HeroPower):
                     tarWhere.append(obj.type + str(obj.ID))
                 else:
                     tarIndex.append(self.Game.Hand_Deck.hands[obj.ID].index(obj))
-                    tarWhere.append("hand%d" % obj.ID)
-        self.Game.moves.append(("power", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
+                    tarWhere.append("Hand%d" % obj.ID)
+        self.Game.moves.append(("Power", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
         self.targets = []
 
     def createCopy(self, game):
@@ -297,14 +297,14 @@ class SVMinion(Minion):
             if self.targetCorrect(hero, choice) and (comment == "" or self.canSelect(hero)):
                 targets.append(hero)
                 indices.append(ID)
-                wheres.append("hero")
-            where = "minion%d" % ID
+                wheres.append("Hero")
+            where = "Minion%d" % ID
             for obj in game.minionsandAmuletsonBoard(ID):
                 if self.targetCorrect(obj, choice) and (comment == "" or self.canSelect(obj)):
                     targets.append(obj)
                     indices.append(obj.position)
                     wheres.append(where)
-            where = "hand%d" % ID
+            where = "Hand%d" % ID
             for i, card in enumerate(game.Hand_Deck.hands[ID]):
                 if self.targetCorrect(card, choice):
                     targets.append(card)
@@ -603,14 +603,14 @@ class Amulet(Dormant):
             if self.targetCorrect(hero, choice) and (comment == "" or self.canSelect(hero)):
                 targets.append(hero)
                 indices.append(ID)
-                wheres.append("hero")
-            where = "minion%d" % ID
+                wheres.append("Hero")
+            where = "Minion%d" % ID
             for obj in game.minionsandAmuletsonBoard(ID):
                 if self.targetCorrect(obj, choice) and (comment == "" or self.canSelect(obj)):
                     targets.append(obj)
                     indices.append(obj.position)
                     wheres.append(where)
-            where = "hand%d" % ID
+            where = "Hand%d" % ID
             for i, card in enumerate(game.Hand_Deck.hands[ID]):
                 if self.targetCorrect(card, choice):
                     targets.append(card)
@@ -770,14 +770,14 @@ class SVSpell(Spell):
             if self.targetCorrect(hero, choice) and (comment == "" or self.canSelect(hero)):
                 targets.append(hero)
                 indices.append(ID)
-                wheres.append("hero")
-            where = "minion%d" % ID
+                wheres.append("Hero")
+            where = "Minion%d" % ID
             for obj in game.minionsandAmuletsonBoard(ID):
                 if self.targetCorrect(obj, choice) and (comment == "" or self.canSelect(obj)):
                     targets.append(obj)
                     indices.append(obj.position)
                     wheres.append(where)
-            where = "hand%d" % ID
+            where = "Hand%d" % ID
             for i, card in enumerate(game.Hand_Deck.hands[ID]):
                 if self.targetCorrect(card, choice):
                     targets.append(card)

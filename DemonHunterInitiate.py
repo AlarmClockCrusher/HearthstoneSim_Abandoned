@@ -345,7 +345,7 @@ class Trig_WrathscaleNaga(TrigBoard):
 				targets = curGame.charsAlive(3-self.entity.ID)
 				if targets:
 					enemy = npchoice(targets)
-					curGame.fixedGuides.append((enemy.position, "minion%d"%enemy.ID) if enemy.type == "Minion" else (enemy.ID, "hero"))
+					curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
 				else: curGame.fixedGuides.append((0, ""))
 			if enemy:
 				PRINT(curGame, "After a friendly minion dies, Wrathscale Naga deals 3 damage to random enemy %s"%enemy.name)

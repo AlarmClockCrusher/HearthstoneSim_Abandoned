@@ -432,12 +432,12 @@ class Card:
 			if self.canAttackTarget(self.Game.heroes[side]):
 				targets.append(self.Game.heroes[side])
 				indices.append(side)
-				wheres.append("hero")
+				wheres.append("Hero")
 			for i, minion in enumerate(self.Game.minionsonBoard(side)):
 				if self.canAttackTarget(minion):
 					targets.append(minion)
 					indices.append(i)
-					wheres.append("minion%d"%side)
+					wheres.append("Minion%d"%side)
 		return targets, indices, wheres
 		
 	#所有打出效果的目标寻找，包括战吼，法术等
@@ -449,33 +449,33 @@ class Card:
 				if self.canSelect(game.heroes[ID]) and self.targetCorrect(game.heroes[ID], choice):
 					targets.append(game.heroes[ID])
 					indices.append(ID)
-					wheres.append("hero")
+					wheres.append("Hero")
 			for minion in game.minionsonBoard(1):
 				if self.canSelect(minion) and self.targetCorrect(minion, choice):
 					targets.append(minion)
 					indices.append(minion.position)
-					wheres.append("minion1")
+					wheres.append("Minion1")
 			for minion in game.minionsonBoard(2):
 				if self.canSelect(minion) and self.targetCorrect(minion, choice):
 					targets.append(minion)
 					indices.append(minion.position)
-					wheres.append("minion2")
+					wheres.append("Minion2")
 		else:
 			for ID in range(1, 3):
 				if self.targetCorrect(game.heroes[ID], choice):
 					targets.append(game.heroes[ID])
 					indices.append(ID)
-					wheres.append("hero")
+					wheres.append("Hero")
 			for minion in game.minionsonBoard(1):
 				if self.targetCorrect(minion, choice):
 					targets.append(minion)
 					indices.append(minion.position)
-					wheres.append("minion1")
+					wheres.append("Minion1")
 			for minion in game.minionsonBoard(2):
 				if self.targetCorrect(minion, choice):
 					targets.append(minion)
 					indices.append(minion.position)
-					wheres.append("minion2")
+					wheres.append("Minion2")
 		if targets: return targets, indices, wheres
 		else: return [None], [0], ['']
 		

@@ -1842,7 +1842,7 @@ class Trig_Dragonbane(TrigBoard):
 				chars = curGame.charsAlive(3-self.entity.ID)
 				if chars:
 					char = npchoice(chars)
-					curGame.fixedGuides.append((char.position, "minion%d"%char.ID) if char.type == "Minion" else (char.ID, "hero"))
+					curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
 			if char: self.entity.dealsDamage(char, 5)
@@ -2121,7 +2121,7 @@ class MalygossMissiles(Spell):
 					objs = curGame.charsAlive(side)
 					if objs:
 						char = npchoice(objs)
-						curGame.fixedGuides.append((side, "hero") if char.type == "Hero" else (char.position, "minion%d"%side))
+						curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if i > -1: self.dealsDamage(char, 1)
@@ -2302,7 +2302,7 @@ class RollingFireball(Spell):
 							minion, direction = neighbors[ran], ran
 						elif dist < 0: minion, direction = neighbors[0], 0
 						elif dist == 2: minion, direction = neighbors[0], 1
-						if minion: curGame.fixedGuides.append((minion.position, "minion%d"%minion.ID, direction))
+						if minion: curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID, direction))
 						else: curGame.fixedGuides.append((0, '', ''))
 					else: #如果可以在手牌中找到那个随从时
 						#火球滚滚打到手牌中的随从时，会判断目前那个随从在手牌中位置，如果在从左数第3张的话，那么会将过量伤害传递给场上的2号或者4号随从。
@@ -2317,7 +2317,7 @@ class RollingFireball(Spell):
 									else: minion, direction = minions[i-1], 0
 								#如果随从在手牌中的编号很大，如手牌中第5张（编号4），则如果场上有5张或者以下随从，则都会向左滚
 								else: minion, direction = minions[-1], 0
-								if minion: curGame.fixedGuides.append((minion.position, "minion%d"%minion.ID, direction))
+								if minion: curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID, direction))
 								else: curGame.fixedGuides.append((0, '', ''))
 						else:
 							curGame.fixedGuides.append((0, '', ''))
@@ -3788,7 +3788,7 @@ class DarkSkies(Spell):
 					if where: minion = curGame.find(i, where)
 				else:
 					minion = npchoice(minions)
-					curGame.fixedGuides.append((minion.position, "minion%d"%minion.ID))
+					curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID))
 				self.dealsDamage(minion, damage)
 				handSize = len(curGame.Hand_Deck.hands[self.ID])
 				for num in range(handSize):
@@ -3800,7 +3800,7 @@ class DarkSkies(Spell):
 						minions = self.Game.minionsAlive(1) + self.Game.minionsAlive(2)
 						if minions:
 							minion = npchoice(minions)
-							curGame.fixedGuides.append((minion.position, "minion%d"%minion.ID))
+							curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID))
 						else:
 							curGame.fixedGuides.append((0, ''))
 					if minion: self.dealsDamage(minion, damage)
@@ -4151,7 +4151,7 @@ class RammingSpeed(Spell):
 					neighbors = curGame.neighbors2(target)[0]
 					if neighbors:
 						neighbor = npchoice(neighbors)
-						curGame.fixedGuides.append((neighbor.position, "minion%d"%neighbor.ID))
+						curGame.fixedGuides.append((neighbor.position, "Minion%d"%neighbor.ID))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if neighbor: curGame.battle(target, neighbor, verifySelectable=False, useAttChance=False, resolveDeath=False)
@@ -4207,7 +4207,7 @@ class Trig_Skybarge(TrigBoard):
 				chars = curGame.charsAlive(3-self.entity.ID)
 				if chars:
 					char = npchoice(chars)
-					curGame.fixedGuides.append((char.position, "minion%d"%char.ID) if char.type == "Minion" else (char.ID, "hero"))
+					curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
 			if char: self.entity.dealsDamage(char, 2)
@@ -4356,7 +4356,7 @@ class DeathwingMadAspect(Minion):
 					while minions:
 						minion = minions.pop(0)
 						if minion.onBoard and minion.health > 0 and not minion.dead:
-							infos.append((minion.position, "minion%d"%minion.ID))
+							infos.append((minion.position, "Minion%d"%minion.ID))
 							curGame.battle(curGame.minionPlayed, minion, verifySelectable=False, useAttChance=True, resolveDeath=False, resetRedirectionTriggers=False)
 					curGame.fixedGuides.append(tuple(infos))
 				else: curGame.fixedGuides.append(())

@@ -770,7 +770,7 @@ class ScavengingShivarra(Minion):
 					minions = curGame.minionsAlive(self.ID, self) + curGame.minionsAlive(3-self.ID)
 					if minions:
 						minion = npchoice(minions)
-						curGame.fixedGuides.append((minion.position, "minion%d"%minion.ID))
+						curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if minion:
@@ -3184,7 +3184,7 @@ class TheLurkerBelow(Minion):
 							else: minion, direction = neighbors[0], 0
 						elif dist < 0: minion, direction = neighbors[0], 0
 						elif dist == 2: minion, direction = neighbors[0], 1
-					if minion: curGame.fixedGuides.append((minion.position, "minion%d"%minion.ID, direction))
+					if minion: curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID, direction))
 					else: curGame.fixedGuides.append((0, '', ''))
 				#开始循环
 				while minion: #如果下个目标没有随从了，则停止循环
@@ -3256,7 +3256,7 @@ class UnstableFelbolt(Spell):
 				ownMinions = curGame.minionsonBoard(self.ID)
 				if ownMinions:
 					minion = npchoice(ownMinions)
-					curGame.fixedGuides.append((minion.position, "minion%d"%minion.ID))
+					curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID))
 				else:
 					curGame.fixedGuides.append((0, ''))
 			if minion:

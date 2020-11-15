@@ -542,7 +542,7 @@ class ElfTracker(SVMinion):
                     objs = curGame.minionsAlive(side)
                     if objs:
                         char = npchoice(objs)
-                        curGame.fixedGuides.append((char.position, f"minion{side}"))
+                        curGame.fixedGuides.append((char.position, "Minion%d"%side))
                     else:
                         curGame.fixedGuides.append((0, ''))
                 if char:

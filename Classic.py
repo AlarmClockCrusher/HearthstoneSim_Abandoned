@@ -1151,17 +1151,16 @@ class TinkmasterOverspark(Minion):
 			minion, newMinion = None, None
 			if curGame.guides:
 				i, where, newMinion = curGame.guides.pop(0)
-				if not where: minion = curGame.find(i, where)
+				if where: minion = curGame.find(i, where)
 			else:
 				minions = curGame.minionsonBoard(1) + curGame.minionsonBoard(2)
 				try: minions.remove(self)
 				except: pass
 				if minions:
-					minion = npchoice(minions)
-					i, where, newMinion = minion.position, "minion%d"%minion.ID, npchoice([Squirrel, Devilsaur])
-					curGame.fixedGuides.append((i, where, newMinion))
+					minion, newMinion = npchoice(minions), npchoice([Squirrel, Devilsaur])
+					curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID, newMinion))
 				else:
-					curGame.fixedGuides.append((0, '', 0))
+					curGame.fixedGuides.append((0, '', None))
 			if minion:
 				curGame.transform(minion, newMinion(curGame, minion.ID))
 		return None
@@ -3703,7 +3702,7 @@ class AvengingWrath(Spell):
 					objs = curGame.charsAlive(side)
 					if objs:
 						char = npchoice(objs)
-						curGame.fixedGuides.append((side, "hero") if char.type == "Hero" else (char.position, "minion%d"%side))
+						curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if char:
@@ -5280,7 +5279,7 @@ class Brawl(Spell):
 				minions = curGame.minionsonBoard(1) + curGame.minionsonBoard(2)
 				if len(minions) > 1:
 					survivor = npchoice(minions)
-					curGame.fixedGuides.append((survivor.position, "minion%d"%survivor.ID))
+					curGame.fixedGuides.append((survivor.position, "Minion%d"%survivor.ID))
 					curGame.killMinion(self, [minion for minion in minions if minion != survivor])
 				else:
 					curGame.fixedGuides.append((0, ""))

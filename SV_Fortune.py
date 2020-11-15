@@ -77,19 +77,18 @@ class SuddenShowers(SVSpell):
         curGame = self.Game
         if curGame.mode == 0:
             PRINT(curGame, "Sudden Showers destroys a random follower.")
-            if curGame.guides:
+            minion = None
+			if curGame.guides:
                 i, where = curGame.guides.pop(0)
-                if where:
-                    minion = curGame.find(i, where)
-                    curGame.killMinion(self, minion)
+                if where: minion = curGame.find(i, where)
             else:
                 minions = curGame.minionsAlive(1) + curGame.minionsAlive(2)
                 if len(minions) > 0:
                     minion = npchoice(minions)
-                    curGame.fixedGuides.append((minion.position, f"minion{minion.ID}"))
-                    curGame.killMinion(self, minion)
+                    curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID))
                 else:
                     curGame.fixedGuides.append((0, ""))
+			if minion: curGame.killMinion(self, minion)
         return None
 
 
@@ -1391,8 +1390,7 @@ class Trig_VIIOluonRunawayChariot(TrigBoard):
                         objs.remove(self.entity)
                         if objs:
                             char = npchoice(objs)
-                            curGame.fixedGuides.append(
-                                (char.ID, "hero") if char.type == "Hero" else (char.position, f"minion{char.ID}"))
+                            curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
                         else:
                             curGame.fixedGuides.append((0, ''))
                     if char:
@@ -2982,7 +2980,7 @@ class Trig_VIMilteoTheLovers(TrigBoard):
                     if self.entity in minions: minions.remove(self.entity)
                     if len(minions) > 0:
                         minion = npchoice(minions)
-                        curGame.fixedGuides.append((minion.position, f"minion{minion.ID}"))
+                        curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID))
                         curGame.killMinion(self.entity, minion)
                     else:
                         curGame.fixedGuides.append((0, ""))
