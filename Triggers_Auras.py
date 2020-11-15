@@ -42,7 +42,7 @@ class TrigBoard:
 		pass
 		
 	def rngPool(self, identifier):
-		pool = self.entity.Game.rngPool[identifier]
+		pool = self.entity.Game.RNGPools[identifier]
 		try: pool.remove(type(self.entity))
 		except: pass
 		return pool
