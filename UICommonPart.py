@@ -510,7 +510,7 @@ class GUI_Common:
 			btnTypeConfirm.wait_variable(var)
 			cardName = self.wish.get()
 			self.wish.delete(0, "end")
-			if cardName in self.rngPool["Basic and Classic Card Index"]:
+			if cardName in self.RNGPools["Basic and Classic Card Index"]:
 				card = self.rngPool["Basic and Classic Card Index"][cardName]
 				self.Game.fixedGuides.append(card)
 				self.Game.Hand_Deck.addCardtoHand(card, initiator.ID, "type")
