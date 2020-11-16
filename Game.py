@@ -272,7 +272,8 @@ class Game:
 				self.minionPlayed, spell = None, minion
 				spellHolder, origSpell = [spell], spell
 				self.sendSignal("SpellOKtoCast?", self.turn, spellHolder, None, mana, "")
-				if not spellHolder: self.Counters.numCardsPlayedThisTurn[self.turn] += 1
+				if not spellHolder:
+					self.Counters.numCardsPlayedThisTurn[self.turn] += 1
 				else:
 					if origSpell != spellHolder[0]: spellHolder[0].cast()
 					else:
@@ -1071,7 +1072,6 @@ class Game:
 			spellHolder, origSpell = [spell], spell
 			self.sendSignal("SpellOKtoCast?", self.turn, spellHolder, None, mana, "")
 			if not spellHolder:
-				print("Spell played is countered by Counterspell")
 				self.Counters.numCardsPlayedThisTurn[self.turn] += 1
 			else:
 				if origSpell != spellHolder[0]: spellHolder[0].cast()
