@@ -82,6 +82,7 @@ class Manas:
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
 
 	def gainEmptyManaCrystal(self, num, ID):
+		before = self.manasUpper[ID]
 		if self.manasUpper[ID] + num <= self.manas_UpperLimit[ID]:
 			self.manasUpper[ID] += num
 			self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
@@ -89,7 +90,7 @@ class Manas:
 		else: #只要获得的空水晶量高于目前缺少的空水晶量，即返回False
 			self.manasUpper[ID] = self.manas_UpperLimit[ID]
 			self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
-			return False
+			return before < self.manas_UpperLimit[ID]
 
 	def restoreManaCrystal(self, num, ID, restoreAll=False):
 		before = self.manas[ID]

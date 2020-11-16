@@ -2407,7 +2407,7 @@ class DestroyaRandomEnemyMinion(Deathrattle_Minion):
 				i = npchoice(minions).position if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
-				curGame.killMinion(self.entity, curGame.minions[3-self.entity.ID])
+				curGame.killMinion(self.entity, curGame.minions[3-self.entity.ID][i])
 				
 				
 class MassResurrection(Spell):
@@ -3631,7 +3631,8 @@ class BlastmasterBoom(Minion):
 		numSummon = min(8, 2 * numBombs)
 		PRINT(self.Game, "Blastmaster Boom's battlecry summons two 1/1 Boom Bots for each Bomb in opponent's deck.")
 		pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
-		self.Game.summon([BoomBot(self.Game, self.ID) for i in range(numSummon)], pos, self.ID)
+		if numSummon > 0:
+			self.Game.summon([BoomBot(self.Game, self.ID) for i in range(numSummon)], pos, self.ID)
 		return None
 		
 				

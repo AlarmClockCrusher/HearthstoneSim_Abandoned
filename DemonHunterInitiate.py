@@ -383,8 +383,7 @@ class RagingFelscreamer(Minion):
 		
 class YourNextDemonCosts2Less(TempManaEffect):
 	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.changeby, self.changeto = -2, -1
+		self.blank_init(Game, ID, -2, -1)
 		self.temporary = False #不会在回合结束后消失，直到那个恶魔被打出为止
 		self.auraAffected = []
 		

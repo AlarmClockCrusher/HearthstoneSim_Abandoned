@@ -902,7 +902,7 @@ class ManaAura:
 #TempManaEffects are supposed be single-usage and expires. But they can be modified to last longer, etc.
 class TempManaEffect:
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
-		self.blank_init(Game, ID, 0, -1)
+		self.blank_init(Game, ID, changeby, changeto)
 		
 	def blank_init(self, Game, ID, changeby, changeto):
 		self.Game, self.ID = Game, ID
@@ -949,7 +949,7 @@ class TempManaEffect:
 		self.Game.Manas.calcMana_All()
 		
 	def selfCopy(self, game):
-		return type(self)(game, self.ID, self.changeby, self.changeto)
+		return type(self)(game, self.ID)
 		
 	def createCopy(self, game): #The recipient is the Game that handles the Aura.
 		if self not in game.copiedObjs:
