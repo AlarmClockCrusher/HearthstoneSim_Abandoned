@@ -3170,7 +3170,6 @@ class Trig_Counterspell(SecretTrigger):
 		self.blank_init(entity, ["SpellOKtoCast?"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Test counterspell", ID != self.entity.ID and subject)
 		return ID != self.entity.ID and subject
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
