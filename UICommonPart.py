@@ -603,7 +603,7 @@ class GUI_Common:
 		ID, ownID = card.ID, self.ID if hasattr(self, "ID") else 1
 		if self.offBoardTrigs[ID]: self.offBoardTrigs[ID].remove()
 		#After erasing the old effect, show the new effect being resolved.
-		btn = HandButton(self, card, enemyCanSee=True)
+		btn = HandButton(self, card, enemyCanSee=seeEnemyHand)
 		pos = int(0.9*X), int(0.75*Y if ID == ownID else 0.25*Y)
 		btn.plot(pos[0], pos[1])
 		self.handZones[ID].btnsDrawn.remove(btn)

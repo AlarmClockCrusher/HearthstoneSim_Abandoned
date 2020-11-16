@@ -1070,7 +1070,9 @@ class Game:
 			#https://www.bilibili.com/video/av51236298?zw
 			spellHolder, origSpell = [spell], spell
 			self.sendSignal("SpellOKtoCast?", self.turn, spellHolder, None, mana, "")
-			if not spellHolder: self.Counters.numCardsPlayedThisTurn[self.turn] += 1
+			if not spellHolder:
+				print("Spell played is countered by Counterspell")
+				self.Counters.numCardsPlayedThisTurn[self.turn] += 1
 			else:
 				if origSpell != spellHolder[0]: spellHolder[0].cast()
 				else:

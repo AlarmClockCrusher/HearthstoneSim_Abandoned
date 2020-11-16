@@ -1613,6 +1613,7 @@ class Secret(Spell):
 			self.Game.GUI.wait(500)
 		self.whenEffective(None, "byOthers", choice=0, posinHand=-2)
 		# 使用后步骤，但是此时的扳机只会触发星界密使和风潮的状态移除，因为其他的使用后步骤都要求是玩家亲自打出。
+		if self.Game.GUI: self.Game.GUI.eraseOffBoardTrig(self.ID)
 		self.Game.sendSignal("SpellBeenCast", self.ID, self, None, 0, "byOthers")
 		
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
@@ -1625,6 +1626,7 @@ class Secret(Spell):
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		self.whenEffective(None, '', choice, posinHand)
 		# There is no need for another round of death resolution.
+		if self.Game.GUI: self.Game.GUI.eraseOffBoardTrig(self.ID)
 		self.Game.sendSignal("SpellBeenCast", self.ID, self, None, 0, "")
 
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1675,8 +1677,7 @@ class Quest(Spell):
 					if quest.name == self.name:  # Sidequests can coexist with other different quest and Sidequests
 						return False
 			else:  # If the subject is a main quest. Then there can only be only main quest
-				if self.Game.Secrets.mainQuests[
-					self.ID] != []:  # Sidequests can coexist with other different quest and sidequests
+				if self.Game.Secrets.mainQuests[self.ID] != []:  # Sidequests can coexist with other different quest and sidequests
 					return False
 			return True  # If the there are no same kind of quests in the way, return True
 		return False
@@ -1691,6 +1692,7 @@ class Quest(Spell):
 			self.Game.GUI.wait(500)
 		self.whenEffective(None, "byOthers", choice=0, posinHand=-2)
 		# 使用后步骤，但是此时的扳机只会触发星界密使和风潮的状态移除，因为其他的使用后步骤都要求是玩家亲自打出。
+		if self.Game.GUI: self.Game.GUI.eraseOffBoardTrig(self.ID)
 		self.Game.sendSignal("SpellBeenCast", self.ID, self, None, 0, "byOthers")
 
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
@@ -1703,6 +1705,7 @@ class Quest(Spell):
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		self.whenEffective(None, '', choice, posinHand)
 		# There is no need for another round of death resolution.
+		if self.Game.GUI: self.Game.GUI.eraseOffBoardTrig(self.ID)
 		self.Game.sendSignal("SpellBeenCast", self.ID, self, None, 0, "")
 		self.Game.Counters.hasPlayedQuestThisGame[self.ID] = True
 		
