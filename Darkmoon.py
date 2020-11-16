@@ -1035,7 +1035,7 @@ class YoggSaronMasterofFate(Minion):
 	index = "Darkmoon~Neutral~Minion~10~7~5~None~Yogg-Saron, Master of Fate~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you've cast 10 spells this game, spin the Wheel of Yogg-Saron"
 	def effectCanTrigger(self):
-		self.effectViable = sum("~Spell~" in index for index in self.Game.Counters.cardsPlayedThisGame[self.ID]) > 1
+		self.effectViable = sum("~Spell~" in index for index in self.Game.Counters.cardsPlayedThisGame[self.ID]) > 10
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -1043,7 +1043,7 @@ class YoggSaronMasterofFate(Minion):
 			if curGame.guides:
 				wheel = curGame.guides.pop(0)
 			else:
-				if sum("~Spell~" in index for index in curGame.Counters.cardsPlayedThisGame[self.ID]) > 1:
+				if sum("~Spell~" in index for index in curGame.Counters.cardsPlayedThisGame[self.ID]) > 10:
 					#CurseofFlesh "Fill the board with random minions, then give your Rush"
 					#DevouringHunger "Destroy all other minions. Gain their Attack and Health"
 					#HandofFate "Fill your hand with random spells. They cost (0) this turn"
