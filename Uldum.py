@@ -333,15 +333,8 @@ class ZephrystheGreat(Minion):
 	poolIdentifier = "Basic and Classic Cards"
 	@classmethod
 	def generatePool(cls, Game):
-		basicandClassicCards, basicandClassicNameObjs = [], {}
-		basicandClassicClassCards = {s: [] for s in Game.ClassesandNeutral}
-		classes = ["Basic and Classic %s Cards"%Class for Class in Game.ClassesandNeutral]
-		for key, value in Game.cardPool.items():
-			if (key.startswith("Basic") or key.startswith("Classic")) and "~Uncollectible" not in key:
-				basicandClassicCards.append(value)
-				basicandClassicNameObjs[value.name] = value
-				basicandClassicClassCards[key.split('~')[1]].append(value)
-		return ["Basic and Classic Cards", "Basic and Classic Card Index"]+classes, [basicandClassicCards, basicandClassicNameObjs]+list(basicandClassicClassCards.values())
+		basicandClassicCards = [value for key, value in Game.cardPool.items() if (key.startswith("Basic") or key.startswith("Classic")) and "~Uncollectible" not in key]
+		return "Basic and Classic Cards", basicandClassicCards
 		
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Hand_Deck.noDuplicatesinDeck(self.ID)

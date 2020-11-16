@@ -474,8 +474,8 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 
 
-Default1 = [PenFlinger, PenFlinger, PenFlinger, PenFlinger, Frostbolt, ArcaneShot, RapidFire
+Default1 = [ForbiddenWords, PenFlinger, Frostbolt, ArcaneShot, RapidFire, HeadmasterKelThuzad, ZephrystheGreat, ZephrystheGreat
 			]
 
-Default2 = [PenFlinger, PenFlinger, PenFlinger, PenFlinger, Frostbolt, ArcaneShot, RapidFire
+Default2 = [ForbiddenWords, PenFlinger, Frostbolt, ArcaneShot, RapidFire, HeadmasterKelThuzad, ZephrystheGreat, ZephrystheGreat
 			]

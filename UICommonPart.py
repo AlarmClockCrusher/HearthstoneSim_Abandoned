@@ -510,33 +510,37 @@ class GUI_Common:
 			btnTypeConfirm.wait_variable(var)
 			cardName = self.wish.get()
 			self.wish.delete(0, "end")
-			if cardName in self.Game.RNGPools["Basic and Classic Card Index"]:
-				card = self.Game.RNGPools["Basic and Classic Card Index"][cardName]
-				self.Game.fixedGuides.append(card)
-				self.Game.Hand_Deck.addCardtoHand(card, initiator.ID, "type")
+			nameinList = False
+			for card in self.Game.RNGPools["Basic and Classic Cards"]:
+				if card.name == cardName:
+					nameinList = True
+					self.Game.fixedGuides.append(card)
+					self.Game.Hand_Deck.addCardtoHand(card, initiator.ID, "type")
+					break
+			if nameinList:
 				break
-			else:
-				self.printInfo("Input has NO match with a Basic or Classic card. Do you want to see card names in a certain class?")
-				self.printInfo("y/n to show class card names or search by name: ")
+			self.printInfo("Input has NO match with a Basic or Classic card. Do you want to see card names in a certain class?")
+			self.printInfo("y/n to show class card names or search by name: ")
+			var = tk.IntVar()
+			btnTypeConfirm.wait_variable(var)
+			searchinIndex = self.wish.get()
+			self.wish.delete(0, "end")
+			if searchinIndex == 'y' or searchinIndex == 'Y' or searchinIndex == 'Yes' or searchinIndex == 'yes':
+				self.printInfo("Class: Demon Hunter, Druid, Hunter, Mage, Monk, Paladin, Priest, Rogue, Shaman, Warlock, Warrior\n")
 				var = tk.IntVar()
 				btnTypeConfirm.wait_variable(var)
-				searchinIndex = self.wish.get()
+				className = self.wish.get()
 				self.wish.delete(0, "end")
-				if searchinIndex == 'y' or searchinIndex == 'Y' or searchinIndex == 'Yes' or searchinIndex == 'yes':
-					self.printInfo("Class: Demon Hunter, Druid, Hunter, Mage, Monk, Paladin, Priest, Rogue, Shaman, Warlock, Warrior\n")
-					var = tk.IntVar()
-					btnTypeConfirm.wait_variable(var)
-					className = self.wish.get()
-					self.wish.delete(0, "end")
-					if className not in ["Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior", "Neutral"]:
-						self.printInfo("Class input wrong. Returning to search by name")
-					else:
-						self.printInfo("Showing %s cards"%className)
-						for value in self.Game.RNGPools["Basic and Classic %s Cards"%className]:
-							self.printInfo("{}:   Mana {},  Description {}".format(value.name, value.mana, value.description))
-						self.printInfo("Returning to search by card name")
+				if className not in ["Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior", "Neutral"]:
+					self.printInfo("Class input wrong. Returning to search by name")
 				else:
+					self.printInfo("Showing %s cards"%className)
+					for card in self.Game.RNGPools["Basic and Classic Cards"]:
+						if card.Class == className:
+							self.printInfo("{}:  Mana {},  Description {}".format(card.name, card.mana, card.description))
 					self.printInfo("Returning to search by card name")
+			else:
+				self.printInfo("Returning to search by card name")
 		btnTypeConfirm.destroy()
 		self.wish.unbind("<Return>")
 		self.lbl_wish.forget()

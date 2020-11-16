@@ -190,7 +190,7 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 			if hasattr(card, "poolIdentifier"):
 				identifier, pool = card.generatePool(Game)
 				#发现职业法术一定会生成一个职业列表，不会因为生成某个特定职业法术的牌而被跳过
-				if isinstance(identifier, list): #单identifier
+				if isinstance(identifier, list):
 					for key, value in zip(identifier, pool):
 						RNGPools[key] = value
 				else: RNGPools[identifier] = pool
