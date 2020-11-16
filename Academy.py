@@ -781,7 +781,7 @@ class Trig_HeadmasterKelThuzad(TrigBoard):
 			PRINT(minion.Game, "After player casts a spell, Headmaster Kel'Thuzad summons all minions killed by it.")
 			if self.minionsKilled:
 				minion.Game.summon([minionKilled(minion.Game, minion.ID) for minionKilled in self.minionsKilled], (minion.position, "totheRight"), minion.ID)
-			
+				
 	def createCopy(self, game):
 		if self not in game.copiedObjs: #这个扳机没有被复制过
 			entityCopy = self.entity.createCopy(game)

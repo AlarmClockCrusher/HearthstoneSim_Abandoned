@@ -778,11 +778,10 @@ class Minion(Card):
 	# 随从不能因为有多次攻击机会而自行解冻。只能等回合结束。
 	def turnEnds(self, ID):
 		# 直到回合结束的对攻击力改变效果不论是否是该随从的当前回合，都会消失
-		size = len(self.tempAttChanges)
-		for i in range(size):
-			if self.tempAttChanges[size - 1 - i][1] == "EndofTurn":
-				self.statChange(-self.tempAttChanges[size - 1 - i][0], 0)
-				self.tempAttChanges.pop(size - 1 - i)
+		for i in reversed(range(len(self.tempAttChanges))):
+			if self.tempAttChanges[i][1] == "EndofTurn":
+				self.statChange(-self.tempAttChanges[i][0], 0)
+				self.tempAttChanges.pop(i)
 		if ID == self.ID:
 			self.status["Immune"] = 0
 			# The minion can only thaw itself at the end of its turn. Not during or outside its turn

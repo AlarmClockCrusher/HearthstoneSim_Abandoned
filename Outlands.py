@@ -94,8 +94,8 @@ class Trig_ImprisonedDormantForm(TrigBoard):
 			PRINT(self.entity.Game, "%s awakens and triggers its effect"%self.entity.name)
 			#假设唤醒的Imprisoned Vanilla可以携带buff
 			self.entity.Game.transform(self.entity, self.entity.prisoner, firstTime=False)
-			if hasattr(prisoner, "awakenEffect"):
-				prisoner.awakenEffect()
+			if hasattr(self.entity.prisoner, "awakenEffect"):
+				self.entity.prisoner.awakenEffect()
 				
 """Mana 1 cards"""
 class EtherealAugmerchant(Minion):
