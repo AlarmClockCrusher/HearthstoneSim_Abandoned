@@ -1809,7 +1809,7 @@ class TortollanPilgrim(Minion):
 							spell = npchoice(spells)
 							curGame.fixedGuides.append(spell)
 							PRINT(curGame, "Tortollan Pilgrim casts a copy of a random spell in player's deck: %s"%copy.name)
-							spell.selfCopy(curGame, self.ID).cast()
+							spell.selfCopy(self.ID).cast()
 						else:
 							Copies = npchoice(spells, min(3, len(spells)), replace=False)
 							curGame.options = [Copy.selfCopy(self.ID) for Copy in Copies]
@@ -1821,7 +1821,7 @@ class TortollanPilgrim(Minion):
 	def discoverDecided(self, option, info):
 		self.Game.fixedGuides.append(type(option))
 		PRINT(self.Game, "Copy of spell %s is cast"%option.name)
-		option.selfCopy(self.Game, self.ID).cast()
+		option.selfCopy(self.ID).cast()
 		
 		
 class RenotheRelicologist(Minion):
