@@ -1111,8 +1111,8 @@ class TurnEndButton(tk.Button):
 	def respond(self, event):
 		GUI = self.GUI
 		if GUI.UI < 3 and GUI.UI > -1:
+			GUI.resolveMove(None, self, "TurnEnds")
 			if not hasattr(GUI, "ID"): #For 1P GUI
-				GUI.resolveMove(None, self, "TurnEnds")
 				if ReplayMovesThisTurn:
 					s = pickleObj2Str(GUI.Game.moves)+"||"+pickleObj2Str(GUI.Game.fixedGuides)
 					#GUI.Game.moves, GUI.Game.fixedGuides, GUI.Game.guides = [], [], []
@@ -1137,8 +1137,7 @@ class TurnEndButton(tk.Button):
 					GUI.Game.evolvewithGuide(moves, gameGuides)
 					GUI.gameBackup = GUI.Game.copyGame()[0]
 				GUI.update()
-			else:
-				GUI.resolveMove(None, self, "TurnEnds")
+			elif not hasattr(GUI, "sock"): #双人无服务器版本
 				game = GUI.Game
 				moves, gameGuides = game.moves, game.fixedGuides
 				s = pickleObj2Str(moves)+"||"+pickleObj2Str(gameGuides)
@@ -1151,6 +1150,16 @@ class TurnEndButton(tk.Button):
 					GUI.printInfo(move)
 				game.moves, game.fixedGuides, game.guides = [], [], []
 				GUI.btnGenInfo.config(bg="grey")
+			else: #双人服务器版本
+				GUI.resolveMove(None, self, "TurnEnds")
+				game = GUI.Game
+				moves, gameGuides = game.moves, game.fixedGuides
+				s = pickleObj2Str(moves)+"||"+pickleObj2Str(gameGuides)
+				for move in moves:
+					GUI.printInfo(move)
+				game.moves, game.fixedGuides, game.guides = [], [], []
+				GUI.conn.sendall(s)
+				GUI.wait4EnemyMovefromServer()
 				
 	def plot(self, x, y):
 		self.place(x=x, y=y, anchor="c")

@@ -150,7 +150,7 @@ class GUI_Common:
 				
 			if not hasattr(self, "ID"): TurnEndButton(self).plot(x=int(0.95*X), y=int(0.58*Y) if self.Game.turn == 1 else int(0.42*Y))
 			elif self.ID == self.Game.turn: TurnEndButton(self).plot(x=int(0.95*X), y=int(0.5*Y))
-					
+			
 		if self.Game.gameEnds > 0:
 			gameEndMsg = {1: "Player 2 Wins", 2: "Player 1 Wins", 3: "Both Players Died"}[self.Game.gameEnds]
 			self.UI = -1
@@ -182,6 +182,8 @@ class GUI_Common:
 				self.subject, self.target = None, None
 				game.switchTurn()
 				self.update()
+				if hasattr(self, "sock"):
+					self.startWaitingforEnemyMoves()
 			elif entity.ID != game.turn or (hasattr(self, "ID") and entity.ID != self.ID):
 				self.printInfo("You can only select your own characters as subject.")
 				self.cancelSelection()
@@ -237,6 +239,8 @@ class GUI_Common:
 						subject.use(None) #Whether the Hero Power is used or not is handled in the use method.
 						self.subject, self.target, self.UI = None, None, 0
 						self.update()
+						if hasattr(self, "sock"):
+							self.sendOwnMovethruServer()
 				#不能攻击的随从不能被选择。
 				elif selectedSubject.endswith("onBoard"):
 					if not entity.canAttack(): self.cancelSelection()
@@ -257,6 +261,8 @@ class GUI_Common:
 				self.subject, self.target = None, None
 				game.switchTurn()
 				self.update()
+				if hasattr(self, "sock"):
+					self.sendOwnMovethruServer()
 			else:
 				self.printInfo("You must click an available option to continue.")
 				
@@ -270,6 +276,8 @@ class GUI_Common:
 				self.subject, self.target = None, None
 				game.switchTurn()
 				self.update()
+				if hasattr(self, "sock"):
+					self.startWaitingforEnemyMoves()
 			elif selectedSubject.endswith("inHand"): #影之诗的目标选择不会在这个阶段进行
 				self.cancelSelection()
 			elif self.selectedSubject.endswith("onBoard"):
@@ -283,6 +291,8 @@ class GUI_Common:
 					game.battle(subject, target)
 					self.subject, self.target, self.UI = None, None, 0
 					self.update()
+					if hasattr(self, "sock"):
+						self.sendOwnMovethruServer()
 			#手中选中的随从在这里结算打出位置，如果不需要目标，则直接打出。
 			elif self.selectedSubject == "MinioninHand" or self.selectedSubject == "AmuletinHand": #选中场上的友方随从，我休眠物和护符时会把随从打出在其左侧
 				if selectedSubject == "Board" or (entity.ID == self.subject.ID and (selectedSubject.endswith("onBoard") and not selectedSubject.startswith("Hero"))):
@@ -299,6 +309,8 @@ class GUI_Common:
 						game.playMinion(subject, None, position, choice)
 						self.subject, self.target, self.UI = None, None, 0
 						self.update()
+						if hasattr(self, "sock"):
+							self.sendOwnMovethruServer()
 					else:
 						#self.printInfo("The minion requires target to play. needTarget() returns {}".format(self.subject.needTarget(self.choice)))
 						button.configure(bg="purple")
@@ -317,6 +329,8 @@ class GUI_Common:
 					game.playMinion(subject, entity, position, choice)
 					self.subject, self.target, self.UI = None, None, 0
 					self.update()
+					if hasattr(self, "sock"):
+						self.sendOwnMovethruServer()
 				else:
 					self.printInfo("Not a valid selection. All selections canceled.")
 			#选中的法术已经确定抉择选项（如果有），下面决定目标选择。
@@ -330,6 +344,8 @@ class GUI_Common:
 						game.playSpell(subject, target, choice)
 						self.subject, self.target, self.UI = None, None, 0
 						self.update()
+						if hasattr(self, "sock"):
+							self.sendOwnMovethruServer()
 				else: #法术或者法术抉择选项需要指定目标。
 					if selectedSubject == "MiniononBoard" or selectedSubject == "HeroonBoard":
 						self.printInfo("Requesting to play spell {} with target {}. The choice is {}".format(self.subject.name, entity, self.choice))
@@ -339,6 +355,8 @@ class GUI_Common:
 						game.playSpell(subject, target, choice)
 						self.subject, self.target, self.UI = None, None, 0
 						self.update()
+						if hasattr(self, "sock"):
+							self.sendOwnMovethruServer()
 					else: self.printInfo("Targeting spell must be cast on Hero or Minion on board.")
 			#选择手牌中的武器的打出目标
 			elif self.selectedSubject == "WeaponinHand":
@@ -351,6 +369,8 @@ class GUI_Common:
 						game.playWeapon(subject, None)
 						self.subject, self.target, self.UI = None, None, 0
 						self.update()
+						if hasattr(self, "sock"):
+							self.sendOwnMovethruServer()
 				else:
 					if selectedSubject == "MiniononBoard" or selectedSubject == "HeroonBoard":
 						subject, target = self.subject, entity
@@ -360,6 +380,8 @@ class GUI_Common:
 						game.playWeapon(subject, target)
 						self.subject, self.target, self.UI = None, None, 0
 						self.update()
+						if hasattr(self, "sock"):
+							self.sendOwnMovethruServer()
 					else: self.printInfo("Targeting weapon must be played with a target.")
 			#手牌中的英雄牌是没有目标的
 			elif self.selectedSubject == "HeroinHand":
@@ -371,6 +393,8 @@ class GUI_Common:
 					game.playHero(subject)
 					self.subject, self.target, self.UI = None, None, 0
 					self.update()
+					if hasattr(self, "sock"):
+						self.sendOwnMovethruServer()
 			#Select the target for a Hero Power.
 			#在此选择的一定是指向性的英雄技能。
 			elif self.selectedSubject == "Power": #如果需要指向的英雄技能对None使用，HeroPower的合法性检测会阻止使用。
@@ -382,6 +406,8 @@ class GUI_Common:
 					subject.use(entity)
 					self.subject, self.target, self.UI = None, None, 0
 					self.update()
+					if hasattr(self, "sock"):
+						self.sendOwnMovethruServer()
 				else: self.printInfo("Targeting hero power must be used with a target.")
 		else: #self.UI == 3
 			if selectedSubject == "DiscoverOption":
@@ -407,9 +433,13 @@ class GUI_Common:
 					"Power": lambda : subject.use(target, choice),
 					}[subject.type]()
 					self.update()
+					if hasattr(self, "sock"):
+						self.sendOwnMovethruServer()
 			elif selectedSubject == "Fusion":
 				self.UI = 0
 				self.update()
+				if hasattr(self, "sock"):
+					self.sendOwnMovethruServer()
 				game.Discover.initiator.fusionDecided(entity)
 			else:
 				self.printInfo("You MUST click a correct object to continue.")
