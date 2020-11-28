@@ -151,7 +151,7 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 	Game.basicPowers = BasicPowers
 	Game.upgradedPowers = UpgradedPowers
 	
-	print("SV cards included in card pool:", "SV_Basic~Runecraft~4~3~3~Minion~None~Vesper, Witchhunter~Accelerate~Fanfare" in Game.cardPool)
+	#print("SV cards included in card pool:", "SV_Basic~Runecraft~4~3~3~Minion~None~Vesper, Witchhunter~Accelerate~Fanfare" in Game.cardPool)
 	#cardPool本身需要保留各种祈求牌
 	Game.MinionswithRace = {"Beast": {}, "Demon": {}, "Dragon": {}, "Elemental":{},
 							"Murloc": {}, "Mech": {}, "Pirate":{}, "Totem": {}}
@@ -203,7 +203,7 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 					RNGPools[key] = value
 			else: RNGPools[identifier] = pool
 			
-		print(info)
+		#print(info)
 		out_file.write(info)
 		
 		#把BasicPowers, UpgradedPowers, Classes, ClassesandNeutral, ClassDict写入python里面

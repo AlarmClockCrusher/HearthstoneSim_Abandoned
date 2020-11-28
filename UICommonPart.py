@@ -183,7 +183,8 @@ class GUI_Common:
 				game.switchTurn()
 				self.update()
 				if hasattr(self, "sock"):
-					self.startWaitingforEnemyMoves()
+					print("Turn ends . Send the info to server")
+					self.sendEndTurnthruServer()
 			elif entity.ID != game.turn or (hasattr(self, "ID") and entity.ID != self.ID):
 				self.printInfo("You can only select your own characters as subject.")
 				self.cancelSelection()
@@ -262,7 +263,8 @@ class GUI_Common:
 				game.switchTurn()
 				self.update()
 				if hasattr(self, "sock"):
-					self.sendOwnMovethruServer()
+					print("Turn ends . Send the info to server")
+					self.sendEndTurnthruServer()
 			else:
 				self.printInfo("You must click an available option to continue.")
 				
@@ -277,7 +279,8 @@ class GUI_Common:
 				game.switchTurn()
 				self.update()
 				if hasattr(self, "sock"):
-					self.startWaitingforEnemyMoves()
+					print("Turn ends . Send the info to server")
+					self.sendEndTurnthruServer()
 			elif selectedSubject.endswith("inHand"): #影之诗的目标选择不会在这个阶段进行
 				self.cancelSelection()
 			elif self.selectedSubject.endswith("onBoard"):

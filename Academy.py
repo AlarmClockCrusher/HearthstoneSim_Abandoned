@@ -1101,6 +1101,7 @@ class TrueaimCrescent(Weapon):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_TrueaimCrescent(self)]
 		
+#即使是被冰冻的随从也可以因为这个效果进行攻击，同时攻击不浪费攻击机会，同时可以触发巨型沙虫等随从的获得额外的攻击机会
 class Trig_TrueaimCrescent(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion"])

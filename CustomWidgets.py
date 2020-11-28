@@ -67,6 +67,12 @@ def unpickleStr2Obj(s):
 	obj = pickle.loads(bytes(s.encode()))
 	return obj
 	
+def pickleObj2Bytes(obj):
+	return pickle.dumps(obj, 0)
+	
+def unpickleBytes2Obj(s):
+	return pickle.loads(s)
+	
 def fixedList(listObj):
 	return listObj[0:len(listObj)]
 	
@@ -1150,16 +1156,6 @@ class TurnEndButton(tk.Button):
 					GUI.printInfo(move)
 				game.moves, game.fixedGuides, game.guides = [], [], []
 				GUI.btnGenInfo.config(bg="grey")
-			else: #双人服务器版本
-				GUI.resolveMove(None, self, "TurnEnds")
-				game = GUI.Game
-				moves, gameGuides = game.moves, game.fixedGuides
-				s = pickleObj2Str(moves)+"||"+pickleObj2Str(gameGuides)
-				for move in moves:
-					GUI.printInfo(move)
-				game.moves, game.fixedGuides, game.guides = [], [], []
-				GUI.conn.sendall(s)
-				GUI.wait4EnemyMovefromServer()
 				
 	def plot(self, x, y):
 		self.place(x=x, y=y, anchor="c")

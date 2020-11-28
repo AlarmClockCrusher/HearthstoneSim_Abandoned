@@ -11,6 +11,7 @@ bitsadmin /transfer job /download /priority normal https://raw.githubusercontent
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/UICommonPart.py %cd%\UICommonPart.py
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/GUI.py %cd%\GUI.py
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/2PGUI.py %cd%\2PGUI.py
+bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/ClientGUI.py %cd%\ClientGUI.py
 
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Basic.py %cd%\Basic.py
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Classic.py %cd%\Classic.py

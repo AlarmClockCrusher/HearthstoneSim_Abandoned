@@ -993,6 +993,7 @@ class Mysterybox(Spell):
 				spell.cast()
 				curGame.gathertheDead(decideWinner=True)
 				
+#每次释放炎爆之后会进行设计胜负判定的死亡结算
 class RodofRoasting(Spell):
 	Class, name = "Neutral", "Rod of Roasting"
 	requireTarget, mana = False, 0
@@ -1011,7 +1012,8 @@ class RodofRoasting(Spell):
 			curGame.GUI.subject = self
 			curGame.GUI.target = target
 			curGame.GUI.wait(750)
-		while True:
+		i = 0
+		while i < 100:
 			minions = curGame.minionsAlive(1) + curGame.minionsAlive(2)
 			heroes = [hero for hero in curGame.heroes.values() if hero.health > 0 and not hero.dead]
 			#Stop if not both players are alive, or (players are alive but there are no living minions and players are immune)
@@ -1027,6 +1029,9 @@ class RodofRoasting(Spell):
 						char = npchoice(minions+heroes)
 						curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
 				Pyroblast(curGame, self.ID).cast(target=char, comment="", preferedTarget=None)
+				curGame.gathertheDead(decideWinner=True)
+			i += 1
+		curGame.heroes[3-self.ID].dead = True #假设在100次循环后如果还没有人死亡的话，则直接杀死对方英雄
 		return None
 		
 class YoggSaronMasterofFate(Minion):
@@ -2048,6 +2053,7 @@ class Trig_TramplingRhino(TrigBoard):
 		self.entity.dealsDamage(self.entity.Game.heroes[3-self.entity.ID], excessDmg)
 		
 #Even minions with "Can't attack heroes" still attack hero under her command
+#The battlecry alone will not kill the minion summoned. 
 class MaximaBlastenheimer(Minion):
 	Class, race, name = "Hunter", "", "Maxima Blastenheimer"
 	mana, attack, health = 6, 4, 4
