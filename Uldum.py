@@ -1373,18 +1373,18 @@ class Trig_UnsealtheVault(QuestTrigger):
 		self.counter += 1
 		PRINT(self.entity.Game, "After player summons minion %s, Quest Unseal the Vault progresses by 1. Current progress: %d"%(subject.name, self.counter))
 		if self.counter > 19:
-			PRINT(self.entity.Game, "Player summons the 20th minion and gains Reward: Ramkahen Roar.")
+			PRINT(self.entity.Game, "Player summons the 20th minion and gains Reward: Pharaoh's Warmask.")
 			self.disconnect()
 			try: self.entity.Game.Secrets.mainQuests[self.entity.ID].remove(self.entity)
 			except: pass
-			RamkahenRoar(self.entity.Game, self.entity.ID).replaceHeroPower()
+			PharaohsWarmask(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
-class RamkahenRoar(HeroPower):
-	mana, name, requireTarget = 2, "Ramkahen Roar", False
-	index = "Hunter~Hero Power~2~Ramkahen Roar"
+class PharaohsWarmask(HeroPower):
+	mana, name, requireTarget = 2, "Pharaoh's Warmask", False
+	index = "Hunter~Hero Power~2~Pharaoh's Warmask"
 	description = "Give your minions +2 Attack"
 	def effect(self, target=None, choice=0):
-		PRINT(self.Game, "Hero Power Ramkahen Roar gives all friendly minions +2 Attack")
+		PRINT(self.Game, "Hero Power Pharaoh's Warmask gives all friendly minions +2 Attack")
 		for minion in fixedList(self.Game.minionsonBoard(self.ID)):
 			minion.buffDebuff(2, 0)
 		return 0
@@ -1788,7 +1788,7 @@ class TortollanPilgrim(Minion):
 	Class, race, name = "Mage", "", "Tortollan Pilgrim"
 	mana, attack, health = 8, 5, 5
 	index = "Uldum~Mage~Minion~8~5~5~None~Tortollan Pilgrim~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Discover a Copy of a spell in your deck and cast it with random targets"
+	requireTarget, keyWord, description = False, "", "Battlecry: Discover a spell in your deck and cast it with random targets"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -1801,19 +1801,19 @@ class TortollanPilgrim(Minion):
 				else:
 					spells, types = [], []
 					for card in curGame.Hand_Deck.decks[self.ID]:
-						if card.type == "Spell" and type(card) not in types:
-							spells.append(card)
-							types.append(type(card))
-					if spells:
-						if "byOthers" in comment:
-							spell = npchoice(spells)
-							curGame.fixedGuides.append(spell)
-							PRINT(curGame, "Tortollan Pilgrim casts a copy of a random spell in player's deck: %s"%copy.name)
-							spell.selfCopy(self.ID).cast()
-						else:
-							Copies = npchoice(spells, min(3, len(spells)), replace=False)
-							curGame.options = [Copy.selfCopy(self.ID) for Copy in Copies]
-							PRINT(curGame, "Tortollan Pilgrim's battlecry lets player Discover a copy of a spell in player's deck and cast it")
+			#			if card.type == "Spell" and type(card) not in types:
+			#				spells.append(card)
+			#				types.append(type(card))
+			#		if spells:
+			#			if "byOthers" in comment:
+			#				spell = npchoice(spells)
+			#				curGame.fixedGuides.append(spell)
+			#				PRINT(curGame, "Tortollan Pilgrim casts a copy of a random spell in player's deck: %s"%copy.name)
+			#				spell.selfCopy(self.ID).cast()
+			#			else:
+			#				Copies = npchoice(spells, min(3, len(spells)), replace=False)
+			#				curGame.options = [Copy.selfCopy(self.ID) for Copy in Copies]
+			#				PRINT(curGame, "Tortollan Pilgrim's battlecry lets player Discover a copy of a spell in player's deck and cast it")
 							curGame.Discover.startDiscover(self)
 					else: curGame.fixedGuides.append(None)
 		return None

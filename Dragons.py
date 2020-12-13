@@ -3112,7 +3112,7 @@ class PraiseGalakrond(Spell):
 		if target:
 			PRINT(self.Game, "Praise Galakrond! is cast and gives minion %s +1 Attack"%target.name)
 			target.buffDebuff(1, 0)
-		PRINT(self.Game, "Praise Galakrond! Frost Invokes Galakrond")
+		PRINT(self.Game, "Praise Galakrond! Invokes Galakrond")
 		invokeGalakrond(self.Game, self.ID)
 		return target
 		

@@ -4291,7 +4291,7 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Rogue~Spell~2~Swindle~Combo": Swindle,
 					"Darkmoon~Rogue~Minion~2~3~2~None~Tenwu of the Red Smoke~Battlecry~Legendary": TenwuoftheRedSmoke,
 					"Darkmoon~Rogue~Spell~3~Cloak of Shadows": CloakofShadows,
-					"Darkmoon~Rogue~Minion~3~4~3~None~Ticket Master~Battlecry": TicketMaster,
+					"Darkmoon~Rogue~Minion~3~4~3~None~Ticket Master~Deathrattle": TicketMaster,
 					"Darkmoon~Rogue~Spell~3~Tickets~Casts When Drawn~Uncollectible": Tickets,
 					"Darkmoon~Rogue~Minion~3~3~3~None~Plush Bear~Uncollectible": PlushBear,
 					"Darkmoon~Rogue~Spell~5~Malevolent Strike": MalevolentStrike,
