@@ -40,7 +40,7 @@ class Game:
 		self.mainPlayerID = np.random.randint(2) + 1
 		self.GUI = GUI
 
-	def initialize(self, cardPool, MinionsofCost, RNGPools, hero1=None, hero2=None, deck1=[], deck2=[]):
+	def initialize(self, cardPool, ClassCards, NeutralCards, MinionsofCost, RNGPools, hero1=None, hero2=None, deck1=[], deck2=[]):
 		self.heroes = {1:(Illidan if hero1 is None else hero1)(self, 1), 2:(Anduin if hero2 is None else hero2)(self, 2)}
 		self.powers = {1:self.heroes[1].heroPower, 2:self.heroes[2].heroPower}
 		self.heroes[1].onBoard, self.heroes[2].onBoard = True, True
@@ -62,7 +62,8 @@ class Game:
 		self.auras = [] #用于一些永久光环，如砰砰博士的机械获得突袭。
 		#登记了的扳机，这些扳机的触发依次遵循主玩家的场上、手牌和牌库。然后是副玩家的场上、手牌和牌库。
 		self.trigsBoard, self.trigsHand, self.trigsDeck = {1:{}, 2:{}}, {1:{}, 2:{}}, {1:{}, 2:{}}
-		self.cardPool, self.MinionsofCost, self.RNGPools = cardPool, MinionsofCost, RNGPools
+		self.cardPool, self.ClassCards, self.NeutralCards = cardPool, ClassCards, NeutralCards
+		self.MinionsofCost, self.RNGPools = MinionsofCost, RNGPools
 		from Hand import Hand_Deck
 		self.Hand_Deck = Hand_Deck(self, deck1, deck2)
 		self.Hand_Deck.initialize()
@@ -1221,7 +1222,8 @@ class Game:
 		for Copy in copies:
 			Copy.copiedObjs = {}
 			Copy.mainPlayerID, Copy.GUI = self.mainPlayerID, self.GUI
-			Copy.cardPool, Copy.MinionsofCost, Copy.RNGPools = self.cardPool, self.MinionsofCost, self.RNGPools
+			Copy.cardPool, Copy.ClassCards, Copy.NeutralCards = self.cardPool, self.ClassCards, self.NeutralCards
+			Copy.MinionsofCost, Copy.RNGPools = self.MinionsofCost, self.RNGPools
 			#t1 = datetime.now()
 			Copy.heroes = {1: self.heroes[1].createCopy(Copy), 2: self.heroes[2].createCopy(Copy)}
 			Copy.powers = {1: self.powers[1].createCopy(Copy), 2: self.powers[2].createCopy(Copy)}

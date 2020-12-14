@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 from CustomWidgets import *
-from UICommonPart import GUI_Common
+from UICommonPart import *
 from Game import *
 from Code2CardList import *
 from GenerateRNGPools import *
@@ -15,10 +15,11 @@ import threading
 import pickle
 import types
 
-	
+CHN = True
+
 class MulliganFinishButton_3(tk.Button):
 	def __init__(self, GUI):
-		tk.Button.__init__(self, master=GUI.GamePanel, text="Replace Card", bg="green3", width=13, height=3, font=("Yahei", 12, "bold"))
+		tk.Button.__init__(self, master=GUI.GamePanel, text=txt("Replace Card", CHN), bg="green3", width=13, height=3, font=("Yahei", 12, "bold"))
 		self.GUI = GUI
 		self.configure(command=self.respond)
 		
@@ -35,7 +36,7 @@ class MulliganFinishButton_3(tk.Button):
 			data = GUI.sock.recv(1024)
 			if data:
 				if data.startswith(b"Wait for Opponent's Mulligan"): #把自己完成的手牌和牌库会给对方
-					messagebox.showinfo(message="Wait for opponent to finish mulligan")
+					messagebox.showinfo(message=txt("Wait for opponent to finish mulligan", CHN))
 				elif data.startswith(b"P1 Initiates Game"):
 					action, handsAndDecks = data.split(b"||")
 					game = GUI.Game
@@ -62,7 +63,7 @@ class MulliganFinishButton_3(tk.Button):
 					game.Hand_Deck.startGame()
 					break
 				elif data.startswith(b"Opponent Disconnected"):
-					messagebox.showinfo(message="Opponent disconnected. Closing")
+					messagebox.showinfo(message=txt("Opponent disconnected. Closing", CHN))
 					self.GUI.window.destroy()
 		if GUI.ID == 2:
 			print("Start waiting for the opponent to make moves")
@@ -77,20 +78,21 @@ class MulliganFinishButton_3(tk.Button):
 		
 class Button_Connect2Server(tk.Button):
 	def __init__(self, GUI):
-		tk.Button.__init__(self, master=GUI.initConnPanel, bg="green3", text="Connect", font=("Yahei", 15), width=20)
+		tk.Button.__init__(self, master=GUI.initConnPanel, bg="green3", text=txt("Connect", CHN), font=("Yahei", 15), width=20)
 		self.GUI = GUI
 		self.bind("<Button-1>", self.leftClick)
 		
 	def leftClick(self, event): #在这时检测所带的卡组是不正确
-		deckCorrect, deck, hero = self.GUI.decideDeckandClass()
+		deckCorrect, deck, hero = parseDeckCode(self.ownDeck.get(), ClassDict[self.hero.get()], ClassDict)
+		self.GUI.decideDeckandClass()
 		if deckCorrect: #卡组正确时可以尝试连接服务器
 			self.GUI.initConntoServer(hero, deck)
 		else:
-			messagebox.showinfo(message="Deck code is wrong. Check before retry")
+			messagebox.showinfo(message=txt("Deck code is wrong. Check before retry", CHN))
 			
 class Button_ConnectandResume(tk.Button):
 	def __init__(self, GUI):
-		tk.Button.__init__(self, master=GUI.initConnPanel, bg="green3", text="Resume", font=("Yahei", 12), width=7)
+		tk.Button.__init__(self, master=GUI.initConnPanel, bg="green3", text=txt("Resume", CHN), font=("Yahei", 12), width=7)
 		self.GUI = GUI
 		self.bind("<Button-1>", self.leftClick)
 		
@@ -113,7 +115,7 @@ class GUI_Online(GUI_Common):
 		self.initConnPanel = tk.Frame(master=self.window, width=0.005*X, height=int(0.6*Y))
 		self.initConnPanel.pack(side=tk.TOP)
 		
-		tk.Label(self.initConnPanel, text="Enter your deck code below", 
+		tk.Label(self.initConnPanel, text=txt("Enter deck code below", CHN), 
 				font=("Yahei", 15)).grid(row=0, column=0)
 		self.ownDeck = tk.Entry(self.initConnPanel, text="", font=("Yahei", 15, "bold"), width=20)
 		self.ownDeck.grid(row=1, column=0)
@@ -135,11 +137,11 @@ class GUI_Online(GUI_Common):
 		self.serverIP.grid(row=0, column=1)
 		self.queryPort.grid(row=1, column=1)
 		self.tableID.grid(row=2, column=1)
-		tk.Label(self.initConnPanel, text="Server IP", 
+		tk.Label(self.initConnPanel, text=txt("Server IP", CHN), 
 				font=("Yahei", 15)).grid(row=0, column=2, sticky=tk.W)
-		tk.Label(self.initConnPanel, text="Query Port", 
+		tk.Label(self.initConnPanel, text=txt("Query Port", CHN), 
 				font=("Yahei", 15)).grid(row=1, column=2, sticky=tk.W)
-		tk.Label(self.initConnPanel, text="Start/Join Table", 
+		tk.Label(self.initConnPanel, text=txt("Start/Join Table", CHN), 
 				font=("Yahei", 15)).grid(row=2, column=2, sticky=tk.W)
 		Button_Connect2Server(self).grid(row=3, column=1, columnspan=2)
 		Button_ConnectandResume(self).grid(row=4, column=2, columnspan=1)
@@ -149,7 +151,7 @@ class GUI_Online(GUI_Common):
 		serverIP = self.serverIP.get()
 		try: self.sock.connect((serverIP, int(self.queryPort.get()))) #Blocks. If the server port turns this attempt down, it raises error
 		except ConnectionRefusedError:
-			messagebox.showinfo(message="Can't connect to the server's query port")
+			messagebox.showinfo(message=txt("Can't connect to the server's query port", CHN))
 			return
 		data = self.sock.recv(1024)
 		if data.startswith(b"Ports"): #b"Ports,65433,65434"
@@ -165,7 +167,7 @@ class GUI_Online(GUI_Common):
 			self.receivePiecesofGameCopy(tableID)
 			
 		elif data == b"No Ports Left":
-			messagebox.showinfo(message="No tables left. Please wait")
+			messagebox.showinfo(message=txt("No tables left. Please wait", CHN))
 		else:
 			print("Received smth else", data)
 			
@@ -173,7 +175,7 @@ class GUI_Online(GUI_Common):
 		serverIP = self.serverIP.get()
 		try: self.sock.connect((serverIP, int(self.queryPort.get()))) #Blocks. If the server port turns this attempt down, it raises error
 		except ConnectionRefusedError:
-			messagebox.showinfo(message="Can't connect to the server's query port")
+			messagebox.showinfo(message=txt("Can't connect to the server's query port", CHN))
 			return
 		data = self.sock.recv(1024)
 		if data.startswith(b"Ports"): #b"Ports,65433,65434"
@@ -202,9 +204,9 @@ class GUI_Online(GUI_Common):
 					print("You have joined a table. Start your mulligan")
 					self.mulliganPrep(hero, deck, data)
 				elif data == b"Use another table ID":
-					messagebox.showinfo(message="This table ID is already taken.")
+					messagebox.showinfo(message=txt("This table ID is already taken.", CHN))
 		elif data == b"No Ports Left":
-			messagebox.showinfo(message="No tables left. Please wait")
+			messagebox.showinfo(message=txt("No tables left. Please wait", CHN))
 		else:
 			print("Received smth else", data)
 			
@@ -217,9 +219,9 @@ class GUI_Online(GUI_Common):
 		board, self.transferStudentType = makeCardPool(monk=0, board=self.boardID)
 		from CardPools import Classes, ClassesandNeutral, ClassDict, cardPool, MinionsofCost, RNGPools
 		if self.ID == 1: #起手要换的牌会在游戏的初始过程中直接决定
-			game.initialize(cardPool, MinionsofCost, RNGPools, hero, enemyHero, deck, deck)
+			game.initialize(cardPool, ClassCards, NeutralCards, MinionsofCost, RNGPools, hero, enemyHero, deck, deck)
 		else:
-			game.initialize(cardPool, MinionsofCost, RNGPools, enemyHero, hero, deck, deck)
+			game.initialize(cardPool, ClassCards, NeutralCards, MinionsofCost, RNGPools, enemyHero, hero, deck, deck)
 		game.mode = 0
 		self.UI, self.Game = -2, game
 		game.Classes, game.ClassesandNeutral = Classes, ClassesandNeutral
@@ -229,25 +231,11 @@ class GUI_Online(GUI_Common):
 	def initSidePartofUI(self):
 		self.GamePanel = tk.Frame(self.window, width=X, height=Y, bg="black")
 		self.GamePanel.pack(fill=tk.Y, side=tk.LEFT if LeftorRight else tk.RIGHT)
-		self.outputPanel = tk.Frame(self.window, width=0.005*X, height=int(0.2*Y), bg="cyan")
-		self.outputPanel.pack(side=tk.TOP)
-		self.inputPanel = tk.Frame(self.window, width=int(0.005*X), height=int(0.3*Y), bg="cyan")
-		self.inputPanel.pack(side=tk.TOP)
-		#The box of the output text printing the progress of the game
-		lbl_Output = tk.Label(self.outputPanel, text="System Resolution", font=("Yahei", 15))
-		scrollbar_hor = tk.Scrollbar(self.outputPanel, orient="horizontal")
-		scrollbar_ver = tk.Scrollbar(self.outputPanel)
-		self.output = tk.Listbox(self.outputPanel, xscrollcommand=scrollbar_hor.set, yscrollcommand=scrollbar_ver.set, width=40, height=6, bg="white", font=("Yahei", 13))
-		scrollbar_hor.configure(command=self.output.xview)
-		scrollbar_ver.configure(command=self.output.yview)
-		scrollbar_ver.pack(fill=tk.Y, side=tk.RIGHT)
-		scrollbar_hor.pack(fill=tk.X, side=tk.BOTTOM)
-		lbl_Output.pack(fill=tk.X, side=tk.TOP)
-		self.output.pack(side=tk.LEFT)
+		self.sidePanel = tk.Frame(self.window, width=int(0.005*X), height=int(0.3*Y), bg="cyan")
+		self.sidePanel.pack(side=tk.TOP)
 		
-		self.lbl_Card = tk.Label(self.inputPanel, text="Resolving Card Effect")
-		self.lbl_wish = tk.Label(master=self.inputPanel, text="Type Card You Wish", font=("Yahei", 15))
-		self.wish = tk.Entry(master=self.inputPanel, font=("Yahei", 12))
+		self.lbl_Card = tk.Label(self.sidePanel, text=txt("Resolving Card Effect", CHN))
+		self.lbl_wish = tk.Label(master=self.sidePanel, text=txt("Card Wished", CHN), font=("Yahei", 15))
 		self.lbl_Card.pack(fill=tk.X)
 		
 	def initMuliganUI(self):
@@ -257,7 +245,6 @@ class GUI_Online(GUI_Common):
 		self.heroZones[1].draw()
 		self.heroZones[2].draw()
 		self.canvas.draw()
-		self.printInfo("The game starts. Select the cards you want to replace. Then click the button at the center of the screen")
 		self.mulliganStatus = [0] * len(self.Game.mulligans[self.ID])
 		#其他的两个GUI里面都是直接用update(),这里专门写一下
 		for i, card in enumerate(self.Game.mulligans[self.ID]):
@@ -267,7 +254,7 @@ class GUI_Online(GUI_Common):
 		
 	def wait4Enemy2Reconnect(self):
 		self.timer, self.UI = 60, -2
-		btn_WaitforReconn = tk.Button(self.GamePanel, text="Wait for Opponent to Reconnect: 60s", bg="red", height=2, font=("Yahei", 12, "bold"))
+		btn_WaitforReconn = tk.Button(self.GamePanel, text=txt("Wait for Opponent to Reconnect: ", CHN) + "60s", bg="red", height=2, font=("Yahei", 12, "bold"))
 		btn_WaitforReconn.place(x=X/2, y=Y/2)
 		thread_data = threading.Thread(target=self.wait4Reconn, daemon=True)
 		thread_timer = threading.Thread(target=self.timerCountdown, args=(self.timer, btn_WaitforReconn), daemon=True)
@@ -278,11 +265,11 @@ class GUI_Online(GUI_Common):
 		print("Start countdown")
 		while self.timer > 0 and self.UI < -1:
 			time.sleep(1)
-			btn_WaitforReconn.config(text="Wait for Opponent to Reconnect: %ds"%self.timer)
+			btn_WaitforReconn.config(text=txt("Wait for Opponent to Reconnect: ", CHN) + "%ds"%self.timer)
 			self.timer -= 1
 		print("Finished sending game copy to server")
 		if self.timer < 1:
-			btn_WaitforReconn.config(text="Opponent failed to reconnect.\nClosing in 2 seconds")
+			btn_WaitforReconn.config(text=txt("Opponent failed to reconnect.\nClosing in 2 seconds", CHN))
 			self.window.after(2000, self.window.destroy())
 		else:
 			btn_WaitforReconn.destroy()
@@ -391,28 +378,9 @@ class GUI_Online(GUI_Common):
 		#如果结束之后进入了玩家的回合，则不再等待对方的操作
 		self.waiting4Server = self.ID != self.Game.turn
 		
-	def decideDeckandClass(self):
-		deck, hero = [], ClassDict[self.hero.get()]
-		deckString, deckCorrect = self.ownDeck.get(), True
-		if deckString:
-			if deckString.startswith("names||"):
-				deckString = deckString.split('||')
-				deckString.pop(0)
-				for name in deckString:
-					if name != "": deck.append(cardName2Class(name))
-			else: deck = decode_deckstring(deckString)
-		for obj in deck:
-			if obj is None: deckCorrect = False
-		if deckCorrect:
-			for card in deck:
-				if card.Class != "Neutral" and "," not in card.Class:
-					hero = ClassDict[card.Class] #The hero will be changed to the first non-neutral&non-dual cards
-					break
-		return deckCorrect, deck, hero
-		
 	def receivePiecesofGameCopy(self, tableID):
 		self.UI = -1
-		lbl_CopyReceptionProgress = tk.Label(self.GamePanel, text="Receiving Game Copies from Opponent: 0%", font=("Yahei", 15))
+		lbl_CopyReceptionProgress = tk.Label(self.GamePanel, text=txt("Receiving Game Copies from Opponent: ", CHN) + "0%", font=("Yahei", 15))
 		lbl_CopyReceptionProgress.place(x=X/2, y=Y/2)
 		thread = threading.Thread(target=self.receiveandUpdateCount, args=(tableID, lbl_CopyReceptionProgress), daemon=True)
 		thread.start()
@@ -450,10 +418,10 @@ class GUI_Online(GUI_Common):
 				self.sock.sendall(b"All Pieces Received")
 				break
 			elif data == b"Table ID wrong/occupied. Cannot resume":
-				messagebox.showinfo(message="Want to request game copy. But table iD is wrong")
+				messagebox.showinfo(message=txt("Want to request game copy. But table iD is wrong", CHN))
 				return
 			if numPiecesReceived % 5 == 1:
-				lbl_CopyReceptionProgress.config(text="Receiving Game Copies from Opponent: %d/%d"%(numPiecesReceived, numPiecesTotal))
+				lbl_CopyReceptionProgress.config(text=txt("Receiving Game Copies from Opponent: ", CHN) + "%d/%d"%(numPiecesReceived, numPiecesTotal))
 		print("Received %d pieces out of %d in total"%(numPiecesReceived, numPiecesTotal))
 		try:
 			gameCopy = unpickleBytes2Obj(buffer)

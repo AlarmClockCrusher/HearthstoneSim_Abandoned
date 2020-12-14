@@ -366,7 +366,7 @@ class MulliganButton(tk.Button):
 	def __init__(self, GUI, card):
 		img = PIL.Image.open(findPicFilepath_FullImg(card)).resize((210, 280))
 		ph = PIL.ImageTk.PhotoImage(img)
-		tk.Button.__init__(self, relief=tk.FLAT, master=GUI.GamePanel, image=ph, bg="green", width=2.5*CARD_X, height=int(2.3*CARD_Y))
+		tk.Button.__init__(self, relief=tk.FLAT, master=GUI.GamePanel, image=ph, bg="green", width=int(2.5*CARD_X), height=int(2.3*CARD_Y))
 		self.GUI, self.card, self.image, self.selected = GUI, card, ph, 0
 		self.bind("<Button-1>", self.respond)
 		
@@ -391,6 +391,26 @@ class MulliganButton(tk.Button):
 		
 	def remove(self):
 		self.destroy()
+		
+		
+class CardCollectionButton(tk.Button):
+	def __init__(self, window, card):
+		img = PIL.Image.open(findPicFilepath_FullImg(card)).resize((270, 360))
+		ph = PIL.ImageTk.PhotoImage(img, master=window.displayPanel)
+		tk.Button.__init__(self, master=window.displayPanel, image=ph)
+		self.window, self.GUI, self.card, self.image = window, window.GUI, card, ph
+		self.bind("<Button-1>", self.respond)
+		
+	def respond(self, event):
+		img = PIL.Image.open(findPicFilepath_FullImg(self.card)).resize((210, 280))
+		ph = PIL.ImageTk.PhotoImage(img, master=self.window.GUI.sidePanel)
+		self.GUI.lbl_wish.config(image=ph)
+		self.GUI.lbl_wish.image = ph
+		self.GUI.cardWished = type(self.card)
+		
+	def plot(self, i, j):
+		self.grid(row=i, column=j)
+		self.window.btnsDrawn.append(self)
 		
 """Choice or discover buttons"""
 class DiscoverCardButton(HandButton):

@@ -1,7 +1,60 @@
 from CustomWidgets import *
 
 import numpy as np
+CHN = True
 
+def txt(s, CHN=True):
+	return s if not CHN else texts[s]
+	
+texts = {"Include DIY packs": "包含DIY卡牌",
+		"Choose Game Board": "选择棋盘版本",
+		"Continue": "继续", "Confirm": "确定",
+		"Monk": "武僧",
+		"System Resolution": "系统结算",
+		"Type Card You Wish": "输入许愿卡牌的英文名称",
+		"Resolving Card Effect": "正在结算卡牌",
+		"Enter Deck 1 code": "玩家1套牌代码", "Enter Deck 2 code": "玩家2套牌代码",
+		"Deck 1 incorrect": "套牌代码1无效", "Deck 2 incorrect": "套牌代码2无效",
+		"Enter deck code below": "输入套牌代码",
+		"Show Send Info Reminder": "显示向对方发送信息的提示",
+		"Plays to update": "向对方发送的信息",
+		"L:Generate Update / R:Copy Game": "左键：生成要发送的信息\n右键：复制游戏",
+		"Load Update from Opponent": "加载对方的操作信息",
+		"To go 1st, use left panel to decide the DIY expansion and game board.\nTo go 2nd/load a saved game, use right panel to enter info from your opponent/select a .p file": \
+			"作为先手方：用左侧面板确定要加载的DIY和棋盘\n作为后手方/加载已保存的游戏，使用右侧面板输入先手方发送给你的信息/选择一个.p文件",
+		"Load a Game, or\nGo 2nd using Info from Opponent": "加载已保存的游戏，\n或输入对方信息、作为后手开始游戏",
+		"Start a new game as Player 1\nDecide DIY Packs and Game Board": "作为先手开始游戏\n并决定使用的DIY卡牌与棋盘",
+		"Choose a Game to load": "选择加载已保存的游戏文件",
+		"Decide your deck and class, mulligan and send the generated info to your opponent": "确定你的套牌和职业，在起手调度后将生成的信息发送给对方",
+		"Saved Game loaded. Will resume after confirmation": "已加载保存的游戏。确定后回到游戏",
+		"Player 1 has decided their deck and initial hand.\nDecide yours and send the info back to start the game": "先手方已经确定了其牌库与起始手牌。确定你的牌库和起始手牌后将信息回传给对方",
+		"Your deck and hand have been decided. Send the info to the opponent": "你的牌库和手牌已确定。将生成的信息发送给对方",
+		"Info not generated yet": "尚无更新信息",
+		"Game Copy Generated": "游戏进度已保存为两份.p文件。双方可以各加载一个返回当前游戏进度",
+		"Send Info in Clipboard!": "操作信息已经保存至剪贴板，请发送至对方玩家",
+		"Update same as last time\nLeftclick: Continue/Rightclick: Cancel": "游戏更新信息与上次相同，\n可能存在重复，确认使用?\n左键：确定\n右键：取消",
+		"Receiving Game Copies from Opponent: ": "正在接收对方发送的游戏复制",
+		"Opponent failed to reconnect.\nClosing in 2 seconds": "对方玩家重连失败\n2秒后关闭",
+		"Wait for Opponent to Reconnect: ": "等待对方重连中",
+		"Replace Card": "替换手牌",
+		"Connect": "连接服务器", "Resume": "重连游戏",
+		"Server IP": "服务器IP地址", "Query Port": "服务器端口", "Start/Join Table": "新开/加入一桌",
+		"Wait for opponent to finish mulligan": "等待对方完成换牌",
+		"Want to request game copy. But table iD is wrong": "请求对方发送当前游戏的复制。但是桌子ID错误",
+		"No tables left. Please wait": "目前没有空桌子了，请等待",
+		"This table ID is already taken.": "输入的桌子ID已经被占用",
+		"Can't connect to the server's query port": "无法连接到服务器端口",
+		"Deck code is wrong. Check before retry": "套牌代码错误。请检查后重试",
+		"Opponent disconnected. Closing": "对方连接断开。正在关闭",
+		"View Cards": "显示卡牌", "Last Page": "上一页", "Next Page": "下一页",
+		"Class": "职业", "Mana": "费用", "Expansion": "版本",
+		"Card Wished": "许愿的卡牌", "Wish": "许愿",
+		"The card is not a Basic or Classic card": "选择的卡不是基础卡或经典卡",
+		"No wish card selected yet": "尚未选择许愿的卡牌",
+		"Already the first page": "已是第一页", "Already the last page": "已是最后一页",
+		"View Collectible Card": "查看所有可收藏卡牌",
+		}
+		
 class MulliganFinishButton_1(tk.Button):
 	def __init__(self, GUI):
 		tk.Button.__init__(self, relief=tk.FLAT, master=GUI.GamePanel, text="Replace Card and\nStart 1st Turn", bg="green3", width=13, height=3, font=("Yahei", 12, "bold"))
@@ -52,7 +105,7 @@ class MulliganFinishButton_2(tk.Button):
 			self.GUI.window.clipboard_append(s)
 			self.GUI.info4Opponent.config(text=s)
 		if self.GUI.showReminder.get():
-			messagebox.showinfo(message="Info for opponent created in clipboard. Send before proceeding")
+			messagebox.showinfo(message=txt("Your deck and hand have been decided. Send the info to the opponent", CHN))
 		self.destroy()
 		
 	def plot(self, x, y):
@@ -62,8 +115,7 @@ class MulliganFinishButton_2(tk.Button):
 		
 class GUI_Common:
 	def printInfo(self, string):
-		self.output.insert(tk.END, string)
-		self.output.see("end")
+		pass
 		
 	def initGameDisplay(self):
 		self.canvas = BoardButton(self)
@@ -529,55 +581,38 @@ class GUI_Common:
 				self.fusionMaterials = []
 				
 	def wishforaCard(self, initiator):
+		collectionWindow = CardCollectionWindow(self)
 		self.UI = 3
-		self.lbl_wish.pack(fill=tk.X, side=tk.TOP)
-		self.wish.pack(fill=tk.X, side=tk.TOP)
-		btnTypeConfirm = tk.Button(relief=tk.FLAT, master=self.inputPanel, text="Wish", bg="lime green", width=6, height=1, font=("Yahei", 16, "bold"))
-		btnTypeConfirm.GUI, btnTypeConfirm.colorOrig = self, "lime green"
-		btnTypeConfirm.pack(fill=tk.X)
+		self.btn_ViewCollection.forget()
+		self.lbl_Card.forget()
+		btnWishConfirm = tk.Button(master=self.sidePanel, text=txt("Wish", CHN), bg="lime green", width=3, height=1, font=("Yahei", 15, "bold"))
+		btnWishConfirm.GUI, btnWishConfirm.colorOrig = self, "lime green"
 		var = tk.IntVar()
-		self.wish.bind("<Return>", lambda event: var.set(1))
+		btnWishConfirm.bind("<Button-1>", lambda event: var.set(1))
+		
+		self.lbl_wish.pack(side=tk.TOP)
+		btnWishConfirm.pack(side=tk.TOP)
+		self.lbl_Card.pack(side=tk.TOP)
 		while True:
-			self.printInfo("Type the name of the card you want")
-			btnTypeConfirm.configure(command=lambda: var.set(1))
-			btnTypeConfirm.wait_variable(var)
-			cardName = self.wish.get()
-			self.wish.delete(0, "end")
-			nameinList = False
-			for card in self.Game.RNGPools["Basic and Classic Cards"]:
-				if card.name == cardName:
-					nameinList = True
-					self.Game.fixedGuides.append(card)
-					self.Game.Hand_Deck.addCardtoHand(card, initiator.ID, "type")
+			btnWishConfirm.wait_variable(var)
+			if self.cardWished:
+				expansion = self.cardWished.index.split('~')[0]
+				if expansion == "Basic" or expansion == "Classic":
 					break
-			if nameinList:
-				break
-			self.printInfo("Input has NO match with a Basic or Classic card. Do you want to see card names in a certain class?")
-			self.printInfo("y/n to show class card names or search by name: ")
+				else: messagebox.showinfo(message=txt("The card is not a Basic or Classic card", CHN))
+			else: messagebox.showinfo(message=txt("No wish card selected yet", CHN))
+			collectionWindow = CardCollectionWindow(self)
 			var = tk.IntVar()
-			btnTypeConfirm.wait_variable(var)
-			searchinIndex = self.wish.get()
-			self.wish.delete(0, "end")
-			if searchinIndex == 'y' or searchinIndex == 'Y' or searchinIndex == 'Yes' or searchinIndex == 'yes':
-				self.printInfo("Class: Demon Hunter, Druid, Hunter, Mage, Monk, Paladin, Priest, Rogue, Shaman, Warlock, Warrior\n")
-				var = tk.IntVar()
-				btnTypeConfirm.wait_variable(var)
-				className = self.wish.get()
-				self.wish.delete(0, "end")
-				if className not in ["Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior", "Neutral"]:
-					self.printInfo("Class input wrong. Returning to search by name")
-				else:
-					self.printInfo("Showing %s cards"%className)
-					for card in self.Game.RNGPools["Basic and Classic Cards"]:
-						if card.Class == className:
-							self.printInfo("{}:  Mana {},  Description {}".format(card.name, card.mana, card.description))
-					self.printInfo("Returning to search by card name")
-			else:
-				self.printInfo("Returning to search by card name")
-		btnTypeConfirm.destroy()
-		self.wish.unbind("<Return>")
+		self.Game.fixedGuides.append(self.cardWished)
+		self.Game.Hand_Deck.addCardtoHand(self.cardWished, initiator.ID, "type")
+		
+		btnWishConfirm.destroy()
+		try: collectionWindow.destroy()
+		except: pass
 		self.lbl_wish.forget()
-		self.wish.forget()
+		self.lbl_Card.forget()
+		self.btn_ViewCollection.pack(side=tk.TOP)
+		self.lbl_Card.pack(side=tk.TOP)
 		self.UI = 0
 		self.update()
 		
@@ -890,3 +925,97 @@ class GUI_Common:
 				self.window.after(250, var.set, 1)
 				self.window.wait_variable(var)
 				for btn in btns: btn.destroy()
+				
+				
+				
+				
+class CardCollectionWindow(tk.Tk):
+	def __init__(self, GUI):
+		tk.Tk.__init__(self)
+		self.GUI = GUI
+		game = self.GUI.Game
+		self.Class2Display, self.expansion, self.mana = tk.StringVar(self), tk.StringVar(self), tk.StringVar(self)
+		
+		self.Class2Display.set(list(game.ClassCards.keys())[0])
+		self.mana.set("All")
+		self.expansion.set("All")
+		self.classOpt = tk.OptionMenu(self, self.Class2Display, *(list(game.ClassCards.keys()) + ["Neutral"]) )
+		self.manaOpt = tk.OptionMenu(self, self.mana, *["All", '0', '1', '2', '3', '4', '5', '6', '7', '7+'])
+		self.expansionOpt = tk.OptionMenu(self, self.expansion, *["All", "DIY", "Basic", "Classic", "Shadows", "Uldum", "Dragons", "Galakrond", "Initiate", "Outlands", "Academy", "Darkmoon"])
+		self.classOpt.config(font=("Yahei", 14))
+		self.manaOpt.config(font=("Yahei", 14))
+		self.expansionOpt.config(font=("Yahei", 14))
+		
+		self.search = tk.Entry(self, font=("Yahei", 13), width=20)
+		btn_ViewCards = tk.Button(self, text=txt("View Cards", CHN), command=self.showCards, font=("Yahei", 14), bg="green3")
+		btn_Left = tk.Button(self, text=txt("Last Page", CHN), command=self.lastPage, font=("Yahei", 14))
+		btn_Right = tk.Button(self, text=txt("Next Page", CHN), command=self.nextPage, font=("Yahei", 14))
+		self.cards2Display, self.btnsDrawn, self.pageNum = {}, [], 0
+		self.displayPanel = tk.Frame(self)
+		
+		tk.Label(self, text=txt("Class", CHN), font=("Yahei", 13)).grid(row=0, column=0)
+		self.classOpt.grid(row=0, column=1)
+		tk.Label(self, text=txt("Mana", CHN), font=("Yahei", 13)).grid(row=0, column=2)
+		self.manaOpt.grid(row=0, column=3)
+		tk.Label(self, text=txt("Expansion", CHN), font=("Yahei", 13)).grid(row=0, column=4)
+		self.expansionOpt.grid(row=0, column=5)
+		self.search.grid(row=0, column=6)
+		btn_ViewCards.grid(row=0, column=7)
+		
+		tk.Label(self, text="     ", font=("Yahei", 13)).grid(row=0, column=8)
+		btn_Left.grid(row=0, column=9)
+		btn_Right.grid(row=0, column=10)
+		self.displayPanel.grid(row=1, column=0, columnspan=11)
+		
+	def manaCorrect(self, card, mana):
+		if mana == "All": return True
+		elif mana == "7+": return card.mana > 7
+		else: return card.mana == int(mana)
+		
+	def expansionCorrect(self, index, expansion):
+		if expansion == "All": return True
+		else: return index.split('~')[0] == expansion
+		
+	def showCards(self):
+		self.cards2Display, self.pageNum = {}, 0
+		for btn in self.btnsDrawn: btn.destroy()
+		
+		Class2Display = self.Class2Display.get()
+		mana = self.mana.get()
+		expansion = self.expansion.get()
+		search = self.search.get().lower()
+		game = self.GUI.Game
+		if Class2Display == "Neutral": cards = game.NeutralCards
+		else: cards = game.ClassCards[Class2Display]
+		i, j = 0, -1
+		for key, value in cards.items():
+			if self.manaCorrect(value, mana) and self.expansionCorrect(key, expansion) \
+				and search in value.description.lower():
+				if i % 10 == 0:
+					j += 1
+					self.cards2Display[j] = [value(game, 1)]
+				else: self.cards2Display[j].append(value(game, 1))
+				i += 1
+		if self.cards2Display: #如果查询结果不为空
+			for i, card in enumerate(self.cards2Display[0]):
+				btn_Card = CardCollectionButton(self, card)
+				btn_Card.plot(0 + i > 4, i % 5)
+				
+	def lastPage(self):
+		if self.pageNum - 1 in self.cards2Display:
+			self.pageNum -= 1
+			for btn in self.btnsDrawn: btn.destroy()
+			for i, card in enumerate(self.cards2Display[self.pageNum]):
+				btn_Card = CardCollectionButton(self, card)
+				btn_Card.plot(0 + i > 4, i % 5)
+		else: messagebox.showinfo(message=txt("Already the last page", CHN))
+		
+	def nextPage(self):
+		if self.pageNum + 1 in self.cards2Display:
+			self.pageNum += 1
+			for btn in self.btnsDrawn: btn.destroy()
+			for i, card in enumerate(self.cards2Display[self.pageNum]):
+				btn_Card = CardCollectionButton(self, card)
+				btn_Card.plot(0 + i > 4, i % 5)
+		else: messagebox.showinfo(message=txt("Already the first page", CHN))
+		

@@ -27,11 +27,29 @@ def cardName2Class(cardName):
 	print(cardName, " not found")
 	return None
 	
+def parseDeckCode(s, hero, ClassDict):
+	deck, deckCorrect, hero = [], False, hero
+	if s:
+		try:
+			if s.startswith("names||"):
+				s = deckStrings[ID].split('||')[1:]
+				deck = [typeName2Class(name.strip()) for name in s if name]
+			else: deck = decode_deckstring(s)
+			deckCorrect = all(obj is not None for obj in deck)
+		except: pass
+	else: deckCorrect = True
+	if deckCorrect:
+		for card in deck:
+			if card.Class != "Neutral" and ',' not in card.Class:
+				hero = ClassDict[card.Class]
+				break
+	return deck, deckCorrect, hero
+	
 def getCardnameFromDbf(id):
 	for cardInfo in j:
 		if cardInfo["dbfId"] == id:
 			return cardInfo["name"]
-	
+			
 def decode_deckstring(s, to="List"):
 	deckTuple = deckstrings.parse_deckstring(s)[0]
 	if to == "string":
