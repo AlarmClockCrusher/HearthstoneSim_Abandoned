@@ -53,6 +53,7 @@ class GUI_1P(GUI_Common):
 		self.discover = None
 		self.gameBackup = None
 		self.btnsDrawn = [] #btnsDrawn include the discover options, etc
+		self.CHN = CHN
 		self.window = tk.Tk()
 		#Select DIY packs
 		lbl_SelectPacks = tk.Label(master=self.window, text=txt("Include DIY packs", CHN), font=("Yahei", 15))

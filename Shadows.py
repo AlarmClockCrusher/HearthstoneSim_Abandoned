@@ -414,44 +414,53 @@ class ProudDefender(Minion):
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Has +2 Attack while you have no other minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.appearResponse = [self.checkBoard]
-		self.disappearResponse = [self.deactivate]
-		self.silenceResponse = [self.deactivate]
-		self.trigsBoard = [Trig_ProudDefender(self)]
+		self.auras["Has +2 Attack while you have no other minions"] = StatAura_ProudDefender(self)
 		
-	def checkBoard(self):
-		if self.onBoard:
-			noOtherFriendlyMinions = True
-			for minion in self.Game.minions[self.ID]:
-				if minion.type == "Minion" and minion != self and minion.onBoard:
-					noOtherFriendlyMinions = False
-					break
-			if noOtherFriendlyMinions and self.activated == False:
-				PRINT(self.Game, "Proud Defender gains +2 Attack because there's no other friendly minion")
-				self.statChange(2, 0)
-				self.activated = True
-			elif noOtherFriendlyMinions == False and self.activated:
-				PRINT(self.Game, "Proud Defender loses +2 Attack because there are other friendly minions")
-				self.statChange(-2, 0)
-				self.activated = False
-				
-	def deactivate(self):
-		if self.activated:
-			self.statChange(-2, 0)
-			
-class Trig_ProudDefender(TrigBoard):
+class StatAura_ProudDefender(GameRuleAura):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionAppears", "MinionDisappears"])
+		self.entity = entity
+		self.signals = ["MinionAppears", "MinionDisappears"]
+		self.activated = False
+		self.auraAffected = []
 		
+	def auraAppears(self):
+		game, ID = self.entity.Game, self.entity.ID
+		for sig in self.signals:
+			try: game.trigsBoard[ID][sig].append(self)
+			except: game.trigsBoard[ID][sig] = [self]
+		if not game.minionsonBoard(ID, target=self.entity): #No other minions on board
+			self.activated = True
+			Stat_Receiver(self.entity, self, 2, 0).effectStart()
+			
+	def auraDisappears(self):
+		for minion, receiver in fixedList(self.auraAffected):
+			receiver.effectClear()
+		self.auraAffected = []
+		self.activated = False
+		game, ID = self.entity.Game, self.entity.ID
+		for sig in self.signals:
+			try: game.trigsBoard[ID][sig].remove(self)
+			except: pass
+			
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if signal == "MinionAppears": return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity
-		else: return self.entity.onBoard and target.ID == self.entity.ID and target != self.entity
+		return self.entity.onBoard and ID == self.entity.ID
 		
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrigger(signal, ID, subject, target, number, comment):
+			self.effect(signal, ID, subject, target, number, comment)
+			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "%s checks board due to board change."%self.entity.name)
-		self.entity.checkBoard()
-		
-		
+		otherMinions = self.entity.Game.minionsonBoard(self.entity.ID, self.entity)
+		if self.activated and otherMinions:
+			self.activated = False
+			for minion, receiver in fixedList(self.auraAffected):
+				receiver.effectClear()
+			self.auraAffected = []
+		elif not self.activated and not otherMinions:
+			self.activated = True
+			Stat_Receiver(self.entity, self, 2, 0).effectStart()
+			
+			
 class SoldierofFortune(Minion):
 	Class, race, name = "Neutral", "Elemental", "Soldier of Fortune"
 	mana, attack, health = 4, 5, 6
@@ -869,7 +878,7 @@ class WhirlwindTempest(Minion):
 	requireTarget, keyWord, description = False, "", "Your Windfury minions have Mega Windfury"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Has Aura"] = HasAura_Dealer(self, "Mega Windfury")
+		self.auras["Has Aura"] = EffectAura(self, "Mega Windfury")
 		
 	def applicable(self, target):
 		return target.keyWords["Windfury"] > 0
@@ -1715,17 +1724,14 @@ class Khadgar(Minion):
 	requireTarget, keyWord, description = False, "", "Your cards that summon minions summon twice as many"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.appearResponse = [self.activateAura]
-		self.disappearResponse = [self.deactivateAura]
-		self.silenceResponse = [self.deactivateAura]
+		self.auras["Your cards that summon minions summon twice as many"] = GameRuleAura_Khadgar(self)
 		
-	def activateAura(self):
-		PRINT(self.Game, "Khadgar's aura is registered. Player %d's cards' summoning effects now summon twice as many."%self.ID)
-		self.Game.status[self.ID]["Summon x2"] += 1
+class GameRuleAura_Khadgar(GameRuleAura):
+	def auraAppears(self):
+		self.entity.Game.status[self.entity.ID]["Summon x2"] += 1
 		
-	def deactivateAura(self):
-		PRINT(self.Game, "Khadgar's aura is removed. Player %d's cards' summoning effects no longer summon twice as many."%self.ID)
-		self.Game.status[self.ID]["Summon x2"] -= 1
+	def auraDisappears(self):
+		self.entity.Game.status[self.entity.ID]["Summon x2"] -= 1
 		
 		
 class MagicDartFrog(Minion):
@@ -2278,20 +2284,16 @@ class CommanderRhyssa(Minion):
 	requireTarget, keyWord, description = False, "", "Your Secrets trigger twice"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.appearResponse = [self.activateAura]
-		self.disappearResponse = [self.deactivateAura]
-		self.silenceResponse = [self.deactivateAura]
+		self.auras["Your Secrets trigger twice"] = GameRuleAura_CommanderRhyssa(self)
 		
-	def activateAura(self):
-		PRINT(self.Game, "Commander Rhyssa's aura is registered. Player %d's Secrets now trigger twice."%self.ID)
-		self.Game.status[self.ID]["Secrets x2"] += 1
+class GameRuleAura_CommanderRhyssa(GameRuleAura):
+	def auraAppears(self):
+		self.entity.Game.status[self.entity.ID]["Secrets x2"] += 1
 		
-	def deactivateAura(self):
-		PRINT(self.Game, "Commander Rhyssa's aura is removed. Player %d's Secrets no longer trigger twice."%self.ID)
-		if self.Game.status[self.ID]["Secrets x2"] > 0:
-			self.Game.status[self.ID]["Secrets x2"] -= 1
-			
-			
+	def auraDisappears(self):
+		self.entity.Game.status[self.entity.ID]["Secrets x2"] -= 1
+		
+		
 class Nozari(Minion):
 	Class, race, name = "Paladin", "Dragon", "Nozari"
 	mana, attack, health = 10, 4, 12

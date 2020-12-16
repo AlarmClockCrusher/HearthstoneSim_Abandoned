@@ -427,17 +427,14 @@ class ArcaneAmplifier(Minion):
 	requireTarget, keyWord, description = False, "", "Your Hero Power deals 2 extra damage"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.appearResponse = [self.activateAura]
-		self.disappearResponse = [self.deactivateAura]
-		self.silenceResponse = [self.deactivateAura]
+		self.auras["Your Hero Power deals 2 extra damage"] = GameRuleAura_ArcaneAmplifier(self)
 		
-	def activateAura(self):
-		PRINT(self.Game, "Arcane Amplifier's aura is registered. Player %d's Hero Power now deals 2 extra damage, if applicable."%self.ID)
-		self.Game.status[self.ID]["Power Damage"] += 2
+class GameRuleAura_ArcaneAmplifier(GameRuleAura):
+	def auraAppears(self):
+		self.entity.Game.status[self.entity.ID]["Power Damage"] += 2
 		
-	def deactivateAura(self):
-		PRINT(self.Game, "Arcane Amplifier's aura is removed. Player %d's Hero Power no longer deals 2 extra damage."%self.ID)
-		self.Game.status[self.ID]["Power Damage"] -= 2
+	def auraDisappears(self):
+		self.entity.Game.status[self.entity.ID]["Power Damage"] -= 2
 		
 		
 class AnimatedAvalanche(Minion):

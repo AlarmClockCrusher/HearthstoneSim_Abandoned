@@ -1,60 +1,7 @@
 from CustomWidgets import *
 
 import numpy as np
-CHN = True
 
-def txt(s, CHN=True):
-	return s if not CHN else texts[s]
-	
-texts = {"Include DIY packs": "包含DIY卡牌",
-		"Choose Game Board": "选择棋盘版本",
-		"Continue": "继续", "Confirm": "确定",
-		"Monk": "武僧",
-		"System Resolution": "系统结算",
-		"Type Card You Wish": "输入许愿卡牌的英文名称",
-		"Resolving Card Effect": "正在结算卡牌",
-		"Enter Deck 1 code": "玩家1套牌代码", "Enter Deck 2 code": "玩家2套牌代码",
-		"Deck 1 incorrect": "套牌代码1无效", "Deck 2 incorrect": "套牌代码2无效",
-		"Enter deck code below": "输入套牌代码",
-		"Show Send Info Reminder": "显示向对方发送信息的提示",
-		"Plays to update": "向对方发送的信息",
-		"L:Generate Update / R:Copy Game": "左键：生成要发送的信息\n右键：复制游戏",
-		"Load Update from Opponent": "加载对方的操作信息",
-		"To go 1st, use left panel to decide the DIY expansion and game board.\nTo go 2nd/load a saved game, use right panel to enter info from your opponent/select a .p file": \
-			"作为先手方：用左侧面板确定要加载的DIY和棋盘\n作为后手方/加载已保存的游戏，使用右侧面板输入先手方发送给你的信息/选择一个.p文件",
-		"Load a Game, or\nGo 2nd using Info from Opponent": "加载已保存的游戏，\n或输入对方信息、作为后手开始游戏",
-		"Start a new game as Player 1\nDecide DIY Packs and Game Board": "作为先手开始游戏\n并决定使用的DIY卡牌与棋盘",
-		"Choose a Game to load": "选择加载已保存的游戏文件",
-		"Decide your deck and class, mulligan and send the generated info to your opponent": "确定你的套牌和职业，在起手调度后将生成的信息发送给对方",
-		"Saved Game loaded. Will resume after confirmation": "已加载保存的游戏。确定后回到游戏",
-		"Player 1 has decided their deck and initial hand.\nDecide yours and send the info back to start the game": "先手方已经确定了其牌库与起始手牌。确定你的牌库和起始手牌后将信息回传给对方",
-		"Your deck and hand have been decided. Send the info to the opponent": "你的牌库和手牌已确定。将生成的信息发送给对方",
-		"Info not generated yet": "尚无更新信息",
-		"Game Copy Generated": "游戏进度已保存为两份.p文件。双方可以各加载一个返回当前游戏进度",
-		"Send Info in Clipboard!": "操作信息已经保存至剪贴板，请发送至对方玩家",
-		"Update same as last time\nLeftclick: Continue/Rightclick: Cancel": "游戏更新信息与上次相同，\n可能存在重复，确认使用?\n左键：确定\n右键：取消",
-		"Receiving Game Copies from Opponent: ": "正在接收对方发送的游戏复制",
-		"Opponent failed to reconnect.\nClosing in 2 seconds": "对方玩家重连失败\n2秒后关闭",
-		"Wait for Opponent to Reconnect: ": "等待对方重连中",
-		"Replace Card": "替换手牌",
-		"Connect": "连接服务器", "Resume": "重连游戏",
-		"Server IP": "服务器IP地址", "Query Port": "服务器端口", "Start/Join Table": "新开/加入一桌",
-		"Wait for opponent to finish mulligan": "等待对方完成换牌",
-		"Want to request game copy. But table iD is wrong": "请求对方发送当前游戏的复制。但是桌子ID错误",
-		"No tables left. Please wait": "目前没有空桌子了，请等待",
-		"This table ID is already taken.": "输入的桌子ID已经被占用",
-		"Can't connect to the server's query port": "无法连接到服务器端口",
-		"Deck code is wrong. Check before retry": "套牌代码错误。请检查后重试",
-		"Opponent disconnected. Closing": "对方连接断开。正在关闭",
-		"View Cards": "显示卡牌", "Last Page": "上一页", "Next Page": "下一页",
-		"Class": "职业", "Mana": "费用", "Expansion": "版本",
-		"Card Wished": "许愿的卡牌", "Wish": "许愿",
-		"The card is not a Basic or Classic card": "选择的卡不是基础卡或经典卡",
-		"No wish card selected yet": "尚未选择许愿的卡牌",
-		"Already the first page": "已是第一页", "Already the last page": "已是最后一页",
-		"View Collectible Card": "查看所有可收藏卡牌",
-		}
-		
 class MulliganFinishButton_1(tk.Button):
 	def __init__(self, GUI):
 		tk.Button.__init__(self, relief=tk.FLAT, master=GUI.GamePanel, text="Replace Card and\nStart 1st Turn", bg="green3", width=13, height=3, font=("Yahei", 12, "bold"))
@@ -167,6 +114,8 @@ class GUI_Common:
 		return text
 		
 	def update(self):
+		try: self.lbl_Status.destroy()
+		except: pass
 		if self.UI == -2: #Draw the mulligan part, the cards and the start turn button
 			self.printInfo("The game starts. Select the cards you want to replace. Then click the button at the center of the screen")
 			if hasattr(self, "ID"):

@@ -7,10 +7,6 @@ from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 
-def extractfrom(target, listObj):
-	try: return listObj.pop(listObj.index(target))
-	except: return None
-	
 def fixedList(listObj):
 	return listObj[0:len(listObj)]
 	
@@ -116,6 +112,9 @@ class Trig_Battlefiend(TrigBoard):
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject == self.entity.Game.heroes[self.entity.ID]
 		
+	def text(self, CHN):
+		return "在你的英雄攻击后，获得+1攻击力" if CHN else "After your hero attacks, gain +1 Attack"
+		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "After friendly hero attacks, %s gains +1 Attack"%self.entity.name)
 		self.entity.buffDebuff(1, 0)
@@ -161,6 +160,10 @@ class TwoFewerManaEffectRemoved:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		
+	def text(self, CHN):
+		return "玩家%d的下个回合减少2个法力水晶"%self.ID if CHN \
+				else "Player %d's next turn has 2 fewer Mana Crystals"%self.ID
+				
 	def turnStartTrigger(self):
 		PRINT(self.Game, "At the start of turn, Mana Burn's effect expires and player will no longer start a turn with two fewer Mana Crystals")
 		self.Game.Manas.manas_withheld[self.ID] -= 2
@@ -184,6 +187,9 @@ class AddaLostSoultoYourHand(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Deathrattle: Add a 2/1 Lost Soul to your hand triggers")
 		self.entity.Game.Hand_Deck.addCardtoHand(LostSoul, self.entity.ID, "type")
+		
+	def text(self, CHN):
+		return "亡语：将一张2/1的“迷失之魂”置入你的手牌" if CHN else "Deathrattle: Add a 2/1 Lost Soul to your hand"
 		
 class LostSoul(Minion):
 	Class, race, name = "Demon Hunter", "", "Lost Soul"
@@ -266,6 +272,10 @@ class Trig_AltruistheOutcast(TrigBoard):
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and (comment == -1 or comment == 0)
 		
+	def text(self, CHN):
+		return "在你使用最左或最右的一张手牌后，对所有敌人造成1点伤害" if CHN \
+				else "After you play the left- or right-most card in your hand, deal 1 damage to all enemies"
+				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "After player plays the left- or right-most card in hand, %s deals 1 damage to all enemies"%self.entity.name)
 		targets = [self.entity.Game.heroes[3-self.entity.ID]] + self.entity.Game.minionsonBoard(3-self.entity.ID)
@@ -296,6 +306,11 @@ class EyeBeam(Spell):
 			posinHand = self.Game.Hand_Deck.hands[self.ID].index(self)
 			if posinHand == 0 or posinHand == len(self.Game.Hand_Deck.hands[self.ID]) - 1:
 				self.mana = 1
+				
+	def text(self, CHN):
+		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "吸血。对一个随从造成%d点伤害。流放：法力值消耗为(1)点"%damage if CHN \
+				else "Lifesteal. Deal %d damage to a minion. Outcast: This costs (1)"%damage
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -333,6 +348,9 @@ class Trig_WrathscaleNaga(TrigBoard):
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and target != self.entity and target.ID == self.entity.ID #Technically, minion has to disappear before dies. But just in case.
+		
+	def text(self, CHN):
+		return "在一个友方随从死亡后，随从对一个敌人造成3点伤害" if CHN else "After a friendly minion dies, deal 3 damage to a random enemy"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
@@ -440,6 +458,9 @@ class Trig_WrathspikeBrute(TrigBoard):
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and target == self.entity
 		
+	def text(self, CHN):
+		return "在该随从被攻击后，对所有敌人造成1点伤害" if CHN else "After this is attacked, deal 1 damage to all enemies"
+		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "After %s is attacked, it deals 1 damage to all enemies."%self.entity.name)
 		targets = [self.entity.Game.heroes[3-self.entity.ID]] + self.entity.Game.minionsonBoard(3-self.entity.ID)
@@ -469,8 +490,13 @@ class Trig_HulkingOverfiend(TrigBoard):
 		self.blank_init(entity, ["MinionAttackedMinion"])
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and subject == self.entity and self.entity.health > 0 and self.entity.dead == False and (target.health < 1 or target.dead == True)
-		
+		return self.entity.onBoard and subject == self.entity and self.entity.health > 0 \
+				and self.entity.dead == False and (target.health < 1 or target.dead == True)
+				
+	def text(self, CHN):
+		return "在该随从攻击并消灭一个随从后，可再次攻击" if CHN \
+				else "After this attacks and kills a minion, it may attack again"
+				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "After %s attacks and kills a minion %s, it gains an extra attack chance."%(self.entity.name, target.name))
 		self.entity.attChances_extra += 1
@@ -492,6 +518,10 @@ class Nethrandamus(Minion):
 		self.trigsHand = [Trig_Nethrandamus(self)] #只有在手牌中才会升级
 		self.progress = 0
 		
+	def text(self, CHN):
+		return "战吼：随机召唤两个法力值消耗为(%d)的随从"%self.progress if CHN \
+				else "Battlecry: Summon two random %d-Cost minions"%self.progress
+				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
@@ -515,6 +545,10 @@ class Trig_Nethrandamus(TrigHand):
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and target.ID == self.entity.ID
 		
+	def text(self, CHN):
+		return "该随从在手牌中时，每有一个友方随从死亡便升级" if CHN \
+				else "Upgrades in hand each time a friendly minions dies"
+				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.progress += 1
 		

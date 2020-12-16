@@ -246,7 +246,7 @@ class DarkmoonStatue(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsHand = [Trig_Corrupt(self, DarkmoonStatue_Corrupt)] #只有在手牌中才会升级
-		self.auras["Buff Aura"] = BuffAura_Dealer_All(self, 1, 0)
+		self.auras["Buff Aura"] = StatAura_Others(self, 1, 0)
 		
 class DarkmoonStatue_Corrupt(Minion):
 	Class, race, name = "Paladin", "", "Darkmoon Statue"
@@ -255,7 +255,7 @@ class DarkmoonStatue_Corrupt(Minion):
 	requireTarget, keyWord, description = False, "", "Corrupted. Your other minions have +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Buff Aura"] = BuffAura_Dealer_All(self, 1, 0)
+		self.auras["Buff Aura"] = StatAura_Others(self, 1, 0)
 		
 		
 class Gyreworm(Minion):
@@ -1397,17 +1397,14 @@ class Ilgynoth(Minion):
 	requireTarget, keyWord, description = False, "Lifesteal", "Lifesteal. Your Lifesteal damages the enemy hero instead of healing you"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.appearResponse = [self.activateAura]
-		self.disappearResponse = [self.deactivateAura]
-		self.silenceResponse = [self.deactivateAura]
+		self.auras["Your Lifesteal damages the enemy hero instead of healing you"] = GameRuleAura_Ilgynoth(self)
 		
-	def activateAura(self):
-		PRINT(self.Game, "Il'gynoth's aura is registered. Player %d's Lifesteal damages the enemy hero instead."%self.ID)
-		self.Game.status[self.ID]["Lifesteal Damages Enemy"] += 1
+class GameRuleAura_Ilgynoth(GameRuleAura):
+	def auraAppears(self):
+		self.entity.Game.status[self.entity.ID]["Lifesteal Damages Enemy"] += 1
 		
-	def deactivateAura(self):
-		PRINT(self.Game, "Il'gynoth's aura is removed. Player %d's Lifesteal is back to normal"%self.ID)
-		self.Game.status[self.ID]["Lifesteal Damages Enemy"] -= 1
+	def auraDisappears(self):
+		self.entity.Game.status[self.entity.ID]["Lifesteal Damages Enemy"] -= 1
 		
 		
 class RenownedPerformer(Minion):
@@ -2643,10 +2640,10 @@ class LothraxiontheRedeemed(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Lothraxion the Redeemed's battlecry gives every Silver Hand Recruit summoned by player for the rest of the turn")
-		LothraxiontheRedeemedEffect(self.Game, self.ID).connect()
+		LothraxiontheRedeemed_Effect(self.Game, self.ID).connect()
 		return None
 		
-class LothraxiontheRedeemedEffect:
+class LothraxiontheRedeemed_Effect:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		
@@ -3559,8 +3556,8 @@ class HeroBuffAura_InaraStormcrash:
 			minion = self.entity
 			if signal[0] == "T": #
 				if "E" in signal: #At the end of either player's turn, clear the affected list
-					for hero, aura_Receiver in fixedList(self.auraAffected):
-						aura_Receiver.effectClear()
+					for hero, receiver in fixedList(self.auraAffected):
+						receiver.effectClear()
 					self.auraAffected = []
 				elif ID == minion.ID: #Only start the effect at the start of your turn
 					self.applies(minion.Game.heroes[ID])
@@ -3568,8 +3565,9 @@ class HeroBuffAura_InaraStormcrash:
 				self.applies(subject)
 			
 	def applies(self, subject):
-		HeroBuffAura_Receiver(subject, self).effectStart()
-		HeroHasAura_Receiver(subject, self, "Windfury").effectStart()
+		Stat_Receiver(subject, self, 2).effectStart()
+		#随从和英雄的特效光环可以共用
+		Effect_Receiver(subject, self, "Windfury").effectStart()
 		
 	def auraAppears(self):
 		game, ID = self.entity.Game, self.entity.ID
@@ -3580,8 +3578,8 @@ class HeroBuffAura_InaraStormcrash:
 			except: trigsBoard[sig] = [self]
 			
 	def auraDisappears(self):
-		for hero, aura_Receiver in fixedList(self.auraAffected):
-			aura_Receiver.effectClear()
+		for hero, receiver in fixedList(self.auraAffected):
+			receiver.effectClear()
 		self.auraAffected = []
 		trigsBoard = self.entity.Game.trigsBoard[self.entity.ID]
 		for sig in ["HeroReplaced", "TurnStarts", "TurnEnds"]:
@@ -3598,15 +3596,10 @@ class HeroBuffAura_InaraStormcrash:
 			heroCopy = self.entity.createCopy(game)
 			Copy = self.selfCopy(heroCopy)
 			game.copiedObjs[self] = Copy
-			for hero, aura_Receiver in self.auraAffected:
+			for hero, receiver in self.auraAffected:
 				heroCopy = hero.createCopy(game)
-				if hasattr(aura_Receiver, "keyWord"):
-					receiverIndex = hero.keyWordbyAura["Auras"].index(aura_Receiver)
-					receiverCopy = heroCopy.keyWordbyAura["Auras"][receiverIndex]
-				else:
-					#英雄光环的statbyAura是[0, []]
-					receiverIndex = hero.statbyAura[1].index(aura_Receiver)
-					receiverCopy = heroCopy.statbyAura[1][receiverIndex]
+				index = hero.auraReceivers.index(receiver)
+				receiverCopy = heroCopy.auraReceivers[index]
 				receiverCopy.source = Copy #补上这个receiver的source
 				Copy.auraAffected.append((heroCopy, receiverCopy))
 			return Copy

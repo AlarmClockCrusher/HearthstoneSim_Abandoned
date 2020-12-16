@@ -143,6 +143,7 @@ class GUI_2P(GUI_Common):
 		self.ID, self.showReminder = 1, None
 		self.lastInfo, self.pickleFile = '', None
 		self.DIYs = []
+		self.CHN = CHN
 		self.window = tk.Tk()
 		#Before entering deck, Player 1 loads the packs and choose the board
 		if self: #Draw the first stage of selection

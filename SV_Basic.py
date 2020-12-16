@@ -1128,7 +1128,7 @@ class FlameDestroyer(SVMinion):
 """Dragoncraft cards"""
 
 
-class BuffAura_Overflow(AuraDealer_toMinion):
+class BuffAura_Overflow(HasAura_toMinion):
     def __init__(self, entity):
         self.entity = entity
         self.signals, self.auraAffected = ["ManaXtlsCheck"], []
@@ -1140,8 +1140,8 @@ class BuffAura_Overflow(AuraDealer_toMinion):
         isOverflow = self.entity.Game.isOverflow(self.entity.ID)
         if isOverflow == False and self.entity.activated:
             self.entity.activated = False
-            for minion, aura_Receiver in fixedList(self.auraAffected):
-                aura_Receiver.effectClear()
+            for minion, receiver in fixedList(self.auraAffected):
+                receiver.effectClear()
             self.auraAffected = []
         elif isOverflow and self.entity.activated == False:
             self.entity.activated = True
@@ -1149,8 +1149,7 @@ class BuffAura_Overflow(AuraDealer_toMinion):
 
     def applies(self, subject):
         if subject == self.entity:
-            aura_Receiver = BuffAura_Receiver(subject, self, 2, 0)
-            aura_Receiver.effectStart()
+           Stat_Receiver(subject, self, 2, 0).effectStart()
 
     def auraAppears(self):
         isOverflow = self.entity.Game.Manas.manasUpper[self.entity.ID] >= 7
@@ -1207,8 +1206,7 @@ class Dragonrider(SVMinion):
 class BuffAura_Dragonrider(BuffAura_Overflow):
     def applies(self, subject):
         if subject == self.entity:
-            aura_Receiver = BuffAura_Receiver(subject, self, 2, 0)
-            aura_Receiver.effectStart()
+            Stat_Receiver(subject, self, 2, 0).effectStart()
 
 
 class DragonOracle(SVSpell):
@@ -1246,8 +1244,8 @@ class FirstbornDragon(SVMinion):
 
 class BuffAura_FirstbornDragon(BuffAura_Overflow):
     def applies(self, subject):
-        aura_Receiver = HasAura_Receiver(subject, self, "Taunt")
-        aura_Receiver.effectStart()
+        receiver = Effect_Receiver(subject, self, "Taunt")
+        receiver.effectStart()
 
 
 class DeathDragon(SVMinion):
@@ -1319,8 +1317,8 @@ class Dragonguard(SVMinion):
 
 class BuffAura_Dragonguard(BuffAura_Overflow):
     def applies(self, subject):
-        aura_Receiver = HasAura_Receiver(subject, self, "Taunt")
-        aura_Receiver.effectStart()
+        receiver = Effect_Receiver(subject, self, "Taunt")
+        receiver.effectStart()
 
 
 class DreadDragon(SVMinion):

@@ -18,6 +18,61 @@ WeaponIconWidth, WeaponIconHeight =  int(0.83*HeroIconSize), HeroIconSize
 SecretIconSize_img, SecretIconSize_noImg = int(0.85*HeroIconSize), int(0.1*HeroIconSize)
 SecretImgSize = int(0.95*SecretIconSize_img)
 
+waitTime4Info = 1
+infoDispXPos = 0.9
+CHN = True
+texts = {"Include DIY packs": "包含DIY卡牌",
+		"Choose Game Board": "选择棋盘版本",
+		"Continue": "继续", "Confirm": "确定",
+		"Monk": "武僧",
+		"System Resolution": "系统结算",
+		"Type Card You Wish": "输入许愿卡牌的英文名称",
+		"Resolving Card Effect": "正在结算卡牌",
+		"Enter Deck 1 code": "玩家1套牌代码", "Enter Deck 2 code": "玩家2套牌代码",
+		"Deck 1 incorrect": "套牌代码1无效", "Deck 2 incorrect": "套牌代码2无效",
+		"Enter deck code below": "输入套牌代码",
+		"Show Send Info Reminder": "显示向对方发送信息的提示",
+		"Plays to update": "向对方发送的信息",
+		"L:Generate Update / R:Copy Game": "左键：生成要发送的信息\n右键：复制游戏",
+		"Load Update from Opponent": "加载对方的操作信息",
+		"To go 1st, use left panel to decide the DIY expansion and game board.\nTo go 2nd/load a saved game, use right panel to enter info from your opponent/select a .p file": \
+			"作为先手方：用左侧面板确定要加载的DIY和棋盘\n作为后手方/加载已保存的游戏，使用右侧面板输入先手方发送给你的信息/选择一个.p文件",
+		"Load a Game, or\nGo 2nd using Info from Opponent": "加载已保存的游戏，\n或输入对方信息、作为后手开始游戏",
+		"Start a new game as Player 1\nDecide DIY Packs and Game Board": "作为先手开始游戏\n并决定使用的DIY卡牌与棋盘",
+		"Choose a Game to load": "选择加载已保存的游戏文件",
+		"Decide your deck and class, mulligan and send the generated info to your opponent": "确定你的套牌和职业，在起手调度后将生成的信息发送给对方",
+		"Saved Game loaded. Will resume after confirmation": "已加载保存的游戏。确定后回到游戏",
+		"Player 1 has decided their deck and initial hand.\nDecide yours and send the info back to start the game": "先手方已经确定了其牌库与起始手牌。确定你的牌库和起始手牌后将信息回传给对方",
+		"Your deck and hand have been decided. Send the info to the opponent": "你的牌库和手牌已确定。将生成的信息发送给对方",
+		"Info not generated yet": "尚无更新信息",
+		"Game Copy Generated": "游戏进度已保存为两份.p文件。双方可以各加载一个返回当前游戏进度",
+		"Send Info in Clipboard!": "操作信息已经保存至剪贴板，请发送至对方玩家",
+		"Update same as last time\nLeftclick: Continue/Rightclick: Cancel": "游戏更新信息与上次相同，\n可能存在重复，确认使用?\n左键：确定\n右键：取消",
+		"Receiving Game Copies from Opponent: ": "正在接收对方发送的游戏复制",
+		"Opponent failed to reconnect.\nClosing in 2 seconds": "对方玩家重连失败\n2秒后关闭",
+		"Wait for Opponent to Reconnect: ": "等待对方重连中",
+		"Replace Card": "替换手牌",
+		"Connect": "连接服务器", "Resume": "重连游戏",
+		"Server IP": "服务器IP地址", "Query Port": "服务器端口", "Start/Join Table": "新开/加入一桌",
+		"Wait for opponent to finish mulligan": "等待对方完成换牌",
+		"Want to request game copy. But table iD is wrong": "请求对方发送当前游戏的复制。但是桌子ID错误",
+		"No tables left. Please wait": "目前没有空桌子了，请等待",
+		"This table ID is already taken.": "输入的桌子ID已经被占用",
+		"Can't connect to the server's query port": "无法连接到服务器端口",
+		"Deck code is wrong. Check before retry": "套牌代码错误。请检查后重试",
+		"Opponent disconnected. Closing": "对方连接断开。正在关闭",
+		"View Cards": "显示卡牌", "Last Page": "上一页", "Next Page": "下一页",
+		"Class": "职业", "Mana": "费用", "Expansion": "版本",
+		"Card Wished": "许愿的卡牌", "Wish": "许愿",
+		"The card is not a Basic or Classic card": "选择的卡不是基础卡或经典卡",
+		"No wish card selected yet": "尚未选择许愿的卡牌",
+		"Already the first page": "已是第一页", "Already the last page": "已是最后一页",
+		"View Collectible Card": "查看所有可收藏卡牌",
+		}
+		
+def txt(s, CHN=True):
+	return s if not CHN else texts[s]
+	
 #For single-player GUI
 Hero1Pos, Hero2Pos = (0.5*X, Y-0.25*Y), (0.5*X, 0.25*Y)
 Weapon1Pos, Weapon2Pos = (0.42*X, Y-0.25*Y), (0.42*X, 0.25*Y)
@@ -56,7 +111,8 @@ import tkinter as tk
 import PIL.Image, PIL.ImageTk
 import pickle, inspect
 import os
-
+import threading
+import time
 
 def pickleObj2Str(obj):
 	s = str(pickle.dumps(obj, 0).decode())
@@ -154,6 +210,7 @@ class CardLabel(tk.Label):
 class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张牌是自己可以打出的牌的时候点击是有响应的。
 	def __init__(self, GUI, card, enemyCanSee=False):
 		game = GUI.Game
+		self.waiting = False
 		if enemyCanSee or not hasattr(GUI, "ID") or seeEnemyHand or GUI.ID == card.ID:
 			self.decideColorOrig(GUI, card)
 			img = PIL.Image.open(findPicFilepath(card)).resize((HandImgSize, HandImgSize))
@@ -163,6 +220,8 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			self.x, self.y, self.labels, self.zone = 0, 0, [], GUI.handZones[card.ID]
 			self.bind('<Button-1>', self.leftClick)   # bind left mouse click
 			self.bind('<Button-3>', self.rightClick)   # bind right mouse click
+			self.bind("<Enter>", self.crosshairEnter)
+			self.bind("<Leave>", self.crosshairLeave)
 			if card.index.startswith("SV_") and hasattr(card, "fusion"):
 				self.bind("<Double-Button-1>", lambda event: game.Discover.startFusion(card, card.findFusionMaterials()))
 			#Info bookkeeping
@@ -200,9 +259,25 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 				
 	def rightClick(self, event):
 		self.GUI.cancelSelection()
-		self.card.STATUSPRINT()
-		self.GUI.displayCard(self.card)
 		
+	def crosshairEnter(self, event):
+		self.waiting = True
+		thread = threading.Thread(target=self.wait2Display, daemon=True)
+		thread.start()
+		
+	def crosshairLeave(self, event):
+		self.waiting = False
+		try: self.GUI.lbl_Status.destroy()
+		except: pass
+		
+	def wait2Display(self):
+		time.sleep(waitTime4Info)
+		if self.waiting:
+			text = self.card.cardStatus()
+			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=text, bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
+			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
+			self.GUI.displayCard(self.card)
+			
 	def tempLeftClick(self, event): #For Shadowverse
 		self.GUI.select = self.card
 		self.var.set(1)
@@ -366,7 +441,7 @@ class MulliganButton(tk.Button):
 	def __init__(self, GUI, card):
 		img = PIL.Image.open(findPicFilepath_FullImg(card)).resize((210, 280))
 		ph = PIL.ImageTk.PhotoImage(img)
-		tk.Button.__init__(self, relief=tk.FLAT, master=GUI.GamePanel, image=ph, bg="green", width=int(2.5*CARD_X), height=int(2.3*CARD_Y))
+		tk.Button.__init__(self, relief=tk.FLAT, master=GUI.GamePanel, image=ph, bg="green", width=int(2.5*CARD_X), height=int(2.4*CARD_Y))
 		self.GUI, self.card, self.image, self.selected = GUI, card, ph, 0
 		self.bind("<Button-1>", self.respond)
 		
@@ -556,6 +631,7 @@ class ChooseOneButton(tk.Button):
 class MinionButton(tk.Button):
 	def __init__(self, GUI, minion):
 		self.decideColorOrig(GUI, minion)
+		self.waiting = False
 		seq = minion.sequence
 		text = {0: "1st", 1: "2nd", 2: "3rd"}[seq] if seq < 3 else "%dth"%(seq+1) + ' '
 		for key, value in minion.keyWords.items():
@@ -566,6 +642,8 @@ class MinionButton(tk.Button):
 		self.GUI, self.card, self.image, self.selected = GUI, minion, ph, 0
 		self.bind('<Button-1>', self.leftClick)
 		self.bind('<Button-3>', self.rightClick)
+		self.bind("<Enter>", self.crosshairEnter)
+		self.bind("<Leave>", self.crosshairLeave)
 		self.x, self.y, self.labels, self.zone = 0, 0, [], GUI.boardZones[minion.ID]
 		#Info bookkeeping
 		self.cardInfo = type(minion)
@@ -602,11 +680,25 @@ class MinionButton(tk.Button):
 				
 	def rightClick(self, event):
 		self.GUI.cancelSelection()
-		self.card.STATUSPRINT()
-		self.GUI.displayCard(self.card)
-		# print("This button of %s is in zone's btnsDrawn"%self.card.name, self in self.zone.btnsDrawn)
-		# print("This boardZones' btnsDrawn", self.GUI.boardZones[1].btnsDrawn, self.GUI.boardZones[2].btnsDrawn)
 		
+	def crosshairEnter(self, event):
+		self.waiting = True
+		thread = threading.Thread(target=self.wait2Display, daemon=True)
+		thread.start()
+		
+	def crosshairLeave(self, event):
+		self.waiting = False
+		try: self.GUI.lbl_Status.destroy()
+		except: pass
+		
+	def wait2Display(self):
+		time.sleep(waitTime4Info)
+		if self.waiting:
+			text = self.card.cardStatus()
+			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=text, bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
+			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
+			self.GUI.displayCard(self.card)
+			
 	def tempLeftClick(self, event): #For Shadowverse
 		self.GUI.select = self.card
 		self.var.set(1)
@@ -709,12 +801,15 @@ class BoardZone:
 class HeroButton(tk.Button):
 	def __init__(self, GUI, hero):
 		self.decideColorOrig(GUI, hero)
+		self.waiting = False
 		img = PIL.Image.open(findPicFilepath(hero)).resize((HeroIconSize, HeroIconSize))
 		ph = PIL.ImageTk.PhotoImage(img)
 		tk.Button.__init__(self, relief=tk.FLAT, master=GUI.GamePanel, image=ph, bg=self.colorOrig, width=int(1.2*Hand_X), height=int(1.2*Hand_Y))
 		self.GUI, self.card, self.image, self.selected = GUI, hero, ph, 0
 		self.bind('<Button-1>', self.leftClick)
 		self.bind('<Button-3>', self.rightClick)
+		self.bind("<Enter>", self.crosshairEnter)
+		self.bind("<Leave>", self.crosshairLeave)
 		self.x, self.y, self.labels, self.zone = 0, 0, [], GUI.heroZones[hero.ID]
 		self.cardInfo = type(hero)
 		self.attack, self.health, self.armor = hero.attack, hero.health, hero.armor
@@ -734,9 +829,25 @@ class HeroButton(tk.Button):
 			
 	def rightClick(self, event):
 		self.GUI.cancelSelection()
-		self.card.STATUSPRINT()
-		self.GUI.displayCard(self.card)
 		
+	def crosshairEnter(self, event):
+		self.waiting = True
+		thread = threading.Thread(target=self.wait2Display, daemon=True)
+		thread.start()
+		
+	def crosshairLeave(self, event):
+		self.waiting = False
+		try: self.GUI.lbl_Status.destroy()
+		except: pass
+		
+	def wait2Display(self):
+		time.sleep(waitTime4Info)
+		if self.waiting:
+			text = self.card.cardStatus()
+			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=text, bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
+			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
+			self.GUI.displayCard(self.card)
+			
 	def tempLeftClick(self, event): #For Shadowverse
 		self.GUI.select = self.card
 		self.var.set(1)
@@ -777,12 +888,15 @@ class HeroButton(tk.Button):
 class HeroPowerButton(tk.Button): #For Hero Powers that are on board
 	def __init__(self, GUI, power):
 		self.decideColorOrig(GUI, power)
+		self.waiting = False
 		img = PIL.Image.open(findPicFilepath(power)).resize((PowerImgSize, PowerImgSize))
 		ph = PIL.ImageTk.PhotoImage(img)
 		tk.Button.__init__(self, relief=tk.FLAT, master=GUI.GamePanel, image=ph, bg=self.colorOrig, width=PowerIconSize, height=PowerIconSize)
 		self.GUI, self.card, self.image, self.selected = GUI, power, ph, 0
 		self.bind('<Button-1>', self.leftClick)
 		self.bind('<Button-3>', self.rightClick)
+		self.bind("<Enter>", self.crosshairEnter)
+		self.bind("<Leave>", self.crosshairLeave)
 		self.x, self.y, self.labels, self.zone = 0, 0, [], GUI.heroZones[power.ID]
 		#Info bookkeeping
 		self.cardInfo = type(power)
@@ -807,9 +921,25 @@ class HeroPowerButton(tk.Button): #For Hero Powers that are on board
 				
 	def rightClick(self, event):
 		self.GUI.cancelSelection()
-		self.card.STATUSPRINT()
-		self.GUI.displayCard(self.card)
 		
+	def crosshairEnter(self, event):
+		self.waiting = True
+		thread = threading.Thread(target=self.wait2Display, daemon=True)
+		thread.start()
+		
+	def crosshairLeave(self, event):
+		self.waiting = False
+		try: self.GUI.lbl_Status.destroy()
+		except: pass
+		
+	def wait2Display(self):
+		time.sleep(waitTime4Info)
+		if self.waiting:
+			text = self.card.cardStatus()
+			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=text, bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
+			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
+			self.GUI.displayCard(self.card)
+			
 	def plot(self, x, y):
 		self.x, self.y, self.labels = x, y, []
 		self.place(x=x, y=y, anchor='c')
@@ -839,6 +969,7 @@ class HeroPowerButton(tk.Button): #For Hero Powers that are on board
 class WeaponButton(tk.Button): #休眠物和武器无论左右键都是取消选择，打印目前状态
 	def __init__(self, GUI, weapon):
 		self.decideColorOrig(GUI, weapon)
+		self.waiting = False
 		seq = weapon.sequence
 		text = {0: "1st", 1: "2nd", 2: "3rd"}[seq] if seq < 3 else "%dth"%(seq+1) + ' '
 		for key, value in weapon.keyWords.items():
@@ -848,6 +979,8 @@ class WeaponButton(tk.Button): #休眠物和武器无论左右键都是取消选
 		tk.Button.__init__(self, text=text, relief=tk.FLAT, image=ph, compound=tk.TOP, master=GUI.GamePanel, bg=self.colorOrig, width=WeaponIconWidth, height=WeaponIconHeight, font=("Yahei", 10, "bold"))
 		self.GUI, self.card, self.image, self.selected = GUI, weapon, ph, 0
 		self.bind("<Button-3>", self.rightClick)
+		self.bind("<Enter>", self.crosshairEnter)
+		self.bind("<Leave>", self.crosshairLeave)
 		self.x, self.y, self.labels, self.zone = 0, 0, [], GUI.heroZones[weapon.ID]
 		#Info bookkeeping
 		self.cardInfo = type(weapon)
@@ -862,9 +995,25 @@ class WeaponButton(tk.Button): #休眠物和武器无论左右键都是取消选
 		
 	def rightClick(self, event):
 		self.GUI.cancelSelection()
-		self.card.STATUSPRINT()
-		self.GUI.displayCard(self.card)
 		
+	def crosshairEnter(self, event):
+		self.waiting = True
+		thread = threading.Thread(target=self.wait2Display, daemon=True)
+		thread.start()
+		
+	def crosshairLeave(self, event):
+		self.waiting = False
+		try: self.GUI.lbl_Status.destroy()
+		except: pass
+		
+	def wait2Display(self):
+		time.sleep(waitTime4Info)
+		if self.waiting:
+			text = self.card.cardStatus()
+			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=text, bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
+			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
+			self.GUI.displayCard(self.card)
+			
 	def plot(self, x, y):
 		self.x, self.y, self.labels = x, y, []
 		self.place(x=x, y=y, anchor='c')
@@ -956,12 +1105,15 @@ class HeroZone: #Include heroes, weapons and powers
 class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选择，打印目前状态
 	def __init__(self, GUI, card):
 		self.decideColorOrig(GUI, card)
+		self.waiting = False
 		if not card.description.startswith("Secret:") or not hasattr(GUI, "ID") or seeEnemyHand or GUI.ID == card.ID:
 			img = PIL.Image.open(findPicFilepath(card)).resize((SecretImgSize, SecretImgSize))
 			ph = PIL.ImageTk.PhotoImage(img)
 			tk.Button.__init__(self, relief=tk.FLAT, image=ph, compound=tk.TOP, master=GUI.GamePanel, bg=self.colorOrig, width=SecretIconSize_img, height=SecretIconSize_img, font=("Yahei", 10, "bold"))
 			self.GUI, self.card, self.image, self.selected = GUI, card, ph, 0
 			self.bind("<Button-3>", self.rightClick)
+			self.bind("<Enter>", self.crosshairEnter)
+			self.bind("<Leave>", self.crosshairLeave)
 		else:
 			tk.Button.__init__(self, relief=tk.FLAT, image=None, compound=tk.TOP, master=GUI.GamePanel, text="?", fg="white", bg=self.colorOrig, width=3, height=1, font=("Yahei", 20, "bold"))
 			self.GUI, self.card, self.image, self.selected = GUI, card, None, 0
@@ -983,9 +1135,25 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 
 	def rightClick(self, event):
 		self.GUI.cancelSelection()
-		self.card.STATUSPRINT()
-		self.GUI.displayCard(self.card)
 		
+	def crosshairEnter(self, event):
+		self.waiting = True
+		thread = threading.Thread(target=self.wait2Display, daemon=True)
+		thread.start()
+		
+	def crosshairLeave(self, event):
+		self.waiting = False
+		try: self.GUI.lbl_Status.destroy()
+		except: pass
+		
+	def wait2Display(self):
+		time.sleep(waitTime4Info)
+		if self.waiting:
+			text = self.card.cardStatus()
+			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=text, bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
+			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
+			self.GUI.displayCard(self.card)
+			
 	def plot(self, x, y):
 		self.x, self.y, self.labels = x, y, []
 		self.place(x=x, y=y, anchor='c')
@@ -1071,19 +1239,23 @@ class BoardButton(tk.Canvas):
 		self.GUI, self.selected, self.colorOrig, self.boardInfo = GUI, 0, BoardColor, GUI.boardID
 		self.bind('<Button-1>', self.leftClick)   # bind left mouse click
 		self.bind('<Button-3>', self.rightClick)   # bind right mouse click
-		self.text = "Transfer Student--%s\n"% \
-				{"1 Classic Ogrimmar": "Battlecry: Deal 2 damage",
-				"2 Classic Stormwind": "Divine Shield",
-				"3 Classic Stranglethorn": "Stealth, Poisonous",
-				"4 Classic Four Wind Valley": "Battlecry: Give a friendly minion +1/+2",
-				"20 Dalaran": "Battlecry: Add a Lackey to your hand",
-				"21 Uldum Desert": "Reborn",
-				"22 Uldum Oasis": "Battlecry: Add a Uldum plague card to your hand",
-				"23 Dragons": "Battlecry: Discover a Dragon",
-				"24 Outlands": "Dormant for 2 turns. When this awakens, deal 3 damage to 2 random enemy minions",
-				"25 Scholomance Academy": "Add a Dual class card to your hand",
-				"26 Darkmoon Faire": "Corrupt: Gain +2/+2",
-				}[self.boardInfo]
+		self.text = "Transfer Student--%s\n" if not CHN else "转校生--%s\n"% \
+					{"1 Classic Ogrimmar": "Battlecry: Deal 2 damage" if not CHN else "战吼：造成2点伤害",
+					"2 Classic Stormwind": "Divine Shield" if not CHN else "圣盾",
+					"3 Classic Stranglethorn": "Stealth, Poisonous" if not CHN else "潜行，剧毒",
+					"4 Classic Four Wind Valley": "Battlecry: Give a friendly minion +1/+2" if not CHN \
+													else "战吼：使一个友方随从获得+1/+2",
+					"20 Dalaran": "Battlecry: Add a Lackey to your hand" if not CHN else "战吼：将一张跟班牌置入你的手牌",
+					"21 Uldum Desert": "Reborn" if not CHN else "复生",
+					"22 Uldum Oasis": "Battlecry: Add a Uldum plague card to your hand" if not CHN \
+										else "战吼：将一张奥丹姆灾祸法术牌置入你的手牌",
+					"23 Dragons": "Battlecry: Discover a Dragon" if not CHN else "战吼：发现一张龙牌",
+					"24 Outlands": "Dormant for 2 turns. When this awakens, deal 3 damage to 2 random enemy minions" if not CHN \
+									else "休眠两回合。唤醒时，随机对两个敌方随从造成3点伤害",
+					"25 Scholomance Academy": "Battlecry: Add a Dual class card to your hand" if not CHN \
+												else "战吼：将一张双职业卡牌置入你的手牌",
+					"26 Darkmoon Faire": "Corrupt: Gain +2/+2" if not CHN else "腐化：获得+2/+2",
+					}[self.boardInfo]
 		self.effectIDs = []
 		
 	def leftClick(self, event):
@@ -1101,16 +1273,22 @@ class BoardButton(tk.Canvas):
 		while self.effectIDs:
 			self.delete(self.effectIDs.pop())
 		game = self.GUI.Game
-		status = self.text + "\nPlayer 1 has:\n"
-		for key, value in game.status[1].items():
-			if value > 0: status += "%s:%d "%(key, value)
-		status += "\n\nPlayer 2 has:\n"
-		for key, value in game.status[2].items():
-			if value > 0: status += "%s:%d	"%(key, value)
-		status += "\n\nTempTriggers:\n"
+		status = self.text
+		for ID in range(1, 3):
+			status += ("\nPlayer %d has:\n"%ID if not CHN else "玩家%d有：\n"%ID)
+			for key, value in game.status[ID].items():
+				if value > 0: status += "\t%s:%d "%(key, value)
+		status += "\nEffects:\n" if not CHN else "\n效果\n"
+		effects = []
 		for obj in game.turnStartTrigger + game.turnEndTrigger:
-			status += type(obj).__name__ + ' '
-		
+			if obj not in effects:
+				status += obj.text(CHN) + ' '
+				effects.append(obj)
+		for trigList in game.trigsBoard[1].values():
+			for trig in trigList:
+				if hasattr(trig, "ID") and trig not in effects:
+					status += obj.text(CHN) + ' '
+					effects.append(obj)
 		textID = self.create_text(int(0.3*Board_X), Board_Y/2, text=self.GUI.wrapText(status, lengthLimit=60), 
 									fill="orange2", font=("Yahei", 14, ))
 		self.effectIDs.append(textID)

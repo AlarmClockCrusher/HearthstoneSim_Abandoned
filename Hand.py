@@ -236,9 +236,8 @@ class Hand_Deck:
 					self.drawCard(ID)
 				cardTracker[0].afterDrawingCard()
 			else:  # 抽到的牌可以加入手牌。
-				if cardTracker[0].type == "Minion" or cardTracker[0].type == "Amulet" and cardTracker[0].triggers["Drawn"] != []:
-					PRINT(game, "%s is drawn and triggers its effect." % cardTracker[0].name)
-					for func in cardTracker[0].triggers["Drawn"]: func()
+				if cardTracker[0].type == "Minion" or cardTracker[0].type == "Amulet":
+					cardTracker[0].whenDrawn()
 				cardTracker[0] = cardTracker[0].entersHand()
 				self.hands[ID].append(cardTracker[0])
 				if GUI: GUI.drawCardAni_2(btn, cardTracker[0])
@@ -363,15 +362,14 @@ class Hand_Deck:
 			for minion in minions:
 				self.Game.Counters.numBurialRiteThisGame[ID] += 1
 				self.Game.sendSignal("BurialRite", ID, None, minion, 0, "")
-
-
+				
 	def discardAll(self, ID):
 		if self.hands[ID]:
 			cards, cost, isRightmostCardinHand = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True)
 			n = len(cards)
 			for card in cards:
 				PRINT(self.Game, "Card %s in player's hand is discarded:" % card.name)
-				for func in card.triggers["Discarded"]: func()
+				card.whenDiscarded()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.Counters.shadows[card.ID] += 1
 				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, -1, "")
@@ -385,12 +383,11 @@ class Hand_Deck:
 				card, cost, isRightmostCardinHand = self.extractfromHand(card, enemyCanSee=True)
 				PRINT(self.Game, "Card %s in player's hand is discarded:" % card.name)
 				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 1, "")
-				for func in card.triggers["Discarded"]: func()
+				card.whenDiscarded()
 				self.Game.Manas.calcMana_All()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.Counters.shadows[card.ID] += 1
 				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
-
 		else:  # Discard a chosen card.
 			i = card if isinstance(card, (int, np.int32, np.int64)) else self.hands[ID].index(card)
 			card = self.hands[ID].pop(i)

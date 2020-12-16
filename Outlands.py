@@ -49,16 +49,9 @@ class Minion_Dormantfor2turns(Minion):
 		if firstTime: #首次出场时会进行休眠，而且休眠状态会保持之前的随从buff
 			self.Game.transform(self, ImprisonedDormantForm(self.Game, self.ID, self), firstTime=True)
 		else: #只有不是第一次出现在场上时才会执行这些函数
-			for value in self.auras.values():
-				value.auraAppears()
-			#随从入场时将注册其场上扳机和亡语扳机
-			for trigger in self.trigsBoard + self.deathrattles:
-				trigger.connect() #把(obj, signal)放入Game.triggersonBoard中
-			#Mainly mana aura minions, e.g. Sorcerer's Apprentice.
-			for func in self.appearResponse: func()
-			#The buffAuras/hasAuras will react to this signal.
+			for aura in self.auras.values(): aura.auraAppears()
+			for trig in self.trigsBoard + self.deathrattles: trig.connect()
 			self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, comment=firstTime)
-			for func in self.triggers["StatChanges"]: func()
 			
 	def awakenEffect(self):
 		pass
@@ -215,6 +208,9 @@ class Trig_BonechewerBrawler(TrigBoard):
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity and self.entity.onBoard
 		
+	def text(self, CHN):
+		return "每当该随从受到伤害，便获得+2攻击力" if CHN else "Whenever this minion takes damage, gain +2 Attack"
+		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "%s takes Damage and gains +2 Attack."%self.entity.name)
 		self.entity.buffDebuff(2, 0)
@@ -286,6 +282,10 @@ class Trig_BlisteringRot(TrigBoard):
 		return self.entity.onBoard and ID == self.entity.ID and self.entity.health > 0
 	#假设召唤的Rot只是一个1/1，然后接受buff.而且该随从生命值低于1时不能触发
 	#假设攻击力为负数时，召唤物的攻击力为0
+	def text(self, CHN):
+		return "在你的回合结束时，召唤一个属性值等同于该随从的腐质" if CHN \
+				else "At the end of your turn, summon a Rot with stats equal to this minion's"
+				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "At the start of turn, %s summons a Rot with equal stats"%self.entity.name)
 		minion = LivingRot(self.entity.Game, self.entity.ID)
@@ -324,21 +324,61 @@ class OverconfidentOrc(Minion):
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. While at full Health, this has +2 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggers["StatChanges"] = [self.handleAttack]
-		self.activated = False
+		self.auras["While at full Health, this has +2 Attack"] = StatAura_OverconfidentOrc(self)
 		
-	def handleAttack(self):
-		if self.silenced == False and self.onBoard:
-			if self.activated == False and self.health >= self.health_max:
+class StatAura_OverconfidentOrc(HasAura_toMinion):
+	def __init__(self, entity):
+		self.entity = entity
+		self.signals = ["MinionStatCheck"]
+		self.activated = False
+		self.auraAffected = []
+		
+	#光环开启和关闭都取消，因为要依靠随从自己的handleEnrage来触发
+	def auraAppears(self):
+		minion = self.entity
+		for sig in self.signals:
+			try: minion.Game.trigsBoard[minion.ID][sig].append(self)
+			except: minion.Game.trigsBoard[minion.ID][sig] = [self]
+		if minion.onBoard:
+			if minion.health == minion.health_max and not self.activated:
 				self.activated = True
-				self.statChange(2, 0)
-				self.statbyAura[0] += 2
-			elif self.activated and self.health < self.health_max:
-				self.activated = False
-				self.statChange(-2, 0)
-				self.statbyAura[0] -= 2
+				self.applies(minion)
 				
+	def auraDisappears(self):
+		self.activated = False
+		for sig in self.signals:
+			try: self.entity.Game.trigsBoard[self.entity.ID][sig].append(self)
+			except: pass
+		for minion, receiver in fixedList(self.auraAffected):
+			receiver.effectClear()
+		self.auraAffected = []
+		
+	def applies(self, target):
+		Stat_Receiver(target, self, 2, 0).effectStart()
+		
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		return target == self.entity and target.onBoard
+		
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrigger(signal, ID, subject, target, number, comment):
+			self.effect(signal, ID, subject, target, number, comment)
+			
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		minion = self.entity
+		if minion.health == minion.health_max and not self.activated:
+			self.activated = True
+			self.applies(minion)
+		elif minion.health < minion.health_max and self.activated:
+			self.activated = False
+			for minion, receiver in fixedList(self.auraAffected):
+				receiver.effectClear()
 				
+	def selfCopy(self, recipient): #The recipientMinion is the entity that deals the Aura.
+		#func that checks if subject is applicable will be the new copy's function
+		return type(self)(recipient)
+	#激怒的光环仍然可以通过HasAura_toMinion的createCopy复制
+	
+	
 class TerrorguardEscapee(Minion):
 	Class, race, name = "Neutral", "Demon", "Terrorguard Escapee"
 	mana, attack, health = 3, 3, 7
@@ -427,6 +467,9 @@ class SummonanInquisitor(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Deathrattle: Summon a 9/1 Inquisitor triggers")
 		self.entity.Game.summon(RustswornInquisitor(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)	
+		
+	def text(self, CHN):
+		return "亡语：召唤一个9/1的审判官" if CHN else "Deathrattle: Summon a 9/1 Inquisitor"
 		
 class RustswornInquisitor(Minion):
 	Class, race, name = "Neutral", "Demon", "Rustsworn Inquisitor"
@@ -616,6 +659,10 @@ class SummonAshesofAlar(Deathrattle_Minion):
 		PRINT(self.entity.Game, "Deathrattle: Summon a 0/3 Ashes of Al'ar that resurrects Al'ar on player's next turn triggers")
 		self.entity.Game.summon(AshesofAlar(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		
+	def text(self, CHN):
+		return "亡语：召唤一个0/3的可以在你的下个回合复活该随从的“奥的灰烬”" if CHN \
+				else "Deathrattle: Summon a 0/3 Ashes of Al'ar that resurrects this minion on your next turn"
+				
 class AshesofAlar(Minion):
 	Class, race, name = "Neutral", "", "Ashes of Al'ar"
 	mana, attack, health = 1, 0, 3
@@ -631,6 +678,9 @@ class Trig_AshesofAlar(TrigBoard):
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
+		
+	def text(self, CHN):
+		return "在你的回合开始时，该随从变形成为奥" if CHN else "At the start of your turn, transform this into Al'ar"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "At the start of turn, %s transforms into Al'ar"%self.entity.name)
@@ -692,6 +742,9 @@ class SummonaDragonrider(Deathrattle_Minion):
 		PRINT(self.entity.Game, "Deathrattle: Summon a 3/4 Dragonrider triggers")
 		self.entity.Game.summon(Dragonrider(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		
+	def text(self, CHN):
+		return "亡语：召唤一个3/4的龙骑士" if CHN else "Deathrattle: Summon a 3/4 Dragonrider"
+		
 class Dragonrider(Minion):
 	Class, race, name = "Neutral", "", "Dragonrider"
 	mana, attack, health = 3, 3, 4
@@ -706,49 +759,83 @@ class KaelthasSunstrider(Minion):
 	requireTarget, keyWord, description = False, "", "Every third spell you cast each turn costs (1)"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura(self, changeby=0, changeto=1)
-		self.trigsBoard = [Trig_KaelthasSunstrider(self)]
-		#随从的光环启动在顺序上早于appearResponse,关闭同样早于disappearResponse
-		self.appearResponse = [self.checkAuraCorrectness]
-		self.disappearResponse = [self.deactivateAura]
-		self.silenceResponse = [self.deactivateAura]
+		self.auras["Every third spell you cast each turn costs (1)"] = ManaAura_Every3rdSpell0(self)
 		
-	def manaAuraApplicable(self, subject):
-		return subject.ID == self.ID and subject.type == "Spell"
-		
-	def checkAuraCorrectness(self): #负责光环在随从登场时无条件启动之后的检测。如果光环的启动条件并没有达成，则关掉光环
-		if self.Game.turn != self.ID or self.Game.Counters.numSpellsPlayedThisTurn[self.ID] % 3 != 2:
-			PRINT(self.Game, "Kael'thas Sunstrider's mana aura is incorrectly activated. It will be shut down")
-			self.auras["Mana Aura"].auraDisappears()
-			for trig in self.trigsBoard:
-				if isinstance(trig, Trig_KaelthasSunstrider):
-					trig.counter = self.Game.Counters.numSpellsPlayedThisTurn[self.ID]
-					
-	def deactivateAura(self):
-		PRINT(self.Game, "Kael'thas Sunstrider's mana aura is removed. Player's third spell each turn no longer costs (0).")
-		self.auras["Mana Aura"].auraDisappears()
-		
-#不知道之前法术被反制之后是否会计为打出的牌.假设不会计入计数器中
-class Trig_KaelthasSunstrider(TrigBoard):
-	def __init__(self, entity): #以我方打出一张法术之后来启动给每回合第三张法术的光环
-		self.blank_init(entity, ["SpellBeenPlayed", "TurnEnds", "ManaPaid"])
+#Assume spells countered by Counterspell still count as spells played
+class ManaAura_Every3rdSpell0:
+	def __init__(self, entity):
+		self.entity = entity
+		self.auraAffected = []
+		self.signals = ["CardEntersHand", "ManaPaid", "TurnEnds"]
 		self.counter = 0
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return (signal == "TurnEnds" and self.entity.onBoard) or \
-				((signal == "ManaPaid" or signal == "SpellBeenPlayed") and self.entity.onBoard and subject.type == "Spell" and subject.ID == self.entity.ID)
-				
+		return self.entity.onBoard and ID == self.entity.ID
+		
+	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrigger(signal, ID, subject, target, number, comment):
+			self.effect(signal, ID, subject, target, number, comment)
+			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		if signal == "TurnEnds":
-			PRINT(self.entity.Game, "At the end of turn, %s shuts its Mana Aura down."%self.entity.name)
-			self.entity.auras["Mana Aura"].auraDisappears()
-			self.counter = 0
-		elif signal == "SpellBeenPlayed":
-			self.counter += 1
-			if self.entity.Game.Counters.numSpellsPlayedThisTurn[self.entity.ID] % 3 == 2:
-				self.entity.auras["Mana Aura"].auraAppears()
-		else: #signal == "ManaPaid"
-			self.entity.auras["Mana Aura"].auraDisappears()
+		minionID, game = self.entity.ID, self.entity.Game
+		if signal[0] == 'T':
+			for card, manaMod in fixedList(self.auraAffected):
+				manaMod.getsRemoved()
+			self.auraAffected, self.counter = [], 0
+		elif signal[0] == 'M': #我方回合中第三张法术打出的时候会产生光环，取消这个光环中所有登记的manaMod
+			self.counter = game.Counters.numSpellsPlayedThisTurn[minionID] % 3
+			if self.counter == 2:
+				for card in game.Hand_Deck.hands[minionID]: self.applies(card)
+			elif self.counter == 0:
+				for card, manaMod in fixedList(self.auraAffected):
+					manaMod.getsRemoved()
+				self.auraAffected = []
+		elif self.counter == 2: self.applies(target[0])
+		
+	def applies(self, target): #This target is NOT holder.
+		if target.type == "Spell":
+			manaMod = ManaMod(target, 0, 1, self)
+			manaMod.applies()
+			self.auraAffected.append((target, manaMod))
+			
+	def auraAppears(self):
+		game, ID = self.entity.Game, self.entity.ID
+		self.counter = game.Counters.numSpellsPlayedThisTurn[ID] % 3
+		if game.turn == ID and self.counter == 2:
+			for card in game.Hand_Deck.hands[ID]: self.applies(card)
+		for sig in self.signals:
+			try: game.trigsBoard[ID][sig].append(self)
+			except: game.trigsBoard[ID][sig] = [self]
+		game.Manas.calcMana_All()
+		
+	def auraDisappears(self):
+		game, ID = self.entity.Game, self.entity.ID
+		for card, manaMod in fixedList(self.auraAffected):
+			manaMod.getsRemoved()
+		self.auraAffected, self.counter = [], 0
+		for sig in self.signals:
+			try: game.trigsBoard[ID][sig].remove(self)
+			except: pass
+		game.Manas.calcMana_All()
+		
+	def selfCopy(self, recipient): #The recipient is the entity that deals the Aura.
+		return type(self)(recipient)
+		
+	def createCopy(self, game):
+		if self not in game.copiedObjs:
+			entityCopy = self.entity.createCopy(game)
+			Copy = self.selfCopy(entityCopy)
+			game.copiedObjs[self] = Copy
+			Copy.counter = self.counter
+			for card, manaMod in self.auraAffected:
+				cardCopy = card.createCopy(game)
+				manaModIndex = card.manaMods.index(manaMod)
+				manaModCopy = cardCopy.manaMods[manaModIndex]
+				manaModCopy.source = Copy
+				Copy.auraAffected.append((cardCopy, manaModCopy))
+			return Copy
+		else:
+			return game.copiedObjs[self]
 			
 			
 class ScavengingShivarra(Minion):
@@ -795,6 +882,9 @@ class Trig_BonechewerVanguard(TrigBoard):
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity and self.entity.onBoard
+		
+	def text(self, CHN):
+		return "每当该随从受到伤害，便获得+2攻击力" if CHN else "Whenever this minion takes damage, gain +2 Attack"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "%s takes Damage and gains +2 Attack."%self.entity.name)
@@ -971,25 +1061,25 @@ class SummonaRandomDemonfromYourHand(Deathrattle_Minion):
 				curGame.fixedGuides.append(i)
 			if i > -1: curGame.summonfromHand(i, self.entity.ID, self.entity.position+1, self.entity.ID)
 			
-			
+	def text(self, CHN):
+		return "亡语：随机从你的手牌中召唤一个恶魔" if CHN else "Deathrattle: Summon a random Demon from your hand"
+		
+		
 class KaynSunfury(Minion):
 	Class, race, name = "Demon Hunter", "", "Kayn Sunfury"
 	mana, attack, health = 4, 3, 4
 	index = "Outlands~Demon Hunter~Minion~4~3~4~None~Kayn Sunfury~Charge~Legendary"
-	requireTarget, keyWord, description = False, "Charge", "Charge. All friendly Ignore Taunt"
+	requireTarget, keyWord, description = False, "Charge", "Charge. All friendly attacks ignore Taunt"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.appearResponse = [self.activateAura]
-		self.disappearResponse = [self.deactivateAura]
-		self.silenceResponse = [self.deactivateAura]
+		self.auras["All friendly attacks ignore Taunt"] = GameRuleAura_KaynSunfury(self)
 		
-	def activateAura(self):
-		PRINT(self.Game, "Kayn Sunfury's aura is registered. Player %d's attacks now ignore Taunt."%self.ID)
-		self.Game.status[self.ID]["Ignore Taunt"] += 1
+class GameRuleAura_KaynSunfury(GameRuleAura):
+	def auraAppears(self):
+		self.entity.Game.status[self.entity.ID]["Ignore Taunt"] += 1
 		
-	def deactivateAura(self):
-		PRINT(self.Game, "Kayn Sunfury's aura is removed. Player %d's attacks no longer ignore Taunt."%self.ID)
-		self.Game.status[self.ID]["Ignore Taunt"] -= 1
+	def auraDisappears(self):
+		self.entity.Game.status[self.entity.ID]["Ignore Taunt"] -= 1
 		
 		
 class Metamorphosis(Spell):
@@ -1164,6 +1254,9 @@ class SummonaWarlordwithTaunt(Deathrattle_Minion):
 		PRINT(self.entity.Game, "Deathrattle: Summon a 5/9 Warlord with Taunt triggers")
 		self.entity.Game.summon(ConchguardWarlord(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		
+	def text(self, CHN):
+		return "亡语：召唤一个5/9并具有嘲讽的督军" if CHN else "Deathrattle: Summon a 5/9 Warlord with Taunt"
+		
 class ConchguardWarlord(Minion):
 	Class, race, name = "Demon Hunter", "", "Conchguard Warlord"
 	mana, attack, health = 8, 5, 9
@@ -1273,6 +1366,9 @@ class ShuffleMsshifnPrimeintoYourDeck(Deathrattle_Minion):
 		PRINT(self.entity.Game, "Deathrattle: Shuffle 'Msshi'fn Prime' into your deck triggers")
 		self.entity.Game.Hand_Deck.shuffleCardintoDeck(MsshifnPrime(self.entity.Game, self.entity.ID), self.entity.ID)
 		
+	def text(self, CHN):
+		return "亡语：将“终极姆希菲”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Msshi'fn Prime' into your deck"
+		
 class MsshifnPrime(Minion):
 	Class, race, name = "Druid", "", "Msshi'fn Prime"
 	mana, attack, health = 10, 9, 9
@@ -1349,6 +1445,11 @@ class Bogbeam(Spell):
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Manas.manasUpper[self.ID] > 6
 		
+	def text(self, CHN):
+		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对一个随从造成%d点伤害。如果你拥有至少七个法力水晶，则法力值消耗为(0)点"%damage if CHN \
+				else "Deal %d damage to a minion. Costs (0) if you have at least 7 Mana Crystals"%damage
+				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1524,7 +1625,10 @@ class GiveaRandomBeastinYourHandPlus1Plus1(Deathrattle_Minion):
 				PRINT(curGame, "Deathrattle: Give a random Beast in your hand +1/+1 triggers")
 				ownHand[i].buffDebuff(1, 1)
 				
-				
+	def text(self, CHN):
+		return "亡语：随机使你手牌中的一张野兽获得+1/+1" if CHN else "Deathrattle: Give a random Beast in your hand +1/+1"
+		
+		
 class ImprisonedFelmaw(Minion_Dormantfor2turns):
 	Class, race, name = "Hunter", "Demon", "Imprisoned Felmaw"
 	mana, attack, health = 2, 5, 4
@@ -1626,6 +1730,10 @@ class DealDamageEqualtoAttack(Deathrattle_Minion):
 					PRINT(curGame, "Deathrattle deals 1 damage to random enemy %s"%enemy.name)
 					minion.dealsDamage(enemy, 1)
 				else: break
+				
+	def text(self, CHN):
+		return "亡语：造成等同于该随从攻击力的伤害，随机分配到所有敌人身上" if CHN \
+				else "Deathrattle: Deal this minion's Attack damage randomly split among all enemies"
 				
 				
 class ZixorApexPredator(Minion):
@@ -1889,6 +1997,9 @@ class Trig_ApexisSmuggler(TrigBoard):
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject.description.startswith("Secret:")
 		
+	def text(self, CHN):
+		return "在你使用一张奥秘牌后，发现一张法术牌" if CHN else "After you play a Secret, Discover a spell"
+		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion, curGame = self.entity, self.entity.Game
 		if curGame.mode == 0:
@@ -1916,6 +2027,9 @@ class ShuffleSolarianPrimeintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Deathrattle: Shuffle 'Solarian Prime' into your deck triggers")
 		self.entity.Game.Hand_Deck.shuffleCardintoDeck(SolarianPrime(self.entity.Game, self.entity.ID), self.entity.ID)
+		
+	def text(self, CHN):
+		return "亡语：将“终极索兰莉安”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Solarian Prime' into your deck"
 		
 class SolarianPrime(Minion):
 	Class, race, name = "Mage", "Demon", "Solarian Prime"
@@ -2038,6 +2152,11 @@ class ApexisBlast(Spell):
 	def effectCanTrigger(self):
 		self.effectViable = self.Game.Hand_Deck.noMinionsinDeck(self.ID)
 		
+	def text(self, CHN):
+		damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "造成%d点伤害。如果你的牌库中没有随从牌，随机召唤一个法力消耗为(5)的随从"%damage if CHN \
+				else "Deal %d damage. If your deck has no minions, summon a random 5-Cost minion"%damage
+				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if target:
@@ -2093,11 +2212,11 @@ class SungillStreamrunner(Minion):
 	requireTarget, keyWord, description = False, "", ""
 	
 	
-class LibramManaAura:
+class GameManaAura_Libram:
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
 		self.Game, self.ID = Game, ID
 		self.changeby, self.changeto = changeby, changeto
-		self.auraAffected = [] #A list of (minion, aura_Receiver)
+		self.auraAffected = [] #A list of (minion, receiver)
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.name.startswith("Libram of")
@@ -2125,7 +2244,7 @@ class LibramManaAura:
 		PRINT(self.Game, "Aura", self, "starts")
 		for card in self.Game.Hand_Deck.hands[1]: self.applies(card)
 		for card in self.Game.Hand_Deck.hands[2]: self.applies(card)
-		#Only need to handle minions that appear. Them leaving/silenced will be handled by the BuffAura_Receiver object.
+		#Only need to handle minions that appear. Them leaving/silenced will be handled by the Stat_Receiver object.
 		#We want this Trig_MinionAppears can handle everything including registration and buff and removing.
 		try: self.Game.trigsBoard[self.ID]["CardEntersHand"].append(self)
 		except: self.Game.trigsBoard[self.ID]["CardEntersHand"] = [self]
@@ -2161,7 +2280,7 @@ class AldorAttendant(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Aldor Attendant's battlecry reduces the Cost of player's Librams by (1) this game")
-		aura = LibramManaAura(self.Game, self.ID, -1, -1)
+		aura = GameManaAura_Libram(self.Game, self.ID, -1, -1)
 		self.Game.auras.append(aura)
 		aura.auraAppears()
 		return None
@@ -2294,7 +2413,7 @@ class AldorTruthseeker(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Aldor Truthseeker's battlecry reduces the Cost of player's Librams by (2) this game")
-		aura = LibramManaAura(self.Game, self.ID, -2, -1)
+		aura = GameManaAura_Libram(self.Game, self.ID, -2, -1)
 		self.Game.auras.append(aura)
 		aura.auraAppears()
 		return None
@@ -2513,6 +2632,10 @@ class Trig_DragonmawOverseer(TrigBoard):
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
+	def text(self, CHN):
+		return "在你的回合结束时，使另一个友方随从获得+2/+2" if CHN \
+				else "At the end of your turn, give another friendly minion +2/+2"
+				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
@@ -2814,6 +2937,9 @@ class ShuffleAkamaPrimeintoYourDeck(Deathrattle_Minion):
 		PRINT(self.entity.Game, "Deathrattle: Shuffle 'Akama Prime' into your deck triggers")
 		self.entity.Game.Hand_Deck.shuffleCardintoDeck(AkamaPrime(self.entity.Game, self.entity.ID), self.entity.ID)
 		
+	def text(self, CHN):
+		return "亡语：将“终极阿卡玛”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Akama Prime' into your deck"
+				
 class AkamaPrime(Minion):
 	Class, race, name = "Rogue", "", "Akama Prime"
 	mana, attack, health = 6, 6, 5
@@ -2878,6 +3004,9 @@ class SummonaShadowwithTaunt(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Deathrattle: Summon a 7/5 Shadow with Stealth triggers")
 		self.entity.Game.summon(CursedShadow(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		
+	def text(self, CHN):
+		return "亡语：召唤一个7/5并具有潜行的阴影" if CHN else "Deathrattle: Summon a 7/5 Shadow with Stealth"
 		
 class CursedShadow(Minion):
 	Class, race, name = "Rogue", "", "Cursed Shadow"
@@ -3119,6 +3248,10 @@ class Trig_BoggspineKnuckles(TrigBoard):
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
 		
+	def text(self, CHN):
+		return "在你的英雄攻击后，随机将你的所有随从变形成为法力值消耗增加(1)点的随从" if CHN \
+				else "After your hero attacks, transform your minions into ones that cost (1) more"
+				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
 		PRINT(curGame, "After player attacks, weapon Boggspine Knuckles transforms friendly minions into ones that cost (1) more.")
@@ -3285,7 +3418,7 @@ class KanrethadEbonlocke(Minion):
 	requireTarget, keyWord, description = False, "", "Your Demons cost (1) less. Deathrattle: Shuffle 'Kanrethad Prime' into your deck"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Mana Aura"] = ManaAura(self, changeby=-1, changeto=-1)
+		self.auras["Your Demons cost (1) less"] = ManaAura(self, changeby=-1, changeto=-1)
 		self.deathrattles = [ShuffleKanrethadPrimeintoYourDeck(self)]
 		
 	def manaAuraApplicable(self, subject): #ID用于判定是否是我方手中的随从
@@ -3295,6 +3428,10 @@ class ShuffleKanrethadPrimeintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Deathrattle: Shuffle 'Kanrethad Prime' into your deck triggers")
 		self.entity.Game.Hand_Deck.shuffleCardintoDeck(KanrethadPrime(self.entity.Game, self.entity.ID), self.entity.ID)
+		
+	def text(self, CHN):
+		return "亡语：将“终极坎雷萨德”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Kanrethad Prime' into your deck"
+		
 		
 class KanrethadPrime(Minion):
 	Class, race, name = "Warlock", "Demon", "Kanrethad Prime"
@@ -3333,6 +3470,9 @@ class Trig_Darkglare(TrigBoard):
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity.Game.heroes[self.entity.ID]
+		
+	def text(self, CHN):
+		return "在你的英雄受到伤害后，复原一个法力水晶" if CHN else "After your hero takes damage, refresh a Mana Crystals"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "After player takes damage, Darkglare refreshes 2 of player's Mana Crystals")
@@ -3467,6 +3607,9 @@ class SummonaDreadlordwithLifesteal(Deathrattle_Minion):
 		PRINT(self.entity.Game, "Deathrattle: Summon a 5/5 Dreadlord with Lifesteal triggers")
 		self.entity.Game.summon(DesperateDreadlord(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)\
 		
+	def text(self, CHN):
+		return "亡语：召唤一个5/5并具有吸血的恐惧魔王" if CHN else "Deathrattle: Summon a 5/5 Dreadlord with Lifesteal"
+		
 class DesperateDreadlord(Minion):
 	Class, race, name = "Warlock", "Demon", "Desperate Dreadlord"
 	mana, attack, health = 5, 5, 5
@@ -3599,6 +3742,10 @@ class Trig_BulwarkofAzzinoth(TrigBoard):
 		#Can only prevent damage if there is still durability left
 		return target == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard and self.entity.durability > 0
 		
+	def text(self, CHN):
+		return "每当你的英雄即将受到伤害，改为埃辛诺斯壁垒失去1点耐久度" if CHN \
+				else "Whenever your hero would take damage, this loses 1 Durability instead"
+				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "Player is about to take damage and %s prevents it at the cost of losing 1 Durability."%self.entity.name)
 		number[0] = 0
@@ -3640,6 +3787,9 @@ class ShuffleKargathPrimeintoYourDeck(Deathrattle_Minion):
 		PRINT(self.entity.Game, "Deathrattle: Shuffle Kargath Prime into your deck triggers")
 		self.entity.Game.Hand_Deck.shuffleCardintoDeck(KargathPrime(self.entity.Game, self.entity.ID), self.entity.ID)
 		
+	def text(self, CHN):
+		return "亡语：将“终极卡加斯”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Kargath Prime' into your deck"
+		
 class KargathPrime(Minion):
 	Class, race, name = "Warrior", "", "Kargath Prime"
 	mana, attack, health = 8, 10, 10
@@ -3655,6 +3805,9 @@ class Trig_KargathPrime(TrigBoard):
 		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity and self.entity.onBoard and (target.health < 1 or target.dead == True)
+		
+	def text(self, CHN):
+		return "每当该随从攻击并消灭一个随从时，获得10点护甲值" if CHN else "Whenever this attacks and kills a minion, gain 10 Armor"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "After %s attacks and kills minion %s, the player gains 10 Armor."%(self.entity.name, target.name))
@@ -3701,6 +3854,10 @@ class Trig_BloodboilBrute(TrigHand):
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand
 		
+	def text(self, CHN):
+		return "每当受伤随从的数量变化，重新计算该随从的费用" if CHN \
+				else "When number of damaged minions change, recalculate mana"
+				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.Game.Manas.calcMana_Single(self.entity)
 		

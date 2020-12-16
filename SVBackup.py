@@ -1065,7 +1065,7 @@ class ReclusivePonderer(SVMinion):
 #
 #	 def __init__(self, Game, ID):
 #		 self.blank_init(Game, ID)
-#		 self.auras["Has Aura"] = HasAura_Dealer(self, "Free Evolve")
+#		 self.auras["Has Aura"] = EffectAura(self, "Free Evolve")
 #
 #	 def applicable(self, target):
 #		 return target.cardType == "Minion" and "Levin" in target.race

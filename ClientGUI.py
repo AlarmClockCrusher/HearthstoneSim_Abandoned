@@ -101,13 +101,14 @@ class Button_ConnectandResume(tk.Button):
 		
 #import tkinter.font as tkFont
 #fontStyle = tkFont.Font(family="Lucida Grande", size=3)
-class GUI_Online(GUI_Common):
+class GUI_Client(GUI_Common):
 	def __init__(self):
 		self.mulliganStatus, self.btnsDrawn = [], []
 		self.selectedSubject = ""
 		self.subject, self.target, self.discover = None, None, None
 		self.position, self.choice, self.UI = -1, 0, -2 #起手调换的UI为-2
 		self.boardID, self.ID = '', 1
+		self.CHN = CHN
 		self.window = tk.Tk()
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.waiting4Server, self.timer = False, 60
@@ -436,5 +437,5 @@ class GUI_Online(GUI_Common):
 		self.UI = 0
 		if self.ID != self.Game.turn:
 			self.wait4EnemyMovefromServer()
-		
-GUI_Online()
+			
+GUI_Client()

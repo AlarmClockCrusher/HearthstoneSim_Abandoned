@@ -115,52 +115,8 @@ class MonksApprentice(Minion):
 	def handleStatChange(self):
 		self.auras["RushandWindfury"].handleStatChange()
 		
-class Aura_MonksApprentice(AuraDealer_toMinion):
-	def __init__(self, entity):
-		self.entity = entity
-		signals, self.auraAffected = [], []
-		
-	def auraAppears(self):
-		pass
-		
-	def auraDisappears(self):
-		pass
-		
-	def handleStatChange(self):
-		if self.entity.onBoard:
-			if self.entity.activated == False and self.entity.attack > 1:
-				self.entity.activated = True
-				HasAura_Receiver(self.entity, self, "Rush").effectStart()
-				HasAura_Receiver(self.entity, self, "Windfury").effectStart()
-			elif self.entity.activated and self.entity.attack < 2:
-				self.entity.activated = False
-				for entity, aura_Receiver in fixedList(self.auraAffected):
-					aura_Receiver.effectClear()
-					
-	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
-		#func that checks if subject is applicable will be the new copy's function
-		return type(self)(recipient)
-		
-	def createCopy(self, recipientGame):
-		#一个光环的注册可能需要注册多个扳机
-		if self not in recipientGame.copiedObjs: #这个光环没有被复制过
-			entityCopy = self.entity.createCopy(recipientGame)
-			Copy = self.selfCopy(entityCopy)
-			recipientGame.copiedObjs[self] = Copy
-			for minion, aura_Receiver in self.auraAffected:
-				minionCopy = minion.createCopy(recipientGame)
-				if hasattr(aura_Receiver, "keyWord"):
-					receiverIndex = minion.keyWordbyAura["Auras"].index(aura_Receiver)
-					receiverCopy = minionCopy.keyWordbyAura["Auras"][receiverIndex]
-				else: #不是关键字光环，而是buff光环
-					receiverIndex = minion.statbyAura[2].index(aura_Receiver)
-					receiverCopy = minionCopy.statbyAura[2][receiverIndex]
-				receiverCopy.source = Copy #补上这个receiver的source
-				Copy.auraAffected.append((minionCopy, receiverCopy))
-			return Copy
-		else:
-			return recipientGame.copiedObjs[self]
-			
+class Aura_MonksApprentice(HasAura_toMinion):
+	
 			
 class ShaohaosProtection(Spell): #少昊的保护
 	#使一个友方随从获得+2生命值且无法成为法术或英雄技能的目标
@@ -786,7 +742,7 @@ class ShaohaotheEmperor(Minion): #皇帝 少昊
 		self.status["Temp Stealth"] += 1
 		return None
 		
-class OtherFriendlyMinionsHaveEvasive(HasAura_Dealer):
+class OtherFriendlyMinionsHaveEvasive(EffectAura):
 	def __init__(self, entity):
 		self.entity = entity
 		self.signals, self.auraAffected = ["MinionAppears"], []
@@ -797,44 +753,10 @@ class OtherFriendlyMinionsHaveEvasive(HasAura_Dealer):
 		
 	def applies(self, subject):
 		if self.applicable(subject):
-			aura_Receiver = HasEvasive_Receiver(subject, self)
-			aura_Receiver.effectStart()
+			Effect_Receiver(subject, self, "Enemy Evasive").effectStart()
 			
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
-		
-class HasEvasive_Receiver:
-	def __init__(self, receiver, source):
-		self.source = source #The aura.
-		self.receiver = receiver #The minion that is affected
-		self.keyWord = "Evasive"
-		
-	def effectStart(self):
-		if "Evasive" in self.receiver.keyWordbyAura:
-			self.receiver.keyWordbyAura["Evasive"] += 1
-		else: self.receiver.keyWordbyAura["Evasive"] = 1
-		self.receiver.marks["Evasive"] += 1
-		self.receiver.keyWordbyAura["Auras"].append(self)
-		self.source.auraAffected.append((self.receiver, self))
-		
-	#The aura on the receiver is cleared and the source will remove this receiver and aura_Receiver from it's list.
-	def effectClear(self):
-		if self.receiver.keyWordbyAura["Evasive"] > 0:
-			self.receiver.keyWordbyAura["Evasive"] -= 1
-		self.receiver.marks["Evasive"] -= 1
-		extractfrom(self, self.receiver.keyWordbyAura["Auras"])
-		extractfrom((self.receiver, self), self.source.auraAffected)
-		
-	#After a receiver is deep copied, it will also copy this aura_Receiver, simply remove it.
-	#The aura_Dealer won't have reference to this copied aura.
-	def effectDiscard(self):
-		if self.receiver.keyWordbyAura["Evasive"] > 0:
-			self.receiver.keyWordbyAura["Evasive"] -= 1
-			self.receiver.marks["Evasive"] -= 1
-		extractfrom(self, self.receiver.keyWordbyAura["Auras"])
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient, self.source)
 		
 		
 class InnerPeace(Spell): #平常心

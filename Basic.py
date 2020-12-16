@@ -50,6 +50,10 @@ class Trig_HealingTotem(TrigBoard):
 		targets = self.entity.Game.minionsonBoard(self.entity.ID)
 		self.entity.restoresAOE(targets, [heal for minion in targets])
 		
+	def text(self, CHN):
+		heal = 2 * (2 ** self.entity.countHealDouble())
+		return "在你的回合结束时，为所有友方随从恢复%d生命值"%heal if CHN else "At the end of your turn, restore %d health to all friendly minions"%heal
+		
 		
 class WrathofAirTotem(Minion):
 	Class, race, name = "Shaman", "Totem", "Wrath of Air Totem"
@@ -418,10 +422,10 @@ class GrimscaleOracle(Minion):
 	Class, race, name = "Neutral", "Murloc", "Grimscale Oracle"
 	mana, attack, health = 1, 1, 1
 	index = "Basic~Neutral~Minion~1~1~1~Murloc~Grimscale Oracle"
-	requireTarget, keyWord, description = False, "", "Give your other Murlocs +1/+1"
+	requireTarget, keyWord, description = False, "", "Your other Murlocs have +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Buff Aura"] = BuffAura_Dealer_All(self, 1, 0)
+		self.auras["Your other Murlocs have +1 Attack"] = StatAura_Others(self, 1, 0)
 		
 	def applicable(self, target):
 		return "Murloc" in target.race
@@ -445,8 +449,12 @@ class VoodooDoctor(Minion):
 	Class, race, name = "Neutral", "", "Voodoo Doctor"
 	mana, attack, health = 1, 2, 1
 	index = "Basic~Neutral~Minion~1~2~1~None~Voodoo Doctor~Battlecry"
-	requireTarget, keyWord, description = True, "", "Restore 2 health"
+	requireTarget, keyWord, description = True, "", "Battlecry: Restore 2 health"
 	
+	def text(self, CHN):
+		heal = 2 * (2 ** self.countHealDouble())
+		return "战吼：恢复%d点生命值"%heal if CHN else "Battlecry: Restore %d health"%heal
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			heal = 2 * (2 ** self.countHealDouble())
@@ -581,7 +589,7 @@ class RaidLeader(Minion):
 	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Buff Aura"] = BuffAura_Dealer_All(self, 1, 0)
+		self.auras["Your other minions have +1 Attack"] = StatAura_Others(self, 1, 0)
 		
 		
 class RazorfenHunter(Minion):
@@ -716,6 +724,10 @@ class DarkscaleHealer(Minion):
 	index = "Basic~Neutral~Minion~5~4~5~None~Darkscale Healer~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Restore 2 health to all friendly characters"
 	
+	def text(self, CHN):
+		heal = 2 * (2 ** self.countHealDouble())
+		return "战吼：为所有友方角色恢复%d生命值"%heal if CHN else "Battlecry: Restore %d health to all friendly characters"%heal
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		heal = 2 * (2 ** self.countHealDouble())
 		targets = [self.Game.heroes[self.ID]] + self.Game.minionsonBoard(self.ID)
@@ -759,6 +771,9 @@ class Trig_GurubashiBerserker(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "%s takes Damage and gains +3 Attack."%self.entity.name)
 		self.entity.buffDebuff(3, 0)
+		
+	def text(self, CHN):
+		return "每当该随从受到伤害，便获得+3攻击力" if CHN else "Whenever this minion takes damage, gain +3 Attack"
 		
 		
 class Nightblade(Minion):
@@ -828,7 +843,7 @@ class StormwindChampion(Minion):
 	requireTarget, keyWord, description = False, "", "Your other minions have +1/+1"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Buff Aura"] = BuffAura_Dealer_All(self, 1, 1)
+		self.auras["Your other minions have +1/+1"] = StatAura_Others(self, 1, 1)
 		
 		
 class WarGolem(Minion):
@@ -939,6 +954,9 @@ class Trig_SatyrOverseer(TrigBoard):
 		PRINT(self.entity.Game, "After friendly hero attacks, %s summons a 2/2 Satyr"%self.entity.name)
 		self.entity.Game.summon(IllidariSatyr(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
 		
+	def text(self, CHN):
+		return "在你的英雄攻击后，召唤一个2/2的萨特" if CHN else "After your hero attacks, summon a 2/2 Satyr"
+		
 class IllidariSatyr(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Illidari Satyr"
 	mana, attack, health = 2, 2, 2
@@ -954,6 +972,10 @@ class SoulCleave(Spell):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.keyWords["Lifesteal"] = 1
+		
+	def text(self, CHN):
+		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "吸血。对两个随机敌方随从造成%d点伤害"%damage if CHN else "Lifesteal. Deal %d damage to two random enemy minions"%damage
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -976,6 +998,10 @@ class ChaosNova(Spell):
 	requireTarget, mana = False, 5
 	index = "Basic~Demon Hunter~Spell~5~Chaos Nova"
 	description = "Deal 4 damage to all minions"
+	def text(self, CHN):
+		damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对所有随从造成%d点伤害"%damage if CHN else "Deal %d damage to all minions"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		targets = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
@@ -1031,6 +1057,10 @@ class Moonfire(Spell):
 	requireTarget, mana = True, 0
 	index = "Basic~Druid~Spell~0~Moonfire"
 	description = "Deal 1 damage"
+	def text(self, CHN):
+		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "造成%d点伤害"%damage if CHN else "Deal %d damage"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1077,6 +1107,10 @@ class HealingTouch(Spell):
 	requireTarget, mana = True, 3
 	index = "Basic~Druid~Spell~3~Healing Touch"
 	description = "Restore 8 health"
+	def text(self, CHN):
+		heal = 8 * (2 ** self.countHealDouble())
+		return "恢复%d点生命值"%heal if CHN else "Restore %d health"%heal
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			heal = 8 * (2 ** self.countHealDouble())
@@ -1132,6 +1166,12 @@ class Swipe(Spell):
 	def targetCorrect(self, target, choice=0):
 		return (target.type == "Minion" or target.type == "Hero") and target.ID != self.ID and target.onBoard
 		
+	def text(self, CHN):
+		AOEdamage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		targetdamage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对一个敌人造成%d点伤害，并对所有其他敌人造成%d点伤害"%(targetdamage, AOEdamage) if CHN \
+				else "Deal %d damage to an enemy and %d damage to all other enemies"%(targetdamage, AOEdamage)
+				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			AOEdamage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1151,6 +1191,10 @@ class Starfire(Spell):
 	requireTarget, mana = True, 6
 	index = "Basic~Druid~Spell~6~Starfire"
 	description = "Deal 5 damage. Draw a card"
+	def text(self, CHN):
+		damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "造成%d点伤害，抽一张牌"%damage if CHN else "Deal %d damage. Draw a card"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1172,6 +1216,10 @@ class ArcaneShot(Spell):
 	requireTarget, mana = True, 1
 	index = "Basic~Hunter~Spell~1~Arcane Shot"
 	description = "Deal 2 damage"
+	def text(self, CHN):
+		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "造成%d点伤害"%damage if CHN else "Deal %d damage"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1187,11 +1235,10 @@ class TimberWolf(Minion):
 	requireTarget, keyWord, description = False, "", "Your other Beasts have +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Buff Aura"] = BuffAura_Dealer_All(self, 1, 0)
+		self.auras["Your other Beasts have +1 Attack"] = StatAura_Others(self, 1, 0)
 		
 	def applicable(self, target):
 		return "Beast" in target.race
-		
 		
 #In real game, when there is only one card left in deck,
 # player still needs to choose, despite only one option available.
@@ -1306,7 +1353,7 @@ class Leokk(Minion):
 	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Buff Aura"] = BuffAura_Dealer_All(self, 1, 0)
+		self.auras["Your other minions have +1 Attack"] = StatAura_Others(self, 1, 0)
 		
 class Misha(Minion):
 	Class, race, name = "Hunter", "Beast", "Misha"
@@ -1321,24 +1368,17 @@ class KillCommand(Spell):
 	index = "Basic~Hunter~Spell~3~Kill Command"
 	description = "Deal 3 damage. If you control a Beast, deal 5 damage instead"
 	def effectCanTrigger(self):
-		self.effectViable = False
-		for minion in self.Game.minionsonBoard(self.ID):
-			if "Beast" in minion.race:
-				self.effectViable = True
-				break
-				
+		return any("Beast" in minion.race for minion in self.Game.minionsonBoard(self.ID))
+		
+	def text(self, CHN):
+		damage_3 = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		damage_5 = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "造成%d点伤害。如果你控制一个野兽，则改为造成%d点伤害"%(damage_3, damage_5) if CHN else "Deal %d damage. If you control a Beast, deal %d damage instead"%(damage_3, damage_5)
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			controlsBeast = False
-			for minion in self.Game.minionsonBoard(self.ID):
-				if "Beast" in minion.race:
-					controlsBeast = True
-					break
-			if controlsBeast:
-				damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			else:
-				damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-				
+			base = 3 + 2 * any("Beast" in minion.race for minion in self.Game.minionsonBoard(self.ID))
+			damage = (base + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			PRINT(self.Game, "Kill Command deals %d damage to %s"%(damage, target.name))
 			self.dealsDamage(target, damage)
 		return target
@@ -1371,6 +1411,10 @@ class MultiShot(Spell):
 	description = "Deal 3 damage to two random enemy minions"
 	def available(self):
 		return self.Game.minionsonBoard(3-self.ID) != []
+		
+	def text(self, CHN):
+		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对两个随机敌方随从造成%d点伤害"%damage if CHN else "Deal %d damage to two random enemy minions"%damage
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1408,6 +1452,8 @@ class Trig_StarvingBuzzard(TrigBoard):
 		PRINT(self.entity.Game, "A friendly Beast is summoned and %s lets player draw a card."%self.entity.name)
 		self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
 		
+	def text(self, CHN):
+		return "每当你召唤一个野兽，抽一张牌" if CHN else "Whenever you summon a Beast, draw a card"
 		
 class TundraRhino(Minion):
 	Class, race, name = "Hunter", "Beast", "Tundra Rhino"
@@ -1416,7 +1462,7 @@ class TundraRhino(Minion):
 	requireTarget, keyWord, description = False, "", "Your Beasts have Charge"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Has Aura"] = HasAura_Dealer(self, "Charge")
+		self.auras["Your Beasts have Charge"] = EffectAura(self, "Charge")
 		
 	def applicable(self, target):
 		return "Beast" in target.race
@@ -1427,7 +1473,10 @@ class ArcaneMissiles(Spell):
 	requireTarget, mana = False, 1
 	index = "Basic~Mage~Spell~1~Arcane Missiles"
 	description = "Deal 3 damage randomly split among all enemies"
-	
+	def text(self, CHN):
+		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "造成%d点伤害，随机分配到所有敌人身上"%damage if CHN else "Deal %d damage randomly split among all enemies"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		side, curGame = 3-self.ID, self.Game
@@ -1476,6 +1525,10 @@ class ArcaneExplosion(Spell):
 	requireTarget, mana = False, 2
 	index = "Basic~Mage~Spell~2~Arcane Explosion"
 	description = "Deal 1 damage to all enemy minions"
+	def text(self, CHN):
+		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对所有敌方随从造成%d点伤害"%damage if CHN else "Deal %d damage to all enemy minions"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		targets = self.Game.minionsonBoard(3-self.ID)
@@ -1489,6 +1542,10 @@ class Frostbolt(Spell):
 	requireTarget, mana = True, 2
 	index = "Basic~Mage~Spell~2~Frostbolt"
 	description = "Deal 3 damage to a character and Freeze it"
+	def text(self, CHN):
+		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对一个角色造成%d点伤害，并使其冻结"%damage if CHN else "Deal %d damage to a character and Freeze it"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1528,6 +1585,10 @@ class Fireball(Spell):
 	requireTarget, mana = True, 4
 	index = "Basic~Mage~Spell~4~Fireball"
 	description = "Deal 6 damage"
+	def text(self, CHN):
+		damage = (6 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "造成%d点伤害"%damage if CHN else "Deal %d damage"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (6 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1582,12 +1643,19 @@ class Trig_WaterElemental(TrigBoard):
 		PRINT(self.entity.Game, "%s deals damage to %s and freezes it."%(self.entity.name, target.name))
 		target.getsFrozen()
 		
+	def text(self, CHN):
+		return "冻结任何受到该随从伤害的角色" if CHN else "Freeze any character damaged by this minion"
+		
 		
 class Flamestrike(Spell):
 	Class, name = "Mage", "Flamestrike"
 	requireTarget, mana = False, 7
 	index = "Basic~Mage~Spell~7~Flamestrike"
 	description = "Deal 4 damage to all enemy minions"
+	def text(self, CHN):
+		damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对所有敌方随从造成%d点伤害"%damage if CHN else "Deal %d damage to all enemy minions"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		PRINT(self.Game, "Flamestrike deals %d damage to all enemy minions"%damage)
@@ -1662,6 +1730,10 @@ class HolyLight(Spell):
 	requireTarget, mana = True, 2
 	index = "Basic~Paladin~Spell~2~Holy Light"
 	description = "Restore 6 health"
+	def text(self, CHN):
+		heal = 6 * (2 ** self.countHealDouble())
+		return "恢复%d点生命值"%heal if CHN else "Restore %d health"%heal
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			heal = 6 * (2 ** self.countHealDouble())
@@ -1693,6 +1765,10 @@ class Consecration(Spell):
 	requireTarget, mana = False, 4
 	index = "Basic~Paladin~Spell~4~Consecration"
 	description = "Deal 2 damage to all enemies"
+	def text(self, CHN):
+		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对所有敌人造成%d点伤害"%damage if CHN else "Deal %d damage to all enemies"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		targets = [self.Game.heroes[3-self.ID]] + self.Game.minionsonBoard(3-self.ID)
@@ -1706,6 +1782,10 @@ class HammerofWrath(Spell):
 	requireTarget, mana = True, 4
 	index = "Basic~Paladin~Spell~4~Hammer of Wrath"
 	description = "Deal 3 damage. Draw a card"
+	def text(self, CHN):
+		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "造成%d点伤害，抽一张牌"%damage if CHN else "Deal %d damage. Draw a card"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1735,6 +1815,10 @@ class Trig_TruesilverChampion(TrigBoard):
 		PRINT(self.entity.Game, "%s restores %d Health the hero when it attacks."%(self.entity.name, heal))
 		self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], heal)
 		
+	def text(self, CHN):
+		heal = 2 * (2 ** self.entity.countHealDouble())
+		return "每当你的英雄进攻，便为其恢复%d点生命值"%heal if CHN else "Whenever your hero attacks, restore %d Health to it"%heal
+		
 		
 class GuardianofKings(Minion):
 	Class, race, name = "Paladin", "", "Guardian of Kings"
@@ -1742,6 +1826,10 @@ class GuardianofKings(Minion):
 	index = "Basic~Paladin~Minion~7~5~6~None~Guardian of Kings~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Restore 6 health to your hero"
 	
+	def text(self, CHN):
+		heal = 6 * (2 ** self.countHealDouble())
+		return "战吼：为你的英雄恢复%d点生命值"%heal if CHN else "Battlecry: Restore %d health to your hero"%heal
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		heal = 6 * (2 ** self.countHealDouble())
 		PRINT(self.Game, "Guardian of Kings' battlecry restores %d health to player's hero."%heal)
@@ -1777,6 +1865,10 @@ class HolySmite(Spell):
 		
 	def targetCorrect(self, target, choice=0):
 		return target.type == "Minion" and target.onBoard
+		
+	def text(self, CHN):
+		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对一个随从造成%d点伤害"%damage if CHN else "Deal %d damage to a minion"%damage
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -1831,6 +1923,10 @@ class Radiance(Spell):
 	requireTarget, mana = False, 1
 	index = "Basic~Priest~Spell~1~Radiance"
 	description = "Restore 5 health to your hero"
+	def text(self, CHN):
+		heal = 5 * (2 ** self.countHealDouble())
+		return "为你的英雄恢复%d生命值"%heal if CHN else "Restore %d Health to your hero"%heal
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		heal = 5 * (2 ** self.countHealDouble())
 		PRINT(self.Game, "Radiance restores %d heal to hero"%heal)
@@ -1882,6 +1978,12 @@ class HolyNova(Spell):
 	requireTarget, mana = False, 4
 	index = "Basic~Priest~Spell~4~Holy Nova"
 	description = "Deal 2 damage to all enemy minions. Restore 2 Health to all friendly characters"
+	def text(self, CHN):
+		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		heal = 2 * (2 ** self.countHealDouble())
+		return "对所有敌方随从造成%d点伤害，为所有友方角色恢复%d生命值"%(damage, heal) if CHN \
+				else "Deal %d damage to all enemy minions. Restore %d Health to all friendly characters"%(damage, heal)
+				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		heal = 2 * (2 ** self.countHealDouble())
@@ -1940,6 +2042,10 @@ class Backstab(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.type == "Minion" and target.health == target.health_max and target.onBoard
 		
+	def text(self, CHN):
+		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对一个未受伤的随从造成%d点伤害"%damage if CHN else "Deal %d damage to an undamage minion"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1982,6 +2088,10 @@ class SinisterStrike(Spell):
 	requireTarget, mana = False, 1
 	index = "Basic~Rogue~Spell~1~Sinister Strike"
 	description = "Deal 3 damage to the enemy hero"
+	def text(self, CHN):
+		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对敌方英雄造成%d点伤害"%damage if CHN else "Deal %d damage to the enemy hero"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		PRINT(self.Game, "Sinister Strike deals %d damage to enemy hero"%damage)
@@ -2014,6 +2124,10 @@ class Shiv(Spell):
 	requireTarget, mana = True, 2
 	index = "Basic~Rogue~Spell~2~Shiv"
 	description = "Deal 1 damage. Draw a card"
+	def text(self, CHN):
+		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "造成%d点伤害，抽一张牌"%damage if CHN else "Deal %d damage. Draw a card"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -2028,6 +2142,10 @@ class FanofKnives(Spell):
 	requireTarget, mana = False, 3
 	index = "Basic~Rogue~Spell~3~Fan of Knives"
 	description = "Deal 1 damage to all enemy minions. Draw a card"
+	def text(self, CHN):
+		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对所有敌方随从造成%d点伤害，抽一张牌"%damage if CHN else "Deal %d damage to all enemy minions. Draw a card"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		targets = self.Game.minionsonBoard(3-self.ID)
@@ -2135,9 +2253,11 @@ class FrostShock(Spell):
 		return self.selectableEnemyExists()
 		
 	def targetCorrect(self, target, choice=0):
-		if (target.type == "Minion" or target.type == "Hero") and target.ID != self.ID and target.onBoard:
-			return True
-		return False
+		return (target.type == "Minion" or target.type == "Hero") and target.ID != self.ID and target.onBoard
+		
+	def text(self, CHN):
+		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对一个敌方角色造成%d点伤害，并使其冻结"%damage if CHN else "Deal %d damage to an enemy character and Freeze it"%damage
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -2157,9 +2277,7 @@ class RockbiterWeapon(Spell):
 		return self.selectableFriendlyExists()
 		
 	def targetCorrect(self, target, choice=0):
-		if (target.type == "Minion" or target.type == "Hero") and target.ID == self.ID and target.onBoard:
-			return True
-		return False
+		return (target.type == "Minion" or target.type == "Hero") and target.ID == self.ID and target.onBoard
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -2198,7 +2316,7 @@ class FlametongueTotem(Minion):
 	requireTarget, keyWord, description = False, "", "Adjacent minions have +2 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Buff Aura"] = BuffAura_Dealer_Adjacent(self, 2, 0)
+		self.auras["Adjacent minions have +2 Attack"] = StatAura_Adjacent(self, 2, 0)
 		
 		
 class Hex(Spell):
@@ -2282,6 +2400,10 @@ class SacrificialPact(Spell):
 	requireTarget, mana = True, 0
 	index = "Basic~Warlock~Spell~0~Sacrificial Pact"
 	description = "Destroy a friendly Demon. Restore 5 health to you hero"
+	def text(self, CHN):
+		heal = 5 * (2 ** self.countHealDouble())
+		return "消灭一个友方恶魔，为你的英雄恢复%d生命值"%heal if CHN else "Destroy a friendly Demon. Restore %d Health to your hero"%heal
+		
 	def targetCorrect(self, target, choice=0):
 		if target.ID != self.ID: return False
 		if target.type == "Minion" and "Demon" in target.race and target.onBoard:
@@ -2335,6 +2457,9 @@ class Trig_Corruption(TrigBoard):
 		self.disconnect()
 		extractfrom(self, self.entity.trigsBoard)
 		
+	def text(self, CHN):
+		return "随从会在玩家%d的回合开始时死亡"%self.ID if CHN else "Minion dies at the start of player %d's turn"%self.ID
+		
 	def selfCopy(self, recipient):
 		trig = type(self)(recipient)
 		trig.ID = self.ID
@@ -2350,6 +2475,10 @@ class MortalCoil(Spell):
 		
 	def targetCorrect(self, target, choice=0):
 		return target.type == "Minion" and target.onBoard
+		
+	def text(self, CHN):
+		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对一个随从造成%d点伤害。如果‘死亡缠绕’消灭该随从，抽一张牌"%damage if CHN else "Deal %d damage to a minion. If that kills it, draw a card"%damage
 		
 	#When cast by Archmage Vargoth, this spell can target minions with health <=0 and automatically meet the requirement of killing.
 	#If the target minion dies before this spell takes effect, due to being killed by Violet Teacher/Knife Juggler, Mortal Coil still lets
@@ -2371,6 +2500,10 @@ class Soulfire(Spell):
 	requireTarget, mana = True, 1
 	index = "Basic~Warlock~Spell~1~Soulfire"
 	description = "Deal 4 damage. Discard a random card"
+	def text(self, CHN):
+		damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "造成%d点伤害，随机弃一张牌"%damage if CHN else "Deal %d damage. Discard a random card"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		ownHand = curGame.Hand_Deck.hands[self.ID]
@@ -2422,6 +2555,11 @@ class DrainLife(Spell):
 	requireTarget, mana = True, 3
 	index = "Basic~Warlock~Spell~3~Drain Life"
 	description = "Deal 2 damage. Restore 2 Health to your hero"
+	def text(self, CHN):
+		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		heal = 2 * (2 ** self.countHealDouble())
+		return "造成%d点伤害，为你的英雄恢复%d点生命值"%(damage, heal) if CHN else "Deal %d damage. Restore %d Health to your hero"%(damage, heal)
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -2444,6 +2582,10 @@ class ShadowBolt(Spell):
 	def targetCorrect(self, target, choice=0):
 		return target.type == "Minion" and target.onBoard
 		
+	def text(self, CHN):
+		damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对一个随从造成%d点伤害"%damage if CHN else "Deal %d damage to a minion"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -2457,6 +2599,10 @@ class Hellfire(Spell):
 	requireTarget, mana = False, 4
 	index = "Basic~Warlock~Spell~4~Hellfire"
 	description = "Deal 3 damage to ALL characters"
+	def text(self, CHN):
+		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对所有角色造成%d点伤害"%damage if CHN else "Deal %d damage to ALL characters"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		targets = [self.Game.heroes[1], self.Game.heroes[2]] + self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
@@ -2486,6 +2632,10 @@ class Whirlwind(Spell):
 	requireTarget, mana = False, 1
 	index = "Basic~Warrior~Spell~1~Whirlwind"
 	description = "Deal 1 damage to ALL minions"
+	def text(self, CHN):
+		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对所有随从造成%d点伤害"%damage if CHN else "Deal %d damage to ALL minions"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		targets = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
@@ -2531,6 +2681,9 @@ class Trig_Charge(TrigBoard):
 		try: self.entity.trigsBoard.remove(self)
 		except: pass
 		
+	def text(self, CHN):
+		return "随从重新可以攻击英雄" if CHN else "Minion can attack heroes again"
+		
 		
 class Execute(Spell):
 	Class, name = "Warrior", "Execute"
@@ -2557,6 +2710,10 @@ class Cleave(Spell):
 	description = "Deal 2 damage to two random enemy minions"
 	def available(self):
 		return self.Game.minionsonBoard(3-self.ID) != []
+		
+	def text(self, CHN):
+		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "对两个随机敌方随从造成%d点伤害"%damage if CHN else "Deal %d damage to two random enemy minions"%damage
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -2610,9 +2767,54 @@ class WarsongCommander(Minion):
 	requireTarget, keyWord, description = False, "", "Your Charge minions have +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Buff Aura"] = WarsongCommander_Aura(self)
+		self.auras["Your Charge minions have +1 Attack"] = StatAura_WarsongCommande(self)
 		
+#战歌指挥官的光环相对普通的buff光环更特殊，因为会涉及到随从获得和失去光环的情况
+class StatAura_WarsongCommande(HasAura_toMinion):
+	def __init__(self, entity):
+		self.entity = entity
+		self.signals, self.auraAffected = ["MinionAppears", "MinionChargeChanged"], []
 		
+	#All minions appearing on the same side will be subject to the buffAura.
+	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+		#注意，战歌指挥官的光环可以作用在自己身上，这点区分于其他所有身材buff型光环。
+		#随从只要发生了冲锋状态的变化就要调用战歌指挥官的Aura_Dealer，如果冲锋状态失去，则由该光环来移除其buff状态
+		return self.entity.onBoard and subject.ID == self.entity.ID and ((signal == "MinionAppears" and subject.keyWords["Charge"] > 0) or signal == "MinionChargeChanged")
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.applies(signal, subject)
+		
+	def applies(self, signal, subject):
+		if signal == "MinionAppears":
+			if subject.keyWords["Charge"] > 0:
+				Stat_Receiver(subject, self, 1, 0).effectStart()
+		else: #signal == "MinionChargeChanged"
+			if subject.keyWords["Charge"] > 0:
+				notAffectedPreviously = True
+				for receiver, receiver in fixedList(self.auraAffected):
+					if subject == receiver:
+						notAffectedPreviously = False
+						break
+				if notAffectedPreviously:
+					Stat_Receiver(subject, self, 1, 0).effectStart()
+			elif subject.keyWords["Charge"] < 1:
+				for receiver, receiver in fixedList(self.auraAffected):
+					if subject == receiver:
+						receiver.effectClear()
+						break
+						
+	def auraAppears(self):
+		for minion in self.entity.Game.minionsonBoard(self.entity.ID):
+			self.applies("MinionAppears", minion) #The signal here is a placeholder and directs the function to first-time aura applicatioin
+		for sig in self.signals:
+			try: self.entity.Game.trigsBoard[self.entity.ID][sig].remove(self)
+			except: pass
+			
+	def selfCopy(self, recipient):
+		return type(self)(recipient)
+	#可以通过HasAura_toMinion的createCopy方法复制
+	
+	
 class KorkronElite(Minion):
 	Class, race, name = "Warrior", "", "Kor'kron Elite"
 	mana, attack, health = 4, 4, 3

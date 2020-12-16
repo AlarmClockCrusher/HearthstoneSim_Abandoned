@@ -120,11 +120,8 @@ class Galakrond_Hero(Hero):
 	def replaceHero(self, fromHeroCard=False):
 		game, ID = self.Game, self.ID
 		self.onBoard, self.position, self.attTimes = True, ID, game.heroes[ID].attTimes
-		while self.statbyAura[1]:
-			self.statbyAura[1][0].effectClear()
-		while self.keyWordbyAura["Auras"]:
-			self.keyWordbyAura["Auras"][0].effectClear()
-			
+		while self.auraReceivers: self.auraReceivers[0].effectClear()
+		
 		game.heroes[ID] = self
 		if game.Counters.primaryGalakronds[ID] is None: #迦拉克隆的打出不会影响当前的主迦拉克隆？
 			game.Counters.primaryGalakronds[ID] = self
@@ -138,10 +135,7 @@ class Galakrond_Hero(Hero):
 		self.health, self.health_max, self.armor = oldHero.health, oldHero.health_max, oldHero.armor
 		self.attack_bare, self.tempAttChanges, self.attTimes, self.armor = oldHero.attack_bare, oldHero.tempAttChanges, oldHero.attTimes, oldHero.armor
 		self.onBoard, oldHero.onBoard, self.position = True, False, ID #这个只是为了方便定义(i, where)
-		while self.statbyAura[1]:
-			self.statbyAura[1][0].effectClear()
-		while self.keyWordbyAura["Auras"]:
-			self.keyWordbyAura["Auras"][0].effectClear()
+		while self.auraReceivers: self.auraReceivers[0].effectClear()
 			
 		game.powers[ID].disappears()
 		game.powers[ID].heroPower = None
@@ -453,7 +447,7 @@ class DreadRaven(Minion):
 		self.blank_init(Game, ID)
 		self.auras["Buff Aura"] = BuffAura_DreadRaven(self)
 		
-class BuffAura_DreadRaven(AuraDealer_toMinion):
+class BuffAura_DreadRaven(HasAura_toMinion):
 	def __init__(self, entity):
 		self.entity = entity
 		self.signals, self.auraAffected = ["MinionAppears", "MinionDisappears"], []
@@ -463,8 +457,8 @@ class BuffAura_DreadRaven(AuraDealer_toMinion):
 		return self.entity.onBoard and obj.ID == self.entity.ID and obj.name == "Dread Raven" and obj != self.entity
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		for minion, aura_Receiver in fixedList(self.auraAffected):
-			aura_Receiver.effectClear()
+		for minion, receiver in fixedList(self.auraAffected):
+			receiver.effectClear()
 			
 		self.applies(self.entity)
 		
@@ -473,10 +467,8 @@ class BuffAura_DreadRaven(AuraDealer_toMinion):
 		for minion in self.entity.Game.minionsonBoard(self.entity.ID):
 			if minion.name == "Dread Raven" and minion != self.entity:
 				numDreadRavens += 1
-				
 		if numDreadRavens > 0:
-			aura_Receiver = BuffAura_Receiver(subject, self, 3 * numDreadRavens, 0)
-			aura_Receiver.effectStart()
+			Stat_Receiver(subject, self, 3 * numDreadRavens, 0).effectStart()
 			
 	def auraAppears(self):
 		self.applies(self.entity)
@@ -487,7 +479,7 @@ class BuffAura_DreadRaven(AuraDealer_toMinion):
 	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
 		return type(self)(recipient)
-	#可以通过AuraDealer_toMinion的createCopy方法复制
+	#可以通过HasAura_toMinion的createCopy方法复制
 	
 	
 class FireHawk(Minion):
@@ -534,22 +526,16 @@ class LivingDragonbreath(Minion):
 	requireTarget, keyWord, description = False, "", "Your minions can't be Frozen"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.appearResponse = [self.activateAura]
-		self.disappearResponse = [self.deactivateAura]
-		self.silenceResponse = [self.deactivateAura]
+		self.auras["Your minions can't be Frozen"] = GameRuleAura_LivingDragonbreath(self)
 		
-	def activateAura(self):
-		PRINT(self.Game, "Living Dragonbreath's aura is registered. Player %d's minions thaw immediately and won't be Frozen again."%self.ID)
-		for minion in fixedList(self.Game.minionsonBoard(self.ID)):
-			minion.status["Frozen"] = 0
-		self.Game.status[self.ID]["Minions Can't Be Frozen"] += 1
+class GameRuleAura_LivingDragonbreath(GameRuleAura):
+	def auraAppears(self):
+		self.entity.Game.status[self.entity.ID]["Minions Can't Be Frozen"] += 1
 		
-	def deactivateAura(self):
-		PRINT(self.Game, "Living Dragonbreath's aura is removed. Player %d's minions can be Frozen now"%self.ID)
-		if self.Game.status[self.ID]["Minions Can't Be Frozen"] > 0:
-			self.Game.status[self.ID]["Minions Can't Be Frozen"] -= 1
-			
-			
+	def auraDisappears(self):
+		self.entity.Game.status[self.entity.ID]["Minions Can't Be Frozen"] -= 1
+		
+		
 class Scalerider(Minion):
 	Class, race, name = "Neutral", "", "Scalerider"
 	mana, attack, health = 3, 3, 3
@@ -711,7 +697,7 @@ class WingCommander(Minion):
 		self.blank_init(Game, ID)
 		self.auras["Buff Aura"] = BuffAura_WingCommander(self)
 		
-class BuffAura_WingCommander(AuraDealer_toMinion):
+class BuffAura_WingCommander(HasAura_toMinion):
 	def __init__(self, entity):
 		self.entity = entity
 		self.signals, self.auraAffected = ["CardLeavesHand", "CardEntersHand"], []
@@ -721,8 +707,8 @@ class BuffAura_WingCommander(AuraDealer_toMinion):
 		return self.entity.onBoard and card.ID == self.entity.ID and card.type == "Minion" and "Dragon" in card.race
 
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		for minion, aura_Receiver in fixedList(self.auraAffected):
-			aura_Receiver.effectClear()
+		for minion, receiver in fixedList(self.auraAffected):
+			receiver.effectClear()
 
 		self.applies(self.entity)
 
@@ -734,8 +720,7 @@ class BuffAura_WingCommander(AuraDealer_toMinion):
 
 		if numDragonsinHand > 0:
 			PRINT(self.Game, "Minion %s gains the %d Attack for the Dragons player's holding" % (subject.name, 2 * numDragonsinHand))
-			aura_Receiver = BuffAura_Receiver(subject, self, 2 * numDragonsinHand, 0)
-			aura_Receiver.effectStart()
+			Stat_Receiver(subject, self, 2 * numDragonsinHand, 0).effectStart()
 
 	def auraAppears(self):
 		self.applies(self.entity)
@@ -746,7 +731,7 @@ class BuffAura_WingCommander(AuraDealer_toMinion):
 	def selfCopy(self, recipient):  # The recipientMinion is the minion that deals the Aura.
 		# func that checks if subject is applicable will be the new copy's function
 		return type(self)(recipient)
-		#可以通过AuraDealer_toMinion的createCopy方法复制
+		#可以通过HasAura_toMinion的createCopy方法复制
 
 
 class ZulDrakRitualist(Minion):
@@ -1536,10 +1521,10 @@ class GorutheMightree(Minion):
 		aura.auraAppears()
 		return None
 		
-class YourTreantsHavePlus1Plus1(AuraDealer_toMinion):
+class YourTreantsHavePlus1Plus1(HasAura_toMinion):
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
-		self.signals, self.auraAffected = ["MinionAppears"], [] #A list of (minion, aura_Receiver)
+		self.signals, self.auraAffected = ["MinionAppears"], [] #A list of (minion, receiver)
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.name == "Treant"
@@ -1549,8 +1534,7 @@ class YourTreantsHavePlus1Plus1(AuraDealer_toMinion):
 		
 	def applies(self, subject):
 		if self.applicable(subject):
-			aura_Receiver = BuffAura_Receiver(subject, self, 1, 1)
-			aura_Receiver.effectStart()
+			Stat_Receiver(subject, self, 1, 1).effectStart()
 			
 	def auraAppears(self):
 		for minion in self.Game.minionsonBoard(self.ID):
@@ -1558,7 +1542,7 @@ class YourTreantsHavePlus1Plus1(AuraDealer_toMinion):
 		try: self.Game.trigsBoard[self.ID]["MinionAppears"].append(self)
 		except: pass
 	#没有auraDisappear方法
-	#可以通过AuraDealer_toMinion的createCopy方法复制
+	#可以通过HasAura_toMinion的createCopy方法复制
 	
 	
 class YseraUnleashed(Minion):
@@ -1638,17 +1622,14 @@ class DwarvenSharpshooter(Minion):
 	requireTarget, keyWord, description = False, "", "Your Hero Power can target minions"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.appearResponse = [self.activateAura]
-		self.disappearResponse = [self.deactivateAura]
-		self.silenceResponse = [self.deactivateAura]
+		self.auras["Your Hero Power can target minions"] = GameRuleAura_DwarvenSharpshooter(self)
 		
-	def activateAura(self):
-		PRINT(self.Game, "Dwarven Sharpshooter's aura is registered. Player %d's Hero Power can target minions now."%self.ID)
-		self.Game.status[self.ID]["Power Can Target Minions"] += 1
+class GameRuleAura_DwarvenSharpshooter(GameRuleAura):
+	def auraAppears(self):
+		self.entity.Game.status[self.entity.ID]["Power Can Target Minions"] += 1
 		
-	def deactivateAura(self):
-		PRINT(self.Game, "Dwarven Sharpshooter's aura is removed. Player %d's Hero Powers can't target minions anymore."%self.ID)
-		self.Game.status[self.ID]["Power Can Target Minions"] -= 1
+	def auraDisappears(self):
+		self.entity.Game.status[self.entity.ID]["Power Can Target Minions"] -= 1
 		
 		
 class ToxicReinforcements(Quest):
@@ -2008,24 +1989,26 @@ class Chenvaala(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Chenvaala(self)]
-		self.appearResponse = [self.resetCounter]
-		self.disappearResponse = [self.resetCounter]
-		self.silenceResponse = [self.resetCounter]
 		
-	def resetCounter(self):
-		for trig in self.trigsBoard:
-			if type(trig) == Trig_Chenvaala:
-				trig.counter = 0
-				
 class Trig_Chenvaala(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed", "TurnEnds", "TurnStarts"])
 		self.counter = 0
 		
+	def connect(self):
+		for sig in self.signals:
+			try: self.entity.Game.trigsBoard[self.entity.ID][sig].append(self)
+			except: self.entity.Game.trigsBoard[self.entity.ID][sig] = [self]
+		self.counter = 0
+		
+	def disconnect(self):
+		for sig in self.signals:
+			try: self.entity.Game.trigsBoard[self.entity.ID][sig].remove(self)
+			except: pass
+		self.counter = 0
+		
 	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if signal == "SpellBeenPlayed":
-			return self.entity.onBoard and subject.ID == self.entity.ID
-		return True
+		return signal[0] == 'T' or (self.entity.onBoard and subject.ID == self.entity.ID)
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		if signal == "SpellBeenPlayed":
@@ -2520,7 +2503,7 @@ class SkyClaw(Minion):
 	requireTarget, keyWord, description = False, "", "Your other Mechs have +1 Attack. Battlecry: Summon two 1/1 Microcopters"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Buff Aura"] = BuffAura_Dealer_All(self, 1, 0)
+		self.auras["Buff Aura"] = StatAura_Others(self, 1, 0)
 		
 	def applicable(self, target):
 		return "Mech" in target.race
@@ -3396,7 +3379,7 @@ class SurgingTempest(Minion):
 		self.auras["Buff Aura"] = BuffAura_SurgingTempest(self)
 		self.activated = False
 		
-class BuffAura_SurgingTempest(AuraDealer_toMinion):
+class BuffAura_SurgingTempest(HasAura_toMinion):
 	def __init__(self, entity):
 		self.entity = entity
 		self.signals, self.auraAffected = ["OverloadCheck"], []
@@ -3408,8 +3391,8 @@ class BuffAura_SurgingTempest(AuraDealer_toMinion):
 		isOverloaded = self.entity.Game.Manas.manasOverloaded[self.entity.ID] > 0 or self.entity.Game.Manas.manasLocked[self.entity.ID] > 0
 		if isOverloaded == False and self.entity.activated:
 			self.entity.activated = False
-			for minion, aura_Receiver in fixedList(self.auraAffected):
-				aura_Receiver.effectClear()
+			for minion, receiver in fixedList(self.auraAffected):
+				receiver.effectClear()
 			self.auraAffected = []
 		elif isOverloaded and self.entity.activated == False:
 			self.entity.activated = True
@@ -3417,8 +3400,7 @@ class BuffAura_SurgingTempest(AuraDealer_toMinion):
 			
 	def applies(self, subject):
 		if subject == self.entity:
-			aura_Receiver = BuffAura_Receiver(subject, self, 1, 0)
-			aura_Receiver.effectStart()
+			Stat_Receiver(subject, self, 1, 0).effectStart()
 			
 	def auraAppears(self):
 		isOverloaded = self.entity.Game.Manas.manasOverloaded[self.entity.ID] > 0 or self.entity.Game.Manas.manasLocked[self.entity.ID] > 0
@@ -3431,7 +3413,7 @@ class BuffAura_SurgingTempest(AuraDealer_toMinion):
 		
 	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
 		return type(self)(recipient)
-	#可以通过AuraDealer_toMinion的createCopy方法复制
+	#可以通过HasAura_toMinion的createCopy方法复制
 	
 	
 class Squallhunter(Minion):

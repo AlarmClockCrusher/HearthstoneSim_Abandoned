@@ -415,14 +415,10 @@ class SVMinion(Minion):
             Copy.attack, Copy.attack_0, Copy.attack_Enchant = self.attack, self.attack_0, self.attack_Enchant
             Copy.health_0, Copy.health, Copy.health_max = self.health_0, self.health, self.health_max
             Copy.tempAttChanges = copy.deepcopy(self.tempAttChanges)
-            Copy.statbyAura = [self.statbyAura[0], self.statbyAura[1],
-                               [aura_Receiver.selfCopy(Copy) for aura_Receiver in self.statbyAura[2]]]
-            for key, value in self.keyWordbyAura.items():
-                if key != "Auras":
-                    Copy.keyWordbyAura[key] = value
-                else:
-                    Copy.keyWordbyAura[key] = [aura_Receiver.selfCopy(Copy) for aura_Receiver in
-                                               self.keyWordbyAura["Auras"]]
+            Copy.attfromAura, Copy.healthfromAura = self.attfromAura, self.healthfromAura
+			Copy.effectfromAura = copy.deepcopy(self.effectfromAura)
+			Copy.auraReceivers = [receiver.selfCopy(Copy) for receiver in self.auraReceivers]
+			
             Copy.keyWords = copy.deepcopy(self.keyWords)
             Copy.marks = copy.deepcopy(self.marks)
             Copy.status = copy.deepcopy(self.status)
@@ -434,11 +430,6 @@ class SVMinion(Minion):
             Copy.sequence, Copy.position = self.sequence, self.position
             Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
             Copy.options = [option.selfCopy(Copy) for option in self.options]
-            for key, value in self.triggers.items():
-                Copy.triggers[key] = [getattr(Copy, func.__qualname__.split(".")[1]) for func in value]
-            Copy.appearResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.appearResponse]
-            Copy.disappearResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.disappearResponse]
-            Copy.silenceResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.silenceResponse]
             for key, value in self.auras.items():
                 Copy.auras[key] = value.createCopy(game)
             Copy.deathrattles = [trig.createCopy(game) for trig in self.deathrattles]
@@ -556,7 +547,7 @@ class Amulet(Dormant):
         for func in self.disappearResponse: func()
         self.activated = False
         self.Game.sendSignal("AmuletDisappears", self.ID, None, self, 0, "")
-
+		
     def STATUSPRINT(self):
         PRINT(self.Game, "Game is {}.".format(self.Game))
         PRINT(self.Game,

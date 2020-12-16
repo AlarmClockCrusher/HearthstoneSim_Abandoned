@@ -597,58 +597,10 @@ class RobesofProtection(Minion):
 	requireTarget, keyWord, description = False, "", "Your minions have 'Can't be targeted by spells or Hero Powers'"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Has Aura"] = YourMinionsHaveEvasive(self)
+		self.auras["Your minions have 'Can't be targeted by spells or Hero Powers'"] = EffectAura(self, "Evasive")
 		
 	def applicable(self, target):
 		return True
-		
-class YourMinionsHaveEvasive(HasAura_Dealer):
-	def __init__(self, entity):
-		self.entity = entity
-		self.signals, self.auraAffected = ["MinionAppears"], []
-		self.keyWord = "Evasive"
-		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity
-		
-	def applies(self, subject):
-		if self.applicable(subject):
-			HasEvasive_Receiver(subject, self).effectStart()
-			
-	def selfCopy(self, recipient):
-		return type(self)(recipient)
-		
-class HasEvasive_Receiver:
-	def __init__(self, receiver, source):
-		self.source, self.receiver = source, receiver
-		self.keyWord = "Evasive"
-		
-	def effectStart(self):
-		try: self.receiver.keyWordbyAura["Evasive"] += 1
-		except: self.receiver.keyWordbyAura["Evasive"] = 1
-		self.receiver.marks["Evasive"] += 1
-		self.receiver.keyWordbyAura["Auras"].append(self)
-		self.source.auraAffected.append((self.receiver, self))
-		
-	#The aura on the receiver is cleared and the source will remove this receiver and aura_Receiver from it's list.
-	def effectClear(self):
-		self.receiver.keyWordbyAura["Evasive"] -= 1
-		self.receiver.marks["Evasive"] -= 1
-		try: self.receiver.keyWordbyAura["Auras"].remove(self)
-		except: pass
-		try: self.source.auraAffected.remove((self.receiver, self))
-		except: pass
-		
-	#After a receiver is deep copied, it will also copy this aura_Receiver, simply remove it.
-	#The aura_Dealer won't have reference to this copied aura.
-	def effectDiscard(self):
-		self.receiver.keyWordbyAura["Evasive"] -= 1
-		self.receiver.marks["Evasive"] -= 1
-		try: self.receiver.keyWordbyAura["Auras"].remove(self)
-		except: pass
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient, self.source)
 		
 """Mana 4 Cards"""
 class CrimsonHothead(Minion):
@@ -1064,7 +1016,7 @@ class Kolek(Minion):
 	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Buff Aura"] = BuffAura_Dealer_All(self, 1, 0)
+		self.auras["Buff Aura"] = StatAura_Others(self, 1, 0)
 		
 class Shima(Minion):
 	Class, race, name = "Demon Hunter,Hunter", "Demon", "Shima"
@@ -1816,17 +1768,14 @@ class ProfessorSlate(Minion):
 	requireTarget, keyWord, description = False, "", "Your spells are Poisonous"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.appearResponse = [self.activateAura]
-		self.disappearResponse = [self.deactivateAura]
-		self.silenceResponse = [self.deactivateAura]
+		self.auras["Your spells are Poisonous"] = GameRuleAura_ProfessorSlate(self)
 		
-	def activateAura(self):
-		PRINT(self.Game, "Professor Slate makes player %d's spells Poisonous."%self.ID)
-		self.Game.status[self.ID]["Spells Poisonous"] += 1
+class GameRuleAura_ProfessorSlate(GameRuleAura):
+	def auraAppears(self):
+		self.entity.Game.status[self.entity.ID]["Spells Poisonous"] += 1
 		
-	def deactivateAura(self):
-		PRINT(self.Game, "Professor Slate is removed and player %d's spells are no longer Poisonous"%self.ID )
-		self.Game.status[self.ID]["Spells Poisonous"] -= 1
+	def auraDisappears(self):
+		self.entity.Game.status[self.entity.ID]["Spells Poisonous"] -= 1
 		
 		
 class ShandoWildclaw(Minion):
@@ -2927,9 +2876,9 @@ class VulperaToxinblade(Minion):
 	requireTarget, keyWord, description = False, "", "Your weapon has +2 Attack while this is damaged"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Weapon Aura"] = WeaponBuffAura(self)
+		self.auras["Weapon Aura"] = StatAura_VulperaToxinblade(self)
 		
-class WeaponBuffAura:
+class StatAura_VulperaToxinblade:
 	def __init__(self, entity):
 		self.entity = entity
 		self.auraAffected = []
@@ -2945,7 +2894,7 @@ class WeaponBuffAura:
 		self.applies(subject)
 		
 	def applies(self, subject):
-		WeaponBuffAura_Receiver(subject, self).effectStart()
+		Stat_Receiver(subject, self, 2).effectStart()
 		
 	def auraAppears(self):
 		weapon = self.entity.Game.availableWeapon(self.entity.ID)
@@ -2954,8 +2903,8 @@ class WeaponBuffAura:
 		except: self.entity.Game.trigsBoard[self.entity.ID]["WeaponEquipped"] = [self]
 		
 	def auraDisappears(self):
-		for weapon, aura_Receiver in fixedList(self.auraAffected):
-			aura_Receiver.effectClear()
+		for weapon, receiver in fixedList(self.auraAffected):
+			receiver.effectClear()
 		self.auraAffected = []
 		try: self.entity.Game.trigsBoard[self.entity.ID]["WeaponEquipped"].remove(self)
 		except: pass
@@ -2970,11 +2919,10 @@ class WeaponBuffAura:
 			entityCopy = self.entity.createCopy(game)
 			Copy = self.selfCopy(entityCopy)
 			game.copiedObjs[self] = Copy
-			for entity, aura_Receiver in self.auraAffected:
+			for entity, receiver in self.auraAffected:
 				entityCopy = entity.createCopy(game)
-				#武器光环的statbyAura是[0, []]
-				receiverIndex = entity.statbyAura[1].index(aura_Receiver)
-				receiverCopy = entityCopy.statbyAura[1][receiverIndex]
+				index = entity.auraReceivers.index(receiver)
+				receiverCopy = entityCopy.auraReceivers[index]
 				receiverCopy.source = Copy #补上这个receiver的source
 				Copy.auraAffected.append((entityCopy, receiverCopy))
 			return Copy

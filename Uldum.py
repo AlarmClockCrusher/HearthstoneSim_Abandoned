@@ -310,12 +310,7 @@ class TempleBerserker(Minion):
 	requireTarget, keyWord, description = False, "Reborn", "Reborn. Has +2 Attack while damaged"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["Enrage"] = BuffAura_Dealer_Enrage(self, 2)
-		self.triggers["StatChanges"] = [self.handleEnrage]
-		self.activated = False
-		
-	def handleEnrage(self):
-		self.auras["Enrage"].handleEnrage()
+		self.auras["Enrage"] = StatAura_Enrage(self, 2)
 		
 		
 class Vilefiend(Minion):
@@ -737,7 +732,7 @@ class PhalanxCommander(Minion):
 		self.auras["Buff Aura"] = BuffAura_PhalanxCommander(self)
 		
 #Refer to Warsong Commander's aura
-class BuffAura_PhalanxCommander(AuraDealer_toMinion):
+class BuffAura_PhalanxCommander(HasAura_toMinion):
 	def __init__(self, minion):
 		self.minion = minion
 		self.signals, self.auraAffected = ["MinionAppears", "MinionTauntKeywordChange"], []
@@ -753,22 +748,20 @@ class BuffAura_PhalanxCommander(AuraDealer_toMinion):
 		if signal == "MinionAppears":
 			if subject.keyWords["Taunt"] > 0:
 				PRINT(self.minion.Game, "Minion %s gains the +2 Attack aura from Phalanx Commander"%subject.name)
-				aura_Receiver = BuffAura_Receiver(subject, self, 2, 0)
-				aura_Receiver.effectStart()
+				Stat_Receiver(subject, self, 2, 0).effectStart()
 		else: #signal == "MinionTauntKeywordChange"
 			if subject.keyWords["Taunt"] > 0:
 				notAffectedPreviously = True
-				for receiver, aura_Receiver in fixedList(self.auraAffected):
+				for receiver, receiver in fixedList(self.auraAffected):
 					if subject == receiver:
 						notAffectedPreviously = False
 						break
 				if notAffectedPreviously:
-					aura_Receiver = BuffAura_Receiver(subject, self, 1, 0)
-					aura_Receiver.effectStart()
+					Stat_Receiver(subject, self, 1, 0).effectStart()
 			elif subject.keyWords["Taunt"] < 1:
-				for receiver, aura_Receiver in fixedList(self.auraAffected):
+				for receiver, receiver in fixedList(self.auraAffected):
 					if subject == receiver:
-						aura_Receiver.effectClear()
+						receiver.effectClear()
 						break
 						
 	def auraAppears(self):
@@ -782,7 +775,7 @@ class BuffAura_PhalanxCommander(AuraDealer_toMinion):
 		
 	def selfCopy(self, recipient): #The recipientMinion is the minion that deals the Aura.
 		return type(self)(recipient)
-	#可以通过AuraDealer_toMinion的createCopy方法复制
+	#可以通过HasAura_toMinion的createCopy方法复制
 	
 	
 class WastelandAssassin(Minion):
@@ -2848,7 +2841,7 @@ class Vessina(Minion):
 		self.auras["Buff Aura"] = BuffAura_Vessina(self)
 		self.activated = False
 		
-class BuffAura_Vessina(AuraDealer_toMinion):
+class BuffAura_Vessina(HasAura_toMinion):
 	def __init__(self, entity):
 		self.entity = entity
 		self.signals, self.auraAffected = ["MinionAppears", "OverloadCheck"], []
@@ -2868,8 +2861,8 @@ class BuffAura_Vessina(AuraDealer_toMinion):
 			if isOverloaded == False and self.entity.activated:
 				self.entity.activated = False
 				PRINT(self.entity, "Vessina's Buff Aura: Your other minions have +2 Attack is shut down.")
-				for minion, aura_Receiver in fixedList(self.auraAffected):
-					aura_Receiver.effectClear()
+				for minion, receiver in fixedList(self.auraAffected):
+					receiver.effectClear()
 				self.auraAffected = []
 			elif isOverloaded and self.entity.activated == False:
 				self.entity.activated = True
@@ -2879,9 +2872,7 @@ class BuffAura_Vessina(AuraDealer_toMinion):
 					
 	def applies(self, subject):
 		if subject != self.entity:
-			PRINT(self.entity, "Minion %s gains the %d/%d aura from %s"%(subject.name, 2, 0, self.entity))
-			aura_Receiver = BuffAura_Receiver(subject, self, 2, 0)
-			aura_Receiver.effectStart()
+			Stat_Receiver(subject, self, 2, 0).effectStart()
 			
 	def auraAppears(self):
 		game = self.entity.Game
@@ -2899,7 +2890,7 @@ class BuffAura_Vessina(AuraDealer_toMinion):
 		
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
-	#可以通过AuraDealer_toMinion的createCopy方法复制
+	#可以通过HasAura_toMinion的createCopy方法复制
 	
 	
 class Earthquake(Spell):
@@ -3243,7 +3234,7 @@ class DarkPharaohTekahn(Minion):
 		aura.auraAppears()
 		return None
 		
-class YourLackeysareAlways44(AuraDealer_toMinion):
+class YourLackeysareAlways44(HasAura_toMinion):
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.signals, self.auraAffected = ["MinionAppears", "CardEntersHand"], []
@@ -3285,7 +3276,7 @@ class YourLackeysareAlways44(AuraDealer_toMinion):
 			try: self.Game.trigsBoard[self.ID][sig].insert(0, self) #假设这种光环总是添加到最前面，保证它可以在其他的普通光环生效之前作用
 			except: self.Game.trigsBoard[self.ID][sig] = [self]
 			
-	#可以通过AuraDealer_toMinion的createCopy方法复制
+	#可以通过HasAura_toMinion的createCopy方法复制
 	
 """Warrior cards"""
 class HacktheSystem(Quest):
