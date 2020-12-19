@@ -83,12 +83,12 @@ class Button_Connect2Server(tk.Button):
 		self.bind("<Button-1>", self.leftClick)
 		
 	def leftClick(self, event): #在这时检测所带的卡组是不正确
-		deckCorrect, deck, hero = parseDeckCode(self.ownDeck.get(), ClassDict[self.hero.get()], ClassDict)
-		self.GUI.decideDeckandClass()
-		if deckCorrect: #卡组正确时可以尝试连接服务器
-			self.GUI.initConntoServer(hero, deck)
-		else:
+		deck, deckCorrect, hero = parseDeckCode(self.GUI.ownDeck.get(), ClassDict[self.GUI.hero.get()], ClassDict)
+		if deckCorrect:
+			thread = threading.Thread(target=self.GUI.initConntoServer, args=(hero, deck), daemon=True)
+			thread.start()
 			messagebox.showinfo(message=txt("Deck code is wrong. Check before retry", CHN))
+		else: messagebox.showinfo(message=txt("Deck code is wrong. Check before retry", CHN))
 			
 class Button_ConnectandResume(tk.Button):
 	def __init__(self, GUI):
