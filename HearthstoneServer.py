@@ -5,6 +5,7 @@ import selectors
 import types
 from numpy.random import choice as npchoice
 from CustomWidgets import BoardIndex
+import sys
 
 """
 selectors.EVENT_READ = 1; selectors.EVENT_WRITE = 2
@@ -286,4 +287,6 @@ class Server:
 			
 				
 if __name__ == "__main__":
-	Server().run()
+	address = sys.argv[1]
+	print(address)
+	Server(address).run()

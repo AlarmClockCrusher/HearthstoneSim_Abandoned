@@ -11,10 +11,11 @@ import socket
 import select
 import time
 import numpy
-import threading
+import threading, subprocess
 import pickle
 import types
-
+import platform
+			
 CHN = True
 
 class MulliganFinishButton_3(tk.Button):
@@ -85,9 +86,10 @@ class Button_Connect2Server(tk.Button):
 	def leftClick(self, event): #在这时检测所带的卡组是不正确
 		deck, deckCorrect, hero = parseDeckCode(self.GUI.ownDeck.get(), ClassDict[self.GUI.hero.get()], ClassDict)
 		if deckCorrect:
-			thread = threading.Thread(target=self.GUI.initConntoServer, args=(hero, deck), daemon=True)
-			thread.start()
+			#thread = threading.Thread(target=self.GUI.initConntoServer, args=(hero, deck), daemon=True)
+			#thread.start()
 			messagebox.showinfo(message=txt("Connecting to server. Please wait", CHN))
+			self.GUI.initConntoServer(hero, deck)
 		else: messagebox.showinfo(message=txt("Deck code is wrong. Check before retry", CHN))
 			
 class Button_ConnectandResume(tk.Button):
@@ -174,6 +176,10 @@ class GUI_Client(GUI_Common):
 			
 	def initConntoServer(self, hero, deck):
 		serverIP = self.serverIP.get()
+		param = '-n' if platform.system().lower() == 'windows' else '-c'
+		command = ["ping", param, '1', serverIP]
+		if subprocess.call(command) != 0:
+			messagebox.showinfo(message="Can't ping the address %s"%serverIP)
 		try: self.sock.connect((serverIP, int(self.queryPort.get()))) #Blocks. If the server port turns this attempt down, it raises error
 		except ConnectionRefusedError:
 			messagebox.showinfo(message=txt("Can't connect to the server's query port", CHN))
