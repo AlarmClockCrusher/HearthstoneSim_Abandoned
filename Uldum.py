@@ -3236,8 +3236,6 @@ class YourLackeysareAlways44(HasAura_toMinion):
 			try: game.trigsBoard[self.ID][sig].insert(0, self) #假设这种光环总是添加到最前面，保证它可以在其他的普通光环生效之前作用
 			except: game.trigsBoard[self.ID][sig] = [self]
 			
-	#可以通过HasAura_toMinion的createCopy方法复制
-	
 """Warrior cards"""
 class HacktheSystem(Quest):
 	Class, name = "Warrior", "Hack the System"

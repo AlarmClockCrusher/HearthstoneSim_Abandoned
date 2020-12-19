@@ -679,6 +679,10 @@ class Trig_HeadmasterKelThuzad(TrigBoard):
 		if signal == "MinionDied": return self.enabled
 		else: return self.entity.onBoard and subject.ID == self.entity.ID
 		
+	def text(self, CHN):
+		return "法术迸发：如果法术消灭了任何随从，召唤被消灭的随从" if CHN \
+				else "Spellburst: If the spell destroys any minions, summon them"
+				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		if signal == "SpellPlayed": self.enabled = True
 		elif signal == "MinionDied": self.minionsKilled.append(type(target))

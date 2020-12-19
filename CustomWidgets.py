@@ -114,6 +114,8 @@ import os
 import threading
 import time
 
+from Game import gameStatusDict
+
 def pickleObj2Str(obj):
 	s = str(pickle.dumps(obj, 0).decode())
 	return s.replace("\n", "*")
@@ -267,16 +269,16 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		
 	def crosshairLeave(self, event):
 		self.waiting = False
-		try: self.GUI.lbl_Status.destroy()
+		try: self.GUI.lbl_CardStatus.destroy()
 		except: pass
 		
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
-			try: self.GUI.lbl_Status.destroy()
+			try: self.GUI.lbl_CardStatus.destroy()
 			except: pass
-			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
-			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
+			self.GUI.lbl_CardStatus = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w', justify="left")
+			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			
 	def tempLeftClick(self, event): #For Shadowverse
@@ -653,10 +655,9 @@ class MinionButton(tk.Button):
 			for key, value in minion.keyWords.items():
 				if value > 0: self.keyWords += key
 		self.trigs = [type(trig) for trig in minion.trigsBoard + (minion.deathrattles if minion.type == "Minion" else [])]
-		self.counts = 0
-		for trig in minion.trigsBoard:
-			if hasattr(trig, "counter"): self.counts += trig.counter
-			
+		self.counts = sum(trig.counter for trig in minion.trigsBoard if hasattr(trig, "counter"))
+		self.auras = [type(aura) for aura in minion.auras.values()]
+		
 	def decideColorOrig(self, GUI, minion):
 		if minion.type != "Minion": self.colorOrig = "grey46"
 		else:
@@ -689,7 +690,7 @@ class MinionButton(tk.Button):
 		
 	def crosshairLeave(self, event):
 		self.waiting = False
-		try: self.GUI.lbl_Status.destroy()
+		try: self.GUI.lbl_CardStatus.destroy()
 		except: pass
 		
 	def wait2Display(self):
@@ -698,10 +699,10 @@ class MinionButton(tk.Button):
 			if not hasattr(self.GUI, "ID") or seeEnemyHand or self.card.ID == self.GUI.ID:
 				hideSomeTrigs = False
 			else: hideSomeTrigs = True
-			try: self.GUI.lbl_Status.destroy()
+			try: self.GUI.lbl_CardStatus.destroy()
 			except: pass
-			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(hideSomeTrigs), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
-			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
+			self.GUI.lbl_CardStatus = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(hideSomeTrigs), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w', justify="left")
+			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			
 	def tempLeftClick(self, event): #For Shadowverse
@@ -711,6 +712,8 @@ class MinionButton(tk.Button):
 	def plot(self, x, y):
 		self.x, self.y, self.labels = x, y, []
 		self.place(x=x, y=y, anchor='c')
+		if self.card.auras:
+			CardLabel(btn=self, text='                            ', bg="gold", font=("yellow", 4)).plot(x=x, y=y+0.53*CARD_Y)
 		trigsBoard = [trig for trig in self.card.trigsBoard if not hasattr(trig, "hide")]
 		if trigsBoard or ((self.card.type == "Minion" or self.card.type == "Amulet") and self.card.deathrattles):
 			string = ""
@@ -745,10 +748,9 @@ class MinionButton(tk.Button):
 				if value > 0: keyWords += key
 			if self.attack != attack or self.health != health or self.keyWords != keyWords: return False
 		trigs = [type(trig) for trig in minion.trigsBoard + (minion.deathrattles if minion.type == "Minion" else [])]
-		counts = 0
-		for trig in minion.trigsBoard:
-			if hasattr(trig, "counter"): counts += trig.counter
-		return self.trigs == trigs and self.counts == counts
+		counts = sum(trig.counter for trig in minion.trigsBoard if hasattr(trig, "counter"))
+		auras = [type(aura) for aura in minion.auras.values()]
+		return self.trigs == trigs and self.counts == counts and self.auras == auras
 		
 class BoardZone:
 	def __init__(self, GUI, ID):
@@ -842,16 +844,16 @@ class HeroButton(tk.Button):
 		
 	def crosshairLeave(self, event):
 		self.waiting = False
-		try: self.GUI.lbl_Status.destroy()
+		try: self.GUI.lbl_CardStatus.destroy()
 		except: pass
 		
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
-			try: self.GUI.lbl_Status.destroy()
+			try: self.GUI.lbl_CardStatus.destroy()
 			except: pass
-			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
-			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
+			self.GUI.lbl_CardStatus = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w', justify="left")
+			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			
 	def tempLeftClick(self, event): #For Shadowverse
@@ -935,16 +937,16 @@ class HeroPowerButton(tk.Button): #For Hero Powers that are on board
 		
 	def crosshairLeave(self, event):
 		self.waiting = False
-		try: self.GUI.lbl_Status.destroy()
+		try: self.GUI.lbl_CardStatus.destroy()
 		except: pass
 		
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
-			try: self.GUI.lbl_Status.destroy()
+			try: self.GUI.lbl_CardStatus.destroy()
 			except: pass
-			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
-			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
+			self.GUI.lbl_CardStatus = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w', justify="left")
+			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			
 	def plot(self, x, y):
@@ -1010,16 +1012,16 @@ class WeaponButton(tk.Button): #休眠物和武器无论左右键都是取消选
 		
 	def crosshairLeave(self, event):
 		self.waiting = False
-		try: self.GUI.lbl_Status.destroy()
+		try: self.GUI.lbl_CardStatus.destroy()
 		except: pass
 		
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
-			try: self.GUI.lbl_Status.destroy()
+			try: self.GUI.lbl_CardStatus.destroy()
 			except: pass
-			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
-			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
+			self.GUI.lbl_CardStatus = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w', justify="left")
+			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			
 	def plot(self, x, y):
@@ -1151,16 +1153,16 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 		
 	def crosshairLeave(self, event):
 		self.waiting = False
-		try: self.GUI.lbl_Status.destroy()
+		try: self.GUI.lbl_CardStatus.destroy()
 		except: pass
 		
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
-			try: self.GUI.lbl_Status.destroy()
+			try: self.GUI.lbl_CardStatus.destroy()
 			except: pass
-			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
-			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
+			self.GUI.lbl_CardStatus = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w', justify="left")
+			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			
 	def plot(self, x, y):
@@ -1248,7 +1250,7 @@ class BoardButton(tk.Canvas):
 		self.GUI, self.selected, self.colorOrig, self.boardInfo = GUI, 0, BoardColor, GUI.boardID
 		self.bind('<Button-1>', self.leftClick)   # bind left mouse click
 		self.bind('<Button-3>', self.rightClick)   # bind right mouse click
-		self.text = "Transfer Student--%s\n" if not CHN else "转校生--%s\n"% \
+		self.text = "Transfer Student--%s" if not CHN else "转校生--%s"% \
 					{"1 Classic Ogrimmar": "Battlecry: Deal 2 damage" if not CHN else "战吼：造成2点伤害",
 					"2 Classic Stormwind": "Divine Shield" if not CHN else "圣盾",
 					"3 Classic Stranglethorn": "Stealth, Poisonous" if not CHN else "潜行，剧毒",
@@ -1273,7 +1275,7 @@ class BoardButton(tk.Canvas):
 			
 	def rightClick(self, event):
 		self.GUI.cancelSelection()
-		try: self.GUI.lbl_Status.destroy()
+		try: self.GUI.lbl_CardStatus.destroy()
 		except: pass
 		
 	def plot(self):
@@ -1283,17 +1285,16 @@ class BoardButton(tk.Canvas):
 	def draw(self):
 		while self.effectIDs:
 			self.delete(self.effectIDs.pop())
-		game, status = self.GUI.Game, self.text
+		game, lines = self.GUI.Game, [self.text]
 		for ID in range(1, 3):
-			status += ("\nPlayer %d has:\n"%ID if not CHN else "玩家%d有：\n"%ID)
+			lines.append("Player %d has:"%ID if not CHN else "玩家%d有："%ID)
 			for key, value in game.status[ID].items():
-				if value > 0: status += "\t%s:%d "%(key, value)
-			for obj in game.trigAuras[ID]:
-				status += obj.text(CHN) + '\n'
-		status += "\nTemp Effects:\n" if not CHN else "\n临时效果\n"
+				if value > 0: lines.append("   %s:%d"%(key if not CHN else gameStatusDict[key], value))
+			for obj in game.trigAuras[ID]: lines.append("   %s"%obj.text(CHN))
+		lines.append("Temp Effects:" if not CHN else "临时效果")
 		for obj in game.turnStartTrigger + game.turnEndTrigger:
-			status += obj.text(CHN) + '\n'
-		textID = self.create_text(int(0.3*Board_X), Board_Y/2, text=self.GUI.wrapText(status, lengthLimit=60), 
+			lines.append("   %s"%obj.text(CHN))
+		textID = self.create_text(int(0.3*Board_X), Board_Y/2, text='\n'.join(lines), 
 									fill="orange2", font=("Yahei", 14, ))
 		self.effectIDs.append(textID)
 		

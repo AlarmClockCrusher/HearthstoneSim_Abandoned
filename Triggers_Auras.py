@@ -781,18 +781,22 @@ class TempManaEffect:
 		for sig in self.signals:
 			try: game.trigsBoard[self.ID][sig].append(self)
 			except: game.trigsBoard[self.ID][sig] = [self]
+		game.trigAuras[self.ID].append(self)
 		game.Manas.calcMana_All()
 		
 	def auraDisappears(self):
+		game = self.Game
 		for minion, manaMod in fixedList(self.auraAffected):
 			manaMod.getsRemoved()
 		self.auraAffected = []
-		try: self.Game.Manas.CardAuras.remove(self)
+		try: game.Manas.CardAuras.remove(self)
 		except: pass
 		for sig in self.signals:
-			try: self.Game.trigsBoard[self.ID][sig].remove(self)
+			try: game.trigsBoard[self.ID][sig].remove(self)
 			except: pass
-		self.Game.Manas.calcMana_All()
+		try: game.trigAuras[self.ID].remove(self)
+		except: pass
+		game.Manas.calcMana_All()
 		
 	def selfCopy(self, game):
 		return type(self)(game, self.ID)

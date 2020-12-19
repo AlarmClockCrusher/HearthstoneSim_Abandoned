@@ -450,8 +450,10 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 
 
-Default1 = [OhMyYogg, Counterspell, ForbiddenWords, PenFlinger, Frostbolt, ArcaneShot, RapidFire, HeadmasterKelThuzad, ZephrystheGreat, ZephrystheGreat
+Default1 = [OhMyYogg, Counterspell, PenFlinger, Frostbolt, RuneDagger, RuneDagger, DarkPharaohTekahn,
+			RapidFire, HeadmasterKelThuzad, ZephrystheGreat, RaidLeader
 			]
 
-Default2 = [OhMyYogg, Counterspell, ForbiddenWords, PenFlinger, Frostbolt, ArcaneShot, RapidFire, HeadmasterKelThuzad, ZephrystheGreat, ZephrystheGreat
+Default2 = [Khadgar, DwarvenSharpshooter, ProfessorSlate, OhMyYogg, Counterspell, ForbiddenWords, KirinTorMage, NatureStudies,
+			PenFlinger, Frostbolt, ArcaneShot, RapidFire, HeadmasterKelThuzad, ZephrystheGreat, ZephrystheGreat
 			]

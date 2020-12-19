@@ -27,21 +27,7 @@ gameStatusDict = {"Immune": "你的英雄免疫", "Immune2NextTurn": "你的英�
 				"Hero Can't Be Attacked": "你的英雄不能被攻击",
 				}
 
-statusDict = {"Immune": 0, "Immune2NextTurn": 0, "ImmuneThisTurn": 0,
-				"Evasive": 0, "Evasive2NextTurn": 0,
-				"Spell Damage": 0, "Spells Lifesteal": 0, "Spells x2": 0, "Spells Sweep": 0, "Spells Poisonous": 0,
-
-				"Power Sweep": 0, "Power Damage": 0, #Power Damage.
-				"Power Can Target Minions": 0,
-				"Heal to Damage": 0, "Lifesteal Damages Enemy": 0,
-				"Choose Both": 0,
-				"Battlecry x2": 0, "Shark Battlecry x2": 0,
-				"Deathrattle x2": 0, "Weapon Deathrattle x2": 0,
-				"Summon x2": 0, "Secrets x2": 0,
-				"Minions Can't Be Frozen": 0, #Living Dragonbreath prevents minions from being Frozen
-				"Ignore Taunt": 0, #Kayn Sunfury allows player to ignore Taunt
-				"Hero Can't Be Attacked": 0,
-				}
+statusDict = {key: 0 for key in gameStatusDict.keys()}
 
 class Game:
 	def __init__(self, GUI=None):

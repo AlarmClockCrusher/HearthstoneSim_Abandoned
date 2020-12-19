@@ -114,7 +114,7 @@ class GUI_Common:
 		return text
 		
 	def update(self):
-		try: self.lbl_Status.destroy()
+		try: self.lbl_CardStatus.destroy()
 		except: pass
 		if self.UI == -2: #Draw the mulligan part, the cards and the start turn button
 			self.printInfo("The game starts. Select the cards you want to replace. Then click the button at the center of the screen")

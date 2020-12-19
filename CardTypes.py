@@ -6,34 +6,35 @@ from collections import Counter as cnt
 
 from Triggers_Auras import ManaMod, Stat_Receiver
 
-def wrapTxt(s, wrapLength=11, CHN):
+def wrapTxt(s, CHN=True, wrapLength=11):
 	if CHN:
 		numSubstrings = int(len(s) / wrapLength) + 1 if len(s) % wrapLength else int(len(s) / wrapLength)
-		if numSubstrings == 0:
-			return ''
-		elif numSubstrings == 1:
-			return '  ' + s + '\n'
+		if numSubstrings == 0: return ''
+		elif numSubstrings == 1: return ' ' + s + '\n'
 		else:
 			substrings = [s[i*wrapLength:(i+1)*wrapLength] for i in range(numSubstrings-1)]
 			substrings.append(s[(numSubstrings-1)*wrapLength:])
-			return '  ' + "\n  ".join(substrings) + '\n'
+			print(substrings)
+			return ' ' + "\n  ".join(substrings) + '\n'
 	else:
-		wrapLength = int(1.5 * wrapLength)
-		if len(s) > wrapLength: #"Savannah Highmane"
-			#The currentLine stores at least one word, if the total length exceeds the limit, save the currentLine to substrings
-			substrings, currentLine, words = [], '', s.split(' ')
-			for i in range(len(words)): #words = ["Savannah", "Highmane"]
-				if currentLine == '': currentLine += words[i] #string为空时，遇到一段文字之后，无论如何都要记录下来 string += "Savannah"
-				else: #如果string不是空的话，则需要判断这个string加上下个单词之后是否会长度过长
-					if len(currentLine + words[i]) > wrapLength: #len("Savannah" + "Highmane") > lengthLimit
-						substrings.append(currentLine) #substrings += "  Savannah\n"
-						currentLine = words[i]
-					else: #If including the next word won't make it too long.
-						currentLine += ' ' + words[i]
-			substrings += (currentLine)
-			return "  " + "\n  ".join(substrings) + '\n'
-		return "  " + s + '\n'
+		return wrapEng(s, int(1.6 * wrapLength))
 		
+def wrapEng(s, wrapLength):
+	if len(s) > wrapLength: #"Savannah Highmane"
+		#The currentLine stores at least one word, if the total length exceeds the limit, save the currentLine to substrings
+		substrings, currentLine, words = [], '', s.split(' ')
+		for word in words: #words = ["Savannah", "Highmane"]
+			if currentLine == '': currentLine += word #string为空时，遇到一段文字之后，无论如何都要记录下来 string += "Savannah"
+			else: #如果string不是空的话，则需要判断这个string加上下个单词之后是否会长度过长
+				if len(currentLine + word) > wrapLength: #len("Savannah" + "Highmane") > lengthLimit
+					substrings.append(currentLine) #substrings += "  Savannah\n"
+					currentLine = word
+				else: #If including the next word won't make it too long.
+					currentLine += ' ' + word
+		substrings.append(currentLine)
+		return "  " + "\n   ".join(substrings) + '\n'
+	return "  " + s + '\n'
+	
 def fixedList(listObj):
 	return listObj[0:len(listObj)]
 
@@ -104,7 +105,7 @@ effectsDict = {"Taunt": "嘲讽", "Divine Shield": "圣盾", "Stealth": "潜行"
 				"Enemy Effect Evasive": "Enemy Effect Evasive", "Enemy Effect Damage Immune": "Enemy Effect Damage Immune",
 				"Can't Break": "Can't Break", "Can't Disappear": "Can't Disappear", "Can't Be Attacked": "Can't Be Attacked", "Disappear When Die": "Can't Be Attacked",
 				"Next Damage 0": "Next Damage 0", "Ignore Taunt": "无视嘲讽", "UB": "UB", "Can't Evolve": "无法进化", "Free Evolve": "Free Evolve",
-				"Max Damage": "Max Damage", "Deal Damage 0":"Deal Damage 0"
+				"Max Damage": "Max Damage", "Deal Damage 0":"Deal Damage 0",
 				
 				"Immune": "免疫", "Frozen": "被冻结", "Temp Stealth": "潜行直到你的下个回合开始", "Borrowed": "被暂时控制",
 				"Evolved": "已进化",
@@ -808,7 +809,7 @@ class Minion(Card):
 		if CHN:
 			text += "已攻击%d次 剩余次数:%d\n"%(self.attTimes, self.attChances_extra + self.attChances_base - self.attTimes)
 		else:
-			text += "Attacked %d times\nAttacks left: %d\n"%(self.attTimes, self.attChances_extra + self.attChances_base - self.attTimes)
+			text += "Attacked %d times\nChances left: %d\n"%(self.attTimes, self.attChances_extra + self.attChances_base - self.attTimes)
 		keyWords = [key for key, value in self.keyWords.items() if value]
 		if keyWords:
 			text += "Keywords:\n" if not CHN else "关键字：\n"
@@ -819,12 +820,10 @@ class Minion(Card):
 			for key, value in self.effectfromAura.items():
 				if value > 0: text += "  {}\n".format(self.effectfromAura)
 				
-		marks = [key for key, value in self.marks.items() if value]
+		marks = [key for key, value in self.marks.items() if key != "UB" and value]
 		if marks:
 			text += "Effect:\n" if not CHN else "其他特效：\n"
-			for key in marks:
-				if key != "UB":
-					text += "  {} {}\n".format(key if not CHN else effectsDict[key], self.marks[key])
+			for key in marks: text += "  {} {}\n".format(key if not CHN else effectsDict[key], self.marks[key])
 		status = [key for key, value in self.status.items() if value]
 		if status:
 			text += "Status:\n" if not CHN else "状态效果：\n"
@@ -837,10 +836,9 @@ class Minion(Card):
 		if self.deathrattles:
 			text += "Deathrattles:\n" if not CHN else "亡语：\n"
 			for trig in self.deathrattles: text += "  %s\n"%wrapTxt(trig.text(CHN), CHN)
-			
 		if self.auras:
 			text += "Auras:\n" if not CHN else "光环：\n"
-			for value in self.auras.values(): text += "  {}\n".format(type(value))
+			for key in self.auras.keys(): text += "  {}\n".format(wrapEng(key, wrapLength=18))
 			
 		return text
 		
@@ -1689,6 +1687,10 @@ class HeroPower(Card):
 					text += "\tChanged by %d\n"%manaMod.changeby if not CHN else "\t费用增减 %d\n"%manaMod.changeby
 				else:
 					text += "\tChanged to %d\n"%manaMod.changeto if not CHN else "\t费用变为 %d\n"%manaMod.changeto
+		if CHN:
+			text += "已使用%d次 剩余次数：%d\n"%(self.heroPowerTimes, self.heroPowerChances_base + self.heroPowerChances_extra - self.heroPowerTimes)
+		else:
+			text += "Attacked %d times\nChances left: %d\n"%(self.heroPowerTimes, self.heroPowerChances_base + self.heroPowerChances_extra - self.heroPowerTimes)
 		keyWords = [key for key, value in self.keyWords.items() if value]
 		if keyWords:
 			text += "Keywords:\n" if not CHN else "关键字：\n"
@@ -1867,9 +1869,9 @@ class Hero(Card):
 				else:
 					text += "\tChanged to %d\n"%manaMod.changeto if not CHN else "\t费用变为 %d\n"%manaMod.changeto
 		if CHN:
-			text += "已攻击 %d 次. 剩余可攻击次数: %d\n"%(self.attTimes, self.attChances_extra + self.attChances_base - self.attTimes)
+			text += "已攻击%d次. 剩余次数:%d\n"%(self.attTimes, self.attChances_extra + self.attChances_base - self.attTimes)
 		else:
-			text += "Attacked %d times. Attack chances left: %d\n"%(self.attTimes, self.attChances_extra + self.attChances_base - self.attTimes)
+			text += "Attacked %d times\nChances left: %d\n"%(self.attTimes, self.attChances_extra + self.attChances_base - self.attTimes)
 		if self.auraReceivers:
 			text += "Aura effects on hero\n" if not CHN else "作用于英雄上的光环效果\n"
 			text += "\t+{} att\n".format(self.attfromAura)
