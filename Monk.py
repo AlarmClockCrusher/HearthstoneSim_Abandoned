@@ -5,6 +5,9 @@ from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 
+def PRINT(game, s):
+	pass
+	
 class WindWalkerMistweaver(HeroPower): #踏风织雾
 	mana, name, requireTarget = 2, "WindWalker-Mistweaver", True
 	index = "Monk~Basic Hero Power~2~WindWalker-Mistweaver"
@@ -108,15 +111,13 @@ class MonksApprentice(Minion):
 	requireTarget, keyWord, description = False, "", "While this minion has 2 or more Attack, it has Rush and Windfury"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["RushandWindfury"] = Aura_MonksApprentice(self)
+		self.auras["RushandWindfury"] = None
 		self.triggers["StatChanges"] = [self.handleStatChange]
 		self.activated = False
 		
 	def handleStatChange(self):
 		self.auras["RushandWindfury"].handleStatChange()
 		
-class Aura_MonksApprentice(HasAura_toMinion):
-	
 			
 class ShaohaosProtection(Spell): #少昊的保护
 	#使一个友方随从获得+2生命值且无法成为法术或英雄技能的目标
@@ -338,10 +339,10 @@ class DefenseTechniqueMaster(Minion): #御术僧师
 		if posinHand > -2 and not self.Game.Manas.manas[self.ID]:
 			PRINT(self.Game, "Defense Technique Master's Quaff triggers and gives the minion 'Deathrattle: Give your hero +3 Attack this turn'")
 			self.Game.sendSignal("QuaffTriggered", self.ID, None, None, 0, "")
-			trigger = GiveYourHeroPlus3AttackThisTurn(self)
-			self.deathrattles.append(trigger)
+			trig = GiveYourHeroPlus3AttackThisTurn(self)
+			self.deathrattles.append(trig)
 			if self.onBoard:
-				trigger.connect()
+				trig.connect()
 		return None
 		
 class GiveYourHeroPlus3AttackThisTurn(Deathrattle_Minion):
@@ -410,9 +411,9 @@ class Liquor(Spell): #醉酿
 			elif target.onBoard: #假设只有当目标随从还在场上的时候会生效
 				PRINT(self.Game, "Liquor gives renders minion %s unable to attack for two turns"%target.name)
 				target.marks["Can't Attack"] += 1
-				trigger = Trig_Liquor(target)
-				target.trigsBoard.append(trigger)
-				trigger.connect()
+				trig = Trig_Liquor(target)
+				target.trigsBoard.append(trig)
+				trig.connect()
 		return target
 		
 class Trig_Liquor(TrigBoard):
@@ -430,7 +431,8 @@ class Trig_Liquor(TrigBoard):
 			PRINT(self.entity.Game, "%s can attack next turn."%self.entity.name)
 			self.entity.marks["Can't Attack"] -= 1
 			self.disconnect()
-			extractfrom(self, self.entity.trigsBoard)
+			try: self.entity.trigsBoard.remove(self)
+			except: pass
 		else:
 			PRINT(self.entity.Game, "%s still can't attack for another turn"%self.entity.name)
 			
@@ -519,7 +521,7 @@ class JadeTether(HeroPower):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_JadeTether(self)]
-		self.heroPowerReplaced = None
+		self.powerReplaced = None
 		
 	def effect(self, target, choice=0):
 		if target:
@@ -530,7 +532,7 @@ class JadeTether(HeroPower):
 		return 0
 		
 	def replaceHeroPower(self):
-		self.heroPowerReplaced = type(self.Game.powers[self.ID])
+		self.powerReplaced = type(self.Game.powers[self.ID])
 		if self.Game.powers[self.ID]:
 			self.Game.powers[self.ID].disappears()
 			self.Game.powers[self.ID] = None
@@ -550,8 +552,8 @@ class Trig_JadeTether(TrigBoard):
 		PRINT(self.entity.Game, "Player uses Hero Power and Jade Tether has been used for %d times"%self.counter)
 		if self.counter > 1:
 			PRINT(self.entity.Game, "Player has used Hero Power Jade Tether twice and the Hero Power changes back to the original one it replaced")
-			if self.entity.heroPowerReplaced:
-				self.entity.heroPowerReplaced(self.entity.Game, self.entity.ID).replaceHeroPower()
+			if self.entity.powerReplaced:
+				self.entity.powerReplaced(self.entity.Game, self.entity.ID).replaceHeroPower()
 				self.disconnect()
 				
 class TetheredGolem(Minion): #雪怒的子嗣
@@ -579,8 +581,8 @@ class DrunkenBoxing(Spell): #醉拳
 		minionstoAttack = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
 		npshuffle(minionstoAttack)
 		if quaffTriggered:
-			trigger = Trig_DrunkenBoxing(self)
-			trigger.connect()
+			trig = Trig_DrunkenBoxing(self)
+			trig.connect()
 			self.Game.sendSignal("QuaffTriggered", self.ID, None, None, 0, "")
 		#注册扳机，检测英雄的攻击
 		while minionstoAttack:
@@ -596,7 +598,7 @@ class DrunkenBoxing(Spell): #醉拳
 			else:
 				PRINT(self.Game, "Player is dead and stops attacking minions")
 				break
-		if quaffTriggered: trigger.disconnect()
+		if quaffTriggered: trig.disconnect()
 		return None
 		
 class Trig_DrunkenBoxing(TrigBoard):
@@ -897,9 +899,9 @@ class MonkDragonKeeper(Minion): #驭龙武僧
 			PRINT(self.Game, "Monk Dragon Keeper's Quaff triggers and gives the minion Taunt and 'Deathrattle: Shuffle this into your deck'")
 			self.Game.sendSignal("QuaffTriggered", self.ID, None, None, 0, "")
 			self.getsKeyword("Taunt")
-			trigger = ShuffleThisintoYourDeck(self)
-			self.deathrattles.append(trigger)
-			trigger.connect()
+			trig = ShuffleThisintoYourDeck(self)
+			self.deathrattles.append(trig)
+			trig.connect()
 		return None
 		
 class ShuffleThisintoYourDeck(Deathrattle_Minion):

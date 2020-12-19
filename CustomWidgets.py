@@ -273,8 +273,9 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
-			text = self.card.cardStatus()
-			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=text, bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
+			try: self.GUI.lbl_Status.destroy()
+			except: pass
+			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
 			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			
@@ -694,8 +695,12 @@ class MinionButton(tk.Button):
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
-			text = self.card.cardStatus()
-			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=text, bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
+			if not hasattr(self.GUI, "ID") or seeEnemyHand or self.card.ID == self.GUI.ID:
+				hideSomeTrigs = False
+			else: hideSomeTrigs = True
+			try: self.GUI.lbl_Status.destroy()
+			except: pass
+			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(hideSomeTrigs), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
 			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			
@@ -843,8 +848,9 @@ class HeroButton(tk.Button):
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
-			text = self.card.cardStatus()
-			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=text, bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
+			try: self.GUI.lbl_Status.destroy()
+			except: pass
+			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
 			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			
@@ -935,8 +941,9 @@ class HeroPowerButton(tk.Button): #For Hero Powers that are on board
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
-			text = self.card.cardStatus()
-			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=text, bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
+			try: self.GUI.lbl_Status.destroy()
+			except: pass
+			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
 			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			
@@ -1009,8 +1016,9 @@ class WeaponButton(tk.Button): #休眠物和武器无论左右键都是取消选
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
-			text = self.card.cardStatus()
-			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=text, bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
+			try: self.GUI.lbl_Status.destroy()
+			except: pass
+			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
 			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			
@@ -1149,8 +1157,9 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
-			text = self.card.cardStatus()
-			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=text, bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
+			try: self.GUI.lbl_Status.destroy()
+			except: pass
+			self.GUI.lbl_Status = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w')
 			self.GUI.lbl_Status.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			
@@ -1264,6 +1273,8 @@ class BoardButton(tk.Canvas):
 			
 	def rightClick(self, event):
 		self.GUI.cancelSelection()
+		try: self.GUI.lbl_Status.destroy()
+		except: pass
 		
 	def plot(self):
 		self.place(x=X/2, y=Y/2, anchor='c')
@@ -1272,23 +1283,16 @@ class BoardButton(tk.Canvas):
 	def draw(self):
 		while self.effectIDs:
 			self.delete(self.effectIDs.pop())
-		game = self.GUI.Game
-		status = self.text
+		game, status = self.GUI.Game, self.text
 		for ID in range(1, 3):
 			status += ("\nPlayer %d has:\n"%ID if not CHN else "玩家%d有：\n"%ID)
 			for key, value in game.status[ID].items():
 				if value > 0: status += "\t%s:%d "%(key, value)
-		status += "\nEffects:\n" if not CHN else "\n效果\n"
-		effects = []
+			for obj in game.trigAuras[ID]:
+				status += obj.text(CHN) + '\n'
+		status += "\nTemp Effects:\n" if not CHN else "\n临时效果\n"
 		for obj in game.turnStartTrigger + game.turnEndTrigger:
-			if obj not in effects:
-				status += obj.text(CHN) + ' '
-				effects.append(obj)
-		for trigList in game.trigsBoard[1].values():
-			for trig in trigList:
-				if hasattr(trig, "ID") and trig not in effects:
-					status += obj.text(CHN) + ' '
-					effects.append(obj)
+			status += obj.text(CHN) + '\n'
 		textID = self.create_text(int(0.3*Board_X), Board_Y/2, text=self.GUI.wrapText(status, lengthLimit=60), 
 									fill="orange2", font=("Yahei", 14, ))
 		self.effectIDs.append(textID)

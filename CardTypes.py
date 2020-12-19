@@ -2,34 +2,52 @@ import inspect
 import copy
 
 from numpy.random import choice as npchoice
-from numpy.random import randint as nprandint
-from numpy.random import shuffle as npshuffle
-import numpy as np
+from collections import Counter as cnt
 
 from Triggers_Auras import ManaMod, Stat_Receiver
 
-def wrapTxt(s, wrapLength=11):
-	numSubstrings = int(len(s) / wrapLength) + 1 if len(s) % wrapLength else int(len(s) / wrapLength)
-	if numSubstrings == 0:
-		return ''
-	elif numSubstrings == 1:
-		return '  ' + s + '\n'
+def wrapTxt(s, wrapLength=11, CHN):
+	if CHN:
+		numSubstrings = int(len(s) / wrapLength) + 1 if len(s) % wrapLength else int(len(s) / wrapLength)
+		if numSubstrings == 0:
+			return ''
+		elif numSubstrings == 1:
+			return '  ' + s + '\n'
+		else:
+			substrings = [s[i*wrapLength:(i+1)*wrapLength] for i in range(numSubstrings-1)]
+			substrings.append(s[(numSubstrings-1)*wrapLength:])
+			return '  ' + "\n  ".join(substrings) + '\n'
 	else:
-		substrings = [s[i*wrapLength:(i+1)*wrapLength] for i in range(numSubstrings-1)]
-		substrings.append(s[(numSubstrings-1)*wrapLength:])
-		return '  ' + "\n  ".join(substrings) + '\n'
+		wrapLength = int(1.5 * wrapLength)
+		if len(s) > wrapLength: #"Savannah Highmane"
+			#The currentLine stores at least one word, if the total length exceeds the limit, save the currentLine to substrings
+			substrings, currentLine, words = [], '', s.split(' ')
+			for i in range(len(words)): #words = ["Savannah", "Highmane"]
+				if currentLine == '': currentLine += words[i] #string为空时，遇到一段文字之后，无论如何都要记录下来 string += "Savannah"
+				else: #如果string不是空的话，则需要判断这个string加上下个单词之后是否会长度过长
+					if len(currentLine + words[i]) > wrapLength: #len("Savannah" + "Highmane") > lengthLimit
+						substrings.append(currentLine) #substrings += "  Savannah\n"
+						currentLine = words[i]
+					else: #If including the next word won't make it too long.
+						currentLine += ' ' + words[i]
+			substrings += (currentLine)
+			return "  " + "\n  ".join(substrings) + '\n'
+		return "  " + s + '\n'
 		
 def fixedList(listObj):
 	return listObj[0:len(listObj)]
 
-
-def PRINT(game, string, *args):
-	if game.GUI:
-		if not game.mode: game.GUI.printInfo(string)
-	elif not game.mode:
-		print("game's guide mode is 0\n", string)
-
-
+def classforDiscover(initiator):
+	Class = initiator.Game.heroes[initiator.ID].Class
+	if Class != "Neutral": return Class #如果发现的发起者的职业不是中立，则返回那个职业
+	elif initiator.Class != "Neutral": return initiator.Class #如果玩家职业是中立，但卡牌职业不是中立，则发现以那个卡牌的职业进行
+	else: return npchoice(initiator.Game.Classes) #如果玩家职业和卡牌职业都是中立，则随机选取一个职业进行发现。
+	
+def discoverProb(listObj):
+	counts, total = cnt(listObj), len(listObj)
+	if total: return list(counts.keys()), [value/total for value in counts.values()]
+	else: return [], []
+	
 def copyListDictTuple(obj, recipient):
 	if isinstance(obj, list):
 		objCopy = []
@@ -39,8 +57,7 @@ def copyListDictTuple(obj, recipient):
 				# Have tested that basic types can be appended and altering the original won't mess with the content in the list.
 				objCopy.append(element)
 			elif callable(element):  # If the element is a function
-				func_name = element.__qualname__.split('.')[1]
-				objCopy.append(getattr(recipient, func_name))
+				pass
 			elif inspect.isclass(element):
 				objCopy.append(element)
 			elif type(element) == type(recipient.Game):
@@ -57,9 +74,7 @@ def copyListDictTuple(obj, recipient):
 				objCopy[key] = value
 			# 随从的列表中不会引用游戏
 			elif callable(value):
-				func_name = value.__qualname__.split('.')[1]
-				# print("The value to copy is ", func_name)
-				objCopy[key] = getattr(recipient, func_name)
+				pass
 			elif inspect.isclass(value):
 				objCopy[key] = value
 			elif type(value) == type(recipient.Game):
@@ -74,6 +89,26 @@ def copyListDictTuple(obj, recipient):
 		objCopy = list(objCopy)  # 把那个列表转换回tuple
 	return objCopy
 
+effectsDict = {"Taunt": "嘲讽", "Divine Shield": "圣盾", "Stealth": "潜行",
+				"Lifesteal": "吸血", "Spell Damage": "法术伤害", "Poisonous": "剧毒",
+				"Windfury": "风怒", "Mega Windfury": "超级风怒", "Charge": "冲锋", "Rush": "突袭",
+				"Echo": "回响", "Reborn": "复生", "Bane": "Bane", "Drain": "Drain",
+				
+				"Cost Health Instead": "消耗生命值，而非法力值",
+				"Sweep": "对攻击目标的相邻随从造成同样伤害",
+				"Evasive": "无法成为法术或英雄技能的目标", "Enemy Evasive": "只有成为你的法术或英雄技能的目标",
+				"Can't Attack": "无法攻击", "Can't Attack Hero": "无法攻击英雄",
+				"Heal x2": "你的治疗效果翻倍",  # Crystalsmith Kangor
+				"Power Heal&Dmg x2": "你的英雄技能的治疗或伤害翻倍",  # Prophet Velen, Clockwork Automation
+				"Spell Heal&Dmg x2": "你的法术的治疗或伤害翻倍",
+				"Enemy Effect Evasive": "Enemy Effect Evasive", "Enemy Effect Damage Immune": "Enemy Effect Damage Immune",
+				"Can't Break": "Can't Break", "Can't Disappear": "Can't Disappear", "Can't Be Attacked": "Can't Be Attacked", "Disappear When Die": "Can't Be Attacked",
+				"Next Damage 0": "Next Damage 0", "Ignore Taunt": "无视嘲讽", "UB": "UB", "Can't Evolve": "无法进化", "Free Evolve": "Free Evolve",
+				"Max Damage": "Max Damage", "Deal Damage 0":"Deal Damage 0"
+				
+				"Immune": "免疫", "Frozen": "被冻结", "Temp Stealth": "潜行直到你的下个回合开始", "Borrowed": "被暂时控制",
+				"Evolved": "已进化",
+				}
 
 class Card:
 	def getMana(self):
@@ -103,16 +138,15 @@ class Card:
 		
 	def checkEvanescent(self):
 		self.evanescent = False
-		for trigger in self.trigsBoard + self.trigsHand:
-			if hasattr(trigger, "makesCardEvanescent"):
+		for trig in self.trigsBoard + self.trigsHand:
+			if hasattr(trig, "makesCardEvanescent"):
 				self.evanescent = True
 				break
 				
 	#处理卡牌进入/离开 手牌/牌库时的扳机和各个onBoard/inHand/inDeck标签
 	def entersHand(self):
 		self.onBoard, self.inHand, self.inDeck = False, True, False
-		for trigger in self.trigsHand:
-			trigger.connect()
+		for trig in self.trigsHand: trig.connect()
 		return self
 		
 	def leavesHand(self, intoDeck=False):
@@ -237,7 +271,6 @@ class Card:
 	def selectionLegit(self, target, choice=0):
 		#抉择牌在有全选光环时，选项自动更正为一个负数。
 		choice -= 3 * (self.chooseOne > 0 and self.Game.status[self.ID]["Choose Both"] > 0)
-		PRINT(self.Game, "Verifying the validity of selection. Subject {}, target {} with choice {}".format(self.name, target, choice))
 		if target: #指明了目标
 			#在指明目标的情况下，只有抉择牌的选项是合理的，选项需要目标，目标对于这个选项正确，且目标可选时，才能返回正确。
 			return self.needTarget(choice) and self.targetCorrect(target, choice) and self.canSelect(target)
@@ -258,7 +291,6 @@ class Card:
 	#说明扫荡打击是把相邻的随从列入伤害处理列表 ，主要涉及的两个随从是最先结算的两个，
 	#被扫荡打击涉及的两个随从从左到右依次结算。
 	def attacks(self, target, useAttChance=True):
-		PRINT(self.Game, "%s attacks %s"%(self.name, target.name))
 		subject_attack, target_attack = max(0, self.attack), max(0, target.attack)
 		if self.type == "Minion" and self.keyWords["Stealth"] > 0:
 			self.losesKeyword("Stealth")
@@ -314,7 +346,6 @@ class Card:
 		if self.keyWords["Lifesteal"] > 0 or (self.type == "Spell" and game.status[self.ID]["Spells Lifesteal"] > 0)\
 				or (damageType == "Battle" and "Drain" in self.keyWords and self.keyWords["Drain"] > 0):
 			heal = damage * (2 ** self.countHealDouble())
-			PRINT(game, "%s deals %d damage and restores %d Health to player"%(self.name, damage, heal))
 			if game.status[self.ID]["Heal to Damage"] > 0:
 				#If the Lifesteal heal is converted to damage, then the obj to take the final 
 				#damage will not cause Lifesteal cycle.
@@ -412,9 +443,7 @@ class Card:
 		if self.inHand or self.onBoard:#If the character is dead and removed already or in deck. Nothing happens.
 			if sendHealSignal:  # During AOE healing, the signals are delayed.
 				game.sendSignal(self.type + "GetsCured", game.turn, subject, self, 0, "")
-			if self.health == self.health_max:
-				PRINT(game, "Character %s at full health already."%self.name)
-			else:
+			if self.health < self.health_max:
 				healActual = heal if self.health + heal < self.health_max else self.health_max - self.health
 				self.health += healActual
 				if sendHealSignal: #During AOE healing, the signals are delayed.
@@ -591,14 +620,14 @@ class Dormant(Card):
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
-		text, s = self.name + '\n', wrapTxt(self.text(CHN))
+		text, s = self.name + '\n', wrapTxt(self.text(CHN), CHN)
 		if s: text += s + '\n'
 		if self.trigsBoard:
 			text += "Dormant's trigsBoard:\n" if not CHN else "场上扳机：\n"
-			for trig in self.trigsBoard: text += "\t%s\n"%wrapTxt(trig.text(CHN))
+			for trig in self.trigsBoard: text += "  %s\n"%wrapTxt(trig.text(CHN), CHN)
 		if self.auras:
 			text += "Minion's aura:\n" if not CHN else "光环：\n"
-			for value in self.auras.values(): text += "\t{}\n".format(type(value))
+			for value in self.auras.values(): text += "  {}\n".format(type(value))
 			
 		return text
 		
@@ -732,7 +761,6 @@ class Minion(Card):
 	# The game will directly invoke the turnStarts/turnEnds methods.
 	def turnStarts(self, ID):
 		for i in reversed(range(len(self.tempAttChanges))):  # Remove the temp attack changes.
-			PRINT(self.Game, "Temp Attack change: {}".format(self.tempAttChanges[i]))
 			# self.tempAttChanges[size-1-i]是一个tuple(tempAttackChange, timepoint)
 			if self.tempAttChanges[i][1] == "StartofTurn 1" and self.Game.turn == 1:
 				self.statChange(-self.tempAttChanges[i][0], 0)
@@ -766,17 +794,17 @@ class Minion(Card):
 			self.newonthisSide = False
 			self.attTimes, self.attChances_extra = 0, 0
 			
-	def cardStatus(self):
+	def cardStatus(self, hideSomeTrigs=False):
 		CHN = self.Game.GUI.CHN
-		text, s = self.name + '\n', wrapTxt(self.text(CHN))
+		text, s = self.name + '\n', wrapTxt(self.text(CHN), CHN)
 		if s: text += s + '\n'
 		if self.inHand and self.manaMods:
 			text += "Mana modification:\n" if not CHN else "费用效果\n"
 			for manaMod in self.manaMods:
 				if manaMod.changeby != 0:
-					text += "\tChanged by %d\n"%manaMod.changeby if not CHN else "\t费用增减 %d\n"%manaMod.changeby
+					text += "  Changed by %d\n"%manaMod.changeby if not CHN else "\t费用增减 %d\n"%manaMod.changeby
 				else:
-					text += "\tChanged to %d\n"%manaMod.changeto if not CHN else "\t费用变为 %d\n"%manaMod.changeto
+					text += "  Changed to %d\n"%manaMod.changeto if not CHN else "\t费用变为 %d\n"%manaMod.changeto
 		if CHN:
 			text += "已攻击%d次 剩余次数:%d\n"%(self.attTimes, self.attChances_extra + self.attChances_base - self.attTimes)
 		else:
@@ -784,32 +812,35 @@ class Minion(Card):
 		keyWords = [key for key, value in self.keyWords.items() if value]
 		if keyWords:
 			text += "Keywords:\n" if not CHN else "关键字：\n"
-			for key in keyWords: text += "\t%s %d\n"%(key, self.keyWords[key])
+			for key in keyWords: text += "  %s %d\n"%(key if not CHN else effectsDict[key], self.keyWords[key])
 		if self.auraReceivers:
 			text += "Aura effects on minion\n" if not CHN else "作用于随从上的光环效果\n"
-			text += "\t+{}/+{}\n".format(self.attfromAura, self.healthfromAura)
+			text += "  +{}/+{}\n".format(self.attfromAura, self.healthfromAura)
 			for key, value in self.effectfromAura.items():
-				if value > 0: text += "\t{}\n".format(self.effectfromAura)
+				if value > 0: text += "  {}\n".format(self.effectfromAura)
 				
 		marks = [key for key, value in self.marks.items() if value]
 		if marks:
 			text += "Effect:\n" if not CHN else "其他特效：\n"
-			for key in marks: text += "\t{} {}\n".format(key, self.marks[key])
+			for key in marks:
+				if key != "UB":
+					text += "  {} {}\n".format(key if not CHN else effectsDict[key], self.marks[key])
 		status = [key for key, value in self.status.items() if value]
 		if status:
 			text += "Status:\n" if not CHN else "状态效果：\n"
-			for key in status: text += "\t{} {}\n".format(key, self.status[key])
-		if self.trigsBoard or self.trigsHand:
+			for key in status: text += "  {} {}\n".format(key if not CHN else effectsDict[key], self.status[key])
+		trigsBoard2Show = [trig for trig in self.trigsBoard if not hasattr(trig, "hide")]
+		if trigsBoard2Show or self.trigsHand:
 			text += "Triggers:\n" if not CHN else "扳机：\n"
-			for trig in self.trigsBoard: text += "\t%s\n"%wrapTxt(trig.text(CHN))
-			for trig in self.trigsHand: text += "\t%s\n"%wrapTxt(trig.text(CHN))
+			for trig in trigsBoard2Show: text += "  %s\n"%wrapTxt(trig.text(CHN), CHN)
+			for trig in self.trigsHand: text += "  %s\n"%wrapTxt(trig.text(CHN), CHN)
 		if self.deathrattles:
 			text += "Deathrattles:\n" if not CHN else "亡语：\n"
-			for trig in self.deathrattles: text += "\t%s\n"%wrapTxt(trig.text(CHN))
+			for trig in self.deathrattles: text += "  %s\n"%wrapTxt(trig.text(CHN), CHN)
 			
 		if self.auras:
 			text += "Auras:\n" if not CHN else "光环：\n"
-			for value in self.auras.values(): text += "\t{}\n".format(type(value))
+			for value in self.auras.values(): text += "  {}\n".format(type(value))
 			
 		return text
 		
@@ -939,8 +970,7 @@ class Minion(Card):
 		# If returned to hand/deck already due to deathrattle, the inHand/inDeck will be kept
 		# 假设随从只有在场上结算亡语完毕之后才会进行初始化，而如果扳机已经提前将随从返回手牌或者牌库，则这些随从不会
 		# 移除随从注册了的亡语扳机
-		for trigger in self.deathrattles:
-			trigger.disconnect()
+		for trig in self.deathrattles: trig.disconnect()
 		self.Game.sendSignal("MinionDied", self.Game.turn, None, self, 0, "", 0, triggersAllowed_AfterDied)
 
 	# MinionDeathResolutionFinished
@@ -991,15 +1021,15 @@ class Minion(Card):
 				target.history["Magnetic Upgrades"]["Marks"][key] = value
 		# 将扳机赋予随从，同时记录在目标随从的"Magnetic Upgrades"中
 		for Trig_Class in deathrattles_orig:
-			trigger = Trig_Class(target)
-			target.deathrattles.append(trigger)
-			trigger.connect()
+			trig = Trig_Class(target)
+			target.deathrattles.append(trig)
+			trig.connect()
 			target.history["Magnetic Upgrades"]["Deathrattles"].append(Trig_Class)
 		# 将亡语赋予随从，同时记录在"Magnetic Upgrades"里面
 		for Trig_Class in triggers_orig:
-			trigger = Trig_Class(target)
-			target.trigsBoard.append(trigger)
-			trigger.connect()
+			trig = Trig_Class(target)
+			target.trigsBoard.append(trig)
+			trig.connect()
 			target.history["Magnetic Upgrades"]["Triggers"].append(Trig_Class)
 		# 最后进行身材的改变，并在这里调用目标随从的StatChanges方法
 		target.buffDebuff(attack_orig, health_orig)
@@ -1030,7 +1060,6 @@ class Minion(Card):
 		self.Game.sendSignal("MinionSummoned", self.ID, self, target, mana, "")
 		# 过载结算
 		if self.overload > 0:
-			PRINT(self.Game, "%s is played and Overloads %d mana crystals." % (self.name, self.overload))
 			self.Game.Manas.overloadMana(self.overload, self.ID)
 
 		magneticTarget = None
@@ -1275,7 +1304,7 @@ class Spell(Card):
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
-		text, s = self.name + '\n', wrapTxt(self.text(CHN))
+		text, s = self.name + '\n', wrapTxt(self.text(CHN), CHN)
 		if s: text += s + '\n'
 		if self.inHand and self.manaMods:
 			text += "Mana modification:\n" if not CHN else "费用效果\n"
@@ -1287,15 +1316,15 @@ class Spell(Card):
 		keyWords = [key for key, value in self.keyWords.items() if value]
 		if keyWords:
 			text += "Keywords:\n" if not CHN else "关键字：\n"
-			for key in keyWords: text += " %s %d\n"%(key, self.keyWords[key])
+			for key in keyWords: text += " %s %d\n"%(key if not CHN else effectsDict[key], self.keyWords[key])
 		marks = [key for key, value in self.marks.items() if value]
 		if marks:
 			text += "Effects:\n" if not CHN else "其他特效：\n"
-			for key in marks: text += " {} {}\n".format(key, self.marks[key])
+			for key in marks: text += " {} {}\n".format(key if not CHN else effectsDict[key], self.marks[key])
 		if self.trigsHand or self.trigsBoard:
 			text += "Triggers:\n" if not CHN else "扳机：\n"
-			for trig in self.trigsHand: text += " %s\n"%wrapTxt(trig.text(CHN))
-			for trig in self.trigsBoard: text += " %s\n"%wrapTxt(trig.text(CHN))
+			for trig in self.trigsHand: text += " %s\n"%wrapTxt(trig.text(CHN), CHN)
+			for trig in self.trigsBoard: text += " %s\n"%wrapTxt(trig.text(CHN), CHN)
 			
 		return text
 		
@@ -1344,10 +1373,8 @@ class Spell(Card):
 		#在法术要施放两次的情况下，第二次的目标仍然是第一次时随机决定的
 		for i in range(repeatTimes):
 			if self.overload > 0:
-				PRINT(curGame, "%s is cast and Overloads %d mana crystals."%(self.name, self.overload))
 				curGame.Manas.overloadMana(self.overload, self.ID)
 			if self.twinSpell > 0: #如果不是从手牌中打出，则不会把双生法术牌置入原来的位置
-				PRINT(curGame, "Twinspell %s is cast and adds a another copy to player's hand"%self.name)
 				curGame.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, "type")
 			#指向性法术如果没有目标也可以释放，只是可能没有效果而已
 			target = self.whenEffective(target, "byOthers", choice, posinHand=-2)
@@ -1371,7 +1398,6 @@ class Spell(Card):
 		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
 		#获得过载和双生法术牌。
 		if self.overload > 0:
-			PRINT(self.Game, "%s is cast and Overloads %d mana crystals."%(self.name, self.overload))
 			self.Game.Manas.overloadMana(self.overload, self.ID)
 		if self.twinSpell > 0:
 			self.Game.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, "type", posinHand)
@@ -1397,7 +1423,6 @@ class Spell(Card):
 		for i in range(repeatTimes):
 			if i == 1: #第二次施放时照常获得过载和双生法术牌。
 				if self.overload > 0:
-					PRINT(self.Game, "%s is played and Overloads %d mana crystals."%(self.name, self.overload))
 					self.Game.Manas.overloadMana(self.overload, self.ID)
 				if self.twinSpell > 0:
 					self.Game.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, comment="type", byDiscover=False, pos=posinHand)
@@ -1409,7 +1434,6 @@ class Spell(Card):
 				#用于变形等会让随从提前离场的法术。需要知道后面的再次生效目标。
 				target.history["Spells Cast on This"].append(self.index)
 				target = self.whenEffective(target, comment, choice, posinHand)
-				PRINT(self.Game, "{} will also be cast upon minions {} adjacent to the target {} with choice {}".format(self.name, neighbors, target.name, choice))
 				for minion in neighbors: #对相邻的随从也释放该法术。
 					minion.history["Spells Cast on This"].append(self.index)
 					self.whenEffective(minion, comment, choice, posinHand)
@@ -1429,8 +1453,8 @@ class Spell(Card):
 		#如果法术具有回响，则将回响牌置入手牌中。因为没有牌可以让法术获得回响，所以可以直接在法术played()方法中处理echo
 		#if "~Echo" in self.index:
 		#	echoCard = type(minion)(self, self.Game.turn)
-		#	trigger = Trig_Echo(echoCard)
-		#	echoCard.trigsHand.append(trigger)
+		#	trig = Trig_Echo(echoCard)
+		#	echoCard.trigsHand.append(trig)
 		#	self.Game.Hand_Deck.addCardtoHand(echoCard, self.ID)
 			
 		if self.Game.GUI: self.Game.GUI.eraseOffBoardTrig(self.ID)
@@ -1597,14 +1621,15 @@ class Quest(Spell):
 		self.Game.Counters.hasPlayedQuestThisGame[self.ID] = True
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if self.Game.Secrets.areaNotFull(self.ID):
+		secretZone = self.Game.Secrets
+		if secretZone.areaNotFull(self.ID):
 			if self.description.startswith("Sidequest") \
 				and all(quest.name != self.name for quest in secretZone.sideQuests[self.ID]):
-				self.Game.Secrets.sideQuests[self.ID].append(self)
+				secretZone.sideQuests[self.ID].append(self)
 				for trig in self.trigsBoard: trig.connect()
 			else:  # The quest is a main quest
-				if not self.Game.Secrets.mainQuests[self.ID]:
-					self.Game.Secrets.mainQuests[self.ID].append(self)
+				if not secretZone.mainQuests[self.ID]:
+					secretZone.mainQuests[self.ID].append(self)
 					for trig in self.trigsBoard: trig.connect()
 		return None
 		
@@ -1655,7 +1680,7 @@ class HeroPower(Card):
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
-		text, s = self.name + '\n', wrapTxt(self.text(CHN))
+		text, s = self.name + '\n', wrapTxt(self.text(CHN), CHN)
 		if s: text += s + '\n'
 		if self.manaMods:
 			text += "Mana modification:\n" if not CHN else "费用效果\n"
@@ -1667,14 +1692,14 @@ class HeroPower(Card):
 		keyWords = [key for key, value in self.keyWords.items() if value]
 		if keyWords:
 			text += "Keywords:\n" if not CHN else "关键字：\n"
-			for key in keyWords: text += "\t%s %d\n"%(key, self.keyWords[key])
+			for key in keyWords: text += "\t%s %d\n"%(key if not CHN else effectsDict[key], self.keyWords[key])
 		marks = [key for key, value in self.marks.items() if value]
 		if marks:
 			text += "Minion marks:\n" if not CHN else "其他特效：\n"
-			for key in marks: text += "\t{} {}\n".format(key, self.marks[key])
+			for key in marks: text += "\t{} {}\n".format(key if not CHN else effectsDict[key], self.marks[key])
 		if self.trigsBoard:
 			text += "Triggers:\n" if not CHN else "扳机：\n"
-			for trig in self.trigsBoard: text += "\t%s\n"%wrapTxt(trig.text(CHN))
+			for trig in self.trigsBoard: text += "\t%s\n"%wrapTxt(trig.text(CHN), CHN)
 			
 		return text
 		
@@ -1697,10 +1722,8 @@ class HeroPower(Card):
 		self.Game.Manas.calcMana_Powers()
 		
 	def disappears(self):
-		for trigger in self.trigsBoard:
-			trigger.disconnect()
-		for manaMod in self.manaMods:
-			manaMod.getsRemoved()
+		for trig in self.trigsBoard: trig.disconnect()
+		for manaMod in self.manaMods: manaMod.getsRemoved()
 		self.manaMods = []
 		
 	def replaceHeroPower(self):
@@ -1716,16 +1739,7 @@ class HeroPower(Card):
 				
 	def use(self, target=None, choice=0):
 		try:
-			canUseHeroPower = False
-			if self.Game.Manas.affordable(self) == False:
-				PRINT(self.Game, "Not enough mana to use the Hero Power %s"%self.name)
-			else:
-				if self.available() and self.selectionLegit(target, choice):
-					canUseHeroPower = True
-				else: PRINT(self.Game, "Invalid selection to use Hero Power {} on target {}, with choice {}".format(self.name, target, choice))
-				
-			if canUseHeroPower:
-				PRINT(self.Game, "*********\nHandling using Hero Power {} with target {}, with choice	{}\n*********".format(self.name, target, choice))
+			if self.Game.Manas.affordable(self) and self.available() and self.selectionLegit(target, choice):
 				#支付费用，清除费用状态。
 				subIndex, subWhere = self.ID, "Power"
 				if target: tarIndex, tarWhere = target.position, target.type+str(target.ID)
@@ -1748,7 +1762,6 @@ class HeroPower(Card):
 					targets = self.Game.neighbors2(target)[0]
 					minionsKilled += self.effect(target, choice)
 					if targets != []:
-						PRINT(self.Game, "%s will also be cast upon minions adjacent to the target minion %s"%(self.name, target.name))
 						for minion in targets: minionsKilled += self.effect(minion, choice)
 				else: minionsKilled += self.effect(target, choice)
 					
@@ -1757,7 +1770,6 @@ class HeroPower(Card):
 				if minionsKilled > 0:
 					self.Game.sendSignal("HeroPowerKilledMinion", self.Game.turn, self, None, minionsKilled, "")
 				self.Game.gathertheDead()
-				PRINT(self.Game, "Hero used ability %s"%self.name)
 				self.heroPowerTimes += 1
 				#激励阶段，触发“每当你使用一次英雄技能”的扳机，如激励，虚空形态的技能刷新等。
 				self.Game.Counters.powerUsedThisTurn += 1
@@ -1845,7 +1857,7 @@ class Hero(Card):
 	"""Handle hero's attacks, attack chances, attack chances and frozen status."""
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
-		text, s = self.name + '\n', wrapTxt(self.text(CHN))
+		text, s = self.name + '\n', wrapTxt(self.text(CHN), CHN)
 		if s: text += s + '\n'
 		if self.inHand and self.manaMods:
 			text += "Mana modification:\n" if not CHN else "费用效果\n"
@@ -1866,15 +1878,15 @@ class Hero(Card):
 		marks = [key for key, value in self.marks.items() if value]
 		if marks:
 			text += "Effects:\n" if not CHN else "其他特效：\n"
-			for key in marks: text += "\t{} {}\n".format(key, self.marks[key])
+			for key in marks: text += "\t{} {}\n".format(key if not CHN else effectsDict[key], self.marks[key])
 		status = [key for key, value in self.status.items() if value]
 		if status:
 			text += "Status:\n" if not CHN else "状态：\n"
-			for key in status: text += "\t{} {}\n".format(key, self.status[key])
+			for key in status: text += "\t{} {}\n".format(key if not CHN else effectsDict[key], self.status[key])
 		if self.trigsBoard or self.trigsHand:
 			text += "Triggers:\n" if not CHN else "扳机：\n"
-			for trig in self.trigsBoard: text += "\t%s\n"%wrapTxt(trig.text(CHN))
-			for trig in self.trigsHand: text += "\t%s\n"%wrapTxt(trig.text(CHN))
+			for trig in self.trigsBoard: text += "\t%s\n"%wrapTxt(trig.text(CHN), CHN)
+			for trig in self.trigsHand: text += "\t%s\n"%wrapTxt(trig.text(CHN), CHN)
 			
 		return text
 		
@@ -1888,7 +1900,6 @@ class Hero(Card):
 		
 	def getsFrozen(self):
 		self.status["Frozen"] += 1
-		PRINT(self.Game, "%s gets Frozen."%self.name)
 		
 	def turnStarts(self, ID):
 		if ID == self.ID:
@@ -2168,22 +2179,22 @@ class Weapon(Card):
 		keyWords = [key for key, value in self.keyWords.items() if value]
 		if keyWords:
 			text += "Keywords:\n" if not CHN else "关键字：\n"
-			for key in keyWords: text += " %s %d\n"%(key, self.keyWords[key])
+			for key in keyWords: text += " %s %d\n"%(key if not CHN else effectsDict[key], self.keyWords[key])
 		if self.auraReceivers:
 			text += "Aura effects on weapon:\n" if not CHN else "作用于武器上的光环效果:\n"
 			text += "  +{}att\n".format(self.attfromAura)
 			
 		marks = [key for key, value in self.marks.items() if value]
-		if marks != []:
+		if marks:
 			text += "Effect:\n" if not CHN else "其他特效：\n"
-			for key in marks: text += " {} {}\n".format(key, self.marks[key])
+			for key in marks: text += " {} {}\n".format(key if not CHN else effectsDict[key], self.marks[key])
 		if self.trigsBoard or self.trigsHand:
 			text += "Triggers:\n" if not CHN else "扳机：\n"
-			for trig in self.trigsBoard: text += " %s\n"%wrapTxt(trig.text(CHN))
-			for trig in self.trigsHand: text += " %s\n"%wrapTxt(trig.text(CHN))
+			for trig in self.trigsBoard: text += " %s\n"%wrapTxt(trig.text(CHN), CHN)
+			for trig in self.trigsHand: text += " %s\n"%wrapTxt(trig.text(CHN), CHN)
 		if self.deathrattles:
 			text += "Deathrattles:\n" if not CHN else "亡语：\n"
-			for trig in self.deathrattles: text += " %s\n"%wrapTxt(trig.text(CHN))
+			for trig in self.deathrattles: text += " %s\n"%wrapTxt(trig.text(CHN), CHN)
 			
 		return text
 		
@@ -2210,48 +2221,37 @@ class Weapon(Card):
 	# The deathrattles will be left to gathertheDead() and deathHandle()
 	def destroyed(self):
 		if self.onBoard:  # 只有装备着的武器才会触发，以防连续触发。
-			PRINT(self.Game, "Weapon %s is destroyed" % self.name)
 			if self.keyWords["Windfury"] > 0:
 				self.Game.heroes[self.ID].decideAttChances_base()
 			self.onBoard, self.dead = False, True
 			self.Game.heroes[self.ID].attack = self.Game.heroes[self.ID].attack_bare
 			self.Game.sendSignal("HeroAttCalc", self.ID, self, None, 0, "")
 			# 移除武器对应的场上扳机，亡语扳机在deathrattles中保存
-			for trigger in self.trigsBoard:
-				trigger.disconnect()
-
-			for value in self.auras.values():
-				value.auraDisappears()
-
+			for trig in self.trigsBoard: trig.disconnect()
+			for aura in self.auras.values(): aura.auraDisappears()
 	# self.Game.sendSignal("WeaponRemoved", self.ID, self, None, 0, "")
 
 	def deathResolution(self, attackbeforeDeath, triggersAllowed_WhenDies, triggersAllowed_AfterDied):
-		PRINT(self.Game, "Now resolving the destruction of weapon %s" % self.name)
 		# 除了武器亡语以外，目前只有一个应对武器被摧毁的扳机，即冰封王座的Grave Shambler
 		self.Game.sendSignal("WeaponDestroyed", self.ID, None, self, 0, "", triggersAllowed_WhenDies)
 		self.Game.sendSignal("WeaponRemoved", self.ID, None, self, 0, "")
-		for trigger in self.deathrattles:
-			trigger.disconnect()
+		for trig in self.deathrattles: trig.disconnect()
 		self.reset(self.ID)
 		
 	def disappears(self):
 		if self.onBoard:  # 只有装备着的武器才会触发，以防连续触发。
-			PRINT(self.Game, "Weapon %s leaves board" % self.name)
 			if self.keyWords["Windfury"] > 0:
 				self.Game.heroes[self.ID].decideAttChances_base()
 			self.onBoard = False
 			self.Game.heroes[self.ID].calc_Attack()
 			# 移除武器对应的场上扳机，亡语扳机在deathrattles中保存
-			for trigger in self.trigsBoard:
-				trigger.disconnect()
-			for value in self.auras.values():
-				value.auraDisappears()
+			for trig in self.trigsBoard: trig.disconnect()
+			for aura in self.auras.values(): aura.auraDisappears()
 			self.Game.sendSignal("WeaponRemoved", self.ID, self, None, 0, "")
 			
 	"""Handle the mana, durability and stat of weapon."""
 	# This method is invoked by Hero class, not a listner.
 	def loseDurability(self):
-		PRINT(self.Game, "Weapon %s loses 1 Durability" % self.name)
 		self.durability -= 1
 		
 	def gainStat(self, attack, durability):
@@ -2274,7 +2274,6 @@ class Weapon(Card):
 		self.Game.sendSignal("WeaponPlayed", self.ID, self, target, 0, "", choice=0)
 		# 结算过载。
 		if self.overload > 0:
-			PRINT(self.Game, "%s is played and Overloads %d mana crystals." % (self.name, self.overload))
 			self.Game.Manas.overloadMana(self.overload, self.ID)
 		# 使用阶段结束，处理亡语，暂不处理胜负问题。
 		# 注意，如果此时伊利丹飞刀造成了我方佛丁的死亡，则其装备的灰烬使者会先替换目前装备的武器。
@@ -2304,7 +2303,6 @@ class Weapon(Card):
 				weapon.destroyed()  # 触发“每当你的一把武器被摧毁时”和“每当你的一把武器离场时”的扳机，如南海船工。
 		# 打出的这把武器会成为最后唯一还装备着的武器。触发“每当你装备一把武器时”的扳机，如锈水海盗。
 		self.setasNewWeapon()  # 此时打出的武器的onBoard才会正式标记为True
-		PRINT(self.Game, "Weapon {} is now onBoard: {}".format(self.name, self.onBoard))
 
 		# 结算阶段结束，处理亡语。（此时的亡语结算会包括武器的亡语结算。）
 		self.Game.gathertheDead()

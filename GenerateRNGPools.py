@@ -1,11 +1,9 @@
+from numpy.random import choice as npchoice
+
 def concatenateDicts(dict1, dict2):
 	for key in dict2.keys():
 		dict1[key] = copy.deepcopy(dict2[key]) if key not in dict1 else concatenateDicts(dict1[key], dict2[key])
 	return dict1
-	
-def extractfrom(target, listObject):
-	try: return listObject.pop(listObject.index(target))
-	except: return None
 	
 def indexHasClass(index, Class):
 	return Class in index.split('~')[1]
@@ -96,7 +94,7 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 		"25 Scholomance Academy": TransferStudent_Academy,
 		"26 Darkmoon Faire": TransferStudent_Darkmoon,
 		}
-	if board == "0 Random Game Board": board = np.random.choice(list(transferStudentPool))
+	if board == "0 Random Game Board": board = npchoice(list(transferStudentPool))
 	transferStudent = transferStudentPool[board]
 	Academy_Indices[transferStudent.index] = transferStudent
 	cardPool.update(Academy_Indices)
@@ -273,7 +271,6 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 				if poolIdentifier.endswith(" to Summon"):
 					try: objs.remove(Magtheridon)
 					except: pass
-					#extractfrom(TheDarkness, obj)
 				out_file.write("\t\t'%s': ["%poolIdentifier)
 				i = 0
 				for obj in objs:

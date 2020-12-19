@@ -69,8 +69,6 @@ class EnemyPlaysEntry(tk.Entry):
 			moves = unpickleStr2Obj(moves)
 			gameGuides = unpickleStr2Obj(gameGuides)
 			if isinstance(moves, list):
-				print("Reads in play")
-				for move in moves: print(move)
 				self.GUI.Game.evolvewithGuide(moves, gameGuides)
 				self.GUI.update()
 			else: #只有玩家1会使用这个功能

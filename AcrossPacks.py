@@ -1,24 +1,6 @@
 from CardTypes import *
 from Triggers_Auras import *
 
-from numpy.random import choice as npchoice
-from numpy.random import randint as nprandint
-
-def fixedList(listObj):
-	return listObj[0:len(listObj)]
-	
-def PRINT(game, string, *args):
-	if game.GUI:
-		if not game.mode: game.GUI.printInfo(string)
-	elif not game.mode: print("game's guide mode is 0\n", string)
-	
-def classforDiscover(initiator):
-	Class = initiator.Game.heroes[initiator.ID].Class
-	if Class != "Neutral": return Class #如果发现的发起者的职业不是中立，则返回那个职业
-	elif initiator.Class != "Neutral": return initiator.Class #如果玩家职业是中立，但卡牌职业不是中立，则发现以那个卡牌的职业进行
-	else: return npchoice(initiator.Game.Classes) #如果玩家职业和卡牌职业都是中立，则随机选取一个职业进行发现。
-	
-	
 class BoomBot(Minion):
 	Class, race, name = "Neutral", "Mech", "Boom Bot"
 	mana, attack, health = 1, 1, 1
@@ -33,7 +15,6 @@ class Deal1to4DamagetoaRandomEnemy(Deathrattle_Minion):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
 			enemy = None
-			PRINT(curGame, "Deathrattle: Deal 1~4 damage to a random enemy triggers.")
 			if curGame.guides:
 				i, where, damage = curGame.guides.pop(0)
 				if where: enemy = curGame.find(i, where)
@@ -62,7 +43,6 @@ class GoldenKobold(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
-			PRINT(curGame, "Golden Kobold's battlecry replaces player's hand with Legendary minions")
 			if curGame.guides:
 				hand = curGame.guides.pop(0)
 			else:
@@ -80,7 +60,6 @@ class TolinsGoblet(Spell):
 	description = "Draw a card. Fill your hand with copies of it"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Tolin's Goblet lets player draw a card and fills their hand with copies of it")
 		card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 		if card and self.Game.Hand_Deck.handNotFull(self.ID):
 			copies = [card.selfCopy(self.ID) for i in range(self.Game.Hand_Deck.spaceinHand(self.ID))]
@@ -94,7 +73,6 @@ class WondrousWand(Spell):
 	description = "Draw 3 cards. Reduce their costs to (0)"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "WondrousWand lets player draw 3 cards and reduces their costs to (0)")
 		for i in range(3):
 			card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 			if card:
@@ -126,10 +104,8 @@ class ZarogsCrown(Spell):
 					if self.ID != curGame.turn or "byOthers" in comment:
 						minion = npchoice(self.rngPool(key))
 						curGame.fixedGuides.append(minion)
-						PRINT(curGame, "Zarog's Crown summons two copies of a random Legendary minion")
 						curGame.summon([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
 					else:
-						PRINT(curGame, "Zarog's Crown lets playersummons two copies of a random Legendary minion")
 						minions = npchoice(self.rngPool(key), 3, replace=False)
 						curGame.options = [minion(curGame, self.ID) for minion in minions]
 						curGame.Discover.startDiscover(self)
@@ -148,7 +124,6 @@ class Bomb(Spell):
 	description = "Casts When Drawn. Deal 5 damage to your hero"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		PRINT(self.Game, "Bomb is cast and deals %d damage to player."%damage)
 		self.dealsDamage(self.Game.heroes[self.ID], damage)
 		return None
 
@@ -170,19 +145,16 @@ class EtherealLackey(Minion):
 		if self.ID == curGame.turn:
 			if curGame.mode == 0:
 				if curGame.guides:
-					PRINT(curGame, "Ethereal Lackey's battlecry adds a spell to player's hand")
 					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 				else:
 					key = classforDiscover(self) + " Spells"
 					if "byOthers" in comment:
 						spell = npchoice(self.rngPool(key))
 						curGame.fixedGuides.append(spell)
-						PRINT(curGame, "Ethereal Lackey's battlecry adds a random spell to player's hand")
 						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type", byDiscover=True)
 					else:
 						spells = npchoice(self.rngPool(key), 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
-						PRINT(curGame, "Ethereal Lackey's battlecry lets player discover a spell")
 						curGame.Discover.startDiscover(self)
 		return None
 
@@ -210,7 +182,6 @@ class FacelessLackey(Minion):
 			else:
 				minion = npchoice(self.rngPool("2-Cost Minions to Summon"))
 				curGame.fixedGuides.append(minion)
-			PRINT(curGame, "Faceless Lackey's battlecry summons a random 2-Cost minions.")
 			curGame.summon(minion(curGame, self.ID), self.position + 1, self.ID)
 		return None
 
@@ -229,7 +200,6 @@ class GoblinLackey(Minion):
 
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			PRINT(self.Game, "Goblin Lackey's battlecry gives friendly minion %s +2 attack and Rush." % target.name)
 			target.buffDebuff(1, 0)
 			target.getsKeyword("Rush")
 		return target
@@ -243,7 +213,6 @@ class KoboldLackey(Minion):
 
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			PRINT(self.Game, "Kobold Lackey's battlecry deals 2 damage to %s" % target.name)
 			self.dealsDamage(target, 2)
 		return target
 
@@ -270,7 +239,6 @@ class WitchyLackey(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			curGame = self.Game
-			PRINT(curGame, "Witchy Lackey's battlecry transforms friendly minion %s into one that costs 1 more." % target.name)
 			if curGame.mode == 0:
 				if curGame.guides:
 					newMinion = curGame.guides.pop(0)
@@ -300,7 +268,6 @@ class TitanicLackey(Minion):
 
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			PRINT(self.Game, "Titanic Lackey's battlecry gives friendly minion %s +2 Health and Taunt" % target.name)
 			target.buffDebuff(0, 2)
 			target.getsKeyword("Taunt")
 		return target
@@ -326,19 +293,16 @@ class DraconicLackey(Minion):
 		if self.ID == curGame.turn:
 			if curGame.mode == 0:
 				if curGame.guides:
-					PRINT(curGame, "Draconic Lackey's battlecry adds a Dragon to player's hand")
 					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 				else:
 					key = "Dragons as " + classforDiscover(self)
 					if "byOthers" in comment:
 						dragon = npchoice(self.rngPool(key))
 						curGame.fixedGuides.append(dragon)
-						PRINT(curGame, "Draconic Lackey's battlecry adds a random Dragon to player's hand")
 						curGame.Hand_Deck.addCardtoHand(dragon, self.ID, "type", byDiscover=True)
 					else:
 						dragons = npchoice(self.rngPool(key), 3, replace=False)
 						curGame.options = [dragon(curGame, self.ID) for dragon in dragons]
-						PRINT(curGame, "Draconic Lackey's battlecry lets player discover a Dragon")
 						curGame.Discover.startDiscover(self)
 		return None
 

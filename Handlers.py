@@ -8,18 +8,6 @@ import numpy as np
 
 import inspect
 
-def extractfrom(target, listObj):
-	try: return listObj.pop(listObj.index(target))
-	except: return None
-
-def fixedList(listObj):
-	return listObj[0:len(listObj)]
-
-def PRINT(game, string, *args):
-	if game.GUI:
-		if not game.mode: game.GUI.printInfo(string)
-	elif not game.mode: print("game's guide mode is 0\n", string)
-
 #对卡牌的费用机制的改变
 #主要参考贴（冰封王座BB还在的时候）：https://www.diyiyou.com/lscs/news/194867.html
 #
@@ -235,16 +223,12 @@ class Secrets:
 			for secret in reversed(self.secrets[ID]):
 				secret = self.secrets[ID].pop()
 				secret.active = False
-				for trigger in secret.trigsBoard:
-					trigger.disconnect()
-				PRINT(self.Game, "Secret %s is removed"%secret.name)
+				for trig in secret.trigsBoard: trig.disconnect()
 			return None
 		else:
 			secret = self.secrets[ID].pop(index)
 			secret.active = False
-			for trigger in secret.trigsBoard:
-				trigger.disconnect()
-			PRINT(self.Game, "Secret %s is removed"%secret.name)
+			for trig in secret.trigsBoard: trig.disconnect()
 			return secret
 
 	#secret can be type, index or real card.
@@ -285,7 +269,7 @@ class Counters:
 		self.numSpellsPlayedThisTurn = {1: 0, 2: 0}
 		self.numMinionsPlayedThisTurn = {1: 0, 2: 0}
 		self.minionsDiedThisTurn = {1:[], 2:[]}
-		self.numCardsPlayedThisTurn = {1:0, 2:0} #Specifically for Combo. Because even Countered spells can trigger Combos
+		self.numCardsPlayedThisTurn = {1:0, 2:0} #Specifically for Combo. Because even Countered spells can trig Combos
 		self.cardsPlayedThisTurn = {1: {"Indices": [], "ManasPaid": []},
 									2: {"Indices": [], "ManasPaid": []}} #For Combo and Secret.
 		self.dmgonHero_inOppoTurn = {1:0, 2:0}
@@ -423,7 +407,6 @@ class Discover:
 	def typeCardName(self, initiator):
 		if self.Game.GUI:
 			self.initiator = initiator
-			PRINT(self.Game, "Start to type the name of a card you want")
 			self.Game.GUI.update()
 			self.Game.GUI.wishforaCard(initiator)
 			self.Game.options = []

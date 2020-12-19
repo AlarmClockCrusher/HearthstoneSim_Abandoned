@@ -1,19 +1,11 @@
 from CardTypes import *
 from Triggers_Auras import *
-
-from Basic import IllidariInitiate
-
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
+from numpy import inf as npinf
 
-def fixedList(listObj):
-	return listObj[0:len(listObj)]
-	
-def PRINT(game, string, *args):
-	if game.GUI:
-		if not game.mode: game.GUI.printInfo(string)
-	elif not game.mode: print("game's guide mode is 0\n", string)
+from Basic import IllidariInitiate
 
 """"Demon Hunter Yr Dragon cards"""
 
@@ -25,7 +17,6 @@ class Blur(Spell):
 	description = "Your hero can't take damage this turn"
 	#不知道与博尔碎盾的结算是如何进行的。
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Blur is cast and player can't take any damage this turn")
 		Blur_Effect(self.Game, self.ID).connect()
 		return None
 		
@@ -55,7 +46,6 @@ class Blur_Effect:
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		print("Blur prevents the player from taking damage")
 		number[0] = 0
 		
 	def turnEndTrigger(self):
@@ -77,9 +67,7 @@ class TwinSlice(Spell):
 	description = "Give your hero +2 Attack this turn. Add 'Second Slice' to your hand"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Twin Slice is cast and gives player +2 Attack this turn")
 		self.Game.heroes[self.ID].gainAttack(2)
-		PRINT(self.Game, "Twin Slice puts a 'Second Slice' to player's hand")
 		self.Game.Hand_Deck.addCardtoHand(SecondSlice(self.Game, self.ID), self.ID)
 		return None
 		
@@ -90,7 +78,6 @@ class SecondSlice(Spell):
 	description = "Give your hero +2 Attack this turn"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Second Slice is cast and gives player +2 Attack this turn")
 		self.Game.heroes[self.ID].gainAttack(2)
 		return None
 		
@@ -116,7 +103,6 @@ class Trig_Battlefiend(TrigBoard):
 		return "在你的英雄攻击后，获得+1攻击力" if CHN else "After your hero attacks, gain +1 Attack"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "After friendly hero attacks, %s gains +1 Attack"%self.entity.name)
 		self.entity.buffDebuff(1, 0)
 		
 		
@@ -136,10 +122,8 @@ class ConsumeMagic(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			PRINT(self.Game, "Consume Magic is cast and silences enemy minion %s"%target.name)
 			target.getsSilenced()
 		if posinHand == 0 or posinHand == -1:
-			PRINT(self.Game, "Consume Magic's Outcast triggers and lets player draw a card")
 			self.Game.Hand_Deck.drawCard(self.ID)
 		return target
 		
@@ -150,7 +134,6 @@ class ManaBurn(Spell):
 	index = "DHInitiate~Demon Hunter~Spell~1~Mana Burn"
 	description = "Your opponent has 2 fewer Mana Crystals next turn"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Mana Burn is cast and the opponent has 2 fewer Mana Crystals next turn")
 		self.Game.Manas.manas_withheld[3-self.ID] += 2
 		self.Game.turnStartTrigger.append(TwoFewerManaEffectRemoved(self.Game, 3-self.ID))
 		return None
@@ -165,7 +148,6 @@ class TwoFewerManaEffectRemoved:
 				else "Player %d's next turn has 2 fewer Mana Crystals"%self.ID
 				
 	def turnStartTrigger(self):
-		PRINT(self.Game, "At the start of turn, Mana Burn's effect expires and player will no longer start a turn with two fewer Mana Crystals")
 		self.Game.Manas.manas_withheld[self.ID] -= 2
 		try: self.Game.turnStartTrigger.remove(self)
 		except: pass
@@ -185,7 +167,6 @@ class UrzulHorror(Minion):
 		
 class AddaLostSoultoYourHand(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "Deathrattle: Add a 2/1 Lost Soul to your hand triggers")
 		self.entity.Game.Hand_Deck.addCardtoHand(LostSoul, self.entity.ID, "type")
 		
 	def text(self, CHN):
@@ -218,7 +199,6 @@ class BladeDance(Spell):
 				else:
 					minions = list(npchoice(minions, min(3, len(minions)), replace=False))
 					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
-				PRINT(curGame, "Blade Dance is cast and deals {} damage to enemy minions {}".format(damage, minions))
 				self.dealsAOE(minions, [damage]*len(minions))
 		return None
 		
@@ -232,7 +212,6 @@ class FeastofSouls(Spell):
 		self.effectViable = self.Game.Counters.minionsDiedThisTurn[self.ID] != []
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Feast of Souls is cast and lets player draw a card for each friendly minion that died this turn.")
 		num = len(self.Game.Counters.minionsDiedThisTurn[self.ID])
 		for i in range(num): self.Game.Hand_Deck.drawCard(self.ID)
 		return None
@@ -243,7 +222,6 @@ class Umberwing(Weapon):
 	mana, attack, durability = 2, 1, 2
 	index = "DHInitiate~Demon Hunter~Weapon~2~1~2~Umberwing~Battlecry"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Umberwing's battlecry summons two 1/2 Felwings")
 		self.Game.summon([Felwing(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
@@ -277,7 +255,6 @@ class Trig_AltruistheOutcast(TrigBoard):
 				else "After you play the left- or right-most card in your hand, deal 1 damage to all enemies"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "After player plays the left- or right-most card in hand, %s deals 1 damage to all enemies"%self.entity.name)
 		targets = [self.entity.Game.heroes[3-self.entity.ID]] + self.entity.Game.minionsonBoard(3-self.entity.ID)
 		self.entity.dealsAOE(targets, [1 for enemy in targets])
 		
@@ -315,7 +292,6 @@ class EyeBeam(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			PRINT(self.Game, "Eye Beam deals %d damage to minion %s"%(damage, target.name))
 			self.dealsDamage(target, damage)
 		return target
 		
@@ -366,7 +342,6 @@ class Trig_WrathscaleNaga(TrigBoard):
 					curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
 				else: curGame.fixedGuides.append((0, ""))
 			if enemy:
-				PRINT(curGame, "After a friendly minion dies, Wrathscale Naga deals 3 damage to random enemy %s"%enemy.name)
 				self.entity.dealsDamage(enemy, 1)
 				
 """Mana 4 cards"""
@@ -381,7 +356,6 @@ class IllidariFelblade(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if posinHand == 0 or posinHand == -1:
-			PRINT(self.Game, "Illidari Felblade's Outcast triggers and minion gains Immune this turn")
 			self.status["Immune"] = 1
 		return None
 		
@@ -393,7 +367,6 @@ class RagingFelscreamer(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: The next Demon you play costs (2) less"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Raging Felscreamer's battlecry makes player's next Demon cost (2) less")
 		tempAura = YourNextDemonCosts2Less(self.Game, self.ID)
 		self.Game.Manas.CardAuras.append(tempAura)
 		tempAura.auraAppears()
@@ -426,7 +399,6 @@ class SoulSplit(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and self.Game.space(self.ID) > 0:
-			PRINT(self.Game, "Soul Split is cast and summons a copy of friendly demon %s"%target.name)
 			Copy = target.selfCopy(self.ID) if target.onBoard else type(target)(self.Game, self.ID)
 			self.Game.summon(Copy, target.position+1, self.ID)
 		return target
@@ -438,7 +410,6 @@ class CommandtheIllidari(Spell):
 	index = "DHInitiate~Demon Hunter~Spell~5~Command the Illidari"
 	description = "Summon six 1/1 Illidari with Rush"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		PRINT(self.Game, "Command the Illidari is cast and summons six 1/1 Illidari with Rush")
 		self.Game.summon([IllidariInitiate(self.Game, self.ID) for i in range(6)], (-1, "totheRightEnd"), self.ID)
 		return None
 		
@@ -462,7 +433,6 @@ class Trig_WrathspikeBrute(TrigBoard):
 		return "在该随从被攻击后，对所有敌人造成1点伤害" if CHN else "After this is attacked, deal 1 damage to all enemies"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "After %s is attacked, it deals 1 damage to all enemies."%self.entity.name)
 		targets = [self.entity.Game.heroes[3-self.entity.ID]] + self.entity.Game.minionsonBoard(3-self.entity.ID)
 		self.entity.dealsAOE(targets, [1 for minion in targets])
 		
@@ -498,7 +468,6 @@ class Trig_HulkingOverfiend(TrigBoard):
 				else "After this attacks and kills a minion, it may attack again"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "After %s attacks and kills a minion %s, it gains an extra attack chance."%(self.entity.name, target.name))
 		self.entity.attChances_extra += 1
 		
 		
@@ -533,7 +502,6 @@ class Nethrandamus(Minion):
 					cost -= 1
 				minions = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost), 2, replace=False)
 				curGame.fixedGuides.append(tuple(minions))
-			PRINT(curGame, "Nethrandamus' battlecry summons two random %d-Cost minions."%self.progress)
 			pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 			curGame.summon([minion(curGame, self.ID) for minion in minions], pos, self.ID)
 		return None

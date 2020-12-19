@@ -1,11 +1,6 @@
 def fixedList(listObj):
 	return listObj[0:len(listObj)]
 	
-def PRINT(game, string, *args):
-	if game.GUI:
-		if not game.mode: game.GUI.printInfo(string)
-	elif not game.mode: print("game's guide mode is 0\n", string)
-	
 #对于随从的场上扳机，其被复制的时候所有暂时和非暂时的扳机都会被复制。
 #但是随从返回其额外效果的时候，只有其非暂时场上扳机才会被返回（永恒祭司），暂时扳机需要舍弃。
 class TrigBoard:
@@ -253,7 +248,6 @@ class Trig_Borrow(TrigBoard):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "At the end of turn, temporarily controlled minion %s is returned to the other side."%self.entity.name)
 		#Game的minionSwitchSide方法会自行移除所有的此类扳机。
 		self.entity.Game.minionSwitchSide(self.entity, activity="Return")
 		for trig in reversed(self.entity.trigsBoard):
@@ -272,7 +266,6 @@ class Trig_Echo(TrigHand):
 		return self.entity.inHand #Echo disappearing should trigger at the end of any turn
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "At the end of turn, Echo card %s disappears."%self.entity.name)
 		self.entity.Game.Hand_Deck.extractfromHand(self.entity)
 		
 		
@@ -314,7 +307,6 @@ class Trig_Corrupt(TrigHand):
 			newCard.manaMods = [manaMod.selfCopy(newCard) for manaMod in card.manaMods]
 		except Exception as e:
 			print(e, card, newCard)
-		print("Corruption of ", card, newCard)
 		card.Game.Hand_Deck.replaceCardinHand(card, newCard)
 		
 	def selfCopy(self, recipient):
@@ -339,7 +331,6 @@ class Trig_DieatEndofTurn(TrigBoard):
 		return self.entity.onBoard #Even if the current turn is not the minion's owner's turn
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		PRINT(self.entity.Game, "At the end of turn, minion %s affected by FelLord Betrug dies."%self.entity.name)
 		self.entity.Game.killMinion(None, self.entity)
 		
 		
@@ -422,7 +413,7 @@ class Stat_Receiver:
 		
 	def effectStart(self):
 		obj = self.recipient
-		if obj.type = "Minion":
+		if obj.type == "Minion":
 			obj.statChange(self.attGain, self.healthGain)
 			obj.healthfromAura += self.healthGain
 		elif obj.type == "Hero":
@@ -546,7 +537,7 @@ class StatAura_Enrage(HasAura_toMinion):
 	def auraDisappears(self):
 		self.activated = False
 		for sig in self.signals:
-			try: self.entity.Game.trigsBoard[self.entity.ID][sig].append(self)
+			try: self.entity.Game.trigsBoard[self.entity.ID][sig].remove(self)
 			except: pass
 		for minion, receiver in fixedList(self.auraAffected):
 			receiver.effectClear()
@@ -708,14 +699,12 @@ class ManaAura:
 		
 	def applies(self, target): #This target is NOT holder.
 		if self.manaAuraApplicable(target):
-			PRINT(self.entity.Game, "Card %s gains the Changeby %d/Changeto %d mana change from %s"%(target.name, self.changeby, self.changeto, self.entity.name))
 			manaMod = ManaMod(target, self.changeby, self.changeto, self, self.lowerbound)
 			manaMod.applies()
 			self.auraAffected.append((target, manaMod))
 			
 	def auraAppears(self):
 		game = self.entity.Game
-		PRINT(game, "{} appears and starts its mana aura {}".format(self.entity.name, self))
 		for card in game.Hand_Deck.hands[1]: self.applies(card)
 		for card in game.Hand_Deck.hands[2]: self.applies(card)
 		
@@ -726,7 +715,6 @@ class ManaAura:
 	#When the aura object is no longer referenced, it vanishes automatically.
 	def auraDisappears(self):
 		minion = self.entity
-		PRINT(minion.Game, "%s removes its effect."%minion.name)
 		for card, manaMod in fixedList(self.auraAffected):
 			manaMod.getsRemoved()
 			

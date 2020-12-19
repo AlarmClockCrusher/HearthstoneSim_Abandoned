@@ -10,22 +10,9 @@ from collections import Counter as cnt
 
 import inspect
 
-
 def extractfrom(target, listObj):
 	try: return listObj.pop(listObj.index(target))
 	except: return None
-
-
-def fixedList(listObj):
-	return listObj[0:len(listObj)]
-
-
-def PRINT(game, string, *args):
-	if game.GUI:
-		if not game.mode: game.GUI.printInfo(string)
-	elif not game.mode:
-		print("game's guide mode is 0\n", string)
-
 
 class Hand_Deck:
 	def __init__(self, Game, deck1=[], deck2=[]):  # 通过卡组列表加载卡组
@@ -191,7 +178,6 @@ class Hand_Deck:
 	def drawCard(self, ID, card=None):
 		game, GUI = self.Game, self.Game.GUI
 		if card is None:  # Draw from top of the deck.
-			PRINT(game, "Hero %d draws from the top of the deck" % ID)
 			if self.decks[ID]:  # Still have cards left in deck.
 				card = self.decks[ID].pop()
 				mana = card.mana
@@ -206,7 +192,6 @@ class Hand_Deck:
 						self.Game.gathertheDead(True)
 						return
 				else:
-					PRINT(game, "Hero%d's deck is empty and will take damage" % ID)
 					self.noCards[ID] += 1  # 如果在疲劳状态有卡洗入牌库，则疲劳值不会减少，在下次疲劳时，仍会从当前的非零疲劳值开始。
 					damage = self.noCards[ID]
 					if GUI: GUI.fatigueAni(ID, damage)
@@ -218,7 +203,6 @@ class Hand_Deck:
 				card = self.decks[ID].pop(card)
 			else:
 				card = extractfrom(card, self.decks[ID])
-			PRINT(game, "Hero %d draws %s from the deck" % (ID, card.name))
 			mana = card.mana
 		card.leavesDeck()
 		if self.handNotFull(ID):
@@ -227,7 +211,6 @@ class Hand_Deck:
 			game.sendSignal("CardDrawn", ID, None, cardTracker, mana, "")
 			self.Game.Counters.numCardsDrawnThisTurn[ID] += 1
 			if cardTracker[0].type == "Spell" and "Casts When Drawn" in cardTracker[0].index:
-				PRINT(game, "%s is drawn and cast." % cardTracker[0].name)
 				if GUI: btn.remove()
 				cardTracker[0].whenEffective()
 				game.sendSignal("SpellCastWhenDrawn", ID, None, cardTracker[0], mana, "")
@@ -245,7 +228,6 @@ class Hand_Deck:
 				game.Manas.calcMana_All()
 			return (cardTracker[0], mana)
 		else:
-			PRINT(game, "Player's hand is full. The drawn card %s is milled" % card.name)
 			if GUI: GUI.millCardAni(card)
 			return (None, mana) #假设即使爆牌也可以得到要抽的那个牌的费用，用于神圣愤怒
 			
@@ -368,7 +350,6 @@ class Hand_Deck:
 			cards, cost, isRightmostCardinHand = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True)
 			n = len(cards)
 			for card in cards:
-				PRINT(self.Game, "Card %s in player's hand is discarded:" % card.name)
 				card.whenDiscarded()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.Counters.shadows[card.ID] += 1
@@ -381,7 +362,6 @@ class Hand_Deck:
 			if self.hands[ID]:
 				card = npchoice(self.hands[ID])
 				card, cost, isRightmostCardinHand = self.extractfromHand(card, enemyCanSee=True)
-				PRINT(self.Game, "Card %s in player's hand is discarded:" % card.name)
 				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 1, "")
 				card.whenDiscarded()
 				self.Game.Manas.calcMana_All()
@@ -393,7 +373,6 @@ class Hand_Deck:
 			card = self.hands[ID].pop(i)
 			card.leavesHand()
 			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee=True)
-			PRINT(self.Game, "Card %s in player's hand is discarded:" % card.name)
 			self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 1, "")
 			for func in card.triggers["Discarded"]: func()
 			self.Game.Manas.calcMana_All()
