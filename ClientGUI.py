@@ -87,7 +87,7 @@ class Button_Connect2Server(tk.Button):
 		if deckCorrect:
 			thread = threading.Thread(target=self.GUI.initConntoServer, args=(hero, deck), daemon=True)
 			thread.start()
-			messagebox.showinfo(message=txt("Deck code is wrong. Check before retry", CHN))
+			messagebox.showinfo(message=txt("Connecting to server. Please wait", CHN))
 		else: messagebox.showinfo(message=txt("Deck code is wrong. Check before retry", CHN))
 			
 class Button_ConnectandResume(tk.Button):
