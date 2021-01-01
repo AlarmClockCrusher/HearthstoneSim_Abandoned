@@ -156,7 +156,7 @@ class EffusiveMists(Spell): #流溢之雾
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 				else:
 					minions = list(npchoice(minions, min(2, len(minions)), replace=False))
-					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
+					curGame.fixedGuides.append(tuple([minion.pos for minion in minions]))
 				PRINT(curGame, "Effusive Mists sets the Attack of minions {} to 1".format(minions))
 				for minion in minions: minion.statReset(1, False)
 		return None

@@ -49,7 +49,7 @@ class GUI_1P(GUI_Common):
 		self.mulliganStatus = {1:[0, 0, 0], 2:[0, 0, 0, 0]}
 		self.selectedSubject = ""
 		self.subject, self.target = None, None
-		self.position, self.choice, self.UI = -1, 0, -2 #起手调换为-2
+		self.pos, self.choice, self.UI = -1, 0, -2 #起手调换为-2
 		self.discover = None
 		self.gameBackup = None
 		self.btnsDrawn = [] #btnsDrawn include the discover options, etc

@@ -238,7 +238,7 @@ class RustswornInitiate(Minion):
 		
 class SummonanImpcastwithSpellDamagePlus1(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(Impcaster(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)	
+		self.entity.Game.summon(Impcaster(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)	
 		
 	def text(self, CHN):
 		return "亡语：召唤一个1/1并具有法术伤害+1的小鬼施法者" if CHN else "Deathrattle: Summon a 1/1 Impcaster with Spell Damage +1"
@@ -273,7 +273,7 @@ class Trig_BlisteringRot(TrigBoard):
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = LivingRot(self.entity.Game, self.entity.ID)
-		if self.entity.Game.summon(minion, self.entity.position+1, self.entity.ID):
+		if self.entity.Game.summon(minion, self.entity.pos+1, self.entity.ID):
 			minion.statReset(max(0, self.entity.attack), self.entity.health)
 			
 class LivingRot(Minion):
@@ -405,7 +405,7 @@ class ResummonDestroyedMinionwithPlus1Plus1(Deathrattle_Minion):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.minionsDestroyed != []:
-			pos = (self.entity.position, "totheRight") if self.entity in self.entity.Game.minions[self.entity.ID] else (-1, "totheRightEnd")
+			pos = (self.entity.pos, "totheRight") if self.entity in self.entity.Game.minions[self.entity.ID] else (-1, "totheRightEnd")
 			minions = [minion(self.entity.Game, self.entity.ID) for minion in self.minionsDestroyed]
 			#假设给予+1/+1是在召唤之前
 			for minion in minions: minion.buffDebuff(1, 1)
@@ -446,7 +446,7 @@ class DisguisedWanderer(Minion):
 		
 class SummonanInquisitor(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(RustswornInquisitor(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)	
+		self.entity.Game.summon(RustswornInquisitor(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)	
 		
 	def text(self, CHN):
 		return "亡语：召唤一个9/1的审判官" if CHN else "Deathrattle: Summon a 9/1 Inquisitor"
@@ -590,7 +590,7 @@ class Trig_Replicatotron(TrigBoard):
 				i = curGame.guides.pop(0)
 			else:
 				neighbors = self.entity.Game.neighbors2(minion)[0]
-				i = npchoice(neighbors).position if neighbors else -1
+				i = npchoice(neighbors).pos if neighbors else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
 				neighbor = curGame.minions[minion.ID][i]
@@ -613,7 +613,7 @@ class RustswornCultist(Minion):
 class SummonaRustedDevil(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		#This Deathrattle can't possibly be triggered in hand
-		self.entity.Game.summon(RustedDevil(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summon(RustedDevil(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)
 		
 class RustedDevil(Minion):
 	Class, race, name = "Neutral", "Demon", "Rusted Devil"
@@ -634,7 +634,7 @@ class Alar(Minion):
 		
 class SummonAshesofAlar(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(AshesofAlar(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summon(AshesofAlar(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：召唤一个0/3的可以在你的下个回合复活该随从的“奥的灰烬”" if CHN \
@@ -713,7 +713,7 @@ class DragonmawSkyStalker(Minion):
 		
 class SummonaDragonrider(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(Dragonrider(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summon(Dragonrider(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：召唤一个3/4的龙骑士" if CHN else "Deathrattle: Summon a 3/4 Dragonrider"
@@ -829,7 +829,7 @@ class ScavengingShivarra(Minion):
 					minions = curGame.minionsAlive(self.ID, self) + curGame.minionsAlive(3-self.ID)
 					if minions:
 						minion = npchoice(minions)
-						curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID))
+						curGame.fixedGuides.append((minion.pos, "Minion%d"%minion.ID))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if minion:
@@ -882,7 +882,7 @@ class ScrapyardColossus(Minion):
 		
 class SummonaFelcrackedColossuswithTaunt(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(FelcrackedColossus(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summon(FelcrackedColossus(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：召唤一个7/7并具有嘲讽的邪爆巨像" if CHN else "Deathrattle: Summon a 7/7 Felcracked Colossus with Taunt"
@@ -1022,7 +1022,7 @@ class SummonaRandomDemonfromYourHand(Deathrattle_Minion):
 				demons = [i for i, card in enumerate(ownHand) if card.type == "Minion" and "Demon" in card.race]
 				i = npchoice(demons) if demons and curGame.space(self.entity.ID) > 0 else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.summonfromHand(i, self.entity.ID, self.entity.position+1, self.entity.ID)
+			if i > -1: curGame.summonfromHand(i, self.entity.ID, self.entity.pos+1, self.entity.ID)
 			
 	def text(self, CHN):
 		return "亡语：随机从你的手牌中召唤一个恶魔" if CHN else "Deathrattle: Summon a random Demon from your hand"
@@ -1140,7 +1140,7 @@ class ImprisonedAntaen(Minion_Dormantfor2turns):
 					objs = curGame.charsAlive(3-self.ID)
 					if objs:
 						char = npchoice(objs)
-						curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
+						curGame.fixedGuides.append((char.pos, char.type+str(char.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if char:
@@ -1218,7 +1218,7 @@ class Trig_PriestessofFury(TrigBoard):
 					targets = curGame.charsAlive(3-self.entity.ID)
 					if targets:
 						char = npchoice(targets)
-						curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
+						curGame.fixedGuides.append((char.pos, char.type+str(char.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if char:
@@ -1237,7 +1237,7 @@ class CoilfangWarlord(Minion):
 		
 class SummonaWarlordwithTaunt(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(ConchguardWarlord(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summon(ConchguardWarlord(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：召唤一个5/9并具有嘲讽的督军" if CHN else "Deathrattle: Summon a 5/9 Warlord with Taunt"
@@ -1278,7 +1278,7 @@ class Trig_PitCommander(TrigBoard):
 				demons = [i for i, card in enumerate(curGame.Hand_Deck.decks[minion.ID]) if card.type == "Minion" and "Demon" in card.race]
 				i = npchoice(demons) if demons and curGame.space(minion.ID) > 0 else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.summonfromDeck(i, minion.ID, minion.position+1, minion.ID)
+			if i > -1: curGame.summonfromDeck(i, minion.ID, minion.pos+1, minion.ID)
 			
 			
 """Druid cards"""
@@ -1370,11 +1370,11 @@ class MsshifnPrime(Minion):
 	#如果有全选光环，只有一个9/9，其同时拥有突袭和嘲讽
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if choice == 0:
-			self.Game.summon(FungalGuardian(self.Game, self.ID), self.position+1, self.ID)
+			self.Game.summon(FungalGuardian(self.Game, self.ID), self.pos+1, self.ID)
 		elif choice == 1:
-			self.Game.summon(FungalBruiser(self.Game, self.ID), self.position+1, self.ID)
+			self.Game.summon(FungalBruiser(self.Game, self.ID), self.pos+1, self.ID)
 		elif choice < 0:
-			self.Game.summon(FungalGargantuan(self.Game, self.ID), self.position+1, self.ID)
+			self.Game.summon(FungalGargantuan(self.Game, self.ID), self.pos+1, self.ID)
 		return None
 		
 class FungalGuardian(Minion):
@@ -1485,7 +1485,7 @@ class Germination(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			Copy = target.selfCopy(target.ID)
-			self.Game.summon(Copy, target.position+1, self.ID)
+			self.Game.summon(Copy, target.pos+1, self.ID)
 			Copy.getsKeyword("Taunt")
 		return target
 		
@@ -1626,7 +1626,7 @@ class ImprisonedFelmaw(Minion_Dormantfor2turns):
 				targets = curGame.charsAlive(3-self.ID)
 				if targets:
 					enemy = npchoice(targets)
-					curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
+					curGame.fixedGuides.append((enemy.pos, enemy.type+str(enemy.ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
 			if enemy:
@@ -1650,7 +1650,7 @@ class Trig_PackTactics(SecretTrigger):
 		return self.entity.ID != self.entity.Game.turn and target[0].ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(target[0].selfCopy(self.entity.ID, 3, 3), target[0].position+1, self.entity.ID)
+		self.entity.Game.summon(target[0].selfCopy(self.entity.ID, 3, 3), target[0].pos+1, self.entity.ID)
 		
 		
 class ScavengersIngenuity(Spell):
@@ -1698,7 +1698,7 @@ class DealDamageEqualtoAttack(Deathrattle_Minion):
 					enemies = curGame.charsAlive(3-minion.ID)
 					if enemies:
 						enemy = npchoice(enemies)
-						curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
+						curGame.fixedGuides.append((enemy.pos, enemy.type+str(enemy.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if enemy:
@@ -1736,7 +1736,7 @@ class ZixorPrime(Minion):
 		#假设已经死亡时不会召唤复制
 		if self.onBoard or self.inHand:
 			copies = [self.selfCopy(self.ID) for i in range(3)]
-			self.Game.summon(copies, (self.position, "totheRight"), self.ID)
+			self.Game.summon(copies, (self.pos, "totheRight"), self.ID)
 		return None
 		
 		
@@ -1805,7 +1805,7 @@ class BeastmasterLeoroxx(Minion):
 					beasts = [i for i, card in enumerate(curGame.Hand_Deck.hands[self.ID]) if card.type == "Minion" and "Beast" in card.race]
 					i = npchoice(beasts) if beasts and curGame.space(self.ID) > 0 else -1
 					curGame.fixedGuides.append(i)
-				if i > -1: refMinion = curGame.summonfromHand(i, self.ID, refMinion.position+1, self.ID)
+				if i > -1: refMinion = curGame.summonfromHand(i, self.ID, refMinion.pos+1, self.ID)
 				else: break
 		return None
 		
@@ -1835,7 +1835,7 @@ class NagrandSlam(Spell):
 						targets = curGame.charsAlive(3-self.ID)
 						if targets:
 							enemy = npchoice(targets)
-							curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
+							curGame.fixedGuides.append((enemy.pos, enemy.type+str(enemy.ID)))
 						else:
 							curGame.fixedGuides.append((0, ''))
 					if enemy:
@@ -2159,7 +2159,7 @@ class ImprisonedSungill(Minion_Dormantfor2turns):
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, Summon two 1/1 Murlocs"
 	
 	def awakenEffect(self):
-		self.Game.summon([SungillStreamrunner(self.Game, self.ID) for i in range(2)], (self.position, "leftandRight"), self.ID)
+		self.Game.summon([SungillStreamrunner(self.Game, self.ID) for i in range(2)], (self.pos, "leftandRight"), self.ID)
 		
 class SungillStreamrunner(Minion):
 	Class, race, name = "Paladin", "Murloc", "Sungill Streamrunner"
@@ -2289,7 +2289,7 @@ class MurgurglePrime(Minion):
 				murlocs = tuple(npchoice(self.rngPool("Murlocs to Summon"), 4, replace=True))
 				curGame.fixedGuides.append(murlocs)
 			murlocs = [murloc(curGame, self.ID) for murloc in murlocs]
-			pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
+			pos = (self.pos, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 			curGame.summon(murlocs, pos, self.ID)
 			for murloc in murlocs:
 				if murloc.onBoard: murloc.getsKeyword("Divine Shield")
@@ -2589,7 +2589,7 @@ class Trig_DragonmawOverseer(TrigBoard):
 				minions = curGame.minionsonBoard(self.entity.ID)
 				try: minions.remove(self.entity)
 				except: pass
-				i = npchoice(minions).position if minions else -1
+				i = npchoice(minions).pos if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
 				minion = curGame.minions[self.entity.ID][i]
@@ -2611,7 +2611,7 @@ class PsycheSplit(Spell):
 		if target:
 			target.buffDebuff(1, 2)
 			Copy = target.selfCopy(target.ID)
-			self.Game.summon(Copy, target.position+1, self.ID)
+			self.Game.summon(Copy, target.pos+1, self.ID)
 		return target
 		
 		
@@ -2937,7 +2937,7 @@ class CursedVagrant(Minion):
 		
 class SummonaShadowwithTaunt(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(CursedShadow(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summon(CursedShadow(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：召唤一个7/5并具有潜行的阴影" if CHN else "Deathrattle: Summon a 7/5 Shadow with Stealth"
@@ -3103,7 +3103,7 @@ class TotemicReflection(Spell):
 			target.buffDebuff(2, 2)
 			if "Totem" in target.race:
 				Copy = target.selfCopy(target.ID)
-				self.Game.summon(Copy, target.position+1, self.ID)
+				self.Game.summon(Copy, target.pos+1, self.ID)
 		return target
 		
 		
@@ -3148,7 +3148,7 @@ class VividSpores(Spell):
 class ResummonThisMinion_VividSpores(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		#This Deathrattle can't possibly be triggered in hand
-		self.entity.Game.summon(type(self.entity)(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summon(type(self.entity)(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)
 		
 		
 class BoggspineKnuckles(Weapon):
@@ -3237,7 +3237,7 @@ class TheLurkerBelow(Minion):
 							else: minion, direction = neighbors[0], 0
 						elif dist < 0: minion, direction = neighbors[0], 0
 						elif dist == 2: minion, direction = neighbors[0], 1
-					if minion: curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID, direction))
+					if minion: curGame.fixedGuides.append((minion.pos, "Minion%d"%minion.ID, direction))
 					else: curGame.fixedGuides.append((0, '', ''))
 				#开始循环
 				while minion: #如果下个目标没有随从了，则停止循环
@@ -3308,7 +3308,7 @@ class UnstableFelbolt(Spell):
 				ownMinions = curGame.minionsonBoard(self.ID)
 				if ownMinions:
 					minion = npchoice(ownMinions)
-					curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID))
+					curGame.fixedGuides.append((minion.pos, "Minion%d"%minion.ID))
 				else:
 					curGame.fixedGuides.append((0, ''))
 			if minion:
@@ -3364,7 +3364,7 @@ class KanrethadPrime(Minion):
 				demons = tuple(npchoice(demonsDied, numSummon, replace=True)) if numSummon else ()
 				curGame.fixedGuides.append(demons)
 			if demons:
-				pos = (self.position, "totheRight") if self.onBoard else (-1, "totheRightEnd")
+				pos = (self.pos, "totheRight") if self.onBoard else (-1, "totheRightEnd")
 				curGame.summon([demon(curGame, self.ID) for demon in demons], pos, self.ID)		
 		return None
 		
@@ -3513,7 +3513,7 @@ class EnhancedDreadlord(Minion):
 		
 class SummonaDreadlordwithLifesteal(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(DesperateDreadlord(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)\
+		self.entity.Game.summon(DesperateDreadlord(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)\
 		
 	def text(self, CHN):
 		return "亡语：召唤一个5/5并具有吸血的恐惧魔王" if CHN else "Deathrattle: Summon a 5/5 Dreadlord with Lifesteal"

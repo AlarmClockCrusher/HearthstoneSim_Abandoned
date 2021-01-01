@@ -62,7 +62,7 @@ class NaterranGreatTree(Amulet):
                 if curGame.guides:
                     i = curGame.guides.pop(0)
                 else:
-                    i = npchoice(trees).position
+                    i = npchoice(trees).pos
                     curGame.fixedGuides.append(i)
                 tree = curGame.minions[self.ID][i]
                 self.Game.killMinion(self, tree)

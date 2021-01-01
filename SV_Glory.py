@@ -239,7 +239,7 @@ class Trig_RuinwebSpider_Crystallize(TrigBoard):
 class SummonaRuinwebSpider(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "Deathrattle: Summon a Ruinweb Spider triggers.")
-        self.entity.Game.summon(RuinwebSpider(self.entity.Game, self.entity.ID), self.entity.position + 1,
+        self.entity.Game.summon(RuinwebSpider(self.entity.Game, self.entity.ID), self.entity.pos + 1,
                                 self.entity.ID)
 
 

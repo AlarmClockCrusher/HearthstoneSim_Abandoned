@@ -22,7 +22,7 @@ class Deal1to4DamagetoaRandomEnemy(Deathrattle_Minion):
 				targets = curGame.charsAlive(3-self.entity.ID)
 				if targets:
 					enemy, damage = npchoice(targets), nprandint(1, 5)
-					curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID), damage))
+					curGame.fixedGuides.append((enemy.pos, enemy.type+str(enemy.ID), damage))
 				else:
 					curGame.fixedGuides.append((0, '', 0))
 			if enemy:
@@ -182,7 +182,7 @@ class FacelessLackey(Minion):
 			else:
 				minion = npchoice(self.rngPool("2-Cost Minions to Summon"))
 				curGame.fixedGuides.append(minion)
-			curGame.summon(minion(curGame, self.ID), self.position + 1, self.ID)
+			curGame.summon(minion(curGame, self.ID), self.pos + 1, self.ID)
 		return None
 
 

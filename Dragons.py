@@ -93,7 +93,7 @@ class Galakrond_Hero(Hero):
 		
 	def replaceHero(self, fromHeroCard=False):
 		game, ID = self.Game, self.ID
-		self.onBoard, self.position, self.attTimes = True, ID, game.heroes[ID].attTimes
+		self.onBoard, self.pos, self.attTimes = True, ID, game.heroes[ID].attTimes
 		while self.auraReceivers: self.auraReceivers[0].effectClear()
 		
 		game.heroes[ID] = self
@@ -108,7 +108,7 @@ class Galakrond_Hero(Hero):
 		oldHero = game.heroes[ID]
 		self.health, self.health_max, self.armor = oldHero.health, oldHero.health_max, oldHero.armor
 		self.attack_bare, self.tempAttChanges, self.attTimes, self.armor = oldHero.attack_bare, oldHero.tempAttChanges, oldHero.attTimes, oldHero.armor
-		self.onBoard, oldHero.onBoard, self.position = True, False, ID #这个只是为了方便定义(i, where)
+		self.onBoard, oldHero.onBoard, self.pos = True, False, ID #这个只是为了方便定义(i, where)
 		while self.auraReceivers: self.auraReceivers[0].effectClear()
 			
 		game.powers[ID].disappears()
@@ -654,7 +654,7 @@ class TrollBatrider(Minion):
 				i = curGame.guides.pop(0)
 			else:
 				minions = curGame.minionsAlive(3-self.ID)
-				i = npchoice(minions).position if minions else -1
+				i = npchoice(minions).pos if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1: self.dealsDamage(curGame.minions[3-self.ID][i], 3)
 		return None
@@ -919,7 +919,7 @@ class Skyfin(Minion):
 				else:
 					murlocs = npchoice(self.rngPool("Murlocs to Summon"), 2, replace=False)
 					curGame.fixedGuides.append(tuple(murlocs))
-				pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
+				pos = (self.pos, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 				curGame.summon([murloc(curGame, self.ID) for murloc in murlocs], pos, self.ID)
 		return None
 		
@@ -1021,7 +1021,7 @@ class KronxDragonhoof(Minion):
 			targets = curGame.minionsonBoard(self.ID, self)
 			for minion in targets: minion.buffDebuff(2, 2)
 		else:
-			curGame.summon(ReanimatedDragon(curGame, self.ID), self.position+1, self.ID)
+			curGame.summon(ReanimatedDragon(curGame, self.ID), self.pos+1, self.ID)
 			
 class Annihilation:
 	def __init__(self):
@@ -1099,7 +1099,7 @@ class Trig_Shuma(TrigBoard):
 				else "At the end of your turn, fill your board with 1/1 Tentacles"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon([Tentacle_Dragons(self.entity.Game, self.entity.ID) for i in range(6)], (self.entity.position, "leftandRight"), self.entity.ID)
+		self.entity.Game.summon([Tentacle_Dragons(self.entity.Game, self.entity.ID) for i in range(6)], (self.entity.pos, "leftandRight"), self.entity.ID)
 		
 class Tentacle_Dragons(Minion):
 	Class, race, name = "Neutral", "", "Tentacle"
@@ -1123,7 +1123,7 @@ class TwinTyrant(Minion):
 					targets = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 				else:
 					targets = list(npchoice(minions, min(2, len(minions)), replace=False))
-					curGame.fixedGuides.append(tuple([minion.position for minion in targets]))
+					curGame.fixedGuides.append(tuple([minion.pos for minion in targets]))
 				self.dealsAOE(targets, [4]*len(targets))
 		return None
 		
@@ -1182,7 +1182,7 @@ class Sathrovarr(Minion):
 			self.Game.Hand_Deck.shuffleCardintoDeck(type(target)(self.Game, self.ID), self.ID)
 			#不知道这个召唤的复制是会出现在这个随从右边还是目标随从右边
 			Copy = target.selfCopy(self.ID) if target.onBoard else type(target)(self.Game, self.ID)
-			self.Game.summon(Copy, self.position+1, self.ID)
+			self.Game.summon(Copy, self.pos+1, self.ID)
 		return target
 		
 """Druid cards"""
@@ -1773,7 +1773,7 @@ class Trig_Dragonbane(TrigBoard):
 				chars = curGame.charsAlive(3-self.entity.ID)
 				if chars:
 					char = npchoice(chars)
-					curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
+					curGame.fixedGuides.append((char.pos, char.type+str(char.ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
 			if char: self.entity.dealsDamage(char, 5)
@@ -1968,7 +1968,7 @@ class Trig_Chenvaala(TrigBoard):
 			self.counter += 1
 			if self.counter > 0 and self.counter % 3 == 0:
 				self.counter = 0
-				self.entity.Game.summon(SnowElemental(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+				self.entity.Game.summon(SnowElemental(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)
 		else: #At the start/end of turn, the counter is reset
 			self.entity.resetCounter()
 	#Chenvaala在游戏内复制的时候不保留扳机进度
@@ -2059,7 +2059,7 @@ class MalygossMissiles(Spell):
 					objs = curGame.charsAlive(side)
 					if objs:
 						char = npchoice(objs)
-						curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
+						curGame.fixedGuides.append((char.pos, char.type+str(char.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if i > -1: self.dealsDamage(char, 1)
@@ -2247,7 +2247,7 @@ class RollingFireball(Spell):
 							minion, direction = neighbors[ran], ran
 						elif dist < 0: minion, direction = neighbors[0], 0
 						elif dist == 2: minion, direction = neighbors[0], 1
-						if minion: curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID, direction))
+						if minion: curGame.fixedGuides.append((minion.pos, "Minion%d"%minion.ID, direction))
 						else: curGame.fixedGuides.append((0, '', ''))
 					else: #如果可以在手牌中找到那个随从时
 						#火球滚滚打到手牌中的随从时，会判断目前那个随从在手牌中位置，如果在从左数第3张的话，那么会将过量伤害传递给场上的2号或者4号随从。
@@ -2262,7 +2262,7 @@ class RollingFireball(Spell):
 									else: minion, direction = minions[i-1], 0
 								#如果随从在手牌中的编号很大，如手牌中第5张（编号4），则如果场上有5张或者以下随从，则都会向左滚
 								else: minion, direction = minions[-1], 0
-								if minion: curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID, direction))
+								if minion: curGame.fixedGuides.append((minion.pos, "Minion%d"%minion.ID, direction))
 								else: curGame.fixedGuides.append((0, '', ''))
 						else:
 							curGame.fixedGuides.append((0, '', ''))
@@ -2469,7 +2469,7 @@ class SkyClaw(Minion):
 		return "Mech" in target.race
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
+		pos = (self.pos, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 		self.Game.summon([Microcopter(self.Game, self.ID) for i in range(2)], pos, self.ID)
 		return None
 		
@@ -2740,7 +2740,7 @@ class SummonCopyofaChosenMinion(Deathrattle_Minion):
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
-		minion.Game.summon(self.chosenMinionType(minion.Game, minion.ID), minion.position+1, minion.ID)
+		minion.Game.summon(self.chosenMinionType(minion.Game, minion.ID), minion.pos+1, minion.ID)
 		
 	def selfCopy(self, recipient):
 		trig = type(self)(recipient)
@@ -2786,7 +2786,7 @@ class GraveRune(Spell):
 class Summon2CopiesofThis(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		newMinions = [type(self.entity)(self.entity.Game, self.entity.ID) for i in range(2)]
-		pos = (self.entity.position, "totheRight")
+		pos = (self.entity.pos, "totheRight")
 		self.entity.Game.summon(newMinions, pos, self.entity.ID)
 		
 		
@@ -2874,7 +2874,7 @@ class GalakrondtheUnspeakable(Galakrond_Hero):
 				i = curGame.guides.pop(0)
 			else:
 				minions = curGame.minionsAlive(3-self.ID)
-				i = npchoice(minions).position if minions else -1
+				i = npchoice(minions).pos if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1: curGame.minions[3-self.ID][i].dead = True
 		return None
@@ -2896,7 +2896,7 @@ class GalakrondtheApocalypes_Priest(Galakrond_Hero):
 			else:
 				minions = curGame.minionsAlive(3-self.ID)
 				minions = npchoice(minions, min(2, len(minions)), replace=False) if minions else ()
-				curGame.fixedGuides.append(tuple(minion.position for minion in minions))
+				curGame.fixedGuides.append(tuple(minion.pos for minion in minions))
 			for minion in minions: curGame.killMinion(self, minion)
 		return None
 		
@@ -2916,7 +2916,7 @@ class GalakrondAzerothsEnd_Priest(Galakrond_Hero):
 			else:
 				minions = curGame.minionsAlive(3-self.ID)
 				minions = npchoice(minions, min(4, len(minions)), replace=False) if minions else ()
-				curGame.fixedGuides.append(tuple(minion.position for minion in minions))
+				curGame.fixedGuides.append(tuple(minion.pos for minion in minions))
 			for minion in minions: curGame.killMinion(self, minion)
 		curGame.equipWeapon(DragonClaw(curGame, self.ID))
 		return None
@@ -2956,7 +2956,7 @@ class MurozondtheInfinite(Minion):
 			while cardstoReplay[3-self.ID]:
 				card = cardstoReplay[3-self.ID].pop(0)(curGame, self.ID)
 				if card.type == "Minion":
-					curGame.summon(card, self.position+1, self.ID)
+					curGame.summon(card, self.pos+1, self.ID)
 				elif card.type == "Spell":
 					card.cast()
 				elif card.type == "Weapon":
@@ -3549,7 +3549,7 @@ class Nithogg(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon two 0/3 Eggs. Next turn they hatch into 4/4 Drakes with Rush"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
+		pos = (self.pos, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 		self.Game.summon([StormEgg(self.Game, self.ID) for i in range(2)], pos, self.ID)
 		return None
 		
@@ -3719,7 +3719,7 @@ class DarkSkies(Spell):
 					if where: minion = curGame.find(i, where)
 				else:
 					minion = npchoice(minions)
-					curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID))
+					curGame.fixedGuides.append((minion.pos, "Minion%d"%minion.ID))
 				self.dealsDamage(minion, damage)
 				handSize = len(curGame.Hand_Deck.hands[self.ID])
 				for num in range(handSize):
@@ -3731,7 +3731,7 @@ class DarkSkies(Spell):
 						minions = self.Game.minionsAlive(1) + self.Game.minionsAlive(2)
 						if minions:
 							minion = npchoice(minions)
-							curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID))
+							curGame.fixedGuides.append((minion.pos, "Minion%d"%minion.ID))
 						else:
 							curGame.fixedGuides.append((0, ''))
 					if minion: self.dealsDamage(minion, damage)
@@ -3805,7 +3805,7 @@ class AbyssalSummoner(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		handSize = len(self.Game.Hand_Deck.hands[self.ID])
 		if handSize == 1:
-			self.Game.summon(AbyssalDestroyer_Mutable_1(self.Game, self.ID), self.position+1, self.ID)
+			self.Game.summon(AbyssalDestroyer_Mutable_1(self.Game, self.ID), self.pos+1, self.ID)
 		elif handSize > 1:
 			cost = min(handSize, 10)
 			newIndex = "Dragons~Warlock~Minion~%d~%d~%d~Demon~Abyssal Destroyer~Taunt~Uncollectible"%(cost, handSize, handSize)
@@ -3814,7 +3814,7 @@ class AbyssalSummoner(Minion):
 							"index": newIndex}
 							)
 			self.Game.cardPool[newIndex] = subclass
-			self.Game.summon(subclass(self.Game, self.ID), self.position+1, self.ID)
+			self.Game.summon(subclass(self.Game, self.ID), self.pos+1, self.ID)
 		return None
 		
 class AbyssalDestroyer_Mutable_1(Minion):
@@ -3943,7 +3943,7 @@ class Trig_ZzerakutheWarped(TrigBoard):
 		return "每当你的英雄受到伤害，召唤一条6/6的虚空幼龙" if CHN else "Whenever your hero takes damage, summon a 6/6 Nether Drake"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(NetherDrake(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summon(NetherDrake(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)
 		
 class NetherDrake(Minion):
 	Class, race, name = "Warlock", "Dragon", "Nether Drake"
@@ -4075,7 +4075,7 @@ class RammingSpeed(Spell):
 					neighbors = curGame.neighbors2(target)[0]
 					if neighbors:
 						neighbor = npchoice(neighbors)
-						curGame.fixedGuides.append((neighbor.position, "Minion%d"%neighbor.ID))
+						curGame.fixedGuides.append((neighbor.pos, "Minion%d"%neighbor.ID))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if neighbor: curGame.battle(target, neighbor, verifySelectable=False, useAttChance=False, resolveDeath=False)
@@ -4095,7 +4095,7 @@ class ScionofRuin(Minion):
 		if self.Game.Counters.invocationCounts[self.ID] > 1:
 			if self.onBoard:
 				copies = [self.selfCopy(self.ID), self.selfCopy(self.ID)]
-				self.Game.summon(copies, (self.position, "leftandRight"), self.ID)
+				self.Game.summon(copies, (self.pos, "leftandRight"), self.ID)
 			else: #假设废墟之子在战吼前死亡或者离场，则召唤基础复制
 				copies = [ScionofRuin(self.Game, self.ID) for i in range(2)]
 				self.Game.summon(copies, (-1, "totheRightEnd"), self.ID)
@@ -4133,7 +4133,7 @@ class Trig_Skybarge(TrigBoard):
 				chars = curGame.charsAlive(3-self.entity.ID)
 				if chars:
 					char = npchoice(chars)
-					curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
+					curGame.fixedGuides.append((char.pos, char.type+str(char.ID)))
 				else:
 					curGame.fixedGuides.append((0, ''))
 			if char: self.entity.dealsDamage(char, 2)
@@ -4278,7 +4278,7 @@ class DeathwingMadAspect(Minion):
 					while minions:
 						minion = minions.pop(0)
 						if minion.onBoard and minion.health > 0 and not minion.dead:
-							infos.append((minion.position, "Minion%d"%minion.ID))
+							infos.append((minion.pos, "Minion%d"%minion.ID))
 							curGame.battle(curGame.minionPlayed, minion, verifySelectable=False, useAttChance=True, resolveDeath=False, resetRedirectionTriggers=False)
 					curGame.fixedGuides.append(tuple(infos))
 				else: curGame.fixedGuides.append(())

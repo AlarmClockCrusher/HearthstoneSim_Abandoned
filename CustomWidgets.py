@@ -636,7 +636,7 @@ class MinionButton(tk.Button):
 	def __init__(self, GUI, minion):
 		self.decideColorOrig(GUI, minion)
 		self.waiting = False
-		seq = minion.sequence
+		seq = minion.seq
 		text = {0: "1st", 1: "2nd", 2: "3rd"}[seq] if seq < 3 else "%dth"%(seq+1) + ' '
 		for key, value in minion.keyWords.items():
 			if value > 0: text += key+'\n'
@@ -780,7 +780,7 @@ class BoardZone:
 				if btn:
 					self.btnsDrawn.append(btn)
 					#Reset the text involving sequence and the color of the minion
-					seq = minion.sequence
+					seq = minion.seq
 					text = {0: "1st", 1: "2nd", 2: "3rd"}[seq] if seq < 3 else "%dth"%(seq+1) + ' '
 					if minion.type == "Minion":
 						for key, value in minion.keyWords.items():
@@ -980,7 +980,7 @@ class WeaponButton(tk.Button): #休眠物和武器无论左右键都是取消选
 	def __init__(self, GUI, weapon):
 		self.decideColorOrig(GUI, weapon)
 		self.waiting = False
-		seq = weapon.sequence
+		seq = weapon.seq
 		text = {0: "1st", 1: "2nd", 2: "3rd"}[seq] if seq < 3 else "%dth"%(seq+1) + ' '
 		for key, value in weapon.keyWords.items():
 			if value > 0: text += key+'\n'

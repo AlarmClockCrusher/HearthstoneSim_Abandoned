@@ -138,12 +138,8 @@ class Card:
 		return ''
 		
 	def checkEvanescent(self):
-		self.evanescent = False
-		for trig in self.trigsBoard + self.trigsHand:
-			if hasattr(trig, "makesCardEvanescent"):
-				self.evanescent = True
-				break
-				
+		self.evanescent = any(hasattr(trig, "makesCardEvanescent") for trig in self.trigsBoard + self.trigsHand)
+		
 	#处理卡牌进入/离开 手牌/牌库时的扳机和各个onBoard/inHand/inDeck标签
 	def entersHand(self):
 		self.onBoard, self.inHand, self.inDeck = False, True, False
@@ -154,14 +150,13 @@ class Card:
 		#将注册了的场上、手牌和牌库扳机全部注销。
 		for trig in reversed(self.trigsBoard):
 			trig.disconnect()
-			if not trig.inherent: #If the trig is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				self.trigsBoard.remove(trig)
+			#If the trig is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
+			if not trig.inherent: self.trigsBoard.remove(trig)
 		for trig in reversed(self.trigsHand):
 			trig.disconnect()
 			if not trig.inherent: self.trigsHand.remove(trig)
-		for trig in reversed(self.trigsDeck): #没有给卡牌施加外来扳机的机制
-			trig.disconnect()
-		self.onBoard, self.inHand, self.inDeck = False, False, False
+		for trig in reversed(self.trigsDeck): trig.disconnect() #没有给卡牌施加外来扳机的机制
+		self.onBoard = self.inHand = self.inDeck = False
 		#无论如果离开手牌，被移出还是洗回牌库，费用修改效果（如大帝-1）都会消失
 		for manaMod in reversed(self.manaMods): manaMod.getsRemoved()
 		self.manaMods = []
@@ -176,14 +171,13 @@ class Card:
 		#将注册了的场上、手牌和牌库扳机全部注销。
 		for trig in reversed(self.trigsBoard):
 			trig.disconnect()
-			if not trig.inherent: #If the trig is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
-				self.trigsBoard.remove(trig)
+			#If the trig is temporary, it will be removed once it leaves hand, whether being discarded, played or shuffled into deck
+			if not trig.inherent: self.trigsBoard.remove(trig)
 		for trig in reversed(self.trigsHand):
 			trig.disconnect()
 			if not trig.inherent: self.trigsHand.remove(trig)
-		for trig in reversed(self.trigsDeck): #没有给卡牌施加外来扳机的机制
-			trig.disconnect()
-		self.onBoard, self.inHand, self.inDeck = False, False, False
+		for trig in reversed(self.trigsDeck): trig.disconnect() #没有给卡牌施加外来扳机的机制
+		self.onBoard = self.inHand = self.inDeck = False
 		if not intoHand: #离开牌库时，只有去往手牌中时费用修改效果不会丢失。
 			for manaMod in self.manaMods: manaMod.getsRemoved()
 			self.manaMods = []
@@ -204,17 +198,18 @@ class Card:
 				#攻击目标必须是在场上的没有潜行的敌方随从或英雄
 				#被攻击目标必须能够被选择(没有免疫，潜行和“不能被攻击”)的随从或者英雄
 				#攻击方如果有无视嘲讽，则不用判定嘲讽问题
-		return self.onBoard and self.ID != subject.ID and self.status["Temp Stealth"] < 1 \
-				and ((self.type == "Minion" and self.status["Immune"] + self.keyWords["Stealth"] + self.marks["Can't Be Attacked"] < 1) \
-						or (self.type == "Hero" and self.Game.status[self.ID]["Immune"] + self.Game.status[self.ID]["Hero Can't Be Attacked"] < 1) \
-					) \
-				and ( self.Game.status[subject.ID]["Ignore Taunt"] > 0 or (subject.type == "Minion" and subject.marks["Ignore Taunt"]) \
-						#随从在作为攻击目标时如果自己有嘲讽则随机无须判定是否有其他嘲讽
-						or (self.type == "Minion" and self.keyWords["Taunt"] > 0) \
-						#在攻击方没有无视嘲讽的情况下，且目标不是一个有嘲讽的随从时，需要友方其他随从中没有嘲讽
-						or not any(minion.keyWords["Taunt"] > 0 and minion.status["Temp Stealth"] + minion.status["Immune"] + minion.keyWords["Stealth"] < 1 for minion in self.Game.minionsonBoard(self.ID)) \
-					)
-					
+		if self.onBoard and self.ID != subject.ID and self.status["Temp Stealth"] < 1:
+			if self.type == "Minion":
+				return self.status["Immune"] + self.keyWords["Stealth"] + self.marks["Can't Be Attacked"] < 1 \
+						and (self.keyWords["Taunt"] > 0 \
+							or not any(minion.keyWords["Taunt"] > 0 and minion.status["Temp Stealth"] + minion.status["Immune"] + minion.keyWords["Stealth"] < 1 for minion in self.Game.minionsonBoard(self.ID))
+							or self.Game.status[subject.ID]["Ignore Taunt"] > 0 or (subject.type == "Minion" and subject.marks["Ignore Taunt"]))
+			elif self.type == "Hero":
+				return self.Game.status[self.ID]["Immune"] + self.Game.status[self.ID]["Hero Can't Be Attacked"] < 1 \
+						and (not any(minion.keyWords["Taunt"] > 0 and minion.status["Temp Stealth"] + minion.status["Immune"] + minion.keyWords["Stealth"] < 1 for minion in self.Game.minionsonBoard(self.ID))
+							or self.Game.status[subject.ID]["Ignore Taunt"] > 0 or (subject.type == "Minion" and subject.marks["Ignore Taunt"]))
+		return False
+		
 	def canSelect(self, target):
 		targets = target if isinstance(target, list) else [target]
 		for target in targets:
@@ -292,52 +287,50 @@ class Card:
 	#说明扫荡打击是把相邻的随从列入伤害处理列表 ，主要涉及的两个随从是最先结算的两个，
 	#被扫荡打击涉及的两个随从从左到右依次结算。
 	def attacks(self, target, useAttChance=True):
-		subject_attack, target_attack = max(0, self.attack), max(0, target.attack)
+		game = self.Game
+		subjectAtt, targetAtt = max(0, self.attack), max(0, target.attack)
 		if self.type == "Minion" and self.keyWords["Stealth"] > 0:
 			self.losesKeyword("Stealth")
 		self.status["Temp Stealth"] = 0
-		#Manipulate the health of the subject/target's health.
-		#Only send out "MinionTakesDmg" signal at this point.
 		if useAttChance: self.attTimes += 1
 		
-		damageDealingList = []
+		dmgList = []
 		#如果攻击者是英雄且装备着当前回合打开着的武器，则将攻击的伤害来源视为那把武器。
-		if self.type == "Hero" and self.Game.availableWeapon(self.ID) and self.ID == self.Game.turn:
-			damageDealer_attacker = self.Game.availableWeapon(self.ID)
-		else: damageDealer_attacker = self
+		if self.type == "Hero" and game.availableWeapon(self.ID) and self.ID == game.turn:
+			dmgDealer_att = game.availableWeapon(self.ID)
+		else: dmgDealer_att = self
 		#如果被攻击者是英雄，且装备着当前回合打开着的武器，则将攻击目标造成的伤害来源视为那把武器。
-		if target.type == "Hero" and self.Game.availableWeapon(target.ID) and target.ID == self.Game.turn:
-			damageDealer_target = self.Game.availableWeapon(target.ID)
-		else: damageDealer_target = target
+		if target.type == "Hero" and game.availableWeapon(target.ID) and target.ID == game.turn:
+			dmgDealer_def = game.availableWeapon(target.ID)
+		else: dmgDealer_def = target
+		#Manipulate the health of the subject/target's health.
+		#Only send out "MinionTakesDmg" signal at this point.
 		#首先结算攻击者对于攻击目标的伤害，如果攻击力小于1，则攻击目标不会被记入伤害处理列表。
 		#注意这个伤害承受目标不一定是攻击目标，因为有博尔夫碎盾以及钳嘴龟持盾者的存在
 		#承受伤害者的血量减少，结算剧毒，但是此时不会发出受伤信号。
-		dmgTaker = self.Game.scapegoat4(target, damageDealer_attacker)
-		damageActual = dmgTaker.takesDamage(damageDealer_attacker, subject_attack, sendDamageSignal=False, damageType="Battle")
-		if damageActual > 0:
-			damageDealingList.append((damageDealer_attacker, dmgTaker, damageActual))
-			
+		dmgTaker = game.scapegoat4(target, dmgDealer_att)
+		dmgActual = dmgTaker.takesDamage(dmgDealer_att, subjectAtt, sendDmgSignal=False, damageType="Battle")
+		if dmgActual > 0: dmgList.append((dmgDealer_att, dmgTaker, dmgActual))
+		
 		#寻找受到攻击目标的伤害的角色。同理，此时受伤的角色不会发出受伤信号，这些受伤信号会在之后统一发出。
-		dmgTaker = self.Game.scapegoat4(self, damageDealer_target)
-		damageActual = dmgTaker.takesDamage(damageDealer_target, target_attack, sendDamageSignal=False, damageType="Battle")
-		if damageActual > 0:
-			damageDealingList.append((damageDealer_target, dmgTaker, damageActual))
+		dmgTaker = game.scapegoat4(self, dmgDealer_def)
+		dmgActual = dmgTaker.takesDamage(dmgDealer_def, targetAtt, sendDmgSignal=False, damageType="Battle")
+		if dmgActual > 0: dmgList.append((dmgDealer_def, dmgTaker, dmgActual))
 		#如果攻击者的伤害来源（随从或者武器）有对相邻随从也造成伤害的扳机，则将相邻的随从录入处理列表。
-		if damageDealer_attacker.type != "Hero" and damageDealer_attacker.marks["Sweep"] > 0 and target.type == "Minion":
-			adjacentMinions = self.Game.neighbors2(target)[0] #此时被攻击的随从一定是在场的，已经由Game.battleRequest保证。
-			for minion in adjacentMinions:
-				dmgTaker = self.Game.scapegoat4(minion, damageDealer_attacker)
-				damageActual = dmgTaker.takesDamage(damageDealer_attacker, subject_attack, sendDamageSignal=False, damageType="Ability")
-				if damageActual > 0:
-					damageDealingList.append((damageDealer_attacker, dmgTaker, damageActual))
-					
-		if damageDealer_attacker.type == "Weapon": damageDealer_attacker.loseDurability()
-		for damageDealer, dmgTaker, damage in damageDealingList:
+		if dmgDealer_att.type != "Hero" and dmgDealer_att.marks["Sweep"] > 0 and target.type == "Minion":
+			neighbors = game.neighbors2(target)[0] #此时被攻击的随从一定是在场的，已经由Game.battleRequest保证。
+			for minion in neighbors:
+				dmgTaker = game.scapegoat4(minion, dmgDealer_att)
+				dmgActual = dmgTaker.takesDamage(dmgDealer_att, subjectAtt, sendDmgSignal=False, damageType="Ability")
+				if dmgActual > 0: dmgList.append((dmgDealer_att, dmgTaker, dmgActual))
+				
+		if dmgDealer_att.type == "Weapon": dmgDealer_att.loseDurability()
+		for damageDealer, dmgTaker, damage in dmgList:
 			#参与战斗的各方在战斗过程中只减少血量，受伤的信号在血量和受伤名单登记完毕之后按被攻击者，攻击者，被涉及者顺序发出。
-			self.Game.sendSignal(dmgTaker.type+"TakesDmg", 0, damageDealer, dmgTaker, damage, "")
-			self.Game.sendSignal(dmgTaker.type+"TookDmg", 0, damageDealer, dmgTaker, damage, "")
+			game.sendSignal(dmgTaker.type+"TakesDmg", 0, damageDealer, dmgTaker, damage, "")
+			game.sendSignal(dmgTaker.type+"TookDmg", 0, damageDealer, dmgTaker, damage, "")
 			#吸血扳机始终在队列结算的末尾。
-			damageDealer.tryLifesteal(damage ,damageType="Battle")
+			damageDealer.tryLifesteal(damage, damageType="Battle")
 			
 	"""Handle cards dealing targeting/AOE damage/heal to target(s)."""
 	#Handle Lifesteal of a card. Currently Minion/Weapon/Spell classs have this method.
@@ -380,56 +373,58 @@ class Card:
 	#当场上有血量为2的奥金尼和因为欧米茄灵能者获得的法术吸血时，神圣新星杀死奥金尼仍然会保留治疗转伤害的效果。
 	#有的扳机随从默认随从需要在非濒死情况下才能触发扳机，如北郡牧师。
 	def dealsAOE(self, targets, damages):
+		game = self.Game
 		targets, damages = fixedList(targets), fixedList(damages)
-		dmgTakers, damagesConnected, totalDamageDone = [], [], 0
-		if targets and self.Game.GUI:
-			self.Game.GUI.AOEAni(self, targets, damages)
+		dmgTakers, dmgsActual, totalDmgDone = [], [], 0
+		if targets and game.GUI:
+			game.GUI.AOEAni(self, targets, damages)
 		for target, damage in zip(targets, damages):
-			dmgTaker = self.Game.scapegoat4(target, self)
+			dmgTaker = game.scapegoat4(target, self)
 			#Handle the Divine Shield and Commanding Shout here.
-			damageActual = dmgTaker.takesDamage(self, damage, sendDamageSignal=False, damageType="Ability")
-			if damageActual > 0:
+			dmgActual = dmgTaker.takesDamage(self, damage, sendDmgSignal=False, damageType="Ability")
+			if dmgActual > 0:
 				dmgTakers.append(dmgTaker)
-				damagesConnected.append(damageActual)
-				totalDamageDone += damageActual
+				dmgsActual.append(dmgActual)
+				totalDmgDone += dmgActual
 		#AOE首先计算血量变化，之后才发出伤害信号。
-		for target, damageActual in zip(dmgTakers, damagesConnected):
-			self.Game.sendSignal(target.type+"TakesDmg", self.ID, self, target, damageActual, "")
-			self.Game.sendSignal(target.type+"TookDmg", self.ID, self, target, damageActual, "")
-		self.tryLifesteal(totalDamageDone,"Ability")
-		return dmgTakers, damagesConnected, totalDamageDone
+		for target, dmgActual in zip(dmgTakers, dmgsActual):
+			game.sendSignal(target.type+"TakesDmg", self.ID, self, target, dmgActual, "")
+			game.sendSignal(target.type+"TookDmg", self.ID, self, target, dmgActual, "")
+		self.tryLifesteal(totalDmgDone,"Ability")
+		return dmgTakers, dmgsActual, totalDmgDone
 		
 	def restoresAOE(self, targets, heals):
+		game = self.Game
 		targets_Heal, heals = fixedList(targets), fixedList(heals)
-		if self.Game.status[self.ID]["Heal to Damage"] > 0:
-			dmgTakers, damagesConnected, totalDamageDone = self.dealsAOE(targets_Heal, heals)
-			healsConnected = [-damage for damage in damagesConnected]
-			return dmgTakers, healsConnected, -totalDamageDone #对于AOE回复，如果反而造成伤害，则返回数值为负数
+		if game.status[self.ID]["Heal to Damage"] > 0:
+			dmgTakers, dmgsActual, totalDmgDone = self.dealsAOE(targets_Heal, heals)
+			healsActual = [-damage for damage in dmgsActual]
+			return dmgTakers, healsActual, -totalDmgDone #对于AOE回复，如果反而造成伤害，则返回数值为负数
 		else:
-			targets_healed, healsConnected, totalHealingDone = [], [], 0
-			if targets and self.Game.GUI:
-				self.Game.GUI.AOEAni(self, targets, heals, color="green3")
+			targets_healed, healsActual, totalHealDone = [], [], 0
+			if targets and game.GUI:
+				game.GUI.AOEAni(self, targets, heals, color="green3")
 			for target, heal in zip(targets, heals):
 				healActual = target.getsHealed(self, heal, sendHealSignal=False)
 				if healActual > 0:
 					targets_healed.append(target)
-					healsConnected.append(healActual)
-					totalHealingDone += healActual
+					healsActual.append(healActual)
+					totalHealDone += healActual
 			containHero = False
-			for target, healActual in zip(targets_healed, healsConnected):
-				self.Game.sendSignal(target.type+"GetsHealed", self.Game.turn, self, target, healActual, "FullyHealed")
+			for target, healActual in zip(targets_healed, healsActual):
+				game.sendSignal(target.type+"GetsHealed", game.turn, self, target, healActual, "FullyHealed")
 				if target.type == "Hero":
 					containHero = target.ID
 			if containHero:
-				self.Game.sendSignal("AllCured", containHero, self, None, 0, "")
+				game.sendSignal("AllCured", containHero, self, None, 0, "")
 			else:
-				self.Game.sendSignal("MinionsCured", self.Game.turn, self, None, 0, "")
-		return targets_healed, healsConnected, totalHealingDone
+				game.sendSignal("MinionsCured", game.turn, self, None, 0, "")
+		return targets_healed, healsActual, totalHealDone
 		
 	def restoresHealth(self, target, heal):
 		if self.Game.status[self.ID]["Heal to Damage"] > 0:
-			dmgTaker, damageActual = self.dealsDamage(target, heal)
-			return dmgTaker, -damageActual
+			dmgTaker, dmgActual = self.dealsDamage(target, heal)
+			return dmgTaker, -dmgActual
 		else:	
 			if self.Game.GUI:
 				self.Game.GUI.targetingEffectAni(self, target, heal, color="green3")
@@ -451,7 +446,7 @@ class Card:
 					game.sendSignal(self.type+"GetsHealed", game.turn, subject, self, healActual, "")
 				game.Counters.healthRestoredThisGame[subject.ID] += healActual
 				if self.type == "Minion": 
-					self.Game.sendSignal("MinionStatCheck", self.ID, None, self, 0, "")
+					game.sendSignal("MinionStatCheck", self.ID, None, self, 0, "")
 				elif game.turn == self.ID:
 					game.Counters.timesHeroChangedHealth_inOwnTurn[self.ID] += 1
 					game.Counters.heroChangedHealthThisTurn[self.ID] = True
@@ -459,7 +454,7 @@ class Card:
 		return healActual
 		
 	def rngPool(self, identifier):
-		pool = self.Game.RNGPools[identifier]
+		pool = fixedList(self.Game.RNGPools[identifier])
 		try: pool.remove(type(self))
 		except: pass
 		return pool
@@ -467,56 +462,37 @@ class Card:
 	"""Handle the battle options for minions and heroes."""
 	#Will only be used to find a selectable attack target
 	def findBattleTargets(self):
-		targets, indices, wheres, side = [], [], [], 3-self.ID
+		side = 3 - self.ID
 		if self.canAttack():
-			if self.canAttackTarget(self.Game.heroes[side]):
-				targets.append(self.Game.heroes[side])
+			targets = [minion for minion in self.Game.minionsonBoard(side) if self.canAttackTarget(minion)]
+			indices = [minion.pos for minion in targets]
+			wheres = ["Minion%d"%side] * len(indices)
+			enemyHero = self.Game.heroes[side]
+			if self.canAttackTarget(enemyHero):
+				targets.append(enemyHero)
 				indices.append(side)
-				wheres.append("Hero")
-			for i, minion in enumerate(self.Game.minionsonBoard(side)):
-				if self.canAttackTarget(minion):
-					targets.append(minion)
-					indices.append(i)
-					wheres.append("Minion%d"%side)
-		return targets, indices, wheres
+				wheres.append("Hero%d"side)
+			return targets, indices, wheres
+		else: return [], [], []
 		
 	#所有打出效果的目标寻找，包括战吼，法术等
 	#To be invoked by AI and Shudderwock.
 	def findTargets(self, comment="", choice=0):
 		game, targets, indices, wheres = self.Game, [], [], []
-		if comment == "":
-			for ID in range(1, 3):
-				if self.canSelect(game.heroes[ID]) and self.targetCorrect(game.heroes[ID], choice):
-					targets.append(game.heroes[ID])
-					indices.append(ID)
-					wheres.append("Hero")
-			for minion in game.minionsonBoard(1):
-				if self.canSelect(minion) and self.targetCorrect(minion, choice):
-					targets.append(minion)
-					indices.append(minion.position)
-					wheres.append("Minion1")
-			for minion in game.minionsonBoard(2):
-				if self.canSelect(minion) and self.targetCorrect(minion, choice):
-					targets.append(minion)
-					indices.append(minion.position)
-					wheres.append("Minion2")
-		else:
-			for ID in range(1, 3):
-				if self.targetCorrect(game.heroes[ID], choice):
-					targets.append(game.heroes[ID])
-					indices.append(ID)
-					wheres.append("Hero")
-			for minion in game.minionsonBoard(1):
-				if self.targetCorrect(minion, choice):
-					targets.append(minion)
-					indices.append(minion.position)
-					wheres.append("Minion1")
-			for minion in game.minionsonBoard(2):
-				if self.targetCorrect(minion, choice):
-					targets.append(minion)
-					indices.append(minion.position)
-					wheres.append("Minion2")
-		if targets: return targets, indices, wheres
+		targets = [minion for minion in game.minionsonBoard(1) if self.targetCorrect(minion, choice) and (not comment or self.canSelect(minion))]
+		indices = [minion.pos for minion in targets]
+		wheres = ["Minion1"] * len(indices)
+		targets2 = [minion for minion in game.minionsonBoard(2) if self.targetCorrect(minion, choice) and (not comment or self.canSelect(minion))]
+		targets += targets2
+		indices += [minion.pos for minion in targets2]
+		wheres += ["Minion2"] * len(targets2)
+		for ID in range(1, 3):
+			hero = game.heroes[ID]
+			if self.targetCorrect(hero, choice) and (not comment or self.canSelect(hero)):
+				targets.append(hero)
+				indices.append(ID)
+				wheres.append("Hero%d"%ID)
+		if target: return targets, indices, wheres
 		else: return [None], [0], ['']
 		
 	#Minion has its own selfCopy() method.
@@ -574,7 +550,7 @@ class Dormant(Card):
 
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.dead = False
-		self.sequence, self.position = -1, -2
+		self.seq, self.pos = -1, -2
 		self.keyWords = {"Taunt": 0, "Stealth": 0,
 						 "Divine Shield": 0, "Spell Damage": 0,
 						 "Lifesteal": 0, "Poisonous": 0,
@@ -616,7 +592,7 @@ class Dormant(Card):
 	def canAttack(self):
 		return False
 
-	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
+	def takesDamage(self, subject, damage, sendDmgSignal=True, damageType="None"):
 		return 0
 		
 	def cardStatus(self):
@@ -639,7 +615,7 @@ class Dormant(Card):
 			Copy = type(self)(game, self.ID)
 			game.copiedObjs[self] = Copy
 			Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
-			Copy.sequence, Copy.position = self.sequence, self.position
+			Copy.seq, Copy.pos = self.seq, self.pos
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
 			self.assistCreateCopy(Copy)
 			return Copy
@@ -709,8 +685,8 @@ class Minion(Card):
 		self.effectViable = self.evanescent = False
 		self.onBoard = self.inHand = self.inDeck = False
 		self.silenced = self.activated = False  # This mark is for minion state change, such as enrage.
-		# self.sequence records the number of the minion's appearance. The first minion on board has a sequence of 0
-		self.sequence, self.position = -1, -2
+		# self.seq records the number of the minion's appearance. The first minion on board has a sequence of 0
+		self.seq, self.pos = -1, -2
 		self.attTimes = self.attChances_base = self.attChances_extra = 0
 		
 		self.auras = {}
@@ -908,7 +884,7 @@ class Minion(Card):
 	"""Healing, damage, takeDamage, AOE, lifesteal and dealing damage response"""
 
 	# Stealth Dreadscale actually stays in stealth.
-	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
+	def takesDamage(self, subject, damage, sendDmgSignal=True, damageType="None"):
 		game = self.Game
 		if self.status["Immune"] < 1:  # 随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
 			if "Next Damage 0" in self.marks and self.marks["Next Damage 0"] > 0:
@@ -938,7 +914,7 @@ class Minion(Card):
 						subject.keyWords["Poisonous"] > 0) and self.onBoard:
 						self.dead = True
 					# 在同时涉及多个角色的伤害处理中，受到的伤害暂不发送信号而之后统一进行扳机触发。
-					if sendDamageSignal:
+					if sendDmgSignal:
 						game.sendSignal("MinionTakesDmg", game.turn, subject, self, damage, "")
 						game.sendSignal("MinionTookDamage", game.turn, subject, self, damage, "")
 					if subject.type == "Power":
@@ -1174,7 +1150,7 @@ class Minion(Card):
 		Copy.effectViable, Copy.evanescent = False, False
 		Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False
 		Copy.activated = False
-		Copy.sequence, Copy.position = -1, -2
+		Copy.seq, Copy.pos = -1, -2
 		Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = 0, 0, 0
 		Copy.decideAttChances_base()
 		# 如果要生成一个x/x/x的复制
@@ -1254,7 +1230,7 @@ class Minion(Card):
 			if hasattr(self, "progress"): Copy.progress = self.progress
 			Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
 			Copy.newonthisSide = self.newonthisSide
-			Copy.sequence, Copy.position = self.sequence, self.position
+			Copy.seq, Copy.pos = self.seq, self.pos
 			Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			for key, value in self.auras.items():
@@ -1359,7 +1335,7 @@ class Spell(Card):
 							else: target = npchoice(targets)
 						else: target = None
 					else: target = None
-				if target: i, where = target.position, target.type+str(target.ID)
+				if target: i, where = target.pos, target.type+str(target.ID)
 				else: i, where = 0, ''
 				curGame.fixedGuides.append((i, where, choice))
 		if curGame.GUI:
@@ -1740,50 +1716,47 @@ class HeroPower(Card):
 				and (not self.needTarget() or self.findTargets("")[0][0])
 				
 	def use(self, target=None, choice=0):
-		try:
-			if self.Game.Manas.affordable(self) and self.available() and self.selectionLegit(target, choice):
-				#支付费用，清除费用状态。
-				subIndex, subWhere = self.ID, "Power"
-				if target: tarIndex, tarWhere = target.position, target.type+str(target.ID)
-				else: tarIndex, tarWhere = 0, ''
-				self.Game.Manas.payManaCost(self, self.mana)
-				if self.Game.GUI:
-					self.Game.GUI.displayCard(self)
-					self.Game.GUI.wait(500)
-				#如果有指向，则触发指向扳机（目前只有市长）
-				targetHolder = [target]
-				self.Game.sendSignal("HeroPowerTargetDecision", self.ID, self, targetHolder, 0, "", choice)
-				if target != targetHolder[0] and self.Game.GUI:
-					target = targetHolder[0]
-					self.Game.GUI.target = target
-					self.Game.GUI.wait(500) #If the target is changed, show 0.4 more seconds
-				else: target = targetHolder[0]
+		if self.Game.Manas.affordable(self) and self.available() and self.selectionLegit(target, choice):
+			#支付费用，清除费用状态。
+			subIndex, subWhere = self.ID, "Power"
+			if target: tarIndex, tarWhere = target.pos, target.type+str(target.ID)
+			else: tarIndex, tarWhere = 0, ''
+			self.Game.Manas.payManaCost(self, self.mana)
+			if self.Game.GUI:
+				self.Game.GUI.displayCard(self)
+				self.Game.GUI.wait(500)
+			#如果有指向，则触发指向扳机（目前只有市长）
+			targetHolder = [target]
+			self.Game.sendSignal("HeroPowerTargetDecision", self.ID, self, targetHolder, 0, "", choice)
+			if target != targetHolder[0] and self.Game.GUI:
+				target = targetHolder[0]
+				self.Game.GUI.target = target
+				self.Game.GUI.wait(500) #If the target is changed, show 0.4 more seconds
+			else: target = targetHolder[0]
+			
+			minionsKilled = 0
+			if target and target.type == "Minion" and self.Game.status[self.ID]["Power Sweep"] > 0:
+				targets = self.Game.neighbors2(target)[0]
+				minionsKilled += self.effect(target, choice)
+				if targets != []:
+					for minion in targets: minionsKilled += self.effect(minion, choice)
+			else: minionsKilled += self.effect(target, choice)
 				
-				minionsKilled = 0
-				if target and target.type == "Minion" and self.Game.status[self.ID]["Power Sweep"] > 0:
-					targets = self.Game.neighbors2(target)[0]
-					minionsKilled += self.effect(target, choice)
-					if targets != []:
-						for minion in targets: minionsKilled += self.effect(minion, choice)
-				else: minionsKilled += self.effect(target, choice)
-					
-				#结算阶段结束，处理死亡，此时尚不进行胜负判定。
-				#假设触发英雄技能消灭随从的扳机在死亡结算开始之前进行结算。（可能不对，但是相对比较符合逻辑。）
-				if minionsKilled > 0:
-					self.Game.sendSignal("HeroPowerKilledMinion", self.Game.turn, self, None, minionsKilled, "")
-				self.Game.gathertheDead()
-				self.heroPowerTimes += 1
-				#激励阶段，触发“每当你使用一次英雄技能”的扳机，如激励，虚空形态的技能刷新等。
-				self.Game.Counters.powerUsedThisTurn += 1
-				self.Game.sendSignal("HeroUsedAbility", self.ID, self, target, self.mana, "", choice)
-				#激励阶段结束，处理死亡。此时可以进行胜负判定。
-				self.Game.gathertheDead(True)
-				for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
-					card.effectCanTrigger()
-					card.checkEvanescent()
-				self.Game.moves.append(("Power", subIndex, subWhere, tarIndex, tarWhere, choice))
-		except Exception as e:
-			print(e)
+			#结算阶段结束，处理死亡，此时尚不进行胜负判定。
+			#假设触发英雄技能消灭随从的扳机在死亡结算开始之前进行结算。（可能不对，但是相对比较符合逻辑。）
+			if minionsKilled > 0:
+				self.Game.sendSignal("HeroPowerKilledMinion", self.Game.turn, self, None, minionsKilled, "")
+			self.Game.gathertheDead()
+			self.heroPowerTimes += 1
+			#激励阶段，触发“每当你使用一次英雄技能”的扳机，如激励，虚空形态的技能刷新等。
+			self.Game.Counters.powerUsedThisTurn += 1
+			self.Game.sendSignal("HeroUsedAbility", self.ID, self, target, self.mana, "", choice)
+			#激励阶段结束，处理死亡。此时可以进行胜负判定。
+			self.Game.gathertheDead(True)
+			for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
+				card.effectCanTrigger()
+				card.checkEvanescent()
+			self.Game.moves.append(("Power", subIndex, subWhere, tarIndex, tarWhere, choice))
 			
 	def effect(self, target, choice=0):
 		return 0
@@ -1839,7 +1812,7 @@ class Hero(Card):
 		self.attChances_base, self.attChances_extra, self.attTimes = 1, 0, 0
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.dead = False
-		self.position = self.ID
+		self.pos = self.ID
 		self.heroPower = type(self).heroPower(self.Game, self.ID) if type(self).heroPower else None
 		self.keyWords = {"Windfury": 0, "Poisonous": 0}
 		self.attfromAura = 0
@@ -1970,7 +1943,7 @@ class Hero(Card):
 	def tryLifesteal(self, damage, damageType="None"):
 		pass
 		
-	def takesDamage(self, subject, damage, sendDamageSignal=True, damageType="None"):
+	def takesDamage(self, subject, damage, sendDmgSignal=True, damageType="None"):
 		game = self.Game
 		if game.status[self.ID]["Immune"] < 1:  # 随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
 			if "Next Damage 0" in self.marks and self.marks["Next Damage 0"] > 0:
@@ -1998,7 +1971,7 @@ class Hero(Card):
 						self.health -= damage - self.armor
 						self.armor = 0
 					game.Counters.dmgonHero_inOppoTurn[self.ID] += damage
-					if sendDamageSignal:
+					if sendDmgSignal:
 						game.sendSignal("HeroTakesDmg", game.turn, subject, self, damage, "")
 						game.sendSignal("HeroTookDmg", game.turn, subject, self, damage, "")
 					if game.turn == self.ID:
@@ -2030,7 +2003,7 @@ class Hero(Card):
 		oldHero = game.heroes[ID]
 		self.health, self.health_max, self.armor = oldHero.health, oldHero.health_max, oldHero.armor
 		self.attack_bare, self.tempAttChanges, self.attTimes, self.armor = oldHero.attack_bare, oldHero.tempAttChanges, oldHero.attTimes, oldHero.armor
-		self.onBoard, oldHero.onBoard, self.position = True, False, ID #这个只是为了方便定义(i, where)
+		self.onBoard, oldHero.onBoard, self.pos = True, False, ID #这个只是为了方便定义(i, where)
 		#英雄牌进入战场。（本来是应该在使用阶段临近结束时移除旧英雄和旧技能，但是为了方便，在此时执行。）
 		#继承旧英雄的生命状态和护甲值。此时英雄的被冻结和攻击次数以及攻击机会也继承旧英雄。
 		#清除旧的英雄技能。
@@ -2076,7 +2049,7 @@ class Hero(Card):
 		#假设直接替换的英雄不会继承之前英雄获得的回合内攻击力增加。
 		game, ID = self.Game, self.ID
 		healthChanged = game.heroes[ID].health == self.health #目前只有大王和拉格纳罗斯会改变英雄的血量
-		self.onBoard, self.position, self.attTimes = True, ID, game.heroes[ID].attTimes
+		self.onBoard, self.pos, self.attTimes = True, ID, game.heroes[ID].attTimes
 		#旧英雄在消失前需要归还其所有的光环buff效果，目前只有Inara Stormcrash的+2攻和风怒
 		while self.auraReceivers: self.auraReceivers[0].effectClear()
 		#英雄牌进入战场。（本来是应该在使用阶段临近结束时移除旧英雄和旧技能，但是为了方便，在此时执行。）
@@ -2159,7 +2132,7 @@ class Weapon(Card):
 		self.overload, self.chooseOne = 0, 0
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.dead = False
-		self.sequence = -1
+		self.seq = -1
 		self.deathrattles = []
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.inOrigDeck = False
@@ -2214,7 +2187,7 @@ class Weapon(Card):
 		curGame = self.Game
 		self.onBoard, self.dead = True, False
 		# 因为武器在之前已经被添加到武器列表，所以sequence需要-1，不然会导致错位
-		self.sequence = len(curGame.minions[1]) + len(curGame.minions[2]) + len(curGame.weapons[1]) + len(curGame.weapons[2]) - 1
+		self.seq = len(curGame.minions[1]) + len(curGame.minions[2]) + len(curGame.weapons[1]) + len(curGame.weapons[2]) - 1
 		curGame.heroes[self.ID].calc_Attack()
 		curGame.heroes[self.ID].decideAttChances_base()
 		curGame.sendSignal("WeaponEquipped", self.ID, self, None, 0, "")
@@ -2327,7 +2300,7 @@ class Weapon(Card):
 			Copy.attack, Copy.durability = self.attack, self.durability
 			Copy.keyWords, Copy.marks = copy.deepcopy(self.keyWords), copy.deepcopy(self.marks)
 			Copy.onBoard, Copy.inHand, Copy.inDeck = self.onBoard, self.inHand, self.inDeck
-			Copy.sequence = self.sequence
+			Copy.seq = self.seq
 			Copy.inOrigDeck = self.inOrigDeck
 			#对武器的光环目前只有增加攻击力
 			Copy.attfromAura = self.attfromAura

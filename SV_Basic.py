@@ -172,7 +172,7 @@ class Trig_WellofDestiny(TrigBoard):
                     minions.remove(self.entity)
                 except:
                     pass
-                i = npchoice(minions).position if minions else -1
+                i = npchoice(minions).pos if minions else -1
                 curGame.fixedGuides.append(i)
             if i > -1:
                 minion = curGame.minions[self.entity.ID][i]
@@ -542,7 +542,7 @@ class ElfTracker(SVMinion):
                     objs = curGame.minionsAlive(side)
                     if objs:
                         char = npchoice(objs)
-                        curGame.fixedGuides.append((char.position, "Minion%d"%side))
+                        curGame.fixedGuides.append((char.pos, "Minion%d"%side))
                     else:
                         curGame.fixedGuides.append((0, ''))
                 if char:
@@ -1587,7 +1587,7 @@ class Deathrattle_GhostlyRider(Deathrattle_Minion):
             if curGame.guides:
                 i = curGame.guides.pop(0)
             else:
-                minions = [minion.position for minion in curGame.minionsAlive(self.entity.ID)]
+                minions = [minion.pos for minion in curGame.minionsAlive(self.entity.ID)]
                 i = npchoice(minions) if minions else -1
                 curGame.fixedGuides.append(i)
             if i > -1:

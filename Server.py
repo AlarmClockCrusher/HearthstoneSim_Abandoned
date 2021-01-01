@@ -6,6 +6,7 @@ import types
 from numpy.random import choice as npchoice
 from CustomWidgets import BoardIndex
 import sys
+import tkinter as tkinter
 
 """
 selectors.EVENT_READ = 1; selectors.EVENT_WRITE = 2
@@ -50,7 +51,8 @@ class Server:
 		
 	def openSocket4PortQuery(self):
 		self.socket4PortQuery = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		self.socket4PortQuery.bind(("127.0.0.1", 65432))
+		self.socket4PortQuery.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.socket4PortQuery.bind((self.address, 65432))
 		self.socket4PortQuery.setblocking(False)
 		self.socket4PortQuery.listen()
 		self.selector.register(self.socket4PortQuery, selectors.EVENT_READ, data=None)
@@ -60,6 +62,7 @@ class Server:
 		socks = [socket.socket(socket.AF_INET, socket.SOCK_STREAM) for i in range(2 * numTables)]
 		for port, sock in zip(port, socks):
 			print("Try bind", self.address, port)
+			sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 			sock.bind((self.address, port))
 			sock.listen()
 			self.socketsAvailable.append((port, sock))
@@ -106,6 +109,7 @@ class Server:
 					
 	def handleConnectionRequest(self, sock):
 		conn, addr = sock.accept()
+		print("Connection request from ", addr)
 		if sock == self.socket4PortQuery: #如果是询问还有什么port可以用,无论如何最后都要关闭这个conn
 			if self.socketsAvailable:
 				response = b"Ports"
@@ -286,6 +290,21 @@ class Server:
 				
 			
 				
+class Server_GUI:
+	def __init__(self):
+		self.window = tk.Tk()
+		self.window.mainloop()
+		
+		
+class ServerSimp:
+	def __init__(self, address="127.0.0.1", numTables=1):
+		self.address = address
+		self.socket4PortQuery = None #Need to a special socket to respond to queries about what port can be connected for playing
+		self.conn4PortQuery = None
+		self.openSocket4PortQuery()
+		self.openSocketsforPlayers(numTables)
+		self.tables = {}
+		
 if __name__ == "__main__":
 	address = sys.argv[1]
 	print(address)

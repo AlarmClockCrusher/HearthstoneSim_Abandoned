@@ -85,7 +85,7 @@ class SuddenShowers(SVSpell):
                 minions = curGame.minionsAlive(1) + curGame.minionsAlive(2)
                 if len(minions) > 0:
                     minion = npchoice(minions)
-                    curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID))
+                    curGame.fixedGuides.append((minion.pos, "Minion%d"%minion.ID))
                 else:
                     curGame.fixedGuides.append((0, ""))
 			if minion: curGame.killMinion(self, minion)
@@ -383,7 +383,7 @@ class PureshotAngel_Accelerate(SVSpell):
                 i = curGame.guides.pop(0)
             else:
                 minions = curGame.minionsAlive(3 - self.ID)
-                i = npchoice(minions).position if minions else -1
+                i = npchoice(minions).pos if minions else -1
                 curGame.fixedGuides.append(i)
             if i > -1:
                 damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -426,7 +426,7 @@ class PureshotAngel(SVMinion):
                 i = curGame.guides.pop(0)
             else:
                 minions = curGame.minionsAlive(3 - self.ID)
-                i = npchoice(minions).position if minions else -1
+                i = npchoice(minions).pos if minions else -1
                 curGame.fixedGuides.append(i)
             if i > -1:
                 PRINT(self.Game,
@@ -494,7 +494,7 @@ class Trig_BlossomingArcher(TrigBoard):
                     chars = curGame.minionsAlive(3 - self.entity.ID)
                     if chars:
                         enemy = npchoice(chars)
-                        curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                        curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
                     else:
                         curGame.fixedGuides.append((0, ''))
                 if enemy:
@@ -1072,7 +1072,7 @@ class DreadHound(SVMinion):
                         targets.append(t)
                 if targets:
                     minion = npchoice(targets)
-                    curGame.fixedGuides.append((minion.position, minion.type + str(minion.ID)))
+                    curGame.fixedGuides.append((minion.pos, minion.type + str(minion.ID)))
                 else:
                     curGame.fixedGuides.append((0, ''))
             if minion:
@@ -1097,7 +1097,7 @@ class Deathrattle_ErnestaWeaponsHawker(Deathrattle_Minion):
                 chars = curGame.minionsAlive(3 - self.entity.ID)
                 if chars:
                     enemy = npchoice(chars)
-                    curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                    curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
                 else:
                     curGame.fixedGuides.append((0, ''))
             if enemy:
@@ -1390,7 +1390,7 @@ class Trig_VIIOluonRunawayChariot(TrigBoard):
                         objs.remove(self.entity)
                         if objs:
                             char = npchoice(objs)
-                            curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
+                            curGame.fixedGuides.append((char.pos, char.type+str(char.ID)))
                         else:
                             curGame.fixedGuides.append((0, ''))
                     if char:
@@ -2537,7 +2537,7 @@ class DragonImpact(SVSpell):
                     chars = curGame.minionsAlive(3 - self.ID)
                     if chars:
                         enemy = npchoice(chars)
-                        curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                        curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
                     else:
                         curGame.fixedGuides.append((0, ''))
                 if enemy:
@@ -2980,7 +2980,7 @@ class Trig_VIMilteoTheLovers(TrigBoard):
                     if self.entity in minions: minions.remove(self.entity)
                     if len(minions) > 0:
                         minion = npchoice(minions)
-                        curGame.fixedGuides.append((minion.position, "Minion%d"%minion.ID))
+                        curGame.fixedGuides.append((minion.pos, "Minion%d"%minion.ID))
                         curGame.killMinion(self.entity, minion)
                     else:
                         curGame.fixedGuides.append((0, ""))
@@ -3131,7 +3131,7 @@ class Deathbringer_Crystallize(Amulet):
                 chars = curGame.minionsAlive(3 - self.ID)
                 if chars:
                     enemy = npchoice(chars)
-                    curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                    curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
                 else:
                     curGame.fixedGuides.append((0, ''))
             if enemy:
@@ -3153,7 +3153,7 @@ class Deathrattle_Deathbringer_Crystallize(Deathrattle_Minion):
                 chars = curGame.minionsAlive(3 - self.entity.ID)
                 if chars:
                     enemy = npchoice(chars)
-                    curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                    curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
                 else:
                     curGame.fixedGuides.append((0, ''))
             if enemy:
@@ -3205,7 +3205,7 @@ class Trig_Deathbringer(TrigBoard):
                     chars = curGame.minionsAlive(3 - self.entity.ID)
                     if chars:
                         enemy = npchoice(chars)
-                        curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                        curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
                     else:
                         curGame.fixedGuides.append((0, ''))
                 if enemy:
@@ -3242,7 +3242,7 @@ class Deathrattle_SilverboltHunter(Deathrattle_Minion):
             if curGame.guides:
                 i = curGame.guides.pop(0)
             else:
-                minions = [minion.position for minion in curGame.minionsAlive(self.entity.ID)]
+                minions = [minion.pos for minion in curGame.minionsAlive(self.entity.ID)]
                 i = npchoice(minions) if minions else -1
                 curGame.fixedGuides.append(i)
             if i > -1:
@@ -3391,7 +3391,7 @@ class Trig_EvolvedContemptousDemon(TrigBoard):
                     chars = curGame.minionsAlive(3 - self.entity.ID)
                     if chars:
                         enemy = npchoice(chars)
-                        curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                        curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
                     else:
                         curGame.fixedGuides.append((0, ''))
                 if enemy:
@@ -4202,7 +4202,7 @@ class Trig_SomnolentStrength(TrigBoard):
                     minions.remove(self.entity)
                 except:
                     pass
-                i = npchoice(minions).position if minions else -1
+                i = npchoice(minions).pos if minions else -1
                 curGame.fixedGuides.append(i)
             if i > -1:
                 minion = curGame.minions[self.entity.ID][i]
@@ -4222,7 +4222,7 @@ class Deathrattle_SomnolentStrength(Deathrattle_Minion):
                     minions.remove(self.entity)
                 except:
                     pass
-                i = npchoice(minions).position if minions else -1
+                i = npchoice(minions).pos if minions else -1
                 curGame.fixedGuides.append(i)
             if i > -1:
                 minion = curGame.minions[3 - self.entity.ID][i]
@@ -4611,7 +4611,7 @@ class Trig_XSlausWheelofFortune(TrigBoard):
                     chars = curGame.minionsAlive(3 - self.entity.ID)
                     if chars:
                         enemy = npchoice(chars)
-                        curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                        curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
                     else:
                         curGame.fixedGuides.append((0, ''))
                 if enemy:
@@ -4667,7 +4667,7 @@ class Trig_InvertedManipulation(TrigBoard):
                     chars = curGame.minionsAlive(3 - self.entity.ID)
                     if chars:
                         enemy = npchoice(chars)
-                        curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                        curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
                     else:
                         curGame.fixedGuides.append((0, ''))
         if enemy:
@@ -4819,7 +4819,7 @@ class PopGoesthePoppet(SVSpell):
                         chars = curGame.minionsAlive(3 - self.ID)
                         if chars:
                             enemy = npchoice(chars)
-                            curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                            curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
                         else:
                             curGame.fixedGuides.append((0, ''))
                     if enemy:
@@ -5162,7 +5162,7 @@ class RunieResoluteDiviner(SVMinion):
                         i = curGame.guides.pop(0)
                     else:
                         minions = curGame.minionsAlive(3 - self.ID)
-                        i = npchoice(minions).position if minions else -1
+                        i = npchoice(minions).pos if minions else -1
                         curGame.fixedGuides.append(i)
                     if i > -1:
                         PRINT(self.Game,
@@ -5661,7 +5661,7 @@ class Trig_ScionofDesire(TrigBoard):
                 chars = curGame.minionsAlive(3 - self.entity.ID)
                 if chars:
                     enemy = npchoice(chars)
-                    curGame.fixedGuides.append((enemy.position, enemy.type + str(enemy.ID)))
+                    curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
                 else:
                     curGame.fixedGuides.append((0, ''))
             if enemy:

@@ -86,9 +86,8 @@ class Game:
 		if target: return [amulet for amulet in self.minions[ID] if amulet.type == "Amulet" and amulet.onBoard and "Earth Sigil" in amulet.race and amulet != target]
 		else: return [amulet for amulet in self.minions[ID] if amulet.type == "Amulet" and amulet.onBoard and "Earth Sigil" in amulet.race]
 
-
 	def neighbors2(self, target, countDormants=False):
-		targets, ID, pos, i = [], target.ID, target.position, 0
+		targets, ID, pos, i = [], target.ID, target.pos, 0
 		while pos > 0:
 			pos -= 1
 			obj_onLeft = self.minions[ID][pos]
@@ -97,7 +96,7 @@ class Game:
 				targets.append(obj_onLeft)
 				i -= 1
 				break
-		pos = target.position
+		pos = target.pos
 		boardSize = len(self.minions[ID])
 		while pos < boardSize - 1:
 			pos += 1
@@ -145,7 +144,7 @@ class Game:
 				tarIndex, tarWhere = [], []
 				for obj in target:
 					if obj.onBoard:
-						tarIndex.append(obj.position)
+						tarIndex.append(obj.pos)
 						tarWhere.append(obj.type+str(obj.ID))
 					else:
 						tarIndex.append(self.Hand_Deck.hands[obj.ID].index(obj))
@@ -156,9 +155,9 @@ class Game:
 			self.Manas.payManaCost(amulet, mana)  # 海魔钉刺者，古加尔和血色绽放的伤害生效。
 			# The new minion played will have the largest sequence.
 			# 处理随从的位置的登场顺序。
-			amulet.sequence = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
+			amulet.seq = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
 			self.minions[ID].insert(position + 100 * (position < 0), amulet)
-			self.rearrangePosition()
+			self.sortPos()
 			# 使用随从牌、召唤随从牌、召唤结束信号会触发
 			# 把本回合召唤随从数的计数提前至打出随从之前，可以让小个子召唤师等“每回合第一张”光环在随从打出时正确结算。连击等结算仍依靠cardsPlayedThisTurn
 			self.amuletPlayed = amulet
@@ -229,13 +228,13 @@ class Game:
 					tarIndex, tarWhere = [], []
 					for obj in target:
 						if obj.onBoard:
-							tarIndex.append(obj.position)
+							tarIndex.append(obj.pos)
 							tarWhere.append(obj.type+str(obj.ID))
 						else:
 							tarIndex.append(self.Hand_Deck.hands[obj.ID].index(obj))
 							tarWhere.append("Hand%d"%obj.ID)
 				else: #非列表状态的target一定是炉石卡指定的
-					tarIndex, tarWhere = target.position, target.type+str(target.ID)
+					tarIndex, tarWhere = target.pos, target.type+str(target.ID)
 			else: tarIndex, tarWhere = 0, ''
 			minion, mana, posinHand = self.Hand_Deck.extractfromHand(minion, enemyCanSee=True)
 			#如果打出的随从是SV中的爆能强化，激奏和结晶随从，则它们会返回自己的真正要打出的牌以及对应的费用
@@ -276,9 +275,9 @@ class Game:
 			else: #Normal or Enhance X or Crystallize X minion played
 				typewhenPlayed = minion.type
 				minionIndex = minion.index
-				minion.sequence = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
+				minion.seq = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
 				self.minions[ID].insert(position+100*(position < 0), minion)
-				self.rearrangePosition()
+				self.sortPos()
 				if typewhenPlayed == "Minion": #只有随从打出的时候会计入打出的随从数
 					self.Counters.numMinionsPlayedThisTurn[self.turn] += 1
 				self.minionPlayed = minion
@@ -358,10 +357,10 @@ class Game:
 	def summonSingle(self, subject, position):
 		ID = subject.ID
 		if self.space(ID) > 0:
-			subject.sequence = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
+			subject.seq = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
 			self.minions[subject.ID].insert(position+100*(position<0), subject)  #If position is too large, the insert() simply puts it at the end.
-			self.rearrangePosition()
-			self.rearrangeSequence()
+			self.sortPos()
+			self.sortSeq()
 			subject.appears(firstTime=True)
 			if self.GUI:
 				self.GUI.update()
@@ -384,24 +383,24 @@ class Game:
 				copies = [subject.selfCopy(ID) for i in range(numCopies)]
 				minionSummoned = self.summonSingle(subject, position)
 				if minionSummoned: #只有最初的本体召唤成功的时候才会进行复制的随从的召唤
-					if self.summonSingle(copies[0], subject.position+1):
+					if self.summonSingle(copies[0], subject.pos+1):
 						for i in range(1, numCopies): #复制的随从列表中剩余的随从，如果没有剩余随从了，直接跳过
-							if not self.summonSingle(copies[i], copies[i-1].position): break #翻倍出来的复制会始终紧跟在初始随从的右边。
+							if not self.summonSingle(copies[i], copies[i-1].pos): break #翻倍出来的复制会始终紧跟在初始随从的右边。
 					return minionSummoned #只要第一次召唤出随从就视为召唤成功
 				return None
 			else: return self.summonSingle(subject, position)
 		else: #Summoning multiple minions in a row. But the list can be of length 1
-			if len(subject) == 1: #用列表形式但是只召唤一个随从的时候，position一定是(self.position, "totheRight")或者（-1, "totheRightEnd"）
+			if len(subject) == 1: #用列表形式但是只召唤一个随从的时候，position一定是(self.pos, "totheRight")或者（-1, "totheRightEnd"）
 				position = position[0] + 1 if position[0] >= 0 else -1
 				return self.summon(subject[0], position, initiatorID, comment)
 			else: #真正召唤多个随从的时候，会把它们划分为多次循环。每次循环后下次循环召唤的随从紧贴在这次循环召唤的随从的右边。
 				if position[1] == "leftandRight":
 					centralMinion, totheRight = self.minions[subject[0].ID][position[0]], 1 #必须得到中间的随从的位置
 					for i in range(len(subject)):
-						if i == 0: pos = centralMinion.position+1 #i == 0 召唤的第一个随从直接出现在传递进来的位置的右+1，没有任何问题。但是之后的召唤需要得知发起随从的位置或者之前召唤的随从的位置
-						elif i == 1: pos = centralMinion.position #这个召唤实际上是在列表中插入一个新的随从把中间随从向右挤
+						if i == 0: pos = centralMinion.pos+1 #i == 0 召唤的第一个随从直接出现在传递进来的位置的右+1，没有任何问题。但是之后的召唤需要得知发起随从的位置或者之前召唤的随从的位置
+						elif i == 1: pos = centralMinion.pos #这个召唤实际上是在列表中插入一个新的随从把中间随从向右挤
 						else: #i > 1 向左侧召唤随从也是让新召唤的随从紧贴上一次在左边召唤出来的初始随从。
-							pos = subject[i-2].position+1 if totheRight == 1 else subject[i-2].position
+							pos = subject[i-2].pos+1 if totheRight == 1 else subject[i-2].pos
 
 						totheRight = 1 - totheRight
 						if not self.summon(subject[i], pos, initiatorID, comment):
@@ -412,7 +411,7 @@ class Game:
 					#如果position[1]是"totheRight"，那么position[0]是-2的话会返回pos=1
 					pos = -1 if position[1] == "totheRightEnd" else position[0]+1
 					for i in range(len(subject)):
-						pos = pos if i == 0 else subject[i-1].position+1
+						pos = pos if i == 0 else subject[i-1].pos+1
 						if not self.summon(subject[i], pos, initiatorID, comment) and i == 0:
 							return None
 					return subject[0]
@@ -449,14 +448,14 @@ class Game:
 	def transform(self, target, newMinion, firstTime=True):
 		ID = target.ID
 		if target in self.minions[ID]:
-			pos = target.position
+			pos = target.pos
 			target.disappears(deathrattlesStayArmed=False)
 			self.removeMinionorWeapon(target)
 			if self.minionPlayed == target: self.minionPlayed = newMinion
-			#removeMinionorWeapon invokes rearrangePosition() and rearrangeSequence()
-			newMinion.sequence = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
+			#removeMinionorWeapon invokes sortPos() and sortSeq()
+			newMinion.seq = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
 			self.minions[ID].insert(pos, newMinion)
-			self.rearrangePosition()
+			self.sortPos()
 			newMinion.appears(firstTime)
 		elif target in self.Hand_Deck.hands[target.ID]:
 			if self.minionPlayed == target: self.minionPlayed = newMinion
@@ -469,8 +468,8 @@ class Game:
 		zone = self.weapons[target.ID] if target.type == "Weapon" else self.minions[target.ID]
 		try: zone.remove(target)
 		except: pass
-		self.rearrangeSequence()
-		if target.type != "Weapon": self.rearrangePosition()
+		self.sortSeq()
+		if target.type != "Weapon": self.sortPos()
 		if self.GUI: self.GUI.update()
 
 	def banishMinion(self, subject, target):
@@ -552,15 +551,15 @@ class Game:
 		return None
 
 	#The leftmost minion has position 0. Consider Dormant
-	def rearrangePosition(self):
-		for i, obj in enumerate(self.minions[1]): obj.position = i
-		for i, obj in enumerate(self.minions[2]): obj.position = i
+	def sortPos(self):
+		for i, obj in enumerate(self.minions[1]): obj.pos = i
+		for i, obj in enumerate(self.minions[2]): obj.pos = i
 
 	#Rearrange all livng minions' sequences if change is true. Otherwise, just return the list of the sequences.
 	#需要考虑Dormant的出场顺序
-	def rearrangeSequence(self):
+	def sortSeq(self):
 		objs = self.weapons[1] + self.weapons[2] + self.minions[1] + self.minions[2]
-		for i, obj in zip(np.asarray([obj.sequence for obj in objs]).argsort().argsort(), objs): obj.sequence = i
+		for i, obj in zip(np.asarray([obj.seq for obj in objs]).argsort().argsort(), objs): obj.seq = i
 
 	def returnMiniontoHand(self, target, deathrattlesStayArmed=False, manaMod=None):
 		ID = target.ID
@@ -621,7 +620,7 @@ class Game:
 				self.minions[target.ID].remove(target)
 				target.ID = 3 - target.ID
 				self.minions[target.ID].append(target)
-				self.rearrangePosition() #The appearance sequence stays intact.
+				self.sortPos() #The appearance sequence stays intact.
 				target.appears(firstTime=False) #控制权的变更不会触发水晶核心以及休眠随从的再次休眠等
 				#Possible activities are "Permanent" "Borrow" "Return"
 				#每个随从只有携带一个回合结束后将随从归为对方的turnEndTrigger
@@ -644,9 +643,9 @@ class Game:
 
 	#Given a list of targets to sort, return the list that
 	#contains the targets in the right order to trigger.
-	def sort_Sequence(self, targets):
-		temp, sequences = targets, [target.sequence for target in targets]
-		order = np.asarray(sequences).argsort()
+	def orderofDead(self, targets):
+		temp, seqs = targets, [target.seq for target in targets]
+		order = np.asarray(seqs).argsort()
 		return [temp[i] for i in order], order
 		
 	def armedTrigs(self, sig):
@@ -764,7 +763,7 @@ class Game:
 
 		if self.tempDeads[0]: #self.tempDeads != [[], []]
 			#Rearrange the dead minions according to their sequences.
-			self.tempDeads[0], order = self.sort_Sequence(self.tempDeads[0])
+			self.tempDeads[0], order = self.orderofDead(self.tempDeads[0])
 			temp = self.tempDeads[1]
 			self.tempDeads[1] = []
 			for i in range(len(order)):
@@ -817,7 +816,7 @@ class Game:
 			for rebornMinion in rebornMinions:
 				miniontoSummon = type(rebornMinion)(self, rebornMinion.ID)
 				miniontoSummon.keyWords["Reborn"], miniontoSummon.health = 0, 1 #不需要特殊的身材处理，激怒等直接在随从的appears()函数中处理。
-				self.summon(miniontoSummon, rebornMinion.position, rebornMinion.ID)
+				self.summon(miniontoSummon, rebornMinion.pos, rebornMinion.ID)
 			#死亡结算每轮结束之后才进行死亡随从的收集，然后进行下一轮的亡语结算。
 			self.gathertheDead(decideWinner) #See if the deathrattle results in more death or destruction.
 			if self.deads == [[], []]: break #只有没有死亡随从要结算了才会终结
@@ -905,8 +904,8 @@ class Game:
 			#疯狂巨龙死亡之翼的连续攻击中，只有第一次目标选择被被市长改变，但之后的不会
 			if self.GUI: self.GUI.wait(275)
 			if verifySelectable:
-				subIndex, subWhere = subject.position, subject.type+str(subject.ID)
-				tarIndex, tarWhere = target.position, target.type+str(target.ID)
+				subIndex, subWhere = subject.pos, subject.type+str(subject.ID)
+				tarIndex, tarWhere = target.pos, target.type+str(target.ID)
 			#如果英雄的武器为蜡烛弓和角斗士的长弓，则优先给予攻击英雄免疫，防止一切攻击前步骤带来的伤害。
 			self.sendSignal("BattleStarted", self.turn, subject, target, 0, "") #这里的target没有什么意义，可以留为target
 			#在此，奥秘和健忘扳机会在此触发。需要记住初始的目标，然后可能会有诸多扳机可以对此初始信号响应。
@@ -998,13 +997,13 @@ class Game:
 					tarIndex, tarWhere = [], []
 					for obj in target:
 						if obj.onBoard:
-							tarIndex.append(obj.position)
+							tarIndex.append(obj.pos)
 							tarWhere.append(obj.type+str(obj.ID))
 						else:
 							tarIndex.append(self.Hand_Deck.hands[obj.ID].index(obj))
 							tarWhere.append("Hand%d"%obj.ID)
 				else: #非列表状态的target一定是炉石卡指定的
-					tarIndex, tarWhere = target.position, target.type+str(target.ID)
+					tarIndex, tarWhere = target.pos, target.type+str(target.ID)
 			else: tarIndex, tarWhere = 0, ''
 			#支付法力值，结算血色绽放等状态。
 			spell, mana, posinHand = self.Hand_Deck.extractfromHand(spell, enemyCanSee=not spell.description.startswith("Secret:"))
@@ -1072,7 +1071,7 @@ class Game:
 			if self.GUI: self.GUI.displayCard(weapon)
 			subIndex, subWhere = self.Hand_Deck.hands[weapon.ID].index(weapon), "Hand%d"%weapon.ID
 			if target:
-				tarIndex, tarWhere = target.position, target.type+str(target.ID)
+				tarIndex, tarWhere = target.pos, target.type+str(target.ID)
 			else: tarIndex, tarWhere = 0, ''
 			#卡牌从手中离开，支付费用，费用状态移除，但是目前没有根据武器费用支付而产生响应的效果。
 			weapon, mana, posinHand = self.Hand_Deck.extractfromHand(weapon, enemyCanSee=True)

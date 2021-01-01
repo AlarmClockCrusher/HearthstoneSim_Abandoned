@@ -88,7 +88,7 @@ class GUI_Common:
 	def cancelSelection(self):
 		if self.UI < 3 and self.UI > -1: #只有非发现状态,且游戏不在结算过程中时下才能取消选择
 			self.subject, self.target = None, None
-			self.UI, self.position, self.choice = 0, -1, -1
+			self.UI, self.pos, self.choice = 0, -1, -1
 			self.selectedSubject = ""
 			for btn in reversed(self.btnsDrawn):
 				if isinstance(btn, ChooseOneButton): btn.remove()
@@ -300,14 +300,14 @@ class GUI_Common:
 			#手中选中的随从在这里结算打出位置，如果不需要目标，则直接打出。
 			elif self.selectedSubject == "MinioninHand" or self.selectedSubject == "AmuletinHand": #选中场上的友方随从，我休眠物和护符时会把随从打出在其左侧
 				if selectedSubject == "Board" or (entity.ID == self.subject.ID and (selectedSubject.endswith("onBoard") and not selectedSubject.startswith("Hero"))):
-					self.position = -1 if selectedSubject == "Board" else entity.position
-					self.printInfo("Position for minion in hand decided: %d"%self.position)
+					self.pos = -1 if selectedSubject == "Board" else entity.pos
+					self.printInfo("Position for minion in hand decided: %d"%self.pos)
 					self.selectedSubject = "MinionPositionDecided" #将主体记录为标记了打出位置的手中随从。
 					#抉择随从如有全选光环，且所有选项不需目标，则直接打出。 连击随从的needTarget()由连击条件决定。
 					#self.printInfo("Minion {} in hand needs target: {}".format(self.subject.name, self.subject.needTarget(self.choice)))
 					if not (self.subject.needTarget(self.choice) and self.subject.targetExists(self.choice)):
 						#self.printInfo("Requesting to play minion {} without target. The choice is {}".format(self.subject.name, self.choice))
-						subject, position, choice = self.subject, self.position, self.choice
+						subject, position, choice = self.subject, self.pos, self.choice
 						self.cancelSelection()
 						self.subject, self.target, self.UI = subject, None, -1
 						game.playMinion(subject, None, position, choice)
@@ -327,7 +327,7 @@ class GUI_Common:
 			elif self.selectedSubject == "MinionPositionDecided":
 				if selectedSubject == "MiniononBoard" or selectedSubject == "HeroonBoard":
 					self.printInfo("Requesting to play minion {}, targeting {} with choice: {}".format(self.subject.name, entity.name, self.choice))
-					subject, position, choice = self.subject, self.position, self.choice
+					subject, position, choice = self.subject, self.pos, self.choice
 					self.cancelSelection()
 					self.subject, self.target, self.UI = subject, entity, -1
 					game.playMinion(subject, entity, position, choice)
@@ -428,7 +428,7 @@ class GUI_Common:
 					game.Discover.startSelect(self.subject, self.subject.findTargets("", self.choice)[0])
 				else: #如果目标选择完毕了，则不用再选择，直接开始打出结算
 					self.UI = 0
-					subject, target, position, choice = self.subject, self.subject.targets, self.position, -1
+					subject, target, position, choice = self.subject, self.subject.targets, self.pos, -1
 					self.printInfo("Requesting to play Shadowverse spell {} with targets {}".format(subject.name, target))
 					self.cancelSelection()
 					{"Minion": lambda : game.playMinion(subject, target, position, choice),

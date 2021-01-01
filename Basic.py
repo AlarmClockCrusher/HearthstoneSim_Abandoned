@@ -510,7 +510,7 @@ class MurlocTidehunter(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 1/1 Murloc Scout"
 	#If controlled by enemy, will summon for enemy instead.
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.summon(MurlocScout(self.Game, self.ID), self.position+1, self.ID)
+		self.Game.summon(MurlocScout(self.Game, self.ID), self.pos+1, self.ID)
 		return None
 		
 class MurlocScout(Minion):
@@ -589,7 +589,7 @@ class RazorfenHunter(Minion):
 	
 	#Infer from Dragonling Mechanic.
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.summon(Boar(self.Game, self.ID), self.position+1, self.ID)
+		self.Game.summon(Boar(self.Game, self.ID), self.pos+1, self.ID)
 		return None
 		
 class Boar(Minion):
@@ -647,7 +647,7 @@ class DragonlingMechanic(Minion):
 	
 	#If returned to hand, will summon to the rightend of the board.
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.summon(MechanicalDragonling(self.Game, self.ID), self.position+1, self.ID)
+		self.Game.summon(MechanicalDragonling(self.Game, self.ID), self.pos+1, self.ID)
 		return None
 		
 class MechanicalDragonling(Minion):
@@ -926,7 +926,7 @@ class Trig_SatyrOverseer(TrigBoard):
 		return self.entity.onBoard and subject == self.entity.Game.heroes[self.entity.ID]
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(IllidariSatyr(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summon(IllidariSatyr(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)
 		
 	def text(self, CHN):
 		return "在你的英雄攻击后，召唤一个2/2的萨特" if CHN else "After your hero attacks, summon a 2/2 Satyr"
@@ -961,7 +961,7 @@ class SoulCleave(Spell):
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 				else:
 					minions = list(npchoice(minions, min(2, len(minions)), replace=False))
-					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
+					curGame.fixedGuides.append(tuple([minion.pos for minion in minions]))
 				self.dealsAOE(minions, [damage]*len(minions))
 		return None
 		
@@ -1378,7 +1378,7 @@ class MultiShot(Spell):
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 				else:
 					minions = list(npchoice(minions, min(2, len(minions)), replace=False))
-					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
+					curGame.fixedGuides.append(tuple([minion.pos for minion in minions]))
 				self.dealsAOE(minions, [damage]*len(minions))
 		return None
 		
@@ -1440,7 +1440,7 @@ class ArcaneMissiles(Spell):
 					objs = curGame.charsAlive(side)
 					if objs:
 						char = npchoice(objs)
-						curGame.fixedGuides.append((char.position, char.type+str(char.ID)))
+						curGame.fixedGuides.append((char.pos, char.type+str(char.ID)))
 					else:
 						curGame.fixedGuides.append((0, ''))
 				if char:
@@ -2608,7 +2608,7 @@ class Cleave(Spell):
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 				else:
 					minions = list(npchoice(minions, min(2, len(minions)), replace=False))
-					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
+					curGame.fixedGuides.append(tuple([minion.pos for minion in minions]))
 				self.dealsAOE(minions, [damage]*len(minions))
 		return None
 		

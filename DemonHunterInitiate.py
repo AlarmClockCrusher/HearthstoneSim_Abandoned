@@ -198,7 +198,7 @@ class BladeDance(Spell):
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
 				else:
 					minions = list(npchoice(minions, min(3, len(minions)), replace=False))
-					curGame.fixedGuides.append(tuple([minion.position for minion in minions]))
+					curGame.fixedGuides.append(tuple([minion.pos for minion in minions]))
 				self.dealsAOE(minions, [damage]*len(minions))
 		return None
 		
@@ -339,7 +339,7 @@ class Trig_WrathscaleNaga(TrigBoard):
 				targets = curGame.charsAlive(3-self.entity.ID)
 				if targets:
 					enemy = npchoice(targets)
-					curGame.fixedGuides.append((enemy.position, enemy.type+str(enemy.ID)))
+					curGame.fixedGuides.append((enemy.pos, enemy.type+str(enemy.ID)))
 				else: curGame.fixedGuides.append((0, ""))
 			if enemy:
 				self.entity.dealsDamage(enemy, 1)
@@ -400,7 +400,7 @@ class SoulSplit(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and self.Game.space(self.ID) > 0:
 			Copy = target.selfCopy(self.ID) if target.onBoard else type(target)(self.Game, self.ID)
-			self.Game.summon(Copy, target.position+1, self.ID)
+			self.Game.summon(Copy, target.pos+1, self.ID)
 		return target
 		
 """Mana 5 cards"""
@@ -502,7 +502,7 @@ class Nethrandamus(Minion):
 					cost -= 1
 				minions = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost), 2, replace=False)
 				curGame.fixedGuides.append(tuple(minions))
-			pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
+			pos = (self.pos, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 			curGame.summon([minion(curGame, self.ID) for minion in minions], pos, self.ID)
 		return None
 		

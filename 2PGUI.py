@@ -137,7 +137,7 @@ class GUI_2P(GUI_Common):
 		self.mulliganStatus, self.btnsDrawn = [], []
 		self.selectedSubject = ""
 		self.subject, self.target, self.discover = None, None, None
-		self.position, self.choice, self.UI = -1, 0, -2 #起手调换的UI为-2
+		self.pos, self.choice, self.UI = -1, 0, -2 #起手调换的UI为-2
 		self.ID, self.showReminder = 1, None
 		self.lastInfo, self.pickleFile = '', None
 		self.DIYs = []

@@ -12,7 +12,7 @@ def canBeGenerated(cardType):
 	return not cardType.index.startswith("SV_") and not cardType.description.startswith("Quest:") and \
 			not ("Galakrond" in cardType.name or "Galakrond" in cardType.description or "Invoke" in cardType.description or "invoke" in cardType.description)
 			
-		
+			
 class PoolManager:
 	def __init__(self):
 		self.cardPool = {}

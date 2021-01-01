@@ -37,13 +37,8 @@ class Evolve(HeroPower):
 			if self.Game.Counters.numEvolutionPoint[self.ID] > 0:
 				return True
 			else:
-				hasFree = False
-				for minion in self.Game.minionsAlive(self.ID):
-					if isinstance(minion, SVMinion) and minion.marks["Free Evolve"] > 0 and minion.status[
-						"Evolved"] < 1:
-						hasFree = True
-						break
-				return hasFree
+				return any(if isinstance(minion, SVMinion) and minion.marks["Free Evolve"] > 0 and minion.status["Evolved"] < 1 \
+								for minion in self.Game.minionsAlive(self.ID))
 		return False
 
 	def returnTrue(self, choice=0):
@@ -119,7 +114,7 @@ class Evolve(HeroPower):
 			for obj in game.minionsandAmuletsonBoard(ID):
 				if self.targetCorrect(obj, choice) and (comment == "" or self.canSelect(obj)):
 					targets.append(obj)
-					indices.append(obj.position)
+					indices.append(obj.pos)
 					wheres.append(where)
 			where = "Hand%d" % ID
 			for i, card in enumerate(game.Hand_Deck.hands[ID]):
@@ -139,7 +134,6 @@ class Evolve(HeroPower):
 			self.Game.GUI.wait(500)
 		self.effect(target, choice)
 		self.Game.gathertheDead()
-		PRINT(self.Game, "Hero used ability %s" % self.name)
 		self.heroPowerTimes += 1
 		# 激励阶段，触发“每当你使用一次英雄技能”的扳机，如激励，虚空形态的技能刷新等。
 		self.Game.Counters.powerUsedThisTurn += 1
@@ -154,29 +148,13 @@ class Evolve(HeroPower):
 		if target:  # 因为护符是SV特有的卡牌类型，所以其目标选择一定是列表填充式的
 			for obj in target:
 				if obj.onBoard:
-					tarIndex.append(obj.position)
+					tarIndex.append(obj.pos)
 					tarWhere.append(obj.type + str(obj.ID))
 				else:
 					tarIndex.append(self.Game.Hand_Deck.hands[obj.ID].index(obj))
 					tarWhere.append("Hand%d" % obj.ID)
 		self.Game.moves.append(("Power", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
 		self.targets = []
-
-	def createCopy(self, game):
-		if self in game.copiedObjs:
-			return game.copiedObjs[self]
-		else:
-			Copy = type(self)(game, self.ID)
-			game.copiedObjs[self] = Copy
-			Copy.mana = self.mana
-			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
-			Copy.heroPowerTimes = self.heroPowerTimes
-			Copy.heroPowerChances_base, Copy.heroPowerChances_extra = self.heroPowerChances_base, self.heroPowerChances_extra
-			Copy.options = [option.selfCopy(Copy) for option in self.options]
-			Copy.keyWords = copy.deepcopy(self.keyWords)
-			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
-			self.assistCreateCopy(Copy)
-			return Copy
 
 
 class SVMinion(Minion):
@@ -193,7 +171,6 @@ class SVMinion(Minion):
 			self.health_0 += self.healthAdd
 			self.statReset(self.attack + self.attackAdd, self.health + self.healthAdd)
 			self.status["Evolved"] += 1
-			PRINT(self.Game, self.name + " evolves.")
 			self.Game.Counters.evolvedThisGame[self.ID] += 1
 			self.Game.Counters.evolvedThisTurn[self.ID] += 1
 			for card in self.Game.Hand_Deck.hands[self.ID]:
@@ -286,7 +263,7 @@ class SVMinion(Minion):
 			for obj in game.minionsandAmuletsonBoard(ID):
 				if self.targetCorrect(obj, choice) and (comment == "" or self.canSelect(obj)):
 					targets.append(obj)
-					indices.append(obj.position)
+					indices.append(obj.pos)
 					wheres.append(where)
 			where = "Hand%d" % ID
 			for i, card in enumerate(game.Hand_Deck.hands[ID]):
@@ -328,47 +305,10 @@ class SVMinion(Minion):
 		self.Game.sendSignal("MinionPlayed", self.ID, self, target, mana, "", choice)
 		# 召唤时步骤，触发“每当你召唤一个xx随从”的扳机.如鱼人招潮者等。
 		self.Game.sendSignal("MinionSummoned", self.ID, self, target, mana, "")
-		# 过载结算
-		if self.overload > 0:
-			PRINT(self.Game, "%s is played and Overloads %d mana crystals." % (self.name, self.overload))
-			self.Game.Manas.overloadMana(self.overload, self.ID)
-
-		magneticTarget = None
-		if self.magnetic > 0:
-			if self.onBoard:
-				neighbors, dist = self.Game.neighbors2(self)
-				if dist == 1 and "Mech" in neighbors[1].race:
-					magneticTarget = neighbors[1]
-				elif dist == 2 and "Mech" in neighbors[0].race:
-					magneticTarget = neighbors[0]
+		
 		# 使用阶段结束，开始死亡结算。视随从的存活情况决定战吼的触发情况，此时暂不处理胜负问题。
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		# 结算阶段
-		if self.magnetic > 0:
-			# 磁力相当于伪指向性战吼，一旦指定目标之后，不会被其他扳机改变
-			# 磁力随从需要目标和自己都属于同一方,且磁力目标在场时才能触发。
-			if magneticTarget and magneticTarget.onBoard and self.ID == magneticTarget.ID:
-				# 磁力结算会让随从离场，不会触发后续的随从召唤后，打出后的扳机
-				self.magnetCombine(magneticTarget)
-		# 磁力随从没有战吼等入场特效，因而磁力结算不会引发死亡，不必进行死亡结算
-		else:  # 无磁力的随从
-			# 市长会在战吼触发前检测目标，指向性战吼会被随机取向。一旦这个随机过程完成，之后的第二次战吼会重复对此目标施放。
-			# 如果场上有随从可供战吼选择，但是因为免疫和潜行导致打出随从时没有目标，则不会触发随机选择，因为本来就没有目标。
-			# 在战吼开始检测之前，如果铜须已经死亡，则其并不会让战吼触发两次。也就是扳机的机制。
-			# 同理，如果此时市长已经死亡，则其让选择随机化的扳机也已经离场，所以不会触发随机目标。
-			if target and not isinstance(target, list):
-				targetHolder = [target]
-				self.Game.sendSignal("BattlecryTargetDecision", self.ID, self, targetHolder, 0, "", choice)
-				if target != targetHolder[0] and self.Game.GUI:
-					target = targetHolder[0]
-					self.Game.GUI.target = target
-					self.Game.GUI.wait(400)
-				else:
-					target = targetHolder[0]
-			# 市长不会让发现和抉择选项的选择随机化。
-			# 不管target是否还在场上，此时只要市长还在，就要重新在场上寻找合法目标。如果找不到，就不能触发战吼的指向性部分，以及其产生的后续操作。
-			# 随机条件下，如果所有合法目标均已经消失，则return None. 由随从的战吼决定是否继续生效。
-
 			# 在随从战吼/连击开始触发前，检测是否有战吼/连击翻倍的情况。如果有且战吼可以进行，则强行执行战吼至两次循环结束。无论那个随从是死亡，在手牌中还是牌库
 			num = 1
 			if "~Battlecry" in self.index and self.Game.status[self.ID]["Battlecry x2"] + self.Game.status[self.ID][
@@ -411,7 +351,7 @@ class SVMinion(Minion):
 			if hasattr(self, "progress"): Copy.progress = self.progress
 			Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
 			Copy.newonthisSide, Copy.firstTimeonBoard = self.newonthisSide, self.firstTimeonBoard
-			Copy.sequence, Copy.position = self.sequence, self.position
+			Copy.seq, Copy.pos = self.seq, self.pos
 			Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			for key, value in self.auras.items():
@@ -455,8 +395,8 @@ class Amulet(Dormant):
 		self.newonthisSide, self.firstTimeonBoard = True, True  # firstTimeonBoard用于防止随从在休眠状态苏醒时再次休眠，一般用不上
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.activated = False  # This mark is for minion state change, such as enrage.
-		# self.sequence records the number of the minion's appearance. The first minion on board has a sequence of 0
-		self.sequence, self.position = -1, -2
+		# self.seq records the number of the minion's appearance. The first minion on board has a sequence of 0
+		self.seq, self.pos = -1, -2
 		self.keyWords = {"Taunt": 0, "Stealth": 0,
 						 "Divine Shield": 0, "Spell Damage": 0,
 						 "Lifesteal": 0, "Poisonous": 0,
@@ -499,14 +439,11 @@ class Amulet(Dormant):
 	"""Handle the trigsBoard/inHand/inDeck of minions based on its move"""
 
 	def appears(self):
-		PRINT(self.Game, "%s appears on board." % self.name)
 		self.newonthisSide = True
 		self.onBoard, self.inHand, self.inDeck = True, False, False
 		self.dead = False
 		self.mana = type(self).mana  # Restore the minion's mana to original value.
-		for value in self.auras.values():
-			PRINT(self.Game, "Now starting amulet {}'s Aura {}".format(self.name, value))
-			value.auraAppears()
+		for value in self.auras.values(): value.auraAppears()
 		# 随从入场时将注册其场上扳机和亡语扳机
 		for trig in self.trigsBoard + self.deathrattles:
 			trig.connect()  # 把(obj, signal)放入Game.triggersonBoard中
@@ -533,36 +470,7 @@ class Amulet(Dormant):
 		self.Game.sendSignal("AmuletDisappears", self.ID, None, self, 0, "")
 		
 	def STATUSPRINT(self):
-		PRINT(self.Game, "Game is {}.".format(self.Game))
-		PRINT(self.Game,
-			  "Amulet: %s. ID: %d Race: %s\nDescription: %s" % (self.name, self.ID, self.race, self.description))
-		if self.manaMods != []:
-			PRINT(self.Game, "\tCarries mana modification:")
-			for manaMod in self.manaMods:
-				if manaMod.changeby != 0:
-					PRINT(self.Game, "\t\tChanged by %d" % manaMod.changeby)
-				else:
-					PRINT(self.Game, "\t\tChanged to %d" % manaMod.changeto)
-		if self.trigsBoard != []:
-			PRINT(self.Game, "\tAmulet's trigsBoard")
-			for trigger in self.trigsBoard:
-				PRINT(self.Game, "\t{}".format(type(trigger)))
-		if self.trigsHand != []:
-			PRINT(self.Game, "\tAmulet's trigsHand")
-			for trigger in self.trigsHand:
-				PRINT(self.Game, "\t{}".format(type(trigger)))
-		if self.trigsDeck != []:
-			PRINT(self.Game, "\tAmulet's trigsDeck")
-			for trigger in self.trigsDeck:
-				PRINT(self.Game, "\t{}".format(type(trigger)))
-		if self.auras != {}:
-			PRINT(self.Game, "Amulet's aura")
-			for key, value in self.auras.items():
-				PRINT(self.Game, "{}".format(value))
-		if self.deathrattles != []:
-			PRINT(self.Game, "\tMinion's Deathrattles:")
-			for trigger in self.deathrattles:
-				PRINT(self.Game, "\t{}".format(type(trigger)))
+		pass
 
 	def afterSwitchSide(self, activity):
 		self.newonthisSide = True
@@ -583,7 +491,7 @@ class Amulet(Dormant):
 			for obj in game.minionsandAmuletsonBoard(ID):
 				if self.targetCorrect(obj, choice) and (comment == "" or self.canSelect(obj)):
 					targets.append(obj)
-					indices.append(obj.position)
+					indices.append(obj.pos)
 					wheres.append(where)
 			where = "Hand%d" % ID
 			for i, card in enumerate(game.Hand_Deck.hands[ID]):
@@ -619,8 +527,7 @@ class Amulet(Dormant):
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		# 假设不触发重导向扳机
 		num = 1
-		if "~Battlecry" in self.index and self.Game.status[self.ID]["Battlecry x2"] + self.Game.status[self.ID][
-			"Shark Battlecry x2"] > 0:
+		if "~Battlecry" in self.index and self.Game.status[self.ID]["Battlecry x2"] + self.Game.status[self.ID]["Shark Battlecry x2"] > 0:
 			num = 2
 		for i in range(num):
 			target = self.whenEffective(target, "", choice, posinHand)
@@ -638,7 +545,6 @@ class Amulet(Dormant):
 			if type(trig).__name__ == "Trig_Countdown":
 				trig.counter = self.counter
 		if self.counter == 0:
-			PRINT(self.Game, f"{self.name}'s countdown is 0 and destroys itself")
 			self.Game.killMinion(None, self)
 
 	def canSelect(self, target):
@@ -684,41 +590,9 @@ class Amulet(Dormant):
 		Copy.newonthisSide, Copy.firstTimeonBoard = True, True  # firstTimeonBoard用于防止随从在休眠状态苏醒时再次休眠，一般用不上
 		Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False
 		Copy.activated = False
-		Copy.sequence, Copy.position = -1, -2
+		Copy.seq, Copy.pos = -1, -2
 		Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = 0, 0, 0
 		return Copy
-
-	def createCopy(self, game):
-		if self in game.copiedObjs:
-			return game.copiedObjs[self]
-		else:
-			Copy = type(self)(game, self.ID)
-			game.copiedObjs[self] = Copy
-			Copy.mana = self.mana
-			Copy.counter = self.counter
-			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
-			Copy.marks = copy.deepcopy(self.marks)
-			Copy.identity = copy.deepcopy(self.identity)
-			Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
-			if hasattr(self, "progress"): Copy.progress = self.progress
-			Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
-			Copy.newonthisSide, Copy.firstTimeonBoard = self.newonthisSide, self.firstTimeonBoard
-			Copy.sequence, Copy.position = self.sequence, self.position
-			Copy.options = [option.selfCopy(Copy) for option in self.options]
-			for key, value in self.triggers.items():
-				Copy.triggers[key] = [getattr(Copy, func.__qualname__.split(".")[1]) for func in value]
-			Copy.appearResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.appearResponse]
-			Copy.disappearResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.disappearResponse]
-			Copy.silenceResponse = [getattr(Copy, func.__qualname__.split(".")[1]) for func in self.silenceResponse]
-			for key, value in self.auras.items():
-				Copy.auras[key] = value.createCopy(game)
-			Copy.deathrattles = [trig.createCopy(game) for trig in self.deathrattles]
-			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
-			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
-			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
-			Copy.history = copy.deepcopy(self.history)
-			self.assistCreateCopy(Copy)
-			return Copy
 
 
 class SVSpell(Spell):
@@ -750,7 +624,7 @@ class SVSpell(Spell):
 			for obj in game.minionsandAmuletsonBoard(ID):
 				if self.targetCorrect(obj, choice) and (comment == "" or self.canSelect(obj)):
 					targets.append(obj)
-					indices.append(obj.position)
+					indices.append(obj.pos)
 					wheres.append(where)
 			where = "Hand%d" % ID
 			for i, card in enumerate(game.Hand_Deck.hands[ID]):

@@ -26,7 +26,7 @@ class SkydivingInstructor(Minion):
 				minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if card.mana == 1]
 				i = npchoice(minions) if minions and curGame.space(self.ID) > 0 else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.summonfromDeck(i, self.ID, self.position+1, self.ID)
+			if i > -1: curGame.summonfromDeck(i, self.ID, self.pos+1, self.ID)
 		return None
 		
 		
@@ -37,7 +37,7 @@ class Hailbringer(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon two 1/1 Ice Shards that Freeze"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		pos = (self.position, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
+		pos = (self.pos, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 		self.Game.summon([IceShard(self.Game, self.ID) for i in range(2)], pos, self.ID)
 		return None
 		
@@ -192,7 +192,7 @@ class SkyGenralKragg(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Counters.hasPlayedQuestThisGame[self.ID]:
-			self.Game.summon(Sharkbait(self.Game, self.ID), self.position+1, self.ID)
+			self.Game.summon(Sharkbait(self.Game, self.ID), self.pos+1, self.ID)
 		return None
 		
 class Sharkbait(Minion):
@@ -389,7 +389,7 @@ class RotnestDrake(Minion):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				minions = [minion.position for minion in curGame.minionsAlive(3-self.ID)]
+				minions = [minion.pos for minion in curGame.minionsAlive(3-self.ID)]
 				i = npchoice(minions) if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
@@ -427,7 +427,7 @@ class AnimatedAvalanche(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Counters.numElementalsPlayedLastTurn[self.ID] > 0:
 			Copy = self.selfCopy(self.ID) if self.onBoard else type(self)(self.Game, self.ID)
-			self.Game.summon(Copy, self.position+1, self.ID)
+			self.Game.summon(Copy, self.pos+1, self.ID)
 		return None
 		
 		
@@ -829,7 +829,7 @@ class GiveAttacktoaRandomFriendlyMinion(Deathrattle_Minion):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				minions = [minion.position for minion in curGame.minionsonBoard(self.entity.ID)]
+				minions = [minion.pos for minion in curGame.minionsonBoard(self.entity.ID)]
 				i = npchoice(minions) if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
@@ -1009,7 +1009,7 @@ class Trig_BombWrangler(TrigBoard):
 				else "Whenever this minion takes damage, summon a 1/1 Boom Bot"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(BoomBot(self.entity.Game, self.entity.ID), self.entity.position+1, self.entity.ID)
+		self.entity.Game.summon(BoomBot(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity.ID)
 		
 				
 Galakrond_Indices = {"Galakrond~Neutral~Minion~3~2~2~None~Skydiving Instructor~Battlecry": SkydivingInstructor,
