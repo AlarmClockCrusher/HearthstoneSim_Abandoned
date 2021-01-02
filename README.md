@@ -13,3 +13,4 @@ To play the game where you control both players' actions:
       
 
 Currently working on various optimization of the programs. If you have DIY ideas and would like to see them realized, or want to report bugs, please raise them in the Issues sections.
+There is currently a Shadowverse DIY project underway.
