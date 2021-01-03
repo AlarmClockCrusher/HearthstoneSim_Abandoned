@@ -1241,7 +1241,7 @@ class Minion(Card):
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.history = copy.deepcopy(self.history)
-			Copy.possibilities = copy.deepcoppy(self.possibilities)
+			Copy.possibilities = copy.deepcopy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 
@@ -1465,7 +1465,7 @@ class Spell(Card):
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.marks = copy.deepcopy(self.marks)
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			Copy.possibilities = copy.deepcoppy(self.possibilities)
+			Copy.possibilities = copy.deepcopy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -1628,7 +1628,7 @@ class Quest(Spell):
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			Copy.possibilities = copy.deepcoppy(self.possibilities)
+			Copy.possibilities = copy.deepcopy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -1787,7 +1787,7 @@ class HeroPower(Card):
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
-			Copy.possibilities = copy.deepcoppy(self.possibilities)
+			Copy.possibilities = copy.deepcopy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -2107,7 +2107,7 @@ class Hero(Card):
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			Copy.possibilities = copy.deepcoppy(self.possibilities)
+			Copy.possibilities = copy.deepcopy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -2323,7 +2323,7 @@ class Weapon(Card):
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			Copy.possibilities = copy.deepcoppy(self.possibilities)
+			Copy.possibilities = copy.deepcopy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 
