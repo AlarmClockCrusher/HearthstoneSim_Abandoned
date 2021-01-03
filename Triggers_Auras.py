@@ -220,23 +220,37 @@ class SecretTrigger(TrigBoard):
 	def blank_init(self, entity, signals):
 		self.entity, self.signals = entity, signals
 		self.inherent = True
+		self.dummy = False
 		
 	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
 		secret, game = self.entity, self.entity.Game
-		if game.status[secret.ID]["Secrets x2"] > 0:
+		if self.dummy: #如果一个事件可以触发奥秘的扳机，则需要在game中的可能奥秘中把这个奥秘的可能性去掉
+			try: game.possibleSecrets[secret.ID].remove(type(secret))
+			except: pass
+		else:
+			if game.status[secret.ID]["Secrets x2"] > 0:
+				if self.canTrigger(signal, ID, subject, target, number, comment):
+					if game.GUI: game.GUI.triggerBlink(secret)
+					self.effect(signal, ID, subject, target, number, comment)
 			if self.canTrigger(signal, ID, subject, target, number, comment):
 				if game.GUI: game.GUI.triggerBlink(secret)
 				self.effect(signal, ID, subject, target, number, comment)
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			if game.GUI: game.GUI.triggerBlink(secret)
-			self.effect(signal, ID, subject, target, number, comment)
-		game.sendSignal("SecretRevealed", game.turn, secret, None, 0, "")
-		self.disconnect()
-		game.Counters.numSecretsTriggeredThisGame[secret.ID] += 1
-		try: game.Secrets.secrets[secret.ID].remove(secret)
-		except: pass
+			game.sendSignal("SecretRevealed", game.turn, secret, None, 0, "")
+			self.disconnect()
+			game.Counters.numSecretsTriggeredThisGame[secret.ID] += 1
+			try: game.Secrets.secrets[secret.ID].remove(secret)
+			except: pass
 		
-		
+	def createCopy(self, game):
+		if self not in game.copiedObjs: #这个扳机没有被复制过
+			entityCopy = self.entity.createCopy(game)
+			trigCopy = self.selfCopy(entityCopy)
+			trigCopy.dummy = self.dummy
+			game.copiedObjs[self] = trigCopy
+			return trigCopy
+		else: #一个扳机被复制过了，则其携带者也被复制过了
+			return game.copiedObjs[self]
+			
 #这个扳机的目标：当随从在回合结束时有多个同类扳机，只会触发第一个，这个可以通过回合ID和自身ID是否符合来决定
 class Trig_Borrow(TrigBoard):
 	def __init__(self, entity):

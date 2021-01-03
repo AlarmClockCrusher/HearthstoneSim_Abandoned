@@ -37,7 +37,7 @@ class Evolve(HeroPower):
 			if self.Game.Counters.numEvolutionPoint[self.ID] > 0:
 				return True
 			else:
-				return any(if isinstance(minion, SVMinion) and minion.marks["Free Evolve"] > 0 and minion.status["Evolved"] < 1 \
+				return any(isinstance(minion, SVMinion) and minion.marks["Free Evolve"] > 0 and minion.status["Evolved"] < 1 \
 								for minion in self.Game.minionsAlive(self.ID))
 		return False
 
@@ -310,22 +310,22 @@ class SVMinion(Minion):
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		# 结算阶段
 			# 在随从战吼/连击开始触发前，检测是否有战吼/连击翻倍的情况。如果有且战吼可以进行，则强行执行战吼至两次循环结束。无论那个随从是死亡，在手牌中还是牌库
-			num = 1
-			if "~Battlecry" in self.index and self.Game.status[self.ID]["Battlecry x2"] + self.Game.status[self.ID][
-				"Shark Battlecry x2"] > 0:
-				num = 2
-			if "~Combo" in self.index and self.Game.status[self.ID]["Shark Battlecry x2"] > 0:
-				num = 2
-			# 不同的随从会根据目标和自己的位置和状态来决定effectwhenPlayed()产生体积效果。
-			# 可以变形的随从，如无面操纵者，会有自己的played（） 方法。 大王同理。
-			# 战吼随从自己不会进入牌库，因为目前没有亡语等效果可以把随从返回牌库。
-			# 发现随从如果在战吼触发前被对方控制，则不会引起发现，因为炉石没有对方回合外进行操作的可能。
-			# 结算战吼，连击，抉择
-			for i in range(num):
-				target = self.whenEffective(target, mana, choice, posinHand)
+		num = 1
+		if "~Battlecry" in self.index and self.Game.status[self.ID]["Battlecry x2"] + self.Game.status[self.ID][
+			"Shark Battlecry x2"] > 0:
+			num = 2
+		if "~Combo" in self.index and self.Game.status[self.ID]["Shark Battlecry x2"] > 0:
+			num = 2
+		# 不同的随从会根据目标和自己的位置和状态来决定effectwhenPlayed()产生体积效果。
+		# 可以变形的随从，如无面操纵者，会有自己的played（） 方法。 大王同理。
+		# 战吼随从自己不会进入牌库，因为目前没有亡语等效果可以把随从返回牌库。
+		# 发现随从如果在战吼触发前被对方控制，则不会引起发现，因为炉石没有对方回合外进行操作的可能。
+		# 结算战吼，连击，抉择
+		for i in range(num):
+			target = self.whenEffective(target, mana, choice, posinHand)
 
-			# 结算阶段结束，处理死亡情况，不处理胜负问题。
-			self.Game.gathertheDead()
+		# 结算阶段结束，处理死亡情况，不处理胜负问题。
+		self.Game.gathertheDead()
 		return target
 
 	def createCopy(self, game):

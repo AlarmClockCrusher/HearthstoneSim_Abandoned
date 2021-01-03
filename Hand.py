@@ -439,7 +439,6 @@ class Hand_Deck:
 			game.copiedObjs[self] = Copy
 			Copy.initialDecks = self.initialDecks
 			Copy.hands, Copy.decks = {1: [], 2: []}, {1: [], 2: []}
-			Copy.knownDecks = {1: {"to self": []}, 2: {"to self": []}}
 			Copy.noCards, Copy.handUpperLimit = copy.deepcopy(self.noCards), copy.deepcopy(self.handUpperLimit)
 			Copy.decks = {1: [card.createCopy(game) for card in self.decks[1]],
 						  2: [card.createCopy(game) for card in self.decks[2]]}

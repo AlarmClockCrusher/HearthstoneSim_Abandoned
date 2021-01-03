@@ -471,7 +471,7 @@ class Card:
 			if self.canAttackTarget(enemyHero):
 				targets.append(enemyHero)
 				indices.append(side)
-				wheres.append("Hero%d"side)
+				wheres.append("Hero%d"%side)
 			return targets, indices, wheres
 		else: return [], [], []
 		
@@ -603,7 +603,7 @@ class Dormant(Card):
 			text += "Dormant's trigsBoard:\n" if not CHN else "场上扳机：\n"
 			for trig in self.trigsBoard: text += "  %s\n"%wrapTxt(trig.text(CHN), CHN)
 		if self.auras:
-			text += "Minion's aura:\n" if not CHN else "光环：\n"
+			text += "Dormant's aura:\n" if not CHN else "光环：\n"
 			for value in self.auras.values(): text += "  {}\n".format(type(value))
 			
 		return text
@@ -701,7 +701,8 @@ class Minion(Card):
 											  "Deathrattles": [], "Triggers": []
 											  }
 						}
-
+		self.possibilities = []
+		
 	def applicable(self, target):
 		return target != self
 
@@ -1240,6 +1241,7 @@ class Minion(Card):
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.history = copy.deepcopy(self.history)
+			Copy.possibilities = copy.deepcoppy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 
@@ -1275,6 +1277,7 @@ class Spell(Card):
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
 		self.marks = {"Cost Health Instead": 0,}
 		self.effectViable, self.evanescent = False, False
+		self.possibilities = []
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
@@ -1312,6 +1315,7 @@ class Spell(Card):
 	#目标随机，也不触发目标扳机。
 	def cast(self, target=None, comment="", preferedTarget=None):
 		curGame = self.Game
+		GUI = curGame.GUI
 		#由其他卡牌释放的法术结算相对玩家打出要简单，只需要结算过载，双生法术， 重复释放和使用后的扳机步骤即可。
 		#因为这个法术是由其他序列产生的，所有结束时不会进行死亡处理。
 		repeatTimes = 2 if curGame.status[self.ID]["Spells x2"] > 0 else 1
@@ -1338,12 +1342,11 @@ class Spell(Card):
 				if target: i, where = target.pos, target.type+str(target.ID)
 				else: i, where = 0, ''
 				curGame.fixedGuides.append((i, where, choice))
-		if curGame.GUI:
-			curGame.GUI.displayCard(self)
-			curGame.GUI.showOffBoardTrig(self)
-			curGame.GUI.subject = self
-			curGame.GUI.target = target
-			curGame.GUI.wait(750)
+		if GUI:
+			GUI.displayCard(self)
+			GUI.showOffBoardTrig(self)
+			GUI.subject, GUI.target = self, target
+			GUI.wait(750)
 		#在法术要施放两次的情况下，第二次的目标仍然是第一次时随机决定的
 		for i in range(repeatTimes):
 			if self.overload > 0:
@@ -1352,7 +1355,7 @@ class Spell(Card):
 				curGame.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, "type")
 			#指向性法术如果没有目标也可以释放，只是可能没有效果而已
 			target = self.whenEffective(target, "byOthers", choice, posinHand=-2)
-		if curGame.GUI: curGame.GUI.eraseOffBoardTrig(self.ID)
+		if GUI: GUI.eraseOffBoardTrig(self.ID)
 		#使用后步骤，但是此时的扳机只会触发星界密使和风潮的状态移除。这个信号不是“使用一张xx牌之后”的扳机。
 		curGame.sendSignal("SpellBeenCast", self.ID, self, target, 0, "byOthers", choice=0)
 		
@@ -1462,6 +1465,7 @@ class Spell(Card):
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.marks = copy.deepcopy(self.marks)
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
+			Copy.possibilities = copy.deepcoppy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -1472,7 +1476,6 @@ class Secret(Spell):
 	requireTarget, mana = False, 1
 	index = "Neutral~1~Spell~Vanilla~~Secret"
 	description = ""
-
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 
@@ -1494,7 +1497,8 @@ class Secret(Spell):
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
 		self.marks = {"Cost Health Instead": 0, }
 		self.effectViable, self.evanescent = False, False
-
+		self.possibilities = []
+		
 	def available(self):
 		return self.Game.Secrets.areaNotFull(self.ID) and not self.Game.Secrets.sameSecretExists(self, self.ID)
 
@@ -1507,7 +1511,6 @@ class Secret(Spell):
 			self.Game.GUI.showOffBoardTrig(self)
 			self.Game.GUI.wait(500)
 		self.whenEffective(None, "byOthers", choice=0, posinHand=-2)
-		# 使用后步骤，但是此时的扳机只会触发星界密使和风潮的状态移除，因为其他的使用后步骤都要求是玩家亲自打出。
 		if self.Game.GUI: self.Game.GUI.eraseOffBoardTrig(self.ID)
 		self.Game.sendSignal("SpellBeenCast", self.ID, self, None, 0, "byOthers")
 		
@@ -1525,9 +1528,11 @@ class Secret(Spell):
 		self.Game.sendSignal("SpellBeenCast", self.ID, self, None, 0, "")
 
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if self.Game.Secrets.areaNotFull(self.ID) and not self.Game.Secrets.sameSecretExists(self, self.ID):
-			self.Game.Secrets.secrets[self.ID].append(self)
+		secretHD = self.Game.Secrets
+		if secretHD.areaNotFull(self.ID) and not secretHD.sameSecretExists(self, self.ID):
+			secretHD.secrets[self.ID].append(self)
 			for trig in self.trigsBoard: trig.connect()
+			secretHD.initSecretHint(self) #Let the game know what possible secrets each player has
 		return None
 
 
@@ -1623,6 +1628,7 @@ class Quest(Spell):
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
+			Copy.possibilities = copy.deepcoppy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -1651,6 +1657,7 @@ class HeroPower(Card):
 		self.keyWords = {"Lifesteal": 0, "Poisonous": 0, }
 		self.marks = {"Cost Health Instead": 0,}
 		self.trigsBoard = []
+		self.possibilities = []
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
@@ -1780,6 +1787,7 @@ class HeroPower(Card):
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
+			Copy.possibilities = copy.deepcoppy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -2099,6 +2107,7 @@ class Hero(Card):
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
+			Copy.possibilities = copy.deepcoppy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -2139,6 +2148,7 @@ class Weapon(Card):
 		self.options = []  # For Choose One weapon, non-existent at this point.
 		self.auras = {}
 		self.effectViable, self.evanescent = False, False
+		self.possibilities = []
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
@@ -2313,6 +2323,7 @@ class Weapon(Card):
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
+			Copy.possibilities = copy.deepcoppy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 
