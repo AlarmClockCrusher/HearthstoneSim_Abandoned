@@ -18,10 +18,6 @@ def extractfrom(target, listObj):
         return None
 
 
-def fixedList(listObject):
-    return listObject[0:len(listObject)]
-
-
 def PRINT(game, string, *args):
     if game.GUI:
         if not game.mode: game.GUI.printInfo(string)
@@ -86,7 +82,7 @@ class Trig_SacredPlea(TrigBoard):
         self.blank_init(entity, ["TurnStarts"])
         self.counter = 3
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -116,7 +112,7 @@ class SellswordLucius(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 5
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def returnTrue(self, choice=0):  # 只有在还没有选择过目标的情况下才能继续选择
@@ -171,7 +167,7 @@ class VesperWitchhunter(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sea green" if self.willAccelerate() else False
 
     def returnTrue(self, choice=0):
@@ -218,7 +214,7 @@ class Trig_RuinwebSpider_Crystallize(TrigBoard):
         self.blank_init(entity, ["TurnStarts", "AmuletAppears"])
         self.counter = 10
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         if signal == "TurnStarts":
             return self.entity.onBoard and ID == self.entity.ID
         else:
@@ -263,7 +259,7 @@ class RuinwebSpider(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sea green" if self.willCrystallize() else False
 
     def enemyMinionsCantAttackThisTurn(self):
@@ -279,7 +275,7 @@ class Trig_RuinwebSpider(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionBeenPlayed"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID != self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -295,7 +291,7 @@ class Trig_CantAttack4aTurn(TrigBoard):
         self.blank_init(entity, ["TurnEnds"])
         self.temp = True
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):

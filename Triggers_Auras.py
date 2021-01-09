@@ -1,6 +1,3 @@
-def fixedList(listObj):
-	return listObj[0:len(listObj)]
-	
 #对于随从的场上扳机，其被复制的时候所有暂时和非暂时的扳机都会被复制。
 #但是随从返回其额外效果的时候，只有其非暂时场上扳机才会被返回（永恒祭司），暂时扳机需要舍弃。
 class TrigBoard:
@@ -22,13 +19,13 @@ class TrigBoard:
 			try: game.trigsBoard[ID][sig].remove(self)
 			except: pass
 			
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return True
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
 			if self.entity.Game.GUI:
-				self.entity.Game.GUI.triggerBlink(self.entity)
+				self.entity.Game.GUI.trigBlink(self.entity)
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -48,7 +45,7 @@ class TrigBoard:
 		return type(self)(recipient)
 		
 	#这个扳机会在复制随从列表，手牌和牌库列表之前调用，扳机所涉及的随从，武器等会被复制
-	#游戏会检查triggersonBoard中的每个(trig, signal),产生一个复制(trigCopy, signal)，并注册
+	#游戏会检查trigsBoard中的每个(trig, signal),产生一个复制(trigCopy, signal)，并注册
 	#这里负责处理产生一个trigCopy
 	def createCopy(self, game):
 		if self not in game.copiedObjs: #这个扳机没有被复制过
@@ -78,12 +75,12 @@ class TrigHand:
 			try: self.entity.Game.trigsHand[self.entity.ID][sig].remove(self)
 			except: pass
 			
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			if self.entity.Game.GUI: self.entity.Game.GUI.triggerBlink(self.entity)
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
+			if self.entity.Game.GUI: self.entity.Game.GUI.trigBlink(self.entity)
 			self.effect(signal, ID, subject, target, number, comment)
 			
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return True
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -128,11 +125,11 @@ class TrigDeck:
 			try: self.entity.Game.trigsDeck[self.entity.ID][sig].remove(self)
 			except: pass
 			
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
 			self.effect(signal, ID, subject, target, number, comment)
 			
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return True
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -170,21 +167,21 @@ class Deathrattle_Minion(TrigBoard):
 		self.signals = ["MinionDies", "TrigDeathrattle"]
 		self.inherent = True
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		minion, game = self.entity, self.entity.Game
 		if game.status[minion.ID]["Deathrattle x2"] > 0:
-			if self.canTrigger(signal, ID, subject, target, number, comment):
-				if game.GUI: game.GUI.triggerBlink(minion, color="grey40")
+			if self.canTrig(signal, ID, subject, target, number, comment):
+				if game.GUI: game.GUI.trigBlink(minion, color="grey40")
 				self.effect(signal, ID, subject, target, number, comment)
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			if game: game.GUI.triggerBlink(minion, color="grey40")
+		if self.canTrig(signal, ID, subject, target, number, comment):
+			if game: game.GUI.trigBlink(minion, color="grey40")
 			self.effect(signal, ID, subject, target, number, comment)
 		#随从通过死亡触发的亡语扳机需要在亡语触发之后注销。同样的，如果随从在亡语触发之后不在随从列表中了，如将随从洗回牌库，则同样要注销亡语
 		#但是如果随从在由其他效果在场上触发的扳机，则这个亡语不会注销
 		if signal[0] == 'M' or minion not in game.minions[minion.ID]:
 			self.disconnect()
 			
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity
 		
 		
@@ -197,49 +194,83 @@ class Deathrattle_Weapon(TrigBoard):
 		self.signals = ["WeaponDestroyed"]
 		self.inherent = True
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		weapon, game = self.entity, self.entity.Game
 		if game.status[weapon.ID]["Weapon Deathrattle x2"] > 0:
-			if self.canTrigger(signal, ID, subject, target, number, comment):
-				if game.GUI: game.GUI.triggerBlink(weapon, color="grey40")
+			if self.canTrig(signal, ID, subject, target, number, comment):
+				if game.GUI: game.GUI.trigBlink(weapon, color="grey40")
 				self.effect(signal, ID, subject, target, number, comment)
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			if game.GUI: game.GUI.triggerBlink(weapon, color="grey40")
+		if self.canTrig(signal, ID, subject, target, number, comment):
+			if game.GUI: game.GUI.trigBlink(weapon, color="grey40")
 			self.effect(signal, ID, subject, target, number, comment)
 		#目前没有触发武器亡语的效果，所以武器的亡语触发之后可以很安全地直接将其删除。
 		self.disconnect()
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity
 		
 		
 class SecretTrigger(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionBeenPlayed"])
+		self.blank_init(entity, [])
 		
 	def blank_init(self, entity, signals):
-		self.entity, self.signals = entity, signals
-		self.inherent = True
+		self.entity, self.signals, self.inherent = entity, signals, True
 		self.dummy = False
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		secret, game = self.entity, self.entity.Game
-		if self.dummy: #如果一个事件可以触发奥秘的扳机，则需要在game中的可能奥秘中把这个奥秘的可能性去掉
-			try: game.possibleSecrets[secret.ID].remove(type(secret))
+	def connect(self):
+		secret = self.entity
+		game, ID = secret.Game, secret.ID
+		for sig in self.signals:
+			try: game.trigsBoard[ID][sig].append(self)
+			except: game.trigsBoard[ID][sig] = [self]
+		#if self.dummy: game.trigAuras[ID].append(self)
+		#elif secret.possibilities:
+		#	secret.possibilities = list(set(type for type in secret.possibilities if type.description.startswith("Secret:")))
+		#else: #如果没有已标明的可能性，则从对方剩余资源中进行选择
+		#	secret.possibilities = list(set(type for type in game.Hand_Deck.knownCards[ID] if type.Class == secret.Class and type.description.startswith("Secret:")))
+	#目前所有奥秘离开奥秘区的时候都标明其是什么奥秘，所以可以用于排除其他奥秘的可能性
+	def disconnect(self):
+		game, ID = self.entity.Game, self.entity.ID
+		game.Secrets.ruleOut(type(self.entity), ID) #在玩家的奥秘区中的所有奥秘的可能性中排除这个本体的可能
+		for sig in self.signals:
+			try: game.trigsBoard[ID][sig].remove(self)
 			except: pass
-		else:
+		if self.dummy: game.trigAuras[ID].remove(self)
+		
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+		return True
+		
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		secret, game = self.entity, self.entity.Game
+		self.disconnect() #Handles removing dummy, too.
+		try: game.Secrets.secrets[secret.ID].remove(secret)
+		except: pass
+		if not self.dummy:
 			if game.status[secret.ID]["Secrets x2"] > 0:
-				if self.canTrigger(signal, ID, subject, target, number, comment):
-					if game.GUI: game.GUI.triggerBlink(secret)
+				if self.canTrig(signal, ID, subject, target, number, comment):
+					if game.GUI: game.GUI.trigBlink(secret)
 					self.effect(signal, ID, subject, target, number, comment)
-			if self.canTrigger(signal, ID, subject, target, number, comment):
-				if game.GUI: game.GUI.triggerBlink(secret)
+			if self.canTrig(signal, ID, subject, target, number, comment):
+				if game.GUI: game.GUI.trigBlink(secret)
 				self.effect(signal, ID, subject, target, number, comment)
 			game.sendSignal("SecretRevealed", game.turn, secret, None, 0, "")
-			self.disconnect()
 			game.Counters.numSecretsTriggeredThisGame[secret.ID] += 1
-			try: game.Secrets.secrets[secret.ID].remove(secret)
-			except: pass
+		
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		pass
+		
+	def text(self, CHN):
+		return ''
+		
+	def rngPool(self, identifier):
+		pool = self.entity.Game.RNGPools[identifier]
+		try: pool.remove(type(self.entity))
+		except: pass
+		return pool
+		
+	def selfCopy(self, recipient):
+		return type(self)(recipient)
 		
 	def createCopy(self, game):
 		if self not in game.copiedObjs: #这个扳机没有被复制过
@@ -257,7 +288,7 @@ class Trig_Borrow(TrigBoard):
 		self.blank_init(entity, ["TurnEnds"])
 		self.inherent = True
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#只有当前要结束的回合的ID与自身ID相同的时候可以触发，于是即使有多个同类扳机也只有一个会触发。
 		return self.entity.onBoard and ID == self.entity.ID
 		
@@ -276,7 +307,7 @@ class Trig_Echo(TrigHand):
 		self.inherent = False
 		self.makesCardEvanescent = True
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand #Echo disappearing should trigger at the end of any turn
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -288,7 +319,7 @@ class Trig_Corrupt(TrigHand):
 		self.blank_init(entity, ["ManaPaid"])
 		self.corruptedType = corruptedType
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and ID == self.entity.ID and number > self.entity.mana and subject.type != "Power"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -341,7 +372,7 @@ class Trig_DieatEndofTurn(TrigBoard):
 		self.blank_init(entity, ["TurnEnds"])
 		self.inherent = False
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard #Even if the current turn is not the minion's owner's turn
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -358,9 +389,9 @@ class QuestTrigger(TrigBoard):
 		self.counter = 0
 		self.inherent = True
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
-			if self.entity.Game.GUI: self.entity.Game.GUI.triggerBlink(self.entity)
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
+			if self.entity.Game.GUI: self.entity.Game.GUI.trigBlink(self.entity)
 			self.effect(signal, ID, subject, target, number, comment)
 			
 			
@@ -373,8 +404,8 @@ class HasAura_toMinion:
 	def applicable(self, target):
 		return self.entity.applicable(target)
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -389,7 +420,7 @@ class HasAura_toMinion:
 			except: self.entity.Game.trigsBoard[self.entity.ID][sig] = [self]
 			
 	def auraDisappears(self):
-		for minion, receiver in fixedList(self.auraAffected):
+		for minion, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 		self.auraAffected = []
 		for sig in self.signals:
@@ -480,7 +511,7 @@ class StatAura_Others(HasAura_toMinion):
 		self.signals, self.auraAffected = ["MinionAppears"], []
 		
 	#All minions appearing on the same side will be subject to the buffAura.
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and self.applicable(subject)
 		
 	def applies(self, subject):
@@ -499,12 +530,12 @@ class StatAura_Adjacent(HasAura_toMinion):
 		self.attack, self.health = attack, health
 		self.signals, self.auraAffected = ["MinionAppears", "MinionDisappears"], []
 	#Minions appearing/disappearing will let the minion reevaluate the aura.
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		#重置对于两侧随从的光环
-		for minion, receiver in fixedList(self.auraAffected):
+		for minion, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 		#Find adjacent minions to self.entity, then try to register them.
 		for minion in self.entity.Game.neighbors2(self.entity)[0]:
@@ -553,18 +584,18 @@ class StatAura_Enrage(HasAura_toMinion):
 		for sig in self.signals:
 			try: self.entity.Game.trigsBoard[self.entity.ID][sig].remove(self)
 			except: pass
-		for minion, receiver in fixedList(self.auraAffected):
+		for minion, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 		self.auraAffected = []
 		
 	def applies(self, target):
 		Stat_Receiver(target, self, self.attack, 0).effectStart()
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity and target.onBoard
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -574,7 +605,7 @@ class StatAura_Enrage(HasAura_toMinion):
 			self.applies(minion)
 		elif minion.health >= minion.health_max and self.activated:
 			self.activated = False
-			for minion, receiver in fixedList(self.auraAffected):
+			for minion, receiver in self.auraAffected[:]:
 				receiver.effectClear()
 				
 	def selfCopy(self, recipient): #The recipientMinion is the entity that deals the Aura.
@@ -627,7 +658,7 @@ class EffectAura(HasAura_toMinion):
 		self.keyWord = keyWord
 		self.signals, self.auraAffected = ["MinionAppears"], [] #List of (receiver, receiver)
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and self.applicable(subject)
 		
 	def applies(self, subject):
@@ -701,11 +732,11 @@ class ManaAura:
 		
 	#只要是有满足条件的卡牌进入手牌，就会触发这个光环。target是承载这个牌的列表。
 	#applicable不需要询问一张牌是否在手牌中。光环只会处理在手牌中的卡牌
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and self.manaAuraApplicable(target[0])
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -729,7 +760,7 @@ class ManaAura:
 	#When the aura object is no longer referenced, it vanishes automatically.
 	def auraDisappears(self):
 		minion = self.entity
-		for card, manaMod in fixedList(self.auraAffected):
+		for card, manaMod in self.auraAffected[:]:
 			manaMod.getsRemoved()
 			
 		self.auraAffected = []
@@ -774,13 +805,13 @@ class TempManaEffect:
 	def applicable(self, target):
 		return True
 	#signal有"CardEntersHand"和"ManaPaid",只要它们满足applicable就可以触发。
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.applicable(target[0] if signal[0] == "C" else subject)
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.applicable(target[0] if signal[0] == "C" else subject):
 			if signal[0] == "C": self.applies(target[0])
-			else: self.auraDisappears() #"ManaPaid" check is done in the canTrigger. Here it always turns off the disposable aura
+			else: self.auraDisappears() #"ManaPaid" check is done in the canTrig. Here it always turns off the disposable aura
 			
 	def applies(self, subject):
 		if self.applicable(subject):
@@ -800,7 +831,7 @@ class TempManaEffect:
 		
 	def auraDisappears(self):
 		game = self.Game
-		for minion, manaMod in fixedList(self.auraAffected):
+		for minion, manaMod in self.auraAffected[:]:
 			manaMod.getsRemoved()
 		self.auraAffected = []
 		try: game.Manas.CardAuras.remove(self)
@@ -836,11 +867,11 @@ class ManaAura_1UsageEachTurn: #For Pint-sized Summoner, Kalecgos, etc
 		self.aura = None
 	#只要是有满足条件的卡牌进入手牌，就会触发这个光环。target是承载这个牌的列表。
 	#applicable不需要询问一张牌是否在手牌中。光环只会处理在手牌中的卡牌
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
 			self.aura.auraAppears()
 			
 	def auraAppears(self):
@@ -886,10 +917,10 @@ class TempManaEffect_Power:
 	def applicable(self, target):
 		return True
 	#signal有"CardEntersHand"和"ManaPaid",只要它们满足applicable就可以触发。
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.applicable(subject) #Hero Power的出现是不传递holder而是直接传递subject
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.applicable(subject):
 			if signal[0] == "H": self.applies(subject)
 			elif subject == self.Game.powers[self.ID]: #Mana Paid consumes the aura
@@ -911,7 +942,7 @@ class TempManaEffect_Power:
 		self.Game.Manas.calcMana_Powers()
 		
 	def auraDisappears(self):
-		for minion, manaMod in fixedList(self.auraAffected):
+		for minion, manaMod in self.auraAffected[:]:
 			manaMod.getsRemoved()
 		self.auraAffected = []
 		try: self.Game.Manas.PowerAuras.remove(self)

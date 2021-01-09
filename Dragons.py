@@ -54,7 +54,7 @@ def invokeGalakrond(Game, ID):
 			Game.heroes[ID].gainAttack(3)
 	#invocation counter increases and upgrade the galakronds
 	Game.Counters.invocationCounts[ID] += 1
-	for card in fixedList(Game.Hand_Deck.hands[ID]):
+	for card in Game.Hand_Deck.hands[ID][:]:
 		if "Galakrond, " in card.name:
 			upgrade = card.upgradedGalakrond
 			isPrimaryGalakrond = (card == primaryGalakrond)
@@ -64,7 +64,7 @@ def invokeGalakrond(Game, ID):
 					Game.Hand_Deck.replaceCardinHand(card, upgrade(Game, ID))
 					if isPrimaryGalakrond:
 						Game.Counters.primaryGalakronds[ID] = upgrade
-	for card in fixedList(Game.Hand_Deck.decks[ID]):
+	for card in Game.Hand_Deck.decks[ID][:]:
 		if "Galakrond, " in card.name:
 			upgrade = card.upgradedGalakrond
 			isPrimaryGalakrond = (card == primaryGalakrond)
@@ -158,7 +158,7 @@ class Trig_DepthCharge(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -182,7 +182,7 @@ class Trig_HotAirBalloon(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -207,7 +207,7 @@ class DragonBreeder(Minion):
 	mana, attack, health = 2, 2, 3
 	index = "Dragons~Neutral~Minion~2~2~3~None~Dragon Breeder~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Choose a friendly Dragon. Add a copy of it to your hand"
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = False
 		for minion in self.Game.minionsonBoard(self.ID):
 			if "Dragon" in minion.race:
@@ -283,7 +283,7 @@ class Trig_ParachuteBrigand(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and subject.ID == self.entity.ID and "Pirate" in subject.race
 		
 	def text(self, CHN):
@@ -348,7 +348,7 @@ class Trig_Transmogrifier(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["CardDrawn"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and target[0].ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -430,12 +430,12 @@ class BuffAura_DreadRaven(HasAura_toMinion):
 		self.entity = entity
 		self.signals, self.auraAffected = ["MinionAppears", "MinionDisappears"], []
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		obj = subject if signal == "MinionAppears" else target
 		return self.entity.onBoard and obj.ID == self.entity.ID and obj.name == "Dread Raven" and obj != self.entity
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		for minion, receiver in fixedList(self.auraAffected):
+		for minion, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 			
 		self.applies(self.entity)
@@ -476,7 +476,7 @@ class GoboglideTech(Minion):
 	mana, attack, health = 3, 3, 3
 	index = "Dragons~Neutral~Minion~3~3~3~None~Goboglide Tech~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Mech, gain +1/+1 and Rush"
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = False
 		for minion in self.Game.minionsonBoard(self.ID):
 			if "Mech" in minion.race:
@@ -521,7 +521,7 @@ class Scalerider(Minion):
 	def returnTrue(self, choice=0):
 		return self.Game.Hand_Deck.holdingDragon(self.ID)
 		
-	def effectCanTrigger(self): #Friendly characters are always selectable.
+	def effCanTrig(self): #Friendly characters are always selectable.
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -571,7 +571,7 @@ class DragonmawPoacher(Minion):
 	index = "Dragons~Neutral~Minion~4~4~4~None~Dragonmaw Poacher~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your opponent controls a Dragon, gain +4/+4 and Rush"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = False
 		for minion in self.Game.minionsonBoard(3-self.ID):
 			if "Dragon" in minion.race:
@@ -625,7 +625,7 @@ class HoardPillager(Minion):
 	mana, attack, health = 4, 4, 2
 	index = "Dragons~Neutral~Minion~4~4~2~Pirate~Hoard Pillager~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Equip one of your destroyed weapons"
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Counters.weaponsDestroyedThisGame[self.ID] != []
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -674,12 +674,12 @@ class BuffAura_WingCommander(HasAura_toMinion):
 		self.entity = entity
 		self.signals, self.auraAffected = ["CardLeavesHand", "CardEntersHand"], []
 
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		card = target[0] if signal == "CardEntersHand" else target
 		return self.entity.onBoard and card.ID == self.entity.ID and card.type == "Minion" and "Dragon" in card.race
 
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		for minion, receiver in fixedList(self.auraAffected):
+		for minion, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 
 		self.applies(self.entity)
@@ -798,11 +798,11 @@ class HatchintotheChosenDragon(Deathrattle_Minion):
 		else:
 			return "空蛋！" if CHN else "Empty egg!"
 	#变形亡语只能触发一次。
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
 			if self.dragonInside:
 				if self.entity.Game.GUI:
-					self.entity.Game.GUI.triggerBlink(self.entity)
+					self.entity.Game.GUI.trigBlink(self.entity)
 				self.entity.Game.transform(self.entity, self.dragonInside(self.entity.Game, self.entity.ID))
 				
 	def selfCopy(self, recipient):
@@ -861,7 +861,7 @@ class KoboldStickyfinger(Minion):
 	index = "Dragons~Neutral~Minion~5~4~4~Pirate~Kobold Stickyfinger~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Steal your opponent's weapon"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.availableWeapon(3-self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -907,7 +907,7 @@ class Skyfin(Minion):
 	def generatePool(cls, Game):
 		return "Murlocs to Summon", list(Game.MinionswithRace["Murloc"].values())
 		
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -978,7 +978,7 @@ class KronxDragonhoof(Minion):
 	index = "Dragons~Neutral~Minion~6~6~6~None~Kronx Dragonhoof~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Draw Galakrond. If you're alread Galakrond, unleash a Devastation"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable =  "Galakrond" in self.Game.heroes[self.ID].name
 	#迦拉克隆有主迦拉克隆机制，祈求时只有主迦拉克隆会响应
 	#主迦拉克隆会尽量与玩家职业匹配，如果不能匹配，则系统检测到的第一张迦拉克隆会被触发技能
@@ -1091,7 +1091,7 @@ class Trig_Shuma(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -1140,7 +1140,7 @@ class DragonqueenAlexstrasza(Minion):
 		dragons.remove(DragonqueenAlexstrasza)
 		return "Dragons except Dragonqueen Alexstrasza", dragons
 		
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.noDuplicatesinDeck(self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1216,7 +1216,7 @@ class Trig_SecuretheDeck(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedHero", "HeroAttackedMinion"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity.Game.heroes[self.entity.ID]
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1241,7 +1241,7 @@ class Trig_StrengthinNumbers(QuestTrigger):
 	def __init__(self, entity): #假设人多势众是使用后扳机
 		self.blank_init(entity, ["MinionBeenPlayed"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject.ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1337,7 +1337,7 @@ class BreathofDreams(Spell):
 	requireTarget, mana = False, 2
 	index = "Dragons~Druid~Spell~2~Breath of Dreams"
 	description = "Draw a card. If you're holding a Dragon, gain an empty Mana Crystal"
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1392,7 +1392,7 @@ class Trig_Aeroponics(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAppears", "MinionDisappears"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and ((signal[6] == 'A' and subject.name == "Treant") \
 										or (signal[6] == 'D' and target.name == "Treant"))
 										
@@ -1458,11 +1458,11 @@ class GameTrigAura_BuffYourTreants(HasAura_toMinion):
 		self.buff = 1
 		
 	#All minions appearing on the same side will be subject to the buffAura.
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject.ID == self.ID and subject.name == "Treant"
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
-		if self.canTrigger(signal, ID, subject, target, number, comment):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
 			Stat_Receiver(subject, self, self.buff, self.buff).effectStart()
 			
 	def text(self, CHN):
@@ -1484,7 +1484,7 @@ class GameTrigAura_BuffYourTreants(HasAura_toMinion):
 	#可以通过HasAura_toMinion的createCopy方法复制
 	def improve(self):
 		self.buff += 1
-		for minion, receiver in fixedList(self.auraAffected):
+		for minion, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 		self.auraAffected = []
 		for minion in self.Game.minionsonBoard(self.ID):
@@ -1553,7 +1553,7 @@ class Trig_CleartheWay(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenSummoned"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#不知道召唤随从因为突袭光环而具有突袭是否可以算作任务进度
 		return subject.ID == self.entity.ID and subject.keyWords["Rush"] > 0
 		
@@ -1578,6 +1578,7 @@ class DwarvenSharpshooter(Minion):
 	mana, attack, health = 1, 1, 3
 	index = "Dragons~Hunter~Minion~1~1~3~None~Dwarven Sharpshooter"
 	requireTarget, keyWord, description = False, "", "Your Hero Power can target minions"
+	name_CN = "矮人神射手"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.auras["Your Hero Power can target minions"] = GameRuleAura_DwarvenSharpshooter(self)
@@ -1603,7 +1604,7 @@ class Trig_ToxicReinforcement(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroUsedAbility"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1636,7 +1637,7 @@ class CorrosiveBreath(Spell):
 	requireTarget, mana = True, 2
 	index = "Dragons~Hunter~Spell~2~Corrosive Breath"
 	description = "Deal 3 damage to a minion. If you're holding a Dragon, it also hits the enemy hero"
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def available(self):
@@ -1667,7 +1668,7 @@ class Trig_PhaseStalker(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroUsedAbility"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -1756,7 +1757,7 @@ class Trig_Dragonbane(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroUsedAbility"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -1803,7 +1804,7 @@ class ArcaneBreath(Spell):
 		return [Class+" Spells" for Class in Game.Classes], \
 				[[value for key, value in Game.ClassCards[Class].items() if "~Spell~" in key] for Class in Game.Classes]
 				
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def targetExists(self, choice=0):
@@ -1856,7 +1857,7 @@ class Trig_ElementalAllies(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed", "TurnEnds"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		if signal == "TurnEnds": return self.entity.ID == ID
 		else: return subject.ID == self.entity.ID and "Elemental" in subject.race and self.counter < 2
 		
@@ -1895,7 +1896,7 @@ class Trig_LearnDraconic(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed"]) #假设是使用后扳机
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject.ID == self.entity.ID and self.entity != subject
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1956,7 +1957,7 @@ class Trig_Chenvaala(TrigBoard):
 			except: pass
 		self.counter = 0
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return signal[0] == 'T' or (self.entity.onBoard and subject.ID == self.entity.ID)
 		
 	def text(self, CHN):
@@ -2185,7 +2186,7 @@ class MalygosAspectofMagic(Minion):
 	index = "Dragons~Mage~Minion~5~2~8~Dragon~Malygos, Aspect of Magic~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, Discover an upgraded Mage spell"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID, self)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2288,7 +2289,7 @@ class Dragoncaster(Minion):
 	index = "Dragons~Mage~Minion~7~4~4~None~Dragoncaster~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, your next spell this turn costs (0)"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2328,8 +2329,8 @@ class Trig_ManaGiant(TrigHand):
 		#假设这个费用改变扳机在“当你使用一张法术之后”。不需要预检测
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.inHand and subject.ID == self.entity.ID and not subject.inOrigDeck
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.inHand and subject.ID == self.entity.ID and subject.creator
 		
 	def text(self, CHN):
 		return "每当你使用一张你的套牌之外的卡牌，重新计算费用" if CHN \
@@ -2353,7 +2354,7 @@ class Trig_RighteousCause(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenSummoned"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject.ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2371,7 +2372,7 @@ class SandBreath(Spell):
 	requireTarget, mana = True, 1
 	index = "Dragons~Paladin~Spell~1~Sand Breath"
 	description = "Give a minion +1/+2. Give it Divine Shield if you're holding a Dragon"
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def available(self):
@@ -2401,7 +2402,7 @@ class Trig_Sanctuary(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#在我方回合开始时会触发
 		return ID == self.entity.ID and self.entity.Game.Counters.dmgonHero_inOppoTurn[self.entity.ID] == 0
 		
@@ -2515,7 +2516,7 @@ class LightforgedZealot(Minion):
 	index = "Dragons~Paladin~Minion~4~4~2~None~Lightforged Zealot~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no Neutral cards, equip a 4/2 Truesilver Champion"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = True
 		for card in self.Game.Hand_Deck.decks[self.ID]:
 			if card.Class == "Neutral":
@@ -2568,7 +2569,7 @@ class LightforgedCrusader(Minion):
 	def generatePool(cls, Game):
 		return "Paladin Cards", list(Game.ClassCards["Paladin"].values())
 		
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = True
 		for card in self.Game.Hand_Deck.decks[self.ID]:
 			if card.Class == "Neutral":
@@ -2684,7 +2685,7 @@ class BreathoftheInfinite(Spell):
 	requireTarget, mana = False, 3
 	index = "Dragons~Priest~Spell~3~Breath of the Infinite"
 	description = "Deal 2 damage to all minions. If you're holding a Dragon, only damage enemies"
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def text(self, CHN):
@@ -2729,7 +2730,7 @@ class SummonCopyofaChosenMinion(Deathrattle_Minion):
 		self.blank_init(entity)
 		self.chosenMinionType = None
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity and self.chosenMinionType
 		
 	def text(self, CHN):
@@ -2754,7 +2755,7 @@ class FateWeaver(Minion):
 	index = "Dragons~Priest~Minion~4~3~6~Dragon~Fate Weaver~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you've Invoked twice, reduce the Cost of cards in your hand by (1)"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Counters.invocationCounts[self.ID] > 1
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3002,7 +3003,7 @@ class DragonsHoard(Spell):
 			if curGame.guides:
 				curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
 			else:
-				classes = fixedList(self.rngPool("Classes"))
+				classes = self.rngPool("Classes")[:]
 				try: classes.remove(curGame.heroes[self.ID].Class)
 				except: pass
 				if self.ID != curGame.turn or "byOthers" in comment:
@@ -3062,7 +3063,7 @@ class UmbralSkulker(Minion):
 	index = "Dragons~Rogue~Minion~4~3~3~None~Umbral Skulker~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you've Invoked twice, add 3 Coins to your hand"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Counters.invocationCounts[self.ID] > 1
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3077,7 +3078,7 @@ class NecriumApothecary(Minion):
 	index = "Dragons~Rogue~Minion~5~2~5~None~Necrium Apothecary~Combo"
 	requireTarget, keyWord, description = False, "", "Combo: Draw a Deathrattle minion from your deck and gain its Deathrattle"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3106,8 +3107,8 @@ class Stowaway(Minion):
 	index = "Dragons~Rogue~Minion~5~4~4~None~Stowaway~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If there are cards in your deck that didn't start there, draw 2 of them"
 	
-	def effectCanTrigger(self):
-		return any(not card.inOrigDeck for card in self.Game.Hand_Deck.decks[self.ID])
+	def effCanTrig(self):
+		return any(card.creator for card in self.Game.Hand_Deck.decks[self.ID])
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -3117,7 +3118,7 @@ class Stowaway(Minion):
 				if curGame.guides:
 					i = curGame.guides.pop(0)
 				else:
-					createdCards = [i for i, card in enumerate(HD.decks[self.ID]) if not card.inOrigDeck]
+					createdCards = [i for i, card in enumerate(HD.decks[self.ID]) if card.creator]
 					i = npchoice(createdCards) if createdCards else -1
 					curGame.fixedGuides.append(i)
 				if i > -1: HD.drawCard(self.ID, i)
@@ -3159,7 +3160,7 @@ class CandleBreath(Spell):
 		self.blank_init(Game, ID)
 		self.trigsHand = [Trig_CandleBreath(self)]
 		
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def selfManaChange(self):
@@ -3175,7 +3176,7 @@ class Trig_CandleBreath(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["CardLeavesHand", "CardEntersHand"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#Only cards with a different class than your hero class will trigger this
 		card = target[0] if signal == "CardEntersHand" else target
 		return self.entity.inHand and card.ID == self.entity.ID and card.type == "Minion" and "Dragon" in card.race
@@ -3309,16 +3310,16 @@ class StatAura_SurgingTempest:
 		self.auraAffected = []
 		self.activated = False
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
-	def trigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
 		if minion.onBoard and ID == minion.ID:
 			isOverloaded = minion.Game.Manas.manasOverloaded[minion.ID] > 0 or minion.Game.Manas.manasLocked[minion.ID] > 0
 			if not isOverloaded and self.activated:
 				self.activated = False
-				for recipient, receiver in fixedList(self.auraAffected):
+				for recipient, receiver in self.auraAffected[:]:
 					receiver.effectClear()
 				self.auraAffected = []
 			elif isOverloaded and not self.activated:
@@ -3334,7 +3335,7 @@ class StatAura_SurgingTempest:
 		except: minion.Game.trigsBoard[minion.ID]["OverloadCheck"] = [self]
 		
 	def auraDisappears(self):
-		for minion, receiver in fixedList(self.auraAffected):
+		for minion, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 		self.auraAffected = []
 		try: self.entity.Game.trigsBoard[self.entity.ID]["OverloadCheck"].remove(self)
@@ -3391,7 +3392,7 @@ class LightningBreath(Spell):
 	requireTarget, mana = True, 3
 	index = "Dragons~Shaman~Spell~3~Lightning Breath"
 	description = "Deal 4 damage to a minion. If you're holding a Dragon, also damage its neighbors"
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def available(self):
@@ -3435,7 +3436,7 @@ class Trig_Bandersmosh_PreShifting(TrigHand):
 		self.blank_init(entity, ["TurnStarts"])
 		self.makesCardEvanescent = True
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -3462,7 +3463,7 @@ class Trig_Bandersmosh_KeepShifting(TrigBoard):
 		self.blank_init(entity, ["TurnStarts"])
 		self.makesCardEvanescent = True
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -3493,7 +3494,7 @@ class CumuloMaximus(Minion):
 	def returnTrue(self, choice=0):
 		return self.Game.Manas.manasLocked[self.ID] + self.Game.Manas.manasOverloaded[self.ID] > 0
 		
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		if self.Game.Manas.manasLocked[self.ID] + self.Game.Manas.manasOverloaded[self.ID] > 0:
 			self.effectViable = self.targetExists()
 		else:
@@ -3513,7 +3514,7 @@ class DragonsPack(Spell):
 	def available(self):
 		return self.Game.space(self.ID) > 0
 		
-	def effectCanTrigger(self): #法术先检测是否可以使用才判断是否显示黄色
+	def effCanTrig(self): #法术先检测是否可以使用才判断是否显示黄色
 		self.effectViable = self.Game.Counters.invocationCounts[self.ID] > 1
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3566,7 +3567,7 @@ class Trig_StormEgg(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -3683,7 +3684,7 @@ class NetherBreath(Spell):
 	requireTarget, mana = True, 2
 	index = "Dragons~Warlock~Spell~2~Nether Breath"
 	description = "Deal 2 damage. If you're holding a Dragon, deal 4 damage with Lifesteal instead"
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def text(self, CHN):
@@ -3770,7 +3771,7 @@ class VeiledWorshipper(Minion):
 	index = "Dragons~Warlock~Minion~4~5~4~None~Veiled Worshipper~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you've Invoked twice, draw 3 cards"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Counters.invocationCounts[self.ID] > 1
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3786,7 +3787,7 @@ class CrazedNetherwing(Minion):
 	mana, attack, health = 5, 5, 5
 	index = "Dragons~Warlock~Minion~5~5~5~Dragon~Crazed Netherwing~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, deal 3 dammage to all other characters"
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID, self)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3936,7 +3937,7 @@ class Trig_ZzerakutheWarped(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroTakesDmg"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity.Game.heroes[self.entity.ID]
 		
 	def text(self, CHN):
@@ -4013,7 +4014,7 @@ class Trig_Ancharrr(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["BattleFinished"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
 		
 	def text(self, CHN):
@@ -4088,7 +4089,7 @@ class ScionofRuin(Minion):
 	index = "Dragons~Warrior~Minion~4~3~2~Dragon~Scion of Ruin~Rush~Battlecry"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Battlecry: If you've Invoked twice, summon two copies of this"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Counters.invocationCounts[self.ID] > 1
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4115,7 +4116,7 @@ class Trig_Skybarge(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenSummoned"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and "Pirate" in subject.race
 		
 	def text(self, CHN):
@@ -4144,7 +4145,7 @@ class MoltenBreath(Spell):
 	requireTarget, mana = True, 4
 	index = "Dragons~Warrior~Spell~4~Molten Breath"
 	description = "Deal 5 damage to a minion. If you're holding Dragon, gain 5 Armor"
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def targetExists(self, choice=0):

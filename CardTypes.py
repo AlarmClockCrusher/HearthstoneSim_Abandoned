@@ -14,7 +14,6 @@ def wrapTxt(s, CHN=True, wrapLength=11):
 		else:
 			substrings = [s[i*wrapLength:(i+1)*wrapLength] for i in range(numSubstrings-1)]
 			substrings.append(s[(numSubstrings-1)*wrapLength:])
-			print(substrings)
 			return ' ' + "\n  ".join(substrings) + '\n'
 	else:
 		return wrapEng(s, int(1.6 * wrapLength))
@@ -35,9 +34,6 @@ def wrapEng(s, wrapLength):
 		return "  " + "\n   ".join(substrings) + '\n'
 	return "  " + s + '\n'
 	
-def fixedList(listObj):
-	return listObj[0:len(listObj)]
-
 def classforDiscover(initiator):
 	Class = initiator.Game.heroes[initiator.ID].Class
 	if Class != "Neutral": return Class #如果发现的发起者的职业不是中立，则返回那个职业
@@ -131,7 +127,7 @@ class Card:
 		pass
 		
 	#This is for battlecries with specific target requirement.
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		pass
 		
 	def text(self, CHN):
@@ -374,7 +370,7 @@ class Card:
 	#有的扳机随从默认随从需要在非濒死情况下才能触发扳机，如北郡牧师。
 	def dealsAOE(self, targets, damages):
 		game = self.Game
-		targets, damages = fixedList(targets), fixedList(damages)
+		targets, damages = targets[:], damages[:]
 		dmgTakers, dmgsActual, totalDmgDone = [], [], 0
 		if targets and game.GUI:
 			game.GUI.AOEAni(self, targets, damages)
@@ -395,7 +391,7 @@ class Card:
 		
 	def restoresAOE(self, targets, heals):
 		game = self.Game
-		targets_Heal, heals = fixedList(targets), fixedList(heals)
+		targets_Heal, heals = targets[:], heals[:]
 		if game.status[self.ID]["Heal to Damage"] > 0:
 			dmgTakers, dmgsActual, totalDmgDone = self.dealsAOE(targets_Heal, heals)
 			healsActual = [-damage for damage in dmgsActual]
@@ -454,7 +450,7 @@ class Card:
 		return healActual
 		
 	def rngPool(self, identifier):
-		pool = fixedList(self.Game.RNGPools[identifier])
+		pool = self.Game.RNGPools[identifier][:]
 		try: pool.remove(type(self))
 		except: pass
 		return pool
@@ -498,7 +494,7 @@ class Card:
 	#Minion has its own selfCopy() method.
 	#For now, copying non-minion/weapon cards can only create copies that don't have any enchantments on it.
 	#The mana of a card can be copied, though.
-	def hardCopy(self, ID):
+	def hardCopy(self, ID, creator=""):
 		Copy = type(self)(self.Game, ID)
 		for key, value in self.__dict__.items():
 			#Copy the attributes of basic types, or simply types.
@@ -517,7 +513,7 @@ class Card:
 			else: #The attribute is a self-defined class. They will all have selfCopy methods
 				#A minion can't refernece another minion. The attributes here must be like triggers/deathrattles	
 				Copy.__dict__[key] = value.selfCopy(Copy)
-		Copy.ID, Copy.inOrigDeck, Copy.numOccurrence = ID, False, 0
+		Copy.ID, Copy.creator, Copy.numOccurrence = ID, creator, 0
 		return Copy
 		
 	#给非随从牌用的，目前也没有复制场上武器的牌
@@ -631,12 +627,13 @@ class Minion(Card):
 		self.blank_init(Game, ID)
 
 	def reset(self, ID): #如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化
-		inOrigDeck, numOccurrence = self.inOrigDeck, self.numOccurrence
+		creator, numOccurrence, tracked, possi = self.creator, self.numOccurrence, self.tracked, self.possibilities
 		att_0, health_0 = self.attack_0, self.health_0
 		self.__init__(self.Game, ID)
 		self.attack_0 = self.attack = self.attack_Enchant = att_0
 		self.health_0 = self.health = self.health_max = health_0
-		self.inOrigDeck, self.numOccurrence = inOrigDeck, numOccurrence
+		self.creator, self.numOccurrence, self.tracked = creator, numOccurrence, tracked
+		self.possibilities = possi
 		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -680,7 +677,7 @@ class Minion(Card):
 					   "Evolved": 0,
 					   }
 		#Keep track of the original cards that started in the deck
-		self.inOrigDeck, self.numOccurrence = False, 0
+		self.numOccurrence = 0
 		self.newonthisSide, self.dead = True, False
 		self.effectViable = self.evanescent = False
 		self.onBoard = self.inHand = self.inDeck = False
@@ -701,7 +698,8 @@ class Minion(Card):
 											  "Deathrattles": [], "Triggers": []
 											  }
 						}
-		self.possibilities = []
+		#跟踪卡牌的可能性
+		self.tracked, self.creator, self.possibilities = False, "", ()
 		
 	def applicable(self, target):
 		return target != self
@@ -1146,7 +1144,7 @@ class Minion(Card):
 			if Copy.manaMods[size - 1 - i].source:
 				Copy.manaMods.pop(size - 1 - i)
 		# 在一个游戏中复制出新实体的时候需要把这些值重置
-		Copy.inOrigDeck, Copy.numOccurrence = False, 0
+		Copy.creator, Copy.numOccurrence = "", 0
 		Copy.newonthisSide, Copy.dead = True, False
 		Copy.effectViable, Copy.evanescent = False, False
 		Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False
@@ -1226,7 +1224,7 @@ class Minion(Card):
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.marks = copy.deepcopy(self.marks)
 			Copy.status = copy.deepcopy(self.status)
-			Copy.inOrigDeck, Copy.numOccurrence = self.inOrigDeck, self.numOccurrence
+			Copy.creator, Copy.numOccurrence, Copy.tracked = self.creator, self.numOccurrence, self.tracked
 			Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
 			if hasattr(self, "progress"): Copy.progress = self.progress
 			Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
@@ -1241,7 +1239,7 @@ class Minion(Card):
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.history = copy.deepcopy(self.history)
-			Copy.possibilities = copy.deepcopy(self.possibilities)
+			Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
 			self.assistCreateCopy(Copy)
 			return Copy
 
@@ -1255,9 +1253,9 @@ class Spell(Card):
 		self.blank_init(Game, ID)
 		
 	def reset(self, ID):
-		inOrigDeck = self.inOrigDeck
+		creator = self.creator
 		self.__init__(self.Game, ID)
-		self.inOrigDeck = inOrigDeck
+		self.creator = creator
 		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -1270,14 +1268,14 @@ class Spell(Card):
 		self.overload, self.chooseOne, self.twinSpell = 0, 0, 0
 		#法术也设置onBoard标签，但只是placeholder而已
 		self.onBoard, self.inHand, self.inDeck = False, False, False
-		self.inOrigDeck = False
-		#法术的triggersonBoard只是一个placeholder
+		#法术的trigsBoard只是一个placeholder
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.options = [] #For Choose One spells
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
 		self.marks = {"Cost Health Instead": 0,}
 		self.effectViable, self.evanescent = False, False
-		self.possibilities = []
+		#用于跟踪卡牌的可能性
+		self.creator, self.tracked, self.possibilities = "", False, ()
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
@@ -1457,7 +1455,6 @@ class Spell(Card):
 			Copy.mana = self.mana
 			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
 			Copy.inHand, Copy.inDeck = self.inHand, self.inDeck
-			Copy.inOrigDeck = self.inOrigDeck
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
@@ -1465,7 +1462,7 @@ class Spell(Card):
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.marks = copy.deepcopy(self.marks)
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			Copy.possibilities = copy.deepcopy(self.possibilities)
+			Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -1491,13 +1488,12 @@ class Secret(Spell):
 		self.overload, self.chooseOne, self.twinSpell = 0, 0, 0
 		# 法术也设置onBoard标签，但只是placeholder而已
 		self.onBoard, self.inHand, self.inDeck = False, False, False
-		self.inOrigDeck = False
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.options = []  # For Choose One spells
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
 		self.marks = {"Cost Health Instead": 0, }
 		self.effectViable, self.evanescent = False, False
-		self.possibilities = []
+		self.creator, self.tracked, self.possibilities = "", False, ()
 		
 	def available(self):
 		return self.Game.Secrets.areaNotFull(self.ID) and not self.Game.Secrets.sameSecretExists(self, self.ID)
@@ -1556,12 +1552,13 @@ class Quest(Spell):
 		self.overload, self.chooseOne, self.twinSpell = 0, 0, 0
 		# 法术也设置onBoard标签，但只是placeholder而已
 		self.onBoard, self.inHand, self.inDeck = False, False, False
-		self.inOrigDeck = False
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.options = []  # For Choose One spells
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
 		self.marks = {"Cost Health Instead": 0, }
 		self.effectViable, self.evanescent = False, False
+		#用于跟踪卡牌的可能性
+		self.creator, self.tracked, self.possibilities = "", False, ()
 		
 	#Upper limit of secrets and quests is 5. There can only be one main quest, but multiple different sidequests
 	def available(self):
@@ -1621,14 +1618,13 @@ class Quest(Spell):
 			Copy.mana = self.mana
 			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
 			Copy.inHand, Copy.inDeck = self.inHand, self.inDeck
-			Copy.inOrigDeck = self.inOrigDeck
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			Copy.possibilities = copy.deepcopy(self.possibilities)
+			Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -1657,7 +1653,6 @@ class HeroPower(Card):
 		self.keyWords = {"Lifesteal": 0, "Poisonous": 0, }
 		self.marks = {"Cost Health Instead": 0,}
 		self.trigsBoard = []
-		self.possibilities = []
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
@@ -1761,7 +1756,7 @@ class HeroPower(Card):
 			#激励阶段结束，处理死亡。此时可以进行胜负判定。
 			self.Game.gathertheDead(True)
 			for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
-				card.effectCanTrigger()
+				card.effCanTrig()
 				card.checkEvanescent()
 			self.Game.moves.append(("Power", subIndex, subWhere, tarIndex, tarWhere, choice))
 			
@@ -1787,7 +1782,6 @@ class HeroPower(Card):
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
-			Copy.possibilities = copy.deepcopy(self.possibilities)
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -1800,9 +1794,9 @@ class Hero(Card):
 		self.blank_init(Game, ID)
 		
 	def reset(self, ID):
-		inOrigDeck = self.inOrigDeck
+		creator = self.creator
 		self.__init__(self.Game, ID)
-		self.inOrigDeck = inOrigDeck
+		self.creator = creator
 		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -1831,11 +1825,12 @@ class Hero(Card):
 					"Cost Health Instead": 0,
 					}
 		self.status = {"Frozen": 0, "Temp Stealth": 0, "Draw to Win": 0}
-		self.inOrigDeck = False
 		self.options = [] #For Choose One heroes
 		self.overload, self.chooseOne = 0, 0
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.effectViable, self.evanescent = False, False
+		#用于跟踪卡牌的可能性
+		self.creator, self.tracked, self.possibilities = "", False, ()
 		
 	"""Handle hero's attacks, attack chances, attack chances and frozen status."""
 	def cardStatus(self):
@@ -2101,13 +2096,12 @@ class Hero(Card):
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.marks = copy.deepcopy(self.marks)
 			Copy.status = copy.deepcopy(self.status)
-			Copy.inOrigDeck = self.inOrigDeck
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			Copy.possibilities = copy.deepcopy(self.possibilities)
+			Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
 			self.assistCreateCopy(Copy)
 			return Copy
 			
@@ -2121,9 +2115,9 @@ class Weapon(Card):
 		self.blank_init(Game, ID)
 		
 	def reset(self, ID):
-		inOrigDeck = self.inOrigDeck
+		creator = self.creator
 		self.__init__(self.Game, ID)
-		self.inOrigDeck = inOrigDeck
+		self.creator = creator
 		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -2144,11 +2138,12 @@ class Weapon(Card):
 		self.seq = -1
 		self.deathrattles = []
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
-		self.inOrigDeck = False
+		self.creator = ""
 		self.options = []  # For Choose One weapon, non-existent at this point.
 		self.auras = {}
 		self.effectViable, self.evanescent = False, False
-		self.possibilities = []
+		#用于跟踪卡牌的可能性
+		self.creator, self.tracked, self.possibilities = "", False, ()
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
@@ -2288,14 +2283,11 @@ class Weapon(Card):
 				weapon.destroyed()  # 触发“每当你的一把武器被摧毁时”和“每当你的一把武器离场时”的扳机，如南海船工。
 		# 打出的这把武器会成为最后唯一还装备着的武器。触发“每当你装备一把武器时”的扳机，如锈水海盗。
 		self.setasNewWeapon()  # 此时打出的武器的onBoard才会正式标记为True
-
 		# 结算阶段结束，处理亡语。（此时的亡语结算会包括武器的亡语结算。）
 		self.Game.gathertheDead()
-
 	# 完成阶段在Game.playWeapon中处理。
 	
 	"""Handle the weapon restoring health, dealing damage and dealing AOE effects."""
-
 	# 对于武器而言，dealsDamage()只有毁灭之刃可以使用，因为其他的武器造成伤害不是AOE伤害就是战斗伤害
 	# 战斗伤害会在随从和英雄的attacks()方法中统一处理。毁灭之刃是唯一的拥有单体战吼的武器。
 
@@ -2311,7 +2303,6 @@ class Weapon(Card):
 			Copy.keyWords, Copy.marks = copy.deepcopy(self.keyWords), copy.deepcopy(self.marks)
 			Copy.onBoard, Copy.inHand, Copy.inDeck = self.onBoard, self.inHand, self.inDeck
 			Copy.seq = self.seq
-			Copy.inOrigDeck = self.inOrigDeck
 			#对武器的光环目前只有增加攻击力
 			Copy.attfromAura = self.attfromAura
 			Copy.auraReceivers = [receiver.selfCopy(Copy) for receiver in self.auraReceivers]
@@ -2323,7 +2314,7 @@ class Weapon(Card):
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			Copy.possibilities = copy.deepcopy(self.possibilities)
+			Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
 			self.assistCreateCopy(Copy)
 			return Copy
 
@@ -2348,3 +2339,9 @@ class ChooseOneOption:
 	# 抉择选项的复制一定是以复制卡牌为前提的，调用此函数时，抉择主体一定已经被复制了
 	def createCopy(self, game):
 		return type(self)(game.copiedObjs[self.entity])
+
+
+class UncertainCard:
+	def __init__(self, creator="", possibilities=()):
+		self.creator = creator
+		self.possibilities = possibilities

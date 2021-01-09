@@ -86,7 +86,7 @@ class Trig_HighkeeperRa(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -135,7 +135,7 @@ class Trig_DwarvenArchaeologist(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["PutinHandbyDiscover"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#不知道被发现的牌如果来自对手，是否会享受减费。如Griftah
 		return self.entity.onBoard and ID == self.entity.ID and target.ID == self.entity.ID
 		
@@ -217,7 +217,7 @@ class QuestingExplorer(Minion):
 	mana, attack, health = 2, 2, 3
 	index = "Uldum~Neutral~Minion~2~2~3~None~Questing Explorer~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Quest, draw a card"
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Secrets.mainQuests[self.ID] != [] or self.Game.Secrets.sideQuests[self.ID] != []
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -274,7 +274,7 @@ class Trig_SpittingCamel(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -314,13 +314,14 @@ class ZephrystheGreat(Minion):
 	mana, attack, health = 2, 3, 2
 	index = "Uldum~Neutral~Minion~2~3~2~Elemental~Zephrys the Great~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no duplicates, wish for the perfect card"
+	name_CN = "了不起的 杰弗里斯"
 	poolIdentifier = "Basic and Classic Cards"
 	@classmethod
 	def generatePool(cls, Game):
 		basicandClassicCards = [value for key, value in Game.cardPool.items() if (key.startswith("Basic") or key.startswith("Classic")) and "~Uncollectible" not in key]
 		return "Basic and Classic Cards", basicandClassicCards
 		
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.noDuplicatesinDeck(self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -421,7 +422,7 @@ class Trig_HistoryBuff(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionPlayed"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity
 		
 	def text(self, CHN):
@@ -585,7 +586,7 @@ class Trig_ConjuredMirage(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -609,7 +610,7 @@ class Trig_SunstruckHenchman(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts", "TurnEnds"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -657,7 +658,7 @@ class Trig_DesertObelisk(TrigBoard):
 	def checkDesertObelisk(self):
 		return sum(minion.name == "Desert Obelisk" for minion in self.entity.Game.minionsonBoard(self.entity.ID)) > 2
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID and self.checkDesertObelisk()
 		
 	def text(self, CHN):
@@ -694,7 +695,7 @@ class Trig_MortuaryMachine(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID != self.entity.ID
 		
 	def text(self, CHN):
@@ -719,7 +720,7 @@ class BuffAura_PhalanxCommander(HasAura_toMinion):
 		self.minion = minion
 		self.signals, self.auraAffected = ["MinionAppears", "MinionTauntKeywordChange"], []
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.minion.onBoard and subject.ID == self.minion.ID \
 				and ((signal == "MinionAppears" and subject.keyWords["Charge"] > 0) or signal == "MinionTauntKeywordChange")
 				
@@ -733,14 +734,14 @@ class BuffAura_PhalanxCommander(HasAura_toMinion):
 		else: #signal == "MinionTauntKeywordChange"
 			if subject.keyWords["Taunt"] > 0:
 				notAffectedPreviously = True
-				for receiver, receiver in fixedList(self.auraAffected):
+				for receiver, receiver in self.auraAffected[:]:
 					if subject == receiver:
 						notAffectedPreviously = False
 						break
 				if notAffectedPreviously:
 					Stat_Receiver(subject, self, 1, 0).effectStart()
 			elif subject.keyWords["Taunt"] < 1:
-				for receiver, receiver in fixedList(self.auraAffected):
+				for receiver, receiver in self.auraAffected[:]:
 					if subject == receiver:
 						receiver.effectClear()
 						break
@@ -899,7 +900,7 @@ class Trig_WrappedGolem(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -1017,7 +1018,7 @@ class Trig_UntappedPotential(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1094,7 +1095,7 @@ class Trig_CrystalMerchant(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -1142,7 +1143,7 @@ class GardenGnome(Minion):
 	index = "Uldum~Druid~Minion~4~2~3~None~Garden Gnome~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a spell that costs (5) or more, summon two 2/2 Treants"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingSpellwith5CostorMore(self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1178,7 +1179,7 @@ class Trig_AnubisathDefender(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed", "TurnStarts", "TurnEnds"]) #不需要预检测
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and (signal[0] == 'T' or (number > 4 and subject.ID == self.entity.ID))
 		
 	def text(self, CHN):
@@ -1195,13 +1196,13 @@ class ElisetheEnlightened(Minion):
 	index = "Uldum~Druid~Minion~5~5~5~None~Elise the Enlightened~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no duplicates, duplicate your hand"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.noDuplicatesinDeck(self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		HD = self.Game.Hand_Deck
 		if HD.noDuplicatesinDeck(self.ID):
-			for card in fixedList(HD.hands[self.ID]):
+			for card in HD.hands[self.ID][:]:
 				HD.addCardtoHand(card.selfCopy(self.ID), self.ID)
 		return None
 		
@@ -1341,7 +1342,7 @@ class Trig_UnsealtheVault(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenSummoned"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject.ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1375,7 +1376,7 @@ class Trig_PressurePlate(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.ID != self.entity.Game.turn and subject.ID != self.entity.ID and self.entity.Game.minionsAlive(3-self.entity.ID)
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1402,7 +1403,7 @@ class Trig_DesertSpear(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#The target can't be dying to trigger this
 		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
 		
@@ -1447,7 +1448,7 @@ class HyenaAlpha(Minion):
 	index = "Uldum~Hunter~Minion~4~3~3~Beast~Hyena Alpha~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Secret, summon two 2/2 Hyenas"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Secrets.secrets[self.ID] != []
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1546,7 +1547,7 @@ class DinotamerBrann(Minion):
 	index = "Uldum~Hunter~Minion~7~2~4~None~Dinotamer Brann~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no duplicates, summon King Krush"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.noDuplicatesinDeck(self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1580,7 +1581,7 @@ class Trig_RaidtheSkyTemple(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject.ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1643,7 +1644,7 @@ class Trig_FlameWard(SecretTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackedHero"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.ID != self.entity.Game.turn and target == self.entity.Game.heroes[self.entity.ID]
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1661,7 +1662,7 @@ class CloudPrince(Minion):
 	def returnTrue(self, choice=0):
 		return self.Game.Secrets.secrets[self.ID] != []
 		
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Secrets.secrets[self.ID] != []
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1683,7 +1684,7 @@ class Trig_ArcaneFlakmage(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject.description.startswith("Secret:")
 		
 	def text(self, CHN):
@@ -1712,7 +1713,7 @@ class Trig_DuneSculptor(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["SpellPlayed"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -1794,7 +1795,7 @@ class RenotheRelicologist(Minion):
 	index = "Uldum~Mage~Minion~6~4~6~None~Reno the Relicologist~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no duplicates, deal 10 damage randomly split among all enemy minions"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.noDuplicatesinDeck(self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1854,7 +1855,7 @@ class Trig_MakingMummies(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed"]) #扳机是使用后扳机
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#假设扳机的判定条件是打出的随从在检测时有复生就可以，如果在打出过程中获得复生，则依然算作任务进度
 		return subject.ID == self.entity.ID and subject.keyWords["Reborn"] > 0
 		
@@ -1896,7 +1897,7 @@ class Trig_BrazenZealot(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionSummoned"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity
 		
 	def text(self, CHN):
@@ -1919,7 +1920,7 @@ class Trig_MicroMummy(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -1964,7 +1965,7 @@ class SirFinleyoftheSands(Minion):
 	def generatePool(cls, Game):
 		return "Upgraded Powers", Game.upgradedPowers
 		
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.noDuplicatesinDeck(self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1974,7 +1975,7 @@ class SirFinleyoftheSands(Minion):
 				if curGame.guides:
 					curGame.guides.pop(0)(curGame, self.ID).replaceHeroPower()
 				else:
-					heroPowerPool = fixedList(curGame.upgradedPowers)
+					heroPowerPool = curGame.upgradedPowers[:]
 					try: heroPowerPool.remove(type(curGame.powers[self.ID]))
 					except: pass
 					if "byOthers" in comment:
@@ -2097,7 +2098,7 @@ class Trig_ActivatetheObelisk(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionGetsHealed", "HeroGetsHealed"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject.ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2179,7 +2180,7 @@ class Trig_SandhoofWaterbearer(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -2310,7 +2311,7 @@ class Trig_HighPriestAmet(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionSummoned"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and self.entity.health > 0
 		
 	def text(self, CHN):
@@ -2348,7 +2349,7 @@ class Trig_BazaarBurglary(QuestTrigger):
 		#置入手牌扳机。抽到不同职业牌，回响牌，抽到时施放的法术都可以触发扳机。
 		self.blank_init(entity, ["CardEntersHand", "SpellCastWhenDrawn"]) #抽到时施放的法术没有被处理成置入手牌
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return target[0].ID == self.entity.ID and target[0].Class != "Neutral" and self.entity.Game.heroes[self.entity.ID].Class not in target[0].Class
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2379,7 +2380,7 @@ class Trig_MirageBlade(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["BattleStarted", "BattleFinished"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
 		
 	def text(self, CHN):
@@ -2454,7 +2455,7 @@ class CleverDisguise(Spell):
 			if curGame.guides:
 				spells = curGame.guides.pop(0)
 			else:
-				classes = fixedList(self.rngPool("Classes"))
+				classes = self.rngPool("Classes")[:]
 				try: classes.remove(curGame.heroes[self.ID].Class)
 				except: pass
 				pool = self.rngPool("%s Spells"%npchoice(classes))
@@ -2482,7 +2483,7 @@ class Trig_WhirlkickMaster(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionPlayed", "SpellPlayed", "WeaponPlayed", "HeroCardPlayed"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#这个随从本身是没有连击的。同时目前没有名字中带有Combo的牌。
 		return self.entity.onBoard and subject.ID == self.entity.ID and "~Combo" in subject.index
 		
@@ -2505,7 +2506,7 @@ class HookedScimitar(Weapon):
 	mana, attack, durability = 3, 2, 2
 	index = "Uldum~Rogue~Weapon~3~2~2~Hooked Scimitar~Combo"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2556,7 +2557,7 @@ class BazaarMugger(Minion):
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
 			else:
-				classes = fixedList(self.rngPool("Classes"))
+				classes = self.rngPool("Classes")[:]
 				try: classes.remove(self.Game.heroes[self.ID].Class)
 				except: pass
 				minion = npchoice(self.rngPool(npchoice(classes)+" Minions"))
@@ -2611,11 +2612,11 @@ class AnkatheBuried(Minion):
 	index = "Uldum~Rogue~Minion~5~5~5~None~Anka, the Buried~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Change each Deathrattle minion in your hand into a 1/1 that costs (1)"
 	#不知道安卡的战吼是否会把手牌中的亡语随从变成新的牌还是只会修改它们的身材
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		return any(card.type == "Minion" and card.deathrattles and card != self for card in self.Game.Hand_Deck.hands[self.ID])
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		for card in fixedList(self.Game.Hand_Deck.hands[self.ID]):
+		for card in self.Game.Hand_Deck.hands[self.ID][:]:
 			if card.type == "Minion" and card.deathrattles != []:
 				card.statReset(1, 1)
 				ManaMod(card, changeby=0, changeto=1).applies()
@@ -2635,7 +2636,7 @@ class Trig_CorrupttheWaters(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionBeenPlayed", "WeaponBeenPlayed", "HeroCardBeenPlayed"]) #扳机是使用后扳机
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject.ID == self.entity.ID and "~Battlecry" in subject.index
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2692,7 +2693,7 @@ class Trig_EVILTotem(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -2759,7 +2760,7 @@ class WeaponizedWasp(Minion):
 				return True
 		return False
 		
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = False
 		if self.targetExists():
 			for minion in self.Game.minionsonBoard(self.ID):
@@ -2803,7 +2804,7 @@ class BuffAura_Vessina(HasAura_toMinion):
 		self.entity = entity
 		self.signals, self.auraAffected = ["MinionAppears", "OverloadCheck"], []
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		if signal == "MinionAppears":
 			return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and self.entity.activated
 		else:
@@ -2817,7 +2818,7 @@ class BuffAura_Vessina(HasAura_toMinion):
 			isOverloaded = self.entity.Game.Manas.manasOverloaded[self.entity.ID] > 0 or self.entity.Game.Manas.manasLocked[self.entity.ID] > 0
 			if isOverloaded == False and self.entity.activated:
 				self.entity.activated = False
-				for minion, receiver in fixedList(self.auraAffected):
+				for minion, receiver in self.auraAffected[:]:
 					receiver.effectClear()
 				self.auraAffected = []
 			elif isOverloaded and self.entity.activated == False:
@@ -2890,7 +2891,7 @@ class Trig_MoguFleshshaper(TrigHand):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAppears", "MinionDisappears"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand
 		
 	def text(self, CHN):
@@ -2967,7 +2968,7 @@ class Trig_SupremeArchaeology(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["CardDrawn"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3049,7 +3050,7 @@ class EVILRecruiter(Minion):
 	def targetCorrect(self, target, choice=0):
 		return target.type == "Minion" and target.ID == self.ID and "Lackey" in target.name and "~Uncollectible" in target.index and target.onBoard
 		
-	def effectCanTrigger(self): #Friendly minions are always selectable.
+	def effCanTrig(self): #Friendly minions are always selectable.
 		self.effectViable = False
 		for minion in self.Game.minionsonBoard(self.ID):
 			if minion.name.endswith("Lackey"):
@@ -3084,7 +3085,7 @@ class Trig_NefersetThrasher(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity and self.entity.onBoard
 		
 	def text(self, CHN):
@@ -3136,7 +3137,7 @@ class Trig_DiseasedVulture(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroTookDmg"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity.Game.heroes[self.entity.ID] and self.entity.ID == self.entity.Game.turn
 		
 	def text(self, CHN):
@@ -3182,6 +3183,7 @@ class DarkPharaohTekahn(Minion):
 	mana, attack, health = 5, 4, 4
 	index = "Uldum~Warlock~Minion~5~4~4~None~Dark Pharaoh Tekahn~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: For the rest of the game, your Lackeys are 4/4"
+	name_CN = "黑暗法老 塔卡恒"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		YourLackeysareAlways44(self.Game, self.ID).auraAppears()
@@ -3195,7 +3197,7 @@ class YourLackeysareAlways44(HasAura_toMinion):
 	def applicable(self, target):
 		return target.ID == self.ID and target.name.endswith("Lackey")
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		if signal[0] == 'M': #"MinionAppears" #只有随从在从其他位置进入场上的时候可以进行修改，而从休眠中苏醒或者控制权改变不会触发改变
 			return comment and self.applicable(subject)
 		elif signal[0] == 'C':
@@ -3250,7 +3252,7 @@ class Trig_HacktheSystem(QuestTrigger):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedHero", "HeroAttackedMinion"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity.Game.heroes[self.entity.ID]
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3285,7 +3287,7 @@ class Trig_AnraphetsCore(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedHero", "HeroAttackedMinion"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.heroPowerTimes >= self.entity.heroPowerChances_base + self.entity.heroPowerChances_extra
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3304,7 +3306,7 @@ class IntotheFray(Spell):
 	index = "Uldum~Warrior~Spell~1~Into the Fray"
 	description = "Give all Taunt minions in your hand +2/+2"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		for card in fixedList(self.Game.Hand_Deck.hands[self.ID]):
+		for card in self.Game.Hand_Deck.hands[self.ID][:]:
 			if card.type == "Minion" and card.keyWords["Taunt"] > 0:
 				card.buffDebuff(2, 2)
 		return None
@@ -3357,7 +3359,7 @@ class BloodswornMercenary(Minion):
 	def targetCorrect(self, target, choice=0):
 		return target.type == "Minion" and target.ID == self.ID and target != self and target.onBoard and target.health < target.health_max
 		
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = False
 		for minion in self.Game.minionsonBoard(self.ID):
 			if minion.health < minion.health_max:
@@ -3383,7 +3385,7 @@ class Trig_LivewireLance(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#The target can't be dying to trigger this
 		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
 		
@@ -3437,7 +3439,7 @@ class Trig_Armagedillo(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnEnds"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
@@ -3462,7 +3464,7 @@ class Trig_ArmoredGoon(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["HeroAttackingHero", "HeroAttackingMinion"])
 		
-	def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject == self.entity.Game.heroes[self.entity.ID]
 		
 	def text(self, CHN):

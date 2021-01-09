@@ -9,9 +9,6 @@ from numpy.random import shuffle as npshuffle
 
 import numpy as np
 
-def fixedList(listObject):
-	return listObject[0:len(listObject)]
-
 def listRemove(listObj, obj):
 	l = []
 	for i in listObj:
@@ -141,7 +138,7 @@ class Evolve(HeroPower):
 		# 激励阶段结束，处理死亡。此时可以进行胜负判定。
 		self.Game.gathertheDead(True)
 		for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
-			card.effectCanTrigger()
+			card.effCanTrig()
 			card.checkEvanescent()
 		subIndex, subWhere = self.ID, "Power"
 		tarIndex, tarWhere = [], []
@@ -446,7 +443,7 @@ class Amulet(Dormant):
 		for value in self.auras.values(): value.auraAppears()
 		# 随从入场时将注册其场上扳机和亡语扳机
 		for trig in self.trigsBoard + self.deathrattles:
-			trig.connect()  # 把(obj, signal)放入Game.triggersonBoard中
+			trig.connect()  # 把(obj, signal)放入Game.trigsBoard中
 		# Mainly mana aura minions, e.g. Sorcerer's Apprentice.
 		for func in self.appearResponse: func()
 		# The buffAuras/hasAuras will react to this signal.

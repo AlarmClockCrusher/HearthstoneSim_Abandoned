@@ -7,9 +7,6 @@ from SV_Basic import SVClasses
 import numpy as np
 import copy
 
-def fixedList(listObj):
-	return listObj[0:len(listObj)]
-	
 gameStatusDict = {"Immune": "你的英雄免疫", "Immune2NextTurn": "你的英雄免疫直到你的下个回合", "ImmuneThisTurn": "你的英雄在本回合免疫",
 				"Evasive": "你的英雄无法成为法术或英雄技能的目标", "Evasive2NextTurn": "直到下回合，你的英雄无法成为法术或英雄技能的目标",
 				"Spell Damage": "你的英雄的法术伤害加成", "Spells Lifesteal": "你的法术具有吸血", "Spells x2": "你的法术会施放两次",
@@ -64,7 +61,11 @@ class Game:
 		self.mode = 0
 		self.fixedGuides, self.guides, self.moves = [], [], []
 		self.board = "Ogrimmar"
-
+		
+		self.possibleSecrets = {1:[], 2:[]}
+		self.unusedCards = {1:[], 2:[]}
+		self.knownHands = {1:[], 2:[]}
+		
 	def minionsAlive(self, ID, target=None): #if target is not None, return all living minions except the target
 		if target: return [minion for minion in self.minions[ID] if minion.type == "Minion" \
 							and minion != target and minion.onBoard and (not minion.dead or minion.marks["Can't Break"] > 0) and minion.health > 0]
@@ -176,14 +177,14 @@ class Game:
 			self.Counters.cardsPlayedThisGame[self.turn].append(amuletIndex)
 			# 使用后步骤，触发镜像实体，狙击，顽石元素等“每当你使用一张xx牌”之后的扳机。
 			if self.amuletPlayed and self.amuletPlayed.type == "Amulet":
-				if not self.amuletPlayed.inOrigDeck: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+				if self.amuletPlayed.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
 				# The comment here is posinHand, which records the position a card is played from hand. -1 means the rightmost, 0 means the leftmost
 				self.sendSignal("AmuletBeenPlayed", self.turn, self.amuletPlayed, target, mana, posinHand, choice,
 								armedTrigs)
 			# ............完成阶段结束，开始处理死亡情况，此时可以处理胜负问题。
 			self.gathertheDead(True)
 			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-				card.effectCanTrigger()
+				card.effCanTrig()
 				card.checkEvanescent()
 			if not isinstance(tarIndex, list):
 				self.moves.append(
@@ -260,12 +261,12 @@ class Game:
 						self.Counters.cardsPlayedThisGame[self.turn].append(spell.index)
 						if "~Corrupted~" in spell.index: self.Counters.corruptedCardsPlayed[self.turn].append(spell.index)
 						#使用后步骤，触发“每当使用一张xx牌之后”的扳机，如狂野炎术士，西风灯神，星界密使的状态移除和伊莱克特拉风潮的状态移除。
-						if not spell.inOrigDeck: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+						if spell.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
 						self.sendSignal("SpellBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
 						#完成阶段结束，处理亡语，此时可以处理胜负问题。
 						self.gathertheDead(True)
 						for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-							card.effectCanTrigger()
+							card.effCanTrig()
 							card.checkEvanescent()
 					if not isinstance(tarIndex, list):
 						self.moves.append(("playSpell", subIndex, subWhere, tarIndex, tarWhere, choice))
@@ -296,13 +297,13 @@ class Game:
 				if "~Corrupted~" in minion.index: self.Counters.corruptedCardsPlayed[self.turn].append(minionIndex)
 				#使用后步骤，触发镜像实体，狙击，顽石元素等“每当你使用一张xx牌”之后的扳机。
 				if self.minionPlayed and self.minionPlayed.type != "Dormant":
-					if not self.minionPlayed.inOrigDeck: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+					if self.minionPlayed.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
 					#The comment here is posinHand, which records the position a card is played from hand. -1 means the rightmost, 0 means the leftmost
 					self.sendSignal("%sBeenPlayed"%typewhenPlayed, self.turn, self.minionPlayed, target, mana, posinHand, choice, armedTrigs)
 			#............完成阶段结束，开始处理死亡情况，此时可以处理胜负问题。
 			self.gathertheDead(True)
 			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-				card.effectCanTrigger()
+				card.effCanTrig()
 				card.checkEvanescent()
 			if not isinstance(tarIndex, list):
 				self.moves.append(("playMinion", subIndex, subWhere, tarIndex, tarWhere, position, choice))
@@ -589,7 +590,7 @@ class Game:
 	#targetDeckID decides the destination. initiatorID is for triggers, such as Trig_AugmentedElekk
 	def returnMiniontoDeck(self, target, targetDeckID, initiatorID, deathrattlesStayArmed=False):
 		if target in self.minions[target.ID]:
-			ID, inOrigDeck, numOccurrence = targetDeckID, target.inOrigDeck, target.numOccurrence
+			ID, creator, numOccurrence = targetDeckID, target.creator, target.numOccurrence
 			#如果onBoard仍为True，则其仍计为场上存活的随从，需调用disappears以注销各种扳机
 			if target.onBoard: #随从存活状态下触发死亡扳机的区域移动效果时，不会注销其他扳机
 				target.disappears(deathrattlesStayArmed)
@@ -597,7 +598,7 @@ class Game:
 			self.removeMinionorWeapon(target)
 			target.reset(ID) #永恒祭司的亡语会备份一套enchantment，在调用该函数之后将初始化过的本体重新增益
 			target.numOccurrence += 1
-			target.inOrigDeck, target.numOccurrence = inOrigDeck, numOccurrence + 1
+			target.creator, target.numOccurrence = creator, numOccurrence + 1
 			self.Hand_Deck.shuffleCardintoDeck(target, initiatorID)
 			return target
 		elif target.inHand: #如果随从已进入手牌，仍会将其强行洗入牌库
@@ -664,16 +665,16 @@ class Game:
 		hasResponder = False
 		if trigPool is not None: #主要用于打出xx牌和随从死亡时/后扳机，它们有预检测机制。
 			for trig in trigPool: #扳机只有仍被注册情况下才能触发，但是这个状态可以通过canTrigger来判断，而不必在所有扳机列表中再次检查。
-				if trig.canTrigger(signal, ID, subject, target, number, comment, choice): #扳机能触发通常需要扳机记录的实体还在场上等。
+				if trig.canTrig(signal, ID, subject, target, number, comment, choice): #扳机能触发通常需要扳机记录的实体还在场上等。
 					hasResponder = True
-					trig.trigger(signal, ID, subject, target, number, comment, choice)
+					trig.trig(signal, ID, subject, target, number, comment, choice)
 		else: #向所有注册的扳机请求触发。
 			mainPlayerID = self.mainPlayerID #假设主副玩家不会在一次扳机结算之中发生变化。先触发主玩家的各个位置的扳机。
 			#Trigger the trigs on main player's side, in the following order board-> hand -> deck.
 			for triggerID in [mainPlayerID, 3-mainPlayerID]:
 				trigs = [] #TrigsBoard
 				try: #这个信号有扳机在监听时，记录所有满足条件的扳机
-					trigs = [trig for trig in self.trigsBoard[triggerID][signal] if trig.canTrigger(signal, ID, subject, target, number, comment, choice)]
+					trigs = [trig for trig in self.trigsBoard[triggerID][signal] if trig.canTrig(signal, ID, subject, target, number, comment, choice)]
 					#某个随从死亡导致的队列中，作为场上扳机，救赎拥有最低优先级，其始终在最后结算
 					if trigs: hasResponder = True
 					if signal == "MinionDies" and self.Secrets.sameSecretExists(Redemption, 3-self.turn):
@@ -681,24 +682,24 @@ class Game:
 							if type(trigs[i]) == Trig_Redemption:
 								trigs.append(trigs.pop(i)) #把救赎的扳机移到最后
 								break
-					for trig in trigs: trig.trigger(signal, ID, subject, target, number, comment, choice)
+					for trig in trigs: trig.trig(signal, ID, subject, target, number, comment, choice)
 				except: pass
 				try: #TrigsHand
-					trigs = [trig for trig in self.trigsHand[triggerID][signal] if trig.canTrigger(signal, ID, subject, target, number, comment, choice)]
+					trigs = [trig for trig in self.trigsHand[triggerID][signal] if trig.canTrig(signal, ID, subject, target, number, comment, choice)]
 					if trigs: hasResponder = True
-					for trig in trigs: trig.trigger(signal, ID, subject, target, number, comment, choice)
+					for trig in trigs: trig.trig(signal, ID, subject, target, number, comment, choice)
 				except: pass
 				try: #TrigsDeck
-					trigs = [trig for trig in self.trigsDeck[triggerID][signal] if trig.canTrigger(signal, ID, subject, target, number, comment, choice)]
+					trigs = [trig for trig in self.trigsDeck[triggerID][signal] if trig.canTrig(signal, ID, subject, target, number, comment, choice)]
 					if trigs: hasResponder = True
 					invocation = []
 					for trig in trigs:
 						if "Invocation" in type(trig).__name__:
 							if trig.entity.name not in invocation:
-								trig.trigger(signal, ID, subject, target, number, comment, choice)
+								trig.trig(signal, ID, subject, target, number, comment, choice)
 								invocation.append(trig.entity.name)
 						else:
-							trig.trigger(signal, ID, subject, target, number, comment, choice)
+							trig.trig(signal, ID, subject, target, number, comment, choice)
 				except: pass
 		return hasResponder
 
@@ -848,7 +849,7 @@ class Game:
 		self.sendSignal("TurnEnds", self.turn, None, None, 0, "")
 		self.gathertheDead(True)
 		#The secrets and temp effects are cleared at the end of turn.
-		for obj in fixedList(self.turnEndTrigger): #所有一回合光环都是回合结束时消失，即使效果在自己回合外触发了也是如此
+		for obj in self.turnEndTrigger[:]: #所有一回合光环都是回合结束时消失，即使效果在自己回合外触发了也是如此
 			obj.turnEndTrigger()
 
 		self.Counters.turnEnds()
@@ -857,7 +858,7 @@ class Game:
 		self.turn = 3 - self.turn #Changes the turn to another hero.
 		self.Counters.turns[self.turn] += 1
 		self.Manas.turnStarts()
-		for obj in fixedList(self.turnStartTrigger): #This is for temp effects.
+		for obj in self.turnStartTrigger[:]: #This is for temp effects.
 			if not hasattr(obj, "ID") or obj.ID == self.turn: obj.turnStartTrigger()
 		self.heroes[self.turn].turnStarts(self.turn)
 		self.heroes[3-self.turn].turnStarts(self.turn)
@@ -877,7 +878,7 @@ class Game:
 			self.Hand_Deck.drawCard(self.turn)
 		self.gathertheDead(True) #There might be death induced by drawing cards.
 		for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-			card.effectCanTrigger()
+			card.effCanTrig()
 			card.checkEvanescent()
 		self.moves.append(("EndTurn", ))
 
@@ -963,7 +964,7 @@ class Game:
 			if resolveDeath:
 				self.gathertheDead(True)
 			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-				card.effectCanTrigger()
+				card.effCanTrig()
 				card.checkEvanescent()
 			if verifySelectable:
 				self.moves.append(("battle", subIndex, subWhere, tarIndex, tarWhere))
@@ -1031,12 +1032,12 @@ class Game:
 					self.Counters.cardsPlayedThisGame[self.turn].append(spell.index)
 					if "~Corrupted~" in spell.index: self.Counters.corruptedCardsPlayed[self.turn].append(spell.index)
 					#使用后步骤，触发“每当使用一张xx牌之后”的扳机，如狂野炎术士，西风灯神，星界密使的状态移除和伊莱克特拉风潮的状态移除。
-					if not spell.inOrigDeck: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+					if spell.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
 					self.sendSignal("SpellBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
 					#完成阶段结束，处理亡语，此时可以处理胜负问题。
 					self.gathertheDead(True)
 					for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-						card.effectCanTrigger()
+						card.effCanTrig()
 						card.checkEvanescent()
 				if not isinstance(tarIndex, list):
 					self.moves.append(("playSpell", subIndex, subWhere, tarIndex, tarWhere, choice))
@@ -1086,12 +1087,12 @@ class Game:
 			self.Counters.cardsPlayedThisGame[ID].append(weaponIndex)
 			#if "~Corrupted~" in weaponIndex: self.Counters.corruptedCardsPlayed[self.turn].append(weaponIndex)
 			#完成阶段，触发“每当你使用一张xx牌”的扳机，如捕鼠陷阱和瑟拉金之种等。
-			if not weapon.inOrigDeck: self.Counters.createdCardsPlayedThisGame[ID] += 1
+			if weapon.creator: self.Counters.createdCardsPlayedThisGame[ID] += 1
 			self.sendSignal("WeaponBeenPlayed", self.turn, weapon, target, mana, posinHand, 0, armedTrigs)
 			#完成阶段结束，处理亡语，可以处理胜负问题。
 			self.gathertheDead(True)
 			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-				card.effectCanTrigger()
+				card.effCanTrig()
 				card.checkEvanescent()
 			self.moves.append(("playWeapon", subIndex, subWhere, tarIndex, tarWhere, 0))
 			
@@ -1143,12 +1144,12 @@ class Game:
 			self.Counters.cardsPlayedThisGame[ID].append(heroCardIndex)
 		#完成阶段
 			#使用后步骤，触发“每当你使用一张xx牌之后”的扳机，如捕鼠陷阱等。
-			if not heroCard.inOrigDeck: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+			if heroCard.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
 			self.sendSignal("HeroCardBeenPlayed", self.turn, heroCard, None, mana, posinHand, choice, armedTrigs)
 			#完成阶段结束，处理亡语，可以处理胜负问题。
 			self.gathertheDead(True)
 			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-				card.effectCanTrigger()
+				card.effCanTrig()
 				card.checkEvanescent()
 			self.moves.append(("playHero", subIndex, subWhere, 0, "", choice))
 			
@@ -1218,7 +1219,7 @@ class Game:
 				}[where][i]
 
 	def evolvewithGuide(self, moves, guides):
-		self.fixedGuides, self.guides = fixedList(guides), fixedList(guides)
+		self.fixedGuides, self.guides = guides[:], guides[:]
 		for move in moves:
 			self.decodePlay(move)
 			if self.GUI and move[0] != "EndTurn": self.GUI.wait(600)

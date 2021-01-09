@@ -116,6 +116,7 @@ import threading
 import time
 
 from Game import gameStatusDict
+from Triggers_Auras import SecretTrigger
 
 def pickleObj2Str(obj):
 	s = str(pickle.dumps(obj, 0).decode())
@@ -131,9 +132,6 @@ def pickleObj2Bytes(obj):
 	
 def unpickleBytes2Obj(s):
 	return pickle.loads(s)
-	
-def fixedList(listObj):
-	return listObj[0:len(listObj)]
 	
 def extractfrom(target, listObj):
 	try: return listObj.pop(listObj.index(target))
@@ -220,6 +218,7 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			ph = PIL.ImageTk.PhotoImage(img)
 			tk.Button.__init__(self, relief=tk.FLAT, image=ph, master=GUI.GamePanel, bg=self.colorOrig, width=HandIconWidth, height=HandIconHeight)
 			self.GUI, self.card, self.selected, self.image = GUI, card, 0, ph
+			self.howMuchShown = 2 #How much info of this card is shown
 			self.x, self.y, self.labels, self.zone = 0, 0, [], GUI.handZones[card.ID]
 			self.bind('<Button-1>', self.leftClick)   # bind left mouse click
 			self.bind('<Button-3>', self.rightClick)   # bind right mouse click
@@ -232,11 +231,14 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			if card.type == "Minion": self.attack, self.health = card.attack, card.health
 			elif card.type == "Weapon": self.attack, self.health = card.attack, card.durability
 			else: self.attack, self.health = 0, 0
-		else:
+		else: #Enemy cards that can't be seen
 			tk.Button.__init__(self, relief=tk.FLAT, master=GUI.GamePanel, bg="grey46", width=HandIconWidth_noImg, height=HandIconHeight_noImg)
 			self.GUI, self.card, self.selected, self.image = GUI, card, 0, None
 			self.x, self.y, self.labels, self.zone = 0, 0, [], GUI.handZones[card.ID]
-			
+			#如果这张牌上面有标记
+			if card.tracked:
+				self.config(bg="grey86")
+				
 	def decideColorOrig(self, GUI, card): #decide the correct colorOrig and set it
 		if not hasattr(GUI, "ID") or seeEnemyHand or GUI.ID == card.ID:
 			game, self.colorOrig = card.Game, "red"
@@ -272,16 +274,24 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		self.waiting = False
 		try: self.GUI.lbl_CardStatus.destroy()
 		except: pass
+		try: self.GUI.lbl_CardPossibilities.destroy()
+		except: pass
 		
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
 			try: self.GUI.lbl_CardStatus.destroy()
 			except: pass
+			try: self.GUI.lbl_CardPossibilities.destroy()
+			except: pass
 			self.GUI.lbl_CardStatus = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w', justify="left")
 			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
-			
+			if self.card.possibilities:
+				text = "POSSIBILITIES\n"+"\n".join((type.name for type in self.card.possibilities))
+				self.GUI.lbl_CardPossibilities = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
+				self.GUI.lbl_CardPossibilities.place(relx=infoDispXPos-0.12, rely=0.5, anchor='e')
+				
 	def tempLeftClick(self, event): #For Shadowverse
 		self.GUI.select = self.card
 		self.var.set(1)
@@ -301,7 +311,8 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		self.x, self.y, self.labels = x, y, []
 		self.place(x=x, y=y, anchor='c')
 		if not hasattr(self.GUI, "ID") or seeEnemyHand or self.GUI.ID == card.ID:
-			CardLabel(btn=self, text=self.GUI.wrapText(card.name), fg="black").plot(x=x, y=y-CARD_Y/2)
+			try: CardLabel(btn=self, text=self.GUI.wrapText(card.name) if not CHN else type(self.card).name_CN.replace(' ', '\n'), fg="black", font=("Yahei", 10)).plot(x=x, y=y-CARD_Y/2)
+			except: CardLabel(btn=self, text=self.GUI.wrapText(card.name), fg="black").plot(x=x, y=y-CARD_Y/2)
 			CardLabel(btn=self, text=str(card.getMana()), fg="black").plot(x=x-0.39*CARD_X, y=y-0.22*CARD_Y)
 			#Minions and weapons have stats
 			if card.type == "Minion":
@@ -320,6 +331,15 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			for key, value in card.keyWords.items():
 				if value > 0: text += key+'\n'
 			self['text'] = text
+			if self.card.creator:
+				CardLabel(btn=self, text=self.GUI.wrapText(self.card.creator)).plot(x=x, y=y+0.4*CARD_Y)
+		else:
+			if self.card.tracked and self.card.creator:
+				CardLabel(btn=self, text=self.GUI.wrapText(self.card.creator)).plot(x=x, y=y+0.55*CARD_Y)
+				if len(self.card.possibilities) == 1:
+					name = self.GUI.wrapText(self.card.possibilities[0])
+					CardLabel(btn=self, text=name).plot(x=x, y=y-0.5*CARD_Y)
+					
 		self.zone.btnsDrawn.append(self)
 		
 	def hide(self): #因为DiscoverCardOption是HandButton上面定义的，不用再次定replot
@@ -331,7 +351,7 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		for label in self.labels: label.replot()
 		
 	def showOpponent(self):
-		if not self.labels: #Copy the content from plot() method
+		if self.howMuchShown < 2: #Copy the content from plot() method
 			card = self.card
 			img = PIL.Image.open(findPicFilepath(card)).resize((HandImgSize, HandImgSize))
 			ph = PIL.ImageTk.PhotoImage(img)
@@ -339,7 +359,8 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			self.configure(image=ph)
 			self.configure(width=HandIconWidth)
 			self.configure(height=HandIconHeight)
-			CardLabel(btn=self, text=self.GUI.wrapText(card.name), fg="black").plot(x=self.x, y=self.y-CARD_Y/2)
+			try: CardLabel(btn=self, text=self.GUI.wrapText(card.name) if not CHN else type(self.card).name_CN.replace(' ', '\n'), fg="black", font=("Yahei", 10)).plot(x=self.x, y=self.y-CARD_Y/2)
+			except: CardLabel(btn=self, text=self.GUI.wrapText(card.name), fg="black").plot(x=self.x, y=self.y-CARD_Y/2)
 			CardLabel(btn=self, text=str(card.getMana()), fg="black").plot(x=self.x-0.39*CARD_X, y=self.y-0.22*CARD_Y)
 			#Minions and weapons have stats
 			if card.type == "Minion":
@@ -521,7 +542,8 @@ class DiscoverCardButton(HandButton):
 	def plot(self, x, y):
 		self.x, self.y, self.labels = x, y, []
 		self.place(x=x, y=y, anchor='c')
-		CardLabel(btn=self, text=self.GUI.wrapText(self.card.name), fg="black").plot(x=x, y=y-CARD_Y/2)
+		try: CardLabel(btn=self, text=self.GUI.wrapText(self.card.name) if not CHN else type(self.card).name_CN.replace(' ', '\n'), fg="black", font=("Yahei", 10)).plot(x=x, y=y-CARD_Y/2)
+		except: CardLabel(btn=self, text=self.GUI.wrapText(self.card.name), fg="black").plot(x=x, y=y-CARD_Y/2)
 		CardLabel(btn=self, text=str(self.card.mana), fg="black").plot(x=x-0.39*CARD_X, y=y-0.22*CARD_Y)
 		#Minions and weapons have stats
 		if self.card.type == "Minion":
@@ -559,7 +581,8 @@ class DiscoverOptionButton(tk.Button):
 	def plot(self, x, y):
 		self.x, self.y, self.labels = x, y, []
 		self.place(x=x, y=y, anchor='c')
-		CardLabel(btn=self, text=self.GUI.wrapText(self.card.name), fg="black").plot(x=x, y=y-CARD_Y/2)
+		try: CardLabel(btn=self, text=self.GUI.wrapText(self.card.name) if not CHN else type(self.card).name_CN.replace(' ', '\n'), fg="black", font=("Yahei", 10)).plot(x=x, y=y-CARD_Y/2)
+		except: CardLabel(btn=self, text=self.GUI.wrapText(self.card.name), fg="black").plot(x=x, y=y-CARD_Y/2)
 		self['text'] = self.GUI.wrapText(self.card.description)
 		self.GUI.btnsDrawn.append(self)
 		
@@ -618,7 +641,8 @@ class ChooseOneButton(tk.Button):
 	def plot(self, x, y):
 		self.x, self.y, self.labels = x, y, []
 		self.place(x=x, y=y, anchor='c')
-		CardLabel(self, text=self.GUI.wrapText(self.card.name), fg="black").plot(x=x, y=y-0.4*CARD_Y)
+		try: CardLabel(self, text=self.GUI.wrapText(self.card.name) if not CHN else type(self.card).name_CN.replace(' ', '\n'), fg="black", font=("Yahei", 10)).plot(x=x, y=y-0.4*CARD_Y)
+		except: CardLabel(self, text=self.GUI.wrapText(self.card.name), fg="black").plot(x=x, y=y-0.4*CARD_Y)
 		self.GUI.btnsDrawn.append(self)
 		
 	def respond(self, event):
@@ -1125,9 +1149,10 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 			self.bind("<Button-3>", self.rightClick)
 			self.bind("<Enter>", self.crosshairEnter)
 			self.bind("<Leave>", self.crosshairLeave)
-		else:
+		else: #对方不可见的奥秘
 			tk.Button.__init__(self, relief=tk.FLAT, image=None, compound=tk.TOP, master=GUI.GamePanel, text="?", fg="white", bg=self.colorOrig, width=3, height=1, font=("Yahei", 20, "bold"))
 			self.GUI, self.card, self.image, self.selected = GUI, card, None, 0
+				
 		self.x, self.y, self.labels, self.zone = 0, 0, [], GUI.secretZones[card.ID]
 		self.cardInfo = type(card)
 		self.counts = 0
@@ -1135,12 +1160,12 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 			if hasattr(trig, "counter"): self.counts += trig.counter
 			
 	def decideColorOrig(self, GUI, card):
-		if card.description.startswith("Secret:") and card.ID != GUI.Game.turn:
+		if (card.description.startswith("Secret:") and card.ID != GUI.Game.turn) or card.description.startswith("Sidequest:"):
 			self.colorOrig = {"Paladin": "gold", "Hunter": "green3", "Rogue": "grey", "Mage": "magenta3"}[card.Class]
 		elif card.description.startswith("Quest:"):
 			self.colorOrig = "goldenrod1"
-		elif card.description.startswith("Sidequest:"):
-			self.colorOrig = "magenta2"
+		#elif card.description.startswith("Sidequest:"):
+		#	self.colorOrig = "magenta2"
 		else:
 			self.colorOrig = "red"
 
@@ -1156,16 +1181,25 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 		self.waiting = False
 		try: self.GUI.lbl_CardStatus.destroy()
 		except: pass
+		try: self.GUI.lbl_CardPossibilities.destroy()
+		except: pass
 		
 	def wait2Display(self):
 		time.sleep(waitTime4Info)
 		if self.waiting:
 			try: self.GUI.lbl_CardStatus.destroy()
 			except: pass
+			try: self.GUI.lbl_CardPossibilities.destroy()
+			except: pass
 			self.GUI.lbl_CardStatus = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w', justify="left")
 			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
-			
+			print("Secret has possibilities:", self.card.possibilities)
+			if self.card.possibilities:
+				text = "POSSIBILITIES\n"+"\n".join((type.name for type in self.card.possibilities))
+				self.GUI.lbl_CardPossibilities = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
+				self.GUI.lbl_CardPossibilities.place(relx=infoDispXPos-0.12, rely=0.5, anchor='e')
+				
 	def plot(self, x, y):
 		self.x, self.y, self.labels = x, y, []
 		self.place(x=x, y=y, anchor='c')
@@ -1291,7 +1325,9 @@ class BoardButton(tk.Canvas):
 			lines.append("Player %d has:"%ID if not CHN else "玩家%d有："%ID)
 			for key, value in game.status[ID].items():
 				if value > 0: lines.append("   %s:%d"%(key if not CHN else gameStatusDict[key], value))
-			for obj in game.trigAuras[ID]: lines.append("   %s"%obj.text(CHN))
+			for obj in game.trigAuras[ID]:
+				if not isinstance(obj, SecretTrigger):
+					lines.append("   %s"%obj.text(CHN))
 		lines.append("Temp Effects:" if not CHN else "临时效果")
 		for obj in game.turnStartTrigger + game.turnEndTrigger:
 			lines.append("   %s"%obj.text(CHN))

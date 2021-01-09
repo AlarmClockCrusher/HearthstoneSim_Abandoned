@@ -17,11 +17,6 @@ def extractfrom(target, listObj):
     except:
         return None
 
-
-def fixedList(listObject):
-    return listObject[0:len(listObject)]
-
-
 def PRINT(game, string, *args):
     if game.GUI:
         if not game.mode: game.GUI.printInfo(string)
@@ -114,7 +109,7 @@ class ChangewingCherub(SVMinion):
                 machina += 1
         return machina >= 3 and self.targetExists(choice) and not self.targets
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         machina, natura = 0, 0
         for card in self.Game.Hand_Deck.hands[self.ID]:
             if card.type == "Minion" and card != self:
@@ -163,7 +158,7 @@ class PluckyTreasureHunter(SVMinion):
     requireTarget, keyWord, description = True, "", "Fanfare: If you have any Machina or Natura cards in your hand, discard 1. Then put 2 random cards that share a trait with that card from your deck into your hand."
     attackAdd, healthAdd = 2, 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         for card in self.Game.Hand_Deck.hands[self.ID]:
             if card.type == "Minion" and card != self:
                 if "Natura" in card.race or "Machina" in card.race:
@@ -240,7 +235,7 @@ class Trig_RomanticChanteuse(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID != self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -294,7 +289,7 @@ class GoblinWarpack(SVSpell):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 6
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):

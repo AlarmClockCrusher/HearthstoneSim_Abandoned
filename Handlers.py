@@ -204,7 +204,17 @@ class Secrets:
 
 	def spaceinArea(self, ID):
 		return 5 - (len(self.mainQuests[ID]) + len(self.sideQuests[ID]) + len(self.secrets[ID]))
-
+		
+	def initSecretHint(self, secret):
+		print("Initing secret with possi", secret.possibilities)
+		secretCreator, Class = secret.creator, secret.Class
+		print("Deck possi", self.Game.Hand_Deck.knownCards[secret.ID])
+		deckSecrets = []
+		for creator, possi in self.Game.Hand_Deck.knownCards[secret.ID]:
+			if creator == secretCreator:
+				deckSecrets += [T for T in possi if T.description.startswith("Secret:") and T.Class == Class]
+		secret.possibilities = list(set(deckSecrets))
+		
 	def deploySecretsfromDeck(self, ID, num=1):
 		curGame = self.Game
 		for n in range(num):
@@ -222,15 +232,23 @@ class Secrets:
 		if all:
 			for secret in reversed(self.secrets[ID]):
 				secret = self.secrets[ID].pop()
-				secret.active = False
 				for trig in secret.trigsBoard: trig.disconnect()
+				
+			for obj in self.Game.trigAuras[ID][:]:
+				if isinstance(obj, SecretTrigger):
+					for trig in obj.trigsBoard: trig.disconnect()
 			return None
 		else:
 			secret = self.secrets[ID].pop(index)
-			secret.active = False
 			for trig in secret.trigsBoard: trig.disconnect()
+			try: self.Game.possibleSecrets[ID].remove(type(secret))
+			except: pass
 			return secret
-
+			
+	def ruleOut(self, secretType, ID):
+		for secret in self.secrets[ID]:
+			try: secret.possibilities.remove(secretType)
+			except: pass
 	#secret can be type, index or real card.
 	def sameSecretExists(self, secret, ID):
 		if isinstance(secret, str):

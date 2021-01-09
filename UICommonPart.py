@@ -602,7 +602,7 @@ class GUI_Common:
 		try: self.canvas.delete(lineID) #If a line is drawn, erase it.
 		except: pass
 		
-	def triggerBlink(self, entity, color="yellow"):
+	def trigBlink(self, entity, color="yellow"):
 		for btn in self.boardZones[entity.ID].btnsDrawn + self.heroZones[entity.ID].btnsDrawn + self.secretZones[entity.ID].btnsDrawn \
 					+ (self.handZones[entity.ID].btnsDrawn if not hasattr(self, "ID") or seeEnemyHand or entity.ID == self.ID else []):
 			if btn.card == entity:

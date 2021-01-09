@@ -18,10 +18,6 @@ def extractfrom(target, listObj):
         return None
 
 
-def fixedList(listObject):
-    return listObject[0:len(listObject)]
-
-
 def PRINT(game, string, *args):
     if game.GUI:
         if not game.mode: game.GUI.printInfo(string)
@@ -55,7 +51,7 @@ class Trig_CloudGigas(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -122,7 +118,7 @@ class FieranHavensentWindGod(SVMinion):
         self.trigsBoard = [Trig_FieranHavensentWindGod(self)]
         self.trigsDeck = [Trig_InvocationFieranHavensentWindGod(self)]
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.getEvolutionPoint(
             self.ID) > self.Game.getEvolutionPoint(3 - self.ID)
 
@@ -149,7 +145,7 @@ class Trig_FieranHavensentWindGod(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -160,7 +156,7 @@ class Trig_FieranHavensentWindGod(TrigBoard):
 
 
 class Trig_InvocationFieranHavensentWindGod(TrigInvocation):
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
                self.entity.Game.Counters.numMinionsSummonedThisGame[self.entity.ID] >= 10
 
@@ -171,7 +167,7 @@ class ResolveoftheFallen(SVSpell):
     index = "SV_Fortune~Neutral~Spell~4~Resolve of the Fallen"
     description = "Destroy an enemy follower or amulet.If at least 3 allied followers have evolved this match, recover 3 play points.Then, if at least 5 have evolved, draw 2 cards."
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.Counters.evolvedThisGame[self.ID] > 3
 
     def available(self):
@@ -220,7 +216,7 @@ class XXIZelgeneaTheWorld(SVMinion):
         self.marks["Can't Evolve"] = 1
         self.trigsDeck = [Trig_InvocationXXIZelgeneaTheWorld(self)]
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.heroes[self.ID].health < 15
 
     def afterInvocation(self, signal, ID, subject, target, number, comment):
@@ -266,7 +262,7 @@ class Trig_AttackXXIZelgeneaTheWorld(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject == self.entity
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -282,7 +278,7 @@ class Trig_EndXXIZelgeneaTheWorld(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -293,7 +289,7 @@ class Trig_EndXXIZelgeneaTheWorld(TrigBoard):
 
 
 class Trig_InvocationXXIZelgeneaTheWorld(TrigInvocation):
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
                self.entity.Game.Counters.turns[self.entity.ID] == 10
 
@@ -346,7 +342,7 @@ class Trig_TitanicShowdown(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -411,7 +407,7 @@ class PureshotAngel(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
 
     def available(self):
@@ -448,7 +444,7 @@ class LumberingCarapace(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: If at least 2 other cards were played this turn, gain +2/+2. Then, if at least 4 other cards were played this turn, gain +2/+2 more and Ward."
     attackAdd, healthAdd = 2, 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.combCards(self.ID) >= 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -479,7 +475,7 @@ class Trig_BlossomingArcher(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["SpellPlayed"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard and "~Accelerate" in subject.index
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -508,7 +504,7 @@ class SoothingSpell(SVSpell):
     index = "SV_Fortune~Forestcraft~Spell~2~Soothing Spell"
     description = "Restore 3 defense to an ally. If at least 2 other cards were played this turn, recover 1 evolution point."
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.combCards(self.ID) >= 2
 
     def targetExists(self, choice=0):
@@ -558,7 +554,7 @@ class XIIWolfraudHangedMan(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 7
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -610,7 +606,7 @@ class Trig_TreacherousReversal(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -659,7 +655,7 @@ class ReclusivePonderer(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 1
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willAccelerate() else False
 
 
@@ -698,7 +694,7 @@ class ChipperSkipper(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 1 and self.Game.Counters.numMinionsPlayedThisTurn[self.ID] > 0
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
 
 
@@ -706,7 +702,7 @@ class Trig_ChipperSkipper(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["SpellPlayed"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard and "~Accelerate" in subject.index
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -733,7 +729,7 @@ class FairyAssault(SVSpell):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 8
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -783,7 +779,7 @@ class Trig_OptimisticBeastmaster(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["SpellPlayed"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard and "~Accelerate" in subject.index
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -816,7 +812,7 @@ class Terrorformer(SVMinion):
         return [card for card in self.Game.Hand_Deck.hands[self.ID] if
                 card.type == "Minion" and card != self and card.Class == "Forestcraft" and type(card).mana >= 2]
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.fusionMaterials >= 2
 
     def fusionDecided(self, objs):
@@ -890,7 +886,7 @@ class DeepwoodWolf(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 1
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
 
     def returnTrue(self, choice=0):
@@ -911,7 +907,7 @@ class Trig_DeepwoodWolf(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["SpellPlayed"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard and "~Accelerate" in subject.index
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -961,7 +957,7 @@ class LionelWoodlandShadow(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 1 and self.Game.Counters.evolvedThisTurn[self.ID] > 0
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
 
     def available(self):
@@ -997,7 +993,7 @@ class Trig_LionelWoodlandShadow(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionPlayed"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID != self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1017,7 +1013,7 @@ class Trig_EndLionelWoodlandShadow(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID != self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1041,7 +1037,7 @@ class ErnestaWeaponsHawker(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: Rally (10) - Put a Dread Hound into your hand."
     attackAdd, healthAdd = 2, 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 10
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1111,7 +1107,7 @@ class PompousSummons(SVSpell):
     index = "SV_Fortune~Swordcraft~Spell~1~Pompous Summons"
     description = "Put a random Swordcraft follower from your deck into your hand.Rally (10): Put 2 random Swordcraft followers into your hand instead."
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 10
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1147,7 +1143,7 @@ class DecisiveStrike(SVSpell):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 5
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def targetExists(self, choice=0):
@@ -1193,7 +1189,7 @@ class HonorableThief(SVMinion):
         self.blank_init(Game, ID)
         self.deathrattles = [Deathrattle_HonorableThief(self)]
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 7
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1214,7 +1210,7 @@ class ShieldPhalanx(SVSpell):
     index = "SV_Fortune~Swordcraft~Spell~2~Shield Phalanx"
     description = "Summon a Shield Guardian and Knight.Rally (15): Summon a Frontguard General instead of a Shield Guardian."
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 15
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1274,7 +1270,7 @@ class EmpressofSerenity(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 5
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1315,7 +1311,7 @@ class VIIOluonTheChariot(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 7
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1328,7 +1324,7 @@ class Trig_VIIOluonTheChariot(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1373,7 +1369,7 @@ class Trig_VIIOluonRunawayChariot(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1425,7 +1421,7 @@ class Trig_PrudentGeneral(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1441,7 +1437,7 @@ class StrikelanceKnight(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: If an allied Commander card is in play, evolve this follower."
     attackAdd, healthAdd = 2, 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         minions = self.Game.minionsonBoard(self.ID)
         for minion in minions:
             if minion.onBoard and "Commander" in minion.race:
@@ -1485,7 +1481,7 @@ class DiamondPaladin(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 8
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1508,7 +1504,7 @@ class Trig_DiamondPaladin(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionAttackedMinion"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject == self.entity and self.entity.onBoard and (target.health < 1 or target.dead == True) and \
                (self.entity.health > 0 and self.entity.dead == False)
 
@@ -1527,7 +1523,7 @@ class Trig_EndDiamondPaladin(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1573,7 +1569,7 @@ class JugglingMoggy(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: Earth Rite - Gain +1/+1 and Last Words: Summon 2 Earth Essences."
     attackAdd, healthAdd = 2, 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = len(self.Game.earthsonBoard(self.ID)) > 0
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1600,7 +1596,7 @@ class MagicalAugmentation(SVSpell):
     index = "SV_Fortune~Runecraft~Spell~1~Magical Augmentation~EarthRite"
     description = "Deal 1 damage to an enemy follower. Earth Rite (2): Deal 4 damage instead. Then draw 2 cards."
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = len(self.Game.earthsonBoard(self.ID)) >= 2
 
     def targetExists(self, choice=0):
@@ -1636,7 +1632,7 @@ class CreativeConjurer(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: If there are no allied Earth Sigil amulets in play, summon an Earth Essence. Otherwise, perform Earth Rite: Put a Golem Summoning into your hand."
     attackAdd, healthAdd = 2, 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = len(self.Game.earthsonBoard(self.ID)) >= 0
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1708,7 +1704,7 @@ class Trig_RiteoftheIgnorant(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1737,7 +1733,7 @@ class Trig_EndRiteoftheIgnorant(TrigHand):
         self.makesCardEvanescent = True
 
     # They will be discarded at the end of any turn
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.inHand
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1765,7 +1761,7 @@ class Trig_ScourgeoftheOmniscient(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1796,7 +1792,7 @@ class Trig_AuthoringTomorrow(TrigBoard):
         self.blank_init(entity, ["TurnEnds"])
         self.counter = 3
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1910,7 +1906,7 @@ class ImperatorofMagic(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 6
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = len(self.Game.earthsonBoard(self.ID)) > 0 or self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1958,7 +1954,7 @@ class Trig_EmergencySummoning(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionPlayed"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID != self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2024,7 +2020,7 @@ class Trig_SweetspellSorcerer(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["SpellPlayed"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2071,7 +2067,7 @@ class AdamantineGolem(SVMinion):
         self.blank_init(Game, ID)
         self.triggers["Drawn"] = [self.drawn]
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = len(self.Game.earthsonBoard(self.ID)) > 0
 
     def drawn(self):
@@ -2155,7 +2151,7 @@ class SpringwellDragonKeeper(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 5
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def returnTrue(self, choice=0):
@@ -2207,7 +2203,7 @@ class TropicalGrouper(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 4
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2222,7 +2218,7 @@ class Trig_TropicalGrouper(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionEvolved"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard and subject != self.entity
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2324,7 +2320,7 @@ class Trig_Heliodragon(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["PlayerDiscardsCard", "PlayerDiscardsHand"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return ID == self.entity.ID and self.entity.onBoard and number > 0
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2363,7 +2359,7 @@ class Trig_TurncoatDragons(TrigHand):
     def __init__(self, entity):
         self.blank_init(entity, ["PlayerDiscardsCard"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.inHand and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2470,7 +2466,7 @@ class Trig_DragonsNest(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2601,7 +2597,7 @@ class GhostlyMaid(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: If there are any allied amulets in play, summon a Ghost. Then, if there are at least 2 in play, evolve it."
     attackAdd, healthAdd = 2, 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = len(self.Game.amuletsonBoard(self.ID)) > 0
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2638,7 +2634,7 @@ class BonenanzaNecromancer(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 7
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2653,7 +2649,7 @@ class Trig_BonenanzaNecromancer(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["BurialRite"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2667,7 +2663,7 @@ class SavoringSlash(SVSpell):
     index = "SV_Fortune~Shadowcraft~Spell~2~Savoring Slash"
     description = "Deal 3 damage to an enemy follower. Burial Rite: Draw a card."
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = not self.Game.Hand_Deck.noMinionsinHand(self.ID, self)
 
     def returnTrue(self, choice=0):
@@ -2720,7 +2716,7 @@ class CoffinoftheUnknownSoul(Amulet):
         self.trigsBoard = [Trig_Countdown(self)]
         self.deathrattles = [Deathrattle_CoffinoftheUnknownSoul(self)]
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 2
 
     def targetExists(self, choice=0):
@@ -2748,7 +2744,7 @@ class Deathrattle_CoffinoftheUnknownSoul(Deathrattle_Minion):
         self.blank_init(entity)
         self.chosenMinionType = None
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return target == self.entity and self.chosenMinionType
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2769,7 +2765,7 @@ class SpiritCurator(SVMinion):
     requireTarget, keyWord, description = True, "", "Fanfare: Burial Rite - Draw a card."
     attackAdd, healthAdd = 2, 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 2
 
     def targetExists(self, choice=0):
@@ -2829,7 +2825,7 @@ class DeathFowl(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 1
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willCrystallize() else False
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2850,7 +2846,7 @@ class SoulBox(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: If there are any allied amulets in play, evolve this follower."
     attackAdd, healthAdd = 2, 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = len(self.Game.amuletsonBoard(self.ID)) > 0
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2880,7 +2876,7 @@ class VIMilteoTheLovers(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 9
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         if self.willEnhance():
             self.effectViable = True
         else:
@@ -2963,7 +2959,7 @@ class Trig_VIMilteoTheLovers(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3016,7 +3012,7 @@ class Trig_CloisteredSacristan_Crystallize(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["BurialRite"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3050,7 +3046,7 @@ class CloisteredSacristan(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willCrystallize() else False
 
     def inHandEvolving(self, target=None):
@@ -3089,7 +3085,7 @@ class Trig_ConqueringDreadlord(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3103,7 +3099,7 @@ class Trig_InvocationConqueringDreadlord(TrigInvocation):
     def __init__(self, entity):
         self.blank_init(entity, ["BurialRite"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
                self.entity.Game.Counters.numBurialRiteThisGame[self.entity.ID] in [5, 7, 9]
 
@@ -3182,7 +3178,7 @@ class Deathbringer(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willCrystallize() else False
 
 
@@ -3190,7 +3186,7 @@ class Trig_Deathbringer(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3267,7 +3263,7 @@ class MoonriseWerewolf(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 5
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance() or self.Game.isAvarice(self.ID)
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3299,7 +3295,7 @@ class WhiplashImp(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 6
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance() or self.Game.isWrath(self.ID)
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3328,7 +3324,7 @@ class ContemptousDemon(SVMinion):
         self.blank_init(Game, ID)
         self.trigsBoard = [Trig_StartContemptousDemon(self), Trig_EndContemptousDemon(self)]
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.isWrath(self.ID)
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3348,7 +3344,7 @@ class Trig_StartContemptousDemon(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3360,7 +3356,7 @@ class Trig_EndContemptousDemon(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3373,7 +3369,7 @@ class Trig_EvolvedContemptousDemon(TrigBoard):
         self.blank_init(entity, ["HeroTookDmg", "HeroTook0Dmg", "TurnEnds"])
         self.counter = 10
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         if signal != "TurnEnds":
             return self.entity.onBoard and target == self.entity.Game.heroes[self.entity.ID] and ID == self.entity.ID
         else:
@@ -3434,7 +3430,7 @@ class TyrantofMayhem(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: Draw a card. If Vengeance is not active for you, deal 2 damage to your leader. Otherwise, deal 2 damage to the enemy leader."
     attackAdd, healthAdd = 2, 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.isVengeance(self.ID)
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3468,7 +3464,7 @@ class CurmudgeonOgre(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 6
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3477,7 +3473,7 @@ class CurmudgeonOgre(SVMinion):
             if self.Game.isVengeance(self.ID):
                 n = 2
             PRINT(self.Game, f"Curmudgeon Ogre's Fanfare gives +{n}/+{n} to all allied Bloodcraft followers")
-            for minion in fixedList(self.Game.minionsonBoard(self.ID, self)):
+            for minion in self.Game.minionsonBoard(self.ID, self):
                 if minion.Class == "Bloodcraft":
                     minion.buffDebuff(n, n)
         return target
@@ -3503,7 +3499,7 @@ class Trig_DireBond(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3519,7 +3515,7 @@ class DarholdAbyssalContract(SVMinion):
     requireTarget, keyWord, description = True, "", "Fanfare: If Wrath is active for you, destroy an enemy follower, then deal 3 damage to the enemy leader."
     attackAdd, healthAdd = 2, 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.isWrath(self.ID)
 
     def targetExists(self, choice=0):
@@ -3602,7 +3598,7 @@ class VampireofCalamity(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 1
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
 
     def returnTrue(self, choice=0):
@@ -3649,7 +3645,7 @@ class Trig_UnselfishGrace(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3687,7 +3683,7 @@ class Trig_InsatiableDesire(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3751,7 +3747,7 @@ class XIVLuzenTemperance(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 0
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willAccelerate() else False
 
 
@@ -3761,7 +3757,7 @@ class BuffAura_XIVLuzenTemperance(AuraDealer_toMinion):
         self.signals, self.auraAffected = [], []
 
     # Minions appearing/disappearing will let the minion reevaluate the aura.
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3792,7 +3788,7 @@ class Trig_XIVLuzenTemperance(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["HeroTookDmg", "HeroTook0Dmg"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and target == self.entity.Game.heroes[self.entity.ID]
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3833,7 +3829,7 @@ class StalwartFeatherfolk(SVMinion):
     requireTarget, keyWord, description = False, "Taunt", "Ward. Fanfare: If any allied amulets are in play, restore X defense to your leader. X equals the number of allied amulets in play."
     attackAdd, healthAdd = 2, 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = len(self.Game.amuletsonBoard(self.ID)) > 0
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3972,7 +3968,7 @@ class Trig_LorenaIronWilledPriest(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["HeroGetsCured", "AllCured"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         if signal == "HeroGetsCured":
             return subject.ID == self.entity.ID and self.entity.onBoard
         else:
@@ -4006,7 +4002,7 @@ class SarissaLuxflashSpear(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 6
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4047,7 +4043,7 @@ class Trig_SarissaLuxflashSpear(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionDies"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return target.ID == self.entity.ID and self.entity.onBoard and target.keyWords["Taunt"] > 0
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -4069,7 +4065,7 @@ class PriestessofForesight(SVMinion):
                 return self.targetExists(choice) and not self.targets
         return False
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = True
 
     def targetExists(self, choice=0):
@@ -4108,7 +4104,7 @@ class HolybrightAltar(Amulet):
         self.trigsBoard = [Trig_Countdown(self)]
         self.deathrattles = [Deathrattle_HolybrightAltar(self)]
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         for minion in self.Game.minionsAlive(self.ID):
             if minion != self and minion.keyWords["Taunt"] > 0:
                 self.effectViable = True
@@ -4159,7 +4155,7 @@ class Trig_ReverendAdjudicator(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["HeroGetsCured", "AllCured"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         if signal == "HeroGetsCured":
             return subject.ID == self.entity.ID and self.entity.onBoard
         else:
@@ -4188,7 +4184,7 @@ class Trig_SomnolentStrength(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -4265,12 +4261,12 @@ class VIIISofinaStrength(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "VIII. Sofina, Strength's Fanfare gives +1/+1 and Ward to all allied followers")
-        for minion in fixedList(self.Game.minionsonBoard(self.ID, self)):
+        for minion in self.Game.minionsonBoard(self.ID, self):
             minion.buffDebuff(1, 1)
             minion.getsKeyword("Taunt")
         return None
@@ -4282,7 +4278,7 @@ class BuffAura_VIIISofinaStrength(AuraDealer_toMinion):
         self.signals, self.auraAffected = ["MinionAppears"], []
 
     # All minions appearing on the same side will be subject to the buffAura.
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -4344,7 +4340,7 @@ class PuresongPriest(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 1
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4451,7 +4447,7 @@ class Trig_CatTuner(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -4509,7 +4505,7 @@ class Trig_WheelofMisfortune(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -4580,7 +4576,7 @@ class XSlausWheelofFortune(SVMinion):
         self.blank_init(Game, ID)
         self.trigsBoard = [Trig_XSlausWheelofFortune(self)]
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.isResonance(self.ID)
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4596,7 +4592,7 @@ class Trig_XSlausWheelofFortune(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID != self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -4643,7 +4639,7 @@ class Trig_InvertedManipulation(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionSummoned", "TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         if signal == "TurnEnds":
             return self.entity.onBoard and ID != self.entity.ID
         return self.entity.onBoard and subject.ID == self.entity.ID and subject.name == "Puppet"
@@ -4695,7 +4691,7 @@ class Trig_PowerliftingPuppeteer(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -4742,7 +4738,7 @@ class Trig_DimensionDominator(TrigBoard):
         self.blank_init(entity, ["MinionSummoned", "TurnEnds"])
         self.progress = 1
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         if signal == "TurnEnds":
             return self.entity.onBoard and ID != self.entity.ID
         return self.entity.onBoard and subject.ID == self.entity.ID
@@ -4776,7 +4772,7 @@ class Trig_MindSplitter(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -4905,7 +4901,7 @@ class Trig_AerinForeverBrilliant(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["SpellPlayed"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard and "~Accelerate" in subject.index
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -4928,7 +4924,7 @@ class Trig_EndAerinForeverBrilliant(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -4962,7 +4958,7 @@ class FuriousMountainDeity(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 7
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4978,7 +4974,7 @@ class Trig_FuriousMountainDeity(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID and subject == self.entity
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -5002,7 +4998,7 @@ class Trig_DeepwoodAnomaly(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionAttackingHero"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID and target.ID != self.entity.ID and subject == self.entity
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -5017,7 +5013,7 @@ class LifeBanquet(SVSpell):
     index = "SV_Fortune~Forestcraft~Spell~3~Life Banquet"
     description = "Draw 2 cards. If at least 2 other cards were played this turn, summon a Furious Mountain Deity. Then, if at least 8 other cards were played this turn, summon 2 Deepwood Anomalies."
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.combCards(self.ID) >= 2
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -5048,7 +5044,7 @@ class IlmisunaDiscordHawker(SVMinion):
         if isinstance(target, list): target = target[0]
         return target.type == "Minion" and target.onBoard and target.ID != self.ID
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 15
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -5088,7 +5084,7 @@ class Trig_AlyaskaWarHawker(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionSummoned"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and "Officer" in subject.race
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -5245,7 +5241,7 @@ class AlchemicalCraftschief(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 2
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willAccelerate() else False
 
     def returnTrue(self, choice=0):
@@ -5404,7 +5400,7 @@ class NephthysGoddessofAmenta(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 10
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -5453,7 +5449,7 @@ class Nightscreech(SVSpell):
     index = "SV_Fortune~Bloodcraft~Spell~1~Nightscreech"
     description = "Summon a Forest Bat. If Wrath is active for you, evolve it and draw 1 card. Otherwise, deal 1 damage to your leader."
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.Game.isWrath(self.ID)
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -5487,7 +5483,7 @@ class Baal(SVMinion):
         return [card for card in self.Game.Hand_Deck.hands[self.ID] if
                 card.type == "Minion" and card != self and card.Class == "Bloodcraft" and type(card).mana <= 3]
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.fusionMaterials >= 3
 
     def fusionDecided(self, objs):
@@ -5614,7 +5610,7 @@ class Trig_DemonofPurgatory(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -5647,7 +5643,7 @@ class Trig_ScionofDesire(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -5697,7 +5693,7 @@ class Trig_GluttonousBehemoth(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -5709,7 +5705,7 @@ class Trig_EvolvedGluttonousBehemoth(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -5954,7 +5950,7 @@ class PrinceofCocytus(SVMinion):
         curMana = self.Game.Manas.manas[self.ID]
         return self.mana > curMana >= 3
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = "sky blue" if self.willAccelerate() else False
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -6022,7 +6018,7 @@ class Trig_TempleofHeresy(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID and self.entity.Game.getEvolutionPoint(
             self.entity.ID) > self.entity.Game.getEvolutionPoint(3 - self.entity.ID)
 
@@ -6052,7 +6048,7 @@ class Trig_RaRadianceIncarnate(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnEnds"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -6092,7 +6088,7 @@ class LazuliGatewayHomunculus(SVMinion):
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 9
 
-    def effectCanTrigger(self):
+    def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -6143,7 +6139,7 @@ class Trig_SpinariaLucilleKeepers(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject == self.entity and self.entity.onBoard
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -6180,7 +6176,7 @@ class Trig_LucilleKeeperofRelics(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["MinionSummoned"])
 
-    def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and "Artifact" in subject.race
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):

@@ -18,10 +18,6 @@ def extractfrom(target, listObj):
         return None
 
 
-def fixedList(listObject):
-    return listObject[0:len(listObject)]
-
-
 def PRINT(game, string, *args):
     if game.GUI:
         if not game.mode: game.GUI.printInfo(string)

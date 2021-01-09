@@ -87,7 +87,7 @@ class PantherScout(SVMinion):
 	index = "Shadowverse~Warrior~Minion~2~2~2~None~Panther Scout~Fanfare"
 	requireTarget, keyWord, description = False, "", "Fanfare: Restore 1 Mana. Enhance 8: Gain +3/+3 and restore 7 Mana instead"
 	
-	def effectCanTrigger(self):
+	def effCanTrig(self):
 		self.effectViable = self.Game.Manas.manas[self.ID] > 7
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -242,7 +242,7 @@ class ReclusivePonderer(SVMinion):
 #		 else:
 #			 return self.mana
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -297,11 +297,11 @@ class ReclusivePonderer(SVMinion):
 #				 d.disconnect()
 #				 self.deathrattles.remove(d)
 #		 trigger = TriggerKagemitsu(self)
-#		 self.triggersonBoard.append(trigger)
+#		 self.trigsBoard.append(trigger)
 #		 if self.onBoard:
 #			 trigger.connect()
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -322,7 +322,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and subject == self.entity
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -337,7 +337,7 @@ class ReclusivePonderer(SVMinion):
 #			 PRINT(self,
 #				   "Last Words: If it is your turn, give your leader the following effect - At the start of your turn, summon a Kagemitsu, Matchless Blade, evolve it, then remove this effect.")
 #			 trigger = TriggerSummonAEvolvedKagemitsuNextTurn(self.entity.Game.heroes[self.entity.ID])
-#			 self.entity.Game.heroes[self.entity.ID].triggersonBoard.append(trigger)
+#			 self.entity.Game.heroes[self.entity.ID].trigsBoard.append(trigger)
 #			 trigger.connect()
 #
 #
@@ -345,17 +345,17 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnStarts"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #		 kag = Kagemitsu(self.entity.Game, ID)
 #		 self.entity.Game.summonMinion([kag], (-11, "totheRightEnd"), ID)
 #		 kag.evolve()
-#		 for t in self.entity.Game.heroes[ID].triggersonBoard:
+#		 for t in self.entity.Game.heroes[ID].trigsBoard:
 #			 if type(t) == TriggerSummonAEvolvedKagemitsuNextTurn:
 #				 t.disconnect()
-#				 self.entity.Game.heroes[ID].triggersonBoard.remove(t)
+#				 self.entity.Game.heroes[ID].trigsBoard.remove(t)
 #				 break
 #
 #
@@ -365,7 +365,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~1~Officer~Ernesta, Weapons Hawker~Battlecry"
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Rally (10) - Put a Dread Hound into your hand."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 10
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -420,7 +420,7 @@ class ReclusivePonderer(SVMinion):
 #		 else:
 #			 return self.mana
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def returnTrue(self, choice=0):
@@ -457,7 +457,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Spell~1~Pompous Summons"
 #	 description = "Put a random Swordcraft follower from your deck into your hand.Rally (10): Put 2 random Swordcraft followers into your hand instead."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 10
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -516,14 +516,14 @@ class ReclusivePonderer(SVMinion):
 #
 #	 def __init__(self, Game, ID):
 #		 self.blank_init(Game, ID)
-#		 self.triggersonBoard = [TriggerYuriusLevinDuke(self)]
+#		 self.trigsBoard = [TriggerYuriusLevinDuke(self)]
 #
 #
 # class TriggerYuriusLevinDuke(TriggeronBoard):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["MinionSummoned"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and subject.ID != self.entity.ID and subject != self.entity
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -537,7 +537,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Spell~1~Meet the Levin Sisters!"
 #	 description = "Choose: Put 1 of the following cards into your hand.-Mina, Levin Vice Leader-Mona, Levin Mage-Mena, Levin DuelistEnhance (7): Put 1 of each into your hand instead, and recover 6 play points."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -593,7 +593,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Minion~4~3~3~Levin~Mona, Levin Mage~Battlecry~Uncollectable"
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Recover 2 play points. If another allied Levin card is in play, recover 3 instead."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 controlLevin = False
 #		 for minion in self.Game.minionsonBoard(self.ID):
 #			 if "Levin" in minion.race:
@@ -620,7 +620,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~2~Levin~Mena, Levin Duelist~Battlecry~Rush~Uncollectable"
 #	 requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: If another allied Levin card is in play, gain +1/+1."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 controlLevin = False
 #		 for minion in self.Game.minionsonBoard(self.ID):
 #			 if "Levin" in minion.race:
@@ -645,7 +645,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~1~Levin~Lounes, Levin Apprentice~Battlecry"
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Gain +0/+1 for each Levin card in your hand.Enhance (3): Can attack 2 times per turn."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -688,7 +688,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer,Natura~Panther Scout~Battlecry"
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Recover 1 play point.Enhance (8): Gain +3/+3 and recover 7 play points instead."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -718,7 +718,7 @@ class ReclusivePonderer(SVMinion):
 #		 self.blank_init(Game, ID)
 #		 self.deathrattles = [DeathrattleHonorableThief(self)]
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 7
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -756,7 +756,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Levin~Levin Beastmaster~Battlecry"
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (6) - Summon 2 White Tigers and change them into Levin followers."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -784,7 +784,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Spell~2~Elegance in Action"
 #	 description = "Draw a card. Summon a Heavy Knight for each follower drawn. Deal 3 damage to a random enemy follower for each non-follower drawn.Enhance (5): Draw 3 cards instead."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -821,7 +821,7 @@ class ReclusivePonderer(SVMinion):
 #	 def available(self):
 #		 return self.Game.space(self.ID)
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 15
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -855,7 +855,7 @@ class ReclusivePonderer(SVMinion):
 #			 self.Game.summonMinion([m], (-11, "totheRightEnd"), self.ID)
 #			 m.getsKeyword("Rush")
 #			 trigger = TriggerMirrorsImage(m, self.ID)
-#			 m.triggersonBoard.append(trigger)
+#			 m.trigsBoard.append(trigger)
 #			 if m.onBoard:
 #				 trigger.connect()
 #		 return target
@@ -867,7 +867,7 @@ class ReclusivePonderer(SVMinion):
 #		 self.temp = True
 #		 self.ID = ID
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.ID
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -875,7 +875,7 @@ class ReclusivePonderer(SVMinion):
 #		 self.entity.disappears(keepDeathrattlesRegistered=False)
 #		 self.entity.Game.removeMinionorWeapon(self.entity)
 #		 self.disconnect()
-#		 extractfrom(self, self.entity.triggersonBoard)
+#		 extractfrom(self, self.entity.trigsBoard)
 #
 #	 def selfCopy(self, recipient):
 #		 trigger = type(self)(recipient, self.ID)
@@ -890,9 +890,9 @@ class ReclusivePonderer(SVMinion):
 #
 #	 def __init__(self, Game, ID):
 #		 self.blank_init(Game, ID)
-#		 self.triggersonBoard = [TriggerClashSteadfastSamurai(self)]
+#		 self.trigsBoard = [TriggerClashSteadfastSamurai(self)]
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -916,13 +916,13 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["MinionAttackingMinion"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and (target == self.entity or subject == self.entity)
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #		 self.entity.marks["Damage Immune"] += 1
 #		 trigger = TriggerTurnEndSteadfastSamurai(self.entity)
-#		 self.entity.triggersonBoard.append(trigger)
+#		 self.entity.trigsBoard.append(trigger)
 #		 if self.entity.onBoard:
 #			 trigger.connect()
 #
@@ -931,15 +931,15 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnEnds"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #		 self.entity.marks["Damage Immune"] -= 1
-#		 for t in self.entity.triggersonBoard:
+#		 for t in self.entity.trigsBoard:
 #			 if type(t) == TriggerTurnEndSteadfastSamurai:
 #				 t.disconnect()
-#				 self.entity.triggersonBoard.remove(t)
+#				 self.entity.trigsBoard.remove(t)
 #				 break
 #
 #
@@ -949,7 +949,7 @@ class ReclusivePonderer(SVMinion):
 #		 self.signals, self.auraAffected = [], []
 #
 #	 # Minions appearing/disappearing will let the minion reevaluate the aura.
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -976,7 +976,7 @@ class ReclusivePonderer(SVMinion):
 #
 #	 attackAdd, healthAdd = 1, 1
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = False
 #		 for minion in self.Game.minionsonBoard(self.ID):
 #			 if "Commander" in minion.race:
@@ -1004,7 +1004,7 @@ class ReclusivePonderer(SVMinion):
 #	 requireTarget, keyWord, description = True, "", "Fanfare: Enhance (6) - Banish an enemy follower or amulet."
 #	 evolveRequireTarget = True
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -1102,7 +1102,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Minion~3~2~2~Commander~Empress of Serenity~Battlecry"
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Summon a Shield Guardian.Enhance (5): Summon 3 instead.Enhance (10): Give +3/+3 to all allied Shield Guardians."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -1140,9 +1140,9 @@ class ReclusivePonderer(SVMinion):
 #
 #	 def __init__(self, Game, ID):
 #		 self.blank_init(Game, ID)
-#		 self.triggersonBoard = [TriggerOluonTheChariot(self)]
+#		 self.trigsBoard = [TriggerOluonTheChariot(self)]
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -1166,14 +1166,14 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, Game, ID):
 #		 self.blank_init(Game, ID)
 #		 self.marks["Can't Attack"] = 1
-#		 self.triggersonBoard = [TriggerOluonRunawayChariot(self)]
+#		 self.trigsBoard = [TriggerOluonRunawayChariot(self)]
 #
 #
 # class TriggerOluonTheChariot(TriggeronBoard):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnEnds"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1194,7 +1194,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnEnds"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1226,7 +1226,7 @@ class ReclusivePonderer(SVMinion):
 #		 self.blank_init(Game, ID)
 #		 self.deathrattles = [DeathrattleGeltResoluteKnight(self)]
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = False
 #		 for minion in self.Game.minionsonBoard(self.ID):
 #			 if "Commander" in minion.race:
@@ -1249,7 +1249,7 @@ class ReclusivePonderer(SVMinion):
 #		 PRINT(self,
 #			   "Last Words: At the start of your next turn, put a random Commander card from your deck into your hand.")
 #		 trigger = TriggerDeathrattleGeltResoluteKnight(self.entity.Game.heroes[self.entity.ID])
-#		 self.entity.Game.heroes[self.entity.ID].triggersonBoard.append(trigger)
+#		 self.entity.Game.heroes[self.entity.ID].trigsBoard.append(trigger)
 #		 trigger.connect()
 #
 #
@@ -1257,7 +1257,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnStarts"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return ID == self.entity.ID
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1269,10 +1269,10 @@ class ReclusivePonderer(SVMinion):
 #			 card = np.random.choice(commanders)
 #			 self.entity.Game.Hand_Deck.drawCard(self.entity.ID, card)
 #			 PRINT(self, f"Gelt, Resolute Knight's Last Words let you draw {card.name}.")
-#		 for t in self.entity.Game.heroes[ID].triggersonBoard:
+#		 for t in self.entity.Game.heroes[ID].trigsBoard:
 #			 if type(t) == TriggerDeathrattleGeltResoluteKnight:
 #				 t.disconnect()
-#				 self.entity.Game.heroes[ID].triggersonBoard.remove(t)
+#				 self.entity.Game.heroes[ID].trigsBoard.remove(t)
 #				 break
 #
 #
@@ -1288,7 +1288,7 @@ class ReclusivePonderer(SVMinion):
 #		 else:
 #			 return self.mana
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 commanders = 0
 #		 for card in self.Game.Hand_Deck.hands[self.ID]:
 #			 if card.cardType == "Minion" and "Commander" in card.race:
@@ -1319,9 +1319,9 @@ class ReclusivePonderer(SVMinion):
 #
 #	 def __init__(self, Game, ID):
 #		 self.blank_init(Game, ID)
-#		 self.triggersonBoard = [TriggerPecorinePeckishPrincess(self)]
+#		 self.trigsBoard = [TriggerPecorinePeckishPrincess(self)]
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]
 #
 #	 def targetExists(self, choice=0):
@@ -1345,7 +1345,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnEnds"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1359,7 +1359,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~2~Officer~Tsubaki of the Demon Blade~Battlecry~Stealth"
 #	 requireTarget, keyWord, description = False, "Stealth", "Ambush.Fanfare: If at least 10 allied followers have been destroyed this match, gain +1/+1 and randomly destroy 1 of the enemy followers with the highest attack in play."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.Game.Counters.numMinionsDiedThisGame[self.ID] >= 10
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1388,7 +1388,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Spell~3~Stroke of Conviction"
 #	 description = "Choose: Use play points equal to this card's cost and play this card as an Erika's Sleight, Mistolina's Swordplay, or Bayleon's Command."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -1474,7 +1474,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Spell~3~Courtly Dance"
 #	 description = "Put a random 1-play point and 2-play point Swordcraft follower from your deck into play.Enhance (8): Then, put a random 3-play point Swordcraft follower from your deck into play and evolve them. Evolve effects will not activate for those followers."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -1534,7 +1534,7 @@ class ReclusivePonderer(SVMinion):
 #
 #	 def __init__(self, Game, ID):
 #		 self.blank_init(Game, ID)
-#		 self.triggersonBoard = [TriggerFieranHavensentWindGod(self), TriggerInvocationFieranHavensentWindGod(self)]
+#		 self.trigsBoard = [TriggerFieranHavensentWindGod(self), TriggerInvocationFieranHavensentWindGod(self)]
 #
 #	 def targetExists(self, choice=0):
 #		 selfPoint, oppPoint = 0, 0
@@ -1570,7 +1570,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnEnds"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1586,7 +1586,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnStarts"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
 #				self.entity.Game.Counters.numMinionsSummonThisGame[self.entity.ID] >= 10 and \
 #				self.entity.name not in self.entity.Game.Counters.minionInvocationThisTurn
@@ -1629,10 +1629,10 @@ class ReclusivePonderer(SVMinion):
 #
 #	 def inEvolving(self):
 #		 trigger = TriggerPrudentGeneral(self.Game.heroes[self.ID])
-#		 for t in self.Game.heroes[self.ID].triggersonBoard:
+#		 for t in self.Game.heroes[self.ID].trigsBoard:
 #			 if type(t) == type(trigger):
 #				 return
-#		 self.Game.heroes[self.ID].triggersonBoard.append(trigger)
+#		 self.Game.heroes[self.ID].trigsBoard.append(trigger)
 #		 trigger.connect()
 #
 #
@@ -1640,7 +1640,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnEnds"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1655,7 +1655,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Minion~4~3~5~Officer~Shizuru, Sisterly Sabreur~Battlecry~Taunt"
 #	 requireTarget, keyWord, description = False, "Taunt", "Ward.Fanfare: Union Burst (10) - Deal 3 damage to the enemy leader. Gain the ability to evolve for 0 evolution points."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1667,7 +1667,7 @@ class ReclusivePonderer(SVMinion):
 #
 #	 def inEvolving(self):
 #		 trigger = TriggerShizuruSisterlySabreur(self)
-#		 self.triggersonBoard.append(trigger)
+#		 self.trigsBoard.append(trigger)
 #		 if self.onBoard:
 #			 trigger.connect()
 #
@@ -1676,7 +1676,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnEnds"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1707,9 +1707,9 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, Game, ID):
 #		 self.blank_init(Game, ID)
 #		 self.marks["Can't Evolve"] = 1
-#		 self.triggersinDeck = [TriggerInvocationZelgeneaTheWorld(self)]
+#		 self.trigsDeck = [TriggerInvocationZelgeneaTheWorld(self)]
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.Game.heroes[self.ID].health < 15
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1735,7 +1735,7 @@ class ReclusivePonderer(SVMinion):
 #
 #	 def inEvolving(self):
 #		 trigger = TriggerAttackZelgeneaTheWorld(self)
-#		 self.triggersonBoard.append(trigger)
+#		 self.trigsBoard.append(trigger)
 #		 trigger.connect()
 #
 #
@@ -1743,15 +1743,15 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and subject == self.entity
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #		 trigger = TriggerEndZelgeneaTheWorld(self.entity.Game.heroes[self.entity.ID])
-#		 for t in self.entity.Game.heroes[self.entity.ID].triggersonBoard:
+#		 for t in self.entity.Game.heroes[self.entity.ID].trigsBoard:
 #			 if type(t) == type(trigger):
 #				 return
-#		 self.entity.Game.heroes[self.entity.ID].triggersonBoard.append(trigger)
+#		 self.entity.Game.heroes[self.entity.ID].trigsBoard.append(trigger)
 #		 trigger.connect()
 #
 #
@@ -1759,7 +1759,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnEnds"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1773,7 +1773,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnStarts"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
 #				self.entity.Game.Counters.numTurnPassedThisGame[self.entity.ID] == 10 and \
 #				self.entity.name not in self.entity.Game.Counters.minionInvocationThisTurn
@@ -1792,7 +1792,7 @@ class ReclusivePonderer(SVMinion):
 #	 index = "Shadowverse~Swordcraft~Minion~5~4~5~Officer~Luxblade Arriet~Battlecry"
 #	 requireTarget, keyWord, description = False, "", "Fanfare: If at least 1 allied follower has evolved this match, gain Ward.Then, if at least 3 have evolved, recover 3 play points.Then, if at least 5 have evolved, restore 5 defense to your leader.Then, if at least 7 have evolved, draw cards until there are 7 cards in your hand."
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 1
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1823,7 +1823,7 @@ class ReclusivePonderer(SVMinion):
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Randomly put 2 different Officer followers from your deck into your hand.Enhance (7): Gain the ability to evolve for 0 evolution points and the following effect - The next time this follower takes damage, reduce that damage to 0."
 #	 evolveRequireTarget = True
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -1859,7 +1859,7 @@ class ReclusivePonderer(SVMinion):
 #		 if target:
 #			 ManaModification(target, changeby=-3).applies()
 #			 trigger = TriggerAmeliaTheSilverflash(target)
-#			 target.triggersinHand.append(trigger)
+#			 target.trigsHand.append(trigger)
 #			 trigger.connect()
 #			 PRINT(self, f"Amelia, the Silverflash let {target.name}'s cost -3 in this turn.")
 #		 return
@@ -1873,7 +1873,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnEnds"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.inHand and ID == self.entity.ID
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1881,10 +1881,10 @@ class ReclusivePonderer(SVMinion):
 #			 if m.changeby == -3:
 #				 self.entity.manaModifications.remove(m)
 #				 break
-#		 for t in self.entity.triggersinHand:
+#		 for t in self.entity.trigsHand:
 #			 if type(t) == TriggerAmeliaTheSilverflash:
 #				 t.disconnect()
-#				 self.entity.triggersinHand.remove(t)
+#				 self.entity.trigsHand.remove(t)
 #				 break
 #
 #
@@ -1896,9 +1896,9 @@ class ReclusivePonderer(SVMinion):
 #
 #	 def __init__(self, Game, ID):
 #		 self.blank_init(Game, ID)
-#		 self.triggersonBoard = [TriggerAlbertLevinChampion(self)]
+#		 self.trigsBoard = [TriggerAlbertLevinChampion(self)]
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -1930,7 +1930,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and subject == self.entity
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1956,9 +1956,9 @@ class ReclusivePonderer(SVMinion):
 #
 #	 def __init__(self, Game, ID):
 #		 self.blank_init(Game, ID)
-#		 self.triggersonBoard = [TriggerDiamondPaladin(self)]
+#		 self.trigsBoard = [TriggerDiamondPaladin(self)]
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
 #
 #	 def getMana(self):
@@ -1986,7 +1986,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["MinionAttackedMinion"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return subject == self.entity and self.entity.onBoard and (target.health < 1 or target.dead == True) and \
 #				(self.entity.health > 0 and self.entity.dead == False)
 #
@@ -1996,7 +1996,7 @@ class ReclusivePonderer(SVMinion):
 #		 self.entity.getsKeyword("Windfury")
 #		 self.entity.Game.Manas.manas[self.entity.ID] += 2
 #		 trigger = TriggerTurnEndDiamondPaladin(self.entity)
-#		 self.entity.triggersonBoard.append(trigger)
+#		 self.entity.trigsBoard.append(trigger)
 #		 if self.entity.onBoard:
 #			 trigger.connect()
 #
@@ -2005,15 +2005,15 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, entity):
 #		 self.blank_init(entity, ["TurnEnds"])
 #
-#	 def canTrigger(self, signal, ID, subject, target, number, comment, choice=0):
+#	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #		 self.entity.losesKeyword("Windfury")
-#		 for t in self.entity.triggersonBoard:
+#		 for t in self.entity.trigsBoard:
 #			 if type(t) == TriggerTurnEndDiamondPaladin:
 #				 t.disconnect()
-#				 self.entity.triggersonBoard.remove(t)
+#				 self.entity.trigsBoard.remove(t)
 #				 break
 #
 #
@@ -2043,7 +2043,7 @@ class ReclusivePonderer(SVMinion):
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
 #
-#	 def effectCanTrigger(self):
+#	 def effCanTrig(self):
 #		 self.effectViable = (self.getMana() > self.accelerate or self.mana <= self.accelerate) and \
 #							 self.Game.Counters.numMinionsDiedThisGame[
 #								 self.ID] >= 10 or self.getMana() != self.mana

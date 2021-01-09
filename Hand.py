@@ -26,6 +26,10 @@ class Hand_Deck:
 		if self.Game.heroes[2].Class in SVClasses:
 			self.handUpperLimit[2] = 9
 		self.initialDecks = {1: deck1 if deck1 else Default1, 2: deck2 if deck2 else Default2}
+		self.knownCards = {1:[], 2:[]} #可以明确知道是哪一张的全部资源牌
+		self.knownHands = {1:[], 2:[]} #可以明确知道这张牌是什么的手牌
+		self.uncertainCards = {1:[], 2:[]} #只知道可能是什么的资源牌
+		self.uncertainHands = {1:[], 2:[]} #只知道可能是什么的手牌
 		
 	def initialize(self):
 		self.initializeDecks()
@@ -36,13 +40,13 @@ class Hand_Deck:
 			Class = self.Game.heroes[ID].Class  # Hero's class
 			for obj in self.initialDecks[ID]:
 				if obj.name == "Transfer Student": obj = self.Game.transferStudentType
+				self.knownCards[ID].append(('', (obj, )))
 				card = obj(self.Game, ID)
 				if "Galakrond, " in card.name:
 					# 检测过程中，如果目前没有主迦拉克隆或者与之前检测到的迦拉克隆与玩家的职业不符合，则把检测到的迦拉克隆定为主迦拉克隆
 					if self.Game.Counters.primaryGalakronds[ID] is None or (
 							self.Game.Counters.primaryGalakronds[ID].Class != Class and card.Class == Class):
 						self.Game.Counters.primaryGalakronds[ID] = card
-				card.inOrigDeck = True
 				self.decks[ID].append(card)
 			npshuffle(self.decks[ID])
 			for i, card in enumerate(self.decks[ID]): #克苏恩一定不会出现在起始手牌中，只会沉在牌库底，然后等待效果触发后的洗牌
@@ -83,7 +87,7 @@ class Hand_Deck:
 			self.hands[ID] = [card.entersHand() for card in self.Game.mulligans[ID]]
 			self.Game.mulligans[ID] = []
 			for card in self.hands[1] + self.hands[2]:
-				card.effectCanTrigger()
+				card.effCanTrig()
 				card.checkEvanescent()
 
 		if self.Game.GUI: self.Game.GUI.update()
@@ -96,7 +100,7 @@ class Hand_Deck:
 					card.startofGame()
 		self.drawCard(1)
 		for card in self.hands[1] + self.hands[2]:
-			card.effectCanTrigger()
+			card.effCanTrig()
 			card.checkEvanescent()
 		if self.Game.GUI: self.Game.GUI.update()
 
@@ -120,7 +124,7 @@ class Hand_Deck:
 			self.Game.mulligans[ID] = []
 		for ID in range(1, 3):
 			for card in self.hands[1] + self.hands[2]:
-				card.effectCanTrigger()
+				card.effCanTrig()
 				card.checkEvanescent()
 		if not self.Game.heroes[2].Class in SVClasses:
 			self.addCardtoHand(TheCoin(self.Game, 2), 2)
@@ -130,10 +134,40 @@ class Hand_Deck:
 				if "Start of Game" in card.index: card.startofGame()
 		self.drawCard(1)
 		for card in self.hands[1] + self.hands[2]:
-			card.effectCanTrigger()
+			card.effCanTrig()
 			card.checkEvanescent()
 		if self.Game.GUI: self.Game.GUI.update()
 
+	#fromHD=0: only rule out from hand
+	#fromHD=1: only rule out from deck
+	#fromHD=other: rule out from both
+	def ruleOut(self, card, fromHD): #fromHD = 0, 1, other integers
+		tup = (card.creator, card.possibilities)
+		ID = card.ID
+		if fromHD != 1: #Rule out from hand
+			try: self.knownHands[ID].remove(tup)
+			except:
+				try: self.uncertainHands[ID].remove(tup)
+				except: print("Not found")
+		if fromHD != 0: #Also rule out from deck
+			try: self.knownCards[ID].remove(tup)
+			except:
+				try: self.uncertainCards[ID].remove(tup)
+				except: print("not found")
+				
+	#intoHD=0: include in hand
+	#intoHD=1: include in deck
+	#intoHD=other: include in both
+	def includePossi(self, card, intoHD): #intoHD == 0, 1, other integers
+		tup = (card.creator, card.possibilities)
+		ID = card.ID
+		if tup[0] and isinstance(tup[1], tuple):
+			if intoHD != 1: self.uncertainHands[ID].append(tup)
+			if intoHD != 0: self.uncertainCards[ID].append(tup)
+		else: #The card type is known
+			if intoHD != 1: self.knownHands[ID].append(tup)
+			if intoHD != 0: self.knownCards[ID].append(tup)
+			
 	def handNotFull(self, ID):
 		return len(self.hands[ID]) < self.handUpperLimit[ID]
 
@@ -232,7 +266,7 @@ class Hand_Deck:
 			return (None, mana) #假设即使爆牌也可以得到要抽的那个牌的费用，用于神圣愤怒
 			
 	# Will force the ID of the card to change. obj can be an empty list/tuple
-	def addCardtoHand(self, obj, ID, comment="", byDiscover=False, pos=-1, showAni=True):
+	def addCardtoHand(self, obj, ID, comment="", byDiscover=False, pos=-1, showAni=True, possi=None):
 		game, GUI = self.Game, self.Game.GUI
 		if not isinstance(obj, (list, np.ndarray, tuple)):  # if the obj is not a list, turn it into a single-element list
 			obj = [obj]
@@ -250,6 +284,11 @@ class Hand_Deck:
 					self.hands[ID].insert(pos + 100 * (pos < 0), card)
 					if GUI: GUI.cardReplacedinHand_Refresh(ID)
 				card = card.entersHand()
+				if possi:
+					card.possibilities = possi
+					print("card has possibilities:", card.possibilities)
+				card.tracked = True
+				self.includePossi(card, intoHD=2)
 				game.sendSignal("CardEntersHand", ID, None, [card], 0, comment)
 				if byDiscover: game.sendSignal("PutinHandbyDiscover", ID, None, obj, 0, '')
 			else:
@@ -266,14 +305,17 @@ class Hand_Deck:
 		ID = card.ID
 		i = self.hands[ID].index(card)
 		card.leavesHand()
+		if card.tracked: self.ruleOut(card, fromHD=2)
 		self.hands[ID].pop(i)
 		self.addCardtoHand(newCard, ID, "", byDiscover=False, pos=i, showAni=False)
 		
+	#目前只有牌库中的迦拉克隆升级时会调用，对方是可以知道的
 	def replaceCardinDeck(self, card, newCard):
 		ID = card.ID
 		try:
 			i = self.decks[ID].index(card)
 			card.leavesDeck()
+			self.ruleOut(card, fromHD=1)
 			self.decks[ID][i] = newCard
 			self.Game.sendSignal("DeckCheck", ID, None, None, 0, "")
 		except: pass
@@ -303,12 +345,14 @@ class Hand_Deck:
 			if isinstance(obj, (list, tuple, np.ndarray)):
 				ID = obj[0].ID
 				newDeck = self.decks[ID] + obj
-				for card in obj: card.entersDeck()
+				for card in obj:
+					card.entersDeck()
+					self.includePossi(card, intoHD=1)
 			else:  # Shuffle a single card
 				ID = obj.ID
 				newDeck = self.decks[ID] + [obj]
 				obj.entersDeck()
-
+				self.includePossi(obj, intoHD=1)
 			if curGame.mode == 0:
 				if curGame.guides:
 					order = curGame.guides.pop(0)
@@ -350,6 +394,7 @@ class Hand_Deck:
 			cards, cost, isRightmostCardinHand = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True)
 			n = len(cards)
 			for card in cards:
+				self.ruleOut(card, fromHD=2)
 				card.whenDiscarded()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.Counters.shadows[card.ID] += 1
@@ -358,7 +403,7 @@ class Hand_Deck:
 			self.Game.Manas.calcMana_All()
 
 	def discardCard(self, ID, card=None):
-		if card is None:  # Discard a random card.
+		if card is None:  # Discard a random card. Deprecated
 			if self.hands[ID]:
 				card = npchoice(self.hands[ID])
 				card, cost, isRightmostCardinHand = self.extractfromHand(card, enemyCanSee=True)
@@ -372,9 +417,10 @@ class Hand_Deck:
 			i = card if isinstance(card, (int, np.int32, np.int64)) else self.hands[ID].index(card)
 			card = self.hands[ID].pop(i)
 			card.leavesHand()
+			self.ruleOut(card, fromHD=2) #rule out from both hand and deck
 			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee=True)
 			self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 1, "")
-			for func in card.triggers["Discarded"]: func()
+			card.whenDiscarded()
 			self.Game.Manas.calcMana_All()
 			self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 			self.Game.Counters.shadows[card.ID] += 1
@@ -388,6 +434,9 @@ class Hand_Deck:
 				self.hands[ID] = []
 				for card in cardsOut:
 					card.leavesHand()
+					if card.tracked:
+						#洗牌的时候一般都不会涉及修改资源牌的可能选项
+						self.ruleOut(card, fromHD=0)
 					self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
 				# 一般全部取出手牌的时候都是直接洗入牌库，一般都不可见
 				if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(cardsOut, False)
@@ -403,6 +452,11 @@ class Hand_Deck:
 				card = self.hands[ID].pop(card)
 				cost = card.getMana()
 			card.leavesHand()
+			#取出单张手牌的时候，视情况决定从knownCards或者unknownCards里面移除
+			if enemyCanSee:
+				#If the card is tracked, rule out from both hand and deck; otherwise only rule out from deck
+				self.ruleOut(card, fromHD=1+card.tracked)
+				
 			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee)
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
 			return card, cost, posinHand
@@ -413,24 +467,45 @@ class Hand_Deck:
 			cardsOut = self.decks[ID]
 			self.decks[ID] = []
 			for card in cardsOut: card.leavesDeck()
+			self.knownCards = [] #The knownCards certainly disappear in this case
 			return cardsOut, 0, False
 		else:
 			if not isinstance(card, (int, np.int32, np.int64)):
 				card = extractfrom(card, self.decks[card.ID])
 			else:
-				if not self.decks[ID]:
-					return None, 0, False
+				if not self.decks[ID]: return None, 0, False
 				card = self.decks[ID].pop(card)
 			card.leavesDeck()
+			if enemyCanSee:
+				self.ruleOut(card, fromHD=1)
 			if self.Game.GUI: self.Game.GUI.cardLeavesDeckAni(card, enemyCanSee=enemyCanSee)
 			return card, 0, False
-
+			
+	#所有被移除的卡牌都会被展示
 	def removeDeckTopCard(self, ID, num=1):
 		cards, i = [], 0
 		while i < num:
-			card = self.extractfromDeck(-1, ID)[0]
+			card = self.extractfromDeck(-1, ID)[0] #The cards removed from deck top can always be seen by opponent
 			i += 1
-			if card: cards.append(card)
+			if card:
+				cards.append(card)
+				#一张实体牌的tracked, creator, possibilities
+				#如果一张牌是起始牌库中的，已知，则tup=("", class card)
+				#如果是其他牌产生的，但是仍然已知，则tup=(creator, class card)
+				#如果是其他牌产生的，但是未知，则tup=(creator, () possibilities)
+				#creator, possi = card.creator, card.possibilities
+					#tup = (card.creator, card.possibilities)
+					#try: self.knownCards.remove(tup)
+					#except:
+					#	try: self.uncertainCards.remove(tup)
+					#	except: pass
+				#if tup[0] and isinstance(tup[0], tuple): #一张牌是其他牌创建的，并有多种可能性
+				#	try: self.knownCards.remove((creator, possi))
+				#	except:
+				#		try: self.uncertainCards.remove((creator, possi))
+				#		except: pass
+				#else: #如果一张牌是牌库中起始就有的牌，则一定从knownCards中移除
+				#	self.knownCards.remove((creator, possi))
 		return cards
 		
 	def createCopy(self, game):
@@ -449,8 +524,8 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 
 
-Default1 = [OhMyYogg, Counterspell, PenFlinger, Frostbolt, RuneDagger, RuneDagger, DarkPharaohTekahn,
-			RapidFire, HeadmasterKelThuzad, ZephrystheGreat, RaidLeader
+Default1 = [ExplosiveTrap, FreezingTrap, ExplosiveTrap, FreezingTrap, Snipe, Counterspell, FlameWard, Frostbolt, ArcaneShot, RapidFire, HeadmasterKelThuzad, ZephrystheGreat,
+			
 			]
 
 Default2 = [Khadgar, DwarvenSharpshooter, ProfessorSlate, OhMyYogg, Counterspell, ForbiddenWords, KirinTorMage, NatureStudies,
