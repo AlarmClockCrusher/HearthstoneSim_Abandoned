@@ -159,7 +159,7 @@ class Card:
 		
 	def entersDeck(self):
 		self.onBoard, self.inHand, self.inDeck = False, False, True
-		#Hand_Deck.shuffleCardintoDeck won't track the mana change.
+		#Hand_Deck.shuffleintoDeck won't track the mana change.
 		self.Game.Manas.calcMana_Single(self)
 		for trig in self.trigsDeck: trig.connect()
 			
@@ -593,8 +593,8 @@ class Dormant(Card):
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
-		text, s = self.name + '\n', wrapTxt(self.text(CHN), CHN)
-		if s: text += s + '\n'
+		text, s = self.name if not CHN else type(self).name_CN + "\n", wrapTxt(self.text(CHN), CHN)
+		if s: text += "%s\n"%s
 		if self.trigsBoard:
 			text += "Dormant's trigsBoard:\n" if not CHN else "场上扳机：\n"
 			for trig in self.trigsBoard: text += "  %s\n"%wrapTxt(trig.text(CHN), CHN)
@@ -699,7 +699,7 @@ class Minion(Card):
 											  }
 						}
 		#跟踪卡牌的可能性
-		self.tracked, self.creator, self.possibilities = False, "", ()
+		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
 		
 	def applicable(self, target):
 		return target != self
@@ -772,8 +772,8 @@ class Minion(Card):
 			
 	def cardStatus(self, hideSomeTrigs=False):
 		CHN = self.Game.GUI.CHN
-		text, s = self.name + '\n', wrapTxt(self.text(CHN), CHN)
-		if s: text += s + '\n'
+		text, s = self.name if not CHN else type(self).name_CN + "\n", wrapTxt(self.text(CHN), CHN)
+		if s: text += "%s\n"%s
 		if self.inHand and self.manaMods:
 			text += "Mana modification:\n" if not CHN else "费用效果\n"
 			for manaMod in self.manaMods:
@@ -1253,9 +1253,9 @@ class Spell(Card):
 		self.blank_init(Game, ID)
 		
 	def reset(self, ID):
-		creator = self.creator
+		creator, possi = self.creator, self.possibilities
 		self.__init__(self.Game, ID)
-		self.creator = creator
+		self.creator, self.possibilities = creator, possi
 		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -1275,12 +1275,12 @@ class Spell(Card):
 		self.marks = {"Cost Health Instead": 0,}
 		self.effectViable, self.evanescent = False, False
 		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possibilities = "", False, ()
+		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
-		text, s = self.name + '\n', wrapTxt(self.text(CHN), CHN)
-		if s: text += s + '\n'
+		text, s = self.name if not CHN else type(self).name_CN + "\n", wrapTxt(self.text(CHN), CHN)
+		if s: text += "%s\n"%s
 		if self.inHand and self.manaMods:
 			text += "Mana modification:\n" if not CHN else "费用效果\n"
 			for manaMod in self.manaMods:
@@ -1493,7 +1493,8 @@ class Secret(Spell):
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
 		self.marks = {"Cost Health Instead": 0, }
 		self.effectViable, self.evanescent = False, False
-		self.creator, self.tracked, self.possibilities = "", False, ()
+		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
+		self.dummyTrigs = []
 		
 	def available(self):
 		return self.Game.Secrets.areaNotFull(self.ID) and not self.Game.Secrets.sameSecretExists(self, self.ID)
@@ -1522,16 +1523,21 @@ class Secret(Spell):
 		# There is no need for another round of death resolution.
 		if self.Game.GUI: self.Game.GUI.eraseOffBoardTrig(self.ID)
 		self.Game.sendSignal("SpellBeenCast", self.ID, self, None, 0, "")
-
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		secretHD = self.Game.Secrets
 		if secretHD.areaNotFull(self.ID) and not secretHD.sameSecretExists(self, self.ID):
 			secretHD.secrets[self.ID].append(self)
-			for trig in self.trigsBoard: trig.connect()
 			secretHD.initSecretHint(self) #Let the game know what possible secrets each player has
 		return None
-
-
+		
+	#def realSecretReveal(self):
+		
+	#一个奥秘的伪扳机列表需要复制
+	def assistCreateCopy(self, Copy):
+		Copy.dummyTrigs = [trig.createCopy(Copy.game) for trig in self.dummyTrigs]
+		
+		
 class Quest(Spell):
 	Class, name = "Neutral", "Vanilla"
 	requireTarget, mana = False, 1
@@ -1558,7 +1564,7 @@ class Quest(Spell):
 		self.marks = {"Cost Health Instead": 0, }
 		self.effectViable, self.evanescent = False, False
 		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possibilities = "", False, ()
+		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
 		
 	#Upper limit of secrets and quests is 5. There can only be one main quest, but multiple different sidequests
 	def available(self):
@@ -1656,8 +1662,8 @@ class HeroPower(Card):
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
-		text, s = self.name + '\n', wrapTxt(self.text(CHN), CHN)
-		if s: text += s + '\n'
+		text, s = self.name if not CHN else type(self).name_CN + "\n", wrapTxt(self.text(CHN), CHN)
+		if s: text += "%s\n"%s
 		if self.manaMods:
 			text += "Mana modification:\n" if not CHN else "费用效果\n"
 			for manaMod in self.manaMods:
@@ -1794,9 +1800,9 @@ class Hero(Card):
 		self.blank_init(Game, ID)
 		
 	def reset(self, ID):
-		creator = self.creator
+		creator, possi = self.creator, self.possibilities
 		self.__init__(self.Game, ID)
-		self.creator = creator
+		self.creator, self.possibilities = creator, possi
 		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -1830,13 +1836,13 @@ class Hero(Card):
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.effectViable, self.evanescent = False, False
 		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possibilities = "", False, ()
+		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
 		
 	"""Handle hero's attacks, attack chances, attack chances and frozen status."""
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
-		text, s = self.name + '\n', wrapTxt(self.text(CHN), CHN)
-		if s: text += s + '\n'
+		text, s = self.name if not CHN else type(self).name_CN + "\n", wrapTxt(self.text(CHN), CHN)
+		if s: text += "%s\n"%s
 		if self.inHand and self.manaMods:
 			text += "Mana modification:\n" if not CHN else "费用效果\n"
 			for manaMod in self.manaMods:
@@ -2115,9 +2121,9 @@ class Weapon(Card):
 		self.blank_init(Game, ID)
 		
 	def reset(self, ID):
-		creator = self.creator
+		creator, possi = self.creator, self.possibilities
 		self.__init__(self.Game, ID)
-		self.creator = creator
+		self.creator, self.possibilities = creator, possi
 		
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -2138,17 +2144,16 @@ class Weapon(Card):
 		self.seq = -1
 		self.deathrattles = []
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
-		self.creator = ""
 		self.options = []  # For Choose One weapon, non-existent at this point.
 		self.auras = {}
 		self.effectViable, self.evanescent = False, False
 		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possibilities = "", False, ()
+		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
 		
 	def cardStatus(self):
 		CHN = self.Game.GUI.CHN
-		text, s = self.name + '\n', self.text(CHN)
-		if s: text += s + '\n'
+		text, s = self.name if not CHN else type(self).name_CN + "\n", wrapTxt(self.text(CHN), CHN)
+		if s: text += "%s\n"%s
 		if self.inHand and self.manaMods:
 			text += "Mana modification:\n" if not CHN else "费用效果\n"
 			for manaMod in self.manaMods:
@@ -2340,8 +2345,28 @@ class ChooseOneOption:
 	def createCopy(self, game):
 		return type(self)(game.copiedObjs[self.entity])
 
-
-class UncertainCard:
-	def __init__(self, creator="", possibilities=()):
+#用于处理卡牌的可能性
+class PossiHolder:
+	def __init__(self, card, real, possi, creator="", related=[]):
+		self.real = real #真实的牌类型
+		self.possi = possi #可能的牌类型的列表
 		self.creator = creator
-		self.possibilities = possibilities
+		self.related = related #一张牌的可能性是可以与其他牌存在互斥关系的，这时盛放其他可能性容器
+		self.card = card
+		
+	def confirm(self): #自己的可能性完全确定时
+		self.possi = [self.real]
+		for possiHolder in self.related:
+			possiHolder.possi.remove(self.real)
+			possiHolder.related.remove(self) #当一个可能性容器被完全确定时，其他的可能性容器就不再与这个可能性相关联
+			
+	def ruleOut(self, type): #从这个容器的可能性中移除一个。与此牌相关联的其他牌
+		self.possi.remove(type)
+		#当一个可能性容器被完全确定时，其他的可能性容器就不再与这个可能性相关联
+		if len(self.possi) == 1:
+			for possiHolder in self.related:
+				possiHolder.possi.remove(self.real)
+				possiHolder.related.remove(self)
+				
+	def createCopy(self, game):
+		Copy = PossiHolder(self.card.createCopy(game),  self.real, self.possi[:], self.creator, self.related)

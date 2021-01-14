@@ -288,7 +288,10 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
 			if self.card.possibilities:
-				text = "POSSIBILITIES\n"+"\n".join((type.name for type in self.card.possibilities))
+				if CHN:
+					text = "可能是\n"+"\n".join((type.name_CN for type in self.card.possibilities))
+				else:
+					text = "POSSIBILITIES\n"+"\n".join((type.name for type in self.card.possibilities))
 				self.GUI.lbl_CardPossibilities = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
 				self.GUI.lbl_CardPossibilities.place(relx=infoDispXPos-0.12, rely=0.5, anchor='e')
 				
@@ -1194,9 +1197,11 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 			self.GUI.lbl_CardStatus = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w', justify="left")
 			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
-			print("Secret has possibilities:", self.card.possibilities)
 			if self.card.possibilities:
-				text = "POSSIBILITIES\n"+"\n".join((type.name for type in self.card.possibilities))
+				if CHN:
+					text = "可能是\n"+"\n".join((type.name_CN for type in self.card.possibilities))
+				else:
+					text = "POSSIBILITIES\n"+"\n".join((type.name for type in self.card.possibilities))
 				self.GUI.lbl_CardPossibilities = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
 				self.GUI.lbl_CardPossibilities.place(relx=infoDispXPos-0.12, rely=0.5, anchor='e')
 				
@@ -1456,28 +1461,79 @@ class ManaZone(tk.Frame):
 		for widget in self.manasDrawn: widget.destroy()
 		
 		
-class DeckZone(tk.Frame):
+class DeckZone(tk.Button):
 	def __init__(self, GUI, ID):
-		tk.Frame.__init__(self, master=GUI.GamePanel, height=int(0.2*Y), bg='black')
+		tk.Button.__init__(self, master=GUI.GamePanel, height=5, font=("Yahei", 12, "bold"), fg='black')
 		self.GUI, self.ID = GUI, ID
-		self.x, self.y, self.btnsDrawn = 0, 0, []
+		self.x, self.y = 0, 0
+		ID = self.GUI.ID if hasattr(self.GUI, "ID") else 1
+		self.x, self.y = int(0.94*X), int(0.93*Y) if self.ID == ID else int(0.07*Y)
+		self.draw()
+		self.bind("<Enter>", self.crosshairEnter)
+		self.bind("<Leave>", self.crosshairLeave)
 		
 	def plot(self):
-		ID = self.GUI.ID if hasattr(self.GUI, "ID") else 1
-		if self.ID == ID: x, y= int(0.94*X), int(0.93*Y)
-		else: x, y= int(0.94*X), int(0.07*Y)
-		self.x, self.y = x, y
-		self.place(x=x, y=y, anchor='c')
+		self.place(x=self.x, y=self.y, anchor='c')
 		
 	def draw(self):
 		HD = self.GUI.Game.Hand_Deck
-		if self.btnsDrawn:
-			self.btnsDrawn[0]["text"] = "Hand: %d\nDeck: %d\nTurn: %d\nShadow: %d"%(len(HD.hands[self.ID]), len(HD.decks[self.ID]), self.GUI.Game.Counters.turns[self.ID] ,self.GUI.Game.Counters.shadows[self.ID])
-			self.btnsDrawn[0].configure(bg="green3"if self.GUI.Game.turn == self.ID else "red")
-		else:
-			color = "green3"if self.GUI.Game.turn == self.ID else "red"
-			text = "Hand: %d\n.\n.\nDeck: %d"%(len(HD.hands[self.ID]), len(HD.decks[self.ID]))
-			lbl_HD = tk.Label(self.GUI.GamePanel, text=text, bg=color, fg="black", font=("Yahei", 16, "bold"))
-			lbl_HD.place(x=self.x, y=self.y, anchor='c')
-			self.btnsDrawn = [lbl_HD]
+		text = "Hand: %d\nDeck: %d\nTurn: %d\nShadow: %d"%(len(HD.hands[self.ID]), len(HD.decks[self.ID]), 
+															self.GUI.Game.Counters.turns[self.ID] ,self.GUI.Game.Counters.shadows[self.ID])
+		self.config(text=text)
+		self.config(bg="green3"if self.GUI.Game.turn == self.ID else "red")
+		
+	def crosshairEnter(self, event):
+		print("Start waiting for deck")
+		self.waiting = True
+		thread = threading.Thread(target=self.wait2Display, daemon=True)
+		thread.start()
+		
+	def crosshairLeave(self, event):
+		self.waiting = False
+		try: self.GUI.lbl_CardStatus.destroy()
+		except: pass
+		try: self.GUI.lbl_CardPossibilities.destroy()
+		except: pass
+		
+	def wait2Display(self):
+		time.sleep(waitTime4Info)
+		if self.waiting:
+			try: self.GUI.lbl_CardStatus.destroy()
+			except: pass
+			try: self.GUI.lbl_CardPossibilities.destroy()
+			except: pass
+			HD = self.GUI.Game.Hand_Deck
+			if CHN:
+				if hasattr(self.GUI, "ID"):
+					text = "{}的已知资源\n".format("对方" if self.GUI.ID != self.ID else "你")
+				else: #单人版
+					text = "玩家{}的已知资源\n".format(self.ID)
+				for tup in HD.knownCards[self.ID]:
+					try: creator = tup[0].name_CN
+					except: creator = "对局自身"
+					if len(tup[1]) == 1:
+						if tup[0]: text += "\n由{}创建，{}".format(creator, tup[1][0].name_CN)
+						else: text += "\n初始套牌，{}".format(tup[1][0].name_CN)
+					elif len(tup[1]) < 10:
+						text += "\n由{}创建。可能为以下牌".format(creator)
+						text += "\n  ".join((type.name_CN for type in tup[1]))
+					else: tup += "\n由{}创建。可能性大于10".format(creator)
+			else:
+				if hasattr(self.GUI, "ID"):
+					text = "Known Cards Owned by {} \n".format("Opponent" if self.GUI.ID != self.ID else "You")
+				else: #单人版
+					text = "Known Cards Owned by Player {}\n".format(self.ID)
+				text = "".format("" if self.GUI.ID != self.ID else "You")
+				for tup in HD.knownCards[self.ID]:
+					try: creator = tup[0].name
+					except: creator = "Game itself"
+					if len(tup[1]) == 1:
+						if tup[0]: text += "\nCreated by {}, {}".format(creator, tup[1][0].name)
+						else: text += "\nStarted in deck, {}".format(tup[1][0].name)
+					elif len(tup[1]) < 10:
+						text += "\nCreated by {}. Can be:".format(creator)
+						text += "\n  ".join((type.name for type in tup[1]))
+					else: tup += "\nCreated by  {}. Too many possibilities".format(creator)
+			self.GUI.lbl_CardPossibilities = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
+			self.GUI.lbl_CardPossibilities.place(relx=0, rely=0.5, anchor='w')
 			

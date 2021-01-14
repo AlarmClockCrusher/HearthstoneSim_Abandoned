@@ -527,7 +527,7 @@ class ShuffleRememberedSpells(Deathrattle_Minion):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		spells = [spell(self.entity.Game, self.entity.ID) for spell in self.spellsRemembered]
-		self.entity.Game.Hand_Deck.shuffleCardintoDeck(spells, self.entity.ID)
+		self.entity.Game.Hand_Deck.shuffleintoDeck(spells, self.entity.ID)
 		
 	def selfCopy(self, recipient):
 		trig = type(self)(recipient)
@@ -1176,7 +1176,7 @@ class Marrowslicer(Weapon):
 	name_CN = "切髓之刃"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.Hand_Deck.shuffleCardintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID)
+		self.Game.Hand_Deck.shuffleintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID)
 		return None
 		
 class SoulFragment(Spell):
@@ -2775,7 +2775,7 @@ class SecretPassage(Spell):
 				trigSwap = SecretPassageEffect(self.Game, self.ID)
 				trigSwap.cardsHand2Deck = hand
 				trigSwap.cardsDeck2Hand = cardsfromDeck
-				HD.shuffleCardintoDeck(hand, self.ID, enemyCanSee=False, sendSig=False)
+				HD.shuffleintoDeck(hand, self.ID, enemyCanSee=False, sendSig=False)
 				HD.addCardtoHand(cardsfromDeck, self.ID)
 				self.Game.turnStartTrigger.insert(0, trigSwap)
 		return None
@@ -2797,7 +2797,7 @@ class SecretPassageEffect:
 			for trig in card.trigsBoard + card.trigsHand + card.trigsDeck:
 				trig.disconnect()
 			card.reset(self.playerID)
-		HD.shuffleCardintoDeck(cardstoReturn2Deck, self.playerID, enemyCanSee=False, sendSig=False)
+		HD.shuffleintoDeck(cardstoReturn2Deck, self.playerID, enemyCanSee=False, sendSig=False)
 		HD.addCardtoHand(cardstoReturn2Hand, self.playerID)
 		
 		try: self.Game.turnStartTrigger.remove(self)
@@ -3530,7 +3530,7 @@ class SpiritJailer(Minion):
 	name_CN = "精魂狱卒"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.Hand_Deck.shuffleCardintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID)
+		self.Game.Hand_Deck.shuffleintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID)
 		return None
 		
 		
@@ -3582,7 +3582,7 @@ class SoulShear(Spell):
 		if target:
 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			self.dealsDamage(target, damage)
-			self.Game.Hand_Deck.shuffleCardintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID)
+			self.Game.Hand_Deck.shuffleintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID)
 		return target
 		
 		
@@ -3601,7 +3601,7 @@ class SchoolSpirits(Spell):
 		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		minions = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
 		self.dealsAOE(minions, [damage]*len(minions))
-		self.Game.Hand_Deck.shuffleCardintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID)
+		self.Game.Hand_Deck.shuffleintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID)
 		return None
 		
 		

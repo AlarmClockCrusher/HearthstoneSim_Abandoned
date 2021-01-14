@@ -1412,7 +1412,7 @@ class ArchsporeMsshifn(Minion):
 		
 class ShuffleMsshifnPrimeintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.shuffleCardintoDeck(MsshifnPrime(self.entity.Game, self.entity.ID), self.entity.ID)
+		self.entity.Game.Hand_Deck.shuffleintoDeck(MsshifnPrime(self.entity.Game, self.entity.ID), self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：将“终极姆希菲”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Msshi'fn Prime' into your deck"
@@ -1790,7 +1790,7 @@ class ZixorApexPredator(Minion):
 		
 class ShuffleZixorPrimeintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.shuffleCardintoDeck(ZixorPrime(self.entity.Game, self.entity.ID), self.entity.ID)
+		self.entity.Game.Hand_Deck.shuffleintoDeck(ZixorPrime(self.entity.Game, self.entity.ID), self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：将“终极兹克索尔”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Zixor Prime' into your deck"
@@ -2069,7 +2069,7 @@ class AstromancerSolarian(Minion):
 		
 class ShuffleSolarianPrimeintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.shuffleCardintoDeck(SolarianPrime(self.entity.Game, self.entity.ID), self.entity.ID)
+		self.entity.Game.Hand_Deck.shuffleintoDeck(SolarianPrime(self.entity.Game, self.entity.ID), self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：将“终极索兰莉安”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Solarian Prime' into your deck"
@@ -2356,7 +2356,7 @@ class MurgurMurgurgle(Minion):
 		
 class ShuffleMurgurglePrimeintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.shuffleCardintoDeck(MurgurglePrime(self.entity.Game, self.entity.ID), self.entity.ID)
+		self.entity.Game.Hand_Deck.shuffleintoDeck(MurgurglePrime(self.entity.Game, self.entity.ID), self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：将“终极莫戈尔格”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Murgurgle Prime' into your deck"
@@ -2541,7 +2541,7 @@ class ReliquaryofSouls(Minion):
 		
 class ShuffleReliquaryPrimeintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.shuffleCardintoDeck(ReliquaryPrime(self.entity.Game, self.entity.ID), self.entity.ID)
+		self.entity.Game.Hand_Deck.shuffleintoDeck(ReliquaryPrime(self.entity.Game, self.entity.ID), self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：将“终极魂匣”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Reliquary Prime' into your deck"
@@ -2994,7 +2994,7 @@ class Akama(Minion):
 		
 class ShuffleAkamaPrimeintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.shuffleCardintoDeck(AkamaPrime(self.entity.Game, self.entity.ID), self.entity.ID)
+		self.entity.Game.Hand_Deck.shuffleintoDeck(AkamaPrime(self.entity.Game, self.entity.ID), self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：将“终极阿卡玛”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Akama Prime' into your deck"
@@ -3117,7 +3117,7 @@ class LadyVashj(Minion):
 		
 class ShuffleVashjPrimeintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.shuffleCardintoDeck(VashjPrime(self.entity.Game, self.entity.ID), self.entity.ID)
+		self.entity.Game.Hand_Deck.shuffleintoDeck(VashjPrime(self.entity.Game, self.entity.ID), self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：将“终极瓦斯琪”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Vashj Prime' into your deck"
@@ -3480,7 +3480,7 @@ class KanrethadEbonlocke(Minion):
 		
 class ShuffleKanrethadPrimeintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.shuffleCardintoDeck(KanrethadPrime(self.entity.Game, self.entity.ID), self.entity.ID)
+		self.entity.Game.Hand_Deck.shuffleintoDeck(KanrethadPrime(self.entity.Game, self.entity.ID), self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：将“终极坎雷萨德”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Kanrethad Prime' into your deck"
@@ -3837,7 +3837,7 @@ class KargathBladefist(Minion):
 		
 class ShuffleKargathPrimeintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.shuffleCardintoDeck(KargathPrime(self.entity.Game, self.entity.ID), self.entity.ID)
+		self.entity.Game.Hand_Deck.shuffleintoDeck(KargathPrime(self.entity.Game, self.entity.ID), self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：将“终极卡加斯”洗入你的牌库" if CHN else "Deathrattle: Shuffle 'Kargath Prime' into your deck"

@@ -34,7 +34,7 @@ class Hand_Deck:
 	def initialize(self):
 		self.initializeDecks()
 		self.initializeHands()
-
+		
 	def initializeDecks(self):
 		for ID in range(1, 3):
 			Class = self.Game.heroes[ID].Class  # Hero's class
@@ -92,7 +92,7 @@ class Hand_Deck:
 
 		if self.Game.GUI: self.Game.GUI.update()
 		if not self.Game.heroes[2].Class in SVClasses:
-			self.addCardtoHand(TheCoin(self.Game, 2), 2)
+			self.addCardtoHand(TheCoin(self.Game, 2), 2, possi=(1, (TheCoin,)))
 		self.Game.Manas.calcMana_All()
 		for ID in range(1, 3):
 			for card in self.hands[ID] + self.decks[ID]:
@@ -127,7 +127,7 @@ class Hand_Deck:
 				card.effCanTrig()
 				card.checkEvanescent()
 		if not self.Game.heroes[2].Class in SVClasses:
-			self.addCardtoHand(TheCoin(self.Game, 2), 2)
+			self.addCardtoHand(TheCoin(self.Game, 2), 2, possi=(1, (TheCoin,)))
 		self.Game.Manas.calcMana_All()
 		for ID in range(1, 3):
 			for card in self.hands[ID] + self.decks[ID]:
@@ -265,8 +265,10 @@ class Hand_Deck:
 			if GUI: GUI.millCardAni(card)
 			return (None, mana) #假设即使爆牌也可以得到要抽的那个牌的费用，用于神圣愤怒
 			
+	def createCard(self, obj, ID, comment)
 	# Will force the ID of the card to change. obj can be an empty list/tuple
-	def addCardtoHand(self, obj, ID, comment="", byDiscover=False, pos=-1, showAni=True, possi=None):
+	def addCardtoHand(self, obj, ID, comment="", byDiscover=False, pos=-1, 
+									showAni=True, possi=None):
 		game, GUI = self.Game, self.Game.GUI
 		if not isinstance(obj, (list, np.ndarray, tuple)):  # if the obj is not a list, turn it into a single-element list
 			obj = [obj]
@@ -285,8 +287,10 @@ class Hand_Deck:
 					if GUI: GUI.cardReplacedinHand_Refresh(ID)
 				card = card.entersHand()
 				if possi:
-					card.possibilities = possi
-					print("card has possibilities:", card.possibilities)
+					card.creator, card.possibilities = possi
+					self.knownCards[ID].append(possi)
+				else: #如果没有possi指定，则说明这是一个区域移动效果，不是由其他卡牌创建
+					self.knownCards[ID].append((card.creator, (type(card),)))
 				card.tracked = True
 				self.includePossi(card, intoHD=2)
 				game.sendSignal("CardEntersHand", ID, None, [card], 0, comment)
@@ -301,13 +305,13 @@ class Hand_Deck:
 		targetHolder[0] = newCard
 		if isPrimaryGalakrond: self.Game.Counters.primaryGalakronds[ID] = newCard
 		
-	def replaceCardinHand(self, card, newCard):
+	def replaceCardinHand(self, card, newCard): #替换单张卡牌，用于在手牌中发生变形时
 		ID = card.ID
 		i = self.hands[ID].index(card)
 		card.leavesHand()
 		if card.tracked: self.ruleOut(card, fromHD=2)
 		self.hands[ID].pop(i)
-		self.addCardtoHand(newCard, ID, "", byDiscover=False, pos=i, showAni=False)
+		self.addCardtoHand(newCard, ID, "", byDiscover=False, pos=i, showAni=False, possi=(newCard.creator, newCard.possibilities))
 		
 	#目前只有牌库中的迦拉克隆升级时会调用，对方是可以知道的
 	def replaceCardinDeck(self, card, newCard):
@@ -338,20 +342,29 @@ class Hand_Deck:
 	# All the cards shuffled will be into the same deck. If necessary, invoke this function for each deck.
 	# PlotTwist把手牌洗入牌库的时候，手牌中buff的随从两次被抽上来时buff没有了。
 	# 假设洗入牌库这个动作会把一张牌初始化
-	def shuffleCardintoDeck(self, obj, initiatorID, enemyCanSee=True, sendSig=True):
+	def shuffleintoDeck(self, obj, initiatorID,
+							enemyCanSee=True, sendSig=True, possi=None):
 		if obj:
 			curGame = self.Game
-			if curGame.GUI: curGame.GUI.shuffleCardintoDeckAni(obj, enemyCanSee)
-			if isinstance(obj, (list, tuple, np.ndarray)):
+			if curGame.GUI: curGame.GUI.shuffleintoDeckAni(obj, enemyCanSee)
+			#如果obj不是一个Iterable，则将其变成一个列表
+			if isinstance(obj, (list, tuple, np.ndarray)): 
 				ID = obj[0].ID
 				newDeck = self.decks[ID] + obj
-				for card in obj:
-					card.entersDeck()
-					self.includePossi(card, intoHD=1)
-			else:  # Shuffle a single card
+				if possi: #如果不定义possi,则使用卡牌的默认creator和possibilities
+					for card, p in zip(obj, possi):
+						card.entersDeck()
+						card.creator, card.possibilities = p
+						self.includePossi(card, intoHD=1)
+				else:
+					for card in obj:
+						card.entersDeck()
+						self.includePossi(card, intoHD=1)
+			else:
 				ID = obj.ID
 				newDeck = self.decks[ID] + [obj]
 				obj.entersDeck()
+				if possi: obj.creator, obj.possibilities = possi
 				self.includePossi(obj, intoHD=1)
 			if curGame.mode == 0:
 				if curGame.guides:
@@ -369,11 +382,11 @@ class Hand_Deck:
 		if all:
 			hand = self.extractfromHand(None, ID, all, enemyCanSee=False)[0]
 			for card in hand: card.reset(ID)
-			self.shuffleCardintoDeck(hand, initiatorID, enemyCanSee=False, sendSig=True)
+			self.shuffleintoDeck(hand, initiatorID, enemyCanSee=False, sendSig=True)
 		elif i:
 			card = self.extractfromHand(i, ID, all, enemyCanSee=False)[0]
 			card.reset(ID)
-			self.shuffleCardintoDeck(card, initiatorID, enemyCanSee=False, sendSig=True)
+			self.shuffleintoDeck(card, initiatorID, enemyCanSee=False, sendSig=True)
 			
 	def burialRite(self, ID, minions, noSignal=False):
 		if not isinstance(minions, list):

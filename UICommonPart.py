@@ -796,7 +796,7 @@ class GUI_Common:
 		self.window.wait_variable(var)
 		btn.remove()
 		
-	def shuffleCardintoDeckAni(self, cards, enemyCanSee=True):
+	def shuffleintoDeckAni(self, cards, enemyCanSee=True):
 		if not isinstance(cards, (list, np.ndarray)): cards = [cards]
 		ID, cards, btns = cards[0].ID, cards[::-1], []
 		ownID = self.ID if hasattr(self, "ID") else 1

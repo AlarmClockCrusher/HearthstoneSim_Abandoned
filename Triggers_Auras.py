@@ -216,37 +216,45 @@ class SecretTrigger(TrigBoard):
 		
 	def blank_init(self, entity, signals):
 		self.entity, self.signals, self.inherent = entity, signals, True
-		self.dummy = False
-		
+		self.dummy, self.realSecret = False, None
+	#伪扳机的注册直接在Secrets.initSecretHint里面处理完毕
 	def connect(self):
 		secret = self.entity
 		game, ID = secret.Game, secret.ID
 		for sig in self.signals:
 			try: game.trigsBoard[ID][sig].append(self)
 			except: game.trigsBoard[ID][sig] = [self]
-		#if self.dummy: game.trigAuras[ID].append(self)
-		#elif secret.possibilities:
-		#	secret.possibilities = list(set(type for type in secret.possibilities if type.description.startswith("Secret:")))
-		#else: #如果没有已标明的可能性，则从对方剩余资源中进行选择
-		#	secret.possibilities = list(set(type for type in game.Hand_Deck.knownCards[ID] if type.Class == secret.Class and type.description.startswith("Secret:")))
+			
 	#目前所有奥秘离开奥秘区的时候都标明其是什么奥秘，所以可以用于排除其他奥秘的可能性
 	def disconnect(self):
 		game, ID = self.entity.Game, self.entity.ID
-		game.Secrets.ruleOut(type(self.entity), ID) #在玩家的奥秘区中的所有奥秘的可能性中排除这个本体的可能
 		for sig in self.signals:
 			try: game.trigsBoard[ID][sig].remove(self)
 			except: pass
-		if self.dummy: game.trigAuras[ID].remove(self)
-		
+		if self.dummy:
+			self.realSecret.dummyTrigs.remove(self)
+			#game.trigAuras[ID].remove(self)
+		else:
+			game.Hand_Deck.ruleOut(self.entity, fromHD=1) #只从资源中进行移除
+			
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return True
 		
+	#当一个伪扳机可以被触发并开始结算的时候，它会把自己直接移除，同时去除掉这个可能性
+	#例如：召唤了一个随从，有两个奥秘：第一个可能是狙击或者寒冰护体，但是实际上是爆炸符文；第二个可能是狙击，但是实际上是冰冻陷阱
+		#在结算中，狙击的伪扳机被触发了，需要移除第一个奥秘是狙击的可能性，而寒冰护体的伪扳机无法触发，暂时还不能排除其可能性。
+			#真实的爆炸符文触发了，把随从打到了负血
+			#第二个奥秘的狙击伪扳机无法再发动了，因为随从已经是负血，所以我们无法得知那个奥秘是不是真的狙击，所以第二个奥秘的可能性是没有变化的
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		secret, game = self.entity, self.entity.Game
 		self.disconnect() #Handles removing dummy, too.
-		try: game.Secrets.secrets[secret.ID].remove(secret)
-		except: pass
-		if not self.dummy:
+		if self.dummy: #伪扳机能被触发的时候，需要移除可能性
+			#上面已经把这个伪扳机从trigsBoard和trigAuras里面移除了，下面就是把它所用来服务的那个真正的奥秘的可能范围缩小
+			self.realSecret.possibilities.remove(type(secret))
+			game.Hand_Deck.ruleOut(secret, fromHD=2)
+		else: #如果这个扳机是真奥秘的扳机时，它触发时需要把其从对方的资源中移除
+			try: game.Secrets.secrets[secret.ID].remove(secret)
+			except: pass
 			if game.status[secret.ID]["Secrets x2"] > 0:
 				if self.canTrig(signal, ID, subject, target, number, comment):
 					if game.GUI: game.GUI.trigBlink(secret)
@@ -256,7 +264,8 @@ class SecretTrigger(TrigBoard):
 				self.effect(signal, ID, subject, target, number, comment)
 			game.sendSignal("SecretRevealed", game.turn, secret, None, 0, "")
 			game.Counters.numSecretsTriggeredThisGame[secret.ID] += 1
-		
+			#secret.realSecretReveal()
+			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		pass
 		
@@ -277,6 +286,8 @@ class SecretTrigger(TrigBoard):
 			entityCopy = self.entity.createCopy(game)
 			trigCopy = self.selfCopy(entityCopy)
 			trigCopy.dummy = self.dummy
+			if self.realSecret:
+				trigCopy.realSecret = self.realSecret.createCopy(game)
 			game.copiedObjs[self] = trigCopy
 			return trigCopy
 		else: #一个扳机被复制过了，则其携带者也被复制过了

@@ -577,8 +577,7 @@ class Game:
 				self.Hand_Deck.addCardtoHand(target, ID)
 				return target
 			else: #让还在场上的活着的随从返回一个满了的手牌只会让其死亡
-				if target.onBoard:
-					target.dead = True
+				if target.onBoard: target.dead = True
 				return None #如果随从这时已死亡，则满手牌下不会有任何事情发生。
 		elif target.inDeck: #如果目标阶段已经在牌库中了，将一个基础复制置入其手牌。
 			Copy = type(target)(self, ID)
@@ -599,10 +598,10 @@ class Game:
 			target.reset(ID) #永恒祭司的亡语会备份一套enchantment，在调用该函数之后将初始化过的本体重新增益
 			target.numOccurrence += 1
 			target.creator, target.numOccurrence = creator, numOccurrence + 1
-			self.Hand_Deck.shuffleCardintoDeck(target, initiatorID)
+			self.Hand_Deck.shuffleintoDeck(target, initiatorID)
 			return target
 		elif target.inHand: #如果随从已进入手牌，仍会将其强行洗入牌库
-			self.Hand_Deck.shuffleCardintoDeck(self.Hand_Deck.extractfromHand(target)[0], initiatorID)
+			self.Hand_Deck.shuffleintoDeck(self.Hand_Deck.extractfromHand(target)[0], initiatorID)
 			return target
 		else: return None
 

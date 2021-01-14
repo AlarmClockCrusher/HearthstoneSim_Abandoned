@@ -57,7 +57,7 @@ class Trig_CloudGigas(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.banishMinion(self.entity, self.entity)
         PRINT(self.entity.Game, "Cloud Gigas shuffles a Cloud Gigas into player's deck")
-        self.entity.Game.Hand_Deck.shuffleCardintoDeck([CloudGigas(self.entity.Game, self.entity.ID)], self.entity.ID)
+        self.entity.Game.Hand_Deck.shuffleintoDeck([CloudGigas(self.entity.Game, self.entity.ID)], self.entity.ID)
 
 
 class SuddenShowers(SVSpell):
@@ -588,7 +588,7 @@ class TreacherousReversal(SVSpell):
                 cards.append(card)
                 i += 1
         for c in cards:
-            self.Game.Hand_Deck.shuffleCardintoDeck([c(self.Game, self.ID)], self.ID)
+            self.Game.Hand_Deck.shuffleintoDeck([c(self.Game, self.ID)], self.ID)
         PRINT(self.Game,
               f"Treacherous Reversal Put copies of the first 10 cards your opponent played this match into your deck")
         self.Game.Counters.minionsDiedThisGame[self.ID] = []
@@ -5332,7 +5332,7 @@ class EternalWhale(SVMinion):
     def whenDisppears(self):
         PRINT(self.Game, f"Eternal Whale leaves board and put four 1-play point Eternal Whales into your deck.")
         cards = [EternalWhale_Token(self.Game, self.ID) for i in range(4)]
-        self.Game.Hand_Deck.shuffleCardintoDeck(cards, self.ID)
+        self.Game.Hand_Deck.shuffleintoDeck(cards, self.ID)
 
 
 class EternalWhale_Token(SVMinion):
@@ -5354,7 +5354,7 @@ class EternalWhale_Token(SVMinion):
     def whenDisppears(self):
         PRINT(self.Game, f"Eternal Whale leaves board and put four 1-play point Eternal Whales into your deck.")
         cards = [EternalWhale_Token(self.Game, self.ID) for i in range(4)]
-        self.Game.Hand_Deck.shuffleCardintoDeck(cards, self.ID)
+        self.Game.Hand_Deck.shuffleintoDeck(cards, self.ID)
 
 
 class ForcedResurrection(SVSpell):
@@ -5583,7 +5583,7 @@ class PrinceofDarkness(SVMinion):
             DissDamnation(self.Game, self.ID),
             AstarothsReckoning(self.Game, self.ID),
         ]
-        self.Game.Hand_Deck.shuffleCardintoDeck(cards, self.ID)
+        self.Game.Hand_Deck.shuffleintoDeck(cards, self.ID)
         PRINT(self.Game,
               f"Prince of Darkness's Fanfare replaces your deck with an Apocalypse Deck.")
         return None
@@ -5928,7 +5928,7 @@ class PrinceofCocytus_Accelerate(SVSpell):
                     cards.append(t(self.Game, self.ID))
                     PRINT(self.Game,
                           f"Prince of Cocytus's Accelerate put {t.name} into your deck")
-                self.Game.Hand_Deck.shuffleCardintoDeck(cards, self.ID)
+                self.Game.Hand_Deck.shuffleintoDeck(cards, self.ID)
         return None
 
 
@@ -5970,7 +5970,7 @@ class PrinceofCocytus(SVMinion):
             Earthfall(self.Game, self.ID),
             AstarothsReckoning(self.Game, self.ID),
         ]
-        self.Game.Hand_Deck.shuffleCardintoDeck(cards, self.ID)
+        self.Game.Hand_Deck.shuffleintoDeck(cards, self.ID)
         PRINT(self.Game,
               f"Prince of Cocytus's Fanfare replaces your deck with a Cocytus Deck.")
         return None
@@ -6169,7 +6169,7 @@ class LucilleKeeperofRelics(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Lucille, Keeper of Relics shuffles a Spinaria & Lucille, Keepers into player's deck")
-        self.Game.Hand_Deck.shuffleCardintoDeck([SpinariaLucilleKeepers(self.Game, self.ID)], self.ID)
+        self.Game.Hand_Deck.shuffleintoDeck([SpinariaLucilleKeepers(self.Game, self.ID)], self.ID)
 
 
 class Trig_LucilleKeeperofRelics(TrigBoard):

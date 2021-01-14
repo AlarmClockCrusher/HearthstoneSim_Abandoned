@@ -206,14 +206,23 @@ class Secrets:
 		return 5 - (len(self.mainQuests[ID]) + len(self.sideQuests[ID]) + len(self.secrets[ID]))
 		
 	def initSecretHint(self, secret):
-		print("Initing secret with possi", secret.possibilities)
+		game, ID = self.Game, secret.ID
 		secretCreator, Class = secret.creator, secret.Class
-		print("Deck possi", self.Game.Hand_Deck.knownCards[secret.ID])
 		deckSecrets = []
 		for creator, possi in self.Game.Hand_Deck.knownCards[secret.ID]:
 			if creator == secretCreator:
 				deckSecrets += [T for T in possi if T.description.startswith("Secret:") and T.Class == Class]
 		secret.possibilities = list(set(deckSecrets))
+		#需要根据一个奥秘的可能性，把所有可能的奥秘的伪扳机先都注册上
+		for possi in secret.possibilities:
+			if not isinstance(secret, possi): #把那些虚假的可能性都注册一份伪扳机
+				dummyTrig = possi(game, ID).trigsBoard[0]
+				#伪扳机和真奥秘之间需要建立双向联系
+				dummyTrig.dummy, dummyTrig.realSecret = True, secret
+				dummyTrig.connect()
+				#game.trigAuras[ID].append(dummyTrig)
+				secret.dummyTrigs.append(dummyTrig)
+		for trig in secret.trigsBoard: trig.connect()
 		
 	def deploySecretsfromDeck(self, ID, num=1):
 		curGame = self.Game
@@ -227,28 +236,33 @@ class Secrets:
 					curGame.fixedGuides.append(i)
 				if i > -1: curGame.Hand_Deck.extractfromDeck(i, ID, enemyCanSee=False)[0].whenEffective()
 				else: break
-
+	#奥秘被强行移出奥秘区的时候，都是直接展示出来的，需要排除出已知牌
 	def extractSecrets(self, ID, index=0, all=False):
 		if all:
 			for secret in reversed(self.secrets[ID]):
 				secret = self.secrets[ID].pop()
 				for trig in secret.trigsBoard: trig.disconnect()
-				
-			for obj in self.Game.trigAuras[ID][:]:
-				if isinstance(obj, SecretTrigger):
-					for trig in obj.trigsBoard: trig.disconnect()
+				for trig in secret.dummyTrigs: trig.disconnect()
+				secret.dummyTrigs = []
+				self.Game.Hand_Deck.ruleOut(secret, fromHD=2)
 			return None
 		else:
 			secret = self.secrets[ID].pop(index)
 			for trig in secret.trigsBoard: trig.disconnect()
-			try: self.Game.possibleSecrets[ID].remove(type(secret))
-			except: pass
+			for trig in secret.dummyTrigs: trig.disconnect()
+			secret.dummyTrigs = []
+			self.Game.Hand_Deck.ruleOut(secret, fromHD=2)
+			#把其他在场奥秘和对方已知牌库 中的牌也去掉
+			dummyTrigType2RuleOut = type(secret.trigsBoard[0])
+			for obj in self.secrets[ID]:
+				#其他在场奥秘的dummyTrigs需要被取消注册和移除
+				try: next(trig for trig in obj.dummyTrigs if isinstance(trig, dummyTrigType2RuleOut)).disconnect()
+				except: pass
+				try: obj.possibilities.remove(dummyTrigType2RuleOut)
+				except: pass
+			self.Game.Hand_Deck.ruleOut(secret, fromHD=2)
 			return secret
 			
-	def ruleOut(self, secretType, ID):
-		for secret in self.secrets[ID]:
-			try: secret.possibilities.remove(secretType)
-			except: pass
 	#secret can be type, index or real card.
 	def sameSecretExists(self, secret, ID):
 		if isinstance(secret, str):

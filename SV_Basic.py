@@ -2305,7 +2305,7 @@ class MagisteelLion(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Magisteel Lion shuffles 2 Analyzing Artifacts into player's deck")
-        self.Game.Hand_Deck.shuffleCardintoDeck([AnalyzingArtifact(self.Game, self.ID) for i in range(2)], self.ID)
+        self.Game.Hand_Deck.shuffleintoDeck([AnalyzingArtifact(self.Game, self.ID) for i in range(2)], self.ID)
         return None
 
 
@@ -2408,7 +2408,7 @@ class IronforgedFighter(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         PRINT(self.Game, "Ironforged Fighter shuffles 2 Radiant Artifacts into player's deck")
-        self.Game.Hand_Deck.shuffleCardintoDeck([RadiantArtifact(self.Game, self.ID) for i in range(2)], self.ID)
+        self.Game.Hand_Deck.shuffleintoDeck([RadiantArtifact(self.Game, self.ID) for i in range(2)], self.ID)
         return None
 
 

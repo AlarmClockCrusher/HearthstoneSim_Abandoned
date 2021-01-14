@@ -636,7 +636,7 @@ class Trig_CThun:
 			try: self.pieces.remove(comment)
 			except: pass
 			if not self.pieces:
-				self.Game.Hand_Deck.shuffleCardintoDeck(CThuntheShattered(self.Game, ID), ID)
+				self.Game.Hand_Deck.shuffleintoDeck(CThuntheShattered(self.Game, ID), ID)
 				self.disconnect()
 				
 	def createCopy(self, game): #不是纯的只在回合结束时触发，需要完整的createCopy
@@ -665,10 +665,10 @@ class BodyofCThun(Spell):
 		self.Game.sendSignal("CThunPiece", self.ID, None, None, 0, "Body")
 		return None
 		
-class BodyofCThun_Minion(Minion):
-	Class, race, name = "Neutral", "", "Body of C'Thun"
+class CThunsBody(Minion):
+	Class, race, name = "Neutral", "", "C'Thun's Body"
 	mana, attack, health = 6, 6, 6
-	index = "Darkmoon~Neutral~Minion~6~6~6~None~Body of C'Thun~Taunt~Uncollectible"
+	index = "Darkmoon~Neutral~Minion~6~6~6~None~C'Thun's Body~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "克苏恩之躯"
 	
@@ -764,7 +764,7 @@ class CThuntheShattered(Minion):
 		#Remove the card from deck. Assume the final card WON't count as deck original card 
 		curGame, ID = self.Game, self.ID
 		curGame.Hand_Deck.extractfromDeck(self, ID=0, all=False, enemyCanSee=True)
-		curGame.Hand_Deck.shuffleCardintoDeck([BodyofCThun(curGame, ID), EyeofCThun(curGame, ID), HeartofCThun(curGame, ID), MawofCThun(curGame, ID)], ID)
+		curGame.Hand_Deck.shuffleintoDeck([BodyofCThun(curGame, ID), EyeofCThun(curGame, ID), HeartofCThun(curGame, ID), MawofCThun(curGame, ID)], ID)
 		curGame.Counters.CThunPieces = {1:["Body", "Eye", "Heart", "Maw"], 2:["Body", "Eye", "Heart", "Maw"]}
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1706,6 +1706,7 @@ class SolarEclipse_Effect:
 			return game.copiedObjs[self]
 			
 			
+#The card actually summons a treant that belongs in the darkmoonk pack. But the json id for this card somehow doesn't exist in HS's index 
 class FaireArborist(Minion):
 	Class, race, name = "Druid", "", "Faire Arborist"
 	mana, attack, health = 3, 2, 2
@@ -3261,7 +3262,7 @@ class TicketMaster(Minion):
 class Shuffle3TicketsintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		game, ID = self.entity.Game, self.entity.ID
-		game.Hand_Deck.shuffleCardintoDeck([Tickets(game, ID) for i in range(3)], ID)
+		game.Hand_Deck.shuffleintoDeck([Tickets(game, ID) for i in range(3)], ID)
 		return None
 		
 	def text(self, CHN):
@@ -4285,7 +4286,7 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Neutral~Minion~9~4~4~None~Carnival Clown~Taunt~Battlecry": CarnivalClown,
 					"Darkmoon~Neutral~Minion~9~4~4~None~Carnival Clown~Taunt~Battlecry~Corrupted~Uncollectible": CarnivalClown_Corrupt,
 					"Darkmoon~Neutral~Spell~5~Body of C'Thun~Uncollectible": BodyofCThun,
-					"Darkmoon~Neutral~Minion~6~6~6~None~Body of C'Thun~Taunt~Uncollectible": BodyofCThun_Minion,
+					"Darkmoon~Neutral~Minion~6~6~6~None~C'Thun's Body~Taunt~Uncollectible": CThunsBody,
 					"Darkmoon~Neutral~Spell~5~Eye of C'Thun~Uncollectible": EyeofCThun,
 					"Darkmoon~Neutral~Spell~5~Heart of C'Thun~Uncollectible": HeartofCThun,
 					"Darkmoon~Neutral~Spell~5~Maw of C'Thun~Uncollectible": MawofCThun,

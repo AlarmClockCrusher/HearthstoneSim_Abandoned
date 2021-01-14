@@ -53,7 +53,7 @@ class WrathofAirTotem(Minion):
 	mana, attack, health = 1, 0, 2
 	index = "Basic~Shaman~Minion~1~0~2~Totem~Wrath of Air Totem~Spell Damage~Uncollectible"
 	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1"#Default Spell Damage is 1.
-	name_CN = "空气之怒图腾"
+	name_CN = "空气之怒 图腾"
 	
 BasicTotems = [SearingTotem, StoneclawTotem, HealingTotem, WrathofAirTotem]
 
@@ -167,7 +167,7 @@ class FireblastRank2(HeroPower):
 	mana, name, requireTarget = 2, "Fireblast Rank 2", True
 	index = "Mage~Upgraded Hero Power~2~Fireblast Rank 2"
 	description = "Deal 2 damage"
-	name_CN = "二级火焰冲击"
+	name_CN = "二级 火焰冲击"
 	def text(self, CHN):
 		damage = (2 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		return "造成%d点伤害"%damage if CHN else "Deal %d damage"%damage
@@ -995,7 +995,7 @@ class IllidariInitiate(Minion):
 	mana, attack, health = 1, 1, 1
 	index = "Basic~Demon Hunter~Minion~1~1~1~None~Illidari Initiate~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
-	name_CN = "伊利达雷新兵"
+	name_CN = "伊利达雷 新兵"
 	
 class SatyrOverseer(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Satyr Overseer"
@@ -1025,7 +1025,7 @@ class IllidariSatyr(Minion):
 	mana, attack, health = 2, 2, 2
 	index = "Basic~Demon Hunter~Minion~2~2~2~Demon~Illidari Satyr~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
-	name_CN = "伊利达雷萨特"
+	name_CN = "伊利达雷 萨特"
 	
 	
 class SoulCleave(Spell):
