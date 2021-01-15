@@ -58,7 +58,10 @@ class GUI_1P(GUI_Common):
 		#Select DIY packs
 		lbl_SelectPacks = tk.Label(master=self.window, text=txt("Include DIY packs", CHN), font=("Yahei", 15))
 		monkVar = tk.IntVar()
+		SVVar = tk.IntVar()
 		includeMonk = tk.Checkbutton(self.window, text=txt("Monk", CHN), variable=monkVar, onvalue=1, offvalue=0, font=("Yahei", 15, "bold"))
+		includeSV = tk.Checkbutton(self.window, text=txt("SV", CHN), variable=SVVar, onvalue=1, offvalue=0,
+									 font=("Yahei", 15, "bold"))
 		lbl_SelectBoard = tk.Label(master=self.window, text=txt("Choose Game Board", CHN), font=("Yahei", 15))
 		self.boardID = tk.StringVar(self.window)
 		self.boardID.set(BoardIndex[0])
@@ -70,12 +73,13 @@ class GUI_1P(GUI_Common):
 		btn_genCardPool = tk.Button(self.window, text=txt("Continue", CHN), bg="green3", font=("Yahei", 15, "bold"), command=lambda : var.set(1))
 		lbl_SelectPacks.pack()
 		includeMonk.pack()
+		includeSV.pack()
 		lbl_SelectBoard.pack()
 		boardOpt.pack() #place(x=60, y=60)
 		btn_genCardPool.pack()
 		
 		btn_genCardPool.wait_variable(var)
-		self.boardID, self.transferStudentType = makeCardPool(monkVar.get(), self.boardID.get()) #定义棋盘信息和转校生的类型
+		self.boardID, self.transferStudentType = makeCardPool(self.boardID.get(), monkVar.get(), SVVar.get()) #定义棋盘信息和转校生的类型
 		self.window.destroy()
 		self.window = tk.Tk()
 		#Import the cardPool generated after the selection

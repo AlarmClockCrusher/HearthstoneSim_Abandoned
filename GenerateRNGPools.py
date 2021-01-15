@@ -29,15 +29,15 @@ from Outlands import *
 from Academy import *
 from Darkmoon import *
 
-#from Monk import *
-#from SV_Basic import *
-#from SV_Glory import *
-#from SV_Verdant import *
-#from SV_Ultimate import *
-#from SV_Uprooted import *
-#from SV_Fortune import *
+from Monk import *
+from SV_Basic import *
+from SV_Ultimate import *
+from SV_Uprooted import *
+from SV_Fortune import *
+from SV_Rivayle import *
+from SV_Eternal import *
 
-def makeCardPool(monk=0, board="0 Random Game Board"):
+def makeCardPool(board="0 Random Game Board",monk=0,SV=0):
 	cardPool, info = {}, ""
 	
 	cardPool.update(Basic_Indices)
@@ -103,28 +103,29 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 	cardPool.update(Darkmoon_Indices)
 	info += "from Darkmoon import *\n"
 	
-	#if monk:
-	#	print("Including Monk")
-	#	cardPool.update(Monk_Indices)
-	#	info += "from Monk import *\n"
-	#	
-	#cardPool.update(SV_Basic_Indices)
-	#info += "from SV_Basic import *\n"
+	if monk:
+		print("Including Monk")
+		cardPool.update(Monk_Indices)
+		info += "from Monk import *\n"
+
+	# if SV:
+	# 	cardPool.update(SV_Basic_Indices)
+	# 	info += "from SV_Basic import *\n"
 	#
-	#cardPool.update(SV_Glory_Indices)
-	#info += "from SV_Glory import *\n"
+	# 	cardPool.update(SV_Ultimate_Indices)
+	# 	info += "from SV_Ultimate import *\n"
 	#
-	#cardPool.update(SV_Verdant_Indices)
-	#info += "from SV_Verdant import *\n"
+	# 	cardPool.update(SV_Uprooted_Indices)
+	# 	info += "from SV_Uprooted import *\n"
 	#
-	#cardPool.update(SV_Ultimate_Indices)
-	#info += "from SV_Ultimate import *\n"
+	# 	cardPool.update(SV_Fortune_Indices)
+	# 	info += "from SV_Fortune import *\n"
 	#
-	#cardPool.update(SV_Uprooted_Indices)
-	#info += "from SV_Uprooted import *\n"
+	# 	cardPool.update(SV_Rivayle_Indices)
+	# 	info += "from SV_Rivayle import *\n"
 	#
-	#cardPool.update(SV_Fortune_Indices)
-	#info += "from SV_Fortune import *\n"
+	# 	cardPool.update(SV_Eternal_Indices)
+	# 	info += "from SV_Eternal import *\n"
 
 	BasicPowers, UpgradedPowers, Classes, ClassesandNeutral, ClassDict = [], [], [], [], {}
 	for key in list(cardPool.keys()):
@@ -290,4 +291,4 @@ def makeCardPool(monk=0, board="0 Random Game Board"):
 	return board, transferStudent
 	
 if __name__ == "__main__":
-	makeCardPool(monk=0, board="0 Random Game Board")
+	makeCardPool(board="0 Random Game Board", monk=0, SV=0)

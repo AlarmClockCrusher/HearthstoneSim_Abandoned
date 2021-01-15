@@ -1408,7 +1408,7 @@ cardPool = {
 			"Darkmoon~Neutral~Minion~9~4~4~None~Carnival Clown~Taunt~Battlecry": CarnivalClown,
 			"Darkmoon~Neutral~Minion~9~4~4~None~Carnival Clown~Taunt~Battlecry~Corrupted~Uncollectible": CarnivalClown_Corrupt,
 			"Darkmoon~Neutral~Spell~5~Body of C'Thun~Uncollectible": BodyofCThun,
-			"Darkmoon~Neutral~Minion~6~6~6~None~Body of C'Thun~Taunt~Uncollectible": BodyofCThun_Minion,
+			"Darkmoon~Neutral~Minion~6~6~6~None~Body of C'Thun~Taunt~Uncollectible": CThunsBody,
 			"Darkmoon~Neutral~Spell~5~Eye of C'Thun~Uncollectible": EyeofCThun,
 			"Darkmoon~Neutral~Spell~5~Heart of C'Thun~Uncollectible": HeartofCThun,
 			"Darkmoon~Neutral~Spell~5~Maw of C'Thun~Uncollectible": MawofCThun,

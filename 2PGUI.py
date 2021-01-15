@@ -14,7 +14,7 @@ class LoadDeckButton(tk.Button):
 		tk.Button.__init__(self, master=GUI.deckImportPanel, bg="green3", text=txt("Confirm", CHN), font=("Yahei", 15))
 		self.GUI = GUI
 		self.configure(command=self.respond)
-		
+
 	def respond(self):
 		deck, hero = [], ClassDict[self.GUI.hero.get()]
 		deck, deckCorrect, hero = parseDeckCode(self.GUI.deck.get(), hero, ClassDict)
@@ -38,17 +38,17 @@ class LoadDeckButton(tk.Button):
 			self.GUI.deckImportPanel.destroy()
 			self.GUI.update()
 		else: messagebox.showinfo(message=txt("Deck code is wrong. Check before retry", CHN))
-		
-		
+
+
 class ContinueCancelButton(tk.Button):
 	def leftClick(self, event):
 		self.conti = True
 		self.var.set(1)
-		
+
 	def rightClick(self, event):
 		self.conti = False
 		self.var.set(1)
-		
+
 #info会是plays||game.guides
 class EnemyPlaysEntry(tk.Entry):
 	def respond(self, event): #读入一个字符串，然后转换为plays
@@ -82,7 +82,7 @@ class EnemyPlaysEntry(tk.Entry):
 				self.GUI.initGameDisplay()
 				self.GUI.update()
 				game.Hand_Deck.startGame()
-				
+
 class InfoGenButton(tk.Button):
 	def leftClick(self, event):
 		if self.GUI.Game.moves and self.GUI.UI == 0: #没有moves记录的时候不响应
@@ -97,7 +97,7 @@ class InfoGenButton(tk.Button):
 			self.GUI.Game.moves, self.GUI.Game.fixedGuides, self.GUI.Game.guides = [], [], []
 		else:
 			self.GUI.cancelSelection()
-			
+
 	def rightClick(self, event):
 		self.GUI.Game.moves, self.GUI.Game.fixedGuides, self.GUI.Game.guides = [], [], []
 		gameCopy = self.GUI.Game.copyGame()[0]
@@ -108,28 +108,28 @@ class InfoGenButton(tk.Button):
 			messagebox.showinfo(message=txt("Copied game created as a pickle file", CHN))
 		self.GUI.Game.moves, self.GUI.Game.fixedGuides, self.GUI.Game.guides = [], [], []
 		self.GUI.btnGenInfo.config(bg="Red", text=txt("Game Copy Generated", CHN))
-		
-		
+
+
 class Info4OppoLabel(tk.Label):
 	def __init__(self, GUI):
 		tk.Label.__init__(self, master=GUI.sidePanel, text=txt("Info not generated yet", CHN), font=("Yahei", 15), width=20)
 		self.GUI = GUI
 		self.bind("<Button-3>", self.rightClick)
-		
+
 	def rightClick(self, event):
 		self.GUI.window.clipboard_clear()
 		self.GUI.window.clipboard_append(self.cget('text'))
-		
-		
+
+
 class LoadPickleButton(tk.Button):
 	def __init__(self, GUI, window):
 		tk.Button.__init__(self, master=window, bg="green3", text=txt("Choose a Game to load", CHN), font=("Yahei", 14))
 		self.configure(command=self.respond)
 		self.GUI = GUI
-		
+
 	def respond(self):
 		self.GUI.pickleFile = filedialog.askopenfilename(title="Select pickle file", filetypes=(("pickle files","*.p"),("all files","*.*")))
-		
+
 #import tkinter.font as tkFont
 #fontStyle = tkFont.Font(family="Lucida Grande", size=3)
 class GUI_2P(GUI_Common):
@@ -140,7 +140,8 @@ class GUI_2P(GUI_Common):
 		self.pos, self.choice, self.UI = -1, 0, -2 #起手调换的UI为-2
 		self.ID, self.showReminder = 1, None
 		self.lastInfo, self.pickleFile = '', None
-		self.DIYs = []
+		self.monk = False
+		self.SV = False
 		self.CHN = CHN
 		self.window = tk.Tk()
 		#Before entering deck, Player 1 loads the packs and choose the board
@@ -151,6 +152,7 @@ class GUI_2P(GUI_Common):
 			boardOpt.config(width=20, font=("Yahei", 15))
 			boardOpt["menu"].config(font=("Yahei", 15))
 			monkVar = tk.IntVar()
+			SVVar = tk.IntVar()
 			var = tk.IntVar()
 			btn1 = tk.Button(self.window, text=txt("Start Loading Deck", CHN), bg="green3", font=("Yahei", 15, "bold"), command=lambda : var.set(1))
 			btn2 = tk.Button(self.window, text=txt("Load Saved Game/Go 2nd", CHN), bg="green3", font=("Yahei", 15, "bold"), command=lambda : var.set(2))
@@ -164,11 +166,13 @@ class GUI_2P(GUI_Common):
 					font=("Yahei", 15)).grid(row=4, column = 0)
 			tk.Checkbutton(self.window, text=txt('Monk', CHN), variable=monkVar, onvalue=1, \
 							offvalue=0, font=("Yahei", 15, "bold")).grid(row=5, column = 0)
+			tk.Checkbutton(self.window, text=txt('SV', CHN), variable=SVVar, onvalue=1, \
+							offvalue=0, font=("Yahei", 15, "bold")).grid(row=5, column = 0)
 			#Define and grid the buttons for loading
 			tempGuides = EnemyPlaysEntry(self.window, font=("Yahei", 14), width=15)
 			tempGuides.bind("<Return>", lambda event: var.set(2))
 			tempGuides.GUI = self
-			
+
 			tk.Label(self.window, text=txt("Load a Game, or\nGo 2nd using Info from Opponent", CHN) \
 					, font=("Yahei", 15, "bold")).grid(row=0, column=2)
 			LoadPickleButton(self, self.window).grid(row=1, column=2)
@@ -176,16 +180,16 @@ class GUI_2P(GUI_Common):
 					, font=("Yahei", 15)).grid(row=2, column=2)
 			tempGuides.grid(row=3, column=2)
 			btn2.grid(row=4, column=2)
-			
+
 			tk.Label(self.window, text="		 ").grid(row=0, column=1)
-			
+
 		messagebox.showinfo(message=txt("To go 1st, use left panel to decide the DIY expansion and game board.\nTo go 2nd/load a saved game, use right panel to enter info from your opponent/select a .p file", CHN))
 		self.window.wait_variable(var)
 		if var.get() == 1: #点击左边的情况会有要求先换牌，然后把信息传给对方
-			messagebox.showinfo(message(txt("Decide your deck and class, mulligan and send the generated info to your opponent"), CHN))
-			self.ID, self.DIYs = 1, monkVar.get()
+			messagebox.showinfo(message=(txt("Decide your deck and class, mulligan and send the generated info to your opponent"), CHN))
+			self.ID, self.monk, self.SV = 1, monkVar.get(), SVVar.get()
 			#制作cardPool的同时也会返回真正的boardID
-			self.boardID, self.transferStudentType = makeCardPool(self.DIYs, self.boardID.get())
+			self.boardID, self.transferStudentType = makeCardPool(board=self.boardID.get(), monk=self.monk, SV=self.SV)
 			from CardPools import Classes, ClassesandNeutral, ClassDict, cardPool, MinionsofCost, RNGPools
 			self.window.destroy()
 			self.window = tk.Tk()
@@ -208,16 +212,16 @@ class GUI_2P(GUI_Common):
 				#("DefineGame", DIYlist, boardID, guides)
 				move, info = tempGuides.get().split('||')
 				move = unpickleStr2Obj(move)
-				self.DIYs, self.boardID, self.player1Info = unpickleStr2Obj(info)
+				self.monk, self.SV, self.boardID, self.player1Info = unpickleStr2Obj(info)
 				if move == "DefineGame":
-					self.transferStudentType = makeCardPool(self.DIYs, self.boardID)[1]
+					self.transferStudentType = makeCardPool(board=self.boardID, monk=self.monk, SV=self.SV)[1]
 					from CardPools import Classes, ClassesandNeutral, ClassDict, cardPool, MinionsofCost, RNGPools
 					self.window.destroy()
 					self.window = tk.Tk()
 					self.initLoadDeckUI() #2号玩家开始自己的换牌。在之之前1号玩家已经换牌完毕并把信息传给了2号
 					messagebox.showinfo(message=txt("Player 1 has decided their deck and initial hand.\nDecide yours and send the info back to start the game", CHN))
 		self.window.mainloop()
-		
+
 	def initLoadDeckUI(self):
 		self.GamePanel = tk.Frame(master=self.window, width=X, height=Y, bg="black")
 		self.GamePanel.pack(fill=tk.Y, side=tk.LEFT if LeftorRight else tk.RIGHT)
@@ -225,15 +229,15 @@ class GUI_2P(GUI_Common):
 		self.sidePanel.pack(side=tk.TOP)
 		self.deckImportPanel = tk.Frame(master=self.window, width=0.005*X, height=int(0.6*Y))
 		self.deckImportPanel.pack(side=tk.TOP)
-		
+
 		self.lbl_Card = tk.Label(self.sidePanel, text=txt("Resolving Card Effect", CHN))
 		self.info4Opponent = Info4OppoLabel(self)
 		self.guides = EnemyPlaysEntry(master=self.sidePanel, font=("Yahei", 12), width=10)
 		self.guides.bind("<Return>", self.guides.respond)
 		self.guides.GUI = self
-		
+
 		self.lbl_wish = tk.Label(master=self.sidePanel, text=txt("Card Wished", CHN), font=("Yahei", 15))
-		
+
 		self.btnGenInfo = InfoGenButton(master=self.sidePanel, bg='yellow', text=txt("L:Generate Update / R:Copy Game", CHN), font=("Yahei", 12, "bold"), height=1)
 		self.btnGenInfo.bind('<Button-1>', self.btnGenInfo.leftClick)
 		self.btnGenInfo.bind('<Button-3>', self.btnGenInfo.rightClick)
@@ -247,14 +251,14 @@ class GUI_2P(GUI_Common):
 						variable=self.showReminder, onvalue=1, offvalue=0)
 		ckb.select()
 		ckb.pack(side=tk.TOP)
-		
+
 		self.hero = tk.StringVar(self.deckImportPanel)
 		self.hero.set(list(ClassDict.keys())[0])
 		heroOpt = tk.OptionMenu(self.deckImportPanel, self.hero, *list(ClassDict.keys()))
 		heroOpt.config(width=15, font=("Yahei", 15))
 		heroOpt["menu"].config(font=("Yahei", 15))
 		heroOpt.pack()#place(x=60, y=60)
-		
+
 		tk.Label(self.deckImportPanel, text=txt("Enter deck code below", CHN), \
 				font=("Yahei", 14)).pack()
 		self.deck = tk.Entry(self.deckImportPanel, font=("Yahei", 12))
@@ -262,6 +266,6 @@ class GUI_2P(GUI_Common):
 		btn_LoadDeck = LoadDeckButton(self)
 		btn_LoadDeck.pack()
 		self.deck.bind("<Return>", lambda event: btn_LoadDeck.respond())
-		
-		
+
+
 GUI_2P()

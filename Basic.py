@@ -4,6 +4,7 @@ from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
+import numpy as np
 
 """Basic"""
 
@@ -2884,7 +2885,7 @@ class KorkronElite(Minion):
 	mana, attack, health = 4, 4, 3
 	index = "Basic~Warrior~Minion~4~4~3~None~Kor'kron Elite~Charge"
 	requireTarget, keyWord, description = False, "Charge", "Charge"
-	name_CN = "库卡隆 精英卫士"
+	name_CN = "库卡隆精英卫士"
 	
 	
 class ArcaniteReaper(Weapon):

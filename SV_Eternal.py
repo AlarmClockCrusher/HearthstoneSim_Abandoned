@@ -38,6 +38,6 @@ def extractfrom(target, listObj):
 
 """DLC cards"""
 
-SV_Ultimate_Indices = {
+SV_Eternal_Indices = {
 
 }

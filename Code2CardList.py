@@ -32,7 +32,7 @@ def parseDeckCode(s, hero, ClassDict):
 	if s:
 		try:
 			if s.startswith("names||"):
-				s = deckStrings[ID].split('||')[1:]
+				s = s[hero].split('||')[1:]
 				deck = [typeName2Class(name.strip()) for name in s if name]
 			else: deck = decode_deckstring(s)
 			deckCorrect = all(obj is not None for obj in deck)

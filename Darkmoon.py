@@ -658,7 +658,7 @@ class BodyofCThun(Spell):
 		return self.Game.space(self.ID) > 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.summon(BodyofCThun_Minion(self.Game, self.ID), -1, self.ID)
+		self.Game.summon(CThunsBody(self.Game, self.ID), -1, self.ID)
 		#Assume the spell effect will increase the counter
 		if "CThunPiece" not in self.Game.trigsBoard[self.ID]:
 			Trig_CThun(self.Game, self.ID).connect()

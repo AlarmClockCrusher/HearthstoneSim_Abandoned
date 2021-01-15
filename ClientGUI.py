@@ -222,7 +222,7 @@ class GUI_Client(GUI_Common):
 		enemyHero = unpickleBytes2Obj(enemyHero)
 		game = Game(self)
 		#需要生成一下cardPool
-		board, self.transferStudentType = makeCardPool(monk=0, board=self.boardID)
+		board, self.transferStudentType = makeCardPool(board=self.boardID, monk=0, SV=0)
 		from CardPools import Classes, ClassesandNeutral, ClassDict, cardPool, MinionsofCost, RNGPools
 		if self.ID == 1: #起手要换的牌会在游戏的初始过程中直接决定
 			game.initialize(cardPool, ClassCards, NeutralCards, MinionsofCost, RNGPools, hero, enemyHero, deck, deck)

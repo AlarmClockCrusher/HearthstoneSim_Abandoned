@@ -89,7 +89,7 @@ def copyListDictTuple(obj, recipient):
 effectsDict = {"Taunt": "嘲讽", "Divine Shield": "圣盾", "Stealth": "潜行",
 				"Lifesteal": "吸血", "Spell Damage": "法术伤害", "Poisonous": "剧毒",
 				"Windfury": "风怒", "Mega Windfury": "超级风怒", "Charge": "冲锋", "Rush": "突袭",
-				"Echo": "回响", "Reborn": "复生", "Bane": "Bane", "Drain": "Drain",
+				"Echo": "回响", "Reborn": "复生", "Bane": "毁灭", "Drain": "虹吸",
 				
 				"Cost Health Instead": "消耗生命值，而非法力值",
 				"Sweep": "对攻击目标的相邻随从造成同样伤害",
@@ -98,10 +98,10 @@ effectsDict = {"Taunt": "嘲讽", "Divine Shield": "圣盾", "Stealth": "潜行"
 				"Heal x2": "你的治疗效果翻倍",  # Crystalsmith Kangor
 				"Power Heal&Dmg x2": "你的英雄技能的治疗或伤害翻倍",  # Prophet Velen, Clockwork Automation
 				"Spell Heal&Dmg x2": "你的法术的治疗或伤害翻倍",
-				"Enemy Effect Evasive": "Enemy Effect Evasive", "Enemy Effect Damage Immune": "Enemy Effect Damage Immune",
-				"Can't Break": "Can't Break", "Can't Disappear": "Can't Disappear", "Can't Be Attacked": "Can't Be Attacked", "Disappear When Die": "Can't Be Attacked",
-				"Next Damage 0": "Next Damage 0", "Ignore Taunt": "无视嘲讽", "UB": "UB", "Can't Evolve": "无法进化", "Free Evolve": "Free Evolve",
-				"Max Damage": "Max Damage", "Deal Damage 0":"Deal Damage 0",
+				"Enemy Effect Evasive": "敌方的能力无法指定此卡牌", "Enemy Effect Damage Immune": "因能力所受到的伤害皆转变为0",
+				"Can't Break": "无法被能力破坏", "Can't Disappear": "无法被能力消失", "Can't Be Attacked": "无法对这个随从进行攻击", "Disappear When Die": "离场时消失",
+				"Next Damage 0": "下一次受到的伤害转变为0", "Ignore Taunt": "可无视守护效果进行攻击", "UB": "连结爆发", "Can't Evolve": "无法使用进化点进化", "Free Evolve": "不消费进化点即可进化",
+				"Max Damage": "最大伤害", "Deal Damage 0":"给予的伤害皆转变为0",
 				
 				"Immune": "免疫", "Frozen": "被冻结", "Temp Stealth": "潜行直到你的下个回合开始", "Borrowed": "被暂时控制",
 				"Evolved": "已进化",

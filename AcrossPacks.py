@@ -1,5 +1,6 @@
 from CardTypes import *
 from Triggers_Auras import *
+import numpy as np
 
 class BoomBot(Minion):
 	Class, race, name = "Neutral", "Mech", "Boom Bot"
@@ -21,7 +22,7 @@ class Deal1to4DamagetoaRandomEnemy(Deathrattle_Minion):
 			else:
 				targets = curGame.charsAlive(3-self.entity.ID)
 				if targets:
-					enemy, damage = npchoice(targets), nprandint(1, 5)
+					enemy, damage = npchoice(targets), np.random.randint(1, 5)
 					curGame.fixedGuides.append((enemy.pos, enemy.type+str(enemy.ID), damage))
 				else:
 					curGame.fixedGuides.append((0, '', 0))

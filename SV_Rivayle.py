@@ -18,7 +18,6 @@ def extractfrom(target, listObj):
         return None
 
 
-
 """Neutral cards"""
 
 """Forestcraft cards"""
@@ -39,6 +38,6 @@ def extractfrom(target, listObj):
 
 """DLC cards"""
 
-SV_Verdant_Indices = {
+SV_Rivayle_Indices = {
 
 }

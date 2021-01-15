@@ -17,12 +17,6 @@ def extractfrom(target, listObj):
     except:
         return None
 
-def PRINT(game, string, *args):
-    if game.GUI:
-        if not game.mode: game.GUI.printInfo(string)
-    elif not game.mode:
-        print("game's guide mode is 0\n", string)
-
 
 """Neutral cards"""
 
@@ -53,7 +47,6 @@ class NaterranGreatTree(Amulet):
         if trees:
             curGame = self.Game
             if curGame.mode == 0:
-                PRINT(curGame, f"Last Words: Give Ward to a random allied follower.")
                 if curGame.guides:
                     i = curGame.guides.pop(0)
                 else:
@@ -65,7 +58,6 @@ class NaterranGreatTree(Amulet):
 
 class Deathrattle_NaterranGreatTree(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        PRINT(self.entity.Game, "Last Words: Draw a card.")
         self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
 
 
@@ -91,7 +83,6 @@ class WayfaringIllustrator(SVMinion):
         if target:
             if isinstance(target, list): target = target[0]
             self.Game.Hand_Deck.addCardtoHand([type(target)], self.ID, "type")
-            PRINT(self.Game, f"Wayfaring Illustrator's Fanfare put {target.name} into your hand.")
         return None
 
 
@@ -130,14 +121,12 @@ class ChangewingCherub(SVMinion):
         if target:
             if isinstance(target, list): target = target[0]
             self.dealsDamage(target, 2)
-            PRINT(self.Game, f"Changewing Cherub deals 2 damage to {target.name}")
         natura = 0
         for card in self.Game.Hand_Deck.hands[self.ID]:
             if card.type == "Minion" and card != self and "Natura" in card.race:
                 natura += 1
         if natura >= 3:
             self.restoresHealth(self.Game.heroes[self.ID], 2)
-            PRINT(self.Game, f"Changewing Cherub restores 2 defense to your leader.")
         return None
 
     def inHandEvolving(self, target=None):
@@ -147,8 +136,6 @@ class ChangewingCherub(SVMinion):
     def discoverDecided(self, option, info):
         self.Game.fixedGuides.append(type(option))
         self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
-        PRINT(self.Game,
-              f"Changewing Cherub's Evolve put {option.name} in your hand")
 
 
 class PluckyTreasureHunter(SVMinion):
@@ -183,8 +170,6 @@ class PluckyTreasureHunter(SVMinion):
             self.Game.Hand_Deck.discardCard(self.ID, target)
             curGame = self.Game
             if curGame.mode == 0:
-                PRINT(self.Game,
-                      f"Plucky Treasure Hunter's Fanfare discards {target.name} and puts 2 random cards that share a trait with it from your deck into your hand.")
                 for n in range(2):
                     if curGame.guides:
                         i = curGame.guides.pop(0)
@@ -266,9 +251,7 @@ class GabrielHeavenlyVoice(SVMinion):
         if target:
             if isinstance(target, list): target = target[0]
             target.buffDebuff(x, x)
-            PRINT(self, f"Gabriel, Heavenly Voice's Fanfare give {target.name} +{x}/+{x}.")
         self.buffDebuff(x, x)
-        PRINT(self, f"Gabriel, Heavenly Voice's Fanfare give itself +{x}/+{x}.")
         return None
 
 
@@ -297,7 +280,6 @@ class GoblinWarpack(SVSpell):
         if comment == 6 or comment == 9:
             n = 5
         minions = [Goblin(self.Game, self.ID) for i in range(n)]
-        PRINT(self.Game, f"Conjure Golem summons {n} Guardian Golem")
         self.Game.summon(minions, (-1, "totheRightEnd"), self.ID)
         if comment == 9:
             for minion in minions:
@@ -318,15 +300,11 @@ class WeveGotaCase(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         for i in range(3):
             self.Game.Hand_Deck.drawCard(self.ID)
-        PRINT(self.Game,
-              f"We've Got a Case! draw 3 cards")
         if target:
             if isinstance(target, list): target = target[0]
             damage = (len(self.Game.Hand_Deck.hands[self.ID]) + self.countSpellDamage()) * (
                     2 ** self.countDamageDouble())
             self.dealsDamage(target, damage)
-            PRINT(self.Game,
-                  f"We've Got a Case! deals {damage} damage to {target.name}")
         return target
 
 
@@ -339,12 +317,8 @@ class BoomDevil(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.Counters.turns[self.ID] >= 10:
             self.dealsAOE(self.Game.minionsonBoard(3 - self.ID) + [self.Game.heroes[3 - self.ID]], 5)
-            PRINT(self.Game,
-                  f"Boom Devil deals 5 damage to all enemies")
         else:
             self.dealsDamage(self.Game.heroes[3 - self.ID], 5)
-            PRINT(self.Game,
-                  f"Boom Devil deals 5 damage to enemy leader")
         return None
 
 
@@ -388,7 +362,6 @@ class Terrorformer(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            PRINT(self.Game, f"Terrorformer's Fanfare deals {self.fusionMaterials} damage enemy follower {target.name}")
             self.dealsDamage(target, self.fusionMaterials)
             curGame = self.Game
             if curGame.mode == 0:
