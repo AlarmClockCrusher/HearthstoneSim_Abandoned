@@ -291,7 +291,7 @@ class Card:
 	#被扫荡打击涉及的两个随从从左到右依次结算。
 	def attacks(self, target, useAttChance=True):
 		game = self.Game
-		subjectAtt, targetAtt = max(0, self.attack), max(0, target.attack)
+		subjectAtt, targetAtt = [max(0, self.attack)], [max(0, target.attack)]
 		if self.type == "Minion" and self.keyWords["Stealth"] > 0:
 			self.losesKeyword("Stealth")
 		self.status["Temp Stealth"] = 0
@@ -312,22 +312,22 @@ class Card:
 		#注意这个伤害承受目标不一定是攻击目标，因为有博尔夫碎盾以及钳嘴龟持盾者的存在
 		#承受伤害者的血量减少，结算剧毒，但是此时不会发出受伤信号。
 		dmgTaker = game.scapegoat4(target, dmgDealer_att)
-		dmg = dmgDealer_def.dmgtoRec(dmgDealer_att.dmgtoDeal(subjectAtt, "att"), "def")
-		dmgActual = dmgTaker.takesDamage(dmgDealer_att, dmg, sendDmgSignal=False, damageType="Battle")
+		game.sendSignal("BattleDmg?", 0, subject, target, subjectAtt, "") #不能把这个东西写入和伤害承受目标判定同时进行的结算，因为存在互相干扰的情况
+		dmgActual = dmgTaker.takesDamage(dmgDealer_att, subjectAtt[0], sendDmgSignal=False, damageType="Battle")
 		if dmgActual > 0: dmgList.append((dmgDealer_att, dmgTaker, dmgActual))
 		
 		#寻找受到攻击目标的伤害的角色。同理，此时受伤的角色不会发出受伤信号，这些受伤信号会在之后统一发出。
 		dmgTaker = game.scapegoat4(self, dmgDealer_def)
-		dmg = dmgDealer_att.dmgtoRec(dmgDealer_def.dmgtoDeal(targetAtt, "def"), "att")
-		dmgActual = dmgTaker.takesDamage(dmgDealer_def, dmg, sendDmgSignal=False, damageType="Battle")
+		game.sendSignal("BattleDmg?", 0, target, subject, targetAtt, "") #不能把这个东西写入和伤害承受目标判定同时进行的结算，因为存在互相干扰的情况
+		dmgActual = dmgTaker.takesDamage(dmgDealer_def, targetAtt[0], sendDmgSignal=False, damageType="Battle")
 		if dmgActual > 0: dmgList.append((dmgDealer_def, dmgTaker, dmgActual))
 		#如果攻击者的伤害来源（随从或者武器）有对相邻随从也造成伤害的扳机，则将相邻的随从录入处理列表。
 		if dmgDealer_att.type != "Hero" and dmgDealer_att.marks["Sweep"] > 0 and target.type == "Minion":
 			neighbors = game.neighbors2(target)[0] #此时被攻击的随从一定是在场的，已经由Game.battleRequest保证。
 			for minion in neighbors:
 				dmgTaker = game.scapegoat4(minion, dmgDealer_att)
-				dmg = dmgDealer_def.dmgtoRec(dmgDealer_att.dmgtoDeal(subjectAtt, "att"), "def")
-				dmgActual = dmgTaker.takesDamage(dmgDealer_att, dmg, sendDmgSignal=False, damageType="Ability")
+				#目前假设横扫时造成的战斗伤害都一样，不会改变。毕竟炉石里面没有相似的效果
+				dmgActual = dmgTaker.takesDamage(dmgDealer_att, subjectAtt[0], sendDmgSignal=False, damageType="Ability")
 				if dmgActual > 0: dmgList.append((dmgDealer_att, dmgTaker, dmgActual))
 				
 		if dmgDealer_att.type == "Weapon": dmgDealer_att.loseDurability()
