@@ -32,7 +32,7 @@ class AssemblyDroid(SVMinion):
 class NaterranGreatTree(Amulet):
     Class, race, name = "Neutral", "Natura", "Naterran Great Tree"
     mana = 1
-    index = "SV_Uprooted~Neutral~Amulet~1~Natura~Naterran Great Tree~Deathrattle~Uncollectible"
+    index = "SV_Uprooted~Neutral~Amulet~1~Natura~Naterran Great Tree~Battlecry~Deathrattle~Uncollectible"
     requireTarget, description = False, "Fanfare: If any other allied Naterran Great Trees are in play, randomly destroy 1.Last Words: Draw a card."
 
     def __init__(self, Game, ID):

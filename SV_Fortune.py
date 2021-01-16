@@ -27,6 +27,7 @@ class CloudGigas(SVMinion):
     index = "SV_Fortune~Neutral~Minion~2~5~5~None~Cloud Gigas~Taunt"
     requireTarget, keyWord, description = False, "Taunt", "Ward. At the start of your turn, put a Cloud Gigas into your deck and banish this follower."
     attackAdd, healthAdd = 0, 0
+    name_CN = "腾云巨灵"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -57,6 +58,7 @@ class SuddenShowers(SVSpell):
     mana, requireTarget = 2, False
     index = "SV_Fortune~Neutral~Spell~2~Sudden Showers"
     description = "Destroy a random follower."
+    name_CN = "突坠的落石"
 
     def available(self):
         return len(self.Game.minionsAlive(1)) + len(self.Game.minionsAlive(2)) > 0
@@ -85,6 +87,7 @@ class WingedCourier(SVMinion):
     index = "SV_Fortune~Neutral~Minion~4~4~3~None~Winged Courier~Deathrattle"
     requireTarget, keyWord, description = False, "", "Last Words: Draw a card."
     attackAdd, healthAdd = 2, 2
+    name_CN = "翔翼信使"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -102,6 +105,7 @@ class FieranHavensentWindGod(SVMinion):
     index = "SV_Fortune~Neutral~Minion~4~1~1~None~Fieran, Havensent Wind God~Battlecry~Invocation~Legendary"
     requireTarget, keyWord, description = True, "", "Invocation: At the start of your turn, Rally (10) - Invoke this card.------Fanfare: If you have more evolution points than your opponent, gain +0/+2 and deal 2 damage to an enemy follower. (You have 0 evolution points on turns you are unable to evolve.)At the end of your turn, give +1/+1 to all allied followers."
     attackAdd, healthAdd = 2, 2
+    name_CN = "天霸风神·斐兰"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -153,6 +157,7 @@ class ResolveoftheFallen(SVSpell):
     requireTarget, mana = True, 4
     index = "SV_Fortune~Neutral~Spell~4~Resolve of the Fallen"
     description = "Destroy an enemy follower or amulet.If at least 3 allied followers have evolved this match, recover 3 play points.Then, if at least 5 have evolved, draw 2 cards."
+    name_CN = "堕落的决意"
 
     def effCanTrig(self):
         self.effectViable = self.Game.Counters.evolvedThisGame[self.ID] > 3
@@ -182,6 +187,7 @@ class StarbrightDeity(SVMinion):
     index = "SV_Fortune~Neutral~Minion~5~3~4~None~Starbright Deity~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Put into your hand copies of the 3 left-most cards in your hand, in the order they were added."
     attackAdd, healthAdd = 2, 2
+    name_CN = "星辉女神"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         for i in range(min(3, len(self.Game.Hand_Deck.hands[self.ID]))):
@@ -192,10 +198,11 @@ class StarbrightDeity(SVMinion):
 
 class XXIZelgeneaTheWorld(SVMinion):
     Class, race, name = "Neutral", "", "XXI. Zelgenea, The World"
-    mana, attack, health = 5, 5, 5
+    mana, attack, health = 6, 5, 5
     index = "SV_Fortune~Neutral~Minion~5~5~5~None~XXI. Zelgenea, The World~Battlecry~Invocation~Legendary"
     requireTarget, keyWord, description = False, "", "Invocation: At the start of your tenth turn, invoke this card. Then, evolve it.----------Fanfare: Restore 5 defense to your leader. If your leader had 14 defense or less before defense was restored, draw 2 cards and randomly destroy 1 of the enemy followers with the highest attack in play.Can't be evolved using evolution points. (Can be evolved using card effects.)"
-    attackAdd, healthAdd = 5, 5
+    attackAdd, healthAdd = 2, 2
+    name_CN = "《世界》·捷尔加内亚"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -280,6 +287,7 @@ class TitanicShowdown(Amulet):
     mana = 6
     index = "SV_Fortune~Neutral~Amulet~6~None~Titanic Showdown~Countdown~Deathrattle"
     requireTarget, description = False, "Countdown (2) Fanfare: Put a random follower that originally costs at least 9 play points from your deck into your hand. If any other allied Titanic Showdowns are in play, recover 4 play points and banish this amulet. Last Words: At the start of your next turn, put 5 random followers that originally cost at least 9 play points from your hand into play."
+    name_CN = "巨人的较劲"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -349,6 +357,7 @@ class PureshotAngel_Accelerate(SVSpell):
     requireTarget, mana = False, 2
     index = "SV_Fortune~Neutral~Spell~2~Pureshot Angel~Accelerate~Uncollectible"
     description = "Deal 3 damage to an enemy"
+    name_CN = "圣贯天使"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
@@ -372,6 +381,7 @@ class PureshotAngel(SVMinion):
     requireTarget, keyWord, description = False, "", "Accelerate 2: Deal 1 damage to an enemy. Fanfare: xxx. Deal 3 damage to an enemy minion, and deal 1 damage to the enemy hero"
     accelerateSpell = PureshotAngel_Accelerate
     attackAdd, healthAdd = 2, 2
+    name_CN = "圣贯天使"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] < self.mana:
@@ -415,6 +425,7 @@ class LumberingCarapace(SVMinion):
     index = "SV_Fortune~Forestcraft~Minion~1~1~1~None~Lumbering Carapace~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: If at least 2 other cards were played this turn, gain +2/+2. Then, if at least 4 other cards were played this turn, gain +2/+2 more and Ward."
     attackAdd, healthAdd = 2, 2
+    name_CN = "碎击巨虫"
 
     def effCanTrig(self):
         self.effectViable = self.Game.combCards(self.ID) >= 2
@@ -435,6 +446,7 @@ class BlossomingArcher(SVMinion):
     index = "SV_Fortune~Forestcraft~Minion~2~2~2~None~Blossoming Archer"
     requireTarget, keyWord, description = False, "", "Whenever you play a card using its Accelerate effect, deal 2 damage to a random enemy follower."
     attackAdd, healthAdd = 2, 2
+    name_CN = "花绽弓箭手"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -472,6 +484,7 @@ class SoothingSpell(SVSpell):
     requireTarget, mana = True, 2
     index = "SV_Fortune~Forestcraft~Spell~2~Soothing Spell"
     description = "Restore 3 defense to an ally. If at least 2 other cards were played this turn, recover 1 evolution point."
+    name_CN = "治愈的波动"
 
     def effCanTrig(self):
         self.effectViable = self.Game.combCards(self.ID) >= 2
@@ -499,6 +512,7 @@ class XIIWolfraudHangedMan(SVMinion):
     index = "SV_Fortune~Forestcraft~Minion~3~3~3~None~XII. Wolfraud, Hanged Man~Enhance~Battlecry~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Enhance (7) - Put a Treacherous Reversal into your hand and banish this follower. Can't be destroyed by effects. (Can be destroyed by damage from effects.)"
     attackAdd, healthAdd = 2, 2
+    name_CN = "《倒吊人》·罗弗拉德"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -532,6 +546,7 @@ class TreacherousReversal(SVSpell):
     requireTarget, mana = False, 0
     index = "SV_Fortune~Forestcraft~Spell~0~Treacherous Reversal~Uncollectible"
     description = "Banish all cards in play.Banish all cards in your hand and deck.Put copies of the first 10 cards your opponent played this match (excluding XII. Wolfraud, Hanged Man and Treacherous Reversal) into your deck, in the order they were played.Transform the Reaper at the bottom of your deck into a Victory Card.Treat allied cards that have been destroyed this match as if they were banished.At the end of your opponent's next turn, put copies of each card in your opponent's hand into your hand (excluding XII. Wolfraud, Hanged Man and Treacherous Reversal)."
+    name_CN = "真伪逆转"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.banishMinion(self, self.Game.minionsandAmuletsonBoard(1) + self.Game.minionsandAmuletsonBoard(2))
@@ -585,6 +600,7 @@ class ReclusivePonderer_Accelerate(SVSpell):
     requireTarget, mana = False, 1
     index = "SV_Fortune~Forestcraft~Spell~1~Reclusive Ponderer~Accelerate~Uncollectible"
     description = "Draw a card."
+    name_CN = "深谋的兽人"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.Hand_Deck.drawCard(self.ID)
@@ -598,6 +614,7 @@ class ReclusivePonderer(SVMinion):
     requireTarget, keyWord, description = False, "Stealth", "Accelerate (1): Draw a card. Ambush."
     accelerateSpell = ReclusivePonderer_Accelerate
     attackAdd, healthAdd = 2, 2
+    name_CN = "深谋的兽人"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] < self.mana:
@@ -618,6 +635,7 @@ class ChipperSkipper_Accelerate(SVSpell):
     requireTarget, mana = False, 1
     index = "SV_Fortune~Forestcraft~Spell~1~Chipper Skipper~Accelerate~Uncollectible"
     description = "Summon a Fighter"
+    name_CN = "船娘精灵"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.summon([Fighter(self.Game, self.ID)], (-1, "totheRightEnd"),
@@ -632,6 +650,7 @@ class ChipperSkipper(SVMinion):
     requireTarget, keyWord, description = False, "", "Accelerate (1): Summon a Fighter.(Can only Accelerate if a follower was played this turn.)Whenever you play a card using its Accelerate effect, summon a Fighter and evolve it."
     accelerateSpell = ChipperSkipper_Accelerate
     attackAdd, healthAdd = 2, 2
+    name_CN = "船娘精灵"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -671,6 +690,7 @@ class FairyAssault(SVSpell):
     requireTarget, mana = False, 4
     index = "SV_Fortune~Forestcraft~Spell~4~Fairy Assault"
     description = "Summon 4 Fairies and give them Rush. Enhance (8): Evolve them instead."
+    name_CN = "妖精突击"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] >= 8:
@@ -704,6 +724,7 @@ class OptimisticBeastmaster(SVMinion):
     index = "SV_Fortune~Forestcraft~Minion~5~4~5~None~Optimistic Beastmaster~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Put a random follower with Accelerate from your deck into your hand. Whenever you play a card using its Accelerate effect, deal 2 damage to all enemies."
     attackAdd, healthAdd = 2, 2
+    name_CN = "赞誉之驭兽使"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -741,6 +762,7 @@ class Terrorformer(SVMinion):
     index = "SV_Fortune~Forestcraft~Minion~6~4~4~None~Terrorformer~Battlecry~Fusion~Legendary"
     requireTarget, keyWord, description = True, "", "Fusion: Forestcraft followers that originally cost 2 play points or more. Whenever 2 or more cards are fused to this card at once, gain +2/+0 and draw a card. Fanfare: If at least 2 cards are fused to this card, gain Storm. Then, if at least 4 cards are fused to this card, destroy an enemy follower."
     attackAdd, healthAdd = 2, 2
+    name_CN = "裂地异种"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -786,6 +808,7 @@ class DeepwoodWolf_Accelerate(SVSpell):
     requireTarget, mana = True, 1
     index = "SV_Fortune~Forestcraft~Spell~1~Deepwood Wolf~Accelerate~Uncollectible"
     description = "Return an allied follower or amulet to your hand. Draw a card."
+    name_CN = "森林之狼"
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
@@ -806,6 +829,7 @@ class DeepwoodWolf(SVMinion):
     requireTarget, keyWord, description = True, "Charge", "Accelerate (1): Return an allied follower or amulet to your hand. Draw a card. Storm. When you play a card using its Accelerate effect, evolve this follower."
     accelerateSpell = DeepwoodWolf_Accelerate
     attackAdd, healthAdd = 3, 3
+    name_CN = "森林之狼"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -861,6 +885,7 @@ class LionelWoodlandShadow_Accelerate(SVSpell):
     requireTarget, mana = True, 1
     index = "SV_Fortune~Forestcraft~Spell~1~Lionel, Woodland Shadow~Accelerate~Uncollectible"
     description = "Deal 5 damage to an enemy"
+    name_CN = "森之暗念·莱昂内尔"
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
@@ -881,6 +906,7 @@ class LionelWoodlandShadow(SVMinion):
     requireTarget, keyWord, description = True, "", "Accelerate 2: Deal 1 damage to an enemy. Fanfare: xxx. Deal 3 damage to an enemy minion, and deal 1 damage to the enemy hero"
     accelerateSpell = LionelWoodlandShadow_Accelerate
     attackAdd, healthAdd = 2, 2
+    name_CN = "森之暗念·莱昂内尔"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -972,6 +998,7 @@ class ErnestaWeaponsHawker(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~1~1~1~Officer~Ernesta, Weapons Hawker~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Rally (10) - Put a Dread Hound into your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "武器商人·艾尔涅丝塔"
 
     def effCanTrig(self):
         self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 10
@@ -988,6 +1015,7 @@ class DreadHound(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~1~4~4~Officer~Dread Hound~Battlecry~Bane~Taunt~Uncollectible"
     requireTarget, keyWord, description = False, "Bane,Taunt", "Bane.Ward.Fanfare: Give a random allied Ernesta, Weapons Hawker Last Words - Deal 4 damage to a random enemy follower."
     attackAdd, healthAdd = 2, 2
+    name_CN = "恐惧猎犬"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
@@ -1039,6 +1067,7 @@ class PompousSummons(SVSpell):
     requireTarget, mana = False, 1
     index = "SV_Fortune~Swordcraft~Spell~1~Pompous Summons"
     description = "Put a random Swordcraft follower from your deck into your hand.Rally (10): Put 2 random Swordcraft followers into your hand instead."
+    name_CN = "任性的差遣"
 
     def effCanTrig(self):
         self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 10
@@ -1065,6 +1094,7 @@ class DecisiveStrike(SVSpell):
     requireTarget, mana = True, 1
     index = "SV_Fortune~Swordcraft~Spell~1~Decisive Strike~Enhance"
     description = "Deal X damage to an enemy follower. X equals the attack of the highest-attack Commander follower in your hand.Enhance (5): Deal X damage to all enemy followers instead."
+    name_CN = "所向披靡"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] >= 5:
@@ -1114,6 +1144,7 @@ class HonorableThief(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~2~2~1~Officer~Honorable Thief~Battlecry~Deathrattle"
     requireTarget, keyWord, description = False, "", "Fanfare: Rally (7) - Evolve this follower. Last Words: Put a Gilded Boots into your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "诚实的盗贼"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -1138,6 +1169,7 @@ class ShieldPhalanx(SVSpell):
     requireTarget, mana = False, 2
     index = "SV_Fortune~Swordcraft~Spell~2~Shield Phalanx"
     description = "Summon a Shield Guardian and Knight.Rally (15): Summon a Frontguard General instead of a Shield Guardian."
+    name_CN = "坚盾战阵"
 
     def effCanTrig(self):
         self.effectViable = self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 15
@@ -1158,6 +1190,7 @@ class FrontguardGeneral(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~7~5~6~Commander~Frontguard General~Taunt~Deathrattle"
     requireTarget, keyWord, description = False, "Taunt", "Ward.Last Words: Summon a Fortress Guard."
     attackAdd, healthAdd = 2, 2
+    name_CN = "铁卫战将"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -1176,6 +1209,7 @@ class FortressGuard(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~3~2~3~Officer~Fortress Guard~Taunt~Uncollectible"
     requireTarget, keyWord, description = False, "Taunt", "Ward"
     attackAdd, healthAdd = 2, 2
+    name_CN = "神盾卫士"
 
 
 class EmpressofSerenity(SVMinion):
@@ -1184,6 +1218,7 @@ class EmpressofSerenity(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~3~2~2~Commander~Empress of Serenity~Battlecry~Enhance"
     requireTarget, keyWord, description = False, "", "Fanfare: Summon a Shield Guardian.Enhance (5): Summon 3 instead.Enhance (10): Give +3/+3 to all allied Shield Guardians."
     attackAdd, healthAdd = 2, 2
+    name_CN = "安宁的女王"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] >= 10:
@@ -1217,6 +1252,7 @@ class VIIOluonTheChariot(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~3~3~3~Commander~VII. Oluon, The Chariot~Battlecry~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Enhance (7) - Transform this follower into a VII. Oluon, Runaway Chariot.At the end of your turn, randomly activate 1 of the following effects.-Gain Ward.-Summon a Knight.-Deal 2 damage to the enemy leader."
     attackAdd, healthAdd = 2, 2
+    name_CN = "《战车》·奥辂昂"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -1272,6 +1308,7 @@ class VIIOluonRunawayChariot(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~7~8~16~Commander~VII. Oluon, Runaway Chariot~Uncollectible~Legendary"
     requireTarget, keyWord, description = False, "", "Can't attack.At the end of your turn, randomly deal X damage to an enemy or another ally and then Y damage to this follower. X equals this follower's attack and Y equals the attack of the follower or leader damaged (leaders have 0 attack). Do this 2 times."
     attackAdd, healthAdd = 2, 2
+    name_CN = "《暴走》战车·奥辂昂"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -1318,6 +1355,7 @@ class PrudentGeneral(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~4~3~4~Commander~Prudent General"
     requireTarget, keyWord, description = False, "", ""
     attackAdd, healthAdd = 2, 2
+    name_CN = "静寂的元帅"
 
     def inHandEvolving(self, target=None):
         trigger = Trig_PrudentGeneral(self.Game.heroes[self.ID])
@@ -1346,6 +1384,7 @@ class StrikelanceKnight(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~5~4~5~Officer~Strikelance Knight~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: If an allied Commander card is in play, evolve this follower."
     attackAdd, healthAdd = 2, 2
+    name_CN = "冲锋骑士"
 
     def effCanTrig(self):
         minions = self.Game.minionsonBoard(self.ID)
@@ -1370,6 +1409,7 @@ class DiamondPaladin(SVMinion):
     requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: Enhance (8) - Gain the ability to evolve for 0 evolution points.During your turn, whenever this follower attacks and destroys an enemy follower, if this follower is not destroyed, recover 2 play points and gain the ability to attack 2 times this turn."
     attackAdd, healthAdd = 2, 2
     evolveRequireTarget = True
+    name_CN = "耀钻圣骑士"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -1448,6 +1488,7 @@ class SelflessNoble(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~9~9~7~Commander~Selfless Noble~Battlecry"
     requireTarget, keyWord, description = True, "", "Fanfare: Discard a card. Gain +X/+X. X equals the original cost of the discarded card."
     attackAdd, healthAdd = 2, 2
+    name_CN = "无私的贵族"
 
     def targetExists(self, choice=0):
         return len(self.Game.Hand_Deck.hands[self.ID]) > 1
@@ -1474,6 +1515,7 @@ class JugglingMoggy(SVMinion):
     index = "SV_Fortune~Runecraft~Minion~1~1~1~None~Juggling Moggy~Battlecry~EarthRite"
     requireTarget, keyWord, description = False, "", "Fanfare: Earth Rite - Gain +1/+1 and Last Words: Summon 2 Earth Essences."
     attackAdd, healthAdd = 2, 2
+    name_CN = "魔猫魔术师"
 
     def effCanTrig(self):
         self.effectViable = len(self.Game.earthsonBoard(self.ID)) > 0
@@ -1499,6 +1541,7 @@ class MagicalAugmentation(SVSpell):
     requireTarget, mana = True, 1
     index = "SV_Fortune~Runecraft~Spell~1~Magical Augmentation~EarthRite"
     description = "Deal 1 damage to an enemy follower. Earth Rite (2): Deal 4 damage instead. Then draw 2 cards."
+    name_CN = "扩展的魔法"
 
     def effCanTrig(self):
         self.effectViable = len(self.Game.earthsonBoard(self.ID)) >= 2
@@ -1533,6 +1576,7 @@ class CreativeConjurer(SVMinion):
     index = "SV_Fortune~Runecraft~Minion~2~2~2~None~Creative Conjurer~Battlecry~EarthRite"
     requireTarget, keyWord, description = False, "", "Fanfare: If there are no allied Earth Sigil amulets in play, summon an Earth Essence. Otherwise, perform Earth Rite: Put a Golem Summoning into your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "创物魔法师"
 
     def effCanTrig(self):
         self.effectViable = len(self.Game.earthsonBoard(self.ID)) >= 0
@@ -1550,6 +1594,7 @@ class GolemSummoning(SVSpell):
     requireTarget, mana = False, 2
     index = "SV_Fortune~Runecraft~Spell~2~Golem Summoning~Uncollectible"
     description = "Summon a Guardian Golem. If you have 20 cards or less in your deck, evolve it."
+    name_CN = "巨像创造"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         minion = GuardianGolem(self.Game, self.ID)
@@ -1565,6 +1610,7 @@ class LhynkalTheFool(SVMinion):
     index = "SV_Fortune~Runecraft~Minion~2~2~2~None~0. Lhynkal, The Fool~Battlecry~Choose~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Choose - Put a Rite of the Ignorant or Scourge of the Omniscient into your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "《愚者》·琳库露"
 
     def inHandEvolving(self, target=None):
         self.Game.Manas.restoreManaCrystal(2, self.ID)
@@ -1584,6 +1630,7 @@ class RiteoftheIgnorant(SVSpell):
     requireTarget, mana = False, 4
     index = "SV_Fortune~Runecraft~Spell~4~Rite of the Ignorant~Uncollectible~Legendary"
     description = "Give your leader the following effect: At the start of your turn, draw a card and Spellboost it X times. X equals a random number between 1 and 10. Then give it the following effect: At the end of your turn, discard this card. (This leader effect lasts for the rest of the match.)"
+    name_CN = "蒙昧的术式"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         trigger = Trig_RiteoftheIgnorant(self.Game.heroes[self.ID])
@@ -1638,6 +1685,7 @@ class ScourgeoftheOmniscient(SVSpell):
     requireTarget, mana = False, 2
     index = "SV_Fortune~Runecraft~Spell~2~Scourge of the Omniscient~Uncollectible~Legendary"
     description = "Give the enemy leader the following effect: At the end of your turn, reduce your leader's maximum defense by 1. (This effect lasts for the rest of the match.)"
+    name_CN = "剥落的镇压"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         trigger = Trig_ScourgeoftheOmniscient(self.Game.heroes[3 - self.ID])
@@ -1666,6 +1714,7 @@ class AuthoringTomorrow(SVSpell):
     requireTarget, mana = False, 2
     index = "SV_Fortune~Runecraft~Spell~2~Authoring Tomorrow"
     description = "Give your leader the following effect: At the end of your turn, if it is your second, fourth, sixth, or eighth turn, deal 1 damage to all enemy followers. If it is your third, fifth, seventh, or ninth turn, draw a card. If it is your tenth turn or later, deal 5 damage to the enemy leader. (This effect is not stackable and is removed after activating 3 times.)"
+    name_CN = "预知未来"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         trigger = Trig_AuthoringTomorrow(self.Game.heroes[self.ID])
@@ -1709,6 +1758,7 @@ class MadcapConjuration(SVSpell):
     requireTarget, mana = False, 2
     index = "SV_Fortune~Runecraft~Spell~2~Madcap Conjuration"
     description = "Discard your hand.If at least 2 spells were discarded, draw 5 cards.If at least 2 followers were discarded, destroy all followers.If at least 2 amulets were discarded, summon 2 Clay Golems and deal 2 damage to the enemy leader."
+    name_CN = "乱无章法的嵌合"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         hands = self.Game.Hand_Deck.hands[self.ID]
@@ -1734,6 +1784,7 @@ class ArcaneAuteur(SVMinion):
     index = "SV_Fortune~Runecraft~Minion~3~3~3~None~Arcane Auteur~Deathrattle"
     requireTarget, keyWord, description = False, "", "Last Words: Put an Insight into your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "魔导书撰写者"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -1751,6 +1802,7 @@ class PiquantPotioneer(SVMinion):
     index = "SV_Fortune~Runecraft~Minion~4~3~3~None~Piquant Potioneer~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Deal 1 damage to all enemy followers. If you have 20 cards or less in your deck, deal 3 damage instead."
     attackAdd, healthAdd = 2, 2
+    name_CN = "魔药巫师"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         damage = 1
@@ -1767,6 +1819,7 @@ class ImperatorofMagic(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: Earth Rite - Summon an Emergency Summoning. Fanfare: Enhance (6) - Recover 1 evolution point."
     attackAdd, healthAdd = 2, 2
     evolveRequireTarget = True
+    name_CN = "魔导君临者"
 
     def evolveTargetExists(self, choice=0):
         return self.selectableEnemyMinionExists()
@@ -1811,6 +1864,7 @@ class EmergencySummoning(Amulet):
     mana = 5
     index = "SV_Fortune~Runecraft~Amulet~5~Earth Sigil~Emergency Summoning~Deathrattle~Uncollectible"
     requireTarget, description = False, "When your opponent plays a follower, destroy this amulet. Last Words: Summon a Guardian Golem and a Clay Golem."
+    name_CN = "紧急召唤"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -1842,6 +1896,7 @@ class HappyPig(SVMinion):
     index = "SV_Fortune~Neutral~Minion~2~2~2~None~Happy Pig~Deathrattle"
     requireTarget, keyWord, description = False, "", "Last Words: Restore 1 defense to your leader."
     attackAdd, healthAdd = 2, 2
+    name_CN = "快乐小猪"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -1875,6 +1930,7 @@ class SweetspellSorcerer(SVMinion):
     index = "SV_Fortune~Runecraft~Minion~5~4~4~None~Sweetspell Sorcerer"
     requireTarget, keyWord, description = False, "", "Whenever you play a spell, summon a Happy Pig."
     attackAdd, healthAdd = 2, 2
+    name_CN = "甜品魔术师"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -1904,6 +1960,7 @@ class WitchSnap(SVSpell):
     requireTarget, mana = True, 2
     index = "SV_Fortune~Runecraft~Spell~2~Witch Snap"
     description = "Deal 1 damage to an enemy follower. Earth Rite (2): Deal 4 damage instead. Then draw 2 cards."
+    name_CN = "魔法的一击"
 
     def targetExists(self, choice=0):
         return self.selectableEnemyMinionExists()
@@ -1930,6 +1987,7 @@ class AdamantineGolem(SVMinion):
     index = "SV_Fortune~Runecraft~Minion~6~6~6~None~Adamantine Golem~Battlecry~EarthRite~Legendary"
     requireTarget, keyWord, description = False, "", "During your turn, when this card is added to your hand from your deck, if there are 2 allied Earth Sigil amulets or less in play, reveal it and summon an Earth Essence.Fanfare: Randomly activate 1 of the following effects. Earth Rite (X): Do this X more times. X equals the number of allied Earth Sigil amulets in play.-Summon a Guardian Golem.-Put a Witch Snap into your hand and change its cost to 0.-Deal 2 damage to the enemy leader. Restore 2 defense to your leader."
     attackAdd, healthAdd = 2, 2
+    name_CN = "精金巨像"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -1976,6 +2034,7 @@ class DragoncladLancer(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~1~1~1~None~Dragonclad Lancer~Battlecry"
     requireTarget, keyWord, description = True, "", "Fanfare: Deal 4 damage to an enemy follower."
     attackAdd, healthAdd = 2, 2
+    name_CN = "龙装枪术士"
 
     def targetExists(self, choice=0):
         return self.selectableFriendlyMinionExists()
@@ -1999,6 +2058,7 @@ class SpringwellDragonKeeper(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~2~2~2~None~Springwell Dragon Keeper~Battlecry~Enhance"
     requireTarget, keyWord, description = True, "", "Fanfare: Discard a card and deal 4 damage to an enemy follower.(Activates only when both a targetable card is in your hand and a targetable enemy follower is in play.)Enhance (5): Gain +3/+3."
     attackAdd, healthAdd = 2, 2
+    name_CN = "召水驭龙使"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] >= 5:
@@ -2043,6 +2103,7 @@ class TropicalGrouper(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~2~1~2~None~Tropical Grouper~Battlecry~Enhance"
     requireTarget, keyWord, description = False, "", "Fanfare: Enhance (4) - Summon a Tropical Grouper. During your turn, whenever another allied follower evolves, summon a Tropical Grouper."
     attackAdd, healthAdd = 2, 2
+    name_CN = "热带铠鱼"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2084,6 +2145,7 @@ class WavecrestAngler(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~2~2~2~None~Wavecrest Angler~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Randomly put a copy of a card discarded by an effect this turn into your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "大洋钓手"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
@@ -2104,6 +2166,7 @@ class DraconicCall(SVSpell):
     mana, requireTarget = 2, False
     index = "SV_Fortune~Dragoncraft~Spell~2~Draconic Call"
     description = "Randomly put 1 of the highest-cost Dragoncraft followers from your deck into your hand. If Overflow is active for you, randomly put 2 of the highest-cost Dragoncraft followers into your hand instead."
+    name_CN = "聚龙之唤"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         n = 1
@@ -2133,6 +2196,7 @@ class IvoryDragon(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~1~1~2~None~Ivory Dragon~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Draw a card if Overflow is active for you."
     attackAdd, healthAdd = 2, 2
+    name_CN = "银白幼龙"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isOverflow(self.ID):
@@ -2145,6 +2209,7 @@ class Heliodragon(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~3~1~5~None~Heliodragon"
     requireTarget, keyWord, description = False, "", "If this card is discarded by an effect, summon an Ivory Dragon. Then, if Overflow is active for you, draw a card.During your turn, whenever you discard cards, restore X defense to your leader. X equals the number of cards discarded."
     attackAdd, healthAdd = 2, 2
+    name_CN = "日轮之龙"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2175,6 +2240,7 @@ class SlaughteringDragonewt(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~3~2~8~None~Slaughtering Dragonewt~Bane~Battlecry"
     requireTarget, keyWord, description = False, "Bane", "Fanfare: Draw a card if Overflow is active for you."
     attackAdd, healthAdd = 0, 0
+    name_CN = "虐杀的龙人"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         cards = enumerate(self.Game.Hand_Deck.decks[self.ID])
@@ -2210,6 +2276,7 @@ class CrimsonDragonsSorrow(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~5~4~4~None~Crimson Dragon's Sorrow~Taunt~Battlecry~Legendary~Uncollectible"
     requireTarget, keyWord, description = True, "Taunt", "During your turn, whenever you discard cards, subtract X from the cost of this card. X equals the number of cards discarded.Ward.Fanfare: Discard a card. Draw 2 cards."
     attackAdd, healthAdd = 2, 2
+    name_CN = "悲戚的赤龙"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2243,6 +2310,7 @@ class AzureDragonsRage(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~7~4~4~None~Azure Dragon's Rage~Charge~Legendary~Uncollectible"
     requireTarget, keyWord, description = False, "Charge", "During your turn, whenever you discard cards, subtract X from the cost of this card. X equals the number of cards discarded.Ward.Fanfare: Discard a card. Draw 2 cards."
     attackAdd, healthAdd = 2, 2
+    name_CN = "盛怒的碧龙"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2261,6 +2329,7 @@ class TurncoatDragonSummoner(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~3~2~3~None~Turncoat Dragon Summoner~Battlecry~Legendary"
     requireTarget, keyWord, description = True, "", "If this card is discarded by an effect, put a Crimson Dragon's Sorrow into your hand.Ward.Fanfare: Discard a card. Put an Azure Dragon's Rage into your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "恶极唤龙者"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2289,6 +2358,7 @@ class DragonsNest(Amulet):
     mana = 1
     index = "SV_Fortune~Dragoncraft~Amulet~1~None~Dragon's Nest"
     requireTarget, description = False, "At the start of your turn, restore 2 defense to your leader, draw a card, and destroy this amulet if Overflow is active for you."
+    name_CN = "龙之卵"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2314,6 +2384,7 @@ class DragonSpawning(SVSpell):
     mana, requireTarget = 3, False
     index = "SV_Fortune~Dragoncraft~Spell~3~Dragon Spawning"
     description = "Summon 2 Dragon's Nests. If you have 10 play point orbs, summon 5 instead."
+    name_CN = "龙之诞生"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         n = 2
@@ -2328,6 +2399,7 @@ class DragonImpact(SVSpell):
     mana, requireTarget = 4, True
     index = "SV_Fortune~Dragoncraft~Spell~4~Dragon Impact"
     description = "Give +1/+1 and Rush to a Dragoncraft follower in your hand.Deal 5 damage to a random enemy follower.(Can be played only when a targetable card is in your hand.)"
+    name_CN = "龙威迫击"
 
     def available(self):
         for card in self.Game.Hand_Deck.hands[self.ID]:
@@ -2375,6 +2447,7 @@ class XIErntzJustice(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~10~11~8~None~XI. Erntz, Justice~Ward~Legendary"
     requireTarget, keyWord, description = False, "Taunt", "Ward.When this follower comes into play, randomly activate 1 of the following effects.-Draw 3 cards.-Evolve this follower.When this follower leaves play, restore 8 defense to your leader. (Transformation doesn't count as leaving play.)"
     attackAdd, healthAdd = -3, 3
+    name_CN = "《正义》·伊兰翠"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2419,6 +2492,7 @@ class GhostlyMaid(SVMinion):
     index = "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Ghostly Maid~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: If there are any allied amulets in play, summon a Ghost. Then, if there are at least 2 in play, evolve it."
     attackAdd, healthAdd = 2, 2
+    name_CN = "幽灵女仆"
 
     def effCanTrig(self):
         self.effectViable = len(self.Game.amuletsonBoard(self.ID)) > 0
@@ -2439,6 +2513,8 @@ class BonenanzaNecromancer(SVMinion):
     index = "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Bonenanza Necromancer~Enhance~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Enhance (7) - Reanimate (10). Whenever you perform Burial Rite, draw a card."
     attackAdd, healthAdd = 2, 2
+    name_CN = "狂欢唤灵师"
+
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2478,6 +2554,7 @@ class SavoringSlash(SVSpell):
     requireTarget, mana = True, 2
     index = "SV_Fortune~Shadowcraft~Spell~2~Savoring Slash"
     description = "Deal 3 damage to an enemy follower. Burial Rite: Draw a card."
+    name_CN = "饥欲斩击"
 
     def effCanTrig(self):
         self.effectViable = not self.Game.Hand_Deck.noMinionsinHand(self.ID, self)
@@ -2523,6 +2600,7 @@ class CoffinoftheUnknownSoul(Amulet):
     mana = 2
     index = "SV_Fortune~Shadowcraft~Amulet~2~None~Coffin of the Unknown Soul~Countdown~Battlecry~Deathrattle"
     requireTarget, description = True, "Countdown (1)Fanfare: Burial Rite - Draw a card and add X to this amulet's Countdown. X equals half the original cost of the follower destroyed by Burial Rite (rounded down).Last Words: Summon a copy of the follower destroyed by Burial Rite."
+    name_CN = "幽灵之棺"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2576,6 +2654,7 @@ class SpiritCurator(SVMinion):
     index = "SV_Fortune~Shadowcraft~Minion~3~3~3~None~Spirit Curator~Battlecry"
     requireTarget, keyWord, description = True, "", "Fanfare: Burial Rite - Draw a card."
     attackAdd, healthAdd = 2, 2
+    name_CN = "灵魂鉴定师"
 
     def effCanTrig(self):
         self.effectViable = not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 2
@@ -2600,6 +2679,7 @@ class DeathFowl_Crystallize(Amulet):
     mana = 1
     index = "SV_Fortune~Shadowcraft~Amulet~1~None~Death Fowl~Countdown~Crystallize~Deathrattle~Uncollectible"
     requireTarget, description = False, "Countdown (3) Last Words: Gain 4 shadows."
+    name_CN = "结晶：死之魔鸟"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2620,6 +2700,7 @@ class DeathFowl(SVMinion):
     requireTarget, keyWord, description = False, "", "Crystallize (1): Countdown (3) Last Words: Gain 4 shadows. Fanfare: Gain 4 shadows.Last Words: Draw a card."
     crystallizeAmulet = DeathFowl_Crystallize
     attackAdd, healthAdd = 2, 2
+    name_CN = "死之魔鸟"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2653,6 +2734,7 @@ class SoulBox(SVMinion):
     index = "SV_Fortune~Shadowcraft~Minion~2~2~2~None~Soul Box~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: If there are any allied amulets in play, evolve this follower."
     attackAdd, healthAdd = 2, 2
+    name_CN = "灵魂之箱"
 
     def effCanTrig(self):
         self.effectViable = len(self.Game.amuletsonBoard(self.ID)) > 0
@@ -2669,6 +2751,7 @@ class VIMilteoTheLovers(SVMinion):
     index = "SV_Fortune~Shadowcraft~Minion~5~4~4~None~VI. Milteo, The Lovers~Battlecry~Enhance~Deathrattle~Legendary"
     requireTarget, keyWord, description = True, "", "Fanfare: Burial Rite (2) - Reanimate (X) and Reanimate (Y). X and Y equal 6 split randomly.(To perform Burial Rite (2), there must be at least 2 open spaces in your area after this follower comes into play.)Enhance (9): Do not perform Burial Rite. Evolve this follower instead.Can't be evolved using evolution points. (Can be evolved using card effects.)Last Words: Draw 2 cards."
     attackAdd, healthAdd = 2, 2
+    name_CN = "《恋人》·米路缇欧"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2793,6 +2876,7 @@ class CloisteredSacristan_Crystallize(Amulet):
     mana = 2
     index = "SV_Fortune~Shadowcraft~Amulet~2~None~Cloistered Sacristan~Countdown~Crystallize~Deathrattle~Uncollectible"
     requireTarget, description = False, "Countdown (4) Whenever you perform Burial Rite, subtract 1 from this amulet's Countdown. Last Words: Summon a Cloistered Sacristan."
+    name_CN = "结晶：幽暗守墓者"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2826,6 +2910,7 @@ class CloisteredSacristan(SVMinion):
     crystallizeAmulet = DeathFowl_Crystallize
     attackAdd, healthAdd = 2, 2
     evolveRequireTarget = True
+    name_CN = "幽暗守墓者"
 
     def evolveTargetExists(self, choice=0):
         return not self.Game.Hand_Deck.noMinionsinHand(self.ID, self) and self.Game.space(self.ID) >= 1
@@ -2861,6 +2946,7 @@ class ConqueringDreadlord(SVMinion):
     index = "SV_Fortune~Shadowcraft~Minion~8~6~6~None~Conquering Dreadlord~Invocation~Legendary"
     requireTarget, keyWord, description = False, "", "Invocation: When you perform Burial Rite, if it is your fifth, seventh, or ninth time this match, invoke this card, then return it to your hand.When this follower leaves play, or at the end of your turn, summon a Lich. (Transformation doesn't count as leaving play.)"
     attackAdd, healthAdd = 2, 2
+    name_CN = "征伐的死帝"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2901,6 +2987,7 @@ class Deathbringer_Crystallize(Amulet):
     mana = 2
     index = "SV_Fortune~Shadowcraft~Amulet~2~None~Deathbringer~Countdown~Crystallize~Battlecry~Deathrattle~Uncollectible"
     requireTarget, description = False, "Countdown (3) Fanfare and Last Words: Transform a random enemy follower into a Skeleton."
+    name_CN = "结晶：死灭召来者"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2952,6 +3039,7 @@ class Deathbringer(SVMinion):
     requireTarget, keyWord, description = False, "", "Crystallize (2): Countdown (3) Fanfare and Last Words: Transform a random enemy follower into a Skeleton.At the end of your turn, destroy 2 random enemy followers and restore 5 defense to your leader."
     crystallizeAmulet = Deathbringer_Crystallize
     attackAdd, healthAdd = 2, 2
+    name_CN = "死灭召来者"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3007,6 +3095,7 @@ class SilverboltHunter(SVMinion):
     index = "SV_Fortune~Bloodcraft~Minion~1~1~2~None~Silverbolt Hunter~Battlecry~Deathrattle"
     requireTarget, keyWord, description = False, "", "Fanfare: Deal 1 damage to your leader. Last Words: Give +1/+1 to a random allied follower."
     attackAdd, healthAdd = 2, 2
+    name_CN = "银箭狩猎者"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3037,6 +3126,7 @@ class MoonriseWerewolf(SVMinion):
     index = "SV_Fortune~Bloodcraft~Minion~2~1~3~None~Moonrise Werewolf~Battlecry~Enhance"
     requireTarget, keyWord, description = False, "", "Fanfare: If Avarice is active for you, gain +0/+2 and Ward.Fanfare: Enhance (5) - Gain +3/+3."
     attackAdd, healthAdd = 2, 2
+    name_CN = "月下的狼人"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] >= 5:
@@ -3065,6 +3155,7 @@ class WhiplashImp(SVMinion):
     index = "SV_Fortune~Bloodcraft~Minion~2~2~2~None~Whiplash Imp~Battlecry~Enhance"
     requireTarget, keyWord, description = False, "", "Fanfare: If Wrath is active for you, gain +1/+4, Rush, and Drain. Fanfare: Enhance (6) - Summon an Imp Lancer."
     attackAdd, healthAdd = 2, 2
+    name_CN = "迅鞭小恶魔"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] >= 6:
@@ -3095,6 +3186,7 @@ class ContemptousDemon(SVMinion):
     index = "SV_Fortune~Bloodcraft~Minion~2~2~2~None~Contemptous Demon~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: If Wrath is active for you, gain the ability to evolve for 0 evolution points.At the end of your turn, deal 1 damage to your leader.At the start of your turn, restore 2 defense to your leader."
     attackAdd, healthAdd = 2, 2
+    name_CN = "讥讽的恶魔"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3174,6 +3266,7 @@ class DarkSummons(SVSpell):
     requireTarget, mana = True, 2
     index = "SV_Fortune~Bloodcraft~Spell~2~Dark Summons"
     description = "Deal 3 damage to an enemy follower. If Wrath is active for you, recover 2 play points."
+    name_CN = "暗黑融合"
 
     def available(self):
         return self.selectableEnemyMinionExists()
@@ -3198,6 +3291,7 @@ class TyrantofMayhem(SVMinion):
     index = "SV_Fortune~Bloodcraft~Minion~3~3~3~None~Tyrant of Mayhem~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Draw a card. If Vengeance is not active for you, deal 2 damage to your leader. Otherwise, deal 2 damage to the enemy leader."
     attackAdd, healthAdd = 2, 2
+    name_CN = "暴虐的恶魔"
 
     def effCanTrig(self):
         self.effectViable = self.Game.isVengeance(self.ID)
@@ -3217,6 +3311,7 @@ class CurmudgeonOgre(SVMinion):
     index = "SV_Fortune~Bloodcraft~Minion~4~4~4~None~Curmudgeon Ogre~Battlecry~Enhance"
     requireTarget, keyWord, description = False, "", "Fanfare: Enhance (6) - Give +1/+1 to all allied Bloodcraft followers. If Vengeance is active for you, give +2/+2 instead."
     attackAdd, healthAdd = 2, 2
+    name_CN = "蛮吼的巨魔"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] >= 6:
@@ -3246,6 +3341,7 @@ class DireBond(Amulet):
     mana = 3
     index = "SV_Fortune~Bloodcraft~Amulet~3~None~Dire Bond"
     requireTarget, description = False, "Countdown (3)Fanfare: Deal 6 damage to your leader.At the start of your turn, restore 2 defense to your leader and draw a card."
+    name_CN = "漆黑之契"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3274,6 +3370,7 @@ class DarholdAbyssalContract(SVMinion):
     index = "SV_Fortune~Bloodcraft~Minion~4~4~3~None~Darhold, Abyssal Contract~Battlecry~Legendary"
     requireTarget, keyWord, description = True, "", "Fanfare: If Wrath is active for you, destroy an enemy follower, then deal 3 damage to the enemy leader."
     attackAdd, healthAdd = 2, 2
+    name_CN = "深渊之契·达尔霍德"
 
     def effCanTrig(self):
         self.effectViable = self.Game.isWrath(self.ID)
@@ -3303,6 +3400,7 @@ class BurningConstriction(SVSpell):
     mana, requireTarget = 5, False
     index = "SV_Fortune~Bloodcraft~Spell~5~Burning Constriction"
     description = "Deal 4 damage to all enemy followers. Then, if Vengeance is active for you, deal 4 damage to the enemy leader."
+    name_CN = "盛燃的抵抗"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         damage = (4 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -3318,6 +3416,7 @@ class VampireofCalamity_Accelerate(SVSpell):
     requireTarget, mana = True, 1
     index = "SV_Fortune~Bloodcraft~Spell~1~Vampire of Calamity~Accelerate~Uncollectible"
     description = "Deal 1 damage to your leader. Deal 2 damage to an enemy follower."
+    name_CN = "灾祸暗夜眷属"
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
@@ -3340,6 +3439,7 @@ class VampireofCalamity(SVMinion):
     requireTarget, keyWord, description = True, "Rush", "Accelerate (1): Deal 1 damage to your leader. Deal 2 damage to an enemy follower.Rush.Fanfare: If Wrath is active for you, deal 4 damage to an enemy and restore 4 defense to your leader."
     accelerateSpell = VampireofCalamity_Accelerate
     attackAdd, healthAdd = 2, 2
+    name_CN = "灾祸暗夜眷属"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] < self.mana:
@@ -3384,6 +3484,7 @@ class UnselfishGrace(Amulet):
     mana = 3
     index = "SV_Fortune~Bloodcraft~Amulet~3~None~Unselfish Grace~Uncollectible~Legendary"
     requireTarget, description = False, "Countdown (5)At the end of your turn, restore 1 defense to your leader. If you have more evolution points than your opponent, restore 2 defense instead. (You have 0 evolution points on turns you are unable to evolve.)Last Words: Summon a 4-play point 4/4 XIV. Luzen, Temperance (without Accelerate)."
+    name_CN = "无欲之恩宠"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3417,6 +3518,7 @@ class InsatiableDesire(SVSpell):
     requireTarget, mana = False, 1
     index = "SV_Fortune~Bloodcraft~Spell~1~Insatiable Desire~Uncollectible~Legendary"
     description = "Give your leader the following effects.-At the start of your turn, draw a card.-At the start of your turn, lose 1 play point.(These effects are not stackable and last for the rest of the match.)"
+    name_CN = "无尽之渴望"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         trigger = Trig_InsatiableDesire(self.Game.heroes[self.ID])
@@ -3445,6 +3547,7 @@ class XIVLuzenTemperance_Accelerate(SVSpell):
     requireTarget, mana = False, 0
     index = "SV_Fortune~Bloodcraft~Spell~0~XIV. Luzen, Temperance~Accelerate~Uncollectible~Legendary"
     description = "Put an Unselfish Grace into your hand. If Avarice is active for you, put an Insatiable Desire into your hand instead."
+    name_CN = "《节制》·卢泽"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isAvarice(self.ID):
@@ -3460,6 +3563,7 @@ class XIVLuzenTemperance_Token(SVMinion):
     index = "SV_Fortune~Bloodcraft~Minion~4~4~4~None~XIV. Luzen, Temperance~Uncollectible~Legendary"
     requireTarget, keyWord, description = False, "", "Can't be targeted by enemy effects.While this follower is in play, your leader has the following effects.-Can't take more than 1 damage at a time.-Whenever your leader takes damage, reduce the enemy leader's maximum defense by 3."
     attackAdd, healthAdd = 2, 2
+    name_CN = "《节制》·卢泽"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3474,6 +3578,7 @@ class XIVLuzenTemperance(SVMinion):
     requireTarget, keyWord, description = False, "", "Can't be targeted by enemy effects.While this follower is in play, your leader has the following effects.-Can't take more than 1 damage at a time.-Whenever your leader takes damage, reduce the enemy leader's maximum defense by 3."
     accelerateSpell = XIVLuzenTemperance_Accelerate
     attackAdd, healthAdd = 2, 2
+    name_CN = "《节制》·卢泽"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3548,6 +3653,7 @@ class JeweledBrilliance(SVSpell):
     mana, requireTarget = 1, False,
     index = "SV_Fortune~Havencraft~Spell~1~Jeweled Brilliance"
     description = "Put a random amulet from your deck into your hand."
+    name_CN = "宝石的光辉"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
@@ -3568,6 +3674,7 @@ class StalwartFeatherfolk(SVMinion):
     index = "SV_Fortune~Havencraft~Minion~2~2~2~None~Stalwart Featherfolk~Taunt~Battlecry"
     requireTarget, keyWord, description = False, "Taunt", "Ward. Fanfare: If any allied amulets are in play, restore X defense to your leader. X equals the number of allied amulets in play."
     attackAdd, healthAdd = 2, 2
+    name_CN = "刚健的翼人"
 
     def effCanTrig(self):
         self.effectViable = len(self.Game.amuletsonBoard(self.ID)) > 0
@@ -3585,6 +3692,7 @@ class PrismaplumeBird(SVMinion):
     index = "SV_Fortune~Havencraft~Minion~2~3~1~None~Prismaplume Bird~Deathrattle"
     requireTarget, keyWord, description = False, "", "Last Words: Randomly summon a Summon Pegasus or Pinion Prayer."
     attackAdd, healthAdd = 2, 2
+    name_CN = "优雅的丽鸟"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3616,6 +3724,7 @@ class FourPillarTortoise(SVMinion):
     index = "SV_Fortune~Havencraft~Minion~3~1~4~None~Four-Pillar Tortoise~Taunt~Battlecry"
     requireTarget, keyWord, description = False, "Taunt", "Ward. Fanfare: Randomly put a 4-play point Havencraft follower or amulet from your deck into your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "圣柱巨龟"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
@@ -3634,7 +3743,8 @@ class LorenasHolyWater(SVSpell):
     Class, name = "Havencraft", "Lorena's Holy Water"
     requireTarget, mana = True, 1
     index = "SV_Fortune~Havencraft~Spell~1~Lorena's Holy Water~Uncollectible"
-    description = "Restore 3 defense to an ally. If at least 2 other cards were played this turn, recover 1 evolution point."
+    description = "Restore 2 defense to an ally.Draw a card."
+    name_CN = "萝蕾娜的圣水"
 
     def targetExists(self, choice=0):
         return self.selectableFriendlyExists()
@@ -3659,6 +3769,7 @@ class LorenaIronWilledPriest(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: Put a Lorena's Holy Water into your hand. During your turn, when defense is restored to your leader, if it's the second time this turn, gain the ability to evolve for 0 evolution points."
     attackAdd, healthAdd = 2, 2
     evolveRequireTarget = True
+    name_CN = "传教司祭·萝蕾娜"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3714,6 +3825,7 @@ class SarissaLuxflashSpear(SVMinion):
     index = "SV_Fortune~Havencraft~Minion~3~2~2~None~Sarissa, Luxflash Spear~Battlecry~Enhance~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: The next time this follower takes damage, reduce that damage to 0.Enhance (6): Randomly summon a copy of 1 of the highest-cost allied followers that had Ward when they were destroyed this match.Whenever an allied follower with Ward is destroyed, gain +2/+2."
     attackAdd, healthAdd = 2, 2
+    name_CN = "破暗煌辉·萨莉莎"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3778,6 +3890,7 @@ class PriestessofForesight(SVMinion):
     index = "SV_Fortune~Havencraft~Minion~4~2~5~None~Priestess of Foresight~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: If another allied follower with Ward is in play, destroy an enemy follower. Otherwise, gain Ward."
     attackAdd, healthAdd = 2, 2
+    name_CN = "先见的神官"
 
     def returnTrue(self, choice=0):
         for minion in self.Game.minionsAlive(self.ID):
@@ -3815,6 +3928,7 @@ class HolybrightAltar(Amulet):
     mana = 4
     index = "SV_Fortune~Havencraft~Amulet~4~None~Holybright Altar~Battlecry~Countdown~Deathrattle"
     requireTarget, description = False, "Countdown (1) Fanfare: If an allied follower with Ward is in play, subtract 1 from this amulet's Countdown.Last Words: Summon a Holywing Dragon."
+    name_CN = "咏唱：纯白祭坛"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3851,6 +3965,7 @@ class ReverendAdjudicator(SVMinion):
     index = "SV_Fortune~Havencraft~Minion~5~2~3~None~Reverend Adjudicator~Taunt~Battlecry"
     requireTarget, keyWord, description = False, "Taunt", "Ward.Fanfare: Restore 2 defense to your leader. Draw a card.During your turn, whenever your leader's defense is restored, summon a Snake Priestess."
     attackAdd, healthAdd = 2, 2
+    name_CN = "神域的法王"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3884,6 +3999,7 @@ class SomnolentStrength(Amulet):
     mana = 2
     index = "SV_Fortune~Havencraft~Amulet~2~None~Somnolent Strength~Countdown~Deathrattle~Uncollectible~Legendary"
     requireTarget, description = False, "Countdown (3)At the end of your turn, give +0/+2 to a random allied follower.Last Words: Give -2/-0 to a random enemy follower."
+    name_CN = "虚脱的刚腕"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -3941,6 +4057,7 @@ class VIIISofinaStrength_Accelerate(SVSpell):
     requireTarget, mana = False, 2
     index = "SV_Fortune~Havencraft~Spell~2~VIII. Sofina, Strength~Accelerate~Uncollectible~Legendary"
     description = "Summon a Somnolent Strength."
+    name_CN = "《力量》·索菲娜"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.summon([SomnolentStrength(self.Game, self.ID)], (-1, "totheRightEnd"),
@@ -3955,6 +4072,7 @@ class VIIISofinaStrength(SVMinion):
     requireTarget, keyWord, description = False, "", "Accelerate (2): Summon a Somnolent Strength.Fanfare: Give all other allied followers +1/+1 and Ward.While this follower is in play, all allied followers in play and that come into play can't take more than 3 damage at a time."
     accelerateSpell = VIIISofinaStrength_Accelerate
     attackAdd, healthAdd = 2, 2
+    name_CN = "《力量》·索菲娜"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4013,6 +4131,7 @@ class PuresongPriest_Accelerate(SVSpell):
     requireTarget, mana = False, 1
     index = "SV_Fortune~Havencraft~Spell~1~Puresong Priest~Accelerate~Uncollectible"
     description = "Restore 1 defense to your leader. If an allied follower with Ward is in play, draw a card."
+    name_CN = "光明神父"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.restoresHealth(self.Game.heroes[self.ID], 1)
@@ -4033,6 +4152,7 @@ class PuresongPriest(SVMinion):
     requireTarget, keyWord, description = False, "", "Accelerate (1): Restore 1 defense to your leader. If an allied follower with Ward is in play, draw a card.Fanfare: Restore 4 defense to all allies."
     accelerateSpell = PuresongPriest_Accelerate
     attackAdd, healthAdd = 2, 2
+    name_CN = "光明神父"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] < self.mana:
@@ -4058,9 +4178,10 @@ class PuresongPriest(SVMinion):
 
 class ArtifactScan(SVSpell):
     Class, name = "Portalcraft", "Artifact Scan"
-    requireTarget, mana = False, 0
+    requireTarget, mana = False, 1
     index = "SV_Fortune~Portalcraft~Spell~0~Artifact Scan"
     description = "Put copies of 2 random allied Artifact cards with different names destroyed this match into your hand. Then, if at least 6 allied Artifact cards with different names have been destroyed this match, change their costs to 0."
+    name_CN = "创造物扫描"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.mode == 0:
@@ -4100,6 +4221,7 @@ class RoboticEngineer(SVMinion):
     index = "SV_Fortune~Portalcraft~Minion~1~1~1~None~Robotic Engineer~Deathrattle"
     requireTarget, keyWord, description = False, "", "Last Words: Put a Paradigm Shift into your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "机械技师"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4117,6 +4239,7 @@ class MarionetteExpert(SVMinion):
     index = "SV_Fortune~Portalcraft~Minion~2~2~2~None~Marionette Expert~Deathrattle"
     requireTarget, keyWord, description = False, "", "Last Words: Put a Puppet into your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "持偶者"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4134,6 +4257,7 @@ class CatTuner(SVMinion):
     index = "SV_Fortune~Portalcraft~Minion~2~1~3~None~Cat Tuner"
     requireTarget, keyWord, description = False, "", "At the end of your turn, put a copy of a random allied follower destroyed this match that costs X play points into your hand. X equals your remaining play points."
     attackAdd, healthAdd = 2, 2
+    name_CN = "巧猫调律师"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4177,6 +4301,7 @@ class SteelslashTiger(SVMinion):
     index = "SV_Fortune~Portalcraft~Minion~3~1~5~None~Steelslash Tiger~Rush~Battlecry"
     requireTarget, keyWord, description = False, "Rush", "Rush. Fanfare: Gain +X/+0. X equals the number of allied Artifact cards with different names destroyed this match."
     attackAdd, healthAdd = 2, 2
+    name_CN = "钢之猛虎"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         n = len(self.Game.Counters.artifactsDiedThisGame[self.ID])
@@ -4188,6 +4313,7 @@ class WheelofMisfortune(Amulet):
     mana = 3
     index = "SV_Fortune~Portalcraft~Amulet~3~None~Wheel of Misfortune~Countdown~Uncollectible~Legendary"
     requireTarget, description = False, "Countdown (3) At the start of your turn, randomly activate 1 of the following effects.-Add 1 to the cost of all cards in your hand until the end of the turn.-Give -2/-2 to all allied followers.-Summon an enemy Analyzing Artifact.(The same effect will not activate twice.)"
+    name_CN = "惨祸的圆环"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4260,6 +4386,7 @@ class XSlausWheelofFortune(SVMinion):
     index = "SV_Fortune~Portalcraft~Minion~3~2~3~None~X. Slaus, Wheel of Fortune~Battlecry~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: If Resonance is active for you, summon an enemy Wheel of Misfortune and banish this follower. At the start of your opponent's turn, if Resonance is active for you, gain +1/+1 and destroy a random enemy follower."
     attackAdd, healthAdd = 2, 2
+    name_CN = "《命运之轮》·斯洛士"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4307,6 +4434,7 @@ class InvertedManipulation(SVSpell):
     requireTarget, mana = False, 3
     index = "SV_Fortune~Portalcraft~Spell~3~Inverted Manipulation"
     description = "Put a Puppet into your hand.Give your leader the following effect until the end of the turn: Whenever an allied Puppet comes into play, deal 2 damage to a random enemy follower. If no enemy followers are in play, deal 2 damage to the enemy leader instead. (This effect is not stackable.)"
+    name_CN = "人偶的反噬"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.Hand_Deck.addCardtoHand(Puppet, self.ID, "type")
@@ -4360,6 +4488,7 @@ class PowerliftingPuppeteer(SVMinion):
     index = "SV_Fortune~Portalcraft~Minion~4~3~3~None~Powerlifting Puppeteer~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Put 2 Puppets into your hand. At the end of your turn, give +1/+1 to all Puppets in your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "劲力操偶师"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4388,6 +4517,7 @@ class DimensionDominator(SVMinion):
     index = "SV_Fortune~Portalcraft~Minion~4~4~3~None~Dimension Dominator~Battlecry~Legendary"
     requireTarget, keyWord, description = True, "", "Fanfare: Give a follower in your hand Fanfare - Recover 2 play points."
     attackAdd, healthAdd = 2, 2
+    name_CN = "次元支配者"
 
     def targetExists(self, choice=0):
         return not self.Game.Hand_Deck.noMinionsinHand(self.ID, self)
@@ -4437,6 +4567,7 @@ class MindSplitter(SVMinion):
     index = "SV_Fortune~Portalcraft~Minion~5~4~4~None~Mind Splitter~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Recover X play points. X equals the number of allied followers in play. At the end of your turn, if you have at least 1 play point, draw a card. Then, if you have at least 3 play points, subtract 2 from its cost."
     attackAdd, healthAdd = 2, 2
+    name_CN = "神志分割者"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4467,6 +4598,7 @@ class PopGoesthePoppet(SVSpell):
     requireTarget, mana = True, 5
     index = "SV_Fortune~Portalcraft~Spell~5~Pop Goes the Poppet"
     description = "Destroy an enemy follower. Then deal X damage to a random enemy follower. X equals the destroyed follower's attack."
+    name_CN = "人偶的闪击"
 
     def available(self):
         return self.selectableEnemyMinionExists()
@@ -4508,6 +4640,7 @@ class ArchangelofEvocation(SVMinion):
     index = "SV_Fortune~Neutral~Minion~5~3~5~None~Archangel of Evocation~Taunt~Battlecry"
     requireTarget, keyWord, description = False, "Taunt", "Ward. Fanfare: Add 1 to the cost of all non-follower cards in your opponent's hand until the start of your next turn."
     attackAdd, healthAdd = 2, 2
+    name_CN = "降罪之大天使"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.Manas.CardAuras_Backup.append(ManaEffect_ArchangelofEvocation(self.Game, 3 - self.ID))
@@ -4548,6 +4681,7 @@ class AerinForeverBrilliant(SVMinion):
     index = "SV_Fortune~Forestcraft~Minion~3~1~5~None~Aerin, Forever Brilliant~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Put a random follower with Accelerate from your deck into your hand. Whenever you play a card using its Accelerate effect, deal 2 damage to all enemies."
     attackAdd, healthAdd = 2, 2
+    name_CN = "恒久的光辉·艾琳"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4611,6 +4745,7 @@ class FuriousMountainDeity(SVMinion):
     index = "SV_Fortune~Forestcraft~Minion~4~3~4~None~Furious Mountain Deity~Enhance~Battlecry"
     requireTarget, keyWord, description = False, "", "Fanfare: Enhance (7) - Gain +2/+2 and Rush. Strike: Gain +1/+0."
     attackAdd, healthAdd = 2, 2
+    name_CN = "震怒的山神"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4652,6 +4787,7 @@ class DeepwoodAnomaly(SVMinion):
     index = "SV_Fortune~Forestcraft~Minion~8~8~8~None~Deepwood Anomaly~Battlecry~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Enhance (7) - Gain +2/+2 and Rush. Strike: Gain +1/+0."
     attackAdd, healthAdd = 2, 2
+    name_CN = "森林深处的异种"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4675,6 +4811,7 @@ class LifeBanquet(SVSpell):
     requireTarget, mana = False, 3
     index = "SV_Fortune~Forestcraft~Spell~3~Life Banquet"
     description = "Draw 2 cards. If at least 2 other cards were played this turn, summon a Furious Mountain Deity. Then, if at least 8 other cards were played this turn, summon 2 Deepwood Anomalies."
+    name_CN = "生命的盛宴"
 
     def effCanTrig(self):
         self.effectViable = self.Game.combCards(self.ID) >= 2
@@ -4698,6 +4835,7 @@ class IlmisunaDiscordHawker(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: Rally (15) - Recover 1 evolution point."
     attackAdd, healthAdd = 2, 2
     evolveRequireTarget = True
+    name_CN = "动乱商人·伊尔米斯娜"
 
     def evolveTargetExists(self, choice=0):
         return self.selectableEnemyMinionExists()
@@ -4727,6 +4865,7 @@ class AlyaskaWarHawker(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~4~4~4~Commander~Alyaska, War Hawker~Legendary"
     requireTarget, keyWord, description = False, "", "Reduce damage from effects to 0. When an allied Officer follower comes into play, gain the ability to evolve for 0 evolution points."
     attackAdd, healthAdd = 2, 2
+    name_CN = "战争商人·阿尔亚斯卡"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4756,6 +4895,7 @@ class ExterminusWeapon(SVMinion):
     index = "SV_Fortune~Swordcraft~Minion~8~6~6~Commander~Exterminus Weapon~Battlecry~Deathrattle~Uncollectible~Legendary"
     requireTarget, keyWord, description = True, "", "Fanfare: Destroy 2 enemy followers. Last Words: Deal 4 damage to the enemy leader."
     attackAdd, healthAdd = 2, 2
+    name_CN = "终战兵器"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4797,6 +4937,7 @@ class RunieResoluteDiviner(SVMinion):
     index = "SV_Fortune~Runecraft~Minion~2~1~2~None~Runie, Resolute Diviner~Spellboost~Battlecry~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Spellboost the cards in your hand 1 time. If this card has been Spellboosted at least 1 time, draw a card. Then, if it has been at least 4 times, deal 3 damage to a random enemy follower. Then, if it has been at least 7 times, deal 3 damage to the enemy leader and restore 3 defense to your leader. Then, if it has been at least 10 times, put 3 Runie, Resolute Diviners into your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "决意预言者·露妮"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4830,6 +4971,7 @@ class AlchemicalCraftschief_Accelerate(SVSpell):
     requireTarget, mana = False, 2
     index = "SV_Fortune~Runecraft~Spell~2~Alchemical Craftschief~Accelerate~Uncollectible"
     description = "Summon an Earth Essence. Put a 7-play point Alchemical Craftschief (without Accelerate) into your hand and subtract X from its cost. X equals the number of allied Earth Sigil amulets in play."
+    name_CN = "矮人工房长"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.summon(
@@ -4847,6 +4989,7 @@ class AlchemicalCraftschief_Token(SVMinion):
     index = "SV_Fortune~Runecraft~Minion~7~4~4~None~Alchemical Craftschief~Taunt~Battlecry~Uncollectible"
     requireTarget, keyWord, description = True, "Taunt", "Accelerate (2): Summon an Earth Essence. Put a 7-play point Alchemical Craftschief (without Accelerate) into your hand and subtract X from its cost. X equals the number of allied Earth Sigil amulets in play.Ward.Fanfare: Deal 4 damage to an enemy."
     attackAdd, healthAdd = 2, 2
+    name_CN = "矮人工房长"
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
@@ -4869,6 +5012,7 @@ class AlchemicalCraftschief(SVMinion):
     requireTarget, keyWord, description = True, "Taunt", "Accelerate (2): Summon an Earth Essence. Put a 7-play point Alchemical Craftschief (without Accelerate) into your hand and subtract X from its cost. X equals the number of allied Earth Sigil amulets in play.Ward.Fanfare: Deal 4 damage to an enemy."
     accelerateSpell = AlchemicalCraftschief_Accelerate
     attackAdd, healthAdd = 2, 2
+    name_CN = "矮人工房长"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] < self.mana:
@@ -4909,6 +5053,7 @@ class WhitefrostWhisper(SVSpell):
     requireTarget, mana = True, 2
     index = "SV_Fortune~Dragoncraft~Spell~2~Whitefrost Whisper~Uncollectible~Legendary"
     description = "Select an enemy follower and destroy it if it is already damaged. If it has not been damaged, deal 1 damage instead."
+    name_CN = "银冰吐息"
 
     def targetExists(self, choice=0):
         return self.selectableEnemyMinionExists()
@@ -4937,6 +5082,7 @@ class FileneAbsoluteZero(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~3~1~3~None~Filene, Absolute Zero~Battlecry~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Draw a card if Overflow is active for you."
     attackAdd, healthAdd = 2, 2
+    name_CN = "绝对零度·菲琳"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         minions = self.Game.minionsonBoard(3 - self.ID)
@@ -4955,6 +5101,7 @@ class EternalWhale(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~6~5~7~None~Eternal Whale~Taunt"
     requireTarget, keyWord, description = False, "Taunt", "Ward.When this follower comes into play, deal 2 damage to the enemy leader.When this follower leaves play, put four 1-play point Eternal Whales into your deck. (Transformation doesn't count as leaving play.)"
     attackAdd, healthAdd = 2, 2
+    name_CN = "永恒巨鲸"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4975,6 +5122,7 @@ class EternalWhale_Token(SVMinion):
     index = "SV_Fortune~Dragoncraft~Minion~1~5~7~None~Eternal Whale~Taunt~Uncollectible"
     requireTarget, keyWord, description = False, "Taunt", "Ward.When this follower comes into play, deal 2 damage to the enemy leader.When this follower leaves play, put four 1-play point Eternal Whales into your deck. (Transformation doesn't count as leaving play.)"
     attackAdd, healthAdd = 2, 2
+    name_CN = "永恒巨鲸"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -4994,6 +5142,7 @@ class ForcedResurrection(SVSpell):
     requireTarget, mana = True, 2
     index = "SV_Fortune~Shadowcraft~Spell~2~Forced Resurrection"
     description = "Destroy a follower. Both players perform Reanimate (3)."
+    name_CN = "强制轮回"
 
     def available(self):
         return self.selectableEnemyMinionExists()
@@ -5017,6 +5166,7 @@ class NephthysGoddessofAmenta(SVMinion):
     index = "SV_Fortune~Shadowcraft~Minion~6~5~5~None~Nephthys, Goddess of Amenta~Battlecry~Enhance~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Put 2 random followers of different costs (excluding Nephthys, Goddess of Amenta) from your deck into play and destroy them. Enhance (10): Then, if allied followers that originally cost 1, 2, 3, 4, 5, 6, 7, 8, 9, and 10 play points have been destroyed, win the match."
     attackAdd, healthAdd = 2, 2
+    name_CN = "冥府的女主宰·奈芙蒂斯"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] >= 10:
@@ -5074,6 +5224,7 @@ class Nightscreech(SVSpell):
     requireTarget, mana = False, 1
     index = "SV_Fortune~Bloodcraft~Spell~1~Nightscreech"
     description = "Summon a Forest Bat. If Wrath is active for you, evolve it and draw 1 card. Otherwise, deal 1 damage to your leader."
+    name_CN = "蝙蝠的鸣噪"
 
     def effCanTrig(self):
         self.effectViable = self.Game.isWrath(self.ID)
@@ -5096,6 +5247,7 @@ class Baal(SVMinion):
     index = "SV_Fortune~Bloodcraft~Minion~3~3~3~None~Baal~Battlecry~Fusion~Legendary"
     requireTarget, keyWord, description = False, "", "Fusion: Bloodcraft followers that originally cost 3 play points or less Fanfare: If this card is fused with at least 3 cards, draw cards until there are 6 cards in your hand. Then, if this card is fused with at least 6 cards, deal 6 damage to all enemy followers."
     attackAdd, healthAdd = 2, 2
+    name_CN = "芭力"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -5134,6 +5286,7 @@ class ServantofDarkness(SVMinion):
     index = "SV_Fortune~Neutral~Minion~5~13~13~None~Servant of Darkness~Uncollectible~Legendary"
     requireTarget, keyWord, description = False, "", ""
     attackAdd, healthAdd = 2, 2
+    name_CN = "深渊之王的仆从"
 
 
 class SilentRider(SVMinion):
@@ -5142,6 +5295,7 @@ class SilentRider(SVMinion):
     index = "SV_Fortune~Neutral~Minion~6~8~8~None~Silent Rider~Charge~Uncollectible~Legendary"
     requireTarget, keyWord, description = False, "Charge", "Storm."
     attackAdd, healthAdd = 2, 2
+    name_CN = "沉默的魔将"
 
 
 class DissDamnation(SVSpell):
@@ -5149,6 +5303,7 @@ class DissDamnation(SVSpell):
     requireTarget, mana = True, 7
     index = "SV_Fortune~Neutral~Spell~7~Dis's Damnation~Uncollectible~Legendary"
     description = "Deal 7 damage to an enemy. Restore 7 defense to your leader."
+    name_CN = "狄斯的制裁"
 
     def available(self):
         return self.selectableEnemyExists()
@@ -5172,6 +5327,7 @@ class AstarothsReckoning(SVSpell):
     requireTarget, mana = False, 10
     index = "SV_Fortune~Neutral~Spell~10~Astaroth's Reckoning~Uncollectible~Legendary"
     description = "Deal damage to the enemy leader until their defense drops to 1."
+    name_CN = "阿斯塔罗特的宣判"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         damage = (self.Game.heroes[3 - self.ID].health - 1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -5185,6 +5341,7 @@ class PrinceofDarkness(SVMinion):
     index = "SV_Fortune~Neutral~Minion~10~6~6~None~Prince of Darkness~Battlecry~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Replace your deck with an Apocalypse Deck."
     attackAdd, healthAdd = 2, 2
+    name_CN = "深渊之王"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.Hand_Deck.extractfromDeck(None, self.ID, all=True)
@@ -5210,6 +5367,7 @@ class DemonofPurgatory(SVMinion):
     index = "SV_Fortune~Neutral~Minion~6~9~6~None~Demon of Purgatory~Battlecry~Uncollectible~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Give the enemy leader the following effect - At the start of your next turn, discard a random card from your hand."
     attackAdd, healthAdd = 2, 2
+    name_CN = "边狱的邪祟"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         trigger = Trig_DemonofPurgatory(self.Game.heroes[3 - self.ID])
@@ -5246,6 +5404,7 @@ class ScionofDesire(SVMinion):
     index = "SV_Fortune~Neutral~Minion~4~5~5~None~Scion of Desire~Uncollectible~Legendary"
     requireTarget, keyWord, description = False, "", "At the end of your turn, destroy a random enemy follower. Restore X defense to your leader. X equals that follower's attack."
     attackAdd, healthAdd = 2, 2
+    name_CN = "欲望缠身者"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -5285,6 +5444,7 @@ class GluttonousBehemoth(SVMinion):
     index = "SV_Fortune~Neutral~Minion~7~7~7~None~Gluttonous Behemoth~Uncollectible~Legendary"
     requireTarget, keyWord, description = False, "", "At the end of your turn, deal 7 damage to the enemy leader."
     attackAdd, healthAdd = 2, 2
+    name_CN = "贪食的贝希摩斯"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -5328,6 +5488,7 @@ class ScorpionofGreed(SVMinion):
     index = "SV_Fortune~Neutral~Minion~6~7~6~None~Scorpion of Greed~Charge~Bane~Drain~Uncollectible~Legendary"
     requireTarget, keyWord, description = False, "Charge,Bane,Drain", "Storm.Bane.Drain."
     attackAdd, healthAdd = 2, 2
+    name_CN = "贪欲的毒蝎"
 
 
 class WrathfulIcefiend(SVMinion):
@@ -5336,6 +5497,7 @@ class WrathfulIcefiend(SVMinion):
     index = "SV_Fortune~Neutral~Minion~2~4~4~None~Wrathful Icefiend~Battlecry~Uncollectible~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Recover 2 evolution points."
     attackAdd, healthAdd = 2, 2
+    name_CN = "狂怒的冰魔"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.restoreEvolvePoint(self.ID, 2)
@@ -5347,6 +5509,7 @@ class HereticalHellbeast(SVMinion):
     index = "SV_Fortune~Neutral~Minion~8~8~8~None~Heretical Hellbeast~Battlecry~Taunt~Uncollectible~Legendary"
     requireTarget, keyWord, description = False, "Taunt", "Ward. Fanfare: Deal X damage to your leader. X equals the number of other followers in play. Then destroy all other followers."
     attackAdd, healthAdd = 2, 2
+    name_CN = "异端的冥兽"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         minions = self.Game.minionsAlive(self.ID, self) + self.Game.minionsAlive(3 - self.ID)
@@ -5362,6 +5525,7 @@ class ViciousCommander(SVMinion):
     requireTarget, keyWord, description = True, "", "Fanfare: Deal 4 damage to an enemy follower."
     attackAdd, healthAdd = 2, 2
     evolveRequireTarget = True
+    name_CN = "暴威统率者"
 
     def evolveTargetExists(self, choice=0):
         return self.selectableEnemyMinionExists()
@@ -5395,6 +5559,7 @@ class FlamelordofDeceit(SVMinion):
     index = "SV_Fortune~Neutral~Minion~5~5~5~None~Flamelord of Deceit~Battlecry~Charge~Uncollectible~Legendary"
     requireTarget, keyWord, description = False, "Charge", "Storm.Fanfare: Banish all enemy amulets."
     attackAdd, healthAdd = 2, 2
+    name_CN = "恶意的炎帝"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.banishMinion(self, self.Game.amuletsonBoard(3 - self.ID))
@@ -5406,6 +5571,7 @@ class InfernalGaze(SVSpell):
     requireTarget, mana = False, 1
     index = "SV_Fortune~Neutral~Spell~1~Infernal Gaze~Uncollectible~Legendary"
     description = "Until the start of your next turn, add 10 to the original cost of spells in your opponent's hand. (Only affects cards in hand at the time this effect is activated.)Draw a card."
+    name_CN = "深渊之主的凝视"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.Manas.CardAuras_Backup.append(ManaEffect_InfernalGaze(self.Game, 3 - self.ID))
@@ -5442,6 +5608,7 @@ class InfernalSurge(SVSpell):
     requireTarget, mana = False, 1
     index = "SV_Fortune~Neutral~Spell~1~Infernal Surge~Uncollectible~Legendary"
     description = "Draw 3 cards."
+    name_CN = "深渊之主的波动"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.Hand_Deck.drawCard(self.ID)
@@ -5454,6 +5621,7 @@ class Heavenfall(SVSpell):
     requireTarget, mana = True, 2
     index = "SV_Fortune~Neutral~Spell~2~Heavenfall~Uncollectible~Legendary"
     description = "Banish an enemy follower or amulet.Draw a card."
+    name_CN = "天握"
 
     def available(self):
         return self.selectableEnemyExists()
@@ -5475,6 +5643,7 @@ class Earthfall(SVSpell):
     requireTarget, mana = False, 4
     index = "SV_Fortune~Neutral~Spell~4~Earthfall~Uncollectible~Legendary"
     description = "Destroy all non-Neutral followers."
+    name_CN = "地坏"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         minions = []
@@ -5489,6 +5658,7 @@ class PrinceofCocytus_Accelerate(SVSpell):
     requireTarget, mana = False, 3
     index = "SV_Fortune~Neutral~Spell~3~Prince of Cocytus~Accelerate~Uncollectible~Legendary"
     description = "Randomly put 4 different Cocytus cards into your deck."
+    name_CN = "冰狱之王·深渊之主"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         cards = [
@@ -5532,6 +5702,7 @@ class PrinceofCocytus(SVMinion):
     requireTarget, keyWord, description = False, "", "Accelerate (3): Randomly put 4 different Cocytus cards into your deck.Fanfare: Replace your deck with a Cocytus Deck."
     accelerateSpell = PrinceofCocytus_Accelerate
     attackAdd, healthAdd = 2, 2
+    name_CN = "冰狱之王·深渊之主"
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] < self.mana:
@@ -5572,6 +5743,7 @@ class TempleofHeresy(Amulet):
     mana = 1
     index = "SV_Fortune~Heavencraft~Amulet~1~None~Temple of Heresy~Countdown~Deathrattle"
     requireTarget, description = False, "Countdown (9)At the start of your turn, if you have more evolution points than your opponent, subtract 1 from this amulet's Countdown. (You have 0 evolution points on turns you are unable to evolve.)Last Words: Randomly put a Prince of Darkness or Prince of Cocytus into your hand and change its cost to 1."
+    name_CN = "邪教神殿"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -5619,6 +5791,7 @@ class RaRadianceIncarnate(SVMinion):
     index = "SV_Fortune~Havencraft~Minion~5~5~5~None~Ra, Radiance Incarnate~Taunt~Battlecry"
     requireTarget, keyWord, description = False, "Taunt", "Ward. Fanfare: Give your leader the following effect - At the end of your turn, deal X damage to the enemy leader. X equals your current turn number minus 5 (no damage is dealt if X is less than 0). (This effect is not stackable and lasts for the rest of the match.)"
     attackAdd, healthAdd = 2, 2
+    name_CN = "光辉显世·拉"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         trigger = Trig_RaRadianceIncarnate(self.Game.heroes[self.ID])
@@ -5650,6 +5823,7 @@ class LazuliGatewayHomunculus(SVMinion):
     requireTarget, keyWord, description = False, "Taunt", "Ward.Fanfare: Enhance (9) - Randomly put 1 of the highest-cost Portalcraft followers from your deck into play. Activate its Fanfare effects (excluding Choose and targeted effects)."
     attackAdd, healthAdd = 2, 2
     evolveRequireTarget = True
+    name_CN = "界门的人造体·拉姿莉"
 
     def evolveTargetExists(self, choice=0):
         return self.selectableFriendlyMinionExists()
@@ -5703,6 +5877,7 @@ class SpinariaLucilleKeepers(SVMinion):
     index = "SV_Fortune~Portalcraft~Minion~3~3~3~Artifact~Spinaria & Lucille, Keepers~Uncollectible~Legendary"
     requireTarget, keyWord, description = False, "", "When this follower comes into play, if at least 6 allied Artifact cards with different names have been destroyed this match, evolve this follower.Can't be evolved using evolution points. (Can be evolved using card effects.)"
     attackAdd, healthAdd = 3, 3
+    name_CN = "神秘的遗物·丝碧涅与璐契儿"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -5742,6 +5917,7 @@ class LucilleKeeperofRelics(SVMinion):
     index = "SV_Fortune~Portalcraft~Minion~5~4~4~None~Lucille, Keeper of Relics~Battlecry~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Put a Spinaria & Lucille, Keepers into your deck. When an allied Artifact card comes into play, gain the ability to evolve for 0 evolution points."
     attackAdd, healthAdd = 0, 0
+    name_CN = "遗物守门人·璐契儿"
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)

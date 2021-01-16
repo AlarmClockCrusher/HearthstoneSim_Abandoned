@@ -1,5 +1,6 @@
 import inspect
 import copy
+import numpy as np
 
 from numpy.random import choice as npchoice
 from collections import Counter as cnt
@@ -275,7 +276,13 @@ class Card:
 	def countSpellDamage(self):
 		return self.Game.status[self.ID]["Spell Damage"] \
 				+ sum(minion.keyWords["Spell Damage"] for minion in self.Game.minions[self.ID])
-				
+
+	def dmgtoDeal(self, dmg, role="att"):
+		return dmg
+
+	def dmgtoRec(self, dmg, role="def"):
+		return dmg
+
 	"""Handle the card doing battle(Minion and Hero)"""
 	#Game.battle() invokes this function.
 	#我方有扫荡打击的狂暴者攻击对方相邻的两个狂暴者之一，然后扫荡打击在所有受伤开始之前触发，
@@ -305,19 +312,22 @@ class Card:
 		#注意这个伤害承受目标不一定是攻击目标，因为有博尔夫碎盾以及钳嘴龟持盾者的存在
 		#承受伤害者的血量减少，结算剧毒，但是此时不会发出受伤信号。
 		dmgTaker = game.scapegoat4(target, dmgDealer_att)
-		dmgActual = dmgTaker.takesDamage(dmgDealer_att, subjectAtt, sendDmgSignal=False, damageType="Battle")
+		dmg = dmgDealer_def.dmgtoRec(dmgDealer_att.dmgtoDeal(subjectAtt, "att"), "def")
+		dmgActual = dmgTaker.takesDamage(dmgDealer_att, dmg, sendDmgSignal=False, damageType="Battle")
 		if dmgActual > 0: dmgList.append((dmgDealer_att, dmgTaker, dmgActual))
 		
 		#寻找受到攻击目标的伤害的角色。同理，此时受伤的角色不会发出受伤信号，这些受伤信号会在之后统一发出。
 		dmgTaker = game.scapegoat4(self, dmgDealer_def)
-		dmgActual = dmgTaker.takesDamage(dmgDealer_def, targetAtt, sendDmgSignal=False, damageType="Battle")
+		dmg = dmgDealer_att.dmgtoRec(dmgDealer_def.dmgtoDeal(targetAtt, "def"), "att")
+		dmgActual = dmgTaker.takesDamage(dmgDealer_def, dmg, sendDmgSignal=False, damageType="Battle")
 		if dmgActual > 0: dmgList.append((dmgDealer_def, dmgTaker, dmgActual))
 		#如果攻击者的伤害来源（随从或者武器）有对相邻随从也造成伤害的扳机，则将相邻的随从录入处理列表。
 		if dmgDealer_att.type != "Hero" and dmgDealer_att.marks["Sweep"] > 0 and target.type == "Minion":
 			neighbors = game.neighbors2(target)[0] #此时被攻击的随从一定是在场的，已经由Game.battleRequest保证。
 			for minion in neighbors:
 				dmgTaker = game.scapegoat4(minion, dmgDealer_att)
-				dmgActual = dmgTaker.takesDamage(dmgDealer_att, subjectAtt, sendDmgSignal=False, damageType="Ability")
+				dmg = dmgDealer_def.dmgtoRec(dmgDealer_att.dmgtoDeal(subjectAtt, "att"), "def")
+				dmgActual = dmgTaker.takesDamage(dmgDealer_att, dmg, sendDmgSignal=False, damageType="Ability")
 				if dmgActual > 0: dmgList.append((dmgDealer_att, dmgTaker, dmgActual))
 				
 		if dmgDealer_att.type == "Weapon": dmgDealer_att.loseDurability()
@@ -488,7 +498,7 @@ class Card:
 				targets.append(hero)
 				indices.append(ID)
 				wheres.append("Hero%d"%ID)
-		if target: return targets, indices, wheres
+		if targets: return targets, indices, wheres
 		else: return [None], [0], ['']
 		
 	#Minion has its own selfCopy() method.
@@ -1324,7 +1334,7 @@ class Spell(Card):
 				target = curGame.find(i, where) if where else None
 			else:
 				if self.chooseOne < 1: choice = 0
-				else: choice = -1 if curGame.status[self.ID]["Choose Both"] else nprandint(len(self.options))
+				else: choice = -1 if curGame.status[self.ID]["Choose Both"] else np.random.randint(len(self.options))
 				if target is None: #沼泽女王哈加莎的恐魔是目前唯一的指定发动的
 					if self.needTarget(choice):
 						targets = self.findTargets("", choice)[0]

@@ -34,6 +34,25 @@ def extractfrom(target, listObj):
 
 """Havencraft cards"""
 
+
+class SummitTemple(Amulet):
+    Class, race, name = "Havencraft", "", "Summit Temple"
+    mana = 1
+    index = "SV_Eternal~Havencraft~Amulet~1~Battlecry~Summit Temple"
+    requireTarget, description = False, "Fanfare: If any other allied Summit Temples are in play, draw a card and then destroy this amulet.Whenever an allied Havencraft follower attacks, give it the following effect until the end of the turn: This follower deals damage equal to its defense."
+    name_CN = "峰顶的教会"
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = []
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        for amulet in self.Game.amuletsonBoard(self.ID, self):
+            if amulet.name == "Summit Temple":
+                self.Game.killMinion(self, self)
+                break
+
+
 """Portalcraft cards"""
 
 """DLC cards"""
