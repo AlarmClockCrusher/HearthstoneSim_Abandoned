@@ -108,24 +108,24 @@ def makeCardPool(board="0 Random Game Board",monk=0,SV=0):
 		cardPool.update(Monk_Indices)
 		info += "from Monk import *\n"
 
-	# if SV:
-	# 	cardPool.update(SV_Basic_Indices)
-	# 	info += "from SV_Basic import *\n"
-	#
-	# 	cardPool.update(SV_Ultimate_Indices)
-	# 	info += "from SV_Ultimate import *\n"
-	#
-	# 	cardPool.update(SV_Uprooted_Indices)
-	# 	info += "from SV_Uprooted import *\n"
-	#
-	# 	cardPool.update(SV_Fortune_Indices)
-	# 	info += "from SV_Fortune import *\n"
-	#
-	# 	cardPool.update(SV_Rivayle_Indices)
-	# 	info += "from SV_Rivayle import *\n"
-	#
-	# 	cardPool.update(SV_Eternal_Indices)
-	# 	info += "from SV_Eternal import *\n"
+	if SV:
+		cardPool.update(SV_Basic_Indices)
+		info += "from SV_Basic import *\n"
+
+		cardPool.update(SV_Ultimate_Indices)
+		info += "from SV_Ultimate import *\n"
+
+		cardPool.update(SV_Uprooted_Indices)
+		info += "from SV_Uprooted import *\n"
+
+		cardPool.update(SV_Fortune_Indices)
+		info += "from SV_Fortune import *\n"
+
+		cardPool.update(SV_Rivayle_Indices)
+		info += "from SV_Rivayle import *\n"
+
+		cardPool.update(SV_Eternal_Indices)
+		info += "from SV_Eternal import *\n"
 
 	BasicPowers, UpgradedPowers, Classes, ClassesandNeutral, ClassDict = [], [], [], [], {}
 	for key in list(cardPool.keys()):

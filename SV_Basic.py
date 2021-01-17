@@ -623,7 +623,7 @@ class GildedBlade(SVSpell):
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
-        return target.cardType == "Minion" and target.ID != self.ID and target.onBoard
+        return target.type == "Minion" and target.ID != self.ID and target.onBoard
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
@@ -663,7 +663,7 @@ class GildedBoots(SVSpell):
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
-        return target.cardType == "Minion" and target.ID == self.ID and target.onBoard
+        return target.type == "Minion" and target.ID == self.ID and target.onBoard
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
@@ -684,7 +684,7 @@ class GildedNecklace(SVSpell):
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
-        return target.cardType == "Minion" and target.ID == self.ID and target.onBoard
+        return target.type == "Minion" and target.ID == self.ID and target.onBoard
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
@@ -714,7 +714,7 @@ class UnbridledFury(SVSpell):
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
-        return target.cardType == "Minion" and target.ID != self.ID and target.onBoard
+        return target.type == "Minion" and target.ID != self.ID and target.onBoard
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:

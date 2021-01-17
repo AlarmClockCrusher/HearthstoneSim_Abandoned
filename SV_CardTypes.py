@@ -9,6 +9,7 @@ from numpy.random import shuffle as npshuffle
 
 import numpy as np
 
+
 def listRemove(listObj, obj):
 	l = []
 	for i in listObj:
@@ -21,6 +22,7 @@ class Evolve(HeroPower):
 	mana, name, requireTarget = 0, "Evolve", True
 	index = "SV_Basic~Hero Power~0~Evolve"
 	description = "Evolve an unevolved friendly minion."
+	name_CN = "进化"
 
 	def blank_init(self, Game, ID):
 		super().blank_init(Game, ID)
@@ -34,8 +36,9 @@ class Evolve(HeroPower):
 			if self.Game.Counters.numEvolutionPoint[self.ID] > 0:
 				return True
 			else:
-				return any(isinstance(minion, SVMinion) and minion.marks["Free Evolve"] > 0 and minion.status["Evolved"] < 1 \
-								for minion in self.Game.minionsAlive(self.ID))
+				return any(
+					isinstance(minion, SVMinion) and minion.marks["Free Evolve"] > 0 and minion.status["Evolved"] < 1 \
+					for minion in self.Game.minionsAlive(self.ID))
 		return False
 
 	def returnTrue(self, choice=0):
@@ -126,6 +129,16 @@ class Evolve(HeroPower):
 			return [None], [0], ['']
 
 	def use(self, target=None, choice=0):
+		subIndex, subWhere = self.ID, "Power"
+		tarIndex, tarWhere = [], []
+		if target:  # 因为护符是SV特有的卡牌类型，所以其目标选择一定是列表填充式的
+			for obj in target:
+				if obj.onBoard:
+					tarIndex.append(obj.pos)
+					tarWhere.append(obj.type + str(obj.ID))
+				else:
+					tarIndex.append(self.Game.Hand_Deck.hands[obj.ID].index(obj))
+					tarWhere.append("Hand%d" % obj.ID)
 		if self.Game.GUI:
 			self.Game.GUI.displayCard(self)
 			self.Game.GUI.wait(500)
@@ -140,16 +153,6 @@ class Evolve(HeroPower):
 		for card in self.Game.Hand_Deck.hands[1] + self.Game.Hand_Deck.hands[2]:
 			card.effCanTrig()
 			card.checkEvanescent()
-		subIndex, subWhere = self.ID, "Power"
-		tarIndex, tarWhere = [], []
-		if target:  # 因为护符是SV特有的卡牌类型，所以其目标选择一定是列表填充式的
-			for obj in target:
-				if obj.onBoard:
-					tarIndex.append(obj.pos)
-					tarWhere.append(obj.type + str(obj.ID))
-				else:
-					tarIndex.append(self.Game.Hand_Deck.hands[obj.ID].index(obj))
-					tarWhere.append("Hand%d" % obj.ID)
 		self.Game.moves.append(("Power", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
 		self.targets = []
 
@@ -157,6 +160,15 @@ class Evolve(HeroPower):
 class SVMinion(Minion):
 	attackAdd, healthAdd = 2, 2
 	evolveRequireTarget = False
+
+	def reset(self, ID):  # 如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化
+		creator, numOccurrence, tracked, possi = self.creator, self.numOccurrence, self.tracked, self.possibilities
+		att_0, health_0 = self.attack_0, self.health_0
+		self.__init__(self.Game, ID)
+		self.attack_0 = self.attack = self.attack_Enchant = att_0
+		self.health_0 = self.health = self.health_max = health_0
+		self.creator, self.numOccurrence, self.tracked = creator, numOccurrence, tracked
+		self.possibilities = possi
 
 	def blank_init(self, Game, ID):
 		super().blank_init(Game, ID)
@@ -302,11 +314,11 @@ class SVMinion(Minion):
 		self.Game.sendSignal("MinionPlayed", self.ID, self, target, mana, "", choice)
 		# 召唤时步骤，触发“每当你召唤一个xx随从”的扳机.如鱼人招潮者等。
 		self.Game.sendSignal("MinionSummoned", self.ID, self, target, mana, "")
-		
+
 		# 使用阶段结束，开始死亡结算。视随从的存活情况决定战吼的触发情况，此时暂不处理胜负问题。
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		# 结算阶段
-			# 在随从战吼/连击开始触发前，检测是否有战吼/连击翻倍的情况。如果有且战吼可以进行，则强行执行战吼至两次循环结束。无论那个随从是死亡，在手牌中还是牌库
+		# 在随从战吼/连击开始触发前，检测是否有战吼/连击翻倍的情况。如果有且战吼可以进行，则强行执行战吼至两次循环结束。无论那个随从是死亡，在手牌中还是牌库
 		num = 1
 		if "~Battlecry" in self.index and self.Game.status[self.ID]["Battlecry x2"] + self.Game.status[self.ID][
 			"Shark Battlecry x2"] > 0:
@@ -339,15 +351,14 @@ class SVMinion(Minion):
 			Copy.attfromAura, Copy.healthfromAura = self.attfromAura, self.healthfromAura
 			Copy.effectfromAura = copy.deepcopy(self.effectfromAura)
 			Copy.auraReceivers = [receiver.selfCopy(Copy) for receiver in self.auraReceivers]
-			
+
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.marks = copy.deepcopy(self.marks)
 			Copy.status = copy.deepcopy(self.status)
-			Copy.identity = copy.deepcopy(self.identity)
 			Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
 			if hasattr(self, "progress"): Copy.progress = self.progress
 			Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
-			Copy.newonthisSide, Copy.firstTimeonBoard = self.newonthisSide, self.firstTimeonBoard
+			Copy.newonthisSide = self.newonthisSide
 			Copy.seq, Copy.pos = self.seq, self.pos
 			Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
@@ -357,6 +368,7 @@ class SVMinion(Minion):
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
+			Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
 			Copy.history = copy.deepcopy(self.history)
 			Copy.attackAdd = self.attackAdd
 			Copy.healthAdd = self.healthAdd
@@ -371,6 +383,12 @@ class Amulet(Dormant):
 	index = "Vanilla~Neutral~2~Amulet~None~Vanilla~Uncollectible"
 	requireTarget, description = False, ""
 
+	def reset(self, ID):  # 如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化
+		creator, numOccurrence, tracked, possi = self.creator, self.numOccurrence, self.tracked, self.possibilities
+		self.__init__(self.Game, ID)
+		self.creator, self.numOccurrence, self.tracked = creator, numOccurrence, tracked
+		self.possibilities = possi
+
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.Class, self.name = type(self).Class, type(self).name
@@ -378,6 +396,7 @@ class Amulet(Dormant):
 		# 卡牌的费用和对于费用修改的效果列表在此处定义
 		self.mana, self.manaMods = type(self).mana, []
 		self.counter = -1
+		self.numOccurrence = 0
 		self.tempAttChanges = []  # list of tempAttChange, expiration timepoint
 		self.description = type(self).description
 		# 当一个实例被创建的时候，其needTarget被强行更改为returnTrue或者是returnFalse，不论定义中如何修改needTarget(self, choice=0)这个函数，都会被绕过。需要直接对returnTrue()函数进行修改。
@@ -386,10 +405,9 @@ class Amulet(Dormant):
 		# 复制出一个游戏内的Copy时要重新设为初始值的attr
 		# First two are for card authenticity verification. The last is to check if the minion has ever left board.
 		# Princess Talanji needs to confirm if a card started in original deck.
-		self.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
 		self.dead = False
 		self.effectViable, self.evanescent = False, False
-		self.newonthisSide, self.firstTimeonBoard = True, True  # firstTimeonBoard用于防止随从在休眠状态苏醒时再次休眠，一般用不上
+		self.newonthisSide = True
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.activated = False  # This mark is for minion state change, such as enrage.
 		# self.seq records the number of the minion's appearance. The first minion on board has a sequence of 0
@@ -401,7 +419,7 @@ class Amulet(Dormant):
 						 "Charge": 0, "Rush": 0,
 						 "Echo": 0
 						 }
-		self.marks = {"Sweep": 0,
+		self.marks = {"Sweep": 0, "Cost Health Instead": 0,
 					  "Evasive": 0, "Enemy Evasive": 0,
 					  "Can't Attack": 0, "Can't Attack Hero": 0,
 					  "Heal x2": 0,  # Crystalsmith Kangor
@@ -416,8 +434,6 @@ class Amulet(Dormant):
 		self.options = []  # For Choose One minions.
 		self.overload, self.chooseOne, self.magnetic = 0, 0, 0
 		self.silenced = False
-
-		self.triggers = {"Discarded": [], "StatChanges": [], "Drawn": []}
 		self.appearResponse, self.disappearResponse, self.silenceResponse = [], [], []
 		self.deathrattles = []  # 随从的亡语的触发方式与场上扳机一致，诸扳机之间与
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
@@ -426,6 +442,9 @@ class Amulet(Dormant):
 											  }
 						}
 		self.targets = []
+		self.effectViable, self.evanescent = False, False
+		# 用于跟踪卡牌的可能性
+		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
 
 	def willEnhance(self):
 		return False
@@ -448,9 +467,8 @@ class Amulet(Dormant):
 		for func in self.appearResponse: func()
 		# The buffAuras/hasAuras will react to this signal.
 		self.Game.sendSignal("AmuletAppears", self.ID, self, None, 0, "")
-		for func in self.triggers["StatChanges"]: func()
 
-	def disappears(self, deathrattlesStayArmed=True):  # The minion is about to leave board.
+	def disappears(self, deathrattlesStayArmed=True, disappearResponse=True):  # The minion is about to leave board.
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		# Only the auras and disappearResponse will be invoked when the minion switches side.
 		for value in self.auras.values():
@@ -462,10 +480,11 @@ class Amulet(Dormant):
 			for trig in self.deathrattles:
 				trig.disconnect()
 		# 如果随从有离场时需要触发的函数，在此处理
-		for func in self.disappearResponse: func()
+		if disappearResponse:
+			for func in self.disappearResponse: func()
 		self.activated = False
 		self.Game.sendSignal("AmuletDisappears", self.ID, None, self, 0, "")
-		
+
 	def STATUSPRINT(self):
 		pass
 
@@ -524,7 +543,8 @@ class Amulet(Dormant):
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		# 假设不触发重导向扳机
 		num = 1
-		if "~Battlecry" in self.index and self.Game.status[self.ID]["Battlecry x2"] + self.Game.status[self.ID]["Shark Battlecry x2"] > 0:
+		if "~Battlecry" in self.index and self.Game.status[self.ID]["Battlecry x2"] + self.Game.status[self.ID][
+			"Shark Battlecry x2"] > 0:
 			num = 2
 		for i in range(num):
 			target = self.whenEffective(target, "", choice, posinHand)
@@ -581,19 +601,24 @@ class Amulet(Dormant):
 			if Copy.manaMods[size - 1 - i].source:
 				Copy.manaMods.pop(size - 1 - i)
 		# 在一个游戏中复制出新实体的时候需要把这些值重置
-		Copy.identity = [np.random.rand(), np.random.rand(), np.random.rand()]
 		Copy.dead = False
 		Copy.effectViable, Copy.evanescent = False, False
-		Copy.newonthisSide, Copy.firstTimeonBoard = True, True  # firstTimeonBoard用于防止随从在休眠状态苏醒时再次休眠，一般用不上
+		Copy.newonthisSide = True
 		Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False
 		Copy.activated = False
 		Copy.seq, Copy.pos = -1, -2
 		Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = 0, 0, 0
+		Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
 		return Copy
 
 
 class SVSpell(Spell):
 	race = ""
+
+	def reset(self, ID):
+		creator, possi = self.creator, self.possibilities
+		self.__init__(self.Game, ID)
+		self.creator, self.possibilities = creator, possi
 
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)

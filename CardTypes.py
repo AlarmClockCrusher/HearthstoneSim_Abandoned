@@ -312,13 +312,13 @@ class Card:
 		#注意这个伤害承受目标不一定是攻击目标，因为有博尔夫碎盾以及钳嘴龟持盾者的存在
 		#承受伤害者的血量减少，结算剧毒，但是此时不会发出受伤信号。
 		dmgTaker = game.scapegoat4(target, dmgDealer_att)
-		game.sendSignal("BattleDmg?", 0, subject, target, subjectAtt, "") #不能把这个东西写入和伤害承受目标判定同时进行的结算，因为存在互相干扰的情况
+		game.sendSignal("BattleDmg?", 0, dmgDealer_att, target, subjectAtt, "") #不能把这个东西写入和伤害承受目标判定同时进行的结算，因为存在互相干扰的情况
 		dmgActual = dmgTaker.takesDamage(dmgDealer_att, subjectAtt[0], sendDmgSignal=False, damageType="Battle")
 		if dmgActual > 0: dmgList.append((dmgDealer_att, dmgTaker, dmgActual))
 		
 		#寻找受到攻击目标的伤害的角色。同理，此时受伤的角色不会发出受伤信号，这些受伤信号会在之后统一发出。
 		dmgTaker = game.scapegoat4(self, dmgDealer_def)
-		game.sendSignal("BattleDmg?", 0, target, subject, targetAtt, "") #不能把这个东西写入和伤害承受目标判定同时进行的结算，因为存在互相干扰的情况
+		game.sendSignal("BattleDmg?", 0, target, dmgDealer_def, targetAtt, "") #不能把这个东西写入和伤害承受目标判定同时进行的结算，因为存在互相干扰的情况
 		dmgActual = dmgTaker.takesDamage(dmgDealer_def, targetAtt[0], sendDmgSignal=False, damageType="Battle")
 		if dmgActual > 0: dmgList.append((dmgDealer_def, dmgTaker, dmgActual))
 		#如果攻击者的伤害来源（随从或者武器）有对相邻随从也造成伤害的扳机，则将相邻的随从录入处理列表。
@@ -583,7 +583,7 @@ class Dormant(Card):
 		for trig in self.trigsBoard: trig.connect()
 		
 	# Dormant本身是没有死亡扳机的，所以这个deathrattlesStayArmed无论真假都无影响
-	def disappears(self, deathrattlesStayArmed=False):
+	def disappears(self, deathrattlesStayArmed=False, disappearResponse=True):
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.dead = False
 		for aura in self.auras.values(): aura.auraDisappears()
@@ -601,7 +601,7 @@ class Dormant(Card):
 	def takesDamage(self, subject, damage, sendDmgSignal=True, damageType="None"):
 		return 0
 		
-	def cardStatus(self):
+	def cardStatus(self, hideSomeTrigs=False):
 		CHN = self.Game.GUI.CHN
 		text, s = self.name if not CHN else type(self).name_CN + "\n", wrapTxt(self.text(CHN), CHN)
 		if s: text += "%s\n"%s
@@ -692,6 +692,7 @@ class Minion(Card):
 		self.effectViable = self.evanescent = False
 		self.onBoard = self.inHand = self.inDeck = False
 		self.silenced = self.activated = False  # This mark is for minion state change, such as enrage.
+		self.appearResponse, self.disappearResponse, self.silenceResponse = [], [], []
 		# self.seq records the number of the minion's appearance. The first minion on board has a sequence of 0
 		self.seq, self.pos = -1, -2
 		self.attTimes = self.attChances_base = self.attChances_extra = 0
@@ -722,10 +723,11 @@ class Minion(Card):
 		self.decideAttChances_base()  # Decide base att chances, given Windfury and Mega Windfury
 		for aura in self.auras.values(): aura.auraAppears()
 		for trig in self.trigsBoard + self.deathrattles: trig.connect()
+		for func in self.appearResponse: func()
 		# The buffAuras/hasAuras will react to this signal.
 		self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, comment=firstTime)
 		
-	def disappears(self, deathrattlesStayArmed=True):  # The minion is about to leave board.
+	def disappears(self, deathrattlesStayArmed=True, disappearResponse=True):  # The minion is about to leave board.
 		self.onBoard = self.inHand = self.inDeck = False
 		for aura in self.auras.values(): aura.auraDisappears()
 		for trig in self.trigsBoard: trig.disconnect()
@@ -738,6 +740,8 @@ class Minion(Card):
 		# 如果那些死亡扳机是因为其他效果而触发（非死亡），除非随从在扳机触发后已经离场（返回手牌或者牌库），否则可以保留
 		if not deathrattlesStayArmed:
 			for trig in self.deathrattles: trig.disconnect()
+		if disappearResponse:
+			for func in self.disappearResponse: func()
 		# Let Stat_Receivers and hasreceivers remove themselves
 		while self.auraReceivers: self.auraReceivers[0].effectClear()
 		self.activated = False
@@ -1123,6 +1127,8 @@ class Minion(Card):
 			else:  # Minions can receive temp attack changes, too. And those will also vanish at the corresponding time point.
 				self.tempAttChanges.append((attackGain, attRevertTime))
 				self.statChange(attackGain, healthGain)
+			if attackGain > 0 or healthGain > 0:
+				self.Game.sendSignal("MinionBuffed", self.ID, self, None, 0, "")
 				
 	# Not all params can be False.
 	def statReset(self, newAttack=False, newHealth=False, attRevertTime=""):
@@ -1287,7 +1293,7 @@ class Spell(Card):
 		#用于跟踪卡牌的可能性
 		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
 		
-	def cardStatus(self):
+	def cardStatus(self, hideSomeTrigs=False):
 		CHN = self.Game.GUI.CHN
 		text, s = self.name if not CHN else type(self).name_CN + "\n", wrapTxt(self.text(CHN), CHN)
 		if s: text += "%s\n"%s
@@ -1670,7 +1676,7 @@ class HeroPower(Card):
 		self.marks = {"Cost Health Instead": 0,}
 		self.trigsBoard = []
 		
-	def cardStatus(self):
+	def cardStatus(self, hideSomeTrigs=False):
 		CHN = self.Game.GUI.CHN
 		text, s = self.name if not CHN else type(self).name_CN + "\n", wrapTxt(self.text(CHN), CHN)
 		if s: text += "%s\n"%s
@@ -1849,7 +1855,7 @@ class Hero(Card):
 		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
 		
 	"""Handle hero's attacks, attack chances, attack chances and frozen status."""
-	def cardStatus(self):
+	def cardStatus(self, hideSomeTrigs=False):
 		CHN = self.Game.GUI.CHN
 		text, s = self.name if not CHN else type(self).name_CN + "\n", wrapTxt(self.text(CHN), CHN)
 		if s: text += "%s\n"%s
@@ -2160,7 +2166,7 @@ class Weapon(Card):
 		#用于跟踪卡牌的可能性
 		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
 		
-	def cardStatus(self):
+	def cardStatus(self, hideSomeTrigs=False):
 		CHN = self.Game.GUI.CHN
 		text, s = self.name if not CHN else type(self).name_CN + "\n", wrapTxt(self.text(CHN), CHN)
 		if s: text += "%s\n"%s

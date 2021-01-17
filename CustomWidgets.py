@@ -106,6 +106,8 @@ folderNameTable = {"Basic":"Basic", "Classic": "Classic",
 					"GVG": "Pre_Dalaran", "Kobolds": "Pre_Dalaran", "Boomsday": "Pre_Dalaran",
 					"Shadows": "Shadows", "Uldum": "Uldum", "Dragons": "Dragons", "Galakrond": "Galakrond",
 					"DHInitiate": "DHInitiate", "Outlands": "Outlands", "Academy": "Academy", "Darkmoon": "Darkmoon",
+				   "SV_Basic":"SV_Basic","SV_Ultimate":"SV_Ultimate","SV_Uprooted":"SV_Uprooted","SV_Fortune":"SV_Fortune",
+				   "SV_Rivayle":"SV_Rivayle","SV_Eternal":"SV_Eternal"
 					}
 					
 from tkinter import messagebox
@@ -336,12 +338,12 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 				if value > 0: text += key+'\n'
 			self['text'] = text
 			if self.card.creator:
-				CardLabel(btn=self, text=self.GUI.wrapText(self.card.creator)).plot(x=x, y=y+0.4*CARD_Y)
+				CardLabel(btn=self, text=self.GUI.wrapText(str(self.card.creator))).plot(x=x, y=y+0.4*CARD_Y)
 		else:
 			if self.card.tracked and self.card.creator:
-				CardLabel(btn=self, text=self.GUI.wrapText(self.card.creator)).plot(x=x, y=y+0.55*CARD_Y)
+				CardLabel(btn=self, text=self.GUI.wrapText(str(self.card.creator))).plot(x=x, y=y+0.55*CARD_Y)
 				if len(self.card.possibilities) == 1:
-					name = self.GUI.wrapText(self.card.possibilities[0])
+					name = self.GUI.wrapText(str(self.card.possibilities[0]))
 					CardLabel(btn=self, text=name).plot(x=x, y=y-0.5*CARD_Y)
 					
 		self.zone.btnsDrawn.append(self)
@@ -1332,8 +1334,9 @@ class BoardButton(tk.Canvas):
 			for key, value in game.status[ID].items():
 				if value > 0: lines.append("   %s:%d"%(key if not CHN else gameStatusDict[key], value))
 			for obj in game.trigAuras[ID]:
-				if not isinstance(obj, SecretTrigger):
-					lines.append("   %s"%obj.text(CHN))
+				if hasattr(obj, "text"):
+					if not isinstance(obj, SecretTrigger):
+						lines.append("   %s"%obj.text(CHN))
 		lines.append("Temp Effects:" if not CHN else "临时效果")
 		for obj in game.turnStartTrigger + game.turnEndTrigger:
 			lines.append("   %s"%obj.text(CHN))

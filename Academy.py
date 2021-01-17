@@ -3543,7 +3543,10 @@ class BonewebEgg(Minion):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [Summon2Spiders(self)]
-		self.triggers["Discarded"] = [self.trigDeathrattles]
+
+	def whenDiscarded(self):
+		for trig in self.deathrattles:
+			trig.trig("TrigDeathrattle", self.ID, None, self, self.attack, "")
 		
 	def trigDeathrattles(self):
 		for trig in self.deathrattles:

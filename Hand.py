@@ -265,7 +265,7 @@ class Hand_Deck:
 			if GUI: GUI.millCardAni(card)
 			return (None, mana) #假设即使爆牌也可以得到要抽的那个牌的费用，用于神圣愤怒
 			
-	def createCard(self, obj, ID, comment)
+	# def createCard(self, obj, ID, comment)
 	# Will force the ID of the card to change. obj can be an empty list/tuple
 	def addCardtoHand(self, obj, ID, comment="", byDiscover=False, pos=-1, 
 									showAni=True, possi=None):
@@ -537,8 +537,22 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 
 
-Default1 = [ExplosiveTrap, FreezingTrap, ExplosiveTrap, FreezingTrap, Snipe, Counterspell, FlameWard, Frostbolt, ArcaneShot, RapidFire, HeadmasterKelThuzad, ZephrystheGreat,
-			
+Default1 = [
+			RivaylianBandit, RivaylianBandit,
+			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,
+			WanderingChef, WanderingChef, WanderingChef,
+			Ramiel, Ramiel, Ramiel,
+			IoJourneymage, IoJourneymage, IoJourneymage,
+			ArchangelofRemembrance, ArchangelofRemembrance, ArchangelofRemembrance,
+			GabrielHeavenlyVoice, GabrielHeavenlyVoice, GabrielHeavenlyVoice,
+			GoblinQueen, GoblinQueen, GoblinQueen,
+			FieranHavensentWindGod,
+			RaRadianceIncarnate, RaRadianceIncarnate,
+			WilbertGrandKnight, WilbertGrandKnight, WilbertGrandKnight,
+			GoddessoftheWestWind, GoddessoftheWestWind, GoddessoftheWestWind,
+			Set, Set, Set,
+			AnveltJudgmentsCannon, AnveltJudgmentsCannon,
+			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright
 			]
 
 Default2 = [Khadgar, DwarvenSharpshooter, ProfessorSlate, OhMyYogg, Counterspell, ForbiddenWords, KirinTorMage, NatureStudies,

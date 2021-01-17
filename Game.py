@@ -362,13 +362,16 @@ class Game:
 			self.minions[subject.ID].insert(position+100*(position<0), subject)  #If position is too large, the insert() simply puts it at the end.
 			self.sortPos()
 			self.sortSeq()
-			subject.appears(firstTime=True)
+			subject.appears()
 			if self.GUI:
 				self.GUI.update()
 				self.GUI.wait(200, showLine=False)
-			self.sendSignal("MinionSummoned", self.turn, subject, None, 0, "")
-			self.sendSignal("MinionBeenSummoned", self.turn, subject, None, 0, "")
-			self.Counters.numMinionsSummonedThisGame[subject.ID] += 1
+			if subject.type=="Minion":
+				self.sendSignal("MinionSummoned", self.turn, subject, None, 0, "")
+				self.sendSignal("MinionBeenSummoned", self.turn, subject, None, 0, "")
+				self.Counters.numMinionsSummonedThisGame[subject.ID] += 1
+			elif subject.type=="Amulet":
+				self.sendSignal("AmuletSummoned", self.turn, subject, None, 0, "")
 			return subject
 		return None
 
@@ -450,7 +453,7 @@ class Game:
 		ID = target.ID
 		if target in self.minions[ID]:
 			pos = target.pos
-			target.disappears(deathrattlesStayArmed=False)
+			target.disappears(deathrattlesStayArmed=False, disappearResponse=False)
 			self.removeMinionorWeapon(target)
 			if self.minionPlayed == target: self.minionPlayed = newMinion
 			#removeMinionorWeapon invokes sortPos() and sortSeq()

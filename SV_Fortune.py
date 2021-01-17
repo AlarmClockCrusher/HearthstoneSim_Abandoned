@@ -394,7 +394,10 @@ class PureshotAngel(SVMinion):
         return self.mana > curMana >= 2
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
+        if self.willAccelerate() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
     def available(self):
         if self.willAccelerate():
@@ -627,7 +630,10 @@ class ReclusivePonderer(SVMinion):
         return self.mana > curMana >= 1
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willAccelerate() else False
+        if self.willAccelerate() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
 
 class ChipperSkipper_Accelerate(SVSpell):
@@ -667,7 +673,10 @@ class ChipperSkipper(SVMinion):
         return self.mana > curMana >= 1 and self.Game.Counters.numMinionsPlayedThisTurn[self.ID] > 0
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
+        if self.willAccelerate() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
 
 class Trig_ChipperSkipper(TrigBoard):
@@ -852,7 +861,10 @@ class DeepwoodWolf(SVMinion):
         return self.mana > curMana >= 1
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
+        if self.willAccelerate() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
     def returnTrue(self, choice=0):
         if self.willAccelerate():
@@ -923,7 +935,10 @@ class LionelWoodlandShadow(SVMinion):
         return self.mana > curMana >= 1 and self.Game.Counters.evolvedThisTurn[self.ID] > 0
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
+        if self.willAccelerate() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
     def available(self):
         if self.willAccelerate():
@@ -1991,12 +2006,11 @@ class AdamantineGolem(SVMinion):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.triggers["Drawn"] = [self.drawn]
 
     def effCanTrig(self):
         self.effectViable = len(self.Game.earthsonBoard(self.ID)) > 0
 
-    def drawn(self):
+    def whenDrawn(self):
         if self.Game.turn == self.ID and len(self.Game.earthsonBoard(self.ID)) <= 2:
             self.Game.summon(
                 [EarthEssence(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
@@ -2214,9 +2228,8 @@ class Heliodragon(SVMinion):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.trigsBoard = [Trig_Heliodragon(self)]
-        self.triggers["Discarded"] = [self.whenDiscard]
 
-    def whenDiscard(self):
+    def whenDiscarded(self):
         self.Game.summon([IvoryDragon(self.Game, self.ID)], (-1, "totheRightEnd"),
                          self.ID)
         if self.Game.isOverflow(self.ID):
@@ -2333,9 +2346,8 @@ class TurncoatDragonSummoner(SVMinion):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.triggers["Discarded"] = [self.whenDiscard]
 
-    def whenDiscard(self):
+    def whenDiscarded(self):
         self.Game.Hand_Deck.addCardtoHand(CrimsonDragonsSorrow, self.ID, "type")
 
     def targetExists(self, choice=0):
@@ -2514,7 +2526,6 @@ class BonenanzaNecromancer(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: Enhance (7) - Reanimate (10). Whenever you perform Burial Rite, draw a card."
     attackAdd, healthAdd = 2, 2
     name_CN = "狂欢唤灵师"
-
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
@@ -2717,7 +2728,10 @@ class DeathFowl(SVMinion):
         return self.mana > curMana >= 1
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willCrystallize() else False
+        if self.willCrystallize() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.Counters.shadows[self.ID] += 4
@@ -2930,7 +2944,10 @@ class CloisteredSacristan(SVMinion):
         return self.mana > curMana >= 2
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willCrystallize() else False
+        if self.willCrystallize() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
     def inHandEvolving(self, target=None):
         if target:
@@ -3056,7 +3073,10 @@ class Deathbringer(SVMinion):
         return self.mana > curMana >= 2
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willCrystallize() else False
+        if self.willCrystallize() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
 
 class Trig_Deathbringer(TrigBoard):
@@ -3452,7 +3472,10 @@ class VampireofCalamity(SVMinion):
         return self.mana > curMana >= 1
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
+        if self.willAccelerate() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
     def returnTrue(self, choice=0):
         if self.willAccelerate():
@@ -3596,7 +3619,10 @@ class XIVLuzenTemperance(SVMinion):
         return self.mana > curMana >= 0
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willAccelerate() else False
+        if self.willAccelerate() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
 
 class BuffAura_XIVLuzenTemperance(HasAura_toMinion):
@@ -3774,7 +3800,7 @@ class LorenaIronWilledPriest(SVMinion):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.progress = 0
-        self.trigsBoard = [Trig_LorenaIronWilledPriest(self)]
+        self.trigsBoard = [Trig_LorenaIronWilledPriest(self), Trig_EndLorenaIronWilledPriest]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.Hand_Deck.addCardtoHand(LorenasHolyWater, self.ID, "type")
@@ -3819,6 +3845,17 @@ class Trig_LorenaIronWilledPriest(TrigBoard):
             self.entity.marks["Free Evolve"] += 1
 
 
+class Trig_EndLorenaIronWilledPriest(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.progress = 0
+
+
 class SarissaLuxflashSpear(SVMinion):
     Class, race, name = "Havencraft", "", "Sarissa, Luxflash Spear"
     mana, attack, health = 3, 2, 2
@@ -3860,7 +3897,7 @@ class SarissaLuxflashSpear(SVMinion):
                             except:
                                 minions[self.Game.cardPool[index].mana] = [self.Game.cardPool[index]]
                     if minions:
-                        for i in range(minions.keys()[len(minions) - 1], -1, -1):
+                        for i in range(list(minions.keys())[len(minions) - 1], -1, -1):
                             if i in minions:
                                 t = npchoice(minions[i])
                                 self.Game.fixedGuides.append(t.index)
@@ -4089,7 +4126,10 @@ class VIIISofinaStrength(SVMinion):
         return self.mana > curMana >= 2
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
+        if self.willAccelerate() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         for minion in self.Game.minionsonBoard(self.ID, self):
@@ -4165,7 +4205,10 @@ class PuresongPriest(SVMinion):
         return self.mana > curMana >= 1
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willAccelerate() and self.targetExists() else False
+        if self.willAccelerate() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         chars = self.Game.charsAlive(self.ID)
@@ -5031,7 +5074,10 @@ class AlchemicalCraftschief(SVMinion):
         return self.mana > curMana >= 2
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willAccelerate() else False
+        if self.willAccelerate() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
     def returnTrue(self, choice=0):
         if not self.willAccelerate():
@@ -5715,7 +5761,10 @@ class PrinceofCocytus(SVMinion):
         return self.mana > curMana >= 3
 
     def effCanTrig(self):
-        self.effectViable = "sky blue" if self.willAccelerate() else False
+        if self.willAccelerate() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.Hand_Deck.extractfromDeck(None, self.ID, all=True)

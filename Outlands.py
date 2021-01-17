@@ -3588,8 +3588,11 @@ class HandofGuldan(Spell):
 	name_CN = "古尔丹之手"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.triggers["Discarded"] = [self.whenEffective]
-		
+
+	def whenDiscarded(self):
+		for i in range(3): self.Game.Hand_Deck.drawCard(self.ID)
+		return None
+
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		for i in range(3): self.Game.Hand_Deck.drawCard(self.ID)
 		return None

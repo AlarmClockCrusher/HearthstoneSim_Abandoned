@@ -62,6 +62,7 @@ class GUI_1P(GUI_Common):
 		includeMonk = tk.Checkbutton(self.window, text=txt("Monk", CHN), variable=monkVar, onvalue=1, offvalue=0, font=("Yahei", 15, "bold"))
 		includeSV = tk.Checkbutton(self.window, text=txt("SV", CHN), variable=SVVar, onvalue=1, offvalue=0,
 									 font=("Yahei", 15, "bold"))
+		includeSV.select()
 		lbl_SelectBoard = tk.Label(master=self.window, text=txt("Choose Game Board", CHN), font=("Yahei", 15))
 		self.boardID = tk.StringVar(self.window)
 		self.boardID.set(BoardIndex[0])

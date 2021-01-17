@@ -237,13 +237,14 @@ class GabrielHeavenlyVoice(SVMinion):
     mana, attack, health = 3, 2, 3
     index = "SV_Uprooted~Neutral~Minion~3~2~3~None~Gabriel, Heavenly Voice~Battlecry~Taunt~Legendary"
     requireTarget, keyWord, description = True, "Taunt", "Ward.Fanfare: Use X play points to give +X/+X to this follower and another allied follower. X equals your remaining play points."
+    name_CN = "神谕的大天使·加百列"
 
     def targetExists(self, choice=0):
         return self.selectableFriendlyMinionExists(choice)
 
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
-        return target.cardType == "Minion" and target.ID == self.ID and target.onBoard and target != self
+        return target.type == "Minion" and target.ID == self.ID and target.onBoard and target != self
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         x = self.Game.Manas.manas[self.ID]
