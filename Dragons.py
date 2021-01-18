@@ -143,7 +143,7 @@ class BlazingBattlemage(Minion):
 	mana, attack, health = 1, 2, 2
 	index = "Dragons~Neutral~Minion~1~2~2~None~Blazing Battlemage"
 	requireTarget, keyWord, description = False, "", ""
-	name_CN = "灼光 战斗法师"
+	name_CN = "灼光战斗法师"
 	
 	
 class DepthCharge(Minion):
@@ -489,7 +489,7 @@ class GoboglideTech(Minion):
 	mana, attack, health = 3, 3, 3
 	index = "Dragons~Neutral~Minion~3~3~3~None~Goboglide Tech~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Mech, gain +1/+1 and Rush"
-	name_CN = "地精 滑翔技师"
+	name_CN = "地精滑翔技师"
 	def effCanTrig(self):
 		self.effectViable = any("Mech" in minion.race for minion in self.Game.minionsonBoard(self.ID))
 		
@@ -661,7 +661,7 @@ class TrollBatrider(Minion):
 	mana, attack, health = 4, 3, 3
 	index = "Dragons~Neutral~Minion~4~3~3~None~Troll Batrider~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Deal 3 damage to a random enemy minion"
-	name_CN = "巨魔 蝙蝠骑士"
+	name_CN = "巨魔蝙蝠骑士"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -727,7 +727,7 @@ class ZulDrakRitualist(Minion):
 	mana, attack, health = 4, 3, 9
 	index = "Dragons~Neutral~Minion~4~3~9~None~Zul'Drak Ritualist~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Summon three random 1-Cost minions for your opponent"
-	name_CN = "祖达克 仪祭师"
+	name_CN = "祖达克仪祭师"
 	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
@@ -915,7 +915,7 @@ class ShieldofGalakrond(Minion):
 	mana, attack, health = 5, 4, 5
 	index = "Dragons~Neutral~Minion~5~4~5~None~Shield of Galakrond~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Invoke Galakrond"
-	name_CN = "迦拉克隆 之盾"
+	name_CN = "迦拉克隆之盾"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		invokeGalakrond(self.Game, self.ID)
@@ -1457,7 +1457,7 @@ class EmeraldExplorer(Minion):
 	mana, attack, health = 6, 4, 8
 	index = "Dragons~Druid~Minion~6~4~8~Dragon~Emerald Explorer~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Discover a Dragon"
-	name_CN = "翡翠龙 探险者"
+	name_CN = "翡翠龙探险者"
 	poolIdentifier = "Dragons as Druid"
 	@classmethod
 	def generatePool(cls, Game):
@@ -1496,7 +1496,7 @@ class GorutheMightree(Minion):
 	mana, attack, health = 7, 5, 10
 	index = "Dragons~Druid~Minion~7~5~10~None~Goru the Mightree~Taunt~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: For the rest of the game, your Treants have +1/+1"
-	name_CN = "强力巨树 格鲁"
+	name_CN = "强力巨树格鲁"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		GameTrigAura_BuffYourTreants(self.Game, self.ID).auraAppears()
@@ -2057,7 +2057,7 @@ class AzureExplorer(Minion):
 	mana, attack, health = 4, 2, 3
 	index = "Dragons~Mage~Minion~4~2~3~Dragon~Azure Explorer~Spell Damage~Battlecry"
 	requireTarget, keyWord, description = False, "", "Spell Damage +2. Battlecry: Discover a Dragon"
-	name_CN = "碧蓝龙 探险者"
+	name_CN = "碧蓝龙探险者"
 	poolIdentifier = "Dragons as Mage"
 	@classmethod
 	def generatePool(cls, Game):
@@ -2099,7 +2099,7 @@ class MalygossFrostbolt(Spell):
 	requireTarget, mana = True, 0
 	index = "Dragons~Mage~Spell~0~Malygos's Frostbolt~Legendary~Uncollectible"
 	description = "Deal 3 damage to a character and Freeze it"
-	name_CN = "玛里苟斯的寒冰箭"
+	name_CN = "玛里苟斯的 寒冰箭"
 	def text(self, CHN):
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		return "对一个角色造成%d点伤害，并使其冻结"%damage if CHN else "Deal %d damage to a character and Freeze it"%damage
@@ -2116,7 +2116,7 @@ class MalygossMissiles(Spell):
 	requireTarget, mana = False, 1
 	index = "Dragons~Mage~Spell~1~Malygos's Missiles~Legendary~Uncollectible"
 	description = "Deal 6 damage randomly split among all enemies"
-	name_CN = "玛里苟斯的奥术飞弹"
+	name_CN = "玛里苟斯的 奥术飞弹"
 	def text(self, CHN):
 		damage = (6 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		return "造成%d点伤害，随机分配到所有敌人身上"%damage if CHN else "Deal %d damage randomly split among all enemies"%damage
@@ -2147,7 +2147,7 @@ class MalygossNova(Spell):
 	requireTarget, mana = False, 1
 	index = "Dragons~Mage~Spell~1~Malygos's Nova~Legendary~Uncollectible"
 	description = "Freeze all enemy minions"
-	name_CN = "玛里苟斯的霜冻新星"
+	name_CN = "玛里苟斯的 霜冻新星"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		for minion in self.Game.minionsonBoard(3-self.ID):
 			minion.getsFrozen()
@@ -2158,7 +2158,7 @@ class MalygossPolymorph(Spell):
 	requireTarget, mana = True, 1
 	index = "Dragons~Mage~Spell~1~Malygos's Polymorph~Legendary~Uncollectible"
 	description = "Transform a minion into a 1/1 Sheep"
-	name_CN = "玛里苟斯的变形术"
+	name_CN = "玛里苟斯的 变形术"
 	def available(self):
 		return self.selectableMinionExists()
 		
@@ -2177,7 +2177,7 @@ class MalygossTome(Spell):
 	requireTarget, mana = False, 1
 	index = "Dragons~Mage~Spell~1~Malygos's Tome~Legendary~Uncollectible"
 	description = "Add 3 random Mage spells to your hand"
-	name_CN = "玛里苟斯的智慧秘典"
+	name_CN = "玛里苟斯的 智慧秘典"
 	poolIdentifier = "Mage Spells"
 	@classmethod
 	def generatePool(cls, Game):
@@ -2198,7 +2198,7 @@ class MalygossExplosion(Spell):
 	requireTarget, mana = False, 2
 	index = "Dragons~Mage~Spell~2~Malygos's Explosion~Legendary~Uncollectible"
 	description = "Deal 2 damage to all enemy minions"
-	name_CN = "玛里苟斯的魔爆术"
+	name_CN = "玛里苟斯的 魔爆术"
 	def text(self, CHN):
 		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		return "对所有敌方随从造成%d点伤害"%damage if CHN else "Deal %d damage to all enemy minions"%damage
@@ -2214,7 +2214,7 @@ class MalygossIntellect(Spell):
 	requireTarget, mana = False, 3
 	index = "Dragons~Mage~Spell~3~Malygos's Intellect~Legendary~Uncollectible"
 	description = "Draw 4 cards"
-	name_CN = "玛里苟斯的奥术智慧"
+	name_CN = "玛里苟斯的 奥术智慧"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		for i in range(4): self.Game.Hand_Deck.drawCard(self.ID)
 		return None
@@ -2224,7 +2224,7 @@ class MalygossFireball(Spell):
 	requireTarget, mana = True, 4
 	index = "Dragons~Mage~Spell~4~Malygos's Fireball~Legendary~Uncollectible"
 	description = "Deal 8 damage"
-	name_CN = "玛里苟斯的火球术"
+	name_CN = "玛里苟斯的 火球术"
 	def text(self, CHN):
 		damage = (8 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		return "造成%d点伤害"%damage if CHN else "Deal %d damage"%damage
@@ -2240,7 +2240,7 @@ class MalygossFlamestrike(Spell):
 	requireTarget, mana = False, 7
 	index = "Dragons~Mage~Spell~7~Malygos's Flamestrike~Legendary~Uncollectible"
 	description = "Deal 8 damage to all enemy minions"
-	name_CN = "玛里苟斯的烈焰风暴"
+	name_CN = "玛里苟斯的 烈焰风暴"
 	def text(self, CHN):
 		damage = (8 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		return "对所有敌方随从造成%d点伤害"%damage if CHN else "Deal %d damage to all enemy minions"%damage
@@ -2256,7 +2256,7 @@ class MalygossSheep(Minion):
 	mana, attack, health = 1, 1, 1
 	index = "Dragons~Mage~Minion~1~1~1~Beast~Malygos's Sheep~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
-	name_CN = "玛里苟斯的绵羊"
+	name_CN = "玛里苟斯的 绵羊"
 	
 MalygosUpgradedSpells = [MalygossFrostbolt, MalygossMissiles, MalygossNova, MalygossPolymorph, MalygossTome,
 						MalygossExplosion, MalygossIntellect, MalygossFireball, MalygossFlamestrike
@@ -2515,7 +2515,7 @@ class BronzeExplorer(Minion):
 	mana, attack, health = 3, 2, 3
 	index = "Dragons~Paladin~Minion~3~2~3~Dragon~Bronze Explorer~Lifesteal~Battlecry"
 	requireTarget, keyWord, description = False, "Lifesteal", "Lifesteal. Battlecry: Discover a Dragon"
-	name_CN = "青铜龙 探险者"
+	name_CN = "青铜龙探险者"
 	poolIdentifier = "Dragons as Paladin"
 	@classmethod
 	def generatePool(cls, Game):
@@ -2579,7 +2579,7 @@ class DragonriderTalritha(Minion):
 	mana, attack, health = 3, 3, 3
 	index = "Dragons~Paladin~Minion~3~3~3~None~Dragonrider Talritha~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Give a Dragon in your hand +3/+3 and this Deathrattle"
-	name_CN = "龙骑士 塔瑞萨"
+	name_CN = "龙骑士塔瑞萨"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [GiveaDragoninHandPlus3Plus3AndThisDeathrattle(self)]
@@ -2723,7 +2723,7 @@ class EnvoyofLazul(Minion):
 	mana, attack, health = 2, 2, 2
 	index = "Dragons~Priest~Minion~2~2~2~None~Envoy of Lazul~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Look at 3 cards. Guess which one is in your opponent's hand to get a copy of it"
-	name_CN = "拉祖尔的 信使"
+	name_CN = "拉祖尔的信使"
 	
 	#One card current in opponent's hand( can be created card). Two other cards are the ones currently in opponent's deck but not in hand.
 	#If less than two cards left in opponent's deck, two copies of cards in opponent's starting deck is given.
@@ -3138,7 +3138,7 @@ class PraiseGalakrond(Spell):
 	requireTarget, mana = True, 1
 	index = "Dragons~Rogue~Spell~1~Praise Galakrond!"
 	description = "Give a minion +1 Attack. Invoke Galakrond"
-	name_CN = "赞美 迦拉克隆"
+	name_CN = "赞美迦拉克隆"
 	def available(self):
 		return self.selectableMinionExists()
 		
@@ -3309,7 +3309,7 @@ class FlikSkyshiv(Minion):
 	mana, attack, health = 6, 4, 4
 	index = "Dragons~Rogue~Minion~6~4~4~None~Flik Skyshiv~Battlecry~Legendary"
 	requireTarget, keyWord, description = True, "", "Battlecry: Destroy a minion and all copies of it (wherever they are)"
-	name_CN = "菲里克飞刺"
+	name_CN = "菲里克·飞刺"
 	def targetExists(self, choice=0):
 		return self.selectableMinionExists()
 		
@@ -3938,7 +3938,7 @@ class CrazedNetherwing(Minion):
 	mana, attack, health = 5, 5, 5
 	index = "Dragons~Warlock~Minion~5~5~5~Dragon~Crazed Netherwing~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, deal 3 dammage to all other characters"
-	name_CN = "疯狂的 灵翼龙"
+	name_CN = "疯狂的灵翼龙"
 	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID, self)
 		
@@ -4076,7 +4076,7 @@ class ValdrisFelgorge(Minion):
 	mana, attack, health = 7, 4, 4
 	index = "Dragons~Warlock~Minion~7~4~4~None~Valdris Felgorge~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Increase your maximum hand size to 12. Draw 4 cards"
-	name_CN = "瓦迪瑞斯 邪噬"
+	name_CN = "瓦迪瑞斯·邪噬"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		self.Game.Hand_Deck.handUpperLimit[self.ID] = 12
@@ -4343,7 +4343,7 @@ class GalakrondsMight(HeroPower):
 	mana, name, requireTarget = 2, "Galakrond's Might", False
 	index = "Rogue~Hero Power~2~Galakrond's Might"
 	description = "Give your hero +3 Attack this turn"
-	name_CN = "迦拉克隆 之力"
+	name_CN = "迦拉克隆之力"
 	def effect(self, target=None, choice=0):
 		self.Game.heroes[self.ID].gainAttack(3)
 		return 0

@@ -621,7 +621,7 @@ class GUI_Common:
 		if self.offBoardTrigs[ID]: self.offBoardTrigs[ID].remove()
 		#After erasing the old effect, show the new effect being resolved.
 		btn = HandButton(self, card, enemyCanSee=seeEnemyHand)
-		pos = int(0.9*X), int(0.75*Y if ID == ownID else 0.25*Y)
+		pos = int(0.1*X), int(0.65*Y if ID == ownID else 0.35*Y)
 		btn.plot(pos[0], pos[1])
 		self.handZones[ID].btnsDrawn.remove(btn)
 		self.offBoardTrigs[ID] = btn
@@ -706,10 +706,11 @@ class GUI_Common:
 	def drawCardAni_1(self, card):
 		ownID = self.ID if hasattr(self, "ID") else 1
 		btn = HandButton(self, card)
-		btn.plot(x=int(0.94*X), y=int(0.93*Y if card.ID == ownID else 0.07*Y))
+		ID = card.ID
+		btn.plot(x=self.deckZones[ID].x, y=self.deckZones[ID].y)
 		self.handZones[card.ID].btnsDrawn.remove(btn)
 		btn.configure(bg="green")
-		posEnds = (int(0.85*X), int(0.7*Y) if card.ID == ownID else int(0.3*Y))
+		posEnds = (int(0.85*X), DrawPos_y if card.ID == ownID else Y-DrawPos_y)
 		self.moveBtnsAni(btn, posEnds)
 		var = tk.IntVar()
 		self.window.after(int(450), var.set, 1)
@@ -731,7 +732,7 @@ class GUI_Common:
 		btn = HandButton(self, card, enemyCanSee=True)
 		btn.plot(x=self.deckZones[ID].x, y=self.deckZones[ID].y)
 		btn.configure(bg="grey46")
-		posEnds = (int(0.95*X), int(0.7*Y if ID == ownID else 0.3*Y))
+		posEnds = (int(0.85*X), DrawPos_y if ID == ownID else Y-DrawPos_y)
 		self.moveBtnsAni(btn, posEnds)
 		var = tk.IntVar()
 		self.window.after(int(450), var.set, 1)
@@ -745,7 +746,7 @@ class GUI_Common:
 		btn.move2 = lambda x, y: btn.place(x=x, y=y)
 		btn.place(x=btn.x, y=btn.y, anchor='c')
 		btn.configure(bg="red")
-		posEnds = (int(0.85*X), int(0.7*Y) if ID == ownID else int(0.3*Y))
+		posEnds = (int(0.85*X), int(0.6*Y) if ID == ownID else int(0.4*Y))
 		self.moveBtnsAni(btn, posEnds)
 		var = tk.IntVar()
 		self.window.after(int(300), var.set, 1)
@@ -786,10 +787,11 @@ class GUI_Common:
 	def cardLeavesDeckAni(self, card, enemyCanSee=True):
 		ownID = self.ID if hasattr(self, "ID") else 1
 		btn = HandButton(self, card)
-		btn.plot(x=int(0.94*X), y=int(0.93*Y if card.ID == ownID else 0.07*Y))
+		ID = card.ID
+		btn.plot(x=self.deckZones[ID].x, y=self.deckZones[ID].y)
 		self.handZones[card.ID].btnsDrawn.remove(btn)
 		btn.configure(bg="green")
-		posEnds = (int(0.85*X), int(0.7*Y) if card.ID == ownID else int(0.3*Y))
+		posEnds = (int(0.85*X), DrawPos_y if card.ID == ownID else Y-DrawPos_y)
 		self.moveBtnsAni(btn, posEnds)
 		var = tk.IntVar()
 		self.window.after(350, var.set, 1)
@@ -802,7 +804,7 @@ class GUI_Common:
 		ownID = self.ID if hasattr(self, "ID") else 1
 		for card in cards:
 			btn = HandButton(self, card)
-			btn.plot(x=int(0.85*X), y=int(0.7*Y if ID == ownID else 0.3*Y))
+			btn.plot(x=int(0.85*X), y=DrawPos_y if ID == ownID else Y-DrawPos_y)
 			self.handZones[ID].btnsDrawn.pop()
 			btns.append(btn)
 		btns = btns[::-1]

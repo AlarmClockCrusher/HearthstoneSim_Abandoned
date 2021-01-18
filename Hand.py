@@ -556,5 +556,5 @@ Default1 = [
 			]
 
 Default2 = [Khadgar, DwarvenSharpshooter, ProfessorSlate, OhMyYogg, Counterspell, ForbiddenWords, KirinTorMage, NatureStudies,
-			PenFlinger, Frostbolt, ArcaneShot, RapidFire, HeadmasterKelThuzad, ZephrystheGreat, ZephrystheGreat
+			PenFlinger, Frostbolt, ArcaneShot, ValdrisFelgorge, ValdrisFelgorge, RapidFire, HeadmasterKelThuzad, ZephrystheGreat, ZephrystheGreat
 			]

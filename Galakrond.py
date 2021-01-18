@@ -118,7 +118,7 @@ class EscapedManasaber(Minion):
 	mana, attack, health = 4, 3, 5
 	index = "Galakrond~Neutral~Minion~4~3~5~Beast~Escaped Manasaber~Stealth"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. Whenever this attacks, gain 1 Mana Crystal this turn only"
-	name_CN = "奔逃的 魔晶豹"
+	name_CN = "奔逃的魔晶豹"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_EscapedManasaber(self)]

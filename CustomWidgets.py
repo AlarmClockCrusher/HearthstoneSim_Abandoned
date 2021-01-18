@@ -80,6 +80,8 @@ Hero1Pos, Hero2Pos = (0.5*X, Y-0.25*Y), (0.5*X, 0.25*Y)
 Weapon1Pos, Weapon2Pos = (0.42*X, Y-0.25*Y), (0.42*X, 0.25*Y)
 Power1Pos, Power2Pos = (0.58*X, Y-0.25*Y), (0.58*X, 0.25*Y)
 
+DrawPos_y = int(0.6*Y)
+DeckPos_y = int(0.73*Y)
 #For 2-player GUI
 seeEnemyHand = False
 ReplayMovesThisTurn = False
@@ -141,13 +143,13 @@ def extractfrom(target, listObj):
 	except: return None
 	
 def findPicFilepath(card):
-	if card.type == "Dormant": #休眠的随从会主动查看自己携带的originalMinion的名字和index
-		index = card.originalMinion.index
+	if card.type == "Dormant": #休眠的随从会主动查看自己携带的prisoner的名字和index
+		index = card.prisoner.index
 		folderName = folderNameTable[index.split('~')[0] ]
-		if inspect.isclass(card.originalMinion):
-			name = card.originalMinion.__name__
+		if inspect.isclass(card.prisoner):
+			name = card.prisoner.__name__
 		else: #Instances don't have __name__
-			name = type(card.originalMinion).__name__
+			name = type(card.prisoner).__name__
 		path = "Crops\\%s\\"%folderName
 	else: #type == "Weapon", "Minion", "Spell", "Hero", "Power"
 		index, name = card.index, type(card).__name__
@@ -166,13 +168,13 @@ def findPicFilepath(card):
 	return filepath
 	
 def findPicFilepath_FullImg(card):
-	if card.type == "Dormant": #休眠的随从会主动查看自己携带的originalMinion的名字和index
-		index = card.originalMinion.index
+	if card.type == "Dormant": #休眠的随从会主动查看自己携带的prisoner的名字和index
+		index = card.prisoner.index
 		folderName = folderNameTable[index.split('~')[0] ]
-		if inspect.isclass(card.originalMinion):
-			name = card.originalMinion.__name__
+		if inspect.isclass(card.prisoner):
+			name = card.prisoner.__name__
 		else: #Instances don't have __name__
-			name = type(card.originalMinion).__name__
+			name = type(card.prisoner).__name__
 		path = "Images\\%s\\"%folderName
 	else: #type == "Weapon", "Minion", "Spell", "Hero", "Power"
 		index, name = card.index, type(card).__name__
@@ -415,8 +417,8 @@ class HandZone:
 		game, ownHand = self.GUI.Game, self.GUI.Game.Hand_Deck.hands[self.ID]
 		ownID = 1 if not hasattr(self.GUI, "ID") else self.GUI.ID #1PGUI has virtual ID of 1
 		y = int(Y - 0.07*Y) if self.ID == ownID else int(0.11*Y) #The vertical position of the cards drawn
-		leftPos = (0.5 - (0.5-0.043) * (len(ownHand) - 1) / 14) * X
-		posHands = [(int(leftPos+(X/14)*i), y) for i in range(len(ownHand))]
+		leftPos = (0.5 - 0.5 * (len(ownHand) - 1) / 12) * X
+		posHands = [(int(leftPos+(X/12)*i), y) for i in range(len(ownHand))]
 		if self.btnsDrawn:
 			#Goal: For each card in hand, find the corresponding buttons already drawn.
 			#If buttons no longer has a card it represents, remove it.
@@ -1335,8 +1337,8 @@ class BoardButton(tk.Canvas):
 				if value > 0: lines.append("   %s:%d"%(key if not CHN else gameStatusDict[key], value))
 			for obj in game.trigAuras[ID]:
 				if hasattr(obj, "text"):
-					if not isinstance(obj, SecretTrigger):
-						lines.append("   %s"%obj.text(CHN))
+					try: lines.append("   %s"%obj.text(CHN))
+					except: pass
 		lines.append("Temp Effects:" if not CHN else "临时效果")
 		for obj in game.turnStartTrigger + game.turnEndTrigger:
 			lines.append("   %s"%obj.text(CHN))
@@ -1471,7 +1473,7 @@ class DeckZone(tk.Button):
 		self.GUI, self.ID = GUI, ID
 		self.x, self.y = 0, 0
 		ID = self.GUI.ID if hasattr(self.GUI, "ID") else 1
-		self.x, self.y = int(0.94*X), int(0.93*Y) if self.ID == ID else int(0.07*Y)
+		self.x, self.y = int(0.94*X), DeckPos_y if self.ID == ID else Y-DeckPos_y
 		self.draw()
 		self.bind("<Enter>", self.crosshairEnter)
 		self.bind("<Leave>", self.crosshairLeave)

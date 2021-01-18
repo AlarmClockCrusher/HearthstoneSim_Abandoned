@@ -208,7 +208,7 @@ class ImprisonedVilefiend(Minion_Dormantfor2turns):
 	mana, attack, health = 2, 3, 5
 	index = "Outlands~Neutral~Minion~2~3~5~Demon~Imprisoned Vilefiend~Rush"
 	requireTarget, keyWord, description = False, "Rush", "Dormant for 2 turns. Rush"
-	name_CN = "被禁锢的 邪犬"
+	name_CN = "被禁锢的邪犬"
 	
 	
 class MoargArtificer(Minion):
@@ -565,7 +565,7 @@ class HellfireWarder(Minion):
 	mana, attack, health = 1, 1, 3
 	index = "Outlands~Neutral~Minion~1~1~3~None~Hellfire Warder~Uncollectible"
 	requireTarget, keyWord, description = False, "", "(Magtheridon will destroy all minions and awaken after 3 Warders die)"
-	name_CN = "地狱火 典狱官"
+	name_CN = "地狱火典狱官"
 	
 	
 class MaievShadowsong(Minion):
@@ -1222,7 +1222,7 @@ class WarglaivesofAzzinoth(Weapon):
 	Class, name, description = "Demon Hunter", "Warglaives of Azzinoth", "After attacking a minion, your hero may attack again"
 	mana, attack, durability = 6, 3, 4
 	index = "Outlands~Demon Hunter~Weapon~6~3~4~Warglaives of Azzinoth"
-	name_CN = "埃辛诺斯 战刃"
+	name_CN = "埃辛诺斯战刃"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_WarglaivesofAzzinoth(self)]
@@ -1246,7 +1246,7 @@ class PriestessofFury(Minion):
 	mana, attack, health = 7, 6, 5
 	index = "Outlands~Demon Hunter~Minion~7~6~5~Demon~Priestess of Fury"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, deal 6 damage randomly split among all enemies"
-	name_CN = "愤怒的 女祭司"
+	name_CN = "愤怒的女祭司"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_PriestessofFury(self)]
@@ -1678,7 +1678,7 @@ class ImprisonedFelmaw(Minion_Dormantfor2turns):
 	mana, attack, health = 2, 5, 4
 	index = "Outlands~Hunter~Minion~2~5~4~Demon~Imprisoned Felmaw"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, attack a random enemy"
-	name_CN = "被禁锢的 魔喉"
+	name_CN = "被禁锢的魔喉"
 	#假设这个攻击不会消耗随从的攻击机会
 	def awakenEffect(self):
 		curGame = self.Game
@@ -1724,7 +1724,7 @@ class ScavengersIngenuity(Spell):
 	requireTarget, mana = False, 2
 	index = "Outlands~Hunter~Spell~2~Scavenger's Ingenuity"
 	description = "Draw a Beast. Give it +2/+2"
-	name_CN = "拾荒者的 智慧"
+	name_CN = "拾荒者的智慧"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		ownDeck = curGame.Hand_Deck.decks[self.ID]
@@ -1800,7 +1800,7 @@ class ZixorPrime(Minion):
 	mana, attack, health = 8, 4, 4
 	index = "Outlands~Hunter~Minion~8~4~4~Beast~Zixor Prime~Rush~Battlecry~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Battlecry: Summon 3 copies of this minion"
-	name_CN = "终极 兹克索尔"
+	name_CN = "终极兹克索尔"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		#假设已经死亡时不会召唤复制
@@ -1815,7 +1815,7 @@ class MokNathalLion(Minion):
 	mana, attack, health = 4, 5, 2
 	index = "Outlands~Hunter~Minion~4~5~2~Beast~Mok'Nathal Lion~Rush~Battlecry"
 	requireTarget, keyWord, description = True, "Rush", "Rush. Battlecry: Choose a friendly minion. Gain a copy of its Deathrattle"
-	name_CN = "莫克纳萨 将狮"
+	name_CN = "莫克纳萨将狮"
 	def effCanTrig(self):
 		self.effectViable = self.targetExists()
 		
@@ -1888,7 +1888,7 @@ class NagrandSlam(Spell):
 	requireTarget, mana = False, 10
 	index = "Outlands~Hunter~Spell~10~Nagrand Slam"
 	description = "Summon four 3/5 Clefthoofs that attack random enemies"
-	name_CN = "纳格兰 大冲撞"
+	name_CN = "纳格兰大冲撞"
 	def available(self):
 		return self.Game.space(self.ID) > 0
 		
@@ -2144,7 +2144,7 @@ class ImprisonedObserver(Minion_Dormantfor2turns):
 	mana, attack, health = 3, 4, 5
 	index = "Outlands~Mage~Minion~3~4~5~Demon~Imprisoned Observer"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, deal 2 damage to all enemy minions"
-	name_CN = "被禁锢的 眼魔"
+	name_CN = "被禁锢的眼魔"
 	
 	def awakenEffect(self):
 		targets = self.Game.minionsonBoard(3-self.ID)
@@ -2189,7 +2189,7 @@ class ApexisBlast(Spell):
 	requireTarget, mana = True, 5
 	index = "Outlands~Mage~Spell~5~Apexis Blast"
 	description = "Deal 5 damage. If your deck has no minions, summon a random 5-Cost minion"
-	name_CN = "埃匹希斯 冲击"
+	name_CN = "埃匹希斯冲击"
 	poolIdentifier = "5-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
@@ -2318,7 +2318,7 @@ class AldorAttendant(Minion):
 	mana, attack, health = 1, 1, 3
 	index = "Outlands~Paladin~Minion~1~1~3~None~Aldor Attendant~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Reduce the Cost of your Librams by (1) this game"
-	name_CN = "奥尔多 侍从"
+	name_CN = "奥尔多侍从"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		GameManaAura_Libram(self.Game, self.ID, -1, -1).auraAppears()
@@ -2616,7 +2616,7 @@ class SethekkVeilweaver(Minion):
 	mana, attack, health = 2, 2, 3
 	index = "Outlands~Priest~Minion~2~2~3~None~Sethekk Veilweaver"
 	requireTarget, keyWord, description = False, "", "After you cast a spell on a minion, add a Priest spell to your hand"
-	name_CN = "塞泰克 织巢者"
+	name_CN = "塞泰克织巢者"
 	poolIdentifier = "Priest Spells"
 	@classmethod
 	def generatePool(cls, Game):
@@ -3069,7 +3069,7 @@ class CursedShadow(Minion):
 	mana, attack, health = 7, 7, 5
 	index = "Outlands~Rogue~Minion~7~7~5~None~Cursed Shadow~Stealth~Uncollectible"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth"
-	name_CN = "被诅咒的 阴影"
+	name_CN = "被诅咒的阴影"
 	
 	
 """Shaman cards"""
@@ -3491,7 +3491,7 @@ class KanrethadPrime(Minion):
 	mana, attack, health = 8, 7, 6
 	index = "Outlands~Warlock~Minion~8~7~6~Demon~Kanrethad Prime~Battlecry~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon 3 friendly Demons that died this game"
-	name_CN = "终极 坎雷萨德"
+	name_CN = "终极坎雷萨德"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
@@ -3785,7 +3785,7 @@ class BulwarkofAzzinoth(Weapon):
 	Class, name, description = "Warrior", "Bulwark of Azzinoth", "Whenever your hero would take damage, this loses 1 Durability instead"
 	mana, attack, durability = 3, 1, 4
 	index = "Outlands~Warrior~Weapon~3~1~4~Bulwark of Azzinoth~Legendary"
-	name_CN = "埃辛诺斯 壁垒"
+	name_CN = "埃辛诺斯壁垒"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_BulwarkofAzzinoth(self)]

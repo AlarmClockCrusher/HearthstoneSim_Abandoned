@@ -81,7 +81,7 @@ class HighkeeperRa(Minion):
 	mana, attack, health = 10, 20, 20
 	index = "Uldum~Neutral~Minion~10~20~20~None~Highkeeper Ra~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, deal 20 damage to all enemies"
-	name_CN = "莱， 至高守护者"
+	name_CN = "莱，至高守护者"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_HighkeeperRa(self)]
@@ -134,7 +134,7 @@ class DwarvenArchaeologist(Minion):
 	mana, attack, health = 2, 2, 3
 	index = "Uldum~Neutral~Minion~2~2~3~None~Dwarven Archaeologist"
 	requireTarget, keyWord, description = False, "", "After you Discover a card, reduce its cost by (1)"
-	name_CN = "矮人 历史学家"
+	name_CN = "矮人历史学家"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_DwarvenArchaeologist(self)]
@@ -1082,7 +1082,7 @@ class OssirianTear(HeroPower):
 	mana, name, requireTarget = 0, "Ossirian Tear", False
 	index = "Druid~Hero Power~0~Ossirian Tear"
 	description = "Passive Hero Power. Your Choose One cards have both effects combined"
-	name_CN = "奥斯里安 之泪"
+	name_CN = "奥斯里安之泪"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		
@@ -1251,7 +1251,7 @@ class ElisetheEnlightened(Minion):
 	mana, attack, health = 5, 5, 5
 	index = "Uldum~Druid~Minion~5~5~5~None~Elise the Enlightened~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no duplicates, duplicate your hand"
-	name_CN = "启迪者 伊莉斯"
+	name_CN = "启迪者伊莉斯"
 	
 	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.noDuplicatesinDeck(self.ID)
@@ -1635,7 +1635,7 @@ class KingKrush_Uldum(Minion):
 	mana, attack, health = 9, 8, 8
 	index = "Uldum~Hunter~Minion~9~8~8~Beast~King Krush~Charge~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Charge", "Charge"
-	name_CN = "暴龙王 克鲁什"
+	name_CN = "暴龙王克鲁什"
 	
 	
 """Mage cards"""
@@ -1833,7 +1833,7 @@ class TortollanPilgrim(Minion):
 	mana, attack, health = 8, 5, 5
 	index = "Uldum~Mage~Minion~8~5~5~None~Tortollan Pilgrim~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a spell in your deck and cast it with random targets"
-	name_CN = "始祖龟 朝圣者"
+	name_CN = "始祖龟朝圣者"
 	def castSpellfromDeck(self, spellType, ownDeck):
 		for i, card in enumerate(ownDeck):
 			if isinstance(card, spellType):
@@ -2053,7 +2053,7 @@ class SirFinleyoftheSands(Minion):
 	mana, attack, health = 2, 2, 3
 	index = "Uldum~Paladin~Minion~2~2~3~Murloc~Sir Finley of the Sands~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no duplicates, Discover an upgraded Hero Power"
-	name_CN = "沙漠爵士 芬利"
+	name_CN = "沙漠爵士芬利"
 	poolIdentifier = "Upgraded Powers"
 	@classmethod
 	def generatePool(cls, Game):
@@ -2639,7 +2639,7 @@ class SahketSapper(Minion):
 	mana, attack, health = 4, 4, 4
 	index = "Uldum~Rogue~Minion~4~4~4~Pirate~Sahket Sapper~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Return a random enemy minion to your opponent's hand"
-	name_CN = "萨赫柯特 工兵"
+	name_CN = "萨赫柯特工兵"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [ReturnaRandomEnemyMiniontoHand(self)]
@@ -2734,7 +2734,7 @@ class AnkatheBuried(Minion):
 	mana, attack, health = 5, 5, 5
 	index = "Uldum~Rogue~Minion~5~5~5~None~Anka, the Buried~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Change each Deathrattle minion in your hand into a 1/1 that costs (1)"
-	name_CN = "被埋葬的 安卡"
+	name_CN = "被埋葬的安卡"
 	#不知道安卡的战吼是否会把手牌中的亡语随从变成新的牌还是只会修改它们的身材
 	def effCanTrig(self):
 		return any(card.type == "Minion" and card.deathrattles and card != self for card in self.Game.Hand_Deck.hands[self.ID])
@@ -2776,7 +2776,7 @@ class HeartofVirnaal(HeroPower):
 	mana, name, requireTarget = 2, "Heart of Vir'naal", False
 	index = "Shaman~Hero Power~2~Heart of Vir'naal"
 	description = "Your Battlecries trigger twice this turn"
-	name_CN = "维尔纳尔 之心"
+	name_CN = "维尔纳尔之心"
 	def effect(self, target=None, choice=0):
 		self.Game.status[self.ID]["Battlecry x2"] += 1
 		self.Game.turnEndTrigger.append(HeartofVirnaal_Effect(self.Game, self.ID))
@@ -3086,7 +3086,7 @@ class SupremeArchaeology(Quest):
 	requireTarget, mana = False, 1
 	index = "Uldum~Warlock~Spell~1~Supreme Archaeology~~Quest~Legendary"
 	description = "Quest: Draw 20 cards. Reward: Tome of Origination"
-	name_CN = "最最伟大的考古学"
+	name_CN = "最最伟大的 考古学"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_SupremeArchaeology(self)]
@@ -3404,7 +3404,7 @@ class AnraphetsCore(HeroPower):
 	mana, name, requireTarget = 2, "Anraphet's Core", False
 	index = "Warrior~Hero Power~2~Anraphet's Core"
 	description = "Summon a 4/3 Golem. After your hero attacks, refresh this"
-	name_CN = "安拉斐特 之核"
+	name_CN = "安拉斐特之核"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_AnraphetsCore(self)]

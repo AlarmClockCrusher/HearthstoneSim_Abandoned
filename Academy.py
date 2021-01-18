@@ -381,7 +381,7 @@ class CultNeophyte(Minion):
 	mana, attack, health = 2, 3, 2
 	index = "Academy~Neutral~Minion~2~3~2~None~Cult Neophyte~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Your opponent's spells cost (1) more next turn"
-	name_CN = "异教 低阶牧师"
+	name_CN = "异教低阶牧师"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		self.Game.Manas.CardAuras_Backup.append(GameManaAura_InTurnSpell1More(self.Game, 3-self.ID))
@@ -716,24 +716,13 @@ class Trig_HeadmasterKelThuzad(TrigBoard):
 			if self.minionsKilled:
 				minion.Game.summon([minionKilled(minion.Game, minion.ID) for minionKilled in self.minionsKilled], (minion.pos, "totheRight"), minion.ID)
 				
-	def createCopy(self, game):
-		if self not in game.copiedObjs: #这个扳机没有被复制过
-			entityCopy = self.entity.createCopy(game)
-			trigCopy = self.selfCopy(entityCopy)
-			trigCopy.enabled = self.enabled
-			trigCopy.minionsKilled = self.minionsKilled[:]
-			game.copiedObjs[self] = trigCopy
-			return trigCopy
-		else: #一个扳机被复制过了，则其携带者也被复制过了
-			return game.copiedObjs[self]
-			
 			
 class LakeThresher(Minion):
 	Class, race, name = "Neutral", "Beast", "Lake Thresher"
 	mana, attack, health = 5, 4, 6
 	index = "Academy~Neutral~Minion~5~4~6~Beast~Lake Thresher"
 	requireTarget, keyWord, description = False, "", "Also damages the minions next to whomever this attacks"
-	name_CN = "止水湖 蛇颈龙"
+	name_CN = "止水湖蛇颈龙"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.marks["Sweep"] = 1
@@ -744,7 +733,7 @@ class Ogremancer(Minion):
 	mana, attack, health = 5, 3, 7
 	index = "Academy~Neutral~Minion~5~3~7~None~Ogremancer"
 	requireTarget, keyWord, description = False, "", "Whenever your opponent casts a spell, summon a 2/2 Skeleton with Taunt"
-	name_CN = "食人魔 巫术师"
+	name_CN = "食人魔巫术师"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_Ogremancer(self)]
@@ -1359,7 +1348,7 @@ class AncientVoidHound(Minion):
 	mana, attack, health = 9, 10, 10
 	index = "Academy~Demon Hunter~Minion~9~10~10~Demon~Ancient Void Hound"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, steal 1 Attack and Health from all enemy minions"
-	name_CN = "上古 虚空恶犬"
+	name_CN = "上古虚空恶犬"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_AncientVoidHound(self)]
@@ -1502,7 +1491,7 @@ class SpeakerGidra(Minion):
 	mana, attack, health = 3, 1, 4
 	index = "Academy~Druid~Minion~3~1~4~None~Speaker Gidra~Rush~Windfury"
 	requireTarget, keyWord, description = False, "Rush,Windfury", "Rush, Windfury. Spellburst: Gain Attack and Health equal to the spell's Cost"
-	name_CN = "演讲者 吉德拉"
+	name_CN = "演讲者吉德拉"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_SpeakerGidra(self)]
@@ -2113,7 +2102,7 @@ class JandiceBarov(Minion):
 	mana, attack, health = 5, 2, 1
 	index = "Academy~Mage,Rogue~Minion~5~2~1~None~Jandice Barov~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon two random 5-Cost minions. Secretly pick one that dies when it takes damage"
-	name_CN = "詹迪斯 巴罗夫"
+	name_CN = "詹迪斯·巴罗夫"
 	poolIdentifier = "5-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
@@ -2657,7 +2646,7 @@ class DisciplinarianGandling(Minion):
 	mana, attack, health = 4, 3, 6
 	index = "Academy~Priest,Warlock~Minion~4~3~6~None~Disciplinarian Gandling~Legendary"
 	requireTarget, keyWord, description = False, "", "After you play a minion, destroy it and summon a 4/4 Failed Student"
-	name_CN = "教导主任 加丁"
+	name_CN = "教导主任加丁"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_DisciplinarianGandling(self)]
@@ -2945,7 +2934,7 @@ class InfiltratorLilian(Minion):
 	mana, attack, health = 4, 4, 2
 	index = "Academy~Rogue~Minion~4~4~2~None~Infiltrator Lilian~Stealth~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. Deathrattle: Summon a 4/2 Forsaken Lilian that attacks a random enemy"
-	name_CN = "渗透者 莉莉安"
+	name_CN = "渗透者莉莉安"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [SummonForsakenLilian(self)]
@@ -3685,7 +3674,7 @@ class ReleasedSoul(Minion):
 	mana, attack, health = 3, 3, 3
 	index = "Academy~Warlock,Demon Hunter~Minion~3~3~3~None~Released Soul~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
-	name_CN = "被释放的 灵魂"
+	name_CN = "被释放的灵魂"
 	
 	
 class ArchwitchWillow(Minion):
@@ -3693,7 +3682,7 @@ class ArchwitchWillow(Minion):
 	mana, attack, health = 8, 5, 5
 	index = "Academy~Warlock~Minion~8~5~5~None~Archwitch Willow~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a random Demon from your hand and deck"
-	name_CN = "高阶女巫 维洛"
+	name_CN = "高阶女巫维洛"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game

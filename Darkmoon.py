@@ -310,7 +310,7 @@ class CircusAmalgam(Minion):
 	mana, attack, health = 4, 4, 5
 	index = "Darkmoon~Neutral~Minion~4~4~5~Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem~Circus Amalgam~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. This has all minion types"
-	name_CN = "马戏团 融合怪"
+	name_CN = "马戏团融合怪"
 	
 	
 class CircusMedic(Minion):
@@ -407,7 +407,7 @@ class OptimisticOgre(Minion):
 	mana, attack, health = 5, 6, 7
 	index = "Darkmoon~Neutral~Minion~5~6~7~None~Optimistic Ogre"
 	requireTarget, keyWord, description = False, "", "50% chance to attack the correct enemy"
-	name_CN = "乐观的 食人魔"
+	name_CN = "乐观的食人魔"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_OptimisticOgre(self)]
@@ -1277,7 +1277,7 @@ class DreadlordsBite(Weapon):
 	Class, name, description = "Demon Hunter", "Dreadlord's Bite", "Outcast: Deal 1 damage to all enemies"
 	mana, attack, durability = 3, 3, 2
 	index = "Darkmoon~Demon Hunter~Weapon~3~3~2~Dreadlord's Bite~Outcast"
-	name_CN = "恐惧魔王 之咬"
+	name_CN = "恐惧魔王之咬"
 	
 	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.outcastcanTrigger(self)
@@ -1712,7 +1712,7 @@ class FaireArborist(Minion):
 	mana, attack, health = 3, 2, 2
 	index = "Darkmoon~Druid~Minion~3~2~2~None~Faire Arborist~Choose One"
 	requireTarget, keyWord, description = False, "", "Choose One- Draw a card; or Summon a 2/2 Treant. Corrupt: Do both"
-	name_CN = "马戏团 树艺师"
+	name_CN = "马戏团树艺师"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.chooseOne = 1
@@ -1733,7 +1733,7 @@ class FaireArborist_Corrupt(Minion):
 	mana, attack, health = 3, 2, 2
 	index = "Darkmoon~Druid~Minion~3~2~2~None~Faire Arborist~Corrupted~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Corrupted. Summon a 2/2 Treant. Draw a card"
-	name_CN = "马戏团 树艺师"
+	name_CN = "马戏团树艺师"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		self.Game.summon(Treant_Classic(self.Game, self.ID), self.pos+1, self.ID)
@@ -1859,7 +1859,7 @@ class CenarionWard(Spell):
 	requireTarget, mana = False, 8
 	index = "Darkmoon~Druid~Spell~8~Cenarion Ward"
 	description = "Gain 8 Armor. Summon a random 8-Cost minion"
-	name_CN = "塞纳里奥 结界"
+	name_CN = "塞纳里奥结界"
 	poolIdentifier = "8-Cost Minions to Summon"
 	@classmethod
 	def generatePool(cls, Game):
@@ -1933,7 +1933,7 @@ class DancingCobra(Minion):
 	mana, attack, health = 2, 1, 5
 	index = "Darkmoon~Hunter~Minion~2~1~5~Beast~Dancing Cobra"
 	requireTarget, keyWord, description = False, "", "Corrupt: Gain Poisonous"
-	name_CN = "舞动的 眼镜蛇"
+	name_CN = "舞动的眼镜蛇"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsHand = [Trig_Corrupt(self, DancingCobra_Corrupt)] #只有在手牌中才会升级
@@ -1943,7 +1943,7 @@ class DancingCobra_Corrupt(Minion):
 	mana, attack, health = 2, 1, 5
 	index = "Darkmoon~Hunter~Minion~2~1~5~Beast~Dancing Cobra~Poisonous~Corrupted~Uncollectible"
 	requireTarget, keyWord, description = False, "Poisonous", "Poisonous"
-	name_CN = "舞动的 眼镜蛇"
+	name_CN = "舞动的眼镜蛇"
 	
 	
 class DontFeedtheAnimals(Spell):
@@ -2113,7 +2113,7 @@ class MaximaBlastenheimer(Minion):
 	mana, attack, health = 6, 4, 4
 	index = "Darkmoon~Hunter~Minion~6~4~4~None~Maxima Blastenheimer~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a random minion from your deck. It attacks the enemy hero, then dies"
-	name_CN = "玛克希玛 雷管"
+	name_CN = "玛克希玛·雷管"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -2436,7 +2436,7 @@ class SaygeSeerofDarkmoon(Minion):
 	mana, attack, health = 6, 5, 5
 	index = "Darkmoon~Mage~Minion~6~5~5~None~Sayge, Seer of Darkmoon~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Draw 1 card(Upgraded for each friendly Secret that has triggered this game!)"
-	name_CN = "暗月告知 赛格"
+	name_CN = "暗月先知赛格"
 	
 	def text(self, CHN):
 		num = self.Game.Counters.numSecretsTriggeredThisGame[self.ID] + 1
@@ -2769,7 +2769,7 @@ class HighExarchYrel(Minion):
 	mana, attack, health = 8, 7, 5
 	index = "Darkmoon~Paladin~Minion~8~7~5~None~High Exarch Yrel~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no Neutral cards, gain Rush, Lifesteal, Taunt, and Divine Shield"
-	name_CN = "大主教 伊瑞尔"
+	name_CN = "大主教伊瑞尔"
 	
 	def effCanTrig(self):
 		self.effectViable = all(card.Class != "Neutral" for card in self.Game.Hand_Deck.decks[self.ID])
@@ -3516,7 +3516,7 @@ class PitMaster(Minion):
 	mana, attack, health = 3, 1, 2
 	index = "Darkmoon~Shaman~Minion~3~1~2~None~Pit Master~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 3/2 Duelist. Corrupt: Summon two"
-	name_CN = "死斗场 管理者"
+	name_CN = "死斗场管理者"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsHand = [Trig_Corrupt(self, PitMaster_Corrupt)] #只有在手牌中才会升级
@@ -3530,7 +3530,7 @@ class PitMaster_Corrupt(Minion):
 	mana, attack, health = 3, 1, 2
 	index = "Darkmoon~Shaman~Minion~3~1~2~None~Pit Master~Battlecry~Corrupted~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Corrupted. Battlecry: Summon two 3/2 Duelists"
-	name_CN = "死斗场 管理者"
+	name_CN = "死斗场管理者"
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		pos = (self.pos, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
@@ -3627,7 +3627,7 @@ class InaraStormcrash(Minion):
 	mana, attack, health = 5, 4, 5
 	index = "Darkmoon~Shaman~Minion~5~4~5~None~Inara Stormcrash~Legendary"
 	requireTarget, keyWord, description = False, "", "On your turn, your hero has +2 Attack and Windfury"
-	name_CN = "伊纳拉 碎雷"
+	name_CN = "伊纳拉·碎雷"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.auras["On your turn, your hero has +2 Attack and Windfury"] = HasAura_InaraStormcrash(self)

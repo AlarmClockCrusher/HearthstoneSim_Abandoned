@@ -252,7 +252,7 @@ class YoungPriestess(Minion):
 	mana, attack, health = 1, 2, 1
 	index = "Classic~Neutral~Minion~1~2~1~None~Young Priestess"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, give another random friendly minion +1 Health"
-	name_CN = "年轻的 女祭司"
+	name_CN = "年轻的女祭司"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_YoungPriestess(self)]
@@ -288,7 +288,7 @@ class AmaniBerserker(Minion):
 	mana, attack, health = 2, 2, 3
 	index = "Classic~Neutral~Minion~2~2~3~None~Amani Berserker"
 	requireTarget, keyWord, description = False, "", "Has +3 Attack while damaged"
-	name_CN = "阿曼尼 狂战士"
+	name_CN = "阿曼尼狂战士"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.auras["Has +3 Attack while damaged"] = StatAura_Enrage(self, 3)
@@ -342,7 +342,7 @@ class CrazedAlchemist(Minion):
 	mana, attack, health = 2, 2, 2
 	index = "Classic~Neutral~Minion~2~2~2~None~Crazed Alchemist~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Swap the Attack and Health of a minion"
-	name_CN = "疯狂的 炼金师"
+	name_CN = "疯狂的炼金师"
 	
 	def targetExists(self, choice=0):
 		return self.selectableMinionExists()
@@ -449,7 +449,7 @@ class LootHoarder(Minion):
 	mana, attack, health = 2, 2, 1
 	index = "Classic~Neutral~Minion~2~2~1~None~Loot Hoarder~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Draw a card"
-	name_CN = "战利品 贮藏者"
+	name_CN = "战利品贮藏者"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.deathrattles = [DrawaCard(self)] #This deathrattle obj defined in Bloodmage Thalnos.
@@ -647,7 +647,7 @@ class PintSizedSummoner(Minion):
 	mana, attack, health = 2, 2, 2
 	index = "Classic~Neutral~Minion~2~2~2~None~Pint-Sized Summoner"
 	requireTarget, keyWord, description = False, "", "The first minion you play each turn costs (1) less"
-	name_CN = "小个子 召唤师"
+	name_CN = "小个子召唤师"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.auras["The first minion you play each turn costs (1) less"] = ManaAura_1stMinion1Less(self)
@@ -888,7 +888,7 @@ class EarthenRingFarseer(Minion):
 	mana, attack, health = 3, 3, 3
 	index = "Classic~Neutral~Minion~3~3~3~None~Earthen Ring Farseer~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Restore 3 health"
-	name_CN = "大地之环 先知"
+	name_CN = "大地之环先知"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -1240,7 +1240,7 @@ class CultMaster(Minion):
 	mana, attack, health = 4, 4, 2
 	index = "Classic~Neutral~Minion~4~4~2~None~Cult Master"
 	requireTarget, keyWord, description = False, "", "Whenever one of your other minion dies, draw a card"
-	name_CN = "诅咒教派 领袖"
+	name_CN = "诅咒教派领袖"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_CultMaster(self)]
@@ -1284,7 +1284,7 @@ class DefenderofArgus(Minion):
 	mana, attack, health = 4, 2, 3
 	index = "Classic~Neutral~Minion~4~2~3~None~Defender of Argus~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Given adjacent minions +1/+1 and Taunt"
-	name_CN = "阿古斯 防御者"
+	name_CN = "阿古斯防御者"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.onBoard:
@@ -1330,7 +1330,7 @@ class MogushanWarden(Minion):
 	mana, attack, health = 4, 1, 7
 	index = "Classic~Neutral~Minion~4~1~7~None~Mogu'shan Warden~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
-	name_CN = "魔古山 守望者"
+	name_CN = "魔古山守望者"
 	
 	
 class SilvermoonGuardian(Minion):
@@ -1524,7 +1524,7 @@ class SilverHandKnight(Minion):
 	mana, attack, health = 5, 4, 4
 	index = "Classic~Neutral~Minion~5~4~4~None~Silver Hand Knight~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 2/2 Squire"
-	name_CN = "白银之手 骑士"
+	name_CN = "白银之手骑士"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		self.Game.summon(Squire(self.Game, self.ID), self.pos+1, self.ID)
@@ -1715,7 +1715,7 @@ class GadgetzanAuctioneer(Minion):
 	mana, attack, health = 6, 4, 4
 	index = "Classic~Neutral~Minion~6~4~4~None~Gadgetzan Auctioneer"
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, draw a card"
-	name_CN = "加基森 拍卖师"
+	name_CN = "加基森拍卖师"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_GadgetzanAuctioneer(self)]
@@ -1959,7 +1959,7 @@ class RavenholdtAssassin(Minion):
 	mana, attack, health = 7, 7, 5
 	index = "Classic~Neutral~Minion~7~7~5~None~Ravenholdt Assassin~Stealth"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth"
-	name_CN = "拉文霍德 刺客"
+	name_CN = "拉文霍德刺客"
 	
 """Mana 8 Minions"""
 class ArcaneDevourer(Minion):
@@ -3200,7 +3200,7 @@ class GladiatorsLongbow(Weapon):
 	Class, name, description = "Hunter", "Gladiator's Longbow", "Your hero is Immune while attacking"
 	mana, attack, durability = 7, 5, 2
 	index = "Classic~Hunter~Weapon~7~5~2~Gladiator's Longbow"
-	name_CN = "角斗士的 长弓"
+	name_CN = "角斗士的长弓"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_GladiatorsLongbow(self)]
@@ -3227,7 +3227,7 @@ class KingKrush(Minion):
 	mana, attack, health = 9, 8, 8
 	index = "Classic~Hunter~Minion~9~8~8~Beast~King Krush~Charge~Legendary"
 	requireTarget, keyWord, description = False, "Charge", "Charge"
-	name_CN = "暴龙王 克鲁什"
+	name_CN = "暴龙王克鲁什"
 	
 	
 """Mage cards"""
@@ -3791,7 +3791,7 @@ class BlessedChampion(Spell):
 	requireTarget, mana = True, 5
 	index = "Classic~Paladin~Spell~5~Blessed Champion"
 	description = "Double a minion's Attack"
-	name_CN = "受祝福的 勇士"
+	name_CN = "受祝福的勇士"
 	def available(self):
 		return self.selectableMinionExists()
 		
@@ -4210,7 +4210,7 @@ class CabalShadowPriest(Minion):
 	mana, attack, health = 6, 4, 5
 	index = "Classic~Priest~Minion~6~4~5~None~Cabal Shadow Priest~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Take control of an enemy minion with 2 or less Attack"
-	name_CN = "秘教暗影 祭司"
+	name_CN = "秘教暗影祭司"
 	
 	def targetExists(self, choice=0):
 		return self.selectableEnemyMinionExists()
@@ -4510,7 +4510,7 @@ class SI7Agent(Minion):
 	mana, attack, health = 3, 3, 3
 	index = "Classic~Rogue~Minion~3~3~3~None~SI:7 Agent~Combo"
 	requireTarget, keyWord, description = True, "", "Combo: Deal 2 damage"
-	name_CN = "军情七处 特工"
+	name_CN = "军情七处特工"
 	
 	def returnTrue(self, choice=0):
 		return self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 0
@@ -4817,7 +4817,7 @@ class ManaTideTotem(Minion):
 	mana, attack, health = 3, 0, 3
 	index = "Classic~Shaman~Minion~3~0~3~Totem~Mana Tide Totem"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, draw a card"
-	name_CN = "法力之潮 图腾"
+	name_CN = "法力之潮图腾"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsBoard = [Trig_ManaTideTotem(self)]
@@ -5506,7 +5506,7 @@ class ArathiWeaponsmith(Minion):
 	mana, attack, health = 4, 3, 3
 	index = "Classic~Warrior~Minion~4~3~3~None~Arathi Weaponsmith~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Equip a 2/2 weapon"
-	name_CN = "阿拉希 武器匠"
+	name_CN = "阿拉希武器匠"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		self.Game.equipWeapon(BattleAxe(self.Game, self.ID))
