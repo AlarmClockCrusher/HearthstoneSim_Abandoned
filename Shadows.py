@@ -193,29 +193,15 @@ class ArcaneWatcher(Minion):
 		self.marks["Can't Attack"] = 1
 		
 	def hasSpellDamage(self):
-		if self.Game.status[self.ID]["Spell Damage"] > 0:
-			return True
-		for minion in self.Game.minions[self.ID]:
-			if minion.keyWords["Spell Damage"] > 0:
-				return True
-		return False
-		
+		return self.Game.status[self.ID]["Spell Damage"] > 0 \
+				or any(minion.keyWords["Spell Damage"] > 0 for minion in self.Game.minions[self.ID])
+				
 	def canAttack(self):
-		if self.actionable() == False:
-			return False
-		if self.attack < 1:
-			return False
-		if self.status["Frozen"] > 0:
-			return False
-		#THE CHARGE/RUSH MINIONS WILL GAIN ATTACKCHANCES WHEN THEY APPEAR
-		if self.attChances_base + self.attChances_extra <= self.attTimes:
-			return False
-		if self.marks["Can't Attack"] > 0: #如果自己的不能攻击标签还在，则必定没有被沉默
-			if self.hasSpellDamage() == False:
-				return False
-		return True
-		
-		
+		return self.actionable() and self.attack > 0 and self.status["Frozen"] < 1 \
+				and self.attChances_base + self.attChances_extra <= self.attTimes \
+				and (self.silenced or self.hasSpellDamage())
+				
+				
 class FacelessRager(Minion):
 	Class, race, name = "Neutral", "", "Faceless Rager"
 	mana, attack, health = 3, 5, 1
@@ -420,7 +406,7 @@ class StatAura_ProudDefender(GameRuleAura):
 	def __init__(self, entity):
 		self.entity = entity
 		self.signals = ["MinionAppears", "MinionDisappears"]
-		self.activated = False
+		self.on = False
 		self.auraAffected = []
 		
 	def auraAppears(self):
@@ -429,14 +415,14 @@ class StatAura_ProudDefender(GameRuleAura):
 			try: game.trigsBoard[ID][sig].append(self)
 			except: game.trigsBoard[ID][sig] = [self]
 		if not game.minionsonBoard(ID, target=self.entity): #No other minions on board
-			self.activated = True
+			self.on = True
 			Stat_Receiver(self.entity, self, 2, 0).effectStart()
 			
 	def auraDisappears(self):
 		for minion, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 		self.auraAffected = []
-		self.activated = False
+		self.on = False
 		game, ID = self.entity.Game, self.entity.ID
 		for sig in self.signals:
 			try: game.trigsBoard[ID][sig].remove(self)
@@ -451,13 +437,13 @@ class StatAura_ProudDefender(GameRuleAura):
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		otherMinions = self.entity.Game.minionsonBoard(self.entity.ID, self.entity)
-		if self.activated and otherMinions:
-			self.activated = False
+		if self.on and otherMinions:
+			self.on = False
 			for minion, receiver in self.auraAffected[:]:
 				receiver.effectClear()
 			self.auraAffected = []
-		elif not self.activated and not otherMinions:
-			self.activated = True
+		elif not self.on and not otherMinions:
+			self.on = True
 			Stat_Receiver(self.entity, self, 2, 0).effectStart()
 			
 			

@@ -1107,7 +1107,7 @@ class RagingWorgen(Minion):
 class HasAura_RaginWorgen(StatAura_Enrage):
 	def __init__(self, entity):
 		self.entity = entity
-		self.activated = False
+		self.on = False
 		self.auraAffected = [] #A list of (entity, receiver)
 		
 	def applies(self, target):
@@ -1552,7 +1552,7 @@ class StatAura_SpitefulSmith:
 	def __init__(self, entity):
 		self.entity = entity
 		self.signals = ["MinionStatCheck", "WeaponEquipped"]
-		self.activated = False
+		self.on = False
 		self.auraAffected = []
 		
 	def auraAppears(self):
@@ -1561,13 +1561,13 @@ class StatAura_SpitefulSmith:
 			try: minion.Game.trigsBoard[minion.ID][sig].append(self)
 			except: minion.Game.trigsBoard[minion.ID][sig] = [self]
 		if minion.onBoard:
-			if minion.health < minion.health_max and not self.activated:
-				self.activated = True
+			if minion.health < minion.health_max and not self.on:
+				self.on = True
 				weapon = minion.Game.availableWeapon(minion.ID)
 				if weapon: self.applies(weapon)
 				
 	def auraDisappears(self):
-		self.activated = False
+		self.on = False
 		for sig in self.signals:
 			try: self.entity.Game.trigsBoard[self.entity.ID][sig].append(self)
 			except: pass
@@ -1590,16 +1590,16 @@ class StatAura_SpitefulSmith:
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
 		if signal[0] == 'M':
-			if minion.health < minion.health_max and not self.activated:
-				self.activated = True
+			if minion.health < minion.health_max and not self.on:
+				self.on = True
 				weapon = minion.Game.availableWeapon(minion.ID)
 				if weapon: self.applies(weapon)
-			elif minion.health >= minion.health_max and self.activated:
-				self.activated = False
+			elif minion.health >= minion.health_max and self.on:
+				self.on = False
 				for weapon, receiver in self.auraAffected[:]:
 					receiver.effectClear()
 				self.auraAffected = []
-		elif self.activated:
+		elif self.on:
 			self.applies(subject)
 			
 	def selfCopy(self, recipient):
@@ -1610,7 +1610,7 @@ class StatAura_SpitefulSmith:
 			entityCopy = self.entity.createCopy(game)
 			Copy = self.selfCopy(entityCopy)
 			game.copiedObjs[self] = Copy
-			Copy.activated = self.activated
+			Copy.activated = self.on
 			for minion, receiver in self.auraAffected:
 				minionCopy = minion.createCopy(game)
 				index = minion.auraReceivers.index(receiver)

@@ -182,7 +182,7 @@ class Deathrattle_Minion(TrigBoard):
 			self.disconnect()
 			
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-		return target == self.entity
+		return self.entity.Game.status[self.entity.ID]["Deathrattle X"] < 1 and target == self.entity
 		
 		
 class Deathrattle_Weapon(TrigBoard):
@@ -207,7 +207,7 @@ class Deathrattle_Weapon(TrigBoard):
 		self.disconnect()
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-		return target == self.entity
+		return self.entity.Game.status[self.entity.ID]["Deathrattle X"] < 1 and target == self.entity
 		
 		
 class SecretTrigger(TrigBoard):
@@ -474,7 +474,7 @@ class Stat_Receiver:
 			obj.healthfromAura += self.healthGain
 		elif obj.type == "Hero":
 			obj.gainAttack(self.attGain, '')
-		else:
+		else: #For weapon
 			obj.gainStat(self.attGain, 0)
 		obj.attfromAura += self.attGain
 		obj.auraReceivers.append(self)
@@ -575,30 +575,27 @@ class StatAura_Enrage(HasAura_toMinion):
 	def __init__(self, entity, attack):
 		self.entity = entity
 		self.attack = attack
-		self.signals = ["MinionStatCheck"]
-		self.activated = False
+		self.on = False
 		self.auraAffected = []
 		
 	#光环开启和关闭都取消，因为要依靠随从自己的handleEnrage来触发
 	def auraAppears(self):
 		minion = self.entity
-		for sig in self.signals:
-			try: minion.Game.trigsBoard[minion.ID][sig].append(self)
-			except: minion.Game.trigsBoard[minion.ID][sig] = [self]
-		if minion.onBoard:
-			if minion.health < minion.health_max and not self.activated:
-				self.activated = True
-				self.applies(minion)
-				
+		try: minion.Game.trigsBoard[minion.ID]["MinionStatCheck"].append(self)
+		except: minion.Game.trigsBoard[minion.ID]["MinionStatCheck"] = [self]
+		if minion.onBoard and minion.health < minion.health_max and not self.on:
+			self.on = True
+			self.applies(minion)
+			
 	def auraDisappears(self):
-		self.activated = False
-		for sig in self.signals:
-			try: self.entity.Game.trigsBoard[self.entity.ID][sig].remove(self)
-			except: pass
+		self.on = False
+		try: self.entity.Game.trigsBoard[self.entity.ID]["MinionStatCheck"].remove(self)
+		except: pass
 		for minion, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 		self.auraAffected = []
 		
+	#To be overridden by other more unique enrage minions
 	def applies(self, target):
 		Stat_Receiver(target, self, self.attack, 0).effectStart()
 		
@@ -611,11 +608,11 @@ class StatAura_Enrage(HasAura_toMinion):
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
-		if minion.health < minion.health_max and not self.activated:
-			self.activated = True
+		if minion.health < minion.health_max and not self.on:
+			self.on = True
 			self.applies(minion)
-		elif minion.health >= minion.health_max and self.activated:
-			self.activated = False
+		elif minion.health >= minion.health_max and self.on:
+			self.on = False
 			for minion, receiver in self.auraAffected[:]:
 				receiver.effectClear()
 				
@@ -916,7 +913,7 @@ class ManaAura_1UsageEachTurn: #For Pint-sized Summoner, Kalecgos, etc
 			
 class TempManaEffect_Power:
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
-		self.blank_init(Game, ID, 0, -1)
+		self.blank_init(Game, ID, changeby, changeto)
 		
 	def blank_init(self, Game, ID, changeby, changeto):
 		self.Game, self.ID = Game, ID
@@ -953,7 +950,7 @@ class TempManaEffect_Power:
 		self.Game.Manas.calcMana_Powers()
 		
 	def auraDisappears(self):
-		for minion, manaMod in self.auraAffected[:]:
+		for power, manaMod in self.auraAffected[:]:
 			manaMod.getsRemoved()
 		self.auraAffected = []
 		try: self.Game.Manas.PowerAuras.remove(self)
@@ -979,3 +976,67 @@ class TempManaEffect_Power:
 			return Copy
 		else:
 			return game.copiedObjs[self]
+			
+			
+class ManaAura_Power:
+	def __init__(self, entity, changeby=0, changeto=-1):
+		self.blank_init(entity, changeby, changeto)
+		
+	def blank_init(self, entity, changeby, changeto):
+		self.entity = entity
+		self.changeby, self.changeto = changeby, changeto
+		self.auraAffected = []
+		
+	def manaAuraApplicable(self, subject):
+		return self.entity.manaAuraApplicable(subject)
+		
+	#signal有"CardEntersHand"和"ManaPaid",只要它们满足applicable就可以触发。
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard and self.manaAuraApplicable(subject) #Hero Power的出现是不传递holder而是直接传递subject
+		
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
+			self.effect(signal, ID, subject, target, number, comment)
+			
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.applies(subject)
+		
+	def applies(self, subject):
+		if self.manaAuraApplicable(subject):
+			manaMod = ManaMod(subject, self.changeby, self.changeto, self)
+			manaMod.applies()
+			self.auraAffected.append((subject, manaMod))
+			
+	def auraAppears(self):
+		game = self.entity.Game
+		self.applies(game.powers[1])
+		self.applies(game.powers[2])
+		try: game.trigsBoard[self.ID]["HeroPowerAcquired"].append(self)
+		except: game.trigsBoard[self.ID]["HeroPowerAcquired"] = [self]
+		game.Manas.calcMana_Powers()
+		
+	def auraDisappears(self):
+		for power, manaMod in self.auraAffected[:]:
+			manaMod.getsRemoved()
+		self.auraAffected = []
+		try: self.entity.Game.trigsBoard[self.entity.ID]["HeroPowerAcquired"].remove(self)
+		except: pass
+		self.entity.Game.Manas.calcMana_Powers()
+		
+	def selfCopy(self, game):
+		return type(self)(game, self.ID, self.changeby, self.changeto)
+		
+	def createCopy(self, game): #The recipient is the Game that handles the Aura.
+		if self not in game.copiedObjs:
+			Copy = self.selfCopy(game)
+			game.copiedObjs[self] = Copy
+			for power, manaMod in self.auraAffected:
+				powerCopy = power.createCopy(game)
+				manaModIndex = power.manaMods.index(manaMod)
+				manaModCopy = powerCopy.manaMods[manaModIndex]
+				manaModCopy.source = Copy
+				Copy.auraAffected.append((powerCopy, manaModCopy))
+			return Copy
+		else:
+			return game.copiedObjs[self]
+			

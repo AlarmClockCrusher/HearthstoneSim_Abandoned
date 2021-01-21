@@ -3434,7 +3434,7 @@ class StatAura_SurgingTempest:
 	def __init__(self, entity):
 		self.entity = entity
 		self.auraAffected = []
-		self.activated = False
+		self.on = False
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
@@ -3443,19 +3443,19 @@ class StatAura_SurgingTempest:
 		minion = self.entity
 		if minion.onBoard and ID == minion.ID:
 			isOverloaded = minion.Game.Manas.manasOverloaded[minion.ID] > 0 or minion.Game.Manas.manasLocked[minion.ID] > 0
-			if not isOverloaded and self.activated:
-				self.activated = False
+			if not isOverloaded and self.on:
+				self.on = False
 				for recipient, receiver in self.auraAffected[:]:
 					receiver.effectClear()
 				self.auraAffected = []
-			elif isOverloaded and not self.activated:
-				self.activated = True
+			elif isOverloaded and not self.on:
+				self.on = True
 				Stat_Receiver(minion, self, 1, 0).effectStart()
 				
 	def auraAppears(self):
 		minion = self.entity
 		if minion.Game.Manas.manasOverloaded[minion.ID] > 0 or minion.Game.Manas.manasLocked[minion.ID] > 0:
-			self.activated = True
+			self.on = True
 			Stat_Receiver(minion, self, 1, 0).effectStart()
 		try: minion.Game.trigsBoard[minion.ID]["OverloadCheck"].append(self)
 		except: minion.Game.trigsBoard[minion.ID]["OverloadCheck"] = [self]
@@ -3475,7 +3475,7 @@ class StatAura_SurgingTempest:
 			entityCopy = self.entity.createCopy(game)
 			Copy = self.selfCopy(entityCopy)
 			game.copiedObjs[self] = Copy
-			Copy.activated = self.activated
+			Copy.on = self.on
 			for minion, receiver in self.auraAffected:
 				minionCopy = minion.createCopy(game)
 				index = minion.auraReceivers.index(receiver)

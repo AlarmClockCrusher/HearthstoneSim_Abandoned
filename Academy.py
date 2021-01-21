@@ -3420,6 +3420,10 @@ class TidalWave(Spell):
 		self.blank_init(Game, ID)
 		self.keyWords["Lifesteal"] = 1
 		
+	def text(self, CHN):
+		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "吸血。对所有随从造成%d点伤害"%damage if CHN else "Lifesteal. Deal %d damage to all minions"%damage
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		minions = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)

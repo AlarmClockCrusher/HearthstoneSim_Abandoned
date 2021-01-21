@@ -171,7 +171,7 @@ class Trig_SoulboundAshtongue(TrigBoard):
 		return target == self.entity
 		
 	def text(self, CHN):
-		return "每当该随从受到伤害时，对你的英雄造成先是的伤害" if CHN \
+		return "每当该随从受到伤害时，对你的英雄造成等量的伤害" if CHN \
 				else "Whenever this minion takes damage, also deal that amount to your hero"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -326,32 +326,25 @@ class OverconfidentOrc(Minion):
 class StatAura_OverconfidentOrc(HasAura_toMinion):
 	def __init__(self, entity):
 		self.entity = entity
-		self.signals = ["MinionStatCheck"]
-		self.activated = False
+		self.on = False
 		self.auraAffected = []
 		
 	#光环开启和关闭都取消，因为要依靠随从自己的handleEnrage来触发
 	def auraAppears(self):
 		minion = self.entity
-		for sig in self.signals:
-			try: minion.Game.trigsBoard[minion.ID][sig].append(self)
-			except: minion.Game.trigsBoard[minion.ID][sig] = [self]
-		if minion.onBoard:
-			if minion.health == minion.health_max and not self.activated:
-				self.activated = True
-				self.applies(minion)
-				
+		try: minion.Game.trigsBoard[minion.ID]["MinionStatCheck"].append(self)
+		except: minion.Game.trigsBoard[minion.ID]["MinionStatCheck"] = [self]
+		if minion.onBoard and minion.health == minion.health_max and not self.on:
+			self.on = True
+			Stat_Receiver(minion, self, 2, 0).effectStart()
+			
 	def auraDisappears(self):
-		self.activated = False
-		for sig in self.signals:
-			try: self.entity.Game.trigsBoard[self.entity.ID][sig].append(self)
-			except: pass
+		self.on = False
+		try: self.entity.Game.trigsBoard[self.entity.ID]["MinionStatCheck"].append(self)
+		except: pass
 		for minion, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 		self.auraAffected = []
-		
-	def applies(self, target):
-		Stat_Receiver(target, self, 2, 0).effectStart()
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity and target.onBoard
@@ -362,11 +355,11 @@ class StatAura_OverconfidentOrc(HasAura_toMinion):
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
-		if minion.health == minion.health_max and not self.activated:
-			self.activated = True
-			self.applies(minion)
-		elif minion.health < minion.health_max and self.activated:
-			self.activated = False
+		if minion.health == minion.health_max and not self.on:
+			self.on = True
+			Stat_Receiver(minion, self, 2, 0).effectStart()
+		elif minion.health < minion.health_max and self.on:
+			self.on = False
 			for minion, receiver in self.auraAffected[:]:
 				receiver.effectClear()
 				

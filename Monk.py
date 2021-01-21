@@ -109,15 +109,6 @@ class MonksApprentice(Minion):
 	mana, attack, health = 1, 1, 3
 	index = "Basic~Monk~Minion~1~1~3~None~Monk's Apprentice"
 	requireTarget, keyWord, description = False, "", "While this minion has 2 or more Attack, it has Rush and Windfury"
-	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-		self.auras["RushandWindfury"] = None
-		self.triggers["StatChanges"] = [self.handleStatChange]
-		self.activated = False
-		
-	def handleStatChange(self):
-		self.auras["RushandWindfury"].handleStatChange()
-		
 			
 class ShaohaosProtection(Spell): #少昊的保护
 	#使一个友方随从获得+2生命值且无法成为法术或英雄技能的目标

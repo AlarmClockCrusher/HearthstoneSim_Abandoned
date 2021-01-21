@@ -66,7 +66,7 @@ class CostumedEntertainer(Minion):
 class HorrendousGrowth(Minion):
 	Class, race, name = "Neutral", "", "Horrendous Growth"
 	mana, attack, health = 2, 2, 2
-	index = "Darkmoon~Neutral~Minion~2~2~2~None~Horrendous Growth"
+	index = "Darkmoon~Neutral~Minion~2~2~2~None~Horrendous Growth~ToCorrupt"
 	requireTarget, keyWord, description = False, "", "Corrupt: Gain +1/+1. Can be Corrupted endlessly"
 	name_CN = "恐怖增生体"
 	def __init__(self, Game, ID):
@@ -76,7 +76,7 @@ class HorrendousGrowth(Minion):
 class HorrendousGrowthCorrupt_Mutable_3(Minion):
 	Class, race, name = "Neutral", "", "Horrendous Growth"
 	mana, attack, health = 2, 3, 3
-	index = "Darkmoon~Neutral~Minion~2~3~3~None~Horrendous Growth~Corrupted~Uncollectible"
+	index = "Darkmoon~Neutral~Minion~2~3~3~None~Horrendous Growth~ToCorrupt~Corrupted~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Corrupt: Gain +1/+1. Can be Corrupted endlessly"
 	name_CN = "恐怖增生体"
 	def __init__(self, Game, ID):
@@ -215,7 +215,7 @@ class BananaVendor(Minion):
 class DarkmoonDirigible(Minion):
 	Class, race, name = "Neutral", "Mech", "Darkmoon Dirigible"
 	mana, attack, health = 3, 3, 2
-	index = "Darkmoon~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield"
+	index = "Darkmoon~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield~ToCorrupt"
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield. Corrupt: Gain Rush"
 	name_CN = "暗月飞艇"
 	def __init__(self, Game, ID):
@@ -233,7 +233,7 @@ class DarkmoonDirigible_Corrupt(Minion):
 class DarkmoonStatue(Minion):
 	Class, race, name = "Neutral", "", "Darkmoon Statue"
 	mana, attack, health = 3, 0, 5
-	index = "Darkmoon~Neutral~Minion~3~0~5~None~Darkmoon Statue"
+	index = "Darkmoon~Neutral~Minion~3~0~5~None~Darkmoon Statue~ToCorrupt"
 	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack. Corrupt: This gains +4 Attack"
 	name_CN = "暗月雕像"
 	def __init__(self, Game, ID):
@@ -316,7 +316,7 @@ class CircusAmalgam(Minion):
 class CircusMedic(Minion):
 	Class, race, name = "Neutral", "", "Circus Medic"
 	mana, attack, health = 4, 3, 4
-	index = "Darkmoon~Neutral~Minion~4~3~4~None~Circus Medic~Battlecry"
+	index = "Darkmoon~Neutral~Minion~4~3~4~None~Circus Medic~Battlecry~ToCorrupt"
 	requireTarget, keyWord, description = True, "", "Battlecry: Restore 4 Health. Corrupt: Deal 4 damage instead"
 	name_CN = "马戏团医师"
 	def __init__(self, Game, ID):
@@ -387,7 +387,7 @@ class DarkmoonRider(Minion):
 class FleethoofPearltusk(Minion):
 	Class, race, name = "Neutral", "Beast", "Fleethoof Pearltusk"
 	mana, attack, health = 5, 4, 4
-	index = "Darkmoon~Neutral~Minion~5~4~4~Beast~Fleethoof Pearltusk~Rush"
+	index = "Darkmoon~Neutral~Minion~5~4~4~Beast~Fleethoof Pearltusk~Rush~ToCorrupt"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Corrupt: Gain +4/+4"
 	name_CN = "迅蹄珠齿象"
 	def __init__(self, Game, ID):
@@ -557,7 +557,7 @@ class RotateThatWay:
 class Strongman(Minion):
 	Class, race, name = "Neutral", "", "Strongman"
 	mana, attack, health = 7, 6, 6
-	index = "Darkmoon~Neutral~Minion~7~6~6~None~Strongman~Taunt"
+	index = "Darkmoon~Neutral~Minion~7~6~6~None~Strongman~Taunt~ToCorrupt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Corrupt: This costs (0)"
 	name_CN = "大力士"
 	def __init__(self, Game, ID):
@@ -1292,7 +1292,7 @@ class DreadlordsBite(Weapon):
 class FelsteelExecutioner(Minion):
 	Class, race, name = "Demon Hunter", "Elemental", "Felsteel Executioner"
 	mana, attack, health = 3, 4, 3
-	index = "Darkmoon~Demon Hunter~Minion~3~4~3~Elemental~Felsteel Executioner"
+	index = "Darkmoon~Demon Hunter~Minion~3~4~3~Elemental~Felsteel Executioner~ToCorrupt"
 	requireTarget, keyWord, description = False, "", "Corrupt: Become a weapon"
 	name_CN = "魔钢处决者"
 	def __init__(self, Game, ID):
@@ -1323,7 +1323,7 @@ class LineHopper(Minion):
 class InsatiableFelhound(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Insatiable Felhound"
 	mana, attack, health = 3, 2, 5
-	index = "Darkmoon~Demon Hunter~Minion~3~2~5~Demon~Insatiable Felhound~Taunt"
+	index = "Darkmoon~Demon Hunter~Minion~3~2~5~Demon~Insatiable Felhound~Taunt~ToCorrupt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Corrupt: Gain +1/+1 and Lifesteal"
 	name_CN = "贪食地狱犬"
 	def __init__(self, Game, ID):
@@ -1710,7 +1710,7 @@ class SolarEclipse_Effect:
 class FaireArborist(Minion):
 	Class, race, name = "Druid", "", "Faire Arborist"
 	mana, attack, health = 3, 2, 2
-	index = "Darkmoon~Druid~Minion~3~2~2~None~Faire Arborist~Choose One"
+	index = "Darkmoon~Druid~Minion~3~2~2~None~Faire Arborist~Choose One~ToCorrupt"
 	requireTarget, keyWord, description = False, "", "Choose One- Draw a card; or Summon a 2/2 Treant. Corrupt: Do both"
 	name_CN = "马戏团树艺师"
 	def __init__(self, Game, ID):
@@ -1752,7 +1752,7 @@ class DigItUp_Option(ChooseOneOption):
 class MoontouchedAmulet(Spell):
 	Class, name = "Druid", "Moontouched Amulet"
 	requireTarget, mana = False, 3
-	index = "Darkmoon~Druid~Spell~3~Moontouched Amulet"
+	index = "Darkmoon~Druid~Spell~3~Moontouched Amulet~ToCorrupt"
 	description = "Give your hero +4 Attack this turn. Corrupt: And gain 6 Armor"
 	name_CN = "月触项链"
 	def __init__(self, Game, ID):
@@ -1931,7 +1931,7 @@ class MysteryWinner(Minion):
 class DancingCobra(Minion):
 	Class, race, name = "Hunter", "Beast", "Dancing Cobra"
 	mana, attack, health = 2, 1, 5
-	index = "Darkmoon~Hunter~Minion~2~1~5~Beast~Dancing Cobra"
+	index = "Darkmoon~Hunter~Minion~2~1~5~Beast~Dancing Cobra~ToCorrupt"
 	requireTarget, keyWord, description = False, "", "Corrupt: Gain Poisonous"
 	name_CN = "舞动的眼镜蛇"
 	def __init__(self, Game, ID):
@@ -1949,7 +1949,7 @@ class DancingCobra_Corrupt(Minion):
 class DontFeedtheAnimals(Spell):
 	Class, name = "Hunter", "Don't Feed the Animals"
 	requireTarget, mana = False, 2
-	index = "Darkmoon~Hunter~Spell~2~Don't Feed the Animals"
+	index = "Darkmoon~Hunter~Spell~2~Don't Feed the Animals~ToCorrupt"
 	description = "Give all Beasts in your hand +1/+1. Corrupt: Give them +2/+2 instead"
 	name_CN = "请勿投食"
 	def __init__(self, Game, ID):
@@ -2317,7 +2317,7 @@ class OccultConjurer(Minion):
 class RingToss(Spell):
 	Class, name = "Mage", "Ring Toss"
 	requireTarget, mana = False, 4
-	index = "Darkmoon~Mage~Spell~4~Ring Toss"
+	index = "Darkmoon~Mage~Spell~4~Ring Toss~ToCorrupt"
 	description = "Discover a Secret and cast it. Corrupt: Discover 2 instead"
 	name_CN = "套圈圈"
 	poolIdentifier = "Mage Secrets"
@@ -2400,7 +2400,7 @@ class RingToss_Corrupt(Spell):
 class FireworkElemental(Minion):
 	Class, race, name = "Mage", "Elemental", "Firework Elemental"
 	mana, attack, health = 5, 3, 5
-	index = "Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry"
+	index = "Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry~ToCorrupt"
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal 3 damage to a minion. Corrupt: Deal 12 damage instead"
 	name_CN = "焰火元素"
 	def __init__(self, Game, ID):
@@ -2637,7 +2637,7 @@ class Trig_CarnivalBarker(TrigBoard):
 class DayattheFaire(Spell):
 	Class, name = "Paladin", "Day at the Faire"
 	requireTarget, mana = False, 3
-	index = "Darkmoon~Paladin~Spell~3~Day at the Faire"
+	index = "Darkmoon~Paladin~Spell~3~Day at the Faire~ToCorrupt"
 	description = "Summon 3 Silver Hand Recruits. Corrupt: Summon 5"
 	name_CN = "游园日"
 	def __init__(self, Game, ID):
@@ -2685,7 +2685,7 @@ class BalloonMerchant(Minion):
 class CarouselGryphon(Minion):
 	Class, race, name = "Paladin", "Mech", "Carousel Gryphon"
 	mana, attack, health = 5, 5, 5
-	index = "Darkmoon~Paladin~Minion~5~5~5~Mech~Carousel Gryphon~Divine Shield"
+	index = "Darkmoon~Paladin~Minion~5~5~5~Mech~Carousel Gryphon~Divine Shield~ToCorrupt"
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield. Corrupt: Gain +3/+3 and Taunt"
 	name_CN = "旋转木马"
 	def __init__(self, Game, ID):
@@ -2786,7 +2786,7 @@ class HighExarchYrel(Minion):
 class Insight(Spell):
 	Class, name = "Priest", "Insight"
 	requireTarget, mana = False, 2
-	index = "Darkmoon~Priest~Spell~2~Insight"
+	index = "Darkmoon~Priest~Spell~2~Insight~ToCorrupt"
 	description = "Draw a minion. Corrupt: Reduce its Cost by (2)"
 	name_CN = "洞察"
 	def __init__(self, Game, ID):
@@ -2830,7 +2830,7 @@ class Insight_Corrupt(Spell):
 class FairgroundFool(Minion):
 	Class, race, name = "Priest", "", "Fairground Fool"
 	mana, attack, health = 3, 4, 3
-	index = "Darkmoon~Priest~Minion~3~4~3~None~Fairground Fool~Taunt"
+	index = "Darkmoon~Priest~Minion~3~4~3~None~Fairground Fool~Taunt~ToCorrupt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Corrupt: Gain +4 Health"
 	name_CN = "游乐园小丑"
 	def __init__(self, Game, ID):
@@ -2918,7 +2918,7 @@ class PalmReading(Spell):
 class AuspiciousSpirits(Spell):
 	Class, name = "Priest", "Auspicious Spirits"
 	requireTarget, mana = False, 4
-	index = "Darkmoon~Priest~Spell~4~Auspicious Spirits"
+	index = "Darkmoon~Priest~Spell~4~Auspicious Spirits~ToCorrupt"
 	description = "Summon a random 4-Cost minion. Corrupt: Summon a 7-Cost minion instead"
 	name_CN = "吉兆"
 	poolIdentifier = "4-Cost Minions to Summon"
@@ -3142,7 +3142,7 @@ class Trig_ShadowClone(SecretTrigger):
 class SweetTooth(Minion):
 	Class, race, name = "Rogue", "", "Sweet Tooth"
 	mana, attack, health = 2, 3, 2
-	index = "Darkmoon~Rogue~Minion~2~3~2~None~Sweet Tooth"
+	index = "Darkmoon~Rogue~Minion~2~3~2~None~Sweet Tooth~ToCorrupt"
 	requireTarget, keyWord, description = False, "", "Corrupt: Gain +2 Attack and Stealth"
 	name_CN = "甜食狂"
 	def __init__(self, Game, ID):
@@ -3514,7 +3514,7 @@ class Trig_Magicfin(TrigBoard):
 class PitMaster(Minion):
 	Class, race, name = "Shaman", "", "Pit Master"
 	mana, attack, health = 3, 1, 2
-	index = "Darkmoon~Shaman~Minion~3~1~2~None~Pit Master~Battlecry"
+	index = "Darkmoon~Shaman~Minion~3~1~2~None~Pit Master~Battlecry~ToCorrupt"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 3/2 Duelist. Corrupt: Summon two"
 	name_CN = "死斗场管理者"
 	def __init__(self, Game, ID):
@@ -3593,7 +3593,7 @@ class Trig_WhackAGnollHammer(TrigBoard):
 class DunkTank(Spell):
 	Class, name = "Shaman", "Dunk Tank"
 	requireTarget, mana = True, 4
-	index = "Darkmoon~Shaman~Spell~4~Dunk Tank"
+	index = "Darkmoon~Shaman~Spell~4~Dunk Tank~ToCorrupt"
 	description = "Deal 4 damage. Corrupt: Then deal 2 damage to all enemy minions"
 	name_CN = "深水炸弹"
 	def __init__(self, Game, ID):
@@ -3833,7 +3833,7 @@ class ManariMosher_Effect:
 class CascadingDisaster(Spell):
 	Class, name = "Warlock", "Cascading Disaster"
 	requireTarget, mana = False, 4
-	index = "Darkmoon~Warlock~Spell~4~Cascading Disaster"
+	index = "Darkmoon~Warlock~Spell~4~Cascading Disaster~ToCorrupt"
 	description = "Destroy a random enemy minion. Corrupt: Destroy 2. Corrupt Again: Destroy 3"
 	name_CN = "连环灾难"
 	def __init__(self, Game, ID):
@@ -3856,7 +3856,7 @@ class CascadingDisaster(Spell):
 class CascadingDisaster_Corrupt(Spell):
 	Class, name = "Warlock", "Cascading Disaster"
 	requireTarget, mana = False, 4
-	index = "Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted~Uncollectible"
+	index = "Darkmoon~Warlock~Spell~4~Cascading Disaster~ToCorrupt~Corrupted~Uncollectible"
 	description = "Corrupted. Destroy 2 random enemy minions. Corrupt: Destroy 3"
 	name_CN = "连环灾难"
 	def __init__(self, Game, ID):
@@ -3878,7 +3878,7 @@ class CascadingDisaster_Corrupt(Spell):
 class CascadingDisaster_Corrupt2(Spell):
 	Class, name = "Warlock", "Cascading Disaster"
 	requireTarget, mana = False, 4
-	index = "Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted~2~Uncollectible"
+	index = "Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted~Uncollectible"
 	description = "Corrupted. Destroy 3 random enemy minions"
 	name_CN = "连环灾难"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
@@ -3965,7 +3965,7 @@ class FieryImp(Minion):
 class Tickatus(Minion):
 	Class, race, name = "Warlock", "Demon", "Tickatus"
 	mana, attack, health = 6, 8, 8
-	index = "Darkmoon~Warlock~Minion~6~8~8~Demon~Tickatus~Battlecry~Legendary"
+	index = "Darkmoon~Warlock~Minion~6~8~8~Demon~Tickatus~Battlecry~ToCorrupt~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Remove the top 5 cards from your deck. Corrupt: Your opponent's instead"
 	name_CN = "提克特斯"
 	def __init__(self, Game, ID):
@@ -3991,7 +3991,7 @@ class Tickatus_Corrupt(Minion):
 class StageDive(Spell):
 	Class, name = "Warrior", "Stage Dive"
 	requireTarget, mana = False, 1
-	index = "Darkmoon~Warrior~Spell~1~Stage Dive"
+	index = "Darkmoon~Warrior~Spell~1~Stage Dive~ToCorrupt"
 	description = "Draw a Rush minion. Corrupt: Give it +2/+1"
 	name_CN = "舞台跳水"
 	def __init__(self, Game, ID):
@@ -4254,36 +4254,36 @@ class Trig_TentTrasher(TrigHand):
 		
 Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battlecry": SafetyInspector,
 					"Darkmoon~Neutral~Minion~2~1~2~None~Costumed Entertainer~Battlecry": CostumedEntertainer,
-					"Darkmoon~Neutral~Minion~2~2~2~None~Horrendous Growth": HorrendousGrowth,
-					"Darkmoon~Neutral~Minion~2~3~3~None~Horrendous Growth~Corrupted~Uncollectible": HorrendousGrowthCorrupt_Mutable_3,
+					"Darkmoon~Neutral~Minion~2~2~2~None~Horrendous Growth~ToCorrupt": HorrendousGrowth,
+					"Darkmoon~Neutral~Minion~2~3~3~None~Horrendous Growth~ToCorrupt~Corrupted~Uncollectible": HorrendousGrowthCorrupt_Mutable_3,
 					"Darkmoon~Neutral~Minion~2~2~3~None~Parade Leader": ParadeLeader,
 					"Darkmoon~Neutral~Minion~2~2~3~Murloc~Prize Vendor~Battlecry": PrizeVendor,
 					"Darkmoon~Neutral~Minion~2~5~1~Elemental~Rock Rager~Taunt": RockRager,
 					"Darkmoon~Neutral~Minion~2~3~2~None~Showstopper~Deathrattle": Showstopper,
 					"Darkmoon~Neutral~Minion~2~2~1~None~Wriggling Horror~Battlecry": WrigglingHorror,
 					"Darkmoon~Neutral~Minion~3~2~4~None~Banana Vendor~Battlecry": BananaVendor,
-					"Darkmoon~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield": DarkmoonDirigible,
+					"Darkmoon~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield~ToCorrupt": DarkmoonDirigible,
 					"Darkmoon~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield~Rush~Corrupted~Uncollectible": DarkmoonDirigible_Corrupt,
-					"Darkmoon~Neutral~Minion~3~0~5~None~Darkmoon Statue": DarkmoonStatue,
+					"Darkmoon~Neutral~Minion~3~0~5~None~Darkmoon Statue~ToCorrupt": DarkmoonStatue,
 					"Darkmoon~Neutral~Minion~3~4~5~None~Darkmoon Statue~Corrupted~Uncollectible": DarkmoonStatue_Corrupt,
 					"Darkmoon~Neutral~Minion~3~3~2~Elemental~Gyreworm~Battlecry": Gyreworm,
 					"Darkmoon~Neutral~Minion~3~2~2~None~Inconspicuous Rider~Battlecry": InconspicuousRider,
 					"Darkmoon~Neutral~Minion~3~4~4~None~K'thir Ritualist~Taunt~Battlecry": KthirRitualist,
 					"Darkmoon~Neutral~Minion~4~4~5~Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem~Circus Amalgam~Taunt": CircusAmalgam,
-					"Darkmoon~Neutral~Minion~4~3~4~None~Circus Medic~Battlecry": CircusMedic,
+					"Darkmoon~Neutral~Minion~4~3~4~None~Circus Medic~Battlecry~ToCorrupt": CircusMedic,
 					"Darkmoon~Neutral~Minion~4~3~4~None~Circus Medic~Battlecry~Corrupted~Uncollectible": CircusMedic_Corrupt,
 					"Darkmoon~Neutral~Minion~4~3~5~Elemental~Fantastic Firebird~Windfury": FantasticFirebird,
 					"Darkmoon~Neutral~Minion~4~3~4~None~Knife Vendor~Battlecry": KnifeVendor,
 					"Darkmoon~Neutral~Minion~5~3~2~None~Derailed Coaster~Battlecry": DerailedCoaster,
 					"Darkmoon~Neutral~Minion~1~1~1~None~Darkmoon Rider~Rush~Uncollectible": DarkmoonRider,
-					"Darkmoon~Neutral~Minion~5~4~4~Beast~Fleethoof Pearltusk~Rush": FleethoofPearltusk,
+					"Darkmoon~Neutral~Minion~5~4~4~Beast~Fleethoof Pearltusk~Rush~ToCorrupt": FleethoofPearltusk,
 					"Darkmoon~Neutral~Minion~5~8~8~Beast~Fleethoof Pearltusk~Rush~Corrupted~Uncollectible": FleethoofPearltusk_Corrupt,
 					"Darkmoon~Neutral~Minion~5~6~7~None~Optimistic Ogre": OptimisticOgre,
 					"Darkmoon~Neutral~Minion~6~6~3~Mech~Claw Machine~Rush~Deathrattle": ClawMachine,
 					"Darkmoon~Neutral~Minion~7~4~4~None~Silas Darkmoon~Battlecry~Legendary": SilasDarkmoon,
-					"Darkmoon~Neutral~Minion~7~6~6~None~Strongman~Taunt": Strongman,
+					"Darkmoon~Neutral~Minion~7~6~6~None~Strongman~Taunt~ToCorrupt": Strongman,
 					"Darkmoon~Neutral~Minion~0~6~6~None~Strongman~Taunt~Corrupted~Uncollectible": Strongman_Corrupt,
-					"Darkmoon~Neutral~Minion~9~4~4~None~Carnival Clown~Taunt~Battlecry": CarnivalClown,
+					"Darkmoon~Neutral~Minion~9~4~4~None~Carnival Clown~Taunt~Battlecry~ToCorrupt": CarnivalClown,
 					"Darkmoon~Neutral~Minion~9~4~4~None~Carnival Clown~Taunt~Battlecry~Corrupted~Uncollectible": CarnivalClown_Corrupt,
 					"Darkmoon~Neutral~Spell~5~Body of C'Thun~Uncollectible": BodyofCThun,
 					"Darkmoon~Neutral~Minion~6~6~6~None~C'Thun's Body~Taunt~Uncollectible": CThunsBody,
@@ -4303,10 +4303,10 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Demon Hunter~Minion~2~2~3~None~Redeemed Pariah": RedeemedPariah,
 					"Darkmoon~Demon Hunter~Spell~3~Acrobatics": Acrobatics,
 					"Darkmoon~Demon Hunter~Weapon~3~3~2~Dreadlord's Bite~Outcast": DreadlordsBite,
-					"Darkmoon~Demon Hunter~Minion~3~4~3~Elemental~Felsteel Executioner": FelsteelExecutioner,
+					"Darkmoon~Demon Hunter~Minion~3~4~3~Elemental~Felsteel Executioner~ToCorrupt": FelsteelExecutioner,
 					"Darkmoon~Demon Hunter~Weapon~3~4~3~Felsteel Executioner~Corrupted~Uncollectible": FelsteelExecutioner_Corrupt,
 					"Darkmoon~Demon Hunter~Minion~3~3~4~None~Line Hopper": LineHopper,
-					"Darkmoon~Demon Hunter~Minion~3~2~5~Demon~Insatiable Felhound~Taunt": InsatiableFelhound,
+					"Darkmoon~Demon Hunter~Minion~3~2~5~Demon~Insatiable Felhound~Taunt~ToCorrupt": InsatiableFelhound,
 					"Darkmoon~Demon Hunter~Minion~3~3~6~Demon~Insatiable Felhound~Taunt~Lifesteal~Corrupt~Uncollectible": InsatiableFelhound_Corrupt,
 					"Darkmoon~Demon Hunter~Spell~3~Relentless Pursuit": RelentlessPursuit,
 					"Darkmoon~Demon Hunter~Minion~3~4~1~None~Stiltstepper~Battlecry": Stiltstepper,
@@ -4320,9 +4320,9 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Druid~Spell~2~Guess the Weight": GuesstheWeight,
 					"Darkmoon~Druid~Spell~2~Lunar Eclipse": LunarEclipse,
 					"Darkmoon~Druid~Spell~2~Solar Eclipse": SolarEclipse,
-					"Darkmoon~Druid~Minion~3~2~2~None~Faire Arborist~Choose One": FaireArborist,
+					"Darkmoon~Druid~Minion~3~2~2~None~Faire Arborist~Choose One~ToCorrupt": FaireArborist,
 					"Darkmoon~Druid~Minion~3~2~2~None~Faire Arborist~Corrupted~Uncollectible": FaireArborist_Corrupt,
-					"Darkmoon~Druid~Spell~3~Moontouched Amulet": MoontouchedAmulet,
+					"Darkmoon~Druid~Spell~3~Moontouched Amulet~ToCorrupt": MoontouchedAmulet,
 					"Darkmoon~Druid~Spell~3~Moontouched Amulet~Corrupted~Uncollectible": MoontouchedAmulet_Corrupt,
 					"Darkmoon~Druid~Minion~4~2~2~None~Kiri, Chosen of Elune~Battlecry~Legendary": KiriChosenofElune,
 					"Darkmoon~Druid~Minion~5~4~6~None~Greybough~Taunt~Deathrattle~Legendary": Greybough,
@@ -4331,9 +4331,9 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Druid~Minion~9~10~10~Elemental~Fizzy Elemental~Rush~Taunt": FizzyElemental,
 					#Hunter Cards
 					"Darkmoon~Hunter~Minion~1~1~1~None~Mystery Winner~Battlecry": MysteryWinner,
-					"Darkmoon~Hunter~Minion~2~1~5~Beast~Dancing Cobra": DancingCobra,
+					"Darkmoon~Hunter~Minion~2~1~5~Beast~Dancing Cobra~ToCorrupt": DancingCobra,
 					"Darkmoon~Hunter~Minion~2~1~5~Beast~Dancing Cobra~Poisonous~Corrupted~Uncollectible": DancingCobra_Corrupt,
-					"Darkmoon~Hunter~Spell~2~Don't Feed the Animals": DontFeedtheAnimals,
+					"Darkmoon~Hunter~Spell~2~Don't Feed the Animals~ToCorrupt": DontFeedtheAnimals,
 					"Darkmoon~Hunter~Spell~2~Don't Feed the Animals~Corrupted~Uncollectible": DontFeedtheAnimals_Corrupt,
 					"Darkmoon~Hunter~Spell~2~Open the Cages~~Secret": OpentheCages,
 					"Darkmoon~Hunter~Spell~3~Petting Zoo": PettingZoo,
@@ -4350,9 +4350,9 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Mage~Minion~2~2~3~None~Game Master": GameMaster,
 					"Darkmoon~Mage~Spell~3~Rigged Faire Game~~Secret": RiggedFaireGame,
 					"Darkmoon~Mage~Minion~4~4~4~None~Occult Conjurer~Battlecry": OccultConjurer,
-					"Darkmoon~Mage~Spell~4~Ring Toss": RingToss,
+					"Darkmoon~Mage~Spell~4~Ring Toss~ToCorrupt": RingToss,
 					"Darkmoon~Mage~Spell~4~Ring Toss~Corrupted~Uncollectible": RingToss_Corrupt,
-					"Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry": FireworkElemental,
+					"Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry~ToCorrupt": FireworkElemental,
 					"Darkmoon~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry~Corrupted~Uncollectible": FireworkElemental_Corrupt,
 					"Darkmoon~Mage~Minion~6~5~5~None~Sayge, Seer of Darkmoon~Battlecry~Legendary": SaygeSeerofDarkmoon,
 					"Darkmoon~Mage~Spell~7~Mask of C'Thun": MaskofCThun,
@@ -4363,23 +4363,23 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Paladin~Minion~2~2~3~Murloc~Redscale Dragontamer~Battlecry": RedscaleDragontamer,
 					"Darkmoon~Paladin~Spell~2~Snack Run": SnackRun,
 					"Darkmoon~Paladin~Minion~3~3~2~None~Carnival Barker": CarnivalBarker,
-					"Darkmoon~Paladin~Spell~3~Day at the Faire": DayattheFaire,
+					"Darkmoon~Paladin~Spell~3~Day at the Faire~ToCorrupt": DayattheFaire,
 					"Darkmoon~Paladin~Spell~3~Day at the Faire~Corrupted~Uncollectible": DayattheFaire_Corrupt,
 					"Darkmoon~Paladin~Minion~4~3~5~None~Balloon Merchant~Battlecry": BalloonMerchant,
-					"Darkmoon~Paladin~Minion~5~5~5~Mech~Carousel Gryphon~Divine Shield": CarouselGryphon,
+					"Darkmoon~Paladin~Minion~5~5~5~Mech~Carousel Gryphon~Divine Shield~ToCorrupt": CarouselGryphon,
 					"Darkmoon~Paladin~Minion~5~8~8~Mech~Carousel Gryphon~Divine Shield~Taunt~Corrupted~Uncollectible": CarouselGryphon_Corrupt,
 					"Darkmoon~Paladin~Minion~5~5~5~Demon~Lothraxion the Redeemed~Battlecry~Legendary": LothraxiontheRedeemed,
 					"Darkmoon~Paladin~Weapon~6~3~3~Hammer of the Naaru~Battlecry": HammeroftheNaaru,
 					"Darkmoon~Paladin~Minion~6~6~6~Elemental~Holy Elemental~Taunt~Uncollectible": HolyElemental,
 					"Darkmoon~Paladin~Minion~8~7~5~None~High Exarch Yrel~Battlecry~Legendary": HighExarchYrel,
 					#Priest Cards
-					"Darkmoon~Priest~Spell~2~Insight": Insight,
+					"Darkmoon~Priest~Spell~2~Insight~ToCorrupt": Insight,
 					"Darkmoon~Priest~Spell~2~Insight~Corrupted~Uncollectible": Insight_Corrupt,
-					"Darkmoon~Priest~Minion~3~4~3~None~Fairground Fool~Taunt": FairgroundFool,
+					"Darkmoon~Priest~Minion~3~4~3~None~Fairground Fool~Taunt~ToCorrupt": FairgroundFool,
 					"Darkmoon~Priest~Minion~3~4~7~None~Fairground Fool~Taunt~Corrupted~Uncollectible": FairgroundFool_Corrupt,
 					"Darkmoon~Priest~Minion~3~2~5~None~Nazmani Bloodweaver": NazmaniBloodweaver,
 					"Darkmoon~Priest~Spell~3~Palm Reading": PalmReading,
-					"Darkmoon~Priest~Spell~4~Auspicious Spirits": AuspiciousSpirits,
+					"Darkmoon~Priest~Spell~4~Auspicious Spirits~ToCorrupt": AuspiciousSpirits,
 					"Darkmoon~Priest~Spell~4~Auspicious Spirits~Corrupted~Uncollectible": AuspiciousSpirits_Corrupt,
 					"Darkmoon~Priest~Minion~4~4~4~None~The Nameless One~Battlecry~Legendary": TheNamelessOne,
 					"Darkmoon~Priest~Minion~5~3~3~Mech~Fortune Teller~Taunt~Battlecry": FortuneTeller,
@@ -4390,7 +4390,7 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Rogue~Minion~1~2~1~Pirate~Prize Plunderer~Combo": PrizePlunderer,
 					"Darkmoon~Rogue~Minion~2~3~2~None~Foxy Fraud~Battlecry": FoxyFraud,
 					"Darkmoon~Rogue~Spell~2~Shadow Clone~~Secret": ShadowClone,
-					"Darkmoon~Rogue~Minion~2~3~2~None~Sweet Tooth": SweetTooth,
+					"Darkmoon~Rogue~Minion~2~3~2~None~Sweet Tooth~ToCorrupt": SweetTooth,
 					"Darkmoon~Priest~Minion~2~5~2~None~Sweet Tooth~Stealth~Corrupted~Uncollectible": SweetTooth_Corrupt,
 					"Darkmoon~Rogue~Spell~2~Swindle~Combo": Swindle,
 					"Darkmoon~Rogue~Minion~2~3~2~None~Tenwu of the Red Smoke~Battlecry~Legendary": TenwuoftheRedSmoke,
@@ -4407,11 +4407,11 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Shaman~Minion~2~3~2~None~Pavilion Duelist~Uncollectible": PavilionDuelist,
 					"Darkmoon~Shaman~Minion~3~0~4~Totem~Grand Totem Eys'or~Legendary": GrandTotemEysor,
 					"Darkmoon~Shaman~Minion~3~3~4~Murloc~Magicfin": Magicfin,
-					"Darkmoon~Shaman~Minion~3~1~2~None~Pit Master~Battlecry": PitMaster,
+					"Darkmoon~Shaman~Minion~3~1~2~None~Pit Master~Battlecry~ToCorrupt": PitMaster,
 					"Darkmoon~Shaman~Minion~3~1~2~None~Pit Master~Battlecry~Corrupted~Uncollectible": PitMaster_Corrupt,
 					"Darkmoon~Shaman~Spell~3~Stormstrike": Stormstrike,
 					"Darkmoon~Shaman~Weapon~3~3~2~Whack-A-Gnoll Hammer": WhackAGnollHammer,
-					"Darkmoon~Shaman~Spell~4~Dunk Tank": DunkTank,
+					"Darkmoon~Shaman~Spell~4~Dunk Tank~ToCorrupt": DunkTank,
 					"Darkmoon~Shaman~Spell~4~Dunk Tank~Corrupted~Uncollectible": DunkTank_Corrupt,
 					"Darkmoon~Shaman~Minion~5~4~5~None~Inara Stormcrash~Legendary": InaraStormcrash,
 					#Warlock Cards
@@ -4419,18 +4419,18 @@ Darkmoon_Indices  = {"Darkmoon~Neutral~Minion~1~1~3~None~Safety Inspector~Battle
 					"Darkmoon~Warlock~Minion~2~1~5~Demon~Midway Maniac~Taunt": MidwayManiac,
 					"Darkmoon~Warlock~Spell~3~Free Admission": FreeAdmission,
 					"Darkmoon~Warlock~Minion~3~3~4~Demon~Man'ari Mosher~Battlecry": ManariMosher,
-					"Darkmoon~Warlock~Spell~4~Cascading Disaster": CascadingDisaster,
-					"Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted~Uncollectible": CascadingDisaster_Corrupt,
-					"Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted~2~Uncollectible": CascadingDisaster_Corrupt2,
+					"Darkmoon~Warlock~Spell~4~Cascading Disaster~ToCorrupt": CascadingDisaster,
+					"Darkmoon~Warlock~Spell~4~Cascading Disaster~ToCorrupt~Corrupted~Uncollectible": CascadingDisaster_Corrupt,
+					"Darkmoon~Warlock~Spell~4~Cascading Disaster~Corrupted~Uncollectible": CascadingDisaster_Corrupt2,
 					"Darkmoon~Warlock~Minion~3~3~3~None~Revenant Rascal~Battlecry": RevenantRascal,
 					"Darkmoon~Warlock~Minion~4~4~3~Demon~Fire Breather~Battlecry": FireBreather,
 					"Darkmoon~Warlock~Spell~6~Deck of Chaos~Legendary": DeckofChaos,
 					"Darkmoon~Warlock~Minion~6~6~4~Demon~Ring Matron~Taunt~Deathrattle": RingMatron,
 					"Darkmoon~Warlock~Minion~2~3~2~Demon~Fiery Imp~Uncollectible": FieryImp,
-					"Darkmoon~Warlock~Minion~6~8~8~Demon~Tickatus~Battlecry~Legendary": Tickatus,
+					"Darkmoon~Warlock~Minion~6~8~8~Demon~Tickatus~Battlecry~ToCorrupt~Legendary": Tickatus,
 					"Darkmoon~Warlock~Minion~6~8~8~Demon~Tickatus~Battlecry~Corrupted~Legendary~Uncollectible": Tickatus_Corrupt,
 					#Warrior Cards
-					"Darkmoon~Warrior~Spell~1~Stage Dive": StageDive,
+					"Darkmoon~Warrior~Spell~1~Stage Dive~ToCorrupt": StageDive,
 					"Darkmoon~Warrior~Spell~1~Stage Dive~Corrupted~Uncollectible": StageDive_Corrupt,
 					"Darkmoon~Warrior~Minion~2~1~3~Mech~Bumper Car~Rush~Deathrattle": BumperCar,
 					"Darkmoon~Warrior~Minion~2~1~4~None~E.T.C., God of Metal~Legendary": ETCGodofMetal,

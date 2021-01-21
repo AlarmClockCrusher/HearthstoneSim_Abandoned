@@ -17,7 +17,7 @@ gameStatusDict = {"Immune": "你的英雄免疫", "Immune2NextTurn": "你的英�
 				"Heal to Damage": "你的治疗改为造成伤害", "Lifesteal Damages Enemy": "你的吸血会对敌方英雄造成伤害，而非治疗你",
 				"Choose Both": "你的抉择卡牌可以同时拥有两种效果",
 				"Battlecry x2": "你的战吼会触发两次", "Shark Battlecry x2": "你的战吼或连击会触发两次",
-				"Deathrattle x2": "你的随从的亡语触发两次", "Weapon Deathrattle x2": "你的武器的亡语触发两次",
+				"Deathrattle X": "你的亡语不会触发", "Deathrattle x2": "你的随从的亡语触发两次", "Weapon Deathrattle x2": "你的武器的亡语触发两次",
 				"Summon x2": "你的卡牌效果召唤的随从数量翻倍", "Secrets x2": "你的奥秘触发两次",
 				"Minions Can't Be Frozen": "你的随从无法被冻结", #Living Dragonbreath prevents minions from being Frozen
 				"Ignore Taunt": "所有友方攻击无视嘲讽", #Kayn Sunfury allows player to ignore Taunt
@@ -940,16 +940,12 @@ class Game:
 			#如果此时攻击者，攻击目标或者任意英雄濒死或离场所，则攻击取消，跳过伤害和攻击后步骤。
 			battleContinues = True
 			#如果目标随从变成了休眠物，则攻击会取消，但是不知道是否会浪费攻击机会。假设会浪费
-			if (subject.type != "Minion" and subject.type != "Hero") or subject.onBoard == False or subject.health < 1 or subject.dead:
+			if ((subject.type != "Minion" and subject.type != "Hero") or not subject.onBoard or subject.health < 1 or subject.dead) \
+				or ((target.type != "Minion" and target.type != "Hero") or not target.onBoard or target.health < 1 or target.dead) \
+				or (self.heroes[1].health < 1 or self.heroes[1].dead or self.heroes[2].health < 1 or self.heroes[2].dead):
 				battleContinues = False
-			elif (target.type != "Minion" and target.type != "Hero") or target.onBoard == False or target.health < 1 or target.dead:
-				battleContinues = False
-				if useAttChance: #If this attack is canceled, the attack time still increases.
-					subject.attTimes += 1
-			elif self.heroes[1].health < 1 or self.heroes[1].dead or self.heroes[2].health < 1 or self.heroes[2].dead:
-				battleContinues = False
-				if useAttChance: #If this attack is canceled, the attack time still increases.
-					subject.attTimes += 1
+				if useAttChance: subject.attTimes += 1 #If this attack is canceled, the attack time still increases.
+				
 			if battleContinues:
 				#伤害步骤，攻击者移除潜行，攻击者对被攻击者造成伤害，被攻击者对攻击者造成伤害。然后结算两者的伤害事件。
 				#攻击者和被攻击的血量都减少。但是此时尚不发出伤害判定。先发出攻击完成的信号，可以触发扫荡打击。
@@ -1048,11 +1044,8 @@ class Game:
 				self.Counters.shadows[spell.ID] += 1
 				
 	def availableWeapon(self, ID):
-		for weapon in self.weapons[ID]:
-			if weapon.durability > 0 and weapon.onBoard:
-				return weapon
-		return None
-
+		return next((weapon for weapon in self.weapons[ID] if weapon.durability > 0 and weapon.onBoard), None)
+		
 	"""Weapon with target will be handle later"""
 	def playWeapon(self, weapon, target, choice=0):
 		ID = weapon.ID

@@ -691,7 +691,7 @@ class Minion(Card):
 		self.newonthisSide, self.dead = True, False
 		self.effectViable = self.evanescent = False
 		self.onBoard = self.inHand = self.inDeck = False
-		self.silenced = self.activated = False  # This mark is for minion state change, such as enrage.
+		self.silenced = False  # This mark is for minion state change, such as enrage.
 		self.appearResponse, self.disappearResponse, self.silenceResponse = [], [], []
 		# self.seq records the number of the minion's appearance. The first minion on board has a sequence of 0
 		self.seq, self.pos = -1, -2
@@ -744,7 +744,6 @@ class Minion(Card):
 			for func in self.disappearResponse: func()
 		# Let Stat_Receivers and hasreceivers remove themselves
 		while self.auraReceivers: self.auraReceivers[0].effectClear()
-		self.activated = False
 		self.Game.sendSignal("MinionDisappears", self.ID, None, self, 0, "")
 		
 	"""Attack chances handle"""
@@ -1243,7 +1242,7 @@ class Minion(Card):
 			Copy.creator, Copy.numOccurrence, Copy.tracked = self.creator, self.numOccurrence, self.tracked
 			Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
 			if hasattr(self, "progress"): Copy.progress = self.progress
-			Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
+			Copy.effectViable, Copy.evanescent, Copy.silenced = self.effectViable, self.evanescent, self.silenced
 			Copy.newonthisSide = self.newonthisSide
 			Copy.seq, Copy.pos = self.seq, self.pos
 			Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
@@ -1946,8 +1945,19 @@ class Hero(Card):
 		self.Game.sendSignal("HeroAttCalc", self.ID, self, None, 0, "")
 		
 	def gainsArmor(self, armor):
-		self.armor += armor
-		
+		if armor > 0:
+			self.armor += armor
+			game.sendSignal("ArmorGained", self.ID, self, None, armor, "")
+			
+	def losesArmor(self, armor, all=False):
+		if all:
+			ownArmor = self.armor
+			self.armor = 0
+			if ownArmor: self.Game.sendSignal("ArmorLost", self.ID, self, None, ownArmor, "")
+		else:
+			self.armor -= armor
+			self.Game.sendSignal("ArmorLost", self.ID, self, None, armor, "")
+			
 	def getsKeyword(self, keyWord): #目前只有风怒这一个选项
 		self.keyWords[keyWord] += 1
 		self.decideAttChances_base()
@@ -1972,14 +1982,9 @@ class Hero(Card):
 		game = self.Game
 		if game.status[self.ID]["Immune"] < 1:  # 随从首先结算免疫和圣盾对于伤害的作用，然后进行预检测判定
 			if "Next Damage 0" in self.marks and self.marks["Next Damage 0"] > 0:
-				damage = 0
-				self.marks["Next Damage 0"] = 0
+				damage = self.marks["Next Damage 0"] = 0
 			if "Max Damage" in self.marks and self.marks["Max Damage"]:
-				mini = 100
-				for m in self.marks["Max Damage"]:
-					if m < mini:
-						mini = m
-				damage = min(damage, mini)
+				damage = min(damage, min(self.marks["Max Damage"]))
 			if "Enemy Effect Damage Immune" in self.marks and self.marks[
 				"Enemy Effect Damage Immune"] > 0 and damageType == "Ability":
 				damage = 0
@@ -1991,10 +1996,10 @@ class Hero(Card):
 				damage = damageHolder[0]
 				if damage > 0:
 					if self.armor > damage:
-						self.armor -= damage
+						self.losesArmor(damage)
 					else:
 						self.health -= damage - self.armor
-						self.armor = 0
+						self.losesArmor(0, all=True)
 					game.Counters.dmgonHero_inOppoTurn[self.ID] += damage
 					if sendDmgSignal:
 						game.sendSignal("HeroTakesDmg", game.turn, subject, self, damage, "")
@@ -2075,6 +2080,7 @@ class Hero(Card):
 		game, ID = self.Game, self.ID
 		healthChanged = game.heroes[ID].health == self.health #目前只有大王和拉格纳罗斯会改变英雄的血量
 		self.onBoard, self.pos, self.attTimes = True, ID, game.heroes[ID].attTimes
+		if not fromHeroCard: self.losesArmor(0, all=True) #被大王等非英牌替换时，护甲会被摧毁
 		#旧英雄在消失前需要归还其所有的光环buff效果，目前只有Inara Stormcrash的+2攻和风怒
 		while self.auraReceivers: self.auraReceivers[0].effectClear()
 		#英雄牌进入战场。（本来是应该在使用阶段临近结束时移除旧英雄和旧技能，但是为了方便，在此时执行。）

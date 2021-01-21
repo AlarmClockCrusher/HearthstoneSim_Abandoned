@@ -2918,53 +2918,46 @@ class Vessina(Minion):
 	name_CN = "维西纳"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.auras["While you're Overloaded, your other minions have +2 Attack"] = BuffAura_Vessina(self)
-		self.activated = False
+		self.auras["While you're Overloaded, your other minions have +2 Attack"] = StatAura_Vessina(self)
 		
-class BuffAura_Vessina(HasAura_toMinion):
+class StatAura_Vessina(HasAura_toMinion):
 	def __init__(self, entity):
 		self.entity = entity
 		self.signals, self.auraAffected = ["MinionAppears", "OverloadCheck"], []
+		self.on = True
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-		if signal == "MinionAppears":
+		if signal[0] == 'M':
 			return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and self.entity.activated
 		else:
 			return self.entity.onBoard and ID == self.entity.ID
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		if signal == "MinionAppears":
-			if self.entity.activated:
-				self.applies(subject)
-		else: #signal == "OverloadCheck"
-			isOverloaded = self.entity.Game.Manas.manasOverloaded[self.entity.ID] > 0 or self.entity.Game.Manas.manasLocked[self.entity.ID] > 0
-			if isOverloaded == False and self.entity.activated:
-				self.entity.activated = False
+		if signal[0] == 'O':
+			game = self.entity.Game
+			isOverloaded = game.Manas.manasOverloaded[self.entity.ID] > 0 or game.Manas.manasLocked[self.entity.ID] > 0
+			if not isOverloaded and self.on:
+				self.on = False
 				for minion, receiver in self.auraAffected[:]:
 					receiver.effectClear()
 				self.auraAffected = []
-			elif isOverloaded and self.entity.activated == False:
-				self.entity.activated = True
-				for minion in self.entity.Game.minionsonBoard(self.entity.ID):
-					self.applies(minion)
-					
-	def applies(self, subject):
-		if subject != self.entity:
-			Stat_Receiver(subject, self, 2, 0).effectStart()
-			
-	def auraAppears(self):
-		game = self.entity.Game
-		isOverloaded = game.Manas.manasOverloaded[self.entity.ID] > 0 or game.Manas.manasLocked[self.entity.ID] > 0
-		if isOverloaded:
-			self.entity.activated = True
-			for minion in game.minionsonBoard(self.entity.ID):
-				self.applies(minion)
-				
-		try: game.trigsBoard[self.entity.ID]["MinionAppears"].append(self)
-		except: game.trigsBoard[self.entity.ID]["MinionAppears"] = [self]
-		try: game.trigsBoard[self.entity.ID]["OverloadCheck"].append(self)
-		except: game.trigsBoard[self.entity.ID]["OverloadCheck"] = [self]
+			elif isOverloaded and not self.on:
+				self.on = True
+				for minion in game.minionsonBoard(self.entity.ID, self.entity):
+					Stat_Receiver(minion, self, 2, 0).effectStart()
+		elif self.on: Stat_Receiver(subject, self, 2, 0).effectStart()
 		
+	def auraAppears(self):
+		game, ID = self.entity.Game, self.entity.ID
+		if game.Manas.manasOverloaded[ID] > 0 or game.Manas.manasLocked[ID] > 0:
+			self.on = True
+			for minion in game.minionsonBoard(ID):
+				Stat_Receiver(minion, self, 2, 0).effectStart()
+				
+		for sig in self.signals:
+			try: game.trigsBoard[ID][sig].append(self)
+			except: game.trigsBoard[ID][sig] = [self]
+			
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
 	#可以通过HasAura_toMinion的createCopy方法复制
