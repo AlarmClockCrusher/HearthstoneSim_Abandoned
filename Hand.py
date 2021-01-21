@@ -555,6 +555,6 @@ Default1 = [
 			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright
 			]
 
-Default2 = [Khadgar, DwarvenSharpshooter, ProfessorSlate, OhMyYogg, Counterspell, ForbiddenWords, KirinTorMage, NatureStudies,
-			PenFlinger, Frostbolt, ArcaneShot, ValdrisFelgorge, ValdrisFelgorge, RapidFire, HeadmasterKelThuzad, ZephrystheGreat, ZephrystheGreat
+Default2 = [ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,
+			PenFlinger, Frostbolt, ArcaneShot, HeadmasterKelThuzad
 			]

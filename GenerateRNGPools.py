@@ -20,10 +20,6 @@ class PoolManager:
 from Basic import *
 from Classic import *
 from AcrossPacks import *
-from Shadows import *
-from Uldum import *
-from Dragons import *
-from Galakrond import *
 from DemonHunterInitiate import *
 from Outlands import *
 from Academy import *
@@ -48,18 +44,6 @@ def makeCardPool(board="0 Random Game Board",monk=0,SV=0):
 	
 	cardPool.update(AcrossPacks_Indices)
 	info += "from AcrossPacks import *\n"
-	
-	cardPool.update(Shadows_Indices)
-	info += "from Shadows import *\n"
-	
-	cardPool.update(Uldum_Indices)
-	info += "from Uldum import *\n"
-	
-	cardPool.update(Dragons_Indices)
-	info += "from Dragons import *\n"
-	
-	cardPool.update(Galakrond_Indices)
-	info += "from Galakrond import *\n"
 	
 	cardPool.update(DemonHunterInit_Indices)
 	info += "from DemonHunterInitiate import *\n"

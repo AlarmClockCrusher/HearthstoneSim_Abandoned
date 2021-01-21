@@ -1165,19 +1165,20 @@ class BuffAura_Overflow(HasAura_toMinion):
     def __init__(self, entity):
         self.entity = entity
         self.signals, self.auraAffected = ["ManaXtlsCheck"], []
-
+        self.on = False
+        
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         isOverflow = self.entity.Game.isOverflow(self.entity.ID)
-        if isOverflow == False and self.entity.activated:
-            self.entity.activated = False
+        if not isOverflow and self.on:
+            self.on = False
             for minion, receiver in self.auraAffected[:]:
                 receiver.effectClear()
             self.auraAffected = []
-        elif isOverflow and self.entity.activated == False:
-            self.entity.activated = True
+        elif isOverflow and not self.on:
+            self.on = True
             self.applies(self.entity)
 
     def applies(self, subject):
@@ -1187,7 +1188,7 @@ class BuffAura_Overflow(HasAura_toMinion):
     def auraAppears(self):
         isOverflow = self.entity.Game.Manas.manasUpper[self.entity.ID] >= 7
         if isOverflow:
-            self.entity.activated = True
+            self.on = True
             self.applies(self.entity)
         try:
             self.entity.Game.trigsBoard[self.entity.ID]["ManaXtlsCheck"].append(self)
@@ -1231,8 +1232,7 @@ class Dragonrider(SVMinion):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.auras["Buff Aura"] = BuffAura_Dragonrider(self)
-        self.activated = False
-
+        
     def effCanTrig(self):
         self.effectViable = self.Game.isOverflow(self.ID)
 
@@ -1271,8 +1271,7 @@ class FirstbornDragon(SVMinion):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.auras["Buff Aura"] = BuffAura_FirstbornDragon(self)
-        self.activated = False
-
+        
     def effCanTrig(self):
         self.effectViable = self.Game.isOverflow(self.ID)
 
@@ -1372,8 +1371,7 @@ class Dragonguard(SVMinion):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.auras["Buff Aura"] = BuffAura_Dragonguard(self)
-        self.activated = False
-
+        
 
 class BuffAura_Dragonguard(BuffAura_Overflow):
     def applies(self, subject):

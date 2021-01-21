@@ -166,21 +166,20 @@ class SwiftBrewmaster(Minion): #迷踪的酒仙
 class Trig_SwiftBrewmaster(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["ManaPaid", "HeroUsedAbility"])
-		self.activated = False
+		self.on = False
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		minion, game = self.entity, self.entity.Game
-		if signal == "ManaPaid": return subject == game.powers[minion.ID] and not self.activated and game.Manas.manas[minion.ID] == 0
-		else: return ID == self.entity.ID and self.activated
+		if signal == "ManaPaid": return subject == game.powers[minion.ID] and not self.on and game.Manas.manas[minion.ID] == 0
+		else: return ID == self.entity.ID and self.on
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		if signal == "ManaPaid":
-			PRINT(self.entity.entity, "Player's Hero Power triggers Quaff and %s enables it to also target adjacent minions"%self.entity.name)
 			self.entity.Game.status[self.entity.ID]["Power Sweep"] += 1
-			self.activated = True
+			self.on = True
 		else:
 			self.entity.Game.status[self.entity.ID]["Power Sweep"] -= 1
-			self.activated = False
+			self.on = False
 			
 			
 class Provoke(Spell): #嚎镇八方

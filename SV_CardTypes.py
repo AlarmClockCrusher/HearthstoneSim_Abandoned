@@ -357,7 +357,7 @@ class SVMinion(Minion):
 			Copy.status = copy.deepcopy(self.status)
 			Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
 			if hasattr(self, "progress"): Copy.progress = self.progress
-			Copy.effectViable, Copy.evanescent, Copy.activated, Copy.silenced = self.effectViable, self.evanescent, self.activated, self.silenced
+			Copy.effectViable, Copy.evanescent, Copy.silenced = self.effectViable, self.evanescent, self.silenced
 			Copy.newonthisSide = self.newonthisSide
 			Copy.seq, Copy.pos = self.seq, self.pos
 			Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
@@ -406,10 +406,9 @@ class Amulet(Dormant):
 		# First two are for card authenticity verification. The last is to check if the minion has ever left board.
 		# Princess Talanji needs to confirm if a card started in original deck.
 		self.dead = False
-		self.effectViable, self.evanescent = False, False
+		self.effectViable = self.evanescent = False
 		self.newonthisSide = True
-		self.onBoard, self.inHand, self.inDeck = False, False, False
-		self.activated = False  # This mark is for minion state change, such as enrage.
+		self.onBoard = self.inHand = self.inDeck = False
 		# self.seq records the number of the minion's appearance. The first minion on board has a sequence of 0
 		self.seq, self.pos = -1, -2
 		self.keyWords = {"Taunt": 0, "Stealth": 0,
@@ -482,7 +481,6 @@ class Amulet(Dormant):
 		# 如果随从有离场时需要触发的函数，在此处理
 		if disappearResponse:
 			for func in self.disappearResponse: func()
-		self.activated = False
 		self.Game.sendSignal("AmuletDisappears", self.ID, None, self, 0, "")
 
 	def STATUSPRINT(self):
@@ -595,7 +593,7 @@ class Amulet(Dormant):
 	def selfCopy(self, ID, mana=False):
 		Copy = self.hardCopy(ID)
 		# 随从的光环和亡语复制完全由各自的selfCopy函数负责。
-		Copy.activated, Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False, False
+		Copy.onBoard = Copy.inHand = Copy.inDeck = False
 		size = len(Copy.manaMods)  # 去掉牌上的因光环产生的费用改变
 		for i in range(size):
 			if Copy.manaMods[size - 1 - i].source:
@@ -605,7 +603,6 @@ class Amulet(Dormant):
 		Copy.effectViable, Copy.evanescent = False, False
 		Copy.newonthisSide = True
 		Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False
-		Copy.activated = False
 		Copy.seq, Copy.pos = -1, -2
 		Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = 0, 0, 0
 		Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities

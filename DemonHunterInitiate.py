@@ -569,7 +569,6 @@ DemonHunterInit_Indices = {"DHInitiate~Demon Hunter~Spell~0~Blur": Blur,
 							"DHInitiate~Demon Hunter~Minion~9~8~8~Dragon~Nethrandamus~Battlecry~Legendary": Nethrandamus,
 							}
 							
-#The images/crops were initially in the Shadows folder. This is for batch moving the files.
 #if __name__ == "__main__":
 #	filename_List = []
 #	for key, value in DemonHunterInit_Indices.items():

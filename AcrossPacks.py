@@ -313,6 +313,7 @@ class DraconicLackey(Minion):
 
 Lackeys = [DraconicLackey, EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey]
 
+
 AcrossPacks_Indices = {"GVG~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible": BoomBot,
 					"Kobolds~Neutral~Minion~3~6~6~None~Golden Kobold~Taunt~Battlecry~Legendary~Uncollectible": GoldenKobold,
 					"Kobolds~Neutral~Spell~3~Tolin's Goblet~Uncollectible": TolinsGoblet,

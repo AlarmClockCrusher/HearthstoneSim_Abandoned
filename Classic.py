@@ -1610,7 +1610,7 @@ class StatAura_SpitefulSmith:
 			entityCopy = self.entity.createCopy(game)
 			Copy = self.selfCopy(entityCopy)
 			game.copiedObjs[self] = Copy
-			Copy.activated = self.on
+			Copy.on = self.on
 			for minion, receiver in self.auraAffected:
 				minionCopy = minion.createCopy(game)
 				index = minion.auraReceivers.index(receiver)

@@ -1153,17 +1153,14 @@ class Minion(Card):
 		Copy = self.hardCopy(ID)
 		# 随从的光环和亡语复制完全由各自的selfCopy函数负责。
 		for receiver in Copy.auraReceivers: receiver.effectDiscard()
-		Copy.activated, Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False, False
+		Copy.onBoard = Copy.inHand = Copy.inDeck = False
 		size = len(Copy.manaMods)  # 去掉牌上的因光环产生的费用改变
-		for i in range(size):
-			if Copy.manaMods[size - 1 - i].source:
-				Copy.manaMods.pop(size - 1 - i)
+		for i in reversed(range(size)):
+			if Copy.manaMods[i].source: Copy.manaMods.pop(i)
 		# 在一个游戏中复制出新实体的时候需要把这些值重置
 		Copy.creator, Copy.numOccurrence = "", 0
 		Copy.newonthisSide, Copy.dead = True, False
-		Copy.effectViable, Copy.evanescent = False, False
-		Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False
-		Copy.activated = False
+		Copy.effectViable = Copy.evanescent = False
 		Copy.seq, Copy.pos = -1, -2
 		Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = 0, 0, 0
 		Copy.decideAttChances_base()
