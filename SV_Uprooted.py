@@ -399,5 +399,5 @@ class Terrorformer(SVMinion):
 """DLC cards"""
 
 SV_Uprooted_Indices = {
-
+    "SV_Uprooted~Neutral~Minion~3~2~3~None~Gabriel, Heavenly Voice~Battlecry~Taunt~Legendary": GabrielHeavenlyVoice,
 }

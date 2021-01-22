@@ -24,7 +24,7 @@ def extractfrom(target, listObj):
 class DutifulSteed(Amulet):
     Class, race, name = "Neutral", "", "Dutiful Steed"
     mana = 1
-    index = "SV_Rivayle~Neutral~Amulet~1~Dutiful Steed~Uncollectible"
+    index = "SV_Rivayle~Neutral~Amulet~1~None~Dutiful Steed~Uncollectible"
     requireTarget, description = False, "During your turn, when an allied follower comes into play, give it +1/+1 and banish this amulet."
     name_CN = "顺从的骏马"
 
@@ -48,7 +48,7 @@ class Trig_DutifulSteed(TrigBoard):
 class BulletBike(Amulet):
     Class, race, name = "Neutral", "", "Bullet Bike"
     mana = 2
-    index = "SV_Rivayle~Neutral~Amulet~2~Bullet Bike~Uncollectible"
+    index = "SV_Rivayle~Neutral~Amulet~2~None~Bullet Bike~Uncollectible"
     requireTarget, description = False, "During your turn, when an allied follower comes into play, give it +1/+1 and banish this amulet."
     name_CN = "机动二轮车"
 
@@ -73,7 +73,7 @@ class Trig_BulletBike(TrigBoard):
 class ArcanePersonnelCarrier(Amulet):
     Class, race, name = "Neutral", "", "Arcane Personnel Carrier"
     mana = 3
-    index = "SV_Rivayle~Neutral~Amulet~3~Arcane Personnel Carrier~Uncollectible"
+    index = "SV_Rivayle~Neutral~Amulet~3~None~Arcane Personnel Carrier~Uncollectible"
     requireTarget, description = False, "During your turn, when an allied follower comes into play, give it +1/+1 and banish this amulet."
     name_CN = "魔导装甲车"
 
@@ -255,7 +255,7 @@ class Trig_EndWanderingChef(TrigBoard):
 class Ramiel(SVMinion):
     Class, race, name = "Neutral", "", "Ramiel"
     mana, attack, health = 2, 2, 2
-    index = "SV_Rivayle~Neutral~Minion~2~2~2~None~Ramiel~Taunt"
+    index = "SV_Rivayle~Neutral~Minion~2~2~2~None~Ramiel~Taunt~Legendary"
     requireTarget, keyWord, description = False, "Taunt", "Ward. Reduce damage from effects to 0."
     attackAdd, healthAdd = 2, 2
     name_CN = "蕾米尔"
@@ -360,7 +360,7 @@ class Trig_Set(TrigBoard):
 class AnveltJudgmentsCannon_Crystallize(Amulet):
     Class, race, name = "Havencraft", "", "Crystallize: Anvelt, Judgment's Cannon"
     mana = 1
-    index = "SV_Rivayle~Havencraft~Amulet~1~None~Anvelt, Judgment's Cannon~Countdown~Crystallize~Deathrattle~Uncollectible"
+    index = "SV_Rivayle~Havencraft~Amulet~1~None~Anvelt, Judgment's Cannon~Countdown~Crystallize~Deathrattle~Legendary~Uncollectible"
     requireTarget, description = False, "Countdown (10) At the end of your turn, subtract X from this amulet's Countdown. X equals the number of allied followers with Ward in play. Last Words: Summon an Anvelt, Judgment's Cannon."
     name_CN = "结晶：双炮神罚·安维特"
 
@@ -396,7 +396,7 @@ class Deathrattle_AnveltJudgmentsCannon_Crystallize(Deathrattle_Minion):
 class AnveltJudgmentsCannon(SVMinion):
     Class, race, name = "Havencraft", "", "Anvelt, Judgment's Cannon"
     mana, attack, health = 7, 5, 6
-    index = "SV_Rivayle~Havencraft~Minion~7~5~6~None~Anvelt, Judgment's Cannon~Taunt~Crystallize"
+    index = "SV_Rivayle~Havencraft~Minion~7~5~6~None~Anvelt, Judgment's Cannon~Taunt~Crystallize~Legendary"
     requireTarget, keyWord, description = False, "Taunt", "Crystallize (1): Countdown (10) At the end of your turn, subtract X from this amulet's Countdown. X equals the number of allied followers with Ward in play.Last Words: Summon an Anvelt, Judgment's Cannon.Ward.When this follower comes into play, deal 4 damage to all enemy followers and then 2 damage to the enemy leader."
     crystallizeAmulet = AnveltJudgmentsCannon_Crystallize
     attackAdd, healthAdd = 2, 2
@@ -470,17 +470,17 @@ class GoblinQueen(SVMinion):
 
 
 SV_Rivayle_Indices = {
-    "SV_Rivayle~Neutral~Amulet~1~Dutiful Steed~Uncollectible": DutifulSteed,
-    "SV_Rivayle~Neutral~Amulet~2~Bullet Bike~Uncollectible": BulletBike,
-    "SV_Rivayle~Neutral~Amulet~3~Arcane Personnel Carrier~Uncollectible": ArcanePersonnelCarrier,
+    "SV_Rivayle~Neutral~Amulet~1~None~Dutiful Steed~Uncollectible": DutifulSteed,
+    "SV_Rivayle~Neutral~Amulet~2~None~Bullet Bike~Uncollectible": BulletBike,
+    "SV_Rivayle~Neutral~Amulet~3~None~Arcane Personnel Carrier~Uncollectible": ArcanePersonnelCarrier,
     "SV_Rivayle~Neutral~Minion~1~1~1~None~Rivaylian Bandit~Enhance~Battlecry": RivaylianBandit,
     "SV_Rivayle~Neutral~Minion~2~2~2~None~Quixotic Adventurer~Battlecry": QuixoticAdventurer,
     "SV_Rivayle~Neutral~Minion~2~2~2~None~Wandering Chef": WanderingChef,
-    "SV_Rivayle~Neutral~Minion~2~2~2~None~Ramiel~Taunt": Ramiel,
+    "SV_Rivayle~Neutral~Minion~2~2~2~None~Ramiel~Taunt~Legendary": Ramiel,
     "SV_Rivayle~Havencraft~Spell~1~Set~Accelerate~Uncollectible": Set_Accelerate,
     "SV_Rivayle~Havencraft~Minion~7~2~8~None~Set~Bane~Taunt~Accelerate": Set,
-    "SV_Rivayle~Havencraft~Amulet~1~None~Anvelt, Judgment's Cannon~Countdown~Crystallize~Deathrattle~Uncollectible": AnveltJudgmentsCannon_Crystallize,
-    "SV_Rivayle~Havencraft~Minion~7~5~6~None~Anvelt, Judgment's Cannon~Taunt~Crystallize": AnveltJudgmentsCannon,
+    "SV_Rivayle~Havencraft~Amulet~1~None~Anvelt, Judgment's Cannon~Countdown~Crystallize~Deathrattle~Legendary~Uncollectible": AnveltJudgmentsCannon_Crystallize,
+    "SV_Rivayle~Havencraft~Minion~7~5~6~None~Anvelt, Judgment's Cannon~Taunt~Crystallize~Legendary": AnveltJudgmentsCannon,
     "SV_Rivayle~Neutral~Minion~4~5~5~None~Goblin King~Taunt~Uncollectible": GoblinKing,
     "SV_Rivayle~Neutral~Minion~3~3~3~None~Goblin Queen~Battlecry": GoblinQueen
 }
