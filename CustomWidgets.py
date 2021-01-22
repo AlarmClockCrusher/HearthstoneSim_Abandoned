@@ -69,7 +69,10 @@ texts = {"Include DIY packs": "包含DIY卡牌",
 		"The card is not a Basic or Classic card": "选择的卡不是基础卡或经典卡",
 		"No wish card selected yet": "尚未选择许愿的卡牌",
 		"Already the first page": "已是第一页", "Already the last page": "已是最后一页",
-		"View Collectible Card": "查看所有可收藏卡牌",
+		"View Collectible Card": "查看所有可收藏卡牌", "Your deck is full": "你的牌库已满",
+		"Can't have >3 copies in the same deck": "一套牌中不能有超过3张相同牌", "Can't have >2 copies in the same deck": "一套牌中不能有超过2张相同牌",
+		"Can only have 1 copy of Legendary in the same deck": "一套牌中只能有一张传说牌",
+		"Your search doesn't have any match": "搜索没有任何匹配",
 		}
 		
 def txt(s, CHN=True):

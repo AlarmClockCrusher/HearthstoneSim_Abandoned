@@ -913,7 +913,7 @@ class CardCollectionWindow(tk.Tk):
 		self.search.grid(row=0, column=6)
 		btn_ViewCards.grid(row=0, column=7)
 		
-		tk.Label(self, text="     ", font=("Yahei", 13)).grid(row=0, column=8)
+		tk.Label(self, text="  ", font=("Yahei", 13)).grid(row=0, column=8)
 		btn_Left.grid(row=0, column=9)
 		btn_Right.grid(row=0, column=10)
 		self.displayPanel.grid(row=1, column=0, columnspan=11)
@@ -927,6 +927,10 @@ class CardCollectionWindow(tk.Tk):
 		if expansion == "All": return True
 		else: return index.split('~')[0] == expansion
 		
+	#card here is a class, not an object
+	def searchMatches(self, search, card):
+		return search in card.name or search in card.name_CN or search in card.description.lower() 
+		
 	def showCards(self):
 		self.cards2Display, self.pageNum = {}, 0
 		for btn in self.btnsDrawn: btn.destroy()
@@ -935,13 +939,14 @@ class CardCollectionWindow(tk.Tk):
 		mana = self.mana.get()
 		expansion = self.expansion.get()
 		search = self.search.get().lower()
+		print("Search content is:", search)
 		game = self.GUI.Game
 		if Class2Display == "Neutral": cards = game.NeutralCards
 		else: cards = game.ClassCards[Class2Display]
 		i, j = 0, -1
 		for key, value in cards.items():
 			if self.manaCorrect(value, mana) and self.expansionCorrect(key, expansion) \
-				and search in value.description.lower():
+				and self.searchMatches(search, value):
 				if i % 10 == 0:
 					j += 1
 					self.cards2Display[j] = [value(game, 1)]
@@ -969,4 +974,5 @@ class CardCollectionWindow(tk.Tk):
 				btn_Card = CardCollectionButton(self, card)
 				btn_Card.plot(0 + i > 4, i % 5)
 		else: messagebox.showinfo(message=txt("Already the first page", CHN))
+		
 		

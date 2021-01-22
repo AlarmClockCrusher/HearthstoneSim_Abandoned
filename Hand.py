@@ -1,6 +1,6 @@
-from CardPools import *
 from Academy import TransferStudent
 from SV_Basic import SVClasses
+
 import copy
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
@@ -536,9 +536,25 @@ class Hand_Deck:
 		else:
 			return game.copiedObjs[self]
 
-
-Default1 = [
-			RivaylianBandit, RivaylianBandit,
+from CardPools import RivaylianBandit, RivaylianBandit,\
+			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,\
+			WanderingChef, WanderingChef, WanderingChef,\
+			Ramiel, Ramiel, Ramiel,\
+			IoJourneymage, IoJourneymage, IoJourneymage,\
+			ArchangelofRemembrance, ArchangelofRemembrance, ArchangelofRemembrance,\
+			GabrielHeavenlyVoice, GabrielHeavenlyVoice, GabrielHeavenlyVoice,\
+			GoblinQueen, GoblinQueen, GoblinQueen,\
+			FieranHavensentWindGod,\
+			RaRadianceIncarnate, RaRadianceIncarnate,\
+			WilbertGrandKnight, WilbertGrandKnight, WilbertGrandKnight,\
+			GoddessoftheWestWind, GoddessoftheWestWind, GoddessoftheWestWind,\
+			Set, Set, Set,\
+			AnveltJudgmentsCannon, AnveltJudgmentsCannon,\
+			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright,\
+			ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,\
+			PenFlinger, Frostbolt, ArcaneShot, HeadmasterKelThuzad\
+			
+Default1 = [RivaylianBandit, RivaylianBandit,
 			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,
 			WanderingChef, WanderingChef, WanderingChef,
 			Ramiel, Ramiel, Ramiel,

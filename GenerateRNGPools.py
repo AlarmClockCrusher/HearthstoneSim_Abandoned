@@ -1,4 +1,13 @@
 from numpy.random import choice as npchoice
+from tkinter import messagebox
+import tkinter as tk
+import PIL.Image, PIL.ImageTk
+import threading
+import time
+from collections import Counter as cnt
+import numpy as np
+
+from CustomWidgets import txt, CHN, folderNameTable
 
 def concatenateDicts(dict1, dict2):
 	for key in dict2.keys():
@@ -17,6 +26,7 @@ class PoolManager:
 	def __init__(self):
 		self.cardPool = {}
 		
+from CardTypes import Hero
 from Basic import *
 from Classic import *
 from AcrossPacks import *
@@ -32,6 +42,7 @@ from SV_Uprooted import *
 from SV_Fortune import *
 from SV_Rivayle import *
 from SV_Eternal import *
+
 
 def makeCardPool(board="0 Random Game Board",monk=0,SV=0):
 	cardPool, info = {}, ""
@@ -274,5 +285,301 @@ def makeCardPool(board="0 Random Game Board",monk=0,SV=0):
 		
 	return board, transferStudent
 	
+	
+def findPicFilepath_Construction(card):
+	index, name = card.index, card.__name__
+	if not issubclass(card, Hero):
+		folderName = folderNameTable[index.split('~')[0] ]
+		path = "Images\\%s\\"%folderName
+	else: path = "Images\\HerosandPowers\\"
+	
+	name = name.split("_")[0] if "Mutable" in name else name
+	filepath = path + "%s.png"%name
+	return filepath
+	
+class BtnCardAvailable(tk.Button):
+	def __init__(self, window, card):
+		img = PIL.Image.open(findPicFilepath_Construction(card)).resize((225, 300))
+		ph = PIL.ImageTk.PhotoImage(img, master=window.displayPanel)
+		tk.Button.__init__(self, master=window.displayPanel, image=ph)
+		self.window, self.card, self.image = window, card, ph
+		self.bind("<Button-1>", self.respond)
+		
+	def respond(self, event):
+		card = self.card
+		if len(self.window.cardsinDeck) > 29:
+			messagebox.showinfo(message=txt("Your deck is full", CHN))
+			return
+		numCopies = sum(type == card for type in self.window.cardsinDeck)
+		if card.index.startswith("SV_"):
+			if numCopies < 3:
+				self.window.cardsinDeck.append(self.card)
+				if numCopies == 0:
+					btn = BtnCardIncluded(self.window, self.card)
+					btn.pack(fill=tk.X, side=tk.TOP)
+					self.window.inDeckDrawn.append(btn)
+				else:
+					btn = next(btn for btn in self.window.inDeckDrawn if btn.card == card)
+					btn.count = numCopies + 1
+					btn.config(text=btn.decideText())
+			else: messagebox.showinfo(message=txt("Can't have >3 copies in the same deck", CHN))
+		else:
+			if "~Legendary" in card.index:
+				if numCopies > 0: messagebox.showinfo(message=txt("Can only have 1 copy of Legendary in the same deck", CHN))
+				else:
+					self.window.cardsinDeck.append(self.card)
+					btn = BtnCardIncluded(self.window, self.card)
+					btn.pack(fill=tk.X, side=tk.TOP)
+					self.window.inDeckDrawn.append(btn)
+			else:
+				if numCopies > 1: messagebox.showinfo(message=txt("Can't have >2 copies in the same deck", CHN))
+				else:
+					self.window.cardsinDeck.append(self.card)
+					if numCopies > 0:
+						btn = next(btn for btn in self.window.inDeckDrawn if btn.card == card)
+						btn.count = numCopies + 1
+						btn.config(text=btn.decideText())
+					else:
+						btn = BtnCardIncluded(self.window, self.card)
+						btn.pack(fill=tk.X, side=tk.TOP)
+						self.window.inDeckDrawn.append(btn)
+		self.window.lbl_Deck.config(text="%d/30"%len(self.window.cardsinDeck))
+		
+	def plot(self, i, j):
+		self.grid(row=i, column=j)
+		self.window.collectionsDrawn.append(self)
+		
+class BtnCardIncluded(tk.Button):
+	def __init__(self, window, card):
+		self.count = 1 #画出这张牌的时候就有1计数
+		self.window, self.card = window, card
+		if len(self.window.inDeckDrawn) < 15: 
+			tk.Button.__init__(self, master=self.window.deckPanel1, text=self.decideText(), font=("Yahei", 10, "bold"),
+								width=20, bg="grey86" if "~Legendary" not in card.index else "gold")
+		else:
+			tk.Button.__init__(self, master=self.window.deckPanel2, text=self.decideText(), font=("Yahei", 10, "bold"),
+								width=20, bg="grey86" if "~Legendary" not in card.index else "gold")
+		self.bind("<Button-1>", self.respond)
+		self.bind("<Enter>", self.crosshairEnter)
+		self.bind("<Leave>", self.crosshairLeave)
+		
+	def decideText(self):
+		card = self.card
+		try: return "{}   {}".format(self.count, card.name if not CHN else card.name_CN)
+		except: return "{}   {}".format(self.count, card.name)
+		
+	def respond(self, event):
+		card = self.card
+		btn = next((btn for btn in self.window.inDeckDrawn if btn.card == card), None)
+		self.window.cardsinDeck.remove(card)
+		if btn.count > 1:
+			btn.count -= 1
+			self.config(text=self.decideText())
+		else: btn.destroy()
+		self.window.lbl_Deck.config(text="%d/30"%len(self.window.cardsinDeck))
+		
+	def crosshairEnter(self, event):
+		self.waiting = True
+		thread = threading.Thread(target=self.wait2Display, daemon=True)
+		thread.start()
+		
+	def crosshairLeave(self, event):
+		self.waiting = False
+		try: self.window.lbl_Image.destroy()
+		except: pass
+		try: self.window.lbl_Text.destroy()
+		except: pass
+		
+	def wait2Display(self):
+		time.sleep(0.5)
+		if self.waiting:
+			try: self.window.lbl_Image.destroy()
+			except: pass
+			try: self.window.lbl_Text.destroy()
+			except: pass
+			img = PIL.Image.open(findPicFilepath_Construction(self.card)).resize((240, 320))
+			ph = PIL.ImageTk.PhotoImage(img)
+			self.window.lbl_Image = tk.Label(self.window.cardInfoPanel)
+			self.window.lbl_Image.config(image=ph)
+			self.window.lbl_Image.image = ph
+			self.window.lbl_Text = tk.Label(self.window.cardInfoPanel, text="Placeholder")
+			
+			self.window.lbl_Image.pack()
+			self.window.lbl_Text.pack()
+			
+			
+numCards4EachRow = 4
+
+class DeckBuilderWindow(tk.Tk):
+	def __init__(self, ClassCards, NeutralCards):
+		tk.Tk.__init__(self)
+		self.ClassCards, self.NeutralCards = ClassCards, NeutralCards
+		self.Class2Display, self.expansion, self.mana = tk.StringVar(self), tk.StringVar(self), tk.StringVar(self)
+		self.cards2Display, self.collectionsDrawn, self.pageNum = {}, [], 0
+		self.cardsinDeck, self.inDeckDrawn = [], []
+		self.lbl_Image = self.lbl_Text = None
+		
+		var = tk.IntVar()
+		lbl_Class = tk.Label(self, text="Select a class" if not CHN else "选择一个职业", font=("Yahei", 14, "bold"))
+		Class2Start = tk.StringVar(self)
+		Class2Start.set("Demon Hunter")
+		btn_StartBuildDeck = tk.Button(self, text="Start Building Deck"if not CHN else "开始构筑套牌",
+										command=lambda: var.set(1), font=("Yahei", 14), bg="green3")
+		classOpt = tk.OptionMenu(self, Class2Start, *(list(self.ClassCards.keys())) )
+		classOpt.config(width=12, font=("Yahei", 14))
+		classOpt["menu"].config(font=("Yahei", 14))
+		lbl_Class.grid(row=0, column=0)
+		classOpt.grid(row=0, column=1)
+		btn_StartBuildDeck.grid(row=0, column=2)
+		btn_StartBuildDeck.wait_variable(var)
+		#Intialize the interface, based on the class selection
+		Class2Start = Class2Start.get()
+		lbl_Class.destroy()
+		classOpt.destroy()
+		btn_StartBuildDeck.destroy()
+		self.Class2Display.set(Class2Start)
+		self.mana.set("All")
+		self.expansion.set("All")
+		self.classOpt = tk.OptionMenu(self, self.Class2Display, *([Class2Start, "Neutral"]) )
+		self.manaOpt = tk.OptionMenu(self, self.mana, *["All", '0', '1', '2', '3', '4', '5', '6', '7', '7+'])
+		self.expansionOpt = tk.OptionMenu(self, self.expansion, *["All", "DIY", "Basic", "Classic", "Shadows", "Uldum", "Dragons", "Galakrond", "Initiate", "Outlands", "Academy", "Darkmoon"])
+		self.classOpt.config(font=("Yahei", 14))
+		self.manaOpt.config(font=("Yahei", 14))
+		self.expansionOpt.config(font=("Yahei", 14))
+		
+		self.search = tk.Entry(self, font=("Yahei", 13), width=20)
+		btn_ViewCards = tk.Button(self, text=txt("View Cards", CHN), command=self.showCards, font=("Yahei", 14), bg="green3")
+		btn_Left = tk.Button(self, text="Last Page" if not CHN else "上一页", command=self.lastPage, font=("Yahei", 14))
+		btn_Right = tk.Button(self, text="Next Page" if not CHN else "下一页", command=self.nextPage, font=("Yahei", 14))
+		self.displayPanel = tk.Frame(self)
+		self.deckBtnPanel = tk.Frame(self)
+		self.deckPanel1 = tk.Frame(self)
+		self.deckPanel2 = tk.Frame(self)
+		self.cardInfoPanel = tk.Frame(self)
+		
+		tk.Label(self, text=txt("Class", CHN), font=("Yahei", 13)).grid(row=0, column=0)
+		self.classOpt.grid(row=0, column=1)
+		tk.Label(self, text=txt("Mana", CHN), font=("Yahei", 13)).grid(row=0, column=2)
+		self.manaOpt.grid(row=0, column=3)
+		tk.Label(self, text=txt("Expansion", CHN), font=("Yahei", 13)).grid(row=0, column=4)
+		self.expansionOpt.grid(row=0, column=5)
+		self.search.grid(row=0, column=6)
+		btn_ViewCards.grid(row=0, column=7)
+		
+		tk.Label(self, text="  ", font=("Yahei", 13)).grid(row=0, column=8)
+		btn_Left.grid(row=0, column=9)
+		btn_Right.grid(row=0, column=10)
+		self.displayPanel.grid(row=1, column=0, columnspan=11)
+		
+		self.deckBtnPanel.grid(row=0, column=12, columnspan=2)
+		self.deckPanel1.grid(row=1, column=12, rowspan=2)
+		self.deckPanel2.grid(row=1, column=13, rowspan=2)
+		self.lbl_Deck = tk.Label(self.deckBtnPanel, text="0/30", font=("Yahei", 14, "bold"))
+		self.lbl_Deck.grid(row=0, column=0)
+		tk.Button(self.deckBtnPanel, text="Clear" if not CHN else "清空", font=("Yahei", 14, "bold"), 
+					bg="green3", command=lambda : self.clear()).grid(row=0, column=1)
+		tk.Button(self.deckBtnPanel, text="Sort by Cost" if not CHN else "按费用排序", font=("Yahei", 14, "bold"), 
+					bg="green3", command=lambda : self.sort()).grid(row=0, column=2)
+		tk.Button(self.deckBtnPanel, text="Export" if not CHN else "导出", font=("Yahei", 14, "bold"), 
+					bg="green3", command=lambda : self.export()).grid(row=0, column=3)
+		tk.Label(self.deckBtnPanel, text="Deck Code" if not CHN else "套牌代码", 
+					font=("Yahei", 13, "bold")).grid(row=1, column=0, columnspan=2)
+		self.deckCode = tk.Entry(self.deckBtnPanel)
+		self.deckCode.grid(row=1, column=2, columnspan=2)
+		
+		self.cardInfoPanel.grid(row=0, column=14, rowspan=3)
+		self.showCards()
+		
+	def manaCorrect(self, card, mana):
+		if mana == "All": return True
+		elif mana == "7+": return card.mana > 7
+		else: return card.mana == int(mana)
+		
+	def expansionCorrect(self, index, expansion):
+		if expansion == "All": return True
+		else: return index.split('~')[0] == expansion
+		
+	#card here is a class, not an object
+	def searchMatches(self, search, card):
+		lower = search.lower()
+		return (lower in card.name.lower() or lower in card.description.lower()) or search in card.name_CN
+		
+	def showCards(self):
+		self.cards2Display, self.pageNum = {}, 0
+		for btn in self.collectionsDrawn: btn.destroy()
+		
+		Class2Display = self.Class2Display.get()
+		mana = self.mana.get()
+		expansion = self.expansion.get()
+		search = self.search.get()
+		if Class2Display == "Neutral": cards = self.NeutralCards
+		else: cards = self.ClassCards[Class2Display]
+		i, j = 0, -1
+		for key, value in cards.items():
+			if self.manaCorrect(value, mana) and self.expansionCorrect(key, expansion) \
+				and self.searchMatches(search, value):
+				if i % (2*numCards4EachRow) == 0:
+					j += 1
+					self.cards2Display[j] = [value]
+				else: self.cards2Display[j].append(value)
+				i += 1
+		if self.cards2Display: #如果查询结果不为空
+			for i, card in enumerate(self.cards2Display[0]):
+				btn_Card = BtnCardAvailable(self, card)
+				btn_Card.plot(0 + i >= numCards4EachRow, i % numCards4EachRow)
+		else:
+			messagebox.showinfo(message=txt("Your search doesn't have any match", CHN))
+			
+	def lastPage(self):
+		if self.pageNum - 1 in self.cards2Display:
+			self.pageNum -= 1
+			for btn in self.collectionsDrawn: btn.destroy()
+			for i, card in enumerate(self.cards2Display[self.pageNum]):
+				btn_Card = BtnCardAvailable(self, card)
+				btn_Card.plot(0 + i >= numCards4EachRow, i % numCards4EachRow)
+		else: messagebox.showinfo(message=txt("Already the last page", CHN))
+		
+	def nextPage(self):
+		if self.pageNum + 1 in self.cards2Display:
+			self.pageNum += 1
+			for btn in self.collectionsDrawn: btn.destroy()
+			for i, card in enumerate(self.cards2Display[self.pageNum]):
+				btn_Card = BtnCardAvailable(self, card)
+				btn_Card.plot(0 + i >= numCards4EachRow, i % numCards4EachRow)
+		else: messagebox.showinfo(message=txt("Already the first page", CHN))
+		
+	def sort(self):
+		for btn in self.inDeckDrawn: btn.destroy()
+		self.inDeckDrawn = []
+		cards_counts = cnt(self.cardsinDeck)
+		cards = list(cards_counts.keys())
+		indices = np.asarray([card.mana for card in cards]).argsort()
+		for i in indices:
+			card = cards[i] #Find the correct card in the right order
+			btn = BtnCardIncluded(self, card)
+			btn.count = cards_counts[card]
+			btn.config(text=btn.decideText())
+			btn.pack(side=tk.TOP)
+			self.inDeckDrawn.append(btn)
+			
+	def clear(self):
+		for btn in self.inDeckDrawn: btn.destroy()
+		self.cardsinDeck, self.inDeckDrawn = [], []
+		self.lbl_Deck.config(text="0/30")
+		
+	def export(self):
+		s = "names||"
+		for btn in self.inDeckDrawn:
+			for i in range(btn.count):
+				s += btn.card.name+"||"
+		s = s[0:-2]
+		print(s)
+		self.deckCode.delete(0, tk.END)
+		self.deckCode.insert(0, s)
+		
+		
 if __name__ == "__main__":
 	makeCardPool(board="0 Random Game Board", monk=0, SV=0)
+	from CardPools import ClassCards, NeutralCards
+	DeckBuilderWindow(ClassCards, NeutralCards).mainloop()
+	
