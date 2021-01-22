@@ -209,27 +209,31 @@ class RomanticChanteuse(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            target.marks["Deal Damage 0"] += 1
             trigger = Trig_RomanticChanteuse(target)
             target.trigsBoard.append(trigger)
             trigger.connect()
         return target
 
-
 class Trig_RomanticChanteuse(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        self.blank_init(entity, ["BattleDmgHero", "BattleDmgMinion","AbilityDmgHero","AbilityDmgMinion", "TurnEnds"])
 
-    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-        return self.entity.onBoard and ID != self.entity.ID
+    def canTrig(self, signal, ID, subject, target, number, comment,
+                choice=0):  # target here holds the actual target object
+        return signal[0] == 'T' and ID == self.entity.ID or subject == self.entity
+
+    def text(self, CHN):
+        return "该从者给予的伤害皆转变为0" if CHN else "During this turn, this follower deals damage equal to its defense when attacks"
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.marks["Deal Damage 0"] -= 1
-        for trigger in self.entity.trigsBoard:
-            if type(trigger) == Trig_RomanticChanteuse:
-                self.entity.trigsBoard.remove(trigger)
-                trigger.disconnect()
-                break
+        if signal[0] == 'T':
+            try:
+                self.entity.trigsBoard.remove(self)
+            except:
+                pass
+            self.disconnect()
+        else:
+            number[0] = 0
 
 
 class GabrielHeavenlyVoice(SVMinion):
@@ -399,5 +403,5 @@ class Terrorformer(SVMinion):
 """DLC cards"""
 
 SV_Uprooted_Indices = {
-
+    "SV_Uprooted~Neutral~Minion~3~2~3~None~Gabriel, Heavenly Voice~Battlecry~Taunt~Legendary": GabrielHeavenlyVoice,
 }

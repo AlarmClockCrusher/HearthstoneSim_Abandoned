@@ -2546,15 +2546,15 @@ class BlackIronSoldier(SVMinion):
 
 
 SV_Basic_Indices = {
-    "SV_Hero: Forestcraft": Arisa,
-    "SV_Hero: Swordcraft": Erika,
-    "SV_Hero: Runecraft": Isabelle,
-    "SV_Hero: Dragoncraft": Rowen,
-    "SV_Hero: Shadowcraft": Luna,
-    "SV_Hero: Bloodcraft": Urias,
-    "SV_Hero: Havencraft": Eris,
-    "SV_Hero: Portalcraft": Yuwan,
-    "SV_Hero~Hero Power~0~Evolve": Evolve,
+    "Hero: Forestcraft": Arisa,
+    "Hero: Swordcraft": Erika,
+    "Hero: Runecraft": Isabelle,
+    "Hero: Dragoncraft": Rowen,
+    "Hero: Shadowcraft": Luna,
+    "Hero: Bloodcraft": Urias,
+    "Hero: Havencraft": Eris,
+    "Hero: Portalcraft": Yuwan,
+    "SV_Hero~SV Hero Power~0~Evolve": Evolve,
 
     "SV_Basic~Neutral~Minion~1~1~2~None~Goblin": Goblin,
     "SV_Basic~Neutral~Minion~2~2~2~None~Fighter": Fighter,

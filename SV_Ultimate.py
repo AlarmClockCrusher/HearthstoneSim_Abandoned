@@ -38,7 +38,7 @@ def extractfrom(target, listObj):
 class HolyCavalier(SVMinion):
     Class, race, name = "Havencraft", "", "Holy Cavalier"
     mana, attack, health = 2, 1, 2
-    index = "SV_Ultimate~Havencraft~Minion~2~1~2~None~Holy Cavalier~Taunt~Uncollectible"
+    index = "SV_Ultimate~Havencraft~Minion~2~1~2~None~Holy Cavalier~Taunt~Legendary~Uncollectible"
     requireTarget, keyWord, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "圣骑兵"
@@ -47,7 +47,7 @@ class HolyCavalier(SVMinion):
 class WilbertGrandKnight_Accelerate(SVSpell):
     Class, name = "Havencraft", "Wilbert, Grand Knight"
     requireTarget, mana = False, 3
-    index = "SV_Ultimate~Havencraft~Spell~3~Wilbert, Grand Knight~Accelerate~Uncollectible"
+    index = "SV_Ultimate~Havencraft~Spell~3~Wilbert, Grand Knight~Accelerate~Legendary~Uncollectible"
     description = "Summon 2 Holy Cavaliers."
     name_CN = "尊荣骑士·维尔伯特"
 
@@ -60,7 +60,7 @@ class WilbertGrandKnight_Accelerate(SVSpell):
 class WilbertGrandKnight(SVMinion):
     Class, race, name = "Havencraft", "", "Wilbert, Grand Knight"
     mana, attack, health = 6, 4, 6
-    index = "SV_Ultimate~Havencraft~Minion~6~4~6~None~Wilbert, Grand Knight~Battlecry~Deathrattle~Accelerate"
+    index = "SV_Ultimate~Havencraft~Minion~6~4~6~None~Wilbert, Grand Knight~Battlecry~Deathrattle~Accelerate~Legendary"
     requireTarget, keyWord, description = False, "", "Accelerate (3): Summon 2 Holy Cavaliers.Ward.Fanfare: Give your leader the following effect - Whenever an enemy follower attacks an allied follower with Ward, deal 2 damage to the enemy leader. (This effect is not stackable and lasts for the rest of the match.)Last Words: Give your leader the following effect - At the start of your turn, summon 2 Holy Cavaliers, then remove this effect."
     accelerateSpell = WilbertGrandKnight_Accelerate
     attackAdd, healthAdd = 2, 2
@@ -140,7 +140,7 @@ class Trig_WilbertGrandKnight_TurnStarts(TrigBoard):
 class GoddessoftheWestWind(SVMinion):
     Class, race, name = "Havencraft", "", "Goddess of the West Wind"
     mana, attack, health = 6, 3, 3
-    index = "SV_Ultimate~Havencraft~Minion~6~3~3~None~Goddess of the West Wind~Battlecry"
+    index = "SV_Ultimate~Havencraft~Minion~6~3~3~None~Goddess of the West Wind~Battlecry~Legendary"
     requireTarget, keyWord, description = False, "", "Fanfare: Randomly put 2 different Havencraft followers with an original attack of 2 or less from your deck into play."
     accelerateSpell = WilbertGrandKnight_Accelerate
     attackAdd, healthAdd = 2, 2
@@ -173,8 +173,8 @@ class GoddessoftheWestWind(SVMinion):
 
 
 SV_Ultimate_Indices = {
-    "SV_Ultimate~Havencraft~Minion~2~1~2~None~Holy Cavalier~Taunt~Uncollectible": HolyCavalier,
-    "SV_Ultimate~Havencraft~Spell~3~Wilbert, Grand Knight~Accelerate~Uncollectible": WilbertGrandKnight_Accelerate,
-    "SV_Ultimate~Havencraft~Minion~6~4~6~None~Wilbert, Grand Knight~Battlecry~Deathrattle~Accelerate": WilbertGrandKnight,
-    "SV_Ultimate~Havencraft~Minion~6~3~3~None~Goddess of the West Wind~Battlecry": GoddessoftheWestWind
+    "SV_Ultimate~Havencraft~Minion~2~1~2~None~Holy Cavalier~Taunt~Legendary~Uncollectible": HolyCavalier,
+    "SV_Ultimate~Havencraft~Spell~3~Wilbert, Grand Knight~Accelerate~Legendary~Uncollectible": WilbertGrandKnight_Accelerate,
+    "SV_Ultimate~Havencraft~Minion~6~4~6~None~Wilbert, Grand Knight~Battlecry~Deathrattle~Accelerate~Legendary": WilbertGrandKnight,
+    "SV_Ultimate~Havencraft~Minion~6~3~3~None~Goddess of the West Wind~Battlecry~Legendary": GoddessoftheWestWind
 }

@@ -1,119 +1,119 @@
-class AirboundBarrage(Spell):
-	Class, name = "Warrior", "Airbound Barrage"
-	requireTarget, mana = False, 1
-	index = "Shadowverse~Warrior~Spell~1~Airbound Barrage"
-	description = "Choose a friendly minion and then an enemy minion. Return the friendly minion to your hand and deal 3 damage to the enemy minion"
-	def available(self):
-		return self.selectableFriendlyMinionExists() and self.selectableEnemyMinionExists()
-		
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		ownMinions = [minion for minion in self.Game.minionsonBoard(self.ID) if self.canSelect(minion)]
-		enemyMinions = [minion for minion in self.Game.minionsonBoard(3-self.ID) if self.canSelect(minion)]
-		if ownMinions and enemyMinions:
-			self.ownMinion, self.enemyMinion = None, None
-			self.Game.Discover.startSelectBoard(self, ownMinions)
-			self.Game.Discover.startSelectBoard(self, enemyMinions)
-			PRINT(self.Game, "Airbound Barrage returns friendly minion %s to player's hand"%self.ownMinion.name)
-			self.Game.returnMiniontoHand(self.ownMinion, deathrattlesStayArmed=False)
-			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			PRINT(self.Game, "Airbound Barrage deals %d damage to enemy minion %s"%(damage, self.enemyMinion.name))
-			self.dealsDamage(self.enemyMinion, damage)
-		return None
-		
-	def selectBoardDecided(self, entity):
-		if entity.ID == self.ID: self.ownMinion = entity
-		else: self.enemyMinion = entity
-		
-		
-class EntrancingBlow(Spell):
-	Class, name = "Warrior", "Entrancing Blow"
-	requireTarget, mana = False, 2
-	index = "Shadowverse~Warrior~Spell~2~Entrancing Blow"
-	description = "fefwsfe"
-	def available(self):
-		for card in self.Game.Hand_Deck.hands[self.ID]:
-			if card.type == "Minion":
-				return True
-		return False
-		
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		minions = [card for card in self.Game.Hand_Deck.hands[self.ID]]
-		if minions:
-			self.Game.Discover.startSelectHand(self, minions)
-		return None
-		
-	def selectHandDecided(self, obj):
-		obj.buffDebuff(2, 0)
-		minions = self.Game.minionsonBoard(3-self.ID)
-		if minions:
-			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			self.dealsDamage(npchoice(minions), damage)
-			
-			
-class SavoringSlash(Spell):
-	Class, name = "Warrior", "Savoring Slash"
-	requireTarget, mana = False, 2
-	index = "Shadowverse~Warrior~Spell~2~Savoring Slash"
-	description = "fefwsfe"
-	def available(self):
-		return self.selectableEnemyMinionExists()
-		
-	#葬送是什么东西
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		minionsinHand = [card for card in self.Game.Hand_Deck.hands[self.ID]]
-		enemyMinions = [minion for minion in self.Game.minionsonBoard(3-self.ID) if self.canSelect(minion)]
-		if enemyMinions:
-			self.minioninHand, self.enemyMinion = None, None
-			if minionsinHand:
-				self.Game.Discover.startSelectHand(self, minionsinHand)
-			self.Game.Discover.startSelectBoard(self, enemyMinions)
-			if self.minioninHand:
-				pass
-			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-			PRINT(self.Game, "Savoring Slash deals %d damage to enemy minion %s"%(damage, self.enemyMinion.name))
-			self.dealsDamage(self.enemyMinion, damage)
-		return None
-		
-	def selectBoardDecided(self, entity):
-		self.enemyMinion = entity
-		
-	def selectHandDecided(self, entity):
-		self.minioninHand = entity
-		
-		
-class PantherScout(SVMinion):
-	Class, race, name = "Warrior", "", "Panther Scout"
-	mana, attack, health = 2, 2, 2
-	index = "Shadowverse~Warrior~Minion~2~2~2~None~Panther Scout~Fanfare"
-	requireTarget, keyWord, description = False, "", "Fanfare: Restore 1 Mana. Enhance 8: Gain +3/+3 and restore 7 Mana instead"
-	
-	def effCanTrig(self):
-		self.effectViable = self.Game.Manas.manas[self.ID] > 7
-		
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if :
-			PRINT(self.Game, "Panther Scout's Fanfare restores 7 Mana Crystals and gives minion +3/+3")
-			self.entity.Game.Manas.restoreManaCrystal(7, self.entity.ID)
-			self.buffDebuff(3, 3)
-		else:
-			PRINT(self.Game, "Panther Scout's Fanfare restores 1 Mana Crystal")
-			self.entity.Game.Manas.restoreManaCrystal(1, self.entity.ID)
-		return None
-		
-		
-class RoanWingedNexx(SVMinion):
-	Class, race, name = "Warrior", "", "Roan Winged Nexx"
-	mana, attack, health = 4, 3, 4
-	index = "Shadowverse~Warrior~Minion~4~3~3~None~Reclusive Ponderer~Ambush~Accelerate"
-	requireTarget, keyWord, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
-	
-class ReclusivePonderer(SVMinion):
-	Class, race, name = "Warrior", "", "Reclusive Ponderer"
-	mana, attack, health = 4, 3, 3
-	index = "Shadowverse~Warrior~Minion~4~3~3~None~Reclusive Ponderer~Ambush~Accelerate"
-	requireTarget, keyWord, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
-	
-
+# class AirboundBarrage(Spell):
+# 	Class, name = "Warrior", "Airbound Barrage"
+# 	requireTarget, mana = False, 1
+# 	index = "Shadowverse~Warrior~Spell~1~Airbound Barrage"
+# 	description = "Choose a friendly minion and then an enemy minion. Return the friendly minion to your hand and deal 3 damage to the enemy minion"
+# 	def available(self):
+# 		return self.selectableFriendlyMinionExists() and self.selectableEnemyMinionExists()
+#
+# 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+# 		ownMinions = [minion for minion in self.Game.minionsonBoard(self.ID) if self.canSelect(minion)]
+# 		enemyMinions = [minion for minion in self.Game.minionsonBoard(3-self.ID) if self.canSelect(minion)]
+# 		if ownMinions and enemyMinions:
+# 			self.ownMinion, self.enemyMinion = None, None
+# 			self.Game.Discover.startSelectBoard(self, ownMinions)
+# 			self.Game.Discover.startSelectBoard(self, enemyMinions)
+# 			PRINT(self.Game, "Airbound Barrage returns friendly minion %s to player's hand"%self.ownMinion.name)
+# 			self.Game.returnMiniontoHand(self.ownMinion, deathrattlesStayArmed=False)
+# 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+# 			PRINT(self.Game, "Airbound Barrage deals %d damage to enemy minion %s"%(damage, self.enemyMinion.name))
+# 			self.dealsDamage(self.enemyMinion, damage)
+# 		return None
+#
+# 	def selectBoardDecided(self, entity):
+# 		if entity.ID == self.ID: self.ownMinion = entity
+# 		else: self.enemyMinion = entity
+#
+#
+# class EntrancingBlow(Spell):
+# 	Class, name = "Warrior", "Entrancing Blow"
+# 	requireTarget, mana = False, 2
+# 	index = "Shadowverse~Warrior~Spell~2~Entrancing Blow"
+# 	description = "fefwsfe"
+# 	def available(self):
+# 		for card in self.Game.Hand_Deck.hands[self.ID]:
+# 			if card.type == "Minion":
+# 				return True
+# 		return False
+#
+# 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+# 		minions = [card for card in self.Game.Hand_Deck.hands[self.ID]]
+# 		if minions:
+# 			self.Game.Discover.startSelectHand(self, minions)
+# 		return None
+#
+# 	def selectHandDecided(self, obj):
+# 		obj.buffDebuff(2, 0)
+# 		minions = self.Game.minionsonBoard(3-self.ID)
+# 		if minions:
+# 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+# 			self.dealsDamage(npchoice(minions), damage)
+#
+#
+# class SavoringSlash(Spell):
+# 	Class, name = "Warrior", "Savoring Slash"
+# 	requireTarget, mana = False, 2
+# 	index = "Shadowverse~Warrior~Spell~2~Savoring Slash"
+# 	description = "fefwsfe"
+# 	def available(self):
+# 		return self.selectableEnemyMinionExists()
+#
+# 	#葬送是什么东西
+# 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+# 		minionsinHand = [card for card in self.Game.Hand_Deck.hands[self.ID]]
+# 		enemyMinions = [minion for minion in self.Game.minionsonBoard(3-self.ID) if self.canSelect(minion)]
+# 		if enemyMinions:
+# 			self.minioninHand, self.enemyMinion = None, None
+# 			if minionsinHand:
+# 				self.Game.Discover.startSelectHand(self, minionsinHand)
+# 			self.Game.Discover.startSelectBoard(self, enemyMinions)
+# 			if self.minioninHand:
+# 				pass
+# 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+# 			PRINT(self.Game, "Savoring Slash deals %d damage to enemy minion %s"%(damage, self.enemyMinion.name))
+# 			self.dealsDamage(self.enemyMinion, damage)
+# 		return None
+#
+# 	def selectBoardDecided(self, entity):
+# 		self.enemyMinion = entity
+#
+# 	def selectHandDecided(self, entity):
+# 		self.minioninHand = entity
+#
+#
+# class PantherScout(SVMinion):
+# 	Class, race, name = "Warrior", "", "Panther Scout"
+# 	mana, attack, health = 2, 2, 2
+# 	index = "Shadowverse~Warrior~Minion~2~2~2~None~Panther Scout~Fanfare"
+# 	requireTarget, keyWord, description = False, "", "Fanfare: Restore 1 Mana. Enhance 8: Gain +3/+3 and restore 7 Mana instead"
+#
+# 	def effCanTrig(self):
+# 		self.effectViable = self.Game.Manas.manas[self.ID] > 7
+#
+# 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+# 		if :
+# 			PRINT(self.Game, "Panther Scout's Fanfare restores 7 Mana Crystals and gives minion +3/+3")
+# 			self.entity.Game.Manas.restoreManaCrystal(7, self.entity.ID)
+# 			self.buffDebuff(3, 3)
+# 		else:
+# 			PRINT(self.Game, "Panther Scout's Fanfare restores 1 Mana Crystal")
+# 			self.entity.Game.Manas.restoreManaCrystal(1, self.entity.ID)
+# 		return None
+#
+#
+# class RoanWingedNexx(SVMinion):
+# 	Class, race, name = "Warrior", "", "Roan Winged Nexx"
+# 	mana, attack, health = 4, 3, 4
+# 	index = "Shadowverse~Warrior~Minion~4~3~3~None~Reclusive Ponderer~Ambush~Accelerate"
+# 	requireTarget, keyWord, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
+#
+# class ReclusivePonderer(SVMinion):
+# 	Class, race, name = "Warrior", "", "Reclusive Ponderer"
+# 	mana, attack, health = 4, 3, 3
+# 	index = "Shadowverse~Warrior~Minion~4~3~3~None~Reclusive Ponderer~Ambush~Accelerate"
+# 	requireTarget, keyWord, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
+#
+#
 
 # """Token"""
 #

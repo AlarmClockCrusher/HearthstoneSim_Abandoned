@@ -1,5 +1,6 @@
 from Academy import TransferStudent
 from SV_Basic import SVClasses
+from Basic import TheCoin
 
 import copy
 from numpy.random import choice as npchoice
@@ -552,7 +553,9 @@ from CardPools import RivaylianBandit, RivaylianBandit,\
 			AnveltJudgmentsCannon, AnveltJudgmentsCannon,\
 			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright,\
 			ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,\
-			PenFlinger, Frostbolt, ArcaneShot, HeadmasterKelThuzad\
+			PenFlinger, Frostbolt, ArcaneShot, HeadmasterKelThuzad,\
+            BahamutPrimevalDragon,OnWingsofTomorrow
+
 			
 Default1 = [RivaylianBandit, RivaylianBandit,
 			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,
@@ -572,5 +575,10 @@ Default1 = [RivaylianBandit, RivaylianBandit,
 			]
 
 Default2 = [ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,
-			PenFlinger, Frostbolt, ArcaneShot, HeadmasterKelThuzad
+			PenFlinger, Frostbolt, ArcaneShot, HeadmasterKelThuzad,
+            BahamutPrimevalDragon,OnWingsofTomorrow,
+            BahamutPrimevalDragon,OnWingsofTomorrow,
+            BahamutPrimevalDragon,OnWingsofTomorrow,
+            BahamutPrimevalDragon,OnWingsofTomorrow,
+
 			]
