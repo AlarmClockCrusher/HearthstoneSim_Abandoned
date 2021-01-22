@@ -893,7 +893,8 @@ class CardCollectionWindow(tk.Tk):
 		self.classOpt = tk.OptionMenu(self, self.Class2Display, *(list(game.ClassCards.keys()) + ["Neutral"]) )
 		self.manaOpt = tk.OptionMenu(self, self.mana, *["All", '0', '1', '2', '3', '4', '5', '6', '7', '7+'])
 		self.expansionOpt = tk.OptionMenu(self, self.expansion, *["All", "DIY", "Basic", "Classic", "Shadows", "Uldum", "Dragons", "Galakrond", "Initiate", "Outlands", "Academy", "Darkmoon"])
-		self.classOpt.config(font=("Yahei", 14))
+		self.classOpt.config(width=12, font=("Yahei", 14))
+		self.classOpt["menu"].config(font=("Yahei", 14))
 		self.manaOpt.config(font=("Yahei", 14))
 		self.expansionOpt.config(font=("Yahei", 14))
 		
@@ -929,7 +930,8 @@ class CardCollectionWindow(tk.Tk):
 		
 	#card here is a class, not an object
 	def searchMatches(self, search, card):
-		return search in card.name or search in card.name_CN or search in card.description.lower() 
+		lower = search.lower()
+		return (lower in card.name.lower() or lower in card.description.lower()) or search in card.name_CN
 		
 	def showCards(self):
 		self.cards2Display, self.pageNum = {}, 0
@@ -938,8 +940,8 @@ class CardCollectionWindow(tk.Tk):
 		Class2Display = self.Class2Display.get()
 		mana = self.mana.get()
 		expansion = self.expansion.get()
-		search = self.search.get().lower()
-		print("Search content is:", search)
+		search = self.search.get()
+		
 		game = self.GUI.Game
 		if Class2Display == "Neutral": cards = game.NeutralCards
 		else: cards = game.ClassCards[Class2Display]

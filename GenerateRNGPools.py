@@ -446,6 +446,9 @@ class DeckBuilderWindow(tk.Tk):
 		self.classOpt.config(font=("Yahei", 14))
 		self.manaOpt.config(font=("Yahei", 14))
 		self.expansionOpt.config(font=("Yahei", 14))
+		self.classOpt["menu"].config(font=("Yahei", 14))
+		self.manaOpt["menu"].config(font=("Yahei", 14))
+		self.expansionOpt["menu"].config(font=("Yahei", 14))
 		
 		self.search = tk.Entry(self, font=("Yahei", 13), width=20)
 		btn_ViewCards = tk.Button(self, text=txt("View Cards", CHN), command=self.showCards, font=("Yahei", 14), bg="green3")
