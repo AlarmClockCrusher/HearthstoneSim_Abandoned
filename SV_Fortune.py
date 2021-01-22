@@ -3638,8 +3638,10 @@ class BuffAura_XIVLuzenTemperance(HasAura_toMinion):
         self.applies(self.entity.Game.heroes[self.entity.ID])
 
     def applies(self, subject):
-        subject.marks["Max Damage"].append(1)
         trigger = Trig_XIVLuzenTemperance(subject)
+        subject.trigsBoard.append(trigger)
+        trigger.connect()
+        trigger = Trig_XIVLuzenTemperance_MaxDamage(subject)
         subject.trigsBoard.append(trigger)
         trigger.connect()
 
@@ -3647,10 +3649,12 @@ class BuffAura_XIVLuzenTemperance(HasAura_toMinion):
         self.applies(self.entity.Game.heroes[self.entity.ID])
 
     def auraDisappears(self):
-        if 1 in self.entity.Game.heroes[self.entity.ID].marks["Max Damage"]:
-            self.entity.Game.heroes[self.entity.ID].marks["Max Damage"].remove(1)
         for trigger in self.entity.Game.heroes[self.entity.ID].trigsBoard:
             if type(trigger) == Trig_XIVLuzenTemperance:
+                self.entity.Game.heroes[self.entity.ID].trigsBoard.remove(trigger)
+                break
+        for trigger in self.entity.Game.heroes[self.entity.ID].trigsBoard:
+            if type(trigger) == Trig_XIVLuzenTemperance_MaxDamage:
                 self.entity.Game.heroes[self.entity.ID].trigsBoard.remove(trigger)
                 break
 
@@ -3669,6 +3673,18 @@ class Trig_XIVLuzenTemperance(TrigBoard):
         self.entity.Game.heroes[3 - self.entity.ID].health_max -= 3
         self.entity.Game.heroes[3 - self.entity.ID].health = min(self.entity.Game.heroes[3 - self.entity.ID].health,
                                                                  self.entity.Game.heroes[3 - self.entity.ID].health_max)
+
+
+class Trig_XIVLuzenTemperance_MaxDamage(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["BattleDmgHero", "AbilityDmgHero"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment,
+                choice=0):  # target here holds the actual target object
+        return target == self.entity
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        number[0] = min(1, number[0])
 
 
 """Havencraft cards"""
@@ -4151,7 +4167,9 @@ class BuffAura_VIIISofinaStrength(HasAura_toMinion):
         self.applies(signal, subject)
 
     def applies(self, signal, subject):
-        subject.marks["Max Damage"].append(3)
+        trigger = Trig_VIIISofinaStrength_MaxDamage(subject)
+        subject.trigsBoard.append(trigger)
+        trigger.connect()
 
     def auraAppears(self):
         for minion in self.entity.Game.minionsonBoard(self.entity.ID):
@@ -4159,11 +4177,25 @@ class BuffAura_VIIISofinaStrength(HasAura_toMinion):
 
     def auraDisappears(self):
         for minion in self.entity.Game.minionsonBoard(self.entity.ID):
-            if 3 in minion.marks["Max Damage"]:
-                minion.marks["Max Damage"].remove(3)
+            for trigger in self.entity.Game.heroes[self.entity.ID].trigsBoard:
+                if type(trigger) == Trig_VIIISofinaStrength_MaxDamage:
+                    self.entity.Game.heroes[self.entity.ID].trigsBoard.remove(trigger)
+                    break
 
     def selfCopy(self, recipient):
         return type(self)(recipient)
+
+
+class Trig_VIIISofinaStrength_MaxDamage(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["BattleDmgHero", "BattleDmgMinion", "AbilityDmgHero", "AbilityDmgMinion"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment,
+                choice=0):  # target here holds the actual target object
+        return target == self.entity
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        number[0] = min(3, number[0])
 
 
 class PuresongPriest_Accelerate(SVSpell):
