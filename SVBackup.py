@@ -452,6 +452,190 @@ class Trig_SeoxHeavenlyHowl(TrigBoard):
                 trig.disconnect()
                 break
 
+"""Portalcraft cards"""
+
+
+class FeowerDoubleBladeFlash(SVMinion):
+    Class, race, name = "Portalcraft", "", "Feower, Double Blade Flash"
+    mana, attack, health = 2, 4, 2
+    index = "SV_Eternal~Portalcraft~Minion~2~4~2~None~Feower, Double Blade Flash~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary"
+    requireTarget, keyWord, description = False, "", "Fanfare: Until the end of your opponent's turn, give -4/-0 to a random enemy follower with the highest attack in play.Skybound Art (10): Deal 4 damage to a random enemy follower. Do this 3 times.Super Skybound Art (15): Give all allied followers the ability to attack 2 times per turn.At the end of turns you are unable to evolve, return this card to your hand."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "闪耀的双剑·卡托尔"
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsHand = [Trig_SkyboundArt(self), Trig_SuperSkyboundArt(self), Trig_FeowerTien(self)]
+
+    def effCanTrig(self):
+        for trig in self.trigsHand:
+            if type(trig) == Trig_SkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                self.effectViable = True
+                return
+            if type(trig) == Trig_SuperSkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                self.effectViable = True
+                return
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        curGame = self.Game
+        if curGame.mode == 0:
+            if curGame.guides:
+                i = curGame.guides.pop(0)
+            else:
+                minions = curGame.minionsAlive(3 - self.ID)
+                i = npchoice(minions).pos if minions else -1
+                curGame.fixedGuides.append(i)
+            if i > -1:
+                curGame.minions[3 - self.ID][i].buffDebuff(-4, 0, "StartofTurn " + self.ID)
+        sa, ssa = False, False
+        for trig in self.trigsHand:
+            if type(trig) == Trig_SkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                sa = True
+            if type(trig) == Trig_SuperSkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                ssa = True
+        if sa:
+            for _ in range(3):
+                curGame = self.Game
+                if curGame.mode == 0:
+                    if curGame.guides:
+                        i = curGame.guides.pop(0)
+                    else:
+                        minions = curGame.minionsAlive(3 - self.ID)
+                        i = npchoice(minions).pos if minions else -1
+                        curGame.fixedGuides.append(i)
+                    if i > -1:
+                        self.dealsDamage(curGame.minions[3 - self.ID][i], 4)
+        if ssa:
+            for minion in self.Game.minionsonBoard(self.ID):
+                minion.getsKeyword("Windfury")
+
+
+class FeowerDoubleBladeFlash(SVMinion):
+    Class, race, name = "Portalcraft", "", "Tien, Treacherous Trigger"
+    mana, attack, health = 3, 2, 4
+    index = "SV_Eternal~Portalcraft~Minion~3~2~4~None~Tien, Treacherous Trigger~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary"
+    requireTarget, keyWord, description = False, "", "Fanfare: Draw a card.Skybound Art (10): Gain +2/+0 and Storm.Super Skybound Art (15): Give Storm to all followers in your hand.At the end of turns you are unable to evolve, return this card to your hand."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "魔弹的射手·艾瑟尔"
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsHand = [Trig_SkyboundArt(self), Trig_SuperSkyboundArt(self), Trig_FeowerTien(self)]
+
+    def effCanTrig(self):
+        for trig in self.trigsHand:
+            if type(trig) == Trig_SkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                self.effectViable = True
+                return
+            if type(trig) == Trig_SuperSkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                self.effectViable = True
+                return
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.Game.Hand_Deck.drawCard(self.ID)
+        sa, ssa = False, False
+        for trig in self.trigsHand:
+            if type(trig) == Trig_SkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                sa = True
+            if type(trig) == Trig_SuperSkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                ssa = True
+        if sa:
+            self.buffDebuff(2, 0)
+            self.getsKeyword("Charge")
+        if ssa:
+            for card in self.Game.Hand_Deck.hands[self.ID]:
+                if card.type == "Minion":
+                    card.getsKeyword("Charge")
+
+
+class Trig_FeowerTien(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID and self.entity.Game.Counters.turns[self.entity.ID] < \
+               self.entity.Game.Counters.numEvolutionTurn[self.entity.ID]
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.Game.returnMiniontoHand(self.entity, deathrattlesStayArmed=False)
+
+class AnretheEnlightenedOne(SVMinion):
+    Class, race, name = "Havencraft", "", "Anre, the Enlightened One"
+    mana, attack, health = 2, 1, 1
+    index = "SV_Eternal~Havencraft~Minion~2~1~1~None~Anre, the Enlightened One~Taunt~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary"
+    requireTarget, keyWord, description = True, "Taunt", "Bane.Fanfare: Select an enemy follower. It can't attack until the end of your opponent's turn.Skybound Art (10): Evolve this follower. Give +2/+0 to all other allied followers.Super Skybound Art (15): Strike - Deal X damage to all enemies. X equals this follower's attack."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "开眼者·乌诺"
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsHand = [Trig_SkyboundArt(self), Trig_SuperSkyboundArt(self)]
+
+    def effCanTrig(self):
+        for trig in self.trigsHand:
+            if type(trig) == Trig_SkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                self.effectViable = True
+                return
+            if type(trig) == Trig_SuperSkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                self.effectViable = True
+                return
+
+    def returnTrue(self, choice=0):
+        sa = False
+        for trig in self.trigsHand:
+            if type(trig) == Trig_SkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                sa = True
+                break
+        return sa and self.targetExists(choice) and not self.targets
+
+    def targetExists(self, choice=0):
+        sa = False
+        for trig in self.trigsHand:
+            if type(trig) == Trig_SkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                sa = True
+                break
+        return sa and self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        sa = False
+        for trig in self.trigsHand:
+            if type(trig) == Trig_SkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                sa = True
+                break
+        return sa and target.type == "Minion" and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.marks["Next Damage 0"] = 1
+        sa, ssa = False, False
+        for trig in self.trigsHand:
+            if type(trig) == Trig_SkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                sa = True
+            if type(trig) == Trig_SuperSkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                ssa = True
+        if sa and target:
+            if isinstance(target, list): target = target[0]
+            self.dealsDamage(target, 11)
+        if ssa:
+            targets = self.Game.minionsonBoard(self.ID)
+            targets.append(self.Game.heroes[self.ID])
+            for t in targets:
+                trig = Trig_AnretheEnlightenedOne(t)
+                t.trigsBoard.append(trig)
+                trig.connect()
+
+
+class Trig_AnretheEnlightenedOne(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["BattleDmgHero", "BattleDmgMinion", "AbilityDmgHero", "AbilityDmgMinion"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment,
+                choice=0):  # target here holds the actual target object
+        return target == self.entity
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        number[0] -= 1
+
 # class AirboundBarrage(Spell):
 # 	Class, name = "Warrior", "Airbound Barrage"
 # 	requireTarget, mana = False, 1
