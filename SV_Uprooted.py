@@ -126,8 +126,7 @@ class ChangewingCherub(SVMinion):
             if card.type == "Minion" and card != self and "Natura" in card.race:
                 natura += 1
         if natura >= 3:
-            heal = 2 * (2 ** self.countHealDouble())
-            self.restoresHealth(self.Game.heroes[self.ID], heal)
+            self.restoresHealth(self.Game.heroes[self.ID], 2)
         return None
 
     def inHandEvolving(self, target=None):

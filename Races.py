@@ -6,12 +6,11 @@ from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
 from collections import Counter as cnt
 
-from Classic import Banana, Treant_Classic
-from Outlands import MsshifnPrime, ZixorPrime, SolarianPrime, MurgurglePrime, ReliquaryPrime, \
+from Classic import Bananas, Treant_Classic
+from Outlands import Minion_Dormantfor2turns, MsshifnPrime, ZixorPrime, SolarianPrime, MurgurglePrime, ReliquaryPrime, \
 					AkamaPrime, VashjPrime, KanrethadPrime, KargathPrime
-from Academy import SoulFragment
+from Academy import SoulFragment, Spellburst
 
-import copy
 
 """Darkmoon Races"""
 
@@ -442,7 +441,7 @@ class KeywardenIvory(Minion):
 	def generatePool(cls, Game):
 		spells = []
 		for Class in Game.Classes:
-			cards += [value for key, value in Game.ClassCards[Class].items() if "," in key.split('~')[1] and key.split('~')[2] == "Spell"]
+			spells += [value for key, value in Game.ClassCards[Class].items() if "," in key.split('~')[1] and key.split('~')[2] == "Spell"]
 		return "Dual Class Spells", spells
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -476,11 +475,22 @@ class KeywardenIvory(Minion):
 		self.Game.fixedGuides.append(type(option))
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True, creator=type(self), possi=pool)
 		if self.onBoard or self.inHand:
-			trig = Trig_KeywardenIvory(self, spell, pool)
+			trig = Trig_KeywardenIvory(self, type(option), pool)
 			self.trigsBoard.append(trig)
 			if self.onBoard: trig.connect()
 			
-			
+class Trig_KeywardenIvory(Spellburst):
+	def __init__(self, entity, spell, pool):
+		self.blank_init(entity, ["SpellBeenPlayed"])
+		self.spell, self.pool = spell, pool
+		
+	def text(self, CHN):
+		return "法术迸发：获得一个发现的双职业法术的复制" if CHN else "Spellburst: Get a copy of the Discovered dual-class spell"
+	
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.entity.Game.Hand_Deck.addCardtoHand(self.spell, self.entity.ID, byType=True, creator=type(self.entity), possi=self.pool)
+
+
 """Paladin Cards"""
 class ImprisonedCelestial(Minion_Dormantfor2turns):
 	Class, race, name = "Paladin", "", "Imprisoned Celestial"
@@ -686,7 +696,7 @@ class Trig_Shenanigans(SecretTrigger):
 		return self.entity.ID != self.entity.Game.turn and self.entity.ID != ID and self.entity.Game.Counters.numCardsDrawnThisTurn[ID] == 1
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		card = Banana(self.entity.Game, self.entity.ID)
+		card = Bananas(self.entity.Game, self.entity.ID)
 		self.entity.Game.Hand_Deck.replaceCardDrawn(target, card)
 		
 		
@@ -697,7 +707,7 @@ class SparkjoyCheat(Minion_Dormantfor2turns):
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Secret, cast it and draw a card"
 	name_CN = "欢脱的 作弊选手"
 	def effCanTrig(self):
-		self.effectViable = any(card.description.startswith("Secret:") and not curGame.Secrets.sameSecretExists(card, self.ID) \
+		self.effectViable = any(card.description.startswith("Secret:") and not self.Game.Secrets.sameSecretExists(card, self.ID) \
 									for card in self.Game.Hand_Deck.hands[self.ID])
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -887,6 +897,7 @@ class WeaponBuffAura_SpikedWheel:
 		except: game.trigsBoard[ID]["ArmorLost"] = [self]
 		
 	def auraDisappears(self):
+		game, ID = self.weapon.Game, self.weapon.ID
 		for weapon, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 		self.auraAffected = []

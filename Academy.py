@@ -5,7 +5,7 @@ from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
 
-from Basic import Claw, ArcaneMissiles, TruesilverChampion, Trig_Charge, HealingTotem, SearingTotem, StoneclawTotem, WrathofAirTotem
+from Basic import Trig_Charge, HealingTotem, SearingTotem, StoneclawTotem, WrathofAirTotem
 from Classic import ManaWyrm
 from AcrossPacks import Lackeys
 from Uldum import PlagueofDeath, PlagueofMadness, PlagueofMurlocs, PlagueofFlames, PlagueofWrath
@@ -2435,7 +2435,7 @@ class RaiseDead(Spell):
 			if curGame.guides:
 				minions = curGame.guides.pop(0)
 			else:
-				minions = tuple(npchoice(pool, min(2, len(pool)), replace=False) if deadMinions else [])
+				minions = tuple(npchoice(pool, min(2, len(pool)), replace=False) if pool else [])
 				curGame.fixedGuides.append(minions)
 			if minions:
 				curGame.Hand_Deck.addCardtoHand(minions, self.ID, byType=True, creator=type(self), possi=pool)
@@ -2822,9 +2822,9 @@ class Trig_Plagiarize(SecretTrigger):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		game = self.entity.Game
-		for card in [game.cardPool[index] for index in game.Counters.cardsPlayedThisTurn[3-self.entity.ID]["Indices"]]:
-			game.Hand_Deck.addCardtoHand(cards, self.entity.ID, byType=True, creator=Plagiarize)
-			
+		cards = [game.cardPool[index] for index in game.Counters.cardsPlayedThisTurn[3-self.entity.ID]["Indices"]]
+		game.Hand_Deck.addCardtoHand(cards, self.entity.ID, byType=True, creator=Plagiarize)
+		
 			
 class Coerce(Spell):
 	Class, name = "Rogue,Warrior", "Coerce"
@@ -3502,7 +3502,7 @@ class Felosophy(Spell):
 		curGame, ID = self.Game, self.ID
 		if curGame.mode == 0:
 			#需要更多思考
-			pool = tupe(possi[1][0] for possi in curGame.Hand_Deck.knownCards[ID] if len(possi[1]) == 1 and "Demon" in possi[1][0].race)
+			pool = tuple(possi[1][0] for possi in curGame.Hand_Deck.knownCards[ID] if len(possi[1]) == 1 and "Demon" in possi[1][0].race)
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:

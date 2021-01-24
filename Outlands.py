@@ -510,12 +510,11 @@ class Magtheridon(Minion):
 		self.mana = type(self).mana #Restore the minion's mana to original value.
 		self.decideAttChances_base() #Decide base att chances, given Windfury and Mega Windfury
 		if firstTime: #首次出场时会进行休眠，而且休眠状态会保持之前的随从buff。休眠体由每个不同的随从自己定义
-			self.Game.transform(self, self.dormantForm(self.Game, self.ID, self), firstTime=True)
+			self.Game.transform(self, Magtheridon_Dormant(self.Game, self.ID, self), firstTime=True)
 		else: #只有不是第一次出现在场上时才会执行这些函数
 			for trig in self.trigsBoard + self.deathrattles:
 				trig.connect() #把(obj, signal)放入Game.trigsBoard中
 			self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, comment=firstTime)
-			for func in self.triggers["StatChanges"]: func()
 			
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		self.Game.summon([HellfireWarder(self.Game, 3-self.ID) for i in range(3)], (-1, "totheRightEnd"), self)
@@ -998,7 +997,7 @@ class Netherwalker(Minion):
 		curGame = self.Game
 		if self.ID == curGame.turn:
 			if curGame.mode == 0:
-				pool = tupe(self.rngPool("Demons as "+classforDiscover(self)))
+				pool = tuple(self.rngPool("Demons as "+classforDiscover(self)))
 				if curGame.guides:
 					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
 				else:
@@ -1128,7 +1127,7 @@ class Trig_DemonicBlast(TrigBoard):
 		return subject == self.entity
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		power = DemonicBlast1(self.Game, self.ID)
+		power = DemonicBlast1(self.entity.Game, self.entity.ID)
 		power.powerReplaced = self.entity.powerReplaced
 		power.replaceHeroPower()
 		
@@ -1982,7 +1981,7 @@ class FontofPower(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		pool = tupe(self.rngPool("Mage Minions"))
+		pool = tuple(self.rngPool("Mage Minions"))
 		if curGame.Hand_Deck.noMinionsinDeck(self.ID):
 			if curGame.mode == 0:
 				if curGame.guides:
@@ -2031,7 +2030,7 @@ class ApexisSmuggler(Minion):
 		
 	def discoverDecided(self, option, pool):
 		self.Game.fixedGuides.append(type(option))
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True, creator=type(minion), possi=pool)
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True, creator=type(self), possi=pool)
 		
 class Trig_ApexisSmuggler(TrigBoard):
 	def __init__(self, entity):
@@ -2458,7 +2457,7 @@ class AldorTruthseeker(Minion):
 	name_CN = "奥尔多 真理追寻者"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		GameManaAura_Libram(self.Game, self.ID, -2, -1).auraAppears().auraAppears()
+		GameManaAura_Libram(self.Game, self.ID, -2, -1).auraAppears()
 		return None
 		
 		
@@ -3182,7 +3181,7 @@ class Marshspawn(Minion):
 						curGame.fixedGuides.append(spell)
 						curGame.Hand_Deck.addCardtoHand(spell, self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
 					else:
-						spells = npchoice(self.rngPool(key), 3, replace=False)
+						spells = npchoice(pool, 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
 						curGame.Discover.startDiscover(self, pool)
 		return None

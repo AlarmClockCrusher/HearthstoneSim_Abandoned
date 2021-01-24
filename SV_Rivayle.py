@@ -231,8 +231,7 @@ class Trig_WanderingChef(TrigBoard):
                 curGame.fixedGuides.append(i)
             if i > -1:
                 self.entity.dealsDamage(curGame.minions[3 - self.entity.ID][i], 3)
-        heal = 3 * (2 ** self.entity.countHealDouble())
-        self.entity.restoresHealth(curGame.heroes[self.entity.ID], heal)
+        self.entity.restoresHealth(curGame.heroes[self.entity.ID], 3)
 
 
 class Trig_EndWanderingChef(TrigBoard):
@@ -355,8 +354,7 @@ class Trig_Set(TrigBoard):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        heal = 3 * (2 ** self.entity.countHealDouble())
-        self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], heal)
+        self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], 3)
 
 
 class AnveltJudgmentsCannon_Crystallize(Amulet):

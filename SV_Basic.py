@@ -1804,8 +1804,7 @@ class WardrobeRaider(SVMinion):
             if isinstance(target, list): target = target[0]
             if target and target.onBoard:
                 self.dealsDamage(target, 2)
-                heal = 2 * (2 ** self.countHealDouble())
-                self.restoresHealth(self.Game.heroes[self.ID], heal)
+                self.restoresHealth(self.Game.heroes[self.ID], 2)
 
 
 class CrimsonPurge(SVSpell):
@@ -2131,8 +2130,7 @@ class AcolytesLight(SVSpell):
             if isinstance(target, list): target = target[0]
             health = target.health * (2 ** self.countHealDouble())
             self.Game.banishMinion(self, target)
-            heal = health * (2 ** self.countHealDouble())
-            self.restoresHealth(self.Game.heroes[self.ID], heal)
+            self.restoresHealth(self.Game.heroes[self.ID], health)
             return target
 
 
@@ -2175,8 +2173,7 @@ class Curate(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            heal = 5 * (2 ** self.countHealDouble())
-            self.restoresHealth(target, heal)
+            self.restoresHealth(target, 5)
         return target
 
 

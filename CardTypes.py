@@ -1357,7 +1357,7 @@ class Spell(Card):
 		for i in range(repeatTimes):
 			if self.overload > 0: curGame.Manas.overloadMana(self.overload, self.ID)
 			if self.twinSpell > 0: #如果不是从手牌中打出，则不会把双生法术牌置入原来的位置
-				curGame.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, byType=True, pos=posinHand,
+				curGame.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, byType=True,
 												creator=type(self), possi=(self.twinSpellCopy,))
 			#指向性法术如果没有目标也可以释放，只是可能没有效果而已
 			target = self.whenEffective(target, "byOthers", choice, posinHand=-2)
