@@ -17,8 +17,8 @@ def concatenateDicts(dict1, dict2):
 def indexHasClass(index, Class):
 	return Class in index.split('~')[1]
 	
-def canBeGenerated(cardType):
-	return not cardType.index.startswith("SV_") and not cardType.description.startswith("Quest:") and \
+def canBeGenerated(cardType, SV=0):
+	return (SV or not cardType.index.startswith("SV_")) and not cardType.description.startswith("Quest:") and \
 			not ("Galakrond" in cardType.name or "Galakrond" in cardType.description or "Invoke" in cardType.description or "invoke" in cardType.description)
 			
 			
@@ -149,14 +149,19 @@ def makeCardPool(board="0 Random Game Board",monk=0,SV=0):
 	#cardPool本身需要保留各种祈求牌
 	Game.MinionswithRace = {"Beast": {}, "Demon": {}, "Dragon": {}, "Elemental":{},
 							"Murloc": {}, "Mech": {}, "Pirate":{}, "Totem": {}}
+	if SV:
+		SV_Races = ["Officer", "Commander", "Machina", "Natura", "Earth Sigil", "Mysteria", "Artifact", "Levin"]
+		for race in SV_Races:
+			Game.MinionswithRace[race] = {}
+			
 	for key, value in Game.cardPool.items(): #Fill MinionswithRace
-		if "~Uncollectible" not in key and hasattr(value, "race") and value.race and canBeGenerated(value):
+		if "~Uncollectible" not in key and hasattr(value, "race") and value.race and canBeGenerated(value, SV=SV):
 			for race in value.race.split(','):
 				Game.MinionswithRace[race][key] = value
 				
 	Game.MinionsofCost = {}
 	for key, value in Game.cardPool.items():
-		if "~Minion~" in key and "~Uncollectible" not in key and canBeGenerated(value):
+		if "~Minion~" in key and "~Uncollectible" not in key and canBeGenerated(value, SV=SV):
 			cost = int(key.split('~')[3])
 			try: Game.MinionsofCost[cost][key] = value
 			except: Game.MinionsofCost[cost] = {key: value}
@@ -164,7 +169,7 @@ def makeCardPool(board="0 Random Game Board",monk=0,SV=0):
 	Game.ClassCards = {s:{} for s in Game.Classes}
 	Game.NeutralCards = {}
 	for key, value in Game.cardPool.items():  #Fill NeutralCards
-		if "~Uncollectible" not in key and canBeGenerated(value):
+		if "~Uncollectible" not in key and canBeGenerated(value, SV=SV):
 			for Class in key.split('~')[1].split(','):
 				if Class != "Neutral":
 					try: Game.ClassCards[Class][key] = value
@@ -173,7 +178,7 @@ def makeCardPool(board="0 Random Game Board",monk=0,SV=0):
 				
 	Game.LegendaryMinions = {}
 	for key, value in Game.cardPool.items():
-		if "~Legendary" in key and "~Minion~" in key and "~Uncollectible" not in key and canBeGenerated(value):
+		if "~Legendary" in key and "~Minion~" in key and "~Uncollectible" not in key and canBeGenerated(value, SV=SV):
 			Game.LegendaryMinions[key] = value
 			
 	RNGPools = {}
@@ -298,16 +303,18 @@ def findPicFilepath_Construction(card):
 	return filepath
 	
 class BtnCardAvailable(tk.Button):
-	def __init__(self, window, card):
+	def __init__(self, window, card, SV=0):
 		img = PIL.Image.open(findPicFilepath_Construction(card)).resize((225, 300))
 		ph = PIL.ImageTk.PhotoImage(img, master=window.displayPanel)
 		tk.Button.__init__(self, master=window.displayPanel, image=ph)
 		self.window, self.card, self.image = window, card, ph
 		self.bind("<Button-1>", self.respond)
+		self.deckMax = 40 if SV else 30
+		self.SV = SV
 		
 	def respond(self, event):
 		card = self.card
-		if len(self.window.cardsinDeck) > 29:
+		if len(self.window.cardsinDeck) > self.deckMax-1:
 			messagebox.showinfo(message=txt("Your deck is full", CHN))
 			return
 		numCopies = sum(type == card for type in self.window.cardsinDeck)
@@ -315,22 +322,24 @@ class BtnCardAvailable(tk.Button):
 			if numCopies < 3:
 				self.window.cardsinDeck.append(self.card)
 				if numCopies == 0:
-					btn = BtnCardIncluded(self.window, self.card)
+					btn = BtnCardIncluded(self.window, self.card, self.SV)
 					btn.pack(fill=tk.X, side=tk.TOP)
 					self.window.inDeckDrawn.append(btn)
 				else:
 					btn = next(btn for btn in self.window.inDeckDrawn if btn.card == card)
 					btn.count = numCopies + 1
 					btn.config(text=btn.decideText())
+				self.window.updateDeckComp()
 			else: messagebox.showinfo(message=txt("Can't have >3 copies in the same deck", CHN))
 		else:
 			if "~Legendary" in card.index:
 				if numCopies > 0: messagebox.showinfo(message=txt("Can only have 1 copy of Legendary in the same deck", CHN))
 				else:
 					self.window.cardsinDeck.append(self.card)
-					btn = BtnCardIncluded(self.window, self.card)
+					btn = BtnCardIncluded(self.window, self.card, self.SV)
 					btn.pack(fill=tk.X, side=tk.TOP)
 					self.window.inDeckDrawn.append(btn)
+					self.window.updateDeckComp()
 			else:
 				if numCopies > 1: messagebox.showinfo(message=txt("Can't have >2 copies in the same deck", CHN))
 				else:
@@ -343,21 +352,23 @@ class BtnCardAvailable(tk.Button):
 						btn = BtnCardIncluded(self.window, self.card)
 						btn.pack(fill=tk.X, side=tk.TOP)
 						self.window.inDeckDrawn.append(btn)
-		self.window.lbl_Deck.config(text="%d/30"%len(self.window.cardsinDeck))
+					self.window.updateDeckComp()
+		self.window.lbl_Deck.config(text=f"{len(self.window.cardsinDeck)}/{self.deckMax}")
 		
 	def plot(self, i, j):
 		self.grid(row=i, column=j)
 		self.window.collectionsDrawn.append(self)
 		
 class BtnCardIncluded(tk.Button):
-	def __init__(self, window, card):
+	def __init__(self, window, card, SV=0):
 		self.count = 1 #画出这张牌的时候就有1计数
 		self.window, self.card = window, card
-		if len(self.window.inDeckDrawn) < 15: 
-			tk.Button.__init__(self, master=self.window.deckPanel1, text=self.decideText(), font=("Yahei", 10, "bold"),
+		self.deckMax = 40 if SV else 30
+		if len(self.window.inDeckDrawn) < self.deckMax / 2 :
+			tk.Button.__init__(self, master=self.window.deckPanel1, text=self.decideText(), font=("Yahei", 11),
 								width=20, bg="grey86" if "~Legendary" not in card.index else "gold")
 		else:
-			tk.Button.__init__(self, master=self.window.deckPanel2, text=self.decideText(), font=("Yahei", 10, "bold"),
+			tk.Button.__init__(self, master=self.window.deckPanel2, text=self.decideText(), font=("Yahei", 11),
 								width=20, bg="grey86" if "~Legendary" not in card.index else "gold")
 		self.bind("<Button-1>", self.respond)
 		self.bind("<Enter>", self.crosshairEnter)
@@ -376,7 +387,8 @@ class BtnCardIncluded(tk.Button):
 			btn.count -= 1
 			self.config(text=self.decideText())
 		else: btn.destroy()
-		self.window.lbl_Deck.config(text="%d/30"%len(self.window.cardsinDeck))
+		self.window.lbl_Deck.config(text=f"{len(self.window.cardsinDeck)}/{self.deckMax}")
+		self.window.updateDeckComp()
 		
 	def crosshairEnter(self, event):
 		self.waiting = True
@@ -409,15 +421,18 @@ class BtnCardIncluded(tk.Button):
 			
 			
 numCards4EachRow = 4
+manaDistriWidth, manaDistriHeight = 250, 120
 
 class DeckBuilderWindow(tk.Tk):
-	def __init__(self, ClassCards, NeutralCards):
+	def __init__(self, ClassCards, NeutralCards, SV=0):
 		tk.Tk.__init__(self)
 		self.ClassCards, self.NeutralCards = ClassCards, NeutralCards
 		self.Class2Display, self.expansion, self.mana = tk.StringVar(self), tk.StringVar(self), tk.StringVar(self)
 		self.cards2Display, self.collectionsDrawn, self.pageNum = {}, [], 0
 		self.cardsinDeck, self.inDeckDrawn = [], []
 		self.lbl_Image = self.lbl_Text = None
+		self.manaObjsDrawn = []
+		self.lbl_CardTypes = None
 		
 		var = tk.IntVar()
 		lbl_Class = tk.Label(self, text="Select a class" if not CHN else "选择一个职业", font=("Yahei", 14, "bold"))
@@ -437,47 +452,68 @@ class DeckBuilderWindow(tk.Tk):
 		lbl_Class.destroy()
 		classOpt.destroy()
 		btn_StartBuildDeck.destroy()
+		self.SV_Class = "craft" in Class2Start
+		
+		expansions = ["All", "DIY", "Basic", "Classic", "Shadows", "Uldum", "Dragons", "Galakrond", "Initiate", "Outlands", "Academy", "Darkmoon"]
+		if SV:
+			SV_expansions = ["SV_Basic", "SV_Ultimate", "SV_Uprooted", "SV_Fortune", "SV_Rivayle", "SV_Eternal"]
+			expansions.extend(SV_expansions)
+		self.init_AllPanels(Class2Start, expansions)
+		self.showCards()
+		
+	def init_AllPanels(self, Class2Start, expansions):
+		self.searchPanel = tk.Frame(self)
+		self.displayPanel = tk.Frame(self)
+		self.deckBtnPanel = tk.Frame(self)
+		self.deckManaPanel = tk.Frame(self)
+		self.deckPanel1 = tk.Frame(self)
+		self.deckPanel2 = tk.Frame(self)
+		self.cardInfoPanel = tk.Frame(self)
+		self.searchPanel.grid(row=0, column=0)
+		self.displayPanel.grid(row=1, column=0, rowspan=2)
+		self.deckBtnPanel.grid(row=0, column=1, columnspan=2)
+		self.deckManaPanel.grid(row=1, column=1, columnspan=2)
+		self.deckPanel1.grid(row=2, column=1)
+		self.deckPanel2.grid(row=2, column=2)
+		self.cardInfoPanel.grid(row=0, column=14, rowspan=3)
+		
+		self.init_SearchPanel(Class2Start, expansions)
+		self.init_DeckBtnPanel()
+		self.init_DeckManaPanel()
+		
+	def init_SearchPanel(self, Class2Start, expansions):
 		self.Class2Display.set(Class2Start)
 		self.mana.set("All")
 		self.expansion.set("All")
-		self.classOpt = tk.OptionMenu(self, self.Class2Display, *([Class2Start, "Neutral"]) )
-		self.manaOpt = tk.OptionMenu(self, self.mana, *["All", '0', '1', '2', '3', '4', '5', '6', '7', '7+'])
-		self.expansionOpt = tk.OptionMenu(self, self.expansion, *["All", "DIY", "Basic", "Classic", "Shadows", "Uldum", "Dragons", "Galakrond", "Initiate", "Outlands", "Academy", "Darkmoon"])
+		self.classOpt = tk.OptionMenu(self.searchPanel, self.Class2Display, *([Class2Start, "Neutral"]) )
+		self.manaOpt = tk.OptionMenu(self.searchPanel, self.mana, *["All", '0', '1', '2', '3', '4', '5', '6', '7', '7+'])
+		self.expansionOpt = tk.OptionMenu(self.searchPanel, self.expansion, *expansions)
 		self.classOpt.config(font=("Yahei", 14))
 		self.manaOpt.config(font=("Yahei", 14))
 		self.expansionOpt.config(font=("Yahei", 14))
 		self.classOpt["menu"].config(font=("Yahei", 14))
 		self.manaOpt["menu"].config(font=("Yahei", 14))
 		self.expansionOpt["menu"].config(font=("Yahei", 14))
+		self.search = tk.Entry(self.searchPanel, font=("Yahei", 13), width=20)
+		btn_ViewCards = tk.Button(self.searchPanel, text=txt("View Cards", CHN), command=self.showCards, font=("Yahei", 14), bg="green3")
+		btn_Left = tk.Button(self.searchPanel, text="Last Page" if not CHN else "上一页", command=self.lastPage, font=("Yahei", 14))
+		btn_Right = tk.Button(self.searchPanel, text="Next Page" if not CHN else "下一页", command=self.nextPage, font=("Yahei", 14))
 		
-		self.search = tk.Entry(self, font=("Yahei", 13), width=20)
-		btn_ViewCards = tk.Button(self, text=txt("View Cards", CHN), command=self.showCards, font=("Yahei", 14), bg="green3")
-		btn_Left = tk.Button(self, text="Last Page" if not CHN else "上一页", command=self.lastPage, font=("Yahei", 14))
-		btn_Right = tk.Button(self, text="Next Page" if not CHN else "下一页", command=self.nextPage, font=("Yahei", 14))
-		self.displayPanel = tk.Frame(self)
-		self.deckBtnPanel = tk.Frame(self)
-		self.deckPanel1 = tk.Frame(self)
-		self.deckPanel2 = tk.Frame(self)
-		self.cardInfoPanel = tk.Frame(self)
-		
-		tk.Label(self, text=txt("Class", CHN), font=("Yahei", 13)).grid(row=0, column=0)
+		tk.Label(self.searchPanel, text=txt("Class", CHN), font=("Yahei", 13)).grid(row=0, column=0)
 		self.classOpt.grid(row=0, column=1)
-		tk.Label(self, text=txt("Mana", CHN), font=("Yahei", 13)).grid(row=0, column=2)
+		tk.Label(self.searchPanel, text=txt("Mana", CHN), font=("Yahei", 13)).grid(row=0, column=2)
 		self.manaOpt.grid(row=0, column=3)
-		tk.Label(self, text=txt("Expansion", CHN), font=("Yahei", 13)).grid(row=0, column=4)
+		tk.Label(self.searchPanel, text=txt("Expansion", CHN), font=("Yahei", 13)).grid(row=0, column=4)
 		self.expansionOpt.grid(row=0, column=5)
 		self.search.grid(row=0, column=6)
 		btn_ViewCards.grid(row=0, column=7)
 		
-		tk.Label(self, text="  ", font=("Yahei", 13)).grid(row=0, column=8)
+		tk.Label(self.searchPanel, text="  ", font=("Yahei", 13)).grid(row=0, column=8)
 		btn_Left.grid(row=0, column=9)
 		btn_Right.grid(row=0, column=10)
-		self.displayPanel.grid(row=1, column=0, columnspan=11)
 		
-		self.deckBtnPanel.grid(row=0, column=12, columnspan=2)
-		self.deckPanel1.grid(row=1, column=12, rowspan=2)
-		self.deckPanel2.grid(row=1, column=13, rowspan=2)
-		self.lbl_Deck = tk.Label(self.deckBtnPanel, text="0/30", font=("Yahei", 14, "bold"))
+	def init_DeckBtnPanel(self):
+		self.lbl_Deck = tk.Label(self.deckBtnPanel, text="0/40" if self.SV_Class else "0/30", font=("Yahei", 14, "bold"))
 		self.lbl_Deck.grid(row=0, column=0)
 		tk.Button(self.deckBtnPanel, text="Clear" if not CHN else "清空", font=("Yahei", 14, "bold"), 
 					bg="green3", command=lambda : self.clear()).grid(row=0, column=1)
@@ -490,9 +526,43 @@ class DeckBuilderWindow(tk.Tk):
 		self.deckCode = tk.Entry(self.deckBtnPanel)
 		self.deckCode.grid(row=1, column=2, columnspan=2)
 		
-		self.cardInfoPanel.grid(row=0, column=14, rowspan=3)
-		self.showCards()
+	def init_DeckManaPanel(self):
+		self.lbl_CardTypes = tk.Label(self.deckManaPanel, font=("Yahei", 14), 
+							text="Minion:0\nSpell:0\nWeapon:0\nHero:0\nAmulet:0" if not CHN else "随从:0\n法术:0\n武器:0\n英雄牌:0\n护符:0")
+		self.manaDistri = tk.Canvas(master=self.deckManaPanel, width=manaDistriWidth, height=manaDistriHeight)
+		self.lbl_CardTypes.grid(row=0, column=0)
+		self.manaDistri.grid(row=0, column=1)
+		for mana in range(8):
+			X, Y = (0.125 + 0.1 * mana) * manaDistriWidth, 0.95 * manaDistriHeight
+			self.manaDistri.create_text(X, Y, text=str(mana) if mana < 7 else "7+", font=("Yahei", 12, "bold"))
+			
+	def updateDeckComp(self):
+		cardTypes = {"Minion":0, "Spell":0, "Weapon":0, "Hero":0, "Amulet":0}
+		for card in self.cardsinDeck:
+			if issubclass(card, Minion): cardTypes["Minion"] += 1
+			elif issubclass(card, Spell): cardTypes["Spell"] += 1
+			elif issubclass(card, Weapon): cardTypes["Weapon"] += 1
+			elif issubclass(card, Hero): cardTypes["Hero"] += 1
+			elif issubclass(card, Amulet): cardTypes["Amulet"] += 1
+		if not CHN:
+			text = "Minion:%d\nSpell:%d\nWeapon:%d\nHero:%d\nAmulet:%d"%(
+					cardTypes["Minion"], cardTypes["Spell"], cardTypes["Weapon"], cardTypes["Hero"], cardTypes["Amulet"])
+		else:
+			text = "随从:%d\n法术:%d\n武器:%d\n英雄牌:%d\n护符:%d"%(
+					cardTypes["Minion"], cardTypes["Spell"], cardTypes["Weapon"], cardTypes["Hero"], cardTypes["Amulet"])
+		self.lbl_CardTypes.config(text=text)
+		for objID in self.manaObjsDrawn: self.manaDistri.delete(objID)
+		self.manaObjsDrawn = []
 		
+		counts = cnt((min(card.mana, 7) for card in self.cardsinDeck))
+		most = max(list(counts.values()))
+		for key, value in counts.items():
+			if value:
+				X1, X2 = (0.1 + 0.1 * key) * manaDistriWidth, (0.15 + 0.1 * key) * manaDistriWidth
+				Y1, Y2 = (0.88 - 0.75 * (value / most)) * manaDistriHeight, 0.88 * manaDistriHeight
+				self.manaObjsDrawn.append(self.manaDistri.create_rectangle(X1, Y1, X2, Y2, fill='gold', width=0))
+				self.manaObjsDrawn.append(self.manaDistri.create_text((X1+X2)/2, Y1-0.06*manaDistriHeight, text=str(value), font=("Yahei", 12, "bold")))
+				
 	def manaCorrect(self, card, mana):
 		if mana == "All": return True
 		elif mana == "7+": return card.mana > 7
@@ -528,7 +598,7 @@ class DeckBuilderWindow(tk.Tk):
 				i += 1
 		if self.cards2Display: #如果查询结果不为空
 			for i, card in enumerate(self.cards2Display[0]):
-				btn_Card = BtnCardAvailable(self, card)
+				btn_Card = BtnCardAvailable(self, card, self.SV_Class)
 				btn_Card.plot(0 + i >= numCards4EachRow, i % numCards4EachRow)
 		else:
 			messagebox.showinfo(message=txt("Your search doesn't have any match", CHN))
@@ -538,7 +608,7 @@ class DeckBuilderWindow(tk.Tk):
 			self.pageNum -= 1
 			for btn in self.collectionsDrawn: btn.destroy()
 			for i, card in enumerate(self.cards2Display[self.pageNum]):
-				btn_Card = BtnCardAvailable(self, card)
+				btn_Card = BtnCardAvailable(self, card, self.SV_Class)
 				btn_Card.plot(0 + i >= numCards4EachRow, i % numCards4EachRow)
 		else: messagebox.showinfo(message=txt("Already the last page", CHN))
 		
@@ -547,7 +617,7 @@ class DeckBuilderWindow(tk.Tk):
 			self.pageNum += 1
 			for btn in self.collectionsDrawn: btn.destroy()
 			for i, card in enumerate(self.cards2Display[self.pageNum]):
-				btn_Card = BtnCardAvailable(self, card)
+				btn_Card = BtnCardAvailable(self, card, self.SV_Class)
 				btn_Card.plot(0 + i >= numCards4EachRow, i % numCards4EachRow)
 		else: messagebox.showinfo(message=txt("Already the first page", CHN))
 		
@@ -559,7 +629,7 @@ class DeckBuilderWindow(tk.Tk):
 		indices = np.asarray([card.mana for card in cards]).argsort()
 		for i in indices:
 			card = cards[i] #Find the correct card in the right order
-			btn = BtnCardIncluded(self, card)
+			btn = BtnCardIncluded(self, card, self.SV_Class)
 			btn.count = cards_counts[card]
 			btn.config(text=btn.decideText())
 			btn.pack(side=tk.TOP)
@@ -568,7 +638,8 @@ class DeckBuilderWindow(tk.Tk):
 	def clear(self):
 		for btn in self.inDeckDrawn: btn.destroy()
 		self.cardsinDeck, self.inDeckDrawn = [], []
-		self.lbl_Deck.config(text="0/30")
+		self.lbl_Deck.config(text="0/40" if self.SV_Class else "0/30")
+		self.updateDeckComp()
 		
 	def export(self):
 		s = "names||"
@@ -582,7 +653,8 @@ class DeckBuilderWindow(tk.Tk):
 		
 		
 if __name__ == "__main__":
-	makeCardPool(board="0 Random Game Board", monk=0, SV=0)
+	SV = 1
+	makeCardPool(board="0 Random Game Board", monk=0, SV=SV)
 	from CardPools import ClassCards, NeutralCards
-	DeckBuilderWindow(ClassCards, NeutralCards).mainloop()
+	DeckBuilderWindow(ClassCards, NeutralCards, SV=SV).mainloop()
 	

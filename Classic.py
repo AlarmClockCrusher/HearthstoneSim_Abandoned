@@ -478,7 +478,7 @@ class Trig_LorewalkerCho(TrigBoard):
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		card = type(subject)(self.entity.Game, 3-subject.ID)
-		self.entity.Game.Hand_Deck.addCardtoHand(card, 3-subject.ID)
+		self.entity.Game.Hand_Deck.addCardtoHand(card, 3-subject.ID, creator=type(self.entity))
 		
 		
 class MadBomber(Minion):
@@ -767,13 +767,12 @@ class Trig_AlarmoBot(TrigBoard):
 				minion.disappears(deathrattlesStayArmed=False)
 				curGame.removeMinionorWeapon(minion)
 				minion.reset(ID)
-				minion.numOccurrence += 1
 				#下面节选自Hand.py的addCardtoHand方法，但是要跳过手牌已满的检测
 				ownHand.append(minion)
 				minion.entersHand()
 				curGame.sendSignal("CardEntersHand", minion, None, [minion], 0, "")
 				#假设先发送牌进入手牌的信号，然后召唤随从
-				curGame.summonfromHand(i, ID, pos, ID)
+				curGame.summonfrom(i, ID, pos, self.entity, fromHand=True)
 				
 				
 class ArcaneGolem(Minion):
@@ -824,12 +823,13 @@ class Brightwing(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
+			pool = tuple(self.rngPool("Legendary Minions"))
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
 			else:
-				minion = npchoice(self.rngPool("Legendary Minions"))
+				minion = npchoice(pool)
 				curGame.fixedGuides.append(minion)
-			curGame.Hand_Deck.addCardtoHand(minion, self.ID, "type")
+			curGame.Hand_Deck.addCardtoHand(minion, self.ID, byType=True, creator=type(self), possi=pool)
 		return None
 		
 		
@@ -1035,7 +1035,7 @@ class KingMukla(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Hand_Deck.handNotFull(3-self.ID):
-			self.Game.Hand_Deck.addCardtoHand([Bananas, Bananas], 3-self.ID, "type")
+			self.Game.Hand_Deck.addCardtoHand([Bananas, Bananas], 3-self.ID, byType=True, creator=type(self))
 		return None
 		
 class Bananas(Spell):
@@ -2088,12 +2088,13 @@ class Trig_Ysera(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
+			pool = (Dream, Nightmare, YseraAwakens, LaughingSister, EmeraldDrake)
 			if curGame.guides:
 				card = curGame.guides.pop(0)
 			else:
-				card = npchoice([Dream, Nightmare, YseraAwakens, LaughingSister, EmeraldDrake])
+				card = npchoice(pool)
 				curGame.fixedGuides.append(card)
-			curGame.Hand_Deck.addCardtoHand(card, self.entity.ID, "type")
+			curGame.Hand_Deck.addCardtoHand(card, self.entity.ID, byType=True, creator=type(self.entity), possi=pool)
 			
 class Dream(Spell):
 	Class, name = "DreamCard", "Dream"
@@ -3245,12 +3246,13 @@ class TomeofIntellect(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
+			pool = tuple(self.rngPool("Mage Spells"))
 			if curGame.guides:
 				spell = curGame.guides.pop(0)
 			else:
-				spell = npchoice(self.rngPool("Mage Spells"))
+				spell = npchoice(pool)
 				curGame.fixedGuides.append(spell)
-			curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type")
+			curGame.Hand_Deck.addCardtoHand(spell, self.ID, byType=True, creator=type(self), possi=pool)
 		return None
 		
 		
@@ -3546,7 +3548,7 @@ class Trig_ArchmageAntonidas(TrigBoard):
 		return "每当你施放一个法术，将一张“火球术”法术牌置入你的手牌" if CHN else "Whenever you cast a spell, add a 'Fireball' spell to your hand"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.addCardtoHand(Fireball, self.entity.ID, "type")
+		self.entity.Game.Hand_Deck.addCardtoHand(Fireball, self.entity.ID, byType=True, creator=type(self.entity))
 		
 		
 class Pyroblast(Spell):
@@ -4053,6 +4055,7 @@ class Thoughtsteal(Spell):
 		enemyDeck = curGame.Hand_Deck.decks[3-self.ID]
 		if enemyDeck:
 			if curGame.mode == 0:
+				pool = tuple(type(card) for card in enemyDeck)
 				if curGame.guides:
 					cards = [enemyDeck[i] for i in curGame.guides.pop(0)]
 				else:
@@ -4060,7 +4063,7 @@ class Thoughtsteal(Spell):
 					cards = [enemyDeck[i] for i in indices]
 					curGame.fixedGuides.append(tuple(indices))
 				copies = [card.selfCopy(self.ID) for card in cards]
-				self.Game.Hand_Deck.addCardtoHand(copies, self.ID)
+				self.Game.Hand_Deck.addCardtoHand(copies, self.ID, creator=type(self), possi=pool)
 		return None
 		
 		
@@ -4307,15 +4310,19 @@ class Pilfer(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
+			classes = self.rngPool("Classes")[:]
+			try: classes.remove(curGame.heroes[self.ID].Class)
+			except: pass
+			pool = []
+			for Class in classes:
+				pool += self.rngPool("%s Cards"%Class)
+			pool = tuple(pool)
 			if curGame.guides:
 				card = curGame.guides.pop(0)
 			else:
-				classes = self.rngPool("Classes")[:]
-				try: classes.remove(curGame.heroes[self.ID].Class)
-				except: pass
 				card = npchoice(self.rngPool("%s Cards"%npchoice(classes)))
 				curGame.fixedGuides.append(card)
-			curGame.Hand_Deck.addCardtoHand(card, self.ID, "type")
+			curGame.Hand_Deck.addCardtoHand(card, self.ID, byType=True, creator=type(self), possi=pool)
 		return None
 		
 #Betrayal lets target deal damage to adjacent minions.
@@ -4468,7 +4475,7 @@ class Headcrack_Effect:
 		self.Game.turnStartTrigger.append(self)
 		
 	def turnStartTrigger(self):
-		self.Game.Hand_Deck.addCardtoHand(self.card, self.ID)
+		self.Game.Hand_Deck.addCardtoHand(self.card, self.ID, creator=Headcrack)
 		try: self.Game.turnStartTrigger.remove(self)
 		except: pass
 		
@@ -4941,12 +4948,13 @@ class CalloftheVoid(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
+			pool = self.rngPool("Demons")
 			if curGame.guides:
 				demon = curGame.guides.pop(0)
 			else:
-				demon = npchoice(self.rngPool("Demons"))
+				demon = npchoice(pool)
 				curGame.fixedGuides.append(demon)
-			curGame.Hand_Deck.addCardtoHand(demon, self.ID, "type")
+			curGame.Hand_Deck.addCardtoHand(demon, self.ID, byType=True, creator=type(self), possi=pool)
 		return None
 		
 		
@@ -5007,7 +5015,7 @@ class SenseDemons(Spell):
 					i = npchoice(demons) if demons else -1
 					curGame.fixedGuides.append(i)
 				if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
-				else: curGame.Hand_Deck.addCardtoHand(WorthlessImp, self.ID, "type")
+				else: curGame.Hand_Deck.addCardtoHand(WorthlessImp, self.ID, byType=True, creator=type(self))
 		return None
 		
 class WorthlessImp(Minion):

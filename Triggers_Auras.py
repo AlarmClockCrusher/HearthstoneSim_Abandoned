@@ -250,7 +250,7 @@ class SecretTrigger(TrigBoard):
 		self.disconnect() #Handles removing dummy, too.
 		if self.dummy: #伪扳机能被触发的时候，需要移除可能性
 			#上面已经把这个伪扳机从trigsBoard和trigAuras里面移除了，下面就是把它所用来服务的那个真正的奥秘的可能范围缩小
-			self.realSecret.possibilities.remove(type(secret))
+			self.realSecret.possi.remove(type(secret))
 			game.Hand_Deck.ruleOut(secret, fromHD=2)
 		else: #如果这个扳机是真奥秘的扳机时，它触发时需要把其从对方的资源中移除
 			try: game.Secrets.secrets[secret.ID].remove(secret)

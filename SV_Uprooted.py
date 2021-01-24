@@ -82,7 +82,7 @@ class WayfaringIllustrator(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.Game.Hand_Deck.addCardtoHand([type(target)], self.ID, "type")
+            self.Game.Hand_Deck.addCardtoHand([type(target)], self.ID, byType=True)
         return None
 
 
@@ -133,7 +133,7 @@ class ChangewingCherub(SVMinion):
         self.Game.options = [AssemblyDroid(self.Game, self.ID), NaterranGreatTree(self.Game, self.ID)]
         self.Game.Discover.startDiscover(self)
 
-    def discoverDecided(self, option, info):
+    def discoverDecided(self, option, pool):
         self.Game.fixedGuides.append(type(option))
         self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 

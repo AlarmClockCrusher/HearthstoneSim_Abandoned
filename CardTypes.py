@@ -298,13 +298,11 @@ class Card:
 
 		dmgList = []
 		#如果攻击者是英雄且装备着当前回合打开着的武器，则将攻击的伤害来源视为那把武器。
-		if self.type == "Hero" and game.availableWeapon(self.ID) and self.ID == game.turn:
-			dmgDealer_att = game.availableWeapon(self.ID)
-		else: dmgDealer_att = self
+		weapon = game.availableWeapon(self.ID)
+		dmgDealer_att = weapon if self.type == "Hero" and weapon and self.ID == game.turn else self
 		#如果被攻击者是英雄，且装备着当前回合打开着的武器，则将攻击目标造成的伤害来源视为那把武器。
-		if target.type == "Hero" and game.availableWeapon(target.ID) and target.ID == game.turn:
-			dmgDealer_def = game.availableWeapon(target.ID)
-		else: dmgDealer_def = target
+		weapon = game.availableWeapon(target.ID)
+		dmgDealer_def = weapon if target.type == "Hero" and weapon and target.ID == game.turn else target
 		#Manipulate the health of the subject/target's health.
 		#Only send out "MinionTakesDmg" signal at this point.
 		#首先结算攻击者对于攻击目标的伤害，如果攻击力小于1，则攻击目标不会被记入伤害处理列表。
@@ -526,7 +524,7 @@ class Card:
 			else: #The attribute is a self-defined class. They will all have selfCopy methods
 				#A minion can't refernece another minion. The attributes here must be like triggers/deathrattles
 				Copy.__dict__[key] = value.selfCopy(Copy)
-		Copy.ID, Copy.creator, Copy.numOccurrence = ID, creator, 0
+		Copy.ID, Copy.creator = ID, creator
 		return Copy
 
 	#给非随从牌用的，目前也没有复制场上武器的牌
@@ -639,14 +637,14 @@ class Minion(Card):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 
-	def reset(self, ID): #如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化
-		creator, numOccurrence, tracked, possi = self.creator, self.numOccurrence, self.tracked, self.possibilities
+	def reset(self, ID, isKnown=True): #如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化
+		creator, possi = self.creator, type(self) if isKnown else self.possi
 		att_0, health_0 = self.attack_0, self.health_0
 		self.__init__(self.Game, ID)
 		self.attack_0 = self.attack = self.attack_Enchant = att_0
 		self.health_0 = self.health = self.health_max = health_0
-		self.creator, self.numOccurrence, self.tracked = creator, numOccurrence, tracked
-		self.possibilities = possi
+		self.creator = creator
+		self.possi = possi
 
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -688,8 +686,6 @@ class Minion(Card):
 		self.status = {"Immune": 0, "Frozen": 0, "Temp Stealth": 0, "Borrowed": 0,
 					   "Evolved": 0,
 					   }
-		#Keep track of the original cards that started in the deck
-		self.numOccurrence = 0
 		self.newonthisSide, self.dead = True, False
 		self.effectViable = self.evanescent = False
 		self.onBoard = self.inHand = self.inDeck = False
@@ -711,8 +707,8 @@ class Minion(Card):
 											  "Deathrattles": [], "Triggers": []
 											  }
 						}
-		#跟踪卡牌的可能性
-		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
+		#跟踪卡牌的可能性。一张牌被加入手牌时，这张牌是tracked，被洗回牌库的时候则会取消这个
+		self.creator, self.tracked, self.possi = None, False, (type(self),)
 
 	def applicable(self, target):
 		return target != self
@@ -810,7 +806,7 @@ class Minion(Card):
 			for key, value in self.effectfromAura.items():
 				if value > 0: text += "  {}\n".format(self.effectfromAura)
 
-		marks = [key for key, value in self.marks.items()]
+		marks = [key for key, value in self.marks.items() if key != "UB" and value]
 		if marks:
 			text += "Effect:\n" if not CHN else "其他特效：\n"
 			for key in marks: text += "  {} {}\n".format(key if not CHN else effectsDict[key], self.marks[key])
@@ -1150,7 +1146,7 @@ class Minion(Card):
 			self.Game.sendSignal("MinionStatCheck", self.ID, None, self, 0, "")
 
 	# 在原来的Game中创造一个Copy
-	def selfCopy(self, ID, attack=False, health=False, mana=False):
+	def selfCopy(self, ID, creator, attack=False, health=False, mana=False):
 		Copy = self.hardCopy(ID)
 		# 随从的光环和亡语复制完全由各自的selfCopy函数负责。
 		for receiver in Copy.auraReceivers: receiver.effectDiscard()
@@ -1159,7 +1155,7 @@ class Minion(Card):
 		for i in reversed(range(size)):
 			if Copy.manaMods[i].source: Copy.manaMods.pop(i)
 		# 在一个游戏中复制出新实体的时候需要把这些值重置
-		Copy.creator, Copy.numOccurrence = "", 0
+		Copy.creator = creator
 		Copy.newonthisSide, Copy.dead = True, False
 		Copy.effectViable = Copy.evanescent = False
 		Copy.seq, Copy.pos = -1, -2
@@ -1237,7 +1233,6 @@ class Minion(Card):
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.marks = copy.deepcopy(self.marks)
 			Copy.status = copy.deepcopy(self.status)
-			Copy.creator, Copy.numOccurrence, Copy.tracked = self.creator, self.numOccurrence, self.tracked
 			Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
 			if hasattr(self, "progress"): Copy.progress = self.progress
 			Copy.effectViable, Copy.evanescent, Copy.silenced = self.effectViable, self.evanescent, self.silenced
@@ -1252,7 +1247,7 @@ class Minion(Card):
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.history = copy.deepcopy(self.history)
-			Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
+			Copy.tracked, Copy.creator, Copy.possi = self.tracked, self.creator, self.possi
 			self.assistCreateCopy(Copy)
 			return Copy
 
@@ -1265,10 +1260,10 @@ class Spell(Card):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 
-	def reset(self, ID):
-		creator, possi = self.creator, self.possibilities
+	def reset(self, ID, isKnown=True):
+		creator, possi = self.creator, type(self) if isKnown else self.possi
 		self.__init__(self.Game, ID)
-		self.creator, self.possibilities = creator, possi
+		self.creator, self.possi = creator, possi
 
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -1288,7 +1283,7 @@ class Spell(Card):
 		self.marks = {"Cost Health Instead": 0,}
 		self.effectViable, self.evanescent = False, False
 		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
+		self.creator, self.tracked, self.possi = None, False, (type(self),)
 
 	def cardStatus(self, hideSomeTrigs=False):
 		CHN = self.Game.GUI.CHN
@@ -1360,10 +1355,10 @@ class Spell(Card):
 			GUI.wait(750)
 		#在法术要施放两次的情况下，第二次的目标仍然是第一次时随机决定的
 		for i in range(repeatTimes):
-			if self.overload > 0:
-				curGame.Manas.overloadMana(self.overload, self.ID)
+			if self.overload > 0: curGame.Manas.overloadMana(self.overload, self.ID)
 			if self.twinSpell > 0: #如果不是从手牌中打出，则不会把双生法术牌置入原来的位置
-				curGame.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, "type")
+				curGame.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, byType=True, pos=posinHand,
+												creator=type(self), possi=(self.twinSpellCopy,))
 			#指向性法术如果没有目标也可以释放，只是可能没有效果而已
 			target = self.whenEffective(target, "byOthers", choice, posinHand=-2)
 		if GUI: GUI.eraseOffBoardTrig(self.ID)
@@ -1374,50 +1369,49 @@ class Spell(Card):
 	#泽蒂摩是在法术开始结算之前打上标记,而非在连续两次之间进行判定。
 	#comment = "InvokedbyAI", "Branching-i", ""
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
+		game, ID, GUI = self.Game, self.ID, self.Game.GUI
 		#使用阶段
 		#判定该法术是否会因为风潮的光环存在而释放两次。发现的子游戏中不会两次触发，直接跳过
-		repeatTimes = 2 if self.Game.status[self.ID]["Spells x2"] > 0 else 1
-		if self.Game.GUI:
-			self.Game.GUI.displayCard(self)
-			self.Game.GUI.showOffBoardTrig(self)
-			self.Game.GUI.wait(500)
+		repeatTimes = 2 if game.status[ID]["Spells x2"] > 0 else 1
+		if GUI:
+			GUI.displayCard(self)
+			GUI.showOffBoardTrig(self)
+			GUI.wait(500)
 		#使用时步骤，触发伊利丹和紫罗兰老师等“每当你使用一张xx牌”的扳机
-		self.Game.sendSignal("SpellPlayed", self.ID, self, target if not isinstance(target, list) else None, mana, "", choice)
-		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
+		game.sendSignal("SpellPlayed", ID, self, target if not isinstance(target, list) else None, mana, "", choice)
+		game.sendSignal("Spellboost", ID, self, None, mana, "", choice)
 		#获得过载和双生法术牌。
-		if self.overload > 0:
-			self.Game.Manas.overloadMana(self.overload, self.ID)
+		if self.overload > 0: game.Manas.overloadMana(self.overload, ID)
 		if self.twinSpell > 0:
-			self.Game.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, "type", posinHand)
-
+			game.Hand_Deck.addCardtoHand(self.twinSpellCopy, ID, byType=True, pos=posinHand,
+													creator=type(self), possi=(self.twinSpellCopy,))
 		#使用阶段结束，进行死亡结算。不处理胜负裁定。
-		self.Game.gathertheDead() #At this point, the minion might be removed/controlled by Illidan/Juggler combo.
+		game.gathertheDead() #At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		#进行目标的随机选择和扰咒术的目标改向判定。
 		if target:
-			targetHolder = [target]
-			self.Game.sendSignal("SpellTargetDecision", self.ID, self, targetHolder, 0, choice)
-			if target != targetHolder[0] and self.Game.GUI:
-				target = targetHolder[0]
-				self.Game.GUI.target = target
-				self.Game.GUI.wait(400) #If the target is changed, show 0.4 more seconds
-			else: target = targetHolder[0]
+			holder = [target]
+			game.sendSignal("SpellTargetDecision", ID, self, holder, 0, choice)
+			if target != holder[0] and GUI:
+				target = holder[0]
+				GUI.target = target
+				GUI.wait(400) #If the target is changed, show 0.4 more seconds
+			else: target = holder[0]
 
-		if target and target.ID == self.ID:
-			self.Game.Counters.spellsonFriendliesThisGame[self.ID].append(self.index)
+		if target and target.ID == ID:
+			game.Counters.spellsonFriendliesThisGame[ID].append(self.index)
 		#Zentimo's effect actually an aura. As long as it's onBoard the moment the spell starts being resolved,
 		#the effect will last even if Zentimo leaves board early.
-		sweep = self.Game.status[self.ID]["Spells Sweep"]
+		sweep = game.status[ID]["Spells Sweep"]
 		#没有法术目标，且法术本身是点了需要目标的选项的抉择法术或者需要目标的普通法术。
 		for i in range(repeatTimes):
 			if i == 1: #第二次施放时照常获得过载和双生法术牌。
-				if self.overload > 0:
-					self.Game.Manas.overloadMana(self.overload, self.ID)
+				if self.overload > 0: game.Manas.overloadMana(self.overload, ID)
 				if self.twinSpell > 0:
-					self.Game.Hand_Deck.addCardtoHand(self.twinSpellCopy, self.ID, comment="type", byDiscover=False, pos=posinHand)
-
+					game.Hand_Deck.addCardtoHand(self.twinSpellCopy, ID, byType=True, pos=posinHand,
+													creator=type(self), possi=(self.twinSpellCopy,))
 			#When the target is an onBoard minion, Zentimo is still onBoard and has adjacent minions next to it.
-			if target and target.type == "Minion" and target.onBoard and sweep > 0 and self.Game.neighbors2(target)[0]:
-				neighbors = self.Game.neighbors2(target)[0]
+			if target and target.type == "Minion" and target.onBoard and sweep > 0 and game.neighbors2(target)[0]:
+				neighbors = game.neighbors2(target)[0]
 				#只对中间的目标随从返回法术释放之后的新目标。
 				#用于变形等会让随从提前离场的法术。需要知道后面的再次生效目标。
 				target.history["Spells Cast on This"].append(self.index)
@@ -1427,31 +1421,29 @@ class Spell(Card):
 					self.whenEffective(minion, comment, choice, posinHand)
 			else: #The target isn't minion or Zentimo can't apply to the situation. Be the target hero, minion onBoard or inDeck or None.
 				#如果目标不为空而且是在场上的随从，则这个随从的历史记录中会添加此法术的index。
-				if target and target.type == (target.type == "Minion" or target.type == "Amulet") and target.onBoard:
+				if target and (target.type == "Minion" or target.type == "Amulet") and target.onBoard:
 					target.history["Spells Cast on This"].append(self.index)
-
 				target = self.whenEffective(target, comment, choice, posinHand)
 
 		#仅触发风潮，星界密使等的光环移除扳机。“使用一张xx牌之后”的扳机不在这里触发，而是在Game的playSpell函数中结算。
-		self.Game.sendSignal("SpellBeenCast", self.Game.turn, self, target, 0, "", choice)
+		game.sendSignal("SpellBeenCast", game.turn, self, target, 0, "", choice)
 		#使用阶段结束，进行死亡结算，暂不处理胜负裁定。
-		self.Game.gathertheDead() #At this point, the minion might be removed/controlled by Illidan/Juggler combo.
-
+		game.gathertheDead() #At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 	#完成阶段：
 		#如果法术具有回响，则将回响牌置入手牌中。因为没有牌可以让法术获得回响，所以可以直接在法术played()方法中处理echo
 		#if "~Echo" in self.index:
-		#	echoCard = type(minion)(self, self.Game.turn)
+		#	echoCard = type(minion)(self, game.turn)
 		#	trig = Trig_Echo(echoCard)
 		#	echoCard.trigsHand.append(trig)
-		#	self.Game.Hand_Deck.addCardtoHand(echoCard, self.ID)
-
-		if self.Game.GUI: self.Game.GUI.eraseOffBoardTrig(self.ID)
+		#	game.Hand_Deck.addCardtoHand(echoCard, ID)
+		if GUI: GUI.eraseOffBoardTrig(ID)
 
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		return target
 
 	def afterDrawingCard(self):
 		pass
+		
 	"""Handle the spell dealing damage and restoring health."""
 	def countDamageDouble(self):
 		return sum(minion.marks["Spell Heal&Dmg x2"] > 0 for minion in self.Game.minions[self.ID])
@@ -1475,7 +1467,7 @@ class Spell(Card):
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.marks = copy.deepcopy(self.marks)
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
+			Copy.tracked, Copy.creator, Copy.possi = self.tracked, self.creator, self.possi
 			self.assistCreateCopy(Copy)
 			return Copy
 
@@ -1506,7 +1498,7 @@ class Secret(Spell):
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
 		self.marks = {"Cost Health Instead": 0, }
 		self.effectViable, self.evanescent = False, False
-		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
+		self.creator, self.tracked, self.possi = None, False, (type(self),)
 		self.dummyTrigs = []
 
 	def available(self):
@@ -1577,7 +1569,7 @@ class Quest(Spell):
 		self.marks = {"Cost Health Instead": 0, }
 		self.effectViable, self.evanescent = False, False
 		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
+		self.creator, self.tracked, self.possi = None, False, (type(self),)
 
 	#Upper limit of secrets and quests is 5. There can only be one main quest, but multiple different sidequests
 	def available(self):
@@ -1643,7 +1635,7 @@ class Quest(Spell):
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
+			Copy.tracked, Copy.creator, Copy.possi = self.tracked, self.creator, self.possi
 			self.assistCreateCopy(Copy)
 			return Copy
 
@@ -1812,10 +1804,10 @@ class Hero(Card):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 
-	def reset(self, ID):
-		creator, possi = self.creator, self.possibilities
+	def reset(self, ID, isKnown=True):
+		creator, possi = self.creator, type(self) if isKnown else self.possi
 		self.__init__(self.Game, ID)
-		self.creator, self.possibilities = creator, possi
+		self.creator, self.possi = creator, possi
 
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -1848,7 +1840,7 @@ class Hero(Card):
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.effectViable, self.evanescent = False, False
 		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
+		self.creator, self.tracked, self.possi = None, False, (type(self),)
 
 	"""Handle hero's attacks, attack chances, attack chances and frozen status."""
 	def cardStatus(self, hideSomeTrigs=False):
@@ -2124,7 +2116,7 @@ class Hero(Card):
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
+			Copy.tracked, Copy.creator, Copy.possi = self.tracked, self.creator, self.possi
 			self.assistCreateCopy(Copy)
 			return Copy
 
@@ -2137,10 +2129,10 @@ class Weapon(Card):
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 
-	def reset(self, ID):
-		creator, possi = self.creator, self.possibilities
+	def reset(self, ID, isKnown=True):
+		creator, possi = self.creator, type(self) if isKnown else self.possi
 		self.__init__(self.Game, ID)
-		self.creator, self.possibilities = creator, possi
+		self.creator, self.possi = creator, possi
 
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -2165,7 +2157,7 @@ class Weapon(Card):
 		self.auras = {}
 		self.effectViable, self.evanescent = False, False
 		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
+		self.creator, self.tracked, self.possi = None, False, (type(self),)
 
 	def cardStatus(self, hideSomeTrigs=False):
 		CHN = self.Game.GUI.CHN
@@ -2336,7 +2328,7 @@ class Weapon(Card):
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
 			Copy.effectViable, Copy.evanescent = self.effectViable, self.evanescent
-			Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
+			Copy.tracked, Copy.creator, Copy.possi = self.tracked, self.creator, self.possi
 			self.assistCreateCopy(Copy)
 			return Copy
 

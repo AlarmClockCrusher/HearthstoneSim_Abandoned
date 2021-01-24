@@ -317,7 +317,7 @@ class TotemicSlam(HeroPower):
 				curGame.Discover.startDiscover(self)
 		return 0
 		
-	def discoverDecided(self, option, info):
+	def discoverDecided(self, option, pool):
 		self.Game.fixedGuides.append(type(option))
 		self.Game.summon(option, -1, self.ID, "")
 		
@@ -964,7 +964,7 @@ class SightlessWatcher(Minion):
 						curGame.Discover.startDiscover(self)
 		return None
 		
-	def discoverDecided(self, option, info):
+	def discoverDecided(self, option, pool):
 		ownDeck = self.Game.Hand_Deck.decks[self.ID]
 		i = ownDeck.index(option)
 		self.Game.fixedGuides.append(i)
@@ -1205,7 +1205,7 @@ class WildGrowth(Spell):
 	name_CN = "野性生长"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Manas.gainEmptyManaCrystal(1, self.ID) == False:
-			self.Game.Hand_Deck.addCardtoHand(ExcessMana(self.Game, self.ID), self.ID)
+			self.Game.Hand_Deck.addCardtoHand(ExcessMana(self.Game, self.ID), self.ID, creator=type(self))
 		return None
 		
 class ExcessMana(Spell):
@@ -1357,7 +1357,7 @@ class Tracking(Spell):
 		return None
 		
 	#产生选择选项的时候是牌库顶的牌在最选项的最左面
-	def discoverDecided(self, option, info):
+	def discoverDecided(self, option, pool):
 		i = self.Game.options.index(option)
 		index = info.pop(i)
 		info = (index, tuple(info))
@@ -1961,12 +1961,13 @@ class MindVision(Spell):
 		curGame = self.Game
 		enemyHand = curGame.Hand_Deck.hands[3-self.ID]
 		if curGame.mode == 0:
+			pool = tuple(type(card) for card in enemyHand)
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
 				i = nprandint(len(enemyHand)) if enemyHand else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.Hand_Deck.addCardtoHand(enemyHand[i].selfCopy(self.ID), self.ID)
+			if i > -1: curGame.Hand_Deck.addCardtoHand(enemyHand[i].selfCopy(self.ID), self.ID, creator=type(self), possi=pool)
 		return None
 		
 		
@@ -1981,12 +1982,13 @@ class PsychicConjurer(Minion):
 		curGame = self.Game
 		enemyDeck = curGame.Hand_Deck.decks[3-self.ID]
 		if curGame.mode == 0:
+			pool = tuple(possi[1][0] for possi in curGame.Hand_Deck.knownCards[3-self.ID] if len(possi) == 1)
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
 				i = nprandint(len(enemyDeck)) if enemyDeck else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.Hand_Deck.addCardtoHand(enemyDeck[i].selfCopy(self.ID), self.ID)
+			if i > -1: curGame.Hand_Deck.addCardtoHand(enemyDeck[i].selfCopy(self.ID), self.ID, creator=type(self), possi=pool)
 		return None
 		
 		

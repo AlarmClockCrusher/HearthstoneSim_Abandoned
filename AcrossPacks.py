@@ -105,18 +105,17 @@ class ZarogsCrown(Spell):
 					if self.ID != curGame.turn or "byOthers" in comment:
 						minion = npchoice(self.rngPool(key))
 						curGame.fixedGuides.append(minion)
-						curGame.summon([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
+						curGame.summon([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
 					else:
 						minions = npchoice(self.rngPool(key), 3, replace=False)
 						curGame.options = [minion(curGame, self.ID) for minion in minions]
 						curGame.Discover.startDiscover(self)
 		return None
 		
-	def discoverDecided(self, option, info):
+	def discoverDecided(self, option, pool):
 		self.Game.fixedGuides.append(type(option))
-		self.Game.summon([option, type(option)(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+		self.Game.summon([option, type(option)(self.Game, self.ID)], (-1, "totheRightEnd"), self)
 		
-
 
 class Bomb(Spell):
 	Class, name = "Neutral", "Bomb"
@@ -135,7 +134,6 @@ class EtherealLackey(Minion):
 	index = "Shadows~Neutral~Minion~1~1~1~None~Ethereal Lackey~Battlecry~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a spell"
 	poolIdentifier = "Druid Spells"
-
 	@classmethod
 	def generatePool(cls, Game):
 		return [Class + " Spells" for Class in Game.Classes], \
@@ -145,23 +143,23 @@ class EtherealLackey(Minion):
 		curGame = self.Game
 		if self.ID == curGame.turn:
 			if curGame.mode == 0:
+				pool = tuple(self.rngPool(classforDiscover(self) + " Spells"))
 				if curGame.guides:
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
+					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
 				else:
-					key = classforDiscover(self) + " Spells"
 					if "byOthers" in comment:
-						spell = npchoice(self.rngPool(key))
+						spell = npchoice()
 						curGame.fixedGuides.append(spell)
-						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type", byDiscover=True)
+						curGame.Hand_Deck.addCardtoHand(spell, self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
 					else:
-						spells = npchoice(self.rngPool(key), 3, replace=False)
+						spells = npchoice(pool, 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
-						curGame.Discover.startDiscover(self)
+						curGame.Discover.startDiscover(self, pool)
 		return None
 
-	def discoverDecided(self, option, info):
+	def discoverDecided(self, option, pool):
 		self.Game.fixedGuides.append(type(option))
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True, creator=type(self), possi=pool)
 
 
 class FacelessLackey(Minion):
@@ -183,7 +181,7 @@ class FacelessLackey(Minion):
 			else:
 				minion = npchoice(self.rngPool("2-Cost Minions to Summon"))
 				curGame.fixedGuides.append(minion)
-			curGame.summon(minion(curGame, self.ID), self.pos + 1, self.ID)
+			curGame.summon(minion(curGame, self.ID), self.pos + 1, self)
 		return None
 
 
@@ -307,7 +305,7 @@ class DraconicLackey(Minion):
 						curGame.Discover.startDiscover(self)
 		return None
 
-	def discoverDecided(self, option, info):
+	def discoverDecided(self, option, pool):
 		self.Game.fixedGuides.append(type(option))
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 

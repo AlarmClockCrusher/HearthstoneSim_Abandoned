@@ -41,7 +41,7 @@ class Hand_Deck:
 			Class = self.Game.heroes[ID].Class  # Hero's class
 			for obj in self.initialDecks[ID]:
 				if obj.name == "Transfer Student": obj = self.Game.transferStudentType
-				self.knownCards[ID].append(('', (obj, )))
+				self.knownCards[ID].append((None, (obj, )))
 				card = obj(self.Game, ID)
 				if "Galakrond, " in card.name:
 					# 检测过程中，如果目前没有主迦拉克隆或者与之前检测到的迦拉克隆与玩家的职业不符合，则把检测到的迦拉克隆定为主迦拉克隆
@@ -93,7 +93,7 @@ class Hand_Deck:
 
 		if self.Game.GUI: self.Game.GUI.update()
 		if not self.Game.heroes[2].Class in SVClasses:
-			self.addCardtoHand(TheCoin(self.Game, 2), 2, possi=(1, (TheCoin,)))
+			self.addCardtoHand(TheCoin(self.Game, 2), 2)
 		self.Game.Manas.calcMana_All()
 		for ID in range(1, 3):
 			for card in self.hands[ID] + self.decks[ID]:
@@ -128,7 +128,7 @@ class Hand_Deck:
 				card.effCanTrig()
 				card.checkEvanescent()
 		if not self.Game.heroes[2].Class in SVClasses:
-			self.addCardtoHand(TheCoin(self.Game, 2), 2, possi=(1, (TheCoin,)))
+			self.addCardtoHand(TheCoin(self.Game, 2), 2)
 		self.Game.Manas.calcMana_All()
 		for ID in range(1, 3):
 			for card in self.hands[ID] + self.decks[ID]:
@@ -143,7 +143,7 @@ class Hand_Deck:
 	#fromHD=1: only rule out from deck
 	#fromHD=other: rule out from both
 	def ruleOut(self, card, fromHD): #fromHD = 0, 1, other integers
-		tup = (card.creator, card.possibilities)
+		tup = (card.creator, card.possi)
 		ID = card.ID
 		if fromHD != 1: #Rule out from hand
 			try: self.knownHands[ID].remove(tup)
@@ -160,8 +160,7 @@ class Hand_Deck:
 	#intoHD=1: include in deck
 	#intoHD=other: include in both
 	def includePossi(self, card, intoHD): #intoHD == 0, 1, other integers
-		tup = (card.creator, card.possibilities)
-		ID = card.ID
+		tup, ID = (card.creator, card.possi), card.ID
 		if tup[0] and isinstance(tup[1], tuple):
 			if intoHD != 1: self.uncertainHands[ID].append(tup)
 			if intoHD != 0: self.uncertainCards[ID].append(tup)
@@ -175,7 +174,7 @@ class Hand_Deck:
 	def spaceinHand(self, ID):
 		return self.handUpperLimit[ID] - len(self.hands[ID])
 
-	def outcastcanTrigger(self, card):
+	def outcastcanTrig(self, card):
 		posinHand = self.hands[card.ID].index(card)
 		return posinHand == 0 or posinHand == len(self.hands[card.ID]) - 1
 
@@ -261,23 +260,24 @@ class Hand_Deck:
 				if GUI: GUI.drawCardAni_2(btn, cardTracker[0])
 				game.sendSignal("CardEntersHand", ID, None, cardTracker, mana, "")
 				game.Manas.calcMana_All()
-			return (cardTracker[0], mana)
+			return cardTracker[0], mana
 		else:
 			if GUI: GUI.millCardAni(card)
-			return (None, mana) #假设即使爆牌也可以得到要抽的那个牌的费用，用于神圣愤怒
+			return None, mana #假设即使爆牌也可以得到要抽的那个牌的费用，用于神圣愤怒
 			
 	# def createCard(self, obj, ID, comment)
 	# Will force the ID of the card to change. obj can be an empty list/tuple
-	def addCardtoHand(self, obj, ID, comment="", byDiscover=False, pos=-1, 
-									showAni=True, possi=None):
+	#Creator是这张/些牌的创建者，creator=None，则它们的creator继承原来的。
+	#possi是这张/些牌的可能性，possi=()说明它们都是确定的牌
+	def addCardtoHand(self, obj, ID, byType=False, byDiscover=False, pos=-1, 
+									showAni=True, creator=None, possi=()):
 		game, GUI = self.Game, self.Game.GUI
 		if not isinstance(obj, (list, np.ndarray, tuple)):  # if the obj is not a list, turn it into a single-element list
 			obj = [obj]
 		morethan3 = len(obj) > 2
 		for card in obj:
 			if self.handNotFull(ID):
-				if comment == "type": card = card(game, ID)
-				elif comment == "index": card = game.cardPool[card](game, ID)
+				if byType: card = card(game, ID)
 				card.ID = ID
 				if showAni:
 					if GUI: btn = GUI.cardEntersHandAni_1(card)
@@ -287,22 +287,21 @@ class Hand_Deck:
 					self.hands[ID].insert(pos + 100 * (pos < 0), card)
 					if GUI: GUI.cardReplacedinHand_Refresh(ID)
 				card = card.entersHand()
-				if possi:
-					card.creator, card.possibilities = possi
-					self.knownCards[ID].append(possi)
-				else: #如果没有possi指定，则说明这是一个区域移动效果，不是由其他卡牌创建
-					self.knownCards[ID].append((card.creator, (type(card),)))
+				#只有已经提前定义了instance的卡牌会使用creator is None的选项
+				if creator: card.creator = creator
+				card.possi = possi if possi else (type(card), ) #possi=()说明这张牌的可能性是确定的
 				card.tracked = True
 				self.includePossi(card, intoHD=2)
-				game.sendSignal("CardEntersHand", ID, None, [card], 0, comment)
+				game.sendSignal("CardEntersHand", ID, None, [card], 0, "")
 				if byDiscover: game.sendSignal("PutinHandbyDiscover", ID, None, obj, 0, '')
 			else:
 				self.Game.Counters.shadows[ID] += 1
 		game.Manas.calcMana_All()
 		
-	def replaceCardDrawn(self, targetHolder, newCard):
+	def replaceCardDrawn(self, targetHolder, newCard, possi):
 		ID = targetHolder[0].ID
 		isPrimaryGalakrond = targetHolder[0] == self.Game.Counters.primaryGalakronds[ID]
+		newCard.tracked, newCard.possi = True, possi
 		targetHolder[0] = newCard
 		if isPrimaryGalakrond: self.Game.Counters.primaryGalakronds[ID] = newCard
 		
@@ -312,7 +311,7 @@ class Hand_Deck:
 		card.leavesHand()
 		if card.tracked: self.ruleOut(card, fromHD=2)
 		self.hands[ID].pop(i)
-		self.addCardtoHand(newCard, ID, "", byDiscover=False, pos=i, showAni=False, possi=(newCard.creator, newCard.possibilities))
+		self.addCardtoHand(newCard, ID, "", byDiscover=False, pos=i, showAni=False, possi=(newCard.creator, newCard.possi))
 		
 	#目前只有牌库中的迦拉克隆升级时会调用，对方是可以知道的
 	def replaceCardinDeck(self, card, newCard):
@@ -344,29 +343,20 @@ class Hand_Deck:
 	# PlotTwist把手牌洗入牌库的时候，手牌中buff的随从两次被抽上来时buff没有了。
 	# 假设洗入牌库这个动作会把一张牌初始化
 	def shuffleintoDeck(self, obj, initiatorID,
-							enemyCanSee=True, sendSig=True, possi=None):
+							enemyCanSee=True, sendSig=True, creator=None, possi=()):
 		if obj:
 			curGame = self.Game
 			if curGame.GUI: curGame.GUI.shuffleintoDeckAni(obj, enemyCanSee)
 			#如果obj不是一个Iterable，则将其变成一个列表
-			if isinstance(obj, (list, tuple, np.ndarray)): 
-				ID = obj[0].ID
-				newDeck = self.decks[ID] + obj
-				if possi: #如果不定义possi,则使用卡牌的默认creator和possibilities
-					for card, p in zip(obj, possi):
-						card.entersDeck()
-						card.creator, card.possibilities = p
-						self.includePossi(card, intoHD=1)
-				else:
-					for card in obj:
-						card.entersDeck()
-						self.includePossi(card, intoHD=1)
-			else:
-				ID = obj.ID
-				newDeck = self.decks[ID] + [obj]
-				obj.entersDeck()
-				if possi: obj.creator, obj.possibilities = possi
-				self.includePossi(obj, intoHD=1)
+			if not isinstance(obj, (list, tuple, np.ndarray)):
+				obj = [obj]
+			ID = obj[0].ID
+			newDeck = self.decks[ID] + obj
+			for card in obj:
+				card.entersDeck()
+				card.possi = possi if possi else (type(card), )
+				if creator: card.creator
+				self.includePossi(card, intoHD=1)
 			if curGame.mode == 0:
 				if curGame.guides:
 					order = curGame.guides.pop(0)
@@ -379,21 +369,22 @@ class Hand_Deck:
 			curGame.sendSignal("DeckCheck", ID, None, None, 0, "")
 	
 	#Given the index in hand. Can't shuffle multiple cards except for whole hand
-	def shufflefromHand2Deck(self, i, ID, initiatorID, all=True):
+	def shuffle_Hand2Deck(self, i, ID, initiatorID, all=True):
 		if all:
 			hand = self.extractfromHand(None, ID, all, enemyCanSee=False)[0]
-			for card in hand: card.reset(ID)
-			self.shuffleintoDeck(hand, initiatorID, enemyCanSee=False, sendSig=True)
+			for card in hand:
+				card.reset(ID, isKnown=False)
+				self.shuffleintoDeck(card, initiatorID, enemyCanSee=False, sendSig=True, possi=card.possi)
 		elif i:
 			card = self.extractfromHand(i, ID, all, enemyCanSee=False)[0]
-			card.reset(ID)
-			self.shuffleintoDeck(card, initiatorID, enemyCanSee=False, sendSig=True)
+			card.reset(ID, isKnown=False)
+			self.shuffleintoDeck(card, initiatorID, enemyCanSee=False, sendSig=True, possi=card.possi)
 			
 	def burialRite(self, ID, minions, noSignal=False):
 		if not isinstance(minions, list):
 			minions = [minions]
 		for minion in minions:
-			self.Game.summonfromHand(minion, ID, -1, ID)
+			self.Game.summonfrom(minion, ID, -1, None, fromHand=True)
 			minion.loseAbilityInhand()
 		for minion in minions:
 			self.Game.killMinion(minion, minion)
@@ -503,12 +494,12 @@ class Hand_Deck:
 			i += 1
 			if card:
 				cards.append(card)
-				#一张实体牌的tracked, creator, possibilities
+				#一张实体牌的tracked, creator, possi
 				#如果一张牌是起始牌库中的，已知，则tup=("", class card)
 				#如果是其他牌产生的，但是仍然已知，则tup=(creator, class card)
-				#如果是其他牌产生的，但是未知，则tup=(creator, () possibilities)
-				#creator, possi = card.creator, card.possibilities
-					#tup = (card.creator, card.possibilities)
+				#如果是其他牌产生的，但是未知，则tup=(creator, () possi)
+				#creator, possi = card.creator, card.possi
+					#tup = (card.creator, card.possi)
 					#try: self.knownCards.remove(tup)
 					#except:
 					#	try: self.uncertainCards.remove(tup)
@@ -537,25 +528,26 @@ class Hand_Deck:
 		else:
 			return game.copiedObjs[self]
 
-from CardPools import RivaylianBandit, RivaylianBandit,\
-			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,\
-			WanderingChef, WanderingChef, WanderingChef,\
-			Ramiel, Ramiel, Ramiel,\
-			IoJourneymage, IoJourneymage, IoJourneymage,\
-			ArchangelofRemembrance, ArchangelofRemembrance, ArchangelofRemembrance,\
-			GabrielHeavenlyVoice, GabrielHeavenlyVoice, GabrielHeavenlyVoice,\
-			GoblinQueen, GoblinQueen, GoblinQueen,\
-			FieranHavensentWindGod,\
-			RaRadianceIncarnate, RaRadianceIncarnate,\
-			WilbertGrandKnight, WilbertGrandKnight, WilbertGrandKnight,\
-			GoddessoftheWestWind, GoddessoftheWestWind, GoddessoftheWestWind,\
-			Set, Set, Set,\
-			AnveltJudgmentsCannon, AnveltJudgmentsCannon,\
-			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright,\
-			ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,\
-			PenFlinger, Frostbolt, ArcaneShot, HeadmasterKelThuzad,\
-            BahamutPrimevalDragon,OnWingsofTomorrow
+from CardPools import *
 
+#from CardPools import RivaylianBandit, RivaylianBandit,\
+#			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,\
+#			WanderingChef, WanderingChef, WanderingChef,\
+#			Ramiel, Ramiel, Ramiel,\
+#			IoJourneymage, IoJourneymage, IoJourneymage,\
+#			ArchangelofRemembrance, ArchangelofRemembrance, ArchangelofRemembrance,\
+#			GabrielHeavenlyVoice, GabrielHeavenlyVoice, GabrielHeavenlyVoice,\
+#			GoblinQueen, GoblinQueen, GoblinQueen,\
+#			FieranHavensentWindGod,\
+#			RaRadianceIncarnate, RaRadianceIncarnate,\
+#			WilbertGrandKnight, WilbertGrandKnight, WilbertGrandKnight,\
+#			GoddessoftheWestWind, GoddessoftheWestWind, GoddessoftheWestWind,\
+#			Set, Set, Set,\
+#			AnveltJudgmentsCannon, AnveltJudgmentsCannon,\
+#			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright,\
+#			FreezingTrap, ExplosiveTrap, IceBarrier, NeverSurrenderProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,\
+#			RingToss, RingToss, RingToss_Corrupt, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar
+			
 			
 Default1 = [RivaylianBandit, RivaylianBandit,
 			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,
@@ -574,11 +566,7 @@ Default1 = [RivaylianBandit, RivaylianBandit,
 			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright
 			]
 
-Default2 = [ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,
-			PenFlinger, Frostbolt, ArcaneShot, HeadmasterKelThuzad,
-            BahamutPrimevalDragon,OnWingsofTomorrow,
-            BahamutPrimevalDragon,OnWingsofTomorrow,
-            BahamutPrimevalDragon,OnWingsofTomorrow,
-            BahamutPrimevalDragon,OnWingsofTomorrow,
-
+Default2 = [FreezingTrap, ExplosiveTrap, IceBarrier, RiggedFaireGame, ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,
+			RingToss, RingToss, RingToss_Corrupt, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar
+			
 			]

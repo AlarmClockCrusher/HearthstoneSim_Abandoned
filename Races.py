@@ -136,27 +136,27 @@ class IllidariStudies(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
+			pool = tuple(self.rngPool("Outcast Cards"))
 			if curGame.guides:
 				card, possi = curGame.guides.pop(0)
-				curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True, possi=possi)
+				curGame.Hand_Deck.addCardtoHand(card, self.ID, byType=True, byDiscover=True, creator=type(self), possi=possi)
 			else:
-				pool = curGame.RNGPools["Outcast Cards"]
 				if self.ID != curGame.turn or "byOthers" in comment:
 					card = npchoice(pool)
 					curGame.fixedGuides.append(card)
-					curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True, possi=tuple(pool))
+					curGame.Hand_Deck.addCardtoHand(card, self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
 				else:
 					cards = npchoice(pool, 3, replace=False)
 					curGame.options = [card(curGame, self.ID) for card in cards]
-					curGame.Discover.startDiscover(self, info=pool)
+					curGame.Discover.startDiscover(self, pool)
 		tempAura = GameManaAura_NextOutcast1Less(self.Game, self.ID)
 		self.Game.Manas.CardAuras.append(tempAura)
 		tempAura.auraAppears()
 		return None
 		
-	def discoverDecided(self, option, info):
+	def discoverDecided(self, option, pool):
 		self.Game.fixedGuides.append(type(option))
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True, possi=tuple(info))
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True, creator=type(self), possi=pool)
 		
 class GameManaAura_NextOutcast1Less(TempManaEffect):
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
@@ -216,34 +216,34 @@ class Guidance(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
+			pool = tuple(self.rngPool(classforDiscover(self)+" Spells"))
 			if curGame.guides:
 				card1, card2, choice = curGame.guides.pop(0)
 				if choice > 1:
-					curGame.Hand_Deck.addCardtoHand([card1, card2], self.ID, "type", byDiscover=True)
+					curGame.Hand_Deck.addCardtoHand([card1, card2], self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
 				else:
-					curGame.Hand_Deck.addCardtoHand(card2 if choice else card1, self.ID, "type", byDiscover=True)
+					curGame.Hand_Deck.addCardtoHand(card2 if choice else card1, self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
 					curGame.Manas.overloadMana(1, self.ID)
 			else:
-				pool = self.rngPool(classforDiscover(self)+" Spells")
 				if self.ID != curGame.turn or "byOthers" in comment:
 					card = npchoice(pool)
 					curGame.fixedGuides.append(card)
-					curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True)
+					curGame.Hand_Deck.addCardtoHand(card, self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
 				else:
 					cards = npchoice(pool, 3, replace=False)
 					curGame.options = [card(curGame, self.ID) for card in cards]
-					curGame.Discover.startDiscover(self, info=pool)
+					curGame.Discover.startDiscover(self, pool)
 		return None
 		
-	def discoverDecided(self, option, info):
+	def discoverDecided(self, option, pool):
 		card1, card2 = [type(card) for card in self.Game.options[0:2]]
 		i = self.Game.options.index(option)
 		self.Game.fixedGuides.append((card1, card2, i))
 		if i == 2:
-			self.Game.Hand_Deck.addCardtoHand(self.Game.options[0:2], self.ID, byDiscover=True)
+			self.Game.Hand_Deck.addCardtoHand(self.Game.options[0:2], self.ID, byDiscover=True, creator=type(self), possi=pool)
 			self.Game.Manas.overloadMana(1, self.ID)
 		else:
-			self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
+			self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True, creator=type(self), possi=pool)
 			
 class IWantBoth:
 	def __init__(self):
@@ -276,7 +276,7 @@ class ArborUp(Spell):
 	description = "Summon two 2/2 Treants. Give your minions +2/+1"
 	name_CN = "树木生长"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.summon([Treant_Classic(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
+		self.Game.summon([Treant_Classic(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
 		for minion in self.Game.minionsonBoard(self.ID):
 			minion.buffDebuff(2, 1)
 		return None
@@ -297,25 +297,25 @@ class ResizingPouch(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
+			cost = curGame.Manas.manas[self.ID]
+			pool = (card for card in self.rngPool("Cards as %s"%classforDiscover(self)) if card.mana == cost)
 			if curGame.guides:
 				card = curGame.guides.pop(0)
-				curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True)
+				curGame.Hand_Deck.addCardtoHand(card, self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
 			else:
-				cost = curGame.Manas.manas[self.ID]
-				pool = [card for card in self.rngPool("Cards as %s"%classforDiscover(self)) if card.mana == cost]
 				if self.ID != curGame.turn or "byOthers" in comment:
 					card = npchoice(pool)
 					curGame.fixedGuides.append(card)
-					curGame.Hand_Deck.addCardtoHand(card, self.ID, "type", byDiscover=True)
+					curGame.Hand_Deck.addCardtoHand(card, self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
 				else:
 					cards = npchoice(pool, 3, replace=False)
 					curGame.options = [card(curGame, self.ID) for card in cards]
-					curGame.Discover.startDiscover(self)
+					curGame.Discover.startDiscover(self, pool)
 		return None
 		
-	def discoverDecided(self, option, info):
+	def discoverDecided(self, option, pool):
 		self.Game.fixedGuides.append(type(option))
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True, creator=type(self), possi=pool)
 		
 		
 class BolaShot(Spell):
@@ -378,12 +378,13 @@ class Trig_Saddlemaster(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
+			pool = tuple(self.rngPool("Beasts"))
 			if curGame.guides:
 				card = curGame.guides.pop(0)
 			else:
-				card = npchoice(self.rngPool("Beasts"))
+				card = npchoice(pool)
 				curGame.fixedGuides.append(card)
-			curGame.Hand_Deck.addCardtoHand(card, self.entity.ID, "type")
+			curGame.Hand_Deck.addCardtoHand(card, self.entity.ID, byType=True, creator=type(self.entity), possi=pool)
 			
 """Mage Cards"""
 class GlacierRacer(Minion):
@@ -415,7 +416,7 @@ class ConjureManaBiscuit(Spell):
 	name_CN = "制造法力饼干"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.Hand_Deck.addCardtoHand(ManaBiscuit, self.ID, "type")
+		self.Game.Hand_Deck.addCardtoHand(ManaBiscuit, self.ID, byType=True, creator=type(self))
 		return None
 		
 class ManaBiscuit(Spell):
@@ -448,33 +449,34 @@ class KeywardenIvory(Minion):
 		curGame = self.Game
 		if self.ID == curGame.turn:
 			if curGame.mode == 0:
+				pool = tuple(self.rngPool("Dual Class Spells"))
 				if curGame.guides:
 					spell = curGame.guides.pop(0)
-					curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type", byDiscover=True)
+					curGame.Hand_Deck.addCardtoHand(spell, self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
 					if self.onBoard or self.inHand:
-						trig = Trig_KeywardenIvory(self, spell)
+						trig = Trig_KeywardenIvory(self, spell, pool)
 						self.trigsBoard.append(trig)
 						if self.onBoard: trig.connect()
 				else:
 					if "byOthers" in comment:
-						spell = npchoice(self.rngPool("Dual Class Spells"))
+						spell = npchoice(pool)
 						curGame.fixedGuides.append(spell)
-						curGame.Hand_Deck.addCardtoHand(spell, self.ID, "type", byDiscover=True)
+						curGame.Hand_Deck.addCardtoHand(spell, self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
 						if self.onBoard or self.inHand:
-							trig = Trig_KeywardenIvory(self, spell)
+							trig = Trig_KeywardenIvory(self, spell, pool)
 							self.trigsBoard.append(trig)
 							if self.onBoard: trig.connect()
 					else:
-						spells = npchoice(self.rngPool("Dual Class Spells"), 3, replace=False)
+						spells = npchoice(pool, 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
-						curGame.Discover.startDiscover(self)
+						curGame.Discover.startDiscover(self, pool)
 		return None
 		
-	def discoverDecided(self, option, info):
+	def discoverDecided(self, option, pool):
 		self.Game.fixedGuides.append(type(option))
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
+		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True, creator=type(self), possi=pool)
 		if self.onBoard or self.inHand:
-			trig = Trig_KeywardenIvory(self, spell)
+			trig = Trig_KeywardenIvory(self, spell, pool)
 			self.trigsBoard.append(trig)
 			if self.onBoard: trig.connect()
 			
@@ -522,7 +524,7 @@ class Rally(Spell):
 				minions = tuple((curGame.cardPool[index] for index in minions))
 				curGame.fixedGuides.append(minions)
 			if minions:
-				curGame.summon([minion(curGame, self.ID) for minion in minions], (-1, "totheRightEnd"), self.ID)
+				curGame.summon([minion(curGame, self.ID) for minion in minions], (-1, "totheRightEnd"), self)
 		return None
 		
 		
@@ -577,7 +579,7 @@ class Hysteria(Spell):
 							minion = None
 							curGame.fixedGuides.append((-1, ''))
 					if minion:
-						curGame.battle(target, minion, verifySelectable=False, useAttChance=True, resolveDeath=False, resetRedirectionTriggers=False)
+						curGame.battle(target, minion, verifySelectable=False, useAttChance=True, resolveDeath=False, resetRedirTrig=False)
 					else: break
 					num += 1
 		return target
@@ -802,7 +804,7 @@ class LuckysoulHoarder(Minion):
 		self.trigsHand = [Trig_Corrupt(self, LuckysoulHoarder_Corrupt)] #只有在手牌中才会升级
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.Hand_Deck.shuffleintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID)
+		self.Game.Hand_Deck.shuffleintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID, creator=type(self))
 		return None
 		
 class LuckysoulHoarder_Corrupt(Minion):
@@ -813,7 +815,7 @@ class LuckysoulHoarder_Corrupt(Minion):
 	name_CN = "幸运之魂 囤积者"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.Hand_Deck.shuffleintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID)
+		self.Game.Hand_Deck.shuffleintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID, creator=type(self))
 		self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
@@ -826,12 +828,22 @@ class EnvoyRustwix(Minion):
 	name_CN = "铁锈特使 拉斯维克斯"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.deathrattles = [ShuffleZixorPrimeintoYourDeck(self)]
+		self.deathrattles = [Shuffle3PrimesintoYourDeck(self)]
 		
-class ShuffleZixorPrimeintoYourDeck(Deathrattle_Minion):
+class Shuffle3PrimesintoYourDeck(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.shuffleintoDeck(ZixorPrime(self.entity.Game, self.entity.ID), self.entity.ID)
-		
+		pool = (MsshifnPrime, ZixorPrime, SolarianPrime, MurgurglePrime, ReliquaryPrime, 
+					AkamaPrime, VashjPrime, KanrethadPrime, KargathPrime)
+		minion = self.entity
+		curGame = minion.Game
+		if curGame.mode == 0:
+			if curGame.guides:
+				primes = curGame.guides.pop(0)
+			else:
+				primes = npchoice(pool, 3, replace=True)
+				curGame.fixedGuides.append(primes)
+			minion.Game.Hand_Deck.shuffleintoDeck([prime(curGame, minion.ID) for prime in primes], minion.ID, creator=type(minion), possi=pool)
+			
 	def text(self, CHN):
 		return "亡语：随机将3张终极传说随从洗入你的牌库" if CHN else "Deathrattle: Shuffle 3 random Prime Legendary minions into your deck"
 		
@@ -910,10 +922,10 @@ class Barricade(Spell):
 		return self.Game.space(self.ID) > 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.summon(Guard(self.Game, self.ID), -1, self.ID)
+		self.Game.summon(Guard(self.Game, self.ID), -1, self)
 		#Note that at this stage, there won't be deaths/deathrattles resolved.
 		if len(self.Game.minionsonBoard(self.ID)) == 1:
-			self.Game.summon(Guard(self.Game, self.ID), -1, self.ID)
+			self.Game.summon(Guard(self.Game, self.ID), -1, self)
 		return target
 		
 		

@@ -212,9 +212,9 @@ class Secrets:
 		for creator, possi in self.Game.Hand_Deck.knownCards[secret.ID]:
 			if creator == secretCreator:
 				deckSecrets += [T for T in possi if T.description.startswith("Secret:") and T.Class == Class]
-		secret.possibilities = list(set(deckSecrets))
+		secret.possi = list(set(deckSecrets))
 		#需要根据一个奥秘的可能性，把所有可能的奥秘的伪扳机先都注册上
-		for possi in secret.possibilities:
+		for possi in secret.possi:
 			if not isinstance(secret, possi): #把那些虚假的可能性都注册一份伪扳机
 				dummyTrig = possi(game, ID).trigsBoard[0]
 				#伪扳机和真奥秘之间需要建立双向联系
@@ -258,7 +258,7 @@ class Secrets:
 				#其他在场奥秘的dummyTrigs需要被取消注册和移除
 				try: next(trig for trig in obj.dummyTrigs if isinstance(trig, dummyTrigType2RuleOut)).disconnect()
 				except: pass
-				try: obj.possibilities.remove(dummyTrigType2RuleOut)
+				try: obj.possi.remove(dummyTrigType2RuleOut)
 				except: pass
 			self.Game.Hand_Deck.ruleOut(secret, fromHD=2)
 			return secret

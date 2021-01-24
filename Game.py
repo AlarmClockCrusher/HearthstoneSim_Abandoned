@@ -353,11 +353,12 @@ class Game:
 				#Preprocessing finished, don't invoke doubling. Use the newSubjects and newPositions created.
 				self.summon(newSubjects, newPositions, subject[0].ID, comment="")
 
-	#不考虑卡德加带来的召唤数量翻倍。用于被summonMinion引用。
+	#不考虑卡德加带来的召唤数量翻倍。用于被summon引用。
 	#returns the single minion summoned. Used for anchoring the position of the original minion summoned during doubling
-	def summonSingle(self, subject, position):
+	def summonSingle(self, subject, position, summoner):
 		ID = subject.ID
 		if self.space(ID) > 0:
+			subject.creator = summoner
 			subject.seq = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
 			self.minions[subject.ID].insert(position+100*(position<0), subject)  #If position is too large, the insert() simply puts it at the end.
 			self.sortPos()
@@ -378,25 +379,26 @@ class Game:
 	#只能为同一方召唤随从，如有需要，则多次引用这个函数即可。subject不能是空的
 	#注意，卡德加的机制是2 ** n倍。每次翻倍会出现多召唤1个，2个，4个的情况。
 	#return the first minion summoned, even if subject is list. Return None if no space left
-	def summon(self, subject, position, initiatorID, comment="Enablex2"):
+	def summon(self, subject, position, summoner):
+		summonerID = summoner.ID
 		if not isinstance(subject, (list, np.ndarray)): #Summon a single minion
-			ID, timesofx2 = subject.ID, self.status[initiatorID]["Summon x2"]
-			if not comment: timesofx2 = 0 #如果是英雄技能进行的召唤，则不会翻倍。
+			ID, timesofx2 = subject.ID, self.status[summonerID]["Summon x2"]
+			if summoner and summoner.type == "Power": timesofx2 = 0 #如果是英雄技能进行的召唤，则不会翻倍。
 			if timesofx2 > 0:
 				numCopies = 2 ** timesofx2 - 1
 				copies = [subject.selfCopy(ID) for i in range(numCopies)]
-				minionSummoned = self.summonSingle(subject, position)
+				minionSummoned = self.summonSingle(subject, position, summoner)
 				if minionSummoned: #只有最初的本体召唤成功的时候才会进行复制的随从的召唤
-					if self.summonSingle(copies[0], subject.pos+1):
+					if self.summonSingle(copies[0], subject.pos+1, summoner):
 						for i in range(1, numCopies): #复制的随从列表中剩余的随从，如果没有剩余随从了，直接跳过
-							if not self.summonSingle(copies[i], copies[i-1].pos): break #翻倍出来的复制会始终紧跟在初始随从的右边。
+							if not self.summonSingle(copies[i], copies[i-1].pos, summoner): break #翻倍出来的复制会始终紧跟在初始随从的右边。
 					return minionSummoned #只要第一次召唤出随从就视为召唤成功
 				return None
-			else: return self.summonSingle(subject, position)
+			else: return self.summonSingle(subject, position, summoner)
 		else: #Summoning multiple minions in a row. But the list can be of length 1
 			if len(subject) == 1: #用列表形式但是只召唤一个随从的时候，position一定是(self.pos, "totheRight")或者（-1, "totheRightEnd"）
 				position = position[0] + 1 if position[0] >= 0 else -1
-				return self.summon(subject[0], position, initiatorID, comment)
+				return self.summon(subject[0], position, summonerID, comment)
 			else: #真正召唤多个随从的时候，会把它们划分为多次循环。每次循环后下次循环召唤的随从紧贴在这次循环召唤的随从的右边。
 				if position[1] == "leftandRight":
 					centralMinion, totheRight = self.minions[subject[0].ID][position[0]], 1 #必须得到中间的随从的位置
@@ -407,7 +409,7 @@ class Game:
 							pos = subject[i-2].pos+1 if totheRight == 1 else subject[i-2].pos
 
 						totheRight = 1 - totheRight
-						if not self.summon(subject[i], pos, initiatorID, comment):
+						if not self.summon(subject[i], pos, summonerID, comment):
 							if i == 0: return None #只有第一次召唤就因为没有位置而失败时会返回False
 							else: break
 					return subject[0]
@@ -416,20 +418,30 @@ class Game:
 					pos = -1 if position[1] == "totheRightEnd" else position[0]+1
 					for i in range(len(subject)):
 						pos = pos if i == 0 else subject[i-1].pos+1
-						if not self.summon(subject[i], pos, initiatorID, comment) and i == 0:
+						if not self.summon(subject[i], pos, summonerID, comment) and i == 0:
 							return None
 					return subject[0]
 
 	#一次只从一方的手牌中召唤一个随从。没有列表，从手牌中召唤多个随从都是循环数次检索，然后单个召唤入场的。
-	def summonfromHand(self, i, ID, position, initiatorID, comment="Enablex2"):
+	#首个召唤的随从不进行creator的修改，如果有召唤效果翻倍，则把产生的复制的creator修改为召唤者
+	def summonfrom(self, i, ID, position, summoner, fromHand=True):
 		if self.space(ID) > 0:
-			return self.summon(self.Hand_Deck.extractfromHand(i, ID, all=False, enemyCanSee=True)[0], position, initiatorID, comment)
-		return None
-
-	#一次只从一方的牌库中召唤随从。没有列表，从牌库中召唤多个随从都是循环数次检索，然后单个召唤入场的。
-	def summonfromDeck(self, i, ID, position, initiatorID, comment="Enablex2"):
-		if self.space(ID) > 0:
-			return self.summon(self.Hand_Deck.extractfromDeck(i, ID)[0], position, initiatorID, comment)
+			if fromHand: subject = self.Hand_Deck.extractfromHand(i, ID, all=False, enemyCanSee=True)[0]
+			else: subject = self.Hand_Deck.extractfromDeck(i, ID, all=False, enemyCanSee=True)[0]
+			summonerID = summoner.ID
+			ID, timesofx2 = subject.ID, self.status[summonerID]["Summon x2"]
+			if summoner and summoner.type == "Power": timesofx2 = 0 #如果是英雄技能进行的召唤，则不会翻倍。
+			if timesofx2 > 0:
+				numCopies = 2 ** timesofx2 - 1
+				copies = [subject.selfCopy(ID) for i in range(numCopies)]
+				subject = self.summonSingle(subject, position, None)
+				if subject: #只有最初的本体召唤成功的时候才会进行复制的随从的召唤
+					if self.summonSingle(copies[0], subject.pos+1, summoner):
+						for i in range(1, numCopies): #复制的随从列表中剩余的随从，如果没有剩余随从了，直接跳过
+							if not self.summonSingle(copies[i], copies[i-1].pos, summoner): break #翻倍出来的复制会始终紧跟在初始随从的右边。
+					return subject #只要第一次召唤出随从就视为召唤成功
+				return None
+			else: return self.summonSingle(subject, position, None)
 		return None
 
 	def killMinion(self, subject, target):
@@ -575,7 +587,6 @@ class Game:
 				#如onBoard为False,则disappears已被调用过了。主要适用于触发死亡扳机中的区域移动效果
 				self.removeMinionorWeapon(target)
 				target.reset(ID)
-				target.numOccurrence += 1
 				if manaMod: manaMod.applies()
 				self.Hand_Deck.addCardtoHand(target, ID)
 				return target
@@ -592,15 +603,12 @@ class Game:
 	#targetDeckID decides the destination. initiatorID is for triggers, such as Trig_AugmentedElekk
 	def returnMiniontoDeck(self, target, targetDeckID, initiatorID, deathrattlesStayArmed=False):
 		if target in self.minions[target.ID]:
-			ID, creator, numOccurrence = targetDeckID, target.creator, target.numOccurrence
 			#如果onBoard仍为True，则其仍计为场上存活的随从，需调用disappears以注销各种扳机
 			if target.onBoard: #随从存活状态下触发死亡扳机的区域移动效果时，不会注销其他扳机
 				target.disappears(deathrattlesStayArmed)
 			#如onBoard为False，则disappears已被调用过了。主要适用于触发死亡扳机中的区域移动效果
 			self.removeMinionorWeapon(target)
-			target.reset(ID) #永恒祭司的亡语会备份一套enchantment，在调用该函数之后将初始化过的本体重新增益
-			target.numOccurrence += 1
-			target.creator, target.numOccurrence = creator, numOccurrence + 1
+			target.reset(targetDeckID) #永恒祭司的亡语会备份一套enchantment，在调用该函数之后将初始化过的本体重新增益
 			self.Hand_Deck.shuffleintoDeck(target, initiatorID)
 			return target
 		elif target.inHand: #如果随从已进入手牌，仍会将其强行洗入牌库
@@ -884,7 +892,7 @@ class Game:
 			card.checkEvanescent()
 		self.moves.append(("EndTurn", ))
 
-	def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirectionTriggers=True):
+	def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirTrig=True):
 		if verifySelectable and not subject.canAttackTarget(target):
 			return False
 		else:
@@ -956,7 +964,7 @@ class Game:
 				if subject == self.heroes[1] or subject == self.heroes[2]:
 					self.Counters.heroAttackTimesThisTurn[subject.ID] += 1
 			#重置蜡烛弓，角斗士的长弓，以及傻子和市长的trigedThisBattle标识。
-			if resetRedirectionTriggers: #这个选项目前只有让一个随从连续攻击其他目标时才会选择关闭，不会与角斗士的长弓冲突
+			if resetRedirTrig: #这个选项目前只有让一个随从连续攻击其他目标时才会选择关闭，不会与角斗士的长弓冲突
 				self.sendSignal("BattleFinished", self.turn, subject, None, 0, "")
 			#战斗阶段结束，处理亡语，此时可以处理胜负问题。
 			if resolveDeath:

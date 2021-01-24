@@ -529,7 +529,7 @@ class GUI_Common:
 				self.UI = 0
 				self.fusionMaterials = []
 				
-	def wishforaCard(self, initiator):
+	def wishforaCard(self, initiator): #initiator is the card instance that starts the process(Zephrys the Great).
 		collectionWindow = CardCollectionWindow(self)
 		self.UI = 3
 		self.btn_ViewCollection.forget()
@@ -553,7 +553,7 @@ class GUI_Common:
 			collectionWindow = CardCollectionWindow(self)
 			var = tk.IntVar()
 		self.Game.fixedGuides.append(self.cardWished)
-		self.Game.Hand_Deck.addCardtoHand(self.cardWished, initiator.ID, "type")
+		self.Game.Hand_Deck.addCardtoHand(self.cardWished, initiator.ID, byType=True, creator=type(initiator)) #目前假设许愿的卡牌是双方可以看到的，但是实际上不是
 		
 		btnWishConfirm.destroy()
 		try: collectionWindow.destroy()

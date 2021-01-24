@@ -279,7 +279,7 @@ class WiseLorewalkerCho(Minion): #睿智的游学者周卓
 				self.Game.Discover.startDiscover(self)
 		return None
 		
-	def discoverDecided(self, option, info):
+	def discoverDecided(self, option, pool):
 		PRINT(self.Game, "Spell %s is added to player's hand"%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
@@ -579,8 +579,8 @@ class DrunkenBoxing(Spell): #醉拳
 			attackTarget = minionstoAttack.pop()
 			if attackTarget.health > 0 and not attackTarget.dead and hero.health > 0 and not hero.dead:
 				PRINT(self.Game, "Drunken Boxing lets player attack minion %s"%attackTarget.name)
-				#def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirectionTriggers=True)
-				self.Game.battle(hero, attackTarget, verifySelectable=False, useAttChance=True, resolveDeath=False, resetRedirectionTriggers=False)
+				#def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirTrig=True)
+				self.Game.battle(hero, attackTarget, verifySelectable=False, useAttChance=True, resolveDeath=False, resetRedirTrig=False)
 				self.Game.trigsBoard[self.ID]
 			elif attackTarget.health < 0 or attackTarget.dead:
 				PRINT(self.Game, "Player doesn't attack target minion %s since it's dead already")
@@ -673,7 +673,7 @@ class SpawnofXuen(Minion): #雪怒的子嗣
 					else: curGame.fixedGuides.append(-1)
 		return None
 		
-	def discoverDecided(self, option, info):
+	def discoverDecided(self, option, pool):
 		for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]):
 			if card == option:
 				self.Game.fixedGuides.append(i)
@@ -703,7 +703,7 @@ class SpawnofXuen(Minion): #雪怒的子嗣
 #				self.Game.Discover.startDiscover(self)
 #		return None
 #		
-#	def discoverDecided(self, option, info):
+#	def discoverDecided(self, option, pool):
 #		PRINT(self.Game, "Quick Sip puts 3 copies of card %s into player's hand"%option.name)
 #		self.Game.Hand_Deck.addCardtoHand([option.selfCopy(self.ID) for i in range(3)], self.ID)
 #		

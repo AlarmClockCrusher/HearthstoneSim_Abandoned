@@ -123,7 +123,7 @@ class ConsumeMagic(Spell):
 		return target.type == "Minion" and target.ID != self.ID and target.onBoard
 		
 	def effCanTrig(self):
-		self.effectViable = self.Game.Hand_Deck.outcastcanTrigger(self)
+		self.effectViable = self.Game.Hand_Deck.outcastcanTrig(self)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -233,7 +233,7 @@ class Umberwing(Weapon):
 	index = "DHInitiate~Demon Hunter~Weapon~2~1~2~Umberwing~Battlecry"
 	name_CN = "棕红之翼"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.summon([Felwing(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
+		self.Game.summon([Felwing(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
 		return None
 		
 class Felwing(Minion):
@@ -290,7 +290,7 @@ class EyeBeam(Spell):
 		return target.type == "Minion" and target.onBoard
 		
 	def effCanTrig(self):
-		self.effectViable = self.Game.Hand_Deck.outcastcanTrigger(self)
+		self.effectViable = self.Game.Hand_Deck.outcastcanTrig(self)
 		
 	def selfManaChange(self):
 		if self.inHand:
@@ -368,7 +368,7 @@ class IllidariFelblade(Minion):
 	name_CN = "伊利达雷 邪刃武士"
 	
 	def effCanTrig(self):
-		self.effectViable = self.Game.Hand_Deck.outcastcanTrigger(self)
+		self.effectViable = self.Game.Hand_Deck.outcastcanTrig(self)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if posinHand == 0 or posinHand == -1:
@@ -418,7 +418,7 @@ class SoulSplit(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and self.Game.space(self.ID) > 0:
 			Copy = target.selfCopy(self.ID) if target.onBoard else type(target)(self.Game, self.ID)
-			self.Game.summon(Copy, target.pos+1, self.ID)
+			self.Game.summon(Copy, target.pos+1, self)
 		return target
 		
 """Mana 5 cards"""
@@ -429,7 +429,7 @@ class CommandtheIllidari(Spell):
 	description = "Summon six 1/1 Illidari with Rush"
 	name_CN = "统率 伊利达雷"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.summon([IllidariInitiate(self.Game, self.ID) for i in range(6)], (-1, "totheRightEnd"), self.ID)
+		self.Game.summon([IllidariInitiate(self.Game, self.ID) for i in range(6)], (-1, "totheRightEnd"), self)
 		return None
 		
 class WrathspikeBrute(Minion):
@@ -526,7 +526,7 @@ class Nethrandamus(Minion):
 				minions = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost), 2, replace=False)
 				curGame.fixedGuides.append(tuple(minions))
 			pos = (self.pos, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
-			curGame.summon([minion(curGame, self.ID) for minion in minions], pos, self.ID)
+			curGame.summon([minion(curGame, self.ID) for minion in minions], pos, self)
 		return None
 		
 class Trig_Nethrandamus(TrigHand):

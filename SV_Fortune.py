@@ -192,7 +192,7 @@ class StarbrightDeity(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         for i in range(min(3, len(self.Game.Hand_Deck.hands[self.ID]))):
             card = self.Game.Hand_Deck.hands[self.ID][i]
-            self.Game.Hand_Deck.addCardtoHand([type(card)], self.ID, "type")
+            self.Game.Hand_Deck.addCardtoHand([type(card)], self.ID, byType=True)
         return None
 
 
@@ -540,7 +540,7 @@ class XIIWolfraudHangedMan(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if comment == 7:
             self.Game.banishMinion(self, self)
-            self.Game.Hand_Deck.addCardtoHand([TreacherousReversal], self.ID, "type")
+            self.Game.Hand_Deck.addCardtoHand([TreacherousReversal], self.ID, byType=True)
         return target
 
 
@@ -590,7 +590,7 @@ class Trig_TreacherousReversal(TrigBoard):
             if card.name not in ["Treacherous Reversal", "XII. Wolfraud, Hanged Man"]:
                 cards.append(card)
         for c in cards:
-            self.entity.Game.Hand_Deck.addCardtoHand([type(c)], 3 - self.entity.ID, "type")
+            self.entity.Game.Hand_Deck.addCardtoHand([type(c)], 3 - self.entity.ID, byType=True)
         for t in self.entity.trigsBoard:
             if type(t) == Trig_TreacherousReversal:
                 t.disconnect()
@@ -1176,7 +1176,7 @@ class HonorableThief(SVMinion):
 
 class Deathrattle_HonorableThief(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.Hand_Deck.addCardtoHand(GildedBoots, self.entity.ID, "type")
+        self.entity.Game.Hand_Deck.addCardtoHand(GildedBoots, self.entity.ID, byType=True)
 
 
 class ShieldPhalanx(SVSpell):
@@ -1598,7 +1598,7 @@ class CreativeConjurer(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.earthRite(self, self.ID):
-            self.Game.Hand_Deck.addCardtoHand(GolemSummoning, self.ID, "type")
+            self.Game.Hand_Deck.addCardtoHand(GolemSummoning, self.ID, byType=True)
         else:
             self.Game.summon([EarthEssence(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
         return None
@@ -1635,7 +1635,7 @@ class LhynkalTheFool(SVMinion):
         self.Game.Discover.startDiscover(self)
         return None
 
-    def discoverDecided(self, option, info):
+    def discoverDecided(self, option, pool):
         self.Game.fixedGuides.append(type(option))
         self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 
@@ -1808,7 +1808,7 @@ class ArcaneAuteur(SVMinion):
 
 class Deathrattle_ArcaneAuteur(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.Hand_Deck.addCardtoHand(Insight, self.entity.ID, "type")
+        self.entity.Game.Hand_Deck.addCardtoHand(Insight, self.entity.ID, byType=True)
 
 
 class PiquantPotioneer(SVMinion):
@@ -1992,7 +1992,7 @@ class WitchSnap(SVSpell):
             if isinstance(target, list): target = target[0]
             damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
             self.dealsDamage(target, damage)
-            self.Game.Hand_Deck.addCardtoHand(EarthEssence, self.ID, "type")
+            self.Game.Hand_Deck.addCardtoHand(EarthEssence, self.ID, byType=True)
         return target
 
 
@@ -2172,7 +2172,7 @@ class WavecrestAngler(SVMinion):
                 curGame.fixedGuides.append(i)
             if i > -1:
                 card = self.Game.cardPool[curGame.Counters.cardsDiscardedThisGame[self.ID][i]]
-                self.Game.Hand_Deck.addCardtoHand(card, self.ID, "type")
+                self.Game.Hand_Deck.addCardtoHand(card, self.ID, byType=True)
 
 
 class DraconicCall(SVSpell):
@@ -2348,7 +2348,7 @@ class TurncoatDragonSummoner(SVMinion):
         self.blank_init(Game, ID)
 
     def whenDiscarded(self):
-        self.Game.Hand_Deck.addCardtoHand(CrimsonDragonsSorrow, self.ID, "type")
+        self.Game.Hand_Deck.addCardtoHand(CrimsonDragonsSorrow, self.ID, byType=True)
 
     def targetExists(self, choice=0):
         return len(self.Game.Hand_Deck.hands[self.ID]) > 1
@@ -2361,7 +2361,7 @@ class TurncoatDragonSummoner(SVMinion):
         if target:
             if isinstance(target, list): target = target[0]
             self.Game.Hand_Deck.discardCard(self.ID, target)
-            self.Game.Hand_Deck.addCardtoHand(AzureDragonsRage, self.ID, "type")
+            self.Game.Hand_Deck.addCardtoHand(AzureDragonsRage, self.ID, byType=True)
         return target
 
 
@@ -3819,7 +3819,7 @@ class LorenaIronWilledPriest(SVMinion):
         self.trigsBoard = [Trig_LorenaIronWilledPriest(self), Trig_EndLorenaIronWilledPriest]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.Hand_Deck.addCardtoHand(LorenasHolyWater, self.ID, "type")
+        self.Game.Hand_Deck.addCardtoHand(LorenasHolyWater, self.ID, byType=True)
 
     def inEvolving(self):
         for trig in self.trigsBoard:
@@ -4305,7 +4305,7 @@ class RoboticEngineer(SVMinion):
 
 class Deathrattle_RoboticEngineer(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.Hand_Deck.addCardtoHand(ParadigmShift, self.entity.ID, "type")
+        self.entity.Game.Hand_Deck.addCardtoHand(ParadigmShift, self.entity.ID, byType=True)
 
 
 class MarionetteExpert(SVMinion):
@@ -4323,7 +4323,7 @@ class MarionetteExpert(SVMinion):
 
 class Deathrattle_MarionetteExpert(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.Hand_Deck.addCardtoHand(Puppet, self.entity.ID, "type")
+        self.entity.Game.Hand_Deck.addCardtoHand(Puppet, self.entity.ID, byType=True)
 
 
 class CatTuner(SVMinion):
@@ -4512,7 +4512,7 @@ class InvertedManipulation(SVSpell):
     name_CN = "人偶的反噬"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.Hand_Deck.addCardtoHand(Puppet, self.ID, "type")
+        self.Game.Hand_Deck.addCardtoHand(Puppet, self.ID, byType=True)
         trigger = Trig_InvertedManipulation(self.Game.heroes[self.ID])
         for t in self.Game.heroes[self.ID].trigsBoard:
             if type(t) == type(trigger):
@@ -4570,7 +4570,7 @@ class PowerliftingPuppeteer(SVMinion):
         self.trigsBoard = [Trig_PowerliftingPuppeteer(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.Hand_Deck.addCardtoHand([Puppet for i in range(2)], self.ID, "type")
+        self.Game.Hand_Deck.addCardtoHand([Puppet for i in range(2)], self.ID, byType=True)
 
 
 class Trig_PowerliftingPuppeteer(TrigBoard):
@@ -5038,7 +5038,7 @@ class RunieResoluteDiviner(SVMinion):
                     self.dealsDamage(self.Game.heroes[3 - self.ID], 3)
                     self.restoresHealth(self.Game.heroes[self.ID], 3)
                     if self.progress >= 10:
-                        self.Game.Hand_Deck.addCardtoHand([RunieResoluteDiviner for i in range(3)], self.ID, "type")
+                        self.Game.Hand_Deck.addCardtoHand([RunieResoluteDiviner for i in range(3)], self.ID, byType=True)
 
 
 class AlchemicalCraftschief_Accelerate(SVSpell):
@@ -5165,7 +5165,7 @@ class FileneAbsoluteZero(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         minions = self.Game.minionsonBoard(3 - self.ID)
         self.dealsAOE(minions, [1 for obj in minions])
-        self.Game.Hand_Deck.addCardtoHand([WhitefrostWhisper], self.ID, "type")
+        self.Game.Hand_Deck.addCardtoHand([WhitefrostWhisper], self.ID, byType=True)
 
     def inHandEvolving(self, target=None):
         card = WhitefrostWhisper(self.Game, self.ID)

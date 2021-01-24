@@ -265,7 +265,7 @@ class OnWingsofTomorrow(SVSpell):
                     curGame.Discover.startDiscover(self)
         return None
 
-    def discoverDecided(self, option, info):
+    def discoverDecided(self, option, pool):
         self.card = option
 
 

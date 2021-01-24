@@ -282,7 +282,7 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		self.waiting = False
 		try: self.GUI.lbl_CardStatus.destroy()
 		except: pass
-		try: self.GUI.lbl_CardPossibilities.destroy()
+		try: self.GUI.lbl_Cardpossi.destroy()
 		except: pass
 		
 	def wait2Display(self):
@@ -290,18 +290,18 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		if self.waiting:
 			try: self.GUI.lbl_CardStatus.destroy()
 			except: pass
-			try: self.GUI.lbl_CardPossibilities.destroy()
+			try: self.GUI.lbl_Cardpossi.destroy()
 			except: pass
 			self.GUI.lbl_CardStatus = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w', justify="left")
 			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
-			if self.card.possibilities:
+			if self.card.possi:
 				if CHN:
-					text = "可能是\n"+"\n".join((type.name_CN for type in self.card.possibilities))
+					text = "可能是\n"+"\n".join((type.name_CN for type in self.card.possi))
 				else:
-					text = "POSSIBILITIES\n"+"\n".join((type.name for type in self.card.possibilities))
-				self.GUI.lbl_CardPossibilities = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
-				self.GUI.lbl_CardPossibilities.place(relx=infoDispXPos-0.12, rely=0.5, anchor='e')
+					text = "possi\n"+"\n".join((type.name for type in self.card.possi))
+				self.GUI.lbl_Cardpossi = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
+				self.GUI.lbl_Cardpossi.place(relx=infoDispXPos-0.12, rely=0.5, anchor='e')
 				
 	def tempLeftClick(self, event): #For Shadowverse
 		self.GUI.select = self.card
@@ -347,8 +347,8 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		else:
 			if self.card.tracked and self.card.creator:
 				CardLabel(btn=self, text=self.GUI.wrapText(str(self.card.creator))).plot(x=x, y=y+0.55*CARD_Y)
-				if len(self.card.possibilities) == 1:
-					name = self.GUI.wrapText(str(self.card.possibilities[0]))
+				if len(self.card.possi) == 1:
+					name = self.GUI.wrapText(str(self.card.possi[0]))
 					CardLabel(btn=self, text=name).plot(x=x, y=y-0.5*CARD_Y)
 					
 		self.zone.btnsDrawn.append(self)
@@ -1192,7 +1192,7 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 		self.waiting = False
 		try: self.GUI.lbl_CardStatus.destroy()
 		except: pass
-		try: self.GUI.lbl_CardPossibilities.destroy()
+		try: self.GUI.lbl_Cardpossi.destroy()
 		except: pass
 		
 	def wait2Display(self):
@@ -1200,18 +1200,18 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 		if self.waiting:
 			try: self.GUI.lbl_CardStatus.destroy()
 			except: pass
-			try: self.GUI.lbl_CardPossibilities.destroy()
+			try: self.GUI.lbl_Cardpossi.destroy()
 			except: pass
 			self.GUI.lbl_CardStatus = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w', justify="left")
 			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
-			if self.card.possibilities:
+			if self.card.possi:
 				if CHN:
-					text = "可能是\n"+"\n".join((type.name_CN for type in self.card.possibilities))
+					text = "可能是\n"+"\n".join((type.name_CN for type in self.card.possi))
 				else:
-					text = "POSSIBILITIES\n"+"\n".join((type.name for type in self.card.possibilities))
-				self.GUI.lbl_CardPossibilities = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
-				self.GUI.lbl_CardPossibilities.place(relx=infoDispXPos-0.12, rely=0.5, anchor='e')
+					text = "possi\n"+"\n".join((type.name for type in self.card.possi))
+				self.GUI.lbl_Cardpossi = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
+				self.GUI.lbl_Cardpossi.place(relx=infoDispXPos-0.12, rely=0.5, anchor='e')
 				
 	def plot(self, x, y):
 		self.x, self.y, self.labels = x, y, []
@@ -1501,7 +1501,7 @@ class DeckZone(tk.Button):
 		self.waiting = False
 		try: self.GUI.lbl_CardStatus.destroy()
 		except: pass
-		try: self.GUI.lbl_CardPossibilities.destroy()
+		try: self.GUI.lbl_Cardpossi.destroy()
 		except: pass
 		
 	def wait2Display(self):
@@ -1509,7 +1509,7 @@ class DeckZone(tk.Button):
 		if self.waiting:
 			try: self.GUI.lbl_CardStatus.destroy()
 			except: pass
-			try: self.GUI.lbl_CardPossibilities.destroy()
+			try: self.GUI.lbl_Cardpossi.destroy()
 			except: pass
 			HD = self.GUI.Game.Hand_Deck
 			if CHN:
@@ -1542,7 +1542,7 @@ class DeckZone(tk.Button):
 					elif len(tup[1]) < 10:
 						text += "\nCreated by {}. Can be:".format(creator)
 						text += "\n  ".join((type.name for type in tup[1]))
-					else: tup += "\nCreated by  {}. Too many possibilities".format(creator)
-			self.GUI.lbl_CardPossibilities = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
-			self.GUI.lbl_CardPossibilities.place(relx=0, rely=0.5, anchor='w')
+					else: tup += "\nCreated by  {}. Too many possi".format(creator)
+			self.GUI.lbl_Cardpossi = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
+			self.GUI.lbl_Cardpossi.place(relx=0, rely=0.5, anchor='w')
 			

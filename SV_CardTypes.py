@@ -162,13 +162,13 @@ class SVMinion(Minion):
 	evolveRequireTarget = False
 
 	def reset(self, ID):  # 如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化
-		creator, numOccurrence, tracked, possi = self.creator, self.numOccurrence, self.tracked, self.possibilities
+		creator, tracked, possi = self.creator, self.tracked, self.possi
 		att_0, health_0 = self.attack_0, self.health_0
 		self.__init__(self.Game, ID)
 		self.attack_0 = self.attack = self.attack_Enchant = att_0
 		self.health_0 = self.health = self.health_max = health_0
-		self.creator, self.numOccurrence, self.tracked = creator, numOccurrence, tracked
-		self.possibilities = possi
+		self.creator, self.tracked = creator, tracked
+		self.possi = possi
 
 	def blank_init(self, Game, ID):
 		super().blank_init(Game, ID)
@@ -365,7 +365,7 @@ class SVMinion(Minion):
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
 			Copy.trigsHand = [trig.createCopy(game) for trig in self.trigsHand]
 			Copy.trigsDeck = [trig.createCopy(game) for trig in self.trigsDeck]
-			Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
+			Copy.tracked, Copy.creator, Copy.possi = self.tracked, self.creator, self.possi
 			Copy.history = copy.deepcopy(self.history)
 			Copy.attackAdd = self.attackAdd
 			Copy.healthAdd = self.healthAdd
@@ -381,10 +381,10 @@ class Amulet(Dormant):
 	requireTarget, description = False, ""
 
 	def reset(self, ID):  # 如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化
-		creator, numOccurrence, tracked, possi = self.creator, self.numOccurrence, self.tracked, self.possibilities
+		creator, tracked, possi = self.creator, self.tracked, self.possi
 		self.__init__(self.Game, ID)
-		self.creator, self.numOccurrence, self.tracked = creator, numOccurrence, tracked
-		self.possibilities = possi
+		self.creator, self.tracked = creator, tracked
+		self.possi = possi
 
 	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
@@ -393,7 +393,6 @@ class Amulet(Dormant):
 		# 卡牌的费用和对于费用修改的效果列表在此处定义
 		self.mana, self.manaMods = type(self).mana, []
 		self.counter = -1
-		self.numOccurrence = 0
 		self.tempAttChanges = []  # list of tempAttChange, expiration timepoint
 		self.description = type(self).description
 		# 当一个实例被创建的时候，其needTarget被强行更改为returnTrue或者是returnFalse，不论定义中如何修改needTarget(self, choice=0)这个函数，都会被绕过。需要直接对returnTrue()函数进行修改。
@@ -439,7 +438,7 @@ class Amulet(Dormant):
 		self.targets = []
 		self.effectViable, self.evanescent = False, False
 		# 用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possibilities = None, False, (type(self),)
+		self.creator, self.tracked, self.possi = None, False, (type(self),)
 
 	def willEnhance(self):
 		return False
@@ -601,7 +600,7 @@ class Amulet(Dormant):
 		Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False
 		Copy.seq, Copy.pos = -1, -2
 		Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = 0, 0, 0
-		Copy.tracked, Copy.creator, Copy.possibilities = self.tracked, self.creator, self.possibilities
+		Copy.tracked, Copy.creator, Copy.possi = self.tracked, self.creator, self.possi
 		return Copy
 
 
@@ -609,9 +608,9 @@ class SVSpell(Spell):
 	race = ""
 
 	def reset(self, ID):
-		creator, possi = self.creator, self.possibilities
+		creator, possi = self.creator, self.possi
 		self.__init__(self.Game, ID)
-		self.creator, self.possibilities = creator, possi
+		self.creator, self.possi = creator, possi
 
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
