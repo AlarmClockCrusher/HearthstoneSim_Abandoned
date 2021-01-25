@@ -21,6 +21,81 @@ def extractfrom(target, listObj):
 """Neutral cards"""
 
 
+class MasterSleuth(SVMinion):
+    Class, race, name = "Neutral", "", "Master Sleuth"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Eternal~Neutral~Minion~2~2~2~None~Master Sleuth~Battlecry~Enhance"
+    requireTarget, keyWord, description = False, "", "Fanfare: Enhance (5) - Evolve this follower."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "熟练的侦探"
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] >= 5:
+            return 5
+        else:
+            return self.mana
+
+    def willEnhance(self):
+        return self.Game.Manas.manas[self.ID] >= 5
+
+    def effCanTrig(self):
+        self.effectViable = self.willEnhance()
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if comment == 5:
+            self.evolve()
+
+    def inEvolving(self):
+        trig = Deathrattle_MasterSleuth(self)
+        self.deathrattles.append(trig)
+        trig.connect()
+
+
+class Deathrattle_MasterSleuth(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.Game.summon([MasterSleuth(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"), self.ID)
+
+
+class VyrnLilRedDragon(SVMinion):
+    Class, race, name = "Neutral", "", "Vyrn, Li'l Red Dragon"
+    mana, attack, health = 2, 1, 1
+    index = "SV_Eternal~Neutral~Minion~2~1~1~None~Vyrn, Li'l Red Dragon~Battlecry~Enhance"
+    requireTarget, keyWord, description = False, "", "Fanfare: Draw a card.Enhance (6): Evolve this follower instead. Recover 4 play points."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "小小的红龙·碧"
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] >= 6:
+            return 6
+        else:
+            return self.mana
+
+    def willEnhance(self):
+        return self.Game.Manas.manas[self.ID] >= 6
+
+    def effCanTrig(self):
+        self.effectViable = self.willEnhance()
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if comment == 6:
+            self.evolve()
+        else:
+            self.Game.Hand_Deck.drawCard(self.ID)
+
+
+class AngelicMelody(SVSpell):
+    Class, name = "Neutral", "Angelic Melody"
+    requireTarget, mana = False, 2
+    index = "SV_Eternal~Neutral~Spell~2~Angelic Melody"
+    description = "Give +0/+1 to all allied followers. Draw a card."
+    name_CN = "天使的旋律"
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        for minion in self.Game.minionsonBoard(self.ID):
+            minion.buffDebuff(0, 1)
+        self.Game.Hand_Deck.drawCard(self.ID)
+
+
 class IoJourneymage(SVMinion):
     Class, race, name = "Neutral", "", "Io, Journeymage"
     mana, attack, health = 2, 1, 2
@@ -124,6 +199,51 @@ class ArchangelofRemembrance(SVMinion):
             self.Game.Hand_Deck.drawCard(self.ID)
             self.Game.Hand_Deck.drawCard(self.ID)
         return target
+
+
+class FluffyAngel(SVMinion):
+    Class, race, name = "Neutral", "", "Fluffy Angel"
+    mana, attack, health = 3, 2, 3
+    index = "SV_Eternal~Neutral~Minion~3~2~3~None~Fluffy Angel~Battlecry~Deathrattle"
+    requireTarget, keyWord, description = False, "Taunt", "Ward.Fanfare and Last Words: Restore 2 defense to your leader."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "飘柔天使"
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        heal = 2 * (2 ** self.countHealDouble())
+        self.restoresHealth(self.Game.heroes[self.ID], heal)
+
+
+class Deathrattle_FluffyAngel(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        heal = 2 * (2 ** self.entity.countHealDouble())
+        self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], heal)
+
+
+class EugenStalwartSkyfarer(SVMinion):
+    Class, race, name = "Neutral", "", "Eugen, Stalwart Skyfarer"
+    mana, attack, health = 4, 4, 3
+    index = "SV_Eternal~Neutral~Minion~3~2~3~None~Eugen, Stalwart Skyfarer"
+    requireTarget, keyWord, description = False, "", "Clash: Give +1/+0 to all allied followers.Can evolve for 0 evolution points."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "苍烈的志士·欧根"
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_EugenStalwartSkyfarer(self)]
+        self.marks["Free Evolve"] = 1
+
+
+class Trig_EugenStalwartSkyfarer(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionAttackingMinion"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and (subject == self.entity or target == self.entity)
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        for minion in self.entity.Game.minionsonBoard(self.entity.ID):
+            minion.buffDebuff(1, 0)
 
 
 class GransResolve(SVSpell):
@@ -412,6 +532,60 @@ class BahamutPrimevalDragon(SVMinion):
 """Forestcraft cards"""
 
 
+class WalderForestRanger(SVMinion):
+    Class, race, name = "Forestcraft", "", "Walder, Forest Ranger"
+    mana, attack, health = 1, 1, 1
+    index = "SV_Eternal~Forestcraft~Minion~1~1~1~None~Walder, Forest Ranger~Charge~Battlecry~Enhance"
+    requireTarget, keyWord, description = False, "Charge", "Invocation: When you play a card using its Accelerate effect for the second time this turn, invoke this card.Storm.Fanfare: Enhance (6) - Gain +X/+X. X equals the number of times you've played a card using its Accelerate effect this match."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "森之战士·维鲁达"
+
+
+class ElfSorcerer(SVMinion):
+    Class, race, name = "Forestcraft", "", "Elf Sorcerer"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Eternal~Forestcraft~Minion~2~2~2~None~Elf Sorcerer~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Put a Fairy into your hand."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "精灵咒术师"
+
+
+class MimlemelFreewheelingLass(SVMinion):
+    Class, race, name = "Forestcraft", "", "Mimlemel, Freewheeling Lass"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Eternal~Forestcraft~Minion~2~2~2~None~Mimlemel, Freewheeling Lass~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: If at least 2 other cards were played this turn, summon a Stumpeye."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "随心所欲的吹笛人·米姆露梅莫璐"
+
+
+class Stumpeye(SVMinion):
+    Class, race, name = "Forestcraft", "", "Stumpeye"
+    mana, attack, health = 4, 4, 1
+    index = "SV_Eternal~Forestcraft~Minion~4~4~1~None~Stumpeye~Rush~Uncollectible"
+    requireTarget, keyWord, description = False, "Rush", "Rush. Strike: Give +0/+1 to all allied Mimlemel, Freewheeling Lasses."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "残株"
+
+
+class BlossomTreant(SVMinion):
+    Class, race, name = "Forestcraft", "", "Blossom Treant"
+    mana, attack, health = 4, 1, 6
+    index = "SV_Eternal~Forestcraft~Minion~4~1~6~None~Blossom Treant~Deathrattle"
+    requireTarget, keyWord, description = False, "", "At the start of your turn, evolve this follower.Last Words: Draw a card."
+    attackAdd, healthAdd = 4, 0
+    name_CN = "盛绽树精"
+
+
+class Astoreth(SVMinion):
+    Class, race, name = "Forestcraft", "", "Astoreth"
+    mana, attack, health = 4, 4, 4
+    index = "SV_Eternal~Forestcraft~Minion~4~4~4~None~Astoreth~Taunt~Battlecry"
+    requireTarget, keyWord, description = False, "Taunt", "Ward.Fanfare: If at least 2 other cards were played this turn, evolve this follower."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "阿斯塔蒂"
+
+
 class TweyenDarkHuntress(SVMinion):
     Class, race, name = "Forestcraft", "", "Tweyen, Dark Huntress"
     mana, attack, health = 4, 3, 3
@@ -476,7 +650,94 @@ class Trig_TweyenDarkHuntress(TrigBoard):
         self.entity.dealsAOE(targets, [self.entity.attack for _ in targets])
 
 
+class GreenwoodReindeer(SVMinion):
+    Class, race, name = "Forestcraft", "", "Greenwood Reindeer"
+    mana, attack, health = 5, 5, 5
+    index = "SV_Eternal~Forestcraft~Minion~5~5~5~None~Greenwood Reindeer~Rush~Battlecry"
+    requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: If at least 2 other cards were played this turn, gain +0/+5."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "深绿驯鹿"
+
+
+class XenoSagittarius_Crystallize(Amulet):
+    Class, race, name = "Forestcraft", "", "Crystallize: Xeno Sagittarius"
+    mana = 1
+    index = "SV_Eternal~Forestcraft~Amulet~1~None~Xeno Sagittarius~Countdown~Crystallize~Deathrattle~Legendary~Uncollectible"
+    requireTarget, description = False, "Countdown (1)When this amulet is returned to your hand, draw a card.Last Words: Draw a card."
+    name_CN = "结晶：异种·射手座"
+
+
+class XenoSagittarius(SVMinion):
+    Class, race, name = "Forestcraft", "", "Xeno Sagittarius"
+    mana, attack, health = 6, 6, 4
+    index = "SV_Eternal~Forestcraft~Minion~6~6~4~None~Xeno Sagittarius~Battlecry~Crystallize~Legendary"
+    requireTarget, keyWord, description = False, "", "Crystallize (1): Countdown (1)When this amulet is returned to your hand, draw a card.Last Words: Draw a card.Fanfare: Change the defense of all enemy followers to 1.Strike: Deal 1 damage to all enemy followers.When this follower is returned to your hand, deal 1 damage to all enemy followers."
+    crystallizeAmulet = XenoSagittarius_Crystallize
+    attackAdd, healthAdd = 2, 2
+    name_CN = "异种·射手座"
+
+
+class NatureConsumed(SVSpell):
+    Class, name = "Forestcraft", "Nature Consumed"
+    requireTarget, mana = True, 6
+    index = "SV_Eternal~Forestcraft~Spell~6~Nature Consumed"
+    description = "Destroy an enemy follower.Restore X defense to your leader and draw X cards. X equals half the destroyed follower's defense (rounded up)."
+    name_CN = "大自然的捕食"
+
+
+class PrimordialColossus(SVMinion):
+    Class, race, name = "Forestcraft", "", "Primordial Colossus"
+    mana, attack, health = 7, 4, 6
+    index = "SV_Eternal~Forestcraft~Minion~7~4~6~None~Primordial Colossus~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Give your leader the following effect - Once on each of your turns, when you play a card, recover 2 play points and add 2 to the number of cards played this turn. (This effect is not stackable and lasts for the rest of the match.)"
+    attackAdd, healthAdd = 2, 2
+    name_CN = "原始的恶神"
+
+
+class WindFairy_Accelerate(SVSpell):
+    Class, name = "Forestcraft", "Wind Fairy"
+    requireTarget, mana = True, 1
+    index = "SV_Eternal~Forestcraft~Spell~1~Wind Fairy~Accelerate~Uncollectible"
+    description = "Return an allied follower or amulet to your hand. Put a Fairy Wisp into your hand."
+    name_CN = "迅风妖精"
+
+
+class WindFairy(SVMinion):
+    Class, race, name = "Forestcraft", "", "Wind Fairy"
+    mana, attack, health = 9, 3, 3
+    index = "SV_Eternal~Forestcraft~Minion~9~3~3~None~Wind Fairy~Charge~Windfury~Accelerate"
+    requireTarget, keyWord, description = True, "Charge,Windfury", "Fanfare: Give your leader the following effect - Once on each of your turns, when you play a card, recover 2 play points and add 2 to the number of cards played this turn. (This effect is not stackable and lasts for the rest of the match.)"
+    attackAdd, healthAdd = 2, 2
+    name_CN = "迅风妖精"
+
+
 """Swordcraft cards"""
+
+
+class ArthurSlumberingDragon(SVMinion):
+    Class, race, name = "Swordcraft", "Officer", "Arthur, Slumbering Dragon"
+    mana, attack, health = 2, 1, 3
+    index = "SV_Eternal~Swordcraft~Minion~2~1~3~Officer~Arthur, Slumbering Dragon"
+    requireTarget, keyWord, description = False, "", "At the end of your turn, Rally (10): Give your leader the following effect - The next time your leader takes damage, reduce that damage to 0."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "沉睡的辉龙·亚瑟"
+
+
+class MordredSlumberingLion(SVMinion):
+    Class, race, name = "Swordcraft", "Officer", "Mordred, Slumbering Lion"
+    mana, attack, health = 2, 2, 1
+    index = "SV_Eternal~Swordcraft~Minion~2~2~1~Officer~Mordred, Slumbering Lion"
+    requireTarget, keyWord, description = False, "", "At the end of your turn, Rally (5): Deal 1 damage to all enemy followers."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "沉睡的狮子·莫德雷德"
+
+
+class ProvenMethodology(SVSpell):
+    Class, name = "Swordcraft", "Proven Methodology"
+    requireTarget, mana = False, 2
+    index = "SV_Eternal~Swordcraft~Spell~2~Proven Methodology"
+    description = "Put a random Officer follower from your deck into your hand and give it +2/+2."
+    name_CN = "老练的教鞭"
 
 
 class MirinSamuraiDreamer(SVMinion):
@@ -511,6 +772,56 @@ class MirinSamuraiDreamer(SVMinion):
             self.dealsDamage(self.Game.heroes[3 - self.ID], 6)
         elif sa:
             self.dealsDamage(self.Game.heroes[3 - self.ID], 3)
+
+
+class SwordSwingingBandit(SVMinion):
+    Class, race, name = "Swordcraft", "Officer", "Sword-Swinging Bandit"
+    mana, attack, health = 3, 2, 1
+    index = "SV_Eternal~Swordcraft~Minion~3~2~1~Officer~Sword-Swinging Bandit~Charge~Deathrattle"
+    requireTarget, keyWord, description = False, "Charge", "Storm.Last Words: Summon a Bullet Bike."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "残刃蛮贼"
+
+
+class GrandAuction(SVSpell):
+    Class, name = "Swordcraft", "Grand Auction"
+    requireTarget, mana = True, 1
+    index = "SV_Eternal~Swordcraft~Spell~1~Grand Auction~Uncollectible"
+    description = "Discard a card from your hand.Draw a card.Put an Ageworn Weaponry into your hand."
+    name_CN = "大甩卖"
+
+
+class AgewornWeaponry(Amulet):
+    Class, race, name = "Swordcraft", "", "Ageworn Weaponry"
+    mana = 2
+    index = "SV_Eternal~Swordcraft~Amulet~2~None~Ageworn Weaponry~Countdown~Deathrattle~Uncollectible"
+    requireTarget, description = True, "If an allied Swordcraft follower is in play, and you have at least 2 play points, Choose: Play this card as a Greatshield or Greatsword.Countdown (2)At the end of your opponent's turn, summon a Knight."
+    name_CN = "历战的兵器"
+
+
+class Greatshield(Amulet):
+    Class, race, name = "Swordcraft", "", "Greatshield"
+    mana = 2
+    index = "SV_Eternal~Swordcraft~Amulet~2~None~Greatshield~Countdown~Battlecry~Deathrattle~Uncollectible"
+    requireTarget, description = False, "Countdown (1)Fanfare: Give an allied Swordcraft follower +0/+1.Last Words: Summon a Shield Guardian."
+    name_CN = "坚韧之盾"
+
+
+class Greatsword(Amulet):
+    Class, race, name = "Swordcraft", "", "Greatsword"
+    mana = 2
+    index = "SV_Eternal~Swordcraft~Amulet~2~None~Greatsword~Countdown~Battlecry~Deathrattle~Uncollectible"
+    requireTarget, description = False, "Countdown (1)Fanfare: Give an allied Swordcraft follower +1/+0.Last Words: Summon a Heavy Knight."
+    name_CN = "锐利之剑"
+
+
+class StoneMerchant(SVMinion):
+    Class, race, name = "Swordcraft", "Officer", "Stone Merchant"
+    mana, attack, health = 4, 3, 4
+    index = "SV_Eternal~Swordcraft~Minion~4~3~4~Officer~Stone Merchant~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Put 2 Grand Auctions into your hand."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "奇石商贩"
 
 
 class SeofonStarSwordSovereign(SVMinion):
@@ -572,6 +883,33 @@ class Trig_SeofonStarSwordSovereign(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         number[0] = 0
+
+
+class VictoriousGrappler(SVMinion):
+    Class, race, name = "Swordcraft", "Commander", "Victorious Grappler"
+    mana, attack, health = 5, 5, 5
+    index = "SV_Eternal~Swordcraft~Minion~5~5~5~Commander~Victorious Grappler~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Give all allied Officer followers the following effect - Clash: Deal 2 damage to the enemy leader.Clash: Deal 2 damage to the enemy leader."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "武斗女兵"
+
+
+class AverageAxeman(SVMinion):
+    Class, race, name = "Swordcraft", "Officer", "Average Axeman"
+    mana, attack, health = 7, 2, 7
+    index = "SV_Eternal~Swordcraft~Minion~7~2~7~Officer~Average Axeman~Charge~Bane"
+    requireTarget, keyWord, description = False, "Charge,Bane", "Storm.Bane.Strike: Recover X play points. X equals this follower's attack."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "锐斧战士"
+
+
+class RampagingRhino(SVMinion):
+    Class, race, name = "Swordcraft", "Officer", "Rampaging Rhino"
+    mana, attack, health = 8, 8, 4
+    index = "SV_Eternal~Swordcraft~Minion~8~8~4~Officer~Rampaging Rhino~Rush~Battlecry"
+    requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: Destroy a random enemy follower or amulet."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "蛮冲铁犀"
 
 
 class EahtaGodoftheBlade(SVMinion):
@@ -1194,8 +1532,13 @@ class Trig_FeowerTien(TrigBoard):
 """DLC cards"""
 
 SV_Eternal_Indices = {
+    "SV_Eternal~Neutral~Minion~2~2~2~None~Master Sleuth~Battlecry~Enhance": MasterSleuth,
+    "SV_Eternal~Neutral~Minion~2~1~1~None~Vyrn, Li'l Red Dragon~Battlecry~Enhance": VyrnLilRedDragon,
+    "SV_Eternal~Neutral~Spell~2~Angelic Melody": AngelicMelody,
     "SV_Eternal~Neutral~Minion~2~1~2~None~Io, Journeymage~Battlecry~Enhance": IoJourneymage,
     "SV_Eternal~Neutral~Minion~2~2~1~None~Archangel of Remembrance~Battlecry~Enhance": ArchangelofRemembrance,
+    "SV_Eternal~Neutral~Minion~3~2~3~None~Fluffy Angel~Battlecry~Deathrattle": FluffyAngel,
+    "SV_Eternal~Neutral~Minion~3~2~3~None~Eugen, Stalwart Skyfarer": EugenStalwartSkyfarer,
     "SV_Eternal~Neutral~Spell~0~Gran's Resolve~Legendary~Uncollectible": GransResolve,
     "SV_Eternal~Neutral~Spell~0~Djeeta's Determination~Legendary~Uncollectible": DjeetasDetermination,
     "SV_Eternal~Neutral~Minion~5~5~5~None~Gran & Djeeta, Eternal Heroes~Charge~Legendary~Uncollectible": GranDjeetaEternalHeroes,

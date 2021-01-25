@@ -333,6 +333,24 @@ class Fairy(SVMinion):
     name_CN = "妖精"
 
 
+class FairyWisp(SVMinion):
+    Class, race, name = "Forestcraft", "", "Fairy Wisp"
+    mana, attack, health = 0, 1, 1
+    index = "SV_Basic~Forestcraft~Minion~0~1~1~None~Fairy Wisp~Battlecry~Uncollectible"
+    requireTarget, keyWord, description = False, "", "Fanfare: Banish this follower if at least 2 other cards were played this turn."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "妖精萤火"
+
+    def effCanTrig(self):
+        self.effectViable = self.Game.combCards(self.ID) >= 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        numCardsPlayed = self.Game.combCards(self.ID)
+        if numCardsPlayed >= 2:
+            self.Game.banishMinion(self, self)
+        return None
+
+
 class WaterFairy(SVMinion):
     Class, race, name = "Forestcraft", "", "Water Fairy"
     mana, attack, health = 1, 1, 1
@@ -1166,7 +1184,7 @@ class BuffAura_Overflow(HasAura_toMinion):
         self.entity = entity
         self.signals, self.auraAffected = ["ManaXtlsCheck"], []
         self.on = False
-        
+
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
@@ -1232,7 +1250,7 @@ class Dragonrider(SVMinion):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.auras["Buff Aura"] = BuffAura_Dragonrider(self)
-        
+
     def effCanTrig(self):
         self.effectViable = self.Game.isOverflow(self.ID)
 
@@ -1271,7 +1289,7 @@ class FirstbornDragon(SVMinion):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.auras["Buff Aura"] = BuffAura_FirstbornDragon(self)
-        
+
     def effCanTrig(self):
         self.effectViable = self.Game.isOverflow(self.ID)
 
@@ -1371,7 +1389,7 @@ class Dragonguard(SVMinion):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.auras["Buff Aura"] = BuffAura_Dragonguard(self)
-        
+
 
 class BuffAura_Dragonguard(BuffAura_Overflow):
     def applies(self, subject):
@@ -2395,7 +2413,7 @@ class MagisteelPuppet(SVMinion):
     name_CN = "魔钢傀儡"
 
     def inHandEvolving(self, target=None):
-        self.Game.Hand_Deck.addCardtoHand([Puppet]*2, self.ID, byType=True, creator=type(self))
+        self.Game.Hand_Deck.addCardtoHand([Puppet] * 2, self.ID, byType=True, creator=type(self))
 
 
 class DimensionCut(SVSpell):
@@ -2519,7 +2537,7 @@ class PuppeteersStrings(SVSpell):
     name_CN = "人偶师的线"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.Hand_Deck.addCardtoHand([Puppet]*3, self.ID, byType=True, creator=type(self))
+        self.Game.Hand_Deck.addCardtoHand([Puppet] * 3, self.ID, byType=True, creator=type(self))
         damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
         targets = self.Game.minionsonBoard(3 - self.ID)
         self.dealsAOE(targets, [damage for minion in targets])
@@ -2570,6 +2588,7 @@ SV_Basic_Indices = {
     "SV_Basic~Neutral~Minion~5~2~6~None~Angelic Sword Maiden~Taunt": AngelicSwordMaiden,
 
     "SV_Basic~Forestcraft~Minion~1~1~1~None~Fairy~Uncollectible": Fairy,
+    "SV_Basic~Forestcraft~Minion~0~1~1~None~Fairy Wisp~Battlecry~Uncollectible": FairyWisp,
     "SV_Basic~Forestcraft~Minion~1~1~1~None~Water Fairy~Deathrattle": WaterFairy,
     "SV_Basic~Forestcraft~Minion~2~1~1~None~Fairy Whisperer~Battlecry": FairyWhisperer,
     "SV_Basic~Forestcraft~Minion~2~1~3~None~Elf Guard~Battlecry": ElfGuard,
