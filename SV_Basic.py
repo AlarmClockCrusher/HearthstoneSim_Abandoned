@@ -1583,7 +1583,7 @@ class Deathrattle_HellsUnleasher(Deathrattle_Minion):
                                 self.entity.ID)
 
 
-class CalloftheVoid(SVSpell):
+class CallofVoid(SVSpell):
     Class, name = "Shadowcraft", "Call of the Void"
     requireTarget, mana = True, 4
     index = "SV_Basic~Shadowcraft~Spell~4~Call of the Void"
@@ -2643,7 +2643,7 @@ SV_Basic_Indices = {
     "SV_Basic~Shadowcraft~Minion~4~4~3~None~Elder Spartoi Soldier~Battlecry": ElderSpartoiSoldier,
     "SV_Basic~Shadowcraft~Minion~4~4~3~None~Playful Necromancer": PlayfulNecromancer,
     "SV_Basic~Shadowcraft~Minion~4~1~1~None~Hell's Unleasher~Deathrattle": HellsUnleasher,
-    "SV_Basic~Shadowcraft~Spell~4~Call of the Void": CalloftheVoid,
+    "SV_Basic~Shadowcraft~Spell~4~Call of the Void": CallofVoid,
     "SV_Basic~Shadowcraft~Minion~5~3~3~None~Gravewaker~Deathrattle": Gravewaker,
     "SV_Basic~Shadowcraft~Minion~6~5~5~None~Ghostly Rider~Deathrattle": GhostlyRider,
     "SV_Basic~Shadowcraft~Minion~7~4~4~None~Undead King~Deathrattle": UndeadKing,
