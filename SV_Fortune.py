@@ -5038,7 +5038,7 @@ class RunieResoluteDiviner(SVMinion):
                     self.dealsDamage(self.Game.heroes[3 - self.ID], 3)
                     self.restoresHealth(self.Game.heroes[self.ID], 3)
                     if self.progress >= 10:
-                        self.Game.Hand_Deck.addCardtoHand([RunieResoluteDiviner for i in range(3)], self.ID, byType=True)
+                        self.Game.Hand_Deck.addCardtoHand([RunieResoluteDiviner]*3, self.ID, byType=True, creator=type(self))
 
 
 class AlchemicalCraftschief_Accelerate(SVSpell):
@@ -5049,11 +5049,10 @@ class AlchemicalCraftschief_Accelerate(SVSpell):
     name_CN = "矮人工房长"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.summon(
-            [EarthEssence(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon(EarthEssence(self.Game, self.ID), -1, self)
         n = len(self.Game.earthsonBoard(self.ID))
         card = AlchemicalCraftschief_Token(self.Game, self.ID)
-        self.Game.Hand_Deck.addCardtoHand(card, self.ID)
+        self.Game.Hand_Deck.addCardtoHand(card, self.ID, creator=type(self))
         ManaMod(card, changeby=-n, changeto=-1).applies()
         return None
 
@@ -5165,11 +5164,11 @@ class FileneAbsoluteZero(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         minions = self.Game.minionsonBoard(3 - self.ID)
         self.dealsAOE(minions, [1 for obj in minions])
-        self.Game.Hand_Deck.addCardtoHand([WhitefrostWhisper], self.ID, byType=True)
+        self.Game.Hand_Deck.addCardtoHand(WhitefrostWhisper, self.ID, byType=True, creator=type(self))
 
     def inHandEvolving(self, target=None):
         card = WhitefrostWhisper(self.Game, self.ID)
-        self.Game.Hand_Deck.addCardtoHand([card], self.ID)
+        self.Game.Hand_Deck.addCardtoHand(card, self.ID)
         ManaMod(card, changeby=0, changeto=1).applies()
 
 
@@ -5835,25 +5834,19 @@ class TempleofHeresy(Amulet):
 
 class Deathrattle_TempleofHeresy(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        es = ["D", "C"]
-        e = "D"
         curGame = self.entity.Game
         if curGame.mode == 0:
+            pool = (PrinceofDarkness, PrinceofCocytus)
             if curGame.guides:
-                i, e = curGame.guides.pop(0)
+                card = curGame.guides.pop(0)
             else:
-                e = np.random.choice(es)
-                curGame.fixedGuides.append((0, e))
-        if e == "D":
-            card = PrinceofDarkness(self.entity.Game, self.entity.ID)
-            self.entity.Game.Hand_Deck.addCardtoHand([card], self.entity.ID)
+                card = np.random.choice(pool)
+                curGame.fixedGuides.append(card)
+            card = card(self.entity.Game, self.entity.ID)
             ManaMod(card, changeby=0, changeto=1).applies()
-        elif e == "C":
-            card = PrinceofCocytus(self.entity.Game, self.entity.ID)
-            self.entity.Game.Hand_Deck.addCardtoHand([card], self.entity.ID)
-            ManaMod(card, changeby=0, changeto=1).applies()
-
-
+            self.entity.Game.Hand_Deck.addCardtoHand(card, self.entity.ID, creator=type(self.entity))
+            
+            
 class Trig_TempleofHeresy(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])

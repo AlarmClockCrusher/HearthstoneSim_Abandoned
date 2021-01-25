@@ -63,8 +63,6 @@ class Game:
 		self.board = "Ogrimmar"
 		
 		self.possibleSecrets = {1:[], 2:[]}
-		self.unusedCards = {1:[], 2:[]}
-		self.knownHands = {1:[], 2:[]}
 		
 	def minionsAlive(self, ID, target=None): #if target is not None, return all living minions except the target
 		if target: return [minion for minion in self.minions[ID] if minion.type == "Minion" \

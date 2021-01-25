@@ -27,10 +27,9 @@ class Hand_Deck:
 		if self.Game.heroes[2].Class in SVClasses:
 			self.handUpperLimit[2] = 9
 		self.initialDecks = {1: deck1 if deck1 else Default1, 2: deck2 if deck2 else Default2}
-		self.knownCards = {1:[], 2:[]} #可以明确知道是哪一张的全部资源牌
-		self.knownHands = {1:[], 2:[]} #可以明确知道这张牌是什么的手牌
-		self.uncertainCards = {1:[], 2:[]} #只知道可能是什么的资源牌
-		self.uncertainHands = {1:[], 2:[]} #只知道可能是什么的手牌
+		self.cards_1Possi = {1:[], 2:[]} #可以明确知道是哪一张的全部资源牌
+		self.cards_XPossi = {1:[], 2:[]} #只知道这张牌可能是什么的资源牌
+		self.trackedHands = {1:[], 2:[]} #可以追踪的手牌，但是它们可能明确知道是哪一张，也可能是只知道可能是什么的手牌
 		
 	def initialize(self):
 		self.initializeDecks()
@@ -41,7 +40,7 @@ class Hand_Deck:
 			Class = self.Game.heroes[ID].Class  # Hero's class
 			for obj in self.initialDecks[ID]:
 				if obj.name == "Transfer Student": obj = self.Game.transferStudentType
-				self.knownCards[ID].append((None, (obj, )))
+				self.cards_1Possi[ID].append((None, (obj, )))
 				card = obj(self.Game, ID)
 				if "Galakrond, " in card.name:
 					# 检测过程中，如果目前没有主迦拉克隆或者与之前检测到的迦拉克隆与玩家的职业不符合，则把检测到的迦拉克隆定为主迦拉克隆
@@ -139,6 +138,16 @@ class Hand_Deck:
 			card.checkEvanescent()
 		if self.Game.GUI: self.Game.GUI.update()
 
+	#intoHD=0: include in hand
+	#intoHD=1: include in deck
+	#intoHD=other: include in both
+	def includePossi(self, card, intoHD): #intoHD == 0, 1, other integers
+		tup, ID = (card.creator, card.possi), card.ID
+		if intoHD != 1: self.trackedHands[ID].append(tup) #possi is added to hand
+		if intoHD != 0: #possi is added to the decks
+			if len(tup[1]) == 1: self.cards_1Possi[ID].append(tup)
+			else: self.cards_XPossi[ID].append(tup)
+			
 	#fromHD=0: only rule out from hand
 	#fromHD=1: only rule out from deck
 	#fromHD=other: rule out from both
@@ -146,28 +155,14 @@ class Hand_Deck:
 		tup = (card.creator, card.possi)
 		ID = card.ID
 		if fromHD != 1: #Rule out from hand
-			try: self.knownHands[ID].remove(tup)
-			except:
-				try: self.uncertainHands[ID].remove(tup)
-				except: print("Not found")
+			try: self.trackedHands[ID].remove(tup)
+			except: pass
 		if fromHD != 0: #Also rule out from deck
-			try: self.knownCards[ID].remove(tup)
+			try: self.cards_1Possi[ID].remove(tup)
 			except:
-				try: self.uncertainCards[ID].remove(tup)
-				except: print("not found")
+				try: self.cards_1Possi[ID].remove(tup)
+				except: pass
 				
-	#intoHD=0: include in hand
-	#intoHD=1: include in deck
-	#intoHD=other: include in both
-	def includePossi(self, card, intoHD): #intoHD == 0, 1, other integers
-		tup, ID = (card.creator, card.possi), card.ID
-		if tup[0] and isinstance(tup[1], tuple):
-			if intoHD != 1: self.uncertainHands[ID].append(tup)
-			if intoHD != 0: self.uncertainCards[ID].append(tup)
-		else: #The card type is known
-			if intoHD != 1: self.knownHands[ID].append(tup)
-			if intoHD != 0: self.knownCards[ID].append(tup)
-			
 	def handNotFull(self, ID):
 		return len(self.hands[ID]) < self.handUpperLimit[ID]
 
@@ -216,15 +211,11 @@ class Hand_Deck:
 				card = self.decks[ID].pop()
 				mana = card.mana
 			else:
-				if self.Game.heroes[ID].Class in SVClasses:
-					if self.Game.heroes[ID].status["Draw to Win"] > 0:
-						self.Game.heroes[3 - ID].dead = True
-						self.Game.gathertheDead(True)
-						return
-					else:
-						self.Game.heroes[ID].dead = True
-						self.Game.gathertheDead(True)
-						return
+				if game.heroes[ID].Class in SVClasses:
+					whoDies = ID if game.heroes[ID].status["Draw to Win"] < 1 else 3 - ID
+					game.heroes[whoDies].dead = True
+					game.gathertheDead(True)
+					return
 				else:
 					self.noCards[ID] += 1  # 如果在疲劳状态有卡洗入牌库，则疲劳值不会减少，在下次疲劳时，仍会从当前的非零疲劳值开始。
 					damage = self.noCards[ID]
@@ -233,10 +224,8 @@ class Hand_Deck:
 					dmgTaker.takesDamage(None, damage, damageType="Ability")  # 疲劳伤害没有来源
 					return None, -1 #假设疲劳时返回的数值是负数，从而可以区分爆牌（爆牌时仍然返回那个牌的法力值）和疲劳
 		else:
-			if isinstance(card, (int, np.int32, np.int64)):
-				card = self.decks[ID].pop(card)
-			else:
-				card = extractfrom(card, self.decks[ID])
+			if isinstance(card, (int, np.int32, np.int64)): card = self.decks[ID].pop(card)
+			else: card = extractfrom(card, self.decks[ID])
 			mana = card.mana
 		card.leavesDeck()
 		if self.handNotFull(ID):
@@ -457,7 +446,7 @@ class Hand_Deck:
 				card = self.hands[ID].pop(card)
 				cost = card.getMana()
 			card.leavesHand()
-			#取出单张手牌的时候，视情况决定从knownCards或者unknownCards里面移除
+			#取出单张手牌的时候，如果其可以追踪，则需要从cards_1Possi或者cards_XPossi里面排除
 			if enemyCanSee:
 				#If the card is tracked, rule out from both hand and deck; otherwise only rule out from deck
 				self.ruleOut(card, fromHD=1+card.tracked)
@@ -472,7 +461,7 @@ class Hand_Deck:
 			cardsOut = self.decks[ID]
 			self.decks[ID] = []
 			for card in cardsOut: card.leavesDeck()
-			self.knownCards = [] #The knownCards certainly disappear in this case
+			self.cards_1Possi, self.cards_XPossi = [], []
 			return cardsOut, 0, False
 		else:
 			if not isinstance(card, (int, np.int32, np.int64)):
@@ -481,36 +470,17 @@ class Hand_Deck:
 				if not self.decks[ID]: return None, 0, False
 				card = self.decks[ID].pop(card)
 			card.leavesDeck()
-			if enemyCanSee:
-				self.ruleOut(card, fromHD=1)
+			if enemyCanSee: self.ruleOut(card, fromHD=1)
 			if self.Game.GUI: self.Game.GUI.cardLeavesDeckAni(card, enemyCanSee=enemyCanSee)
 			return card, 0, False
 			
 	#所有被移除的卡牌都会被展示
 	def removeDeckTopCard(self, ID, num=1):
-		cards, i = [], 0
-		while i < num:
+		cards = []
+		for i in range(num):
 			card = self.extractfromDeck(-1, ID)[0] #The cards removed from deck top can always be seen by opponent
-			i += 1
-			if card:
-				cards.append(card)
-				#一张实体牌的tracked, creator, possi
-				#如果一张牌是起始牌库中的，已知，则tup=("", class card)
-				#如果是其他牌产生的，但是仍然已知，则tup=(creator, class card)
-				#如果是其他牌产生的，但是未知，则tup=(creator, () possi)
-				#creator, possi = card.creator, card.possi
-					#tup = (card.creator, card.possi)
-					#try: self.knownCards.remove(tup)
-					#except:
-					#	try: self.uncertainCards.remove(tup)
-					#	except: pass
-				#if tup[0] and isinstance(tup[0], tuple): #一张牌是其他牌创建的，并有多种可能性
-				#	try: self.knownCards.remove((creator, possi))
-				#	except:
-				#		try: self.uncertainCards.remove((creator, possi))
-				#		except: pass
-				#else: #如果一张牌是牌库中起始就有的牌，则一定从knownCards中移除
-				#	self.knownCards.remove((creator, possi))
+			if card: cards.append(card)
+			else: None
 		return cards
 		
 	def createCopy(self, game):
@@ -549,21 +519,25 @@ from CardPools import *
 #			RingToss, RingToss, RingToss_Corrupt, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar
 			
 			
-Default1 = [RivaylianBandit, RivaylianBandit,
-			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,
-			WanderingChef, WanderingChef, WanderingChef,
-			Ramiel, Ramiel, Ramiel,
-			IoJourneymage, IoJourneymage, IoJourneymage,
-			ArchangelofRemembrance, ArchangelofRemembrance, ArchangelofRemembrance,
-			GabrielHeavenlyVoice, GabrielHeavenlyVoice, GabrielHeavenlyVoice,
-			GoblinQueen, GoblinQueen, GoblinQueen,
-			FieranHavensentWindGod,
-			RaRadianceIncarnate, RaRadianceIncarnate,
-			WilbertGrandKnight, WilbertGrandKnight, WilbertGrandKnight,
-			GoddessoftheWestWind, GoddessoftheWestWind, GoddessoftheWestWind,
-			Set, Set, Set,
-			AnveltJudgmentsCannon, AnveltJudgmentsCannon,
-			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright
+#Default1 = [RivaylianBandit, RivaylianBandit,
+#			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,
+#			WanderingChef, WanderingChef, WanderingChef,
+#			Ramiel, Ramiel, Ramiel,
+#			IoJourneymage, IoJourneymage, IoJourneymage,
+#			ArchangelofRemembrance, ArchangelofRemembrance, ArchangelofRemembrance,
+#			GabrielHeavenlyVoice, GabrielHeavenlyVoice, GabrielHeavenlyVoice,
+#			GoblinQueen, GoblinQueen, GoblinQueen,
+#			FieranHavensentWindGod,
+#			RaRadianceIncarnate, RaRadianceIncarnate,
+#			WilbertGrandKnight, WilbertGrandKnight, WilbertGrandKnight,
+#			GoddessoftheWestWind, GoddessoftheWestWind, GoddessoftheWestWind,
+#			Set, Set, Set,
+#			AnveltJudgmentsCannon, AnveltJudgmentsCannon,
+#			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright
+#			]
+Default1 = [FreezingTrap, ExplosiveTrap, IceBarrier, RiggedFaireGame, ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,
+			RinlingsRifle, RingToss_Corrupt, RinlingsRifle, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar, NetherwindPortal, PackTactics, MysteryWinner,
+			
 			]
 
 Default2 = [FreezingTrap, ExplosiveTrap, IceBarrier, RiggedFaireGame, ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,

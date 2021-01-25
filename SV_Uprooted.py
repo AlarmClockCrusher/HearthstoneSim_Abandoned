@@ -69,11 +69,8 @@ class WayfaringIllustrator(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def targetExists(self, choice=0):
-        for minion in self.Game.minionsAlive(self.ID):
-            if ("Machina" in minion.race or "Natura" in minion.race) and self.canSelect(minion):
-                return True
-        return False
-
+        return any(("Machina" in minion.race or "Natura" in minion.race) and self.canSelect(minion) for minion in self.Game.minionsAlive(self.ID))
+		
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
         return target.type == "Minion" and target.ID == self.ID and target.onBoard and (
@@ -82,7 +79,7 @@ class WayfaringIllustrator(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.Game.Hand_Deck.addCardtoHand([type(target)], self.ID, byType=True)
+            self.Game.Hand_Deck.addCardtoHand([type(target)], self.ID, byType=True, creator=type(self))
         return None
 
 

@@ -427,7 +427,7 @@ class CommandtheIllidari(Spell):
 	requireTarget, mana = False, 5
 	index = "DHInitiate~Demon Hunter~Spell~5~Command the Illidari"
 	description = "Summon six 1/1 Illidari with Rush"
-	name_CN = "统率 伊利达雷"
+	name_CN = "统率伊利达雷"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		self.Game.summon([IllidariInitiate(self.Game, self.ID) for i in range(6)], (-1, "totheRightEnd"), self)
 		return None

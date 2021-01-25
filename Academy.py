@@ -440,8 +440,8 @@ class SpectralDelinquent(Minion):
 	
 class VoraciousReader(Minion):
 	Class, race, name = "Neutral", "", "Voracious Reader"
-	mana, attack, health = 2, 1, 3
-	index = "Academy~Neutral~Minion~2~1~3~None~Voracious Reader"
+	mana, attack, health = 3, 1, 3
+	index = "Academy~Neutral~Minion~3~1~3~None~Voracious Reader"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, draw until you have 3 cards"
 	name_CN = "贪婪的书虫"
 	def __init__(self, Game, ID):
@@ -644,8 +644,8 @@ class SpectralFlyer(Minion):
 	
 class LorekeeperPolkelt(Minion):
 	Class, race, name = "Neutral", "", "Lorekeeper Polkelt"
-	mana, attack, health = 4, 4, 5
-	index = "Academy~Neutral~Minion~4~4~5~None~Lorekeeper Polkelt~Battlecry~Legendary"
+	mana, attack, health = 5, 4, 5
+	index = "Academy~Neutral~Minion~5~4~5~None~Lorekeeper Polkelt~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Reorder your deck from the highest Cost card to the lowest Cost card"
 	name_CN = "博学者 普克尔特"
 	
@@ -1120,8 +1120,8 @@ class Trig_Magehunter(TrigBoard):
 		
 class ShardshatterMystic(Minion):
 	Class, race, name = "Demon Hunter", "", "Shardshatter Mystic"
-	mana, attack, health = 3, 3, 2
-	index = "Academy~Demon Hunter~Minion~3~3~2~None~Shardshatter Mystic~Battlecry"
+	mana, attack, health = 4, 3, 2
+	index = "Academy~Demon Hunter~Minion~4~3~2~None~Shardshatter Mystic~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Destroy a Soul Fragment in your deck to deal 3 damage to all other minions"
 	name_CN = "残片震爆 秘术师"
 	
@@ -3502,7 +3502,7 @@ class Felosophy(Spell):
 		curGame, ID = self.Game, self.ID
 		if curGame.mode == 0:
 			#需要更多思考
-			pool = tuple(possi[1][0] for possi in curGame.Hand_Deck.knownCards[ID] if len(possi[1]) == 1 and "Demon" in possi[1][0].race)
+			pool = tuple(possi[1][0] for possi in curGame.Hand_Deck.cards_1Possi[ID] if len(possi[1]) == 1 and "Demon" in possi[1][0].race)
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
@@ -4076,7 +4076,7 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Neutral~Minion~2~2~3~Beast~Manafeeder Panthara~Battlecry": ManafeederPanthara,
 					"Academy~Neutral~Minion~2~3~1~None~Sneaky Delinquent~Stealth~Deathrattle": SneakyDelinquent,
 					"Academy~Neutral~Minion~2~3~1~None~Spectral Delinquent~Stealth~Uncollectible": SpectralDelinquent,
-					"Academy~Neutral~Minion~2~1~3~None~Voracious Reader": VoraciousReader,
+					"Academy~Neutral~Minion~3~1~3~None~Voracious Reader": VoraciousReader,
 					"Academy~Neutral~Minion~2~2~2~None~Wandmaker~Battlecry": Wandmaker,
 					"Academy~Neutral~Minion~3~3~4~Beast~Educated Elekk~Deathrattle": EducatedElekk,
 					"Academy~Neutral~Minion~3~1~6~None~Enchanted Cauldron": EnchantedCauldron,
@@ -4085,7 +4085,7 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Neutral~Minion~4~5~1~Elemental~Divine Rager~Divine Shield": DivineRager,
 					"Academy~Neutral~Minion~4~4~3~Murloc~Fishy Flyer~Rush~Deathrattle": FishyFlyer,
 					"Academy~Neutral~Minion~4~4~3~Murloc~Spectral Flyer~Rush~Uncollectible": SpectralFlyer,
-					"Academy~Neutral~Minion~4~4~5~None~Lorekeeper Polkelt~Battlecry~Legendary": LorekeeperPolkelt,
+					"Academy~Neutral~Minion~5~4~5~None~Lorekeeper Polkelt~Battlecry~Legendary": LorekeeperPolkelt,
 					"Academy~Neutral~Minion~4~2~5~None~Wretched Tutor": WretchedTutor,
 					"Academy~Neutral~Minion~5~4~6~None~Headmaster Kel'Thuzad~Legendary": HeadmasterKelThuzad,
 					"Academy~Neutral~Minion~5~4~6~Beast~Lake Thresher": LakeThresher,
@@ -4109,7 +4109,7 @@ Academy_Indices = {"Academy~Neutral~Minion~2~2~2~None~Transfer Student": Transfe
 					"Academy~Demon Hunter,Hunter~Weapon~1~1~4~Trueaim Crescent": TrueaimCrescent,
 					"Academy~Demon Hunter,Hunter~Minion~3~2~4~None~Ace Hunter Kreen~Legendary": AceHunterKreen,
 					"Academy~Demon Hunter~Minion~3~2~3~None~Magehunter~Rush": Magehunter,
-					"Academy~Demon Hunter~Minion~3~3~2~None~Shardshatter Mystic~Battlecry": ShardshatterMystic,
+					"Academy~Demon Hunter~Minion~4~3~2~None~Shardshatter Mystic~Battlecry": ShardshatterMystic,
 					"Academy~Demon Hunter~Spell~4~Glide~Outcast": Glide,
 					"Academy~Demon Hunter~Weapon~4~4~2~Marrowslicer~Battlecry": Marrowslicer,
 					"Academy~Demon Hunter~Minion~4~4~3~None~Star Student Stelina~Outcast~Legendary": StarStudentStelina,

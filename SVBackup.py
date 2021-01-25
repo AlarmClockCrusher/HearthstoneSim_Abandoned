@@ -249,13 +249,13 @@
 #		 if choice == 6:
 #			 PRINT(self, "Grand Acquisition is cast")
 #			 if self.Game.Hand_Deck.handNotFull(self.ID):
-#				 self.Game.Hand_Deck.addCardtoHand(GildedBlade(self.Game, self.ID), self.ID)
+#				 self.Game.Hand_Deck.addCardtoHand(GildedBlade(self.Game, self.ID), self.ID, creator=type(self))
 #			 if self.Game.Hand_Deck.handNotFull(self.ID):
-#				 self.Game.Hand_Deck.addCardtoHand(GildedGoblet(self.Game, self.ID), self.ID)
+#				 self.Game.Hand_Deck.addCardtoHand(GildedGoblet(self.Game, self.ID), self.ID, creator=type(self))
 #			 if self.Game.Hand_Deck.handNotFull(self.ID):
-#				 self.Game.Hand_Deck.addCardtoHand(GildedBoots(self.Game, self.ID), self.ID)
+#				 self.Game.Hand_Deck.addCardtoHand(GildedBoots(self.Game, self.ID), self.ID, creator=type(self))
 #			 if self.Game.Hand_Deck.handNotFull(self.ID):
-#				 self.Game.Hand_Deck.addCardtoHand(GildedNecklace(self.Game, self.ID), self.ID)
+#				 self.Game.Hand_Deck.addCardtoHand(GildedNecklace(self.Game, self.ID), self.ID, creator=type(self))
 #			 self.Game.Manas.manas[self.ID] += 6
 #			 PRINT(self, "Grand Acquisition restore 6 manas.")
 #		 elif self.ID == self.Game.turn and self.Game.Hand_Deck.handNotFull(self.ID):
@@ -266,8 +266,7 @@
 #		 return None
 #
 #	 def discoverDecided(self, option):
-#		 self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-#		 self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+#		 self.Game.Hand_Deck.addCardtoHand(option, self.ID, creator=type(self))
 #		 return None
 #
 #
@@ -371,7 +370,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 10:
 #			 if self.Game.Hand_Deck.handNotFull(self.ID):
-#				 self.Game.Hand_Deck.addCardtoHand(DreadHound(self.Game, self.ID), self.ID)
+#				 self.Game.Hand_Deck.addCardtoHand(DreadHound(self.Game, self.ID), self.ID, creator=type(self))
 #		 return None
 #
 #
@@ -504,7 +503,7 @@
 #			 self.dealsDamage(target, damage)
 #		 if self.Game.Hand_Deck.handNotFull(self.ID):
 #			 PRINT(self, "Levin Justice add a Yurius, Levin Duke to your hand.")
-#			 self.Game.Hand_Deck.addCardtoHand(YuriusLevinDuke, self.ID, "CreateUsingType")
+#			 self.Game.Hand_Deck.addCardtoHand(YuriusLevinDuke, self.ID, byType=True, creator=type(self))
 #		 return target
 #
 #
@@ -550,11 +549,11 @@
 #		 if choice == 7:
 #			 PRINT(self, "Meet the Levin Sisters! is cast")
 #			 if self.Game.Hand_Deck.handNotFull(self.ID):
-#				 self.Game.Hand_Deck.addCardtoHand(MinaLevinViceLeader(self.Game, self.ID), self.ID)
+#				 self.Game.Hand_Deck.addCardtoHand(MinaLevinViceLeader(self.Game, self.ID), self.ID, creator=type(self))
 #			 if self.Game.Hand_Deck.handNotFull(self.ID):
-#				 self.Game.Hand_Deck.addCardtoHand(MonaLevinMage(self.Game, self.ID), self.ID)
+#				 self.Game.Hand_Deck.addCardtoHand(MonaLevinMage(self.Game, self.ID), self.ID, creator=type(self))
 #			 if self.Game.Hand_Deck.handNotFull(self.ID):
-#				 self.Game.Hand_Deck.addCardtoHand(MenaLevinDuelist(self.Game, self.ID), self.ID)
+#				 self.Game.Hand_Deck.addCardtoHand(MenaLevinDuelist(self.Game, self.ID), self.ID, creator=type(self))
 #			 self.Game.Manas.manas[self.ID] += 6
 #			 PRINT(self, "Meet the Levin Sisters! restore 6 manas.")
 #		 elif self.ID == self.Game.turn and self.Game.Hand_Deck.handNotFull(self.ID):
@@ -565,8 +564,7 @@
 #		 return None
 #
 #	 def discoverDecided(self, option):
-#		 self.Game.Hand_Deck.addCardtoHand(option, self.ID)
-#		 self.Game.sendSignal("DiscoveredCardPutintoHand", self.ID, self, option, 0, "")
+#		 self.Game.Hand_Deck.addCardtoHand(option, self.ID, creator=type(self))
 #		 return None
 #
 #
@@ -731,7 +729,7 @@
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #		 if self.entity.Game.Hand_Deck.handNotFull(self.entity.ID):
 #			 PRINT(self, "Last Words: Add a 'GildedBoots' to your hand triggers.")
-#			 self.entity.Game.Hand_Deck.addCardtoHand(GildedBoots, self.entity.ID, "CreateUsingType")
+#			 self.entity.Game.Hand_Deck.addCardtoHand(GildedBoots, self.entity.ID, byType=True, creator=type(self.entity))
 #
 #
 # class WhiteTiger(SVMinion):

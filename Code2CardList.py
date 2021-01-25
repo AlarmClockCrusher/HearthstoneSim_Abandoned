@@ -96,6 +96,7 @@ def checktheStatsofCards():
 						"Dragon": "DRAGON", "Beast": "BEAST", "Pirate": "PIRATE", "Totem": "TOTEM"}
 	exceptionList = []
 	for key, value in cardPool.items():
+		if key.startswith("SV_"): continue
 		try:
 			if key != value.index:
 				print(value, " has a wrong index")

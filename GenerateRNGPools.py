@@ -7,8 +7,6 @@ import time
 from collections import Counter as cnt
 import numpy as np
 
-from CustomWidgets import txt, CHN, folderNameTable
-
 def concatenateDicts(dict1, dict2):
 	for key in dict2.keys():
 		dict1[key] = copy.deepcopy(dict2[key]) if key not in dict1 else concatenateDicts(dict1[key], dict2[key])
@@ -655,6 +653,8 @@ class DeckBuilderWindow(tk.Tk):
 if __name__ == "__main__":
 	SV = 1
 	makeCardPool(board="0 Random Game Board", monk=0, SV=SV)
+	
+	from CustomWidgets import txt, CHN, folderNameTable
 	from CardPools import ClassCards, NeutralCards
 	DeckBuilderWindow(ClassCards, NeutralCards, SV=SV).mainloop()
 	

@@ -26,6 +26,7 @@ texts = {"Include DIY packs": "包含DIY卡牌",
 		"Continue": "继续", "Confirm": "确定",
 		"Monk": "武僧",
 		"SV": "影之诗",
+		"Side Panel on Left": "辅助栏在左侧显示",
 		"System Resolution": "系统结算",
 		"Type Card You Wish": "输入许愿卡牌的英文名称",
 		"Resolving Card Effect": "正在结算卡牌",
@@ -33,8 +34,10 @@ texts = {"Include DIY packs": "包含DIY卡牌",
 		"Deck 1 incorrect": "套牌代码1无效", "Deck 2 incorrect": "套牌代码2无效",
 		"Enter deck code below": "输入套牌代码",
 		"Show Send Info Reminder": "显示向对方发送信息的提示",
-		"Plays to update": "向对方发送的信息",
+		"Info to send to opponent": "向对方发送的信息",
+		"Info from opponent": "对方发来的信息",
 		"L:Generate Update / R:Copy Game": "左键：生成要发送的信息\n右键：复制游戏",
+		"Start Loading Deck": "开始导入牌组", "Load Saved Game/Go 2nd": "",
 		"Load Update from Opponent": "加载对方的操作信息",
 		"To go 1st, use left panel to decide the DIY expansion and game board.\nTo go 2nd/load a saved game, use right panel to enter info from your opponent/select a .p file": \
 			"作为先手方：用左侧面板确定要加载的DIY和棋盘\n作为后手方/加载已保存的游戏，使用右侧面板输入先手方发送给你的信息/选择一个.p文件",
@@ -48,7 +51,7 @@ texts = {"Include DIY packs": "包含DIY卡牌",
 		"Info not generated yet": "尚无更新信息",
 		"Game Copy Generated": "游戏进度已保存为两份.p文件。双方可以各加载一个返回当前游戏进度",
 		"Send Info in Clipboard!": "操作信息已经保存至剪贴板，请发送至对方玩家",
-		"Update same as last time\nLeftclick: Continue/Rightclick: Cancel": "游戏更新信息与上次相同，\n可能存在重复，确认使用?\n左键：确定\n右键：取消",
+		"Update same as last time\nLeftclick: Continue/Rightclick: Cancel": "游戏更新信息与上次相同，\n可能存在重复，确认使用?\n左键：确定/右键：取消",
 		"Connecting to server. Please wait": "正在连接服务器，请等待",
 		"Receiving Game Copies from Opponent: ": "正在接收对方发送的游戏复制",
 		"Opponent failed to reconnect.\nClosing in 2 seconds": "对方玩家重连失败\n2秒后关闭",
@@ -88,13 +91,10 @@ DeckPos_y = int(0.73*Y)
 #For 2-player GUI
 seeEnemyHand = False
 ReplayMovesThisTurn = False
-LeftorRight = 1
-if LeftorRight: shift, offset =  0, 0
-else: shift, offset = 100, 320
 
-OwnHeroPos, EnemyHeroPos = (shift+0.5*X, Y-0.25*Y), (shift+0.5*X, 0.25*Y)
-OwnWeaponPos, EnemyWeaponPos = (shift+0.41*X, Y-0.25*Y), (shift+0.41*X, 0.25*Y)
-OwnPowerPos, EnemyPowerPos = (shift+0.58*X, Y-0.25*Y), (shift+0.58*X, 0.25*Y)
+OwnHeroPos, EnemyHeroPos = (0.5*X, Y-0.25*Y), (0.5*X, 0.25*Y)
+OwnWeaponPos, EnemyWeaponPos = (0.41*X, Y-0.25*Y), (0.41*X, 0.25*Y)
+OwnPowerPos, EnemyPowerPos = (0.58*X, Y-0.25*Y), (0.58*X, 0.25*Y)
 
 #For Transfer Student and board info
 BoardIndex = ["0 Random Game Board",
@@ -108,7 +108,7 @@ BoardIndex = ["0 Random Game Board",
 			]
 			
 folderNameTable = {"Basic":"Basic", "Classic": "Classic",
-					"GVG": "Pre_Dalaran", "Kobolds": "Pre_Dalaran", "Boomsday": "Pre_Dalaran",
+					"GVG": "AcrossPacks", "Kobolds": "AcrossPacks", "Boomsday": "AcrossPacks",
 					"Shadows": "Shadows", "Uldum": "Uldum", "Dragons": "Dragons", "Galakrond": "Galakrond",
 					"DHInitiate": "DHInitiate", "Outlands": "Outlands", "Academy": "Academy", "Darkmoon": "Darkmoon",
 				   "SV_Basic":"SV_Basic","SV_Ultimate":"SV_Ultimate","SV_Uprooted":"SV_Uprooted","SV_Fortune":"SV_Fortune",
@@ -199,7 +199,7 @@ def findPicFilepath_FullImg(card):
 	
 class CardLabel(tk.Label):
 	def __init__(self, btn, text='', bg="white", fg='black', font=("Yahei", 11, "bold")):
-		tk.Label.__init__(self, text=text, bg=bg, fg=fg, font=font)
+		tk.Label.__init__(self, master=btn.master, text=text, bg=bg, fg=fg, font=font)
 		self.btn = btn
 		self.x, self.y = 0, 0
 		
@@ -295,13 +295,15 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			self.GUI.lbl_CardStatus = tk.Label(self.GUI.GamePanel, text=self.card.cardStatus(), bg="SteelBlue1", font=("Yahei", 12, "bold"), anchor='w', justify="left")
 			self.GUI.lbl_CardStatus.place(relx=infoDispXPos, rely=0.5, anchor='c')
 			self.GUI.displayCard(self.card)
-			if self.card.possi:
+			if self.card.tracked:
 				if CHN:
-					text = "可能是\n"+"\n".join((type.name_CN for type in self.card.possi))
+					s = "创建者： %s\n可能是\n  "%self.card.creator.name_CN if self.card.creator else "可能是\n  "
+					text = s + "  \n".join((type.name_CN for type in self.card.possi))
 				else:
-					text = "possi\n"+"\n".join((type.name for type in self.card.possi))
+					s = "Created by: %s\nPossibilities\n  "%self.card.creator.name if self.card.creator else "Possibilities\n  "
+					text = +"  \n".join((type.name for type in self.card.possi))
 				self.GUI.lbl_Cardpossi = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
-				self.GUI.lbl_Cardpossi.place(relx=infoDispXPos-0.12, rely=0.5, anchor='e')
+				self.GUI.lbl_Cardpossi.place(relx=0.05, rely=0.5, anchor='w')
 				
 	def tempLeftClick(self, event): #For Shadowverse
 		self.GUI.select = self.card
@@ -324,20 +326,20 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 		if not hasattr(self.GUI, "ID") or seeEnemyHand or self.GUI.ID == card.ID:
 			try: CardLabel(btn=self, text=self.GUI.wrapText(card.name) if not CHN else type(self.card).name_CN.replace(' ', '\n'), fg="black", font=("Yahei", 10)).plot(x=x, y=y-CARD_Y/2)
 			except: CardLabel(btn=self, text=self.GUI.wrapText(card.name), fg="black").plot(x=x, y=y-CARD_Y/2)
-			CardLabel(btn=self, text=str(card.getMana()), fg="black").plot(x=x-0.39*CARD_X, y=y-0.22*CARD_Y)
+			CardLabel(btn=self, text=str(card.getMana()), fg="black").plot(x=x-0.39*CARD_X, y=y-0.24*CARD_Y)
 			#Minions and weapons have stats
 			if card.type == "Minion":
 				attack, attack_Enchant, health, health_max = card.attack, card.attack_Enchant, card.health, card.health_max
 				attColor = "green3" if attack_Enchant > card.attack_0 else "black"
 				healthColor = ("black" if health_max <= card.health_0 else "green3") if health >= health_max else "red"
-				CardLabel(btn=self, text=str(attack), fg=attColor).plot(x=x-0.39*CARD_X, y=y+0.39*CARD_Y)
-				CardLabel(btn=self, text=str(health), fg=healthColor).plot(x=x+0.39*CARD_X, y=y+0.39*CARD_Y)
+				CardLabel(btn=self, text=str(attack), fg=attColor).plot(x=x-0.39*CARD_X, y=y+0.37*CARD_Y)
+				CardLabel(btn=self, text=str(health), fg=healthColor).plot(x=x+0.39*CARD_X, y=y+0.37*CARD_Y)
 			elif card.type == "Weapon":
 				attack, dura = card.attack, card.durability
 				attColor = "green3" if attack > type(card).attack else "black"
 				duraColor = "green3" if dura > type(card).durability else "black"
-				CardLabel(btn=self, text=str(attack), fg=attColor).plot(x=x-0.39*CARD_X, y=y+0.39*CARD_Y)
-				CardLabel(btn=self, text=str(dura), fg=duraColor).plot(x=x+0.39*CARD_X, y=y+0.39*CARD_Y)
+				CardLabel(btn=self, text=str(attack), fg=attColor).plot(x=x-0.39*CARD_X, y=y+0.37*CARD_Y)
+				CardLabel(btn=self, text=str(dura), fg=duraColor).plot(x=x+0.39*CARD_X, y=y+0.37*CARD_Y)
 			text = "" #Spells also have keyWords
 			for key, value in card.keyWords.items():
 				if value > 0: text += key+'\n'
@@ -1207,11 +1209,14 @@ class SecretButton(tk.Button): #休眠物和武器无论左右键都是取消选
 			self.GUI.displayCard(self.card)
 			if self.card.possi:
 				if CHN:
-					text = "可能是\n"+"\n".join((type.name_CN for type in self.card.possi))
+					s = "创建者： %s\n可能是\n  "%self.card.creator.name_CN if self.card.creator else "可能是\n  "
+					text = s + "\n".join((type.name_CN for type in self.card.possi))
 				else:
-					text = "possi\n"+"\n".join((type.name for type in self.card.possi))
+					s = "Created by: %s\nPossibilities\n  "%self.card.creator.name if self.card.creator else "Possibilities\n  "
+					text = +"  \n".join((type.name for type in self.card.possi))
+				
 				self.GUI.lbl_Cardpossi = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
-				self.GUI.lbl_Cardpossi.place(relx=infoDispXPos-0.12, rely=0.5, anchor='e')
+				self.GUI.lbl_Cardpossi.place(relx=0.05, rely=0.5, anchor='w')
 				
 	def plot(self, x, y):
 		self.x, self.y, self.labels = x, y, []
@@ -1478,8 +1483,8 @@ class DeckZone(tk.Button):
 		ID = self.GUI.ID if hasattr(self.GUI, "ID") else 1
 		self.x, self.y = int(0.94*X), DeckPos_y if self.ID == ID else Y-DeckPos_y
 		self.draw()
-		self.bind("<Enter>", self.crosshairEnter)
-		self.bind("<Leave>", self.crosshairLeave)
+		#self.bind("<Enter>", self.crosshairEnter)
+		#self.bind("<Leave>", self.crosshairLeave)
 		
 	def plot(self):
 		self.place(x=self.x, y=self.y, anchor='c')
@@ -1491,58 +1496,3 @@ class DeckZone(tk.Button):
 		self.config(text=text)
 		self.config(bg="green3"if self.GUI.Game.turn == self.ID else "red")
 		
-	def crosshairEnter(self, event):
-		print("Start waiting for deck")
-		self.waiting = True
-		thread = threading.Thread(target=self.wait2Display, daemon=True)
-		thread.start()
-		
-	def crosshairLeave(self, event):
-		self.waiting = False
-		try: self.GUI.lbl_CardStatus.destroy()
-		except: pass
-		try: self.GUI.lbl_Cardpossi.destroy()
-		except: pass
-		
-	def wait2Display(self):
-		time.sleep(waitTime4Info)
-		if self.waiting:
-			try: self.GUI.lbl_CardStatus.destroy()
-			except: pass
-			try: self.GUI.lbl_Cardpossi.destroy()
-			except: pass
-			HD = self.GUI.Game.Hand_Deck
-			if CHN:
-				if hasattr(self.GUI, "ID"):
-					text = "{}的已知资源\n".format("对方" if self.GUI.ID != self.ID else "你")
-				else: #单人版
-					text = "玩家{}的已知资源\n".format(self.ID)
-				for tup in HD.knownCards[self.ID]:
-					try: creator = tup[0].name_CN
-					except: creator = "对局自身"
-					if len(tup[1]) == 1:
-						if tup[0]: text += "\n由{}创建，{}".format(creator, tup[1][0].name_CN)
-						else: text += "\n初始套牌，{}".format(tup[1][0].name_CN)
-					elif len(tup[1]) < 10:
-						text += "\n由{}创建。可能为以下牌".format(creator)
-						text += "\n  ".join((type.name_CN for type in tup[1]))
-					else: tup += "\n由{}创建。可能性大于10".format(creator)
-			else:
-				if hasattr(self.GUI, "ID"):
-					text = "Known Cards Owned by {} \n".format("Opponent" if self.GUI.ID != self.ID else "You")
-				else: #单人版
-					text = "Known Cards Owned by Player {}\n".format(self.ID)
-				text = "".format("" if self.GUI.ID != self.ID else "You")
-				for tup in HD.knownCards[self.ID]:
-					try: creator = tup[0].name
-					except: creator = "Game itself"
-					if len(tup[1]) == 1:
-						if tup[0]: text += "\nCreated by {}, {}".format(creator, tup[1][0].name)
-						else: text += "\nStarted in deck, {}".format(tup[1][0].name)
-					elif len(tup[1]) < 10:
-						text += "\nCreated by {}. Can be:".format(creator)
-						text += "\n  ".join((type.name for type in tup[1]))
-					else: tup += "\nCreated by  {}. Too many possi".format(creator)
-			self.GUI.lbl_Cardpossi = tk.Label(self.GUI.GamePanel, text=text, bg="grey86", font=("Yahei", 11, "bold"), anchor='w', justify="left")
-			self.GUI.lbl_Cardpossi.place(relx=0, rely=0.5, anchor='w')
-			

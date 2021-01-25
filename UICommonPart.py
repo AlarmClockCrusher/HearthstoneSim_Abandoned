@@ -2,7 +2,7 @@ from CustomWidgets import *
 
 import numpy as np
 
-class MulliganFinishButton_1(tk.Button):
+class MulliganFinishButton_1P(tk.Button):
 	def __init__(self, GUI):
 		tk.Button.__init__(self, relief=tk.FLAT, master=GUI.GamePanel, text="Replace Card and\nStart 1st Turn", bg="green3", width=13, height=3, font=("Yahei", 12, "bold"))
 		self.GUI = GUI
@@ -24,7 +24,7 @@ class MulliganFinishButton_1(tk.Button):
 		self.GUI.btnsDrawn.append(self)
 		
 		
-class MulliganFinishButton_2(tk.Button):
+class MulliganFinishButton_2PGUI(tk.Button):
 	def __init__(self, GUI):
 		tk.Button.__init__(self, master=GUI.GamePanel, text="Replace Card", bg="green3", width=13, height=3, font=("Yahei", 12, "bold"))
 		self.GUI = GUI
@@ -36,7 +36,7 @@ class MulliganFinishButton_2(tk.Button):
 		game.Hand_Deck.mulligan1Side(ID, indices) #之后生成一个起手调度信息
 		guides = [type(game.heroes[ID]), [type(card) for card in game.Hand_Deck.hands[ID]], [type(card) for card in game.Hand_Deck.decks[ID]]]
 		if ID == 1: #1号玩家调度结束的时候需要把信息传给2号玩家
-			s = pickleObj2Str("DefineGame")+"||"+pickleObj2Str((self.GUI.DIYs, self.GUI.boardID, guides))
+			s = pickleObj2Str("DefineGame")+"||"+pickleObj2Str((self.GUI.monk, self.GUI.SV, self.GUI.boardID, guides))
 			self.GUI.window.clipboard_clear()
 			self.GUI.window.clipboard_append(s)
 			self.GUI.info4Opponent.config(text=s)
@@ -60,6 +60,107 @@ class MulliganFinishButton_2(tk.Button):
 		self.GUI.btnsDrawn.append(self)
 		
 		
+class ListboxPanel(tk.Frame):
+	def __init__(self, GUI, master):
+		self.GUI = GUI
+		super().__init__(master=master)
+		scrollbar_ver = tk.Scrollbar(master=self) #Horizontal scroll bars need orient="horizontal"
+		self.listbox = tk.Listbox(master=self, width=14, height=2, bg="white", font=("Yahei", 10),
+							yscrollcommand=scrollbar_ver.set)
+		self.listbox.pack(fill=tk.Y, side=tk.LEFT)
+		scrollbar_ver.pack(fill=tk.Y, side=tk.LEFT)
+		scrollbar_ver.configure(command=self.listbox.yview)
+		
+	def delete(self, start, end):
+		self.listbox.delete(start, end)
+		
+	def insert(self, start, string):
+		self.listbox.insert(start, string)
+		
+class DeckGravePanel(tk.Frame):
+	def __init__(self, GUI):
+		self.GUI = GUI
+		tk.Frame.__init__(self, master=self.GUI.sidePanel)
+		if hasattr(self.GUI, "ID"):
+			if self.GUI.ID != 1: player1, player2 = "对方的", "你的"
+			else: player1, player2 = "你的", "对方的"
+		else: player1, player2 = "玩家1的", "玩家2的"
+		tk.Button(self, text="%s's deck&grave"%player1, font=("Yahei", 11, "bold"), 
+					command=lambda : self.showDeckGrave(1)).grid(row=0, column=0)
+		tk.Button(self, text="%s's deck&grave"%player2, font=("Yahei", 11, "bold"), 
+					command=lambda : self.showDeckGrave(2)).grid(row=0, column=1)
+		tk.Button(self, text="Clear", font=("Yahei", 11, "bold"), 
+					command=lambda : self.clear()).grid(row=1, column=0, columnspan=2)
+		tk.Label(self, text="Resources with certainty", font=("Yahei", 10)).grid(row=2, column=0)
+		tk.Label(self, text="Resources with possibilities", font=("Yahei", 10)).grid(row=2, column=1)
+		tk.Label(self, text="Cards in hand", font=("Yahei", 10)).grid(row=4, column=0)
+		tk.Label(self, text="Graveyard", font=("Yahei", 10)).grid(row=4, column=1)
+		self.lbx_cards_1Possi = ListboxPanel(self.GUI, self)
+		self.lbx_cards_XPossi = ListboxPanel(self.GUI, self)
+		self.lbx_trackedHands = ListboxPanel(self.GUI, self)
+		self.lbx_Graveyard = ListboxPanel(self.GUI, self)
+		self.lbx_cards_1Possi.grid(row=3, column=0)
+		self.lbx_cards_XPossi.grid(row=3, column=1)
+		self.lbx_trackedHands.grid(row=5, column=0)
+		self.lbx_Graveyard.grid(row=5, column=1)
+		
+	def showDeckGrave(self, ID):
+		HD = self.GUI.Game.Hand_Deck
+		self.clear()
+		img = PIL.Image.open(r"Images\PyHSIcon.png").resize((75, 75))
+		ph = PIL.ImageTk.PhotoImage(img)
+		self.GUI.lbl_Card.config(image=ph)
+		self.GUI.lbl_Card.image = ph
+		self.lbx_cards_1Possi.listbox.config(height=13)
+		self.lbx_cards_XPossi.listbox.config(height=13)
+		self.lbx_trackedHands.listbox.config(height=13)
+		self.lbx_Graveyard.listbox.config(height=13)
+		cardPool = self.GUI.Game.cardPool
+		if CHN:
+			print("cards_1Possi", HD.cards_1Possi[ID])
+			print("cards_XPossi", HD.cards_XPossi[ID])
+			print("trackedHands", HD.trackedHands[ID])
+			for tup in HD.cards_1Possi[ID]:
+				if tup[0]: self.lbx_cards_1Possi.insert(tk.END, "{}->{}"%format(tup[0].name_CN, tup[1][0].name_CN))
+				else: self.lbx_cards_1Possi.insert(tk.END, tup[1][0].name_CN)
+			for tup in HD.cards_XPossi[ID]:
+				self.lbx_cards_XPossi.insert(tk.END, "创建者：{}"%format(tup[0].name_CN))
+				for p in tup[1]: self.lbx_cards_XPossi.insert(tk.END, "    {}"%format(p.name_CN))
+			for tup in HD.trackedHands[ID]:
+				if tup[0]:
+					if len(tup[1]) == 1: self.lbx_trackedHands.insert(tk.END, "{}->{}"%format(tup[0].name_CN, tup[1][0].name_CN))
+					else: self.lbx_trackedHands.insert(tk.END, "创建者：{}"%format(tup[0].name_CN))
+				else:
+					for p in tup[1]: self.lbx_trackedHands.insert(tk.END, "    {}"%format(p.name_CN))
+			for index in self.GUI.Game.Counters.minionsDiedThisGame[ID]:
+				self.lbx_Graveyard.insert(tk.END, cardPool[index].name_CN)
+		else:
+			for tup in HD.cards_1Possi[ID]:
+				if tup[0]: self.lbx_cards_1Possi.insert(tk.END, "{}->{}"%format(tup[0].name, tup[1][0].name))
+				else: self.lbx_cards_1Possi.insert(tk.END, tup[1][0].name)
+			for tup in HD.cards_XPossi[ID]:
+				self.lbx_cards_XPossi.insert(tk.END, "Created by {}"%format(tup[0].name))
+				for p in tup[1]: self.lbx_cards_XPossi.insert(tk.END, "    {}"%format(p.name))
+			for tup in HD.trackedHands[ID]:
+				if tup[0]:
+					if len(tup[1]) == 1: self.lbx_trackedHands.insert(tk.END, "{}->{}"%format(tup[0].name, tup[1][0].name))
+					else: self.lbx_trackedHands.insert(tk.END, "Created by {}"%format(tup[0].name))
+				else:
+					for p in tup[1]: self.lbx_trackedHands.insert(tk.END, "    {}"%format(p.name))
+			for index in self.GUI.Game.Counters.minionsDiedThisGame[ID]:
+				self.lbx_Graveyard.insert(tk.END, cardPool[index].name)
+				
+	def clear(self):
+		self.lbx_cards_1Possi.delete(0, tk.END)
+		self.lbx_cards_XPossi.delete(0, tk.END)
+		self.lbx_trackedHands.delete(0, tk.END)
+		self.lbx_Graveyard.delete(0, tk.END)
+		self.lbx_cards_1Possi.listbox.config(height=2)
+		self.lbx_cards_XPossi.listbox.config(height=2)
+		self.lbx_trackedHands.listbox.config(height=2)
+		self.lbx_Graveyard.listbox.config(height=2)
+		
+		
 class GUI_Common:
 	def printInfo(self, string):
 		pass
@@ -67,6 +168,7 @@ class GUI_Common:
 	def initGameDisplay(self):
 		self.canvas = BoardButton(self)
 		self.canvas.plot()
+		#handZones, boardZones, secretZones不会实际添加到界面上
 		self.handZones = {1: HandZone(self, 1), 2: HandZone(self, 2)}
 		self.boardZones = {1: BoardZone(self, 1), 2: BoardZone(self, 2)}
 		self.heroZones = {1: HeroZone(self, 1), 2: HeroZone(self, 2)}
@@ -84,6 +186,15 @@ class GUI_Common:
 		self.deckZones[ownID].plot()
 		self.deckZones[enemyID].plot()
 		self.UI = 0
+		
+	def initSidePanel(self):
+		self.btn_ViewCollection = tk.Button(self.sidePanel, text=txt("View Collectible Card", CHN), 
+											command=lambda: CardCollectionWindow(self), bg="green3", font=("Yahei", 12))
+		self.deckGravePanel = DeckGravePanel(self)
+		print("Draw view collection button")
+		self.btn_ViewCollection.pack()
+		self.lbl_Card.pack()
+		self.deckGravePanel.pack()
 		
 	def cancelSelection(self):
 		if self.UI < 3 and self.UI > -1: #只有非发现状态,且游戏不在结算过程中时下才能取消选择
@@ -108,7 +219,6 @@ class GUI_Common:
 						string = words[i]
 					else: #If including the next word won't make it too long.
 						string += ' ' + words[i]
-						
 			lines += (string)
 			return lines
 		return text
@@ -121,15 +231,15 @@ class GUI_Common:
 			if hasattr(self, "ID"):
 				self.mulliganStatus = [0] * len(self.Game.mulligans[self.ID])
 				for i, card in enumerate(self.Game.mulligans[self.ID]):
-					pos = (shift+100+i*2*111, Y-140)
+					pos = (100+i*2*111, Y-140)
 					MulliganButton(self, card).plot(x=pos[0], y=pos[1])
-				MulliganFinishButton_2(self).plot(x=X/2, y=Y/2)
+				MulliganFinishButton_2PGUI(self).plot(x=X/2, y=Y/2)
 			else:
 				for ID in range(1, 3):
 					for i, card in enumerate(self.Game.mulligans[ID]):
 						pos = (100+i*2*111, Y-140) if ID == 1 else (100+i*2*111, 140)
 						MulliganButton(self, card).plot(x=pos[0], y=pos[1])
-				MulliganFinishButton_1(self).plot(x=X/2, y=Y/2)
+				MulliganFinishButton_1P(self).plot(x=X/2, y=Y/2)
 		else:
 			if self.UI == 1:
 				for i, option in enumerate(self.Game.options):
@@ -534,6 +644,8 @@ class GUI_Common:
 		self.UI = 3
 		self.btn_ViewCollection.forget()
 		self.lbl_Card.forget()
+		self.deckGravePanel.forget()
+		#Start the wish process
 		btnWishConfirm = tk.Button(master=self.sidePanel, text=txt("Wish", CHN), bg="lime green", width=3, height=1, font=("Yahei", 15, "bold"))
 		btnWishConfirm.GUI, btnWishConfirm.colorOrig = self, "lime green"
 		var = tk.IntVar()
@@ -542,6 +654,7 @@ class GUI_Common:
 		self.lbl_wish.pack(side=tk.TOP)
 		btnWishConfirm.pack(side=tk.TOP)
 		self.lbl_Card.pack(side=tk.TOP)
+		self.deckGravePanel.pack(side=tk.TOP)
 		while True:
 			btnWishConfirm.wait_variable(var)
 			if self.cardWished:

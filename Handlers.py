@@ -209,9 +209,17 @@ class Secrets:
 		game, ID = self.Game, secret.ID
 		secretCreator, Class = secret.creator, secret.Class
 		deckSecrets = []
-		for creator, possi in self.Game.Hand_Deck.knownCards[secret.ID]:
-			if creator == secretCreator:
-				deckSecrets += [T for T in possi if T.description.startswith("Secret:") and T.Class == Class]
+		if secret.tracked: #如果一张奥秘在手牌中且可以追踪，则需要做一些操作
+			game.Hand_Deck.ruleOut(secret, fromHD=2)
+			deckSecrets = list(secret.possi)
+		else:
+			if len(secret.possi) == 1:
+				for creator, possi in self.Game.Hand_Deck.cards_1Possi[secret.ID]:
+					if creator == secretCreator:
+						deckSecrets += [T for T in possi if T.description.startswith("Secret:") and T.Class == Class]
+			else: #如果一张奥秘有多种可能，则它肯定可以匹配到一个
+				game.Hand_Deck.ruleOut(secret, fromHD=2)
+				deckSecrets = list(secret.possi)
 		secret.possi = list(set(deckSecrets))
 		#需要根据一个奥秘的可能性，把所有可能的奥秘的伪扳机先都注册上
 		for possi in secret.possi:
@@ -292,7 +300,7 @@ class Counters:
 		self.mechsDiedThisGame = {1:[], 2:[]}
 		self.manaSpentonSpells = {1: 0, 2: 0}
 		self.manaSpentonPlayingMinions = {1: 0, 2: 0}
-		self.numPogoHoppersPlayedThisGame = {1: 0, 2: 0}
+		#self.numPogoHoppers = {1: 0, 2: 0}
 		self.healthRestoredThisGame = {1: 0, 2: 0}
 		self.cardsDiscardedThisGame = {1:[], 2:[]}
 		self.createdCardsPlayedThisGame = {1:0, 2:0}
@@ -311,7 +319,7 @@ class Counters:
 		self.cardsPlayedLastTurn = {1:[], 2:[]}
 		self.heroAttackTimesThisTurn = {1:0, 2:0}
 		self.primaryGalakronds = {1: None, 2: None}
-		self.invocationCounts = {1:0, 2:0} #For Galakrond
+		self.invokes = {1:0, 2:0} #For Galakrond
 		self.hasPlayedQuestThisGame = {1:False, 2:False}
 		self.timesHeroChangedHealth_inOwnTurn = {1:0, 2:0}
 		self.heroChangedHealthThisTurn = {1:False, 2:False}

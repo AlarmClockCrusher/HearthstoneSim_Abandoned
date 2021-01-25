@@ -452,7 +452,7 @@ class GoblinQueen(SVMinion):
     name_CN = "哥布林女王"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.Hand_Deck.addCardtoHand([Goblin for i in range(2)], self.ID, byType=True)
+        self.Game.Hand_Deck.addCardtoHand([Goblin for i in range(2)], self.ID, byType=True, creator=type(self))
 
     def evolveTargetExists(self, choice=0):
         return any(minion.name == "Goblin" for minion in self.Game.minionsonBoard(self.ID, self))

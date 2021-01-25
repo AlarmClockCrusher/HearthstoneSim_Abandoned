@@ -53,7 +53,7 @@ def invokeGalakrond(Game, ID):
 			if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheUnbreakable(Game, ID), linger=False)
 			Game.heroes[ID].gainAttack(3)
 	#invocation counter increases and upgrade the galakronds
-	Game.Counters.invocationCounts[ID] += 1
+	Game.Counters.invokes[ID] += 1
 	for card in Game.Hand_Deck.hands[ID][:]:
 		if "Galakrond, " in card.name:
 			upgrade = card.upgradedGalakrond
@@ -2857,10 +2857,10 @@ class FateWeaver(Minion):
 	name_CN = "命运编织者"
 	
 	def effCanTrig(self):
-		self.effectViable = self.Game.Counters.invocationCounts[self.ID] > 1
+		self.effectViable = self.Game.Counters.invokes[self.ID] > 1
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if self.Game.Counters.invocationCounts[self.ID] > 1:
+		if self.Game.Counters.invokes[self.ID] > 1:
 			for card in self.Game.Hand_Deck.hands[self.ID]:
 				ManaMod(card, changeby=-1, changeto=-1).applies()
 			self.Game.Manas.calcMana_All()
@@ -3180,10 +3180,10 @@ class UmbralSkulker(Minion):
 	name_CN = "幽影潜藏者"
 	
 	def effCanTrig(self):
-		self.effectViable = self.Game.Counters.invocationCounts[self.ID] > 1
+		self.effectViable = self.Game.Counters.invokes[self.ID] > 1
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if self.Game.Counters.invocationCounts[self.ID] > 1:
+		if self.Game.Counters.invokes[self.ID] > 1:
 			self.Game.Hand_Deck.addCardtoHand([TheCoin, TheCoin, TheCoin], self.ID, byType=True)
 		return None
 		
@@ -3650,12 +3650,12 @@ class DragonsPack(Spell):
 		return self.Game.space(self.ID) > 0
 		
 	def effCanTrig(self): #法术先检测是否可以使用才判断是否显示黄色
-		self.effectViable = self.Game.Counters.invocationCounts[self.ID] > 1
+		self.effectViable = self.Game.Counters.invokes[self.ID] > 1
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		minion1, minion2 = SpiritWolf_Dragons(self.Game, self.ID), SpiritWolf_Dragons(self.Game, self.ID)
 		self.Game.summon([minion1, minion2], (-1, "totheRightEnd"), self)
-		if self.Game.Counters.invocationCounts[self.ID] > 1:
+		if self.Game.Counters.invokes[self.ID] > 1:
 			minion1.buffDebuff(2, 2)
 			minion2.buffDebuff(2, 2)
 		return None
@@ -3926,10 +3926,10 @@ class VeiledWorshipper(Minion):
 	name_CN = "暗藏的信徒"
 	
 	def effCanTrig(self):
-		self.effectViable = self.Game.Counters.invocationCounts[self.ID] > 1
+		self.effectViable = self.Game.Counters.invokes[self.ID] > 1
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if self.Game.Counters.invocationCounts[self.ID] > 1:
+		if self.Game.Counters.invokes[self.ID] > 1:
 			self.Game.Hand_Deck.drawCard(self.ID)
 			self.Game.Hand_Deck.drawCard(self.ID)
 			self.Game.Hand_Deck.drawCard(self.ID)
@@ -4262,10 +4262,10 @@ class ScionofRuin(Minion):
 	name_CN = "废墟之子"
 	
 	def effCanTrig(self):
-		self.effectViable = self.Game.Counters.invocationCounts[self.ID] > 1
+		self.effectViable = self.Game.Counters.invokes[self.ID] > 1
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if self.Game.Counters.invocationCounts[self.ID] > 1:
+		if self.Game.Counters.invokes[self.ID] > 1:
 			if self.onBoard:
 				copies = [self.selfCopy(self.ID), self.selfCopy(self.ID)]
 				self.Game.summon(copies, (self.pos, "leftandRight"), self)

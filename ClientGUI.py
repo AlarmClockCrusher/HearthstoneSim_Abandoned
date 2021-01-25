@@ -44,6 +44,7 @@ class MulliganFinishButton_3(tk.Button):
 					game.Hand_Deck.decks[2] = [card(game, 2) for card in decks]
 					game.Hand_Deck.hands[2] = [card(game, 2) for card in hands]
 					GUI.UI = 0
+					GUI.initSidePanel()
 					GUI.update()
 					game.Hand_Deck.startGame()
 					guides = game.fixedGuides
@@ -59,6 +60,7 @@ class MulliganFinishButton_3(tk.Button):
 					game.Hand_Deck.hands[1] = [card(game, 1) for card in hands]
 					GUI.UI = 0
 					game.guides = unpickleBytes2Obj(guides)
+					GUI.initSidePanel()
 					GUI.update()
 					game.Hand_Deck.startGame()
 					break
@@ -240,7 +242,10 @@ class GUI_Client(GUI_Common):
 		self.sidePanel = tk.Frame(self.window, width=int(0.005*X), height=int(0.3*Y), bg="cyan")
 		self.sidePanel.pack(side=tk.TOP)
 		
-		self.lbl_Card = tk.Label(self.sidePanel, text=txt("Resolving Card Effect", CHN))
+		img = PIL.Image.open(r"Images\PyHSIcon.png").resize((75, 75))
+		ph = PIL.ImageTk.PhotoImage(img)
+		self.lbl_Card = tk.Label(self.sidePanel, image=ph)
+		self.lbl_Card.image = ph
 		self.lbl_wish = tk.Label(master=self.sidePanel, text=txt("Card Wished", CHN), font=("Yahei", 15))
 		self.lbl_Card.pack(fill=tk.X)
 		
@@ -254,7 +259,7 @@ class GUI_Client(GUI_Common):
 		self.mulliganStatus = [0] * len(self.Game.mulligans[self.ID])
 		#其他的两个GUI里面都是直接用update(),这里专门写一下
 		for i, card in enumerate(self.Game.mulligans[self.ID]):
-			pos = (shift+100+i*2*111, 0.5*Y)
+			pos = (100+i*2*111, 0.5*Y)
 			MulliganButton(self, card).plot(x=pos[0], y=pos[1])
 		MulliganFinishButton_3(self).plot(x=X/2, y=0.9*Y)
 		

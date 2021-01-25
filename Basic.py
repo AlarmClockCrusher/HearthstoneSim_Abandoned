@@ -1982,7 +1982,7 @@ class PsychicConjurer(Minion):
 		curGame = self.Game
 		enemyDeck = curGame.Hand_Deck.decks[3-self.ID]
 		if curGame.mode == 0:
-			pool = tuple(possi[1][0] for possi in curGame.Hand_Deck.knownCards[3-self.ID] if len(possi) == 1)
+			pool = tuple(possi[1][0] for possi in curGame.Hand_Deck.cards_1Possi[3-self.ID] if len(possi) == 1)
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:

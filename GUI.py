@@ -35,9 +35,7 @@ class LoadDeckButton(tk.Button):
 			self.GUI.posMulligans = {1:[(100+i*2*111, Y-140) for i in range(len(self.GUI.Game.mulligans[1]))],
 								2:[(100+i*2*111, 140) for i in range(len(self.GUI.Game.mulligans[2]))]}
 			self.destroy()
-			self.GUI.btn_ViewCollection = tk.Button(self.GUI.sidePanel, text=txt("View Collectible Card", CHN), command=lambda: CardCollectionWindow(self.GUI), bg="green3", font=("Yahei", 12))
-			self.GUI.btn_ViewCollection.pack(side=tk.TOP)
-			self.GUI.lbl_Card.pack()
+			self.GUI.initSidePanel()
 			self.GUI.update()
 		else:
 			if not decksCorrect[1]: messagebox.showinfo(message=txt("Deck 1 incorrect", CHN))
@@ -54,11 +52,15 @@ class GUI_1P(GUI_Common):
 		self.gameBackup = None
 		self.btnsDrawn = [] #btnsDrawn include the discover options, etc
 		self.CHN = CHN
+		self.lbx_cards_1Possi = None
+		self.lbx_cards_XPossi = None
+		self.lbx_trackedHands = None
+		self.lbx_Graveyard = None
+		
 		self.window = tk.Tk()
 		#Select DIY packs
 		lbl_SelectPacks = tk.Label(master=self.window, text=txt("Include DIY packs", CHN), font=("Yahei", 15))
-		monkVar = tk.IntVar()
-		SVVar = tk.IntVar()
+		monkVar, SVVar = tk.IntVar(), tk.IntVar()
 		includeMonk = tk.Checkbutton(self.window, text=txt("Monk", CHN), variable=monkVar, onvalue=1, offvalue=0, font=("Yahei", 15, "bold"))
 		includeSV = tk.Checkbutton(self.window, text=txt("SV", CHN), variable=SVVar, onvalue=1, offvalue=0,
 									 font=("Yahei", 15, "bold"))
@@ -71,33 +73,55 @@ class GUI_1P(GUI_Common):
 		boardOpt["menu"].config(font=("Yahei", 15))
 		var = tk.IntVar()
 		
+		onLeftVar = tk.IntVar()
+		sidePanelonLeft = tk.Checkbutton(self.window, text=txt("Side Panel on Left", CHN), variable=onLeftVar, onvalue=1, offvalue=0, font=("Yahei", 15, "bold"))
+		sidePanelonLeft.select() #The side panel shows on the left by default
 		btn_genCardPool = tk.Button(self.window, text=txt("Continue", CHN), bg="green3", font=("Yahei", 15, "bold"), command=lambda : var.set(1))
 		lbl_SelectPacks.pack()
 		includeMonk.pack()
 		includeSV.pack()
 		lbl_SelectBoard.pack()
 		boardOpt.pack() #place(x=60, y=60)
+		sidePanelonLeft.pack()
 		btn_genCardPool.pack()
 		
 		btn_genCardPool.wait_variable(var)
 		self.boardID, self.transferStudentType = makeCardPool(self.boardID.get(), monkVar.get(), SVVar.get()) #定义棋盘信息和转校生的类型
+		onLeft = onLeftVar.get()
 		self.window.destroy()
 		self.window = tk.Tk()
 		#Import the cardPool generated after the selection
 		from CardPools import Classes, ClassesandNeutral, ClassDict, cardPool, MinionsofCost, RNGPools
 		
 		self.GamePanel = tk.Frame(master=self.window, width=X, height=Y, bg="black")
-		self.GamePanel.pack(fill=tk.Y, side=tk.LEFT) #place(relx=0, rely=0)
 		self.sidePanel = tk.Frame(master=self.window, width=int(0.02*X), bg="cyan")
-		self.sidePanel.pack(side=tk.TOP)
 		self.deckImportPanel = tk.Frame(master=self.window, width=int(0.02*X), height=0.6*Y)
+		self.GamePanel.pack(fill=tk.Y, side=tk.RIGHT if onLeft else tk.LEFT) #place(relx=0, rely=0)
+		self.sidePanel.pack(side=tk.TOP)
 		self.deckImportPanel.pack(side=tk.TOP)
 		
 		self.lbl_wish = tk.Label(self.sidePanel, text=txt("Card Wished", CHN), font=("Yahei", 15))
-		self.lbl_Card = tk.Label(self.sidePanel, text=txt("Resolving Card Effect", CHN))
-		
+		img = PIL.Image.open(r"Images\PyHSIcon.png").resize((75, 75))
+		ph = PIL.ImageTk.PhotoImage(img)
+		self.lbl_Card = tk.Label(self.sidePanel, image=ph)
+		self.lbl_Card.image = ph
 		#START in DECKIMPORTPANEL
-		#Drop down option menu for the 1st hero
+		#Drop down option menu for the 1st&2nd hero
+		self.initHero1ClassSelection()
+		self.initHero2ClassSelection()
+		#Confirm button to start the game
+		LoadDeckButton(self).pack()
+		self.deck1 = tk.Entry(self.deckImportPanel, font=("Yahei", 12))
+		self.deck2 = tk.Entry(self.deckImportPanel, font=("Yahei", 12))
+		tk.Label(self.deckImportPanel, text=txt("Enter Deck 1 code", CHN),
+				font=("Yahei", 14)).place(relx=0.2, rely=0.82, anchor='c')
+		tk.Label(self.deckImportPanel, text=txt("Enter Deck 2 code", CHN),
+				font=("Yahei", 14)).place(relx=0.8, rely=0.82, anchor='c')
+		self.deck1.pack(side=tk.LEFT)
+		self.deck2.pack(side=tk.LEFT)
+		self.window.mainloop()
+		
+	def initHero1ClassSelection(self):
 		hero1 = tk.StringVar(self.deckImportPanel)
 		hero1.set(list(ClassDict.keys())[0])
 		hero1Opt = tk.OptionMenu(self.deckImportPanel, hero1, *list(ClassDict.keys()))
@@ -108,7 +132,7 @@ class GUI_1P(GUI_Common):
 		self.hero1Label.pack()
 		hero1.trace("w", lambda *arg: self.hero1Label.configure(text="Hero 1 :"+hero1.get()))
 		
-		##Drop down option menu for the 2nd hero
+	def initHero2ClassSelection(self):
 		hero2 = tk.StringVar(self.deckImportPanel)
 		hero2.set(list(ClassDict.keys())[0])
 		hero2Opt = tk.OptionMenu(self.deckImportPanel, hero2, *list(ClassDict.keys()))
@@ -118,18 +142,5 @@ class GUI_1P(GUI_Common):
 		self.hero2Label = tk.Label(self.deckImportPanel, text="Hero 2:Demon Hunter", font=("Yahei", 15))
 		self.hero2Label.pack()
 		hero2.trace("w", lambda *arg: self.hero2Label.configure(text="Hero 2 :"+hero2.get()))
-		
-		#Confirm button to start the game
-		LoadDeckButton(self).pack()
-		self.deck1 = tk.Entry(self.deckImportPanel, font=("Yahei", 12))
-		self.deck2 = tk.Entry(self.deckImportPanel, font=("Yahei", 12))
-		lbl_deck1 = tk.Label(self.deckImportPanel, text=txt("Enter Deck 1 code", CHN), font=("Yahei", 14))
-		lbl_deck2 = tk.Label(self.deckImportPanel, text=txt("Enter Deck 2 code", CHN), font=("Yahei", 14))
-		self.deck1.pack(side=tk.LEFT)
-		self.deck2.pack(side=tk.LEFT)
-		lbl_deck1.place(relx=0.2, rely=0.82, anchor='c')
-		lbl_deck2.place(relx=0.8, rely=0.82, anchor='c')
-		self.window.mainloop()
-		
 				
 GUI_1P()

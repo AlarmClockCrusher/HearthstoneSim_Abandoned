@@ -348,7 +348,7 @@ class WaterFairy(SVMinion):
 
 class Deathrattle_WaterFairy(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.Hand_Deck.addCardtoHand(Fairy, self.entity.ID, byType=True)
+        self.entity.Game.Hand_Deck.addCardtoHand(Fairy, self.entity.ID, byType=True, creator=type(self.entity))
 
 
 class FairyWhisperer(SVMinion):
@@ -360,7 +360,7 @@ class FairyWhisperer(SVMinion):
     name_CN = "妖精语森林使者"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.Hand_Deck.addCardtoHand([Fairy for i in range(2)], self.ID, byType=True)
+        self.Game.Hand_Deck.addCardtoHand([Fairy for i in range(2)], self.ID, byType=True, creator=type(self))
         return None
 
 
@@ -430,7 +430,7 @@ class SylvanJustice(SVSpell):
             if isinstance(target, list): target = target[0]
             damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
             self.dealsDamage(target, damage)
-            self.Game.Hand_Deck.addCardtoHand(Fairy, self.ID, byType=True)
+            self.Game.Hand_Deck.addCardtoHand(Fairy, self.ID, byType=True, creator=type(self))
         return target
 
 
@@ -455,7 +455,7 @@ class Trig_DarkElfFaure(TrigBoard):
         return subject == self.entity and self.entity.onBoard
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.Hand_Deck.addCardtoHand(Fairy, self.entity.ID, byType=True)
+        self.entity.Game.Hand_Deck.addCardtoHand(Fairy, self.entity.ID, byType=True, creator=type(self.entity))
 
 
 class Okami(SVMinion):
@@ -2339,7 +2339,7 @@ class Puppeteer(SVMinion):
     name_CN = "操偶师"
 
     def inHandEvolving(self, target=None):
-        self.Game.Hand_Deck.addCardtoHand(Puppet, self.ID, byType=True)
+        self.Game.Hand_Deck.addCardtoHand(Puppet, self.ID, byType=True, creator=type(self))
         curGame = self.Game
         ownHand = curGame.Hand_Deck.hands[self.ID]
         if curGame.mode == 0:
@@ -2392,7 +2392,7 @@ class MagisteelPuppet(SVMinion):
     name_CN = "魔钢傀儡"
 
     def inHandEvolving(self, target=None):
-        self.Game.Hand_Deck.addCardtoHand([Puppet, Puppet], self.ID, byType=True)
+        self.Game.Hand_Deck.addCardtoHand([Puppet]*2, self.ID, byType=True, creator=type(self))
 
 
 class DimensionCut(SVSpell):
@@ -2433,7 +2433,7 @@ class ToySoldier(SVMinion):
     name_CN = "玩具士兵"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.Hand_Deck.addCardtoHand(Puppet, self.ID, byType=True)
+        self.Game.Hand_Deck.addCardtoHand(Puppet, self.ID, byType=True, creator=type(self))
         return None
 
     def inEvolving(self):
@@ -2469,7 +2469,7 @@ class AutomatonKnight(SVMinion):
 
 class Deathrattle_AutomatonKnight(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.Hand_Deck.addCardtoHand(Puppet, self.entity.ID, byType=True)
+        self.entity.Game.Hand_Deck.addCardtoHand(Puppet, self.entity.ID, byType=True, creator=type(self.entity))
 
 
 class IronforgedFighter(SVMinion):
@@ -2516,7 +2516,7 @@ class PuppeteersStrings(SVSpell):
     name_CN = "人偶师的线"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.Hand_Deck.addCardtoHand([Puppet for i in range(3)], self.ID, byType=True)
+        self.Game.Hand_Deck.addCardtoHand([Puppet]*3, self.ID, byType=True, creator=type(self))
         damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
         targets = self.Game.minionsonBoard(3 - self.ID)
         self.dealsAOE(targets, [damage for minion in targets])
