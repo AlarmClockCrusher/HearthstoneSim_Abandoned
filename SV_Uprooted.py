@@ -69,8 +69,9 @@ class WayfaringIllustrator(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def targetExists(self, choice=0):
-        return any(("Machina" in minion.race or "Natura" in minion.race) and self.canSelect(minion) for minion in self.Game.minionsAlive(self.ID))
-		
+        return any(("Machina" in minion.race or "Natura" in minion.race) and self.canSelect(minion) for minion in
+                   self.Game.minionsAlive(self.ID))
+
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
         return target.type == "Minion" and target.ID == self.ID and target.onBoard and (
@@ -123,7 +124,8 @@ class ChangewingCherub(SVMinion):
             if card.type == "Minion" and card != self and "Natura" in card.race:
                 natura += 1
         if natura >= 3:
-            self.restoresHealth(self.Game.heroes[self.ID], 2)
+            heal = 2 * (2 ** self.countHealDouble())
+            self.restoresHealth(self.Game.heroes[self.ID], heal)
         return None
 
     def inHandEvolving(self, target=None):
@@ -211,9 +213,10 @@ class RomanticChanteuse(SVMinion):
             trigger.connect()
         return target
 
+
 class Trig_RomanticChanteuse(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BattleDmgHero", "BattleDmgMinion","AbilityDmgHero","AbilityDmgMinion", "TurnEnds"])
+        self.blank_init(entity, ["BattleDmgHero", "BattleDmgMinion", "AbilityDmgHero", "AbilityDmgMinion", "TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment,
                 choice=0):  # target here holds the actual target object
