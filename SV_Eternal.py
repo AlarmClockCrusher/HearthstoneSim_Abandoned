@@ -973,6 +973,57 @@ class Trig_EahtaGodoftheBlade(TrigBoard):
 """Runecraft cards"""
 
 
+class AlistairTinyMagus(SVMinion):
+    Class, race, name = "Runecraft", "", "Alistair, Tiny Magus"
+    mana, attack, health = 1, 0, 1
+    index = "SV_Eternal~Runecraft~Minion~1~0~1~None~Alistair, Tiny Magus~Battlecry~Deathrattle"
+    requireTarget, keyWord, description = True, "", "Fanfare: Deal X damage to an enemy follower. X equals the last digit of your leader's defense.Last Words: Spellboost the cards in your hand."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "小小的术士·阿里斯特拉"
+
+
+class ImpalementArts(SVSpell):
+    Class, name = "Runecraft", "Impalement Arts"
+    requireTarget, mana = True, 1
+    index = "SV_Eternal~Runecraft~Spell~1~Impalement Arts~Spellboost"
+    description = "Deal 1 damage to an enemy.If this card has been Spellboosted at least 5 times, put an Impalement Arts into your hand and give it the following effect: At the end of your turn, discard this card."
+    name_CN = "戏刀奇术"
+
+
+class ElmottPyrestarter(SVMinion):
+    Class, race, name = "Runecraft", "", "Elmott, Pyrestarter"
+    mana, attack, health = 2, 3, 1
+    index = "SV_Eternal~Runecraft~Minion~2~3~1~None~Elmott, Pyrestarter~Battlecry~Spellboost"
+    requireTarget, keyWord, description = True, "", "Fanfare: Deal X damage to an enemy follower. X equals the number of times this card has been Spellboosted. Then, if X is at least 10, deal 4 damage to the enemy leader."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "炎狱的葬送者·艾尔莫特"
+
+
+class ElixirMixer(SVSpell):
+    Class, name = "Runecraft", "Elixir Mixer"
+    requireTarget, mana = True, 2
+    index = "SV_Eternal~Runecraft~Spell~2~Elixir Mixer"
+    description = "Give Rush, Bane, and Drain to an allied follower whose attack or defense has been increased by an effect."
+    name_CN = "灵药调和"
+
+
+class ForceBarrier(SVSpell):
+    Class, name = "Runecraft", "Force Barrier"
+    requireTarget, mana = False, 2
+    index = "SV_Eternal~Runecraft~Spell~2~Force Barrier"
+    description = "Until the end of your opponent's turn, give all allies the following effect: Reduce damage from effects by 2."
+    name_CN = "魔御结界"
+
+
+class AcademicArchmage(SVMinion):
+    Class, race, name = "Runecraft", "", "Academic Archmage"
+    mana, attack, health = 3, 2, 3
+    index = "SV_Eternal~Runecraft~Minion~3~2~3~None~Academic Archmage~Battlecry"
+    requireTarget, keyWord, description = True, "", "Fanfare: Deal 1 damage to an enemy follower and then 1 damage to the enemy leader. If you have 20 cards or less in your deck, deal 3 damage instead."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "博学的魔导士"
+
+
 class FifProdigiousSorcerer(SVMinion):
     Class, race, name = "Runecraft", "", "Fif, Prodigious Sorcerer"
     mana, attack, health = 3, 2, 3
@@ -1052,6 +1103,69 @@ class ResummonMinion(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         newMinion = type(self.entity)(self.entity.Game, self.entity.ID)
         self.entity.Game.summon(newMinion, self.entity.pos + 1, self.entity.ID)
+
+
+class CrystalWitch(SVMinion):
+    Class, race, name = "Runecraft", "", "Crystal Witch"
+    mana, attack, health = 5, 2, 3
+    index = "SV_Eternal~Runecraft~Minion~5~2~3~None~Crystal Witch~Battlecry~Spellboost"
+    requireTarget, keyWord, description = False, "", "Spellboost: Subtract 1 from the cost of this card.Fanfare: Draw a card. Spellboost the cards in your hand."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "石英魔女"
+
+
+class XenoIfrit_Crystallize(Amulet):
+    Class, race, name = "Runecraft", "", "Crystallize: Xeno Ifrit"
+    mana = 3
+    index = "SV_Eternal~Runecraft~Amulet~3~None~Xeno Ifrit~Countdown~Crystallize~Deathrattle~Legendary~Uncollectible"
+    requireTarget, description = False, "Countdown (5)Once on each of your turns, when you play a follower, give it +1/+0.At the start of your turn, if you have more evolution points than your opponent, subtract 1 from this amulet's Countdown. (You have 0 evolution points on turns you are unable to evolve.)Last Words: Summon a Xeno Ifrit."
+    name_CN = "结晶：异种·伊芙利特"
+
+
+class XenoIfrit(SVMinion):
+    Class, race, name = "Runecraft", "", "Xeno Ifrit"
+    mana, attack, health = 6, 5, 4
+    index = "SV_Eternal~Runecraft~Minion~6~5~4~None~Xeno Ifrit~Crystallize~Legendary"
+    requireTarget, keyWord, description = False, "", "Crystallize (3): Countdown (5)Once on each of your turns, when you play a follower, give it +1/+0.At the start of your turn, if you have more evolution points than your opponent, subtract 1 from this amulet's Countdown. (You have 0 evolution points on turns you are unable to evolve.)Last Words: Summon a Xeno Ifrit.When this follower comes into play, deal 3 damage to all enemies."
+    crystallizeAmulet = XenoIfrit_Crystallize
+    attackAdd, healthAdd = 2, 2
+    name_CN = "异种·伊芙利特"
+
+
+class PholiaRetiredSovereign(SVMinion):
+    Class, race, name = "Runecraft", "", "Pholia, Retired Sovereign"
+    mana, attack, health = 7, 4, 4
+    index = "SV_Eternal~Runecraft~Minion~7~4~4~None~Pholia, Retired Sovereign~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: The next time this follower takes damage, reduce that damage to 0. Summon a Bai Ze."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "悠闲隐居的前国王·芙莉亚"
+
+
+class BaiZe(SVMinion):
+    Class, race, name = "Runecraft", "", "Bai Ze"
+    mana, attack, health = 7, 4, 6
+    index = "SV_Eternal~Runecraft~Minion~7~4~6~None~Bai Ze~Rush~Taunt~Uncollectible"
+    requireTarget, keyWord, description = False, "Rush,Taunt", "Rush.Ward.At the end of your turn, give all allied Pholia, Retired Sovereigns the following effect: The next time this follower takes damage, reduce that damage to 0."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "白泽"
+
+
+class RagingGolem_Crystallize(Amulet):
+    Class, race, name = "Runecraft", "", "Crystallize: Raging Golem"
+    mana = 2
+    index = "SV_Eternal~Runecraft~Amulet~2~Earth Sigil~Raging Golem~Crystallize~Deathrattle~Uncollectible"
+    requireTarget, description = False, "Earth Sigil Last Words: Summon a Guardian Golem."
+    name_CN = "结晶：暴烈巨像"
+
+
+class RagingGolem(SVMinion):
+    Class, race, name = "Runecraft", "", "Raging Golem"
+    mana, attack, health = 8, 6, 6
+    index = "SV_Eternal~Runecraft~Minion~8~6~6~None~Raging Golem~Rush~Deathrattle"
+    requireTarget, keyWord, description = False, "Rush", "Crystallize (2): Earth SigilLast Words: Summon a Guardian Golem.Rush.Last Words: Summon 2 Guardian Golems."
+    crystallizeAmulet = RagingGolem_Crystallize
+    attackAdd, healthAdd = 2, 2
+    name_CN = "暴烈巨像"
 
 
 """Dragoncraft cards"""
