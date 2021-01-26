@@ -535,7 +535,7 @@ class BahamutPrimevalDragon(SVMinion):
 class WalderForestRanger(SVMinion):
     Class, race, name = "Forestcraft", "", "Walder, Forest Ranger"
     mana, attack, health = 1, 1, 1
-    index = "SV_Eternal~Forestcraft~Minion~1~1~1~None~Walder, Forest Ranger~Charge~Battlecry~Enhance"
+    index = "SV_Eternal~Forestcraft~Minion~1~1~1~None~Walder, Forest Ranger~Charge~Battlecry~Enhance~Invocation"
     requireTarget, keyWord, description = False, "Charge", "Invocation: When you play a card using its Accelerate effect for the second time this turn, invoke this card.Storm.Fanfare: Enhance (6) - Gain +X/+X. X equals the number of times you've played a card using its Accelerate effect this match."
     attackAdd, healthAdd = 2, 2
     name_CN = "森之战士·维鲁达"
@@ -707,6 +707,7 @@ class WindFairy(SVMinion):
     mana, attack, health = 9, 3, 3
     index = "SV_Eternal~Forestcraft~Minion~9~3~3~None~Wind Fairy~Charge~Windfury~Accelerate"
     requireTarget, keyWord, description = True, "Charge,Windfury", "Fanfare: Give your leader the following effect - Once on each of your turns, when you play a card, recover 2 play points and add 2 to the number of cards played this turn. (This effect is not stackable and lasts for the rest of the match.)"
+    accelerateSpell = WindFairy_Accelerate
     attackAdd, healthAdd = 2, 2
     name_CN = "迅风妖精"
 
@@ -1171,6 +1172,59 @@ class RagingGolem(SVMinion):
 """Dragoncraft cards"""
 
 
+class DragonRearing(SVSpell):
+    Class, name = "Dragoncraft", "Dragon Rearing"
+    requireTarget, mana = True, 1
+    index = "SV_Eternal~Dragoncraft~Spell~1~Dragon Rearing"
+    description = "Give +1/+1 to an allied Dragoncraft follower.If Overflow is active for you, give +2/+2 instead and draw a card."
+    name_CN = "龙之养成"
+
+
+class SharkWarrior(SVMinion):
+    Class, race, name = "Dragoncraft", "", "Shark Warrior"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Eternal~Dragoncraft~Minion~2~2~2~None~Shark Warrior~Battlecry~Enhance"
+    requireTarget, keyWord, description = True, "", "Fanfare: Discard a card. Restore 4 defense to your leader.Enhance (5): Gain +2/+2. Draw a card."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "鲨鱼战士"
+
+
+class MermaidArcher(SVMinion):
+    Class, race, name = "Dragoncraft", "", "Mermaid Archer"
+    mana, attack, health = 2, 0, 5
+    index = "SV_Eternal~Dragoncraft~Minion~2~0~5~None~Mermaid Archer~Battlecry~Enhance"
+    requireTarget, keyWord, description = False, "", "Once each turn, when this follower takes damage, if it's not destroyed, deal 2 damage to a random enemy follower."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "人鱼弓手"
+
+
+class HypersonicDragonewt(SVMinion):
+    Class, race, name = "Dragoncraft", "", "Hypersonic Dragonewt"
+    mana, attack, health = 4, 3, 2
+    index = "SV_Eternal~Dragoncraft~Minion~4~3~2~None~Hypersonic Dragonewt~Charge~Battlecry"
+    requireTarget, keyWord, description = False, "Charge", "Storm. Fanfare: If Overflow is active for you, gain Last Words - Summon a Hypersonic Dragonewt."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "残影龙人"
+
+
+class GiantBasilisk(SVMinion):
+    Class, race, name = "Dragoncraft", "", "Hypersonic Dragonewt"
+    mana, attack, health = 4, 4, 4
+    index = "SV_Eternal~Dragoncraft~Minion~4~4~4~None~Hypersonic Dragonewt~Bane~Battlecry"
+    requireTarget, keyWord, description = False, "Bane", "Bane. Fanfare: If you discarded any cards this turn, evolve this card."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "巨型巴西利斯克"
+
+
+class RaziaVengefulCannonlancer(SVMinion):
+    Class, race, name = "Dragoncraft", "", "Razia, Vengeful Cannonlancer"
+    mana, attack, health = 4, 2, 4
+    index = "SV_Eternal~Dragoncraft~Minion~4~2~4~None~Razia, Vengeful Cannonlancer~Taunt~Deathrattle"
+    requireTarget, keyWord, description = False, "Taunt", "Ward.Clash: Gain +1/+0.Last Words: Deal X damage to the enemy leader. X equals this follower's attack."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "破天的铳枪骑士·拉斯缇娜"
+
+
 class ThreoDivineHavoc(SVMinion):
     Class, race, name = "Dragoncraft", "", "Threo, Divine Havoc"
     mana, attack, health = 4, 4, 3
@@ -1223,7 +1277,87 @@ class Trig_ThreoDivineHavoc(TrigBoard):
         number[0] = self.entity.health - 1
 
 
+class TempestDragon(SVMinion):
+    Class, race, name = "Dragoncraft", "", "Tempest Dragon"
+    mana, attack, health = 5, 5, 5
+    index = "SV_Eternal~Dragoncraft~Minion~5~5~5~None~Tempest Dragon"
+    requireTarget, keyWord, description = False, "", "At the end of your turn, put a random Dragoncraft follower that originally costs 2, 4, 6, 8, or 10 play points from your deck into your hand."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "风霆之龙"
+
+
+class LadivaChampionofLove(SVMinion):
+    Class, race, name = "Dragoncraft", "", "Ladiva, Champion of Love"
+    mana, attack, health = 6, 4, 6
+    index = "SV_Eternal~Dragoncraft~Minion~6~4~6~None~Ladiva, Champion of Love~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: If any enemy followers are in play, lose 1 play point orb and evolve this follower.Clash: Give -2/-0 to the enemy follower."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "爱之大殿堂·法斯蒂瓦"
+
+
+class GhandagozaFistofRage(SVMinion):
+    Class, race, name = "Dragoncraft", "", "Ghandagoza, Fist of Rage"
+    mana, attack, health = 9, 8, 7
+    index = "SV_Eternal~Dragoncraft~Minion~9~8~7~None~Ghandagoza, Fist of Rage~Rush"
+    requireTarget, keyWord, description = False, "Rush", "Rush.Strike: Deal X damage to the enemy leader. X equals this follower's attack."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "古今独步的大拳豪·冈达葛萨"
+
+
+class DisrestanOceanHarbinger_Accelerate(SVSpell):
+    Class, name = "Dragoncraft", "Disrestan, Ocean Harbinger"
+    requireTarget, mana = False, 1
+    index = "SV_Eternal~Dragoncraft~Spell~1~Disrestan, Ocean Harbinger~Accelerate~Legendary~Uncollectible"
+    description = " Draw a card. If you have more evolution points than your opponent, summon a Megalorca. (You have 0 evolution points on turns you are unable to evolve.)"
+    name_CN = "神鱼·迪斯雷斯坦"
+
+
+class DisrestanOceanHarbinger(SVMinion):
+    Class, race, name = "Dragoncraft", "", "Disrestan, Ocean Harbinger"
+    mana, attack, health = 17, 13, 13
+    index = "SV_Eternal~Dragoncraft~Minion~17~13~13~None~Disrestan, Ocean Harbinger~Battlecry~Legendary"
+    requireTarget, keyWord, description = False, "", "At the end of your turn, if you have 10 play point orbs, subtract 10 from the cost of this card.Accelerate (1): Draw a card. If you have more evolution points than your opponent, summon a Megalorca. (You have 0 evolution points on turns you are unable to evolve.)Fanfare: Give -X/-X to all enemy followers. X equals your remaining play points. (Followers are destroyed when their defense drops below 1.)"
+    accelerateSpell = DisrestanOceanHarbinger_Accelerate
+    attackAdd, healthAdd = 2, 2
+    name_CN = "神鱼·迪斯雷斯坦"
+
+
 """Shadowcraft cards"""
+
+
+class ShaoShadyApothecary(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Shao, Shady Apothecary"
+    mana, attack, health = 1, 1, 2
+    index = "SV_Eternal~Shadowcraft~Minion~1~1~2~None~Shao, Shady Apothecary~Battlecry~Necromancy"
+    requireTarget, keyWord, description = False, "", "Fanfare: Necromancy (6) - Reanimate (4)."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "妖艳的药剂师·萧"
+
+
+class UndeadParade(SVSpell):
+    Class, name = "Shadowcraft", "Undead Parade"
+    requireTarget, mana = True, 1
+    index = "SV_Eternal~Shadowcraft~Spell~1~Undead Parade"
+    description = "Burial Rite: Summon 2 Skeletons.If you've performed Burial Rites at least 5 times (excluding this card) this match, summon 2 Liches instead."
+    name_CN = "不死游行"
+
+
+class WingedZombie(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Winged Zombie"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Eternal~Shadowcraft~Minion~2~2~2~None~Winged Zombie"
+    requireTarget, keyWord, description = False, "", "When you perform Necromancy, gain Storm."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "骨翼傀儡"
+
+
+class PsychopompTourGuide(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Psychopomp Tour Guide"
+    mana, attack, health = 2, 2, 1
+    index = "SV_Eternal~Shadowcraft~Minion~2~2~1~None~Psychopomp Tour Guide~Battlecry"
+    requireTarget, keyWord, description = True, "", "Fanfare: If any other allied followers are in play, destroy 1 and draw 2 cards."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "灵魂向导"
 
 
 class NiyonMysticMusician(SVMinion):
@@ -1264,7 +1398,159 @@ class NiyonMysticMusician(SVMinion):
                 minion.getsFrozen()
 
 
+class Skullfish(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Skullfish"
+    mana, attack, health = 3, 3, 2
+    index = "SV_Eternal~Shadowcraft~Minion~3~3~2~None~Skullfish~Rush~Deathrattle"
+    requireTarget, keyWord, description = False, "Rush", "Rush. Last Words: Necromancy (2) - Deal 2 damage to the enemy leader."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "骸骨鱼"
+
+
+class TriHeadHound(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Tri-Head Hound"
+    mana, attack, health = 3, 1, 1
+    index = "SV_Eternal~Shadowcraft~Minion~3~1~1~None~Tri-Head Hound~Deathrattle"
+    requireTarget, keyWord, description = False, "", "Last Words: Summon a 5-play point, 2-attack Tri-Head Hound with the following effect - Last Words: Summon a 7-play point, 3-attack Tri-Head Hound without Last Words."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "三头犬"
+
+
+class TriHeadHound_Token(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Tri-Head Hound"
+    mana, attack, health = 5, 2, 1
+    index = "SV_Eternal~Shadowcraft~Minion~5~2~1~None~Tri-Head Hound~Deathrattle~Uncollectible"
+    requireTarget, keyWord, description = False, "", "Last Words: Summon a 7-play point, 3-attack Tri-Head Hound without Last Words."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "三头犬"
+
+
+class TriHeadHound_Token2(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Tri-Head Hound"
+    mana, attack, health = 7, 3, 1
+    index = "SV_Eternal~Shadowcraft~Minion~7~3~1~None~Tri-Head Hound~Uncollectible"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+    name_CN = "三头犬"
+
+
+class ZajaDeliriousBerserker(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Zaja, Delirious Berserker"
+    mana, attack, health = 4, 3, 4
+    index = "SV_Eternal~Shadowcraft~Minion~4~3~4~None~Zaja, Delirious Berserker~Taunt~Battlecry"
+    requireTarget, keyWord, description = True, "Taunt", "Ward.Fanfare: Burial Rite - Gain the ability to evolve for 0 evolution points."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "打破虚妄的战士·扎扎"
+
+
+class LonesomeNecromancer(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Lonesome Necromancer"
+    mana, attack, health = 6, 4, 5
+    index = "SV_Eternal~Shadowcraft~Minion~6~4~5~None~Lonesome Necromancer~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Summon a Ghost. Reanimate (4)."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "友善的唤灵师"
+
+
+class VaseragaShadowedScythe(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Vaseraga, Shadowed Scythe"
+    mana, attack, health = 7, 4, 7
+    index = "SV_Eternal~Shadowcraft~Minion~7~4~7~None~Vaseraga, Shadowed Scythe~Deathrattle"
+    requireTarget, keyWord, description = False, "", "Can't be targeted by enemy effects.Last Words: Summon a Vaseraga, Shadowed Scythe."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "幽冥钢刃·巴萨拉卡"
+
+
+class RuinbladeReaper(SVMinion):
+    Class, race, name = "Shadowcraft", "", "Ruinblade Reaper"
+    mana, attack, health = 10, 1, 7
+    index = "SV_Eternal~Shadowcraft~Minion~10~1~7~None~Ruinblade Reaper~Bane~Necromancy~Legendary"
+    requireTarget, keyWord, description = False, "Bane", "At the end of your turn, if you have 5 cards in play and at least 15 shadows, change the cost of this card to 0.Bane.When this card comes into play, perform Necromancy (20): Evolve this follower.Can't be evolved using evolution points. (Can be evolved using card effects.)"
+    attackAdd, healthAdd = 6, 0
+    name_CN = "死灭之剑皇"
+
+
 """Bloodcraft cards"""
+
+
+class RougeVampire(SVMinion):
+    Class, race, name = "Bloodcraft", "", "Rouge Vampire"
+    mana, attack, health = 1, 1, 1
+    index = "SV_Eternal~Bloodcraft~Minion~1~1~1~None~Rouge Vampire~Drain~Battlecry"
+    requireTarget, keyWord, description = False, "Drain", "Drain.Fanfare: If Wrath is not active for you, deal 1 damage to your leader. Otherwise, gain +2/+2 and Rush."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "殷红暗夜眷属"
+
+
+class WickedWolf(SVMinion):
+    Class, race, name = "Bloodcraft", "", "Wicked Wolf"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Eternal~Bloodcraft~Minion~2~2~2~None~Wicked Wolf~Bane~Battlecry~Enhance"
+    requireTarget, keyWord, description = False, "Bane", "Bane.Fanfare: Enhance (7) - Summon 3 Wicked Wolves. Give all allied Wicked Wolves the following effect: Reduce damage from effects to 0."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "邪恶魔狼"
+
+
+class SkullFreedomRaider(SVMinion):
+    Class, race, name = "Bloodcraft", "", "Skull, Freedom Raider"
+    mana, attack, health = 2, 2, 1
+    index = "SV_Eternal~Bloodcraft~Minion~2~2~1~None~Skull, Freedom Raider~Rush~Battlecry"
+    requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: If Vengeance is active for you, gain Storm.Fanfare: If Avarice is active for you, gain +2/+2."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "自由飞驰的男子汉·斯卡尔"
+
+
+class HallessenaCalamitysSaw(SVMinion):
+    Class, race, name = "Bloodcraft", "", "Hallessena, Calamity's Saw"
+    mana, attack, health = 3, 2, 1
+    index = "SV_Eternal~Bloodcraft~Minion~3~2~1~None~Hallessena, Calamity's Saw~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: The next time this follower takes damage, reduce that damage to 0.Strike: Gain +1/+0.Can't be attacked."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "坏天灾·哈雷泽娜"
+
+
+class CorruptingBloodlust(SVSpell):
+    Class, name = "Bloodcraft", "Corrupting Bloodlust"
+    requireTarget, mana = False, 3
+    index = "SV_Eternal~Bloodcraft~Spell~3~Corrupting Bloodlust"
+    description = "Deal 1 damage to all allies and enemies. Do this twice."
+    name_CN = "侵蚀的杀意"
+
+
+class DiscerningDevil(SVMinion):
+    Class, race, name = "Bloodcraft", "", "Discerning Devil"
+    mana, attack, health = 4, 3, 3
+    index = "SV_Eternal~Bloodcraft~Minion~4~3~3~None~Discerning Devil~Battlecry~Deathrattle"
+    requireTarget, keyWord, description = False, "", "Fanfare: Draw a card.Last Words: At the start of your next turn, draw a card."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "洞察的恶魔"
+
+
+class GluttonousDemon(SVMinion):
+    Class, race, name = "Bloodcraft", "", "Gluttonous Demon"
+    mana, attack, health = 4, 2, 8
+    index = "SV_Eternal~Bloodcraft~Minion~4~2~8~None~Gluttonous Demon"
+    requireTarget, keyWord, description = False, "", "Can't attack.Once on each of your turns, when this follower's attack or defense is increased by an effect, destroy a random enemy follower and restore 3 defense to your leader.At the end of your turn, if Avarice is active for you, gain +2/+0."
+    attackAdd, healthAdd = 0, 0
+    name_CN = "暴食的恶魔"
+
+
+class KnightofPurgatory(SVMinion):
+    Class, race, name = "Bloodcraft", "", "Knight of Purgatory"
+    mana, attack, health = 4, 4, 4
+    index = "SV_Eternal~Bloodcraft~Minion~4~4~4~None~Knight of Purgatory~Taunt~Battlecry~Invocation"
+    requireTarget, keyWord, description = False, "Taunt", "Invocation: At the end of your turn, if Wrath is active for you, invoke this card. Then, banish all Knights of Purgatory from your deck.Ward.Fanfare: Restore 4 defense to your leader."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "炼狱之黑暗骑士"
+
+
+class DemonicBerserker(SVMinion):
+    Class, race, name = "Bloodcraft", "", "Demonic Berserker"
+    mana, attack, health = 5, 5, 5
+    index = "SV_Eternal~Bloodcraft~Minion~5~5~5~None~Demonic Berserker~Rush~Battlecry"
+    requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: Deal 1 damage to a random leader. Do this 3 times."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "恶魔狂战士"
 
 
 class SeoxHeavenlyHowl(SVMinion):
@@ -1317,6 +1603,24 @@ class Trig_SeoxHeavenlyHowl(TrigBoard):
                 self.entity.trigsBoard.remove(trig)
                 trig.disconnect()
                 break
+
+
+class XenoDiablo_Crystallize(Amulet):
+    Class, race, name = "Bloodcraft", "", "Crystallize: Xeno Diablo"
+    mana = 3
+    index = "SV_Eternal~Bloodcraft~Amulet~3~None~Xeno Diablo~Countdown~Crystallize~Deathrattle~Legendary~Uncollectible"
+    requireTarget, description = False, " Countdown (7)At the start of your turn, restore 1 defense to your leader and, if you have more evolution points than your opponent, subtract 1 from this amulet's Countdown. (You have 0 evolution points on turns you are unable to evolve.)Last Words: Summon a Xeno Diablo."
+    name_CN = "结晶：异种·迪亚波罗"
+
+
+class XenoDiablo(SVMinion):
+    Class, race, name = "Bloodcraft", "", "Xeno Diablo"
+    mana, attack, health = 7, 10, 2
+    index = "SV_Eternal~Bloodcraft~Minion~7~10~2~None~Xeno Diablo~Deathrattle~Crystallize~Legendary"
+    requireTarget, keyWord, description = False, "", "Crystallize (3): Countdown (7)At the start of your turn, restore 1 defense to your leader and, if you have more evolution points than your opponent, subtract 1 from this amulet's Countdown. (You have 0 evolution points on turns you are unable to evolve.)Last Words: Summon a Xeno Diablo.Last Words: If Vengeance is active for you, deal 4 damage to all enemies. If Avarice is active for you, deal 4 damage to all enemies. If Wrath is active for you, deal 4 damage to all enemies."
+    crystallizeAmulet = XenoDiablo_Crystallize
+    attackAdd, healthAdd = 2, 2
+    name_CN = "异种·迪亚波罗"
 
 
 """Havencraft cards"""
@@ -1380,6 +1684,41 @@ class Trig_AttUsesHealth(TrigBoard):
             self.disconnect()
         else:
             number[0] = max(0, self.entity.health)
+
+
+class WillUnderworldPriest(SVMinion):
+    Class, race, name = "Havencraft", "", "Will, Underworld Priest"
+    mana, attack, health = 1, 1, 2
+    index = "SV_Eternal~Havencraft~Minion~1~1~2~None~Will, Underworld Priest~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Restore 1 defense to all allies. If Avarice is active for you, deal 1 damage to the enemy leader."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "宠爱魔物的暗之圣职者·威尔"
+
+
+class UnicornAltar(Amulet):
+    Class, race, name = "Havencraft", "", "Unicorn Altar"
+    mana = 1
+    index = "SV_Eternal~Havencraft~Amulet~1~None~Unicorn Altar~Countdown~Deathrattle"
+    requireTarget, description = False, "Countdown (4)Fanfare: Put a Unicorn into your hand.At the end of your turn, subtract 1 from the cost of a random Unicorn in your hand.Last Words: Deal 4 damage to a random enemy follower. Restore 1 defense to your leader."
+    name_CN = "独角兽祭坛"
+
+
+class Unicorn(SVMinion):
+    Class, race, name = "Havencraft", "", "Unicorn"
+    mana, attack, health = 6, 5, 5
+    index = "SV_Eternal~Havencraft~Minion~6~5~5~None~Unicorn~Battlecry~Uncollectible"
+    requireTarget, keyWord, description = True, "", "Fanfare: Restore 3 defense to an ally."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "独角兽"
+
+
+class BelfrySister(SVMinion):
+    Class, race, name = "Havencraft", "", "Belfry Sister"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Eternal~Havencraft~Minion~2~2~2~None~Belfry Sister~Battlecry~Enhance"
+    requireTarget, keyWord, description = False, "", "Fanfare: Enhance (5) - Gain the ability to evolve for 0 evolution points."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "钟楼的修女"
 
 
 class AnretheEnlightenedOne(SVMinion):
@@ -1460,11 +1799,82 @@ class Trig_AnretheEnlightenedOne(TrigBoard):
         number[0] -= 1
 
 
+class ZahlhamelinaSunPriestess(SVMinion):
+    Class, race, name = "Havencraft", "", "Zahlhamelina, Sun Priestess"
+    mana, attack, health = 3, 1, 5
+    index = "SV_Eternal~Havencraft~Minion~3~1~5~None~Zahlhamelina, Sun Priestess~Taunt"
+    requireTarget, keyWord, description = False, "Taunt", "Ward.If this follower has 2 defense or less, whenever an allied follower attacks, deal 2 damage to the enemy leader."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "日轮的巫女·扎哈梅丽娜"
+
+
+class RedeemersCudgel(SVSpell):
+    Class, name = "Havencraft", "Redeemer's Cudgel"
+    requireTarget, mana = True, 4
+    index = "SV_Eternal~Havencraft~Spell~4~Redeemer's Cudgel"
+    description = "Whenever you play an amulet, subtract 1 from the cost of this card.Banish an enemy follower."
+    name_CN = "净化的矛锤"
+
+
+class SwordAlmiraj(SVMinion):
+    Class, race, name = "Havencraft", "", "Sword Al-mi'raj"
+    mana, attack, health = 5, 3, 6
+    index = "SV_Eternal~Havencraft~Minion~5~3~6~None~Sword Al-mi'raj~Rush"
+    requireTarget, keyWord, description = False, "Rush", "Rush.At the end of your turn, restore 2 defense to your leader."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "跃剑月兔妖"
+
+
+class XenoVohuManah_Crystallize(Amulet):
+    Class, race, name = "Havencraft", "", "Crystallize: Xeno Vohu Manah"
+    mana = 3
+    index = "SV_Eternal~Havencraft~Amulet~3~None~Xeno Vohu Manah~Countdown~Crystallize~Deathrattle~Legendary~Uncollectible"
+    requireTarget, description = False, " Countdown (4)At the start of your turn, if you have more evolution points than your opponent, subtract 1 from this amulet's Countdown. (You have 0 evolution points on turns you are unable to evolve.)Last Words: Summon a Xeno Vohu Manah."
+    name_CN = "结晶：异种·沃胡摩耶"
+
+
+class XenoVohuManah(SVMinion):
+    Class, race, name = "Havencraft", "", "Xeno Vohu Manah"
+    mana, attack, health = 5, 2, 6
+    index = "SV_Eternal~Havencraft~Minion~5~2~6~None~Xeno Vohu Manah~Crystallize~Legendary"
+    requireTarget, keyWord, description = False, "", "Crystallize (3): Countdown (4)At the start of your turn, if you have more evolution points than your opponent, subtract 1 from this amulet's Countdown. (You have 0 evolution points on turns you are unable to evolve.)Last Words: Summon a Xeno Vohu Manah.Can evolve for 0 evolution points.At the end of your turn, restore 4 defense to this follower.Whenever this follower takes damage, if it's not destroyed, give it the following effect until the end of your opponent's turn: Can't be attacked."
+    crystallizeAmulet = XenoVohuManah_Crystallize
+    attackAdd, healthAdd = 2, 2
+    name_CN = "异种·沃胡摩耶"
+
+
+class SacredTiger_Crystallize(Amulet):
+    Class, race, name = "Havencraft", "", "Crystallize: Sacred Tiger"
+    mana = 3
+    index = "SV_Eternal~Havencraft~Amulet~3~None~Sacred Tiger~Countdown~Crystallize~Deathrattle~Uncollectible"
+    requireTarget, description = False, "Countdown (2) Last Words: Summon a White Tiger and Holyflame Tiger."
+    name_CN = "结晶：圣洁之虎"
+
+
+class SacredTiger(SVMinion):
+    Class, race, name = "Havencraft", "", "Sacred Tiger"
+    mana, attack, health = 7, 3, 3
+    index = "SV_Eternal~Havencraft~Minion~7~3~3~None~Sacred Tiger~Charge~Crystallize"
+    requireTarget, keyWord, description = False, "Charge", "Crystallize (3): Countdown (2)Last Words: Summon a White Tiger and Holyflame Tiger.Storm.Fanfare: Summon a White Tiger and Holyflame Tiger."
+    crystallizeAmulet = SacredTiger_Crystallize
+    attackAdd, healthAdd = 2, 2
+    name_CN = "圣洁之虎"
+
+
+class WhiteTiger(SVMinion):
+    Class, race, name = "Havencraft", "", "White Tiger"
+    mana, attack, health = 3, 3, 2
+    index = "SV_Eternal~Havencraft~Minion~3~3~2~None~White Tiger~Taunt~Uncollectible"
+    requireTarget, keyWord, description = False, "Taunt", "Ward. Can't be targeted by enemy effects."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "圣洁之虎"
+
+
 class NoaPrimalShipwright_Crystallize(Amulet):
     Class, race, name = "Havencraft", "", "Crystallize: Noa, Primal Shipwright"
     mana = 1
     index = "SV_Eternal~Havencraft~Amulet~1~None~Noa, Primal Shipwright~Countdown~Crystallize~Deathrattle~Uncollectible"
-    requireTarget, description = False, "Countdown (10) At the end of your turn, subtract X from this amulet's Countdown. X equals the number of allied followers with Ward in play. Last Words: Summon an Anvelt, Judgment's Cannon."
+    requireTarget, description = False, " Countdown (4) Last Words: Summon a Noa, Primal Shipwright."
     name_CN = "结晶：星界的艇人·诺亚"
 
     def __init__(self, Game, ID):
@@ -1484,7 +1894,7 @@ class NoaPrimalShipwright(SVMinion):
     Class, race, name = "Havencraft", "", "Noa, Primal Shipwright"
     mana, attack, health = 7, 1, 1
     index = "SV_Eternal~Havencraft~Minion~7~1~1~None~Noa, Primal Shipwright~Taunt~Crystallize"
-    requireTarget, keyWord, description = True, "", "Crystallize (1): Countdown (10) At the end of your turn, subtract X from this amulet's Countdown. X equals the number of allied followers with Ward in play.Last Words: Summon an Anvelt, Judgment's Cannon.Ward.When this follower comes into play, deal 4 damage to all enemy followers and then 2 damage to the enemy leader."
+    requireTarget, keyWord, description = True, "", "Crystallize (1): Countdown (4)Last Words: Summon a Noa, Primal Shipwright.Fanfare: Remove all effects on an enemy follower except changes to its attack or defense. Then, give it -0/-5. (Followers are destroyed when their defense drops below 1.)When this follower comes into play, gain +X/+X. X equals your Rally count (excluding this card). If X is at least 10, evolve this follower."
     crystallizeAmulet = NoaPrimalShipwright_Crystallize
     attackAdd, healthAdd = 2, 2
     name_CN = "星界的艇人·诺亚"
@@ -1536,6 +1946,50 @@ class NoaPrimalShipwright(SVMinion):
 
 
 """Portalcraft cards"""
+
+
+class MechanizedSoldier(SVMinion):
+    Class, race, name = "Portalcraft", "", "Mechanized Soldier"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Eternal~Portalcraft~Minion~2~2~2~None~Mechanized Soldier~Battlecry~Enhance"
+    requireTarget, keyWord, description = False, "", "Fanfare: Enhance (4) - Summon a Mechanized Soldier.Enhance (6): Summon 2 instead.Enhance (8): Summon 3 instead, and give all allied Mechanized Soldiers the ability to evolve for 0 evolution points."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "机械化步兵"
+
+
+class CatherineNightsmoke(SVMinion):
+    Class, race, name = "Portalcraft", "", "Catherine, Nightsmoke"
+    mana, attack, health = 2, 2, 1
+    index = "SV_Eternal~Portalcraft~Minion~2~2~1~None~Catherine, Nightsmoke~Stealth~Battlecry"
+    requireTarget, keyWord, description = False, "Stealth", "Ambush.Fanfare: Choose - Put 1 of the following cards into your hand.-Gilded Goblet-Gilded Boots-Gilded Necklace"
+    attackAdd, healthAdd = 2, 2
+    name_CN = "夜失的桃烟·凯瑟琳"
+
+
+class SpinnahSpinArtist(SVMinion):
+    Class, race, name = "Portalcraft", "", "Spinnah, Spin Artist"
+    mana, attack, health = 2, 1, 3
+    index = "SV_Eternal~Portalcraft~Minion~2~1~3~None~Spinnah, Spin Artist~Battlecry~Enhance"
+    requireTarget, keyWord, description = False, "", "Fanfare: Enhance (4) - Evolve this follower.Strike: If Resonance is active for you, gain the ability to attack 2 times this turn."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "回转艺术家·斯平纳"
+
+
+class LunaluFangirlA(SVMinion):
+    Class, race, name = "Portalcraft", "", "Lunalu, Fangirl A"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Eternal~Portalcraft~Minion~2~2~2~None~Lunalu, Fangirl A"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+    name_CN = "妄想少女A·露娜露"
+
+
+class Facsimile(SVSpell):
+    Class, name = "Portalcraft", "Facsimile"
+    requireTarget, mana = False, 1
+    index = "SV_Eternal~Portalcraft~Spell~1~Facsimile~Uncollectible"
+    description = "Put a copy of a random allied follower played this turn (excluding Lunalu, Fangirl A) into your hand."
+    name_CN = "临摹"
 
 
 class FeowerDoubleBladeFlash(SVMinion):
@@ -1641,6 +2095,59 @@ class Trig_FeowerTien(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.returnMiniontoHand(self.entity, deathrattlesStayArmed=False)
+
+
+class SurveillanceSystem(SVMinion):
+    Class, race, name = "Portalcraft", "", "Surveillance System"
+    mana, attack, health = 3, 3, 3
+    index = "SV_Eternal~Portalcraft~Minion~3~3~3~None~Surveillance System"
+    requireTarget, keyWord, description = False, "", "Once on each of your opponent's turns, when they play a card, put a Paradigm Shift into your hand."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "间谍装置"
+
+
+class CourageousPuppeteer(SVMinion):
+    Class, race, name = "Portalcraft", "", "Courageous Puppeteer"
+    mana, attack, health = 3, 2, 3
+    index = "SV_Eternal~Portalcraft~Minion~3~2~3~None~Courageous Puppeteer~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Put a Puppet into your hand."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "突破自我的操偶师"
+
+
+class KittyCatArsenal(SVSpell):
+    Class, name = "Portalcraft", "Kitty-Cat Arsenal"
+    requireTarget, mana = True, 3
+    index = "SV_Eternal~Portalcraft~Spell~3~Kitty-Cat Arsenal"
+    description = "Deal 3 damage to an enemy follower and then 2 damage to another random enemy follower.If you have more evolution points than your opponent, summon 2 Ancient Artifacts. (You have 0 evolution points on turns you are unable to evolve.)"
+    name_CN = "肉球射击"
+
+
+class ToyMender(SVMinion):
+    Class, race, name = "Portalcraft", "", "Toy Mender"
+    mana, attack, health = 6, 2, 4
+    index = "SV_Eternal~Portalcraft~Minion~6~2~4~None~Toy Mender~Battlecry"
+    requireTarget, keyWord, description = False, "", "Fanfare: Summon a Barrier Artifact."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "玩具修缮师"
+
+
+class MobilizedFactory_Crystallize(Amulet):
+    Class, race, name = "Portalcraft", "", "Crystallize: Mobilized Factory"
+    mana = 5
+    index = "SV_Eternal~Portalcraft~Amulet~5~None~Mobilized Factory~Crystallize~Uncollectible"
+    requireTarget, description = False, "During your turn, whenever an allied Artifact follower comes into play, give it Rush, recover 1 play point, and draw a card."
+    name_CN = "结晶：巨械工厂"
+
+
+class MobilizedFactory(SVMinion):
+    Class, race, name = "Portalcraft", "", "Mobilized Factory"
+    mana, attack, health = 10, 6, 6
+    index = "SV_Eternal~Portalcraft~Minion~10~6~6~None~Mobilized Factory~Battlecry~Crystallize"
+    requireTarget, keyWord, description = True, "", "Crystallize (5): During your turn, whenever an allied Artifact follower comes into play, give it Rush, recover 1 play point, and draw a card.Fanfare: Give +X/+X and Storm to another random allied follower. X equals the number of allied Artifact cards with different names destroyed this match."
+    crystallizeAmulet = MobilizedFactory_Crystallize
+    attackAdd, healthAdd = 2, 2
+    name_CN = "巨械工厂"
 
 
 """DLC cards"""

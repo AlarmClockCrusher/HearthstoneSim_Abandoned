@@ -1217,6 +1217,15 @@ class BuffAura_Overflow(HasAura_toMinion):
         return type(self)(recipient)
 
 
+class Megalorca(SVMinion):
+    Class, race, name = "Dragoncraft", "", "Megalorca"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Basic~Dragoncraft~Minion~2~2~2~None~Megalorca~Uncollectible"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+    name_CN = "虎鲸"
+
+
 class BlazingBreath(SVSpell):
     Class, name = "Dragoncraft", "Blazing Breath"
     requireTarget, mana = True, 1
@@ -2639,6 +2648,7 @@ SV_Basic_Indices = {
     "SV_Basic~Runecraft~Spell~8~Fiery Embrace~Spellboost": FieryEmbrace,
     "SV_Basic~Runecraft~Minion~10~7~7~None~Flame Destroyer~Spellboost": FlameDestroyer,
 
+    "SV_Basic~Dragoncraft~Minion~2~2~2~None~Megalorca~Uncollectible": Megalorca,
     "SV_Basic~Dragoncraft~Spell~1~Blazing Breath": BlazingBreath,
     "SV_Basic~Dragoncraft~Minion~2~2~2~None~Dragonrider": Dragonrider,
     "SV_Basic~Dragoncraft~Spell~2~Dragon Oracle": DragonOracle,

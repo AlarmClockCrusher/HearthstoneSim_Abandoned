@@ -166,7 +166,6 @@ def findPicFilepath(card):
 		name += "_1"
 	if "Accelerate" in name: name = name.replace("_Accelerate","")
 	if "Crystallize" in name: name = name.replace("_Crystallize","")
-	if "_Token" in name: name = name.replace("_Token","")
 	filepath = path + "%s.png"%name
 	return filepath
 	
@@ -191,7 +190,6 @@ def findPicFilepath_FullImg(card):
 		name += "_1"
 	if "Accelerate" in name: name = name.replace("_Accelerate","")
 	if "Crystallize" in name: name = name.replace("_Crystallize","")
-	if "_Token" in name: name = name.replace("_Token","")
 	filepath = path + "%s.png"%name
 	return filepath
 	
