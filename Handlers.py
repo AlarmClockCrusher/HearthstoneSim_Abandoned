@@ -24,12 +24,12 @@ import inspect
 class Manas:
 	def __init__(self, Game):
 		self.Game = Game
-		self.manas = {1:1, 2:0}
-		self.manasUpper = {1:1, 2:0}
-		self.manasLocked = {1:0, 2:0}
-		self.manasOverloaded = {1:0, 2:0}
+		self.manas = {1:1, 2: 0}
+		self.manasUpper = {1:1, 2: 0}
+		self.manasLocked = {1: 0, 2: 0}
+		self.manasOverloaded = {1: 0, 2: 0}
 		self.manas_UpperLimit = {1:10, 2:10}
-		self.manas_withheld = {1:0, 2:0}
+		self.manas_withheld = {1: 0, 2: 0}
 		#CardAuras只存放临时光环，永久光环不再注册于此
 		#对于卡牌的费用修改效果，每张卡牌自己处理。
 		self.CardAuras, self.CardAuras_Backup = [], []
@@ -303,45 +303,47 @@ class Counters:
 		#self.numPogoHoppers = {1: 0, 2: 0}
 		self.healthRestoredThisGame = {1: 0, 2: 0}
 		self.cardsDiscardedThisGame = {1:[], 2:[]}
-		self.createdCardsPlayedThisGame = {1:0, 2:0}
+		self.createdCardsPlayedThisGame = {1: 0, 2: 0}
 		self.spellsonFriendliesThisGame = {1:[], 2:[]}
 
 		self.numSpellsPlayedThisTurn = {1: 0, 2: 0}
 		self.numMinionsPlayedThisTurn = {1: 0, 2: 0}
 		self.minionsDiedThisTurn = {1:[], 2:[]}
-		self.numCardsPlayedThisTurn = {1:0, 2:0} #Specifically for Combo. Because even Countered spells can trig Combos
+		self.numCardsPlayedThisTurn = {1: 0, 2: 0} #Specifically for Combo. Because even Countered spells can trig Combos
 		self.cardsPlayedThisTurn = {1: {"Indices": [], "ManasPaid": []},
 									2: {"Indices": [], "ManasPaid": []}} #For Combo and Secret.
-		self.dmgonHero_inOppoTurn = {1:0, 2:0}
-		self.damageDealtbyHeroPower = {1:0, 2:0}
-		self.numElementalsPlayedLastTurn = {1:0, 2:0}
+		self.dmgonHero_inOppoTurn = {1: 0, 2: 0}
+		self.damageDealtbyHeroPower = {1: 0, 2: 0}
+		self.numElementalsPlayedLastTurn = {1: 0, 2: 0}
 		self.spellsPlayedLastTurn = {1:[], 2:[]}
 		self.cardsPlayedLastTurn = {1:[], 2:[]}
-		self.heroAttackTimesThisTurn = {1:0, 2:0}
+		self.heroAttackTimesThisTurn = {1: 0, 2: 0}
 		self.primaryGalakronds = {1: None, 2: None}
-		self.invokes = {1:0, 2:0} #For Galakrond
+		self.invokes = {1: 0, 2: 0} #For Galakrond
 		self.hasPlayedQuestThisGame = {1:False, 2:False}
-		self.timesHeroChangedHealth_inOwnTurn = {1:0, 2:0}
+		self.timesHeroChangedHealth_inOwnTurn = {1: 0, 2: 0}
 		self.heroChangedHealthThisTurn = {1:False, 2:False}
 		self.powerUsedThisTurn = 0
 		self.corruptedCardsPlayed = {1:[], 2:[]} #For darkmoon YShaarj.
-		self.numSecretsTriggeredThisGame = {1:0, 2:0}
+		self.numSecretsTriggeredThisGame = {1: 0, 2: 0}
 		#Shadowverse Counters
 		self.numEvolutionTurn = {1:5, 2:4}
 		self.numEvolutionPoint = {1:2, 2:3}
-		self.shadows = {1:0, 2:0}
-		self.turns = {1:1, 2:0}
-		self.evolvedThisGame = {1:0, 2:0}
-		self.evolvedThisTurn = {1:0, 2:0}
-		self.numMinionsSummonedThisGame = {1:0, 2:0}
+		self.shadows = {1: 0, 2: 0}
+		self.turns = {1:1, 2: 0}
+		self.evolvedThisGame = {1: 0, 2: 0}
+		self.evolvedThisTurn = {1: 0, 2: 0}
+		self.numMinionsSummonedThisGame = {1: 0, 2: 0}
 		self.amuletsDestroyedThisTurn = {1:[], 2:[]}
 		self.amuletsDestroyedThisGame = {1:[], 2:[]}
-		self.timesHeroTookDamage_inOwnTurn = {1:0, 2:0}
+		self.timesHeroTookDamage_inOwnTurn = {1: 0, 2: 0}
 		self.tempVengeance = {1:False, 2:False}
-		self.numCardsDrawnThisTurn = {1:0, 2:0}
-		self.numBurialRiteThisGame = {1:0, 2:0}
-		self.numCardsExtraPlayedThisTurn = {1:0, 2:0}
+		self.numCardsDrawnThisTurn = {1: 0, 2: 0}
+		self.numBurialRiteThisGame = {1: 0, 2: 0}
+		self.numCardsExtraPlayedThisTurn = {1: 0, 2: 0}
 		self.artifactsDiedThisGame = {1: {}, 2: {}}
+		self.numAcceleratePlayedThisGame = {1: 0, 2: 0}
+		self.numAcceleratePlayedThisTurn = {1: 0, 2: 0}
 
 	def turnEnds(self):
 		self.numElementalsPlayedLastTurn[self.Game.turn] = 0
@@ -355,21 +357,22 @@ class Counters:
 				self.spellsPlayedLastTurn[self.Game.turn].append(index)
 		self.cardsPlayedThisTurn = {1:{"Indices": [], "ManasPaid": []},
 									2:{"Indices": [], "ManasPaid": []}}
-		self.numCardsPlayedThisTurn = {1:0, 2:0}
-		self.numMinionsPlayedThisTurn = {1:0, 2:0}
-		self.numSpellsPlayedThisTurn = {1:0, 2:0}
+		self.numCardsPlayedThisTurn = {1: 0, 2: 0}
+		self.numMinionsPlayedThisTurn = {1: 0, 2: 0}
+		self.numSpellsPlayedThisTurn = {1: 0, 2: 0}
 		self.dmgonHero_inOppoTurn[self.Game.turn] = 0
 		self.minionsDiedThisTurn = {1:[], 2:[]}
 		self.amuletsDestroyedThisTurn = {1:[], 2:[]}
-		self.heroAttackTimesThisTurn = {1:0, 2:0}
+		self.heroAttackTimesThisTurn = {1: 0, 2: 0}
 		self.heroChangedHealthThisTurn = {1:False, 2:False}
 		self.powerUsedThisTurn = 0
 		self.numCardsDrawnThisTurn = {1: 0, 2: 0}
 		self.tempVengeance = {1: False, 2: False}
 		self.numCardsExtraPlayedThisTurn = {1: 0, 2: 0}
 		self.evolvedThisTurn = {1: 0, 2: 0}
+		self.numAcceleratePlayedThisTurn = {1: 0, 2: 0}
 
-	#只有Game自己会引用Counters
+#只有Game自己会引用Counters
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
 		for key, value in self.__dict__.items():

@@ -3234,7 +3234,8 @@ class Trig_StartContemptousDemon(TrigBoard):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], 2)
+        heal = 2 * (2 ** self.entity.countHealDouble())
+        self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], heal)
 
 
 class Trig_EndContemptousDemon(TrigBoard):

@@ -102,6 +102,7 @@ effectsDict = {"Taunt": "嘲讽", "Divine Shield": "圣盾", "Stealth": "潜行"
 				"Enemy Effect Evasive": "敌方的能力无法指定此卡牌", "Enemy Effect Damage Immune": "因能力所受到的伤害皆转变为0",
 				"Can't Break": "无法被能力破坏", "Can't Disappear": "无法被能力消失", "Can't Be Attacked": "无法对这个随从进行攻击", "Disappear When Die": "离场时消失",
 				"Next Damage 0": "下一次受到的伤害转变为0", "Ignore Taunt": "可无视守护效果进行攻击", "Can't Evolve": "无法使用进化点进化", "Free Evolve": "不消费进化点即可进化",
+			    "Can Attack 3 times" : "一回合中可以进行3次攻击",
 
 				"Immune": "免疫", "Frozen": "被冻结", "Temp Stealth": "潜行直到你的下个回合开始", "Borrowed": "被暂时控制",
 				"Evolved": "已进化",
@@ -681,6 +682,7 @@ class Minion(Card):
 					"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
 					"Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0, "Disappear When Die": 0,
 					"Next Damage 0": 0, "Ignore Taunt": 0, "Can't Evolve": 0, "Free Evolve": 0,
+					"Can Attack 3 times": 0,
 					}
 		# Temp effects that vanish at certain points.
 		self.status = {"Immune": 0, "Frozen": 0, "Temp Stealth": 0, "Borrowed": 0,
@@ -690,7 +692,7 @@ class Minion(Card):
 		self.effectViable = self.evanescent = False
 		self.onBoard = self.inHand = self.inDeck = False
 		self.silenced = False  # This mark is for minion state change, such as enrage.
-		self.appearResponse, self.disappearResponse, self.silenceResponse = [], [], []
+		self.appearResponse, self.disappearResponse, self.silenceResponse, self.returnResponse = [], [], [], []
 		# self.seq records the number of the minion's appearance. The first minion on board has a sequence of 0
 		self.seq, self.pos = -1, -2
 		self.attTimes = self.attChances_base = self.attChances_extra = 0
@@ -838,6 +840,7 @@ class Minion(Card):
 
 	def decideAttChances_base(self):
 		if self.keyWords["Mega Windfury"] > 0: self.attChances_base = 4
+		elif self.marks["Can Attack 3 times"] > 0: self.attChances_base = 3
 		elif self.keyWords["Windfury"] > 0: self.attChances_base = 2
 		else: self.attChances_base = 1
 
@@ -1230,6 +1233,7 @@ class Minion(Card):
 			Copy.effectfromAura = copy.deepcopy(self.effectfromAura)
 			Copy.auraReceivers = [receiver.selfCopy(Copy) for receiver in self.auraReceivers]
 
+			Copy.appearResponse, Copy.disappearResponse, Copy.silenceResponse, Copy.returnResponse = self.appearResponse, self.disappearResponse, self.silenceResponse, self.returnResponse
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.marks = copy.deepcopy(self.marks)
 			Copy.status = copy.deepcopy(self.status)

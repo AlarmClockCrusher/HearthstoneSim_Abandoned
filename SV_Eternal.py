@@ -158,7 +158,7 @@ class IoJourneymage(SVMinion):
 class ArchangelofRemembrance(SVMinion):
     Class, race, name = "Neutral", "", "Archangel of Remembrance"
     mana, attack, health = 2, 2, 1
-    index = "SV_Eternal~Neutral~Minion~2~2~1~None~Archangel of Remembrance~Battlecry~Enhance"
+    index = "SV_Eternal~Neutral~Minion~2~2~1~None~Archangel of Remembrance~Battlecry"
     requireTarget, keyWord, description = True, "", "Fanfare: Banish an enemy follower with 1 defense."
     attackAdd, healthAdd = 2, 2
     evolveRequireTarget = True
@@ -540,6 +540,36 @@ class WalderForestRanger(SVMinion):
     attackAdd, healthAdd = 2, 2
     name_CN = "森之战士·维鲁达"
 
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsDeck = [Trig_InvocationWalderForestRanger(self)]
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] >= 6:
+            return 6
+        else:
+            return self.mana
+
+    def willEnhance(self):
+        return self.Game.Manas.manas[self.ID] >= 6
+
+    def effCanTrig(self):
+        self.effectViable = self.willEnhance()
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if comment == 6:
+            n = self.Game.Counters.numAcceleratePlayedThisGame[self.ID]
+            self.buffDebuff(n, n)
+
+
+class Trig_InvocationWalderForestRanger(TrigInvocation):
+    def __init__(self, entity):
+        self.blank_init(entity, ["AccelerateBeenPlayed"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
+               self.entity.Game.Counters.numAcceleratePlayedThisTurn[self.entity.ID] == 2
+
 
 class ElfSorcerer(SVMinion):
     Class, race, name = "Forestcraft", "", "Elf Sorcerer"
@@ -548,6 +578,15 @@ class ElfSorcerer(SVMinion):
     requireTarget, keyWord, description = False, "", "Fanfare: Put a Fairy into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "精灵咒术师"
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        self.Game.Hand_Deck.addCardtoHand([Fairy], self.ID, byType=True, creator=type(self))
+        return None
+
+    def inHandEvolving(self, target=None):
+        for card in self.Game.Hand_Deck.hands[self.ID]:
+            if type(card) == Fairy:
+                card.getsKeyword("Bane")
 
 
 class MimlemelFreewheelingLass(SVMinion):
@@ -558,6 +597,15 @@ class MimlemelFreewheelingLass(SVMinion):
     attackAdd, healthAdd = 2, 2
     name_CN = "随心所欲的吹笛人·米姆露梅莫璐"
 
+    def effCanTrig(self):
+        self.effectViable = self.Game.combCards(self.ID) >= 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        numCardsPlayed = self.Game.combCards(self.ID)
+        if numCardsPlayed >= 2:
+            self.Game.summon([Stumpeye(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        return None
+
 
 class Stumpeye(SVMinion):
     Class, race, name = "Forestcraft", "", "Stumpeye"
@@ -566,6 +614,23 @@ class Stumpeye(SVMinion):
     requireTarget, keyWord, description = False, "Rush", "Rush. Strike: Give +0/+1 to all allied Mimlemel, Freewheeling Lasses."
     attackAdd, healthAdd = 2, 2
     name_CN = "残株"
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_Stumpeye(self)]
+
+
+class Trig_Stumpeye(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+        return subject == self.entity and self.entity.onBoard
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        for minion in self.entity.Game.minionsonBoard(self.entity.ID):
+            if minion.name == "Mimlemel, Freewheeling Lass":
+                minion.buffDebuff(0, 1)
 
 
 class BlossomTreant(SVMinion):
@@ -576,6 +641,35 @@ class BlossomTreant(SVMinion):
     attackAdd, healthAdd = 4, 0
     name_CN = "盛绽树精"
 
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_BlossomTreant(self)]
+        self.deathrattles = [Deathrattle_BlossomTreant(self)]
+
+    def inEvolving(self):
+        self.getsKeyword("Taunt")
+        for trig in self.trigsBoard:
+            if type(trig) == Trig_BlossomTreant:
+                self.trigsBoard.remove(trig)
+                trig.disconnect()
+                break
+
+
+class Trig_BlossomTreant(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnStarts"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.evolve()
+
+
+class Deathrattle_BlossomTreant(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
+
 
 class Astoreth(SVMinion):
     Class, race, name = "Forestcraft", "", "Astoreth"
@@ -584,6 +678,33 @@ class Astoreth(SVMinion):
     requireTarget, keyWord, description = False, "Taunt", "Ward.Fanfare: If at least 2 other cards were played this turn, evolve this follower."
     attackAdd, healthAdd = 2, 2
     name_CN = "阿斯塔蒂"
+
+    def effCanTrig(self):
+        self.effectViable = self.Game.combCards(self.ID) >= 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        numCardsPlayed = self.Game.combCards(self.ID)
+        if numCardsPlayed >= 2:
+            self.evolve()
+        return None
+
+    def inEvolving(self):
+        trig = Trig_Astoreth(self)
+        self.trigsBoard.append(trig)
+        trig.connect()
+
+
+class Trig_Astoreth(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+        return subject == self.entity and self.entity.onBoard
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        heal = 2 * (2 ** self.entity.countHealDouble())
+        self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], heal)
+        self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
 
 
 class TweyenDarkHuntress(SVMinion):
@@ -658,6 +779,15 @@ class GreenwoodReindeer(SVMinion):
     attackAdd, healthAdd = 2, 2
     name_CN = "深绿驯鹿"
 
+    def effCanTrig(self):
+        self.effectViable = self.Game.combCards(self.ID) >= 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        numCardsPlayed = self.Game.combCards(self.ID)
+        if numCardsPlayed >= 2:
+            self.buffDebuff(0, 5)
+        return None
+
 
 class XenoSagittarius_Crystallize(Amulet):
     Class, race, name = "Forestcraft", "", "Crystallize: Xeno Sagittarius"
@@ -665,6 +795,21 @@ class XenoSagittarius_Crystallize(Amulet):
     index = "SV_Eternal~Forestcraft~Amulet~1~None~Xeno Sagittarius~Countdown~Crystallize~Deathrattle~Legendary~Uncollectible"
     requireTarget, description = False, "Countdown (1)When this amulet is returned to your hand, draw a card.Last Words: Draw a card."
     name_CN = "结晶：异种·射手座"
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.counter = 1
+        self.trigsBoard = [Trig_Countdown(self)]
+        self.returnResponse = [self.whenReturned]
+        self.deathrattles = [Deathrattle_XenoSagittarius_Crystallize(self)]
+
+    def whenReturned(self):
+        self.Game.Hand_Deck.drawCard(self.ID)
+
+
+class Deathrattle_XenoSagittarius_Crystallize(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
 
 
 class XenoSagittarius(SVMinion):
@@ -676,6 +821,31 @@ class XenoSagittarius(SVMinion):
     attackAdd, healthAdd = 2, 2
     name_CN = "异种·射手座"
 
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_XenoSagittarius_Attack(self)]
+        self.returnResponse = [self.whenReturned]
+
+    def whenReturned(self):
+        targets = self.Game.minionsonBoard(3 - self.ID)
+        self.dealsAOE(targets, [1 for minion in targets])
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        for minion in self.Game.minionsonBoard(3 - self.ID):
+            minion.statReset(newHealth=1)
+
+
+class Trig_XenoSagittarius_Attack(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and subject.ID == self.entity.ID and subject == self.entity
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        targets = self.entity.Game.minionsonBoard(3 - self.entity.ID)
+        self.entity.dealsAOE(targets, [1 for minion in targets])
+
 
 class NatureConsumed(SVSpell):
     Class, name = "Forestcraft", "Nature Consumed"
@@ -683,6 +853,24 @@ class NatureConsumed(SVSpell):
     index = "SV_Eternal~Forestcraft~Spell~6~Nature Consumed"
     description = "Destroy an enemy follower.Restore X defense to your leader and draw X cards. X equals half the destroyed follower's defense (rounded up)."
     name_CN = "大自然的捕食"
+
+    def available(self):
+        return self.selectableEnemyMinionExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.ID != self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            x = int((target.health + 0.5) / 2)
+            self.Game.killMinion(self, target)
+            heal = x * (2 ** self.countHealDouble())
+            self.restoresHealth(self.Game.heroes[self.ID], heal)
+            for _ in range(x):
+                self.Game.Hand_Deck.drawCard(self.ID)
+        return target
 
 
 class PrimordialColossus(SVMinion):
@@ -693,6 +881,52 @@ class PrimordialColossus(SVMinion):
     attackAdd, healthAdd = 2, 2
     name_CN = "原始的恶神"
 
+    def inHandEvolving(self, target=None):
+        self.Game.Manas.restoreManaCrystal(2, self.ID)
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        trigger = Trig_PrimordialColossus(self.Game.heroes[self.ID])
+        self.Game.heroes[self.ID].trigsBoard.append(trigger)
+        trigger.connect()
+
+
+class Trig_PrimordialColossus(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["MinionPlayed", "SpellPlayed", "WeaponPlayed", "HeroCardPlayed", "AmuletPlayed"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+        return subject.Game.turn == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        for t in self.entity.trigsBoard:
+            if type(t) == Trig_PrimordialColossus:
+                t.disconnect()
+                self.entity.trigsBoard.remove(t)
+                break
+        trigger = Trig_EndPrimordialColossus(self.entity)
+        self.entity.trigsBoard.append(trigger)
+        trigger.connect()
+        self.entity.Game.Manas.restoreManaCrystal(2, self.entity.ID)
+        self.entity.Game.Counters.numCardsPlayedThisTurn[self.entity.ID] += 2
+
+
+class Trig_EndPrimordialColossus(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID == self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        for t in self.entity.trigsBoard:
+            if type(t) == Trig_EndPrimordialColossus:
+                t.disconnect()
+                self.entity.trigsBoard.remove(t)
+                break
+        trigger = Trig_PrimordialColossus(self.entity)
+        self.entity.trigsBoard.append(trigger)
+        trigger.connect()
+
 
 class WindFairy_Accelerate(SVSpell):
     Class, name = "Forestcraft", "Wind Fairy"
@@ -700,6 +934,20 @@ class WindFairy_Accelerate(SVSpell):
     index = "SV_Eternal~Forestcraft~Spell~1~Wind Fairy~Accelerate~Uncollectible"
     description = "Return an allied follower or amulet to your hand. Put a Fairy Wisp into your hand."
     name_CN = "迅风妖精"
+
+    def available(self):
+        return self.selectableFriendlyMinionExists() or self.selectableFriendlyAmuletExists()
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type in ["Minion", "Amulet"] and target.ID == self.ID and target.onBoard
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            self.Game.returnMiniontoHand(target)
+            self.Game.Hand_Deck.addCardtoHand(FairyWisp, self.ID, byType=True, creator=type(self))
+        return target
 
 
 class WindFairy(SVMinion):
@@ -710,6 +958,43 @@ class WindFairy(SVMinion):
     accelerateSpell = WindFairy_Accelerate
     attackAdd, healthAdd = 2, 2
     name_CN = "迅风妖精"
+
+    def getMana(self):
+        if self.Game.Manas.manas[self.ID] < self.mana:
+            return 1
+        else:
+            return self.mana
+
+    def willAccelerate(self):
+        curMana = self.Game.Manas.manas[self.ID]
+        return self.mana > curMana >= 1
+
+    def effCanTrig(self):
+        if self.willAccelerate() and self.targetExists():
+            self.effectViable = "sky blue"
+        else:
+            self.effectViable = False
+
+    def returnTrue(self, choice=0):
+        if self.willAccelerate():
+            return not self.targets
+        return False
+
+    def available(self):
+        if self.willAccelerate():
+            return self.selectableFriendlyMinionExists() or self.selectableFriendlyAmuletExists()
+        return True
+
+    def targetExists(self, choice=0):
+        if self.willAccelerate():
+            return self.selectableFriendlyMinionExists() or self.selectableFriendlyAmuletExists()
+        return False
+
+    def targetCorrect(self, target, choice=0):
+        if self.willAccelerate():
+            if isinstance(target, list): target = target[0]
+            return target.type in ["Minion", "Amulet"] and target.ID == self.ID and target.onBoard
+        return False
 
 
 """Swordcraft cards"""
@@ -1162,7 +1447,7 @@ class RagingGolem_Crystallize(Amulet):
 class RagingGolem(SVMinion):
     Class, race, name = "Runecraft", "", "Raging Golem"
     mana, attack, health = 8, 6, 6
-    index = "SV_Eternal~Runecraft~Minion~8~6~6~None~Raging Golem~Rush~Deathrattle"
+    index = "SV_Eternal~Runecraft~Minion~8~6~6~None~Raging Golem~Rush~Crystallize~Deathrattle"
     requireTarget, keyWord, description = False, "Rush", "Crystallize (2): Earth SigilLast Words: Summon a Guardian Golem.Rush.Last Words: Summon 2 Guardian Golems."
     crystallizeAmulet = RagingGolem_Crystallize
     attackAdd, healthAdd = 2, 2
@@ -2157,7 +2442,7 @@ SV_Eternal_Indices = {
     "SV_Eternal~Neutral~Minion~2~1~1~None~Vyrn, Li'l Red Dragon~Battlecry~Enhance": VyrnLilRedDragon,
     "SV_Eternal~Neutral~Spell~2~Angelic Melody": AngelicMelody,
     "SV_Eternal~Neutral~Minion~2~1~2~None~Io, Journeymage~Battlecry~Enhance": IoJourneymage,
-    "SV_Eternal~Neutral~Minion~2~2~1~None~Archangel of Remembrance~Battlecry~Enhance": ArchangelofRemembrance,
+    "SV_Eternal~Neutral~Minion~2~2~1~None~Archangel of Remembrance~Battlecry": ArchangelofRemembrance,
     "SV_Eternal~Neutral~Minion~3~2~3~None~Fluffy Angel~Battlecry~Deathrattle": FluffyAngel,
     "SV_Eternal~Neutral~Minion~3~2~3~None~Eugen, Stalwart Skyfarer": EugenStalwartSkyfarer,
     "SV_Eternal~Neutral~Spell~0~Gran's Resolve~Legendary~Uncollectible": GransResolve,
@@ -2167,25 +2452,120 @@ SV_Eternal_Indices = {
     "SV_Eternal~Neutral~Spell~5~Bahamut, Primeval Dragon~Accelerate~Legendary~Uncollectible": BahamutPrimevalDragon_Accelerate,
     "SV_Eternal~Neutral~Minion~10~12~10~None~Bahamut, Primeval Dragon~Battlecry~Accelerate~Legendary": BahamutPrimevalDragon,
 
+    "SV_Eternal~Forestcraft~Minion~1~1~1~None~Walder, Forest Ranger~Charge~Battlecry~Enhance~Invocation": WalderForestRanger,
+    "SV_Eternal~Forestcraft~Minion~2~2~2~None~Elf Sorcerer~Battlecry": ElfSorcerer,
+    "SV_Eternal~Forestcraft~Minion~2~2~2~None~Mimlemel, Freewheeling Lass~Battlecry": MimlemelFreewheelingLass,
+    "SV_Eternal~Forestcraft~Minion~4~4~1~None~Stumpeye~Rush~Uncollectible": Stumpeye,
+    "SV_Eternal~Forestcraft~Minion~4~1~6~None~Blossom Treant~Deathrattle": BlossomTreant,
+    "SV_Eternal~Forestcraft~Minion~4~4~4~None~Astoreth~Taunt~Battlecry": Astoreth,
     "SV_Eternal~Forestcraft~Minion~4~3~3~None~Tweyen, Dark Huntress~Bane~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary": TweyenDarkHuntress,
+    "SV_Eternal~Forestcraft~Minion~5~5~5~None~Greenwood Reindeer~Rush~Battlecry": GreenwoodReindeer,
+    "SV_Eternal~Forestcraft~Amulet~1~None~Xeno Sagittarius~Countdown~Crystallize~Deathrattle~Legendary~Uncollectible": XenoSagittarius_Crystallize,
+    "SV_Eternal~Forestcraft~Minion~6~6~4~None~Xeno Sagittarius~Battlecry~Crystallize~Legendary": XenoSagittarius,
+    "SV_Eternal~Forestcraft~Spell~6~Nature Consumed": NatureConsumed,
+    "SV_Eternal~Forestcraft~Minion~7~4~6~None~Primordial Colossus~Battlecry": PrimordialColossus,
+    "SV_Eternal~Forestcraft~Spell~1~Wind Fairy~Accelerate~Uncollectible": WindFairy_Accelerate,
+    "SV_Eternal~Forestcraft~Minion~9~3~3~None~Wind Fairy~Charge~Windfury~Accelerate": WindFairy,
 
+    "SV_Eternal~Swordcraft~Minion~2~1~3~Officer~Arthur, Slumbering Dragon": ArthurSlumberingDragon,
+    "SV_Eternal~Swordcraft~Minion~2~2~1~Officer~Mordred, Slumbering Lion": MordredSlumberingLion,
+    "SV_Eternal~Swordcraft~Spell~2~Proven Methodology": ProvenMethodology,
     "SV_Eternal~Swordcraft~Minion~2~3~1~Officer~Mirin, Samurai Dreamer~Battlecry~SkyboundArt~SuperSkyboundArt": MirinSamuraiDreamer,
+    "SV_Eternal~Swordcraft~Minion~3~2~1~Officer~Sword-Swinging Bandit~Charge~Deathrattle": SwordSwingingBandit,
+    "SV_Eternal~Swordcraft~Spell~1~Grand Auction~Uncollectible": GrandAuction,
+    "SV_Eternal~Swordcraft~Amulet~2~None~Ageworn Weaponry~Countdown~Deathrattle~Uncollectible": AgewornWeaponry,
+    "SV_Eternal~Swordcraft~Amulet~2~None~Greatshield~Countdown~Battlecry~Deathrattle~Uncollectible": Greatshield,
+    "SV_Eternal~Swordcraft~Amulet~2~None~Greatsword~Countdown~Battlecry~Deathrattle~Uncollectible": Greatsword,
+    "SV_Eternal~Swordcraft~Minion~4~3~4~Officer~Stone Merchant~Battlecry": StoneMerchant,
     "SV_Eternal~Swordcraft~Minion~4~5~3~Commander~Seofon, Star Sword Sovereign~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary": SeofonStarSwordSovereign,
+    "SV_Eternal~Swordcraft~Minion~5~5~5~Commander~Victorious Grappler~Battlecry": VictoriousGrappler,
+    "SV_Eternal~Swordcraft~Minion~7~2~7~Officer~Average Axeman~Charge~Bane": AverageAxeman,
+    "SV_Eternal~Swordcraft~Minion~8~8~4~Officer~Rampaging Rhino~Rush~Battlecry": RampagingRhino,
     "SV_Eternal~Swordcraft~Minion~8~7~6~Officer~Eahta, God of the Blade~Rush~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary": EahtaGodoftheBlade,
 
+    "SV_Eternal~Runecraft~Minion~1~0~1~None~Alistair, Tiny Magus~Battlecry~Deathrattle": AlistairTinyMagus,
+    "SV_Eternal~Runecraft~Spell~1~Impalement Arts~Spellboost": ImpalementArts,
+    "SV_Eternal~Runecraft~Minion~2~3~1~None~Elmott, Pyrestarter~Battlecry~Spellboost": ElmottPyrestarter,
+    "SV_Eternal~Runecraft~Spell~2~Elixir Mixer": ElixirMixer,
+    "SV_Eternal~Runecraft~Spell~2~Force Barrier": ForceBarrier,
+    "SV_Eternal~Runecraft~Minion~3~2~3~None~Academic Archmage~Battlecry": AcademicArchmage,
     "SV_Eternal~Runecraft~Minion~3~2~3~None~Fif, Prodigious Sorcerer~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary": FifProdigiousSorcerer,
+    "SV_Eternal~Runecraft~Minion~5~2~3~None~Crystal Witch~Battlecry~Spellboost": CrystalWitch,
+    "SV_Eternal~Runecraft~Amulet~3~None~Xeno Ifrit~Countdown~Crystallize~Deathrattle~Legendary~Uncollectible": XenoIfrit_Crystallize,
+    "SV_Eternal~Runecraft~Minion~6~5~4~None~Xeno Ifrit~Crystallize~Legendary": XenoIfrit,
+    "SV_Eternal~Runecraft~Minion~7~4~4~None~Pholia, Retired Sovereign~Battlecry": PholiaRetiredSovereign,
+    "SV_Eternal~Runecraft~Minion~7~4~6~None~Bai Ze~Rush~Taunt~Uncollectible": BaiZe,
+    "SV_Eternal~Runecraft~Amulet~2~Earth Sigil~Raging Golem~Crystallize~Deathrattle~Uncollectible": RagingGolem_Crystallize,
+    "SV_Eternal~Runecraft~Minion~8~6~6~None~Raging Golem~Rush~Crystallize~Deathrattle": RagingGolem,
 
+    "SV_Eternal~Dragoncraft~Spell~1~Dragon Rearing": DragonRearing,
+    "SV_Eternal~Dragoncraft~Minion~2~2~2~None~Shark Warrior~Battlecry~Enhance": SharkWarrior,
+    "SV_Eternal~Dragoncraft~Minion~2~0~5~None~Mermaid Archer~Battlecry~Enhance": MermaidArcher,
+    "SV_Eternal~Dragoncraft~Minion~4~3~2~None~Hypersonic Dragonewt~Charge~Battlecry": HypersonicDragonewt,
+    "SV_Eternal~Dragoncraft~Minion~4~4~4~None~Hypersonic Dragonewt~Bane~Battlecry": HypersonicDragonewt,
+    "SV_Eternal~Dragoncraft~Minion~4~2~4~None~Razia, Vengeful Cannonlancer~Taunt~Deathrattle": RaziaVengefulCannonlancer,
     "SV_Eternal~Dragoncraft~Minion~4~4~3~None~Threo, Divine Havoc~Rush~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary": ThreoDivineHavoc,
+    "SV_Eternal~Dragoncraft~Minion~5~5~5~None~Tempest Dragon": TempestDragon,
+    "SV_Eternal~Dragoncraft~Minion~6~4~6~None~Ladiva, Champion of Love~Battlecry": LadivaChampionofLove,
+    "SV_Eternal~Dragoncraft~Minion~9~8~7~None~Ghandagoza, Fist of Rage~Rush": GhandagozaFistofRage,
+    "SV_Eternal~Dragoncraft~Spell~1~Disrestan, Ocean Harbinger~Accelerate~Legendary~Uncollectible": DisrestanOceanHarbinger_Accelerate,
+    "SV_Eternal~Dragoncraft~Minion~17~13~13~None~Disrestan, Ocean Harbinger~Battlecry~Legendary": DisrestanOceanHarbinger,
 
+    "SV_Eternal~Shadowcraft~Minion~1~1~2~None~Shao, Shady Apothecary~Battlecry~Necromancy": ShaoShadyApothecary,
+    "SV_Eternal~Shadowcraft~Spell~1~Undead Parade": UndeadParade,
+    "SV_Eternal~Shadowcraft~Minion~2~2~2~None~Winged Zombie": WingedZombie,
+    "SV_Eternal~Shadowcraft~Minion~2~2~1~None~Psychopomp Tour Guide~Battlecry": PsychopompTourGuide,
     "SV_Eternal~Shadowcraft~Minion~2~1~4~None~Niyon, Mystic Musician~Stealth~Taunt~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary": NiyonMysticMusician,
+    "SV_Eternal~Shadowcraft~Minion~3~3~2~None~Skullfish~Rush~Deathrattle": Skullfish,
+    "SV_Eternal~Shadowcraft~Minion~3~1~1~None~Tri-Head Hound~Deathrattle": TriHeadHound,
+    "SV_Eternal~Shadowcraft~Minion~5~2~1~None~Tri-Head Hound~Deathrattle~Uncollectible": TriHeadHound_Token,
+    "SV_Eternal~Shadowcraft~Minion~7~3~1~None~Tri-Head Hound~Uncollectible": TriHeadHound_Token2,
+    "SV_Eternal~Shadowcraft~Minion~4~3~4~None~Zaja, Delirious Berserker~Taunt~Battlecry": ZajaDeliriousBerserker,
+    "SV_Eternal~Shadowcraft~Minion~6~4~5~None~Lonesome Necromancer~Battlecry": LonesomeNecromancer,
+    "SV_Eternal~Shadowcraft~Minion~7~4~7~None~Vaseraga, Shadowed Scythe~Deathrattle": VaseragaShadowedScythe,
+    "SV_Eternal~Shadowcraft~Minion~10~1~7~None~Ruinblade Reaper~Bane~Necromancy~Legendary": RuinbladeReaper,
 
+    "SV_Eternal~Bloodcraft~Minion~1~1~1~None~Rouge Vampire~Drain~Battlecry": RougeVampire,
+    "SV_Eternal~Bloodcraft~Minion~2~2~2~None~Wicked Wolf~Bane~Battlecry~Enhance": WickedWolf,
+    "SV_Eternal~Bloodcraft~Minion~2~2~1~None~Skull, Freedom Raider~Rush~Battlecry": SkullFreedomRaider,
+    "SV_Eternal~Bloodcraft~Minion~3~2~1~None~Hallessena, Calamity's Saw~Battlecry": HallessenaCalamitysSaw,
+    "SV_Eternal~Bloodcraft~Spell~3~Corrupting Bloodlust": CorruptingBloodlust,
+    "SV_Eternal~Bloodcraft~Minion~4~3~3~None~Discerning Devil~Battlecry~Deathrattle": DiscerningDevil,
+    "SV_Eternal~Bloodcraft~Minion~4~2~8~None~Gluttonous Demon": GluttonousDemon,
+    "SV_Eternal~Bloodcraft~Minion~4~4~4~None~Knight of Purgatory~Taunt~Battlecry~Invocation": KnightofPurgatory,
+    "SV_Eternal~Bloodcraft~Minion~5~5~5~None~Demonic Berserker~Rush~Battlecry": DemonicBerserker,
     "SV_Eternal~Bloodcraft~Minion~6~4~2~None~Seox, Heavenly Howl~Rush~Windfury~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary": SeoxHeavenlyHowl,
+    "SV_Eternal~Bloodcraft~Amulet~3~None~Xeno Diablo~Countdown~Crystallize~Deathrattle~Legendary~Uncollectible": XenoDiablo_Crystallize,
+    "SV_Eternal~Bloodcraft~Minion~7~10~2~None~Xeno Diablo~Deathrattle~Crystallize~Legendary": XenoDiablo,
 
     "SV_Eternal~Havencraft~Amulet~1~Battlecry~Summit Temple": SummitTemple,
+    "SV_Eternal~Havencraft~Minion~1~1~2~None~Will, Underworld Priest~Battlecry": WillUnderworldPriest,
+    "SV_Eternal~Havencraft~Amulet~1~None~Unicorn Altar~Countdown~Deathrattle": UnicornAltar,
+    "SV_Eternal~Havencraft~Minion~6~5~5~None~Unicorn~Battlecry~Uncollectible": Unicorn,
+    "SV_Eternal~Havencraft~Minion~2~2~2~None~Belfry Sister~Battlecry~Enhance": BelfrySister,
     "SV_Eternal~Havencraft~Minion~2~1~1~None~Anre, the Enlightened One~Taunt~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary": AnretheEnlightenedOne,
+    "SV_Eternal~Havencraft~Minion~3~1~5~None~Zahlhamelina, Sun Priestess~Taunt": ZahlhamelinaSunPriestess,
+    "SV_Eternal~Havencraft~Spell~4~Redeemer's Cudgel": RedeemersCudgel,
+    "SV_Eternal~Havencraft~Minion~5~3~6~None~Sword Al-mi'raj~Rush": SwordAlmiraj,
+    "SV_Eternal~Havencraft~Amulet~3~None~Xeno Vohu Manah~Countdown~Crystallize~Deathrattle~Legendary~Uncollectible": XenoVohuManah_Crystallize,
+    "SV_Eternal~Havencraft~Minion~5~2~6~None~Xeno Vohu Manah~Crystallize~Legendary": XenoVohuManah,
+    "SV_Eternal~Havencraft~Amulet~3~None~Sacred Tiger~Countdown~Crystallize~Deathrattle~Uncollectible": SacredTiger_Crystallize,
+    "SV_Eternal~Havencraft~Minion~7~3~3~None~Sacred Tiger~Charge~Crystallize": SacredTiger,
+    "SV_Eternal~Havencraft~Minion~3~3~2~None~White Tiger~Taunt~Uncollectible": WhiteTiger,
     "SV_Eternal~Havencraft~Amulet~1~None~Noa, Primal Shipwright~Countdown~Crystallize~Deathrattle~Uncollectible": NoaPrimalShipwright_Crystallize,
     "SV_Eternal~Havencraft~Minion~7~1~1~None~Noa, Primal Shipwright~Taunt~Crystallize": NoaPrimalShipwright,
 
+    "SV_Eternal~Portalcraft~Minion~2~2~2~None~Mechanized Soldier~Battlecry~Enhance": MechanizedSoldier,
+    "SV_Eternal~Portalcraft~Minion~2~2~1~None~Catherine, Nightsmoke~Stealth~Battlecry": CatherineNightsmoke,
+    "SV_Eternal~Portalcraft~Minion~2~1~3~None~Spinnah, Spin Artist~Battlecry~Enhance": SpinnahSpinArtist,
+    "SV_Eternal~Portalcraft~Minion~2~2~2~None~Lunalu, Fangirl A": LunaluFangirlA,
+    "SV_Eternal~Portalcraft~Spell~1~Facsimile~Uncollectible": Facsimile,
     "SV_Eternal~Portalcraft~Minion~2~4~2~None~Feower, Double Blade Flash~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary": FeowerDoubleBladeFlash,
     "SV_Eternal~Portalcraft~Minion~3~2~4~None~Tien, Treacherous Trigger~Battlecry~SkyboundArt~SuperSkyboundArt~Legendary": TienTreacherousTrigger,
+    "SV_Eternal~Portalcraft~Minion~3~3~3~None~Surveillance System": SurveillanceSystem,
+    "SV_Eternal~Portalcraft~Minion~3~2~3~None~Courageous Puppeteer~Battlecry": CourageousPuppeteer,
+    "SV_Eternal~Portalcraft~Spell~3~Kitty-Cat Arsenal": KittyCatArsenal,
+    "SV_Eternal~Portalcraft~Minion~6~2~4~None~Toy Mender~Battlecry": ToyMender,
+    "SV_Eternal~Portalcraft~Amulet~5~None~Mobilized Factory~Crystallize~Uncollectible": MobilizedFactory_Crystallize,
+    "SV_Eternal~Portalcraft~Minion~10~6~6~None~Mobilized Factory~Battlecry~Crystallize": MobilizedFactory,
 }
