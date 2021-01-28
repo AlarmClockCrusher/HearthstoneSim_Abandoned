@@ -391,6 +391,7 @@ class Hand_Deck:
 				self.ruleOut(card, fromHD=2)
 				card.whenDiscarded()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
+				self.Game.Counters.cardsDiscardedThisTurn[ID].append(card.index)
 				self.Game.Counters.shadows[card.ID] += 1
 				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, -1, "")
 			self.Game.sendSignal("PlayerDiscardsHand", ID, None, None, n, "")
@@ -405,6 +406,7 @@ class Hand_Deck:
 				card.whenDiscarded()
 				self.Game.Manas.calcMana_All()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
+				self.Game.Counters.cardsDiscardedThisTurn[ID].append(card.index)
 				self.Game.Counters.shadows[card.ID] += 1
 				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
 		else:  # Discard a chosen card.
@@ -417,6 +419,7 @@ class Hand_Deck:
 			card.whenDiscarded()
 			self.Game.Manas.calcMana_All()
 			self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
+			self.Game.Counters.cardsDiscardedThisTurn[ID].append(card.index)
 			self.Game.Counters.shadows[card.ID] += 1
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
 			
