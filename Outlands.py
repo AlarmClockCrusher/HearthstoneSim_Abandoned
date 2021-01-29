@@ -1418,9 +1418,11 @@ class MsshifnPrime(Minion):
 	name_CN = "终极姆希菲"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		# 0: Give other minion +2/+2; 1:Summon two Treants with Taunt.
 		self.options = [MsshifnAttac_Option(self), MsshifnProtec_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	#如果有全选光环，只有一个9/9，其同时拥有突袭和嘲讽
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):

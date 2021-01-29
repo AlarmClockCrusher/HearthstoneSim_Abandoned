@@ -113,23 +113,29 @@ class GUI_Client(GUI_Common):
 		self.boardID, self.ID = '', 1
 		self.CHN = CHN
 		self.window = tk.Tk()
+		self.onLeftVar = tk.IntVar()
+		
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.waiting4Server, self.timer = False, 60
 		
 		self.initConnPanel = tk.Frame(master=self.window, width=0.005*X, height=int(0.6*Y))
 		self.initConnPanel.pack(side=tk.TOP)
 		
-		tk.Label(self.initConnPanel, text=txt("Enter deck code below", CHN), 
-				font=("Yahei", 15)).grid(row=0, column=0)
-		self.ownDeck = tk.Entry(self.initConnPanel, text="", font=("Yahei", 15, "bold"), width=20)
-		self.ownDeck.grid(row=1, column=0)
-		
+		ckb = tk.Checkbutton(self.initConnPanel, text=txt("Side Panel on Left", CHN), variable=self.onLeftVar, onvalue=1, \
+						offvalue=0, font=("Yahei", 15, "bold"))
+		ckb.select()
 		self.hero = tk.StringVar(self.initConnPanel)
 		self.hero.set(list(ClassDict.keys())[0])
 		heroOpt = tk.OptionMenu(self.initConnPanel, self.hero, *list(ClassDict.keys()))
 		heroOpt.config(width=15, font=("Yahei", 15))
 		heroOpt["menu"].config(font=("Yahei", 15))
+		self.ownDeck = tk.Entry(self.initConnPanel, text="", font=("Yahei", 15, "bold"), width=20)
+		
+		tk.Label(self.initConnPanel, text=txt("Enter deck code below", CHN), 
+				font=("Yahei", 15)).grid(row=0, column=0)
+		self.ownDeck.grid(row=1, column=0)
 		heroOpt.grid(row=2, column=0)
+		ckb.grid(row=3, column=0)
 		#连接所需的数据，服务器IP address, port以及申请预订或者加入的桌子ID
 		self.serverIP = tk.Entry(self.initConnPanel, font=("Yahei", 15), width=10)
 		self.queryPort = tk.Entry(self.initConnPanel, font=("Yahei", 15), width=10)
@@ -238,8 +244,8 @@ class GUI_Client(GUI_Common):
 		
 	def initSidePartofUI(self):
 		self.GamePanel = tk.Frame(self.window, width=X, height=Y, bg="black")
-		self.GamePanel.pack(fill=tk.Y, side=tk.LEFT if LeftorRight else tk.RIGHT)
 		self.sidePanel = tk.Frame(self.window, width=int(0.005*X), height=int(0.3*Y), bg="cyan")
+		self.GamePanel.pack(fill=tk.Y, side=tk.RIGHT if self.onLeftVar.get() else tk.LEFT)
 		self.sidePanel.pack(side=tk.TOP)
 		
 		img = PIL.Image.open(r"Images\PyHSIcon.png").resize((75, 75))
@@ -247,7 +253,7 @@ class GUI_Client(GUI_Common):
 		self.lbl_Card = tk.Label(self.sidePanel, image=ph)
 		self.lbl_Card.image = ph
 		self.lbl_wish = tk.Label(master=self.sidePanel, text=txt("Card Wished", CHN), font=("Yahei", 15))
-		self.lbl_Card.pack(fill=tk.X)
+		self.initSidePanel()
 		
 	def initMuliganUI(self):
 		self.initSidePartofUI()

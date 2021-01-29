@@ -1722,10 +1722,12 @@ class FaireArborist(Minion):
 	name_CN = "马戏团树艺师"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		# 0: Draw a card; 1:Summon a 2/2 Treant.
 		self.options = [PrunetheFruit_Option(self), DigItUp_Option(self)]
 		self.trigsHand = [Trig_Corrupt(self, FaireArborist_Corrupt)] #只有在手牌中才会升级
+		
+	def need2Choose(self):
+		return True
 		
 	#对于抉择随从而言，应以与战吼类似的方式处理，打出时抉择可以保持到最终结算。但是打出时，如果因为鹿盔和发掘潜力而没有选择抉择，视为到对方场上之后仍然可以而没有如果没有
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):

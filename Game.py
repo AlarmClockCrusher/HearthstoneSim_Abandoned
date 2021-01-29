@@ -237,7 +237,7 @@ class Game:
 			else: tarIndex, tarWhere = 0, ''
 			minion, mana, posinHand = self.Hand_Deck.extractfromHand(minion, enemyCanSee=True)
 			#如果打出的随从是SV中的爆能强化，激奏和结晶随从，则它们会返回自己的真正要打出的牌以及对应的费用
-			try: minion, mana = minion.becomeswhenPlayed()
+			try: minion, mana = minion.becomeswhenPlayed(choice)
 			except: pass #如果随从没有爆能强化等，则无事发生。
 			self.Manas.payManaCost(minion, mana) #海魔钉刺者，古加尔和血色绽放的伤害生效。
 			#需要根据变形成的随从来进行不同的执行
@@ -1012,6 +1012,8 @@ class Game:
 			else: tarIndex, tarWhere = 0, ''
 			#支付法力值，结算血色绽放等状态。
 			spell, mana, posinHand = self.Hand_Deck.extractfromHand(spell, enemyCanSee=not spell.description.startswith("Secret:"))
+			try: spell, mana = spell.becomeswhenPlayed(choice)
+			except: pass #如果随从没有爆能强化等，则无事发生。
 			self.Manas.payManaCost(spell, mana)
 			#请求使用法术，如果此时对方场上有法术反制，则取消后续序列。
 			#法术反制会阻挡使用时扳机，如伊利丹和任务达人等。但是法力值消耗扳机，如血色绽放，肯瑞托法师会触发，从而失去费用光环

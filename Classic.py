@@ -2242,8 +2242,11 @@ class PoweroftheWild(Spell):
 	name_CN = "野性之力"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [LeaderofthePack_Option(self), SummonaPanther_Option(self)]
+		
+	def need2Choose(self):
+		return True
+		
 	#needTarget() always returns False
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if choice != 0:
@@ -2306,8 +2309,10 @@ class Wrath(Spell):
 	name_CN = "愤怒"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [SolarWrath_Option(self), NaturesWrath_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def available(self):
 		return self.selectableMinionExists()
@@ -2397,8 +2402,10 @@ class MarkofNature(Spell):
 	name_CN = "自然印记"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [TigersFury_Option(self), ThickHide_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def available(self):
 		return self.selectableMinionExists()
@@ -2483,8 +2490,10 @@ class KeeperoftheGrove(Minion):
 	name_CN = "丛林守护者"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [Moonfire_Option(self), Dispel_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def targetExists(self, choice=0):
 		return (choice < 1 and self.selectableCharacterExists(choice)) or (choice > 0 and self.selectableMinionExists())
@@ -2549,8 +2558,10 @@ class DruidoftheClaw(Minion):
 	name_CN = "利爪"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [CatForm_Option(self), BearForm_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def played(self, target=None, choice=0, mana=0, posinHand=0, comment=""):
 		self.statReset(self.attack_Enchant, self.health_max)
@@ -2616,8 +2627,10 @@ class Starfall(Spell):
 	name_CN = "星辰坠落"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [Starlord_Option(self), StellarDrift_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def returnTrue(self, choice=0):
 		return choice < 1
@@ -2702,8 +2715,10 @@ class Nourish(Spell):
 	name_CN = "滋养"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [RampantGrowth_Option(self), Enrich_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if choice < 1:
@@ -2753,8 +2768,10 @@ class AncientofLore(Minion):
 	name_CN = "知识古树"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [AncientTeachings_Option(self), AncientSecrets_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def returnTrue(self, choice=0):
 		return choice != 0
@@ -2790,8 +2807,10 @@ class AncientofWar(Minion):
 	name_CN = "战争古树"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [Uproot_Option(self), Rooted_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if choice < 1:
@@ -2829,9 +2848,11 @@ class Cenarius(Minion):
 	name_CN = "塞纳留斯"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		# 0: Give other minion +2/+2; 1:Summon two Treants with Taunt.
 		self.options = [DemigodsFavor_Option(self), ShandosLesson_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	#对于抉择随从而言，应以与战吼类似的方式处理，打出时抉择可以保持到最终结算。但是打出时，如果因为鹿盔和发掘潜力而没有选择抉择，视为到对方场上之后仍然可以而没有如果没有
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):

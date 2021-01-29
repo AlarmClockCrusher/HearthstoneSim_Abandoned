@@ -1580,6 +1580,9 @@ class RunicCarvings(Spell):
 		self.chooseOne = 1
 		self.options = [Normal_Option(self), OverloadRush_Option(self)]
 		
+	def need2Choose(self):
+		return True
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		minions = [TreantTotem(self.Game, self.ID) for i in range(4)]
 		self.Game.summon(minions, (-1, "totheRightEnd"), self)
@@ -1795,8 +1798,10 @@ class ShandoWildclaw(Minion):
 	name_CN = "大导师野爪"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [BuffBeastinDeck_Option(self), BecomeaCopyofBeast_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def returnTrue(self, choice=0):
 		return choice != 0

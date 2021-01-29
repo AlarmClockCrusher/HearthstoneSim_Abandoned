@@ -1272,9 +1272,11 @@ class OasisSurger(Minion):
 	name_CN = "绿洲涌动者"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		# 0: Gain +2/+2; 1: Summon a copy.
 		self.options = [FocusedBurst_Option(self), DivideandConquer_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	#对于抉择随从而言，应以与战吼类似的方式处理，打出时抉择可以保持到最终结算。但是打出时，如果因为鹿盔和发掘潜力而没有选择抉择，视为到对方场上之后仍然可以而没有如果没有
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1302,8 +1304,10 @@ class HiddenOasis(Spell):
 	name_CN = "隐秘绿洲"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [BefriendtheAncient_Option(self), DrinktheWater_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def returnTrue(self, choice=0):
 		return choice != 0

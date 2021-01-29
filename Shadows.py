@@ -1034,8 +1034,10 @@ class CrystalPower(Spell):
 	name_CN = "水晶之力"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [PiercingThorns_Option(self), HealingBlossom_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def available(self):
 		return self.selectableCharacterExists(1)
@@ -1208,7 +1210,7 @@ class Trig_KeeperStalladris(TrigBoard):
 		self.blank_init(entity, ["SpellBeenPlayed"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and subject.ID == self.entity.ID and subject.chooseOne > 0
+		return self.entity.onBoard and subject.ID == self.entity.ID and subject.need2Choose()
 		
 	def text(self, CHN):
 		return "在你施放一个抉择法术后，将每个选项的复制置入你的手牌" if CHN \

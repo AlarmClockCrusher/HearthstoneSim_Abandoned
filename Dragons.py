@@ -1313,8 +1313,10 @@ class Treenforcements(Spell):
 	name_CN = "树木增援"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [SmallRepairs_Option(self), SpinemUp_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def returnTrue(self, choice=0):
 		return choice < 1

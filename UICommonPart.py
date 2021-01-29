@@ -312,24 +312,24 @@ class GUI_Common:
 						typewhenPlayed = self.subject.getTypewhenPlayed()
 						if typewhenPlayed == "Spell" and not entity.available():
 							#法术没有可选目标，或者是不可用的非指向性法术
-							self.printInfo("Selected spell unavailable. All selection canceled.")
 							self.cancelSelection()
 						elif game.space(entity.ID) < 1 and (typewhenPlayed == "Minion" or typewhenPlayed == "Amulet"): #如果场上没有空位，且目标是护符或者无法触发激奏的随从的话，则不能打出牌
-							self.printInfo("The board is full and minion/amulet selected can't be played")
 							self.cancelSelection()
 						else:
-							if entity.chooseOne > 0:
-								if game.status[entity.ID]["Choose Both"] > 0:
+							if entity.need2Choose():
+								#所选的手牌不是影之诗卡牌，且我方有抉择全选的光环
+								if not entity.index.startswith("SV_") and game.status[entity.ID]["Choose Both"] > 0:
 									self.choice = -1 #跳过抉择，直接进入UI=1界面。
 									if entity.needTarget(-1):
 										self.highlightTargets(entity.findTargets("", self.choice)[0])
-								else:
+								elif entity.index.startswith("SV_"):
 									game.options = entity.options
 									self.UI = 1 #进入抉择界面，退出抉择界面的时候已经self.choice已经选好。
 									self.update()
 							#如果选中的手牌是一个需要选择目标的SV法术
 							elif entity.index.startswith("SV_") and typewhenPlayed == "Spell" and entity.needTarget():
-								self.choice = 0
+								self.choice = -1 #影之诗因为有抉择不发动的情况，所以不能默认choice为0（炉石中的非抉择卡牌都默认choice=0），所以需要把choice默认为-1
+								#需要目标选择的影之诗卡牌开始进入多个目标的选择阶段
 								game.Discover.startSelect(entity, entity.findTargets("")[0])
 							#选中的手牌是需要目标的炉石卡
 							elif (typewhenPlayed != "Weapon" and entity.needTarget()) or (typewhenPlayed == "Weapon" and entity.requireTarget):
@@ -358,16 +358,23 @@ class GUI_Common:
 					if not entity.canAttack(): self.cancelSelection()
 					else: self.highlightTargets(entity.findBattleTargets()[0])
 					
-		elif self.UI == 1:
+		elif self.UI == 1: #在抉择界面下点击了抉择选项会进入此结算流程
 			if selectedSubject == "ChooseOneOption" and entity.available():
-				#The first option is indexed as 0.
-				index = game.options.index(entity)
-				self.printInfo("Choice {} chosen".format(entity.name))
-				self.UI, self.choice = 2, index
-				for btn in reversed(self.btnsDrawn):
-					if isinstance(btn, ChooseOneButton): btn.remove()
-				if self.subject.needTarget(self.choice):
-					self.highlightTargets(self.subject.findTargets("", self.choice)[0])
+				if self.subject.index.startswith("SV_"): #影之诗的卡牌的抉择选项确定之后进入与炉石卡不同的UI
+					index = game.options.index(entity)
+					self.UI, self.choice = 2, index
+					for btn in reversed(self.btnsDrawn):
+						if isinstance(btn, ChooseOneButton): btn.remove()
+					if self.subject.needTarget(self.choice):
+						self.highlightTargets(self.subject.findTargets("", self.choice)[0])
+				else: #炉石卡的抉择选项确定完毕
+					#The first option is indexed as 0.
+					index = game.options.index(entity)
+					self.UI, self.choice = 2, index
+					for btn in reversed(self.btnsDrawn):
+						if isinstance(btn, ChooseOneButton): btn.remove()
+					if self.subject.needTarget(self.choice):
+						self.highlightTargets(self.subject.findTargets("", self.choice)[0])
 			elif selectedSubject == "TurnEnds":
 				self.cancelSelection()
 				self.subject, self.target = None, None
@@ -378,7 +385,7 @@ class GUI_Common:
 					self.sendEndTurnthruServer()
 			else:
 				self.printInfo("You must click an available option to continue.")
-				
+		#炉石的目标选择在此处进行
 		elif self.UI == 2: #影之诗的目标选择是不会进入这个阶段的，直接进入UI == 3，并在那里完成所有的目标选择
 			self.target = entity
 			self.printInfo("Selected target: {}".format(entity))
@@ -411,7 +418,7 @@ class GUI_Common:
 			elif self.selectedSubject == "MinioninHand" or self.selectedSubject == "AmuletinHand": #选中场上的友方随从，我休眠物和护符时会把随从打出在其左侧
 				if selectedSubject == "Board" or (entity.ID == self.subject.ID and (selectedSubject.endswith("onBoard") and not selectedSubject.startswith("Hero"))):
 					self.pos = -1 if selectedSubject == "Board" else entity.pos
-					self.printInfo("Position for minion in hand decided: %d"%self.pos)
+					#self.printInfo("Position for minion in hand decided: %d"%self.pos)
 					self.selectedSubject = "MinionPositionDecided" #将主体记录为标记了打出位置的手中随从。
 					#抉择随从如有全选光环，且所有选项不需目标，则直接打出。 连击随从的needTarget()由连击条件决定。
 					#self.printInfo("Minion {} in hand needs target: {}".format(self.subject.name, self.subject.needTarget(self.choice)))
@@ -430,6 +437,7 @@ class GUI_Common:
 						button.configure(bg="purple")
 						#需要区分SV和炉石随从的目标选择。
 						subject = self.subject
+						#如果是影之诗随从，则需要进入多个目标选择的UI==3阶段，而炉石随从则仍留在该阶段之路等待单目标选择的完成
 						if subject.index.startswith("SV_"): #能到这个阶段的都是有目标选择的随从
 							self.choice = 0
 							game.Discover.startSelect(subject, subject.findTargets("")[0])

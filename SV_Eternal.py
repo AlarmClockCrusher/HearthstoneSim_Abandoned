@@ -409,7 +409,74 @@ class BahamutPrimevalDragon(SVMinion):
 """Forestcraft cards"""
 
 """Swordcraft cards"""
+class AgewornWeaponry(Amulet):
+    Class, race, name = "Swordcraft", "", "Ageworn Weaponry"
+    mana = 2
+    index = "SV_Eternal~Swordcraft~Amulet~2~Battlecry~Ageworn Weaponry"
+    requireTarget, description = False, ""
+    name_CN = "历战的兵器"
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.trigsBoard = [Trig_AgewornWeaponry(self)]
+		self.options = [Greatshield_Option(self), Greatsword_Option(self)]
+		
+	def need2Choose(self):
+		return self.Game.Manas.manas[self.ID] > 2 \
+				and any("Swordcraft" in minion.Class for minion in self.Game.minionsonBoard(self.ID))
+		
+	def becomeswhenPlayed(self, choice=0):
+		return (self if choice < 0 else self.options[choice]), self.getMana()
+		
+    def effCanTrig(self):
+        self.effectViable = self.Game.Manas.manas[self.ID] > 2 \
+							and any("Swordcraft" in minion.Class for minion in self.Game.minionsonBoard(self.ID))
 
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if any(amulet.name == "Summit Temple" for amulet in self.Game.amuletsonBoard(self.ID, self)):
+            self.Game.Hand_Deck.drawCard(self.ID)
+            self.Game.killMinion(self, self)
+        return None
+
+class Trig_AgewornWeaponry(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+        return ID != self.entity.ID and self.onBoard
+
+    def text(self, CHN):
+        return "" if CHN else "When an allied Havencraft follower attacks, give it 'This follower deals damage equal to its defense until the end of this turn'"
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.Game.summon(Knight(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity)
+		self.counter -= 1
+		if self.counter < 1: self.entity.dead = True
+		
+
+class Greatshield_Option(ChooseOneOption):
+	name, description = "Greatshield", ""
+	def available(self):
+		return True
+		
+class Greatsword_Option(ChooseOneOption):
+	name, description = "Greatsword", ""
+	def available(self):
+		return True
+		
+class Greatshield(Amulet):
+    Class, race, name = "Swordcraft", "", "Greatshield"
+    mana = 2
+    index = "SV_Eternal~Swordcraft~Amulet~2~Battlecry~Greatshield"
+    requireTarget, description = False, ""
+    name_CN = "坚韧之盾"
+   
+class Greatsword(Amulet):
+    Class, race, name = "Swordcraft", "", "Greatsword"
+    mana = 2
+    index = "SV_Eternal~Swordcraft~Amulet~2~Battlecry~Greatsword"
+    requireTarget, description = False, ""
+    name_CN = "锐利之剑"
+   
 """Runecraft cards"""
 
 """Dragoncraft cards"""

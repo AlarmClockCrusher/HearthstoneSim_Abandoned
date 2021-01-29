@@ -184,6 +184,9 @@ class Card:
 	def whenDiscarded(self):
 		pass
 	"""Handle the target selection. All methods belong to minions. Other types will define their own methods."""
+	def need2Choose(self):
+		return False
+		
 	def available(self):
 		return True
 
@@ -262,7 +265,7 @@ class Card:
 
 	def selectionLegit(self, target, choice=0):
 		#抉择牌在有全选光环时，选项自动更正为一个负数。
-		choice -= 3 * (self.chooseOne > 0 and self.Game.status[self.ID]["Choose Both"] > 0)
+		choice -= 3 * (self.need2Choose() and self.Game.status[self.ID]["Choose Both"] > 0)
 		if target: #指明了目标
 			#在指明目标的情况下，只有抉择牌的选项是合理的，选项需要目标，目标对于这个选项正确，且目标可选时，才能返回正确。
 			return self.needTarget(choice) and self.targetCorrect(target, choice) and self.canSelect(target)
@@ -697,7 +700,7 @@ class Minion(Card):
 
 		self.auras = {}
 		self.options = []  # For Choose One minions.
-		self.overload = self.chooseOne = self.magnetic = 0
+		self.overload = self.magnetic = 0
 
 		self.deathrattles = []  # 随从的亡语的触发方式与场上扳机一致，诸扳机之间与
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
@@ -1273,7 +1276,7 @@ class Spell(Card):
 		self.mana, self.manaMods = type(self).mana, []
 		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
 		self.description = type(self).description
-		self.overload, self.chooseOne, self.twinSpell = 0, 0, 0
+		self.overload, self.twinSpell = 0, 0
 		#法术也设置onBoard标签，但只是placeholder而已
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		#法术的trigsBoard只是一个placeholder
@@ -1331,7 +1334,7 @@ class Spell(Card):
 				i, where, choice = curGame.guides.pop(0)
 				target = curGame.find(i, where) if where else None
 			else:
-				if self.chooseOne < 1: choice = 0
+				if not self.need2Choose(): choice = 0
 				else: choice = -1 if curGame.status[self.ID]["Choose Both"] else np.random.randint(len(self.options))
 				if target is None: #沼泽女王哈加莎的恐魔是目前唯一的指定发动的
 					if self.needTarget(choice):
@@ -1490,7 +1493,7 @@ class Secret(Spell):
 		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
 		self.type = "Spell"
 		self.description = type(self).description
-		self.overload, self.chooseOne, self.twinSpell = 0, 0, 0
+		self.overload, self.twinSpell = 0, 0
 		# 法术也设置onBoard标签，但只是placeholder而已
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
@@ -1560,7 +1563,7 @@ class Quest(Spell):
 		self.mana, self.manaMods = type(self).mana, []
 		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
 		self.description = type(self).description
-		self.overload, self.chooseOne, self.twinSpell = 0, 0, 0
+		self.overload, self.twinSpell = 0, 0
 		# 法术也设置onBoard标签，但只是placeholder而已
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
@@ -1658,7 +1661,6 @@ class HeroPower(Card):
 		self.heroPowerChances_base, self.heroPowerChances_extra = 1, 0
 		self.mana, self.manaMods = type(self).mana, []
 		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
-		self.chooseOne = 0
 		self.onBoard = True
 		self.options = [] #For Choose One
 		self.keyWords = {"Lifesteal": 0, "Poisonous": 0, }
@@ -1836,7 +1838,7 @@ class Hero(Card):
 					}
 		self.status = {"Frozen": 0, "Temp Stealth": 0, "Draw to Win": 0}
 		self.options = [] #For Choose One heroes
-		self.overload, self.chooseOne = 0, 0
+		self.overload = 0
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.effectViable, self.evanescent = False, False
 		#用于跟踪卡牌的可能性
@@ -2147,7 +2149,7 @@ class Weapon(Card):
 		self.requireTarget = False
 		self.keyWords = {"Lifesteal": 0, "Poisonous": 0, "Windfury": 0}
 		self.marks = {"Sweep": 0, "Cost Health Instead": 0,}
-		self.overload, self.chooseOne = 0, 0
+		self.overload = 0
 		self.onBoard, self.inHand, self.inDeck = False, False, False
 		self.dead = False
 		self.seq = -1

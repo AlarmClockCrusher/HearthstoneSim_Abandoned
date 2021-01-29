@@ -223,8 +223,10 @@ class RisingWinds(Spell):
 		self.blank_init(Game, ID)
 		self.twinSpell = 1
 		self.twinSpellCopy = RisingWinds2
-		self.chooseOne = 1
 		self.options = [TakeFlight_Option(self), SwoopIn_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if choice < 1:
@@ -241,8 +243,10 @@ class RisingWinds2(Spell):
 	name_CN = "乘风而起"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.chooseOne = 1
 		self.options = [TakeFlight_Option(self), SwoopIn_Option(self)]
+		
+	def need2Choose(self):
+		return True
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if choice < 1:

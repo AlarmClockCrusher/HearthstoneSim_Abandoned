@@ -426,7 +426,7 @@ class Amulet(Dormant):
 		self.status = {}
 		self.auras = {}
 		self.options = []  # For Choose One minions.
-		self.overload, self.chooseOne, self.magnetic = 0, 0, 0
+		self.overload, self.magnetic = 0, 0
 		self.silenced = False
 		self.appearResponse, self.disappearResponse, self.silenceResponse = [], [], []
 		self.deathrattles = []  # 随从的亡语的触发方式与场上扳机一致，诸扳机之间与
