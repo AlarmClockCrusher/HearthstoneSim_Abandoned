@@ -333,6 +333,24 @@ class Fairy(SVMinion):
     name_CN = "妖精"
 
 
+class FairyWisp(SVMinion):
+    Class, race, name = "Forestcraft", "", "Fairy Wisp"
+    mana, attack, health = 0, 1, 1
+    index = "SV_Basic~Forestcraft~Minion~0~1~1~None~Fairy Wisp~Battlecry~Uncollectible"
+    requireTarget, keyWord, description = False, "", "Fanfare: Banish this follower if at least 2 other cards were played this turn."
+    attackAdd, healthAdd = 2, 2
+    name_CN = "妖精萤火"
+
+    def effCanTrig(self):
+        self.effectViable = self.Game.combCards(self.ID) >= 2
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        numCardsPlayed = self.Game.combCards(self.ID)
+        if numCardsPlayed >= 2:
+            self.Game.banishMinion(self, self)
+        return None
+
+
 class WaterFairy(SVMinion):
     Class, race, name = "Forestcraft", "", "Water Fairy"
     mana, attack, health = 1, 1, 1
@@ -1166,7 +1184,7 @@ class BuffAura_Overflow(HasAura_toMinion):
         self.entity = entity
         self.signals, self.auraAffected = ["ManaXtlsCheck"], []
         self.on = False
-        
+
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
 
@@ -1197,6 +1215,15 @@ class BuffAura_Overflow(HasAura_toMinion):
 
     def selfCopy(self, recipient):  # The recipientMinion is the minion that deals the Aura.
         return type(self)(recipient)
+
+
+class Megalorca(SVMinion):
+    Class, race, name = "Dragoncraft", "", "Megalorca"
+    mana, attack, health = 2, 2, 2
+    index = "SV_Basic~Dragoncraft~Minion~2~2~2~None~Megalorca~Uncollectible"
+    requireTarget, keyWord, description = False, "", ""
+    attackAdd, healthAdd = 2, 2
+    name_CN = "虎鲸"
 
 
 class BlazingBreath(SVSpell):
@@ -1232,7 +1259,7 @@ class Dragonrider(SVMinion):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.auras["Buff Aura"] = BuffAura_Dragonrider(self)
-        
+
     def effCanTrig(self):
         self.effectViable = self.Game.isOverflow(self.ID)
 
@@ -1271,7 +1298,7 @@ class FirstbornDragon(SVMinion):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.auras["Buff Aura"] = BuffAura_FirstbornDragon(self)
-        
+
     def effCanTrig(self):
         self.effectViable = self.Game.isOverflow(self.ID)
 
@@ -1371,7 +1398,7 @@ class Dragonguard(SVMinion):
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.auras["Buff Aura"] = BuffAura_Dragonguard(self)
-        
+
 
 class BuffAura_Dragonguard(BuffAura_Overflow):
     def applies(self, subject):
@@ -1583,7 +1610,7 @@ class Deathrattle_HellsUnleasher(Deathrattle_Minion):
                                 self.entity.ID)
 
 
-class CalloftheVoid(SVSpell):
+class CallofVoid(SVSpell):
     Class, name = "Shadowcraft", "Call of the Void"
     requireTarget, mana = True, 4
     index = "SV_Basic~Shadowcraft~Spell~4~Call of the Void"
@@ -1804,7 +1831,8 @@ class WardrobeRaider(SVMinion):
             if isinstance(target, list): target = target[0]
             if target and target.onBoard:
                 self.dealsDamage(target, 2)
-                self.restoresHealth(self.Game.heroes[self.ID], 2)
+                heal = 2 * (2 ** self.countHealDouble())
+                self.restoresHealth(self.Game.heroes[self.ID], heal)
 
 
 class CrimsonPurge(SVSpell):
@@ -2130,7 +2158,8 @@ class AcolytesLight(SVSpell):
             if isinstance(target, list): target = target[0]
             health = target.health * (2 ** self.countHealDouble())
             self.Game.banishMinion(self, target)
-            self.restoresHealth(self.Game.heroes[self.ID], health)
+            heal = health * (2 ** self.countHealDouble())
+            self.restoresHealth(self.Game.heroes[self.ID], heal)
             return target
 
 
@@ -2173,7 +2202,8 @@ class Curate(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.restoresHealth(target, 5)
+            heal = 5 * (2 ** self.countHealDouble())
+            self.restoresHealth(target, heal)
         return target
 
 
@@ -2392,7 +2422,7 @@ class MagisteelPuppet(SVMinion):
     name_CN = "魔钢傀儡"
 
     def inHandEvolving(self, target=None):
-        self.Game.Hand_Deck.addCardtoHand([Puppet]*2, self.ID, byType=True, creator=type(self))
+        self.Game.Hand_Deck.addCardtoHand([Puppet] * 2, self.ID, byType=True, creator=type(self))
 
 
 class DimensionCut(SVSpell):
@@ -2516,7 +2546,7 @@ class PuppeteersStrings(SVSpell):
     name_CN = "人偶师的线"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.Hand_Deck.addCardtoHand([Puppet]*3, self.ID, byType=True, creator=type(self))
+        self.Game.Hand_Deck.addCardtoHand([Puppet] * 3, self.ID, byType=True, creator=type(self))
         damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
         targets = self.Game.minionsonBoard(3 - self.ID)
         self.dealsAOE(targets, [damage for minion in targets])
@@ -2567,6 +2597,7 @@ SV_Basic_Indices = {
     "SV_Basic~Neutral~Minion~5~2~6~None~Angelic Sword Maiden~Taunt": AngelicSwordMaiden,
 
     "SV_Basic~Forestcraft~Minion~1~1~1~None~Fairy~Uncollectible": Fairy,
+    "SV_Basic~Forestcraft~Minion~0~1~1~None~Fairy Wisp~Battlecry~Uncollectible": FairyWisp,
     "SV_Basic~Forestcraft~Minion~1~1~1~None~Water Fairy~Deathrattle": WaterFairy,
     "SV_Basic~Forestcraft~Minion~2~1~1~None~Fairy Whisperer~Battlecry": FairyWhisperer,
     "SV_Basic~Forestcraft~Minion~2~1~3~None~Elf Guard~Battlecry": ElfGuard,
@@ -2617,6 +2648,7 @@ SV_Basic_Indices = {
     "SV_Basic~Runecraft~Spell~8~Fiery Embrace~Spellboost": FieryEmbrace,
     "SV_Basic~Runecraft~Minion~10~7~7~None~Flame Destroyer~Spellboost": FlameDestroyer,
 
+    "SV_Basic~Dragoncraft~Minion~2~2~2~None~Megalorca~Uncollectible": Megalorca,
     "SV_Basic~Dragoncraft~Spell~1~Blazing Breath": BlazingBreath,
     "SV_Basic~Dragoncraft~Minion~2~2~2~None~Dragonrider": Dragonrider,
     "SV_Basic~Dragoncraft~Spell~2~Dragon Oracle": DragonOracle,
@@ -2640,7 +2672,7 @@ SV_Basic_Indices = {
     "SV_Basic~Shadowcraft~Minion~4~4~3~None~Elder Spartoi Soldier~Battlecry": ElderSpartoiSoldier,
     "SV_Basic~Shadowcraft~Minion~4~4~3~None~Playful Necromancer": PlayfulNecromancer,
     "SV_Basic~Shadowcraft~Minion~4~1~1~None~Hell's Unleasher~Deathrattle": HellsUnleasher,
-    "SV_Basic~Shadowcraft~Spell~4~Call of the Void": CalloftheVoid,
+    "SV_Basic~Shadowcraft~Spell~4~Call of the Void": CallofVoid,
     "SV_Basic~Shadowcraft~Minion~5~3~3~None~Gravewaker~Deathrattle": Gravewaker,
     "SV_Basic~Shadowcraft~Minion~6~5~5~None~Ghostly Rider~Deathrattle": GhostlyRider,
     "SV_Basic~Shadowcraft~Minion~7~4~4~None~Undead King~Deathrattle": UndeadKing,

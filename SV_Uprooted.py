@@ -69,8 +69,9 @@ class WayfaringIllustrator(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def targetExists(self, choice=0):
-        return any(("Machina" in minion.race or "Natura" in minion.race) and self.canSelect(minion) for minion in self.Game.minionsAlive(self.ID))
-		
+        return any(("Machina" in minion.race or "Natura" in minion.race) and self.canSelect(minion) for minion in
+                   self.Game.minionsAlive(self.ID))
+
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
         return target.type == "Minion" and target.ID == self.ID and target.onBoard and (
@@ -123,7 +124,8 @@ class ChangewingCherub(SVMinion):
             if card.type == "Minion" and card != self and "Natura" in card.race:
                 natura += 1
         if natura >= 3:
-            self.restoresHealth(self.Game.heroes[self.ID], 2)
+            heal = 2 * (2 ** self.countHealDouble())
+            self.restoresHealth(self.Game.heroes[self.ID], heal)
         return None
 
     def inHandEvolving(self, target=None):
@@ -211,9 +213,10 @@ class RomanticChanteuse(SVMinion):
             trigger.connect()
         return target
 
+
 class Trig_RomanticChanteuse(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BattleDmgHero", "BattleDmgMinion","AbilityDmgHero","AbilityDmgMinion", "TurnEnds"])
+        self.blank_init(entity, ["BattleDmgHero", "BattleDmgMinion", "AbilityDmgHero", "AbilityDmgMinion", "TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment,
                 choice=0):  # target here holds the actual target object
@@ -389,95 +392,95 @@ class StrokeofConviction(SVSpell):
     requireTarget, mana = False, 3
     index = "SV_Uprooted~Swordcraft~Spell~3~Stroke of Conviction~Enhance"
     description = ""
-	name_CN = "信念之剑闪"
-	#艾莉卡的战技 #Erika's Sleight, 召唤2个迅捷的剑士到战场上
-	#米丝特莉娜的剑刃 #Mistolina's Swordpla #随机给予1个敌方的从者5点伤害
-	#贝里昂的号令 #Bayleyon's Command #给予自己的从者全体+1/+1效果
-	#使自己的PP消耗与这张 卡牌等量的消费值，在使用这张卡牌时将其墨迹为命运抉择 所指定的卡牌
-	#爆能强化6；由原本的命运抉择转变为召唤2个迅捷的剑士到战场上。随机给予一个敌方的从者5点伤害。给予自己的从者全体+1/+1效果
+    name_CN = "信念之剑闪"
+    #艾莉卡的战技 #Erika's Sleight, 召唤2个迅捷的剑士到战场上
+    #米丝特莉娜的剑刃 #Mistolina's Swordpla #随机给予1个敌方的从者5点伤害
+    #贝里昂的号令 #Bayleyon's Command #给予自己的从者全体+1/+1效果
+    #使自己的PP消耗与这张 卡牌等量的消费值，在使用这张卡牌时将其墨迹为命运抉择 所指定的卡牌
+    #爆能强化6；由原本的命运抉择转变为召唤2个迅捷的剑士到战场上。随机给予一个敌方的从者5点伤害。给予自己的从者全体+1/+1效果
     def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-		self.options = [ErikasSleight_Option(self), MistolinasSwordpla_Option(self),
-						BayleyonsCommand_Option(self)]
-		
-	def getMana(self):
+        self.blank_init(Game, ID)
+        self.options = [ErikasSleight_Option(self), MistolinasSwordpla_Option(self),
+                        BayleyonsCommand_Option(self)]
+        
+    def getMana(self):
         if self.Game.Manas.manas[self.ID] >= 6:
             return 6
         return self.mana
 
-	def need2Choose(self):
-		return not self.willEnhance()
-		
+    def need2Choose(self):
+        return not self.willEnhance()
+        
     def willEnhance(self):
         return self.Game.Manas.manas[self.ID] >= 6
 
-	def becomeswhenPlayed(self, choice=0):
-		return (self if self.willEnhance() else self.options[choice]), self.getMana()
-		
+    def becomeswhenPlayed(self, choice=0):
+        return (self if self.willEnhance() else self.options[choice]), self.getMana()
+        
     def effCanTrig(self):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
-		if comment == 6 or choice == 0:
-			curGame.summon([Quickblader(curGame, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
-		if comment == 6 or choice == 1:
-			if curGame.mode == 0:
-				if curGame.guides:
-					i, where = curGame.guides.pop(0)
-					minion = curGame.find(i, where) if i > -1 else None
-				else:
-					minions = curGame.minionsAlive(3-self.ID)
-					minion = npchoice(minions) if minions else None
-					curGame.fixedGuides.append((minion.pos, "Minion%d"%(3-self.ID)) if minion else (-1, ''))
-				if minion: self.dealsDamage(minion, 5)
+        if comment == 6 or choice == 0:
+            curGame.summon([Quickblader(curGame, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
+        if comment == 6 or choice == 1:
+            if curGame.mode == 0:
+                if curGame.guides:
+                    i, where = curGame.guides.pop(0)
+                    minion = curGame.find(i, where) if i > -1 else None
+                else:
+                    minions = curGame.minionsAlive(3-self.ID)
+                    minion = npchoice(minions) if minions else None
+                    curGame.fixedGuides.append((minion.pos, "Minion%d"%(3-self.ID)) if minion else (-1, ''))
+                if minion: self.dealsDamage(minion, 5)
         if comment == 6 or choice == 2:
-			for minion in curGame.minionsonBoard(self.ID):
-				minion.buffDebuff(1, 1)
-				
+            for minion in curGame.minionsonBoard(self.ID):
+                minion.buffDebuff(1, 1)
+                
         return None
 
 class ErikasSleight_Option(ChooseOneOption):
-	name, description = "Erika's Sleight", "Summon 2 Quickbladers"
-	index = "SV_Uprooted~Swordcraft~Spell~0~Erika's Sleight"
-	def available(self):
-		return True
-		
-		
+    name, description = "Erika's Sleight", "Summon 2 Quickbladers"
+    index = "SV_Uprooted~Swordcraft~Spell~0~Erika's Sleight"
+    def available(self):
+        return True
+        
+        
 class MistolinasSwordpla_Option(ChooseOneOption):
-	name, description = "Mistolina's Swordpla", "Deal 5 damage to a random enemy follower"
-	index = "SV_Uprooted~Swordcraft~Spell~0~Mistolina's Swordpla"
-	def available(self):
-		return True
-		
+    name, description = "Mistolina's Swordpla", "Deal 5 damage to a random enemy follower"
+    index = "SV_Uprooted~Swordcraft~Spell~0~Mistolina's Swordpla"
+    def available(self):
+        return True
+        
 class BayleyonsCommand_Option(ChooseOneOption):
-	name, description = "Bayleyon's Command", "Give all allied followers +1/+1"
-	index = "SV_Uprooted~Swordcraft~Spell~0~Bayleyon's Command"
-	def available(self):
-		return True
-		
+    name, description = "Bayleyon's Command", "Give all allied followers +1/+1"
+    index = "SV_Uprooted~Swordcraft~Spell~0~Bayleyon's Command"
+    def available(self):
+        return True
+        
 class ErikasSleight(SVSpell):
     Class, name = "Swordcraft", "Erika's Sleight"
     requireTarget, mana = False, 0
     index = "SV_Uprooted~Swordcraft~Spell~0~Erika's Sleight"
     description = ""
-	name_CN = "艾莉卡的战技"
-	
+    name_CN = "艾莉卡的战技"
+    
 class MistolinasSwordpla(SVSpell):
     Class, name = "Swordcraft", "Mistolina’s Swordpla"
     requireTarget, mana = False, 0
     index = "SV_Uprooted~Swordcraft~Spell~0~Mistolina’s Swordpla"
     description = ""
-	name_CN = "米丝特莉娜的剑刃"
-	
+    name_CN = "米丝特莉娜的剑刃"
+    
 class BayleyonsCommand(SVSpell):
     Class, name = "Swordcraft", "Bayleyon's Command"
     requireTarget, mana = False, 0
     index = "SV_Uprooted~Swordcraft~Spell~0~Bayleyon's Command"
     description = ""
-	name_CN = "贝里昂的号令"
-	
-	
+    name_CN = "贝里昂的号令"
+    
+    
 
 class PaulaIcyWarmth(SVMinion):
     Class, race, name = "Forestcraft", "", "Paula, Icy Warmth"
@@ -485,64 +488,64 @@ class PaulaIcyWarmth(SVMinion):
     index = "SV_Uprooted~Forestcraft~Minion~2~2~2~None~Paula, Icy Warmth"
     requireTarget, keyWord, description = True, "", ""
     attackAdd, healthAdd = 2, 2
-	def __init__(self, Game, ID):
+    def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.options = [PaulaGentalWarmth_Option(self), PaulaPassionateWarmth_Option(self)]
-		
-	def need2Choose(self):
-		return self.Game.Manas.manas[self.ID] > 2 \
-				and self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 2
-		
+        
+    def need2Choose(self):
+        return self.Game.Manas.manas[self.ID] > 2 \
+                and self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 2
+        
     def targetCorrect(self, target, choice=0):
         if isinstance(target, list): target = target[0]
         if choice == 0:
-			return (target.type == "Minion" or target.type == "Amulet") and target.ID == self.ID and target != self and target.onBoard
-		else:
-			return target.type == "Minion" and target.ID != self.ID and target.onBoard
-			
-	def returnTrue(self, choice=0):
-		return self.Game.Manas.manas[self.ID] > 2 \
-				and self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 2
-		
-	def targetExists(self, choice=0):
-		if choice == 0: return self.entity.selectableFriendlyMinionExists(0) \
-								or self.entity.selectableFriendlyAmuletExists(0)
-		else: return self.entity.selectableEnemyMinionExists(1)
-		
-	def becomeswhenPlayed(self, choice=0):
-		return (self if choice < 0 else self.options[choice]), self.getMana()
-		
+            return (target.type == "Minion" or target.type == "Amulet") and target.ID == self.ID and target != self and target.onBoard
+        else:
+            return target.type == "Minion" and target.ID != self.ID and target.onBoard
+            
+    def returnTrue(self, choice=0):
+        return self.Game.Manas.manas[self.ID] > 2 \
+                and self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 2
+        
+    def targetExists(self, choice=0):
+        if choice == 0: return self.entity.selectableFriendlyMinionExists(0) \
+                                or self.entity.selectableFriendlyAmuletExists(0)
+        else: return self.entity.selectableEnemyMinionExists(1)
+        
+    def becomeswhenPlayed(self, choice=0):
+        return (self if choice < 0 else self.options[choice]), self.getMana()
+        
     def effCanTrig(self):
         self.effectViable = self.Game.Manas.manas[self.ID] > 2 \
-							and self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 2
+                            and self.Game.Counters.numCardsPlayedThisTurn[self.ID] > 2
 
 class PaulaGentalWarmth_Option(ChooseOneOption):
-	name, description = "Paula, Gental Warmth", ""
-	#入场曲：将战场上1个自己的其他随从或1个自己的护符收回手牌中
-	def available(self):
-		return self.entity.selectableFriendlyMinionExists(0) \
-				or self.entity.selectableFriendlyAmuletExists(0)
-		
+    name, description = "Paula, Gental Warmth", ""
+    #入场曲：将战场上1个自己的其他随从或1个自己的护符收回手牌中
+    def available(self):
+        return self.entity.selectableFriendlyMinionExists(0) \
+                or self.entity.selectableFriendlyAmuletExists(0)
+        
 class PaulaPassionateWarmth_Option(ChooseOneOption):
-	name, description = "Paula, Passionate Warmth", ""
-	#入场曲 给予1个敌方的随从1点伤害
-	def available(self):
-		return self.entity.selectableEnemyMinionExists(1)
-		
+    name, description = "Paula, Passionate Warmth", ""
+    #入场曲 给予1个敌方的随从1点伤害
+    def available(self):
+        return self.entity.selectableEnemyMinionExists(1)
+        
 class PaulaGentalWarmth(SVMinion):
     Class, race, name = "Forestcraft", "", "Paula, Gental Warmth"
     mana, attack, health = 2, 2, 2
     index = "SV_Uprooted~Forestcraft~Minion~2~2~2~None~Paula, Gental Warmth~Uncollectible"
     requireTarget, keyWord, description = True, "", ""
     attackAdd, healthAdd = 2, 2
-	
+    
 class PaulaPassionateWarmth(SVMinion):
     Class, race, name = "Forestcraft", "", "Paula, Passionate Warmth"
     mana, attack, health = 2, 2, 2
     index = "SV_Uprooted~Forestcraft~Minion~2~2~2~None~Paula, Passionate Warmth~Uncollectible"
     requireTarget, keyWord, description = True, "", ""
     attackAdd, healthAdd = 2, 2
-	
+    
 """Runecraft cards"""
 
 """Dragoncraft cards"""

@@ -458,28 +458,27 @@ class BlossomingArcher(SVMinion):
 
 class Trig_BlossomingArcher(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["SpellPlayed"])
+        self.blank_init(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-        return subject.ID == self.entity.ID and self.entity.onBoard and "~Accelerate" in subject.index
+        return subject.ID == self.entity.ID and self.entity.onBoard
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        if "~Accelerate" in subject.index:
-            curGame = self.entity.Game
-            if curGame.mode == 0:
-                enemy = None
-                if curGame.guides:
-                    i, where = curGame.guides.pop(0)
-                    if where: enemy = curGame.find(i, where)
+        curGame = self.entity.Game
+        if curGame.mode == 0:
+            enemy = None
+            if curGame.guides:
+                i, where = curGame.guides.pop(0)
+                if where: enemy = curGame.find(i, where)
+            else:
+                chars = curGame.minionsAlive(3 - self.entity.ID)
+                if chars:
+                    enemy = npchoice(chars)
+                    curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
                 else:
-                    chars = curGame.minionsAlive(3 - self.entity.ID)
-                    if chars:
-                        enemy = npchoice(chars)
-                        curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
-                    else:
-                        curGame.fixedGuides.append((0, ''))
-                if enemy:
-                    self.entity.dealsDamage(enemy, 2)
+                    curGame.fixedGuides.append((0, ''))
+            if enemy:
+                self.entity.dealsDamage(enemy, 2)
 
 
 class SoothingSpell(SVSpell):
@@ -681,17 +680,16 @@ class ChipperSkipper(SVMinion):
 
 class Trig_ChipperSkipper(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["SpellPlayed"])
+        self.blank_init(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-        return subject.ID == self.entity.ID and self.entity.onBoard and "~Accelerate" in subject.index
+        return subject.ID == self.entity.ID and self.entity.onBoard
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        if "~Accelerate" in subject.index:
-            fighter = Fighter(self.entity.Game, self.entity.ID)
-            self.entity.Game.summon([fighter], (-1, "totheRightEnd"),
-                                    self.entity.ID)
-            fighter.evolve()
+        fighter = Fighter(self.entity.Game, self.entity.ID)
+        self.entity.Game.summon([fighter], (-1, "totheRightEnd"),
+                                self.entity.ID)
+        fighter.evolve()
 
 
 class FairyAssault(SVSpell):
@@ -754,15 +752,14 @@ class OptimisticBeastmaster(SVMinion):
 
 class Trig_OptimisticBeastmaster(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["SpellPlayed"])
+        self.blank_init(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-        return subject.ID == self.entity.ID and self.entity.onBoard and "~Accelerate" in subject.index
+        return subject.ID == self.entity.ID and self.entity.onBoard
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        if "~Accelerate" in subject.index:
-            enemies = self.entity.Game.minionsonBoard(3 - self.entity.ID) + self.entity.Game.heroes[3 - self.entity.ID]
-            self.entity.dealsAOE(enemies, [2 for obj in enemies])
+        enemies = self.entity.Game.minionsonBoard(3 - self.entity.ID) + self.entity.Game.heroes[3 - self.entity.ID]
+        self.entity.dealsAOE(enemies, [2 for obj in enemies])
 
 
 class Terrorformer(SVMinion):
@@ -882,14 +879,13 @@ class DeepwoodWolf(SVMinion):
 
 class Trig_DeepwoodWolf(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["SpellPlayed"])
+        self.blank_init(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-        return subject.ID == self.entity.ID and self.entity.onBoard and "~Accelerate" in subject.index
+        return subject.ID == self.entity.ID and self.entity.onBoard
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        if "~Accelerate" in subject.index:
-            self.entity.evolve()
+        self.entity.evolve()
 
 
 class LionelWoodlandShadow_Accelerate(SVSpell):
@@ -2167,7 +2163,7 @@ class WavecrestAngler(SVMinion):
             if curGame.guides:
                 i = curGame.guides.pop(0)
             else:
-                cards = [i for i, card in enumerate(curGame.Counters.cardsDiscardedThisGame[self.ID])]
+                cards = [i for i, card in enumerate(curGame.Counters.cardsDiscardedThisTurn[self.ID])]
                 i = npchoice(cards) if cards else -1
                 curGame.fixedGuides.append(i)
             if i > -1:
@@ -3234,7 +3230,8 @@ class Trig_StartContemptousDemon(TrigBoard):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], 2)
+        heal = 2 * (2 ** self.entity.countHealDouble())
+        self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], heal)
 
 
 class Trig_EndContemptousDemon(TrigBoard):
@@ -4777,23 +4774,22 @@ class AerinForeverBrilliant(SVMinion):
 
 class Trig_AerinForeverBrilliant(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["SpellPlayed"])
+        self.blank_init(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-        return subject.ID == self.entity.ID and self.entity.onBoard and "~Accelerate" in subject.index
+        return subject.ID == self.entity.ID and self.entity.onBoard
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        if "~Accelerate" in subject.index:
-            self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], 2)
-            self.entity.Game.restoreEvolvePoint(self.entity.ID)
-            for t in self.entity.trigsBoard:
-                if type(t) == Trig_AerinForeverBrilliant:
-                    t.disconnect()
-                    self.entity.trigsBoard.remove(t)
-                    break
-            trigger = Trig_EndAerinForeverBrilliant(self.entity)
-            self.entity.trigsBoard.append(trigger)
-            trigger.connect()
+        self.entity.restoresHealth(self.entity.Game.heroes[self.entity.ID], 2)
+        self.entity.Game.restoreEvolvePoint(self.entity.ID)
+        for t in self.entity.trigsBoard:
+            if type(t) == Trig_AerinForeverBrilliant:
+                t.disconnect()
+                self.entity.trigsBoard.remove(t)
+                break
+        trigger = Trig_EndAerinForeverBrilliant(self.entity)
+        self.entity.trigsBoard.append(trigger)
+        trigger.connect()
 
 
 class Trig_EndAerinForeverBrilliant(TrigBoard):
@@ -5038,7 +5034,8 @@ class RunieResoluteDiviner(SVMinion):
                     self.dealsDamage(self.Game.heroes[3 - self.ID], 3)
                     self.restoresHealth(self.Game.heroes[self.ID], 3)
                     if self.progress >= 10:
-                        self.Game.Hand_Deck.addCardtoHand([RunieResoluteDiviner]*3, self.ID, byType=True, creator=type(self))
+                        self.Game.Hand_Deck.addCardtoHand([RunieResoluteDiviner] * 3, self.ID, byType=True,
+                                                          creator=type(self))
 
 
 class AlchemicalCraftschief_Accelerate(SVSpell):
@@ -5845,8 +5842,8 @@ class Deathrattle_TempleofHeresy(Deathrattle_Minion):
             card = card(self.entity.Game, self.entity.ID)
             ManaMod(card, changeby=0, changeto=1).applies()
             self.entity.Game.Hand_Deck.addCardtoHand(card, self.entity.ID, creator=type(self.entity))
-            
-            
+
+
 class Trig_TempleofHeresy(TrigBoard):
     def __init__(self, entity):
         self.blank_init(entity, ["TurnStarts"])
