@@ -54,7 +54,7 @@ class MasterSleuth(SVMinion):
 
 class Deathrattle_MasterSleuth(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.summon([MasterSleuth(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"), self.ID)
+        self.entity.Game.summon([MasterSleuth(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"), self)
 
 
 class VyrnLilRedDragon(SVMinion):
@@ -284,13 +284,15 @@ class GransResolve(SVSpell):
                 i = npchoice(minions) if minions else -1
                 curGame.fixedGuides.append(i)
                 if len(minions) > 1:
-                    minions.remove(minions[i])
-                    j = npchoice(minions).pos
+                    minions.remove(i)
+                    j = npchoice(minions)
                 else:
                     j = -1
                 curGame.fixedGuides.append(j)
-            if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
-            if j > -1: curGame.Hand_Deck.drawCard(self.ID, i)
+            if i > -1: mi = curGame.Hand_Deck.decks[self.ID][i]
+            if j > -1: mj = curGame.Hand_Deck.decks[self.ID][j]
+            if i > -1: curGame.Hand_Deck.drawCard(self.ID, mi)
+            if j > -1: curGame.Hand_Deck.drawCard(self.ID, mj)
         return None
 
 
@@ -356,14 +358,18 @@ class OnWingsofTomorrow(SVSpell):
 
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
-        self.card = None
         self.trigsHand = [Trig_SuperSkyboundArt(self)]
+        self.options = [GransResolve_Option(self), DjeetasDetermination_Option(self)]
 
-    def becomeswhenPlayed(self):
-        if self.card is not None:
-            return type(self.card)(self.Game, self.ID), self.getMana()
-        else:
-            return self, self.getMana()
+    def need2Choose(self):
+        for trig in self.trigsHand:
+            if type(trig) == Trig_SuperSkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
+                return False
+        return True
+
+    def becomeswhenPlayed(self, choice=0):
+        options = [GransResolve(self.Game, self.ID), DjeetasDetermination(self.Game, self.ID)]
+        return (options[choice] if self.need2Choose() else self), self.getMana()
 
     def effCanTrig(self):
         for trig in self.trigsHand:
@@ -378,19 +384,78 @@ class OnWingsofTomorrow(SVSpell):
                 ssa = True
                 break
         if ssa:
-            self.Game.summon([GranDjeetaEternalHeroes(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+            self.Game.summon([GranDjeetaEternalHeroes(self.Game, self.ID)], (-1, "totheRightEnd"), self)
         else:
-            curGame = self.Game
-            if curGame.mode == 0:
-                if curGame.guides:
-                    self.card = curGame.guides.pop(0)
-                else:
-                    curGame.options = [GransResolve(self.Game, self.ID), DjeetasDetermination(self.Game, self.ID)]
-                    curGame.Discover.startDiscover(self)
+            if choice == 1:
+                curGame = self.Game
+                if curGame.mode == 0:
+                    if curGame.guides:
+                        i = curGame.guides.pop(0)
+                    else:
+                        minions = curGame.minionsAlive(3 - self.ID)
+                        i = npchoice(minions).pos if minions else -1
+                        curGame.fixedGuides.append(i)
+                    if i > -1:
+                        damage = (10 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+                        self.dealsDamage(curGame.minions[3 - self.ID][i], damage)
+                    self.Game.restoreEvolvePoint(self.ID, 1)
+                    self.Game.Manas.restoreManaCrystal(2, self.ID)
+            else:
+                curGame = self.Game
+                if curGame.mode == 0:
+                    if curGame.guides:
+                        i, j = curGame.guides.pop(0)
+                    else:
+                        minions = curGame.minionsAlive(3 - self.ID)
+                        i = npchoice(minions).pos if minions else -1
+                        curGame.fixedGuides.append(i)
+                        if len(minions) > 1:
+                            minions.remove(minions[i])
+                            j = npchoice(minions).pos
+                        else:
+                            j = -1
+                        curGame.fixedGuides.append(j)
+                    if i > -1:
+                        damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+                        self.dealsDamage(curGame.minions[3 - self.ID][i], damage)
+                    if j > -1:
+                        damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+                        self.dealsDamage(curGame.minions[3 - self.ID][j], damage)
+                if curGame.mode == 0:
+                    if curGame.guides:
+                        i, j = curGame.guides.pop(0)
+                    else:
+                        minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
+                                   card.type == "Minion"]
+                        i = npchoice(minions) if minions else -1
+                        curGame.fixedGuides.append(i)
+                        if len(minions) > 1:
+                            minions.remove(i)
+                            j = npchoice(minions)
+                        else:
+                            j = -1
+                        curGame.fixedGuides.append(j)
+                    if i > -1: mi = curGame.Hand_Deck.decks[self.ID][i]
+                    if j > -1: mj = curGame.Hand_Deck.decks[self.ID][j]
+                    if i > -1: curGame.Hand_Deck.drawCard(self.ID, mi)
+                    if j > -1: curGame.Hand_Deck.drawCard(self.ID, mj)
         return None
 
-    def discoverDecided(self, option, pool):
-        self.card = option
+
+class GransResolve_Option(ChooseOneOption):
+    name, description = "Gran's Resolve", "Gran's Resolve"
+    index = "SV_Eternal~Neutral~Spell~0~Gran's Resolve~Legendary~Uncollectible"
+
+    def available(self):
+        return True
+
+
+class DjeetasDetermination_Option(ChooseOneOption):
+    name, description = "Djeeta's Determination", "Djeeta's Determination"
+    index = "SV_Eternal~Neutral~Spell~0~Djeeta's Determination~Legendary~Uncollectible"
+
+    def available(self):
+        return True
 
 
 class Trig_SkyboundArt(TrigHand):
@@ -532,76 +597,7 @@ class BahamutPrimevalDragon(SVMinion):
 
 """Forestcraft cards"""
 
-"""Swordcraft cards"""
-class AgewornWeaponry(Amulet):
-    Class, race, name = "Swordcraft", "", "Ageworn Weaponry"
-    mana = 2
-    index = "SV_Eternal~Swordcraft~Amulet~2~Battlecry~Ageworn Weaponry"
-    requireTarget, description = False, ""
-    name_CN = "历战的兵器"
-    def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
-        self.trigsBoard = [Trig_AgewornWeaponry(self)]
-        self.options = [Greatshield_Option(self), Greatsword_Option(self)]
-        
-    def need2Choose(self):
-        return self.Game.Manas.manas[self.ID] > 2 \
-                and any("Swordcraft" in minion.Class for minion in self.Game.minionsonBoard(self.ID))
-        
-    def becomeswhenPlayed(self, choice=0):
-        return (self if choice < 0 else self.options[choice]), self.getMana()
-        
-    def effCanTrig(self):
-        self.effectViable = self.Game.Manas.manas[self.ID] > 2 \
-                            and any("Swordcraft" in minion.Class for minion in self.Game.minionsonBoard(self.ID))
 
-    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        if any(amulet.name == "Summit Temple" for amulet in self.Game.amuletsonBoard(self.ID, self)):
-            self.Game.Hand_Deck.drawCard(self.ID)
-            self.Game.killMinion(self, self)
-        return None
-
-class Trig_AgewornWeaponry(TrigBoard):
-    def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
-
-    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-        return ID != self.entity.ID and self.onBoard
-
-    def text(self, CHN):
-        return "" if CHN else "When an allied Havencraft follower attacks, give it 'This follower deals damage equal to its defense until the end of this turn'"
-
-    def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.summon(Knight(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity)
-        self.counter -= 1
-        if self.counter < 1: self.entity.dead = True
-        
-
-class Greatshield_Option(ChooseOneOption):
-    name, description = "Greatshield", ""
-    def available(self):
-        return True
-        
-class Greatsword_Option(ChooseOneOption):
-    name, description = "Greatsword", ""
-    def available(self):
-        return True
-        
-class Greatshield(Amulet):
-    Class, race, name = "Swordcraft", "", "Greatshield"
-    mana = 2
-    index = "SV_Eternal~Swordcraft~Amulet~2~Battlecry~Greatshield"
-    requireTarget, description = False, ""
-    name_CN = "坚韧之盾"
-   
-class Greatsword(Amulet):
-    Class, race, name = "Swordcraft", "", "Greatsword"
-    mana = 2
-    index = "SV_Eternal~Swordcraft~Amulet~2~Battlecry~Greatsword"
-    requireTarget, description = False, ""
-    name_CN = "锐利之剑"
-   
-"""Runecraft cards"""
 class WalderForestRanger(SVMinion):
     Class, race, name = "Forestcraft", "", "Walder, Forest Ranger"
     mana, attack, health = 1, 1, 1
@@ -609,6 +605,7 @@ class WalderForestRanger(SVMinion):
     requireTarget, keyWord, description = False, "Charge", "Invocation: When you play a card using its Accelerate effect for the second time this turn, invoke this card.Storm.Fanfare: Enhance (6) - Gain +X/+X. X equals the number of times you've played a card using its Accelerate effect this match."
     attackAdd, healthAdd = 2, 2
     name_CN = "森之战士·维鲁达"
+
     def __init__(self, Game, ID):
         self.blank_init(Game, ID)
         self.trigsDeck = [Trig_InvocationWalderForestRanger(self)]
@@ -672,7 +669,7 @@ class MimlemelFreewheelingLass(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         numCardsPlayed = self.Game.combCards(self.ID)
         if numCardsPlayed >= 2:
-            self.Game.summon([Stumpeye(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+            self.Game.summon([Stumpeye(self.Game, self.ID)], (-1, "totheRightEnd"), self)
         return None
 
 
@@ -1082,7 +1079,7 @@ class ArthurSlumberingDragon(SVMinion):
         self.trigsBoard = [Trig_ArthurSlumberingDragon(self)]
 
     def inHandEvolving(self, target=None):
-        self.Game.summon([MordredSlumberingLion(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([MordredSlumberingLion(self.Game, self.ID)], (-1, "totheRightEnd"), self)
 
 
 class Trig_ArthurSlumberingDragon(TrigBoard):
@@ -1110,7 +1107,7 @@ class MordredSlumberingLion(SVMinion):
         self.trigsBoard = [Trig_MordredSlumberingLion(self)]
 
     def inHandEvolving(self, target=None):
-        self.Game.summon([ArthurSlumberingDragon(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([ArthurSlumberingDragon(self.Game, self.ID)], (-1, "totheRightEnd"), self)
 
 
 class Trig_MordredSlumberingLion(TrigBoard):
@@ -1200,7 +1197,7 @@ class SwordSwingingBandit(SVMinion):
 class Deathrattle_SwordSwingingBandit(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([BulletBike(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class GrandAuction(SVSpell):
@@ -1211,7 +1208,7 @@ class GrandAuction(SVSpell):
     name_CN = "大甩卖"
 
     def available(self):
-        return self.Game.Hand_Deck.hands[self.ID] > 1
+        return len(self.Game.Hand_Deck.hands[self.ID]) > 1
 
     def targetExists(self, choice=0):
         for card in self.Game.Hand_Deck.hands[self.ID]:
@@ -1239,6 +1236,77 @@ class AgewornWeaponry(Amulet):
     requireTarget, description = True, "If an allied Swordcraft follower is in play, and you have at least 2 play points, Choose: Play this card as a Greatshield or Greatsword.Countdown (2)At the end of your opponent's turn, summon a Knight."
     name_CN = "历战的兵器"
 
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.options = [Greatshield_Option(self), Greatsword_Option(self)]
+        self.counter = 2
+        self.trigsBoard = [Trig_Countdown(self), Trig_AgewornWeaponry(self)]
+
+    def need2Choose(self):
+        return self.Game.Manas.manas[self.ID] >= 2 \
+               and any("Swordcraft" in minion.Class for minion in self.Game.minionsonBoard(self.ID))
+
+    def becomeswhenPlayed(self, choice=0):
+        options = [Greatshield(self.Game, self.ID), Greatsword(self.Game, self.ID)]
+        if self.need2Choose():
+            return options[choice], 2
+        return self, self.getMana()
+
+    def effCanTrig(self):
+        self.effectViable = self.Game.Manas.manas[self.ID] >= 2 \
+                            and any("Swordcraft" in minion.Class for minion in self.Game.minionsonBoard(self.ID))
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        if self.need2Choose():
+            return target.type == "Minion" and target.ID == self.ID and target.onBoard and target.Class == "Swordcraft"
+        else:
+            return False
+
+    def returnTrue(self, choice=0):
+        return self.targetExists(choice) and not self.targets
+
+    def targetExists(self, choice=0):
+        if self.need2Choose():
+            for minion in self.Game.minionsonBoard(self.ID):
+                if minion.Class == "Swordcraft" and self.canSelect(minion):
+                    return True
+        return False
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            if choice == 1:
+                target.buffDebuff(1, 0)
+            else:
+                target.buffDebuff(0, 1)
+
+
+class Trig_AgewornWeaponry(TrigBoard):
+    def __init__(self, entity):
+        self.blank_init(entity, ["TurnEnds"])
+
+    def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+        return self.entity.onBoard and ID != self.entity.ID
+
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.Game.summon(Knight(self.entity.Game, self.entity.ID), (-1, "totheRightEnd"),
+                                self.entity)
+
+
+class Greatshield_Option(ChooseOneOption):
+    name, description = "Greatshield", "Greatshield"
+
+    def available(self):
+        return True
+
+
+class Greatsword_Option(ChooseOneOption):
+    name, description = "Greatsword", "Greatsword"
+
+    def available(self):
+        return True
+
 
 class Greatshield(Amulet):
     Class, race, name = "Swordcraft", "", "Greatshield"
@@ -1247,6 +1315,37 @@ class Greatshield(Amulet):
     requireTarget, description = True, "Countdown (1)Fanfare: Give an allied Swordcraft follower +0/+1.Last Words: Summon a Shield Guardian."
     name_CN = "坚韧之盾"
 
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.counter = 1
+        self.trigsBoard = [Trig_Countdown(self)]
+        self.deathrattles = [Deathrattle_Greatshield(self)]
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.ID == self.ID and target.onBoard and target.Class == "Swordcraft"
+
+    def returnTrue(self, choice=0):
+        return self.targetExists(choice) and not self.targets
+
+    def targetExists(self, choice=0):
+        if self.need2Choose():
+            for minion in self.Game.minionsonBoard(self.ID):
+                if minion.Class == "Swordcraft" and self.canSelect(minion):
+                    return True
+        return False
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            target.buffDebuff(0, 1)
+
+
+class Deathrattle_Greatshield(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.Game.summon([ShieldGuardian(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                self.entity)
+
 
 class Greatsword(Amulet):
     Class, race, name = "Swordcraft", "", "Greatsword"
@@ -1254,6 +1353,37 @@ class Greatsword(Amulet):
     index = "SV_Eternal~Swordcraft~Amulet~2~None~Greatsword~Countdown~Battlecry~Deathrattle~Uncollectible"
     requireTarget, description = True, "Countdown (1)Fanfare: Give an allied Swordcraft follower +1/+0.Last Words: Summon a Heavy Knight."
     name_CN = "锐利之剑"
+
+    def __init__(self, Game, ID):
+        self.blank_init(Game, ID)
+        self.counter = 1
+        self.trigsBoard = [Trig_Countdown(self)]
+        self.deathrattles = [Deathrattle_Greatsword(self)]
+
+    def targetCorrect(self, target, choice=0):
+        if isinstance(target, list): target = target[0]
+        return target.type == "Minion" and target.ID == self.ID and target.onBoard and target.Class == "Swordcraft"
+
+    def returnTrue(self, choice=0):
+        return self.targetExists(choice) and not self.targets
+
+    def targetExists(self, choice=0):
+        if self.need2Choose():
+            for minion in self.Game.minionsonBoard(self.ID):
+                if minion.Class == "Swordcraft" and self.canSelect(minion):
+                    return True
+        return False
+
+    def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+        if target:
+            if isinstance(target, list): target = target[0]
+            target.buffDebuff(1, 0)
+
+
+class Deathrattle_Greatsword(Deathrattle_Minion):
+    def effect(self, signal, ID, subject, target, number, comment, choice=0):
+        self.entity.Game.summon([HeavyKnight(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
+                                self.entity)
 
 
 class StoneMerchant(SVMinion):
@@ -1732,7 +1862,7 @@ class FifProdigiousSorcerer(SVMinion):
                     minions = tuple([curGame.cardPool[index] for index in indices])
                     curGame.fixedGuides.append(minions)
                 if minions: curGame.summon([minion(curGame, self.ID) for minion in minions], (-1, "totheRightEnd"),
-                                           self.ID)
+                                           self)
         if ssa:
             for minion in self.Game.minionsonBoard(self.ID):
                 minion.buffDebuff(5, 5)
@@ -1743,7 +1873,7 @@ class FifProdigiousSorcerer(SVMinion):
 class ResummonMinion(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         newMinion = type(self.entity)(self.entity.Game, self.entity.ID)
-        self.entity.Game.summon(newMinion, self.entity.pos + 1, self.entity.ID)
+        self.entity.Game.summon(newMinion, self.entity.pos + 1, self.entity)
 
 
 class CrystalWitch(SVMinion):
@@ -1835,7 +1965,7 @@ class Trig_End_XenoIfrit_Crystallize(TrigBoard):
 class Deathrattle_XenoIfrit_Crystallize(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([XenoIfrit(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class XenoIfrit(SVMinion):
@@ -1883,7 +2013,7 @@ class PholiaRetiredSovereign(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.marks["Next Damage 0"] = 1
-        self.Game.summon([BaiZe(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([BaiZe(self.Game, self.ID)], (-1, "totheRightEnd"), self)
 
     def inHandEvolving(self, target=None):
         for minion in self.Game.minionsonBoard():
@@ -1948,7 +2078,7 @@ class RagingGolem_Crystallize(Amulet):
 class Deathrattle_RagingGolem_Crystallize(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([GuardianGolem(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class RagingGolem(SVMinion):
@@ -1968,8 +2098,7 @@ class RagingGolem(SVMinion):
 class Deathrattle_RagingGolem(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([GuardianGolem(self.entity.Game, self.entity.ID) for _ in range(2)],
-                                (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                (-1, "totheRightEnd"), self.entity)
 
 
 """Dragoncraft cards"""
@@ -2104,7 +2233,7 @@ class HypersonicDragonewt(SVMinion):
 class Deathrattle_HypersonicDragonewt(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([HypersonicDragonewt(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class GiantBasilisk(SVMinion):
@@ -2314,7 +2443,7 @@ class DisrestanOceanHarbinger_Accelerate(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.Hand_Deck.drawCard(self.ID)
         if self.Game.getEvolutionPoint(self.ID) > self.Game.getEvolutionPoint(3 - self.ID):
-            self.Game.summon([Megalorca(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+            self.Game.summon([Megalorca(self.Game, self.ID)], (-1, "totheRightEnd"), self)
         return None
 
 
@@ -2626,9 +2755,9 @@ class SeoxHeavenlyHowl(SVMinion):
                 ssa = True
         if ssa:
             self.Game.summon([SeoxHeavenlyHowl(self.Game, self.ID), SeoxHeavenlyHowl(self.Game, self.ID)],
-                             (-1, "totheRightEnd"), self.ID)
+                             (-1, "totheRightEnd"), self)
         elif sa:
-            self.Game.summon([SeoxHeavenlyHowl(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+            self.Game.summon([SeoxHeavenlyHowl(self.Game, self.ID)], (-1, "totheRightEnd"), self)
 
 
 class Trig_SeoxHeavenlyHowl(TrigBoard):
@@ -2930,7 +3059,7 @@ class NoaPrimalShipwright_Crystallize(Amulet):
 class Deathrattle_NoaPrimalShipwright_Crystallize(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([NoaPrimalShipwright(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class NoaPrimalShipwright(SVMinion):

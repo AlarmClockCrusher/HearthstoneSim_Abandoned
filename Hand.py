@@ -503,47 +503,52 @@ class Hand_Deck:
 
 from CardPools import *
 
-#from CardPools import RivaylianBandit, RivaylianBandit,\
-#			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,\
-#			WanderingChef, WanderingChef, WanderingChef,\
-#			Ramiel, Ramiel, Ramiel,\
-#			IoJourneymage, IoJourneymage, IoJourneymage,\
-#			ArchangelofRemembrance, ArchangelofRemembrance, ArchangelofRemembrance,\
-#			GabrielHeavenlyVoice, GabrielHeavenlyVoice, GabrielHeavenlyVoice,\
-#			GoblinQueen, GoblinQueen, GoblinQueen,\
-#			FieranHavensentWindGod,\
-#			RaRadianceIncarnate, RaRadianceIncarnate,\
-#			WilbertGrandKnight, WilbertGrandKnight, WilbertGrandKnight,\
-#			GoddessoftheWestWind, GoddessoftheWestWind, GoddessoftheWestWind,\
-#			Set, Set, Set,\
-#			AnveltJudgmentsCannon, AnveltJudgmentsCannon,\
-#			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright,\
-#			FreezingTrap, ExplosiveTrap, IceBarrier, NeverSurrenderProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,\
-#			RingToss, RingToss, RingToss_Corrupt, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar
+from CardPools import RivaylianBandit, RivaylianBandit,\
+			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,\
+			WanderingChef, WanderingChef, WanderingChef,\
+			Ramiel, Ramiel, Ramiel,\
+			IoJourneymage, IoJourneymage, IoJourneymage,\
+			ArchangelofRemembrance, ArchangelofRemembrance, ArchangelofRemembrance,\
+			GabrielHeavenlyVoice, GabrielHeavenlyVoice, GabrielHeavenlyVoice,\
+			GoblinQueen, GoblinQueen, GoblinQueen,\
+			FieranHavensentWindGod,\
+			RaRadianceIncarnate, RaRadianceIncarnate,\
+			WilbertGrandKnight, WilbertGrandKnight, WilbertGrandKnight,\
+			GoddessoftheWestWind, GoddessoftheWestWind, GoddessoftheWestWind,\
+			Set, Set, Set,\
+			AnveltJudgmentsCannon, AnveltJudgmentsCannon,\
+			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright,\
+			FreezingTrap, ExplosiveTrap, IceBarrier, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,\
+			RingToss, RingToss, RingToss_Corrupt, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar,\
+			StrokeofConviction, StoneMerchant, XIIWolfraudHangedMan, PaulaIcyWarmth
 			
 			
-#Default1 = [RivaylianBandit, RivaylianBandit,
-#			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,
-#			WanderingChef, WanderingChef, WanderingChef,
-#			Ramiel, Ramiel, Ramiel,
-#			IoJourneymage, IoJourneymage, IoJourneymage,
-#			ArchangelofRemembrance, ArchangelofRemembrance, ArchangelofRemembrance,
-#			GabrielHeavenlyVoice, GabrielHeavenlyVoice, GabrielHeavenlyVoice,
-#			GoblinQueen, GoblinQueen, GoblinQueen,
-#			FieranHavensentWindGod,
-#			RaRadianceIncarnate, RaRadianceIncarnate,
-#			WilbertGrandKnight, WilbertGrandKnight, WilbertGrandKnight,
-#			GoddessoftheWestWind, GoddessoftheWestWind, GoddessoftheWestWind,
-#			Set, Set, Set,
-#			AnveltJudgmentsCannon, AnveltJudgmentsCannon,
-#			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright
-#			]
+# Default1 = [RivaylianBandit, RivaylianBandit,
+# 			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,
+# 			WanderingChef, WanderingChef, WanderingChef,
+# 			Ramiel, Ramiel, Ramiel,
+# 			IoJourneymage, IoJourneymage, IoJourneymage,
+# 			ArchangelofRemembrance, ArchangelofRemembrance, ArchangelofRemembrance,
+# 			GabrielHeavenlyVoice, GabrielHeavenlyVoice, GabrielHeavenlyVoice,
+# 			GoblinQueen, GoblinQueen, GoblinQueen,
+# 			FieranHavensentWindGod,
+# 			RaRadianceIncarnate, RaRadianceIncarnate,
+# 			WilbertGrandKnight, WilbertGrandKnight, WilbertGrandKnight,
+# 			GoddessoftheWestWind, GoddessoftheWestWind, GoddessoftheWestWind,
+# 			Set, Set, Set,
+# 			AnveltJudgmentsCannon, AnveltJudgmentsCannon,
+# 			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright
+# 			]
 Default1 = [FreezingTrap, ExplosiveTrap, IceBarrier, RiggedFaireGame, ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,
 			RinlingsRifle, RingToss_Corrupt, RinlingsRifle, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar, NetherwindPortal, PackTactics, MysteryWinner,
-			
+			OnWingsofTomorrow,OnWingsofTomorrow,OnWingsofTomorrow,OnWingsofTomorrow,
+			StrokeofConviction, StoneMerchant,
+			StrokeofConviction, StoneMerchant,
+			StrokeofConviction, StoneMerchant,
+			PaulaIcyWarmth,PaulaIcyWarmth,PaulaIcyWarmth,
 			]
 
 Default2 = [FreezingTrap, ExplosiveTrap, IceBarrier, RiggedFaireGame, ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,
-			RingToss, RingToss, RingToss_Corrupt, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar
-			
+			RingToss, RingToss, RingToss_Corrupt, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar,
+			XIIWolfraudHangedMan,XIIWolfraudHangedMan,XIIWolfraudHangedMan,
 			]

@@ -53,7 +53,7 @@ class WilbertGrandKnight_Accelerate(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.summon([HolyCavalier(self.Game, self.ID), HolyCavalier(self.Game, self.ID)], (-1, "totheRightEnd"),
-                         self.ID)
+                         self)
         return None
 
 
@@ -124,7 +124,7 @@ class Trig_WilbertGrandKnight_TurnStarts(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon(
             [HolyCavalier(self.entity.Game, self.entity.ID), HolyCavalier(self.entity.Game, self.entity.ID)],
-            (-1, "totheRightEnd"), self.entity.ID)
+            (-1, "totheRightEnd"), self.entity)
         for t in self.entity.trigsBoard:
             if type(t) == Trig_WilbertGrandKnight_TurnStarts:
                 t.disconnect()
@@ -166,9 +166,13 @@ class GoddessoftheWestWind(SVMinion):
                     print(curGame.Hand_Deck.decks[self.ID][m].name)
                 i2 = npchoice(minions) if minions and curGame.space(self.ID) > 1 else -1
             if i1 > -1:
-                curGame.summonfromDeck(i1, self.ID, -1, self.ID)
+                mi1 = curGame.Hand_Deck.decks[self.ID][i1]
             if i2 > -1:
-                curGame.summonfromDeck(i2, self.ID, -1, self.ID)
+                mi2 = curGame.Hand_Deck.decks[self.ID][i2]
+            if i1 > -1:
+                curGame.summonfrom(mi1, self.ID, -1, self, fromHand=False)
+            if i2 > -1:
+                curGame.summonfrom(mi2, self.ID, -1, self, fromHand=False)
         return None
 
 

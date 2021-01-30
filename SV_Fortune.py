@@ -344,7 +344,7 @@ class Trig_TitanicShowdown(TrigBoard):
                         minions.append(i)
                 i = npchoice(minions) if minions and curGame.space(ID) > 0 else -1
                 curGame.fixedGuides.append(i)
-            if i > -1: curGame.summonfromHand(i, ID, -1, self.entity.ID)
+            if i > -1: curGame.summonfrom(i, ID, -1, self.entity)
         for t in self.entity.trigsBoard:
             if type(t) == Trig_TitanicShowdown:
                 t.disconnect()
@@ -644,7 +644,7 @@ class ChipperSkipper_Accelerate(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.summon([Fighter(self.Game, self.ID)], (-1, "totheRightEnd"),
-                         self.ID)
+                         self)
         return None
 
 
@@ -688,7 +688,7 @@ class Trig_ChipperSkipper(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         fighter = Fighter(self.entity.Game, self.entity.ID)
         self.entity.Game.summon([fighter], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
         fighter.evolve()
 
 
@@ -713,7 +713,7 @@ class FairyAssault(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         minions = [Fairy(self.Game, self.ID) for i in range(4)]
-        self.Game.summon(minions, (-1, "totheRightEnd"), self.ID)
+        self.Game.summon(minions, (-1, "totheRightEnd"), self)
         if comment == 8:
             for minion in minions:
                 if minion.onBoard:
@@ -1188,10 +1188,10 @@ class ShieldPhalanx(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.Counters.numMinionsSummonedThisGame[self.ID] >= 15:
             self.Game.summon([FrontguardGeneral(self.Game, self.ID), Knight(self.Game, self.ID)],
-                             (-1, "totheRightEnd"), self.ID)
+                             (-1, "totheRightEnd"), self)
         else:
             self.Game.summon([ShieldGuardian(self.Game, self.ID), Knight(self.Game, self.ID)],
-                             (-1, "totheRightEnd"), self.ID)
+                             (-1, "totheRightEnd"), self)
         return None
 
 
@@ -1211,7 +1211,7 @@ class FrontguardGeneral(SVMinion):
 class Deathrattle_FrontguardGeneral(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([FortressGuard(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class FortressGuard(SVMinion):
@@ -1246,10 +1246,10 @@ class EmpressofSerenity(SVMinion):
         self.effectViable = self.willEnhance()
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.summon([ShieldGuardian(self.Game, self.ID)], (-11, "totheRightEnd"), self.ID)
+        self.Game.summon([ShieldGuardian(self.Game, self.ID)], (-11, "totheRightEnd"), self)
         if comment >= 5:
             self.Game.summon([ShieldGuardian(self.Game, self.ID) for i in range(2)], (-11, "totheRightEnd"),
-                             self.ID)
+                             self)
             if comment == 10:
                 for minion in self.Game.minionsonBoard(self.ID):
                     if type(minion) == ShieldGuardian:
@@ -1310,7 +1310,7 @@ class Trig_VIIOluonTheChariot(TrigBoard):
             self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 2)
         elif e == "K":
             self.entity.Game.summon([Knight(self.entity.Game, self.entity.ID)], (-11, "totheRightEnd"),
-                                    self.entity.ID)
+                                    self.entity)
 
 
 class VIIOluonRunawayChariot(SVMinion):
@@ -1386,7 +1386,7 @@ class Trig_PrudentGeneral(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([SteelcladKnight(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class StrikelanceKnight(SVMinion):
@@ -1544,7 +1544,7 @@ class JugglingMoggy(SVMinion):
 class Deathrattle_JugglingMoggy(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([EarthEssence(self.entity.Game, self.entity.ID) for i in range(2)],
-                                (-1, "totheRightEnd"), self.entity.ID)
+                                (-1, "totheRightEnd"), self.entity)
 
 
 class MagicalAugmentation(SVSpell):
@@ -1596,7 +1596,7 @@ class CreativeConjurer(SVMinion):
         if self.Game.earthRite(self, self.ID):
             self.Game.Hand_Deck.addCardtoHand(GolemSummoning, self.ID, byType=True)
         else:
-            self.Game.summon([EarthEssence(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+            self.Game.summon([EarthEssence(self.Game, self.ID)], (-1, "totheRightEnd"), self)
         return None
 
 
@@ -1609,7 +1609,7 @@ class GolemSummoning(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         minion = GuardianGolem(self.Game, self.ID)
-        self.Game.summon([minion], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([minion], (-1, "totheRightEnd"), self)
         if len(self.Game.Hand_Deck.decks[self.ID]) <= 20:
             minion.evolve()
         return None
@@ -1784,7 +1784,7 @@ class MadcapConjuration(SVSpell):
         if types["Minion"] >= 2:
             self.Game.killMinion(self, self.Game.minionsAlive(1) + self.Game.minionsAlive(2))
         if types["Amulet"] >= 2:
-            self.Game.summon([ClayGolem(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID)
+            self.Game.summon([ClayGolem(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
             damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
             self.dealsDamage(self.Game.heroes[3 - self.ID], damage)
 
@@ -1854,7 +1854,7 @@ class ImperatorofMagic(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.earthRite(self, self.ID):
             self.Game.summon(
-                [EmergencySummoning(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+                [EmergencySummoning(self.Game, self.ID)], (-1, "totheRightEnd"), self)
         if comment == 6:
             self.Game.restoreEvolvePoint(self.ID)
         return None
@@ -1887,7 +1887,7 @@ class Deathrattle_EmergencySummoning(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon(
             [GuardianGolem(self.entity.Game, self.entity.ID), ClayGolem(self.entity.Game, self.entity.ID)],
-            (-1, "totheRightEnd"), self.entity.ID)
+            (-1, "totheRightEnd"), self.entity)
 
 
 class Trig_EmergencySummoning(TrigBoard):
@@ -1963,7 +1963,7 @@ class Trig_SweetspellSorcerer(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon(
-            [HappyPig(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"), self.entity.ID)
+            [HappyPig(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"), self.entity)
 
 
 class WitchSnap(SVSpell):
@@ -2009,7 +2009,7 @@ class AdamantineGolem(SVMinion):
     def whenDrawn(self):
         if self.Game.turn == self.ID and len(self.Game.earthsonBoard(self.ID)) <= 2:
             self.Game.summon(
-                [EarthEssence(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+                [EarthEssence(self.Game, self.ID)], (-1, "totheRightEnd"), self)
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         for i in range(len(self.Game.earthsonBoard(self.ID)) + 1):
@@ -2025,7 +2025,7 @@ class AdamantineGolem(SVMinion):
                         curGame.fixedGuides.append((0, e))
                 if e == "S":
                     self.Game.summon(
-                        [GuardianGolem(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+                        [GuardianGolem(self.Game, self.ID)], (-1, "totheRightEnd"), self)
                 elif e == "P":
                     card = WitchSnap(self.Game, self.ID)
                     self.Game.Hand_Deck.addCardtoHand(card, self.ID)
@@ -2134,7 +2134,7 @@ class TropicalGrouper(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if comment == 4:
             self.Game.summon([TropicalGrouper(self.Game, self.ID)], (-1, "totheRightEnd"),
-                             self.ID)
+                             self)
 
 
 class Trig_TropicalGrouper(TrigBoard):
@@ -2146,7 +2146,7 @@ class Trig_TropicalGrouper(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([TropicalGrouper(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class WavecrestAngler(SVMinion):
@@ -2227,7 +2227,7 @@ class Heliodragon(SVMinion):
 
     def whenDiscarded(self):
         self.Game.summon([IvoryDragon(self.Game, self.ID)], (-1, "totheRightEnd"),
-                         self.ID)
+                         self)
         if self.Game.isOverflow(self.ID):
             self.Game.Hand_Deck.drawCard(self.ID)
 
@@ -2399,7 +2399,7 @@ class DragonSpawning(SVSpell):
         if self.Game.Manas.manasUpper[self.ID] >= 10:
             n = 5
         self.Game.summon([DragonsNest(self.Game, self.ID) for i in range(n)], (-1, "totheRightEnd"),
-                         self.ID)
+                         self)
 
 
 class DragonImpact(SVSpell):
@@ -2509,7 +2509,7 @@ class GhostlyMaid(SVMinion):
         if len(self.Game.amuletsonBoard(self.ID)) > 0:
             minion = Ghost(self.Game, self.ID)
             self.Game.summon([minion], (-1, "totheRightEnd"),
-                             self.ID)
+                             self)
             if len(self.Game.amuletsonBoard(self.ID)) >= 2:
                 minion.evolve()
         return None
@@ -2647,7 +2647,7 @@ class Deathrattle_CoffinoftheUnknownSoul(Deathrattle_Minion):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([self.chosenMinionType(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
     def selfCopy(self, newMinion):
         trigger = type(self)(newMinion)
@@ -2898,7 +2898,7 @@ class CloisteredSacristan_Crystallize(Amulet):
 class Deathrattle_CloisteredSacristan_Crystallize(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([CloisteredSacristan(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class Trig_CloisteredSacristan_Crystallize(TrigBoard):
@@ -2968,7 +2968,7 @@ class ConqueringDreadlord(SVMinion):
         self.disappearResponse = [self.whenDisppears]
 
     def whenDisppears(self):
-        self.Game.summon([Lich(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([Lich(self.Game, self.ID)], (-1, "totheRightEnd"), self)
 
     def afterInvocation(self, signal, ID, subject, target, number, comment):
         self.Game.returnMiniontoHand(self, deathrattlesStayArmed=False)
@@ -2983,7 +2983,7 @@ class Trig_ConqueringDreadlord(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([Lich(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class Trig_InvocationConqueringDreadlord(TrigInvocation):
@@ -3192,7 +3192,7 @@ class WhiplashImp(SVMinion):
             self.getsKeyword("Drain")
         if comment == 6:
             self.Game.summon([ImpLancer(self.Game, self.ID)], (-1, "totheRightEnd"),
-                             self.ID)
+                             self)
         return target
 
 
@@ -3409,7 +3409,7 @@ class DarholdAbyssalContract(SVMinion):
     def inHandEvolving(self, target=None):
         self.dealsDamage(self.Game.heroes[self.ID], 3)
         self.Game.summon([DireBond(self.Game, self.ID)], (-1, "totheRightEnd"),
-                         self.ID)
+                         self)
 
 
 class BurningConstriction(SVSpell):
@@ -3530,7 +3530,7 @@ class Trig_UnselfishGrace(TrigBoard):
 class Deathrattle_UnselfishGrace(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([XIVLuzenTemperance_Token(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class InsatiableDesire(SVSpell):
@@ -3751,10 +3751,10 @@ class Deathrattle_PrismaplumeBird(Deathrattle_Minion):
                 curGame.fixedGuides.append((0, e))
         if e == "S":
             self.entity.Game.summon([SummonPegasus(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                    self.entity.ID)
+                                    self.entity)
         elif e == "P":
             self.entity.Game.summon([PinionPrayer(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                    self.entity.ID)
+                                    self.entity)
 
 
 class FourPillarTortoise(SVMinion):
@@ -3919,7 +3919,7 @@ class SarissaLuxflashSpear(SVMinion):
                         self.Game.fixedGuides.append(None)
                 if t:
                     subject = t(self.Game, self.ID)
-                    self.Game.summon([subject], (-1, "totheRightEnd"), self.ID)
+                    self.Game.summon([subject], (-1, "totheRightEnd"), self)
         return None
 
 
@@ -4006,7 +4006,7 @@ class HolybrightAltar(Amulet):
 class Deathrattle_HolybrightAltar(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([HolywingDragon(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class ReverendAdjudicator(SVMinion):
@@ -4041,7 +4041,7 @@ class Trig_ReverendAdjudicator(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([SnakePriestess(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class SomnolentStrength(Amulet):
@@ -4111,7 +4111,7 @@ class VIIISofinaStrength_Accelerate(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.summon([SomnolentStrength(self.Game, self.ID)], (-1, "totheRightEnd"),
-                         self.ID)
+                         self)
         return None
 
 
@@ -4425,7 +4425,7 @@ class Trig_WheelofMisfortune(TrigBoard):
                 minion.buffDebuff(-2, -2)
         elif i == 5:
             self.entity.Game.summon([AnalyzingArtifact(self.entity.Game, 3 - self.entity.ID)], (-11, "totheRightEnd"),
-                                    3 - self.entity.ID)
+                                    self.entity)
 
 
 class ManaEffect_WheelofMisfortune(TempManaEffect):
@@ -4470,7 +4470,7 @@ class XSlausWheelofFortune(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isResonance(self.ID):
             self.Game.summon([WheelofMisfortune(self.Game, 3 - self.ID)], (-11, "totheRightEnd"),
-                             3 - self.ID)
+                             self)
             self.Game.banishMinion(self, self)
 
 
@@ -4892,10 +4892,10 @@ class LifeBanquet(SVSpell):
         self.Game.Hand_Deck.drawCard(self.ID)
         if self.Game.combCards(self.ID) >= 2:
             self.Game.summon([FuriousMountainDeity(self.Game, self.ID)], (-1, "totheRightEnd"),
-                             self.ID)
+                             self)
             if self.Game.combCards(self.ID) >= 8:
                 self.Game.summon([DeepwoodAnomaly(self.Game, self.ID)], (-1, "totheRightEnd"),
-                                 self.ID)
+                                 self)
         return target
 
 
@@ -5267,7 +5267,7 @@ class NephthysGoddessofAmenta(SVMinion):
                     i = npchoice(cards) if cards and curGame.space(self.ID) > 0 else -1
                     curGame.fixedGuides.append(i)
                 if i > -1:
-                    minion = curGame.summonfromDeck(i, self.ID, -1, self.ID)
+                    minion = curGame.summonfrom(i, self.ID, -1, self, fromHand=False)
                     if minion:
                         minions.append(minion)
                 else:
@@ -5305,7 +5305,7 @@ class Nightscreech(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         minion = ForestBat(self.Game, self.ID)
-        self.Game.summon([minion], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([minion], (-1, "totheRightEnd"), self)
         if self.Game.isWrath(self.ID):
             minion.evolve()
             self.Game.Hand_Deck.drawCard(self.ID)
@@ -5937,7 +5937,7 @@ class LazuliGatewayHomunculus(SVMinion):
                         i = npchoice(cards) if cards and curGame.space(self.ID) > 0 else -1
                         curGame.fixedGuides.append(i)
                     if i > -1:
-                        minion = curGame.summonfromDeck(i, self.ID, -1, self.ID)
+                        minion = curGame.summonfrom(i, self.ID, -1, self, fromHand=False)
                         if minion and minion.onBoard and "~Battlecry" in minion.index and not minion.requireTarget and "~Choose" not in minion.index:
                             minion.whenEffective(target=None, comment="", choice=0, posinHand=-2)
 
@@ -5995,7 +5995,7 @@ class LucilleKeeperofRelics(SVMinion):
         self.trigsBoard = [Trig_LucilleKeeperofRelics(self)]
 
     def inHandEvolving(self, target=None):
-        self.Game.summon([RadiantArtifact(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([RadiantArtifact(self.Game, self.ID)], (-1, "totheRightEnd"), self)
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.Hand_Deck.shuffleintoDeck([SpinariaLucilleKeepers(self.Game, self.ID)], self.ID)

@@ -401,7 +401,7 @@ class Game:
 		else: #Summoning multiple minions in a row. But the list can be of length 1
 			if len(subject) == 1: #用列表形式但是只召唤一个随从的时候，position一定是(self.pos, "totheRight")或者（-1, "totheRightEnd"）
 				position = position[0] + 1 if position[0] >= 0 else -1
-				return self.summon(subject[0], position, summonerID, summoner)
+				return self.summon(subject[0], position, summoner)
 			else: #真正召唤多个随从的时候，会把它们划分为多次循环。每次循环后下次循环召唤的随从紧贴在这次循环召唤的随从的右边。
 				if position[1] == "leftandRight":
 					centralMinion, totheRight = self.minions[subject[0].ID][position[0]], 1 #必须得到中间的随从的位置
@@ -412,7 +412,7 @@ class Game:
 							pos = subject[i-2].pos+1 if totheRight == 1 else subject[i-2].pos
 
 						totheRight = 1 - totheRight
-						if not self.summon(subject[i], pos, summonerID, summoner):
+						if not self.summon(subject[i], pos, summoner):
 							if i == 0: return None #只有第一次召唤就因为没有位置而失败时会返回False
 							else: break
 					return subject[0]
@@ -421,7 +421,7 @@ class Game:
 					pos = -1 if position[1] == "totheRightEnd" else position[0]+1
 					for i in range(len(subject)):
 						pos = pos if i == 0 else subject[i-1].pos+1
-						if not self.summon(subject[i], pos, summonerID, summoner) and i == 0:
+						if not self.summon(subject[i], pos, summoner) and i == 0:
 							return None
 					return subject[0]
 

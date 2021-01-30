@@ -119,7 +119,7 @@ class TrigInvocation(TrigDeck):
                     i = npchoice(minions) if minions and curGame.space(self.entity.ID) > 0 else -1
                     curGame.fixedGuides.append(i)
                 if i > -1:
-                    minion = curGame.summonfromDeck(i, self.entity.ID, -1, self.entity.ID)
+                    minion = curGame.summonfrom(i, self.entity.ID, -1, self, fromHand=False)
                     minion.afterInvocation(signal, ID, subject, target, number, comment)
 
 
@@ -227,7 +227,7 @@ class Trig_HarnessedFlameUnion(TrigBoard):
                 self.entity.disappears(deathrattlesStayArmed=False)
                 self.entity.Game.removeMinionorWeapon(self.entity)
                 self.entity.Game.summon([FlameandGlass(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                        self.entity.ID)
+                                        self.entity)
                 break
 
 
@@ -273,7 +273,7 @@ class Trig_HarnessedGlassUnion(TrigBoard):
                 self.entity.disappears(deathrattlesStayArmed=False)
                 self.entity.Game.removeMinionorWeapon(self.entity)
                 self.entity.Game.summon([FlameandGlass(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                        self.entity.ID)
+                                        self.entity)
                 break
 
 
@@ -751,7 +751,7 @@ class OathlessKnight(SVMinion):
     name_CN = "背水一战的骑士"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.summon([Knight(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([Knight(self.Game, self.ID)], (-1, "totheRightEnd"), self)
         return None
 
 
@@ -773,7 +773,7 @@ class AsceticKnight(SVMinion):
     name_CN = "凯旋的骑士"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.summon([HeavyKnight(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([HeavyKnight(self.Game, self.ID)], (-1, "totheRightEnd"), self)
         return None
 
 
@@ -837,7 +837,7 @@ class FloralFencer(SVMinion):
 
     def inHandEvolving(self, target=None):
         self.Game.summon([Knight(self.Game, self.ID), SteelcladKnight(self.Game, self.ID)],
-                         (-1, "totheRightEnd"), self.ID)
+                         (-1, "totheRightEnd"), self)
         return None
 
 
@@ -948,7 +948,7 @@ class ConjureGuardian(SVSpell):
     name_CN = "守护者炼成术"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.summon([GuardianGolem(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([GuardianGolem(self.Game, self.ID)], (-1, "totheRightEnd"), self)
         return None
 
 
@@ -1021,7 +1021,7 @@ class ConjureGolem(SVSpell):
     name_CN = "巨像炼成术"
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-        self.Game.summon([ClayGolem(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([ClayGolem(self.Game, self.ID)], (-1, "totheRightEnd"), self)
         return None
 
 
@@ -1068,7 +1068,7 @@ class SummonSnow(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.summon([Snowman(self.Game, self.ID) for i in range(1 + self.progress)], (-1, "totheRightEnd"),
-                         self.ID)
+                         self)
         return None
 
 
@@ -1095,7 +1095,7 @@ class ConjureTwosome(SVSpell):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         self.Game.summon([ClayGolem(self.Game, self.ID), ClayGolem(self.Game, self.ID)], (-1, "totheRightEnd"),
-                         self.ID)
+                         self)
         return None
 
 
@@ -1562,7 +1562,7 @@ class ApprenticeNecromancer(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.necromancy(self, self.ID, 4):
-            self.Game.summon([Zombie(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+            self.Game.summon([Zombie(self.Game, self.ID)], (-1, "totheRightEnd"), self)
         return None
 
 
@@ -1588,7 +1588,7 @@ class PlayfulNecromancer(SVMinion):
     name_CN = "爱捣蛋的唤灵师"
 
     def inHandEvolving(self, target=None):
-        self.Game.summon([Ghost(self.Game, self.ID), Ghost(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([Ghost(self.Game, self.ID), Ghost(self.Game, self.ID)], (-1, "totheRightEnd"), self)
 
 
 class HellsUnleasher(SVMinion):
@@ -1607,7 +1607,7 @@ class HellsUnleasher(SVMinion):
 class Deathrattle_HellsUnleasher(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([Lich(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class CallofVoid(SVSpell):
@@ -1632,7 +1632,7 @@ class CallofVoid(SVSpell):
             if isinstance(target, list): target = target[0]
             self.Game.killMinion(self, target)
             if self.Game.necromancy(self, self.ID, 4):
-                self.Game.summon([Lich(self.Game, self.ID)], (-1, "totheRightEnd"), self.ID)
+                self.Game.summon([Lich(self.Game, self.ID)], (-1, "totheRightEnd"), self)
         return target
 
 
@@ -1652,7 +1652,7 @@ class Gravewaker(SVMinion):
 class Deathrattle_Gravewaker(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([Zombie(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class GhostlyRider(SVMinion):
@@ -1699,8 +1699,7 @@ class UndeadKing(SVMinion):
 class Deathrattle_UndeadKing(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([Zombie(self.entity.Game, self.entity.ID), Zombie(self.entity.Game, self.entity.ID)],
-                                (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                (-1, "totheRightEnd"), self.entity)
 
 
 """Bloodcraft cards"""
@@ -1978,7 +1977,7 @@ class SummonPegasus(Amulet):
 class Deathrattle_SummonPegasus(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([Pegasus(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class PinionPrayer(Amulet):
@@ -1998,7 +1997,7 @@ class PinionPrayer(Amulet):
 class Deathrattle_PinionPrayer(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([HolyFalcon(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class SnakePriestess(SVMinion):
@@ -2076,7 +2075,7 @@ class BeastlyVow(Amulet):
 class Deathrattle_BeastlyVow(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([HolyflameTiger(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class FeatherwyrmsDescent(Amulet):
@@ -2096,7 +2095,7 @@ class FeatherwyrmsDescent(Amulet):
 class Deathrattle_FeatherwyrmsDescent(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon([HolywingDragon(self.entity.Game, self.entity.ID)], (-1, "totheRightEnd"),
-                                self.entity.ID)
+                                self.entity)
 
 
 class PriestoftheCudgel(SVMinion):
@@ -2181,7 +2180,7 @@ class Deathrattle_DualFlames(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.summon(
             [HolyflameTiger(self.entity.Game, self.entity.ID), HolyflameTiger(self.entity.Game, self.entity.ID)],
-            (-1, "totheRightEnd"), self.entity.ID)
+            (-1, "totheRightEnd"), self.entity)
 
 
 class Curate(SVMinion):
@@ -2357,7 +2356,7 @@ class ParadigmShift(SVSpell):
 
     def discoverDecided(self, option, pool):
         self.Game.fixedGuides.append(type(option))
-        self.Game.summon([option], (-1, "totheRightEnd"), self.ID)
+        self.Game.summon([option], (-1, "totheRightEnd"), self)
 
 
 class Puppeteer(SVMinion):
