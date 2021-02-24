@@ -14,7 +14,7 @@ from AcrossPacks import BoomBot, Lackeys
 class SkydivingInstructor(Minion):
 	Class, race, name = "Neutral", "", "Skydiving Instructor"
 	mana, attack, health = 3, 2, 2
-	index = "Galakrond~Neutral~Minion~3~2~2~None~Skydiving Instructor~Battlecry"
+	index = "Galakrond~Neutral~Minion~3~2~2~~Skydiving Instructor~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 1-Cost minion from your deck"
 	name_CN = "伞降教官"
 	
@@ -71,7 +71,7 @@ class Trig_IceShard(TrigBoard):
 class LicensedAdventurer(Minion):
 	Class, race, name = "Neutral", "", "Licensed Adventurer"
 	mana, attack, health = 2, 3, 2
-	index = "Galakrond~Neutral~Minion~2~3~2~None~Licensed Adventurer~Battlecry"
+	index = "Galakrond~Neutral~Minion~2~3~2~~Licensed Adventurer~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Quest, add a Coin to your hand"
 	name_CN = "资深探险者"
 	def effCanTrig(self):
@@ -141,7 +141,7 @@ class Trig_EscapedManasaber(TrigBoard):
 class BoompistolBully(Minion):
 	Class, race, name = "Neutral", "", "Boompistol Bully"
 	mana, attack, health = 5, 5, 5
-	index = "Galakrond~Neutral~Minion~5~5~5~None~Boompistol Bully~Battlecry"
+	index = "Galakrond~Neutral~Minion~5~5~5~~Boompistol Bully~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Enemy Battlecry cards cost (5) more next turn"
 	name_CN = "持枪恶霸"
 	
@@ -161,7 +161,7 @@ class GameManaAura_InTurnBattlecry5More(TempManaEffect):
 class GrandLackeyErkh(Minion):
 	Class, race, name = "Neutral", "", "Grand Lackey Erkh"
 	mana, attack, health = 4, 2, 3
-	index = "Galakrond~Neutral~Minion~4~2~3~None~Grand Lackey Erkh~Legendary"
+	index = "Galakrond~Neutral~Minion~4~2~3~~Grand Lackey Erkh~Legendary"
 	requireTarget, keyWord, description = False, "", "After you play a Lackey, add a Lackey to your hand"
 	name_CN = "高级跟班 厄尔克"
 	def __init__(self, Game, ID):
@@ -214,7 +214,7 @@ class Sharkbait(Minion):
 	
 """Druid cards"""
 class RisingWinds(Spell):
-	Class, name = "Druid", "Rising Winds"
+	Class, school, name = "Druid", "", "Rising Winds"
 	requireTarget, mana = False, 2
 	index = "Galakrond~Druid~Spell~2~Rising Winds~Twinspell~Choose One"
 	description = "Twinspell. Choose One- Draw a card; or Summon a 3/2 Eagle"
@@ -236,7 +236,7 @@ class RisingWinds(Spell):
 		return None
 		
 class RisingWinds2(Spell):
-	Class, name = "Druid", "Rising Winds"
+	Class, school, name = "Druid", "", "Rising Winds"
 	requireTarget, mana = False, 2
 	index = "Galakrond~Druid~Spell~2~Rising Winds~Choose One~Uncollectible"
 	description = "Choose One- Draw a card; or Summon a 3/2 Eagle"
@@ -266,7 +266,7 @@ class SwoopIn_Option(ChooseOneOption):
 		return self.entity.Game.space(self.entity.ID) > 0
 		
 class TakeFlight(Spell):
-	Class, name = "Druid", "Take Flight"
+	Class, school, name = "Druid", "", "Take Flight"
 	requireTarget, mana = False, 2
 	index = "Galakrond~Druid~Spell~2~Take Flight~Uncollectible"
 	description = "Draw a card"
@@ -276,7 +276,7 @@ class TakeFlight(Spell):
 		return None
 		
 class SwoopIn(Spell):
-	Class, name = "Druid", "Swoop In"
+	Class, school, name = "Druid", "", "Swoop In"
 	requireTarget, mana = False, 2
 	index = "Galakrond~Druid~Spell~2~Swoop In~Uncollectible"
 	description = "Summon a 3/2 Eagle"
@@ -324,7 +324,7 @@ class WingedGuardian(Minion):
 		
 """Hunter cards"""
 class FreshScent(Spell):
-	Class, name = "Hunter", "Fresh Scent"
+	Class, school, name = "Hunter", "", "Fresh Scent"
 	requireTarget, mana = True, 2
 	index = "Galakrond~Hunter~Spell~2~Fresh Scent~Twinspell"
 	description = "Twinspell. Given a Beast +2/+2"
@@ -346,7 +346,7 @@ class FreshScent(Spell):
 		return None
 		
 class FreshScent2(Spell):
-	Class, name = "Hunter", "Fresh Scent"
+	Class, school, name = "Hunter", "", "Fresh Scent"
 	requireTarget, mana = True, 2
 	index = "Galakrond~Hunter~Spell~2~Fresh Scent~Uncollectible"
 	description = "Given a Beast +2/+2"
@@ -526,7 +526,7 @@ class Shotbot(Minion):
 	
 	
 class AirRaid(Spell):
-	Class, name = "Paladin", "Air Raid"
+	Class, school, name = "Paladin", "", "Air Raid"
 	requireTarget, mana = False, 2
 	index = "Galakrond~Paladin~Spell~2~Air Raid~Twinspell"
 	description = "Twinspell. Summon two 1/1 Silver Hand Recruits with Taunt"
@@ -543,7 +543,7 @@ class AirRaid(Spell):
 		return None
 		
 class AirRaid2(Spell):
-	Class, name = "Paladin", "Air Raid"
+	Class, school, name = "Paladin", "", "Air Raid"
 	requireTarget, mana = False, 2
 	index = "Galakrond~Paladin~Spell~2~Air Raid~Uncollectible"
 	description = "Summon two 1/1 Silver Hand Recruits with Taunt"
@@ -592,7 +592,7 @@ class AeonReaver(Minion):
 class ClericofScales(Minion):
 	Class, race, name = "Priest", "", "Cleric of Scales"
 	mana, attack, health = 1, 1, 1
-	index = "Galakrond~Priest~Minion~1~1~1~None~Cleric of Scales~Battlecry"
+	index = "Galakrond~Priest~Minion~1~1~1~~Cleric of Scales~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, Discover a spell from your deck"
 	name_CN = "龙鳞祭司"
 	
@@ -631,7 +631,7 @@ class ClericofScales(Minion):
 		
 		
 class DarkProphecy(Spell):
-	Class, name = "Priest", "Dark Prophecy"
+	Class, school, name = "Priest", "", "Dark Prophecy"
 	requireTarget, mana = False, 3
 	index = "Galakrond~Priest~Spell~3~Dark Prophecy"
 	description = "Discover a 2-Cost minion. Summon it and give it +3 Health"
@@ -693,7 +693,7 @@ class DrawaCard(Deathrattle_Minion):
 		
 		
 class Waxmancy(Spell):
-	Class, name = "Rogue", "Waxmancy"
+	Class, school, name = "Rogue", "", "Waxmancy"
 	requireTarget, mana = False, 2
 	index = "Galakrond~Rogue~Spell~2~Waxmancy"
 	description = "Discover a Battlecry minion. Reduce its Cost by (2)"
@@ -736,7 +736,7 @@ class Waxmancy(Spell):
 class ShadowSculptor(Minion):
 	Class, race, name = "Rogue", "", "Shadow Sculptor"
 	mana, attack, health = 5, 3, 2
-	index = "Galakrond~Rogue~Minion~5~3~2~None~Shadow Sculptor~Combo"
+	index = "Galakrond~Rogue~Minion~5~3~2~~Shadow Sculptor~Combo"
 	requireTarget, keyWord, description = False, "", "Combo: Draw a card for each card you've played this turn"
 	name_CN = "暗影塑形师"
 	def effCanTrig(self):
@@ -750,7 +750,7 @@ class ShadowSculptor(Minion):
 		
 """Shaman cards"""
 class ExplosiveEvolution(Spell):
-	Class, name = "Shaman", "Explosive Evolution"
+	Class, school, name = "Shaman", "", "Explosive Evolution"
 	requireTarget, mana = True, 2
 	index = "Galakrond~Shaman~Spell~2~Explosive Evolution"
 	description = "Transform a friendly minion into a random one that costs (3) more"
@@ -786,7 +786,7 @@ class ExplosiveEvolution(Spell):
 		
 		
 class EyeoftheStorm(Spell):
-	Class, name = "Shaman", "Eye of the Storm"
+	Class, school, name = "Shaman", "", "Eye of the Storm"
 	requireTarget, mana = False, 10
 	index = "Galakrond~Shaman~Spell~10~Eye of the Storm~Overload"
 	description = "Summon three 5/6 Elementals with Taunt. Overload: (3)"
@@ -886,7 +886,7 @@ class GiveAttacktoaRandomFriendlyMinion(Deathrattle_Minion):
 				
 				
 class TwistedKnowledge(Spell):
-	Class, name = "Warlock", "Twisted Knowledge"
+	Class, school, name = "Warlock", "", "Twisted Knowledge"
 	requireTarget, mana = False, 2
 	index = "Galakrond~Warlock~Spell~2~Twisted Knowledge"
 	description = "Discover 2 Warlock cards"
@@ -964,7 +964,7 @@ class Trig_CorruptedHand(TrigHand):
 		
 """Warrior cards"""
 class BoomSquad(Spell):
-	Class, name = "Warrior", "Boom Squad"
+	Class, school, name = "Warrior", "", "Boom Squad"
 	requireTarget, mana = False, 1
 	index = "Galakrond~Warrior~Spell~1~Boom Squad"
 	description = "Discover a Lackey, Mech, or a Dragon"
@@ -1039,7 +1039,7 @@ class Trig_RiskySkipper(TrigBoard):
 class BombWrangler(Minion):
 	Class, race, name = "Warrior", "", "Bomb Wrangler"
 	mana, attack, health = 3, 2, 3
-	index = "Galakrond~Warrior~Minion~3~2~3~None~Bomb Wrangler"
+	index = "Galakrond~Warrior~Minion~3~2~3~~Bomb Wrangler"
 	requireTarget, keyWord, description = False, "", "Whenever this minion takes damage, summon a 1/1 Boom Bot"
 	name_CN = "炸弹牛仔"
 	def __init__(self, Game, ID):
@@ -1061,14 +1061,14 @@ class Trig_BombWrangler(TrigBoard):
 		self.entity.Game.summon(BoomBot(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity)
 		
 				
-Galakrond_Indices = {"Galakrond~Neutral~Minion~3~2~2~None~Skydiving Instructor~Battlecry": SkydivingInstructor,
+Galakrond_Indices = {"Galakrond~Neutral~Minion~3~2~2~~Skydiving Instructor~Battlecry": SkydivingInstructor,
 					"Galakrond~Neutral~Minion~5~3~4~Elemental~Hailbringer~Battlecry": Hailbringer,
 					"Galakrond~Neutral~Minion~1~1~1~Elemental~Ice Shard~Uncollectible": IceShard,
-					"Galakrond~Neutral~Minion~2~3~2~None~Licensed Adventurer~Battlecry": LicensedAdventurer,
+					"Galakrond~Neutral~Minion~2~3~2~~Licensed Adventurer~Battlecry": LicensedAdventurer,
 					"Galakrond~Neutral~Minion~4~3~2~Demon~Frenzied Felwing": FrenziedFelwing,
 					"Galakrond~Neutral~Minion~4~3~5~Beast~Escaped Manasaber~Stealth": EscapedManasaber,
-					"Galakrond~Neutral~Minion~5~5~5~None~Boompistol Bully~Battlecry": BoompistolBully,
-					"Galakrond~Neutral~Minion~4~2~3~None~Grand Lackey Erkh~Legendary": GrandLackeyErkh,
+					"Galakrond~Neutral~Minion~5~5~5~~Boompistol Bully~Battlecry": BoompistolBully,
+					"Galakrond~Neutral~Minion~4~2~3~~Grand Lackey Erkh~Legendary": GrandLackeyErkh,
 					"Galakrond~Neutral~Minion~4~2~3~Pirate~Sky Gen'ral Kragg~Taunt~Battlecry~Legendary": SkyGenralKragg,
 					"Galakrond~Neutral~Minion~4~4~2~Beast~Sharkbait~Rush~Legendary~Uncollectible": Sharkbait,
 					"Galakrond~Druid~Spell~2~Rising Winds~Twinspell~Choose One": RisingWinds,
@@ -1090,11 +1090,11 @@ Galakrond_Indices = {"Galakrond~Neutral~Minion~3~2~2~None~Skydiving Instructor~B
 					"Galakrond~Paladin~Spell~2~Air Raid~Uncollectible": AirRaid2,
 					"Galakrond~Paladin~Minion~5~5~6~Dragon~Scalelord~Battlecry": Scalelord,
 					"Galakrond~Priest~Minion~6~4~4~Dragon~Aeon Reaver~Battlecry": AeonReaver,
-					"Galakrond~Priest~Minion~1~1~1~None~Cleric of Scales~Battlecry": ClericofScales,
+					"Galakrond~Priest~Minion~1~1~1~~Cleric of Scales~Battlecry": ClericofScales,
 					"Galakrond~Priest~Spell~3~Dark Prophecy": DarkProphecy,
 					"Galakrond~Rogue~Minion~2~1~3~Pirate~Skyvateer~Stealth~Deathrattle": Skyvateer,
 					"Galakrond~Rogue~Spell~2~Waxmancy": Waxmancy,
-					"Galakrond~Rogue~Minion~5~3~2~None~Shadow Sculptor~Combo": ShadowSculptor,
+					"Galakrond~Rogue~Minion~5~3~2~~Shadow Sculptor~Combo": ShadowSculptor,
 					"Galakrond~Shaman~Spell~2~Explosive Evolution": ExplosiveEvolution,
 					"Galakrond~Shaman~Spell~10~Eye of the Storm~Overload": EyeoftheStorm,
 					"Galakrond~Shaman~Minion~5~5~6~Elemental~Stormblocker~Taunt~Uncollectible": Stormblocker,
@@ -1104,6 +1104,5 @@ Galakrond_Indices = {"Galakrond~Neutral~Minion~3~2~2~None~Skydiving Instructor~B
 					"Galakrond~Warlock~Minion~3~4~3~Demon~Chaos Gazer~Battlecry": ChaosGazer,
 					"Galakrond~Warrior~Spell~1~Boom Squad": BoomSquad,
 					"Galakrond~Warrior~Minion~1~1~3~Pirate~Risky Skipper": RiskySkipper,
-					"Galakrond~Warrior~Minion~3~2~3~None~Bomb Wrangler": BombWrangler,
+					"Galakrond~Warrior~Minion~3~2~3~~Bomb Wrangler": BombWrangler,
 					}
-					

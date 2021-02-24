@@ -13,7 +13,7 @@ from Basic import Trig_Corruption, Fireball
 class Wisp(Minion):
 	Class, race, name = "Neutral", "", "Wisp"
 	mana, attack, health = 0, 1, 1
-	index = "Classic~Neutral~Minion~0~1~1~None~Wisp"
+	index = "Classic~Neutral~Minion~0~1~1~~Wisp"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "小精灵"
 	
@@ -21,7 +21,7 @@ class Wisp(Minion):
 class AbusiveSergeant(Minion):
 	Class, race, name = "Neutral", "", "Abusive Sergeant"
 	mana, attack, health = 1, 1, 1
-	index = "Classic~Neutral~Minion~1~1~1~None~Abusive Sergeant~Battlecry"
+	index = "Classic~Neutral~Minion~1~1~1~~Abusive Sergeant~Battlecry"
 	requireTarget, keyWord, description = True, "", "Give a minion +2 Attack this turn"
 	name_CN = "叫嚣的中士"
 	
@@ -40,7 +40,7 @@ class AbusiveSergeant(Minion):
 class ArgentSquire(Minion):
 	Class, race, name = "Neutral", "", "Argent Squire"
 	mana, attack, health = 1, 1, 1
-	index = "Classic~Neutral~Minion~1~1~1~None~Argent Squire~Divine Shield"
+	index = "Classic~Neutral~Minion~1~1~1~~Argent Squire~Divine Shield"
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield"
 	name_CN = "银色侍从"
 	
@@ -93,7 +93,7 @@ class HungryCrab(Minion):
 class LeperGnome(Minion):
 	Class, race, name = "Neutral", "", "Leper Gnome"
 	mana, attack, health = 1, 1, 1
-	index = "Classic~Neutral~Minion~1~1~1~None~Leper Gnome~Deathrattle"
+	index = "Classic~Neutral~Minion~1~1~1~~Leper Gnome~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Deal 2 damage to the enemy hero"
 	name_CN = "麻风侏儒"
 	def __init__(self, Game, ID):
@@ -111,7 +111,7 @@ class Deal2DamagetoEnemyHero(Deathrattle_Minion):
 class Lightwarden(Minion):
 	Class, race, name = "Neutral", "", "Lightwarden"
 	mana, attack, health = 1, 1, 2
-	index = "Classic~Neutral~Minion~1~1~2~None~Lightwarden"
+	index = "Classic~Neutral~Minion~1~1~2~~Lightwarden"
 	requireTarget, keyWord, description = False, "", "Whenever a character is healed, gain +2 Attack"
 	name_CN = "圣光护卫者"
 	def __init__(self, Game, ID):
@@ -160,7 +160,7 @@ class Trig_MurlocTidecaller(TrigBoard):
 class Secretkeeper(Minion):
 	Class, race, name = "Neutral", "", "Secretkeeper"
 	mana, attack, health = 1, 1, 2
-	index = "Classic~Neutral~Minion~1~1~2~None~Secretkeeper"
+	index = "Classic~Neutral~Minion~1~1~2~~Secretkeeper"
 	requireTarget, keyWord, description = False, "", "Whenever a Secret is played, gain +1/+1"
 	name_CN = "奥秘守护者"
 	def __init__(self, Game, ID):
@@ -185,7 +185,7 @@ class Trig_Secretkeeper(TrigBoard):
 class Shieldbearer(Minion):
 	Class, race, name = "Neutral", "", "Shieldbearer"
 	mana, attack, health = 1, 0, 4
-	index = "Classic~Neutral~Minion~1~0~4~None~Shieldbearer~Taunt"
+	index = "Classic~Neutral~Minion~1~0~4~~Shieldbearer~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "持盾卫士"
 	
@@ -234,7 +234,7 @@ class EffectAura_SouthseaDeckhandr(HasAura_toMinion):
 class WorgenInfiltrator(Minion):
 	Class, race, name = "Neutral", "", "Worgen Infiltrator"
 	mana, attack, health = 1, 2, 1
-	index = "Classic~Neutral~Minion~1~2~1~None~Worgen Infiltrator~Stealth"
+	index = "Classic~Neutral~Minion~1~2~1~~Worgen Infiltrator~Stealth"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth"
 	name_CN = "狼人渗透者"
 	
@@ -250,7 +250,7 @@ class YoungDragonhawk(Minion):
 class YoungPriestess(Minion):
 	Class, race, name = "Neutral", "", "Young Priestess"
 	mana, attack, health = 1, 2, 1
-	index = "Classic~Neutral~Minion~1~2~1~None~Young Priestess"
+	index = "Classic~Neutral~Minion~1~2~1~~Young Priestess"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, give another random friendly minion +1 Health"
 	name_CN = "年轻的女祭司"
 	def __init__(self, Game, ID):
@@ -286,7 +286,7 @@ class Trig_YoungPriestess(TrigBoard):
 class AmaniBerserker(Minion):
 	Class, race, name = "Neutral", "", "Amani Berserker"
 	mana, attack, health = 2, 2, 3
-	index = "Classic~Neutral~Minion~2~2~3~None~Amani Berserker"
+	index = "Classic~Neutral~Minion~2~2~3~~Amani Berserker"
 	requireTarget, keyWord, description = False, "", "Has +3 Attack while damaged"
 	name_CN = "阿曼尼狂战士"
 	def __init__(self, Game, ID):
@@ -297,7 +297,7 @@ class AmaniBerserker(Minion):
 class AncientWatcher(Minion):
 	Class, race, name = "Neutral", "", "Ancient Watcher"
 	mana, attack, health = 2, 4, 5
-	index = "Classic~Neutral~Minion~2~4~5~None~Ancient Watcher"
+	index = "Classic~Neutral~Minion~2~4~5~~Ancient Watcher"
 	requireTarget, keyWord, description = False, "", "Can't Attack"
 	name_CN = "上古看守者"
 	def __init__(self, Game, ID):
@@ -308,7 +308,7 @@ class AncientWatcher(Minion):
 class BloodmageThalnos(Minion):
 	Class, race, name = "Neutral", "", "Bloodmage Thalnos"
 	mana, attack, health = 2, 1, 1
-	index = "Classic~Neutral~Minion~2~1~1~None~Bloodmage Thalnos~Deathrattle~Spell Damage~Legendary"
+	index = "Classic~Neutral~Minion~2~1~1~~Bloodmage Thalnos~Deathrattle~Spell Damage~Legendary"
 	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1. Deathrattle: Draw a card"
 	name_CN = "血法师 萨尔诺斯"
 	def __init__(self, Game, ID):
@@ -340,7 +340,7 @@ class BloodsailRaider(Minion):
 class CrazedAlchemist(Minion):
 	Class, race, name = "Neutral", "", "Crazed Alchemist"
 	mana, attack, health = 2, 2, 2
-	index = "Classic~Neutral~Minion~2~2~2~None~Crazed Alchemist~Battlecry"
+	index = "Classic~Neutral~Minion~2~2~2~~Crazed Alchemist~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Swap the Attack and Health of a minion"
 	name_CN = "疯狂的炼金师"
 	
@@ -370,7 +370,7 @@ class DireWolfAlpha(Minion):
 class Doomsayer(Minion):
 	Class, race, name = "Neutral", "", "Doomsayer"
 	mana, attack, health = 2, 0, 7
-	index = "Classic~Neutral~Minion~2~0~7~None~Doomsayer"
+	index = "Classic~Neutral~Minion~2~0~7~~Doomsayer"
 	requireTarget, keyWord, description = False, "", "At the start of your turn, destroy ALL minions"
 	name_CN = "末日预言者"
 	def __init__(self, Game, ID):
@@ -409,7 +409,7 @@ class FaerieDragon(Minion):
 class KnifeJuggler(Minion):
 	Class, race, name = "Neutral", "", "Knife Juggler"
 	mana, attack, health = 2, 2, 2
-	index = "Classic~Neutral~Minion~2~2~2~None~Knife Juggler"
+	index = "Classic~Neutral~Minion~2~2~2~~Knife Juggler"
 	requireTarget, keyWord, description = False, "", "After you summon a minion, deal 1 damage to a random enemy"
 	name_CN = "飞刀杂耍者"
 	def __init__(self, Game, ID):
@@ -447,7 +447,7 @@ class Trig_KnifeJuggler(TrigBoard):
 class LootHoarder(Minion):
 	Class, race, name = "Neutral", "", "Loot Hoarder"
 	mana, attack, health = 2, 2, 1
-	index = "Classic~Neutral~Minion~2~2~1~None~Loot Hoarder~Deathrattle"
+	index = "Classic~Neutral~Minion~2~2~1~~Loot Hoarder~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Draw a card"
 	name_CN = "战利品贮藏者"
 	def __init__(self, Game, ID):
@@ -458,7 +458,7 @@ class LootHoarder(Minion):
 class LorewalkerCho(Minion):
 	Class, race, name = "Neutral", "", "Lorewalker Cho"
 	mana, attack, health = 2, 0, 4
-	index = "Classic~Neutral~Minion~2~0~4~None~Lorewalker Cho~Legendary"
+	index = "Classic~Neutral~Minion~2~0~4~~Lorewalker Cho~Legendary"
 	requireTarget, keyWord, description = False, "", "Whenever a player casts a spell, put a copy into the other player's hand"
 	name_CN = "游学者周卓"
 	def __init__(self, Game, ID):
@@ -484,7 +484,7 @@ class Trig_LorewalkerCho(TrigBoard):
 class MadBomber(Minion):
 	Class, race, name = "Neutral", "", "Mad Bomber"
 	mana, attack, health = 2, 3, 2
-	index = "Classic~Neutral~Minion~2~3~2~None~Mad Bomber~Battlecry"
+	index = "Classic~Neutral~Minion~2~3~2~~Mad Bomber~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Deal 3 damage randomly split among all other characters"
 	name_CN = "疯狂投弹者"
 	
@@ -511,7 +511,7 @@ class MadBomber(Minion):
 class ManaAddict(Minion):
 	Class, race, name = "Neutral", "", "Mana Addict"
 	mana, attack, health = 2, 1, 3
-	index = "Classic~Neutral~Minion~2~1~3~None~Mana Addict"
+	index = "Classic~Neutral~Minion~2~1~3~~Mana Addict"
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, gain +2 Attack this turn"
 	name_CN = "魔瘾者"
 	def __init__(self, Game, ID):
@@ -536,7 +536,7 @@ class Trig_ManaAddict(TrigBoard):
 class ManaWraith(Minion):
 	Class, race, name = "Neutral", "", "Mana Wraith"
 	mana, attack, health = 2, 2, 2
-	index = "Classic~Neutral~Minion~2~2~2~None~Mana Wraith"
+	index = "Classic~Neutral~Minion~2~2~2~~Mana Wraith"
 	requireTarget, keyWord, description = False, "", "ALL minions cost (1) more"
 	name_CN = "法力怨魂"
 	def __init__(self, Game, ID):
@@ -550,7 +550,7 @@ class ManaWraith(Minion):
 class MasterSwordsmith(Minion):
 	Class, race, name = "Neutral", "", "Master Swordsmith"
 	mana, attack, health = 2, 1, 3
-	index = "Classic~Neutral~Minion~2~1~3~None~Master Swordsmith"
+	index = "Classic~Neutral~Minion~2~1~3~~Master Swordsmith"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, give another random friendly minion +1 Attack"
 	name_CN = "铸剑师"
 	def __init__(self, Game, ID):
@@ -588,7 +588,7 @@ class Trig_MasterSwordsmith(TrigBoard):
 class MillhouseManastorm(Minion):
 	Class, race, name = "Neutral", "", "Millhouse Manastorm"
 	mana, attack, health = 2, 4, 4
-	index = "Classic~Neutral~Minion~2~4~4~None~Millhouse Manastorm~Battlecry~Legendary"
+	index = "Classic~Neutral~Minion~2~4~4~~Millhouse Manastorm~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Your opponent's spells cost (0) next turn"
 	name_CN = "米尔豪斯 法力风暴"
 	
@@ -610,7 +610,7 @@ class GameManaAura_InTurnSpells0(TempManaEffect):
 class NatPagle(Minion):
 	Class, race, name = "Neutral", "", "Nat Pagle"
 	mana, attack, health = 2, 0, 4
-	index = "Classic~Neutral~Minion~2~0~4~None~Nat Pagle~Legendary"
+	index = "Classic~Neutral~Minion~2~0~4~~Nat Pagle~Legendary"
 	requireTarget, keyWord, description = False, "", "At the start of your turn, you have a 50% chance to draw an extra card"
 	name_CN = "纳特帕格"
 	def __init__(self, Game, ID):
@@ -645,7 +645,7 @@ class Trig_NatPagle(TrigBoard):
 class PintSizedSummoner(Minion):
 	Class, race, name = "Neutral", "", "Pint-Sized Summoner"
 	mana, attack, health = 2, 2, 2
-	index = "Classic~Neutral~Minion~2~2~2~None~Pint-Sized Summoner"
+	index = "Classic~Neutral~Minion~2~2~2~~Pint-Sized Summoner"
 	requireTarget, keyWord, description = False, "", "The first minion you play each turn costs (1) less"
 	name_CN = "小个子召唤师"
 	def __init__(self, Game, ID):
@@ -673,7 +673,7 @@ class ManaAura_1stMinion1Less(ManaAura_1UsageEachTurn):
 class SunfuryProtector(Minion):
 	Class, race, name = "Neutral", "", "Sunfury Protector"
 	mana, attack, health = 2, 2, 3
-	index = "Classic~Neutral~Minion~2~2~3~None~Sunfury Protector~Battlecry"
+	index = "Classic~Neutral~Minion~2~2~3~~Sunfury Protector~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Give adjacent minions Taunt"
 	name_CN = "日怒保卫者"
 	
@@ -689,7 +689,7 @@ class SunfuryProtector(Minion):
 class WildPyromancer(Minion):
 	Class, race, name = "Neutral", "", "Wild Pyromancer"
 	mana, attack, health = 2, 3, 2
-	index = "Classic~Neutral~Minion~2~3~2~None~Wild Pyromancer"
+	index = "Classic~Neutral~Minion~2~3~2~~Wild Pyromancer"
 	requireTarget, keyWord, description = False, "", "After you cast a spell, deal 1 damage to ALL minions"
 	name_CN = "狂野炎术师"
 	def __init__(self, Game, ID):
@@ -714,7 +714,7 @@ class Trig_WildPyromancer(TrigBoard):
 class YouthfulBrewmaster(Minion):
 	Class, race, name = "Neutral", "", "Youthful Brewmaster"
 	mana, attack, health = 2, 3, 2
-	index = "Classic~Neutral~Minion~2~3~2~None~Youthful Brewmaster~Battlecry"
+	index = "Classic~Neutral~Minion~2~3~2~~Youthful Brewmaster~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Return a friendly minion from the battlefield to you hand"
 	name_CN = "年轻的酒仙"
 	
@@ -778,7 +778,7 @@ class Trig_AlarmoBot(TrigBoard):
 class ArcaneGolem(Minion):
 	Class, race, name = "Neutral", "", "Arcane Golem"
 	mana, attack, health = 3, 4, 4
-	index = "Classic~Neutral~Minion~3~4~4~None~Arcane Golem~Battlecry"
+	index = "Classic~Neutral~Minion~3~4~4~~Arcane Golem~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Give your opponent a Mana Crystal"
 	name_CN = "奥术傀儡"
 	
@@ -790,7 +790,7 @@ class ArcaneGolem(Minion):
 class BloodKnight(Minion):
 	Class, race, name = "Neutral", "", "Blood Knight"
 	mana, attack, health = 3, 3, 3
-	index = "Classic~Neutral~Minion~3~3~3~None~Blood Knight~Battlecry"
+	index = "Classic~Neutral~Minion~3~3~3~~Blood Knight~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: All minions lose Divine Shield. Gain +3/+3 for each Shield lost"
 	name_CN = "血骑士"
 	#仍视为随从连续两次施放战吼，但是第二次由于各随从的圣盾已经消失，所以可以在每一次战吼触发时检测是否有铜须光环的存在。
@@ -886,7 +886,7 @@ class Trig_Demolisher(TrigBoard):
 class EarthenRingFarseer(Minion):
 	Class, race, name = "Neutral", "", "Earthen Ring Farseer"
 	mana, attack, health = 3, 3, 3
-	index = "Classic~Neutral~Minion~3~3~3~None~Earthen Ring Farseer~Battlecry"
+	index = "Classic~Neutral~Minion~3~3~3~~Earthen Ring Farseer~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Restore 3 health"
 	name_CN = "大地之环先知"
 	
@@ -908,7 +908,7 @@ class EmperorCobra(Minion):
 class FlesheatingGhoul(Minion):
 	Class, race, name = "Neutral", "", "Flesheating Ghoul"
 	mana, attack, health = 3, 2, 3
-	index = "Classic~Neutral~Minion~3~2~3~None~Flesheating Ghoul"
+	index = "Classic~Neutral~Minion~3~2~3~~Flesheating Ghoul"
 	requireTarget, keyWord, description = False, "", "Whenever a minion dies, gain +1 Attack"
 	name_CN = "腐肉食尸鬼"
 	def __init__(self, Game, ID):
@@ -957,7 +957,7 @@ class DamagedGolem(Minion):
 class ImpMaster(Minion):
 	Class, race, name = "Neutral", "", "Imp Master"
 	mana, attack, health = 3, 1, 5
-	index = "Classic~Neutral~Minion~3~1~5~None~Imp Master"
+	index = "Classic~Neutral~Minion~3~1~5~~Imp Master"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, deal 1 damage to this minion and summon a 1/1 Imp"
 	name_CN = "小鬼召唤师"
 	def __init__(self, Game, ID):
@@ -990,7 +990,7 @@ class Imp(Minion):
 class InjuredBlademaster(Minion):
 	Class, race, name = "Neutral", "", "Injured Blademaster"
 	mana, attack, health = 3, 4, 7
-	index = "Classic~Neutral~Minion~3~4~7~None~Injured Blademaster~Battlecry"
+	index = "Classic~Neutral~Minion~3~4~7~~Injured Blademaster~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Deal 4 damage to HIMSELF"
 	name_CN = "负伤剑圣"
 	
@@ -1039,7 +1039,7 @@ class KingMukla(Minion):
 		return None
 		
 class Bananas(Spell):
-	Class, name = "Neutral", "Bananas"
+	Class, school, name = "Neutral", "", "Bananas"
 	requireTarget, mana = True, 1
 	index = "Classic~Neutral~Spell~1~Bananas~Uncollectible"
 	description = "Give a minion +1/+1"
@@ -1073,7 +1073,7 @@ class MurlocWarleader(Minion):
 class QuestingAdventurer(Minion):
 	Class, race, name = "Neutral", "", "Questing Adventurer"
 	mana, attack, health = 3, 2, 2
-	index = "Classic~Neutral~Minion~3~2~2~None~Questing Adventurer"
+	index = "Classic~Neutral~Minion~3~2~2~~Questing Adventurer"
 	requireTarget, keyWord, description = False, "", "Whenever your play a card, gain +1/+1"
 	name_CN = "任务达人"
 	def __init__(self, Game, ID):
@@ -1097,7 +1097,7 @@ class Trig_QuestingAdventurer(TrigBoard):
 class RagingWorgen(Minion):
 	Class, race, name = "Neutral", "", "Raging Worgen"
 	mana, attack, health = 3, 3, 3
-	index = "Classic~Neutral~Minion~3~3~3~None~Raging Worgen"
+	index = "Classic~Neutral~Minion~3~3~3~~Raging Worgen"
 	requireTarget, keyWord, description = False, "", "Has +1 Attack and Windfury while damaged"
 	name_CN = "暴怒的狼人"
 	def __init__(self, Game, ID):
@@ -1121,7 +1121,7 @@ class HasAura_RaginWorgen(StatAura_Enrage):
 class ScarletCrusader(Minion):
 	Class, race, name = "Neutral", "", "Scarlet Crusader"
 	mana, attack, health = 3, 3, 1
-	index = "Classic~Neutral~Minion~3~3~1~None~Scarlet Crusader~Divine Shield"
+	index = "Classic~Neutral~Minion~3~3~1~~Scarlet Crusader~Divine Shield"
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield"
 	name_CN = "血色十字军 战士"
 	
@@ -1143,7 +1143,7 @@ class SouthseaCaptain(Minion):
 class TaurenWarrior(Minion):
 	Class, race, name = "Neutral", "", "Tauren Warrior"
 	mana, attack, health = 3, 2, 3
-	index = "Classic~Neutral~Minion~3~2~3~None~Tauren Warrior~Taunt"
+	index = "Classic~Neutral~Minion~3~2~3~~Tauren Warrior~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Has +3 attack while damaged"
 	name_CN = "牛头人战士"
 	def __init__(self, Game, ID):
@@ -1154,7 +1154,7 @@ class TaurenWarrior(Minion):
 class ThrallmarFarseer(Minion):
 	Class, race, name = "Neutral", "", "Thrallmar Farseer"
 	mana, attack, health = 3, 2, 3
-	index = "Classic~Neutral~Minion~3~2~3~None~Thrallmar Farseer~Windfury"
+	index = "Classic~Neutral~Minion~3~2~3~~Thrallmar Farseer~Windfury"
 	requireTarget, keyWord, description = False, "Windfury", "Windfury"
 	name_CN = "萨尔玛先知"
 	
@@ -1162,7 +1162,7 @@ class ThrallmarFarseer(Minion):
 class TinkmasterOverspark(Minion):
 	Class, race, name = "Neutral", "", "Tinkmaster Overspark"
 	mana, attack, health = 3, 3, 3
-	index = "Classic~Neutral~Minion~3~3~3~None~Tinkmaster Overspark~Battlecry~Legendary"
+	index = "Classic~Neutral~Minion~3~3~3~~Tinkmaster Overspark~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Transform another random minion into a 5/5 Devilsaur or 1/1 Squirrel"
 	name_CN = "工匠大师 欧沃斯巴克"
 	
@@ -1204,7 +1204,7 @@ class Squirrel(Minion):
 class AncientBrewmaster(Minion):
 	Class, race, name = "Neutral", "", "Ancient Brewmaster"
 	mana, attack, health = 4, 5, 4
-	index = "Classic~Neutral~Minion~4~5~4~None~Ancient Brewmaster~Battlecry"
+	index = "Classic~Neutral~Minion~4~5~4~~Ancient Brewmaster~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Return a friendly minion from battlefield to your hand"
 	name_CN = "年迈的酒仙"
 	
@@ -1223,7 +1223,7 @@ class AncientBrewmaster(Minion):
 class AncientMage(Minion):
 	Class, race, name = "Neutral", "", "Ancient Mage"
 	mana, attack, health = 4, 2, 5
-	index = "Classic~Neutral~Minion~4~2~5~None~Ancient Mage~Battlecry"
+	index = "Classic~Neutral~Minion~4~2~5~~Ancient Mage~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Give adjacent minions Spell Damage +1"
 	name_CN = "年迈的法师"
 	
@@ -1238,7 +1238,7 @@ class AncientMage(Minion):
 class CultMaster(Minion):
 	Class, race, name = "Neutral", "", "Cult Master"
 	mana, attack, health = 4, 4, 2
-	index = "Classic~Neutral~Minion~4~4~2~None~Cult Master"
+	index = "Classic~Neutral~Minion~4~4~2~~Cult Master"
 	requireTarget, keyWord, description = False, "", "Whenever one of your other minion dies, draw a card"
 	name_CN = "诅咒教派领袖"
 	def __init__(self, Game, ID):
@@ -1262,7 +1262,7 @@ class Trig_CultMaster(TrigBoard):
 class DarkIronDwarf(Minion):
 	Class, race, name = "Neutral", "", "Dark Iron Dwarf"
 	mana, attack, health = 4, 4, 4
-	index = "Classic~Neutral~Minion~4~4~4~None~Dark Iron Dwarf~Battlecry"
+	index = "Classic~Neutral~Minion~4~4~4~~Dark Iron Dwarf~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Give a minion +2 Attack"
 	name_CN = "黑铁矮人"
 	
@@ -1282,7 +1282,7 @@ class DarkIronDwarf(Minion):
 class DefenderofArgus(Minion):
 	Class, race, name = "Neutral", "", "Defender of Argus"
 	mana, attack, health = 4, 2, 3
-	index = "Classic~Neutral~Minion~4~2~3~None~Defender of Argus~Battlecry"
+	index = "Classic~Neutral~Minion~4~2~3~~Defender of Argus~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Given adjacent minions +1/+1 and Taunt"
 	name_CN = "阿古斯防御者"
 	
@@ -1328,7 +1328,7 @@ class Trig_DreadCorsair(TrigHand):
 class MogushanWarden(Minion):
 	Class, race, name = "Neutral", "", "Mogu'shan Warden"
 	mana, attack, health = 4, 1, 7
-	index = "Classic~Neutral~Minion~4~1~7~None~Mogu'shan Warden~Taunt"
+	index = "Classic~Neutral~Minion~4~1~7~~Mogu'shan Warden~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "魔古山守望者"
 	
@@ -1336,7 +1336,7 @@ class MogushanWarden(Minion):
 class SilvermoonGuardian(Minion):
 	Class, race, name = "Neutral", "", "Silvermoon Guardian"
 	mana, attack, health = 4, 3, 3
-	index = "Classic~Neutral~Minion~4~3~3~None~Silvermoon Guardian~Divine Shield"
+	index = "Classic~Neutral~Minion~4~3~3~~Silvermoon Guardian~Divine Shield"
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield"
 	name_CN = "银月城卫兵"
 	
@@ -1344,7 +1344,7 @@ class SilvermoonGuardian(Minion):
 class SI7Infiltrator(Minion):
 	Class, race, name = "Neutral", "", "SI:7 Infiltrator"
 	mana, attack, health = 4, 5, 4
-	index = "Classic~Neutral~Minion~4~5~4~None~SI:7 Infiltrator~Battlecry"
+	index = "Classic~Neutral~Minion~4~5~4~~SI:7 Infiltrator~Battlecry"
 	requireTarget, keyWord, description = False, "", "Destroy a random enemy secret"
 	name_CN = "军情七处 渗透者"
 	
@@ -1377,7 +1377,7 @@ class TwilightDrake(Minion):
 class VioletTeacher(Minion):
 	Class, race, name = "Neutral", "", "Violet Teacher"
 	mana, attack, health = 4, 3, 5
-	index = "Classic~Neutral~Minion~4~3~5~None~Violet Teacher"
+	index = "Classic~Neutral~Minion~4~3~5~~Violet Teacher"
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, summon a 1/1 Violet Apperentice"
 	name_CN = "紫罗兰教师"
 	def __init__(self, Game, ID):
@@ -1400,7 +1400,7 @@ class Trig_VioletTeacher(TrigBoard):
 class VioletApprentice(Minion):
 	Class, race, name = "Neutral", "", "Violet Apprentice"
 	mana, attack, health = 1, 1, 1
-	index = "Classic~Neutral~Minion~1~1~1~None~Violet Apprentice~Uncollectible"
+	index = "Classic~Neutral~Minion~1~1~1~~Violet Apprentice~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "紫罗兰学徒"
 	
@@ -1408,7 +1408,7 @@ class VioletApprentice(Minion):
 class Abomination(Minion):
 	Class, race, name = "Neutral", "", "Abomination"
 	mana, attack, health = 5, 4, 4
-	index = "Classic~Neutral~Minion~5~4~4~None~Abomination~Taunt~Deathrattle"
+	index = "Classic~Neutral~Minion~5~4~4~~Abomination~Taunt~Deathrattle"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Deal 2 damage to ALL characters"
 	name_CN = "憎恶"
 	def __init__(self, Game, ID):
@@ -1428,7 +1428,7 @@ class Deal2DamagetoAllCharacters(Deathrattle_Minion):
 class BigGameHunter(Minion):
 	Class, race, name = "Neutral", "", "Big Game Hunter"
 	mana, attack, health = 5, 4, 2
-	index = "Classic~Neutral~Minion~5~4~2~None~Big Game Hunter~Battlecry"
+	index = "Classic~Neutral~Minion~5~4~2~~Big Game Hunter~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Destroy a minion with 7 or more Attack"
 	name_CN = "王牌猎人"
 	
@@ -1460,7 +1460,7 @@ class CaptainGreenskin(Minion):
 class FacelessManipulator(Minion):
 	Class, race, name = "Neutral", "", "Faceless Manipulator"
 	mana, attack, health = 5, 3, 3
-	index = "Classic~Neutral~Minion~5~3~3~None~Faceless Manipulator~Battlecry"
+	index = "Classic~Neutral~Minion~5~3~3~~Faceless Manipulator~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Choose a minion and become a copy of it"
 	name_CN = "无面操纵者"
 	
@@ -1493,7 +1493,7 @@ class FacelessManipulator(Minion):
 class FenCreeper(Minion):
 	Class, race, name = "Neutral", "", "Fen Creeper"
 	mana, attack, health = 5, 3, 6
-	index = "Classic~Neutral~Minion~5~3~6~None~Fen Creeper~Taunt"
+	index = "Classic~Neutral~Minion~5~3~6~~Fen Creeper~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "沼泽爬行者"
 	
@@ -1501,7 +1501,7 @@ class FenCreeper(Minion):
 class HarrisonJones(Minion):
 	Class, race, name = "Neutral", "", "Harrison Jones"
 	mana, attack, health = 5, 5, 4
-	index = "Classic~Neutral~Minion~5~5~4~None~Harrison Jones~Battlecry~Legendary"
+	index = "Classic~Neutral~Minion~5~5~4~~Harrison Jones~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Destroy your opponent's weapon and draw cards equal to its Durability"
 	name_CN = "哈里森琼斯"
 	
@@ -1522,7 +1522,7 @@ class HarrisonJones(Minion):
 class SilverHandKnight(Minion):
 	Class, race, name = "Neutral", "", "Silver Hand Knight"
 	mana, attack, health = 5, 4, 4
-	index = "Classic~Neutral~Minion~5~4~4~None~Silver Hand Knight~Battlecry"
+	index = "Classic~Neutral~Minion~5~4~4~~Silver Hand Knight~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 2/2 Squire"
 	name_CN = "白银之手骑士"
 	
@@ -1533,7 +1533,7 @@ class SilverHandKnight(Minion):
 class Squire(Minion):
 	Class, race, name = "Neutral", "", "Squire"
 	mana, attack, health = 1, 2, 2
-	index = "Classic~Neutral~Minion~1~2~2~None~Squire~Uncollectible"
+	index = "Classic~Neutral~Minion~1~2~2~~Squire~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "侍从"
 	
@@ -1541,7 +1541,7 @@ class Squire(Minion):
 class SpitefulSmith(Minion):
 	Class, race, name = "Neutral", "", "Spiteful Smith"
 	mana, attack, health = 5, 4, 6
-	index = "Classic~Neutral~Minion~5~4~6~None~Spiteful Smith"
+	index = "Classic~Neutral~Minion~5~4~6~~Spiteful Smith"
 	requireTarget, keyWord, description = False, "", "Your weapon has +2 Attack while this is damaged"
 	name_CN = "恶毒铁匠"
 	def __init__(self, Game, ID):
@@ -1653,7 +1653,7 @@ class StranglethornTiger(Minion):
 class VentureCoMercenary(Minion):
 	Class, race, name = "Neutral", "", "Venture Co. Mercenary"
 	mana, attack, health = 5, 7, 6
-	index = "Classic~Neutral~Minion~5~7~6~None~Venture Co. Mercenary"
+	index = "Classic~Neutral~Minion~5~7~6~~Venture Co. Mercenary"
 	requireTarget, keyWord, description = False, "", "Your minions cost (3) more"
 	name_CN = "风险投资 雇佣兵"
 	def __init__(self, Game, ID):
@@ -1667,7 +1667,7 @@ class VentureCoMercenary(Minion):
 class ArgentCommander(Minion):
 	Class, race, name = "Neutral", "", "Argent Commander"
 	mana, attack, health = 6, 4, 2
-	index = "Classic~Neutral~Minion~6~4~2~None~Argent Commander~Divine Shield~Charge"
+	index = "Classic~Neutral~Minion~6~4~2~~Argent Commander~Divine Shield~Charge"
 	requireTarget, keyWord, description = False, "Charge,Divine Shield", "Charge, Divine Shield"
 	name_CN = "银色指挥官"
 	
@@ -1675,7 +1675,7 @@ class ArgentCommander(Minion):
 class CairneBloodhoof(Minion):
 	Class, race, name = "Neutral", "", "Cairne Bloodhoof"
 	mana, attack, health = 6, 4, 5
-	index = "Classic~Neutral~Minion~6~4~5~None~Cairne Bloodhoof~Deathrattle~Legendary"
+	index = "Classic~Neutral~Minion~6~4~5~~Cairne Bloodhoof~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Summon a 4/5 Baine Bloodhoof"
 	name_CN = "凯恩血蹄"
 	def __init__(self, Game, ID):
@@ -1692,7 +1692,7 @@ class SummonBaineBloodhoof(Deathrattle_Minion):
 class BaineBloodhoof(Minion):
 	Class, race, name = "Neutral", "", "Baine Bloodhoof"
 	mana, attack, health = 4, 4, 5
-	index = "Classic~Neutral~Minion~4~4~5~None~Baine Bloodhoof~Legendary~Uncollectible"
+	index = "Classic~Neutral~Minion~4~4~5~~Baine Bloodhoof~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "贝恩血蹄"
 	
@@ -1713,7 +1713,7 @@ class FrostElemental(Minion):
 class GadgetzanAuctioneer(Minion):
 	Class, race, name = "Neutral", "", "Gadgetzan Auctioneer"
 	mana, attack, health = 6, 4, 4
-	index = "Classic~Neutral~Minion~6~4~4~None~Gadgetzan Auctioneer"
+	index = "Classic~Neutral~Minion~6~4~4~~Gadgetzan Auctioneer"
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, draw a card"
 	name_CN = "加基森拍卖师"
 	def __init__(self, Game, ID):
@@ -1737,7 +1737,7 @@ class Trig_GadgetzanAuctioneer(TrigBoard):
 class Hogger(Minion):
 	Class, race, name = "Neutral", "", "Hogger"
 	mana, attack, health = 6, 4, 4
-	index = "Classic~Neutral~Minion~6~4~4~None~Hogger~Legendary"
+	index = "Classic~Neutral~Minion~6~4~4~~Hogger~Legendary"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, summon a 2/2 Gnoll with Taunt"
 	name_CN = "霍格"
 	def __init__(self, Game, ID):
@@ -1760,7 +1760,7 @@ class Trig_Hogger(TrigBoard):
 class Gnoll(Minion):
 	Class, race, name = "Neutral", "", "Gnoll"
 	mana, attack, health = 2, 2, 2
-	index = "Classic~Neutral~Minion~2~2~2~None~Gnoll~Taunt~Uncollectible"
+	index = "Classic~Neutral~Minion~2~2~2~~Gnoll~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "豺狼人"
 	
@@ -1803,7 +1803,7 @@ class XavianSatyr(Minion):
 class PriestessofElune(Minion):
 	Class, race, name = "Neutral", "", "Priestess of Elune"
 	mana, attack, health = 6, 5, 4
-	index = "Classic~Neutral~Minion~6~5~4~None~Priestess of Elune~Battlecry"
+	index = "Classic~Neutral~Minion~6~5~4~~Priestess of Elune~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Restore 4 health to your hero"
 	name_CN = "艾露恩的 女祭司"
 	
@@ -1820,7 +1820,7 @@ class PriestessofElune(Minion):
 class Sunwalker(Minion):
 	Class, race, name = "Neutral", "", "Sunwalker"
 	mana, attack, health = 6, 4, 5
-	index = "Classic~Neutral~Minion~6~4~5~None~Sunwalker~Divine Shield~Taunt"
+	index = "Classic~Neutral~Minion~6~4~5~~Sunwalker~Divine Shield~Taunt"
 	requireTarget, keyWord, description = False, "Taunt,Divine Shield", "Taunt, Divine Shield"
 	name_CN = "烈日行者"
 	
@@ -1845,7 +1845,7 @@ class SummonFinkleEinhornsforOpponent(Deathrattle_Minion):
 class FinkleEinhorn(Minion):
 	Class, race, name = "Neutral", "", "Finkle Einhorn"
 	mana, attack, health = 3, 3, 3
-	index = "Classic~Neutral~Minion~3~3~3~None~Finkle Einhorn~Legendary~Uncollectible"
+	index = "Classic~Neutral~Minion~3~3~3~~Finkle Einhorn~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "芬克恩霍尔"
 	
@@ -1853,7 +1853,7 @@ class FinkleEinhorn(Minion):
 class TheBlackKnight(Minion):
 	Class, race, name = "Neutral", "", "The Black Knight"
 	mana, attack, health = 6, 4, 5
-	index = "Classic~Neutral~Minion~6~4~5~None~The Black Knight~Battlecry~Legendary"
+	index = "Classic~Neutral~Minion~6~4~5~~The Black Knight~Battlecry~Legendary"
 	requireTarget, keyWord, description = True, "", "Battlecry: Destroy a minion with Taunt"
 	name_CN = "黑骑士"
 	
@@ -1871,7 +1871,7 @@ class TheBlackKnight(Minion):
 class WindfuryHarpy(Minion):
 	Class, race, name = "Neutral", "", "Windfury Harpy"
 	mana, attack, health = 6, 4, 5
-	index = "Classic~Neutral~Minion~6~4~5~None~Windfury Harpy~Windfury"
+	index = "Classic~Neutral~Minion~6~4~5~~Windfury Harpy~Windfury"
 	requireTarget, keyWord, description = False, "Windfury", "Windfury"
 	name_CN = "风怒鹰身人"
 	
@@ -1879,7 +1879,7 @@ class WindfuryHarpy(Minion):
 class BarrensStablehand(Minion):
 	Class, race, name = "Neutral", "", "Barrens Stablehand"
 	mana, attack, health = 7, 4, 4
-	index = "Classic~Neutral~Minion~7~4~4~None~Barrens Stablehand~Battlecry"
+	index = "Classic~Neutral~Minion~7~4~4~~Barrens Stablehand~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a random Beast"
 	name_CN = "贫瘠之地 饲养员"
 	poolIdentifier = "Beasts to Summon"
@@ -1928,7 +1928,7 @@ class Trig_BaronGeddon(TrigBoard):
 class HighInquisitorWhitemane(Minion):
 	Class, race, name = "Neutral", "", "High Inquisitor Whitemane"
 	mana, attack, health = 7, 6, 8
-	index = "Classic~Neutral~Minion~7~6~8~None~High Inquisitor Whitemane~Battlecry~Legendary"
+	index = "Classic~Neutral~Minion~7~6~8~~High Inquisitor Whitemane~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon all friendly minions that died this turn"
 	name_CN = "大检察官 怀特迈恩"
 	
@@ -1957,7 +1957,7 @@ class HighInquisitorWhitemane(Minion):
 class RavenholdtAssassin(Minion):
 	Class, race, name = "Neutral", "", "Ravenholdt Assassin"
 	mana, attack, health = 7, 7, 5
-	index = "Classic~Neutral~Minion~7~7~5~None~Ravenholdt Assassin~Stealth"
+	index = "Classic~Neutral~Minion~7~7~5~~Ravenholdt Assassin~Stealth"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth"
 	name_CN = "拉文霍德刺客"
 	
@@ -1989,7 +1989,7 @@ class Trig_ArcaneDevourer(TrigBoard):
 class Gruul(Minion):
 	Class, race, name = "Neutral", "", "Gruul"
 	mana, attack, health = 8, 7, 7
-	index = "Classic~Neutral~Minion~8~7~7~None~Gruul~Legendary"
+	index = "Classic~Neutral~Minion~8~7~7~~Gruul~Legendary"
 	requireTarget, keyWord, description = False, "", "At the end of each turn, gain +1/+1"
 	name_CN = "格鲁尔"
 	def __init__(self, Game, ID):
@@ -2097,7 +2097,7 @@ class Trig_Ysera(TrigBoard):
 			curGame.Hand_Deck.addCardtoHand(card, self.entity.ID, byType=True, creator=type(self.entity), possi=pool)
 			
 class Dream(Spell):
-	Class, name = "DreamCard", "Dream"
+	Class, school, name = "DreamCard", "", "Dream"
 	requireTarget, mana = True, 0
 	index = "Classic~DreamCard~Spell~0~Dream~Uncollectible"
 	description = "Return a minion to its owner's hand"
@@ -2114,7 +2114,7 @@ class Dream(Spell):
 		return target
 		
 class Nightmare(Spell):
-	Class, name = "DreamCard", "Nightmare"
+	Class, school, name = "DreamCard", "", "Nightmare"
 	requireTarget, mana = True, 0
 	index = "Classic~DreamCard~Spell~0~Nightmare~Uncollectible"
 	description = "Give a minion +5/+5. At the start of your next turn, destroy it."
@@ -2135,7 +2135,7 @@ class Nightmare(Spell):
 		return target
 		
 class YseraAwakens(Spell):
-	Class, name = "DreamCard", "Ysera Awakens"
+	Class, school, name = "DreamCard", "", "Ysera Awakens"
 	requireTarget, mana = False, 2
 	index = "Classic~DreamCard~Spell~2~Ysera Awakens~Uncollectible"
 	description = "Deal 5 damage to all characters except Ysera"
@@ -2157,7 +2157,7 @@ class YseraAwakens(Spell):
 class LaughingSister(Minion):
 	Class, race, name = "DreamCard", "", "Laughing Sister"
 	mana, attack, health = 3, 3, 5
-	index = "Classic~DreamCard~Minion~3~3~5~None~Laughing Sister~Uncollectible"
+	index = "Classic~DreamCard~Minion~3~3~5~~Laughing Sister~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Can't targeted by spells or Hero Powers"
 	name_CN = "欢笑的姐妹"
 	def __init__(self, Game, ID):
@@ -2188,7 +2188,7 @@ class Deathwing(Minion):
 class SeaGiant(Minion):
 	Class, race, name = "Neutral", "", "Sea Giant"
 	mana, attack, health = 10, 8, 8
-	index = "Classic~Neutral~Minion~10~8~8~None~Sea Giant"
+	index = "Classic~Neutral~Minion~10~8~8~~Sea Giant"
 	requireTarget, keyWord, description = False, "", "Costs (1) less for each other minion on the battlefield"
 	name_CN = "海巨人"
 	def __init__(self, Game, ID):
@@ -2216,7 +2216,7 @@ class Trig_SeaGiant(TrigHand):
 		
 """Druid Cards"""
 class Savagery(Spell):
-	Class, name = "Druid", "Savagery"
+	Class, school, name = "Druid", "", "Savagery"
 	requireTarget, mana = True, 1
 	index = "Classic~Druid~Spell~1~Savagery"
 	description = "Deal equal to your hero's Attack to a minion"
@@ -2235,7 +2235,7 @@ class Savagery(Spell):
 		
 		
 class PoweroftheWild(Spell):
-	Class, name = "Druid", "Power of the Wild"
+	Class, school, name = "Druid", "", "Power of the Wild"
 	requireTarget, mana = False, 2
 	index = "Classic~Druid~Spell~2~Power of the Wild~Choose One"
 	description = "Choose One - Give your minions +1/+1; or Summon a 3/2 Panther"
@@ -2267,7 +2267,7 @@ class SummonaPanther_Option(ChooseOneOption):
 		return self.entity.Game.space(self.entity.ID) > 0
 		
 class LeaderofthePack(Spell):
-	Class, name = "Druid", "Leader of the Pack"
+	Class, school, name = "Druid", "", "Leader of the Pack"
 	requireTarget, mana = False, 2
 	index = "Classic~Druid~Spell~2~Leader of the Pack~Uncollectible"
 	description = "Give your minions +1/+1"
@@ -2281,7 +2281,7 @@ class LeaderofthePack(Spell):
 		return None
 		
 class SummonaPanther(Spell):
-	Class, name = "Druid", "Summon a Panther"
+	Class, school, name = "Druid", "", "Summon a Panther"
 	requireTarget, mana = False, 2
 	index = "Classic~Druid~Spell~2~Summon a Panther~Uncollectible"
 	description = "Summon a 3/2 Panther"
@@ -2302,7 +2302,7 @@ class Panther(Minion):
 	
 	
 class Wrath(Spell):
-	Class, name = "Druid", "Wrath"
+	Class, school, name = "Druid", "", "Wrath"
 	requireTarget, mana = True, 2
 	index = "Classic~Druid~Spell~2~Wrath~Choose One"
 	description = "Choose One - Deal 3 damage to a minion; or Deal 1 damage and draw a card"
@@ -2350,7 +2350,7 @@ class NaturesWrath_Option(ChooseOneOption):
 		return self.entity.selectableMinionExists(1)
 		
 class SolarWrath(Spell):
-	Class, name = "Druid", "Solar Wrath"
+	Class, school, name = "Druid", "", "Solar Wrath"
 	requireTarget, mana = True, 2
 	index = "Classic~Druid~Spell~2~Solar Wrath~Uncollectible"
 	description = "Deal 3 damage to a minion"
@@ -2372,7 +2372,7 @@ class SolarWrath(Spell):
 		return target
 		
 class NaturesWrath(Spell):
-	Class, name = "Druid", "Nature's Wrath"
+	Class, school, name = "Druid", "", "Nature's Wrath"
 	requireTarget, mana = True, 2
 	index = "Classic~Druid~Spell~2~Nature's Wrath~Uncollectible"
 	description = "Deal 1 damage to a minion. Draw a card"
@@ -2395,7 +2395,7 @@ class NaturesWrath(Spell):
 		return target
 		
 class MarkofNature(Spell):
-	Class, name = "Druid", "Mark of Nature"
+	Class, school, name = "Druid", "", "Mark of Nature"
 	requireTarget, mana = True, 3
 	index = "Classic~Druid~Spell~3~Mark of Nature~Choose One"
 	description = "Choose One - Give a minion +4 Attack; or +4 Health and Taunt"
@@ -2435,7 +2435,7 @@ class ThickHide_Option(ChooseOneOption):
 		return self.entity.selectableMinionExists(1)
 		
 class TigersFury(Spell):
-	Class, name = "Druid", "Tiger's Fury"
+	Class, school, name = "Druid", "", "Tiger's Fury"
 	requireTarget, mana = True, 3
 	index = "Classic~Druid~Spell~3~Tiger's Fury~Uncollectible"
 	description = "Give a minion +4 Attack"
@@ -2452,7 +2452,7 @@ class TigersFury(Spell):
 		return target
 		
 class ThickHide(Spell):
-	Class, name = "Druid", "Thick Hide"
+	Class, school, name = "Druid", "", "Thick Hide"
 	requireTarget, mana = True, 3
 	index = "Classic~Druid~Spell~3~Thick Hide~Uncollectible"
 	description = "Give a minion +4 Health and Taunt"
@@ -2471,7 +2471,7 @@ class ThickHide(Spell):
 		
 		
 class Bite(Spell):
-	Class, name = "Druid", "Bite"
+	Class, school, name = "Druid", "", "Bite"
 	requireTarget, mana = False, 4
 	index = "Classic~Druid~Spell~4~Bite"
 	description = "Give your hero +4 Attack this turn. Gain 4 Armor"
@@ -2485,7 +2485,7 @@ class Bite(Spell):
 class KeeperoftheGrove(Minion):
 	Class, race, name = "Druid", "", "Keeper of the Grove"
 	mana, attack, health = 4, 2, 2
-	index = "Classic~Druid~Minion~4~2~2~None~Keeper of the Grove~Choose One"
+	index = "Classic~Druid~Minion~4~2~2~~Keeper of the Grove~Choose One"
 	requireTarget, keyWord, description = True, "", "Choose One - Deal 2 damage; or Silence a minion"
 	name_CN = "丛林守护者"
 	def __init__(self, Game, ID):
@@ -2519,7 +2519,7 @@ class Dispel_Option(ChooseOneOption):
 		
 		
 class SouloftheForest(Spell):
-	Class, name = "Druid", "Soul of the Forest"
+	Class, school, name = "Druid", "", "Soul of the Forest"
 	requireTarget, mana = False, 4
 	index = "Classic~Druid~Spell~4~Soul of the Forest"
 	description = "Give your minions 'Deathrattle: Summon a 2/2 Treant'"
@@ -2545,7 +2545,7 @@ class SummonaTreant(Deathrattle_Minion):
 class Treant_Classic(Minion):
 	Class, race, name = "Druid", "", "Treant"
 	mana, attack, health = 2, 2, 2
-	index = "Classic~Druid~Minion~2~2~2~None~Treant~Uncollectible"
+	index = "Classic~Druid~Minion~2~2~2~~Treant~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "树人"
 	
@@ -2553,7 +2553,7 @@ class Treant_Classic(Minion):
 class DruidoftheClaw(Minion):
 	Class, race, name = "Druid", "", "Druid of the Claw"
 	mana, attack, health = 5, 4, 4
-	index = "Classic~Druid~Minion~5~4~4~None~Druid of the Claw~Choose One"
+	index = "Classic~Druid~Minion~5~4~4~~Druid of the Claw~Choose One"
 	requireTarget, keyWord, description = False, "", "Choose One - Transform into a 4/4 with Charge; or a 4/6 with Taunt"
 	name_CN = "利爪"
 	def __init__(self, Game, ID):
@@ -2606,7 +2606,7 @@ class DruidoftheClaw_Both(Minion):
 	
 	
 class ForceofNature(Spell):
-	Class, name = "Druid", "Force of Nature"
+	Class, school, name = "Druid", "", "Force of Nature"
 	requireTarget, mana = False, 5
 	index = "Classic~Druid~Spell~5~Force of Nature"
 	description = "Summon three 2/2 Treants"
@@ -2620,7 +2620,7 @@ class ForceofNature(Spell):
 		
 	
 class Starfall(Spell):
-	Class, name = "Druid", "Starfall"
+	Class, school, name = "Druid", "", "Starfall"
 	requireTarget, mana = True, 5
 	index = "Classic~Druid~Spell~5~Starfall~Choose One"
 	description = "Choose One - Deal 5 damage to a minion; or Deal 2 damage to all enemy minions"
@@ -2669,7 +2669,7 @@ class StellarDrift_Option(ChooseOneOption):
 	index = "Classic~Druid~Spell~5~Stellar Drift~Uncollectible"
 	
 class Starlord(Spell):
-	Class, name = "Druid", "Starlord"
+	Class, school, name = "Druid", "", "Starlord"
 	requireTarget, mana = True, 5
 	index = "Classic~Druid~Spell~5~Starlord~Uncollectible"
 	description = "Deal 5 damage to a minion"
@@ -2691,7 +2691,7 @@ class Starlord(Spell):
 		return target
 		
 class StellarDrift(Spell):
-	Class, name = "Druid", "Stellar Drift"
+	Class, school, name = "Druid", "", "Stellar Drift"
 	requireTarget, mana = False, 5
 	index = "Classic~Druid~Spell~5~Stellar Drift~Uncollectible"
 	description = "Deal 2 damage to all enemy minions"
@@ -2708,7 +2708,7 @@ class StellarDrift(Spell):
 		
 		
 class Nourish(Spell):
-	Class, name = "Druid", "Nourish"
+	Class, school, name = "Druid", "", "Nourish"
 	requireTarget, mana = False, 6
 	index = "Classic~Druid~Spell~6~Nourish~Choose One"
 	description = "Choose One - Gain 2 Mana Crystals; or Draw 3 cards"
@@ -2738,7 +2738,7 @@ class Enrich_Option(ChooseOneOption):
 	index = "Classic~Druid~Spell~6~Enrich~Uncollectible"
 	
 class RampantGrowth(Spell):
-	Class, name = "Druid", "Rampant Growth"
+	Class, school, name = "Druid", "", "Rampant Growth"
 	requireTarget, mana = False, 6
 	index = "Classic~Druid~Spell~6~Rampant Growth~Uncollectible"
 	description = "Gain 2 Mana Crystals"
@@ -2748,7 +2748,7 @@ class RampantGrowth(Spell):
 		return None
 		
 class Enrich(Spell):
-	Class, name = "Druid", "Enrich"
+	Class, school, name = "Druid", "", "Enrich"
 	requireTarget, mana = False, 6
 	index = "Classic~Druid~Spell~6~Enrich~Uncollectible"
 	description = "Draw 3 cards"
@@ -2763,7 +2763,7 @@ class Enrich(Spell):
 class AncientofLore(Minion):
 	Class, race, name = "Druid", "", "Ancient of Lore"
 	mana, attack, health = 7, 5, 5
-	index = "Classic~Druid~Minion~7~5~5~None~Ancient of Lore~Choose One"
+	index = "Classic~Druid~Minion~7~5~5~~Ancient of Lore~Choose One"
 	requireTarget, keyWord, description = True, "", "Choose One - Draw a card; or Restore 5 Health"
 	name_CN = "知识古树"
 	def __init__(self, Game, ID):
@@ -2802,7 +2802,7 @@ class AncientSecrets_Option(ChooseOneOption):
 class AncientofWar(Minion):
 	Class, race, name = "Druid", "", "Ancient of War"
 	mana, attack, health = 7, 5, 5
-	index = "Classic~Druid~Minion~7~5~5~None~Ancient of War~Choose One"
+	index = "Classic~Druid~Minion~7~5~5~~Ancient of War~Choose One"
 	requireTarget, keyWord, description = False, "", "Choose One - +5 Attack; or +5 Health and Taunt"
 	name_CN = "战争古树"
 	def __init__(self, Game, ID):
@@ -2828,7 +2828,7 @@ class Rooted_Option(ChooseOneOption):
 	
 	
 class GiftoftheWild(Spell):
-	Class, name = "Druid", "Gift of the Wild"
+	Class, school, name = "Druid", "", "Gift of the Wild"
 	requireTarget, mana = False, 8
 	index = "Classic~Druid~Spell~8~Gift of the Wild"
 	description = "Give your minions +2/+2 and Taunt"
@@ -2843,7 +2843,7 @@ class GiftoftheWild(Spell):
 class Cenarius(Minion):
 	Class, race, name = "Druid", "", "Cenarius"
 	mana, attack, health = 9, 5, 8
-	index = "Classic~Druid~Minion~9~5~8~None~Cenarius~Choose One~Legendary"
+	index = "Classic~Druid~Minion~9~5~8~~Cenarius~Choose One~Legendary"
 	requireTarget, keyWord, description = False, "", "Choose One- Give your other minions +2/+2; or Summon two 2/2 Treants with Taunt"
 	name_CN = "塞纳留斯"
 	def __init__(self, Game, ID):
@@ -2870,7 +2870,7 @@ class Cenarius(Minion):
 class Treant_Classic_Taunt(Minion):
 	Class, race, name = "Druid", "", "Treant"
 	mana, attack, health = 2, 2, 2
-	index = "Classic~Druid~Minion~2~2~2~None~Treant~Taunt~Uncollectible"
+	index = "Classic~Druid~Minion~2~2~2~~Treant~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "树人"
 	
@@ -2884,7 +2884,7 @@ class ShandosLesson_Option(ChooseOneOption):
 		
 """Hunter Cards"""
 class BestialWrath(Spell):
-	Class, name = "Hunter", "Bestial Wrath"
+	Class, school, name = "Hunter", "", "Bestial Wrath"
 	requireTarget, mana = True, 1
 	index = "Classic~Hunter~Spell~1~Bestial Wrath"
 	description = "Give a friendly Beast +2 Attack and Immune this turn"
@@ -2904,7 +2904,7 @@ class BestialWrath(Spell):
 		
 		
 class ExplosiveTrap(Secret):
-	Class, name = "Hunter", "Explosive Trap"
+	Class, school, name = "Hunter", "", "Explosive Trap"
 	requireTarget, mana = False, 2
 	index = "Classic~Hunter~Spell~2~Explosive Trap~~Secret"
 	description = "Secret: When your hero is attacked, deal 2 damage to all enemies"
@@ -2931,7 +2931,7 @@ class Trig_ExplosiveTrap(SecretTrigger):
 		
 		
 class FreezingTrap(Secret):
-	Class, name = "Hunter", "Freezing Trap"
+	Class, school, name = "Hunter", "", "Freezing Trap"
 	requireTarget, mana = False, 2
 	index = "Classic~Hunter~Spell~2~Freezing Trap~~Secret"
 	description = "Secret: When an enemy minion attacks, return it to its owner's hand. It costs (2) more."
@@ -2955,7 +2955,7 @@ class Trig_FreezingTrap(SecretTrigger):
 		
 		
 class Misdirection(Secret):
-	Class, name = "Hunter", "Misdirection"
+	Class, school, name = "Hunter", "", "Misdirection"
 	requireTarget, mana = False, 2
 	index = "Classic~Hunter~Spell~2~Misdirection~~Secret"
 	description = "Secret: When an enemy attacks your hero, instead it attacks another random character"
@@ -3000,7 +3000,7 @@ class Trig_Misdirection(SecretTrigger):
 					
 					
 class SnakeTrap(Secret):
-	Class, name = "Hunter", "Snake Trap"
+	Class, school, name = "Hunter", "", "Snake Trap"
 	requireTarget, mana = False, 2
 	index = "Classic~Hunter~Spell~2~Snake Trap~~Secret"
 	description = "Secret: When one of your minions is attacked, summon three 1/1 Snakes"
@@ -3029,7 +3029,7 @@ class Snake(Minion):
 	
 	
 class Snipe(Secret):
-	Class, name = "Hunter", "Snipe"
+	Class, school, name = "Hunter", "", "Snipe"
 	requireTarget, mana = False, 2
 	index = "Classic~Hunter~Spell~2~Snipe~~Secret"
 	description = "Secret: After your opponent plays a minion, deal 4 damage to it"
@@ -3057,7 +3057,7 @@ class Trig_Snipe(SecretTrigger):
 		
 		
 class Flare(Spell):
-	Class, name = "Hunter", "Flare"
+	Class, school, name = "Hunter", "", "Flare"
 	requireTarget, mana = False, 2
 	index = "Classic~Hunter~Spell~2~Flare"
 	description = "All minions lose Stealth. Destroy all enemy secrets. Draw a card"
@@ -3097,7 +3097,7 @@ class Trig_ScavengingHyena(TrigBoard):
 		
 		
 class DeadlyShot(Spell):
-	Class, name = "Hunter", "Deadly Shot"
+	Class, school, name = "Hunter", "", "Deadly Shot"
 	requireTarget, mana = False, 3
 	index = "Classic~Hunter~Spell~3~Deadly Shot"
 	description = "Destroy a random enemy minion"
@@ -3140,7 +3140,7 @@ class Trig_EaglehornBow(TrigBoard):
 		
 		
 class UnleashtheHounds(Spell):
-	Class, name = "Hunter", "Unleash the Hounds"
+	Class, school, name = "Hunter", "", "Unleash the Hounds"
 	requireTarget, mana = False, 3
 	index = "Classic~Hunter~Spell~3~Unleash the Hounds"
 	description = "For each enemy minion, summon a 1/1 Hound with Charge"
@@ -3162,7 +3162,7 @@ class Hound(Minion):
 	
 	
 class ExplosiveShot(Spell):
-	Class, name = "Hunter", "Explosive Shot"
+	Class, school, name = "Hunter", "", "Explosive Shot"
 	requireTarget, mana = True, 5
 	index = "Classic~Hunter~Spell~5~Explosive Shot"
 	description = "Deal 5 damage to a minion and 2 damage to adjacent ones"
@@ -3254,7 +3254,7 @@ class KingKrush(Minion):
 	
 """Mage cards"""
 class TomeofIntellect(Spell):
-	Class, name = "Mage", "Tome of Intellect"
+	Class, school, name = "Mage", "", "Tome of Intellect"
 	requireTarget, mana = False, 1
 	index = "Classic~Mage~Spell~1~Tome of Intellect"
 	description = "Add a random Mage spell to your hand"
@@ -3278,7 +3278,7 @@ class TomeofIntellect(Spell):
 		
 		
 class Icicle(Spell):
-	Class, name = "Mage", "Icicle"
+	Class, school, name = "Mage", "", "Icicle"
 	requireTarget, mana = True, 2
 	index = "Classic~Mage~Spell~2~Icicle"
 	description = "Deal 2 damage to a minion. If it's Frozen, draw a card"
@@ -3305,7 +3305,7 @@ class Icicle(Spell):
 class ManaWyrm(Minion):
 	Class, race, name = "Mage", "", "Mana Wyrm"
 	mana, attack, health = 2, 1, 3
-	index = "Classic~Mage~Minion~2~1~3~None~Mana Wyrm"
+	index = "Classic~Mage~Minion~2~1~3~~Mana Wyrm"
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, gain 1 Attack"
 	name_CN = "法力浮龙"
 	def __init__(self, Game, ID):
@@ -3329,7 +3329,7 @@ class Trig_ManaWyrm(TrigBoard):
 class SorcerersApprentice(Minion):
 	Class, race, name = "Mage", "", "Sorcerer's Apprentice"
 	mana, attack, health = 2, 3, 2
-	index = "Classic~Mage~Minion~2~3~2~None~Sorcerer's Apprentice"
+	index = "Classic~Mage~Minion~2~3~2~~Sorcerer's Apprentice"
 	requireTarget, keyWord, description = False, "", "Your spells cost (1) less"
 	name_CN = "巫师学徒"
 	def __init__(self, Game, ID):
@@ -3342,9 +3342,9 @@ class SorcerersApprentice(Minion):
 #Counterspell is special, it doesn't need a trigger. All spells played by player will directly
 #check if this Secret is onBoard.
 class Counterspell(Secret):
-	Class, name = "Mage", "Counterspell"
+	Class, school, name = "Mage", "", "Counterspell"
 	requireTarget, mana = False, 3
-	index = "Classic~Mage~Spell~3~Counterspell~~Secret"
+	index = "Classic~Mage~Spell~3~CounterSpell~Secret"
 	description = "Secret: When your opponent casts a spell, Counter it."
 	name_CN = "法术反制"
 	def __init__(self, Game, ID):
@@ -3363,7 +3363,7 @@ class Trig_Counterspell(SecretTrigger):
 		
 		
 class IceBarrier(Secret):
-	Class, name = "Mage", "Ice Barrier"
+	Class, school, name = "Mage", "", "Ice Barrier"
 	requireTarget, mana = False, 3
 	index = "Classic~Mage~Spell~3~Ice Barrier~~Secret"
 	description = "Secret: When your hero is attacked, gain 8 Armor"
@@ -3384,7 +3384,7 @@ class Trig_IceBarrier(SecretTrigger):
 		
 		
 class MirrorEntity(Secret):
-	Class, name = "Mage", "Mirror Entity"
+	Class, school, name = "Mage", "", "Mirror Entity"
 	requireTarget, mana = False, 3
 	index = "Classic~Mage~Spell~3~Mirror Entity~~Secret"
 	description = "Secret: After your opponent plays a minion, summon a copy of it"
@@ -3406,7 +3406,7 @@ class Trig_MirrorEntity(SecretTrigger):
 		
 		
 class Spellbender(Secret):
-	Class, name = "Mage", "Spellbender"
+	Class, school, name = "Mage", "", "Spellbender"
 	requireTarget, mana = False, 3
 	index = "Classic~Mage~Spell~3~Spellbender~~Secret"
 	description = "Secret: When an enemy casts a spell on a minion, summon a 1/3 as the new target"
@@ -3430,13 +3430,13 @@ class Trig_Spellbender(SecretTrigger):
 class Spellbender_Minion(Minion):
 	Class, race, name = "Mage", "", "Spellbender"
 	mana, attack, health = 1, 1, 3
-	index = "Classic~Mage~Minion~1~1~3~None~Spellbender~Uncollectible"
+	index = "Classic~Mage~Minion~1~1~3~~Spellbender~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "扰咒师"
 	
 	
 class Vaporize(Secret):
-	Class, name = "Mage", "Vaporize"
+	Class, school, name = "Mage", "", "Vaporize"
 	requireTarget, mana = False, 3
 	index = "Classic~Mage~Spell~3~Vaporize~~Secret"
 	description = "Secret: When a minion attacks your hero, destroy it"
@@ -3459,7 +3459,7 @@ class Trig_Vaporize(SecretTrigger):
 class KirinTorMage(Minion):
 	Class, race, name = "Mage", "", "Kirin Tor Mage"
 	mana, attack, health = 3, 4, 3
-	index = "Classic~Mage~Minion~3~4~3~None~Kirin Tor Mage~Battlecry"
+	index = "Classic~Mage~Minion~3~4~3~~Kirin Tor Mage~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Your next Secret this turn costs (0)"
 	name_CN = "肯瑞托法师"
 	
@@ -3478,7 +3478,7 @@ class GameManaAura_InTurnNextSecret0(TempManaEffect):
 		
 		
 class ConeofCold(Spell):
-	Class, name = "Mage", "Cone of Cold"
+	Class, school, name = "Mage", "", "Cone of Cold"
 	requireTarget, mana = True, 4
 	index = "Classic~Mage~Spell~4~Cone of Cold"
 	description = "Freeze a minion and the minions next to it, and deal 1 damage to them"
@@ -3511,7 +3511,7 @@ class ConeofCold(Spell):
 class EtherealArcanist(Minion):
 	Class, race, name = "Mage", "", "Ethereal Arcanist"
 	mana, attack, health = 4, 3, 3
-	index = "Classic~Mage~Minion~4~3~3~None~Ethereal Arcanist"
+	index = "Classic~Mage~Minion~4~3~3~~Ethereal Arcanist"
 	requireTarget, keyWord, description = False, "", "If you control a Secret at the end of your turn, gain +2/+2"
 	name_CN = "虚灵奥术师"
 	def __init__(self, Game, ID):
@@ -3533,7 +3533,7 @@ class Trig_EtherealArcanist(TrigBoard):
 		
 		
 class Blizzard(Spell):
-	Class, name = "Mage", "Blizzard"
+	Class, school, name = "Mage", "", "Blizzard"
 	requireTarget, mana = False, 6
 	index = "Classic~Mage~Spell~6~Blizzard"
 	description = "Deal 2 damage to all enemy minions and Freeze them"
@@ -3551,7 +3551,7 @@ class Blizzard(Spell):
 class ArchmageAntonidas(Minion):
 	Class, race, name = "Mage", "", "Archmage Antonidas"
 	mana, attack, health = 7, 5, 7
-	index = "Classic~Mage~Minion~7~5~7~None~Archmage Antonidas~Legendary"
+	index = "Classic~Mage~Minion~7~5~7~~Archmage Antonidas~Legendary"
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, add a 'Fireball' spell to your hand"
 	name_CN = "大法师 安东尼达斯"
 	def __init__(self, Game, ID):
@@ -3573,7 +3573,7 @@ class Trig_ArchmageAntonidas(TrigBoard):
 		
 		
 class Pyroblast(Spell):
-	Class, name = "Mage", "Pyroblast"
+	Class, school, name = "Mage", "", "Pyroblast"
 	requireTarget, mana = True, 10
 	index = "Classic~Mage~Spell~10~Pyroblast"
 	description = "Deal 10 damage"
@@ -3594,7 +3594,7 @@ class Pyroblast(Spell):
 class AldorPeacekeeper(Minion):
 	Class, race, name = "Paladin", "", "Aldor Peacekeeper"
 	mana, attack, health = 3, 3, 3
-	index = "Classic~Paladin~Minion~3~3~3~None~Aldor Peacekeeper~Battlecry"
+	index = "Classic~Paladin~Minion~3~3~3~~Aldor Peacekeeper~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Change an enemy minion's Attack to 1"
 	name_CN = "奥尔多卫士"
 	
@@ -3612,7 +3612,7 @@ class AldorPeacekeeper(Minion):
 		
 		
 class BlessingofWisdom(Spell):
-	Class, name = "Paladin", "Blessing of Wisdom"
+	Class, school, name = "Paladin", "", "Blessing of Wisdom"
 	requireTarget, mana = True, 1
 	index = "Classic~Paladin~Spell~1~Blessing of Wisdom"
 	description = "Choose a minion. Whenever it attacks, draw a card"
@@ -3645,7 +3645,7 @@ class Trig_BlessingofWisdom(TrigBoard):
 		
 		
 class EyeforanEye(Secret):
-	Class, name = "Paladin", "Eye for an Eye"
+	Class, school, name = "Paladin", "", "Eye for an Eye"
 	requireTarget, mana = False, 1
 	index = "Classic~Paladin~Spell~1~Eye for an Eye~~Secret"
 	description = "Secret: When your hero takes damage, deal that much damage to the enemy hero"
@@ -3667,7 +3667,7 @@ class Trig_EyeforanEye(SecretTrigger):
 		
 		
 class NobleSacrifice(Secret):
-	Class, name = "Paladin", "Noble Sacrifice"
+	Class, school, name = "Paladin", "", "Noble Sacrifice"
 	requireTarget, mana = False, 1
 	index = "Classic~Paladin~Spell~1~Noble Sacrifice~~Secret"
 	description = "Secret: When an enemy attacks, summon a 2/1 Defender as the new target"
@@ -3692,13 +3692,13 @@ class Trig_NobleSacrifice(SecretTrigger):
 class Defender(Minion):
 	Class, race, name = "Paladin", "", "Defender"
 	mana, attack, health = 1, 2, 1
-	index = "Classic~Paladin~Minion~1~2~1~None~Defender~Uncollectible"
+	index = "Classic~Paladin~Minion~1~2~1~~Defender~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "防御者"
 	
 	
 class Redemption(Secret):
-	Class, name = "Paladin", "Redemption"
+	Class, school, name = "Paladin", "", "Redemption"
 	requireTarget, mana = False, 1
 	index = "Classic~Paladin~Spell~1~Redemption~~Secret"
 	description = "Secret: When an enemy attacks, summon a 2/1 Defender as the new target"
@@ -3733,7 +3733,7 @@ class Trig_Redemption(SecretTrigger):
 			
 			
 class Repentance(Secret):
-	Class, name = "Paladin", "Repentance"
+	Class, school, name = "Paladin", "", "Repentance"
 	requireTarget, mana = False, 1
 	index = "Classic~Paladin~Spell~1~Repentance~~Secret"
 	description = "Secret: After your opponent plays a minion, reduce its Health to 1"
@@ -3756,7 +3756,7 @@ class Trig_Repentance(SecretTrigger):
 class ArgentProtector(Minion):
 	Class, race, name = "Paladin", "", "Argent Protector"
 	mana, attack, health = 2, 2, 2
-	index = "Classic~Paladin~Minion~2~2~2~None~Argent Protector~Battlecry"
+	index = "Classic~Paladin~Minion~2~2~2~~Argent Protector~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion Divine Shield"
 	name_CN = "银色保卫者"
 	
@@ -3773,7 +3773,7 @@ class ArgentProtector(Minion):
 		
 		
 class Equality(Spell):
-	Class, name = "Paladin", "Equality"
+	Class, school, name = "Paladin", "", "Equality"
 	requireTarget, mana = False, 4
 	index = "Classic~Paladin~Spell~4~Equality"
 	description = "Change the Health of ALL minions to 1"
@@ -3810,7 +3810,7 @@ class Trig_SwordofJustice(TrigBoard):
 		
 		
 class BlessedChampion(Spell):
-	Class, name = "Paladin", "Blessed Champion"
+	Class, school, name = "Paladin", "", "Blessed Champion"
 	requireTarget, mana = True, 5
 	index = "Classic~Paladin~Spell~5~Blessed Champion"
 	description = "Double a minion's Attack"
@@ -3828,7 +3828,7 @@ class BlessedChampion(Spell):
 		
 		
 class HolyWrath(Spell):
-	Class, name = "Paladin", "Holy Wrath"
+	Class, school, name = "Paladin", "", "Holy Wrath"
 	requireTarget, mana = True, 5
 	index = "Classic~Paladin~Spell~5~Holy Wrath"
 	description = "Draw a card and deal damage equal to its cost"
@@ -3843,7 +3843,7 @@ class HolyWrath(Spell):
 		
 		
 class Righteousness(Spell):
-	Class, name = "Paladin", "Righteousness"
+	Class, school, name = "Paladin", "", "Righteousness"
 	requireTarget, mana = False, 5
 	index = "Classic~Paladin~Spell~5~Righteousness"
 	description = "Give your minions Divine Shield"
@@ -3855,7 +3855,7 @@ class Righteousness(Spell):
 		
 		
 class AvengingWrath(Spell):
-	Class, name = "Paladin", "Avenging Wrath"
+	Class, school, name = "Paladin", "", "Avenging Wrath"
 	requireTarget, mana = False, 6
 	index = "Classic~Paladin~Spell~6~Avenging Wrath"
 	description = "Deal 8 damage randomly split among all enemies"
@@ -3887,7 +3887,7 @@ class AvengingWrath(Spell):
 		
 		
 class LayonHands(Spell):
-	Class, name = "Paladin", "Lay on Hands"
+	Class, school, name = "Paladin", "", "Lay on Hands"
 	requireTarget, mana = True, 8
 	index = "Classic~Paladin~Spell~8~Lay on Hands"
 	description = "Restore 8 Health. Draw 3 cards"
@@ -3909,7 +3909,7 @@ class LayonHands(Spell):
 class TirionFordring(Minion):
 	Class, race, name = "Paladin", "", "Tirion Fordring"
 	mana, attack, health = 8, 6, 6
-	index = "Classic~Paladin~Minion~8~6~6~None~Tirion Fordring~Taunt~Divine Shield~Deathrattle~Legendary"
+	index = "Classic~Paladin~Minion~8~6~6~~Tirion Fordring~Taunt~Divine Shield~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "Divine Shield,Taunt", "Divine Shield, Taunt. Deathrattle: Equip a 5/3 Ashbringer"
 	name_CN = "提里昂弗丁"
 	def __init__(self, Game, ID):
@@ -3932,7 +3932,7 @@ class Ashbringer(Weapon):
 	
 """Priest cards"""
 class CircleofHealing(Spell):
-	Class, name = "Priest", "Circle of Healing"
+	Class, school, name = "Priest", "", "Circle of Healing"
 	requireTarget, mana = False, 0
 	index = "Classic~Priest~Spell~0~Circle of Healing"
 	description = "Restore 4 health to ALL minions"
@@ -3949,7 +3949,7 @@ class CircleofHealing(Spell):
 		
 		
 class Silence(Spell):
-	Class, name = "Priest", "Silence"
+	Class, school, name = "Priest", "", "Silence"
 	requireTarget, mana = True, 0
 	index = "Classic~Priest~Spell~0~Silence"
 	description = "Silence a minion"
@@ -3967,7 +3967,7 @@ class Silence(Spell):
 		
 		
 class InnerFire(Spell):
-	Class, name = "Priest", "Inner Fire"
+	Class, school, name = "Priest", "", "Inner Fire"
 	requireTarget, mana = True, 1
 	index = "Classic~Priest~Spell~1~Inner Fire"
 	description = "Change a minion's Attack to be equal to its Health"
@@ -3987,7 +3987,7 @@ class InnerFire(Spell):
 class ScarletSubjugator(Minion):
 	Class, race, name = "Priest", "", "Scarlet Subjugator"
 	mana, attack, health = 1, 2, 1
-	index = "Classic~Priest~Minion~1~2~1~None~Scarlet Subjugator~Battlecry"
+	index = "Classic~Priest~Minion~1~2~1~~Scarlet Subjugator~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Give an enemy minion -2 Attack until your next turn"
 	name_CN = "血色征服者"
 	def targetExists(self, choice=0):
@@ -4005,7 +4005,7 @@ class ScarletSubjugator(Minion):
 class KulTiranChaplain(Minion):
 	Class, race, name = "Priest", "", "Kul Tiran Chaplain"
 	mana, attack, health = 2, 2, 3
-	index = "Classic~Priest~Minion~2~2~3~None~Kul Tiran Chaplain~Battlecry"
+	index = "Classic~Priest~Minion~2~2~3~~Kul Tiran Chaplain~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion +2 Health"
 	name_CN = "库尔提拉斯 教士"
 	
@@ -4024,7 +4024,7 @@ class KulTiranChaplain(Minion):
 class Lightwell(Minion):
 	Class, race, name = "Priest", "", "Lightwell"
 	mana, attack, health = 2, 0, 5
-	index = "Classic~Priest~Minion~2~0~5~None~Lightwell"
+	index = "Classic~Priest~Minion~2~0~5~~Lightwell"
 	requireTarget, keyWord, description = False, "", "At the start of your turn, restore 3 health to a damaged friendly character"
 	name_CN = "光明之泉"
 	def __init__(self, Game, ID):
@@ -4063,7 +4063,7 @@ class Trig_Lightwell(TrigBoard):
 				
 				
 class Thoughtsteal(Spell):
-	Class, name = "Priest", "Thoughtsteal"
+	Class, school, name = "Priest", "", "Thoughtsteal"
 	requireTarget, mana = False, 2
 	index = "Classic~Priest~Spell~2~Thoughtsteal"
 	description = "Copy 2 card in your opponent's hand and add them to your hand"
@@ -4098,7 +4098,7 @@ class Thoughtsteal(Spell):
 #暂时控制+永久控制 = 永久控制
 #暂时控制 + 暂时控制 = 每一次暂时控制者得到
 class ShadowMadness(Spell):
-	Class, name = "Priest", "Shadow Madness"
+	Class, school, name = "Priest", "", "Shadow Madness"
 	requireTarget, mana = True, 3
 	index = "Classic~Priest~Spell~3~Shadow Madness"
 	description = "Gain control of an enemy minion with 3 or less Attack until end of turn"
@@ -4152,7 +4152,7 @@ class StatAura_Lightspawn:
 		
 		
 class MassDispel(Spell):
-	Class, name = "Priest", "Mass Dispel"
+	Class, school, name = "Priest", "", "Mass Dispel"
 	requireTarget, mana = False, 4
 	index = "Classic~Priest~Spell~4~Mass Dispel"
 	description = "Silence all enemy minions. Draw a card"
@@ -4166,7 +4166,7 @@ class MassDispel(Spell):
 		
 		
 class Mindgames(Spell):
-	Class, name = "Priest", "Mindgames"
+	Class, school, name = "Priest", "", "Mindgames"
 	requireTarget, mana = False, 4
 	index = "Classic~Priest~Spell~4~Mindgames"
 	description = "Put a copy of a random minion from your opponent's deck into the battlefield"
@@ -4194,13 +4194,13 @@ class Mindgames(Spell):
 class ShadowofNothing(Minion):
 	Class, race, name = "Priest", "", "Shadow of Nothing"
 	mana, attack, health = 0, 0, 1
-	index = "Classic~Priest~Minion~0~0~1~None~Shadow of Nothing~Uncollectible"
+	index = "Classic~Priest~Minion~0~0~1~~Shadow of Nothing~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Mindgames whiffed! Your opponent had no minions!"
 	name_CN = "空无之影"
 	
 	
 class ShadowWordRuin(Spell):
-	Class, name = "Priest", "Shadow Word: Ruin"
+	Class, school, name = "Priest", "", "Shadow Word: Ruin"
 	requireTarget, mana = False, 4
 	index = "Classic~Priest~Spell~4~Shadow Word: Ruin"
 	description = "Destroy all minions with 5 or more Attack"
@@ -4213,7 +4213,7 @@ class ShadowWordRuin(Spell):
 class TempleEnforcer(Minion):
 	Class, race, name = "Priest", "", "Temple Enforcer"
 	mana, attack, health = 5, 5, 6
-	index = "Classic~Priest~Minion~5~5~6~None~Temple Enforcer~Battlecry"
+	index = "Classic~Priest~Minion~5~5~6~~Temple Enforcer~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion +3 health"
 	name_CN = "圣殿执行者"
 	
@@ -4232,7 +4232,7 @@ class TempleEnforcer(Minion):
 class CabalShadowPriest(Minion):
 	Class, race, name = "Priest", "", "Cabal Shadow Priest"
 	mana, attack, health = 6, 4, 5
-	index = "Classic~Priest~Minion~6~4~5~None~Cabal Shadow Priest~Battlecry"
+	index = "Classic~Priest~Minion~6~4~5~~Cabal Shadow Priest~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Take control of an enemy minion with 2 or less Attack"
 	name_CN = "秘教暗影祭司"
 	
@@ -4253,7 +4253,7 @@ class CabalShadowPriest(Minion):
 class NatalieSeline(Minion):
 	Class, race, name = "Priest", "", "Natalie Seline"
 	mana, attack, health = 8, 8, 1
-	index = "Classic~Priest~Minion~8~8~1~None~Natalie Seline~Battlecry"
+	index = "Classic~Priest~Minion~8~8~1~~Natalie Seline~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Destroy a minion and gain its Health"
 	name_CN = "娜塔莉塞林"
 	
@@ -4275,7 +4275,7 @@ class NatalieSeline(Minion):
 		
 """Rogue cards"""
 class Preparation(Spell):
-	Class, name = "Rogue", "Preparation"
+	Class, school, name = "Rogue", "", "Preparation"
 	requireTarget, mana = False, 0
 	index = "Classic~Rogue~Spell~0~Preparation"
 	description = "The next spell you cast this turn costs (2) less"
@@ -4296,7 +4296,7 @@ class GameManaAura_InTurnNextSpell2Less(TempManaEffect):
 		
 		
 class Shadowstep(Spell):
-	Class, name = "Rogue", "Shadowstep"
+	Class, school, name = "Rogue", "", "Shadowstep"
 	requireTarget, mana = True, 0
 	index = "Classic~Rogue~Spell~0~Shadowstep"
 	description = "Return a friendly minion to your hand. It costs (2) less"
@@ -4317,7 +4317,7 @@ class Shadowstep(Spell):
 		
 		
 class Pilfer(Spell):
-	Class, name = "Rogue", "Pilfer"
+	Class, school, name = "Rogue", "", "Pilfer"
 	requireTarget, mana = False, 1
 	index = "Classic~Rogue~Spell~1~Pilfer"
 	description = "Add a random card from another class to your hand"
@@ -4349,7 +4349,7 @@ class Pilfer(Spell):
 #Betrayal lets target deal damage to adjacent minions.
 #Therefore, the overkill and lifesteal can be triggered.
 class Betrayal(Spell):
-	Class, name = "Rogue", "Betrayal"
+	Class, school, name = "Rogue", "", "Betrayal"
 	requireTarget, mana = True, 2
 	index = "Classic~Rogue~Spell~2~Betrayal"
 	description = "Force a minion to deal its damage to minions next to it"
@@ -4369,7 +4369,7 @@ class Betrayal(Spell):
 		
 		
 class ColdBlood(Spell):
-	Class, name = "Rogue", "Cold Blood"
+	Class, school, name = "Rogue", "", "Cold Blood"
 	requireTarget, mana = True, 2
 	index = "Classic~Rogue~Spell~2~Cold Blood~Combo"
 	description = "Give a minion +2 Attack. Combo: +4 Attack instead"
@@ -4395,7 +4395,7 @@ class ColdBlood(Spell):
 class DefiasRingleader(Minion):
 	Class, race, name = "Rogue", "", "Defias Ringleader"
 	mana, attack, health = 2, 2, 2
-	index = "Classic~Rogue~Minion~2~2~2~None~Defias Ringleader~Combo"
+	index = "Classic~Rogue~Minion~2~2~2~~Defias Ringleader~Combo"
 	requireTarget, keyWord, description = False, "", "Combo: Summon a 2/1 Defias Bandit"
 	name_CN = "迪菲亚头目"
 	
@@ -4410,13 +4410,13 @@ class DefiasRingleader(Minion):
 class DefiasBandit(Minion):
 	Class, race, name = "Rogue", "", "Defias Bandit"
 	mana, attack, health = 1, 2, 1
-	index = "Classic~Rogue~Minion~1~2~1~None~Defias Bandit~Uncollectible"
+	index = "Classic~Rogue~Minion~1~2~1~~Defias Bandit~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "迪菲亚强盗"
 	
 	
 class Eviscerate(Spell):
-	Class, name = "Rogue", "Eviscerate"
+	Class, school, name = "Rogue", "", "Eviscerate"
 	requireTarget, mana = True, 2
 	index = "Classic~Rogue~Spell~2~Eviscerate~Combo"
 	description = "Deal 2 damage. Combo: Deal 4 instead"
@@ -4440,7 +4440,7 @@ class Eviscerate(Spell):
 class PatientAssassin(Minion):
 	Class, race, name = "Rogue", "", "Patient Assassin"
 	mana, attack, health = 2, 1, 1
-	index = "Classic~Rogue~Minion~2~1~1~None~Patient Assassin~Poisonous~Stealth"
+	index = "Classic~Rogue~Minion~2~1~1~~Patient Assassin~Poisonous~Stealth"
 	requireTarget, keyWord, description = False, "Stealth,Poisonous", "Stealth, Poisonous"
 	name_CN = "耐心的刺客"
 	
@@ -4448,7 +4448,7 @@ class PatientAssassin(Minion):
 class EdwinVanCleef(Minion):
 	Class, race, name = "Rogue", "", "Edwin VanCleef"
 	mana, attack, health = 4, 2, 2
-	index = "Classic~Rogue~Minion~4~2~2~None~Edwin VanCleef~Combo~Legendary"
+	index = "Classic~Rogue~Minion~4~2~2~~Edwin VanCleef~Combo~Legendary"
 	requireTarget, keyWord, description = False, "", "Combo: Gain +2/+2 for each other card you've played this turn"
 	name_CN = "艾德温 范克里夫"
 	
@@ -4465,7 +4465,7 @@ class EdwinVanCleef(Minion):
 		
 		
 class Headcrack(Spell):
-	Class, name = "Rogue", "Headcrack"
+	Class, school, name = "Rogue", "", "Headcrack"
 	requireTarget, mana = False, 3
 	index = "Classic~Rogue~Spell~3~Headcrack~Combo"
 	description = "Deal 2 damage to the enemy hero. Combo: Return this to your hand next turn"
@@ -4536,7 +4536,7 @@ class PerditionsBlade(Weapon):
 class SI7Agent(Minion):
 	Class, race, name = "Rogue", "", "SI:7 Agent"
 	mana, attack, health = 3, 3, 3
-	index = "Classic~Rogue~Minion~3~3~3~None~SI:7 Agent~Combo"
+	index = "Classic~Rogue~Minion~3~3~3~~SI:7 Agent~Combo"
 	requireTarget, keyWord, description = True, "", "Combo: Deal 2 damage"
 	name_CN = "军情七处特工"
 	
@@ -4555,7 +4555,7 @@ class SI7Agent(Minion):
 #Therefore, Lifesteal and Overkill won't be triggered by this spell.
 #However, Doomerang let weapon deal the damage and won't be boosted by Spell Damage.
 class BladeFlurry(Spell):
-	Class, name = "Rogue",  "Blade Flurry"
+	Class, school, name = "Rogue", "",  "Blade Flurry"
 	requireTarget, mana = False, 4
 	index = "Classic~Rogue~Spell~4~Blade Flurry"
 	description = "Destroy your weapon and deal its damage to all enemy minions"
@@ -4576,7 +4576,7 @@ class BladeFlurry(Spell):
 class MasterofDisguise(Minion):
 	Class, race, name = "Rogue", "", "Master of Disguise"
 	mana, attack, health = 4, 4, 4
-	index = "Classic~Rogue~Minion~4~4~4~None~Master of Disguise~Battlecry"
+	index = "Classic~Rogue~Minion~4~4~4~~Master of Disguise~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion Stealth until your next turn"
 	name_CN = "伪装大师"
 	
@@ -4596,7 +4596,7 @@ class MasterofDisguise(Minion):
 class Kidnapper(Minion):
 	Class, race, name = "Rogue", "", "Kidnapper"
 	mana, attack, health = 6, 5, 3
-	index = "Classic~Rogue~Minion~6~5~3~None~Kidnapper~Combo"
+	index = "Classic~Rogue~Minion~6~5~3~~Kidnapper~Combo"
 	requireTarget, keyWord, description = True, "", "Combo: Return a minion to its owner's hand"
 	name_CN = "劫持者"
 	
@@ -4633,7 +4633,7 @@ class DustDevil(Minion):
 		
 		
 class EarthShock(Spell):
-	Class, name = "Shaman", "Earth Shock"
+	Class, school, name = "Shaman", "", "Earth Shock"
 	requireTarget, mana = True, 1
 	index = "Classic~Shaman~Spell~1~Earth Shock"
 	description = "Silence a minion. Then deal 1 damage to it"
@@ -4657,7 +4657,7 @@ class EarthShock(Spell):
 		
 		
 class ForkedLightning(Spell):
-	Class, name = "Shaman", "Forked Lightning"
+	Class, school, name = "Shaman", "", "Forked Lightning"
 	requireTarget, mana = False, 1
 	index = "Classic~Shaman~Spell~1~Forked Lightning~Overload"
 	description = "Deal 2 damage to 2 random enemy minions. Overload: (2)"
@@ -4689,7 +4689,7 @@ class ForkedLightning(Spell):
 		
 		
 class LightningBolt(Spell):
-	Class, name = "Shaman", "Lightning Bolt"
+	Class, school, name = "Shaman", "Nature", "Lightning Bolt"
 	requireTarget, mana = True, 1
 	index = "Classic~Shaman~Spell~1~Lightning Bolt~Overload"
 	description = "Deal 3 damage. Overload: (1)"
@@ -4710,7 +4710,7 @@ class LightningBolt(Spell):
 		
 		
 class AncestralSpirit(Spell):
-	Class, name = "Shaman",  "Ancestral Spirit"
+	Class, school, name = "Shaman", "",  "Ancestral Spirit"
 	requireTarget, mana = True, 2
 	index = "Classic~Shaman~Spell~2~Ancestral Spirit"
 	description = "Give a minion 'Deathrattle: Resummon this minion.'"
@@ -4748,7 +4748,7 @@ class StormforgedAxe(Weapon):
 		
 		
 class FarSight(Spell):
-	Class, name = "Shaman", "Far Sight"
+	Class, school, name = "Shaman", "", "Far Sight"
 	requireTarget, mana = False, 3
 	index = "Classic~Shaman~Spell~3~Far Sight"
 	description = "Draw a card. That card costs (3) less"
@@ -4762,7 +4762,7 @@ class FarSight(Spell):
 		
 		
 class FeralSpirit(Spell):
-	Class, name = "Shaman", "Feral Spirit"
+	Class, school, name = "Shaman", "", "Feral Spirit"
 	requireTarget, mana = False, 3
 	index = "Classic~Shaman~Spell~3~Feral Spirit~Overload"
 	description = "Summon two 2/3 Spirit Wolves with Taunt. Overload: (2)"
@@ -4781,14 +4781,14 @@ class FeralSpirit(Spell):
 class SpiritWolf(Minion):
 	Class, race, name = "Shaman", "", "Spirit Wolf"
 	mana, attack, health = 2, 2, 3
-	index = "Classic~Shaman~Minion~2~2~3~None~Spirit Wolf~Taunt~Uncollectible"
+	index = "Classic~Shaman~Minion~2~2~3~~Spirit Wolf~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "幽灵狼"
 	
 #Overload spells targeting adjacent minions will overload multiple times.
 #Overload spells repeated by Electra Stormsurge will also overload twice.
 class LavaBurst(Spell):
-	Class, name = "Shaman", "Lava Burst"
+	Class, school, name = "Shaman", "", "Lava Burst"
 	requireTarget, mana = True, 3
 	index = "Classic~Shaman~Spell~3~Lava Burst~Overload"
 	description = "Deal 5 damage. Overload: (2)"
@@ -4809,7 +4809,7 @@ class LavaBurst(Spell):
 		
 		
 class LightningStorm(Spell):
-	Class, name = "Shaman", "Lightning Storm"
+	Class, school, name = "Shaman", "", "Lightning Storm"
 	requireTarget, mana = False, 3
 	index = "Classic~Shaman~Spell~3~Lightning Storm~Overload"
 	description = "Deal 2~3 damage to all enemy minions. Overload: (2)"
@@ -4956,7 +4956,7 @@ class Trig_BloodImp(TrigBoard):
 				
 				
 class CalloftheVoid(Spell):
-	Class, name = "Warlock", "Call of the Void"
+	Class, school, name = "Warlock", "", "Call of the Void"
 	requireTarget, mana = False, 1
 	index = "Classic~Warlock~Spell~1~Call of the Void"
 	description = "Add a random Demon to your hand"
@@ -4992,7 +4992,7 @@ class FlameImp(Minion):
 		
 		
 class Demonfire(Spell):
-	Class, name = "Warlock", "Demonfire"
+	Class, school, name = "Warlock", "", "Demonfire"
 	requireTarget, mana = True, 2
 	index = "Classic~Warlock~Spell~2~Demonfire"
 	description = "Deal 2 damage to a minion. If it's friendly Demon, give it +2/+2 instead"
@@ -5019,7 +5019,7 @@ class Demonfire(Spell):
 		
 #If the hands are full, both of the cards will be milled. Tested with Archmage Vargoth.
 class SenseDemons(Spell):
-	Class, name = "Warlock", "Sense Demons"
+	Class, school, name = "Warlock", "", "Sense Demons"
 	requireTarget, mana = False, 3
 	index = "Classic~Warlock~Spell~3~Sense Demons"
 	description = "Draw 2 Demons from your deck"
@@ -5050,7 +5050,7 @@ class WorthlessImp(Minion):
 class SummoningPortal(Minion):
 	Class, race, name = "Warlock", "", "Summoning Portal"
 	mana, attack, health = 4, 0, 4
-	index = "Classic~Warlock~Minion~4~0~4~None~Summoning Portal"
+	index = "Classic~Warlock~Minion~4~0~4~~Summoning Portal"
 	requireTarget, keyWord, description = False, "", "Your minions cost (2) less, but not less than (1)"
 	name_CN = "召唤传送门"
 	def __init__(self, Game, ID):
@@ -5106,7 +5106,7 @@ class PitLord(Minion):
 		
 		
 class Shadowflame(Spell):
-	Class, name = "Warlock", "Shadowflame"
+	Class, school, name = "Warlock", "", "Shadowflame"
 	requireTarget, mana = True, 4
 	index = "Classic~Warlock~Spell~4~Shadowflame"
 	description = "Destroy a friendly minion and deals its Attack damage to all enemy minions"
@@ -5127,7 +5127,7 @@ class Shadowflame(Spell):
 		
 		
 class BaneofDoom(Spell):
-	Class, name = "Warlock", "Bane of Doom"
+	Class, school, name = "Warlock", "", "Bane of Doom"
 	requireTarget, mana = True, 5
 	index = "Classic~Warlock~Spell~5~Bane of Doom"
 	description = "Deal 2 damage to a character. It that kills it, summon a random Demon"
@@ -5165,7 +5165,7 @@ class BaneofDoom(Spell):
 		
 		
 class SiphonSoul(Spell):
-	Class, name = "Warlock", "Siphon Soul"
+	Class, school, name = "Warlock", "", "Siphon Soul"
 	requireTarget, mana = True, 6
 	index = "Classic~Warlock~Spell~6~Siphon Soul"
 	description = "Destroy a minion. Restore 3 Health to your hero"
@@ -5203,7 +5203,7 @@ class Siegebreaker(Minion):
 		
 		
 class TwistingNether(Spell):
-	Class, name = "Warlock", "Twisting Nether"
+	Class, school, name = "Warlock", "", "Twisting Nether"
 	requireTarget, mana = False, 8
 	index = "Classic~Warlock~Spell~8~Twisting Nether"
 	description = "Destroy all minions"
@@ -5279,7 +5279,7 @@ class LordJaraxxus_Hero(Hero):
 		
 """Warrior cards"""
 class InnerRage(Spell):
-	Class, name = "Warrior", "Inner Rage"
+	Class, school, name = "Warrior", "", "Inner Rage"
 	requireTarget, mana = True, 0
 	index = "Classic~Warrior~Spell~0~Inner Rage"
 	description = "Deal 1 damage to a minion and give it +2 Attack"
@@ -5303,7 +5303,7 @@ class InnerRage(Spell):
 		
 		
 class ShieldSlam(Spell):
-	Class, name = "Warrior", "Shield Slam"
+	Class, school, name = "Warrior", "", "Shield Slam"
 	requireTarget, mana = True, 1
 	index = "Classic~Warrior~Spell~1~Shield Slam"
 	description = "Deal 1 damage to a minion for each Armor you have"
@@ -5323,7 +5323,7 @@ class ShieldSlam(Spell):
 		
 		
 class Upgrade(Spell):
-	Class, name = "Warrior", "Upgrade!"
+	Class, school, name = "Warrior", "", "Upgrade!"
 	requireTarget, mana = False, 1
 	index = "Classic~Warrior~Spell~1~Upgrade!"
 	description = "If your have a weapon, give it +1/+1. Otherwise, equip a 1/3 weapon"
@@ -5346,7 +5346,7 @@ class HeavyAxe(Weapon):
 class Armorsmith(Minion):
 	Class, race, name = "Warrior", "", "Armorsmith"
 	mana, attack, health = 2, 1, 4
-	index = "Classic~Warrior~Minion~2~1~4~None~Armorsmith"
+	index = "Classic~Warrior~Minion~2~1~4~~Armorsmith"
 	requireTarget, keyWord, description = False, "", "Whenever a friendly minion takes damage, gain +1 Armor"
 	name_CN = "铸甲师"
 	def __init__(self, Game, ID):
@@ -5368,7 +5368,7 @@ class Trig_Armorsmith(TrigBoard):
 		
 		
 class BattleRage(Spell):
-	Class, name = "Warrior", "Battle Rage"
+	Class, school, name = "Warrior", "", "Battle Rage"
 	requireTarget, mana = False, 2
 	index = "Classic~Warrior~Spell~2~Battle Rage"
 	description = "Draw a card for each damaged friendly character"
@@ -5389,7 +5389,7 @@ class BattleRage(Spell):
 #先命令怒吼，然后Shellfighter，1血生物攻击与剧毒随从，仍然是Shellfighter先结算，无关先后顺序
 #先执行Shellfighter的预伤害扳机结算，然后随从自己的takesDamage会开始伤害量预判定。
 class CommandingShout(Spell):
-	Class, name = "Warrior", "Commanding Shout"
+	Class, school, name = "Warrior", "", "Commanding Shout"
 	requireTarget, mana = False, 2
 	index = "Classic~Warrior~Spell~2~Commanding Shout"
 	description = "Your minions can't be reduced below 1 Health this turn. Draw a card"
@@ -5445,7 +5445,7 @@ class CommandingShout_Effect:
 class CruelTaskmaster(Minion):
 	Class, race, name = "Warrior", "", "Cruel Taskmaster"
 	mana, attack, health = 2, 2, 2
-	index = "Classic~Warrior~Minion~2~2~2~None~Cruel Taskmaster~Battlecry"
+	index = "Classic~Warrior~Minion~2~2~2~~Cruel Taskmaster~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal 1 damage to a minion and give it +2 Attack"
 	name_CN = "严酷的监工"
 	
@@ -5464,7 +5464,7 @@ class CruelTaskmaster(Minion):
 		
 		
 class Rampage(Spell):
-	Class, name = "Warrior", "Rampage"
+	Class, school, name = "Warrior", "", "Rampage"
 	requireTarget, mana = True, 2
 	index = "Classic~Warrior~Spell~2~Rampage"
 	description = "Give a damaged minion +3/+3"
@@ -5482,7 +5482,7 @@ class Rampage(Spell):
 		
 #Deals 2 damage to Frothing Berserker, Berserker gains +1 attack then this draws card.
 class Slam(Spell):
-	Class, name = "Warrior", "Slam"
+	Class, school, name = "Warrior", "", "Slam"
 	requireTarget, mana = True, 2
 	index = "Classic~Warrior~Spell~2~Slam"
 	description = "Deal 2 damage to a minion. If it survives, draw a card"
@@ -5509,7 +5509,7 @@ class Slam(Spell):
 class FrothingBerserker(Minion):
 	Class, race, name = "Warrior", "", "Frothing Berserker"
 	mana, attack, health = 3, 2, 4
-	index = "Classic~Warrior~Minion~3~2~4~None~Frothing Berserker"
+	index = "Classic~Warrior~Minion~3~2~4~~Frothing Berserker"
 	requireTarget, keyWord, description = False, "", "Whenever a minion takes damage, gain +1 Attack"
 	name_CN = "暴乱狂战士"
 	def __init__(self, Game, ID):
@@ -5533,7 +5533,7 @@ class Trig_FrothingBerserker(TrigBoard):
 class ArathiWeaponsmith(Minion):
 	Class, race, name = "Warrior", "", "Arathi Weaponsmith"
 	mana, attack, health = 4, 3, 3
-	index = "Classic~Warrior~Minion~4~3~3~None~Arathi Weaponsmith~Battlecry"
+	index = "Classic~Warrior~Minion~4~3~3~~Arathi Weaponsmith~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Equip a 2/2 weapon"
 	name_CN = "阿拉希武器匠"
 	
@@ -5549,7 +5549,7 @@ class BattleAxe(Weapon):
 	
 	
 class MortalStrike(Spell):
-	Class, name = "Warrior", "Mortal Strike"
+	Class, school, name = "Warrior", "", "Mortal Strike"
 	requireTarget, mana = True, 4
 	index = "Classic~Warrior~Spell~4~Mortal Strike"
 	description = "Deal 4 damage. If your have 12 or less Health, deal 6 instead"
@@ -5569,7 +5569,7 @@ class MortalStrike(Spell):
 		
 		
 class Brawl(Spell):
-	Class, name = "Warrior", "Brawl"
+	Class, school, name = "Warrior", "", "Brawl"
 	requireTarget, mana = False, 5
 	index = "Classic~Warrior~Spell~5~Brawl"
 	description = "Destroy all minions except one. (Chosen randomly)"
@@ -5630,7 +5630,7 @@ class Trig_Gorehowl(TrigBoard):
 class GrommashHellscream(Minion):
 	Class, race, name = "Warrior", "", "Grommash Hellscream"
 	mana, attack, health = 8, 4, 9
-	index = "Classic~Warrior~Minion~8~4~9~None~Grommash Hellscream~Charge~Legendary"
+	index = "Classic~Warrior~Minion~8~4~9~~Grommash Hellscream~Charge~Legendary"
 	requireTarget, keyWord, description = False, "Charge", "Charge. Has +6 attack while damaged"
 	name_CN = "格罗玛什 地狱咆哮"
 	def __init__(self, Game, ID):
@@ -5638,115 +5638,115 @@ class GrommashHellscream(Minion):
 		self.auras["Has +6 attack while damaged"] = StatAura_Enrage(self, 6)
 		
 		
-Classic_Indices = {"Classic~Neutral~Minion~0~1~1~None~Wisp": Wisp,
-					"Classic~Neutral~Minion~1~1~1~None~Abusive Sergeant~Battlecry": AbusiveSergeant,
-					"Classic~Neutral~Minion~1~1~1~None~Argent Squire~Divine Shield": ArgentSquire,
+Classic_Indices = {"Classic~Neutral~Minion~0~1~1~~Wisp": Wisp,
+					"Classic~Neutral~Minion~1~1~1~~Abusive Sergeant~Battlecry": AbusiveSergeant,
+					"Classic~Neutral~Minion~1~1~1~~Argent Squire~Divine Shield": ArgentSquire,
 					"Classic~Neutral~Minion~1~1~1~Beast~Angry Chicken": AngryChicken,
 					"Classic~Neutral~Minion~1~1~2~Pirate~Bloodsail Corsair~Battlecry": BloodsailCorsair,
 					"Classic~Neutral~Minion~1~1~2~Beast~Hungry Crab~Battlecry": HungryCrab,
-					"Classic~Neutral~Minion~1~1~1~None~Leper Gnome~Deathrattle": LeperGnome,
-					"Classic~Neutral~Minion~1~1~2~None~Lightwarden": Lightwarden,
+					"Classic~Neutral~Minion~1~1~1~~Leper Gnome~Deathrattle": LeperGnome,
+					"Classic~Neutral~Minion~1~1~2~~Lightwarden": Lightwarden,
 					"Classic~Neutral~Minion~1~1~2~Murloc~Murloc Tidecaller": MurlocTidecaller,
-					"Classic~Neutral~Minion~1~1~2~None~Secretkeeper": Secretkeeper,
-					"Classic~Neutral~Minion~1~0~4~None~Shieldbearer~Taunt": Shieldbearer,
+					"Classic~Neutral~Minion~1~1~2~~Secretkeeper": Secretkeeper,
+					"Classic~Neutral~Minion~1~0~4~~Shieldbearer~Taunt": Shieldbearer,
 					"Classic~Neutral~Minion~1~2~1~Pirate~Southsea Deckhand": SouthseaDeckhand,
-					"Classic~Neutral~Minion~1~2~1~None~Worgen Infiltrator~Stealth": WorgenInfiltrator,
+					"Classic~Neutral~Minion~1~2~1~~Worgen Infiltrator~Stealth": WorgenInfiltrator,
 					"Classic~Neutral~Minion~1~1~1~Beast~Young Dragonhawk~Windfury": YoungDragonhawk,
-					"Classic~Neutral~Minion~1~2~1~None~Young Priestess": YoungPriestess,
-					"Classic~Neutral~Minion~2~2~3~None~Amani Berserker": AmaniBerserker,
-					"Classic~Neutral~Minion~2~4~5~None~Ancient Watcher": AncientWatcher,
-					"Classic~Neutral~Minion~2~1~1~None~Bloodmage Thalnos~Deathrattle~Spell Damage~Legendary": BloodmageThalnos,
+					"Classic~Neutral~Minion~1~2~1~~Young Priestess": YoungPriestess,
+					"Classic~Neutral~Minion~2~2~3~~Amani Berserker": AmaniBerserker,
+					"Classic~Neutral~Minion~2~4~5~~Ancient Watcher": AncientWatcher,
+					"Classic~Neutral~Minion~2~1~1~~Bloodmage Thalnos~Deathrattle~Spell Damage~Legendary": BloodmageThalnos,
 					"Classic~Neutral~Minion~2~2~3~Pirate~Bloodsail Raider~Battlecry": BloodsailRaider,
-					"Classic~Neutral~Minion~2~2~2~None~Crazed Alchemist~Battlecry": CrazedAlchemist,
+					"Classic~Neutral~Minion~2~2~2~~Crazed Alchemist~Battlecry": CrazedAlchemist,
 					"Classic~Neutral~Minion~2~2~2~Beast~Dire Wolf Alpha": DireWolfAlpha,
-					"Classic~Neutral~Minion~2~0~7~None~Doomsayer": Doomsayer,
+					"Classic~Neutral~Minion~2~0~7~~Doomsayer": Doomsayer,
 					"Classic~Neutral~Minion~2~3~2~Dragon~Faerie Dragon": FaerieDragon,
-					"Classic~Neutral~Minion~2~2~2~None~Knife Juggler": KnifeJuggler,
-					"Classic~Neutral~Minion~2~2~1~None~Loot Hoarder~Deathrattle": LootHoarder,
-					"Classic~Neutral~Minion~2~0~4~None~Lorewalker Cho~Legendary": LorewalkerCho,
-					"Classic~Neutral~Minion~2~3~2~None~Mad Bomber~Battlecry": MadBomber,
-					"Classic~Neutral~Minion~2~1~3~None~Mana Addict": ManaAddict,
-					"Classic~Neutral~Minion~2~2~2~None~Mana Wraith": ManaWraith,
-					"Classic~Neutral~Minion~2~1~3~None~Master Swordsmith": MasterSwordsmith,
-					"Classic~Neutral~Minion~2~4~4~None~Millhouse Manastorm~Battlecry~Legendary": MillhouseManastorm,
-					"Classic~Neutral~Minion~2~0~4~None~Nat Pagle~Legendary": NatPagle,
-					"Classic~Neutral~Minion~2~2~2~None~Pint-Sized Summoner": PintSizedSummoner,
-					"Classic~Neutral~Minion~2~2~3~None~Sunfury Protector~Battlecry": SunfuryProtector,
-					"Classic~Neutral~Minion~2~3~2~None~Wild Pyromancer": WildPyromancer,
-					"Classic~Neutral~Minion~2~3~2~None~Youthful Brewmaster~Battlecry": YouthfulBrewmaster,
+					"Classic~Neutral~Minion~2~2~2~~Knife Juggler": KnifeJuggler,
+					"Classic~Neutral~Minion~2~2~1~~Loot Hoarder~Deathrattle": LootHoarder,
+					"Classic~Neutral~Minion~2~0~4~~Lorewalker Cho~Legendary": LorewalkerCho,
+					"Classic~Neutral~Minion~2~3~2~~Mad Bomber~Battlecry": MadBomber,
+					"Classic~Neutral~Minion~2~1~3~~Mana Addict": ManaAddict,
+					"Classic~Neutral~Minion~2~2~2~~Mana Wraith": ManaWraith,
+					"Classic~Neutral~Minion~2~1~3~~Master Swordsmith": MasterSwordsmith,
+					"Classic~Neutral~Minion~2~4~4~~Millhouse Manastorm~Battlecry~Legendary": MillhouseManastorm,
+					"Classic~Neutral~Minion~2~0~4~~Nat Pagle~Legendary": NatPagle,
+					"Classic~Neutral~Minion~2~2~2~~Pint-Sized Summoner": PintSizedSummoner,
+					"Classic~Neutral~Minion~2~2~3~~Sunfury Protector~Battlecry": SunfuryProtector,
+					"Classic~Neutral~Minion~2~3~2~~Wild Pyromancer": WildPyromancer,
+					"Classic~Neutral~Minion~2~3~2~~Youthful Brewmaster~Battlecry": YouthfulBrewmaster,
 					"Classic~Neutral~Minion~3~0~3~Mech~Alarm-o-Bot": AlarmoBot,
-					"Classic~Neutral~Minion~3~4~4~None~Arcane Golem~Battlecry": ArcaneGolem,
-					"Classic~Neutral~Minion~3~3~3~None~Blood Knight~Battlecry": BloodKnight,
+					"Classic~Neutral~Minion~3~4~4~~Arcane Golem~Battlecry": ArcaneGolem,
+					"Classic~Neutral~Minion~3~3~3~~Blood Knight~Battlecry": BloodKnight,
 					"Classic~Neutral~Minion~3~3~2~Dragon~Brightwing~Battlecry~Legendary": Brightwing,
 					"Classic~Neutral~Minion~3~2~3~Murloc~Coldlight Seer~Battlecry": ColdlightSeer,
 					"Classic~Neutral~Minion~3~1~4~Mech~Demolisher": Demolisher,
-					"Classic~Neutral~Minion~3~3~3~None~Earthen Ring Farseer~Battlecry": EarthenRingFarseer,
+					"Classic~Neutral~Minion~3~3~3~~Earthen Ring Farseer~Battlecry": EarthenRingFarseer,
 					"Classic~Neutral~Minion~3~2~3~Beast~Emperor Cobra~Poisonous": EmperorCobra,
-					"Classic~Neutral~Minion~3~2~3~None~Flesheating Ghoul": FlesheatingGhoul,
+					"Classic~Neutral~Minion~3~2~3~~Flesheating Ghoul": FlesheatingGhoul,
 					"Classic~Neutral~Minion~3~2~3~Mech~Harvest Golem~Deathrattle": HarvestGolem,
 					"Classic~Neutral~Minion~1~2~1~Mech~Damaged Golem~Uncollectible": DamagedGolem,
-					"Classic~Neutral~Minion~3~1~5~None~Imp Master": ImpMaster,
+					"Classic~Neutral~Minion~3~1~5~~Imp Master": ImpMaster,
 					"Classic~Neutral~Minion~1~1~1~Demon~Imp~Uncollectible": Imp,
-					"Classic~Neutral~Minion~3~4~7~None~Injured Blademaster~Battlecry": InjuredBlademaster,
+					"Classic~Neutral~Minion~3~4~7~~Injured Blademaster~Battlecry": InjuredBlademaster,
 					"Classic~Neutral~Minion~3~2~1~Beast~Ironbeak Owl~Battlecry": IronbeakOwl,
 					"Classic~Neutral~Minion~3~4~2~Beast~Jungle Panther~Stealth": JunglePanther,
 					"Classic~Neutral~Minion~3~5~5~Beast~King Mukla~Battlecry~Legendary": KingMukla,
 					"Classic~Neutral~Spell~1~Bananas~Uncollectible": Bananas,
 					"Classic~Neutral~Minion~3~3~3~Murloc~Murloc Warleader": MurlocWarleader,
-					"Classic~Neutral~Minion~3~2~2~None~Questing Adventurer": QuestingAdventurer,
-					"Classic~Neutral~Minion~3~3~3~None~Raging Worgen": RagingWorgen,
-					"Classic~Neutral~Minion~3~3~1~None~Scarlet Crusader~Divine Shield": ScarletCrusader,
+					"Classic~Neutral~Minion~3~2~2~~Questing Adventurer": QuestingAdventurer,
+					"Classic~Neutral~Minion~3~3~3~~Raging Worgen": RagingWorgen,
+					"Classic~Neutral~Minion~3~3~1~~Scarlet Crusader~Divine Shield": ScarletCrusader,
 					"Classic~Neutral~Minion~3~3~3~Pirate~Southsea Captain": SouthseaCaptain,
-					"Classic~Neutral~Minion~3~2~3~None~Tauren Warrior~Taunt": TaurenWarrior,
-					"Classic~Neutral~Minion~3~2~3~None~Thrallmar Farseer~Windfury": ThrallmarFarseer,
-					"Classic~Neutral~Minion~3~3~3~None~Tinkmaster Overspark~Battlecry~Legendary": TinkmasterOverspark,
+					"Classic~Neutral~Minion~3~2~3~~Tauren Warrior~Taunt": TaurenWarrior,
+					"Classic~Neutral~Minion~3~2~3~~Thrallmar Farseer~Windfury": ThrallmarFarseer,
+					"Classic~Neutral~Minion~3~3~3~~Tinkmaster Overspark~Battlecry~Legendary": TinkmasterOverspark,
 					"Classic~Neutral~Minion~5~5~5~Beast~Devilsaur~Uncollectible": Devilsaur,
 					"Classic~Neutral~Minion~1~1~1~Beast~Squirrel~Uncollectible": Squirrel,
-					"Classic~Neutral~Minion~4~5~4~None~Ancient Brewmaster~Battlecry": AncientBrewmaster,
-					"Classic~Neutral~Minion~4~2~5~None~Ancient Mage~Battlecry": AncientMage,
-					"Classic~Neutral~Minion~4~4~2~None~Cult Master": CultMaster,
-					"Classic~Neutral~Minion~4~4~4~None~Dark Iron Dwarf~Battlecry": DarkIronDwarf,
-					"Classic~Neutral~Minion~4~2~3~None~Defender of Argus~Battlecry": DefenderofArgus,
+					"Classic~Neutral~Minion~4~5~4~~Ancient Brewmaster~Battlecry": AncientBrewmaster,
+					"Classic~Neutral~Minion~4~2~5~~Ancient Mage~Battlecry": AncientMage,
+					"Classic~Neutral~Minion~4~4~2~~Cult Master": CultMaster,
+					"Classic~Neutral~Minion~4~4~4~~Dark Iron Dwarf~Battlecry": DarkIronDwarf,
+					"Classic~Neutral~Minion~4~2~3~~Defender of Argus~Battlecry": DefenderofArgus,
 					"Classic~Neutral~Minion~4~3~3~Pirate~Dread Corsair~Taunt": DreadCorsair,
-					"Classic~Neutral~Minion~4~1~7~None~Mogu'shan Warden~Taunt": MogushanWarden,
-					"Classic~Neutral~Minion~4~3~3~None~Silvermoon Guardian~Divine Shield": SilvermoonGuardian,
-					"Classic~Neutral~Minion~4~5~4~None~SI:7 Infiltrator~Battlecry": SI7Infiltrator,
+					"Classic~Neutral~Minion~4~1~7~~Mogu'shan Warden~Taunt": MogushanWarden,
+					"Classic~Neutral~Minion~4~3~3~~Silvermoon Guardian~Divine Shield": SilvermoonGuardian,
+					"Classic~Neutral~Minion~4~5~4~~SI:7 Infiltrator~Battlecry": SI7Infiltrator,
 					"Classic~Neutral~Minion~4~4~1~Dragon~Twilight Drake~Battlecry": TwilightDrake,
-					"Classic~Neutral~Minion~4~3~5~None~Violet Teacher": VioletTeacher,
-					"Classic~Neutral~Minion~1~1~1~None~Violet Apprentice~Uncollectible": VioletApprentice,
-					"Classic~Neutral~Minion~5~4~4~None~Abomination~Taunt~Deathrattle": Abomination,
-					"Classic~Neutral~Minion~5~4~2~None~Big Game Hunter~Battlecry": BigGameHunter,
+					"Classic~Neutral~Minion~4~3~5~~Violet Teacher": VioletTeacher,
+					"Classic~Neutral~Minion~1~1~1~~Violet Apprentice~Uncollectible": VioletApprentice,
+					"Classic~Neutral~Minion~5~4~4~~Abomination~Taunt~Deathrattle": Abomination,
+					"Classic~Neutral~Minion~5~4~2~~Big Game Hunter~Battlecry": BigGameHunter,
 					"Classic~Neutral~Minion~5~5~4~Pirate~Captain Greenskin~Battlecry~Legendary": CaptainGreenskin,
-					"Classic~Neutral~Minion~5~3~3~None~Faceless Manipulator~Battlecry": FacelessManipulator,
-					"Classic~Neutral~Minion~5~3~6~None~Fen Creeper~Taunt": FenCreeper,
-					"Classic~Neutral~Minion~5~5~4~None~Harrison Jones~Battlecry~Legendary": HarrisonJones,
-					"Classic~Neutral~Minion~5~4~4~None~Silver Hand Knight~Battlecry": SilverHandKnight,
-					"Classic~Neutral~Minion~1~2~2~None~Squire~Uncollectible": Squire,
-					"Classic~Neutral~Minion~5~4~6~None~Spiteful Smith": SpitefulSmith,
+					"Classic~Neutral~Minion~5~3~3~~Faceless Manipulator~Battlecry": FacelessManipulator,
+					"Classic~Neutral~Minion~5~3~6~~Fen Creeper~Taunt": FenCreeper,
+					"Classic~Neutral~Minion~5~5~4~~Harrison Jones~Battlecry~Legendary": HarrisonJones,
+					"Classic~Neutral~Minion~5~4~4~~Silver Hand Knight~Battlecry": SilverHandKnight,
+					"Classic~Neutral~Minion~1~2~2~~Squire~Uncollectible": Squire,
+					"Classic~Neutral~Minion~5~4~6~~Spiteful Smith": SpitefulSmith,
 					"Classic~Neutral~Minion~5~3~5~Beast~Stampeding Kodo~Battlecry": StampedingKodo,
 					"Classic~Neutral~Minion~5~5~5~Beast~Stranglethorn Tiger~Stealth": StranglethornTiger,
-					"Classic~Neutral~Minion~5~7~6~None~Venture Co. Mercenary": VentureCoMercenary,
-					"Classic~Neutral~Minion~6~4~2~None~Argent Commander~Divine Shield~Charge": ArgentCommander,
-					"Classic~Neutral~Minion~6~4~5~None~Cairne Bloodhoof~Deathrattle~Legendary": CairneBloodhoof,
-					"Classic~Neutral~Minion~4~4~5~None~Baine Bloodhoof~Legendary~Uncollectible": BaineBloodhoof,
+					"Classic~Neutral~Minion~5~7~6~~Venture Co. Mercenary": VentureCoMercenary,
+					"Classic~Neutral~Minion~6~4~2~~Argent Commander~Divine Shield~Charge": ArgentCommander,
+					"Classic~Neutral~Minion~6~4~5~~Cairne Bloodhoof~Deathrattle~Legendary": CairneBloodhoof,
+					"Classic~Neutral~Minion~4~4~5~~Baine Bloodhoof~Legendary~Uncollectible": BaineBloodhoof,
 					"Classic~Neutral~Minion~6~5~5~Elemental~Frost Elemental~Battlecry": FrostElemental,
-					"Classic~Neutral~Minion~6~4~4~None~Gadgetzan Auctioneer": GadgetzanAuctioneer,
-					"Classic~Neutral~Minion~6~4~4~None~Hogger~Legendary": Hogger,
-					"Classic~Neutral~Minion~2~2~2~None~Gnoll~Taunt~Uncollectible": Gnoll,
+					"Classic~Neutral~Minion~6~4~4~~Gadgetzan Auctioneer": GadgetzanAuctioneer,
+					"Classic~Neutral~Minion~6~4~4~~Hogger~Legendary": Hogger,
+					"Classic~Neutral~Minion~2~2~2~~Gnoll~Taunt~Uncollectible": Gnoll,
 					"Classic~Neutral~Minion~6~7~5~Demon~Xavius~Legendary": Xavius,
 					"Classic~Neutral~Minion~1~2~1~Demon~Xavian Satyr~Uncollectible": XavianSatyr,
-					"Classic~Neutral~Minion~6~5~4~None~Priestess of Elune~Battlecry": PriestessofElune,
-					"Classic~Neutral~Minion~6~4~5~None~Sunwalker~Divine Shield~Taunt": Sunwalker,
+					"Classic~Neutral~Minion~6~5~4~~Priestess of Elune~Battlecry": PriestessofElune,
+					"Classic~Neutral~Minion~6~4~5~~Sunwalker~Divine Shield~Taunt": Sunwalker,
 					"Classic~Neutral~Minion~6~9~7~Beast~The Beast~Deathrattle~Legendary": TheBeast,
-					"Classic~Neutral~Minion~3~3~3~None~Finkle Einhorn~Legendary~Uncollectible": FinkleEinhorn,
-					"Classic~Neutral~Minion~6~4~5~None~The Black Knight~Battlecry~Legendary": TheBlackKnight,
-					"Classic~Neutral~Minion~6~4~5~None~Windfury Harpy~Windfury": WindfuryHarpy,
-					"Classic~Neutral~Minion~7~4~4~None~Barrens Stablehand~Battlecry": BarrensStablehand,
+					"Classic~Neutral~Minion~3~3~3~~Finkle Einhorn~Legendary~Uncollectible": FinkleEinhorn,
+					"Classic~Neutral~Minion~6~4~5~~The Black Knight~Battlecry~Legendary": TheBlackKnight,
+					"Classic~Neutral~Minion~6~4~5~~Windfury Harpy~Windfury": WindfuryHarpy,
+					"Classic~Neutral~Minion~7~4~4~~Barrens Stablehand~Battlecry": BarrensStablehand,
 					"Classic~Neutral~Minion~7~7~5~Elemental~Baron Geddon~Legendary": BaronGeddon,
-					"Classic~Neutral~Minion~7~6~8~None~High Inquisitor Whitemane~Battlecry~Legendary": HighInquisitorWhitemane,
-					"Classic~Neutral~Minion~7~7~5~None~Ravenholdt Assassin~Stealth": RavenholdtAssassin,
+					"Classic~Neutral~Minion~7~6~8~~High Inquisitor Whitemane~Battlecry~Legendary": HighInquisitorWhitemane,
+					"Classic~Neutral~Minion~7~7~5~~Ravenholdt Assassin~Stealth": RavenholdtAssassin,
 					"Classic~Neutral~Minion~8~5~5~Elemental~Arcane Devourer": ArcaneDevourer,
-					"Classic~Neutral~Minion~8~7~7~None~Gruul~Legendary": Gruul,
+					"Classic~Neutral~Minion~8~7~7~~Gruul~Legendary": Gruul,
 					"Classic~Neutral~Minion~9~8~8~Dragon~Alexstrasza~Battlecry~Legendary": Alexstrasza,
 					"Classic~Neutral~Minion~9~4~12~Dragon~Malygos~Spell Damage~Legendary": Malygos,
 					"Classic~Neutral~Minion~9~8~8~Dragon~Nozdormu~Legendary": Nozdormu,
@@ -5756,10 +5756,10 @@ Classic_Indices = {"Classic~Neutral~Minion~0~1~1~None~Wisp": Wisp,
 					"Classic~DreamCard~Spell~0~Dream~Uncollectible": Dream,
 					"Classic~DreamCard~Spell~0~Nightmare~Uncollectible": Nightmare,
 					"Classic~DreamCard~Spell~2~Ysera Awakens~Uncollectible": YseraAwakens,
-					"Classic~DreamCard~Minion~3~3~5~None~Laughing Sister~Uncollectible": LaughingSister,
+					"Classic~DreamCard~Minion~3~3~5~~Laughing Sister~Uncollectible": LaughingSister,
 					"Classic~DreamCard~Minion~4~7~6~Dragon~Emerald Drake~Uncollectible": EmeraldDrake,
 					"Classic~Neutral~Minion~10~12~12~Dragon~Deathwing~Battlecry~Legendary": Deathwing,
-					"Classic~Neutral~Minion~10~8~8~None~Sea Giant": SeaGiant,
+					"Classic~Neutral~Minion~10~8~8~~Sea Giant": SeaGiant,
 					"Classic~Druid~Spell~1~Savagery": Savagery,
 					"Classic~Druid~Spell~2~Power of the Wild~Choose One": PoweroftheWild,
 					"Classic~Druid~Spell~2~Leader of the Pack~Uncollectible": LeaderofthePack,
@@ -5772,25 +5772,25 @@ Classic_Indices = {"Classic~Neutral~Minion~0~1~1~None~Wisp": Wisp,
 					"Classic~Druid~Spell~3~Tiger's Fury~Uncollectible": TigersFury,
 					"Classic~Druid~Spell~3~Thick Hide~Uncollectible": ThickHide,
 					"Classic~Druid~Spell~4~Bite": Bite,
-					"Classic~Druid~Minion~4~2~2~None~Keeper of the Grove~Choose One": KeeperoftheGrove,
+					"Classic~Druid~Minion~4~2~2~~Keeper of the Grove~Choose One": KeeperoftheGrove,
 					"Classic~Druid~Spell~4~Soul of the Forest": SouloftheForest,
-					"Classic~Druid~Minion~5~4~4~None~Druid of the Claw~Choose One": DruidoftheClaw,
+					"Classic~Druid~Minion~5~4~4~~Druid of the Claw~Choose One": DruidoftheClaw,
 					"Classic~Druid~Minion~5~4~4~Beast~Druid of the Claw~Charge~Uncollectible": DruidoftheClaw_Charge,
 					"Classic~Druid~Minion~5~4~6~Beast~Druid of the Claw~Taunt~Uncollectible": DruidoftheClaw_Taunt,
 					"Classic~Druid~Minion~5~4~6~Beast~Druid of the Claw~Taunt~Charge~Uncollectible": DruidoftheClaw_Both,
 					"Classic~Druid~Spell~5~Force of Nature": ForceofNature,
-					"Classic~Druid~Minion~2~2~2~None~Treant~Uncollectible": Treant_Classic,
+					"Classic~Druid~Minion~2~2~2~~Treant~Uncollectible": Treant_Classic,
 					"Classic~Druid~Spell~5~Starfall~Choose One": Starfall,
 					"Classic~Druid~Spell~5~Starlord~Uncollectible": Starlord,
 					"Classic~Druid~Spell~5~Stellar Drift~Uncollectible": StellarDrift,
 					"Classic~Druid~Spell~6~Nourish~Choose One": Nourish,
 					"Classic~Druid~Spell~6~Rampant Growth~Uncollectible": RampantGrowth,
 					"Classic~Druid~Spell~6~Enrich~Uncollectible": Enrich,
-					"Classic~Druid~Minion~7~5~5~None~Ancient of Lore~Choose One": AncientofLore,
-					"Classic~Druid~Minion~7~5~5~None~Ancient of War~Choose One": AncientofWar,
+					"Classic~Druid~Minion~7~5~5~~Ancient of Lore~Choose One": AncientofLore,
+					"Classic~Druid~Minion~7~5~5~~Ancient of War~Choose One": AncientofWar,
 					"Classic~Druid~Spell~8~Gift of the Wild": GiftoftheWild,
-					"Classic~Druid~Minion~9~5~8~None~Cenarius~Choose One~Legendary": Cenarius,
-					"Classic~Druid~Minion~2~2~2~None~Treant~Taunt~Uncollectible": Treant_Classic_Taunt,
+					"Classic~Druid~Minion~9~5~8~~Cenarius~Choose One~Legendary": Cenarius,
+					"Classic~Druid~Minion~2~2~2~~Treant~Taunt~Uncollectible": Treant_Classic_Taunt,
 					"Classic~Hunter~Spell~1~Bestial Wrath": BestialWrath,
 					"Classic~Hunter~Spell~2~Explosive Trap~~Secret": ExplosiveTrap,
 					"Classic~Hunter~Spell~2~Freezing Trap~~Secret": FreezingTrap,
@@ -5811,70 +5811,70 @@ Classic_Indices = {"Classic~Neutral~Minion~0~1~1~None~Wisp": Wisp,
 					"Classic~Hunter~Minion~9~8~8~Beast~King Krush~Charge~Legendary": KingKrush,
 					"Classic~Mage~Spell~1~Tome of Intellect": TomeofIntellect,
 					"Classic~Mage~Spell~2~Icicle": Icicle,
-					"Classic~Mage~Minion~2~1~3~None~Mana Wyrm": ManaWyrm,
-					"Classic~Mage~Minion~2~3~2~None~Sorcerer's Apprentice": SorcerersApprentice,
-					"Classic~Mage~Spell~3~Counterspell~~Secret": Counterspell,
+					"Classic~Mage~Minion~2~1~3~~Mana Wyrm": ManaWyrm,
+					"Classic~Mage~Minion~2~3~2~~Sorcerer's Apprentice": SorcerersApprentice,
+					"Classic~Mage~Spell~3~CounterSpell~Secret": Counterspell,
 					"Classic~Mage~Spell~3~Ice Barrier~~Secret": IceBarrier,
 					"Classic~Mage~Spell~3~Mirror Entity~~Secret": MirrorEntity,
 					"Classic~Mage~Spell~3~Spellbender~~Secret": Spellbender,
-					"Classic~Mage~Minion~1~1~3~None~Spellbender~Uncollectible": Spellbender_Minion,
+					"Classic~Mage~Minion~1~1~3~~Spellbender~Uncollectible": Spellbender_Minion,
 					"Classic~Mage~Spell~3~Vaporize~~Secret": Vaporize,
-					"Classic~Mage~Minion~3~4~3~None~Kirin Tor Mage~Battlecry": KirinTorMage,
+					"Classic~Mage~Minion~3~4~3~~Kirin Tor Mage~Battlecry": KirinTorMage,
 					"Classic~Mage~Spell~4~Cone of Cold": ConeofCold,
-					"Classic~Mage~Minion~4~3~3~None~Ethereal Arcanist": EtherealArcanist,
+					"Classic~Mage~Minion~4~3~3~~Ethereal Arcanist": EtherealArcanist,
 					"Classic~Mage~Spell~6~Blizzard": Blizzard,
-					"Classic~Mage~Minion~7~5~7~None~Archmage Antonidas~Legendary": ArchmageAntonidas,
+					"Classic~Mage~Minion~7~5~7~~Archmage Antonidas~Legendary": ArchmageAntonidas,
 					"Classic~Mage~Spell~10~Pyroblast": Pyroblast,
 					
 					"Classic~Paladin~Spell~1~Blessing of Wisdom": BlessingofWisdom,
 					"Classic~Paladin~Spell~1~Eye for an Eye~~Secret": EyeforanEye,
 					"Classic~Paladin~Spell~1~Noble Sacrifice~~Secret": NobleSacrifice,
-					"Classic~Paladin~Minion~1~2~1~None~Defender~Uncollectible": Defender,
+					"Classic~Paladin~Minion~1~2~1~~Defender~Uncollectible": Defender,
 					"Classic~Paladin~Spell~1~Redemption~~Secret": Redemption,
 					"Classic~Paladin~Spell~1~Repentance~~Secret": Repentance,
-					"Classic~Paladin~Minion~2~2~2~None~Argent Protector~Battlecry": ArgentProtector,
+					"Classic~Paladin~Minion~2~2~2~~Argent Protector~Battlecry": ArgentProtector,
 					"Classic~Paladin~Spell~4~Equality": Equality,
-					"Classic~Paladin~Minion~3~3~3~None~Aldor Peacekeeper~Battlecry": AldorPeacekeeper,
+					"Classic~Paladin~Minion~3~3~3~~Aldor Peacekeeper~Battlecry": AldorPeacekeeper,
 					"Classic~Paladin~Weapon~3~1~5~Sword of Justice": SwordofJustice,
 					"Classic~Paladin~Spell~5~Blessed Champion": BlessedChampion,
 					"Classic~Paladin~Spell~5~Holy Wrath": HolyWrath,
 					"Classic~Paladin~Spell~5~Righteousness": Righteousness,
 					"Classic~Paladin~Spell~6~Avenging Wrath": AvengingWrath,
 					"Classic~Paladin~Spell~8~Lay on Hands": LayonHands,
-					"Classic~Paladin~Minion~8~6~6~None~Tirion Fordring~Taunt~Divine Shield~Deathrattle~Legendary": TirionFordring,
+					"Classic~Paladin~Minion~8~6~6~~Tirion Fordring~Taunt~Divine Shield~Deathrattle~Legendary": TirionFordring,
 					"Classic~Paladin~Weapon~5~5~3~Ashbringer~Legendary~Uncollectible": Ashbringer,
 					"Classic~Priest~Spell~0~Circle of Healing": CircleofHealing,
 					"Classic~Priest~Spell~0~Silence": Silence,
 					"Classic~Priest~Spell~1~Inner Fire": InnerFire,
-					"Classic~Priest~Minion~1~2~1~None~Scarlet Subjugator~Battlecry": ScarletSubjugator,
-					"Classic~Priest~Minion~2~2~3~None~Kul Tiran Chaplain~Battlecry": KulTiranChaplain,
-					"Classic~Priest~Minion~2~0~5~None~Lightwell": Lightwell,
+					"Classic~Priest~Minion~1~2~1~~Scarlet Subjugator~Battlecry": ScarletSubjugator,
+					"Classic~Priest~Minion~2~2~3~~Kul Tiran Chaplain~Battlecry": KulTiranChaplain,
+					"Classic~Priest~Minion~2~0~5~~Lightwell": Lightwell,
 					"Classic~Priest~Spell~2~Thoughtsteal": Thoughtsteal,
 					"Classic~Priest~Spell~3~Shadow Madness": ShadowMadness,
 					"Classic~Priest~Minion~4~0~5~Elemental~Lightspawn": Lightspawn,
 					"Classic~Priest~Spell~4~Mass Dispel": MassDispel,
 					"Classic~Priest~Spell~4~Mindgames": Mindgames,
 					"Classic~Priest~Spell~4~Shadow Word: Ruin": ShadowWordRuin,
-					"Classic~Priest~Minion~0~0~1~None~Shadow of Nothing~Uncollectible": ShadowofNothing,
-					"Classic~Priest~Minion~6~4~5~None~Cabal Shadow Priest~Battlecry": CabalShadowPriest,
-					"Classic~Priest~Minion~5~5~6~None~Temple Enforcer~Battlecry": TempleEnforcer,
-					"Classic~Priest~Minion~8~8~1~None~Natalie Seline~Battlecry": NatalieSeline,
+					"Classic~Priest~Minion~0~0~1~~Shadow of Nothing~Uncollectible": ShadowofNothing,
+					"Classic~Priest~Minion~6~4~5~~Cabal Shadow Priest~Battlecry": CabalShadowPriest,
+					"Classic~Priest~Minion~5~5~6~~Temple Enforcer~Battlecry": TempleEnforcer,
+					"Classic~Priest~Minion~8~8~1~~Natalie Seline~Battlecry": NatalieSeline,
 					"Classic~Rogue~Spell~0~Preparation": Preparation,
 					"Classic~Rogue~Spell~0~Shadowstep": Shadowstep,
 					"Classic~Rogue~Spell~1~Pilfer": Pilfer,
 					"Classic~Rogue~Spell~2~Betrayal": Betrayal,
 					"Classic~Rogue~Spell~2~Cold Blood~Combo": ColdBlood,
-					"Classic~Rogue~Minion~2~2~2~None~Defias Ringleader~Combo": DefiasRingleader,
-					"Classic~Rogue~Minion~1~2~1~None~Defias Bandit~Uncollectible": DefiasBandit,
+					"Classic~Rogue~Minion~2~2~2~~Defias Ringleader~Combo": DefiasRingleader,
+					"Classic~Rogue~Minion~1~2~1~~Defias Bandit~Uncollectible": DefiasBandit,
 					"Classic~Rogue~Spell~2~Eviscerate~Combo": Eviscerate,
-					"Classic~Rogue~Minion~2~1~1~None~Patient Assassin~Poisonous~Stealth": PatientAssassin,
-					"Classic~Rogue~Minion~4~2~2~None~Edwin VanCleef~Combo~Legendary": EdwinVanCleef,
+					"Classic~Rogue~Minion~2~1~1~~Patient Assassin~Poisonous~Stealth": PatientAssassin,
+					"Classic~Rogue~Minion~4~2~2~~Edwin VanCleef~Combo~Legendary": EdwinVanCleef,
 					"Classic~Rogue~Spell~3~Headcrack~Combo": Headcrack,
 					"Classic~Rogue~Weapon~3~2~2~Perdition's Blade~Combo~Battlecry": PerditionsBlade,
-					"Classic~Rogue~Minion~3~3~3~None~SI:7 Agent~Combo": SI7Agent,
+					"Classic~Rogue~Minion~3~3~3~~SI:7 Agent~Combo": SI7Agent,
 					"Classic~Rogue~Spell~4~Blade Flurry": BladeFlurry,
-					"Classic~Rogue~Minion~4~4~4~None~Master of Disguise~Battlecry": MasterofDisguise,
-					"Classic~Rogue~Minion~6~5~3~None~Kidnapper~Combo": Kidnapper,
+					"Classic~Rogue~Minion~4~4~4~~Master of Disguise~Battlecry": MasterofDisguise,
+					"Classic~Rogue~Minion~6~5~3~~Kidnapper~Combo": Kidnapper,
 					"Classic~Shaman~Minion~1~3~1~Elemental~Dust Devil~Overload~Windfury": DustDevil,
 					"Classic~Shaman~Spell~1~Earth Shock": EarthShock,
 					"Classic~Shaman~Spell~1~Forked Lightning~Overload": ForkedLightning,
@@ -5883,7 +5883,7 @@ Classic_Indices = {"Classic~Neutral~Minion~0~1~1~None~Wisp": Wisp,
 					"Classic~Shaman~Weapon~2~2~3~Stormforged Axe~Overload": StormforgedAxe,
 					"Classic~Shaman~Spell~3~Far Sight": FarSight,
 					"Classic~Shaman~Spell~3~Feral Spirit~Overload": FeralSpirit,
-					"Classic~Shaman~Minion~2~2~3~None~Spirit Wolf~Taunt~Uncollectible": SpiritWolf,
+					"Classic~Shaman~Minion~2~2~3~~Spirit Wolf~Taunt~Uncollectible": SpiritWolf,
 					"Classic~Shaman~Spell~3~Lava Burst~Overload": LavaBurst,
 					"Classic~Shaman~Spell~3~Lightning Storm~Overload": LightningStorm,
 					"Classic~Shaman~Minion~3~0~3~Totem~Mana Tide Totem": ManaTideTotem,
@@ -5897,7 +5897,7 @@ Classic_Indices = {"Classic~Neutral~Minion~0~1~1~None~Wisp": Wisp,
 					"Classic~Warlock~Spell~2~Demonfire": Demonfire,
 					"Classic~Warlock~Spell~3~Sense Demons": SenseDemons,
 					"Classic~Warlock~Minion~1~1~1~Demon~Worthless Imp~Uncollectible": WorthlessImp,
-					"Classic~Warlock~Minion~4~0~4~None~Summoning Portal": SummoningPortal,
+					"Classic~Warlock~Minion~4~0~4~~Summoning Portal": SummoningPortal,
 					"Classic~Warlock~Minion~3~3~5~Demon~Felguard~Taunt~Battlecry": Felguard,
 					"Classic~Warlock~Minion~3~3~3~Demon~Void Terror~Battlecry": VoidTerror,
 					"Classic~Warlock~Minion~4~5~6~Demon~Pit Lord~Battlecry": PitLord,
@@ -5913,17 +5913,17 @@ Classic_Indices = {"Classic~Neutral~Minion~0~1~1~None~Wisp": Wisp,
 					"Classic~Warrior~Spell~1~Shield Slam": ShieldSlam,
 					"Classic~Warrior~Spell~1~Upgrade!": Upgrade,
 					"Classic~Warrior~Weapon~1~1~3~Heavy Axe~Uncollectible": HeavyAxe,
-					"Classic~Warrior~Minion~2~1~4~None~Armorsmith": Armorsmith,
+					"Classic~Warrior~Minion~2~1~4~~Armorsmith": Armorsmith,
 					"Classic~Warrior~Spell~2~Battle Rage": BattleRage,
 					"Classic~Warrior~Spell~2~Commanding Shout": CommandingShout,
-					"Classic~Warrior~Minion~2~2~2~None~Cruel Taskmaster~Battlecry": CruelTaskmaster,
+					"Classic~Warrior~Minion~2~2~2~~Cruel Taskmaster~Battlecry": CruelTaskmaster,
 					"Classic~Warrior~Spell~2~Rampage": Rampage,
 					"Classic~Warrior~Spell~2~Slam": Slam,
-					"Classic~Warrior~Minion~3~2~4~None~Frothing Berserker": FrothingBerserker,
-					"Classic~Warrior~Minion~4~3~3~None~Arathi Weaponsmith~Battlecry": ArathiWeaponsmith,
+					"Classic~Warrior~Minion~3~2~4~~Frothing Berserker": FrothingBerserker,
+					"Classic~Warrior~Minion~4~3~3~~Arathi Weaponsmith~Battlecry": ArathiWeaponsmith,
 					"Classic~Warrior~Weapon~1~2~2~Battle Axe~Uncollectible": BattleAxe,
 					"Classic~Warrior~Spell~4~Mortal Strike": MortalStrike,
 					"Classic~Warrior~Spell~5~Brawl": Brawl,
 					"Classic~Warrior~Weapon~7~7~1~Gorehowl": Gorehowl,
-					"Classic~Warrior~Minion~8~4~9~None~Grommash Hellscream~Charge~Legendary": GrommashHellscream
+					"Classic~Warrior~Minion~8~4~9~~Grommash Hellscream~Charge~Legendary": GrommashHellscream
 					}

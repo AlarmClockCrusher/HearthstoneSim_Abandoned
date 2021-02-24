@@ -616,10 +616,10 @@ class Game:
 			#如onBoard为False，则disappears已被调用过了。主要适用于触发死亡扳机中的区域移动效果
 			self.removeMinionorWeapon(target)
 			target.reset(targetDeckID) #永恒祭司的亡语会备份一套enchantment，在调用该函数之后将初始化过的本体重新增益
-			self.Hand_Deck.shuffleintoDeck(target, initiatorID)
+			self.Hand_Deck.shuffleintoDeck(target)
 			return target
 		elif target.inHand: #如果随从已进入手牌，仍会将其强行洗入牌库
-			self.Hand_Deck.shuffleintoDeck(self.Hand_Deck.extractfromHand(target)[0], initiatorID)
+			self.Hand_Deck.shuffleintoDeck(self.Hand_Deck.extractfromHand(target)[0])
 			return target
 		else: return None
 

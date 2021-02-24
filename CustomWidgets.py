@@ -344,13 +344,7 @@ class HandButton(tk.Button): #Cards that are in hand. 目前而言只有一张�
 			self['text'] = text
 			if self.card.creator:
 				CardLabel(btn=self, text=self.GUI.wrapText(str(self.card.creator))).plot(x=x, y=y+0.4*CARD_Y)
-		else:
-			if self.card.tracked and self.card.creator:
-				CardLabel(btn=self, text=self.GUI.wrapText(str(self.card.creator))).plot(x=x, y=y+0.55*CARD_Y)
-				if len(self.card.possi) == 1:
-					name = self.GUI.wrapText(str(self.card.possi[0]))
-					CardLabel(btn=self, text=name).plot(x=x, y=y-0.5*CARD_Y)
-					
+		
 		self.zone.btnsDrawn.append(self)
 		
 	def hide(self): #因为DiscoverCardOption是HandButton上面定义的，不用再次定replot

@@ -331,8 +331,7 @@ class Hand_Deck:
 	# All the cards shuffled will be into the same deck. If necessary, invoke this function for each deck.
 	# PlotTwist把手牌洗入牌库的时候，手牌中buff的随从两次被抽上来时buff没有了。
 	# 假设洗入牌库这个动作会把一张牌初始化
-	def shuffleintoDeck(self, obj, initiatorID,
-							enemyCanSee=True, sendSig=True, creator=None, possi=()):
+	def shuffleintoDeck(self, obj, initiatorID=0, enemyCanSee=True, sendSig=True, creator=None, possi=()):
 		if obj:
 			curGame = self.Game
 			if curGame.GUI: curGame.GUI.shuffleintoDeckAni(obj, enemyCanSee)
@@ -344,7 +343,7 @@ class Hand_Deck:
 			for card in obj:
 				card.entersDeck()
 				card.possi = possi if possi else (type(card), )
-				if creator: card.creator
+				if creator: card.creator = type(creator)
 				self.includePossi(card, intoHD=1)
 			if curGame.mode == 0:
 				if curGame.guides:
@@ -354,20 +353,21 @@ class Hand_Deck:
 					npshuffle(order)
 					curGame.fixedGuides.append(tuple(order))
 				self.decks[ID] = [newDeck[i] for i in order]
-			if sendSig: curGame.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
+			if sendSig: curGame.sendSignal("CardShuffled", initiatorID, creator, obj, 0, "")
 			curGame.sendSignal("DeckCheck", ID, None, None, 0, "")
 	
 	#Given the index in hand. Can't shuffle multiple cards except for whole hand
+	#ID here is the target deck ID, it can be initiated by cards from a different side 
 	def shuffle_Hand2Deck(self, i, ID, initiatorID, all=True):
 		if all:
 			hand = self.extractfromHand(None, ID, all, enemyCanSee=False)[0]
 			for card in hand:
 				card.reset(ID, isKnown=False)
-				self.shuffleintoDeck(card, initiatorID, enemyCanSee=False, sendSig=True, possi=card.possi)
+				self.shuffleintoDeck(card, initiatorID=initiatorID, enemyCanSee=False, sendSig=True, possi=card.possi)
 		elif i:
 			card = self.extractfromHand(i, ID, all, enemyCanSee=False)[0]
 			card.reset(ID, isKnown=False)
-			self.shuffleintoDeck(card, initiatorID, enemyCanSee=False, sendSig=True, possi=card.possi)
+			self.shuffleintoDeck(card, initiatorID=initiatorID, enemyCanSee=False, sendSig=True, possi=card.possi)
 			
 	def burialRite(self, ID, minions, noSignal=False):
 		if not isinstance(minions, list):

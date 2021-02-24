@@ -399,7 +399,7 @@ class SVMinion(Minion):
 class Amulet(Dormant):
 	Class, race, name = "Neutral", "", "Vanilla"
 	mana = 2
-	index = "Vanilla~Neutral~2~Amulet~None~Vanilla~Uncollectible"
+	index = "Vanilla~Neutral~2~Amulet~~Vanilla~Uncollectible"
 	requireTarget, description = False, ""
 
 	def reset(self, ID):  # 如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化

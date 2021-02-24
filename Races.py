@@ -18,7 +18,7 @@ from Academy import SoulFragment, Spellburst
 class ArmorVendor(Minion):
 	Class, race, name = "Neutral", "", "Armor Vendor"
 	mana, attack, health = 1, 1, 3
-	index = "Races~Neutral~Minion~1~1~3~None~Armor Vendor~Battlecry"
+	index = "Races~Neutral~Minion~1~1~3~~Armor Vendor~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Give 4 Armor to each hero"
 	name_CN = "护甲商贩"
 	
@@ -31,7 +31,7 @@ class ArmorVendor(Minion):
 class Crabrider(Minion):
 	Class, race, name = "Neutral", "Murloc", "Crabrider"
 	mana, attack, health = 2, 1, 4
-	index = "Races~Neutral~Minion~2~1~4~None~Crabrider~Rush~Windfury"
+	index = "Races~Neutral~Minion~2~1~4~~Crabrider~Rush~Windfury"
 	requireTarget, keyWord, description = False, "Rush,Windfury", "Rush, Windfury"
 	name_CN = "螃蟹骑士"
 	
@@ -39,7 +39,7 @@ class Crabrider(Minion):
 class Deathwarden(Minion):
 	Class, race, name = "Neutral", "", "Deathwarden"
 	mana, attack, health = 3, 2, 5
-	index = "Races~Neutral~Minion~3~2~5~None~Deathwarden"
+	index = "Races~Neutral~Minion~3~2~5~~Deathwarden"
 	requireTarget, keyWord, description = False, "", "Deathrattles can't trigger"
 	name_CN = "死亡守望者"
 	def __init__(self, Game, ID):
@@ -122,7 +122,7 @@ class Trig_RunawayBlackwing(TrigBoard):
 		
 """Demon Hunter Cards"""
 class IllidariStudies(Spell):
-	Class, name = "Demon Hunter", "Illidari Studies"
+	Class, school, name = "Demon Hunter", "", "Illidari Studies"
 	requireTarget, mana = False, 1
 	index = "Races~Demon Hunter~Spell~1~Illidari Studies"
 	description = "Discover an Outcast card. Your next one costs (1) less"
@@ -172,7 +172,7 @@ class GameManaAura_NextOutcast1Less(TempManaEffect):
 class FelfireDeadeye(Minion):
 	Class, race, name = "Demon Hunter,Hunter", "", "Felfire Deadeye"
 	mana, attack, health = 2, 2, 3
-	index = "Races~Demon Hunter,Hunter~Minion~2~2~3~None~Felfire Deadeye"
+	index = "Races~Demon Hunter,Hunter~Minion~2~2~3~~Felfire Deadeye"
 	requireTarget, keyWord, description = False, "", "Your Hero Power costs (1) less"
 	name_CN = "邪火神射手"
 	def __init__(self, Game, ID):
@@ -201,7 +201,7 @@ class Felsaber(Minion):
 				
 """Druid Cards"""
 class Guidance(Spell):
-	Class, name = "Druid,Shaman", "Guidance"
+	Class, school, name = "Druid,Shaman", "", "Guidance"
 	requireTarget, mana = False, 1
 	index = "Races~Druid,Shaman~Spell~1~Guidance"
 	description = "Look at two spells. Add one to your hand or Overload: (1) to get both"
@@ -269,7 +269,7 @@ class DreamingDrake_Corrupt(Minion):
 	
 	
 class ArborUp(Spell):
-	Class, name = "Druid", "Arbor Up"
+	Class, school, name = "Druid", "", "Arbor Up"
 	requireTarget, mana = False, 5
 	index = "Races~Druid~Spell~5~Arbor Up"
 	description = "Summon two 2/2 Treants. Give your minions +2/+1"
@@ -283,7 +283,7 @@ class ArborUp(Spell):
 		
 """Hunter Cards"""
 class ResizingPouch(Spell):
-	Class, name = "Hunter,Druid", "Resizing Pouch"
+	Class, school, name = "Hunter,Druid", "", "Resizing Pouch"
 	requireTarget, mana = False, 1
 	index = "Races~Hunter,Druid~Spell~1~Resizing Pouch"
 	description = "Discover a card with Cost equal to your remaining Mana Crystals"
@@ -318,7 +318,7 @@ class ResizingPouch(Spell):
 		
 		
 class BolaShot(Spell):
-	Class, name = "Hunter", "Bola Shot"
+	Class, school, name = "Hunter", "", "Bola Shot"
 	requireTarget, mana = True, 2
 	index = "Races~Hunter~Spell~2~Bola Shot"
 	description = "Deal 1 damage to a minion and 2 damage to its neighbors"
@@ -352,7 +352,7 @@ class BolaShot(Spell):
 class Saddlemaster(Minion):
 	Class, race, name = "Hunter", "", "Saddlemaster"
 	mana, attack, health = 3, 3, 4
-	index = "Races~Hunter~Minion~3~3~4~None~Saddlemaster"
+	index = "Races~Hunter~Minion~3~3~4~~Saddlemaster"
 	requireTarget, keyWord, description = False, "", "After you play a Beast, add a random Beast to your hand"
 	name_CN = "鞍座大师"
 	poolIdentifier = "Beasts"
@@ -389,7 +389,7 @@ class Trig_Saddlemaster(TrigBoard):
 class GlacierRacer(Minion):
 	Class, race, name = "Mage", "", "Glacier Racer"
 	mana, attack, health = 1, 1, 3
-	index = "Races~Mage~Minion~1~1~3~None~Glacier Racer"
+	index = "Races~Mage~Minion~1~1~3~~Glacier Racer"
 	requireTarget, keyWord, description = False, "", "Spellburst: Deal 3 damage to all Frozen enemies"
 	name_CN = "冰川竞速者"
 	def __init__(self, Game, ID):
@@ -408,7 +408,7 @@ class Trig_GlacierRacer(Spellburst):
 		
 		
 class ConjureManaBiscuit(Spell):
-	Class, name = "Mage", "Conjure Mana Biscuit"
+	Class, school, name = "Mage", "", "Conjure Mana Biscuit"
 	requireTarget, mana = False, 2
 	index = "Races~Mage~Spell~2~Conjure Mana Biscuit"
 	description = "Add a Biscuit to your hand that refreshes 2 Mana Crystals"
@@ -419,7 +419,7 @@ class ConjureManaBiscuit(Spell):
 		return None
 		
 class ManaBiscuit(Spell):
-	Class, name = "Mage", "Mana Biscuit"
+	Class, school, name = "Mage", "", "Mana Biscuit"
 	requireTarget, mana = False, 0
 	index = "Races~Mage~Spell~0~Mana Biscuit~Uncollectible"
 	description = "Refresh 2 Mana Crystals"
@@ -433,7 +433,7 @@ class ManaBiscuit(Spell):
 class KeywardenIvory(Minion):
 	Class, race, name = "Mage,Rogue", "", "Keywarden Ivory"
 	mana, attack, health = 5, 4, 5
-	index = "Races~Mage,Rogue~Minion~5~4~5~None~Keywarden Ivory~Battlecry~Legendary"
+	index = "Races~Mage,Rogue~Minion~5~4~5~~Keywarden Ivory~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a dual-class spell from any class. Spellburst: Get another copy"
 	name_CN = "钥匙守护者 艾芙瑞"
 	poolIdentifier = "Dual Class Spells"
@@ -495,7 +495,7 @@ class Trig_KeywardenIvory(Spellburst):
 class ImprisonedCelestial(Minion_Dormantfor2turns):
 	Class, race, name = "Paladin", "", "Imprisoned Celestial"
 	mana, attack, health = 3, 4, 5
-	index = "Races~Paladin~Minion~3~4~5~None~Imprisoned Celestial"
+	index = "Races~Paladin~Minion~3~4~5~~Imprisoned Celestial"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. Spellburst: Give your minions Divine Shield"
 	name_CN = "被禁锢的星骓"
 	def __init__(self, Game, ID):
@@ -512,7 +512,7 @@ class Trig_ImprisonedCelestial(Spellburst):
 			
 			
 class Rally(Spell):
-	Class, name = "Paladin,Priest", "Rally!"
+	Class, school, name = "Paladin,Priest", "", "Rally!"
 	requireTarget, mana = False, 4
 	index = "Races~Paladin,Priest~Spell~4~Rally!"
 	description = "Resurrect a friendly 1-Cost, 2-Cost, and 3-Cost minion"
@@ -558,7 +558,7 @@ class LibramofJudgement_Corrupt(Weapon):
 		
 """Priest Cards"""
 class Hysteria(Spell):
-	Class, name = "Priest,Warlock", "Hysteria"
+	Class, school, name = "Priest,Warlock", "", "Hysteria"
 	requireTarget, mana = True, 3
 	index = "Races~Priest,Warlock~Spell~3~Hysteria"
 	description = "Choose a minion. It attacks random minions until it dies"
@@ -622,7 +622,7 @@ class Trig_Lightsteed(TrigBoard):
 class DarkInquisitorXanesh(Minion):
 	Class, race, name = "Priest", "", "Dark Inquisitor Xanesh"
 	mana, attack, health = 5, 3, 5
-	index = "Races~Priest~Minion~5~3~5~None~Dark Inquisitor Xanesh~Battlecry~Legendary"
+	index = "Races~Priest~Minion~5~3~5~~Dark Inquisitor Xanesh~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Your healing effects also give affected minions +2 Health"
 	name_CN = "黑暗审判官 夏奈什"
 	
@@ -637,7 +637,7 @@ class DarkInquisitorXanesh(Minion):
 		
 """Rogue Cards"""
 class NitroboostPoison(Spell):
-	Class, name = "Rogue,Warrior", "Nitroboost Poison"
+	Class, school, name = "Rogue,Warrior", "", "Nitroboost Poison"
 	requireTarget, mana = True, 1
 	index = "Races~Rogue,Warrior~Spell~1~Nitroboost Poison~ToCorrupt"
 	description = "Give a minion +2 Attack. Corrupt: And your weapon"
@@ -658,7 +658,7 @@ class NitroboostPoison(Spell):
 		return target
 		
 class NitroboostPoison_Corrupt(Spell):
-	Class, name = "Rogue,Warrior", "Nitroboost Poison"
+	Class, school, name = "Rogue,Warrior", "", "Nitroboost Poison"
 	requireTarget, mana = True, 1
 	index = "Races~Rogue,Warrior~Spell~1~Nitroboost Poison~Corrupted~Uncollectible"
 	description = "Corrupted: Give a minion and your weapon +2 Attack"
@@ -677,7 +677,7 @@ class NitroboostPoison_Corrupt(Spell):
 		return target
 		
 class Shenanigans(Secret):
-	Class, name = "Rogue", "Shenanigans"
+	Class, school, name = "Rogue", "", "Shenanigans"
 	requireTarget, mana = False, 2
 	index = "Races~Rogue~Spell~2~Shenanigans~~Secret"
 	description = "Secret: When your opponent draws their second card in a turn, transform it into a Banana"
@@ -703,7 +703,7 @@ class Trig_Shenanigans(SecretTrigger):
 class SparkjoyCheat(Minion_Dormantfor2turns):
 	Class, race, name = "Rogue", "", "Sparkjoy Cheat"
 	mana, attack, health = 3, 3, 3
-	index = "Races~Rogue~Minion~3~3~3~None~Sparkjoy Cheat~Battlecry"
+	index = "Races~Rogue~Minion~3~3~3~~Sparkjoy Cheat~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Secret, cast it and draw a card"
 	name_CN = "欢脱的 作弊选手"
 	def effCanTrig(self):
@@ -740,7 +740,7 @@ class ImprisonedPhoenix(Minion_Dormantfor2turns):
 		
 		
 class Landslide(Spell):
-	Class, name = "Shaman", "Landslide"
+	Class, school, name = "Shaman", "", "Landslide"
 	requireTarget, mana = False, 2
 	index = "Races~Shaman~Spell~2~Landslide"
 	description = "Deal 1 damage to all enemy minions. If you're Overloaded, deal 1 damage again"
@@ -766,7 +766,7 @@ class Landslide(Spell):
 class Mistrunner(Minion):
 	Class, race, name = "Shaman", "", "Mistrunner"
 	mana, attack, health = 5, 4, 4
-	index = "Races~Shaman~Minion~5~4~4~None~Mistrunner~Battlecry~Overload"
+	index = "Races~Shaman~Minion~5~4~4~~Mistrunner~Battlecry~Overload"
 	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion +3/+3. Overload: (1)"
 	name_CN = "迷雾行者"
 	def __init__(self, Game, ID):
@@ -786,7 +786,7 @@ class Mistrunner(Minion):
 		
 """Warlock Cards"""
 class Backfire(Spell):
-	Class, name = "Warlock", "Backfire"
+	Class, school, name = "Warlock", "", "Backfire"
 	requireTarget, mana = False, 3
 	index = "Races~Warlock~Spell~3~Backfire"
 	description = "Draw 3 cards. Deal 3 damage to your hero"
@@ -806,7 +806,7 @@ class Backfire(Spell):
 class LuckysoulHoarder(Minion):
 	Class, race, name = "Warlock,Demon Hunter", "", "Luckysoul Hoarder"
 	mana, attack, health = 3, 3, 4
-	index = "Races~Warlock,Demon Hunter~Minion~3~3~4~None~Luckysoul Hoarder~Battlecry~ToCorrupt"
+	index = "Races~Warlock,Demon Hunter~Minion~3~3~4~~Luckysoul Hoarder~Battlecry~ToCorrupt"
 	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle 2 Soul Fragments into your deck. Corrupt: Draw a card"
 	name_CN = "幸运之魂 囤积者"
 	def __init__(self, Game, ID):
@@ -814,18 +814,18 @@ class LuckysoulHoarder(Minion):
 		self.trigsHand = [Trig_Corrupt(self, LuckysoulHoarder_Corrupt)] #只有在手牌中才会升级
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.Hand_Deck.shuffleintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID, creator=type(self))
+		self.Game.Hand_Deck.shuffleintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], creator=self)
 		return None
 		
 class LuckysoulHoarder_Corrupt(Minion):
 	Class, race, name = "Warlock,Demon Hunter", "", "Luckysoul Hoarder"
 	mana, attack, health = 3, 3, 4
-	index = "Races~Warlock,Demon Hunter~Minion~3~3~4~None~Luckysoul Hoarder~Battlecry~Corrupted~Uncollectible"
+	index = "Races~Warlock,Demon Hunter~Minion~3~3~4~~Luckysoul Hoarder~Battlecry~Corrupted~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Corrupted. Battlecry: Shuffle 2 Soul Fragments into your deck. Draw a card"
 	name_CN = "幸运之魂 囤积者"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.Hand_Deck.shuffleintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], self.ID, creator=type(self))
+		self.Game.Hand_Deck.shuffleintoDeck([SoulFragment(self.Game, self.ID) for i in range(2)], creator=self)
 		self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
@@ -852,7 +852,7 @@ class Shuffle3PrimesintoYourDeck(Deathrattle_Minion):
 			else:
 				primes = npchoice(pool, 3, replace=True)
 				curGame.fixedGuides.append(primes)
-			minion.Game.Hand_Deck.shuffleintoDeck([prime(curGame, minion.ID) for prime in primes], minion.ID, creator=type(minion), possi=pool)
+			minion.Game.Hand_Deck.shuffleintoDeck([prime(curGame, minion.ID) for prime in primes], creator=minion, possi=pool)
 			
 	def text(self, CHN):
 		return "亡语：随机将3张终极传说随从洗入你的牌库" if CHN else "Deathrattle: Shuffle 3 random Prime Legendary minions into your deck"
@@ -924,7 +924,7 @@ class Ironclad(Minion):
 		
 		
 class Barricade(Spell):
-	Class, name = "Warrior,Paladin", "Barricade"
+	Class, school, name = "Warrior,Paladin", "", "Barricade"
 	requireTarget, mana = False, 4
 	index = "Races~Warrior,Paladin~Spell~4~Barricade"
 	description = "Summon a 2/4 Guard with Taunt. If it's your only minion, summon another"
@@ -943,18 +943,18 @@ class Barricade(Spell):
 class Guard(Minion):
 	Class, race, name = "Warrior,Paladin", "", "Ironclad"
 	mana, attack, health = 3, 2, 4
-	index = "Races~Warrior,Paladin~Minion~3~2~4~None~Ironclad~Taunt~Uncollectible"
+	index = "Races~Warrior,Paladin~Minion~3~2~4~~Ironclad~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = ""
 	
 	
-Races_Indices = {"Races~Neutral~Minion~1~1~3~None~Armor Vendor~Battlecry": ArmorVendor,
-				"Races~Neutral~Minion~2~1~4~None~Crabrider~Rush~Windfury": Crabrider,
-				"Races~Neutral~Minion~3~2~5~None~Deathwarden": Deathwarden,
+Races_Indices = {"Races~Neutral~Minion~1~1~3~~Armor Vendor~Battlecry": ArmorVendor,
+				"Races~Neutral~Minion~2~1~4~~Crabrider~Rush~Windfury": Crabrider,
+				"Races~Neutral~Minion~3~2~5~~Deathwarden": Deathwarden,
 				"Races~Neutral~Minion~5~6~3~Beast~Moonfang~Legendary": Moonfang,
 				"Races~Neutral~Minion~9~9~9~Dragon~Runaway Blackwing": RunawayBlackwing,
 				"Races~Demon Hunter~Spell~1~Illidari Studies": IllidariStudies,
-				"Races~Demon Hunter,Hunter~Minion~2~2~3~None~Felfire Deadeye": FelfireDeadeye,
+				"Races~Demon Hunter,Hunter~Minion~2~2~3~~Felfire Deadeye": FelfireDeadeye,
 				"Races~Demon Hunter~Minion~4~5~6~Demon~Felsaber": Felsaber,
 				"Races~Druid,Shaman~Spell~1~Guidance": Guidance,
 				"Races~Druid~Minion~3~3~4~Dragon~Dreaming Drake~Taunt~ToCorrupt": DreamingDrake,
@@ -962,31 +962,31 @@ Races_Indices = {"Races~Neutral~Minion~1~1~3~None~Armor Vendor~Battlecry": Armor
 				"Races~Druid~Spell~5~Arbor Up": ArborUp,
 				"Races~Hunter,Druid~Spell~1~Resizing Pouch": ResizingPouch,
 				"Races~Hunter~Spell~2~Bola Shot": BolaShot,
-				"Races~Hunter~Minion~3~3~4~None~Saddlemaster": Saddlemaster,
-				"Races~Mage~Minion~1~1~3~None~Glacier Racer": GlacierRacer,
+				"Races~Hunter~Minion~3~3~4~~Saddlemaster": Saddlemaster,
+				"Races~Mage~Minion~1~1~3~~Glacier Racer": GlacierRacer,
 				"Races~Mage~Spell~2~Conjure Mana Biscuit": ConjureManaBiscuit,
 				"Races~Mage~Spell~0~Mana Biscuit~Uncollectible": ManaBiscuit,
-				"Races~Mage,Rogue~Minion~5~4~5~None~Keywarden Ivory~Battlecry~Legendary": KeywardenIvory,
-				"Races~Paladin~Minion~3~4~5~None~Imprisoned Celestial": ImprisonedCelestial,
+				"Races~Mage,Rogue~Minion~5~4~5~~Keywarden Ivory~Battlecry~Legendary": KeywardenIvory,
+				"Races~Paladin~Minion~3~4~5~~Imprisoned Celestial": ImprisonedCelestial,
 				"Races~Paladin,Priest~Spell~4~Rally!": Rally,
 				"Races~Paladin~Weapon~7~5~3~Libram of Judgement~ToCorrupt": LibramofJudgement,
 				"Races~Paladin~Weapon~7~5~3~Libram of Judgement~Lifesteal~Corrupted~Uncollectible": LibramofJudgement_Corrupt,
 				"Races~Priest,Warlock~Spell~3~Hysteria": Hysteria,
 				"Races~Priest~Minion~4~3~6~Elemental~Lightsteed": Lightsteed,
-				"Races~Priest~Minion~5~3~5~None~Dark Inquisitor Xanesh~Battlecry~Legendary": DarkInquisitorXanesh,
+				"Races~Priest~Minion~5~3~5~~Dark Inquisitor Xanesh~Battlecry~Legendary": DarkInquisitorXanesh,
 				"Races~Rogue,Warrior~Spell~1~Nitroboost Poison~ToCorrupt": NitroboostPoison,
 				"Races~Rogue,Warrior~Spell~1~Nitroboost Poison~Corrupted~Uncollectible": NitroboostPoison_Corrupt,
 				"Races~Rogue~Spell~2~Shenanigans~~Secret": Shenanigans,
-				"Races~Rogue~Minion~3~3~3~None~Sparkjoy Cheat~Battlecry": SparkjoyCheat,
+				"Races~Rogue~Minion~3~3~3~~Sparkjoy Cheat~Battlecry": SparkjoyCheat,
 				"Races~Shaman,Mage~Minion~2~2~3~Elemental~Imprisoned Phoenix~Spell Damge": ImprisonedPhoenix,
 				"Races~Shaman~Spell~2~Landslide": Landslide,
-				"Races~Shaman~Minion~5~4~4~None~Mistrunner~Battlecry~Overload": Mistrunner,
+				"Races~Shaman~Minion~5~4~4~~Mistrunner~Battlecry~Overload": Mistrunner,
 				"Races~Warlock~Spell~3~Backfire": Backfire,
-				"Races~Warlock,Demon Hunter~Minion~3~3~4~None~Luckysoul Hoarder~Battlecry~ToCorrupt": LuckysoulHoarder,
-				"Races~Warlock,Demon Hunter~Minion~3~3~4~None~Luckysoul Hoarder~Battlecry~Corrupted~Uncollectible": LuckysoulHoarder_Corrupt,
+				"Races~Warlock,Demon Hunter~Minion~3~3~4~~Luckysoul Hoarder~Battlecry~ToCorrupt": LuckysoulHoarder,
+				"Races~Warlock,Demon Hunter~Minion~3~3~4~~Luckysoul Hoarder~Battlecry~Corrupted~Uncollectible": LuckysoulHoarder_Corrupt,
 				"Races~Warlock~Minion~5~5~4~Demon~Envoy Rustwix~Deathrattle~Legendary": EnvoyRustwix,
 				"Races~Warrior~Weapon~3~1~4~Spiked Wheel": SpikedWheel,
 				"Races~Warrior~Minion~3~2~4~Mech~Ironclad~Battlecry": Ironclad,
 				"Races~Warrior,Paladin~Spell~4~Barricade": Barricade,
-				"Races~Warrior,Paladin~Minion~3~2~4~None~Ironclad~Taunt~Uncollectible": Guard,
+				"Races~Warrior,Paladin~Minion~3~2~4~~Ironclad~Taunt~Uncollectible": Guard,
 				}

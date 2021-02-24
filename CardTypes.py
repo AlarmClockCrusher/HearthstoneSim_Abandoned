@@ -3,6 +3,7 @@ import copy
 import numpy as np
 
 from numpy.random import choice as npchoice
+from numpy.random import randint as nprandint
 from collections import Counter as cnt
 
 from Triggers_Auras import ManaMod, Stat_Receiver
@@ -41,6 +42,38 @@ def classforDiscover(initiator):
 	elif initiator.Class != "Neutral": return initiator.Class #如果玩家职业是中立，但卡牌职业不是中立，则发现以那个卡牌的职业进行
 	else: return npchoice(initiator.Game.Classes) #如果玩家职业和卡牌职业都是中立，则随机选取一个职业进行发现。
 
+def count(listObj):
+	count = {}
+	for i in listObj:
+		if i in count: count[i] += 1
+		else: count[i] = 1
+	return count
+	
+def countTypes(listObj):
+	count = {}
+	for i in listObj:
+		T = type(i)
+		if T in count: count[T] += 1
+		else: count[T] = 1
+	return count
+	
+#Return an empty tuple if num == 0 or listObj is empty
+#If want to return 3 indices but there aren't enough different types, then return len-2 tuple
+def npChoice_inds(listTypes, listInds, num):
+	total = len(listTypes)
+	if num == 0 or total < 1: return []
+	elif num == 1: return [nprandint(total)]
+	else:
+		count, inds = {}, {}
+		for T, i in zip(listTypes, listInds):
+			if T in count:
+				count[T] += 1
+				inds[T].append(i)
+			else:
+				count[T], inds[T] = 1, [i]
+		Ts = npchoice([count.keys()], min(num, total), p=[i / total for i in count.values()], replace=False)
+		return [inds[T] for T in Ts]
+		
 def discoverProb(listObj):
 	counts, total = cnt(listObj), len(listObj)
 	if total: return list(counts.keys()), [value/total for value in counts.values()]
@@ -102,7 +135,7 @@ effectsDict = {"Taunt": "嘲讽", "Divine Shield": "圣盾", "Stealth": "潜行"
 				"Enemy Effect Evasive": "敌方的能力无法指定此卡牌", "Enemy Effect Damage Immune": "因能力所受到的伤害皆转变为0",
 				"Can't Break": "无法被能力破坏", "Can't Disappear": "无法被能力消失", "Can't Be Attacked": "无法对这个随从进行攻击", "Disappear When Die": "离场时消失",
 				"Next Damage 0": "下一次受到的伤害转变为0", "Ignore Taunt": "可无视守护效果进行攻击", "Can't Evolve": "无法使用进化点进化", "Free Evolve": "不消费进化点即可进化",
-			    "Can Attack 3 times" : "一回合中可以进行3次攻击",
+				"Can Attack 3 times" : "一回合中可以进行3次攻击",
 
 				"Immune": "免疫", "Frozen": "被冻结", "Temp Stealth": "潜行直到你的下个回合开始", "Borrowed": "被暂时控制",
 				"Evolved": "已进化",
@@ -635,7 +668,7 @@ class Dormant(Card):
 class Minion(Card):
 	Class, race, name = "Neutral", "", "Vanilla"
 	mana, attack, health = 2, 2, 2
-	index = "Vanilla~Neutral~2~2~2~Minion~None~Vanilla~Uncollectible"
+	index = "Vanilla~Neutral~2~2~2~Minion~~Vanilla~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 
 	def __init__(self, Game, ID):
@@ -1339,7 +1372,7 @@ class Spell(Card):
 				target = curGame.find(i, where) if where else None
 			else:
 				if not self.need2Choose(): choice = 0
-				else: choice = -1 if curGame.status[self.ID]["Choose Both"] else np.random.randint(len(self.options))
+				else: choice = -1 if curGame.status[self.ID]["Choose Both"] else nprandint(len(self.options))
 				if target is None: #沼泽女王哈加莎的恐魔是目前唯一的指定发动的
 					if self.needTarget(choice):
 						targets = self.findTargets("", choice)[0]

@@ -11,7 +11,7 @@ from Basic import IllidariInitiate
 
 """Mana 0 cards"""
 class Blur(Spell):
-	Class, name = "Demon Hunter", "Blur"
+	Class, school, name = "Demon Hunter", "", "Blur"
 	requireTarget, mana = False, 0
 	index = "DHInitiate~Demon Hunter~Spell~0~Blur"
 	description = "Your hero can't take damage this turn"
@@ -62,7 +62,7 @@ class Blur_Effect:
 			
 			
 class TwinSlice(Spell):
-	Class, name = "Demon Hunter", "Twin Slice"
+	Class, school, name = "Demon Hunter", "", "Twin Slice"
 	requireTarget, mana = False, 1
 	index = "DHInitiate~Demon Hunter~Spell~1~Twin Slice"
 	description = "Give your hero +2 Attack this turn. Add 'Second Slice' to your hand"
@@ -74,7 +74,7 @@ class TwinSlice(Spell):
 		return None
 		
 class SecondSlice(Spell):
-	Class, name = "Demon Hunter", "Second Slice"
+	Class, school, name = "Demon Hunter", "", "Second Slice"
 	requireTarget, mana = False, 1
 	index = "DHInitiate~Demon Hunter~Spell~1~Second Slice~Uncollectible"
 	description = "Give your hero +2 Attack this turn"
@@ -111,7 +111,7 @@ class Trig_Battlefiend(TrigBoard):
 		
 		
 class ConsumeMagic(Spell):
-	Class, name = "Demon Hunter", "Consume Magic"
+	Class, school, name = "Demon Hunter", "", "Consume Magic"
 	requireTarget, mana = True, 1
 	index = "DHInitiate~Demon Hunter~Spell~1~Consume Magic~Outcast"
 	description = "Silence an enemy minion. Outcast: Draw a card"
@@ -134,7 +134,7 @@ class ConsumeMagic(Spell):
 		
 		
 class ManaBurn(Spell):
-	Class, name = "Demon Hunter", "Mana Burn"
+	Class, school, name = "Demon Hunter", "", "Mana Burn"
 	requireTarget, mana = False, 1
 	index = "DHInitiate~Demon Hunter~Spell~1~Mana Burn"
 	description = "Your opponent has 2 fewer Mana Crystals next turn"
@@ -182,14 +182,14 @@ class AddaLostSoultoYourHand(Deathrattle_Minion):
 class LostSoul(Minion):
 	Class, race, name = "Demon Hunter", "", "Lost Soul"
 	mana, attack, health = 1, 2, 1
-	index = "DHInitiate~Demon Hunter~Minion~1~2~1~None~Lost Soul~Uncollectible"
+	index = "DHInitiate~Demon Hunter~Minion~1~2~1~~Lost Soul~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "迷失之魂"
 	
 	
 """Mana 2 cards"""
 class BladeDance(Spell):
-	Class, name = "Demon Hunter", "Blade Dance"
+	Class, school, name = "Demon Hunter", "", "Blade Dance"
 	requireTarget, mana = False, 3
 	index = "DHInitiate~Demon Hunter~Spell~3~Blade Dance"
 	description = "Deal damage equal to your hero's Attack to 3 random enemy minions"
@@ -213,7 +213,7 @@ class BladeDance(Spell):
 		
 		
 class FeastofSouls(Spell):
-	Class, name = "Demon Hunter", "Feast of Souls"
+	Class, school, name = "Demon Hunter", "", "Feast of Souls"
 	requireTarget, mana = False, 2
 	index = "DHInitiate~Demon Hunter~Spell~2~Feast of Souls"
 	description = "Draw a card for each friendly minion that died this turn"
@@ -248,7 +248,7 @@ class Felwing(Minion):
 class AltruistheOutcast(Minion):
 	Class, race, name = "Demon Hunter", "", "Altruis the Outcast"
 	mana, attack, health = 4, 4, 2
-	index = "DHInitiate~Demon Hunter~Minion~4~4~2~None~Altruis the Outcast~Legendary"
+	index = "DHInitiate~Demon Hunter~Minion~4~4~2~~Altruis the Outcast~Legendary"
 	requireTarget, keyWord, description = False, "", "After you play the left- or right-most card in your hand, deal 1 damage to all enemies"
 	name_CN = "流放者 奥图里斯"
 	def __init__(self, Game, ID):
@@ -273,7 +273,7 @@ class Trig_AltruistheOutcast(TrigBoard):
 		
 		
 class EyeBeam(Spell):
-	Class, name = "Demon Hunter", "Eye Beam"
+	Class, school, name = "Demon Hunter", "", "Eye Beam"
 	requireTarget, mana = True, 3
 	index = "DHInitiate~Demon Hunter~Spell~3~Eye Beam~Outcast"
 	description = "Lifesteal. Deal 3 damage to a minion. Outcast: This costs (1)"
@@ -326,7 +326,7 @@ class Trig_EyeBeam(TrigHand):
 class WrathscaleNaga(Minion):
 	Class, race, name = "Demon Hunter", "", "Wrathscale Naga"
 	mana, attack, health = 3, 3, 1
-	index = "DHInitiate~Demon Hunter~Minion~3~3~1~None~Wrathscale Naga"
+	index = "DHInitiate~Demon Hunter~Minion~3~3~1~~Wrathscale Naga"
 	requireTarget, keyWord, description = False, "", "After a friendly minion dies, deal 3 damage to a random enemy"
 	name_CN = "怒鳞纳迦"
 	def __init__(self, Game, ID):
@@ -363,7 +363,7 @@ class Trig_WrathscaleNaga(TrigBoard):
 class IllidariFelblade(Minion):
 	Class, race, name = "Demon Hunter", "", "Illidari Felblade"
 	mana, attack, health = 4, 5, 3
-	index = "DHInitiate~Demon Hunter~Minion~4~5~3~None~Illidari Felblade~Rush~Outcast"
+	index = "DHInitiate~Demon Hunter~Minion~4~5~3~~Illidari Felblade~Rush~Outcast"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Outcast: Gain Immune this turn"
 	name_CN = "伊利达雷 邪刃武士"
 	
@@ -379,7 +379,7 @@ class IllidariFelblade(Minion):
 class RagingFelscreamer(Minion):
 	Class, race, name = "Demon Hunter", "", "Raging Felscreamer"
 	mana, attack, health = 4, 4, 4
-	index = "DHInitiate~Demon Hunter~Minion~4~4~4~None~Raging Felscreamer~Battlecry"
+	index = "DHInitiate~Demon Hunter~Minion~4~4~4~~Raging Felscreamer~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: The next Demon you play costs (2) less"
 	name_CN = "暴怒邪吼者"
 	
@@ -403,7 +403,7 @@ class YourNextDemonCosts2Less(TempManaEffect):
 		
 		
 class SoulSplit(Spell):
-	Class, name = "Demon Hunter", "Soul Split"
+	Class, school, name = "Demon Hunter", "", "Soul Split"
 	requireTarget, mana = True, 4
 	index = "DHInitiate~Demon Hunter~Spell~4~Soul Split"
 	description = "Choose a friendly Demon. Summon a copy of it"
@@ -423,7 +423,7 @@ class SoulSplit(Spell):
 		
 """Mana 5 cards"""
 class CommandtheIllidari(Spell):
-	Class, name = "Demon Hunter", "Command the Illidari"
+	Class, school, name = "Demon Hunter", "", "Command the Illidari"
 	requireTarget, mana = False, 5
 	index = "DHInitiate~Demon Hunter~Spell~5~Command the Illidari"
 	description = "Summon six 1/1 Illidari with Rush"
@@ -551,16 +551,16 @@ DemonHunterInit_Indices = {"DHInitiate~Demon Hunter~Spell~0~Blur": Blur,
 							"DHInitiate~Demon Hunter~Spell~1~Consume Magic~Outcast": ConsumeMagic,
 							"DHInitiate~Demon Hunter~Spell~1~Mana Burn": ManaBurn,
 							"DHInitiate~Demon Hunter~Minion~1~2~1~Demon~Ur'zul Horror~Deathrattle": UrzulHorror,
-							"DHInitiate~Demon Hunter~Minion~1~2~1~None~Lost Soul~Uncollectible": LostSoul,
+							"DHInitiate~Demon Hunter~Minion~1~2~1~~Lost Soul~Uncollectible": LostSoul,
 							"DHInitiate~Demon Hunter~Spell~3~Blade Dance": BladeDance,
 							"DHInitiate~Demon Hunter~Spell~2~Feast of Souls": FeastofSouls,
 							"DHInitiate~Demon Hunter~Weapon~2~1~2~Umberwing~Battlecry": Umberwing,
 							"DHInitiate~Demon Hunter~Minion~1~1~1~Demon~Felwing~Uncollectible": Felwing,
-							"DHInitiate~Demon Hunter~Minion~4~4~2~None~Altruis the Outcast~Legendary": AltruistheOutcast,
+							"DHInitiate~Demon Hunter~Minion~4~4~2~~Altruis the Outcast~Legendary": AltruistheOutcast,
 							"DHInitiate~Demon Hunter~Spell~3~Eye Beam~Outcast": EyeBeam,
-							"DHInitiate~Demon Hunter~Minion~3~3~1~None~Wrathscale Naga": WrathscaleNaga,
-							"DHInitiate~Demon Hunter~Minion~4~5~3~None~Illidari Felblade~Rush~Outcast": IllidariFelblade,
-							"DHInitiate~Demon Hunter~Minion~4~4~4~None~Raging Felscreamer~Battlecry": RagingFelscreamer,
+							"DHInitiate~Demon Hunter~Minion~3~3~1~~Wrathscale Naga": WrathscaleNaga,
+							"DHInitiate~Demon Hunter~Minion~4~5~3~~Illidari Felblade~Rush~Outcast": IllidariFelblade,
+							"DHInitiate~Demon Hunter~Minion~4~4~4~~Raging Felscreamer~Battlecry": RagingFelscreamer,
 							"DHInitiate~Demon Hunter~Spell~4~Soul Split": SoulSplit,
 							"DHInitiate~Demon Hunter~Spell~5~Command the Illidari": CommandtheIllidari,
 							"DHInitiate~Demon Hunter~Minion~5~2~6~Demon~Wrathspike Brute~Taunt": WrathspikeBrute,
@@ -569,9 +569,3 @@ DemonHunterInit_Indices = {"DHInitiate~Demon Hunter~Spell~0~Blur": Blur,
 							"DHInitiate~Demon Hunter~Minion~9~8~8~Dragon~Nethrandamus~Battlecry~Legendary": Nethrandamus,
 							}
 							
-#if __name__ == "__main__":
-#	filename_List = []
-#	for key, value in DemonHunterInit_Indices.items():
-#		filename_List.append(value.__name__+".png")
-#		
-#	print(filename_List)

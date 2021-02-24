@@ -135,7 +135,7 @@ def checktheStatsofCards():
 					elif raceAllCapDict[value.race] !=cardInfo["race"]:
 						print(value, " race doesn't match json")
 						print(raceAllCapDict[value.race], cardInfo["race"])
-				elif value.race or words[6] != "None": #If card doesn't have race
+				elif value.race or words[6]: #If card doesn't have race
 					print(value, " shouldn't have race", value.race, words[6])
 				#Check the keyWords of the minion
 				if value.keyWord:

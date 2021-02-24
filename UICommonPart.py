@@ -64,12 +64,15 @@ class ListboxPanel(tk.Frame):
 	def __init__(self, GUI, master):
 		self.GUI = GUI
 		super().__init__(master=master)
-		scrollbar_ver = tk.Scrollbar(master=self) #Horizontal scroll bars need orient="horizontal"
-		self.listbox = tk.Listbox(master=self, width=14, height=2, bg="white", font=("Yahei", 10),
+		scrollbar_ver = tk.Scrollbar(master=self)
+		scrollbar_hor = tk.Scrollbar(master=self, orient="horizontal") #Horizontal scroll bars need orient="horizontal"
+		self.listbox = tk.Listbox(master=self, width=18, height=1, bg="white", font=("Yahei", 10),
 							yscrollcommand=scrollbar_ver.set)
-		self.listbox.pack(fill=tk.Y, side=tk.LEFT)
-		scrollbar_ver.pack(fill=tk.Y, side=tk.LEFT)
+		scrollbar_ver.pack(fill=tk.Y, side=tk.RIGHT)
+		scrollbar_hor.pack(fill=tk.X, side=tk.BOTTOM)
+		self.listbox.pack(side=tk.LEFT)
 		scrollbar_ver.configure(command=self.listbox.yview)
+		scrollbar_hor.configure(command=self.listbox.xview)
 		
 	def delete(self, start, end):
 		self.listbox.delete(start, end)
@@ -121,17 +124,17 @@ class DeckGravePanel(tk.Frame):
 			print("cards_XPossi", HD.cards_XPossi[ID])
 			print("trackedHands", HD.trackedHands[ID])
 			for tup in HD.cards_1Possi[ID]:
-				if tup[0]: self.lbx_cards_1Possi.insert(tk.END, "{}->{}"%format(tup[0].name_CN, tup[1][0].name_CN))
+				if tup[0]: self.lbx_cards_1Possi.insert(tk.END, tup[0].name_CN+"->"+tup[1][0].name_CN)
 				else: self.lbx_cards_1Possi.insert(tk.END, tup[1][0].name_CN)
 			for tup in HD.cards_XPossi[ID]:
-				self.lbx_cards_XPossi.insert(tk.END, "创建者：{}"%format(tup[0].name_CN))
-				for p in tup[1]: self.lbx_cards_XPossi.insert(tk.END, "    {}"%format(p.name_CN))
+				self.lbx_cards_XPossi.insert(tk.END, "创建者："+tup[0].name_CN)
+				for p in tup[1]: self.lbx_cards_XPossi.insert(tk.END, "    "+p.name_CN)
 			for tup in HD.trackedHands[ID]:
 				if tup[0]:
-					if len(tup[1]) == 1: self.lbx_trackedHands.insert(tk.END, "{}->{}"%format(tup[0].name_CN, tup[1][0].name_CN))
-					else: self.lbx_trackedHands.insert(tk.END, "创建者：{}"%format(tup[0].name_CN))
+					if len(tup[1]) == 1: self.lbx_trackedHands.insert(tk.END, tup[0].name_CN+"->"+tup[1][0].name_CN)
+					else: self.lbx_trackedHands.insert(tk.END, "创建者："+tup[0].name_CN)
 				else:
-					for p in tup[1]: self.lbx_trackedHands.insert(tk.END, "    {}"%format(p.name_CN))
+					for p in tup[1]: self.lbx_trackedHands.insert(tk.END, "    "+p.name_CN)
 			for index in self.GUI.Game.Counters.minionsDiedThisGame[ID]:
 				self.lbx_Graveyard.insert(tk.END, cardPool[index].name_CN)
 		else:
@@ -155,10 +158,10 @@ class DeckGravePanel(tk.Frame):
 		self.lbx_cards_XPossi.delete(0, tk.END)
 		self.lbx_trackedHands.delete(0, tk.END)
 		self.lbx_Graveyard.delete(0, tk.END)
-		self.lbx_cards_1Possi.listbox.config(height=2)
-		self.lbx_cards_XPossi.listbox.config(height=2)
-		self.lbx_trackedHands.listbox.config(height=2)
-		self.lbx_Graveyard.listbox.config(height=2)
+		self.lbx_cards_1Possi.listbox.config(height=1)
+		self.lbx_cards_XPossi.listbox.config(height=1)
+		self.lbx_trackedHands.listbox.config(height=1)
+		self.lbx_Graveyard.listbox.config(height=1)
 		
 		
 class GUI_Common:
