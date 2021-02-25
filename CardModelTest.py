@@ -2,25 +2,54 @@ from direct.showbase.ShowBase import ShowBase
 from panda3d.core import *
 
 import gltf, simplepbr
-from Spell_Model import loadSpell
-from Minion_Model import loadMinion
+from Spell_Model import *
+from Minion_Model import *
+from Weapon_Model import *
+from Power_Model import *
+from Hero_Model	import *
+
 configVars = """
 win-size 1280 720
 show-frame-rate-meter 1
 """
 
-from Classic import LightningBolt, Deathwing
-from Outlands import SoulMirror
+from Basic import Reinforce, Garrosh
+from Classic import LightningBolt, Deathwing, Gorehowl
+from Outlands import SoulMirror, BulwarkofAzzinoth
+from Darkmoon import RinlingsRifle
+
+CameraDistance = 10
 
 class HSModelTest(ShowBase):
 	def __init__(self):
 		ShowBase.__init__(self)
 		#simplepbr.init()
 		
-		#card = loadMinion(self.render, self.loader, Deathwing, 12)
-		card = loadSpell(self.render, self.loader, SoulMirror, 7)
-		card.reparentTo(self.render)
-		card.setPos(0, 3, 0)
+		#card1 = loadMinion(self.render, self.loader, Deathwing, 12)
+		#card2 = loadMinion_Played(self.render, self.loader, Deathwing)
+		#card3 = loadWeapon(self.render, self.loader, BulwarkofAzzinoth, 3)
+		#card4 = loadWeapon_Played(self.render, self.loader, BulwarkofAzzinoth)
+		#card5 = loadSpell(self.render, self.loader, SoulMirror, 7)
+		card6 = loadPower(self.render, self.loader, Reinforce, 1)
+		card7 = loadPower_Played(self.render, self.loader, Reinforce)
+		card8 = loadHero_Played(self.render, self.loader, Garrosh, 3, 26, 10)
+		
+		#card1.reparentTo(self.render)
+		#card2.reparentTo(self.render)
+		#card3.reparentTo(self.render)
+		#card4.reparentTo(self.render)
+		#card5.reparentTo(self.render)
+		card6.reparentTo(self.render)
+		card7.reparentTo(self.render)
+		card8.reparentTo(self.render)
+		
+		#card1.setPos(-10, CameraDistance, 0)
+		#card2.setPos(0, CameraDistance, 0)
+		#card3.setPos(10, CameraDistance, 0)
+		#card4.setPos(20, CameraDistance, 0)
+		#card5.setPos(10, CameraDistance, 10)
+		card6.setPos(-10, CameraDistance, 0)
+		card7.setPos(0, CameraDistance, -10)
 		
 		#card = self.loader.loadModel("SpellModels\\Card.glb")
 		#card.reparentTo(self.render)
