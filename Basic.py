@@ -216,11 +216,7 @@ class Reinforce(HeroPower):
 	description = "Summon a 1/1 Silver Hand Recruit"
 	name_CN = "增援"
 	def available(self):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1:
-			return False
-		return True
+		return not self.chancesUsedUp() and self.Game.space(self.ID)
 		
 	def effect(self, target=None, choice=0):
 		#Hero Power summoning won't be doubled by Khadgar.
@@ -233,11 +229,7 @@ class TheSilverHand(HeroPower):
 	description = "Summon two 1/1 Silver Hand Recruits"
 	name_CN = "白银之手"
 	def available(self):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1:
-			return False
-		return True
+		return not self.chancesUsedUp() and self.Game.space(self.ID)
 		
 	def effect(self, target=None, choice=0):
 		self.Game.summon([SilverHandRecruit(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID, "")
@@ -300,11 +292,7 @@ class TotemicCall(HeroPower):
 	description = "Summon a random totem"
 	name_CN = "图腾召唤"
 	def available(self):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1 or self.viableTotems()[0] < 1:
-			return False
-		return True
+		return not self.chancesUsedUp() and self.Game.space(self.ID) and self.viableTotems()[0]
 		
 	def effect(self, target=None, choice=0):
 		curGame = self.Game
@@ -331,11 +319,7 @@ class TotemicSlam(HeroPower):
 	description = "Summon a totem of your choice"
 	name_CN = "图腾崇拜"
 	def available(self):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1:
-			return False
-		return True
+		return not self.chancesUsedUp() and self.Game.space(self.ID) 
 		
 	def effect(self, target=None, choice=0):
 		curGame = self.Game
@@ -659,8 +643,8 @@ class MagmaRager(Minion):
 	
 class RaidLeader(Minion):
 	Class, race, name = "Neutral", "", "Raid Leader"
-	mana, attack, health = 3, 2, 2
-	index = "Basic~Neutral~Minion~3~2~2~~Raid Leader"
+	mana, attack, health = 3, 2, 3
+	index = "Basic~Neutral~Minion~3~2~3~~Raid Leader"
 	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack"
 	name_CN = "团队领袖"
 	def __init__(self, Game, ID):
@@ -840,8 +824,8 @@ class FrostwolfWarlord(Minion):
 #When takes damage in hand(Illidan/Juggler/Anub'ar Ambusher), won't trigger the +3 Attack buff.
 class GurubashiBerserker(Minion):
 	Class, race, name = "Neutral", "", "Gurubashi Berserker"
-	mana, attack, health = 5, 2, 7
-	index = "Basic~Neutral~Minion~5~2~7~~Gurubashi Berserker"
+	mana, attack, health = 5, 2, 8
+	index = "Basic~Neutral~Minion~5~2~8~~Gurubashi Berserker"
 	requireTarget, keyWord, description = False, "", "Whenever this minion takes damage, gain +3 Attack"
 	name_CN = "古拉巴什 狂暴者"
 	def __init__(self, Game, ID):
@@ -1828,18 +1812,18 @@ class LightsJustice(Weapon):
 	
 	
 class HolyLight(Spell):
-	Class, school, name = "Paladin", "", "Holy Light"
+	Class, school, name = "Paladin", "Holy", "Holy Light"
 	requireTarget, mana = True, 2
-	index = "Basic~Paladin~Spell~2~Holy Light"
-	description = "Restore 6 health"
+	index = "Basic~Paladin~Spell~2~Holy~Holy Light"
+	description = "Restore 8 health"
 	name_CN = "圣光术"
 	def text(self, CHN):
-		heal = 6 * (2 ** self.countHealDouble())
+		heal = 8 * (2 ** self.countHealDouble())
 		return "恢复%d点生命值"%heal if CHN else "Restore %d health"%heal
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			heal = 6 * (2 ** self.countHealDouble())
+			heal = 8 * (2 ** self.countHealDouble())
 			self.restoresHealth(target, heal)
 		return target
 		
@@ -2048,9 +2032,7 @@ class ShadowWordDeath(Spell):
 		return self.selectableMinionExists()
 		
 	def targetCorrect(self, target, choice=0):
-		if target.type == "Minion" and target.attack > 4 and target.onBoard:
-			return True
-		return False
+		return target.type == "Minion" and target.attack > 4 and target.onBoard
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -2078,9 +2060,9 @@ class ShadowWordPain(Spell):
 		
 		
 class HolyNova(Spell):
-	Class, school, name = "Priest", "", "Holy Nova"
+	Class, school, name = "Priest", "Holy", "Holy Nova"
 	requireTarget, mana = False, 4
-	index = "Basic~Priest~Spell~4~Holy Nova"
+	index = "Basic~Priest~Spell~4~Holy~Holy Nova"
 	description = "Deal 2 damage to all enemy minions. Restore 2 Health to all friendly characters"
 	name_CN = "神圣新星"
 	def text(self, CHN):
@@ -2097,7 +2079,6 @@ class HolyNova(Spell):
 		self.dealsAOE(enemies, [damage]*len(enemies))
 		self.restoresAOE(friendlies, [heal]*len(friendlies))
 		return None
-		
 		
 class PowerInfusion(Spell):
 	Class, school, name = "Priest", "", "Power Infusion"
@@ -2394,18 +2375,16 @@ class RockbiterWeapon(Spell):
 		
 		
 class Windfury(Spell):
-	Class, school, name = "Shaman", "", "Windfury"
+	Class, school, name = "Shaman", "Nature", "Windfury"
 	requireTarget, mana = True, 2
-	index = "Basic~Shaman~Spell~2~Windfury"
+	index = "Basic~Shaman~Spell~2~Nature~Windfury"
 	description = "Give a minion Windfury"
 	name_CN = "风怒"
 	def available(self):
 		return self.selectableMinionExists()
 		
 	def targetCorrect(self, target, choice=0):
-		if target.type == "Minion" and target.onBoard:
-			return True
-		return False
+		return target.type == "Minion" and target.onBoard
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -2507,6 +2486,9 @@ class SacrificialPact(Spell):
 	index = "Basic~Warlock~Spell~0~Sacrificial Pact"
 	description = "Destroy a friendly Demon. Restore 5 health to you hero"
 	name_CN = "牺牲契约"
+	def available(self):
+		return self.selectableFriendlyMinionExists()
+		
 	def text(self, CHN):
 		heal = 5 * (2 ** self.countHealDouble())
 		return "消灭一个友方恶魔，为你的英雄恢复%d生命值"%heal if CHN else "Destroy a friendly Demon. Restore %d Health to your hero"%heal
@@ -2571,6 +2553,7 @@ class Trig_Corruption(TrigBoard):
 		trig.ID = self.ID
 		return trig
 		
+		
 class MortalCoil(Spell):
 	Class, school, name = "Warlock", "", "Mortal Coil"
 	requireTarget, mana = True, 1
@@ -2623,7 +2606,7 @@ class Soulfire(Spell):
 				ownHand = curGame.Hand_Deck.hands[self.ID]
 				i = nprandint(len(ownHand)) if ownHand else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.Hand_Deck.discardCard(self.ID, i)
+			if i > -1: curGame.Hand_Deck.discard(self.ID, i)
 		return target
 		
 		
@@ -2651,7 +2634,7 @@ class Felstalker(Minion):
 				ownHand = curGame.Hand_Deck.hands[self.ID]
 				i = nprandint(len(ownHand)) if ownHand else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.Hand_Deck.discardCard(self.ID, i)
+			if i > -1: curGame.Hand_Deck.discard(self.ID, i)
 		return None
 		
 		

@@ -1061,7 +1061,7 @@ class Trig_TrueaimCrescent(TrigBoard):
 		minions = game.sort_Sequence(game.minionsAlive(self.entity.ID))[0]
 		for minion in minions:
 			if target.onBoard and target.health > 0 and not target.dead:
-				game.battle(minion, target, verifySelectable=False, useAttChance=True, resolveDeath=False, resetRedirTrig=True)
+				game.battle(minion, target, verifySelectable=False, useAttChance=False, resolveDeath=False, resetRedirTrig=True)
 				
 				
 class AceHunterKreen(Minion):
@@ -3413,7 +3413,7 @@ class TotemGoliath(Minion):
 class SummonAllBasicTotems(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion, game = self.entity, self.entity.Game
-		totems = [HealingTotem(game, minion.ID), SearingTotem(game, minion.ID), StoneclawTotem(game, minion.ID), WrathofAirTotem(game, minion.ID)]
+		totems = [HealingTotem(game, minion.ID), SearingTotem(game, minion.ID), StoneclawTotem(game, minion.ID), StrengthTotem(game, minion.ID)]
 		pos = (minion.pos, "totheRight") if minion in game.minions[minion.ID] else (-1, "totheRightEnd")
 		game.summon(totems, pos, minion)
 		

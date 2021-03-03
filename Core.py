@@ -7,6 +7,26 @@ from numpy import inf as npinf
 import numpy as np
 
 """Core"""
+class SilverHandRecruit(Minion):
+	Class, race, name = "Paladin", "", "Silver Hand Recruit"
+	mana, attack, health = 1, 1, 1
+	index = "Core~Paladin~Minion~1~1~1~~Silver Hand Recruit~Uncollectible"
+	requireTarget, keyWord, description = False, "", ""
+	name_CN = "白银之手新兵"
+
+
+class WickedKnife(Weapon):
+	Class, name, description = "Rogue", "Wicked Knife", ""
+	mana, attack, durability = 1, 1, 2
+	index = "Core~Rogue~Weapon~1~1~2~Wicked Knife~Uncollectible"
+	name_CN = "邪恶短刀"
+
+class PoisonedDagger(Weapon):
+	Class, name, description = "Rogue", "Poisoned Dagger", ""
+	mana, attack, durability = 1, 2, 2
+	index = "Core~Rogue~Weapon~1~2~2~Poisoned Dagger~Uncollectible"
+	name_CN = "浸毒匕首"
+
 
 class SearingTotem(Minion):
 	Class, race, name = "Shaman", "Totem", "Searing Totem"
@@ -66,7 +86,7 @@ class Trig_StrengthTotem(TrigBoard):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
-		return "在你的回合结束时，为使另一个友方随从获得+1攻击力"%heal if CHN else "At the end of your turn, give another friendly minion +1 Attack"
+		return "在你的回合结束时，为使另一个友方随从获得+1攻击力" if CHN else "At the end of your turn, give another friendly minion +1 Attack"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
@@ -86,7 +106,7 @@ class Trig_StrengthTotem(TrigBoard):
 #	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1"#Default Spell Damage is 1.
 #	name_CN = "空气之怒图腾"
 	
-BasicTotems = [SearingTotem, StoneclawTotem, HealingTotem, WrathofAirTotem]
+BasicTotems = [SearingTotem, StoneclawTotem, HealingTotem, StrengthTotem]
 
 """Basic Hero Powers"""
 class DemonClaws(HeroPower):
@@ -216,11 +236,7 @@ class Reinforce(HeroPower):
 	description = "Summon a 1/1 Silver Hand Recruit"
 	name_CN = "增援"
 	def available(self):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1:
-			return False
-		return True
+		return not self.chancesUsedUp() and self.Game.space(self.ID) 
 		
 	def effect(self, target=None, choice=0):
 		#Hero Power summoning won't be doubled by Khadgar.
@@ -233,11 +249,7 @@ class TheSilverHand(HeroPower):
 	description = "Summon two 1/1 Silver Hand Recruits"
 	name_CN = "白银之手"
 	def available(self):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1:
-			return False
-		return True
+		return not self.chancesUsedUp() and self.Game.space(self.ID) 
 		
 	def effect(self, target=None, choice=0):
 		self.Game.summon([SilverHandRecruit(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self.ID, "")
@@ -292,7 +304,7 @@ class PoisonedDaggers(HeroPower):
 	def effect(self, target=None, choice=0):
 		self.Game.equipWeapon(PoisonedDagger(self.Game, self.ID))
 		return 0
-		
+
 #Shaman basic and upgraded powers
 class TotemicCall(HeroPower):
 	mana, name, requireTarget = 2, "Totemic Call", False
@@ -300,11 +312,7 @@ class TotemicCall(HeroPower):
 	description = "Summon a random totem"
 	name_CN = "图腾召唤"
 	def available(self):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1 or self.viableTotems()[0] < 1:
-			return False
-		return True
+		return not self.chancesUsedUp() and self.Game.space(self.ID) and self.viableTotems()[0]
 		
 	def effect(self, target=None, choice=0):
 		curGame = self.Game
@@ -319,7 +327,7 @@ class TotemicCall(HeroPower):
 		return 0
 		
 	def viableTotems(self):
-		viableTotems = [SearingTotem, StoneclawTotem, HealingTotem, WrathofAirTotem]
+		viableTotems = [SearingTotem, StoneclawTotem, HealingTotem, StrengthTotem]
 		for minion in self.Game.minionsonBoard(self.ID):
 			try: viableTotems.remove(type(minion))
 			except: pass
@@ -331,11 +339,7 @@ class TotemicSlam(HeroPower):
 	description = "Summon a totem of your choice"
 	name_CN = "图腾崇拜"
 	def available(self):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1:
-			return False
-		return True
+		return not self.chancesUsedUp() and self.Game.space(self.ID)
 		
 	def effect(self, target=None, choice=0):
 		curGame = self.Game
@@ -343,7 +347,7 @@ class TotemicSlam(HeroPower):
 			if curGame.guides:
 				curGame.summon(curGame.guides.pop(0)(curGame, self.ID), -1, self.ID, '')
 			else:
-				curGame.options = [totem(curGame, self.ID) for totem in [SearingTotem, StoneclawTotem, HealingTotem, WrathofAirTotem]]
+				curGame.options = [totem(curGame, self.ID) for totem in [SearingTotem, StoneclawTotem, HealingTotem, StrengthTotem]]
 				curGame.Discover.startDiscover(self)
 		return 0
 		
@@ -442,7 +446,7 @@ class Guldan(Hero):
 	Class, name, heroPower = "Warlock", "Gul'dan", LifeTap
 	name_CN = "古尔丹"
 	
-"""Mana 0 cards"""
+	
 class TheCoin(Spell):
 	Class, school, name = "Neutral", "", "The Coin"
 	requireTarget, mana = False, 0

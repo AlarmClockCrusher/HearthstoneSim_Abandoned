@@ -471,7 +471,7 @@ class BuffAura_DreadRaven(HasAura_toMinion):
 		return type(self)(recipient)
 	#可以通过HasAura_toMinion的createCopy方法复制
 	
-	
+			
 class FireHawk(Minion):
 	Class, race, name = "Neutral", "Elemental", "Fire Hawk"
 	mana, attack, health = 3, 1, 3
@@ -2931,7 +2931,7 @@ class TimeRip(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			if target.onBoard: target.dead = True
-			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
+			elif target.inHand: self.Game.Hand_Deck.discard(target) #如果随从在手牌中则将其丢弃
 		invokeGalakrond(self.Game, self.ID)
 		return target
 		
@@ -2943,11 +2943,7 @@ class GalakrondsWit(HeroPower):
 	description = "Add a random Priest minion to your hand"
 	name_CN = "迦拉克隆 的智识"
 	def available(self, choice=0):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.Hand_Deck.handNotFull(self.ID) == False:
-			return False
-		return True
+		return not (self.chancesUsedUp() or self.Game.Hand_Deck.handNotFull(self.ID))
 		
 	def effect(self, target=None, choice=0):
 		curGame = self.Game
@@ -3341,8 +3337,7 @@ class GalakrondsGuile(HeroPower):
 	description = "Add a Lackey to your hand"
 	name_CN = "迦拉克隆 的诡计"
 	def available(self, choice=0):
-		return self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra \
-				and not self.Game.Hand_Deck.handNotFull(self.ID)
+		return not (self.chancesUsedUp() or self.Game.Hand_Deck.handNotFull(self.ID))
 				
 	def effect(self, target=None, choice=0):
 		curGame = self.Game
@@ -3731,12 +3726,8 @@ class GalakrondsFury(HeroPower):
 	index = "Shaman~Hero Power~2~Galakrond's Fury"
 	description = "Summon a 2/1 Elemental with Rush"
 	name_CN = "迦拉克隆 的愤怒"
-	def available(self, choice=0):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1:
-			return False
-		return True
+	def available(self):
+		return not self.chancesUsedUp() and self.Game.space(self.ID)
 		
 	def effect(self, target=None, choice=0):
 		self.Game.summon(WindsweptElemental(self.Game, self.ID), -1, self, "")
@@ -3989,12 +3980,8 @@ class GalakrondsMalice(HeroPower):
 	index = "Shaman~Hero Power~2~Galakrond's Malice"
 	description = "Summon two 1/1 Imps"
 	name_CN = "迦拉克隆 的恶意"
-	def available(self, choice=0):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1:
-			return False
-		return True
+	def available(self):
+		return not self.chancesUsedUp() and self.Game.space(self.ID)
 		
 	def effect(self, target=None, choice=0):
 		self.Game.summon([DraconicImp(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self, "")

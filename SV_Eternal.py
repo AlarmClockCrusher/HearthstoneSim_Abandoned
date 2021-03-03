@@ -1223,7 +1223,7 @@ class GrandAuction(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.Game.Hand_Deck.discardCard(self.ID, target)
+            self.Game.Hand_Deck.discard(self.ID, target)
             self.Game.Hand_Deck.drawCard(self.ID)
             self.Game.Hand_Deck.addCardtoHand(AgewornWeaponry, self.ID, byType=True, creator=type(self))
         return target
@@ -1675,7 +1675,7 @@ class Trig_ImpalementArts(TrigHand):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.Hand_Deck.discardCard(self.entity.ID, self.entity)
+        self.entity.Game.Hand_Deck.discard(self.entity.ID, self.entity)
 
 
 class ElmottPyrestarter(SVMinion):
@@ -2165,7 +2165,7 @@ class SharkWarrior(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.Game.Hand_Deck.discardCard(self.ID, target)
+            self.Game.Hand_Deck.discard(self.ID, target)
             heal = 4 * (2 ** self.countHealDouble())
             self.restoresHealth(self.Game.heroes[self.ID], heal)
         if comment == 5:
@@ -4681,7 +4681,7 @@ class GrandAuction(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.Game.Hand_Deck.discardCard(self.ID, target)
+            self.Game.Hand_Deck.discard(self.ID, target)
             self.Game.Hand_Deck.drawCard(self.ID)
             self.Game.Hand_Deck.addCardtoHand(AgewornWeaponry, self.ID, byType=True, creator=type(self))
         return target
@@ -5133,7 +5133,7 @@ class Trig_ImpalementArts(TrigHand):
         return self.entity.onBoard and ID == self.entity.ID
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.Hand_Deck.discardCard(self.entity.ID, self.entity)
+        self.entity.Game.Hand_Deck.discard(self.entity.ID, self.entity)
 
 
 class ElmottPyrestarter(SVMinion):
@@ -5623,7 +5623,7 @@ class SharkWarrior(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.Game.Hand_Deck.discardCard(self.ID, target)
+            self.Game.Hand_Deck.discard(self.ID, target)
             heal = 4 * (2 ** self.countHealDouble())
             self.restoresHealth(self.Game.heroes[self.ID], heal)
         if comment == 5:

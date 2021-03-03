@@ -1,55 +1,73 @@
 from direct.showbase.ShowBase import ShowBase
+from direct.showbase import DirectObject
 from panda3d.core import *
-
 import gltf, simplepbr
-from Spell_Model import *
-from Minion_Model import *
-from Weapon_Model import *
-from Power_Model import *
-from Hero_Model	import *
+
+from LoadModels import *
 
 configVars = """
 win-size 1280 720
-show-frame-rate-meter 1
+window-title Card Model Loading Viewer
+clock-mode limited
+clock-frame-rate 45
 """
 
-from Basic import Reinforce, Garrosh
-from Classic import LightningBolt, Deathwing, Gorehowl
-from Outlands import SoulMirror, BulwarkofAzzinoth
-from Darkmoon import RinlingsRifle
+loadPrcFileData('', configVars)
 
-CameraDistance = 10
+
+from Basic import Reinforce, Garrosh
+from Classic import *
+from Outlands import *
+from Darkmoon import *
+
+CameraDistance = 3
 
 class HSModelTest(ShowBase):
 	def __init__(self):
 		ShowBase.__init__(self)
-		#simplepbr.init()
+		simplepbr.init(max_lights=4)
 		
-		#card1 = loadMinion(self.render, self.loader, Deathwing, 12)
-		#card2 = loadMinion_Played(self.render, self.loader, Deathwing)
-		#card3 = loadWeapon(self.render, self.loader, BulwarkofAzzinoth, 3)
-		#card4 = loadWeapon_Played(self.render, self.loader, BulwarkofAzzinoth)
-		#card5 = loadSpell(self.render, self.loader, SoulMirror, 7)
-		card6 = loadPower(self.render, self.loader, Reinforce, 1)
+		card1 = loadMinion(self.render, self.loader, Deathwing, orig=True)
+		card2 = loadMinion_Played(self.render, self.loader, AbusiveSergeant)
+		card3 = loadWeapon(self.render, self.loader, RinlingsRifle, orig=True)
+		card4 = loadWeapon_Played(self.render, self.loader, BulwarkofAzzinoth)
+		card5 = loadSpell(self.render, self.loader, SoulMirror, orig=True)
+		card6 = loadPower(self.render, self.loader, Reinforce, 1, orig=True)
 		card7 = loadPower_Played(self.render, self.loader, Reinforce)
 		card8 = loadHero_Played(self.render, self.loader, Garrosh, 3, 26, 10)
+		card9 = loadMinion(self.render, self.loader, FacelessManipulator, orig=True)
+		card10 = loadMinion_Played(self.render, self.loader, Deathwing)
+		card11 = loadWeapon(self.render, self.loader, FieryWarAxe, orig=True)
+		card12 = loadWeapon_Played(self.render, self.loader, Gorehowl)
+		card13 = loadHero(self.render, self.loader, LordJaraxxus, orig=True)
 		
-		#card1.reparentTo(self.render)
-		#card2.reparentTo(self.render)
-		#card3.reparentTo(self.render)
-		#card4.reparentTo(self.render)
-		#card5.reparentTo(self.render)
+		card1.reparentTo(self.render)
+		card2.reparentTo(self.render)
+		card3.reparentTo(self.render)
+		card4.reparentTo(self.render)
+		card5.reparentTo(self.render)
 		card6.reparentTo(self.render)
 		card7.reparentTo(self.render)
 		card8.reparentTo(self.render)
+		card9.reparentTo(self.render)
+		card10.reparentTo(self.render)
+		card11.reparentTo(self.render)
+		card12.reparentTo(self.render)
+		card13.reparentTo(self.render)
 		
-		#card1.setPos(-10, CameraDistance, 0)
-		#card2.setPos(0, CameraDistance, 0)
-		#card3.setPos(10, CameraDistance, 0)
-		#card4.setPos(20, CameraDistance, 0)
-		#card5.setPos(10, CameraDistance, 10)
-		card6.setPos(-10, CameraDistance, 0)
-		card7.setPos(0, CameraDistance, -10)
+		card1.setPos(0, CameraDistance, 0)
+		card2.setPos(10, CameraDistance, 0)
+		card3.setPos(20, CameraDistance, 0)
+		card4.setPos(30, CameraDistance, 0)
+		card5.setPos(0, CameraDistance, 15)
+		card6.setPos(10, CameraDistance, 15)
+		card7.setPos(20, CameraDistance, 15)
+		card8.setPos(30, CameraDistance, 15)
+		card9.setPos(0, CameraDistance, -15)
+		card10.setPos(10, CameraDistance, -15)
+		card11.setPos(20, CameraDistance, -15)
+		card12.setPos(30, CameraDistance, -15)
+		card13.setPos(0, CameraDistance, 30)
 		
 		#card = self.loader.loadModel("SpellModels\\Card.glb")
 		#card.reparentTo(self.render)

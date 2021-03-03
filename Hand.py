@@ -353,7 +353,7 @@ class Hand_Deck:
 					npshuffle(order)
 					curGame.fixedGuides.append(tuple(order))
 				self.decks[ID] = [newDeck[i] for i in order]
-			if sendSig: curGame.sendSignal("CardShuffled", initiatorID, creator, obj, 0, "")
+			if sendSig: curGame.sendSignal("CardShuffled", creator.ID if creator else initiatorID, creator, obj, 0, "")
 			curGame.sendSignal("DeckCheck", ID, None, None, 0, "")
 	
 	#Given the index in hand. Can't shuffle multiple cards except for whole hand
@@ -386,42 +386,46 @@ class Hand_Deck:
 	def discardAll(self, ID):
 		if self.hands[ID]:
 			cards, cost, isRightmostCardinHand = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True)
-			n = len(cards)
 			for card in cards:
 				self.ruleOut(card, fromHD=2)
 				card.whenDiscarded()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.Counters.cardsDiscardedThisTurn[ID].append(card.index)
 				self.Game.Counters.shadows[card.ID] += 1
-				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, -1, "")
-			self.Game.sendSignal("PlayerDiscardsHand", ID, None, None, n, "")
+				self.Game.sendSignal("CardDiscarded", card.ID, None, card, -1, "")
+			self.Game.sendSignal("HandDiscarded", ID, None, None, len(cards), "")
 			self.Game.Manas.calcMana_All()
 
-	def discardCard(self, ID, card=None):
-		if card is None:  # Discard a random card. Deprecated
+	#card can be a list(for discarding multiple cards), or can be a single int or card entity
+	def discard(self, ID, card, all=False):
+		if all or isinstance(card, (list, tuple, np.ndarray)):
 			if self.hands[ID]:
-				card = npchoice(self.hands[ID])
-				card, cost, isRightmostCardinHand = self.extractfromHand(card, enemyCanSee=True)
-				self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 1, "")
-				card.whenDiscarded()
+				if all: cards = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True)[0]
+				else: cards = [self.extractfromHand(None, ID=ID, enemyCanSee=True)[0] for i in card]
+				if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(cards, enemyCanSee=True)
+				for card in cards:
+					self.ruleOut(card, fromHD=2)
+					self.Game.sendSignal("CardDiscarded", card.ID, None, card, 1, "")
+					card.whenDiscarded()
+					self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
+					self.Game.Counters.cardsDiscardedThisTurn[ID].append(card.index)
+					self.Game.Counters.shadows[card.ID] += 1
+					self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
+				self.Game.sendSignal("HandDiscarded", ID, None, None, len(cards), "")
 				self.Game.Manas.calcMana_All()
-				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
-				self.Game.Counters.cardsDiscardedThisTurn[ID].append(card.index)
-				self.Game.Counters.shadows[card.ID] += 1
-				self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
 		else:  # Discard a chosen card.
 			i = card if isinstance(card, (int, np.int32, np.int64)) else self.hands[ID].index(card)
 			card = self.hands[ID].pop(i)
 			card.leavesHand()
 			self.ruleOut(card, fromHD=2) #rule out from both hand and deck
 			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee=True)
-			self.Game.sendSignal("PlayerDiscardsCard", card.ID, None, card, 1, "")
+			self.Game.sendSignal("CardDiscarded", card.ID, None, card, 1, "")
 			card.whenDiscarded()
-			self.Game.Manas.calcMana_All()
 			self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 			self.Game.Counters.cardsDiscardedThisTurn[ID].append(card.index)
 			self.Game.Counters.shadows[card.ID] += 1
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, "")
+			self.Game.Manas.calcMana_All()
 			
 	# 只能全部拿出手牌中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
 	def extractfromHand(self, card, ID=0, all=False, enemyCanSee=False):
@@ -503,25 +507,8 @@ class Hand_Deck:
 
 from CardPools import *
 
-from CardPools import RivaylianBandit, RivaylianBandit,\
-			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,\
-			WanderingChef, WanderingChef, WanderingChef,\
-			Ramiel, Ramiel, Ramiel,\
-			IoJourneymage, IoJourneymage, IoJourneymage,\
-			ArchangelofRemembrance, ArchangelofRemembrance, ArchangelofRemembrance,\
-			GabrielHeavenlyVoice, GabrielHeavenlyVoice, GabrielHeavenlyVoice,\
-			GoblinQueen, GoblinQueen, GoblinQueen,\
-			FieranHavensentWindGod,\
-			RaRadianceIncarnate, RaRadianceIncarnate,\
-			WilbertGrandKnight, WilbertGrandKnight, WilbertGrandKnight,\
-			GoddessoftheWestWind, GoddessoftheWestWind, GoddessoftheWestWind,\
-			Set, Set, Set,\
-			AnveltJudgmentsCannon, AnveltJudgmentsCannon,\
-			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright,\
-			FreezingTrap, ExplosiveTrap, IceBarrier, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,\
-			RingToss, RingToss, RingToss_Corrupt, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar,\
-			StrokeofConviction, StoneMerchant, XIIWolfraudHangedMan, PaulaIcyWarmth
-			
+from CardPools import FreezingTrap, ExplosiveTrap, IceBarrier, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,\
+			RingToss, RingToss, RingToss_Corrupt, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar
 			
 # Default1 = [RivaylianBandit, RivaylianBandit,
 # 			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,
@@ -541,14 +528,10 @@ from CardPools import RivaylianBandit, RivaylianBandit,\
 # 			]
 Default1 = [FreezingTrap, ExplosiveTrap, IceBarrier, RiggedFaireGame, ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,
 			RinlingsRifle, RingToss_Corrupt, RinlingsRifle, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar, NetherwindPortal, PackTactics, MysteryWinner,
-			OnWingsofTomorrow,OnWingsofTomorrow,OnWingsofTomorrow,OnWingsofTomorrow,
-			StrokeofConviction, StoneMerchant,
-			StrokeofConviction, StoneMerchant,
-			StrokeofConviction, StoneMerchant,
-			PaulaIcyWarmth,PaulaIcyWarmth,PaulaIcyWarmth,
+			
 			]
 
 Default2 = [FreezingTrap, ExplosiveTrap, IceBarrier, RiggedFaireGame, ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,
 			RingToss, RingToss, RingToss_Corrupt, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar,
-			XIIWolfraudHangedMan,XIIWolfraudHangedMan,XIIWolfraudHangedMan,
+			
 			]

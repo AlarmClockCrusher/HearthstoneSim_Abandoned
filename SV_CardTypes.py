@@ -29,8 +29,7 @@ class Evolve(HeroPower):
         self.targets = []
 
     def available(self):
-        if self.selectableFriendlyMinionExists() and self.heroPowerTimes < self.heroPowerChances_base + \
-                self.heroPowerChances_extra and \
+        if self.selectableFriendlyMinionExists() and not self.chancesUsedUp() and \
                 self.Game.Counters.turns[self.ID] >= \
                 self.Game.Counters.numEvolutionTurn[self.ID]:
             if self.Game.Counters.numEvolutionPoint[self.ID] > 0:

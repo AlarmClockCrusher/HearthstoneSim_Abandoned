@@ -1960,7 +1960,7 @@ class ConjurersCalling(Spell):
 			key = "%d-Cost Minions to Summon"%cost
 			targetID, position = target.ID, target.pos
 			if target.onBoard: curGame.killMinion(self, target)
-			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
+			elif target.inHand: self.Game.Hand_Deck.discard(target) #如果随从在手牌中则将其丢弃
 			#强制死亡需要在此插入死亡结算，并让随从离场
 			curGame.gathertheDead()
 			if curGame.mode == 0:
@@ -1998,7 +1998,7 @@ class ConjurersCalling2(Spell):
 			key = "%d-Cost Minions to Summon"%cost
 			targetID, position = target.ID, target.pos
 			if target.onBoard: curGame.killMinion(self, target)
-			elif target.inHand: self.Game.Hand_Deck.discardCard(target) #如果随从在手牌中则将其丢弃
+			elif target.inHand: self.Game.Hand_Deck.discard(target) #如果随从在手牌中则将其丢弃
 			#强制死亡需要在此插入死亡结算，并让随从离场
 			curGame.gathertheDead()
 			if curGame.mode == 0:

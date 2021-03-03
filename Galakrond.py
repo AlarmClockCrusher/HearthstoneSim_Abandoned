@@ -959,7 +959,7 @@ class Trig_CorruptedHand(TrigHand):
 		return "你的回合结束时，弃掉这张手牌" if CHN else "At the end of this turn, discard this card"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.discardCard(self.entity.ID, self.entity)
+		self.entity.Game.Hand_Deck.discard(self.entity.ID, self.entity)
 		
 		
 """Warrior cards"""

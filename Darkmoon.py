@@ -3746,7 +3746,7 @@ class WickedWhispers(Spell):
 					elif card.mana == lowestCost: cards.append(i)
 				i = npchoice(cards) if cards else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.Hand_Deck.discardCard(self.ID, i)
+			if i > -1: curGame.Hand_Deck.discard(self.ID, i)
 			for minion in curGame.minionsonBoard(self.ID):
 				minion.buffDebuff(1, 1)
 		return None

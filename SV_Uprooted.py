@@ -166,7 +166,7 @@ class PluckyTreasureHunter(SVMinion):
         if target:
             if isinstance(target, list): target = target[0]
             races = target.race.split(",")
-            self.Game.Hand_Deck.discardCard(self.ID, target)
+            self.Game.Hand_Deck.discard(self.ID, target)
             curGame = self.Game
             if curGame.mode == 0:
                 for n in range(2):
@@ -830,7 +830,7 @@ class PluckyTreasureHunter(SVMinion):
         if target:
             if isinstance(target, list): target = target[0]
             races = target.race.split(",")
-            self.Game.Hand_Deck.discardCard(self.ID, target)
+            self.Game.Hand_Deck.discard(self.ID, target)
             curGame = self.Game
             if curGame.mode == 0:
                 for n in range(2):

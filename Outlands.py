@@ -926,22 +926,6 @@ class FelcrackedColossus(Minion):
 	name_CN = "邪爆巨像"
 	
 """Demon Hunter cards"""
-class CrimsonSigilRunner(Minion):
-	Class, race, name = "Demon Hunter", "", "Crimson Sigil Runner"
-	mana, attack, health = 1, 1, 1
-	index = "Outlands~Demon Hunter~Minion~1~1~1~~Crimson Sigil Runner~Outcast"
-	requireTarget, keyWord, description = False, "", "Outcast: Draw a card"
-	name_CN = "火色魔印 奔行者"
-	
-	def effCanTrig(self):
-		self.effectViable = self.Game.Hand_Deck.outcastcanTrig(self)
-		
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if posinHand == 0 or posinHand == -1:
-			self.Game.Hand_Deck.drawCard(self.ID)
-		return None
-		
-		
 class FuriousFelfin(Minion):
 	Class, race, name = "Demon Hunter", "Murloc", "Furious Felfin"
 	mana, attack, health = 2, 3, 2
@@ -1016,29 +1000,7 @@ class Netherwalker(Minion):
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True, creator=type(self), possi=pool)
 		
 		
-class SpectralSight(Spell):
-	Class, school, name = "Demon Hunter", "", "Spectral Sight"
-	requireTarget, mana = False, 2
-	index = "Outlands~Demon Hunter~Spell~2~Spectral Sight~Outcast"
-	description = "Draw a cards. Outscast: Draw another"
-	name_CN = "幽灵视觉"
-	def effCanTrig(self):
-		self.effectViable = self.Game.Hand_Deck.outcastcanTrig(self)
-		
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.Hand_Deck.drawCard(self.ID)
-		if posinHand == 0 or posinHand == -1:
-			self.Game.Hand_Deck.drawCard(self.ID)
-		return None
-		
-		
-class AshtongueBattlelord(Minion):
-	Class, race, name = "Demon Hunter", "", "Ashtongue Battlelord"
-	mana, attack, health = 4, 3, 5
-	index = "Outlands~Demon Hunter~Minion~4~3~5~~Ashtongue Battlelord~Taunt~Lifesteal"
-	requireTarget, keyWord, description = False, "Taunt,Lifesteal", "Taunt, Lifesteal"
-	name_CN = "灰舌将领"
-	
+
 	
 class FelSummoner(Minion):
 	Class, race, name = "Demon Hunter", "", "Fel Summoner"
@@ -1210,29 +1172,7 @@ class SkullofGuldan(Spell):
 		return None
 		
 		
-class WarglaivesofAzzinoth(Weapon):
-	Class, name, description = "Demon Hunter", "Warglaives of Azzinoth", "After attacking a minion, your hero may attack again"
-	mana, attack, durability = 6, 3, 4
-	index = "Outlands~Demon Hunter~Weapon~6~3~4~Warglaives of Azzinoth"
-	name_CN = "埃辛诺斯战刃"
-	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-		self.trigsBoard = [Trig_WarglaivesofAzzinoth(self)]
-		
-class Trig_WarglaivesofAzzinoth(TrigBoard):
-	def __init__(self, entity):
-		self.blank_init(entity, ["HeroAttackedMinion"])
-		
-	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-		return subject == self.entity.Game.heroes[self.entity.ID] and target.type == "Minion" and self.entity.onBoard
-		
-	def text(self, CHN):
-		return "在攻击一个随从后，你的英雄可以再次攻击" if CHN else "After attacking a minion, your hero may attack again"
-		
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.heroes[self.entity.ID].attChances_extra +=1
-		
-		
+
 class PriestessofFury(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Priestess of Fury"
 	mana, attack, health = 7, 6, 5
@@ -1347,7 +1287,7 @@ class FungalFortunes(Spell):
 			card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 			#If a card has "cast when drawn" effect, it won't stay in hand.
 			if card and card.type == "Minion" and card.inHand:
-				self.Game.Hand_Deck.discardCard(self.ID, card)
+				self.Game.Hand_Deck.discard(self.ID, card)
 		return None
 		
 		
@@ -1964,7 +1904,7 @@ class Trig_Evocation(TrigHand):
 		return "在你的回合结束时，弃掉这张牌" if CHN else "At the end of your turn, discard this card"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.discardCard(self.entity.ID, self.entity)
+		self.entity.Game.Hand_Deck.discard(self.entity.ID, self.entity)
 		
 		
 class FontofPower(Spell):
@@ -3561,7 +3501,7 @@ class NightshadeMatron(Minion):
 					elif card.mana == highestCost: cards.append(i)
 				i = npchoice(cards) if cards else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.Hand_Deck.discardCard(self.ID, i)
+			if i > -1: curGame.Hand_Deck.discard(self.ID, i)
 		return None
 		
 		
@@ -3973,16 +3913,12 @@ Outlands_Indices = {"Outlands~Neutral~Minion~1~2~1~~Ethereal Augmerchant~Battlec
 					"Outlands~Neutral~Minion~8~12~12~Demon~Supreme Abyssal": SupremeAbyssal,
 					"Outlands~Neutral~Minion~10~7~7~Elemental~Scrapyard Colossus~Taunt~Deathrattle": ScrapyardColossus,
 					"Outlands~Neutral~Minion~7~7~7~Elemental~Felcracked Colossus~Taunt~Uncollectible": FelcrackedColossus,
-					"Outlands~Demon Hunter~Minion~1~1~1~~Crimson Sigil Runner~Outcast": CrimsonSigilRunner,
 					"Outlands~Demon Hunter~Minion~2~3~2~Murloc~Furious Felfin~Battlecry": FuriousFelfin,
 					"Outlands~Demon Hunter~Spell~2~Immolation Aura": ImmolationAura,
 					"Outlands~Demon Hunter~Minion~2~2~2~~Netherwalker~Battlecry": Netherwalker,
-					"Outlands~Demon Hunter~Spell~2~Spectral Sight~Outcast": SpectralSight,
-					"Outlands~Demon Hunter~Minion~4~3~5~~Ashtongue Battlelord~Taunt~Lifesteal": AshtongueBattlelord,
 					"Outlands~Demon Hunter~Minion~6~8~3~~Fel Summoner~Deathrattle": FelSummoner,
 					"Outlands~Demon Hunter~Minion~4~3~4~~Kayn Sunfury~Charge~Legendary": KaynSunfury,
 					"Outlands~Demon Hunter~Spell~5~Metamorphosis~Legendary": Metamorphosis,
-					"Outlands~Demon Hunter~Weapon~6~3~4~Warglaives of Azzinoth": WarglaivesofAzzinoth,
 					"Outlands~Demon Hunter~Minion~6~10~6~Demon~Imprisoned Antaen": ImprisonedAntaen,
 					"Outlands~Demon Hunter~Spell~6~Skull of Gul'dan~Outcast": SkullofGuldan,
 					"Outlands~Demon Hunter~Minion~7~6~5~Demon~Priestess of Fury": PriestessofFury,

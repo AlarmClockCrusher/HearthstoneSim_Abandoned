@@ -608,7 +608,7 @@ class DeckBuilderWindow(tk.Tk):
 			for i, card in enumerate(self.cards2Display[self.pageNum]):
 				btn_Card = BtnCardAvailable(self, card, self.SV_Class)
 				btn_Card.plot(0 + i >= numCards4EachRow, i % numCards4EachRow)
-		else: messagebox.showinfo(message=txt("Already the last page", CHN))
+		else: messagebox.showinfo(message=txt("Already the first page", CHN))
 		
 	def nextPage(self):
 		if self.pageNum + 1 in self.cards2Display:
@@ -617,7 +617,7 @@ class DeckBuilderWindow(tk.Tk):
 			for i, card in enumerate(self.cards2Display[self.pageNum]):
 				btn_Card = BtnCardAvailable(self, card, self.SV_Class)
 				btn_Card.plot(0 + i >= numCards4EachRow, i % numCards4EachRow)
-		else: messagebox.showinfo(message=txt("Already the first page", CHN))
+		else: messagebox.showinfo(message=txt("Already the last page", CHN))
 		
 	def sort(self):
 		for btn in self.inDeckDrawn: btn.destroy()

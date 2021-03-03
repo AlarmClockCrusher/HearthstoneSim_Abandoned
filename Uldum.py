@@ -1491,7 +1491,7 @@ class HuntersPack(Spell):
 	requireTarget, mana = False, 3
 	index = "Uldum~Hunter~Spell~3~Hunter's Pack"
 	description = "Add a random Hunter Beast, Secret, and Weapon to your hand"
-	name_CN = "狼人工具包"
+	name_CN = "猎人工具包"
 	poolIdentifier = "Hunter Beasts"
 	@classmethod
 	def generatePool(cls, Game):
@@ -1965,11 +1965,7 @@ class EmperorWraps(HeroPower):
 	description = "Summon a 2/2 copy of a friendly minion"
 	name_CN = "帝王裹布"
 	def available(self, choice=0):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1 or self.selectableFriendlyMinionExists() == False:
-			return False
-		return True
+		return not self.chancesUsedUp() and self.Game.space(self.ID) and self.selectableFriendlyMinionExists()
 		
 	def effect(self, target=None, choice=0):
 		if target:
@@ -3140,7 +3136,7 @@ class ExpiredMerchant(Minion):
 				curGame.fixedGuides.append(i)
 			if i > -1:
 				card = curGame.Hand_Deck.hands[self.ID][i]
-				curGame.Hand_Deck.discardCard(self.ID, i)
+				curGame.Hand_Deck.discard(self.ID, i)
 				for trig in self.deathrattles:
 					if isinstance(trig, Return2CopiesofDiscardedCard):
 						trig.discardedCard = type(card)
@@ -3407,11 +3403,7 @@ class AnraphetsCore(HeroPower):
 		self.trigsBoard = [Trig_AnraphetsCore(self)]
 		
 	def available(self, choice=0):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1:
-			return False
-		return True
+		return not self.chancesUsedUp() and self.Game.space(self.ID)
 		
 	def effect(self, target=None, choice=0):
 		#Hero Power summoning won't be doubled by Khadgar.
@@ -3423,10 +3415,10 @@ class Trig_AnraphetsCore(TrigBoard):
 		self.blank_init(entity, ["HeroAttackedHero", "HeroAttackedMinion"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.heroPowerTimes >= self.entity.heroPowerChances_base + self.entity.heroPowerChances_extra
+		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.chancesUsedUp()
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.heroPowerChances_extra += 1
+		self.entity.heroPowerTimes -= 1
 		
 class StoneGolem(Minion):
 	Class, race, name = "Warrior", "", "Stone Golem"

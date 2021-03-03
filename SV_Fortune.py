@@ -1512,7 +1512,7 @@ class SelflessNoble(SVMinion):
         if target:
             if isinstance(target, list): target = target[0]
             n = type(target).mana
-            self.Game.Hand_Deck.discardCard(self.ID, target)
+            self.Game.Hand_Deck.discard(self.ID, target)
             self.buffDebuff(n, n)
         return target
 
@@ -1688,7 +1688,7 @@ class Trig_EndRiteoftheIgnorant(TrigHand):
         return self.entity.inHand
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.Hand_Deck.discardCard(self.entity.ID, self.entity)
+        self.entity.Game.Hand_Deck.discard(self.entity.ID, self.entity)
 
 
 class ScourgeoftheOmniscient(SVSpell):
@@ -2234,7 +2234,7 @@ class Heliodragon(SVMinion):
 
 class Trig_Heliodragon(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["PlayerDiscardsCard", "PlayerDiscardsHand"])
+        self.blank_init(entity, ["CardDiscarded", "HandDiscarded"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return ID == self.entity.ID and self.entity.onBoard and number > 0
@@ -2269,7 +2269,7 @@ class SlaughteringDragonewt(SVMinion):
 
 class Trig_TurncoatDragons(TrigHand):
     def __init__(self, entity):
-        self.blank_init(entity, ["PlayerDiscardsCard"])
+        self.blank_init(entity, ["CardDiscarded"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.inHand and ID == self.entity.ID
@@ -2307,7 +2307,7 @@ class CrimsonDragonsSorrow(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.Game.Hand_Deck.discardCard(self.ID, target)
+            self.Game.Hand_Deck.discard(self.ID, target)
             self.Game.Hand_Deck.drawCard(self.ID)
             self.Game.Hand_Deck.drawCard(self.ID)
         return target
@@ -2356,7 +2356,7 @@ class TurncoatDragonSummoner(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.Game.Hand_Deck.discardCard(self.ID, target)
+            self.Game.Hand_Deck.discard(self.ID, target)
             self.Game.Hand_Deck.addCardtoHand(AzureDragonsRage, self.ID, byType=True)
         return target
 
@@ -5469,7 +5469,7 @@ class Trig_DemonofPurgatory(TrigBoard):
                 ownHand = curGame.Hand_Deck.hands[self.entity.ID]
                 i = nprandint(len(ownHand)) if ownHand else -1
                 curGame.fixedGuides.append(i)
-            if i > -1: curGame.Hand_Deck.discardCard(self.entity.ID, i)
+            if i > -1: curGame.Hand_Deck.discard(self.entity.ID, i)
 
 
 class ScionofDesire(SVMinion):
@@ -7713,7 +7713,7 @@ class SelflessNoble(SVMinion):
         if target:
             if isinstance(target, list): target = target[0]
             n = type(target).mana
-            self.Game.Hand_Deck.discardCard(self.ID, target)
+            self.Game.Hand_Deck.discard(self.ID, target)
             self.buffDebuff(n, n)
         return target
 
@@ -7889,7 +7889,7 @@ class Trig_EndRiteoftheIgnorant(TrigHand):
         return self.entity.inHand
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.Game.Hand_Deck.discardCard(self.entity.ID, self.entity)
+        self.entity.Game.Hand_Deck.discard(self.entity.ID, self.entity)
 
 
 class ScourgeoftheOmniscient(SVSpell):
@@ -8435,7 +8435,7 @@ class Heliodragon(SVMinion):
 
 class Trig_Heliodragon(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["PlayerDiscardsCard", "PlayerDiscardsHand"])
+        self.blank_init(entity, ["CardDiscarded", "HandDiscarded"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return ID == self.entity.ID and self.entity.onBoard and number > 0
@@ -8470,7 +8470,7 @@ class SlaughteringDragonewt(SVMinion):
 
 class Trig_TurncoatDragons(TrigHand):
     def __init__(self, entity):
-        self.blank_init(entity, ["PlayerDiscardsCard"])
+        self.blank_init(entity, ["CardDiscarded"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.inHand and ID == self.entity.ID
@@ -8508,7 +8508,7 @@ class CrimsonDragonsSorrow(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.Game.Hand_Deck.discardCard(self.ID, target)
+            self.Game.Hand_Deck.discard(self.ID, target)
             self.Game.Hand_Deck.drawCard(self.ID)
             self.Game.Hand_Deck.drawCard(self.ID)
         return target
@@ -8557,7 +8557,7 @@ class TurncoatDragonSummoner(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.Game.Hand_Deck.discardCard(self.ID, target)
+            self.Game.Hand_Deck.discard(self.ID, target)
             self.Game.Hand_Deck.addCardtoHand(AzureDragonsRage, self.ID, byType=True)
         return target
 
@@ -11670,7 +11670,7 @@ class Trig_DemonofPurgatory(TrigBoard):
                 ownHand = curGame.Hand_Deck.hands[self.entity.ID]
                 i = nprandint(len(ownHand)) if ownHand else -1
                 curGame.fixedGuides.append(i)
-            if i > -1: curGame.Hand_Deck.discardCard(self.entity.ID, i)
+            if i > -1: curGame.Hand_Deck.discard(self.entity.ID, i)
 
 
 class ScionofDesire(SVMinion):

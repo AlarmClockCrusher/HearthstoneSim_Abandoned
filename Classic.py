@@ -22,7 +22,7 @@ class AbusiveSergeant(Minion):
 	Class, race, name = "Neutral", "", "Abusive Sergeant"
 	mana, attack, health = 1, 1, 1
 	index = "Classic~Neutral~Minion~1~1~1~~Abusive Sergeant~Battlecry"
-	requireTarget, keyWord, description = True, "", "Give a minion +2 Attack this turn"
+	requireTarget, keyWord, description = True, "", "Battlecry: Give a minion +2 Attack this turn"
 	name_CN = "叫嚣的中士"
 	
 	def targetExists(self, choice=0):
@@ -574,9 +574,7 @@ class Trig_MasterSwordsmith(TrigBoard):
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
-				minions = curGame.minionsonBoard(self.entity.ID)
-				try: minions.remove(self.entity)
-				except: pass
+				minions = curGame.minionsonBoard(self.entity.ID, self.entity)
 				i = npchoice(minions).pos if minions else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
@@ -890,6 +888,10 @@ class EarthenRingFarseer(Minion):
 	requireTarget, keyWord, description = True, "", "Battlecry: Restore 3 health"
 	name_CN = "大地之环先知"
 	
+	def text(self, CHN):
+		heal = 3 * (2 ** self.countHealDouble())
+		return "战吼：恢复%d点生命值"%heal if CHN else "Battlecry: Restore %d health"%heal
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			heal = 3 * (2 ** self.countHealDouble())
@@ -1876,29 +1878,6 @@ class WindfuryHarpy(Minion):
 	name_CN = "风怒鹰身人"
 	
 """Mana 7 minions"""
-class BarrensStablehand(Minion):
-	Class, race, name = "Neutral", "", "Barrens Stablehand"
-	mana, attack, health = 7, 4, 4
-	index = "Classic~Neutral~Minion~7~4~4~~Barrens Stablehand~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Summon a random Beast"
-	name_CN = "贫瘠之地 饲养员"
-	poolIdentifier = "Beasts to Summon"
-	@classmethod
-	def generatePool(cls, Game):
-		return "Beasts to Summon", list(Game.MinionswithRace["Beast"].values())
-		
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				beast = curGame.guides.pop(0)
-			else:
-				beast = npchoice(self.rngPool("Beasts to Summon"))
-				curGame.fixedGuides.append(beast)
-			curGame.summon(beast(curGame, self.ID), self.pos+1, self.ID)
-		return None
-		
-		
 class BaronGeddon(Minion):
 	Class, race, name = "Neutral", "Elemental", "Baron Geddon"
 	mana, attack, health = 7, 7, 5
@@ -1925,10 +1904,33 @@ class Trig_BaronGeddon(TrigBoard):
 		minion.dealsAOE(targets, [2]*len(targets))
 		
 		
+class BarrensStablehand(Minion):
+	Class, race, name = "Neutral", "", "Barrens Stablehand"
+	mana, attack, health = 7, 4, 4
+	index = "Classic~Neutral~Minion~7~4~4~~Barrens Stablehand~Battlecry"
+	requireTarget, keyWord, description = False, "", "Battlecry: Summon a random Beast"
+	name_CN = "贫瘠之地 饲养员"
+	poolIdentifier = "Beasts to Summon"
+	@classmethod
+	def generatePool(cls, Game):
+		return "Beasts to Summon", list(Game.MinionswithRace["Beast"].values())
+		
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+		curGame = self.Game
+		if curGame.mode == 0:
+			if curGame.guides:
+				beast = curGame.guides.pop(0)
+			else:
+				beast = npchoice(self.rngPool("Beasts to Summon"))
+				curGame.fixedGuides.append(beast)
+			curGame.summon(beast(curGame, self.ID), self.pos+1, self.ID)
+		return None
+		
+		
 class HighInquisitorWhitemane(Minion):
 	Class, race, name = "Neutral", "", "High Inquisitor Whitemane"
-	mana, attack, health = 7, 6, 8
-	index = "Classic~Neutral~Minion~7~6~8~~High Inquisitor Whitemane~Battlecry~Legendary"
+	mana, attack, health = 6, 5, 7
+	index = "Classic~Neutral~Minion~6~5~7~~High Inquisitor Whitemane~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon all friendly minions that died this turn"
 	name_CN = "大检察官 怀特迈恩"
 	
@@ -3242,8 +3244,8 @@ class Trig_GladiatorsLongbow(TrigBoard):
 			self.entity.Game.status[self.entity.ID]["Immune"] += 1
 		else:
 			self.entity.Game.status[self.entity.ID]["Immune"] -= 1
-				
-				
+			
+			
 class KingKrush(Minion):
 	Class, race, name = "Hunter", "Beast", "King Krush"
 	mana, attack, health = 9, 8, 8
@@ -3339,12 +3341,11 @@ class SorcerersApprentice(Minion):
 	def manaAuraApplicable(self, subject): #ID用于判定是否是我方手中的随从
 		return subject.type == "Spell" and subject.ID == self.ID
 		
-#Counterspell is special, it doesn't need a trigger. All spells played by player will directly
-#check if this Secret is onBoard.
+		
 class Counterspell(Secret):
-	Class, school, name = "Mage", "", "Counterspell"
+	Class, school, name = "Mage", "Arcane", "Counterspell"
 	requireTarget, mana = False, 3
-	index = "Classic~Mage~Spell~3~CounterSpell~Secret"
+	index = "Classic~Mage~Spell~3~Arcane~CounterSpell~Secret"
 	description = "Secret: When your opponent casts a spell, Counter it."
 	name_CN = "法术反制"
 	def __init__(self, Game, ID):
@@ -3590,7 +3591,6 @@ class Pyroblast(Spell):
 		
 		
 """Paladin cards"""
-#If minion attacks and triggers this, drawing card from empty deck kills the hero. Then the attack will be stopped early.
 class AldorPeacekeeper(Minion):
 	Class, race, name = "Paladin", "", "Aldor Peacekeeper"
 	mana, attack, health = 3, 3, 3
@@ -3687,7 +3687,6 @@ class Trig_NobleSacrifice(SecretTrigger):
 		newTarget = Defender(self.entity.Game, self.entity.ID)
 		self.entity.Game.summon(newTarget, -1, self.entity.ID)
 		target[1] = newTarget
-		
 		
 class Defender(Minion):
 	Class, race, name = "Paladin", "", "Defender"
@@ -4039,7 +4038,7 @@ class Trig_Lightwell(TrigBoard):
 		return self.entity.onBoard and ID == self.entity.ID
 		
 	def text(self, CHN):
-		heal = 3 * (2 ** self.countHealDouble())
+		heal = 3 * (2 ** self.entity.countHealDouble())
 		return "你的回合开始时，为一个随机友方角色恢复%d点生命值"%heal if CHN \
 				else "At the start of your turn, restore %d health to a damaged friendly character"%heal
 				
@@ -4117,8 +4116,8 @@ class ShadowMadness(Spell):
 				
 class Lightspawn(Minion):
 	Class, race, name = "Priest", "Elemental", "Lightspawn"
-	mana, attack, health = 4, 0, 5
-	index = "Classic~Priest~Minion~4~0~5~Elemental~Lightspawn"
+	mana, attack, health = 3, 0, 4
+	index = "Classic~Priest~Minion~3~0~4~Elemental~Lightspawn"
 	requireTarget, keyWord, description = False, "", "This minion's Attack is always equal to its Health"
 	name_CN = "光耀之子"
 	def __init__(self, Game, ID):
@@ -4296,9 +4295,9 @@ class GameManaAura_InTurnNextSpell2Less(TempManaEffect):
 		
 		
 class Shadowstep(Spell):
-	Class, school, name = "Rogue", "", "Shadowstep"
+	Class, school, name = "Rogue", "Shadow", "Shadowstep"
 	requireTarget, mana = True, 0
-	index = "Classic~Rogue~Spell~0~Shadowstep"
+	index = "Classic~Rogue~Spell~0~Shadow~Shadowstep"
 	description = "Return a friendly minion to your hand. It costs (2) less"
 	name_CN = "暗影步"
 	def targetExists(self, choice=0):
@@ -4765,11 +4764,11 @@ class FeralSpirit(Spell):
 	Class, school, name = "Shaman", "", "Feral Spirit"
 	requireTarget, mana = False, 3
 	index = "Classic~Shaman~Spell~3~Feral Spirit~Overload"
-	description = "Summon two 2/3 Spirit Wolves with Taunt. Overload: (2)"
+	description = "Summon two 2/3 Spirit Wolves with Taunt. Overload: (1)"
 	name_CN = "野性狼魂"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.overload = 2
+		self.overload = 1
 		
 	def available(self):
 		return self.Game.space(self.ID) > 0
@@ -5214,29 +5213,29 @@ class TwistingNether(Spell):
 		
 #Won't trigger Knife Juggler, but will trigger Illidan Stormrage
 #Will trigger Mirror Entity, however.
-class LordJaraxxus(Minion):
-	Class, race, name = "Warlock", "Demon", "Lord Jaraxxus"
-	mana, attack, health = 9, 3, 15
-	index = "Classic~Warlock~Minion~9~3~15~Demon~Lord Jaraxxus~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Destroy your hero and replace it with Lord Jaraxxus"
-	name_CN = "加拉克苏斯 大王"
-	
-	#打出过程：如果大王被提前消灭了，则不会触发变身过程。此时应该返回self，成为一个普通的早夭随从。、
-	#如果大王留在场上或者被返回手牌，则此时应该会变身成为英雄，返回应该是None
-	
-	#If invoked by Shudderwock, then Shudderwock will transform and replace your hero with Jaraxxus.
-	#Then Shudderwock's battlecry is stopped.
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		if self.inHand: #Returned to hand. Assume the card in hand is gone and then hero still gets replaced.
-			self.Game.Hand_Deck.extractfromHand(self, enemyCanSee=True)
-			LordJaraxxus_Hero(self.Game, self.ID).replaceHero()
-		elif self.onBoard:
-			self.disappears()
-			self.Game.removeMinionorWeapon(self)
-			LordJaraxxus_Hero(self.Game, self.ID).replaceHero()
-		if self.Game.minionPlayed == self:
-			self.Game.minionPlayed = None
-		return None #If Jaraxxus is killed before battlecry, it won't trigger
+#lass LordJaraxxus(Minion):
+#	Class, race, name = "Warlock", "Demon", "Lord Jaraxxus"
+#	mana, attack, health = 9, 3, 15
+#	index = "Classic~Warlock~Minion~9~3~15~Demon~Lord Jaraxxus~Battlecry~Legendary"
+#	requireTarget, keyWord, description = False, "", "Battlecry: Destroy your hero and replace it with Lord Jaraxxus"
+#	name_CN = "加拉克苏斯 大王"
+#	
+#	#打出过程：如果大王被提前消灭了，则不会触发变身过程。此时应该返回self，成为一个普通的早夭随从。、
+#	#如果大王留在场上或者被返回手牌，则此时应该会变身成为英雄，返回应该是None
+#	
+#	#If invoked by Shudderwock, then Shudderwock will transform and replace your hero with Jaraxxus.
+#	#Then Shudderwock's battlecry is stopped.
+#	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+#		if self.inHand: #Returned to hand. Assume the card in hand is gone and then hero still gets replaced.
+#			self.Game.Hand_Deck.extractfromHand(self, enemyCanSee=True)
+#			LordJaraxxus_Hero(self.Game, self.ID).replaceHero()
+#		elif self.onBoard:
+#			self.disappears()
+#			self.Game.removeMinionorWeapon(self)
+#			LordJaraxxus_Hero(self.Game, self.ID).replaceHero()
+#		if self.Game.minionPlayed == self:
+#			self.Game.minionPlayed = None
+#		return None #If Jaraxxus is killed before battlecry, it won't trigger
 		
 class Infernal(Minion):
 	Class, race, name = "Warlock", "Demon", "Infernal"
@@ -5251,11 +5250,7 @@ class INFERNO(HeroPower):
 	description = "Summon a 6/6 Infernal"
 	name_CN = "地狱火！"
 	def available(self, choice=0):
-		if self.heroPowerTimes >= self.heroPowerChances_base + self.heroPowerChances_extra:
-			return False
-		if self.Game.space(self.ID) < 1:
-			return False
-		return True
+		return not self.chancesUsedUp() and self.Game.space(self.ID) 
 		
 	def effect(self, target=None, choice=0):
 		self.Game.summon(Infernal(self.Game, self.ID), -1, self.ID, "")
@@ -5267,14 +5262,15 @@ class BloodFury(Weapon):
 	index = "Classic~Warlock~Weapon~3~3~8~Blood Fury~Uncollectible"
 	name_CN = "血怒"
 	
-class LordJaraxxus_Hero(Hero):
-	mana, weapon, description = 0, BloodFury, ""
+class LordJaraxxus(Hero):
+	mana, weapon, description = 0, None, "Battlecry: Equip a 3/8 Bloodfury"
 	Class, name, heroPower, armor = "Warlock", "Lord Jaraxxus", INFERNO, 0
-	index = "Classic~Warlock~Hero Card~9~Lord Jaraxxus~Battlecry~Uncollectible"
-	name_CN = "加拉克苏斯 大王"
-	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-		self.health, self.health_max, self.armor = 15, 15, 0
+	index = "Classic~Warlock~Hero Card~9~Lord Jaraxxus~Battlecry~Legendary"
+	name_CN = "加拉克苏斯大王"
+	
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+		self.Game.equipWeapon(BloodFury(self.Game, self.ID))
+		return None
 		
 		
 """Warrior cards"""

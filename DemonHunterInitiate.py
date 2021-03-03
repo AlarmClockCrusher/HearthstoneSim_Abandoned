@@ -375,32 +375,7 @@ class IllidariFelblade(Minion):
 			self.status["Immune"] = 1
 		return None
 		
-		
-class RagingFelscreamer(Minion):
-	Class, race, name = "Demon Hunter", "", "Raging Felscreamer"
-	mana, attack, health = 4, 4, 4
-	index = "DHInitiate~Demon Hunter~Minion~4~4~4~~Raging Felscreamer~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: The next Demon you play costs (2) less"
-	name_CN = "暴怒邪吼者"
-	
-	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		tempAura = YourNextDemonCosts2Less(self.Game, self.ID)
-		self.Game.Manas.CardAuras.append(tempAura)
-		tempAura.auraAppears()
-		return None
-		
-class YourNextDemonCosts2Less(TempManaEffect):
-	def __init__(self, Game, ID):
-		self.blank_init(Game, ID, -2, -1)
-		self.temporary = False #不会在回合结束后消失，直到那个恶魔被打出为止
-		self.auraAffected = []
-		
-	def applicable(self, target):
-		return target.ID == self.ID and target.type == "Minion" and "Demon" in target.race
-		
-	def selfCopy(self, game):
-		return type(self)(game, self.ID)
-		
+
 		
 class SoulSplit(Spell):
 	Class, school, name = "Demon Hunter", "", "Soul Split"
@@ -560,7 +535,6 @@ DemonHunterInit_Indices = {"DHInitiate~Demon Hunter~Spell~0~Blur": Blur,
 							"DHInitiate~Demon Hunter~Spell~3~Eye Beam~Outcast": EyeBeam,
 							"DHInitiate~Demon Hunter~Minion~3~3~1~~Wrathscale Naga": WrathscaleNaga,
 							"DHInitiate~Demon Hunter~Minion~4~5~3~~Illidari Felblade~Rush~Outcast": IllidariFelblade,
-							"DHInitiate~Demon Hunter~Minion~4~4~4~~Raging Felscreamer~Battlecry": RagingFelscreamer,
 							"DHInitiate~Demon Hunter~Spell~4~Soul Split": SoulSplit,
 							"DHInitiate~Demon Hunter~Spell~5~Command the Illidari": CommandtheIllidari,
 							"DHInitiate~Demon Hunter~Minion~5~2~6~Demon~Wrathspike Brute~Taunt": WrathspikeBrute,

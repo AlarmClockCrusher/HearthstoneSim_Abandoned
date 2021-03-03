@@ -14,6 +14,7 @@ gameStatusDict = {"Immune": "你的英雄免疫", "Immune2NextTurn": "你的英�
 
 				"Power Sweep": "你的英雄技能也会对目标随从的相邻随从生效", "Power Damage": "你的英雄技能伤害加成", #Power Damage.
 				"Power Can Target Minions": "你的英雄技能可以以随从为目标",
+				"Power Chance 2": "可以使用两次英雄技能", "Power Chance Inf": "可以使用任意次数的英雄技能",
 				"Heal to Damage": "你的治疗改为造成伤害", "Lifesteal Damages Enemy": "你的吸血会对敌方英雄造成伤害，而非治疗你",
 				"Choose Both": "你的抉择卡牌可以同时拥有两种效果",
 				"Battlecry x2": "你的战吼会触发两次", "Shark Battlecry x2": "你的战吼或连击会触发两次",
@@ -455,7 +456,7 @@ class Game:
 		elif target:
 			if self.GUI and subject: self.GUI.targetingEffectAni(subject, target, 'X', color="grey46")
 			if target.onBoard: target.dead = True
-			elif target.inHand: self.Hand_Deck.discardCard(target.ID, target)  # 如果随从在手牌中则将其丢弃
+			elif target.inHand: self.Hand_Deck.discard(target.ID, target)  # 如果随从在手牌中则将其丢弃
 
 	def necromancy(self, subject, ID, number):
 		if self.Counters.shadows[ID] >= number:

@@ -21,6 +21,7 @@ class LoadDeckButton(tk.Button):
 		deckStrings = {1: self.GUI.deck1.get(), 2: self.GUI.deck2.get()}
 		decks, decksCorrect = {1: [], 2: []}, {1: False, 2: False}
 		for ID in range(1, 3):
+			print(deckStrings[ID], heroes[ID], ClassDict)
 			decks[ID], decksCorrect[ID], heroes[ID] = parseDeckCode(deckStrings[ID], heroes[ID], ClassDict)
 		if decksCorrect[1] and decksCorrect[2]:
 			self.GUI.Game = Game(self.GUI)

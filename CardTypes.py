@@ -71,7 +71,7 @@ def npChoice_inds(listTypes, listInds, num):
 				inds[T].append(i)
 			else:
 				count[T], inds[T] = 1, [i]
-		Ts = npchoice([count.keys()], min(num, total), p=[i / total for i in count.values()], replace=False)
+		Ts = npchoice(list(count.keys()), min(num, total), p=[i / total for i in count.values()], replace=False)
 		return [inds[T] for T in Ts]
 		
 def discoverProb(listObj):
@@ -348,13 +348,14 @@ class Card:
 		dmgTaker = game.scapegoat4(target, dmgDealer_att)
 		game.sendSignal("BattleDmg" + target.type, 0, dmgDealer_att, target, subjectAtt, "") #不能把这个东西写入和伤害承受目标判定同时进行的结算，因为存在互相干扰的情况
 		dmgActual = dmgTaker.takesDamage(dmgDealer_att, subjectAtt[0], sendDmgSignal=False, damageType="Battle")
-		if dmgActual > 0: dmgList.append((dmgDealer_att, dmgTaker, dmgActual))
+		if dmgActual: dmgList.append((dmgDealer_att, dmgTaker, dmgActual))
 
 		#寻找受到攻击目标的伤害的角色。同理，此时受伤的角色不会发出受伤信号，这些受伤信号会在之后统一发出。
 		dmgTaker = game.scapegoat4(self, dmgDealer_def)
 		game.sendSignal("BattleDmg" + target.type, 0, target, dmgDealer_def, targetAtt, "") #不能把这个东西写入和伤害承受目标判定同时进行的结算，因为存在互相干扰的情况
 		dmgActual = dmgTaker.takesDamage(dmgDealer_def, targetAtt[0], sendDmgSignal=False, damageType="Battle")
-		if dmgActual > 0: dmgList.append((dmgDealer_def, dmgTaker, dmgActual))
+		if dmgActual: dmgList.append((dmgDealer_def, dmgTaker, dmgActual))
+		dmg_byDef = dmgActual #The damage dealt by the character under attack
 		#如果攻击者的伤害来源（随从或者武器）有对相邻随从也造成伤害的扳机，则将相邻的随从录入处理列表。
 		if dmgDealer_att.type != "Hero" and dmgDealer_att.marks["Sweep"] > 0 and target.type == "Minion":
 			neighbors = game.neighbors2(target)[0] #此时被攻击的随从一定是在场的，已经由Game.battleRequest保证。
@@ -362,16 +363,20 @@ class Card:
 				dmgTaker = game.scapegoat4(minion, dmgDealer_att)
 				#目前假设横扫时造成的战斗伤害都一样，不会改变。毕竟炉石里面没有相似的效果
 				dmgActual = dmgTaker.takesDamage(dmgDealer_att, subjectAtt[0], sendDmgSignal=False, damageType="Ability")
-				if dmgActual > 0: dmgList.append((dmgDealer_att, dmgTaker, dmgActual))
+				if dmgActual: dmgList.append((dmgDealer_att, dmgTaker, dmgActual))
 
 		if dmgDealer_att.type == "Weapon": dmgDealer_att.loseDurability()
-		for damageDealer, dmgTaker, damage in dmgList:
+		dmg_byAtt = 0 #The damage dealt by the character that attacks
+		for dmgDealer, dmgTaker, damage in dmgList:
 			#参与战斗的各方在战斗过程中只减少血量，受伤的信号在血量和受伤名单登记完毕之后按被攻击者，攻击者，被涉及者顺序发出。
-			game.sendSignal(dmgTaker.type+"TakesDmg", 0, damageDealer, dmgTaker, damage, "")
-			game.sendSignal(dmgTaker.type+"TookDmg", 0, damageDealer, dmgTaker, damage, "")
+			game.sendSignal(dmgTaker.type+"TakesDmg", 0, dmgDealer, dmgTaker, damage, "")
+			game.sendSignal(dmgTaker.type+"TookDmg", 0, dmgDealer, dmgTaker, damage, "")
 			#吸血扳机始终在队列结算的末尾。
-			damageDealer.tryLifesteal(damage, damageType="Battle")
-
+			dmgDealer.tryLifesteal(damage, damageType="Battle")
+			dmg_byAtt += damage
+		if dmg_byAtt: game.sendSignal("DealtDmg", 0, dmgDealer_att, None, dmg_byAtt, "")
+		if dmg_byDef: game.sendSignal("DealtDmg", 0, dmgDealer_def, None, dmg_byDef, "")
+		
 	"""Handle cards dealing targeting/AOE damage/heal to target(s)."""
 	#Handle Lifesteal of a card. Currently Minion/Weapon/Spell classs have this method.
 	##法术因为有因为外界因素获得吸血的能力，所以有自己的tryLifesteal方法。
@@ -407,6 +412,7 @@ class Card:
 			self.Game.sendSignal("AbilityDmg" + target.type, 0, self, target, damage, "")  # 不能把这个东西写入和伤害承受目标判定同时进行的结算，因为存在互相干扰的情况
 			dmgActual = dmgTaker.takesDamage(self, damage[0], damageType="Ability")
 			self.tryLifesteal(dmgActual, "Ability")
+			if dmgActual: self.Game.sendSignal("DealtDmg", 0, self, None, dmgActual, "")
 			return dmgTaker, dmgActual
 		else: return target, 0 #The target is neither on board or in hand. Either removed already or shuffled into deck.
 
@@ -417,7 +423,7 @@ class Card:
 	def dealsAOE(self, targets, damages):
 		game = self.Game
 		targets, damages = targets[:], damages[:]
-		dmgTakers, dmgsActual, totalDmgDone = [], [], 0
+		dmgTakers, dmgsActual, totalDmg = [], [], 0
 		if targets and game.GUI:
 			game.GUI.AOEAni(self, targets, damages)
 		for target, damage in zip(targets, damages):
@@ -429,13 +435,14 @@ class Card:
 			if dmgActual > 0:
 				dmgTakers.append(dmgTaker)
 				dmgsActual.append(dmgActual)
-				totalDmgDone += dmgActual
+				totalDmg += dmgActual
 		#AOE首先计算血量变化，之后才发出伤害信号。
 		for target, dmgActual in zip(dmgTakers, dmgsActual):
 			game.sendSignal(target.type+"TakesDmg", self.ID, self, target, dmgActual, "")
 			game.sendSignal(target.type+"TookDmg", self.ID, self, target, dmgActual, "")
-		self.tryLifesteal(totalDmgDone, "Ability")
-		return dmgTakers, dmgsActual, totalDmgDone
+		self.tryLifesteal(totalDmg, "Ability")
+		if totalDmg: game.sendSignal("DealtDmg", 0, self, None, totalDmg, "")
+		return dmgTakers, dmgsActual, totalDmg
 
 	def restoresAOE(self, targets, heals):
 		game = self.Game
@@ -457,6 +464,7 @@ class Card:
 			containHero = False
 			for target, healActual in zip(targets_healed, healsActual):
 				game.sendSignal(target.type+"GetsHealed", game.turn, self, target, healActual, "FullyHealed")
+				game.sendSignal(target.type+"GotHealed", game.turn, self, target, healActual, "FullyHealed")
 				if target.type == "Hero":
 					containHero = target.ID
 			if containHero:
@@ -495,6 +503,8 @@ class Card:
 					game.Counters.timesHeroChangedHealth_inOwnTurn[self.ID] += 1
 					game.Counters.heroChangedHealthThisTurn[self.ID] = True
 					game.sendSignal("HeroChangedHealthinTurn", self.ID, None, None, 0, "")
+				if sendHealSignal: #During AOE healing, the signals are delayed.
+					game.sendSignal(self.type+"GotHealed", game.turn, subject, self, healActual, "")
 		return healActual
 
 	def rngPool(self, identifier):
@@ -885,9 +895,9 @@ class Minion(Card):
 		self.Game.sendSignal("MinionGetsFrozen", self.Game.turn, None, self, 0, "")
 
 	# 对于暂时因为某种aura而获得关键字的情况，直接在effectfromAura里面添加对应的关键字，但是不注册receiver
-	def getsKeyword(self, keyWord):
+	def getsKeyword(self, keyWord, amount=1):
 		if self.inDeck == False:  # and keyWord in self.keyWords.keys()
-			self.keyWords[keyWord] += 1
+			self.keyWords[keyWord] += amount
 			if self.onBoard:
 				self.decideAttChances_base()
 				if keyWord == "Charge":
@@ -1695,7 +1705,6 @@ class HeroPower(Card):
 		self.heroPowerTimes = 0
 		#额外的英雄技能技能只有考达拉幼龙和要塞指挥官可以更改。
 		#技能能否使用，需要根据已使用次数和基础机会和额外机会的和相比较。
-		self.heroPowerChances_base, self.heroPowerChances_extra = 1, 0
 		self.mana, self.manaMods = type(self).mana, []
 		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
 		self.onBoard = True
@@ -1715,10 +1724,6 @@ class HeroPower(Card):
 					text += "\tChanged by %d\n"%manaMod.changeby if not CHN else "\t费用增减 %d\n"%manaMod.changeby
 				else:
 					text += "\tChanged to %d\n"%manaMod.changeto if not CHN else "\t费用变为 %d\n"%manaMod.changeto
-		if CHN:
-			text += "已使用%d次 剩余次数：%d\n"%(self.heroPowerTimes, self.heroPowerChances_base + self.heroPowerChances_extra - self.heroPowerTimes)
-		else:
-			text += "Attacked %d times\nChances left: %d\n"%(self.heroPowerTimes, self.heroPowerChances_base + self.heroPowerChances_extra - self.heroPowerTimes)
 		keyWords = [key for key, value in self.keyWords.items() if value]
 		if keyWords:
 			text += "Keywords:\n" if not CHN else "关键字：\n"
@@ -1735,16 +1740,13 @@ class HeroPower(Card):
 
 	def turnStarts(self, ID):
 		if ID == self.ID:
-			self.heroPowerChances_base, self.heroPowerChances_extra = 1, 0
 			self.heroPowerTimes = 0
 
 	def turnEnds(self, ID):
 		if ID == self.ID:
-			self.heroPowerChances_base, self.heroPowerChances_extra = 1, 0
 			self.heroPowerTimes = 0
 
 	def appears(self):
-		self.heroPowerChances_base = 1
 		self.heroPowerTimes = 0
 		for trig in self.trigsBoard:
 			trig.connect()
@@ -1757,15 +1759,19 @@ class HeroPower(Card):
 		self.manaMods = []
 
 	def replaceHeroPower(self):
-		if self.Game.powers[self.ID]:
-			self.Game.powers[self.ID].disappears()
-			self.Game.powers[self.ID] = None
-		self.Game.powers[self.ID] = self
+		powers, ID = self.Game.powers, self.ID
+		if powers[ID]:
+			powers[ID].disappears()
+			powers[ID] = None
+		powers[ID] = self
 		self.appears()
-
+		
+	def chancesUsedUp(self):
+		return self.Game.status[self.ID]["Power Chance Inf"] < 1 \
+				and self.heroPowerTimes >= (1 + (self.Game.status[self.ID]["Power Chance 2"] > 0) )
+				
 	def available(self): #只考虑没有抉择的技能，抉择技能需要自己定义
-		return self.heroPowerTimes < self.heroPowerChances_base + self.heroPowerChances_extra \
-				and (not self.needTarget() or self.findTargets("")[0][0])
+		return not self.chancesUsedUp and (not self.needTarget() or self.findTargets("")[0][0])
 
 	def use(self, target=None, choice=0):
 		if self.Game.Manas.affordable(self) and self.available() and self.selectionLegit(target, choice):
@@ -1828,7 +1834,6 @@ class HeroPower(Card):
 			Copy.mana = self.mana
 			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
 			Copy.heroPowerTimes = self.heroPowerTimes
-			Copy.heroPowerChances_base, Copy.heroPowerChances_extra = self.heroPowerChances_base, self.heroPowerChances_extra
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]

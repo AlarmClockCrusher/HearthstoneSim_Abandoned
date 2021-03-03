@@ -35,8 +35,11 @@ def parseDeckCode(s, hero, ClassDict):
 				s = s[hero].split('||')[1:]
 				deck = [typeName2Class(name.strip()) for name in s if name]
 			else: deck = decode_deckstring(s)
+			print("After parsing", deck)
 			deckCorrect = all(obj is not None for obj in deck)
-		except: pass
+		except:
+			print("Parsing encountered mistake")
+			pass
 	else: deckCorrect = True
 	if deckCorrect:
 		for card in deck:
