@@ -762,7 +762,9 @@ class GUI_Common:
 		except: pass
 		self.offBoardTrigs[ID] = None
 		
-	def attackAni(self, subject, target):
+	def attackAni(self, subject, target=None):
+		if not target: #The tkinter GUI will simply skip this if no target specified
+			return
 		subjectFound = False
 		for zone in [self.boardZones[1].btnsDrawn, self.boardZones[2].btnsDrawn]:
 			for i, btn in enumerate(zone):
@@ -789,6 +791,9 @@ class GUI_Common:
 		self.moveBtnsAni(btn1, (x2, y2), timestep=6, stepSize=10)
 		self.moveBtnsAni(btn1, (x1, y1), timestep=6, stepSize=10)
 		
+	def cancelAttack(self, subject):
+		pass
+	
 	def moveBtnsAni(self, btns, posEnds, timestep=14, stepSize=0, vanish=False, vanishTime=250): #vanish means buttons disappear after reaching final positions
 		numSteps = 10
 		if isinstance(btns, (list, tuple)): #Move multiple buttons

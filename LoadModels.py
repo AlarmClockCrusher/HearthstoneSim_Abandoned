@@ -1,5 +1,6 @@
 from panda3d.core import *
-import inspect
+import inspect, time, threading
+from direct.interval.IntervalGlobal import Func, Parallel
 
 BoardIndex = ["0 Random Game Board",
 			"1 Classic Ogrimmar", "2 Classic Stormwind", "3 Classic Stranglethorn", "4 Classic Four Wind Valley",
@@ -40,6 +41,9 @@ def findFilepath(card):
 	filepath = path + "%s.png" % name
 	return filepath
 
+colorDict = {"green": (1, 0, 0, 1), "red": (0, 1, 0, 1), "blue": (0, 0, 1, 1),
+			 "white": (1, 1, 1, 1), "grey": (0.6, 0.6, 0.6, 1), "yellow": (1, 1, 0, 1),
+			 }
 
 """Subclass the NodePath, since it can be assigned attributes directly"""
 class NodePath_Card(NodePath):
@@ -49,27 +53,108 @@ class NodePath_Card(NodePath):
 		#These attributes will be modified by load functions below
 		self.cardType = cardType
 		self.card = card
+		self.selected = False
 		self.GUI = GUI
 		self.manaText = self.attackText = self.healthText = self.durabilityText = self.armorText = None
 		self.descriptionText = None
+		self.card_Model = self.nameTag_Model = self.cardImage_Model = None
+		self.nodePath_CardSpecs = None
+		self.mouseOver = False
+		
+		self.pos, self.hpr = Point3(), Point3()
+		self.collNode = self.collNode_Backup = None #collNode holds the return value of attachNewNode
+		
 		if collBox4:
 			box_dx, box_dy, box_dz = {"Hand": (3.5, 0.3, 5),
 									  "Minion": (2.4, 0.3, 3), "Dormant": (2, 0.3, 3),
 									  "Weapon": (2.7, 0.3, 2.7), "Hero": (2, 0.3, 2.4),
 									  "Power": (2, 0.4, 2)}[collBox4]
-			collNode_Card = CollisionNode("%s_c_node"%(card.name if card else cardType.name))
-			collNode_Card.addSolid(CollisionBox(Point3(0, 0, 0), box_dx, box_dy, box_dz))
-			node = self.attachNewNode(collNode_Card)
-			#node.show()
-	
+			self.collNode_Backup = CollisionNode("%s_c_node"%(card.name if card else cardType.name))
+			self.collNode_Backup.addSolid(CollisionBox(Point3(0, 0, 0), box_dx, box_dy, box_dz))
+			self.collNode = self.attachNewNode(self.collNode_Backup)
+			
+	def dimDown(self):
+		color = colorDict["grey"]
+		if self.nameTag_Model: self.nameTag_Model.setColor(color[0], color[1], color[2], color[3])
+		if self.card_Model: self.card_Model.setColor(color[0], color[1], color[2], color[3])
+		if self.cardImage_Model: self.cardImage_Model.setColor(color[0], color[1], color[2], color[3])
+
+	def setColor(self, color):
+		color = colorDict[color]
+		if self.nameTag_Model: self.nameTag_Model.setColor(color[0], color[1], color[2], color[3])
+		elif self.card_Model: self.card_Model.setColor(color[0], color[1], color[2], color[3])
+		else: self.cardImage_Model.setColor(color[0], color[1], color[2], color[3])
+		
+	def mouseHoveringOver(self):
+		if self.GUI.UI == 0:
+			self.GUI.drawCardSpecsDisplay(self)
+		
+	#The class is shared with the deck builder, but the deck builder won't invoke functions from here
 	def leftClick(self):
-		print("Clicked:", self.card if self.card else self.cardType)
+		self.selected = not self.selected
+		GUI, card = self.GUI, self.card
+		game = GUI.Game
+		if GUI.UI == -1:  #When conducting mulligan
+			if self.selected: self.setColor("red")
+			else: self.setColor("white")
+		elif GUI.UI == 1:
+			GUI.resolveMove(card, self, "ChooseOneOption")
+		elif GUI.UI == 3:
+			if card in game.options:
+				GUI.resolveMove(card, None, "DiscoverOption", info=None)
+		else:
+			if self.selected: self.setColor("green")
+			else: self.setColor("white")
+			if card.type == "Power":
+				GUI.resolveMove(card, self, "Power")
+			elif card in game.Hand_Deck.hands[card.ID]:
+				GUI.resolveMove(card, self, card.type + "inHand")
+			elif card in game.minions[card.ID]:
+				if self.card.type == "Minion":
+					GUI.resolveMove(card, self, "MiniononBoard")
+				elif self.card.type == "Dormant":
+					if GUI.UI == 2:
+						GUI.resolveMove(card, self, "DormantonBoard")
+					else:
+						GUI.cancelSelection()
+				elif self.card.type == "Amulet":
+					selectedSubject = "AmuletonBoard"
+					GUI.resolveMove(card, self, selectedSubject)
+			elif card == game.heroes[1] or card == game.heroes[2]:
+				GUI.resolveMove(card, self, "HeroonBoard")
+	
+	def showStatus(self):
+		pass
 	
 	def rightClick(self):
 		print("Clicked:", self.card if self.card else self.cardType)
 
+	def refresh(self):
+		if self.manaText: self.manaText.setText(str(self.card.mana))
+		if self.attackText: self.attackText.setText(str(self.card.attack))
+		if self.healthText: self.healthText.setText(str(self.card.health))
+		if self.durabilityText: self.durabilityText.setText(str(self.card.durability))
+		if self.armorText:
+			self.armorText.setText(str(self.card.armor))
+			self.armorText.setTextColor((1, 1, 1, 1) if self.card.armor else (1, 1, 1, 0))
+		self.setColor("white")
+		
+	def startMovingTowards(self, pos, hpr):
+		posInterval = self.posInterval(0.3, pos,  #goes to 0, -10, 0 from 0, 10, 0
+											startPos=self.pos)
+		hprInterval = self.hprInterval(0.3, hpr,
+											startHpr=self.hpr)
+		self.pos, self.hpr = pos, hpr
+		Parallel(posInterval, hprInterval, name="card move").start()
 
-def loadCard(base, card=None, cardType=None, pickable=True):
+	def genMoveIntervals(self, pos=Point3(), hpr=Point3(), duration=0.3):
+		posInterval = self.posInterval(duration, pos, startPos=self.pos)
+		hprInterval = self.hprInterval(duration, hpr, startHpr=self.hpr)
+		self.pos, self.hpr = pos, hpr
+		return posInterval, hprInterval
+		
+		
+def loadCard(base, card=None, cardType=None, pickable=True, ):
 	if card:
 		if card.type == "Minion":
 			return loadMinion(base, card=card, cardType=cardType, pickable=pickable)
@@ -80,6 +165,7 @@ def loadCard(base, card=None, cardType=None, pickable=True):
 		elif card.type == "Hero":
 			return loadHero(base, card=card, cardType=cardType, pickable=pickable)
 		elif card.type == "Power":
+			print("Loading power")
 			return loadPower(base, card=card, cardType=cardType, pickable=pickable)
 	else:
 		if "attack" in cardType.__dict__:
@@ -106,22 +192,22 @@ def loadMinion(base, card=None, cardType=None, pickable=True):
 	isLegendary = ("~Legendary" in card.index) if card else ("~Legendary" in cardType.index)
 	"""The card frame. The front face texture is set according to it class"""
 	filePath = "Models\\MinionModels\\" + ("Card_Legendary.glb" if isLegendary else "Card.glb")
-	card_Model = loader.loadModel(filePath)
-	card_Model.reparentTo(root)
-	card_Model.setTexture(card_Model.findTextureStage('*'),
+	root.card_Model = loader.loadModel(filePath)
+	root.card_Model.reparentTo(root)
+	root.card_Model.setTexture(root.card_Model.findTextureStage('*'),
 					loader.loadTexture(imgPath), 1)
 	
 	"""Card image based on the card type"""
 	filePath = "Models\\MinionModels\\" + ("MinionImage_Legendary.glb" if isLegendary else "MinionImage.glb")
-	cardImage = loader.loadModel(filePath)
-	cardImage.reparentTo(root)
-	cardImage.setTexture(cardImage.findTextureStage('*'),
+	root.cardImage_Model = loader.loadModel(filePath)
+	root.cardImage_Model.reparentTo(root)
+	root.cardImage_Model.setTexture(root.cardImage_Model.findTextureStage('*'),
 						 loader.loadTexture(imgPath), 1)
 	
 	"""Name Tag of the card, includes the model, and the nameText"""
-	nameTag = loader.loadModel("Models\\MinionModels\\NameTag.glb")
-	nameTag.reparentTo(root)
-	nameTag.setTexture(nameTag.findTextureStage('*'),
+	root.nameTag_Model = loader.loadModel("Models\\MinionModels\\NameTag.glb")
+	root.nameTag_Model.reparentTo(root)
+	root.nameTag_Model.setTexture(root.nameTag_Model.findTextureStage('*'),
 					loader.loadTexture(imgPath), 1)
 	
 	"""Values to display on the card"""
@@ -132,48 +218,60 @@ def loadMinion(base, card=None, cardType=None, pickable=True):
 	"""Mana display of the card"""
 	mana_Model = loader.loadModel("Models\\MinionModels\\Mana.glb")
 	mana_Model.reparentTo(root)
+	mana_Model.setTexture(mana_Model.findTextureStage('*'),
+						  loader.loadTexture("Models\\MinionModels\\MinionStats.png"), 1)
 	root.manaText = TextNode("Mana Text Node")
 	root.manaText.setFont(sansBold)
 	root.manaText.setText(manaValue)
 	root.manaText.setAlign(TextNode.ACenter)
-	manaTextNode = mana_Model.attachNewNode(root.manaText)
-	manaTextNode.setScale(1.4)
+	
+	manaTextNode = root.attachNewNode(root.manaText)
+	manaTextNode.setScale(1.7)
+	manaTextNode.setPos(-2.75, -0.25, 3.85)
 	
 	"""Attack of the card, includes the model and the attackText"""
 	attack_Model = loader.loadModel("Models\\MinionModels\\Attack.glb")
 	attack_Model.reparentTo(root)
+	attack_Model.setTexture(attack_Model.findTextureStage('*'),
+						  loader.loadTexture("Models\\MinionModels\\MinionStats.png"), 1)
 	root.attackText = TextNode("Attack Text Node")
 	root.attackText.setText(attackValue)
 	root.attackText.setFont(sansBold)
 	root.attackText.setAlign(TextNode.ACenter)
-	attackTextNode = attack_Model.attachNewNode(root.attackText)
+	attackTextNode = root.attachNewNode(root.attackText)
 	attackTextNode.setScale(1.3)
-	attackTextNode.setPos(-2.75, -0.3, -4.7)
+	attackTextNode.setPos(-2.75, -0.25, -4.7)
 	
 	"""Health of the card, includes the model and the attackText"""
 	health_Model = loader.loadModel("Models\\MinionModels\\Health.glb")
 	health_Model.reparentTo(root)
+	health_Model.setTexture(health_Model.findTextureStage('*'),
+						  loader.loadTexture("Models\\MinionModels\\MinionStats.png"), 1)
 	root.healthText = TextNode("Health Text Node")
 	root.healthText.setText(healthValue)
 	root.healthText.setFont(sansBold)
 	root.healthText.setAlign(TextNode.ACenter)
-	healthTextNode = health_Model.attachNewNode(root.healthText)
+	healthTextNode = root.attachNewNode(root.healthText)
 	healthTextNode.setScale(1.3)
-	healthTextNode.setPos(3, -0.3, -4.7)
+	healthTextNode.setPos(3, -0.25, -4.7)
 	
 	if isLegendary:
 		legendaryIcon = loader.loadModel("Models\\MinionModels\\LegendaryIcon.glb")
 		legendaryIcon.reparentTo(root)
-		
+		legendaryIcon.setTexture(legendaryIcon.findTextureStage('*'),
+					loader.loadTexture("Models\\MinionModels\\LegendaryExample.png"), 1)
+	
 	race = card.race if card else cardType.race
 	if race:
 		race_Model = loader.loadModel("Models\\MinionModels\\Race.glb")
 		race_Model.reparentTo(root)
+		race_Model.setTexture(race_Model.findTextureStage('*'),
+							  loader.loadTexture("Models\\MinionModels\\MinionStats.png"), 1)
 		raceText = TextNode("Race Text Node")
 		raceText.setText(race)
 		raceText.setFont(sansBold)
 		raceText.setAlign(TextNode.ACenter)
-		raceTextNode = race_Model.attachNewNode(raceText)
+		raceTextNode = root.attachNewNode(raceText)
 		raceTextNode.setScale(0.4)
 		raceTextNode.setPos(0.2, -0.3, -4.55)
 	
@@ -189,15 +287,15 @@ def loadMinion_Played(base, card):
 	root.reparentTo(base.render)
 	
 	"""Card image based on the card type"""
-	cardImage = loader.loadModel("Models\\MinionModels\\MinionImage_Played.glb")
-	cardImage.reparentTo(root)
-	cardImage.setTexture(cardImage.findTextureStage('*'),
+	root.cardImage_Model = loader.loadModel("Models\\MinionModels\\MinionImage_Played.glb")
+	root.cardImage_Model.reparentTo(root)
+	root.cardImage_Model.setTexture(root.cardImage_Model.findTextureStage('*'),
 						 loader.loadTexture(imgPath), 1)
 	
 	"""Name Tag of the card, includes the model, and the nameText"""
-	nameTag = loader.loadModel("Models\\MinionModels\\NameTag_Played.glb")
-	nameTag.reparentTo(root)
-	nameTag.setTexture(nameTag.findTextureStage('*'),
+	root.nameTag_Model = loader.loadModel("Models\\MinionModels\\NameTag_Played.glb")
+	root.nameTag_Model.reparentTo(root)
+	root.nameTag_Model.setTexture(root.nameTag_Model.findTextureStage('*'),
 					loader.loadTexture(imgPath), 1)
 	
 	"""Values to display on the minion pawn"""
@@ -211,8 +309,8 @@ def loadMinion_Played(base, card):
 	root.attackText.setText(attackValue)
 	root.attackText.setFont(sansBold)
 	root.attackText.setAlign(TextNode.ACenter)
-	attackTextNode = attack_Model.attachNewNode(root.attackText)
-	attackTextNode.setScale(1)
+	attackTextNode = root.attachNewNode(root.attackText)
+	attackTextNode.setScale(1.3)
 	attackTextNode.setPos(-2.05, -0.1, -1.95)
 	
 	"""Health of the card, includes the model and the attackText"""
@@ -222,15 +320,17 @@ def loadMinion_Played(base, card):
 	root.healthText.setText(healthValue)
 	root.healthText.setFont(sansBold)
 	root.healthText.setAlign(TextNode.ACenter)
-	healthTextNode = health_Model.attachNewNode(root.healthText)
-	healthTextNode.setScale(1)
+	healthTextNode = root.attachNewNode(root.healthText)
+	healthTextNode.setScale(1.3)
 	healthTextNode.setPos(1.95, -0.1, -1.9)
 	
 	"""Playeds only need to the Legendary Icon surrounding the image"""
 	if "~Legendary" in card.index:
 		legendaryIcon = loader.loadModel("Models\\MinionModels\\LegendaryIcon_Played.glb")
 		legendaryIcon.reparentTo(root)
-		
+		legendaryIcon.setTexture(legendaryIcon.findTextureStage('*'),
+								 loader.loadTexture("Models\\MinionModels\\LegendaryExample.png"), 1)
+	
 	return root
 
 
@@ -248,26 +348,37 @@ def loadSpell(base, card=None, cardType=None, pickable=True):
 	isLegendary = ("~Legendary" in card.index) if card else ("~Legendary" in cardType.index)
 	"""The card frame. The front face texture is set according to it class"""
 	filePath = "Models\\SpellModels\\" + ("Card_Legendary.glb" if isLegendary else "Card.glb")
-	card_Model = loader.loadModel(filePath)
-	card_Model.reparentTo(root)
-	card_Model.setTexture(card_Model.findTextureStage('*'),
+	root.card_Model = loader.loadModel(filePath)
+	root.card_Model.reparentTo(root)
+	root.card_Model.setTexture(root.card_Model.findTextureStage('*'),
 					loader.loadTexture(imgPath), 1)
 	
+	"""Name Tag of the card"""
+	filePath = "Models\\SpellModels\\" + ("NameTag_Legendary.glb" if isLegendary else "NameTag.glb")
+	root.nameTag_Model = loader.loadModel(filePath)
+	root.nameTag_Model.reparentTo(root)
+	root.nameTag_Model.setTexture(root.nameTag_Model.findTextureStage('*'),
+							loader.loadTexture(imgPath), 1)
+
 	"""Mana display of the card"""
 	manaValue = "%d"%(card.mana if card else cardType.mana)
 	mana_Model = loader.loadModel("Models\\SpellModels\\Mana.glb")
 	mana_Model.reparentTo(root)
+	mana_Model.setTexture(mana_Model.findTextureStage('*'),
+						  loader.loadTexture("Models\\SpellModels\\SpellStats.png"), 1)
 	root.manaText = TextNode("mana")
 	root.manaText.setFont(sansBold)
 	root.manaText.setText(manaValue)
 	root.manaText.setAlign(TextNode.ACenter)
-	manaTextNode = mana_Model.attachNewNode(root.manaText)
-	manaTextNode.setScale(1.4)
-	manaTextNode.setPos(-2.9, -0.1, 4)
+	manaTextNode = root.attachNewNode(root.manaText)
+	manaTextNode.setScale(1.7)
+	manaTextNode.setPos(-2.75, -0.1, 3.85)
 	
 	if isLegendary:
 		legendaryIcon = loader.loadModel("Models\\SpellModels\\LegendaryIcon.glb")
 		legendaryIcon.reparentTo(root)
+		legendaryIcon.setTexture(legendaryIcon.findTextureStage('*'),
+								 loader.loadTexture("Models\\SpellModels\\LegendaryExample.png"), 1)
 	
 	school = card.school if card else cardType.school
 	if school:
@@ -277,7 +388,7 @@ def loadSpell(base, card=None, cardType=None, pickable=True):
 		nameText.setText(school)
 		nameText.setFont(sansBold)
 		nameText.setAlign(TextNode.ACenter)
-		nameTextNode = school_Model.attachNewNode(nameText)
+		nameTextNode = root.attachNewNode(nameText)
 		nameTextNode.setScale(0.4)
 		nameTextNode.setPos(0, -0.1, -4.45)
 	
@@ -298,11 +409,11 @@ def loadWeapon(base, card=None, cardType=None, pickable=True):
 	isLegendary = ("~Legendary" in card.index) if card else ("~Legendary" in cardType.index)
 	"""The card frame. The front face texture is set according to it class"""
 	filePath = "Models\\WeaponModels\\" + ("Card_Legendary.glb" if isLegendary else "Card.glb")
-	card_Model = loader.loadModel(filePath)
-	card_Model.reparentTo(root)
+	root.card_Model = loader.loadModel(filePath)
+	root.card_Model.reparentTo(root)
 	#print(card.findAllTextures())
 	#print(card.findAllMatches("**/+GeomNode"))
-	card_Model.setTexture(card_Model.findTextureStage('*'),
+	root.card_Model.setTexture(root.card_Model.findTextureStage('*'),
 					loader.loadTexture(imgPath), 1)
 	
 	cardBack = loader.loadModel("Models\\WeaponModels\\CardBack.glb")
@@ -313,6 +424,12 @@ def loadWeapon(base, card=None, cardType=None, pickable=True):
 	cardImg.reparentTo(root)
 	cardImg.setTexture(cardImg.findTextureStage('*'),
 					   loader.loadTexture(imgPath), 1)
+	
+	"""Name Tag of the card"""
+	root.nameTag_Model = loader.loadModel("Models\\WeaponModels\\NameTag.glb")
+	root.nameTag_Model.reparentTo(root)
+	root.nameTag_Model.setTexture(root.nameTag_Model.findTextureStage('*'),
+							loader.loadTexture(imgPath), 1)
 	
 	"""Values to display on the card"""
 	manaValue = '%d' % (card.mana if card else cardType.mana)
@@ -326,9 +443,9 @@ def loadWeapon(base, card=None, cardType=None, pickable=True):
 	root.manaText.setFont(sansBold)
 	root.manaText.setText(manaValue)
 	root.manaText.setAlign(TextNode.ACenter)
-	manaTextNode = mana_Model.attachNewNode(root.manaText)
-	manaTextNode.setScale(1.4)
-	manaTextNode.setPos(-2.85, -0.15, 3.85)
+	manaTextNode = root.attachNewNode(root.manaText)
+	manaTextNode.setScale(1.7)
+	manaTextNode.setPos(-3.0, -0.15, 3.85)
 	
 	"""Attack of the card, includes the model and the attackText"""
 	attack_Model = loader.loadModel("Models\\WeaponModels\\Attack.glb")
@@ -337,7 +454,7 @@ def loadWeapon(base, card=None, cardType=None, pickable=True):
 	root.attackText.setText(attackValue)
 	root.attackText.setFont(sansBold)
 	root.attackText.setAlign(TextNode.ACenter)
-	attackTextNode = attack_Model.attachNewNode(root.attackText)
+	attackTextNode = root.attachNewNode(root.attackText)
 	attackTextNode.setScale(1.3)
 	attackTextNode.setPos(-2.85, -0.15, -4.7)
 	
@@ -348,13 +465,15 @@ def loadWeapon(base, card=None, cardType=None, pickable=True):
 	root.durabilityText.setText(durabilityValue)
 	root.durabilityText.setFont(sansBold)
 	root.durabilityText.setAlign(TextNode.ACenter)
-	durabilityTextNode = durability_Model.attachNewNode(root.durabilityText)
+	durabilityTextNode = root.attachNewNode(root.durabilityText)
 	durabilityTextNode.setScale(1.3)
 	durabilityTextNode.setPos(2.9, -0.15, -4.7)
 	
 	if isLegendary:
 		legendaryIcon = loader.loadModel("Models\\WeaponModels\\LegendaryIcon.glb")
 		legendaryIcon.reparentTo(root)
+		legendaryIcon.setTexture(legendaryIcon.findTextureStage('*'),
+								 loader.loadTexture("Models\\WeaponModels\\LegendaryExample.png"), 1)
 	
 	return root
 
@@ -370,17 +489,19 @@ def loadWeapon_Played(base, card):
 	"""Card border for weapon"""
 	border = loader.loadModel("Models\\WeaponModels\\Border_Played.glb")
 	border.reparentTo(root)
+	border.setTexture(border.findTextureStage('*'),
+								 loader.loadTexture("Models\\WeaponModels\\ForBorder.png"), 1)
 	
 	"""Card image based on the card type"""
-	cardImage = loader.loadModel("Models\\WeaponModels\\WeaponImage_Played.glb")
-	cardImage.reparentTo(root)
-	cardImage.setTexture(cardImage.findTextureStage('*'),
+	root.cardImage_Model = loader.loadModel("Models\\WeaponModels\\WeaponImage_Played.glb")
+	root.cardImage_Model.reparentTo(root)
+	root.cardImage_Model.setTexture(root.cardImage_Model.findTextureStage('*'),
 						 loader.loadTexture(imgPath), 1)
 	
 	"""Name Tag of the card, includes the model, and the nameText"""
-	nameTag = loader.loadModel("Models\\WeaponModels\\NameTag_Played.glb")
-	nameTag.reparentTo(root)
-	nameTag.setTexture(nameTag.findTextureStage('*'),
+	root.nameTag_Model = loader.loadModel("Models\\WeaponModels\\NameTag_Played.glb")
+	root.nameTag_Model.reparentTo(root)
+	root.nameTag_Model.setTexture(root.nameTag_Model.findTextureStage('*'),
 					   loader.loadTexture(imgPath), 1)
 	
 	"""Values to display on the card"""
@@ -394,8 +515,8 @@ def loadWeapon_Played(base, card):
 	root.attackText.setText(attackValue)
 	root.attackText.setFont(sansBold)
 	root.attackText.setAlign(TextNode.ACenter)
-	attackTextNode = attack_Model.attachNewNode(root.attackText)
-	attackTextNode.setScale(1)
+	attackTextNode = root.attachNewNode(root.attackText)
+	attackTextNode.setScale(1.3)
 	attackTextNode.setPos(-2.25, -0.17, -1.7)
 	
 	"""Durability of the card, includes the model and the attackText"""
@@ -405,13 +526,15 @@ def loadWeapon_Played(base, card):
 	root.durabilityText.setText(durabilityValue)
 	root.durabilityText.setFont(sansBold)
 	root.durabilityText.setAlign(TextNode.ACenter)
-	durabilityTextNode = durability_Model.attachNewNode(root.durabilityText)
-	durabilityTextNode.setScale(1)
+	durabilityTextNode = root.attachNewNode(root.durabilityText)
+	durabilityTextNode.setScale(1.3)
 	durabilityTextNode.setPos(2.25, -0.17, -1.7)
 	"""Playeds only need to the Legendary Icon surrounding the image"""
 	if "~Legendary" in card.index:
 		legendaryIcon = loader.loadModel("Models\\WeaponModels\\LegendaryIcon_Played.glb")
 		legendaryIcon.reparentTo(root)
+		legendaryIcon.setTexture(legendaryIcon.findTextureStage('*'),
+								 loader.loadTexture("Models\\WeaponModels\\LegendaryExample.png"), 1)
 	
 	return root
 
@@ -420,25 +543,36 @@ def loadWeapon_Played(base, card):
 """Load Hero Powers"""
 def loadPower(base, card=None, cardType=None, pickable=True):
 	loader = base.loader
+	imgPath = "Images\\HerosandPowers\\%s.png"%(type(card).__name__ if card else cardType.__name__)
 	sansBold = loader.loadFont('Models\\OpenSans-Bold.ttf')
 	
 	root = NodePath_Card(base, card=card, cardType=cardType, collBox4="Power" if pickable else '')
 	root.reparentTo(base.render)
 	
 	"""The power frame"""
-	power = loader.loadModel("Models\\PowerModels\\Power.glb")
-	power.reparentTo(root)
+	root.card_Model = loader.loadModel("Models\\PowerModels\\Power.glb")
+	root.card_Model.reparentTo(root)
+	root.card_Model.setTexture(root.card_Model.findTextureStage('*'),
+							   loader.loadTexture(imgPath), 1)
 	
+	"""Name Tag of the card, includes the model, and the nameText"""
+	root.nameTag_Model = loader.loadModel("Models\\PowerModels\\NameTag.glb")
+	root.nameTag_Model.reparentTo(root)
+	root.nameTag_Model.setTexture(root.nameTag_Model.findTextureStage('*'),
+							loader.loadTexture(imgPath), 1)
+
 	"""Mana display of the power"""
-	manaValue = '%d' % (power.mana if power else cardType.mana)
+	manaValue = '%d' % (card.mana if card else cardType.mana)
 	mana_Model = loader.loadModel("Models\\PowerModels\\Mana.glb")
 	mana_Model.reparentTo(root)
+	mana_Model.setTexture(root.nameTag_Model.findTextureStage('*'),
+								  loader.loadTexture("Models\\PowerModels\\HeroPower.png"), 1)
 	root.manaText = TextNode("mana")
 	root.manaText.setFont(sansBold)
 	root.manaText.setText(manaValue)
 	root.manaText.setAlign(TextNode.ACenter)
-	manaTextNode = mana_Model.attachNewNode(root.manaText)
-	manaTextNode.setScale(1.4)
+	manaTextNode = root.attachNewNode(root.manaText)
+	manaTextNode.setScale(1.7)
 	manaTextNode.setPos(0, -0.25, 4)
 	
 	return root
@@ -455,16 +589,26 @@ def loadPower_Played(base, card):
 	"""Power border for weapon"""
 	border = loader.loadModel("Models\\PowerModels\\Border_Played.glb")
 	border.reparentTo(root)
+	border.setTexture(border.findTextureStage('*'),
+					loader.loadTexture("Models\\PowerModels\\ForBorder.png"), 1)
+	
+	"""Name Tag of the card, includes the model, and the nameText"""
+	root.nameTag_Model = loader.loadModel("Models\\PowerModels\\NameTag_Played.glb")
+	root.nameTag_Model.reparentTo(root)
+	root.nameTag_Model.setTexture(root.nameTag_Model.findTextureStage('*'),
+							loader.loadTexture(imgPath), 1)
 	
 	"""Mana display of the power"""
 	mana_Model = loader.loadModel("Models\\PowerModels\\Mana_Played.glb")
 	mana_Model.reparentTo(root)
+	mana_Model.setTexture(root.nameTag_Model.findTextureStage('*'),
+						  loader.loadTexture("Models\\PowerModels\\HeroPower.png"), 1)
 	root.manaText = TextNode("mana")
 	root.manaText.setFont(sansBold)
 	root.manaText.setText('%d' % card.mana)
 	root.manaText.setAlign(TextNode.ACenter)
-	manaTextNode = mana_Model.attachNewNode(root.manaText)
-	manaTextNode.setScale(1.4)
+	manaTextNode = root.attachNewNode(root.manaText)
+	manaTextNode.setScale(1.7)
 	manaTextNode.setPos(-0.1, -0.35, 1.75)
 	
 	"""Power image based on the power type"""
@@ -489,11 +633,17 @@ def loadHero(base, card=None, cardType=None, pickable=True):
 	
 	
 	"""The card frame. The front face texture is set according to it class"""
-	card_Model = loader.loadModel("Models\\HeroModels\\Card.glb")
-	card_Model.reparentTo(root)
-	card_Model.setTexture(card_Model.findTextureStage('*'),
+	root.card_Model = loader.loadModel("Models\\HeroModels\\Card.glb")
+	root.card_Model.reparentTo(root)
+	root.card_Model.setTexture(root.card_Model.findTextureStage('*'),
 					loader.loadTexture(imgPath), 1)
 	
+	"""Name Tag of the card, includes the model, and the nameText"""
+	root.nameTag_Model = loader.loadModel("Models\\HeroModels\\NameTag.glb")
+	root.nameTag_Model.reparentTo(root)
+	root.nameTag_Model.setTexture(root.nameTag_Model.findTextureStage('*'),
+							loader.loadTexture(imgPath), 1)
+
 	"""Mana display of the card"""
 	manaValue = '%d' % (card.mana if card else cardType.mana)
 	mana_Model = loader.loadModel("Models\\HeroModels\\Mana.glb")
@@ -502,9 +652,9 @@ def loadHero(base, card=None, cardType=None, pickable=True):
 	root.manaText.setFont(sansBold)
 	root.manaText.setText(manaValue)
 	root.manaText.setAlign(TextNode.ACenter)
-	manaTextNode = mana_Model.attachNewNode(root.manaText)
-	manaTextNode.setScale(1.5)
-	manaTextNode.setPos(-2.8, -0.15, 3.0)
+	manaTextNode = root.attachNewNode(root.manaText)
+	manaTextNode.setScale(1.7)
+	manaTextNode.setPos(-2.8, -0.15, 3.75)
 	
 	"""Armor display of the card"""
 	armorValue = '%d' % (card.armor if card else cardType.armor)
@@ -514,14 +664,16 @@ def loadHero(base, card=None, cardType=None, pickable=True):
 	root.armorText.setFont(sansBold)
 	root.armorText.setText(armorValue)
 	root.armorText.setAlign(TextNode.ACenter)
-	armorTextNode = armor_Model.attachNewNode(root.armorText)
-	armorTextNode.setScale(1.4)
-	armorTextNode.setPos(2.5, -0.2, -4.75)
+	armorTextNode = root.attachNewNode(root.armorText)
+	armorTextNode.setScale(1.6)
+	armorTextNode.setPos(2.8, -0.2, -4.75)
 	
 	if "~Legendary" in (card.index if card else cardType.index):
 		legendaryIcon = loader.loadModel("Models\\HeroModels\\LegendaryIcon.glb")
 		legendaryIcon.reparentTo(root)
-		
+		legendaryIcon.setTexture(legendaryIcon.findTextureStage('*'),
+								 loader.loadTexture("Models\\HeroModels\\LegendaryExample.png"), 1)
+	
 	return root
 
 
@@ -534,9 +686,9 @@ def loadHero_Played(base, card):
 	root.reparentTo(base.render)
 	
 	"""Card image based on the card type"""
-	cardImage = loader.loadModel("Models\\HeroModels\\HeroHead.glb")
-	cardImage.reparentTo(root)
-	cardImage.setTexture(cardImage.findTextureStage('*'),
+	root.cardImage_Model = loader.loadModel("Models\\HeroModels\\HeroHead.glb")
+	root.cardImage_Model.reparentTo(root)
+	root.cardImage_Model.setTexture(root.cardImage_Model.findTextureStage('*'),
 						 loader.loadTexture(imgPath), 1)
 	
 	"""Values to display on the card"""
@@ -550,9 +702,10 @@ def loadHero_Played(base, card):
 	root.attackText.setText(attackValue)
 	root.attackText.setFont(sansBold)
 	root.attackText.setAlign(TextNode.ACenter)
-	attackTextNode = attack_Node.attachNewNode(root.attackText)
-	attackTextNode.setScale(0.6)
-	attackTextNode.setPos(-1.98, -0.25, -1.92)
+	root.attackText.setTextColor((0, 1, 0, 1) if card.attack > 0 else (0, 1, 0, 0))
+	attackTextNode = root.attachNewNode(root.attackText)
+	attackTextNode.setScale(0.8)
+	attackTextNode.setPos(-2, -0.25, -1.95)
 	
 	"""Health of the hero"""
 	health_Node = loader.loadModel("Models\\HeroModels\\Health.glb")
@@ -561,21 +714,22 @@ def loadHero_Played(base, card):
 	root.healthText.setText(durabilityValue)
 	root.healthText.setFont(sansBold)
 	root.healthText.setAlign(TextNode.ACenter)
-	healthTextNode = health_Node.attachNewNode(root.healthText)
-	healthTextNode.setScale(0.6)
+	root.healthText.setTextColor((0, 1, 0, 1) if card.health >= card.health else (1, 0, 0, 1))
+	healthTextNode = root.attachNewNode(root.healthText)
+	healthTextNode.setScale(0.8)
 	healthTextNode.setPos(2.05, -0.22, -1.92)
 	
 	"""Armor of the hero"""
-	if card.armor > 0:
-		armor_Node = loader.loadModel("Models\\HeroModels\\Armor_Played.glb")
-		armor_Node.reparentTo(root)
-		root.armorText = TextNode("health")
-		root.armorText.setText('%d' % card.armor)
-		root.armorText.setFont(sansBold)
-		root.armorText.setAlign(TextNode.ACenter)
-		armorTextNode = armor_Node.attachNewNode(root.armorText)
-		armorTextNode.setScale(0.6)
-		armorTextNode.setPos(2.05, -0.25, -1.05)
+	armor_Node = loader.loadModel("Models\\HeroModels\\Armor_Played.glb")
+	armor_Node.reparentTo(root)
+	root.armorText = TextNode("health")
+	root.armorText.setText('%d' % card.armor)
+	root.armorText.setFont(sansBold)
+	root.armorText.setAlign(TextNode.ACenter)
+	root.armorText.setTextColor((1, 1, 1, 1) if card.armor > 0 else (1, 1, 1, 0))
+	armorTextNode = root.attachNewNode(root.armorText)
+	armorTextNode.setScale(0.8)
+	armorTextNode.setPos(2.05, -0.3, -0.8)
 	
 	return root
 	

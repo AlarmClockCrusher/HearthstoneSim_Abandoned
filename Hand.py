@@ -69,7 +69,8 @@ class Hand_Deck:
 					self.Game.mulligans[ID].append(extractfrom(quest, self.decks[ID]))
 			for i in range(mulliganSize[ID] - numQueststoDraw):
 				self.Game.mulligans[ID].append(self.decks[ID].pop())
-
+	
+	#Mulligan for 1P GUIs, where a single player controls all the plays.
 	def mulligan(self, indices1, indices2):
 		indices = {1: indices1, 2: indices2}  # indicesCards是要替换的手牌的列表序号，如[1, 3]
 		for ID in range(1, 3):
@@ -89,10 +90,12 @@ class Hand_Deck:
 			for card in self.hands[1] + self.hands[2]:
 				card.effCanTrig()
 				card.checkEvanescent()
-
-		if self.Game.GUI: self.Game.GUI.update()
+		
 		if not self.Game.heroes[2].Class in SVClasses:
 			self.addCardtoHand(TheCoin(self.Game, 2), 2)
+		if self.Game.GUI:
+			self.Game.GUI.handZones[1].draw()
+			self.Game.GUI.handZones[2].draw()
 		self.Game.Manas.calcMana_All()
 		for ID in range(1, 3):
 			for card in self.hands[ID] + self.decks[ID]:

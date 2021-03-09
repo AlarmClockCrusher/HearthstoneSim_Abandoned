@@ -1694,6 +1694,7 @@ class HeroPower(Card):
 	mana, name, requireTarget = 2, "Test", False
 	index = "Neutral-2-Hero Power-Vanilla"
 	description = ""
+	name_CN = ""
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 

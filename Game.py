@@ -921,7 +921,9 @@ class Game:
 			#如果一个角色被迫发起攻击，如沼泽之王爵德，野兽之心，群体狂乱等，会经历上述的战斗阶段的所有步骤，之后没有发现效果结算。同时角色的attackedTimes不会增加。
 			#之后没有阶段间步骤（因为这种强制攻击肯定是由其他序列引发的）
 			#疯狂巨龙死亡之翼的连续攻击中，只有第一次目标选择被被市长改变，但之后的不会
-			if self.GUI: self.GUI.wait(275)
+			if self.GUI:
+				self.GUI.wait(275)
+				self.GUI.attackAni(subject)
 			if verifySelectable:
 				subIndex, subWhere = subject.pos, subject.type+str(subject.ID)
 				tarIndex, tarWhere = target.pos, target.type+str(target.ID)
@@ -971,6 +973,7 @@ class Game:
 				self.sendSignal(subject.type+"Attacked"+target.type, self.turn, subject, target, 0, "")
 				if subject == self.heroes[1] or subject == self.heroes[2]:
 					self.Counters.heroAttackTimesThisTurn[subject.ID] += 1
+			elif self.GUI: self.GUI.cancelAttack(subject)
 			#重置蜡烛弓，角斗士的长弓，以及傻子和市长的trigedThisBattle标识。
 			if resetRedirTrig: #这个选项目前只有让一个随从连续攻击其他目标时才会选择关闭，不会与角斗士的长弓冲突
 				self.sendSignal("BattleFinished", self.turn, subject, None, 0, "")
