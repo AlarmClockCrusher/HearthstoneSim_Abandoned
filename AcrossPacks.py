@@ -553,6 +553,24 @@ class Trig_WaterElemental(TrigBoard):
 		return "冻结任何受到该随从伤害的角色" if CHN else "Freeze any character damaged by this minion"
 
 
+class Pyroblast(Spell):
+	Class, school, name = "Mage", "Fire", "Pyroblast"
+	requireTarget, mana = True, 10
+	index = "EXPERT1~Mage~Spell~10~Fire~Pyroblast"
+	description = "Deal 10 damage"
+	name_CN = "炎爆术"
+	
+	def text(self, CHN):
+		damage = (10 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		return "造成%d点伤害" % damage if CHN else "Deal %d damage" % damage
+	
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+		if target:
+			damage = (10 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+			self.dealsDamage(target, damage)
+		return target
+
+
 """EXPERT1 cards"""
 class Bananas(Spell):
 	Class, school, name = "Neutral", "", "Bananas"
@@ -848,6 +866,33 @@ class Snake(Minion):
 	index = "EXPERT1~Hunter~Minion~1~1~1~Beast~Snake~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "蛇"
+
+
+class Huffer(Minion):
+	Class, race, name = "Hunter", "Beast", "Huffer"
+	mana, attack, health = 3, 4, 2
+	index = "EXPERT1~Hunter~Minion~3~4~2~Beast~Huffer~Charge~Uncollectible"
+	requireTarget, keyWord, description = False, "Charge", "Charge"
+	name_CN = "霍弗"
+
+
+class Leokk(Minion):
+	Class, race, name = "Hunter", "Beast", "Leokk"
+	mana, attack, health = 3, 2, 4
+	index = "EXPERT1~Hunter~Minion~3~2~4~Beast~Leokk~Uncollectible"
+	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack"
+	name_CN = "雷欧克"
+	def __init__(self, Game, ID):
+		self.blank_init(Game, ID)
+		self.auras["Your other minions have +1 Attack"] = StatAura_Others(self, 1, 0)
+
+
+class Misha(Minion):
+	Class, race, name = "Hunter", "Beast", "Misha"
+	mana, attack, health = 3, 4, 4
+	index = "EXPERT1~Hunter~Minion~3~4~4~Beast~Misha~Taunt~Uncollectible"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt"
+	name_CN = "米莎"
 
 
 class Hyena_Classic(Minion):
@@ -1322,8 +1367,12 @@ AcrossPacks_Indices = {"Hero: Demon Hunter": Illidan, "Hero: Druid": Malfurion,
 					"EXPERT1~Druid~Spell~6~Nature~Rampant Growth~Uncollectible": RampantGrowth,
 					"EXPERT1~Druid~Spell~6~Nature~Enrich~Uncollectible": Enrich,
 					"EXPERT1~Hunter~Minion~1~1~1~Beast~Snake~Uncollectible": Snake,
+					"EXPERT1~Hunter~Minion~3~4~2~Beast~Huffer~Charge~Uncollectible": Huffer,
+					"EXPERT1~Hunter~Minion~3~2~4~Beast~Leokk~Uncollectible": Leokk,
+					"EXPERT1~Hunter~Minion~3~4~4~Beast~Misha~Taunt~Uncollectible": Misha,
 					"EXPERT1~Hunter~Minion~2~2~2~Beast~Hyena~Uncollectible": Hyena_Classic,
 					"EXPERT1~Mage~Minion~1~1~2~~Mana Wyrm": ManaWyrm,
+					"EXPERT1~Mage~Spell~10~Fire~Pyroblast": Pyroblast,
 					"EXPERT1~Paladin~Minion~1~2~1~~Defender~Uncollectible": Defender,
 					"EXPERT1~Paladin~Weapon~5~5~3~Ashbringer~Legendary~Uncollectible": Ashbringer,
 					"EXPERT1~Shaman~Minion~2~2~3~~Spirit Wolf~Taunt~Uncollectible": SpiritWolf,

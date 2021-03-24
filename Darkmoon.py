@@ -6,8 +6,7 @@ from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
 from collections import Counter as cnt
 
-from Basic import IllidariInitiate, Huffer, Leokk, Misha, SilverHandRecruit
-from Classic import GameManaAura_InTurnNextSpell2Less, Bananas, Pyroblast
+from AcrossPacks import Bananas, IllidariInitiate, Huffer, Leokk, Misha, SilverHandRecruit, Pyroblast
 from Outlands import Minion_Dormantfor2turns, MsshifnPrime, ZixorPrime, SolarianPrime, MurgurglePrime, ReliquaryPrime, \
 					AkamaPrime, VashjPrime, KanrethadPrime, KargathPrime
 from Academy import SoulFragment, Spellburst
@@ -1664,7 +1663,15 @@ class LunarEclipse(Spell):
 			self.Game.Manas.CardAuras.append(tempAura)
 			tempAura.auraAppears()
 		return target
-		
+
+class GameManaAura_InTurnNextSpell2Less(TempManaEffect):
+	def __init__(self, Game, ID, changeby=0, changeto=-1):
+		self.blank_init(Game, ID, -2, -1)
+	
+	def applicable(self, target):
+		return target.ID == self.ID and target.type == "Spell"
+
+
 class SolarEclipse(Spell):
 	Class, school, name = "Druid", "", "Solar Eclipse"
 	requireTarget, mana = False, 2

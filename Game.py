@@ -1,7 +1,7 @@
 from Handlers import *
 from Triggers_Auras import Trig_Borrow
 
-from Basic import Illidan, Anduin
+from AcrossPacks import Illidan, Anduin
 from SV_Basic import SVClasses
 
 import numpy as np

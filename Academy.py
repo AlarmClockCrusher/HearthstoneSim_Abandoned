@@ -5,8 +5,7 @@ from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
 
-from Classic import ManaWyrm
-from AcrossPacks import Lackeys, HealingTotem, SearingTotem, StoneclawTotem, StrengthTotem
+from AcrossPacks import Lackeys, HealingTotem, SearingTotem, StoneclawTotem, StrengthTotem, ManaWyrm
 from Uldum import PlagueofDeath, PlagueofMadness, PlagueofMurlocs, PlagueofFlames, PlagueofWrath
 from Outlands import Minion_Dormantfor2turns
 
