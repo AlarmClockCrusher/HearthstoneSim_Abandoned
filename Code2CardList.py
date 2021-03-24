@@ -5,24 +5,22 @@ import string
 from CardPools import *
 
 cardType2jsonType = {"Minion": "MINION", "Spell": "SPELL", "Weapon": "WEAPON", "Hero": "HERO"}
-Pack2jsonSet = {"Basic": "CORE", "Classic": "EXPERT1",
-				"GVG": "GVG", "Kobolds": "LOOTAPALOOZA", "Boomsday": "BOOMSDAY",
-				"Shadows": "DALARAN", "Uldum": "ULDUM", "Dragons": "DRAGONS", "Galakrond": "YEAR_OF_THE_DRAGON",
-				"DHInitiate": "DEMON_HUNTER_INITIATE", "Outlands": "BLACK_TEMPLE", "Academy": "SCHOLOMANCE", "Darkmoon": "DARKMOON_FAIRE",
-				}
+
 j = json.loads(open("cards.collectible.json", "r", encoding="utf-8").read())
 k = json.loads(open("cards.json", "r", encoding="utf-8").read())
 
 def typeName2Class(typename):
-	for value in cardPool.values():
-		if value.__name__ == typename:
-			return value
-	print(typename, " not found")
-	return None
-	
+	try:
+		if typename.startswith("TransferStudent"): value = next(value for value in cardPool.values() if value.name == "Transfer Student" and "Uncollectible" not in value.index)
+		else: value = next(value for value in cardPool.values() if value.__name__ == typename)
+		return value
+	except:
+		print(typename, " not found")
+		return None
+		
 def cardName2Class(cardName):
 	for value in cardPool.values():
-		if value.name == cardName:
+		if value.name == cardName and "~Uncollectible" not in value.index:
 			return value
 	print(cardName, " not found")
 	return None
@@ -32,10 +30,9 @@ def parseDeckCode(s, hero, ClassDict):
 	if s:
 		try:
 			if s.startswith("names||"):
-				s = s[hero].split('||')[1:]
-				deck = [typeName2Class(name.strip()) for name in s if name]
+				s = s.split('||')[1:]
+				deck = [cardName2Class(name.strip()) for name in s if name]
 			else: deck = decode_deckstring(s)
-			print("After parsing", deck)
 			deckCorrect = all(obj is not None for obj in deck)
 		except:
 			print("Parsing encountered mistake")
@@ -84,12 +81,12 @@ def getAnyCardInfofromType(cardType):
 	for cardInfo in k:
 		words = cardType.index.split('~')
 		jsonName, cardName = cardInfo["name"], cardType.name
-		jsonSet, translatedSet = cardInfo["set"], Pack2jsonSet[words[0]]
+		jsonSet = cardInfo["set"]
 		isCollectibleinJson, isCollectibleinType = "collectible" in cardInfo, "Uncollectible" not in cardType.index
 		jsonType, translatedType = cardInfo["type"], cardType2jsonType[words[2]]
 		if jsonName == cardName:
-			possibleCards.append((cardName, jsonSet, translatedSet, isCollectibleinJson, isCollectibleinType, jsonType, translatedType))
-			if jsonSet ==  translatedSet and isCollectibleinJson == isCollectibleinType and jsonType == translatedType:
+			possibleCards.append((cardName, jsonSet, words[0], isCollectibleinJson, isCollectibleinType, jsonType, translatedType))
+			if jsonSet ==  words[0] and isCollectibleinJson == isCollectibleinType and jsonType == translatedType:
 				return cardInfo
 	return possibleCards
 	

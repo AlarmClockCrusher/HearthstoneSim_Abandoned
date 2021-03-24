@@ -6,6 +6,7 @@ class TrigBoard:
 		
 	def blank_init(self, entity, signals):
 		self.entity, self.signals, self.inherent = entity, signals, True
+		self.blockwhilePlaying = False
 		
 	def connect(self):
 		game, ID = self.entity.Game, self.entity.ID
@@ -25,7 +26,7 @@ class TrigBoard:
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
 			if self.entity.Game.GUI:
-				self.entity.Game.GUI.trigBlink(self.entity)
+				self.entity.Game.GUI.trigBlink(self.entity, blockwhilePlaying=self.blockwhilePlaying)
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -171,10 +172,10 @@ class Deathrattle_Minion(TrigBoard):
 		minion, game = self.entity, self.entity.Game
 		if game.status[minion.ID]["Deathrattle x2"] > 0:
 			if self.canTrig(signal, ID, subject, target, number, comment):
-				if game.GUI: game.GUI.trigBlink(minion, color="grey40")
+				if game.GUI: game.GUI.deathrattleAni(minion, color="grey40")
 				self.effect(signal, ID, subject, target, number, comment)
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			if game: game.GUI.trigBlink(minion, color="grey40")
+			if game: game.GUI.deathrattleAni(minion, color="grey40")
 			self.effect(signal, ID, subject, target, number, comment)
 		#随从通过死亡触发的亡语扳机需要在亡语触发之后注销。同样的，如果随从在亡语触发之后不在随从列表中了，如将随从洗回牌库，则同样要注销亡语
 		#但是如果随从在由其他效果在场上触发的扳机，则这个亡语不会注销
@@ -198,10 +199,10 @@ class Deathrattle_Weapon(TrigBoard):
 		weapon, game = self.entity, self.entity.Game
 		if game.status[weapon.ID]["Weapon Deathrattle x2"] > 0:
 			if self.canTrig(signal, ID, subject, target, number, comment):
-				if game.GUI: game.GUI.trigBlink(weapon, color="grey40")
+				if game.GUI: game.GUI.deathrattleAni(weapon, color="grey40")
 				self.effect(signal, ID, subject, target, number, comment)
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			if game.GUI: game.GUI.trigBlink(weapon, color="grey40")
+			if game.GUI: game.GUI.deathrattleAni(weapon, color="grey40")
 			self.effect(signal, ID, subject, target, number, comment)
 		#目前没有触发武器亡语的效果，所以武器的亡语触发之后可以很安全地直接将其删除。
 		self.disconnect()
@@ -257,10 +258,10 @@ class SecretTrigger(TrigBoard):
 			except: pass
 			if game.status[secret.ID]["Secrets x2"] > 0:
 				if self.canTrig(signal, ID, subject, target, number, comment):
-					if game.GUI: game.GUI.trigBlink(secret)
+					if game.GUI: game.GUI.secretTrigAni(secret)
 					self.effect(signal, ID, subject, target, number, comment)
 			if self.canTrig(signal, ID, subject, target, number, comment):
-				if game.GUI: game.GUI.trigBlink(secret)
+				if game.GUI: game.GUI.secretTrigAni(secret)
 				self.effect(signal, ID, subject, target, number, comment)
 			game.sendSignal("SecretRevealed", game.turn, secret, None, 0, "")
 			game.Counters.numSecretsTriggeredThisGame[secret.ID] += 1
@@ -415,6 +416,9 @@ class HasAura_toMinion:
 	def applicable(self, target):
 		return self.entity.applicable(target)
 		
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+		return True
+	
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
 			self.effect(signal, ID, subject, target, number, comment)
@@ -438,6 +442,9 @@ class HasAura_toMinion:
 			try: self.entity.Game.trigsBoard[self.entity.ID][sig].remove(self)
 			except: pass
 			
+	def selfCopy(self, recipient):
+		return type(self)()
+	
 	#这个函数会在复制场上扳机列表的时候被调用。
 	def createCopy(self, game):
 		#一个光环的注册可能需要注册多个扳机
@@ -698,7 +705,8 @@ class GameRuleAura:
 class ManaMod:
 	def __init__(self, card, changeby=0, changeto=-1, source=None, lowerbound=0):
 		self.card = card
-		self.changeby, self.changeto, self.lowerbound = changeby, changeto, lowerbound
+		self.changeby, self.changeto = changeby, changeto
+		self.lowerbound = lowerbound
 		self.source = source
 		
 	def handleMana(self):
@@ -710,8 +718,12 @@ class ManaMod:
 	def applies(self):
 		self.card.manaMods.append(self) #需要让卡牌自己也带有一个检测的光环，离开手牌或者牌库中需要清除。
 		if self.card in self.card.Game.Hand_Deck.hands[self.card.ID] or self.card in self.card.Game.Hand_Deck.decks[self.card.ID]:
+			mana_0 = self.card.mana
 			self.card.Game.Manas.calcMana_Single(self.card)
-			
+			mana_1 = self.card.mana
+			if mana_0 != mana_1 and self.card.Game.GUI:
+				self.card.Game.GUI.manaChangeAni(self.card, mana_1)
+				
 	def getsRemoved(self):
 		try: self.card.manaMods.remove(self)
 		except: pass
@@ -1011,8 +1023,8 @@ class ManaAura_Power:
 		game = self.entity.Game
 		self.applies(game.powers[1])
 		self.applies(game.powers[2])
-		try: game.trigsBoard[self.ID]["HeroPowerAcquired"].append(self)
-		except: game.trigsBoard[self.ID]["HeroPowerAcquired"] = [self]
+		try: game.trigsBoard[self.entity.ID]["HeroPowerAcquired"].append(self)
+		except: game.trigsBoard[self.entity.ID]["HeroPowerAcquired"] = [self]
 		game.Manas.calcMana_Powers()
 		
 	def auraDisappears(self):

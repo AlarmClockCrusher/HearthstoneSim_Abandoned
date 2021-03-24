@@ -32,8 +32,8 @@ class Game:
 		self.mainPlayerID = np.random.randint(2) + 1
 		self.GUI = GUI
 
-	def initialize(self, cardPool, ClassCards, NeutralCards, MinionsofCost, RNGPools, hero1=None, hero2=None, deck1=[], deck2=[]):
-		self.heroes = {1:(Illidan if hero1 is None else hero1)(self, 1), 2:(Anduin if hero2 is None else hero2)(self, 2)}
+	def initialize(self):
+		self.heroes = {1:Illidan(self, 1), 2:Anduin(self, 2)}
 		self.powers = {1:self.heroes[1].heroPower, 2:self.heroes[2].heroPower}
 		self.heroes[1].onBoard, self.heroes[2].onBoard = True, True
 		#Multipole weapons can coexitst at minions in lists. The newly equipped weapons are added to the lists
@@ -44,7 +44,7 @@ class Game:
 		self.Counters, self.Manas, self.Discover, self.Secrets = Counters(self), Manas(self), Discover(self), Secrets(self)
 
 		self.minionPlayed = None #Used for target change induced by triggers such Mayor Noggenfogger and Spell Bender.
-		self.gameEnds, self.turn = 0, 1
+		self.gameEnds, self.turn, self.numTurn = 0, 1, 1
 		#self.turnstoTake = {1:1, 2:1} #For Temporus & Open the Waygate
 		self.tempDeads, self.deads = [[], []], [[], []] #1st list records dead objects, 2nd records object attacks when they die.
 		self.resolvingDeath = False
@@ -54,17 +54,29 @@ class Game:
 		self.trigAuras = {1:[], 2:[]} #用于一些永久光环，如砰砰博士的机械获得突袭。
 		#登记了的扳机，这些扳机的触发依次遵循主玩家的场上、手牌和牌库。然后是副玩家的场上、手牌和牌库。
 		self.trigsBoard, self.trigsHand, self.trigsDeck = {1:{}, 2:{}}, {1:{}, 2:{}}, {1:{}, 2:{}}
+		
+		self.mode = 0
+		self.fixedGuides, self.guides, self.moves = [], [], []
+		self.board = "Ogrimmar"
+		
+		self.possibleSecrets = {1: [], 2: []}
+
+	def initialize_Details(self, cardPool, ClassCards, NeutralCards, MinionsofCost, RNGPools, hero1, hero2, deck1=[], deck2=[]):
+		hero1 = hero1(self, 1)
+		hero1.onBoard = True
+		self.heroes[1] = hero1
+		self.powers[1] = hero1.heroPower
+		hero2 = hero2(self, 2)
+		hero2.onBoard = True
+		self.heroes[2] = hero2
+		self.powers[2] = hero2.heroPower
+		
 		self.cardPool, self.ClassCards, self.NeutralCards = cardPool, ClassCards, NeutralCards
 		self.MinionsofCost, self.RNGPools = MinionsofCost, RNGPools
 		from Hand import Hand_Deck
 		self.Hand_Deck = Hand_Deck(self, deck1, deck2)
 		self.Hand_Deck.initialize()
-		self.mode = 0
-		self.fixedGuides, self.guides, self.moves = [], [], []
-		self.board = "Ogrimmar"
-
-		self.possibleSecrets = {1:[], 2:[]}
-
+		
 	def minionsAlive(self, ID, target=None): #if target is not None, return all living minions except the target
 		if target: return [minion for minion in self.minions[ID] if minion.type == "Minion" \
 							and minion != target and minion.onBoard and (not minion.dead or minion.marks["Can't Break"] > 0) and minion.health > 0]
@@ -138,7 +150,6 @@ class Game:
 			###结算死亡，此时因为序列结束可以处理胜负问题。
 
 			# 在打出序列的开始阶段决定是否要产生一个回响copy
-			if self.GUI: self.GUI.displayCard(amulet)
 			subIndex, subWhere = self.Hand_Deck.hands[amulet.ID].index(amulet), "Hand%d" % amulet.ID
 			if target: #因为护符是SV特有的卡牌类型，所以其目标选择一定是列表填充式的
 				tarIndex, tarWhere = [], []
@@ -221,7 +232,6 @@ class Game:
 					#使用后步骤：使用后扳机：如镜像实体，狙击，顽石元素。低语元素的状态移除结算和dk的技能刷新等。
 					###结算死亡，此时因为序列结束可以处理胜负问题。
 
-			if self.GUI: self.GUI.displayCard(minion)
 			subIndex, subWhere = self.Hand_Deck.hands[minion.ID].index(minion), "Hand%d"%minion.ID
 			if target:
 				if isinstance(target, list):
@@ -236,7 +246,8 @@ class Game:
 				else: #非列表状态的target一定是炉石卡指定的
 					tarIndex, tarWhere = target.pos, target.type+str(target.ID)
 			else: tarIndex, tarWhere = 0, ''
-			minion, mana, posinHand = self.Hand_Deck.extractfromHand(minion, enemyCanSee=True)
+			minion, mana, posinHand = self.Hand_Deck.extractfromHand(minion, enemyCanSee=True, animate=False)
+			print("Play minion extract from hand finished")
 			#如果打出的随从是SV中的爆能强化，激奏和结晶随从，则它们会返回自己的真正要打出的牌以及对应的费用
 			try: minion, mana = minion.becomeswhenPlayed(choice)
 			except: pass #如果随从没有爆能强化等，则无事发生。
@@ -287,7 +298,9 @@ class Game:
 					self.Counters.numMinionsPlayedThisTurn[self.turn] += 1
 				self.minionPlayed = minion
 				armedTrigs = self.armedTrigs("%sBeenPlayed"%typewhenPlayed)
-				if self.GUI: self.GUI.wait(400)
+				if self.GUI:
+					self.GUI.showOffBoardTrig(minion, alsoDisplayCard=True, animate=False)
+					self.GUI.hand2BoardAni(minion)
 				target = minion.played(target, choice, mana, posinHand, comment)
 				if self.minionPlayed and self.minionPlayed.onBoard:
 					self.sendSignal("%sBeenSummoned"%typewhenPlayed, self.turn, self.minionPlayed, target, mana, "")
@@ -299,6 +312,7 @@ class Game:
 				self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
 				self.Counters.cardsPlayedThisGame[self.turn].append(minionIndex)
 				if "~Corrupted~" in minion.index: self.Counters.corruptedCardsPlayed[self.turn].append(minionIndex)
+				if minion.name.endswith("Watch Post"): self.Counters.numWatchPostSummoned[self.turn] += 1
 				#使用后步骤，触发镜像实体，狙击，顽石元素等“每当你使用一张xx牌”之后的扳机。
 				if self.minionPlayed and self.minionPlayed.type != "Dormant":
 					if self.minionPlayed.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
@@ -318,15 +332,15 @@ class Game:
 	#This method can also summon minions for enemy.
 	#SUMMONING MINIONS ONLY CONSIDERS ONBOARD MINIONS. MINIONS THAT HAVE ENTERED THE tempDeads DON'T COUNT AS MINIONS.
 	#Khadgar doubles the summoning from any card, except Invoke-triggererd Galakrond(Galakrond, the Tempest; Galakrond, the Wretched).
-	def summonx2(self, subject, position):
+	def summonx2(self, subject, position, summoner):
 		if not isinstance(subject, (list, np.ndarray)): #Summon a single minion
 			if self.space(subject.ID) > 0:
 				newSubjects = [subject, subject.selfCopy(subject.ID)]
 				pos = [position, position]
-				self.summon(newSubjects, pos, subject.ID, comment="")
+				self.summon(newSubjects, pos, summoner)
 		elif len(subject) == 1: #A list that has only 1 minion to summon
 			if self.space(subject[0].ID) > 0:
-				self.summonx2(subject[0], position[0]) #Go back to doubling a single minion
+				self.summonx2(subject[0], position[0], summoner) #Go back to doubling a single minion
 		else:
 			if self.space(subject[0].ID) > 0:
 				newSubjects = []
@@ -355,11 +369,12 @@ class Game:
 						newPositions.append(pos+1)
 						newPositions.append(pos+1)
 				#Preprocessing finished, don't invoke doubling. Use the newSubjects and newPositions created.
-				self.summon(newSubjects, newPositions, subject[0].ID, comment="")
+				self.summon(newSubjects, newPositions, summoner)
 
 	#不考虑卡德加带来的召唤数量翻倍。用于被summon引用。
 	#returns the single minion summoned. Used for anchoring the position of the original minion summoned during doubling
-	def summonSingle(self, subject, position, summoner):
+	#fromHandDeck {created: 0, fromHand: 1, fromDeck: 2}
+	def summonSingle(self, subject, position, summoner, fromHandDeck=0):
 		ID = subject.ID
 		if self.space(ID) > 0:
 			subject.creator = summoner
@@ -367,10 +382,12 @@ class Game:
 			self.minions[subject.ID].insert(position+100*(position<0), subject)  #If position is too large, the insert() simply puts it at the end.
 			self.sortPos()
 			self.sortSeq()
-			subject.appears()
 			if self.GUI:
-				self.GUI.update()
-				self.GUI.wait(200, showLine=False)
+				if fromHandDeck == 1: self.GUI.hand2BoardAni(subject)
+				elif fromHandDeck == 2: self.GUI.deck2BoardAni(subject)
+				else: self.GUI.minionAppearAni(subject)
+			subject.appears()
+			self.Counters.numWatchPostSummoned[ID] += 1
 			if subject.type=="Minion":
 				self.sendSignal("MinionSummoned", self.turn, subject, None, 0, "")
 				self.sendSignal("MinionBeenSummoned", self.turn, subject, None, 0, "")
@@ -438,7 +455,7 @@ class Game:
 			if timesofx2 > 0:
 				numCopies = 2 ** timesofx2 - 1
 				copies = [subject.selfCopy(ID) for i in range(numCopies)]
-				subject = self.summonSingle(subject, position, None)
+				subject = self.summonSingle(subject, position, None, fromHandDeck=1 if fromHand else 2)
 				if subject: #只有最初的本体召唤成功的时候才会进行复制的随从的召唤
 					if self.summonSingle(copies[0], subject.pos+1, summoner):
 						for i in range(1, numCopies): #复制的随从列表中剩余的随从，如果没有剩余随从了，直接跳过
@@ -470,27 +487,37 @@ class Game:
 		if target in self.minions[ID]:
 			pos = target.pos
 			target.disappears(deathrattlesStayArmed=False, disappearResponse=False)
-			self.removeMinionorWeapon(target)
+			self.removeMinionorWeapon(target, animate=False)
 			if self.minionPlayed == target: self.minionPlayed = newMinion
 			#removeMinionorWeapon invokes sortPos() and sortSeq()
 			newMinion.seq = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
 			self.minions[ID].insert(pos, newMinion)
 			self.sortPos()
+			if self.GUI:
+				if newMinion.type == target.type:
+					target.btn.changeCard(newMinion)
+				else: #主要用于随从和休眠物之间的变形
+					btn = target.btn
+					boardZone = self.GUI.boardZones[ID]
+					pos = target.btn.getPos()
+					boardZone.addaMinion(newMinion, pos)
+					boardZone.removeMinion(btn)
+					self.GUI.ensureBtnMovedAway(btn)
 			newMinion.appears(firstTime)
 		elif target in self.Hand_Deck.hands[target.ID]:
 			if self.minionPlayed == target: self.minionPlayed = newMinion
 			self.Hand_Deck.replaceCardinHand(target, newMinion)
-		if self.GUI: self.GUI.update()
-
+		
 	#This method is always invoked after the minion.disappears() method.
-	def removeMinionorWeapon(self, target):
+	def removeMinionorWeapon(self, target, animate=True):
 		target.onBoard = False
 		zone = self.weapons[target.ID] if target.type == "Weapon" else self.minions[target.ID]
 		try: zone.remove(target)
 		except: pass
 		self.sortSeq()
 		if target.type != "Weapon": self.sortPos()
-		if self.GUI: self.GUI.update()
+		if self.GUI and animate:
+			self.GUI.removeMinionorWeaponAni(target)
 
 	def banishMinion(self, subject, target):
 		if target:
@@ -565,7 +592,7 @@ class Game:
 				self.fixedGuides.append(t.index)
 			if t:
 				subject = t(self, ID)
-				self.summon([subject], (-1, "totheRightEnd"), ID)
+				self.summon([subject], (-1, "totheRightEnd"), None)
 				self.sendSignal("Reanimate", ID, subject, None, mana, "")
 				return subject
 		return None
@@ -589,9 +616,14 @@ class Game:
 				if target.onBoard: #随从存活状态下触发死亡扳机的区域移动效果时，不会注销其他扳机
 					target.disappears(deathrattlesStayArmed)
 				#如onBoard为False,则disappears已被调用过了。主要适用于触发死亡扳机中的区域移动效果
-				self.removeMinionorWeapon(target)
+				print("Card to move 01", target, target.btn)
+				self.removeMinionorWeapon(target, animate=False)
+				print("Card to move 02", target, target.btn)
+				if self.GUI: self.GUI.board2HandAni(target)
+				print("Card to move 1", target, target.btn)
 				target.reset(ID)
 				if manaMod: manaMod.applies()
+				print("Card to move 2", target, target.btn)
 				self.Hand_Deck.addCardtoHand(target, ID)
 				for func in target.returnResponse:
 					func()
@@ -695,11 +727,12 @@ class Game:
 					trigs = [trig for trig in self.trigsBoard[triggerID][signal] if trig.canTrig(signal, ID, subject, target, number, comment, choice)]
 					#某个随从死亡导致的队列中，作为场上扳机，救赎拥有最低优先级，其始终在最后结算
 					if trigs: hasResponder = True
-					if signal == "MinionDies" and self.Secrets.sameSecretExists(Redemption, 3-self.turn):
-						for i in range(len(trigs)):
-							if type(trigs[i]) == Trig_Redemption:
-								trigs.append(trigs.pop(i)) #把救赎的扳机移到最后
-								break
+					#Redemption has been rotated out
+					#if signal == "MinionDies" and self.Secrets.sameSecretExists(Redemption, 3-self.turn):
+					#	for i in range(len(trigs)):
+					#		if type(trigs[i]) == Trig_Redemption:
+					#			trigs.append(trigs.pop(i)) #把救赎的扳机移到最后
+					#			break
 					for trig in trigs: trig.trig(signal, ID, subject, target, number, comment, choice)
 				except: pass
 				try: #TrigsHand
@@ -787,6 +820,7 @@ class Game:
 			self.tempDeads[1] = []
 			for i in range(len(order)):
 				self.tempDeads[1].append(temp[order[i]])
+			if self.GUI: self.GUI.minionsDieAni(self.tempDeads[0])
 			#If there is no current deathrattles queued, start the deathrattle calc process.
 			if not self.deads[0]: self.deads = self.tempDeads
 			else:
@@ -824,8 +858,10 @@ class Game:
 				#一个亡语随从另附一个亡语时，两个亡语会连续触发，之后才会去结算其他随从的亡语。
 				#当死灵机械师与其他 亡语随从一同死亡的时候， 不会让那些亡语触发两次，即死灵机械师、瑞文戴尔需要活着才能有光环
 				#场上有憎恶时，憎恶如果死亡，触发的第一次AOE杀死死灵机械师，则第二次亡语照常触发。所以亡语会在第一次触发开始时判定是否会多次触发
+				print("Removing dead minion/weapon before deathresolution", objtoDie, objtoDie.btn)
 				if objtoDie.type == "Minion" and objtoDie.keyWords["Reborn"] > 0: rebornMinions.append(objtoDie)
 				objtoDie.deathResolution(attackwhenDies, armedTrigs_WhenDies, armedTrigs_AfterDied)
+				print("Removing dead minion/weapon", objtoDie, objtoDie.btn)
 				self.removeMinionorWeapon(objtoDie) #结算完一个随从的亡语之后将其移除。
 				objtoDie.reset(objtoDie.ID)
 				objtoDie.dead = True
@@ -835,7 +871,7 @@ class Game:
 			for rebornMinion in rebornMinions:
 				miniontoSummon = type(rebornMinion)(self, rebornMinion.ID)
 				miniontoSummon.keyWords["Reborn"], miniontoSummon.health = 0, 1 #不需要特殊的身材处理，激怒等直接在随从的appears()函数中处理。
-				self.summon(miniontoSummon, rebornMinion.pos, rebornMinion.ID)
+				self.summon(miniontoSummon, rebornMinion.pos, rebornMinion)
 			#死亡结算每轮结束之后才进行死亡随从的收集，然后进行下一轮的亡语结算。
 			self.gathertheDead(decideWinner) #See if the deathrattle results in more death or destruction.
 			if self.deads == [[], []]: break #只有没有死亡随从要结算了才会终结
@@ -854,6 +890,7 @@ class Game:
 	The deaths of minions will be handled at the end of triggering, which is then followed by drawing card.
 	"""
 	def switchTurn(self):
+		if self.GUI: self.GUI.switchTurnAni()
 		for minion in self.minions[self.turn] + self.minions[3-self.turn]: #Include the Dormants.
 			minion.turnEnds(self.turn) #Handle minions' attTimes and attChances
 		for card in self.Hand_Deck.hands[self.turn]	+ self.Hand_Deck.hands[3-self.turn]:
@@ -874,6 +911,7 @@ class Game:
 		self.Manas.turnEnds()
 
 		self.turn = 3 - self.turn #Changes the turn to another hero.
+		self.numTurn += 1
 		self.Counters.turns[self.turn] += 1
 		self.Manas.turnStarts()
 		for obj in self.turnStartTrigger[:]: #This is for temp effects.
@@ -1008,7 +1046,6 @@ class Game:
 			#符文之矛和导演释放的法术也会使用风潮或者星界密使的效果。
 			#西风灯神和沃拉斯的效果仅是获得过载和双生法术 ->结算法术牌面
 
-			if self.GUI: self.GUI.displayCard(spell, notSecretBeingPlayed=False)
 			subIndex, subWhere = self.Hand_Deck.hands[spell.ID].index(spell), "Hand%d"%spell.ID
 			if target:
 				if isinstance(target, list):
@@ -1085,7 +1122,7 @@ class Game:
 			#完成阶段
 				#使用后步骤，触发“每当你使用一张xx牌”之后的扳机。如捕鼠陷阱和瑟拉金之种等
 				#死亡结算，可以处理胜负问题。
-			if self.GUI: self.GUI.displayCard(weapon)
+			if self.GUI: self.GUI.showOffBoardTrig(weapon, alsoDisplayCard=True)
 			subIndex, subWhere = self.Hand_Deck.hands[weapon.ID].index(weapon), "Hand%d"%weapon.ID
 			if target:
 				tarIndex, tarWhere = target.pos, target.type+str(target.ID)
@@ -1145,7 +1182,6 @@ class Game:
 				#使用后步骤，触发“每当你使用一张xx牌之后”的扳机。如捕鼠陷阱和瑟拉金之种等
 				#完成阶段结束，处理死亡，可以处理胜负问题。
 
-			if self.GUI: self.GUI.displayCard(heroCard)
 			subIndex, subWhere = self.Hand_Deck.hands[heroCard.ID].index(heroCard), "Hand%d"%heroCard.ID
 			#支付费用，以及费用状态移除
 			heroCard, mana, posinHand = self.Hand_Deck.extractfromHand(heroCard, enemyCanSee=True)
@@ -1193,7 +1229,8 @@ class Game:
 			Copy.trigAuras = {ID: [aura.createCopy(Copy) for aura in self.trigAuras[ID]] for ID in range(1, 3)}
 			Copy.mulligans, Copy.options, Copy.tempDeads, Copy.deads = {1:[], 2:[]}, [], [[], []], [[], []]
 			Copy.Counters, Copy.Manas = self.Counters.createCopy(Copy), self.Manas.createCopy(Copy)
-			Copy.minionPlayed, Copy.gameEnds, Copy.turn, Copy.resolvingDeath = None, self.gameEnds, self.turn, False
+			Copy.minionPlayed, Copy.gameEnds, Copy.turn, Copy.numTurn = None, self.gameEnds, self.turn, self.numTurn
+			Copy.resolvingDeath = False
 			Copy.tempImmuneStatus = self.tempImmuneStatus
 			Copy.status = copy.copy(self.status)
 			Copy.players = self.players

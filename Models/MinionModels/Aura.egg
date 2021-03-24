@@ -1,0 +1,55 @@
+<Comment> {
+  "egg-texture-cards -o Aura.egg -fps 3 'F:\Captures\Aura\Crops\Aura_0.png' 'F:\Captures\Aura\Crops\Aura_1.png' 'F:\Captures\Aura\Crops\Aura_2.png'"
+}
+<Texture> Aura_2 {
+  "/f/Captures/Aura/Crops/Aura_2.png"
+}
+<Texture> Aura_1 {
+  "/f/Captures/Aura/Crops/Aura_1.png"
+}
+<Texture> Aura_0 {
+  "/f/Captures/Aura/Crops/Aura_0.png"
+}
+<Group> {
+  <Switch> { 1 }
+  <Scalar> fps { 3 }
+  <VertexPool> vpool {
+    <Vertex> 0 {
+      -0.5 0.5 0
+      <UV> { 0 1 }
+    }
+    <Vertex> 1 {
+      -0.5 -0.5 0
+      <UV> { 0 0 }
+    }
+    <Vertex> 2 {
+      0.5 -0.5 0
+      <UV> { 1 0 }
+    }
+    <Vertex> 3 {
+      0.5 0.5 0
+      <UV> { 1 1 }
+    }
+  }
+  <Group> Aura_0 {
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Aura_0 }
+      <VertexRef> { 0 1 2 3 <Ref> { vpool } }
+    }
+  }
+  <Group> Aura_1 {
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Aura_1 }
+      <VertexRef> { 0 1 2 3 <Ref> { vpool } }
+    }
+  }
+  <Group> Aura_2 {
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { Aura_2 }
+      <VertexRef> { 0 1 2 3 <Ref> { vpool } }
+    }
+  }
+}

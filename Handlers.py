@@ -46,33 +46,38 @@ class Manas:
 	must be cited again for every card in its registered list.'''
 	def overloadMana(self, num, ID):
 		self.manasOverloaded[ID] += num
+		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
 		self.Game.sendSignal("ManaOverloaded", ID, None, None, 0, "")
 		self.Game.sendSignal("OverloadCheck", ID, None, None, 0, "")
-
+		
 	def unlockOverloadedMana(self, ID):
 		self.manas[ID] += self.manasLocked[ID]
 		self.manas[ID] = min(self.manas_UpperLimit[ID], self.manas[ID])
 		self.manasLocked[ID] = 0
 		self.manasOverloaded[ID] = 0
+		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
 		self.Game.sendSignal("OverloadCheck", ID, None, None, 0, "")
-
+	
 	def setManaCrystal(self, num, ID):
 		self.manasUpper[ID] = num
 		if self.manas[ID] > num:
 			self.manas[ID] = num
+		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
-
+	
 	def gainManaCrystal(self, num, ID):
 		self.manas[ID] += num
 		self.manas[ID] = min(self.manas_UpperLimit[ID], self.manas[ID])
 		self.manasUpper[ID] += num
 		self.manasUpper[ID] = min(self.manas_UpperLimit[ID], self.manasUpper[ID])
+		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
-
+	
 	def gainEmptyManaCrystal(self, num, ID):
 		before = self.manasUpper[ID]
 		if self.manasUpper[ID] + num <= self.manas_UpperLimit[ID]:
 			self.manasUpper[ID] += num
+			if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
 			self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
 			return True
 		else: #只要获得的空水晶量高于目前缺少的空水晶量，即返回False
@@ -88,6 +93,7 @@ class Manas:
 			self.manas[ID] += num
 			self.manas[ID] = min(self.manas[ID], self.manasUpper[ID] - self.manasLocked[ID])
 		after = self.manas[ID]
+		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
 		if after-before > 0:
 			self.Game.sendSignal("ManaXtlsRestore", ID, None, None, after-before, "")
 
@@ -95,6 +101,7 @@ class Manas:
 		self.manasUpper[ID] -= num
 		self.manasUpper[ID] = max(0, self.manasUpper[ID])
 		self.manas[ID] = min(self.manas[ID], self.manasUpper[ID])
+		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
 
 	def affordable(self, subject):
@@ -113,6 +120,7 @@ class Manas:
 			dmgTaker.takesDamage(None, mana, damageType="Ability")
 		else: self.manas[ID] -= mana
 		subject.marks["Cost Health Instead"] = 0 #Cleanse the "Cost Health Instead" mark on the card played
+		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
 		self.Game.sendSignal("ManaPaid", ID, subject, None, mana, "")
 		if subject.type == "Minion":
 			self.Game.Counters.manaSpentonPlayingMinions[ID] += mana
@@ -127,6 +135,7 @@ class Manas:
 		self.manasLocked[ID] = self.manasOverloaded[ID]
 		self.manasOverloaded[ID] = 0
 		self.manas[ID] = max(0, self.manasUpper[ID] - self.manasLocked[ID] - self.manas_withheld[ID])
+		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
 		self.Game.sendSignal("OverloadCheck", ID, None, None, 0, "")
 		#卡牌的费用光环加载
 		i = 0
@@ -244,6 +253,8 @@ class Secrets:
 					curGame.fixedGuides.append(i)
 				if i > -1: curGame.Hand_Deck.extractfromDeck(i, ID, enemyCanSee=False)[0].whenEffective()
 				else: break
+		if self.Game.GUI: self.Game.GUI.drawZones(all=False, secret=True)
+		
 	#奥秘被强行移出奥秘区的时候，都是直接展示出来的，需要排除出已知牌
 	def extractSecrets(self, ID, index=0, all=False):
 		if all:
@@ -326,7 +337,10 @@ class Counters:
 		self.powerUsedThisTurn = 0
 		self.corruptedCardsPlayed = {1: [], 2: []} #For darkmoon YShaarj.
 		self.numSecretsTriggeredThisGame = {1: 0, 2: 0}
-		#Shadowverse Counters
+		self.numWatchPostSummoned = {1: 0, 2: 0}
+		self.healthRestoredThisTurn = {1: 0, 2: 0}
+		
+		"""Shadowverse Counters"""
 		self.numEvolutionTurn = {1:5, 2:4}
 		self.numEvolutionPoint = {1:2, 2:3}
 		self.shadows = {1: 0, 2: 0}
@@ -374,7 +388,7 @@ class Counters:
 		self.evolvedThisTurn = {1: 0, 2: 0}
 		self.numAcceleratePlayedThisTurn = {1: 0, 2: 0}
 		self.cardsDiscardedThisTurn = {1:[], 2:[]}
-
+		self.healthRestoredThisTurn = {1: 0, 2: 0}
 
 	#只有Game自己会引用Counters
 	def createCopy(self, recipientGame):
@@ -433,7 +447,7 @@ class Discover:
 	def startDiscover(self, initiator, info=None):
 		if self.Game.GUI:
 			self.initiator = initiator
-			self.Game.GUI.update()
+			self.Game.GUI.update(all=False, board=True)
 			self.Game.GUI.waitforDiscover(info)
 			self.initiator, self.Game.options = None, []
 
@@ -454,7 +468,7 @@ class Discover:
 	def typeCardName(self, initiator):
 		if self.Game.GUI:
 			self.initiator = initiator
-			self.Game.GUI.update()
+			self.Game.GUI.update(all=False, board=True)
 			self.Game.GUI.wishforaCard(initiator)
 			self.Game.options = []
 

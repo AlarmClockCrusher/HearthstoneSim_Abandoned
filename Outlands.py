@@ -5,7 +5,8 @@ from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
 
-from Basic import FieryWarAxe, ExcessMana, WaterElemental
+from AcrossPacks import WaterElemental
+from Core_2021 import FieryWarAxe, ExcessMana
 
 """Ashes of Outlands"""
 #休眠的随从在打出之后2回合本来时会触发你“召唤一张随从”
@@ -21,8 +22,9 @@ class Minion_Dormantfor2turns(Minion):
 		return None #没有目标可以返回
 		
 	def appears(self, firstTime=True):
-		self.onBoard, self.inHand, self.inDeck = True, False, False
-		self.newonthisSide, self.dead = True, False
+		self.onBoard = True
+		self.inHand = self.inDeck = self.dead = False
+		self.enterBoardTurn = self.Game.numTurn
 		self.mana = type(self).mana #Restore the minion's mana to original value.
 		self.decideAttChances_base() #Decide base att chances, given Windfury and Mega Windfury
 		#没有光环，目前炉石没有给随从人为添加光环的效果, 不可能在把手牌中获得的扳机带入场上，因为会在变形中丢失
@@ -58,10 +60,11 @@ class Trig_ImprisonedDormantForm(TrigBoard):
 	def __init__(self, entity):
 		self.blank_init(entity, ["TurnStarts"])
 		self.counter = 2
+		self.blockwhilePlaying = True
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID #会在我方回合开始时进行苏醒
-		
+	
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.counter -= 1
 		if self.counter < 1:
@@ -74,7 +77,7 @@ class Trig_ImprisonedDormantForm(TrigBoard):
 class EtherealAugmerchant(Minion):
 	Class, race, name = "Neutral", "", "Ethereal Augmerchant"
 	mana, attack, health = 1, 2, 1
-	index = "Outlands~Neutral~Minion~1~2~1~~Ethereal Augmerchant~Battlecry"
+	index = "BLACK_TEMPLE~Neutral~Minion~1~2~1~~Ethereal Augmerchant~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal 1 damage to a minion and give it Spell Damage +1"
 	name_CN = "虚灵改装师"
 	def targetExists(self, choice=0):
@@ -94,7 +97,7 @@ class EtherealAugmerchant(Minion):
 class GuardianAugmerchant(Minion):
 	Class, race, name = "Neutral", "", "Guardian Augmerchant"
 	mana, attack, health = 1, 2, 1
-	index = "Outlands~Neutral~Minion~1~2~1~~Guardian Augmerchant~Battlecry"
+	index = "BLACK_TEMPLE~Neutral~Minion~1~2~1~~Guardian Augmerchant~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal 1 damage to a minion and give it Divine Shield"
 	name_CN = "防护改装师"
 	def targetExists(self, choice=0):
@@ -113,7 +116,7 @@ class GuardianAugmerchant(Minion):
 class InfectiousSporeling(Minion):
 	Class, race, name = "Neutral", "", "Infectious Sporeling"
 	mana, attack, health = 1, 1, 2
-	index = "Outlands~Neutral~Minion~1~1~2~~Infectious Sporeling"
+	index = "BLACK_TEMPLE~Neutral~Minion~1~1~2~~Infectious Sporeling"
 	requireTarget, keyWord, description = False, "", "After this damages a minion, turn it into an Infectious Sporeling"
 	name_CN = "传染孢子"
 	def __init__(self, Game, ID):
@@ -137,7 +140,7 @@ class Trig_InfectiousSporeling(TrigBoard):
 class RocketAugmerchant(Minion):
 	Class, race, name = "Neutral", "", "Rocket Augmerchant"
 	mana, attack, health = 1, 2, 1
-	index = "Outlands~Neutral~Minion~1~2~1~~Rocket Augmerchant~Battlecry"
+	index = "BLACK_TEMPLE~Neutral~Minion~1~2~1~~Rocket Augmerchant~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal 1 damage to a minion and give it Rush"
 	name_CN = "火箭改装师"
 	def targetExists(self, choice=0):
@@ -156,7 +159,7 @@ class RocketAugmerchant(Minion):
 class SoulboundAshtongue(Minion):
 	Class, race, name = "Neutral", "", "Soulbound Ashtongue"
 	mana, attack, health = 1, 1, 4
-	index = "Outlands~Neutral~Minion~1~1~4~~Soulbound Ashtongue"
+	index = "BLACK_TEMPLE~Neutral~Minion~1~1~4~~Soulbound Ashtongue"
 	requireTarget, keyWord, description = False, "", "Whenever this minion takes damage, also deal that amount to your hero"
 	name_CN = "魂缚灰舌"
 	def __init__(self, Game, ID):
@@ -182,7 +185,7 @@ class Trig_SoulboundAshtongue(TrigBoard):
 class BonechewerBrawler(Minion):
 	Class, race, name = "Neutral", "", "Bonechewer Brawler"
 	mana, attack, health = 2, 2, 3
-	index = "Outlands~Neutral~Minion~2~2~3~~Bonechewer Brawler~Taunt"
+	index = "BLACK_TEMPLE~Neutral~Minion~2~2~3~~Bonechewer Brawler~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Whenever this minion takes damage, gain +2 Attack"
 	name_CN = "噬骨殴斗者"
 	def __init__(self, Game, ID):
@@ -206,7 +209,7 @@ class Trig_BonechewerBrawler(TrigBoard):
 class ImprisonedVilefiend(Minion_Dormantfor2turns):
 	Class, race, name = "Neutral", "Demon", "Imprisoned Vilefiend"
 	mana, attack, health = 2, 3, 5
-	index = "Outlands~Neutral~Minion~2~3~5~Demon~Imprisoned Vilefiend~Rush"
+	index = "BLACK_TEMPLE~Neutral~Minion~2~3~5~Demon~Imprisoned Vilefiend~Rush"
 	requireTarget, keyWord, description = False, "Rush", "Dormant for 2 turns. Rush"
 	name_CN = "被禁锢的邪犬"
 	
@@ -214,7 +217,7 @@ class ImprisonedVilefiend(Minion_Dormantfor2turns):
 class MoargArtificer(Minion):
 	Class, race, name = "Neutral", "Demon", "Mo'arg Artificer"
 	mana, attack, health = 2, 2, 4
-	index = "Outlands~Neutral~Minion~2~2~4~Demon~Mo'arg Artificer"
+	index = "BLACK_TEMPLE~Neutral~Minion~2~2~4~Demon~Mo'arg Artificer"
 	requireTarget, keyWord, description = False, "", "All minions take double damage from spells"
 	name_CN = "莫尔葛工匠"
 	def __init__(self, Game, ID):
@@ -238,7 +241,7 @@ class Trig_MoargArtificer(TrigBoard):
 class RustswornInitiate(Minion):
 	Class, race, name = "Neutral", "", "Rustsworn Initiate"
 	mana, attack, health = 2, 2, 2
-	index = "Outlands~Neutral~Minion~2~2~2~~Rustsworn Initiate~Deathrattle"
+	index = "BLACK_TEMPLE~Neutral~Minion~2~2~2~~Rustsworn Initiate~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Summon a 1/1 Impcaster with Spell Damage +1"
 	name_CN = "锈誓新兵"
 	def __init__(self, Game, ID):
@@ -255,7 +258,7 @@ class SummonanImpcastwithSpellDamagePlus1(Deathrattle_Minion):
 class Impcaster(Minion):
 	Class, race, name = "Neutral", "Demon", "Impcaster"
 	mana, attack, health = 1, 1, 1
-	index = "Outlands~Neutral~Minion~1~1~1~Demon~Impcaster~Spell Damage~Uncollectible"
+	index = "BLACK_TEMPLE~Neutral~Minion~1~1~1~Demon~Impcaster~Spell Damage~Uncollectible"
 	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1"
 	name_CN = "小鬼施法者"
 	
@@ -263,7 +266,7 @@ class Impcaster(Minion):
 class BlisteringRot(Minion):
 	Class, race, name = "Neutral", "", "Blistering Rot"
 	mana, attack, health = 3, 1, 2
-	index = "Outlands~Neutral~Minion~3~1~2~~Blistering Rot"
+	index = "BLACK_TEMPLE~Neutral~Minion~3~1~2~~Blistering Rot"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, summon a Rot with stats equal to this minion's"
 	name_CN = "起泡的 腐泥怪"
 	def __init__(self, Game, ID):
@@ -290,7 +293,7 @@ class Trig_BlisteringRot(TrigBoard):
 class LivingRot(Minion):
 	Class, race, name = "Neutral", "", "Living Rot"
 	mana, attack, health = 1, 1, 1
-	index = "Outlands~Neutral~Minion~1~1~1~~Living Rot~Uncollectible"
+	index = "BLACK_TEMPLE~Neutral~Minion~1~1~1~~Living Rot~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "生命腐质"
 	
@@ -298,7 +301,7 @@ class LivingRot(Minion):
 class FrozenShadoweaver(Minion):
 	Class, race, name = "Neutral", "", "Frozen Shadoweaver"
 	mana, attack, health = 3, 4, 3
-	index = "Outlands~Neutral~Minion~3~4~3~~Frozen Shadoweaver~Battlecry"
+	index = "BLACK_TEMPLE~Neutral~Minion~3~4~3~~Frozen Shadoweaver~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Freeze an enemy"
 	name_CN = "冰霜织影者"
 	def targetExists(self, choice=0):
@@ -316,7 +319,7 @@ class FrozenShadoweaver(Minion):
 class OverconfidentOrc(Minion):
 	Class, race, name = "Neutral", "", "Overconfident Orc"
 	mana, attack, health = 3, 1, 6
-	index = "Outlands~Neutral~Minion~3~1~6~~Overconfident Orc~Taunt"
+	index = "BLACK_TEMPLE~Neutral~Minion~3~1~6~~Overconfident Orc~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. While at full Health, this has +2 Attack"
 	name_CN = "狂傲的兽人"
 	def __init__(self, Game, ID):
@@ -372,7 +375,7 @@ class StatAura_OverconfidentOrc(HasAura_toMinion):
 class TerrorguardEscapee(Minion):
 	Class, race, name = "Neutral", "Demon", "Terrorguard Escapee"
 	mana, attack, health = 3, 3, 7
-	index = "Outlands~Neutral~Minion~3~3~7~Demon~Terrorguard Escapee~Battlecry"
+	index = "BLACK_TEMPLE~Neutral~Minion~3~3~7~Demon~Terrorguard Escapee~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon three 1/1 Huntresses for your opponent"
 	name_CN = "逃脱的 恐惧卫士"
 	
@@ -383,7 +386,7 @@ class TerrorguardEscapee(Minion):
 class Huntress(Minion):
 	Class, race, name = "Neutral", "", "Huntress"
 	mana, attack, health = 1, 1, 1
-	index = "Outlands~Neutral~Minion~1~1~1~~Huntress~Uncollectible"
+	index = "BLACK_TEMPLE~Neutral~Minion~1~1~1~~Huntress~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "女猎手"
 	
@@ -391,7 +394,7 @@ class Huntress(Minion):
 class TeronGorefiend(Minion):
 	Class, race, name = "Neutral", "", "Teron Gorefiend"
 	mana, attack, health = 3, 3, 4
-	index = "Outlands~Neutral~Minion~3~3~4~~Teron Gorefiend~Battlecry~Deathrattle~Legendary"
+	index = "BLACK_TEMPLE~Neutral~Minion~3~3~4~~Teron Gorefiend~Battlecry~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Destroy all friendly minions. Deathrattle: Resummon all of them with +1/+1"
 	name_CN = "塔隆血魔"
 	def __init__(self, Game, ID):
@@ -434,7 +437,7 @@ class ResummonDestroyedMinionwithPlus1Plus1(Deathrattle_Minion):
 class BurrowingScorpid(Minion):
 	Class, race, name = "Neutral", "Beast", "Burrowing Scorpid"
 	mana, attack, health = 4, 5, 2
-	index = "Outlands~Neutral~Minion~4~5~2~Beast~Burrowing Scorpid~Battlecry"
+	index = "BLACK_TEMPLE~Neutral~Minion~4~5~2~Beast~Burrowing Scorpid~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal 2 damage. If that kills the target, gain Stealth"
 	name_CN = "潜地蝎"
 	
@@ -449,7 +452,7 @@ class BurrowingScorpid(Minion):
 class DisguisedWanderer(Minion):
 	Class, race, name = "Neutral", "Demon", "Disguised Wanderer"
 	mana, attack, health = 4, 3, 3
-	index = "Outlands~Neutral~Minion~4~3~3~Demon~Disguised Wanderer~Deathrattle"
+	index = "BLACK_TEMPLE~Neutral~Minion~4~3~3~Demon~Disguised Wanderer~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Summon a 9/1 Inquisitor"
 	name_CN = "变装游荡者"
 	def __init__(self, Game, ID):
@@ -466,7 +469,7 @@ class SummonanInquisitor(Deathrattle_Minion):
 class RustswornInquisitor(Minion):
 	Class, race, name = "Neutral", "Demon", "Rustsworn Inquisitor"
 	mana, attack, health = 4, 9, 1
-	index = "Outlands~Neutral~Minion~4~9~1~Demon~Rustsworn Inquisitor~Uncollectible"
+	index = "BLACK_TEMPLE~Neutral~Minion~4~9~1~Demon~Rustsworn Inquisitor~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "锈誓审判官"
 	
@@ -474,7 +477,7 @@ class RustswornInquisitor(Minion):
 class FelfinNavigator(Minion):
 	Class, race, name = "Neutral", "Murloc", "Felfin Navigator"
 	mana, attack, health = 4, 4, 4
-	index = "Outlands~Neutral~Minion~4~4~4~Murloc~Felfin Navigator~Battlecry"
+	index = "BLACK_TEMPLE~Neutral~Minion~4~4~4~Murloc~Felfin Navigator~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Give your other Murlocs +1/+1"
 	name_CN = "邪鳍导航员"
 	
@@ -488,7 +491,7 @@ class FelfinNavigator(Minion):
 class Magtheridon(Minion):
 	Class, race, name = "Neutral", "Demon", "Magtheridon"
 	mana, attack, health = 4, 12, 12
-	index = "Outlands~Neutral~Minion~4~12~12~Demon~Magtheridon~Battlecry~Legendary"
+	index = "BLACK_TEMPLE~Neutral~Minion~4~12~12~Demon~Magtheridon~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Dormant. Battlecry: Summon three 1/3 enemy Warders. When they die, destroy all minions and awaken"
 	name_CN = "玛瑟里顿"
 	
@@ -505,8 +508,9 @@ class Magtheridon(Minion):
 		return None
 		
 	def appears(self, firstTime=True):
-		self.newonthisSide, self.dead = True, False
-		self.onBoard, self.inHand, self.inDeck = True, False, False
+		self.onBoard = True
+		self.inHand = self.inDeck = self.dead = False
+		self.enterBoardTurn = self.Game.numTurn
 		self.mana = type(self).mana #Restore the minion's mana to original value.
 		self.decideAttChances_base() #Decide base att chances, given Windfury and Mega Windfury
 		if firstTime: #首次出场时会进行休眠，而且休眠状态会保持之前的随从buff。休眠体由每个不同的随从自己定义
@@ -555,7 +559,7 @@ class Trig_Magtheridon_Dormant(TrigBoard):
 class HellfireWarder(Minion):
 	Class, race, name = "Neutral", "", "Hellfire Warder"
 	mana, attack, health = 1, 1, 3
-	index = "Outlands~Neutral~Minion~1~1~3~~Hellfire Warder~Uncollectible"
+	index = "BLACK_TEMPLE~Neutral~Minion~1~1~3~~Hellfire Warder~Uncollectible"
 	requireTarget, keyWord, description = False, "", "(Magtheridon will destroy all minions and awaken after 3 Warders die)"
 	name_CN = "地狱火典狱官"
 	
@@ -563,7 +567,7 @@ class HellfireWarder(Minion):
 class MaievShadowsong(Minion):
 	Class, race, name = "Neutral", "", "Maiev Shadowsong"
 	mana, attack, health = 4, 4, 3
-	index = "Outlands~Neutral~Minion~4~4~3~~Maiev Shadowsong~Battlecry~Legendary"
+	index = "BLACK_TEMPLE~Neutral~Minion~4~4~3~~Maiev Shadowsong~Battlecry~Legendary"
 	requireTarget, keyWord, description = True, "", "Battlecry: Choose a minion. It goes Dormant for 2 turns"
 	name_CN = "玛维影歌"
 	def targetExists(self, choice=0):
@@ -583,7 +587,7 @@ class MaievShadowsong(Minion):
 class Replicatotron(Minion):
 	Class, race, name = "Neutral", "Mech", "Replicat-o-tron"
 	mana, attack, health = 4, 3, 3
-	index = "Outlands~Neutral~Minion~4~3~3~Mech~Replicat-o-tron"
+	index = "BLACK_TEMPLE~Neutral~Minion~4~3~3~Mech~Replicat-o-tron"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, transform a neighbor into a copy of this"
 	name_CN = "复制机器人"
 	def __init__(self, Game, ID):
@@ -612,13 +616,13 @@ class Trig_Replicatotron(TrigBoard):
 				curGame.fixedGuides.append(i)
 			if i > -1:
 				neighbor = curGame.minions[minion.ID][i]
-				curGame.transform(neighbor, minion.selfCopy(minion.ID))
+				curGame.transform(neighbor, minion.selfCopy(minion.ID, minion))
 				
 				
 class RustswornCultist(Minion):
 	Class, race, name = "Neutral", "", "Rustsworn Cultist"
 	mana, attack, health = 4, 3, 3
-	index = "Outlands~Neutral~Minion~4~3~3~~Rustsworn Cultist~Battlecry"
+	index = "BLACK_TEMPLE~Neutral~Minion~4~3~3~~Rustsworn Cultist~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Give your other minions 'Deathrattle: Summon a 1/1 Demon'"
 	name_CN = "锈誓信徒"
 	
@@ -637,7 +641,7 @@ class SummonaRustedDevil(Deathrattle_Minion):
 class RustedDevil(Minion):
 	Class, race, name = "Neutral", "Demon", "Rusted Devil"
 	mana, attack, health = 1, 1, 1
-	index = "Outlands~Neutral~Minion~1~1~1~Demon~Rusted Devil~Uncollectible"
+	index = "BLACK_TEMPLE~Neutral~Minion~1~1~1~Demon~Rusted Devil~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "铁锈恶鬼"
 	
@@ -646,7 +650,7 @@ class RustedDevil(Minion):
 class Alar(Minion):
 	Class, race, name = "Neutral", "Elemental", "Al'ar"
 	mana, attack, health = 5, 7, 3
-	index = "Outlands~Neutral~Minion~5~7~3~Elemental~Al'ar~Deathrattle~Legendary"
+	index = "BLACK_TEMPLE~Neutral~Minion~5~7~3~Elemental~Al'ar~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Summon a 0/3 Ashes of Al'ar that resurrects this minion on your next turn"
 	name_CN = "奥"
 	def __init__(self, Game, ID):
@@ -664,7 +668,7 @@ class SummonAshesofAlar(Deathrattle_Minion):
 class AshesofAlar(Minion):
 	Class, race, name = "Neutral", "", "Ashes of Al'ar"
 	mana, attack, health = 1, 0, 3
-	index = "Outlands~Neutral~Minion~1~0~3~~Ashes of Al'ar~Legendary~Uncollectible"
+	index = "BLACK_TEMPLE~Neutral~Minion~1~0~3~~Ashes of Al'ar~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "", "At the start of your turn, transform this into Al'ar"
 	name_CN = "奥的灰烬”"
 	def __init__(self, Game, ID):
@@ -688,7 +692,7 @@ class Trig_AshesofAlar(TrigBoard):
 class RuststeedRaider(Minion):
 	Class, race, name = "Neutral", "", "Ruststeed Raider"
 	mana, attack, health = 5, 1, 8
-	index = "Outlands~Neutral~Minion~5~1~8~~Ruststeed Raider~Taunt~Rush~Battlecry"
+	index = "BLACK_TEMPLE~Neutral~Minion~5~1~8~~Ruststeed Raider~Taunt~Rush~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt,Rush", "Taunt, Rush. Battlecry: Gain +4 Attack this turn"
 	name_CN = "锈骑劫匪"
 	
@@ -700,7 +704,7 @@ class RuststeedRaider(Minion):
 class WasteWarden(Minion):
 	Class, race, name = "Neutral", "", "Waste Warden"
 	mana, attack, health = 5, 3, 3
-	index = "Outlands~Neutral~Minion~5~3~3~~Waste Warden~Battlecry"
+	index = "BLACK_TEMPLE~Neutral~Minion~5~3~3~~Waste Warden~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal 3 damage to a minion and all others of the same minion type"
 	name_CN = "废土守望者"
 	
@@ -729,7 +733,7 @@ class WasteWarden(Minion):
 class DragonmawSkyStalker(Minion):
 	Class, race, name = "Neutral", "Dragon", "Dragonmaw Sky Stalker"
 	mana, attack, health = 6, 5, 6
-	index = "Outlands~Neutral~Minion~6~5~6~Dragon~Dragonmaw Sky Stalker~Deathrattle"
+	index = "BLACK_TEMPLE~Neutral~Minion~6~5~6~Dragon~Dragonmaw Sky Stalker~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Summon a 3/4 Dragonrider"
 	name_CN = "龙喉巡天者"
 	def __init__(self, Game, ID):
@@ -746,7 +750,7 @@ class SummonaDragonrider(Deathrattle_Minion):
 class Dragonrider(Minion):
 	Class, race, name = "Neutral", "", "Dragonrider"
 	mana, attack, health = 3, 3, 4
-	index = "Outlands~Neutral~Minion~3~3~4~~Dragonrider~Uncollectible"
+	index = "BLACK_TEMPLE~Neutral~Minion~3~3~4~~Dragonrider~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "龙骑士"
 	
@@ -754,7 +758,7 @@ class Dragonrider(Minion):
 class KaelthasSunstrider(Minion):
 	Class, race, name = "Neutral", "", "Kael'thas Sunstrider"
 	mana, attack, health = 7, 4, 7
-	index = "Outlands~Neutral~Minion~7~4~7~~Kael'thas Sunstrider~Legendary"
+	index = "BLACK_TEMPLE~Neutral~Minion~7~4~7~~Kael'thas Sunstrider~Legendary"
 	requireTarget, keyWord, description = False, "", "Every third spell you cast each turn costs (1)"
 	name_CN = "凯尔萨斯 逐日者"
 	def __init__(self, Game, ID):
@@ -841,7 +845,7 @@ class ManaAura_Every3rdSpell0:
 class ScavengingShivarra(Minion):
 	Class, race, name = "Neutral", "Demon", "Scavenging Shivarra"
 	mana, attack, health = 6, 6, 3
-	index = "Outlands~Neutral~Minion~6~6~3~Demon~Scavenging Shivarra~Battlecry"
+	index = "BLACK_TEMPLE~Neutral~Minion~6~6~3~Demon~Scavenging Shivarra~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Deal 6 damage randomly split among all other minions"
 	name_CN = "食腐破坏魔"
 	
@@ -869,7 +873,7 @@ class ScavengingShivarra(Minion):
 class BonechewerVanguard(Minion):
 	Class, race, name = "Neutral", "", "Bonechewer Vanguard"
 	mana, attack, health = 7, 4, 10
-	index = "Outlands~Neutral~Minion~7~4~10~~Bonechewer Vanguard~Taunt"
+	index = "BLACK_TEMPLE~Neutral~Minion~7~4~10~~Bonechewer Vanguard~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Whenever this minion takes damage, gain +2 Attack"
 	name_CN = "噬骨先锋"
 	def __init__(self, Game, ID):
@@ -893,7 +897,7 @@ class Trig_BonechewerVanguard(TrigBoard):
 class SupremeAbyssal(Minion):
 	Class, race, name = "Neutral", "Demon", "Supreme Abyssal"
 	mana, attack, health = 8, 12, 12
-	index = "Outlands~Neutral~Minion~8~12~12~Demon~Supreme Abyssal"
+	index = "BLACK_TEMPLE~Neutral~Minion~8~12~12~Demon~Supreme Abyssal"
 	requireTarget, keyWord, description = False, "", "Can't attack heroes"
 	name_CN = "深渊至尊"
 	def __init__(self, Game, ID):
@@ -904,7 +908,7 @@ class SupremeAbyssal(Minion):
 class ScrapyardColossus(Minion):
 	Class, race, name = "Neutral", "Elemental", "Scrapyard Colossus"
 	mana, attack, health = 10, 7, 7
-	index = "Outlands~Neutral~Minion~10~7~7~Elemental~Scrapyard Colossus~Taunt~Deathrattle"
+	index = "BLACK_TEMPLE~Neutral~Minion~10~7~7~Elemental~Scrapyard Colossus~Taunt~Deathrattle"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Summon a 7/7 Felcracked Colossus with Taunt"
 	name_CN = "废料场巨像"
 	def __init__(self, Game, ID):
@@ -921,7 +925,7 @@ class SummonaFelcrackedColossuswithTaunt(Deathrattle_Minion):
 class FelcrackedColossus(Minion):
 	Class, race, name = "Neutral", "Elemental", "Felcracked Colossus"
 	mana, attack, health = 7, 7, 7
-	index = "Outlands~Neutral~Minion~7~7~7~Elemental~Felcracked Colossus~Taunt~Uncollectible"
+	index = "BLACK_TEMPLE~Neutral~Minion~7~7~7~Elemental~Felcracked Colossus~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "邪爆巨像"
 	
@@ -929,7 +933,7 @@ class FelcrackedColossus(Minion):
 class FuriousFelfin(Minion):
 	Class, race, name = "Demon Hunter", "Murloc", "Furious Felfin"
 	mana, attack, health = 2, 3, 2
-	index = "Outlands~Demon Hunter~Minion~2~3~2~Murloc~Furious Felfin~Battlecry"
+	index = "BLACK_TEMPLE~Demon Hunter~Minion~2~3~2~Murloc~Furious Felfin~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your hero attacked this turn, gain +1 Attack and Rush"
 	name_CN = "暴怒的邪鳍"
 	
@@ -946,7 +950,7 @@ class FuriousFelfin(Minion):
 class ImmolationAura(Spell):
 	Class, school, name = "Demon Hunter", "", "Immolation Aura"
 	requireTarget, mana = False, 2
-	index = "Outlands~Demon Hunter~Spell~2~Immolation Aura"
+	index = "BLACK_TEMPLE~Demon Hunter~Spell~2~Immolation Aura"
 	description = "Deal 1 damage to all minions twice"
 	name_CN = "献祭光环"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -964,7 +968,7 @@ class ImmolationAura(Spell):
 class Netherwalker(Minion):
 	Class, race, name = "Demon Hunter", "", "Netherwalker"
 	mana, attack, health = 2, 2, 2
-	index = "Outlands~Demon Hunter~Minion~2~2~2~~Netherwalker~Battlecry"
+	index = "BLACK_TEMPLE~Demon Hunter~Minion~2~2~2~~Netherwalker~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a Demon"
 	name_CN = "虚无行者"
 	poolIdentifier = "Demons as Demon Hunter"
@@ -1005,7 +1009,7 @@ class Netherwalker(Minion):
 class FelSummoner(Minion):
 	Class, race, name = "Demon Hunter", "", "Fel Summoner"
 	mana, attack, health = 6, 8, 3
-	index = "Outlands~Demon Hunter~Minion~6~8~3~~Fel Summoner~Deathrattle"
+	index = "BLACK_TEMPLE~Demon Hunter~Minion~6~8~3~~Fel Summoner~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Summon a random Demon from your hand"
 	name_CN = "邪能召唤师"
 	def __init__(self, Game, ID):
@@ -1032,7 +1036,7 @@ class SummonaRandomDemonfromYourHand(Deathrattle_Minion):
 class KaynSunfury(Minion):
 	Class, race, name = "Demon Hunter", "", "Kayn Sunfury"
 	mana, attack, health = 4, 3, 4
-	index = "Outlands~Demon Hunter~Minion~4~3~4~~Kayn Sunfury~Charge~Legendary"
+	index = "BLACK_TEMPLE~Demon Hunter~Minion~4~3~4~~Kayn Sunfury~Charge~Legendary"
 	requireTarget, keyWord, description = False, "Charge", "Charge. All friendly attacks ignore Taunt"
 	name_CN = "凯恩日怒"
 	def __init__(self, Game, ID):
@@ -1050,7 +1054,7 @@ class GameRuleAura_KaynSunfury(GameRuleAura):
 class Metamorphosis(Spell):
 	Class, school, name = "Demon Hunter", "", "Metamorphosis"
 	requireTarget, mana = False, 5
-	index = "Outlands~Demon Hunter~Spell~5~Metamorphosis~Legendary"
+	index = "BLACK_TEMPLE~Demon Hunter~Spell~5~Metamorphosis~Legendary"
 	description = "Swap your Hero Power to 'Deal 4 damage'. After 2 uses, swap it back"
 	name_CN = "恶魔变形"
 	#不知道是否只是对使用两次英雄技能计数，而不一定要是那个特定的英雄技能
@@ -1071,7 +1075,7 @@ class DemonicBlast(HeroPower):
 		self.powerReplaced = None
 		
 	def text(self, CHN):
-		damage = (4 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
+		damage = (4 + self.marks["Damage Boost"] + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		return "造成%d点伤害。（还可使用两次！） 替换的原技能是%s"%(damage, self.powerReplaced.name) if CHN \
 				else "Deal %d damage. (Two uses left!) Original Hero Power is %s"%(damage, self.powerReplaced.name)
 				
@@ -1104,7 +1108,7 @@ class DemonicBlast1(HeroPower):
 		self.powerReplaced = None
 		
 	def text(self, CHN):
-		damage = (4 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
+		damage = (4 + self.marks["Damage Boost"] + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		return "造成%d点伤害。（还可使用一次！） 替换的原技能是%s"%(damage, self.powerReplaced.name) if CHN \
 				else "Deal %d damage. (Last use!) Original Hero Power is %s"%(damage, self.powerReplaced.name)
 				
@@ -1130,7 +1134,7 @@ class Trig_DemonicBlast1(TrigBoard):
 class ImprisonedAntaen(Minion_Dormantfor2turns):
 	Class, race, name = "Demon Hunter", "Demon", "Imprisoned Antaen"
 	mana, attack, health = 6, 10, 6
-	index = "Outlands~Demon Hunter~Minion~6~10~6~Demon~Imprisoned Antaen"
+	index = "BLACK_TEMPLE~Demon Hunter~Minion~6~10~6~Demon~Imprisoned Antaen"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, deal 10 damage randomly split among all enemies"
 	name_CN = "被禁锢的 安塔恩"
 	
@@ -1157,7 +1161,7 @@ class ImprisonedAntaen(Minion_Dormantfor2turns):
 class SkullofGuldan(Spell):
 	Class, school, name = "Demon Hunter", "", "Skull of Gul'dan"
 	requireTarget, mana = False, 6
-	index = "Outlands~Demon Hunter~Spell~6~Skull of Gul'dan~Outcast"
+	index = "BLACK_TEMPLE~Demon Hunter~Spell~6~Skull of Gul'dan~Outcast"
 	description = "Draw 3 cards. Outscast: Reduce their Cost by (3)"
 	name_CN = "古尔丹之颅"
 	def effCanTrig(self):
@@ -1176,7 +1180,7 @@ class SkullofGuldan(Spell):
 class PriestessofFury(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Priestess of Fury"
 	mana, attack, health = 7, 6, 5
-	index = "Outlands~Demon Hunter~Minion~7~6~5~Demon~Priestess of Fury"
+	index = "BLACK_TEMPLE~Demon Hunter~Minion~7~6~5~Demon~Priestess of Fury"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, deal 6 damage randomly split among all enemies"
 	name_CN = "愤怒的女祭司"
 	def __init__(self, Game, ID):
@@ -1216,7 +1220,7 @@ class Trig_PriestessofFury(TrigBoard):
 class CoilfangWarlord(Minion):
 	Class, race, name = "Demon Hunter", "", "Coilfang Warlord"
 	mana, attack, health = 8, 9, 5
-	index = "Outlands~Demon Hunter~Minion~8~9~5~~Coilfang Warlord~Rush~Deathrattle"
+	index = "BLACK_TEMPLE~Demon Hunter~Minion~8~9~5~~Coilfang Warlord~Rush~Deathrattle"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Deathrattle: Summon a 5/9 Warlord with Taunt"
 	name_CN = "盘牙督军"
 	def __init__(self, Game, ID):
@@ -1233,7 +1237,7 @@ class SummonaWarlordwithTaunt(Deathrattle_Minion):
 class ConchguardWarlord(Minion):
 	Class, race, name = "Demon Hunter", "", "Conchguard Warlord"
 	mana, attack, health = 8, 5, 9
-	index = "Outlands~Demon Hunter~Minion~8~5~9~~Conchguard Warlord~Taunt~Uncollectible"
+	index = "BLACK_TEMPLE~Demon Hunter~Minion~8~5~9~~Conchguard Warlord~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "螺盾督军"
 	
@@ -1241,7 +1245,7 @@ class ConchguardWarlord(Minion):
 class PitCommander(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Pit Commander"
 	mana, attack, health = 9, 7, 9
-	index = "Outlands~Demon Hunter~Minion~9~7~9~Demon~Pit Commander~Taunt"
+	index = "BLACK_TEMPLE~Demon Hunter~Minion~9~7~9~Demon~Pit Commander~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. At the end of your turn, summon a Demon from your deck"
 	name_CN = "深渊指挥官"
 	def __init__(self, Game, ID):
@@ -1275,7 +1279,7 @@ class Trig_PitCommander(TrigBoard):
 class FungalFortunes(Spell):
 	Class, school, name = "Druid", "", "Fungal Fortunes"
 	requireTarget, mana = False, 3
-	index = "Outlands~Druid~Spell~3~Fungal Fortunes"
+	index = "BLACK_TEMPLE~Druid~Spell~3~Fungal Fortunes"
 	description = "Draw 3 cards. Discard any minions drawn"
 	name_CN = "真菌宝藏"
 	#The minions will be discarded immediately before drawing the next card.
@@ -1294,7 +1298,7 @@ class FungalFortunes(Spell):
 class Ironbark(Spell):
 	Class, school, name = "Druid", "", "Ironbark"
 	requireTarget, mana = True, 2
-	index = "Outlands~Druid~Spell~2~Ironbark"
+	index = "BLACK_TEMPLE~Druid~Spell~2~Ironbark"
 	description = "Give a minion +1/+3 and Taunt. Costs (0) if you have at least 7 Mana Crystals"
 	name_CN = "铁木树皮"
 	def __init__(self, Game, ID):
@@ -1335,7 +1339,7 @@ class Trig_Ironbark(TrigHand):
 class ArchsporeMsshifn(Minion):
 	Class, race, name = "Druid", "", "Archspore Msshi'fn"
 	mana, attack, health = 3, 3, 4
-	index = "Outlands~Druid~Minion~3~3~4~~Archspore Msshi'fn~Taunt~Deathrattle~Legendary"
+	index = "BLACK_TEMPLE~Druid~Minion~3~3~4~~Archspore Msshi'fn~Taunt~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Shuffle 'Msshi'fn Prime' into your deck"
 	name_CN = "孢子首领 姆希菲"
 	def __init__(self, Game, ID):
@@ -1353,7 +1357,7 @@ class ShuffleMsshifnPrimeintoYourDeck(Deathrattle_Minion):
 class MsshifnPrime(Minion):
 	Class, race, name = "Druid", "", "Msshi'fn Prime"
 	mana, attack, health = 10, 9, 9
-	index = "Outlands~Druid~Minion~10~9~9~~Msshi'fn Prime~Taunt~Choose One~Legendary~Uncollectible"
+	index = "BLACK_TEMPLE~Druid~Minion~10~9~9~~Msshi'fn Prime~Taunt~Choose One~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Choose One- Summon a 9/9 Fungal Giant with Taunt; or Rush"
 	name_CN = "终极姆希菲"
 	def __init__(self, Game, ID):
@@ -1377,19 +1381,19 @@ class MsshifnPrime(Minion):
 class FungalGuardian(Minion):
 	Class, race, name = "Druid", "", "Fungal Guardian"
 	mana, attack, health = 10, 9, 9
-	index = "Outlands~Druid~Minion~10~9~9~~Fungal Guardian~Taunt~Uncollectible"
+	index = "BLACK_TEMPLE~Druid~Minion~10~9~9~~Fungal Guardian~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	
 class FungalBruiser(Minion):
 	Class, race, name = "Druid", "", "Fungal Bruiser"
 	mana, attack, health = 10, 9, 9
-	index = "Outlands~Druid~Minion~10~9~9~~Fungal Bruiser~Rush~Uncollectible"
+	index = "BLACK_TEMPLE~Druid~Minion~10~9~9~~Fungal Bruiser~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	
 class FungalGargantuan(Minion):
 	Class, race, name = "Druid", "", "Fungal Gargantuan"
 	mana, attack, health = 10, 9, 9
-	index = "Outlands~Druid~Minion~10~9~9~~Fungal Gargantuan~Taunt~Rush~Uncollectible"
+	index = "BLACK_TEMPLE~Druid~Minion~10~9~9~~Fungal Gargantuan~Taunt~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt,Rush", "Taunt, Rush"
 	
 class MsshifnAttac_Option(ChooseOneOption):
@@ -1406,7 +1410,7 @@ class MsshifnProtec_Option(ChooseOneOption):
 class Bogbeam(Spell):
 	Class, school, name = "Druid", "", "Bogbeam"
 	requireTarget, mana = True, 3
-	index = "Outlands~Druid~Spell~3~Bogbeam"
+	index = "BLACK_TEMPLE~Druid~Spell~3~Bogbeam"
 	description = "Deal 3 damage to a minion. Costs (0) if you have at least 7 Mana Crystals"
 	name_CN = "沼泽射线"
 	def __init__(self, Game, ID):
@@ -1452,7 +1456,7 @@ class Trig_Bogbeam(TrigHand):
 class ImprisonedSatyr(Minion_Dormantfor2turns):
 	Class, race, name = "Druid", "Demon", "Imprisoned Satyr"
 	mana, attack, health = 3, 3, 3
-	index = "Outlands~Druid~Minion~3~3~3~Demon~Imprisoned Satyr"
+	index = "BLACK_TEMPLE~Druid~Minion~3~3~3~Demon~Imprisoned Satyr"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, reduce the Cost of a random minion in your hand by (5)"
 	name_CN = "被禁锢的 萨特"
 	
@@ -1473,7 +1477,7 @@ class ImprisonedSatyr(Minion_Dormantfor2turns):
 class Germination(Spell):
 	Class, school, name = "Druid", "", "Germination"
 	requireTarget, mana = True, 4
-	index = "Outlands~Druid~Spell~4~Germination"
+	index = "BLACK_TEMPLE~Druid~Spell~4~Germination"
 	description = "Summon a copy of a friendly minion. Give the copy Taunt"
 	name_CN = "萌芽分裂"
 	def available(self):
@@ -1484,7 +1488,7 @@ class Germination(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			Copy = target.selfCopy(target.ID)
+			Copy = target.selfCopy(target.ID, self)
 			self.Game.summon(Copy, target.pos+1, self)
 			Copy.getsKeyword("Taunt")
 		return target
@@ -1493,7 +1497,7 @@ class Germination(Spell):
 class Overgrowth(Spell):
 	Class, school, name = "Druid", "", "Overgrowth"
 	requireTarget, mana = False, 4
-	index = "Outlands~Druid~Spell~4~Overgrowth"
+	index = "BLACK_TEMPLE~Druid~Spell~4~Overgrowth"
 	description = "Gain two empty Mana Crystals"
 	name_CN = "过度生长"
 	#不知道满费用和9费时如何结算,假设不会给抽牌的衍生物
@@ -1506,7 +1510,7 @@ class Overgrowth(Spell):
 class GlowflySwarm(Spell):
 	Class, school, name = "Druid", "", "Glowfly Swarm"
 	requireTarget, mana = False, 5
-	index = "Outlands~Druid~Spell~5~Glowfly Swarm"
+	index = "BLACK_TEMPLE~Druid~Spell~5~Glowfly Swarm"
 	description = "Summon a 2/2 Glowfly for each spell in your hand"
 	name_CN = "萤火成群"
 	def available(self):
@@ -1524,7 +1528,7 @@ class GlowflySwarm(Spell):
 class Glowfly(Minion):
 	Class, race, name = "Druid", "Beast", "Glowfly"
 	mana, attack, health = 2, 2, 2
-	index = "Outlands~Druid~Minion~2~2~2~Beast~Glowfly~Uncollectible"
+	index = "BLACK_TEMPLE~Druid~Minion~2~2~2~Beast~Glowfly~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "萤火虫"
 	
@@ -1532,7 +1536,7 @@ class Glowfly(Minion):
 class MarshHydra(Minion):
 	Class, race, name = "Druid", "Beast", "Marsh Hydra"
 	mana, attack, health = 7, 7, 7
-	index = "Outlands~Druid~Minion~7~7~7~Beast~Marsh Hydra~Rush"
+	index = "BLACK_TEMPLE~Druid~Minion~7~7~7~Beast~Marsh Hydra~Rush"
 	requireTarget, keyWord, description = False, "Rush", "Rush. After this attacks, add a random 8-Cost minion to your hand"
 	name_CN = "沼泽多头蛇"
 	poolIdentifier = "8-Cost Minions"
@@ -1570,7 +1574,7 @@ class Trig_MarshHydra(TrigBoard):
 class YsielWindsinger(Minion):
 	Class, race, name = "Druid", "", "Ysiel Windsinger"
 	mana, attack, health = 9, 5, 5
-	index = "Outlands~Druid~Minion~9~5~5~~Ysiel Windsinger~Legendary"
+	index = "BLACK_TEMPLE~Druid~Minion~9~5~5~~Ysiel Windsinger~Legendary"
 	requireTarget, keyWord, description = False, "", "Your spells cost (1)"
 	name_CN = "伊谢尔风歌"
 	def __init__(self, Game, ID):
@@ -1584,7 +1588,7 @@ class YsielWindsinger(Minion):
 class Helboar(Minion):
 	Class, race, name = "Hunter", "Beast", "Helboar"
 	mana, attack, health = 1, 2, 1
-	index = "Outlands~Hunter~Minion~1~2~1~Beast~Helboar~Deathrattle"
+	index = "BLACK_TEMPLE~Hunter~Minion~1~2~1~Beast~Helboar~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Give a random Beast in your hand +1/+1"
 	name_CN = "地狱野猪"
 	def __init__(self, Game, ID):
@@ -1612,7 +1616,7 @@ class GiveaRandomBeastinYourHandPlus1Plus1(Deathrattle_Minion):
 class ImprisonedFelmaw(Minion_Dormantfor2turns):
 	Class, race, name = "Hunter", "Demon", "Imprisoned Felmaw"
 	mana, attack, health = 2, 5, 4
-	index = "Outlands~Hunter~Minion~2~5~4~Demon~Imprisoned Felmaw"
+	index = "BLACK_TEMPLE~Hunter~Minion~2~5~4~Demon~Imprisoned Felmaw"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, attack a random enemy"
 	name_CN = "被禁锢的魔喉"
 	#假设这个攻击不会消耗随从的攻击机会
@@ -1637,7 +1641,7 @@ class ImprisonedFelmaw(Minion_Dormantfor2turns):
 class PackTactics(Secret):
 	Class, school, name = "Hunter", "", "Pack Tactics"
 	requireTarget, mana = False, 2
-	index = "Outlands~Hunter~Spell~2~Pack Tactics~~Secret"
+	index = "BLACK_TEMPLE~Hunter~Spell~2~Pack Tactics~~Secret"
 	description = "Secret: When a friendly minion is attacked, summon a 3/3 copy"
 	name_CN = "集群战术"
 	def __init__(self, Game, ID):
@@ -1652,13 +1656,13 @@ class Trig_PackTactics(SecretTrigger):
 		return self.entity.ID != self.entity.Game.turn and target[0].ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(target[0].selfCopy(self.entity.ID, 3, 3), target[0].pos+1, self.entity)
+		self.entity.Game.summon(target[0].selfCopy(self.entity.ID, self.entity, 3, 3), target[0].pos+1, self.entity)
 		
 		
 class ScavengersIngenuity(Spell):
 	Class, school, name = "Hunter", "", "Scavenger's Ingenuity"
 	requireTarget, mana = False, 2
-	index = "Outlands~Hunter~Spell~2~Scavenger's Ingenuity"
+	index = "BLACK_TEMPLE~Hunter~Spell~2~Scavenger's Ingenuity"
 	description = "Draw a Beast. Give it +2/+2"
 	name_CN = "拾荒者的智慧"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1681,7 +1685,7 @@ class ScavengersIngenuity(Spell):
 class AugmentedPorcupine(Minion):
 	Class, race, name = "Hunter", "Beast", "Augmented Porcupine"
 	mana, attack, health = 3, 2, 4
-	index = "Outlands~Hunter~Minion~3~2~4~Beast~Augmented Porcupine~Deathrattle"
+	index = "BLACK_TEMPLE~Hunter~Minion~3~2~4~Beast~Augmented Porcupine~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Deals this minion's Attack damage randomly split among all enemies"
 	name_CN = "强能箭猪"
 	def __init__(self, Game, ID):
@@ -1717,7 +1721,7 @@ class DealDamageEqualtoAttack(Deathrattle_Minion):
 class ZixorApexPredator(Minion):
 	Class, race, name = "Hunter", "Beast", "Zixor, Apex Predator"
 	mana, attack, health = 3, 2, 4
-	index = "Outlands~Hunter~Minion~3~2~4~Beast~Zixor, Apex Predator~Rush~Deathrattle~Legendary"
+	index = "BLACK_TEMPLE~Hunter~Minion~3~2~4~Beast~Zixor, Apex Predator~Rush~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Deathrattle: Shuffle 'Zixor Prime' into your deck"
 	name_CN = "顶级捕食者 兹克索尔"
 	def __init__(self, Game, ID):
@@ -1735,14 +1739,14 @@ class ShuffleZixorPrimeintoYourDeck(Deathrattle_Minion):
 class ZixorPrime(Minion):
 	Class, race, name = "Hunter", "Beast", "Zixor Prime"
 	mana, attack, health = 8, 4, 4
-	index = "Outlands~Hunter~Minion~8~4~4~Beast~Zixor Prime~Rush~Battlecry~Legendary~Uncollectible"
+	index = "BLACK_TEMPLE~Hunter~Minion~8~4~4~Beast~Zixor Prime~Rush~Battlecry~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Battlecry: Summon 3 copies of this minion"
 	name_CN = "终极兹克索尔"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		#假设已经死亡时不会召唤复制
 		if self.onBoard or self.inHand:
-			copies = [self.selfCopy(self.ID) for i in range(3)]
+			copies = [self.selfCopy(self.ID, self) for i in range(3)]
 			self.Game.summon(copies, (self.pos, "totheRight"), self)
 		return None
 		
@@ -1750,7 +1754,7 @@ class ZixorPrime(Minion):
 class MokNathalLion(Minion):
 	Class, race, name = "Hunter", "Beast", "Mok'Nathal Lion"
 	mana, attack, health = 4, 5, 2
-	index = "Outlands~Hunter~Minion~4~5~2~Beast~Mok'Nathal Lion~Rush~Battlecry"
+	index = "BLACK_TEMPLE~Hunter~Minion~4~5~2~Beast~Mok'Nathal Lion~Rush~Battlecry"
 	requireTarget, keyWord, description = True, "Rush", "Rush. Battlecry: Choose a friendly minion. Gain a copy of its Deathrattle"
 	name_CN = "莫克纳萨将狮"
 	def effCanTrig(self):
@@ -1775,7 +1779,7 @@ class MokNathalLion(Minion):
 class ScrapShot(Spell):
 	Class, school, name = "Hunter", "", "Scrap Shot"
 	requireTarget, mana = True, 4
-	index = "Outlands~Hunter~Spell~4~Scrap Shot"
+	index = "BLACK_TEMPLE~Hunter~Spell~4~Scrap Shot"
 	description = "Deal 3 damage. Give a random Beast in your hand +3/+3"
 	name_CN = "废铁射击"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1799,7 +1803,7 @@ class ScrapShot(Spell):
 class BeastmasterLeoroxx(Minion):
 	Class, race, name = "Hunter", "", "Beastmaster Leoroxx"
 	mana, attack, health = 8, 5, 5
-	index = "Outlands~Hunter~Minion~8~5~5~~Beastmaster Leoroxx~Battlecry~Legendary"
+	index = "BLACK_TEMPLE~Hunter~Minion~8~5~5~~Beastmaster Leoroxx~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon 3 Beasts from your hand"
 	name_CN = "兽王 莱欧洛克斯"
 	
@@ -1823,7 +1827,7 @@ class BeastmasterLeoroxx(Minion):
 class NagrandSlam(Spell):
 	Class, school, name = "Hunter", "", "Nagrand Slam"
 	requireTarget, mana = False, 10
-	index = "Outlands~Hunter~Spell~10~Nagrand Slam"
+	index = "BLACK_TEMPLE~Hunter~Spell~10~Nagrand Slam"
 	description = "Summon four 3/5 Clefthoofs that attack random enemies"
 	name_CN = "纳格兰大冲撞"
 	def available(self):
@@ -1857,7 +1861,7 @@ class NagrandSlam(Spell):
 class Clefthoof(Minion):
 	Class, race, name = "Hunter", "Beast", "Clefthoof"
 	mana, attack, health = 4, 3, 5
-	index = "Outlands~Hunter~Minion~4~3~5~Beast~Clefthoof~Uncollectible"
+	index = "BLACK_TEMPLE~Hunter~Minion~4~3~5~Beast~Clefthoof~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "裂蹄牛"
 	
@@ -1865,7 +1869,7 @@ class Clefthoof(Minion):
 class Evocation(Spell):
 	Class, school, name = "Mage", "", "Evocation"
 	requireTarget, mana = False, 2
-	index = "Outlands~Mage~Spell~2~Evocation~Legendary"
+	index = "BLACK_TEMPLE~Mage~Spell~2~Evocation~Legendary"
 	description = "Fill your hand with random Mage spells. At the end of your turn, discard them"
 	name_CN = "唤醒"
 	poolIdentifier = "Mage Spells"
@@ -1910,7 +1914,7 @@ class Trig_Evocation(TrigHand):
 class FontofPower(Spell):
 	Class, school, name = "Mage", "", "Font of Power"
 	requireTarget, mana = False, 1
-	index = "Outlands~Mage~Spell~1~Font of Power"
+	index = "BLACK_TEMPLE~Mage~Spell~1~Font of Power"
 	description = "Discover a Mage minion. If your deck has no minions, keep all 3"
 	name_CN = "能量之泉"
 	poolIdentifier = "Mage Minions"
@@ -1957,7 +1961,7 @@ class FontofPower(Spell):
 class ApexisSmuggler(Minion):
 	Class, race, name = "Mage", "", "Apexis Smuggler"
 	mana, attack, health = 2, 2, 3
-	index = "Outlands~Mage~Minion~2~2~3~~Apexis Smuggler"
+	index = "BLACK_TEMPLE~Mage~Minion~2~2~3~~Apexis Smuggler"
 	requireTarget, keyWord, description = False, "", "After you play a Secret, Discover a spell"
 	name_CN = "埃匹希斯 走私犯"
 	poolIdentifier = "Mage Spells"
@@ -1999,7 +2003,7 @@ class Trig_ApexisSmuggler(TrigBoard):
 class AstromancerSolarian(Minion):
 	Class, race, name = "Mage", "", "Astromancer Solarian"
 	mana, attack, health = 2, 3, 2
-	index = "Outlands~Mage~Minion~2~3~2~~Astromancer Solarian~Spell Damage~Deathrattle~Legendary"
+	index = "BLACK_TEMPLE~Mage~Minion~2~3~2~~Astromancer Solarian~Spell Damage~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1. Deathrattle: Shuffle 'Solarian Prime' into your deck"
 	name_CN = "星术师 索兰莉安"
 	def __init__(self, Game, ID):
@@ -2017,7 +2021,7 @@ class ShuffleSolarianPrimeintoYourDeck(Deathrattle_Minion):
 class SolarianPrime(Minion):
 	Class, race, name = "Mage", "Demon", "Solarian Prime"
 	mana, attack, health = 9, 7, 7
-	index = "Outlands~Mage~Minion~9~7~7~Demon~Solarian Prime~Spell Damage~Battlecry~Legendary~Uncollectible"
+	index = "BLACK_TEMPLE~Mage~Minion~9~7~7~Demon~Solarian Prime~Spell Damage~Battlecry~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1. Battlecry: Cast 5 random Mage spells (target enemies if possible)"
 	name_CN = "终极索兰莉安"
 	poolIdentifier = "Mage Spells"
@@ -2042,7 +2046,7 @@ class SolarianPrime(Minion):
 class IncantersFlow(Spell):
 	Class, school, name = "Mage", "", "Incanter's Flow"
 	requireTarget, mana = False, 2
-	index = "Outlands~Mage~Spell~2~Incanter's Flow"
+	index = "BLACK_TEMPLE~Mage~Spell~2~Incanter's Flow"
 	description = "Reduce the Cost of spells in your deck by (1)"
 	name_CN = "咒术洪流"
 	
@@ -2056,7 +2060,7 @@ class IncantersFlow(Spell):
 class Starscryer(Minion):
 	Class, race, name = "Mage", "", "Starscryer"
 	mana, attack, health = 2, 3, 1
-	index = "Outlands~Mage~Minion~2~3~1~~Starscryer~Deathrattle"
+	index = "BLACK_TEMPLE~Mage~Minion~2~3~1~~Starscryer~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Draw a spell"
 	name_CN = "星占师"
 	def __init__(self, Game, ID):
@@ -2082,7 +2086,7 @@ class DrawaSpell(Deathrattle_Minion):
 class ImprisonedObserver(Minion_Dormantfor2turns):
 	Class, race, name = "Mage", "Demon", "Imprisoned Observer"
 	mana, attack, health = 3, 4, 5
-	index = "Outlands~Mage~Minion~3~4~5~Demon~Imprisoned Observer"
+	index = "BLACK_TEMPLE~Mage~Minion~3~4~5~Demon~Imprisoned Observer"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, deal 2 damage to all enemy minions"
 	name_CN = "被禁锢的眼魔"
 	
@@ -2094,7 +2098,7 @@ class ImprisonedObserver(Minion_Dormantfor2turns):
 class NetherwindPortal(Secret):
 	Class, school, name = "Mage", "", "Netherwind Portal"
 	requireTarget, mana = False, 3
-	index = "Outlands~Mage~Spell~3~Netherwind Portal~~Secret"
+	index = "BLACK_TEMPLE~Mage~Spell~3~Netherwind Portal~~Secret"
 	description = "Secret: After your opponent casts a spell, summon a random 4-Cost minion"
 	name_CN = "虚空之风 传送门"
 	poolIdentifier = "4-Cost Minions to Summon"
@@ -2127,7 +2131,7 @@ class Trig_NetherwindPortal(SecretTrigger):
 class ApexisBlast(Spell):
 	Class, school, name = "Mage", "", "Apexis Blast"
 	requireTarget, mana = True, 5
-	index = "Outlands~Mage~Spell~5~Apexis Blast"
+	index = "BLACK_TEMPLE~Mage~Spell~5~Apexis Blast"
 	description = "Deal 5 damage. If your deck has no minions, summon a random 5-Cost minion"
 	name_CN = "埃匹希斯冲击"
 	poolIdentifier = "5-Cost Minions to Summon"
@@ -2162,7 +2166,7 @@ class ApexisBlast(Spell):
 class DeepFreeze(Spell):
 	Class, school, name = "Mage", "", "Deep Freeze"
 	requireTarget, mana = True, 8
-	index = "Outlands~Mage~Spell~8~Deep Freeze"
+	index = "BLACK_TEMPLE~Mage~Spell~8~Deep Freeze"
 	description = "Freeze an enemy. Summon two 3/6 Water Elementals"
 	name_CN = "深度冻结"
 	def available(self):
@@ -2181,7 +2185,7 @@ class DeepFreeze(Spell):
 class ImprisonedSungill(Minion_Dormantfor2turns):
 	Class, race, name = "Paladin", "Murloc", "Imprisoned Sungill"
 	mana, attack, health = 1, 2, 1
-	index = "Outlands~Paladin~Minion~1~2~1~Murloc~Imprisoned Sungill"
+	index = "BLACK_TEMPLE~Paladin~Minion~1~2~1~Murloc~Imprisoned Sungill"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, Summon two 1/1 Murlocs"
 	name_CN = "被禁锢的 阳鳃鱼人"
 	
@@ -2191,7 +2195,7 @@ class ImprisonedSungill(Minion_Dormantfor2turns):
 class SungillStreamrunner(Minion):
 	Class, race, name = "Paladin", "Murloc", "Sungill Streamrunner"
 	mana, attack, health = 1, 1, 1
-	index = "Outlands~Paladin~Minion~1~1~1~Murloc~Sungill Streamrunner~Uncollectible"
+	index = "BLACK_TEMPLE~Paladin~Minion~1~1~1~Murloc~Sungill Streamrunner~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "阳鳃士兵"
 	
@@ -2238,7 +2242,7 @@ class GameManaAura_Libram:
 		if self not in game.copiedObjs:
 			Copy = type(self)(game, self.ID, self.changeby, self.changeto)
 			game.copiedObjs[self] = Copy
-			#ManaMod.selfCopy(self, recipientCard):
+			#def ManaMod.selfCopy(self, recipientCard):
 			#	return ManaMod(recipientCard, self.changeby, self.changeto, self.source, self.lowerbound)
 			for card, manaMod in self.auraAffected: #从自己的auraAffected里面复制内容出去
 				cardCopy = card.createCopy(game)
@@ -2256,7 +2260,7 @@ class GameManaAura_Libram:
 class AldorAttendant(Minion):
 	Class, race, name = "Paladin", "", "Aldor Attendant"
 	mana, attack, health = 1, 1, 3
-	index = "Outlands~Paladin~Minion~1~1~3~~Aldor Attendant~Battlecry"
+	index = "BLACK_TEMPLE~Paladin~Minion~1~1~3~~Aldor Attendant~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Reduce the Cost of your Librams by (1) this game"
 	name_CN = "奥尔多侍从"
 	
@@ -2268,7 +2272,7 @@ class AldorAttendant(Minion):
 class HandofAdal(Spell):
 	Class, school, name = "Paladin", "",  "Hand of A'dal"
 	requireTarget, mana = True, 2
-	index = "Outlands~Paladin~Spell~2~Hand of A'dal"
+	index = "BLACK_TEMPLE~Paladin~Spell~2~Hand of A'dal"
 	description = "Give a minion +2/+2. Draw a card"
 	name_CN = "阿达尔之手"
 	def targetExists(self, choice=0):
@@ -2287,7 +2291,7 @@ class HandofAdal(Spell):
 class MurgurMurgurgle(Minion):
 	Class, race, name = "Paladin", "Murloc", "Murgur Murgurgle"
 	mana, attack, health = 2, 2, 1
-	index = "Outlands~Paladin~Minion~2~2~1~Murloc~Murgur Murgurgle~Divine Shield~Deathrattle~Legendary"
+	index = "BLACK_TEMPLE~Paladin~Minion~2~2~1~Murloc~Murgur Murgurgle~Divine Shield~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield. Deathrattle: Shuffle 'Murgurgle Prime' into your deck"
 	name_CN = "莫戈尔 莫戈尔格"
 	def __init__(self, Game, ID):
@@ -2305,7 +2309,7 @@ class ShuffleMurgurglePrimeintoYourDeck(Deathrattle_Minion):
 class MurgurglePrime(Minion):
 	Class, race, name = "Paladin", "Murloc", "Murgurgle Prime"
 	mana, attack, health = 8, 6, 3
-	index = "Outlands~Paladin~Minion~8~6~3~Murloc~Murgurgle Prime~Divine Shield~Battlecry~Legendary~Uncollectible"
+	index = "BLACK_TEMPLE~Paladin~Minion~8~6~3~Murloc~Murgurgle Prime~Divine Shield~Battlecry~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield. Battlecry: Summon 4 random Murlocs. Give them Divine Shield"
 	name_CN = "终极莫戈尔格"
 	poolIdentifier = "Murlocs to Summon"
@@ -2332,7 +2336,7 @@ class MurgurglePrime(Minion):
 class LibramofWisdom(Spell):
 	Class, school, name = "Paladin", "",  "Libram of Wisdom"
 	requireTarget, mana = True, 2
-	index = "Outlands~Paladin~Spell~2~Libram of Wisdom"
+	index = "BLACK_TEMPLE~Paladin~Spell~2~Libram of Wisdom"
 	description = "Give a minion +1/+1 and 'Deathrattle: Add a 'Libram of Wisdom' spell to your hand'"
 	name_CN = "智慧圣契"
 	def targetExists(self, choice=0):
@@ -2357,7 +2361,7 @@ class AddaLibramofWisdomtoYourHand(Deathrattle_Minion):
 class UnderlightAnglingRod(Weapon):
 	Class, name, description = "Paladin", "Underlight Angling Rod", "After your hero attacks, add a random Murloc to your hand"
 	mana, attack, durability = 3, 3, 2
-	index = "Outlands~Paladin~Weapon~3~3~2~Underlight Angling Rod"
+	index = "BLACK_TEMPLE~Paladin~Weapon~3~3~2~Underlight Angling Rod"
 	name_CN = "幽光鱼竿"
 	poolIdentifier = "Murlocs"
 	@classmethod
@@ -2394,7 +2398,7 @@ class Trig_UnderlightAnglingRod(TrigBoard):
 class AldorTruthseeker(Minion):
 	Class, race, name = "Paladin", "", "Aldor Truthseeker"
 	mana, attack, health = 5, 4, 6
-	index = "Outlands~Paladin~Minion~5~4~6~~Aldor Truthseeker~Battlecry"
+	index = "BLACK_TEMPLE~Paladin~Minion~5~4~6~~Aldor Truthseeker~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Reduce the Cost of your Librams by (2) this game"
 	name_CN = "奥尔多 真理追寻者"
 	
@@ -2406,7 +2410,7 @@ class AldorTruthseeker(Minion):
 class LibramofJustice(Spell):
 	Class, school, name = "Paladin", "",  "Libram of Justice"
 	requireTarget, mana = False, 5
-	index = "Outlands~Paladin~Spell~5~Libram of Justice"
+	index = "BLACK_TEMPLE~Paladin~Spell~5~Libram of Justice"
 	description = "Equip a 1/4 weapon. Change the Health of all enemy minions to 1"
 	name_CN = "正义圣契"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2418,13 +2422,13 @@ class LibramofJustice(Spell):
 class OverdueJustice(Weapon):
 	Class, name, description = "Paladin", "Overdue Justice", ""
 	mana, attack, durability = 1, 1, 4
-	index = "Outlands~Paladin~Weapon~1~1~4~Overdue Justice~Uncollectible"
+	index = "BLACK_TEMPLE~Paladin~Weapon~1~1~4~Overdue Justice~Uncollectible"
 	name_CN = "迟到的正义"
 	
 class LadyLiadrin(Minion):
 	Class, race, name = "Paladin", "", "Lady Liadrin"
 	mana, attack, health = 7, 4, 6
-	index = "Outlands~Paladin~Minion~7~4~6~~Lady Liadrin~Battlecry~Legendary"
+	index = "BLACK_TEMPLE~Paladin~Minion~7~4~6~~Lady Liadrin~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a copy of each spell you cast on friendly characters this game to your hand"
 	name_CN = "女伯爵 莉亚德琳"
 	
@@ -2444,7 +2448,7 @@ class LadyLiadrin(Minion):
 class LibramofHope(Spell):
 	Class, school, name = "Paladin", "", "Libram of Hope"
 	requireTarget, mana = True, 9
-	index = "Outlands~Paladin~Spell~9~Libram of Hope"
+	index = "BLACK_TEMPLE~Paladin~Spell~9~Libram of Hope"
 	description = "Restore 8 Health. Summon an 8/8 with Guardian with Taunt and Divine Shield"
 	name_CN = "希望圣契"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2457,7 +2461,7 @@ class LibramofHope(Spell):
 class AncientGuardian(Minion):
 	Class, race, name = "Paladin", "", "Ancient Guardian"
 	mana, attack, health = 8, 8, 8
-	index = "Outlands~Paladin~Minion~8~8~8~~Ancient Guardian~Taunt~Divine Shield~Uncollectible"
+	index = "BLACK_TEMPLE~Paladin~Minion~8~8~8~~Ancient Guardian~Taunt~Divine Shield~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt,Divine Shield", "Taunt, Divine Shield"
 	name_CN = "远古守卫"
 	
@@ -2465,7 +2469,7 @@ class AncientGuardian(Minion):
 class ImprisonedHomunculus(Minion_Dormantfor2turns):
 	Class, race, name = "Priest", "Demon", "Imprisoned Homunculus"
 	mana, attack, health = 1, 2, 5
-	index = "Outlands~Priest~Minion~1~2~5~Demon~Imprisoned Homunculus~Taunt"
+	index = "BLACK_TEMPLE~Priest~Minion~1~2~5~Demon~Imprisoned Homunculus~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Dormant for 2 turns. Taunt"
 	name_CN = "被禁锢的 矮劣魔"
 	
@@ -2473,7 +2477,7 @@ class ImprisonedHomunculus(Minion_Dormantfor2turns):
 class ReliquaryofSouls(Minion):
 	Class, race, name = "Priest", "", "Reliquary of Souls"
 	mana, attack, health = 1, 1, 3
-	index = "Outlands~Priest~Minion~1~1~3~~Reliquary of Souls~Lifesteal~Deathrattle~Legendary"
+	index = "BLACK_TEMPLE~Priest~Minion~1~1~3~~Reliquary of Souls~Lifesteal~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "Lifesteal", "Lifesteal. Deathrattle: Shuffle 'Leliquary Prime' into your deck"
 	name_CN = "灵魂之匣"
 	def __init__(self, Game, ID):
@@ -2491,7 +2495,7 @@ class ShuffleReliquaryPrimeintoYourDeck(Deathrattle_Minion):
 class ReliquaryPrime(Minion):
 	Class, race, name = "Priest", "", "Reliquary Prime"
 	mana, attack, health = 7, 6, 8
-	index = "Outlands~Priest~Minion~7~6~8~~Reliquary Prime~Taunt~Lifesteal~Legendary~Uncollectible"
+	index = "BLACK_TEMPLE~Priest~Minion~7~6~8~~Reliquary Prime~Taunt~Lifesteal~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt,Lifesteal", "Taunt, Lifesteal. Only you can target this with spells and Hero Powers"
 	name_CN = "终极魂匣"
 	def __init__(self, Game, ID):
@@ -2502,7 +2506,7 @@ class ReliquaryPrime(Minion):
 class Renew(Spell):
 	Class, school, name = "Priest", "", "Renew"
 	requireTarget, mana = True, 1
-	index = "Outlands~Priest~Spell~1~Renew"
+	index = "BLACK_TEMPLE~Priest~Spell~1~Renew"
 	description = "Restore 3 Health. Discover a spell"
 	name_CN = "复苏"
 	poolIdentifier = "Priest Spells"
@@ -2539,7 +2543,7 @@ class Renew(Spell):
 class DragonmawSentinel(Minion):
 	Class, race, name = "Priest", "", "Dragonmaw Sentinel"
 	mana, attack, health = 2, 1, 4
-	index = "Outlands~Priest~Minion~2~1~4~~Dragonmaw Sentinel~Battlecry"
+	index = "BLACK_TEMPLE~Priest~Minion~2~1~4~~Dragonmaw Sentinel~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, gain +1 Attack and Lifesteal"
 	name_CN = "龙喉哨兵"
 	
@@ -2556,7 +2560,7 @@ class DragonmawSentinel(Minion):
 class SethekkVeilweaver(Minion):
 	Class, race, name = "Priest", "", "Sethekk Veilweaver"
 	mana, attack, health = 2, 2, 3
-	index = "Outlands~Priest~Minion~2~2~3~~Sethekk Veilweaver"
+	index = "BLACK_TEMPLE~Priest~Minion~2~2~3~~Sethekk Veilweaver"
 	requireTarget, keyWord, description = False, "", "After you cast a spell on a minion, add a Priest spell to your hand"
 	name_CN = "塞泰克织巢者"
 	poolIdentifier = "Priest Spells"
@@ -2594,7 +2598,7 @@ class Trig_SethekkVeilweaver(TrigBoard):
 class Apotheosis(Spell):
 	Class, school, name = "Priest", "", "Apotheosis"
 	requireTarget, mana = True, 3
-	index = "Outlands~Priest~Spell~3~Apotheosis"
+	index = "BLACK_TEMPLE~Priest~Spell~3~Apotheosis"
 	description = "Give a minion +2/+3 and Lifesteal"
 	name_CN = "神圣化身"
 	def available(self):
@@ -2613,7 +2617,7 @@ class Apotheosis(Spell):
 class DragonmawOverseer(Minion):
 	Class, race, name = "Priest", "", "Dragonmaw Overseer"
 	mana, attack, health = 3, 2, 2
-	index = "Outlands~Priest~Minion~3~2~2~~Dragonmaw Overseer"
+	index = "BLACK_TEMPLE~Priest~Minion~3~2~2~~Dragonmaw Overseer"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, give another friendly minion +2/+2"
 	name_CN = "龙喉监工"
 	def __init__(self, Game, ID):
@@ -2650,7 +2654,7 @@ class Trig_DragonmawOverseer(TrigBoard):
 class PsycheSplit(Spell):
 	Class, school, name = "Priest", "", "Psyche Split"
 	requireTarget, mana = True, 5
-	index = "Outlands~Priest~Spell~5~Psyche Split"
+	index = "BLACK_TEMPLE~Priest~Spell~5~Psyche Split"
 	description = "Give a minion +1/+2. Summon a copy of it"
 	name_CN = "心灵分裂"
 	def available(self):
@@ -2662,7 +2666,7 @@ class PsycheSplit(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			target.buffDebuff(1, 2)
-			Copy = target.selfCopy(target.ID)
+			Copy = target.selfCopy(target.ID, self)
 			self.Game.summon(Copy, target.pos+1, self)
 		return target
 		
@@ -2670,7 +2674,7 @@ class PsycheSplit(Spell):
 class SkeletalDragon(Minion):
 	Class, race, name = "Priest", "Dragon", "Skeletal Dragon"
 	mana, attack, health = 7, 4, 9
-	index = "Outlands~Priest~Minion~7~4~9~Dragon~Skeletal Dragon~Taunt"
+	index = "BLACK_TEMPLE~Priest~Minion~7~4~9~Dragon~Skeletal Dragon~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. At the end of your turn, add a Dragon to your hand"
 	name_CN = "骸骨巨龙"
 	poolIdentifier = "Dragons"
@@ -2708,14 +2712,14 @@ class Trig_SkeletalDragon(TrigBoard):
 class SoulMirror(Spell):
 	Class, school, name = "Priest", "", "Soul Mirror"
 	requireTarget, mana = False, 7
-	index = "Outlands~Priest~Spell~7~Soul Mirror~Legendary"
+	index = "BLACK_TEMPLE~Priest~Spell~7~Soul Mirror~Legendary"
 	description = "Summon copies of enemy minions. They attack their copies"
 	name_CN = "灵魂之镜"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		pairs = [[], []]
 		for minion in self.Game.minionsonBoard(3-self.ID):
-			Copy = minion.selfCopy(self.ID)
+			Copy = minion.selfCopy(self.ID, self)
 			pairs[0].append(minion)
 			pairs[1].append(Copy)
 		if pairs[1] != []:
@@ -2732,7 +2736,7 @@ class SoulMirror(Spell):
 class BlackjackStunner(Minion):
 	Class, race, name = "Rogue", "", "Blackjack Stunner"
 	mana, attack, health = 1, 1, 2
-	index = "Outlands~Rogue~Minion~1~1~2~~Blackjack Stunner~Battlecry"
+	index = "BLACK_TEMPLE~Rogue~Minion~1~1~2~~Blackjack Stunner~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: If you control a Secret, return a minion to its owner's hand. It costs (1) more"
 	name_CN = "钉棍终结者"
 	def effCanTrig(self):
@@ -2759,7 +2763,7 @@ class BlackjackStunner(Minion):
 class Spymistress(Minion):
 	Class, race, name = "Rogue", "", "Spymistress"
 	mana, attack, health = 1, 3, 1
-	index = "Outlands~Rogue~Minion~1~3~1~~Spymistress~Stealth"
+	index = "BLACK_TEMPLE~Rogue~Minion~1~3~1~~Spymistress~Stealth"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth"
 	name_CN = "间谍女郎"
 	
@@ -2767,7 +2771,7 @@ class Spymistress(Minion):
 class Ambush(Secret):
 	Class, school, name = "Rogue", "", "Ambush"
 	requireTarget, mana = False, 2
-	index = "Outlands~Rogue~Spell~2~Ambush~~Secret"
+	index = "BLACK_TEMPLE~Rogue~Spell~2~Ambush~~Secret"
 	description = "Secret: After your opponent plays a minion, summon a 2/3 Ambusher with Poisonous"
 	name_CN = "伏击"
 	def __init__(self, Game, ID):
@@ -2787,7 +2791,7 @@ class Trig_Ambush(SecretTrigger):
 class BrokenAmbusher(Minion):
 	Class, race, name = "Rogue", "", "Broken Ambusher"
 	mana, attack, health = 2, 2, 3
-	index = "Outlands~Rogue~Minion~2~2~3~~Broken Ambusher~Poisonous~Uncollectible"
+	index = "BLACK_TEMPLE~Rogue~Minion~2~2~3~~Broken Ambusher~Poisonous~Uncollectible"
 	requireTarget, keyWord, description = False, "Poisonous", "Poisonous"
 	name_CN = "破碎者伏兵"
 	
@@ -2795,7 +2799,7 @@ class BrokenAmbusher(Minion):
 class AshtongueSlayer(Minion):
 	Class, race, name = "Rogue", "", "Ashtongue Slayer"
 	mana, attack, health = 2, 3, 2
-	index = "Outlands~Rogue~Minion~2~3~2~~Ashtongue Slayer~Battlecry"
+	index = "BLACK_TEMPLE~Rogue~Minion~2~3~2~~Ashtongue Slayer~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Give a Stealthed minion +3 Attack and Immune this turn"
 	name_CN = "灰舌杀手"
 	def targetExists(self, choice=0):
@@ -2814,7 +2818,7 @@ class AshtongueSlayer(Minion):
 class Bamboozle(Secret):
 	Class, school, name = "Rogue", "", "Bamboozle"
 	requireTarget, mana = False, 2
-	index = "Outlands~Rogue~Spell~2~Bamboozle~~Secret"
+	index = "BLACK_TEMPLE~Rogue~Spell~2~Bamboozle~~Secret"
 	description = "Secret: When one of your minions is attacked, transform it into a random one that costs (3) more"
 	name_CN = "偷天换日"
 	poolIdentifier = "3-Cost Minions to Summon"
@@ -2855,7 +2859,7 @@ class Trig_Bamboozle(SecretTrigger):
 class DirtyTricks(Secret):
 	Class, school, name = "Rogue", "", "Dirty Tricks"
 	requireTarget, mana = False, 2
-	index = "Outlands~Rogue~Spell~2~Dirty Tricks~~Secret"
+	index = "BLACK_TEMPLE~Rogue~Spell~2~Dirty Tricks~~Secret"
 	description = "Secret: After your opponent casts a spell, draw 2 cards"
 	name_CN = "邪恶计谋"
 	def __init__(self, Game, ID):
@@ -2877,7 +2881,7 @@ class Trig_DirtyTricks(SecretTrigger):
 class ShadowjewelerHanar(Minion):
 	Class, race, name = "Rogue", "", "Shadowjeweler Hanar"
 	mana, attack, health = 2, 1, 4
-	index = "Outlands~Rogue~Minion~2~1~4~~Shadowjeweler Hanar~Legendary"
+	index = "BLACK_TEMPLE~Rogue~Minion~2~1~4~~Shadowjeweler Hanar~Legendary"
 	requireTarget, keyWord, description = False, "", "After you play a Secret, Discover a Secret from a different class"
 	name_CN = "暗影珠宝师 汉纳尔"
 	poolIdentifier = "Rogue Secrets"
@@ -2931,7 +2935,7 @@ class Trig_ShadowjewelerHanar(TrigBoard):
 class Akama(Minion):
 	Class, race, name = "Rogue", "", "Akama"
 	mana, attack, health = 3, 3, 4
-	index = "Outlands~Rogue~Minion~3~3~4~~Akama~Stealth~Deathrattle~Legendary"
+	index = "BLACK_TEMPLE~Rogue~Minion~3~3~4~~Akama~Stealth~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. Deathrattle: Shuffle 'Akama Prime' into your deck"
 	name_CN = "阿卡玛"
 	def __init__(self, Game, ID):
@@ -2949,7 +2953,7 @@ class ShuffleAkamaPrimeintoYourDeck(Deathrattle_Minion):
 class AkamaPrime(Minion):
 	Class, race, name = "Rogue", "", "Akama Prime"
 	mana, attack, health = 6, 6, 5
-	index = "Outlands~Rogue~Minion~6~6~5~~Akama Prime~Stealth~Legendary~Uncollectible"
+	index = "BLACK_TEMPLE~Rogue~Minion~6~6~5~~Akama Prime~Stealth~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Stealth", "Permanently Stealthed"
 	name_CN = "终极阿卡玛"
 	
@@ -2973,7 +2977,7 @@ class AkamaPrime(Minion):
 class GreyheartSage(Minion):
 	Class, race, name = "Rogue", "", "Greyheart Sage"
 	mana, attack, health = 3, 3, 3
-	index = "Outlands~Rogue~Minion~3~3~3~~Greyheart Sage~Battlecry"
+	index = "BLACK_TEMPLE~Rogue~Minion~3~3~3~~Greyheart Sage~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Stealth minion, draw 2 cards"
 	def effCanTrig(self):
 		self.effectViable = False
@@ -2997,7 +3001,7 @@ class GreyheartSage(Minion):
 class CursedVagrant(Minion):
 	Class, race, name = "Rogue", "", "Cursed Vagrant"
 	mana, attack, health = 7, 7, 5
-	index = "Outlands~Rogue~Minion~7~7~5~~Cursed Vagrant~Deathrattle"
+	index = "BLACK_TEMPLE~Rogue~Minion~7~7~5~~Cursed Vagrant~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Summon a 7/5 Shadow with Stealth"
 	name_CN = "被诅咒的 流浪者"
 	def __init__(self, Game, ID):
@@ -3014,7 +3018,7 @@ class SummonaShadowwithTaunt(Deathrattle_Minion):
 class CursedShadow(Minion):
 	Class, race, name = "Rogue", "", "Cursed Shadow"
 	mana, attack, health = 7, 7, 5
-	index = "Outlands~Rogue~Minion~7~7~5~~Cursed Shadow~Stealth~Uncollectible"
+	index = "BLACK_TEMPLE~Rogue~Minion~7~7~5~~Cursed Shadow~Stealth~Uncollectible"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth"
 	name_CN = "被诅咒的阴影"
 	
@@ -3023,7 +3027,7 @@ class CursedShadow(Minion):
 class BogstrokClacker(Minion):
 	Class, race, name = "Shaman", "", "Bogstrok Clacker"
 	mana, attack, health = 3, 3, 3
-	index = "Outlands~Shaman~Minion~3~3~3~~Bogstrok Clacker~Battlecry"
+	index = "BLACK_TEMPLE~Shaman~Minion~3~3~3~~Bogstrok Clacker~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Transform adjacent minions into random minions that cost (1) more"
 	name_CN = "泥泽巨拳 龙虾人"
 	poolIdentifier = "1-Cost Minions to Summon"
@@ -3055,7 +3059,7 @@ class BogstrokClacker(Minion):
 class LadyVashj(Minion):
 	Class, race, name = "Shaman", "", "Lady Vashj"
 	mana, attack, health = 3, 4, 3
-	index = "Outlands~Shaman~Minion~3~4~3~~Lady Vashj~Spell Damage~Deathrattle~Legendary"
+	index = "BLACK_TEMPLE~Shaman~Minion~3~4~3~~Lady Vashj~Spell Damage~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1. Deathrattle: Shuffle 'Vashj Prime' into your deck"
 	name_CN = "瓦斯琪女士"
 	def __init__(self, Game, ID):
@@ -3073,7 +3077,7 @@ class ShuffleVashjPrimeintoYourDeck(Deathrattle_Minion):
 class VashjPrime(Minion):
 	Class, race, name = "Shaman", "", "Vashj Prime"
 	mana, attack, health = 7, 5, 4
-	index = "Outlands~Shaman~Minion~7~5~4~~Vashj Prime~Spell Damage~Battlecry~Legendary~Uncollectible"
+	index = "BLACK_TEMPLE~Shaman~Minion~7~5~4~~Vashj Prime~Spell Damage~Battlecry~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1. Battlecry: Draw 3 spells. Reduce their Cost by (3)"
 	name_CN = "终极瓦斯琪"
 	
@@ -3098,7 +3102,7 @@ class VashjPrime(Minion):
 class Marshspawn(Minion):
 	Class, race, name = "Shaman", "Elemental", "Marshspawn"
 	mana, attack, health = 3, 3, 4
-	index = "Outlands~Shaman~Minion~3~3~4~Elemental~Marshspawn~Battlecry"
+	index = "BLACK_TEMPLE~Shaman~Minion~3~3~4~Elemental~Marshspawn~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you cast a spell last turn, Discover a spell"
 	name_CN = "沼泽之子"
 	poolIdentifier = "Shaman Spells"
@@ -3136,7 +3140,7 @@ class Marshspawn(Minion):
 class SerpentshrinePortal(Spell):
 	Class, school, name = "Shaman", "", "Serpentshrine Portal"
 	requireTarget, mana = True, 3
-	index = "Outlands~Shaman~Spell~3~Serpentshrine Portal~Overload"
+	index = "BLACK_TEMPLE~Shaman~Spell~3~Serpentshrine Portal~Overload"
 	description = "Deal 3 damage. Summon a random 3-Cost minion. Overload: (1)"
 	name_CN = "毒蛇神殿 传送门"
 	poolIdentifier = "3-Cost Minions to Summon"
@@ -3166,7 +3170,7 @@ class SerpentshrinePortal(Spell):
 class TotemicReflection(Spell):
 	Class, school, name = "Shaman", "", "Totemic Reflection"
 	requireTarget, mana = True, 3
-	index = "Outlands~Shaman~Spell~3~Totemic Reflection"
+	index = "BLACK_TEMPLE~Shaman~Spell~3~Totemic Reflection"
 	description = "Give a minion +2/2. If it's a Totem, summon a copy of it"
 	name_CN = "图腾映像"
 	def available(self):
@@ -3179,7 +3183,7 @@ class TotemicReflection(Spell):
 		if target:
 			target.buffDebuff(2, 2)
 			if "Totem" in target.race:
-				Copy = target.selfCopy(target.ID)
+				Copy = target.selfCopy(target.ID, self)
 				self.Game.summon(Copy, target.pos+1, self)
 		return target
 		
@@ -3187,7 +3191,7 @@ class TotemicReflection(Spell):
 class Torrent(Spell):
 	Class, school, name = "Shaman", "", "Torrent"
 	requireTarget, mana = True, 4
-	index = "Outlands~Shaman~Spell~4~Torrent"
+	index = "BLACK_TEMPLE~Shaman~Spell~4~Torrent"
 	description = "Deal 8 damage to a minion. Costs (3) less if you cast a spell last turn"
 	name_CN = "洪流"
 	def available(self):
@@ -3214,7 +3218,7 @@ class Torrent(Spell):
 class VividSpores(Spell):
 	Class, school, name = "Shaman", "", "Vivid Spores"
 	requireTarget, mana = False, 4
-	index = "Outlands~Shaman~Spell~4~Vivid Spores"
+	index = "BLACK_TEMPLE~Shaman~Spell~4~Vivid Spores"
 	description = "Give your minions 'Deathrattle: Resummon this minion'"
 	name_CN = "鲜活孢子"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3233,7 +3237,7 @@ class ResummonThisMinion_VividSpores(Deathrattle_Minion):
 class BoggspineKnuckles(Weapon):
 	Class, name, description = "Shaman", "Boggspine Knuckles", "After your hero attacks, transform your minions into ones that cost (1) more"
 	mana, attack, durability = 5, 3, 2
-	index = "Outlands~Shaman~Weapon~5~3~2~Boggspine Knuckles"
+	index = "BLACK_TEMPLE~Shaman~Weapon~5~3~2~Boggspine Knuckles"
 	name_CN = "沼泽拳刺"
 	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
@@ -3274,7 +3278,7 @@ class Trig_BoggspineKnuckles(TrigBoard):
 class ShatteredRumbler(Minion):
 	Class, race, name = "Shaman", "Elemental", "Shattered Rumbler"
 	mana, attack, health = 5, 5, 6
-	index = "Outlands~Shaman~Minion~5~5~6~Elemental~Shattered Rumbler~Battlecry"
+	index = "BLACK_TEMPLE~Shaman~Minion~5~5~6~Elemental~Shattered Rumbler~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you cast a spell last turn, deal 2 damage to all other minions"
 	name_CN = "破碎奔行者"
 	def effCanTrig(self):
@@ -3290,7 +3294,7 @@ class ShatteredRumbler(Minion):
 class TheLurkerBelow(Minion):
 	Class, race, name = "Shaman", "Beast", "The Lurker Below"
 	mana, attack, health = 6, 6, 5
-	index = "Outlands~Shaman~Minion~6~6~5~Beast~The Lurker Below~Battlecry~Legendary"
+	index = "BLACK_TEMPLE~Shaman~Minion~6~6~5~Beast~The Lurker Below~Battlecry~Legendary"
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal 3 damage to an enemy minion, it dies, repeat on one of its neighbors"
 	name_CN = "鱼斯拉"
 	def targetExists(self, choice=0):
@@ -3342,7 +3346,7 @@ class TheLurkerBelow(Minion):
 class ShadowCouncil(Spell):
 	Class, school, name = "Warlock", "", "Shadow Council"
 	requireTarget, mana = False, 1
-	index = "Outlands~Warlock~Spell~1~Shadow Council"
+	index = "BLACK_TEMPLE~Warlock~Spell~1~Shadow Council"
 	description = "Replace your hand with random Demons. Give them +2/+2"
 	name_CN = "暗影议会"
 	poolIdentifier = "Demons"
@@ -3370,7 +3374,7 @@ class ShadowCouncil(Spell):
 class UnstableFelbolt(Spell):
 	Class, school, name = "Warlock", "", "Unstable Felbolt"
 	requireTarget, mana = True, 1
-	index = "Outlands~Warlock~Spell~1~Unstable Felbolt"
+	index = "BLACK_TEMPLE~Warlock~Spell~1~Unstable Felbolt"
 	description = "Deal 3 damage to an enemy minion and a random friendly one"
 	name_CN = "不稳定的 邪能箭"
 	def available(self):
@@ -3404,7 +3408,7 @@ class UnstableFelbolt(Spell):
 class ImprisonedScrapImp(Minion_Dormantfor2turns):
 	Class, race, name = "Warlock", "Demon", "Imprisoned Scrap Imp"
 	mana, attack, health = 2, 3, 3
-	index = "Outlands~Warlock~Minion~2~3~3~Demon~Imprisoned Scrap Imp"
+	index = "BLACK_TEMPLE~Warlock~Minion~2~3~3~Demon~Imprisoned Scrap Imp"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, give all minions in your hand +2/+1"
 	name_CN = "被禁锢的 拾荒小鬼"
 	
@@ -3416,7 +3420,7 @@ class ImprisonedScrapImp(Minion_Dormantfor2turns):
 class KanrethadEbonlocke(Minion):
 	Class, race, name = "Warlock", "", "Kanrethad Ebonlocke"
 	mana, attack, health = 2, 3, 2
-	index = "Outlands~Warlock~Minion~2~3~2~~Kanrethad Ebonlocke~Deathrattle~Legendary"
+	index = "BLACK_TEMPLE~Warlock~Minion~2~3~2~~Kanrethad Ebonlocke~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "", "Your Demons cost (1) less. Deathrattle: Shuffle 'Kanrethad Prime' into your deck"
 	name_CN = "坎雷萨德 埃伯洛克"
 	def __init__(self, Game, ID):
@@ -3439,7 +3443,7 @@ class ShuffleKanrethadPrimeintoYourDeck(Deathrattle_Minion):
 class KanrethadPrime(Minion):
 	Class, race, name = "Warlock", "Demon", "Kanrethad Prime"
 	mana, attack, health = 8, 7, 6
-	index = "Outlands~Warlock~Minion~8~7~6~Demon~Kanrethad Prime~Battlecry~Legendary~Uncollectible"
+	index = "BLACK_TEMPLE~Warlock~Minion~8~7~6~Demon~Kanrethad Prime~Battlecry~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon 3 friendly Demons that died this game"
 	name_CN = "终极坎雷萨德"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3461,7 +3465,7 @@ class KanrethadPrime(Minion):
 class Darkglare(Minion):
 	Class, race, name = "Warlock", "Demon", "Darkglare"
 	mana, attack, health = 2, 2, 3
-	index = "Outlands~Warlock~Minion~2~2~3~Demon~Darkglare"
+	index = "BLACK_TEMPLE~Warlock~Minion~2~2~3~Demon~Darkglare"
 	requireTarget, keyWord, description = False, "", "After your hero takes damage, refresh a Mana Crystals"
 	name_CN = "黑眼"
 	def __init__(self, Game, ID):
@@ -3485,7 +3489,7 @@ class Trig_Darkglare(TrigBoard):
 class NightshadeMatron(Minion):
 	Class, race, name = "Warlock", "Demon", "Nightshade Matron"
 	mana, attack, health = 4, 5, 5
-	index = "Outlands~Warlock~Minion~4~5~5~Demon~Nightshade Matron~Rush~Battlecry"
+	index = "BLACK_TEMPLE~Warlock~Minion~4~5~5~Demon~Nightshade Matron~Rush~Battlecry"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Battlecry: Discard your highest Cost card"
 	name_CN = "夜影主母"
 	
@@ -3508,7 +3512,7 @@ class NightshadeMatron(Minion):
 class TheDarkPortal(Spell):
 	Class, school, name = "Warlock", "", "The Dark Portal"
 	requireTarget, mana = False, 4
-	index = "Outlands~Warlock~Spell~4~The Dark Portal"
+	index = "BLACK_TEMPLE~Warlock~Spell~4~The Dark Portal"
 	description = "Draw a minion. If you have at least 8 cards in hand, it costs (5) less"
 	name_CN = "黑暗之门"
 	def effCanTrig(self):
@@ -3533,7 +3537,7 @@ class TheDarkPortal(Spell):
 class HandofGuldan(Spell):
 	Class, school, name = "Warlock", "", "Hand of Gul'dan"
 	requireTarget, mana = False, 6
-	index = "Outlands~Warlock~Spell~6~Hand of Gul'dan"
+	index = "BLACK_TEMPLE~Warlock~Spell~6~Hand of Gul'dan"
 	description = "When you play or discard this, draw 3 cards"
 	name_CN = "古尔丹之手"
 	def __init__(self, Game, ID):
@@ -3551,7 +3555,7 @@ class HandofGuldan(Spell):
 class KelidantheBreaker(Minion):
 	Class, race, name = "Warlock", "", "Keli'dan the Breaker"
 	mana, attack, health = 6, 3, 3
-	index = "Outlands~Warlock~Minion~6~3~3~~Keli'dan the Breaker~Battlecry~Legendary"
+	index = "BLACK_TEMPLE~Warlock~Minion~6~3~3~~Keli'dan the Breaker~Battlecry~Legendary"
 	requireTarget, keyWord, description = True, "", "Battlecry: Destroy a minion. If drawn this turn, instead destroy all minions except this one"
 	name_CN = "击碎者克里丹"
 	def __init__(self, Game, ID):
@@ -3602,7 +3606,7 @@ class Trig_KelidantheBreaker(TrigHand):
 class EnhancedDreadlord(Minion):
 	Class, race, name = "Warlock", "Demon", "Enhanced Dreadlord"
 	mana, attack, health = 8, 5, 7
-	index = "Outlands~Warlock~Minion~8~5~7~Demon~Enhanced Dreadlord~Taunt~Deathrattle"
+	index = "BLACK_TEMPLE~Warlock~Minion~8~5~7~Demon~Enhanced Dreadlord~Taunt~Deathrattle"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Summon a 5/5 Dreadlord with Lifesteal"
 	name_CN = "改进型 恐惧魔王"
 	def __init__(self, Game, ID):
@@ -3619,7 +3623,7 @@ class SummonaDreadlordwithLifesteal(Deathrattle_Minion):
 class DesperateDreadlord(Minion):
 	Class, race, name = "Warlock", "Demon", "Desperate Dreadlord"
 	mana, attack, health = 5, 5, 5
-	index = "Outlands~Warlock~Minion~5~5~5~Demon~Desperate Dreadlord~Lifesteal~Uncollectible"
+	index = "BLACK_TEMPLE~Warlock~Minion~5~5~5~Demon~Desperate Dreadlord~Lifesteal~Uncollectible"
 	requireTarget, keyWord, description = False, "Lifesteal", "Lifesteal"
 	name_CN = "绝望的 恐惧魔王"
 	
@@ -3627,7 +3631,7 @@ class DesperateDreadlord(Minion):
 class ImprisonedGanarg(Minion_Dormantfor2turns):
 	Class, race, name = "Warrior", "Demon", "Imprisoned Gan'arg"
 	mana, attack, health = 1, 2, 2
-	index = "Outlands~Warrior~Minion~1~2~2~Demon~Imprisoned Gan'arg"
+	index = "BLACK_TEMPLE~Warrior~Minion~1~2~2~Demon~Imprisoned Gan'arg"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, equip a 3/2 Axe"
 	name_CN = "被禁锢的 甘尔葛"
 	
@@ -3638,7 +3642,7 @@ class ImprisonedGanarg(Minion_Dormantfor2turns):
 class SwordandBoard(Spell):
 	Class, school, name = "Warrior", "", "Sword and Board"
 	requireTarget, mana = True, 1
-	index = "Outlands~Warrior~Spell~1~Sword and Board"
+	index = "BLACK_TEMPLE~Warrior~Spell~1~Sword and Board"
 	description = "Deal 2 damage to a minion. Gain 2 Armor"
 	name_CN = "剑盾猛攻"
 	def available(self):
@@ -3658,7 +3662,7 @@ class SwordandBoard(Spell):
 class CorsairCache(Spell):
 	Class, school, name = "Warrior", "", "Corsair Cache"
 	requireTarget, mana = False, 2
-	index = "Outlands~Warrior~Spell~2~Corsair Cache"
+	index = "BLACK_TEMPLE~Warrior~Spell~2~Corsair Cache"
 	description = "Draw a weapon. Give it +1 Durability"
 	name_CN = "海盗藏品"
 	
@@ -3682,7 +3686,7 @@ class CorsairCache(Spell):
 class Bladestorm(Spell):
 	Class, school, name = "Warrior", "", "Bladestorm"
 	requireTarget, mana = False, 3
-	index = "Outlands~Warrior~Spell~3~Bladestorm"
+	index = "BLACK_TEMPLE~Warrior~Spell~3~Bladestorm"
 	description = "Deal 1 damage to all minions. Repeat until one dies"
 	name_CN = "剑刃风暴"
 	
@@ -3707,7 +3711,7 @@ class Bladestorm(Spell):
 class BonechewerRaider(Minion):
 	Class, race, name = "Warrior", "", "Bonechewer Raider"
 	mana, attack, health = 3, 3, 3
-	index = "Outlands~Warrior~Minion~3~3~3~~Bonechewer Raider~Battlecry"
+	index = "BLACK_TEMPLE~Warrior~Minion~3~3~3~~Bonechewer Raider~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If there is a damaged minion, gain +1/+1 and Rush"
 	name_CN = "噬骨骑兵"
 	
@@ -3734,7 +3738,7 @@ class BonechewerRaider(Minion):
 class BulwarkofAzzinoth(Weapon):
 	Class, name, description = "Warrior", "Bulwark of Azzinoth", "Whenever your hero would take damage, this loses 1 Durability instead"
 	mana, attack, durability = 3, 1, 4
-	index = "Outlands~Warrior~Weapon~3~1~4~Bulwark of Azzinoth~Legendary"
+	index = "BLACK_TEMPLE~Warrior~Weapon~3~1~4~Bulwark of Azzinoth~Legendary"
 	name_CN = "埃辛诺斯壁垒"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3746,7 +3750,9 @@ class Trig_BulwarkofAzzinoth(TrigBoard):
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#Can only prevent damage if there is still durability left
-		return target == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard and self.entity.durability > 0
+		print("Testing the Bulwark of Azzinoth",  target == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard)
+		print(target == self.entity.Game.heroes[self.entity.ID], self.entity.onBoard)
+		return target == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
 		
 	def text(self, CHN):
 		return "每当你的英雄即将受到伤害，改为埃辛诺斯壁垒失去1点耐久度" if CHN \
@@ -3760,7 +3766,7 @@ class Trig_BulwarkofAzzinoth(TrigBoard):
 class WarmaulChallenger(Minion):
 	Class, race, name = "Warrior", "", "Warmaul Challenger"
 	mana, attack, health = 3, 1, 10
-	index = "Outlands~Warrior~Minion~3~1~10~~Warmaul Challenger~Battlecry"
+	index = "BLACK_TEMPLE~Warrior~Minion~3~1~10~~Warmaul Challenger~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Choose an enemy minion. Battle it to the death!"
 	name_CN = "战槌挑战者"
 	
@@ -3781,7 +3787,7 @@ class WarmaulChallenger(Minion):
 class KargathBladefist(Minion):
 	Class, race, name = "Warrior", "", "Kargath Bladefist"
 	mana, attack, health = 4, 4, 4
-	index = "Outlands~Warrior~Minion~4~4~4~~Kargath Bladefist~Rush~Deathrattle~Legendary"
+	index = "BLACK_TEMPLE~Warrior~Minion~4~4~4~~Kargath Bladefist~Rush~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Deathrattle: Shuffle 'Kargath Prime' into your deck"
 	name_CN = "卡加斯刃拳"
 	def __init__(self, Game, ID):
@@ -3799,7 +3805,7 @@ class ShuffleKargathPrimeintoYourDeck(Deathrattle_Minion):
 class KargathPrime(Minion):
 	Class, race, name = "Warrior", "", "Kargath Prime"
 	mana, attack, health = 8, 10, 10
-	index = "Outlands~Warrior~Minion~8~10~10~~Kargath Prime~Rush~Legendary~Uncollectible"
+	index = "BLACK_TEMPLE~Warrior~Minion~8~10~10~~Kargath Prime~Rush~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Whenever this attacks and kills a minion, gain 10 Armor"
 	name_CN = "终极卡加斯"
 	def __init__(self, Game, ID):
@@ -3823,7 +3829,7 @@ class Trig_KargathPrime(TrigBoard):
 class ScrapGolem(Minion):
 	Class, race, name = "Warrior", "Mech", "Scrap Golem"
 	mana, attack, health = 5, 4, 5
-	index = "Outlands~Warrior~Minion~5~4~5~Mech~Scrap Golem~Taunt~Deathrattle"
+	index = "BLACK_TEMPLE~Warrior~Minion~5~4~5~Mech~Scrap Golem~Taunt~Deathrattle"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Gain Armor equal to this minion's Attack"
 	name_CN = "废铁魔像"
 	def __init__(self, Game, ID):
@@ -3841,7 +3847,7 @@ class GainArmorEqualtoAttack(Deathrattle_Minion):
 class BloodboilBrute(Minion):
 	Class, race, name = "Warrior", "", "Bloodboil Brute"
 	mana, attack, health = 7, 5, 8
-	index = "Outlands~Warrior~Minion~7~5~8~~Bloodboil Brute~Rush"
+	index = "BLACK_TEMPLE~Warrior~Minion~7~5~8~~Bloodboil Brute~Rush"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Costs (1) less for each damaged minion"
 	name_CN = "沸血蛮兵"
 	def __init__(self, Game, ID):
@@ -3874,165 +3880,29 @@ class Trig_BloodboilBrute(TrigHand):
 		
 		
 		
-Outlands_Indices = {"Outlands~Neutral~Minion~1~2~1~~Ethereal Augmerchant~Battlecry": EtherealAugmerchant,
-					"Outlands~Neutral~Minion~1~2~1~~Guardian Augmerchant~Battlecry": GuardianAugmerchant,
-					"Outlands~Neutral~Minion~1~1~2~~Infectious Sporeling": InfectiousSporeling,
-					"Outlands~Neutral~Minion~1~2~1~~Rocket Augmerchant~Battlecry": RocketAugmerchant,
-					"Outlands~Neutral~Minion~1~1~4~~Soulbound Ashtongue": SoulboundAshtongue,
-					"Outlands~Neutral~Minion~2~2~3~~Bonechewer Brawler~Taunt": BonechewerBrawler,
-					"Outlands~Neutral~Minion~2~3~5~Demon~Imprisoned Vilefiend~Rush": ImprisonedVilefiend,
-					"Outlands~Neutral~Minion~2~2~4~Demon~Mo'arg Artificer": MoargArtificer,
-					"Outlands~Neutral~Minion~2~2~2~~Rustsworn Initiate~Deathrattle": RustswornInitiate,
-					"Outlands~Neutral~Minion~1~1~1~Demon~Impcaster~Spell Damage~Uncollectible": Impcaster,
-					"Outlands~Neutral~Minion~3~1~2~~Blistering Rot": BlisteringRot,
-					"Outlands~Neutral~Minion~1~1~1~~Living Rot~Uncollectible": LivingRot,
-					"Outlands~Neutral~Minion~3~4~3~~Frozen Shadoweaver~Battlecry": FrozenShadoweaver,
-					"Outlands~Neutral~Minion~3~1~6~~Overconfident Orc~Taunt": OverconfidentOrc,
-					"Outlands~Neutral~Minion~3~3~7~Demon~Terrorguard Escapee~Battlecry": TerrorguardEscapee,
-					"Outlands~Neutral~Minion~1~1~1~~Huntress~Uncollectible": Huntress,
-					"Outlands~Neutral~Minion~3~3~4~~Teron Gorefiend~Battlecry~Deathrattle~Legendary": TeronGorefiend,
-					"Outlands~Neutral~Minion~4~5~2~Beast~Burrowing Scorpid~Battlecry": BurrowingScorpid,
-					"Outlands~Neutral~Minion~4~3~3~Demon~Disguised Wanderer~Deathrattle": DisguisedWanderer,
-					"Outlands~Neutral~Minion~4~9~1~Demon~Rustsworn Inquisitor~Uncollectible": RustswornInquisitor,
-					"Outlands~Neutral~Minion~4~4~4~Murloc~Felfin Navigator~Battlecry": FelfinNavigator,
-					"Outlands~Neutral~Minion~4~12~12~Demon~Magtheridon~Battlecry~Legendary": Magtheridon,
-					"Outlands~Neutral~Minion~1~1~3~~Hellfire Warder~Uncollectible": HellfireWarder,
-					"Outlands~Neutral~Minion~4~4~3~~Maiev Shadowsong~Battlecry~Legendary": MaievShadowsong,
-					"Outlands~Neutral~Minion~4~3~3~Mech~Replicat-o-tron": Replicatotron,
-					"Outlands~Neutral~Minion~4~3~3~~Rustsworn Cultist~Battlecry": RustswornCultist,
-					"Outlands~Neutral~Minion~1~1~1~Demon~Rusted Devil~Uncollectible": RustedDevil,
-					"Outlands~Neutral~Minion~5~7~3~Elemental~Al'ar~Deathrattle~Legendary": Alar,
-					"Outlands~Neutral~Minion~1~0~3~~Ashes of Al'ar~Legendary~Uncollectible": AshesofAlar,
-					"Outlands~Neutral~Minion~5~1~8~~Ruststeed Raider~Taunt~Rush~Battlecry": RuststeedRaider,
-					"Outlands~Neutral~Minion~5~3~3~~Waste Warden~Battlecry": WasteWarden,
-					"Outlands~Neutral~Minion~6~5~6~Dragon~Dragonmaw Sky Stalker~Deathrattle": DragonmawSkyStalker,
-					"Outlands~Neutral~Minion~3~3~4~~Dragonrider~Uncollectible": Dragonrider,
-					"Outlands~Neutral~Minion~6~6~3~Demon~Scavenging Shivarra~Battlecry": ScavengingShivarra,
-					"Outlands~Neutral~Minion~7~4~10~~Bonechewer Vanguard~Taunt": BonechewerVanguard,
-					"Outlands~Neutral~Minion~7~4~7~~Kael'thas Sunstrider~Legendary": KaelthasSunstrider,
-					"Outlands~Neutral~Minion~8~12~12~Demon~Supreme Abyssal": SupremeAbyssal,
-					"Outlands~Neutral~Minion~10~7~7~Elemental~Scrapyard Colossus~Taunt~Deathrattle": ScrapyardColossus,
-					"Outlands~Neutral~Minion~7~7~7~Elemental~Felcracked Colossus~Taunt~Uncollectible": FelcrackedColossus,
-					"Outlands~Demon Hunter~Minion~2~3~2~Murloc~Furious Felfin~Battlecry": FuriousFelfin,
-					"Outlands~Demon Hunter~Spell~2~Immolation Aura": ImmolationAura,
-					"Outlands~Demon Hunter~Minion~2~2~2~~Netherwalker~Battlecry": Netherwalker,
-					"Outlands~Demon Hunter~Minion~6~8~3~~Fel Summoner~Deathrattle": FelSummoner,
-					"Outlands~Demon Hunter~Minion~4~3~4~~Kayn Sunfury~Charge~Legendary": KaynSunfury,
-					"Outlands~Demon Hunter~Spell~5~Metamorphosis~Legendary": Metamorphosis,
-					"Outlands~Demon Hunter~Minion~6~10~6~Demon~Imprisoned Antaen": ImprisonedAntaen,
-					"Outlands~Demon Hunter~Spell~6~Skull of Gul'dan~Outcast": SkullofGuldan,
-					"Outlands~Demon Hunter~Minion~7~6~5~Demon~Priestess of Fury": PriestessofFury,
-					"Outlands~Demon Hunter~Minion~8~9~5~~Coilfang Warlord~Rush~Deathrattle": CoilfangWarlord,
-					"Outlands~Demon Hunter~Minion~8~5~9~~Conchguard Warlord~Taunt~Uncollectible": ConchguardWarlord,
-					"Outlands~Demon Hunter~Minion~9~7~9~Demon~Pit Commander~Taunt": PitCommander,
-					"Outlands~Druid~Spell~3~Fungal Fortunes": FungalFortunes,
-					"Outlands~Druid~Spell~2~Ironbark": Ironbark,
-					"Outlands~Druid~Minion~3~3~4~~Archspore Msshi'fn~Taunt~Deathrattle~Legendary": ArchsporeMsshifn,
-					"Outlands~Druid~Minion~10~9~9~~Msshi'fn Prime~Taunt~Choose One~Legendary~Uncollectible": MsshifnPrime,
-					"Outlands~Druid~Minion~10~9~9~~Fungal Guardian~Taunt~Uncollectible": FungalGuardian,
-					"Outlands~Druid~Minion~10~9~9~~Fungal Bruiser~Rush~Uncollectible": FungalBruiser,
-					"Outlands~Druid~Minion~10~9~9~~Fungal Gargantuan~Taunt~Rush~Uncollectible": FungalGargantuan,
-					"Outlands~Druid~Spell~3~Bogbeam": Bogbeam,
-					"Outlands~Druid~Minion~3~3~3~Demon~Imprisoned Satyr": ImprisonedSatyr,
-					"Outlands~Druid~Spell~4~Germination": Germination,
-					"Outlands~Druid~Spell~4~Overgrowth": Overgrowth,
-					"Outlands~Druid~Spell~5~Glowfly Swarm": GlowflySwarm,
-					"Outlands~Druid~Minion~2~2~2~Beast~Glowfly~Uncollectible": Glowfly,
-					"Outlands~Druid~Minion~7~7~7~Beast~Marsh Hydra~Rush": MarshHydra,
-					"Outlands~Druid~Minion~9~5~5~~Ysiel Windsinger~Legendary": YsielWindsinger,
-					"Outlands~Hunter~Minion~1~2~1~Beast~Helboar~Deathrattle": Helboar,
-					"Outlands~Hunter~Minion~2~5~4~Demon~Imprisoned Felmaw": ImprisonedFelmaw,
-					"Outlands~Hunter~Spell~2~Pack Tactics~~Secret": PackTactics,
-					"Outlands~Hunter~Spell~2~Scavenger's Ingenuity": ScavengersIngenuity,
-					"Outlands~Hunter~Minion~3~2~4~Beast~Augmented Porcupine~Deathrattle": AugmentedPorcupine,
-					"Outlands~Hunter~Minion~3~2~4~Beast~Zixor, Apex Predator~Rush~Deathrattle~Legendary": ZixorApexPredator,
-					"Outlands~Hunter~Minion~8~4~4~Beast~Zixor Prime~Rush~Battlecry~Legendary~Uncollectible": ZixorPrime,
-					"Outlands~Hunter~Minion~4~5~2~Beast~Mok'Nathal Lion~Rush~Battlecry": MokNathalLion,
-					"Outlands~Hunter~Spell~4~Scrap Shot": ScrapShot,
-					"Outlands~Hunter~Minion~8~5~5~~Beastmaster Leoroxx~Battlecry~Legendary": BeastmasterLeoroxx,
-					"Outlands~Hunter~Spell~10~Nagrand Slam": NagrandSlam,
-					"Outlands~Hunter~Minion~4~3~5~Beast~Clefthoof~Uncollectible": Clefthoof,
-					"Outlands~Mage~Spell~2~Evocation~Legendary": Evocation,
-					"Outlands~Mage~Spell~1~Font of Power": FontofPower,
-					"Outlands~Mage~Minion~2~2~3~~Apexis Smuggler": ApexisSmuggler,
-					"Outlands~Mage~Minion~2~3~2~~Astromancer Solarian~Spell Damage~Deathrattle~Legendary": AstromancerSolarian,
-					"Outlands~Mage~Minion~9~7~7~Demon~Solarian Prime~Spell Damage~Battlecry~Legendary~Uncollectible": SolarianPrime,
-					"Outlands~Mage~Spell~2~Incanter's Flow": IncantersFlow,
-					"Outlands~Mage~Minion~2~3~1~~Starscryer~Deathrattle": Starscryer,
-					"Outlands~Mage~Minion~3~4~5~Demon~Imprisoned Observer": ImprisonedObserver,
-					"Outlands~Mage~Spell~3~Netherwind Portal~~Secret": NetherwindPortal,
-					"Outlands~Mage~Spell~5~Apexis Blast": ApexisBlast,
-					"Outlands~Mage~Spell~8~Deep Freeze": DeepFreeze,
-					"Outlands~Paladin~Minion~1~2~1~Murloc~Imprisoned Sungill": ImprisonedSungill,
-					"Outlands~Paladin~Minion~1~1~1~Murloc~Sungill Streamrunner~Uncollectible": SungillStreamrunner,
-					"Outlands~Paladin~Minion~1~1~3~~Aldor Attendant~Battlecry": AldorAttendant,
-					"Outlands~Paladin~Spell~2~Hand of A'dal": HandofAdal,
-					"Outlands~Paladin~Minion~2~2~1~Murloc~Murgur Murgurgle~Divine Shield~Deathrattle~Legendary": MurgurMurgurgle,
-					"Outlands~Paladin~Minion~8~6~3~Murloc~Murgurgle Prime~Divine Shield~Battlecry~Legendary~Uncollectible": MurgurglePrime,
-					"Outlands~Paladin~Spell~2~Libram of Wisdom": LibramofWisdom,
-					"Outlands~Paladin~Weapon~3~3~2~Underlight Angling Rod": UnderlightAnglingRod,
-					"Outlands~Paladin~Minion~5~4~6~~Aldor Truthseeker~Battlecry": AldorTruthseeker,
-					"Outlands~Paladin~Spell~5~Libram of Justice": LibramofJustice,
-					"Outlands~Paladin~Weapon~1~1~4~Overdue Justice~Uncollectible": OverdueJustice,
-					"Outlands~Paladin~Minion~7~4~6~~Lady Liadrin~Battlecry~Legendary": LadyLiadrin,
-					"Outlands~Paladin~Spell~9~Libram of Hope": LibramofHope,
-					"Outlands~Paladin~Minion~8~8~8~~Ancient Guardian~Taunt~Divine Shield~Uncollectible": AncientGuardian,
-					"Outlands~Priest~Minion~1~2~5~Demon~Imprisoned Homunculus~Taunt": ImprisonedHomunculus,
-					"Outlands~Priest~Minion~1~1~3~~Reliquary of Souls~Lifesteal~Deathrattle~Legendary": ReliquaryofSouls,
-					"Outlands~Priest~Minion~7~6~8~~Reliquary Prime~Taunt~Lifesteal~Legendary~Uncollectible": ReliquaryPrime,
-					"Outlands~Priest~Spell~1~Renew": Renew,
-					"Outlands~Priest~Minion~2~1~4~~Dragonmaw Sentinel~Battlecry": DragonmawSentinel,
-					"Outlands~Priest~Minion~2~2~3~~Sethekk Veilweaver": SethekkVeilweaver,
-					"Outlands~Priest~Spell~3~Apotheosis": Apotheosis,
-					"Outlands~Priest~Minion~3~2~2~~Dragonmaw Overseer": DragonmawOverseer,
-					"Outlands~Priest~Spell~5~Psyche Split": PsycheSplit,
-					"Outlands~Priest~Minion~7~4~9~Dragon~Skeletal Dragon~Taunt": SkeletalDragon,
-					"Outlands~Priest~Spell~7~Soul Mirror~Legendary": SoulMirror,
-					"Outlands~Rogue~Minion~1~1~2~~Blackjack Stunner~Battlecry": BlackjackStunner,
-					"Outlands~Rogue~Minion~1~3~1~~Spymistress~Stealth": Spymistress,
-					"Outlands~Rogue~Spell~2~Ambush~~Secret": Ambush,
-					"Outlands~Rogue~Minion~2~2~3~~Broken Ambusher~Poisonous~Uncollectible": BrokenAmbusher,
-					"Outlands~Rogue~Minion~2~3~2~~Ashtongue Slayer~Battlecry": AshtongueSlayer,
-					"Outlands~Rogue~Spell~2~Bamboozle~~Secret": Bamboozle,
-					"Outlands~Rogue~Spell~2~Dirty Tricks~~Secret": DirtyTricks,
-					"Outlands~Rogue~Minion~2~1~4~~Shadowjeweler Hanar~Legendary": ShadowjewelerHanar,
-					"Outlands~Rogue~Minion~3~3~4~~Akama~Stealth~Deathrattle~Legendary": Akama,
-					"Outlands~Rogue~Minion~6~6~5~~Akama Prime~Stealth~Legendary~Uncollectible": AkamaPrime,
-					"Outlands~Rogue~Minion~3~3~3~~Greyheart Sage~Battlecry": GreyheartSage,
-					"Outlands~Rogue~Minion~7~7~5~~Cursed Vagrant~Deathrattle": CursedVagrant,
-					"Outlands~Rogue~Minion~7~7~5~~Cursed Shadow~Stealth~Uncollectible": CursedShadow,
-					"Outlands~Shaman~Minion~3~3~3~~Bogstrok Clacker~Battlecry": BogstrokClacker,
-					"Outlands~Shaman~Minion~3~4~3~~Lady Vashj~Spell Damage~Deathrattle~Legendary": LadyVashj,
-					"Outlands~Shaman~Minion~7~5~4~~Vashj Prime~Spell Damage~Battlecry~Legendary~Uncollectible": VashjPrime,
-					"Outlands~Shaman~Minion~3~3~4~Elemental~Marshspawn~Battlecry": Marshspawn,
-					"Outlands~Shaman~Spell~3~Serpentshrine Portal~Overload": SerpentshrinePortal,
-					"Outlands~Shaman~Spell~3~Totemic Reflection": TotemicReflection,
-					"Outlands~Shaman~Spell~4~Vivid Spores": VividSpores,
-					"Outlands~Shaman~Weapon~5~3~2~Boggspine Knuckles": BoggspineKnuckles,
-					"Outlands~Shaman~Minion~5~5~6~Elemental~Shattered Rumbler~Battlecry": ShatteredRumbler,
-					"Outlands~Shaman~Spell~4~Torrent": Torrent,
-					"Outlands~Shaman~Minion~6~6~5~Beast~The Lurker Below~Battlecry~Legendary": TheLurkerBelow,
-					"Outlands~Warlock~Spell~1~Shadow Council": ShadowCouncil,
-					"Outlands~Warlock~Spell~1~Unstable Felbolt": UnstableFelbolt,
-					"Outlands~Warlock~Minion~2~3~3~Demon~Imprisoned Scrap Imp": ImprisonedScrapImp,
-					"Outlands~Warlock~Minion~2~3~2~~Kanrethad Ebonlocke~Deathrattle~Legendary": KanrethadEbonlocke,
-					"Outlands~Warlock~Minion~8~7~6~Demon~Kanrethad Prime~Battlecry~Legendary~Uncollectible": KanrethadPrime,
-					"Outlands~Warlock~Minion~2~2~3~Demon~Darkglare": Darkglare,
-					"Outlands~Warlock~Minion~4~5~5~Demon~Nightshade Matron~Rush~Battlecry": NightshadeMatron,
-					"Outlands~Warlock~Spell~4~The Dark Portal": TheDarkPortal,
-					"Outlands~Warlock~Spell~6~Hand of Gul'dan": HandofGuldan,
-					"Outlands~Warlock~Minion~6~3~3~~Keli'dan the Breaker~Battlecry~Legendary": KelidantheBreaker,
-					"Outlands~Warlock~Minion~8~5~7~Demon~Enhanced Dreadlord~Taunt~Deathrattle": EnhancedDreadlord,
-					"Outlands~Warlock~Minion~5~5~5~Demon~Desperate Dreadlord~Lifesteal~Uncollectible": DesperateDreadlord,
-					"Outlands~Warrior~Minion~1~2~2~Demon~Imprisoned Gan'arg": ImprisonedGanarg,
-					"Outlands~Warrior~Spell~1~Sword and Board": SwordandBoard,
-					"Outlands~Warrior~Spell~2~Corsair Cache": CorsairCache,
-					"Outlands~Warrior~Spell~3~Bladestorm": Bladestorm,
-					"Outlands~Warrior~Minion~3~3~3~~Bonechewer Raider~Battlecry": BonechewerRaider,
-					"Outlands~Warrior~Weapon~3~1~4~Bulwark of Azzinoth~Legendary": BulwarkofAzzinoth,
-					"Outlands~Warrior~Minion~3~1~10~~Warmaul Challenger~Battlecry": WarmaulChallenger,
-					"Outlands~Warrior~Minion~4~4~4~~Kargath Bladefist~Rush~Deathrattle~Legendary": KargathBladefist,
-					"Outlands~Warrior~Minion~8~10~10~~Kargath Prime~Rush~Legendary~Uncollectible": KargathPrime,
-					"Outlands~Warrior~Minion~5~4~5~Mech~Scrap Golem~Taunt~Deathrattle": ScrapGolem,
-					"Outlands~Warrior~Minion~7~5~8~~Bloodboil Brute~Rush": BloodboilBrute,
-					}
+Outlands_Cards = [#Neutral cards
+				EtherealAugmerchant, GuardianAugmerchant, InfectiousSporeling, RocketAugmerchant, SoulboundAshtongue, BonechewerBrawler, ImprisonedVilefiend, MoargArtificer, RustswornInitiate, Impcaster, BlisteringRot, LivingRot, 
+				FrozenShadoweaver, OverconfidentOrc, TerrorguardEscapee, Huntress, TeronGorefiend, BurrowingScorpid, DisguisedWanderer, RustswornInquisitor, FelfinNavigator, Magtheridon, HellfireWarder, MaievShadowsong, Replicatotron, 
+				RustswornCultist, RustedDevil, Alar, AshesofAlar, RuststeedRaider, WasteWarden, DragonmawSkyStalker, Dragonrider, ScavengingShivarra, BonechewerVanguard, KaelthasSunstrider, SupremeAbyssal, ScrapyardColossus, FelcrackedColossus, 
+				#Demon Hunter cards
+				FuriousFelfin, ImmolationAura, Netherwalker, FelSummoner, KaynSunfury, Metamorphosis, ImprisonedAntaen, SkullofGuldan, PriestessofFury, CoilfangWarlord, ConchguardWarlord, PitCommander, 
+				#Druid cards
+				FungalFortunes, Ironbark, ArchsporeMsshifn, MsshifnPrime, FungalGuardian, FungalBruiser, FungalGargantuan, Bogbeam, ImprisonedSatyr, Germination, Overgrowth, GlowflySwarm, Glowfly, MarshHydra, YsielWindsinger, 
+				#Hunter cards
+				Helboar, ImprisonedFelmaw, PackTactics, ScavengersIngenuity, AugmentedPorcupine, ZixorApexPredator, ZixorPrime, MokNathalLion, ScrapShot, BeastmasterLeoroxx, NagrandSlam, Clefthoof, 
+				#Mage cards
+				Evocation, FontofPower, ApexisSmuggler, AstromancerSolarian, SolarianPrime, IncantersFlow, Starscryer, ImprisonedObserver, NetherwindPortal, ApexisBlast, DeepFreeze, 
+				#Paladin cards
+				ImprisonedSungill, SungillStreamrunner, AldorAttendant, HandofAdal, MurgurMurgurgle, MurgurglePrime, LibramofWisdom, UnderlightAnglingRod, AldorTruthseeker, LibramofJustice, OverdueJustice, LadyLiadrin, LibramofHope, AncientGuardian, 
+				#Priest cards
+				ImprisonedHomunculus, ReliquaryofSouls, ReliquaryPrime, Renew, DragonmawSentinel, SethekkVeilweaver, Apotheosis, DragonmawOverseer, PsycheSplit, SkeletalDragon, SoulMirror, 
+				#Rogue cards
+				BlackjackStunner, Spymistress, Ambush, BrokenAmbusher, AshtongueSlayer, Bamboozle, DirtyTricks, ShadowjewelerHanar, Akama, AkamaPrime, GreyheartSage, CursedVagrant, CursedShadow, 
+				#Shaman cards
+				BogstrokClacker, LadyVashj, VashjPrime, Marshspawn, SerpentshrinePortal, TotemicReflection, VividSpores, BoggspineKnuckles, ShatteredRumbler, Torrent, TheLurkerBelow, 
+				#Warlock cards
+				ShadowCouncil, UnstableFelbolt, ImprisonedScrapImp, KanrethadEbonlocke, KanrethadPrime, Darkglare, NightshadeMatron, TheDarkPortal, HandofGuldan, KelidantheBreaker, EnhancedDreadlord, DesperateDreadlord, 
+				#Warrior cards
+				ImprisonedGanarg, SwordandBoard, CorsairCache, Bladestorm, BonechewerRaider, BulwarkofAzzinoth, WarmaulChallenger, KargathBladefist, KargathPrime, ScrapGolem, BloodboilBrute,
+				]
+				

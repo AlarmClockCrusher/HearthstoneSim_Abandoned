@@ -903,7 +903,7 @@ class ShuffleThisintoYourDeck(Deathrattle_Minion):
 		if self.canTrig(signal, ID, subject, target, number, comment):
 			PRINT(self.entity.Game, "Deathrattle: Shuffle this minion into your deck triggers")
 			if self.entity.Game.GUI:
-				self.entity.Game.GUI.trigBlink(self.entity)
+				self.entity.Game.GUI.deathrattleAni(self.entity)
 			self.entity.Game.returnMiniontoDeck(self.entity, targetDeckID=self.entity.ID, initiatorID=self.entity.ID, deathrattlesStayArmed=True)
 			
 Monk_Indices = { #Hero and standard Hero Powers

@@ -78,7 +78,9 @@ def invokeGalakrond(Game, ID):
 						
 class Galakrond_Hero(Hero):
 	def entersHand(self):
-		self.onBoard, self.inHand, self.inDeck = False, True, False
+		self.inHand = True
+		self.onBoard = self.inDeck = False
+		self.enterHandTurn = self.Game.numTurn
 		if self.Game.Counters.primaryGalakronds[self.ID] is None:
 			self.Game.Counters.primaryGalakronds[self.ID] = self
 		for trig in self.trigsHand: trig.connect()
@@ -141,7 +143,7 @@ class Galakrond_Hero(Hero):
 class BlazingBattlemage(Minion):
 	Class, race, name = "Neutral", "", "Blazing Battlemage"
 	mana, attack, health = 1, 2, 2
-	index = "Dragons~Neutral~Minion~1~2~2~~Blazing Battlemage"
+	index = "DRAGONS~Neutral~Minion~1~2~2~~Blazing Battlemage"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "灼光战斗法师"
 	
@@ -149,7 +151,7 @@ class BlazingBattlemage(Minion):
 class DepthCharge(Minion):
 	Class, race, name = "Neutral", "", "Depth Charge"
 	mana, attack, health = 1, 0, 5
-	index = "Dragons~Neutral~Minion~1~0~5~~Depth Charge"
+	index = "DRAGONS~Neutral~Minion~1~0~5~~Depth Charge"
 	requireTarget, keyWord, description = False, "", "At the start of your turn, deal 5 damage to all minions"
 	name_CN = "深潜炸弹"
 	def __init__(self, Game, ID):
@@ -174,7 +176,7 @@ class Trig_DepthCharge(TrigBoard):
 class HotAirBalloon(Minion):
 	Class, race, name = "Neutral", "Mech", "Hot Air Balloon"
 	mana, attack, health = 1, 1, 2
-	index = "Dragons~Neutral~Minion~1~1~2~Mech~Hot Air Balloon"
+	index = "DRAGONS~Neutral~Minion~1~1~2~Mech~Hot Air Balloon"
 	requireTarget, keyWord, description = False, "", "At the start of your turn, gain +1 Health"
 	name_CN = "热气球"
 	def __init__(self, Game, ID):
@@ -198,7 +200,7 @@ class Trig_HotAirBalloon(TrigBoard):
 class EvasiveChimaera(Minion):
 	Class, race, name = "Neutral", "Beast", "Evasive Chimaera"
 	mana, attack, health = 2, 2, 1
-	index = "Dragons~Neutral~Minion~2~2~1~Beast~Evasive Chimaera~Poisonous"
+	index = "DRAGONS~Neutral~Minion~2~2~1~Beast~Evasive Chimaera~Poisonous"
 	requireTarget, keyWord, description = False, "Poisonous", "Poisonous. Can't be targeted by spells or Hero Powers"
 	name_CN = "辟法奇美拉"
 	def __init__(self, Game, ID):
@@ -209,7 +211,7 @@ class EvasiveChimaera(Minion):
 class DragonBreeder(Minion):
 	Class, race, name = "Neutral", "", "Dragon Breeder"
 	mana, attack, health = 2, 2, 3
-	index = "Dragons~Neutral~Minion~2~2~3~~Dragon Breeder~Battlecry"
+	index = "DRAGONS~Neutral~Minion~2~2~3~~Dragon Breeder~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Choose a friendly Dragon. Add a copy of it to your hand"
 	name_CN = "幼龙饲养员"
 	def effCanTrig(self):
@@ -234,7 +236,7 @@ class DragonBreeder(Minion):
 class GrizzledWizard(Minion):
 	Class, race, name = "Neutral", "", "Grizzled Wizard"
 	mana, attack, health = 2, 3, 2
-	index = "Dragons~Neutral~Minion~2~3~2~~Grizzled Wizard~Battlecry"
+	index = "DRAGONS~Neutral~Minion~2~3~2~~Grizzled Wizard~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Swap Hero Powers with your opponent until next turn"
 	name_CN = "灰发巫师"
 	
@@ -279,7 +281,7 @@ class SwapHeroPowersBack:
 class ParachuteBrigand(Minion):
 	Class, race, name = "Neutral", "Pirate", "Parachute Brigand"
 	mana, attack, health = 2, 2, 2
-	index = "Dragons~Neutral~Minion~2~2~2~Pirate~Parachute Brigand"
+	index = "DRAGONS~Neutral~Minion~2~2~2~Pirate~Parachute Brigand"
 	requireTarget, keyWord, description = False, "", "After you play a Pirate, summon this minion from your hand"
 	name_CN = "空降歹徒"
 	def __init__(self, Game, ID):
@@ -308,7 +310,7 @@ class Trig_ParachuteBrigand(TrigHand):
 class TastyFlyfish(Minion):
 	Class, race, name = "Neutral", "Murloc", "Tasty Flyfish"
 	mana, attack, health = 2, 2, 2
-	index = "Dragons~Neutral~Minion~2~2~2~Murloc~Tasty Flyfish~Deathrattle"
+	index = "DRAGONS~Neutral~Minion~2~2~2~Murloc~Tasty Flyfish~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Give a Dragon in your hand +2/+2"
 	name_CN = "美味飞鱼"
 	def __init__(self, Game, ID):
@@ -341,7 +343,7 @@ class GiveaDragoninHandPlus2Plus2(Deathrattle_Minion):
 class Transmogrifier(Minion):
 	Class, race, name = "Neutral", "", "Transmogrifier"
 	mana, attack, health = 2, 2, 3
-	index = "Dragons~Neutral~Minion~2~2~3~~Transmogrifier"
+	index = "DRAGONS~Neutral~Minion~2~2~3~~Transmogrifier"
 	requireTarget, keyWord, description = False, "", "Whenever you draw a card, transform it into a random Legendary minion"
 	name_CN = "幻化师"
 	poolIdentifier = "Legendary Minions"
@@ -378,7 +380,7 @@ class Trig_Transmogrifier(TrigBoard):
 class WyrmrestPurifier(Minion):
 	Class, race, name = "Neutral", "", "Wyrmrest Purifier"
 	mana, attack, health = 2, 3, 2
-	index = "Dragons~Neutral~Minion~2~3~2~~Wyrmrest Purifier~Battlecry"
+	index = "DRAGONS~Neutral~Minion~2~3~2~~Wyrmrest Purifier~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Transform all Neutral cards in your deck into random cards from your class"
 	name_CN = "龙眠净化者"
 	poolIdentifier = "Druid Cards"
@@ -410,7 +412,7 @@ class WyrmrestPurifier(Minion):
 class BlowtorchSaboteur(Minion):
 	Class, race, name = "Neutral", "", "Blowtorch Saboteur"
 	mana, attack, health = 3, 3, 4
-	index = "Dragons~Neutral~Minion~3~3~4~~Blowtorch Saboteur~Battlecry"
+	index = "DRAGONS~Neutral~Minion~3~3~4~~Blowtorch Saboteur~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Your opponent's next Hero Power costs (3)"
 	name_CN = "喷灯破坏者"
 	
@@ -430,7 +432,7 @@ class GameManaAura_NextHeroPower3(TempManaEffect_Power):
 class DreadRaven(Minion):
 	Class, race, name = "Neutral", "Beast", "Dread Raven"
 	mana, attack, health = 3, 3, 4
-	index = "Dragons~Neutral~Minion~3~3~4~Beast~Dread Raven"
+	index = "DRAGONS~Neutral~Minion~3~3~4~Beast~Dread Raven"
 	requireTarget, keyWord, description = False, "", "Has +3 Attack for each other Dread Raven you control"
 	name_CN = "恐惧渡鸦"
 	def __init__(self, Game, ID):
@@ -475,7 +477,7 @@ class BuffAura_DreadRaven(HasAura_toMinion):
 class FireHawk(Minion):
 	Class, race, name = "Neutral", "Elemental", "Fire Hawk"
 	mana, attack, health = 3, 1, 3
-	index = "Dragons~Neutral~Minion~3~1~3~Elemental~Fire Hawk~Battlecry"
+	index = "DRAGONS~Neutral~Minion~3~1~3~Elemental~Fire Hawk~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Gain +1 Attack for each card in your opponent's hand"
 	name_CN = "火鹰"
 	
@@ -487,7 +489,7 @@ class FireHawk(Minion):
 class GoboglideTech(Minion):
 	Class, race, name = "Neutral", "", "Goboglide Tech"
 	mana, attack, health = 3, 3, 3
-	index = "Dragons~Neutral~Minion~3~3~3~~Goboglide Tech~Battlecry"
+	index = "DRAGONS~Neutral~Minion~3~3~3~~Goboglide Tech~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Mech, gain +1/+1 and Rush"
 	name_CN = "地精滑翔技师"
 	def effCanTrig(self):
@@ -503,7 +505,7 @@ class GoboglideTech(Minion):
 class LivingDragonbreath(Minion):
 	Class, race, name = "Neutral", "Elemental", "Living Dragonbreath"
 	mana, attack, health = 3, 3, 4
-	index = "Dragons~Neutral~Minion~3~3~4~Elemental~Living Dragonbreath"
+	index = "DRAGONS~Neutral~Minion~3~3~4~Elemental~Living Dragonbreath"
 	requireTarget, keyWord, description = False, "", "Your minions can't be Frozen"
 	name_CN = "活化龙息"
 	def __init__(self, Game, ID):
@@ -521,7 +523,7 @@ class GameRuleAura_LivingDragonbreath(GameRuleAura):
 class Scalerider(Minion):
 	Class, race, name = "Neutral", "", "Scalerider"
 	mana, attack, health = 3, 3, 3
-	index = "Dragons~Neutral~Minion~3~3~3~~Scalerider~Battlecry"
+	index = "DRAGONS~Neutral~Minion~3~3~3~~Scalerider~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: If you're holding a Dragon, deal 2 damage"
 	name_CN = "锐鳞骑士"
 	
@@ -541,7 +543,7 @@ class Scalerider(Minion):
 class BadLuckAlbatross(Minion):
 	Class, race, name = "Neutral", "Beast", "Bad Luck Albatross"
 	mana, attack, health = 4, 4, 3
-	index = "Dragons~Neutral~Minion~4~4~3~Beast~Bad Luck Albatross~Deathrattle"
+	index = "DRAGONS~Neutral~Minion~4~4~3~Beast~Bad Luck Albatross~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Shuffle two 1/1 Albatross into your opponent's deck"
 	name_CN = "厄运信天翁"
 	def __init__(self, Game, ID):
@@ -559,7 +561,7 @@ class ShuffleTwoAlbatrossintoOpponentsDeck(Deathrattle_Minion):
 class Albatross(Minion):
 	Class, race, name = "Neutral", "Beast", "Albatross"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Neutral~Minion~1~1~1~Beast~Albatross~Uncollectible"
+	index = "DRAGONS~Neutral~Minion~1~1~1~Beast~Albatross~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "信天翁"
 	
@@ -567,7 +569,7 @@ class Albatross(Minion):
 class DevotedManiac(Minion):
 	Class, race, name = "Neutral", "", "Devoted Maniac"
 	mana, attack, health = 4, 2, 2
-	index = "Dragons~Neutral~Minion~4~2~2~~Devoted Maniac~Rush~Battlecry"
+	index = "DRAGONS~Neutral~Minion~4~2~2~~Devoted Maniac~Rush~Battlecry"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Battlecry: Invoke Galakrond"
 	name_CN = "虔诚信徒"
 	
@@ -579,7 +581,7 @@ class DevotedManiac(Minion):
 class DragonmawPoacher(Minion):
 	Class, race, name = "Neutral", "", "Dragonmaw Poacher"
 	mana, attack, health = 4, 4, 4
-	index = "Dragons~Neutral~Minion~4~4~4~~Dragonmaw Poacher~Battlecry"
+	index = "DRAGONS~Neutral~Minion~4~4~4~~Dragonmaw Poacher~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your opponent controls a Dragon, gain +4/+4 and Rush"
 	name_CN = "龙喉偷猎者"
 	
@@ -605,7 +607,7 @@ class DragonmawPoacher(Minion):
 class EvasiveFeywing(Minion):
 	Class, race, name = "Neutral", "Dragon", "Evasive Feywing"
 	mana, attack, health = 4, 5, 4
-	index = "Dragons~Neutral~Minion~4~5~4~Dragon~Evasive Feywing"
+	index = "DRAGONS~Neutral~Minion~4~5~4~Dragon~Evasive Feywing"
 	requireTarget, keyWord, description = False, "", "Can't be targeted by spells or Hero Powers"
 	name_CN = "辟法灵龙"
 	def __init__(self, Game, ID):
@@ -616,7 +618,7 @@ class EvasiveFeywing(Minion):
 class FrizzKindleroost(Minion):
 	Class, race, name = "Neutral", "", "Frizz Kindleroost"
 	mana, attack, health = 4, 5, 4
-	index = "Dragons~Neutral~Minion~4~5~4~~Frizz Kindleroost~Battlecry~Legendary"
+	index = "DRAGONS~Neutral~Minion~4~5~4~~Frizz Kindleroost~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Reduce the Cost of Dragons in your deck by (2)"
 	name_CN = "弗瑞兹光巢"
 	
@@ -630,7 +632,7 @@ class FrizzKindleroost(Minion):
 class Hippogryph(Minion):
 	Class, race, name = "Neutral", "Beast", "Hippogryph"
 	mana, attack, health = 4, 2, 6
-	index = "Dragons~Neutral~Minion~4~2~6~Beast~Hippogryph~Rush~Taunt"
+	index = "DRAGONS~Neutral~Minion~4~2~6~Beast~Hippogryph~Rush~Taunt"
 	requireTarget, keyWord, description = False, "Rush,Taunt", "Rush, Taunt"
 	name_CN = "角鹰兽"
 	
@@ -638,7 +640,7 @@ class Hippogryph(Minion):
 class HoardPillager(Minion):
 	Class, race, name = "Neutral", "Pirate", "Hoard Pillager"
 	mana, attack, health = 4, 4, 2
-	index = "Dragons~Neutral~Minion~4~4~2~Pirate~Hoard Pillager~Battlecry"
+	index = "DRAGONS~Neutral~Minion~4~4~2~Pirate~Hoard Pillager~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Equip one of your destroyed weapons"
 	name_CN = "藏宝匪贼"
 	def effCanTrig(self):
@@ -660,7 +662,7 @@ class HoardPillager(Minion):
 class TrollBatrider(Minion):
 	Class, race, name = "Neutral", "", "Troll Batrider"
 	mana, attack, health = 4, 3, 3
-	index = "Dragons~Neutral~Minion~4~3~3~~Troll Batrider~Battlecry"
+	index = "DRAGONS~Neutral~Minion~4~3~3~~Troll Batrider~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Deal 3 damage to a random enemy minion"
 	name_CN = "巨魔蝙蝠骑士"
 	
@@ -680,7 +682,7 @@ class TrollBatrider(Minion):
 class WingCommander(Minion):
 	Class, race, name = "Neutral", "", "Wing Commander"
 	mana, attack, health = 4, 2, 5
-	index = "Dragons~Neutral~Minion~4~2~5~~Wing Commander"
+	index = "DRAGONS~Neutral~Minion~4~2~5~~Wing Commander"
 	requireTarget, keyWord, description = False, "", "Has +2 Attack for each Dragon in your hand"
 	name_CN = "空军指挥官"
 	def __init__(self, Game, ID):
@@ -726,7 +728,7 @@ class BuffAura_WingCommander(HasAura_toMinion):
 class ZulDrakRitualist(Minion):
 	Class, race, name = "Neutral", "", "Zul'Drak Ritualist"
 	mana, attack, health = 4, 3, 9
-	index = "Dragons~Neutral~Minion~4~3~9~~Zul'Drak Ritualist~Taunt~Battlecry"
+	index = "DRAGONS~Neutral~Minion~4~3~9~~Zul'Drak Ritualist~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Summon three random 1-Cost minions for your opponent"
 	name_CN = "祖达克仪祭师"
 	poolIdentifier = "1-Cost Minions to Summon"
@@ -750,7 +752,7 @@ class ZulDrakRitualist(Minion):
 class BigOlWhelp(Minion):
 	Class, race, name = "Neutral", "Dragon", "Big Ol' Whelp"
 	mana, attack, health = 5, 5, 5
-	index = "Dragons~Neutral~Minion~5~5~5~Dragon~Big Ol' Whelp~Battlecry"
+	index = "DRAGONS~Neutral~Minion~5~5~5~Dragon~Big Ol' Whelp~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Draw a card"
 	name_CN = "雏龙巨婴"
 	
@@ -762,7 +764,7 @@ class BigOlWhelp(Minion):
 class ChromaticEgg(Minion):
 	Class, race, name = "Neutral", "", "Chromatic Egg"
 	mana, attack, health = 5, 0, 3
-	index = "Dragons~Neutral~Minion~5~0~3~~Chromatic Egg~Battlecry~Deathrattle"
+	index = "DRAGONS~Neutral~Minion~5~0~3~~Chromatic Egg~Battlecry~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Battlecry: Secretly Discover a Dragon to hatch into. Deathrattle: Hatch!"
 	name_CN = "多彩龙蛋"
 	poolIdentifier = "Dragons as Druid to Summon"
@@ -823,7 +825,7 @@ class HatchintotheChosenDragon(Deathrattle_Minion):
 		if self.canTrig(signal, ID, subject, target, number, comment):
 			if self.dragonInside:
 				if self.entity.Game.GUI:
-					self.entity.Game.GUI.trigBlink(self.entity)
+					self.entity.Game.GUI.deathrattleAni(self.entity)
 				self.entity.Game.transform(self.entity, self.dragonInside(self.entity.Game, self.entity.ID))
 				
 	def selfCopy(self, recipient):
@@ -835,7 +837,7 @@ class HatchintotheChosenDragon(Deathrattle_Minion):
 class CobaltSpellkin(Minion):
 	Class, race, name = "Neutral", "Dragon", "Cobalt Spellkin"
 	mana, attack, health = 5, 3, 5
-	index = "Dragons~Neutral~Minion~5~3~5~Dragon~Cobalt Spellkin~Battlecry"
+	index = "DRAGONS~Neutral~Minion~5~3~5~Dragon~Cobalt Spellkin~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add two 1-Cost spells from your class to your hand"
 	name_CN = "深蓝系咒师"
 	poolIdentifier = "1-Cost Spells as Druid"
@@ -860,7 +862,7 @@ class CobaltSpellkin(Minion):
 class FacelessCorruptor(Minion):
 	Class, race, name = "Neutral", "", "Faceless Corruptor"
 	mana, attack, health = 5, 4, 4
-	index = "Dragons~Neutral~Minion~5~4~4~~Faceless Corruptor~Rush~Battlecry"
+	index = "DRAGONS~Neutral~Minion~5~4~4~~Faceless Corruptor~Rush~Battlecry"
 	requireTarget, keyWord, description = True, "Rush", "Rush. Battlecry: Transform one of your friendly minions into a copy of this"
 	name_CN = "无面腐蚀者"
 	
@@ -872,7 +874,7 @@ class FacelessCorruptor(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			Copy = self.selfCopy(self.ID) if self.onBoard or self.inHand else type(self)(self.Game, self.ID)
+			Copy = self.selfCopy(self.ID, self) if self.onBoard or self.inHand else type(self)(self.Game, self.ID)
 			self.Game.transform(target, Copy)
 			return Copy
 		return None
@@ -881,7 +883,7 @@ class FacelessCorruptor(Minion):
 class KoboldStickyfinger(Minion):
 	Class, race, name = "Neutral", "Pirate", "Kobold Stickyfinger"
 	mana, attack, health = 5, 4, 4
-	index = "Dragons~Neutral~Minion~5~4~4~Pirate~Kobold Stickyfinger~Battlecry"
+	index = "DRAGONS~Neutral~Minion~5~4~4~Pirate~Kobold Stickyfinger~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Steal your opponent's weapon"
 	name_CN = "黏指狗头人"
 	
@@ -902,7 +904,7 @@ class KoboldStickyfinger(Minion):
 class Platebreaker(Minion):
 	Class, race, name = "Neutral", "", "Platebreaker"
 	mana, attack, health = 5, 5, 5
-	index = "Dragons~Neutral~Minion~5~5~5~~Platebreaker~Battlecry"
+	index = "DRAGONS~Neutral~Minion~5~5~5~~Platebreaker~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Destroy your opponent's Armor"
 	name_CN = "破甲骑士"
 	
@@ -914,7 +916,7 @@ class Platebreaker(Minion):
 class ShieldofGalakrond(Minion):
 	Class, race, name = "Neutral", "", "Shield of Galakrond"
 	mana, attack, health = 5, 4, 5
-	index = "Dragons~Neutral~Minion~5~4~5~~Shield of Galakrond~Taunt~Battlecry"
+	index = "DRAGONS~Neutral~Minion~5~4~5~~Shield of Galakrond~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Invoke Galakrond"
 	name_CN = "迦拉克隆之盾"
 	
@@ -926,7 +928,7 @@ class ShieldofGalakrond(Minion):
 class Skyfin(Minion):
 	Class, race, name = "Neutral", "Murloc", "Skyfin"
 	mana, attack, health = 5, 3, 3
-	index = "Dragons~Neutral~Minion~5~3~3~Murloc~Skyfin~Battlecry"
+	index = "DRAGONS~Neutral~Minion~5~3~3~Murloc~Skyfin~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, summon 2 random Murlocs"
 	name_CN = "飞天鱼人"
 	poolIdentifier = "Murlocs to Summon"
@@ -954,7 +956,7 @@ class Skyfin(Minion):
 class TentacledMenace(Minion):
 	Class, race, name = "Neutral", "", "Tentacled Menace"
 	mana, attack, health = 5, 6, 5
-	index = "Dragons~Neutral~Minion~5~6~5~~Tentacled Menace~Battlecry"
+	index = "DRAGONS~Neutral~Minion~5~6~5~~Tentacled Menace~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Each player draws a card. Swap their Costs"
 	name_CN = "触手恐吓者"
 	
@@ -974,7 +976,7 @@ class TentacledMenace(Minion):
 class CamouflagedDirigible(Minion):
 	Class, race, name = "Neutral", "Mech", "Camouflaged Dirigible"
 	mana, attack, health = 6, 6, 6
-	index = "Dragons~Neutral~Minion~6~6~6~Mech~Camouflaged Dirigible~Battlecry"
+	index = "DRAGONS~Neutral~Minion~6~6~6~Mech~Camouflaged Dirigible~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Give your other Mechs Stealth until your next turn"
 	name_CN = "迷彩飞艇"
 	
@@ -987,7 +989,7 @@ class CamouflagedDirigible(Minion):
 class EvasiveWyrm(Minion):
 	Class, race, name = "Neutral", "Dragon", "Evasive Wyrm"
 	mana, attack, health = 6, 5, 3
-	index = "Dragons~Neutral~Minion~6~5~3~Dragon~Evasive Wyrm~Divine Shield~Rush"
+	index = "DRAGONS~Neutral~Minion~6~5~3~Dragon~Evasive Wyrm~Divine Shield~Rush"
 	requireTarget, keyWord, description = False, "Divine Shield,Rush", "Divine Shield, Rush. Can't be targeted by spells or Hero Powers"
 	name_CN = "辟法巨龙"
 	def __init__(self, Game, ID):
@@ -998,7 +1000,7 @@ class EvasiveWyrm(Minion):
 class Gyrocopter(Minion):
 	Class, race, name = "Neutral", "Mech", "Gyrocopter"
 	mana, attack, health = 6, 4, 5
-	index = "Dragons~Neutral~Minion~6~4~5~Mech~Gyrocopter~Rush~Windfury"
+	index = "DRAGONS~Neutral~Minion~6~4~5~Mech~Gyrocopter~Rush~Windfury"
 	requireTarget, keyWord, description = False, "Rush,Windfury", "Rush, Windfury"
 	name_CN = "旋翼机"
 	
@@ -1006,7 +1008,7 @@ class Gyrocopter(Minion):
 class KronxDragonhoof(Minion):
 	Class, race, name = "Neutral", "", "Kronx Dragonhoof"
 	mana, attack, health = 6, 6, 6
-	index = "Dragons~Neutral~Minion~6~6~6~~Kronx Dragonhoof~Battlecry~Legendary"
+	index = "DRAGONS~Neutral~Minion~6~6~6~~Kronx Dragonhoof~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Draw Galakrond. If you're alread Galakrond, unleash a Devastation"
 	name_CN = "克罗斯龙蹄"
 	
@@ -1078,7 +1080,7 @@ class Reanimation:
 class ReanimatedDragon(Minion):
 	Class, race, name = "Neutral", "Dragon", "Reanimated Dragon"
 	mana, attack, health = 8, 8, 8
-	index = "Dragons~Neutral~Minion~8~8~8~Dragon~Reanimated Dragon~Uncollectible"
+	index = "DRAGONS~Neutral~Minion~8~8~8~Dragon~Reanimated Dragon~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "重生的巨龙"
 	
@@ -1086,7 +1088,7 @@ class ReanimatedDragon(Minion):
 class UtgardeGrapplesniper(Minion):
 	Class, race, name = "Neutral", "", "Utgarde Grapplesniper"
 	mana, attack, health = 6, 5, 5
-	index = "Dragons~Neutral~Minion~6~5~5~~Utgarde Grapplesniper~Battlecry"
+	index = "DRAGONS~Neutral~Minion~6~5~5~~Utgarde Grapplesniper~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Both players draw a card. If it's a Dragon, summon it"
 	name_CN = "乌特加德 鱼叉射手"
 	
@@ -1105,7 +1107,7 @@ class UtgardeGrapplesniper(Minion):
 class EvasiveDrakonid(Minion):
 	Class, race, name = "Neutral", "Dragon", "Evasive Drakonid"
 	mana, attack, health = 7, 7, 7
-	index = "Dragons~Neutral~Minion~7~7~7~Dragon~Evasive Drakonid~Taunt"
+	index = "DRAGONS~Neutral~Minion~7~7~7~Dragon~Evasive Drakonid~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Can't be targeted by spells or Hero Powers"
 	name_CN = "辟法龙人"
 	def __init__(self, Game, ID):
@@ -1116,7 +1118,7 @@ class EvasiveDrakonid(Minion):
 class Shuma(Minion):
 	Class, race, name = "Neutral", "", "Shu'ma"
 	mana, attack, health = 7, 1, 7
-	index = "Dragons~Neutral~Minion~7~1~7~~Shu'ma~Legendary"
+	index = "DRAGONS~Neutral~Minion~7~1~7~~Shu'ma~Legendary"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, fill your board with 1/1 Tentacles"
 	name_CN = "舒玛"
 	def __init__(self, Game, ID):
@@ -1140,7 +1142,7 @@ class Trig_Shuma(TrigBoard):
 class Tentacle_Dragons(Minion):
 	Class, race, name = "Neutral", "", "Tentacle"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Neutral~Minion~1~1~1~~Tentacle~Uncollectible"
+	index = "DRAGONS~Neutral~Minion~1~1~1~~Tentacle~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "触手"
 	
@@ -1148,7 +1150,7 @@ class Tentacle_Dragons(Minion):
 class TwinTyrant(Minion):
 	Class, race, name = "Neutral", "Dragon", "Twin Tyrant"
 	mana, attack, health = 8, 4, 10
-	index = "Dragons~Neutral~Minion~8~4~10~Dragon~Twin Tyrant~Battlecry"
+	index = "DRAGONS~Neutral~Minion~8~4~10~Dragon~Twin Tyrant~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Deal 4 damage to two random enemy minions"
 	name_CN = "双头暴虐龙"
 	
@@ -1169,7 +1171,7 @@ class TwinTyrant(Minion):
 class DragonqueenAlexstrasza(Minion):
 	Class, race, name = "Neutral", "Dragon", "Dragonqueen Alexstrasza"
 	mana, attack, health = 9, 8, 8
-	index = "Dragons~Neutral~Minion~9~8~8~Dragon~Dragonqueen Alexstrasza~Battlecry~Legendary"
+	index = "DRAGONS~Neutral~Minion~9~8~8~Dragon~Dragonqueen Alexstrasza~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no duplicates, add two Dragons to your hand. They cost (1)"
 	name_CN = "红龙女王 阿莱克丝塔萨"
 	poolIdentifier = "Dragons except Dragonqueen Alexstrasza"
@@ -1205,7 +1207,7 @@ class DragonqueenAlexstrasza(Minion):
 class Sathrovarr(Minion):
 	Class, race, name = "Neutral", "Demon", "Sathrovarr"
 	mana, attack, health = 9, 5, 5
-	index = "Dragons~Neutral~Minion~9~5~5~Demon~Sathrovarr~Battlecry~Legendary"
+	index = "DRAGONS~Neutral~Minion~9~5~5~Demon~Sathrovarr~Battlecry~Legendary"
 	requireTarget, keyWord, description = True, "", "Battlecry: Choose a friendly minion. Add a copy of it to your hand, deck and battlefield"
 	name_CN = "萨索瓦尔"
 	
@@ -1221,7 +1223,7 @@ class Sathrovarr(Minion):
 			#不知道这个加入牌库是否算作洗入牌库，从而可以触发强能雷象等扳机
 			self.Game.Hand_Deck.shuffleintoDeck(type(target)(self.Game, self.ID), creator=self)
 			#不知道这个召唤的复制是会出现在这个随从右边还是目标随从右边
-			Copy = target.selfCopy(self.ID) if target.onBoard else type(target)(self.Game, self.ID)
+			Copy = target.selfCopy(self.ID, self) if target.onBoard else type(target)(self.Game, self.ID)
 			self.Game.summon(Copy, self.pos+1, self)
 		return target
 		
@@ -1229,7 +1231,7 @@ class Sathrovarr(Minion):
 class Embiggen(Spell):
 	Class, school, name = "Druid", "", "Embiggen"
 	requireTarget, mana = False, 0
-	index = "Dragons~Druid~Spell~0~Embiggen"
+	index = "DRAGONS~Druid~Spell~0~Embiggen"
 	description = "Give all minions in your deck +2/+2. They cost (1) more (up to 10)"
 	name_CN = "森然巨化"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1247,7 +1249,7 @@ class Embiggen(Spell):
 class SecuretheDeck(Quest):
 	Class, school, name = "Druid", "", "Secure the Deck"
 	requireTarget, mana = False, 1
-	index = "Dragons~Druid~Spell~1~Secure the Deck~~Quest"
+	index = "DRAGONS~Druid~Spell~1~Secure the Deck~~Quest"
 	description = "Sidequest: Attack twice with your hero. Reward: Add 3 'Claw' to your hand"
 	name_CN = "保护甲板"
 	def __init__(self, Game, ID):
@@ -1273,7 +1275,7 @@ class Trig_SecuretheDeck(QuestTrigger):
 class StrengthinNumbers(Quest):
 	Class, school, name = "Druid", "", "Strength in Numbers"
 	requireTarget, mana = False, 1
-	index = "Dragons~Druid~Spell~1~Strength in Numbers~~Quest"
+	index = "DRAGONS~Druid~Spell~1~Strength in Numbers~~Quest"
 	description = "Sidequest: Spend 10 Mana on minions. Rewards: Summon a minion from your deck"
 	name_CN = "人多势众"
 	def __init__(self, Game, ID):
@@ -1308,7 +1310,7 @@ class Trig_StrengthinNumbers(QuestTrigger):
 class Treenforcements(Spell):
 	Class, school, name = "Druid", "", "Treenforcements"
 	requireTarget, mana = True, 1
-	index = "Dragons~Druid~Spell~1~Treenforcements~Choose One"
+	index = "DRAGONS~Druid~Spell~1~Treenforcements~Choose One"
 	description = "Choose One - Give a minion +2 Health and Taunt; or Summon a 2/2 Taunt"
 	name_CN = "树木增援"
 	def __init__(self, Game, ID):
@@ -1342,20 +1344,20 @@ class Treenforcements(Spell):
 		
 class SmallRepairs_Option(ChooseOneOption):
 	name, description = "Small Repairs", "Give a minion +2 Health and Taunt"
-	index = "Dragons~Druid~Spell~1~Small Repairs~Uncollectible"
+	index = "DRAGONS~Druid~Spell~1~Small Repairs~Uncollectible"
 	def available(self):
 		return self.entity.selectableMinionExists(0)
 		
 class SpinemUp_Option(ChooseOneOption):
 	name, description = "Spin 'em Up", "Summon a Treant"
-	index = "Dragons~Druid~Spell~1~Spin'em Up~Uncollectible"
+	index = "DRAGONS~Druid~Spell~1~Spin'em Up~Uncollectible"
 	def available(self):
 		return self.entity.Game.space(self.entity.ID)
 		
 class SmallRepairs(Spell):
 	Class, school, name = "Druid", "", "Small Repairs"
 	requireTarget, mana = True, 1
-	index = "Dragons~Druid~Spell~1~Small Repairs~Uncollectible"
+	index = "DRAGONS~Druid~Spell~1~Small Repairs~Uncollectible"
 	description = "Give a minion +2 Health and Taunt"
 	name_CN = "简单维修"
 	def available(self):
@@ -1373,7 +1375,7 @@ class SmallRepairs(Spell):
 class SpinemUp(Spell):
 	Class, school, name = "Druid", "", "Spin 'em Up"
 	requireTarget, mana = False, 1
-	index = "Dragons~Druid~Spell~1~Spin 'em Up~Uncollectible"
+	index = "DRAGONS~Druid~Spell~1~Spin 'em Up~Uncollectible"
 	description = "Summon a 2/2 Treant"
 	name_CN = "旋叶起飞"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1384,7 +1386,7 @@ class SpinemUp(Spell):
 class BreathofDreams(Spell):
 	Class, school, name = "Druid", "", "Breath of Dreams"
 	requireTarget, mana = False, 2
-	index = "Dragons~Druid~Spell~2~Breath of Dreams"
+	index = "DRAGONS~Druid~Spell~2~Breath of Dreams"
 	description = "Draw a card. If you're holding a Dragon, gain an empty Mana Crystal"
 	name_CN = "梦境吐息"
 	def effCanTrig(self):
@@ -1400,7 +1402,7 @@ class BreathofDreams(Spell):
 class Shrubadier(Minion):
 	Class, race, name = "Druid", "", "Shrubadier"
 	mana, attack, health = 2, 1, 1
-	index = "Dragons~Druid~Minion~2~1~1~~Shrubadier~Battlecry"
+	index = "DRAGONS~Druid~Minion~2~1~1~~Shrubadier~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 2/2 Treant"
 	name_CN = "盆栽投手"
 	
@@ -1411,7 +1413,7 @@ class Shrubadier(Minion):
 class Treant_Dragons(Minion):
 	Class, race, name = "Druid", "", "Treant"
 	mana, attack, health = 2, 2, 2
-	index = "Dragons~Druid~Minion~2~2~2~~Treant~Uncollectible"
+	index = "DRAGONS~Druid~Minion~2~2~2~~Treant~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "树人"
 	
@@ -1419,7 +1421,7 @@ class Treant_Dragons(Minion):
 class Aeroponics(Spell):
 	Class, school, name = "Druid", "", "Aeroponics"
 	requireTarget, mana = False, 5
-	index = "Dragons~Druid~Spell~5~Aeroponics"
+	index = "DRAGONS~Druid~Spell~5~Aeroponics"
 	description = "Draw 2 cards. Costs (2) less for each Treant you control"
 	name_CN = "空气盆栽"
 	def __init__(self, Game, ID):
@@ -1459,7 +1461,7 @@ class Trig_Aeroponics(TrigHand):
 class EmeraldExplorer(Minion):
 	Class, race, name = "Druid", "Dragon", "Emerald Explorer"
 	mana, attack, health = 6, 4, 8
-	index = "Dragons~Druid~Minion~6~4~8~Dragon~Emerald Explorer~Taunt~Battlecry"
+	index = "DRAGONS~Druid~Minion~6~4~8~Dragon~Emerald Explorer~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Discover a Dragon"
 	name_CN = "翡翠龙探险者"
 	poolIdentifier = "Dragons as Druid"
@@ -1498,7 +1500,7 @@ class EmeraldExplorer(Minion):
 class GorutheMightree(Minion):
 	Class, race, name = "Druid", "", "Goru the Mightree"
 	mana, attack, health = 7, 5, 10
-	index = "Dragons~Druid~Minion~7~5~10~~Goru the Mightree~Taunt~Battlecry~Legendary"
+	index = "DRAGONS~Druid~Minion~7~5~10~~Goru the Mightree~Taunt~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: For the rest of the game, your Treants have +1/+1"
 	name_CN = "强力巨树格鲁"
 	
@@ -1565,7 +1567,7 @@ class GameTrigAura_BuffYourTreants(HasAura_toMinion):
 class YseraUnleashed(Minion):
 	Class, race, name = "Druid", "Dragon", "Ysera, Unleashed"
 	mana, attack, health = 9, 4, 12
-	index = "Dragons~Druid~Minion~9~4~12~Dragon~Ysera, Unleashed~Battlecry~Legendary"
+	index = "DRAGONS~Druid~Minion~9~4~12~Dragon~Ysera, Unleashed~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle 7 Dream Portals into your deck. When drawn, summon a random Dragon"
 	name_CN = "觉醒巨龙 伊瑟拉"
 	poolIdentifier = "Dragons to Summon"
@@ -1581,7 +1583,7 @@ class YseraUnleashed(Minion):
 class DreamPortal(Spell):
 	Class, school, name = "Druid", "", "Dream Portal"
 	requireTarget, mana = False, 9
-	index = "Dragons~Druid~Spell~9~Dream Portal~Casts When Drawn~Uncollectible"
+	index = "DRAGONS~Druid~Spell~9~Dream Portal~Casts When Drawn~Uncollectible"
 	description = "Casts When Drawn. Summon a random Dragon"
 	name_CN = "梦境之门"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1600,7 +1602,7 @@ class DreamPortal(Spell):
 class CleartheWay(Quest):
 	Class, school, name = "Hunter", "", "Clear the Way"
 	requireTarget, mana = False, 1
-	index = "Dragons~Hunter~Spell~1~Clear the Way~~Quest"
+	index = "DRAGONS~Hunter~Spell~1~Clear the Way~~Quest"
 	description = "Sidequest: Summon 3 Rush minions. Reward: Summon a 4/4 Gryphon with Rush"
 	name_CN = "扫清道路"
 	def __init__(self, Game, ID):
@@ -1627,7 +1629,7 @@ class Trig_CleartheWay(QuestTrigger):
 class Gryphon_Dragons(Minion):
 	Class, race, name = "Hunter", "Beast", "Gryphon"
 	mana, attack, health = 4, 4, 4
-	index = "Dragons~Hunter~Minion~4~4~4~Beast~Gryphon~Rush~Uncollectible"
+	index = "DRAGONS~Hunter~Minion~4~4~4~Beast~Gryphon~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	name_CN = "狮鹫"
 	
@@ -1635,7 +1637,7 @@ class Gryphon_Dragons(Minion):
 class DwarvenSharpshooter(Minion):
 	Class, race, name = "Hunter", "", "Dwarven Sharpshooter"
 	mana, attack, health = 1, 1, 3
-	index = "Dragons~Hunter~Minion~1~1~3~~Dwarven Sharpshooter"
+	index = "DRAGONS~Hunter~Minion~1~1~3~~Dwarven Sharpshooter"
 	requireTarget, keyWord, description = False, "", "Your Hero Power can target minions"
 	name_CN = "矮人神射手"
 	def __init__(self, Game, ID):
@@ -1653,7 +1655,7 @@ class GameRuleAura_DwarvenSharpshooter(GameRuleAura):
 class ToxicReinforcements(Quest):
 	Class, school, name = "Hunter", "", "Toxic Reinforcements"
 	requireTarget, mana = False, 1
-	index = "Dragons~Hunter~Spell~1~Toxic Reinforcements~~Quest"
+	index = "DRAGONS~Hunter~Spell~1~Toxic Reinforcements~~Quest"
 	description = "Sidequest: Use your Hero Power three times. Reward: Summon three 1/1 Leper Gnomes"
 	name_CN = "病毒增援"
 	def __init__(self, Game, ID):
@@ -1678,7 +1680,7 @@ class Trig_ToxicReinforcement(QuestTrigger):
 class LeperGnome_Dragons(Minion):
 	Class, race, name = "Neutral", "", "Leper Gnome"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Neutral~Minion~1~1~1~~Leper Gnome~Deathrattle~Uncollectible"
+	index = "DRAGONS~Neutral~Minion~1~1~1~~Leper Gnome~Deathrattle~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Deal 2 damage to the enemy hero"
 	name_CN = "麻风侏儒"
 	def __init__(self, Game, ID):
@@ -1696,7 +1698,7 @@ class Deal2DamagetoEnemyHero(Deathrattle_Minion):
 class CorrosiveBreath(Spell):
 	Class, school, name = "Hunter", "", "Corrosive Breath"
 	requireTarget, mana = True, 2
-	index = "Dragons~Hunter~Spell~2~Corrosive Breath"
+	index = "DRAGONS~Hunter~Spell~2~Corrosive Breath"
 	description = "Deal 3 damage to a minion. If you're holding a Dragon, it also hits the enemy hero"
 	name_CN = "腐蚀吐息"
 	def effCanTrig(self):
@@ -1720,7 +1722,7 @@ class CorrosiveBreath(Spell):
 class PhaseStalker(Minion):
 	Class, race, name = "Hunter", "Beast", "Phase Stalker"
 	mana, attack, health = 2, 2, 3
-	index = "Dragons~Hunter~Minion~2~2~3~Beast~Phase Stalker"
+	index = "DRAGONS~Hunter~Minion~2~2~3~Beast~Phase Stalker"
 	requireTarget, keyWord, description = False, "", "After you use your Hero Power, cast a Secret from your deck"
 	name_CN = "相位追踪者"
 	def __init__(self, Game, ID):
@@ -1745,7 +1747,7 @@ class Trig_PhaseStalker(TrigBoard):
 class DivingGryphon(Minion):
 	Class, race, name = "Hunter", "Beast", "Diving Gryphon"
 	mana, attack, health = 3, 4, 1
-	index = "Dragons~Hunter~Minion~3~4~1~Beast~Diving Gryphon~Rush~Battlecry"
+	index = "DRAGONS~Hunter~Minion~3~4~1~Beast~Diving Gryphon~Rush~Battlecry"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Battlecry: Draw a Rush minion from your deck"
 	name_CN = "俯冲狮鹫"
 	
@@ -1765,7 +1767,7 @@ class DivingGryphon(Minion):
 class PrimordialExplorer(Minion):
 	Class, race, name = "Hunter", "Dragon", "Primordial Explorer"
 	mana, attack, health = 3, 2, 3
-	index = "Dragons~Hunter~Minion~3~2~3~Dragon~Primordial Explorer~Poisonous~Battlecry"
+	index = "DRAGONS~Hunter~Minion~3~2~3~Dragon~Primordial Explorer~Poisonous~Battlecry"
 	requireTarget, keyWord, description = False, "Poisonous", "Poisonous. Battlecry: Discover a Dragon"
 	name_CN = "始生龙探险者"
 	poolIdentifier = "Dragons as Hunter"
@@ -1803,7 +1805,7 @@ class PrimordialExplorer(Minion):
 class Stormhammer(Weapon):
 	Class, name, description = "Hunter", "Stormhammer", "Doesn't lose Durability while you control a Dragon"
 	mana, attack, durability = 3, 3, 2
-	index = "Dragons~Hunter~Weapon~3~3~2~Stormhammer"
+	index = "DRAGONS~Hunter~Weapon~3~3~2~Stormhammer"
 	name_CN = "风暴之锤"
 	def loseDurability(self):
 		if not any("Dragon" in minion.race for minion in self.Game.minionsonBoard(self.ID)):
@@ -1813,7 +1815,7 @@ class Stormhammer(Weapon):
 class Dragonbane(Minion):
 	Class, race, name = "Hunter", "Mech", "Dragonbane"
 	mana, attack, health = 4, 3, 5
-	index = "Dragons~Hunter~Minion~4~3~5~Mech~Dragonbane~Legendary"
+	index = "DRAGONS~Hunter~Minion~4~3~5~Mech~Dragonbane~Legendary"
 	requireTarget, keyWord, description = False, "", "After you use your Hero Power, deal 5 damage to a random enemy"
 	name_CN = "灭龙弩炮"
 	def __init__(self, Game, ID):
@@ -1850,7 +1852,7 @@ class Trig_Dragonbane(TrigBoard):
 class Veranus(Minion):
 	Class, race, name = "Hunter", "Dragon", "Veranus"
 	mana, attack, health = 6, 7, 6
-	index = "Dragons~Hunter~Minion~6~7~6~Dragon~Veranus~Battlecry~Legendary"
+	index = "DRAGONS~Hunter~Minion~6~7~6~Dragon~Veranus~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Change the Health of all enemy minions to 1"
 	name_CN = "维拉努斯"
 	
@@ -1864,7 +1866,7 @@ class Veranus(Minion):
 class ArcaneBreath(Spell):
 	Class, school, name = "Mage", "", "Arcane Breath"
 	requireTarget, mana = True, 1
-	index = "Dragons~Mage~Spell~1~Arcane Breath"
+	index = "DRAGONS~Mage~Spell~1~Arcane Breath"
 	description = "Deal 2 damage to a minion. If you're holding a Dragon, Discover a spell"
 	name_CN = "奥术吐息"
 	poolIdentifier = "Mage Spells"
@@ -1916,7 +1918,7 @@ class ArcaneBreath(Spell):
 class ElementalAllies(Quest):
 	Class, school, name = "Mage", "", "Elemental Allies"
 	requireTarget, mana = False, 1
-	index = "Dragons~Mage~Spell~1~Elemental Allies~~Quest"
+	index = "DRAGONS~Mage~Spell~1~Elemental Allies~~Quest"
 	description = "Sidequest: Play an Elemental two turns in a row. Reward: Draw 3 spells from your deck"
 	name_CN = "元素盟军"
 	def __init__(self, Game, ID):
@@ -1956,7 +1958,7 @@ class Trig_ElementalAllies(QuestTrigger):
 class LearnDraconic(Quest):
 	Class, school, name = "Mage", "", "Learn Draconic"
 	requireTarget, mana = False, 1
-	index = "Dragons~Mage~Spell~1~Learn Draconic~~Quest"
+	index = "DRAGONS~Mage~Spell~1~Learn Draconic~~Quest"
 	description = "Sidequest: Spend 8 Mana on spells. Reward: Summon a 6/6 Dragon"
 	name_CN = "学习龙语"
 	def __init__(self, Game, ID):
@@ -1981,7 +1983,7 @@ class Trig_LearnDraconic(QuestTrigger):
 class DraconicEmissary(Minion):
 	Class, race, name = "Mage", "Dragon", "Draconic Emissary"
 	mana, attack, health = 6, 6, 6
-	index = "Dragons~Mage~Minion~6~6~6~Dragon~Draconic Emissary~Uncollectible"
+	index = "DRAGONS~Mage~Minion~6~6~6~Dragon~Draconic Emissary~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "龙族使者"
 	
@@ -1989,7 +1991,7 @@ class DraconicEmissary(Minion):
 class VioletSpellwing(Minion):
 	Class, race, name = "Mage", "Elemental", "Violet Spellwing"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Mage~Minion~1~1~1~Elemental~Violet Spellwing~Deathrattle"
+	index = "DRAGONS~Mage~Minion~1~1~1~Elemental~Violet Spellwing~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Add an 'Arcane Missile' to your hand"
 	name_CN = "紫罗兰 魔翼鸦"
 	def __init__(self, Game, ID):
@@ -2007,7 +2009,7 @@ class Add1ArcaneMisslestoYourHand(Deathrattle_Minion):
 class Chenvaala(Minion):
 	Class, race, name = "Mage", "Elemental", "Chenvaala"
 	mana, attack, health = 3, 2, 5
-	index = "Dragons~Mage~Minion~3~2~5~Elemental~Chenvaala~Legendary"
+	index = "DRAGONS~Mage~Minion~3~2~5~Elemental~Chenvaala~Legendary"
 	requireTarget, keyWord, description = False, "", "After you cast three spells in a turn, summon a 5/5 Elemental"
 	name_CN = "齐恩瓦拉"
 	def __init__(self, Game, ID):
@@ -2051,7 +2053,7 @@ class Trig_Chenvaala(TrigBoard):
 class SnowElemental(Minion):
 	Class, race, name = "Mage", "Elemental", "Snow Elemental"
 	mana, attack, health = 5, 5, 5
-	index = "Dragons~Mage~Minion~5~5~5~Elemental~Snow Elemental~Uncollectible"
+	index = "DRAGONS~Mage~Minion~5~5~5~Elemental~Snow Elemental~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "冰雪元素"
 	
@@ -2059,7 +2061,7 @@ class SnowElemental(Minion):
 class AzureExplorer(Minion):
 	Class, race, name = "Mage", "Dragon", "Azure Explorer"
 	mana, attack, health = 4, 2, 3
-	index = "Dragons~Mage~Minion~4~2~3~Dragon~Azure Explorer~Spell Damage~Battlecry"
+	index = "DRAGONS~Mage~Minion~4~2~3~Dragon~Azure Explorer~Spell Damage~Battlecry"
 	requireTarget, keyWord, description = False, "", "Spell Damage +2. Battlecry: Discover a Dragon"
 	name_CN = "碧蓝龙探险者"
 	poolIdentifier = "Dragons as Mage"
@@ -2101,7 +2103,7 @@ class AzureExplorer(Minion):
 class MalygossFrostbolt(Spell):
 	Class, school, name = "Mage", "", "Malygos's Frostbolt"
 	requireTarget, mana = True, 0
-	index = "Dragons~Mage~Spell~0~Malygos's Frostbolt~Legendary~Uncollectible"
+	index = "DRAGONS~Mage~Spell~0~Malygos's Frostbolt~Legendary~Uncollectible"
 	description = "Deal 3 damage to a character and Freeze it"
 	name_CN = "玛里苟斯的 寒冰箭"
 	def text(self, CHN):
@@ -2118,7 +2120,7 @@ class MalygossFrostbolt(Spell):
 class MalygossMissiles(Spell):
 	Class, school, name = "Mage", "", "Malygos's Missiles"
 	requireTarget, mana = False, 1
-	index = "Dragons~Mage~Spell~1~Malygos's Missiles~Legendary~Uncollectible"
+	index = "DRAGONS~Mage~Spell~1~Malygos's Missiles~Legendary~Uncollectible"
 	description = "Deal 6 damage randomly split among all enemies"
 	name_CN = "玛里苟斯的 奥术飞弹"
 	def text(self, CHN):
@@ -2149,7 +2151,7 @@ class MalygossMissiles(Spell):
 class MalygossNova(Spell):
 	Class, school, name = "Mage", "", "Malygos's Nova"
 	requireTarget, mana = False, 1
-	index = "Dragons~Mage~Spell~1~Malygos's Nova~Legendary~Uncollectible"
+	index = "DRAGONS~Mage~Spell~1~Malygos's Nova~Legendary~Uncollectible"
 	description = "Freeze all enemy minions"
 	name_CN = "玛里苟斯的 霜冻新星"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2160,7 +2162,7 @@ class MalygossNova(Spell):
 class MalygossPolymorph(Spell):
 	Class, school, name = "Mage", "", "Malygos's Polymorph"
 	requireTarget, mana = True, 1
-	index = "Dragons~Mage~Spell~1~Malygos's Polymorph~Legendary~Uncollectible"
+	index = "DRAGONS~Mage~Spell~1~Malygos's Polymorph~Legendary~Uncollectible"
 	description = "Transform a minion into a 1/1 Sheep"
 	name_CN = "玛里苟斯的 变形术"
 	def available(self):
@@ -2179,7 +2181,7 @@ class MalygossPolymorph(Spell):
 class MalygossTome(Spell):
 	Class, school, name = "Mage", "", "Malygos's Tome"
 	requireTarget, mana = False, 1
-	index = "Dragons~Mage~Spell~1~Malygos's Tome~Legendary~Uncollectible"
+	index = "DRAGONS~Mage~Spell~1~Malygos's Tome~Legendary~Uncollectible"
 	description = "Add 3 random Mage spells to your hand"
 	name_CN = "玛里苟斯的 智慧秘典"
 	poolIdentifier = "Mage Spells"
@@ -2200,7 +2202,7 @@ class MalygossTome(Spell):
 class MalygossExplosion(Spell):
 	Class, school, name = "Mage", "", "Malygos's Explosion"
 	requireTarget, mana = False, 2
-	index = "Dragons~Mage~Spell~2~Malygos's Explosion~Legendary~Uncollectible"
+	index = "DRAGONS~Mage~Spell~2~Malygos's Explosion~Legendary~Uncollectible"
 	description = "Deal 2 damage to all enemy minions"
 	name_CN = "玛里苟斯的 魔爆术"
 	def text(self, CHN):
@@ -2216,7 +2218,7 @@ class MalygossExplosion(Spell):
 class MalygossIntellect(Spell):
 	Class, school, name = "Mage", "", "Malygos's Intellect"
 	requireTarget, mana = False, 3
-	index = "Dragons~Mage~Spell~3~Malygos's Intellect~Legendary~Uncollectible"
+	index = "DRAGONS~Mage~Spell~3~Malygos's Intellect~Legendary~Uncollectible"
 	description = "Draw 4 cards"
 	name_CN = "玛里苟斯的 奥术智慧"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2226,7 +2228,7 @@ class MalygossIntellect(Spell):
 class MalygossFireball(Spell):
 	Class, school, name = "Mage", "", "Malygos's Fireball"
 	requireTarget, mana = True, 4
-	index = "Dragons~Mage~Spell~4~Malygos's Fireball~Legendary~Uncollectible"
+	index = "DRAGONS~Mage~Spell~4~Malygos's Fireball~Legendary~Uncollectible"
 	description = "Deal 8 damage"
 	name_CN = "玛里苟斯的 火球术"
 	def text(self, CHN):
@@ -2242,7 +2244,7 @@ class MalygossFireball(Spell):
 class MalygossFlamestrike(Spell):
 	Class, school, name = "Mage", "", "Malygos's Flamestrike"
 	requireTarget, mana = False, 7
-	index = "Dragons~Mage~Spell~7~Malygos's Flamestrike~Legendary~Uncollectible"
+	index = "DRAGONS~Mage~Spell~7~Malygos's Flamestrike~Legendary~Uncollectible"
 	description = "Deal 8 damage to all enemy minions"
 	name_CN = "玛里苟斯的 烈焰风暴"
 	def text(self, CHN):
@@ -2258,7 +2260,7 @@ class MalygossFlamestrike(Spell):
 class MalygossSheep(Minion):
 	Class, race, name = "Mage", "Beast", "Malygos's Sheep"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Mage~Minion~1~1~1~Beast~Malygos's Sheep~Legendary~Uncollectible"
+	index = "DRAGONS~Mage~Minion~1~1~1~Beast~Malygos's Sheep~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "玛里苟斯的 绵羊"
 	
@@ -2269,7 +2271,7 @@ MalygosUpgradedSpells = [MalygossFrostbolt, MalygossMissiles, MalygossNova, Maly
 class MalygosAspectofMagic(Minion):
 	Class, race, name = "Mage", "Dragon", "Malygos, Aspect of Magic"
 	mana, attack, health = 5, 2, 8
-	index = "Dragons~Mage~Minion~5~2~8~Dragon~Malygos, Aspect of Magic~Battlecry~Legendary"
+	index = "DRAGONS~Mage~Minion~5~2~8~Dragon~Malygos, Aspect of Magic~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, Discover an upgraded Mage spell"
 	name_CN = "织法巨龙 玛里苟斯"
 	
@@ -2301,7 +2303,7 @@ class MalygosAspectofMagic(Minion):
 class RollingFireball(Spell):
 	Class, school, name = "Mage", "", "Rolling Fireball"
 	requireTarget, mana = True, 5
-	index = "Dragons~Mage~Spell~5~Rolling Fireball"
+	index = "DRAGONS~Mage~Spell~5~Rolling Fireball"
 	description = "Deal 8 damage to a minion. Any excess damage continues to the left or right"
 	name_CN = "火球滚滚"
 	def available(self):
@@ -2374,7 +2376,7 @@ class RollingFireball(Spell):
 class Dragoncaster(Minion):
 	Class, race, name = "Mage", "", "Dragoncaster"
 	mana, attack, health = 7, 4, 4
-	index = "Dragons~Mage~Minion~7~4~4~~Dragoncaster~Battlecry"
+	index = "DRAGONS~Mage~Minion~7~4~4~~Dragoncaster~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, your next spell this turn costs (0)"
 	name_CN = "乘龙法师"
 	
@@ -2402,7 +2404,7 @@ class GameManaAura_InTurnNextSpell0(TempManaEffect):
 class ManaGiant(Minion):
 	Class, race, name = "Mage", "Elemental", "Mana Giant"
 	mana, attack, health = 8, 8, 8
-	index = "Dragons~Mage~Minion~8~8~8~Elemental~Mana Giant"
+	index = "DRAGONS~Mage~Minion~8~8~8~Elemental~Mana Giant"
 	requireTarget, keyWord, description = False, "", "Costs (1) less for each card you've played this game that didn't start in your deck"
 	name_CN = "法力巨人"
 	def __init__(self, Game, ID):
@@ -2434,7 +2436,7 @@ class Trig_ManaGiant(TrigHand):
 class RighteousCause(Quest):
 	Class, school, name = "Paladin", "", "Righteous Cause"
 	requireTarget, mana = False, 1
-	index = "Dragons~Paladin~Spell~1~Righteous Cause~~Quest"
+	index = "DRAGONS~Paladin~Spell~1~Righteous Cause~~Quest"
 	description = "Sidequest: Summon 5 minions. Reward: Give your minions +1/+1"
 	name_CN = "正义感召"
 	def __init__(self, Game, ID):
@@ -2461,7 +2463,7 @@ class Trig_RighteousCause(QuestTrigger):
 class SandBreath(Spell):
 	Class, school, name = "Paladin", "", "Sand Breath"
 	requireTarget, mana = True, 1
-	index = "Dragons~Paladin~Spell~1~Sand Breath"
+	index = "DRAGONS~Paladin~Spell~1~Sand Breath"
 	description = "Give a minion +1/+2. Give it Divine Shield if you're holding a Dragon"
 	name_CN = "沙尘吐息"
 	def effCanTrig(self):
@@ -2484,7 +2486,7 @@ class SandBreath(Spell):
 class Sanctuary(Quest):
 	Class, school, name = "Paladin", "", "Sanctuary"
 	requireTarget, mana = False, 2
-	index = "Dragons~Paladin~Spell~2~Sanctuary~~Quest"
+	index = "DRAGONS~Paladin~Spell~2~Sanctuary~~Quest"
 	description = "Sidequest: Take no damage for a turn. Reward: Summon a 3/6 minion with Taunt"
 	name_CN = "庇护"
 	def __init__(self, Game, ID):
@@ -2509,7 +2511,7 @@ class Trig_Sanctuary(QuestTrigger):
 class IndomitableChampion(Minion):
 	Class, race, name = "Paladin", "", "Indomitable Champion"
 	mana, attack, health = 4, 3, 6
-	index = "Dragons~Paladin~Minion~4~3~6~~Indomitable Champion~Taunt~Uncollectible"
+	index = "DRAGONS~Paladin~Minion~4~3~6~~Indomitable Champion~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "不屈的勇士"
 	
@@ -2517,7 +2519,7 @@ class IndomitableChampion(Minion):
 class BronzeExplorer(Minion):
 	Class, race, name = "Paladin", "Dragon", "Bronze Explorer"
 	mana, attack, health = 3, 2, 3
-	index = "Dragons~Paladin~Minion~3~2~3~Dragon~Bronze Explorer~Lifesteal~Battlecry"
+	index = "DRAGONS~Paladin~Minion~3~2~3~Dragon~Bronze Explorer~Lifesteal~Battlecry"
 	requireTarget, keyWord, description = False, "Lifesteal", "Lifesteal. Battlecry: Discover a Dragon"
 	name_CN = "青铜龙探险者"
 	poolIdentifier = "Dragons as Paladin"
@@ -2555,7 +2557,7 @@ class BronzeExplorer(Minion):
 class SkyClaw(Minion):
 	Class, race, name = "Paladin", "Mech", "Sky Claw"
 	mana, attack, health = 3, 1, 2
-	index = "Dragons~Paladin~Minion~3~1~2~Mech~Sky Claw~Battlecry"
+	index = "DRAGONS~Paladin~Minion~3~1~2~Mech~Sky Claw~Battlecry"
 	requireTarget, keyWord, description = False, "", "Your other Mechs have +1 Attack. Battlecry: Summon two 1/1 Microcopters"
 	name_CN = "空中飞爪"
 	def __init__(self, Game, ID):
@@ -2573,7 +2575,7 @@ class SkyClaw(Minion):
 class Microcopter(Minion):
 	Class, race, name = "Paladin", "Mech", "Microcopter"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Paladin~Minion~1~1~1~Mech~Microcopter~Uncollectible"
+	index = "DRAGONS~Paladin~Minion~1~1~1~Mech~Microcopter~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "微型旋翼机"
 	
@@ -2581,7 +2583,7 @@ class Microcopter(Minion):
 class DragonriderTalritha(Minion):
 	Class, race, name = "Paladin", "", "Dragonrider Talritha"
 	mana, attack, health = 3, 3, 3
-	index = "Dragons~Paladin~Minion~3~3~3~~Dragonrider Talritha~Deathrattle~Legendary"
+	index = "DRAGONS~Paladin~Minion~3~3~3~~Dragonrider Talritha~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Give a Dragon in your hand +3/+3 and this Deathrattle"
 	name_CN = "龙骑士塔瑞萨"
 	def __init__(self, Game, ID):
@@ -2611,7 +2613,7 @@ class GiveaDragoninHandPlus3Plus3AndThisDeathrattle(Deathrattle_Minion):
 class LightforgedZealot(Minion):
 	Class, race, name = "Paladin", "", "Lightforged Zealot"
 	mana, attack, health = 4, 4, 2
-	index = "Dragons~Paladin~Minion~4~4~2~~Lightforged Zealot~Battlecry"
+	index = "DRAGONS~Paladin~Minion~4~4~2~~Lightforged Zealot~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no Neutral cards, equip a 4/2 Truesilver Champion"
 	name_CN = "光铸狂热者"
 	
@@ -2627,7 +2629,7 @@ class LightforgedZealot(Minion):
 class NozdormutheTimeless(Minion):
 	Class, race, name = "Paladin", "Dragon", "Nozdormu the Timeless"
 	mana, attack, health = 4, 8, 8
-	index = "Dragons~Paladin~Minion~4~8~8~Dragon~Nozdormu the Timeless~Battlecry~Legendary"
+	index = "DRAGONS~Paladin~Minion~4~8~8~Dragon~Nozdormu the Timeless~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Set each player to 10 Mana Crystals"
 	name_CN = "时光巨龙 诺兹多姆"
 	
@@ -2640,7 +2642,7 @@ class NozdormutheTimeless(Minion):
 class AmberWatcher(Minion):
 	Class, race, name = "Paladin", "Dragon", "Amber Watcher"
 	mana, attack, health = 5, 4, 6
-	index = "Dragons~Paladin~Minion~5~4~6~Dragon~Amber Watcher~Battlecry"
+	index = "DRAGONS~Paladin~Minion~5~4~6~Dragon~Amber Watcher~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Restore 8 Health"
 	name_CN = "琥珀看守者"
 	
@@ -2658,7 +2660,7 @@ class AmberWatcher(Minion):
 class LightforgedCrusader(Minion):
 	Class, race, name = "Paladin", "", "Lightforged Crusader"
 	mana, attack, health = 7, 7, 7
-	index = "Dragons~Paladin~Minion~7~7~7~~Lightforged Crusader~Battlecry"
+	index = "DRAGONS~Paladin~Minion~7~7~7~~Lightforged Crusader~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no Neutral cards, add 5 random Paladin cards to your hand"
 	name_CN = "光铸远征军"
 	poolIdentifier = "Paladin Cards"
@@ -2695,7 +2697,7 @@ class LightforgedCrusader(Minion):
 class WhispersofEVIL(Spell):
 	Class, school, name = "Priest", "", "Whispers of EVIL"
 	requireTarget, mana = False, 0
-	index = "Dragons~Priest~Spell~0~Whispers of EVIL"
+	index = "DRAGONS~Priest~Spell~0~Whispers of EVIL"
 	description = "Add a Lackey to your hand"
 	name_CN = "怪盗低语"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2713,7 +2715,7 @@ class WhispersofEVIL(Spell):
 class DiscipleofGalakrond(Minion):
 	Class, race, name = "Priest", "", "Disciple of Galakrond"
 	mana, attack, health = 1, 1, 2
-	index = "Dragons~Priest~Minion~1~1~2~~Disciple of Galakrond~Battlecry"
+	index = "DRAGONS~Priest~Minion~1~1~2~~Disciple of Galakrond~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Invoke Galakrond"
 	name_CN = "迦拉克隆的 信徒"
 	
@@ -2725,7 +2727,7 @@ class DiscipleofGalakrond(Minion):
 class EnvoyofLazul(Minion):
 	Class, race, name = "Priest", "", "Envoy of Lazul"
 	mana, attack, health = 2, 2, 2
-	index = "Dragons~Priest~Minion~2~2~2~~Envoy of Lazul~Battlecry"
+	index = "DRAGONS~Priest~Minion~2~2~2~~Envoy of Lazul~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Look at 3 cards. Guess which one is in your opponent's hand to get a copy of it"
 	name_CN = "拉祖尔的信使"
 	
@@ -2740,7 +2742,7 @@ class EnvoyofLazul(Minion):
 				if curGame.guides:
 					i = curGame.guides.pop(0)
 					if i > -1:
-						HD.addCardtoHand(HD.hands[3-self.ID][i].selfCopy(self.ID), self.ID)
+						HD.addCardtoHand(HD.hands[3-self.ID][i].selfCopy(self.ID, self), self.ID)
 				else:
 					#假设被沙德沃克调用时无效果
 					if "byOthers" not in comment:
@@ -2769,7 +2771,7 @@ class EnvoyofLazul(Minion):
 		if option.inHand:
 			i = curGame.Hand_Deck.hands[3-self.ID].index(option)
 			curGame.fixedGuides.append(i)
-			Copy = option.selfCopy(self.ID)
+			Copy = option.selfCopy(self.ID, self)
 			curGame.Hand_Deck.addCardtoHand(Copy, self.ID)
 		else:
 			curGame.fixedGuides.append(-1)
@@ -2783,7 +2785,7 @@ class EnvoyofLazul(Minion):
 class BreathoftheInfinite(Spell):
 	Class, school, name = "Priest", "", "Breath of the Infinite"
 	requireTarget, mana = False, 3
-	index = "Dragons~Priest~Spell~3~Breath of the Infinite"
+	index = "DRAGONS~Priest~Spell~3~Breath of the Infinite"
 	description = "Deal 2 damage to all minions. If you're holding a Dragon, only damage enemies"
 	name_CN = "永恒吐息"
 	def effCanTrig(self):
@@ -2807,7 +2809,7 @@ class BreathoftheInfinite(Spell):
 class MindflayerKaahrj(Minion):
 	Class, race, name = "Priest", "", "Mindflayer Kaahrj"
 	mana, attack, health = 3, 3, 3
-	index = "Dragons~Priest~Minion~3~3~3~~Mindflayer Kaahrj~Battlecry~Deathrattle~Legendary"
+	index = "DRAGONS~Priest~Minion~3~3~3~~Mindflayer Kaahrj~Battlecry~Deathrattle~Legendary"
 	requireTarget, keyWord, description = True, "", "Battlecry: Choose an enemy minion. Deathrattle: Summon a new copy of it"
 	name_CN = "夺心者卡什"
 	def __init__(self, Game, ID):
@@ -2854,7 +2856,7 @@ class SummonCopyofaChosenMinion(Deathrattle_Minion):
 class FateWeaver(Minion):
 	Class, race, name = "Priest", "Dragon", "Fate Weaver"
 	mana, attack, health = 4, 3, 6
-	index = "Dragons~Priest~Minion~4~3~6~Dragon~Fate Weaver~Battlecry"
+	index = "DRAGONS~Priest~Minion~4~3~6~Dragon~Fate Weaver~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you've Invoked twice, reduce the Cost of cards in your hand by (1)"
 	name_CN = "命运编织者"
 	
@@ -2872,7 +2874,7 @@ class FateWeaver(Minion):
 class GraveRune(Spell):
 	Class, school, name = "Priest", "", "Grave Rune"
 	requireTarget, mana = True, 4
-	index = "Dragons~Priest~Spell~4~Grave Rune"
+	index = "DRAGONS~Priest~Spell~4~Grave Rune"
 	description = "Give a minion 'Deathrattle: Summon 2 copies of this'"
 	name_CN = "墓地符文"
 	def available(self):
@@ -2898,7 +2900,7 @@ class Summon2CopiesofThis(Deathrattle_Minion):
 class Chronobreaker(Minion):
 	Class, race, name = "Priest", "Dragon", "Chronobreaker"
 	mana, attack, health = 5, 4, 5
-	index = "Dragons~Priest~Minion~5~4~5~Dragon~Chronobreaker~Deathrattle"
+	index = "DRAGONS~Priest~Minion~5~4~5~Dragon~Chronobreaker~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: If you're holding a Dragon, deal 3 damage to all enemy minions"
 	name_CN = "时空破坏者"
 	def __init__(self, Game, ID):
@@ -2919,7 +2921,7 @@ class Deal3DamagetoAllEnemyMinions(Deathrattle_Minion):
 class TimeRip(Spell):
 	Class, school, name = "Priest", "", "Time Rip"
 	requireTarget, mana = True, 5
-	index = "Dragons~Priest~Spell~5~Time Rip"
+	index = "DRAGONS~Priest~Spell~5~Time Rip"
 	description = "Destroy a minion. Invoke Galakrond"
 	name_CN = "时空裂痕"
 	def available(self):
@@ -2960,7 +2962,7 @@ class GalakrondsWit(HeroPower):
 class GalakrondtheUnspeakable(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Destroy a random enemy minion. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Priest", "Galakrond, the Unspeakable", GalakrondsWit, 5
-	index = "Dragons~Priest~Hero Card~7~Galakrond, the Unspeakable~Battlecry~Legendary"
+	index = "DRAGONS~Priest~Hero Card~7~Galakrond, the Unspeakable~Battlecry~Legendary"
 	name_CN = "讳言巨龙 迦拉克隆"
 	poolIdentifier = "Priest Minions"
 	@classmethod
@@ -2987,7 +2989,7 @@ class GalakrondtheUnspeakable(Galakrond_Hero):
 class GalakrondtheApocalypes_Priest(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Destroy 2 random enemy minions. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Priest", "Galakrond, the Apocalypes", GalakrondsWit, 5
-	index = "Dragons~Priest~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
+	index = "DRAGONS~Priest~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
 	name_CN = "天降浩劫 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3009,7 +3011,7 @@ class GalakrondtheApocalypes_Priest(Galakrond_Hero):
 class GalakrondAzerothsEnd_Priest(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Destroy 4 random enemy minions. Equip a 5/2 Claw"
 	Class, name, heroPower, armor = "Priest", "Galakrond, Azeroth's End", GalakrondsWit, 5
-	index = "Dragons~Priest~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
+	index = "DRAGONS~Priest~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
 	name_CN = "世界末日 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3031,7 +3033,7 @@ class GalakrondAzerothsEnd_Priest(Galakrond_Hero):
 class DragonClaw(Weapon):
 	Class, name, description = "Neutral", "Dragon Claw", ""
 	mana, attack, durability = 5, 5, 2
-	index = "Dragons~Neutral~Weapon~5~5~2~Dragon Claw~Uncollectible"
+	index = "DRAGONS~Neutral~Weapon~5~5~2~Dragon Claw~Uncollectible"
 	name_CN = "巨龙之爪"
 	
 #施放顺序是随机的。在姆诺兹多死亡之后，依然可以进行施放。如果姆诺兹多被对方控制，则改为施放我方上回合打出的牌。
@@ -3046,7 +3048,7 @@ class DragonClaw(Weapon):
 class MurozondtheInfinite(Minion):
 	Class, race, name = "Priest", "Dragon", "Murozond the Infinite"
 	mana, attack, health = 8, 8, 8
-	index = "Dragons~Priest~Minion~8~8~8~Dragon~Murozond the Infinite~Battlecry~Legendary"
+	index = "DRAGONS~Priest~Minion~8~8~8~Dragon~Murozond the Infinite~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Play all cards your opponent played last turn"
 	name_CN = "永恒巨龙 姆诺兹多"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3080,7 +3082,7 @@ class MurozondtheInfinite(Minion):
 class BloodsailFlybooter(Minion):
 	Class, race, name = "Rogue", "Pirate", "Bloodsail Flybooter"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Rogue~Minion~1~1~1~Pirate~Bloodsail Flybooter~Battlecry"
+	index = "DRAGONS~Rogue~Minion~1~1~1~Pirate~Bloodsail Flybooter~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add two 1/1 Pirates to your hand"
 	name_CN = "血帆飞贼"
 	
@@ -3091,7 +3093,7 @@ class BloodsailFlybooter(Minion):
 class SkyPirate(Minion):
 	Class, race, name = "Rogue", "Pirate", "Sky Pirate"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Rogue~Minion~1~1~1~Pirate~Sky Pirate~Uncollectible"
+	index = "DRAGONS~Rogue~Minion~1~1~1~Pirate~Sky Pirate~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "空中海盗"
 	
@@ -3099,7 +3101,7 @@ class SkyPirate(Minion):
 class DragonsHoard(Spell):
 	Class, school, name = "Rogue", "", "Dragon's Hoard"
 	requireTarget, mana = False, 1
-	index = "Dragons~Rogue~Spell~1~Dragon's Hoard"
+	index = "DRAGONS~Rogue~Spell~1~Dragon's Hoard"
 	description = "Discover a Legendary minion from another class"
 	name_CN = "巨龙宝藏"
 	poolIdentifier = "Druid Legendary Minions"
@@ -3136,7 +3138,7 @@ class DragonsHoard(Spell):
 class PraiseGalakrond(Spell):
 	Class, school, name = "Rogue", "", "Praise Galakrond!"
 	requireTarget, mana = True, 1
-	index = "Dragons~Rogue~Spell~1~Praise Galakrond!"
+	index = "DRAGONS~Rogue~Spell~1~Praise Galakrond!"
 	description = "Give a minion +1 Attack. Invoke Galakrond"
 	name_CN = "赞美迦拉克隆"
 	def available(self):
@@ -3155,7 +3157,7 @@ class PraiseGalakrond(Spell):
 class SealFate(Spell):
 	Class, school, name = "Rogue", "", "Seal Fate"
 	requireTarget, mana = True, 3
-	index = "Dragons~Rogue~Spell~3~Seal Fate"
+	index = "DRAGONS~Rogue~Spell~3~Seal Fate"
 	description = "Deal 3 damage to an undamaged character. Invoke Galakrond"
 	name_CN = "封印命运"
 	def text(self, CHN):
@@ -3173,7 +3175,7 @@ class SealFate(Spell):
 class UmbralSkulker(Minion):
 	Class, race, name = "Rogue", "", "Umbral Skulker"
 	mana, attack, health = 4, 3, 3
-	index = "Dragons~Rogue~Minion~4~3~3~~Umbral Skulker~Battlecry"
+	index = "DRAGONS~Rogue~Minion~4~3~3~~Umbral Skulker~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you've Invoked twice, add 3 Coins to your hand"
 	name_CN = "幽影潜藏者"
 	
@@ -3189,7 +3191,7 @@ class UmbralSkulker(Minion):
 class NecriumApothecary(Minion):
 	Class, race, name = "Rogue", "", "Necrium Apothecary"
 	mana, attack, health = 5, 2, 5
-	index = "Dragons~Rogue~Minion~5~2~5~~Necrium Apothecary~Combo"
+	index = "DRAGONS~Rogue~Minion~5~2~5~~Necrium Apothecary~Combo"
 	requireTarget, keyWord, description = False, "", "Combo: Draw a Deathrattle minion from your deck and gain its Deathrattle"
 	name_CN = "死金药剂师"
 	
@@ -3219,7 +3221,7 @@ class NecriumApothecary(Minion):
 class Stowaway(Minion):
 	Class, race, name = "Rogue", "", "Stowaway"
 	mana, attack, health = 5, 4, 4
-	index = "Dragons~Rogue~Minion~5~4~4~~Stowaway~Battlecry"
+	index = "DRAGONS~Rogue~Minion~5~4~4~~Stowaway~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If there are cards in your deck that didn't start there, draw 2 of them"
 	name_CN = "偷渡者"
 	
@@ -3244,7 +3246,7 @@ class Stowaway(Minion):
 class Waxadred(Minion):
 	Class, race, name = "Rogue", "Dragon", "Waxadred"
 	mana, attack, health = 5, 7, 5
-	index = "Dragons~Rogue~Minion~5~7~5~Dragon~Waxadred~Deathrattle~Legendary"
+	index = "DRAGONS~Rogue~Minion~5~7~5~Dragon~Waxadred~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Shuffle a Candle into your deck that resummons Waxadred when drawn"
 	name_CN = "蜡烛巨龙"
 	def __init__(self, Game, ID):
@@ -3262,7 +3264,7 @@ class ShuffleaCandleintoYourDeck(Deathrattle_Minion):
 class WaxadredsCandle(Spell):
 	Class, school, name = "Rogue", "", "Waxadred's Candle"
 	requireTarget, mana = False, 5
-	index = "Dragons~Rogue~Spell~5~Waxadred's Candle~Casts When Drawn~Uncollectible"
+	index = "DRAGONS~Rogue~Spell~5~Waxadred's Candle~Casts When Drawn~Uncollectible"
 	description = "Casts When Drawn. Summon Waxadred"
 	name_CN = "巨龙的蜡烛"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3273,7 +3275,7 @@ class WaxadredsCandle(Spell):
 class CandleBreath(Spell):
 	Class, school, name = "Rogue", "", "Candle Breath"
 	requireTarget, mana = False, 6
-	index = "Dragons~Rogue~Spell~6~Candle Breath"
+	index = "DRAGONS~Rogue~Spell~6~Candle Breath"
 	description = "Draw 3 cards. Costs (3) less while you're holding a Dragon"
 	name_CN = "烛火吐息"
 	def __init__(self, Game, ID):
@@ -3308,7 +3310,7 @@ class Trig_CandleBreath(TrigHand):
 class FlikSkyshiv(Minion):
 	Class, race, name = "Rogue", "", "Flik Skyshiv"
 	mana, attack, health = 6, 4, 4
-	index = "Dragons~Rogue~Minion~6~4~4~~Flik Skyshiv~Battlecry~Legendary"
+	index = "DRAGONS~Rogue~Minion~6~4~4~~Flik Skyshiv~Battlecry~Legendary"
 	requireTarget, keyWord, description = True, "", "Battlecry: Destroy a minion and all copies of it (wherever they are)"
 	name_CN = "菲里克·飞刺"
 	def targetExists(self, choice=0):
@@ -3353,7 +3355,7 @@ class GalakrondsGuile(HeroPower):
 class GalakrondtheNightmare(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Draw a card. It costs (1). (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Rogue", "Galakrond, the Nightmare", GalakrondsGuile, 5
-	index = "Dragons~Rogue~Hero Card~7~Galakrond, the Nightmare~Battlecry~Legendary"
+	index = "DRAGONS~Rogue~Hero Card~7~Galakrond, the Nightmare~Battlecry~Legendary"
 	name_CN = "梦魇巨龙 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3369,7 +3371,7 @@ class GalakrondtheNightmare(Galakrond_Hero):
 class GalakrondtheApocalypes_Rogue(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Draw 2 cards. They cost (1). (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Rogue", "Galakrond, the Apocalypes", GalakrondsGuile, 5
-	index = "Dragons~Rogue~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
+	index = "DRAGONS~Rogue~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
 	name_CN = "天降浩劫 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3386,7 +3388,7 @@ class GalakrondtheApocalypes_Rogue(Galakrond_Hero):
 class GalakrondAzerothsEnd_Rogue(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Draw 4 cards. They cost (1). Equip a 5/2 Claw"
 	Class, name, heroPower, armor = "Rogue", "Galakrond, Azeroth's End", GalakrondsGuile, 5
-	index = "Dragons~Rogue~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
+	index = "DRAGONS~Rogue~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
 	name_CN = "世界末日 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3404,7 +3406,7 @@ class GalakrondAzerothsEnd_Rogue(Galakrond_Hero):
 class InvocationofFrost(Spell):
 	Class, school, name = "Shaman", "", "Invocation of Frost"
 	requireTarget, mana = True, 2
-	index = "Dragons~Shaman~Spell~2~Invocation of Frost"
+	index = "DRAGONS~Shaman~Spell~2~Invocation of Frost"
 	description = "Freeze a minion. Invoke Galakrond"
 	name_CN = "霜之祈咒"
 	def available(self):
@@ -3423,7 +3425,7 @@ class InvocationofFrost(Spell):
 class SurgingTempest(Minion):
 	Class, race, name = "Shaman", "Elemental", "Surging Tempest"
 	mana, attack, health = 1, 1, 3
-	index = "Dragons~Shaman~Minion~1~1~3~Elemental~Surging Tempest"
+	index = "DRAGONS~Shaman~Minion~1~1~3~Elemental~Surging Tempest"
 	requireTarget, keyWord, description = False, "", "Has +1 Attack while you have Overloaded Mana Crystals"
 	name_CN = "电涌风暴"
 	def __init__(self, Game, ID):
@@ -3490,7 +3492,7 @@ class StatAura_SurgingTempest:
 class Squallhunter(Minion):
 	Class, race, name = "Shaman", "Dragon", "Squallhunter"
 	mana, attack, health = 4, 5, 7
-	index = "Dragons~Shaman~Minion~4~5~7~Dragon~Squallhunter~Spell Damage~Overload"
+	index = "DRAGONS~Shaman~Minion~4~5~7~Dragon~Squallhunter~Spell Damage~Overload"
 	requireTarget, keyWord, description = False, "", "Spell Damage +2, Overload: (2)"
 	name_CN = "猎风巨龙"
 	def __init__(self, Game, ID):
@@ -3502,7 +3504,7 @@ class Squallhunter(Minion):
 class StormsWrath(Spell):
 	Class, school, name = "Shaman", "", "Storm's Wrath"
 	requireTarget, mana = False, 1
-	index = "Dragons~Shaman~Spell~1~Storm's Wrath~Overload"
+	index = "DRAGONS~Shaman~Spell~1~Storm's Wrath~Overload"
 	description = "Give your minions +1/+1. Overload: (1)"
 	name_CN = "风暴之怒"
 	def __init__(self, Game, ID):
@@ -3518,7 +3520,7 @@ class StormsWrath(Spell):
 class LightningBreath(Spell):
 	Class, school, name = "Shaman", "", "Lightning Breath"
 	requireTarget, mana = True, 3
-	index = "Dragons~Shaman~Spell~3~Lightning Breath"
+	index = "DRAGONS~Shaman~Spell~3~Lightning Breath"
 	description = "Deal 4 damage to a minion. If you're holding a Dragon, also damage its neighbors"
 	name_CN = "闪电吐息"
 	def effCanTrig(self):
@@ -3549,7 +3551,7 @@ class LightningBreath(Spell):
 class Bandersmosh(Minion):
 	Class, race, name = "Shaman", "", "Bandersmosh"
 	mana, attack, health = 5, 5, 5
-	index = "Dragons~Shaman~Minion~5~5~5~~Bandersmosh"
+	index = "DRAGONS~Shaman~Minion~5~5~5~~Bandersmosh"
 	requireTarget, keyWord, description = False, "", "Each turn this is in your hand, transform it into a 5/5 random Legendary minion"
 	name_CN = "班德斯莫什"
 	poolIdentifier = "Legendary Minions"
@@ -3619,7 +3621,7 @@ class Trig_Bandersmosh_KeepShifting(TrigBoard):
 class CumuloMaximus(Minion):
 	Class, race, name = "Shaman", "Elemental", "Cumulo-Maximus"
 	mana, attack, health = 5, 5, 5
-	index = "Dragons~Shaman~Minion~5~5~5~Elemental~Cumulo-Maximus~Battlecry"
+	index = "DRAGONS~Shaman~Minion~5~5~5~Elemental~Cumulo-Maximus~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: If you have Overloaded Mana Crystals, deal 5 damage"
 	name_CN = "遮天雨云"
 	def returnTrue(self, choice=0):
@@ -3640,7 +3642,7 @@ class CumuloMaximus(Minion):
 class DragonsPack(Spell):
 	Class, school, name = "Shaman", "", "Dragon's Pack"
 	requireTarget, mana = False, 5
-	index = "Dragons~Shaman~Spell~5~Dragon's Pack"
+	index = "DRAGONS~Shaman~Spell~5~Dragon's Pack"
 	description = "Summon two 2/3 Spirit Wolves with Taunt. If you've Invoked Galakrond, give them +2/+2"
 	name_CN = "巨龙的兽群"
 	def available(self):
@@ -3660,7 +3662,7 @@ class DragonsPack(Spell):
 class SpiritWolf_Dragons(Minion):
 	Class, race, name = "Shaman", "", "Spirit Wolf"
 	mana, attack, health = 2, 2, 3
-	index = "Dragons~Shaman~Minion~2~2~3~~Spirit Wolf~Taunt~Uncollectible"
+	index = "DRAGONS~Shaman~Minion~2~2~3~~Spirit Wolf~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "幽灵狼"
 	
@@ -3668,7 +3670,7 @@ class SpiritWolf_Dragons(Minion):
 class CorruptElementalist(Minion):
 	Class, race, name = "Shaman", "", "Corrupt Elementalist"
 	mana, attack, health = 6, 3, 3
-	index = "Dragons~Shaman~Minion~6~3~3~~Corrupt Elementalist~Battlecry"
+	index = "DRAGONS~Shaman~Minion~6~3~3~~Corrupt Elementalist~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Invoke Galakrond twice"
 	name_CN = "堕落的元素师"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3680,7 +3682,7 @@ class CorruptElementalist(Minion):
 class Nithogg(Minion):
 	Class, race, name = "Shaman", "Dragon", "Nithogg"
 	mana, attack, health = 6, 5, 5
-	index = "Dragons~Shaman~Minion~6~5~5~Dragon~Nithogg~Battlecry~Legendary"
+	index = "DRAGONS~Shaman~Minion~6~5~5~Dragon~Nithogg~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon two 0/3 Eggs. Next turn they hatch into 4/4 Drakes with Rush"
 	name_CN = "尼索格"
 	
@@ -3692,7 +3694,7 @@ class Nithogg(Minion):
 class StormEgg(Minion):
 	Class, race, name = "Shaman", "", "Storm Egg"
 	mana, attack, health = 1, 0, 3
-	index = "Dragons~Shaman~Minion~1~0~3~~Storm Egg~Uncollectible"
+	index = "DRAGONS~Shaman~Minion~1~0~3~~Storm Egg~Uncollectible"
 	requireTarget, keyWord, description = False, "", "At the start of your turn, transform into a 4/4 Storm Drake with Rush"
 	name_CN = "风暴龙卵"
 	def __init__(self, Game, ID):
@@ -3716,7 +3718,7 @@ class Trig_StormEgg(TrigBoard):
 class StormDrake(Minion):
 	Class, race, name = "Shaman", "Dragon", "Storm Drake"
 	mana, attack, health = 4, 4, 4
-	index = "Dragons~Shaman~Minion~4~4~4~Dragon~Storm Drake~Rush~Uncollectible"
+	index = "DRAGONS~Shaman~Minion~4~4~4~Dragon~Storm Drake~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	name_CN = "风暴幼龙"
 	
@@ -3736,14 +3738,14 @@ class GalakrondsFury(HeroPower):
 class WindsweptElemental(Minion):
 	Class, race, name = "Shaman", "Elemental", "Windswept Elemental"
 	mana, attack, health = 2, 2, 1
-	index = "Dragons~Shaman~Minion~2~2~1~Elemental~Windswept Elemental~Rush~Uncollectible"
+	index = "DRAGONS~Shaman~Minion~2~2~1~Elemental~Windswept Elemental~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	name_CN = "风啸元素"
 	
 class GalakrondtheTempest(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon two 2/2 Storms with Rush. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Shaman", "Galakrond, the Tempest", GalakrondsFury, 5
-	index = "Dragons~Shaman~Hero Card~7~Galakrond, the Tempest~Battlecry~Legendary"
+	index = "DRAGONS~Shaman~Hero Card~7~Galakrond, the Tempest~Battlecry~Legendary"
 	name_CN = "风暴巨龙 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3757,7 +3759,7 @@ class GalakrondtheTempest(Galakrond_Hero):
 class GalakrondtheApocalypes_Shaman(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon two 4/4 Storms with Rush. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Shaman", "Galakrond, the Apocalypes", GalakrondsFury, 5
-	index = "Dragons~Shaman~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
+	index = "DRAGONS~Shaman~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
 	name_CN = "天降浩劫 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3771,7 +3773,7 @@ class GalakrondtheApocalypes_Shaman(Galakrond_Hero):
 class GalakrondAzerothsEnd_Shaman(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon two 8/8 Storms with Rush. Equip a 5/2 Claw"
 	Class, name, heroPower, armor = "Shaman", "Galakrond, Azeroth's End", GalakrondsFury, 5
-	index = "Dragons~Shaman~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
+	index = "DRAGONS~Shaman~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
 	name_CN = "世界末日 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3785,21 +3787,21 @@ class GalakrondAzerothsEnd_Shaman(Galakrond_Hero):
 class BrewingStorm(Minion):
 	Class, race, name = "Shaman", "Elemental", "Brewing Storm"
 	mana, attack, health = 2, 2, 2
-	index = "Dragons~Shaman~Minion~2~2~2~Elemental~Brewing Storm~Rush~Uncollectible"
+	index = "DRAGONS~Shaman~Minion~2~2~2~Elemental~Brewing Storm~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	name_CN = "成型风暴"
 	
 class LivingStorm(Minion):
 	Class, race, name = "Shaman", "Elemental", "Living Storm"
 	mana, attack, health = 4, 4, 4
-	index = "Dragons~Shaman~Minion~4~4~4~Elemental~Living Storm~Rush~Uncollectible"
+	index = "DRAGONS~Shaman~Minion~4~4~4~Elemental~Living Storm~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	name_CN = "活体风暴"
 	
 class RagingStorm(Minion):
 	Class, race, name = "Shaman", "Elemental", "Raging Storm"
 	mana, attack, health = 8, 8, 8
-	index = "Dragons~Shaman~Minion~8~8~8~Elemental~Raging Storm~Rush~Uncollectible"
+	index = "DRAGONS~Shaman~Minion~8~8~8~Elemental~Raging Storm~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	name_CN = "狂怒风暴"
 	
@@ -3807,7 +3809,7 @@ class RagingStorm(Minion):
 class RainofFire(Spell):
 	Class, school, name = "Warlock", "", "Rain of Fire"
 	requireTarget, mana = False, 1
-	index = "Dragons~Warlock~Spell~1~Rain of Fire"
+	index = "DRAGONS~Warlock~Spell~1~Rain of Fire"
 	description = "Deal 1 damage to all characters"
 	name_CN = "火焰之雨"
 	def text(self, CHN):
@@ -3824,7 +3826,7 @@ class RainofFire(Spell):
 class NetherBreath(Spell):
 	Class, school, name = "Warlock", "", "Nether Breath"
 	requireTarget, mana = True, 2
-	index = "Dragons~Warlock~Spell~2~Nether Breath"
+	index = "DRAGONS~Warlock~Spell~2~Nether Breath"
 	description = "Deal 2 damage. If you're holding a Dragon, deal 4 damage with Lifesteal instead"
 	name_CN = "虚空吐息"
 	def effCanTrig(self):
@@ -3849,7 +3851,7 @@ class NetherBreath(Spell):
 class DarkSkies(Spell):
 	Class, school, name = "Warlock", "", "Dark Skies"
 	requireTarget, mana = False, 3
-	index = "Dragons~Warlock~Spell~3~Dark Skies"
+	index = "DRAGONS~Warlock~Spell~3~Dark Skies"
 	description = "Deal 1 damage to a random minion. Repeat for each card in your hand"
 	name_CN = "黑暗天际"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3887,7 +3889,7 @@ class DarkSkies(Spell):
 class DragonblightCultist(Minion):
 	Class, race, name = "Warlock", "", "Dragonblight Cultist"
 	mana, attack, health = 3, 1, 1
-	index = "Dragons~Warlock~Minion~3~1~1~~Dragonblight Cultist~Battlecry"
+	index = "DRAGONS~Warlock~Minion~3~1~1~~Dragonblight Cultist~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Invoke Galakrond. Gain +1 Attack for each other friendly minion"
 	name_CN = "龙骨荒野 异教徒"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3901,7 +3903,7 @@ class DragonblightCultist(Minion):
 class FiendishRites(Spell):
 	Class, school, name = "Warlock", "", "Fiendish Rites"
 	requireTarget, mana = False, 4
-	index = "Dragons~Warlock~Spell~4~Fiendish Rites"
+	index = "DRAGONS~Warlock~Spell~4~Fiendish Rites"
 	description = "Invoke Galakrond. Give your minions +1 Attack"
 	name_CN = "邪鬼仪式"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3914,7 +3916,7 @@ class FiendishRites(Spell):
 class VeiledWorshipper(Minion):
 	Class, race, name = "Warlock", "", "Veiled Worshipper"
 	mana, attack, health = 4, 5, 4
-	index = "Dragons~Warlock~Minion~4~5~4~~Veiled Worshipper~Battlecry"
+	index = "DRAGONS~Warlock~Minion~4~5~4~~Veiled Worshipper~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you've Invoked twice, draw 3 cards"
 	name_CN = "暗藏的信徒"
 	
@@ -3932,7 +3934,7 @@ class VeiledWorshipper(Minion):
 class CrazedNetherwing(Minion):
 	Class, race, name = "Warlock", "Dragon", "Crazed Netherwing"
 	mana, attack, health = 5, 5, 5
-	index = "Dragons~Warlock~Minion~5~5~5~Dragon~Crazed Netherwing~Battlecry"
+	index = "DRAGONS~Warlock~Minion~5~5~5~Dragon~Crazed Netherwing~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, deal 3 dammage to all other characters"
 	name_CN = "疯狂的灵翼龙"
 	def effCanTrig(self):
@@ -3948,7 +3950,7 @@ class CrazedNetherwing(Minion):
 class AbyssalSummoner(Minion):
 	Class, race, name = "Warlock", "", "Abyssal Summoner"
 	mana, attack, health = 6, 2, 2
-	index = "Dragons~Warlock~Minion~6~2~2~~Abyssal Summoner~Battlecry"
+	index = "DRAGONS~Warlock~Minion~6~2~2~~Abyssal Summoner~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a Demon with Taunt and stats equal to your hand size"
 	name_CN = "深渊召唤者"
 	
@@ -3958,7 +3960,7 @@ class AbyssalSummoner(Minion):
 			self.Game.summon(AbyssalDestroyer_Mutable_1(self.Game, self.ID), self.pos+1, self)
 		elif handSize > 1:
 			cost = min(handSize, 10)
-			newIndex = "Dragons~Warlock~Minion~%d~%d~%d~Demon~Abyssal Destroyer~Taunt~Uncollectible"%(cost, handSize, handSize)
+			newIndex = "DRAGONS~Warlock~Minion~%d~%d~%d~Demon~Abyssal Destroyer~Taunt~Uncollectible"%(cost, handSize, handSize)
 			subclass = type("AbyssalDestroyer_Mutable_"+str(handSize), (AbyssalDestroyer_Mutable_1, ),
 							{"mana": cost, "attack": handSize, "health": handSize,
 							"index": newIndex}
@@ -3970,7 +3972,7 @@ class AbyssalSummoner(Minion):
 class AbyssalDestroyer_Mutable_1(Minion):
 	Class, race, name = "Warlock", "Demon", "Abyssal Destroyer"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Warlock~Minion~1~1~1~Demon~Abyssal Destroyer~Taunt~Uncollectible"
+	index = "DRAGONS~Warlock~Minion~1~1~1~Demon~Abyssal Destroyer~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "深渊毁灭者"
 	
@@ -3990,7 +3992,7 @@ class GalakrondsMalice(HeroPower):
 class GalakrondtheWretched(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon a random Demon. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Warlock", "Galakrond, the Wretched", GalakrondsMalice, 5
-	index = "Dragons~Warlock~Hero Card~7~Galakrond, the Wretched~Battlecry~Legendary"
+	index = "DRAGONS~Warlock~Hero Card~7~Galakrond, the Wretched~Battlecry~Legendary"
 	name_CN = "邪火巨龙 迦拉克隆"
 	poolIdentifier = "Demons to Summon"
 	@classmethod
@@ -4016,7 +4018,7 @@ class GalakrondtheWretched(Galakrond_Hero):
 class GalakrondtheApocalypes_Warlock(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon 2 random Demons. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Warlock", "Galakrond, the Apocalypes", GalakrondsMalice, 5
-	index = "Dragons~Warlock~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
+	index = "DRAGONS~Warlock~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
 	name_CN = "天降浩劫 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -4037,7 +4039,7 @@ class GalakrondtheApocalypes_Warlock(Galakrond_Hero):
 class GalakrondAzerothsEnd_Warlock(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon 4 random Demons. Equip a 5/2 Claw"
 	Class, name, heroPower, armor = "Warlock", "Galakrond, Azeroth's End", GalakrondsMalice, 5
-	index = "Dragons~Warlock~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
+	index = "DRAGONS~Warlock~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
 	name_CN = "世界末日 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -4058,7 +4060,7 @@ class GalakrondAzerothsEnd_Warlock(Galakrond_Hero):
 class DraconicImp(Minion):
 	Class, race, name = "Warlock", "Demon", "Draconic Imp"
 	mana, attack, health = 1, 1, 1
-	index = "Dragons~Warlock~Minion~1~1~1~Demon~Draconic Imp~Uncollectible"
+	index = "DRAGONS~Warlock~Minion~1~1~1~Demon~Draconic Imp~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "龙裔小鬼"
 	
@@ -4066,7 +4068,7 @@ class DraconicImp(Minion):
 class ValdrisFelgorge(Minion):
 	Class, race, name = "Warlock", "", "Valdris Felgorge"
 	mana, attack, health = 7, 4, 4
-	index = "Dragons~Warlock~Minion~7~4~4~~Valdris Felgorge~Battlecry~Legendary"
+	index = "DRAGONS~Warlock~Minion~7~4~4~~Valdris Felgorge~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Increase your maximum hand size to 12. Draw 4 cards"
 	name_CN = "瓦迪瑞斯·邪噬"
 	
@@ -4079,7 +4081,7 @@ class ValdrisFelgorge(Minion):
 class ZzerakutheWarped(Minion):
 	Class, race, name = "Warlock", "Dragon", "Zzeraku the Warped"
 	mana, attack, health = 8, 4, 12
-	index = "Dragons~Warlock~Minion~8~4~12~Dragon~Zzeraku the Warped~Legendary"
+	index = "DRAGONS~Warlock~Minion~8~4~12~Dragon~Zzeraku the Warped~Legendary"
 	requireTarget, keyWord, description = False, "", "Whenever your hero takes damage, summon a 6/6 Nether Drake"
 	name_CN = "扭曲巨龙 泽拉库"
 	def __init__(self, Game, ID):
@@ -4102,7 +4104,7 @@ class Trig_ZzerakutheWarped(TrigBoard):
 class NetherDrake(Minion):
 	Class, race, name = "Warlock", "Dragon", "Nether Drake"
 	mana, attack, health = 6, 6, 6
-	index = "Dragons~Warlock~Minion~6~6~6~Dragon~Nether Drake~Uncollectible"
+	index = "DRAGONS~Warlock~Minion~6~6~6~Dragon~Nether Drake~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "虚空幼龙"
 	
@@ -4110,7 +4112,7 @@ class NetherDrake(Minion):
 class SkyRaider(Minion):
 	Class, race, name = "Warrior", "Pirate", "Sky Raider"
 	mana, attack, health = 1, 1, 2
-	index = "Dragons~Warrior~Minion~1~1~2~Pirate~Sky Raider~Battlecry"
+	index = "DRAGONS~Warrior~Minion~1~1~2~Pirate~Sky Raider~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a random Pirate to your hand"
 	name_CN = "空中悍匪"
 	poolIdentifier = "Pirates"
@@ -4133,7 +4135,7 @@ class SkyRaider(Minion):
 class RitualChopper(Weapon):
 	Class, name, description = "Warrior", "Ritual Chopper", "Battlecry: Invoke Galakrond"
 	mana, attack, durability = 2, 1, 2
-	index = "Dragons~Warrior~Weapon~2~1~2~Ritual Chopper~Battlecry"
+	index = "DRAGONS~Warrior~Weapon~2~1~2~Ritual Chopper~Battlecry"
 	name_CN = "仪式斩斧"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		invokeGalakrond(self.Game, self.ID)
@@ -4143,7 +4145,7 @@ class RitualChopper(Weapon):
 class Awaken(Spell):
 	Class, school, name = "Warrior", "", "Awaken!"
 	requireTarget, mana = False, 3
-	index = "Dragons~Warrior~Spell~3~Awaken!"
+	index = "DRAGONS~Warrior~Spell~3~Awaken!"
 	description = "Invoke Galakrond. Deal 1 damage to all minions"
 	name_CN = "祈求觉醒"
 	def text(self, CHN):
@@ -4162,7 +4164,7 @@ class Awaken(Spell):
 class Ancharrr(Weapon):
 	Class, name, description = "Warrior", "Ancharrr", "After your hero attacks, draw a Pirate from your deck"
 	mana, attack, durability = 3, 2, 2
-	index = "Dragons~Warrior~Weapon~3~2~2~Ancharrr~Legendary"
+	index = "DRAGONS~Warrior~Weapon~3~2~2~Ancharrr~Legendary"
 	name_CN = "海盗之锚"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -4193,7 +4195,7 @@ class Trig_Ancharrr(TrigBoard):
 class EVILQuartermaster(Minion):
 	Class, race, name = "Warrior", "", "EVIL Quartermaster"
 	mana, attack, health = 3, 2, 3
-	index = "Dragons~Warrior~Minion~3~2~3~~EVIL Quartermaster~Battlecry"
+	index = "DRAGONS~Warrior~Minion~3~2~3~~EVIL Quartermaster~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a Lackey to your hand. Gain 3 Armor"
 	name_CN = "怪盗军需官"
 	
@@ -4213,7 +4215,7 @@ class EVILQuartermaster(Minion):
 class RammingSpeed(Spell):
 	Class, school, name = "Warrior", "", "Ramming Speed"
 	requireTarget, mana = True, 3
-	index = "Dragons~Warrior~Spell~3~Ramming Speed"
+	index = "DRAGONS~Warrior~Spell~3~Ramming Speed"
 	description = "Force a minion to attack one of its neighbors"
 	name_CN = "横冲直撞"
 	def targetExists(self, choice=0):
@@ -4246,7 +4248,7 @@ class RammingSpeed(Spell):
 class ScionofRuin(Minion):
 	Class, race, name = "Warrior", "Dragon", "Scion of Ruin"
 	mana, attack, health = 4, 3, 2
-	index = "Dragons~Warrior~Minion~4~3~2~Dragon~Scion of Ruin~Rush~Battlecry"
+	index = "DRAGONS~Warrior~Minion~4~3~2~Dragon~Scion of Ruin~Rush~Battlecry"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Battlecry: If you've Invoked twice, summon two copies of this"
 	name_CN = "废墟之子"
 	
@@ -4256,7 +4258,7 @@ class ScionofRuin(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Counters.invokes[self.ID] > 1:
 			if self.onBoard:
-				copies = [self.selfCopy(self.ID), self.selfCopy(self.ID)]
+				copies = [self.selfCopy(self.ID, self), self.selfCopy(self.ID, self)]
 				self.Game.summon(copies, (self.pos, "leftandRight"), self)
 			else: #假设废墟之子在战吼前死亡或者离场，则召唤基础复制
 				copies = [ScionofRuin(self.Game, self.ID) for i in range(2)]
@@ -4267,7 +4269,7 @@ class ScionofRuin(Minion):
 class Skybarge(Minion):
 	Class, race, name = "Warrior", "Mech", "Skybarge"
 	mana, attack, health = 3, 2, 5
-	index = "Dragons~Warrior~Minion~3~2~5~Mech~Skybarge"
+	index = "DRAGONS~Warrior~Minion~3~2~5~Mech~Skybarge"
 	requireTarget, keyWord, description = False, "", "After you summon a Pirate, deal 2 damage to a random enemy"
 	name_CN = "空中炮艇"
 	def __init__(self, Game, ID):
@@ -4305,7 +4307,7 @@ class Trig_Skybarge(TrigBoard):
 class MoltenBreath(Spell):
 	Class, school, name = "Warrior", "", "Molten Breath"
 	requireTarget, mana = True, 4
-	index = "Dragons~Warrior~Spell~4~Molten Breath"
+	index = "DRAGONS~Warrior~Spell~4~Molten Breath"
 	description = "Deal 5 damage to a minion. If you're holding Dragon, gain 5 Armor"
 	name_CN = "熔火吐息"
 	def effCanTrig(self):
@@ -4343,7 +4345,7 @@ class GalakrondsMight(HeroPower):
 class GalakrondtheUnbreakable(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Draw 1 minion. Give it +4/+4. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Warrior", "Galakrond, the Unbreakable", GalakrondsMight, 5
-	index = "Dragons~Warrior~Hero Card~7~Galakrond, the Unbreakable~Battlecry~Legendary"
+	index = "DRAGONS~Warrior~Hero Card~7~Galakrond, the Unbreakable~Battlecry~Legendary"
 	name_CN = "无敌巨龙 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -4367,7 +4369,7 @@ class GalakrondtheUnbreakable(Galakrond_Hero):
 class GalakrondtheApocalypes_Warrior(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Draw 2 minions. Give them +4/+4. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Warrior", "Galakrond, the Apocalypes", GalakrondsMight, 5
-	index = "Dragons~Warrior~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
+	index = "DRAGONS~Warrior~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
 	name_CN = "天降浩劫 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -4393,7 +4395,7 @@ class GalakrondtheApocalypes_Warrior(Galakrond_Hero):
 class GalakrondAzerothsEnd_Warrior(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Draw 4 minions. Give them +4/+4. Equip a 5/2 Claw"
 	Class, name, heroPower, armor = "Warrior", "Galakrond, Azeroth's End", GalakrondsMight, 5
-	index = "Dragons~Warrior~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
+	index = "DRAGONS~Warrior~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
 	name_CN = "世界末日 迦拉克隆"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -4425,7 +4427,7 @@ class GalakrondAzerothsEnd_Warrior(Galakrond_Hero):
 class DeathwingMadAspect(Minion):
 	Class, race, name = "Warrior", "Dragon", "Deathwing, Mad Aspect"
 	mana, attack, health = 8, 12, 12
-	index = "Dragons~Warrior~Minion~8~12~12~Dragon~Deathwing, Mad Aspect~Battlecry~Legendary"
+	index = "DRAGONS~Warrior~Minion~8~12~12~Dragon~Deathwing, Mad Aspect~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Attack ALL other minions"
 	name_CN = "疯狂巨龙 死亡之翼"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4455,190 +4457,190 @@ class DeathwingMadAspect(Minion):
 		
 		
 		
-Dragons_Indices = {"Dragons~Neutral~Minion~1~2~2~~Blazing Battlemage": BlazingBattlemage,
-					"Dragons~Neutral~Minion~1~0~5~~Depth Charge": DepthCharge,
-					"Dragons~Neutral~Minion~1~1~2~Mech~Hot Air Balloon": HotAirBalloon,
-					"Dragons~Neutral~Minion~2~2~1~Beast~Evasive Chimaera~Poisonous": EvasiveChimaera,
-					"Dragons~Neutral~Minion~2~2~3~~Dragon Breeder~Battlecry": DragonBreeder,
-					"Dragons~Neutral~Minion~2~3~2~~Grizzled Wizard~Battlecry": GrizzledWizard,
-					"Dragons~Neutral~Minion~2~2~2~Pirate~Parachute Brigand": ParachuteBrigand,
-					"Dragons~Neutral~Minion~2~2~2~Murloc~Tasty Flyfish~Deathrattle": TastyFlyfish,
-					"Dragons~Neutral~Minion~2~2~3~~Transmogrifier": Transmogrifier,
-					"Dragons~Neutral~Minion~2~3~2~~Wyrmrest Purifier~Battlecry": WyrmrestPurifier,
-					"Dragons~Neutral~Minion~3~3~4~~Blowtorch Saboteur~Battlecry": BlowtorchSaboteur,
-					"Dragons~Neutral~Minion~3~3~4~Beast~Dread Raven": DreadRaven,
-					"Dragons~Neutral~Minion~3~1~3~Elemental~Fire Hawk~Battlecry": FireHawk,
-					"Dragons~Neutral~Minion~3~3~3~~Goboglide Tech~Battlecry": GoboglideTech,
-					"Dragons~Neutral~Minion~3~3~4~Elemental~Living Dragonbreath": LivingDragonbreath,
-					"Dragons~Neutral~Minion~3~3~3~~Scalerider~Battlecry": Scalerider,
-					"Dragons~Neutral~Minion~4~4~3~Beast~Bad Luck Albatross~Deathrattle": BadLuckAlbatross,
-					"Dragons~Neutral~Minion~1~1~1~Beast~Albatross~Uncollectible": Albatross,
-					"Dragons~Neutral~Minion~4~2~2~~Devoted Maniac~Rush~Battlecry": DevotedManiac,
-					"Dragons~Neutral~Minion~4~4~4~~Dragonmaw Poacher~Battlecry": DragonmawPoacher,
-					"Dragons~Neutral~Minion~4~5~4~Dragon~Evasive Feywing": EvasiveFeywing,
-					"Dragons~Neutral~Minion~4~5~4~~Frizz Kindleroost~Battlecry~Legendary": FrizzKindleroost,
-					"Dragons~Neutral~Minion~4~2~6~Beast~Hippogryph~Rush~Taunt": Hippogryph,
-					"Dragons~Neutral~Minion~4~4~2~Pirate~Hoard Pillager~Battlecry": HoardPillager,
-					"Dragons~Neutral~Minion~4~3~3~~Troll Batrider~Battlecry": TrollBatrider,
-					"Dragons~Neutral~Minion~4~2~5~~Wing Commander": WingCommander,
-					"Dragons~Neutral~Minion~4~3~9~~Zul'Drak Ritualist~Taunt~Battlecry": ZulDrakRitualist,
-					"Dragons~Neutral~Minion~5~5~5~Dragon~Big Ol' Whelp~Battlecry": BigOlWhelp,
-					"Dragons~Neutral~Minion~5~0~3~~Chromatic Egg~Battlecry~Deathrattle": ChromaticEgg,
-					"Dragons~Neutral~Minion~5~3~5~Dragon~Cobalt Spellkin~Battlecry": CobaltSpellkin,
-					"Dragons~Neutral~Minion~5~4~4~~Faceless Corruptor~Rush~Battlecry": FacelessCorruptor,
-					"Dragons~Neutral~Minion~5~4~4~Pirate~Kobold Stickyfinger~Battlecry": KoboldStickyfinger,
-					"Dragons~Neutral~Minion~5~5~5~~Platebreaker~Battlecry": Platebreaker,
-					"Dragons~Neutral~Minion~5~4~5~~Shield of Galakrond~Taunt~Battlecry": ShieldofGalakrond,
-					"Dragons~Neutral~Minion~5~3~3~Murloc~Skyfin~Battlecry": Skyfin,
-					"Dragons~Neutral~Minion~5~6~5~~Tentacled Menace~Battlecry": TentacledMenace,
-					"Dragons~Neutral~Minion~6~6~6~Mech~Camouflaged Dirigible~Battlecry": CamouflagedDirigible,
-					"Dragons~Neutral~Minion~6~5~3~Dragon~Evasive Wyrm~Divine Shield~Rush": EvasiveWyrm,
-					"Dragons~Neutral~Minion~6~4~5~Mech~Gyrocopter~Rush~Windfury": Gyrocopter,
-					"Dragons~Neutral~Minion~6~6~6~~Kronx Dragonhoof~Battlecry~Legendary": KronxDragonhoof,
-					"Dragons~Neutral~Minion~8~8~8~Dragon~Reanimated Dragon~Uncollectible": ReanimatedDragon,
-					"Dragons~Neutral~Minion~6~5~5~~Utgarde Grapplesniper~Battlecry": UtgardeGrapplesniper,
-					"Dragons~Neutral~Minion~7~7~7~Dragon~Evasive Drakonid~Taunt": EvasiveDrakonid,
-					"Dragons~Neutral~Minion~7~1~7~~Shu'ma~Legendary": Shuma,
-					"Dragons~Neutral~Minion~1~1~1~~Tentacle~Uncollectible": Tentacle_Dragons,
-					"Dragons~Neutral~Minion~8~4~10~Dragon~Twin Tyrant~Battlecry": TwinTyrant,
-					"Dragons~Neutral~Minion~9~8~8~Dragon~Dragonqueen Alexstrasza~Battlecry~Legendary": DragonqueenAlexstrasza,
-					"Dragons~Neutral~Minion~9~5~5~Demon~Sathrovarr~Battlecry~Legendary": Sathrovarr,
-					"Dragons~Druid~Spell~0~Embiggen": Embiggen,
-					"Dragons~Druid~Spell~1~Secure the Deck~~Quest": SecuretheDeck,
-					"Dragons~Druid~Spell~1~Strength in Numbers~~Quest": StrengthinNumbers,
-					"Dragons~Druid~Spell~1~Treenforcements~Choose One": Treenforcements,
-					"Dragons~Druid~Spell~1~Small Repairs~Uncollectible": SmallRepairs,
-					"Dragons~Druid~Spell~1~Spin 'em Up~Uncollectible": SpinemUp,
-					"Dragons~Druid~Spell~2~Breath of Dreams": BreathofDreams,
-					"Dragons~Druid~Minion~2~1~1~~Shrubadier~Battlecry": Shrubadier,
-					"Dragons~Druid~Minion~2~2~2~~Treant~Uncollectible": Treant_Dragons,
-					"Dragons~Druid~Spell~5~Aeroponics": Aeroponics,
-					"Dragons~Druid~Minion~6~4~8~Dragon~Emerald Explorer~Taunt~Battlecry": EmeraldExplorer,
-					"Dragons~Druid~Minion~7~5~10~~Goru the Mightree~Taunt~Battlecry~Legendary": GorutheMightree,
-					"Dragons~Druid~Minion~9~4~12~Dragon~Ysera, Unleashed~Battlecry~Legendary": YseraUnleashed,
-					"Dragons~Druid~Spell~9~Dream Portal~Casts When Drawn~Uncollectible": DreamPortal,
-					"Dragons~Hunter~Spell~1~Clear the Way~~Quest": CleartheWay,
-					"Dragons~Hunter~Minion~4~4~4~Beast~Gryphon~Rush~Uncollectible": Gryphon_Dragons,
-					"Dragons~Hunter~Minion~1~1~3~~Dwarven Sharpshooter": DwarvenSharpshooter,
-					"Dragons~Hunter~Spell~1~Toxic Reinforcements~~Quest": ToxicReinforcements,
-					"Dragons~Neutral~Minion~1~1~1~~Leper Gnome~Deathrattle~Uncollectible": LeperGnome_Dragons,
-					"Dragons~Hunter~Spell~2~Corrosive Breath": CorrosiveBreath,
-					"Dragons~Hunter~Minion~2~2~3~Beast~Phase Stalker": PhaseStalker,
-					"Dragons~Hunter~Minion~3~4~1~Beast~Diving Gryphon~Rush~Battlecry": DivingGryphon,
-					"Dragons~Hunter~Minion~3~2~3~Dragon~Primordial Explorer~Poisonous~Battlecry": PrimordialExplorer,
-					"Dragons~Hunter~Weapon~3~3~2~Stormhammer": Stormhammer,
-					"Dragons~Hunter~Minion~4~3~5~Mech~Dragonbane~Legendary": Dragonbane,
-					"Dragons~Hunter~Minion~6~7~6~Dragon~Veranus~Battlecry~Legendary": Veranus,
-					"Dragons~Mage~Spell~1~Arcane Breath": ArcaneBreath,
-					"Dragons~Mage~Spell~1~Elemental Allies~~Quest": ElementalAllies,
-					"Dragons~Mage~Spell~1~Learn Draconic~~Quest": LearnDraconic,
-					"Dragons~Mage~Minion~6~6~6~Dragon~Draconic Emissary~Uncollectible": DraconicEmissary,
-					"Dragons~Mage~Minion~1~1~1~Elemental~Violet Spellwing~Deathrattle": VioletSpellwing,
-					"Dragons~Mage~Minion~3~2~5~Elemental~Chenvaala~Legendary": Chenvaala,
-					"Dragons~Mage~Minion~5~5~5~Elemental~Snow Elemental~Uncollectible": SnowElemental,
-					"Dragons~Mage~Minion~4~2~3~Dragon~Azure Explorer~Spell Damage~Battlecry": AzureExplorer,
-					"Dragons~Mage~Spell~0~Malygos's Frostbolt~Legendary~Uncollectible": MalygossFrostbolt,
-					"Dragons~Mage~Spell~1~Malygos's Missiles~Legendary~Uncollectible": MalygossMissiles,
-					"Dragons~Mage~Spell~1~Malygos's Nova~Legendary~Uncollectible": MalygossNova,
-					"Dragons~Mage~Spell~1~Malygos's Polymorph~Legendary~Uncollectible": MalygossPolymorph,
-					"Dragons~Mage~Spell~1~Malygos's Tome~Legendary~Uncollectible": MalygossTome,
-					"Dragons~Mage~Spell~2~Malygos's Explosion~Legendary~Uncollectible": MalygossExplosion,
-					"Dragons~Mage~Spell~3~Malygos's Intellect~Legendary~Uncollectible": MalygossIntellect,
-					"Dragons~Mage~Spell~4~Malygos's Fireball~Legendary~Uncollectible": MalygossFireball,
-					"Dragons~Mage~Spell~7~Malygos's Flamestrike~Legendary~Uncollectible": MalygossFlamestrike,
-					"Dragons~Mage~Minion~1~1~1~Beast~Malygos's Sheep~Legendary~Uncollectible": MalygossSheep,
-					"Dragons~Mage~Minion~5~2~8~Dragon~Malygos, Aspect of Magic~Battlecry~Legendary": MalygosAspectofMagic,
-					"Dragons~Mage~Spell~5~Rolling Fireball": RollingFireball,
-					"Dragons~Mage~Minion~7~4~4~~Dragoncaster~Battlecry": Dragoncaster,
-					"Dragons~Mage~Minion~8~8~8~Elemental~Mana Giant": ManaGiant,
-					"Dragons~Paladin~Spell~1~Righteous Cause~~Quest": RighteousCause,
-					"Dragons~Paladin~Spell~1~Sand Breath": SandBreath,
-					"Dragons~Paladin~Spell~2~Sanctuary~~Quest": Sanctuary,
-					"Dragons~Paladin~Minion~4~3~6~~Indomitable Champion~Taunt~Uncollectible": IndomitableChampion,
-					"Dragons~Paladin~Minion~3~2~3~Dragon~Bronze Explorer~Lifesteal~Battlecry": BronzeExplorer,
-					"Dragons~Paladin~Minion~3~1~2~Mech~Sky Claw~Battlecry": SkyClaw,
-					"Dragons~Paladin~Minion~1~1~1~Mech~Microcopter~Uncollectible": Microcopter,
-					"Dragons~Paladin~Minion~3~3~3~~Dragonrider Talritha~Deathrattle~Legendary": DragonriderTalritha,
-					"Dragons~Paladin~Minion~4~4~2~~Lightforged Zealot~Battlecry": LightforgedZealot,
-					"Dragons~Paladin~Minion~4~8~8~Dragon~Nozdormu the Timeless~Battlecry~Legendary": NozdormutheTimeless,
-					"Dragons~Paladin~Minion~5~4~6~Dragon~Amber Watcher~Battlecry": AmberWatcher,
-					"Dragons~Paladin~Minion~7~7~7~~Lightforged Crusader~Battlecry": LightforgedCrusader,
-					"Dragons~Priest~Spell~0~Whispers of EVIL": WhispersofEVIL,
-					"Dragons~Priest~Minion~1~1~2~~Disciple of Galakrond~Battlecry": DiscipleofGalakrond,
-					"Dragons~Priest~Minion~2~2~2~~Envoy of Lazul~Battlecry": EnvoyofLazul,
-					"Dragons~Priest~Spell~3~Breath of the Infinite": BreathoftheInfinite,
-					"Dragons~Priest~Minion~3~3~3~~Mindflayer Kaahrj~Battlecry~Deathrattle~Legendary": MindflayerKaahrj,
-					"Dragons~Priest~Minion~4~3~6~Dragon~Fate Weaver~Battlecry": FateWeaver,
-					"Dragons~Priest~Spell~4~Grave Rune": GraveRune,
-					"Dragons~Priest~Minion~5~4~5~Dragon~Chronobreaker~Deathrattle": Chronobreaker,
-					"Dragons~Priest~Spell~5~Time Rip": TimeRip,
-					"Dragons~Priest~Hero Card~7~Galakrond, the Unspeakable~Battlecry~Legendary": GalakrondtheUnspeakable,
-					"Dragons~Priest~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible": GalakrondtheApocalypes_Priest,
-					"Dragons~Priest~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible": GalakrondAzerothsEnd_Priest,
-					"Dragons~Neutral~Weapon~5~5~2~Dragon Claw~Uncollectible": DragonClaw,
-					"Dragons~Priest~Minion~8~8~8~Dragon~Murozond the Infinite~Battlecry~Legendary": MurozondtheInfinite,
-					"Dragons~Rogue~Minion~1~1~1~Pirate~Bloodsail Flybooter~Battlecry": BloodsailFlybooter,
-					"Dragons~Rogue~Minion~1~1~1~Pirate~Sky Pirate~Uncollectible": SkyPirate,
-					"Dragons~Rogue~Spell~1~Dragon's Hoard": DragonsHoard,
-					"Dragons~Rogue~Spell~1~Praise Galakrond!": PraiseGalakrond,
-					"Dragons~Rogue~Spell~3~Seal Fate": SealFate,
-					"Dragons~Rogue~Minion~4~3~3~~Umbral Skulker~Battlecry": UmbralSkulker,
-					"Dragons~Rogue~Minion~5~2~5~~Necrium Apothecary~Combo": NecriumApothecary,
-					"Dragons~Rogue~Minion~5~4~4~~Stowaway~Battlecry": Stowaway,
-					"Dragons~Rogue~Minion~5~7~5~Dragon~Waxadred~Deathrattle~Legendary": Waxadred,
-					"Dragons~Rogue~Spell~5~Waxadred's Candle~Casts When Drawn~Uncollectible": WaxadredsCandle,
-					"Dragons~Rogue~Spell~6~Candle Breath": CandleBreath,
-					"Dragons~Rogue~Minion~6~4~4~~Flik Skyshiv~Battlecry~Legendary": FlikSkyshiv,
-					"Dragons~Rogue~Hero Card~7~Galakrond, the Nightmare~Battlecry~Legendary": GalakrondtheNightmare,
-					"Dragons~Rogue~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible": GalakrondtheApocalypes_Rogue,
-					"Dragons~Rogue~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible": GalakrondAzerothsEnd_Rogue,
-					"Dragons~Shaman~Spell~2~Invocation of Frost": InvocationofFrost,
-					"Dragons~Shaman~Minion~1~1~3~Elemental~Surging Tempest": SurgingTempest,
-					"Dragons~Shaman~Minion~4~5~7~Dragon~Squallhunter~Spell Damage~Overload": Squallhunter,
-					"Dragons~Shaman~Spell~1~Storm's Wrath~Overload": StormsWrath,
-					"Dragons~Shaman~Spell~3~Lightning Breath": LightningBreath,
-					"Dragons~Shaman~Minion~5~5~5~~Bandersmosh": Bandersmosh,
-					"Dragons~Shaman~Minion~5~5~5~Elemental~Cumulo-Maximus~Battlecry": CumuloMaximus,
-					"Dragons~Shaman~Spell~5~Dragon's Pack": DragonsPack,
-					"Dragons~Shaman~Minion~2~2~3~~Spirit Wolf~Taunt~Uncollectible": SpiritWolf_Dragons,
-					"Dragons~Shaman~Minion~6~3~3~~Corrupt Elementalist~Battlecry": CorruptElementalist,
-					"Dragons~Shaman~Minion~6~5~5~Dragon~Nithogg~Battlecry~Legendary": Nithogg,
-					"Dragons~Shaman~Minion~1~0~3~~Storm Egg~Uncollectible": StormEgg,
-					"Dragons~Shaman~Minion~4~4~4~Dragon~Storm Drake~Rush~Uncollectible": StormDrake,
-					"Dragons~Shaman~Minion~2~2~1~Elemental~Windswept Elemental~Rush~Uncollectible": WindsweptElemental,
-					"Dragons~Shaman~Hero Card~7~Galakrond, the Tempest~Battlecry~Legendary": GalakrondtheTempest,
-					"Dragons~Shaman~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible": GalakrondtheApocalypes_Shaman,
-					"Dragons~Shaman~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible": GalakrondAzerothsEnd_Shaman,
-					"Dragons~Shaman~Minion~2~2~2~Elemental~Brewing Storm~Rush~Uncollectible": BrewingStorm,
-					"Dragons~Shaman~Minion~4~4~4~Elemental~Living Storm~Rush~Uncollectible": LivingStorm,
-					"Dragons~Shaman~Minion~8~8~8~Elemental~Raging Storm~Rush~Uncollectible": RagingStorm,
-					"Dragons~Warlock~Spell~1~Rain of Fire": RainofFire,
-					"Dragons~Warlock~Spell~2~Nether Breath": NetherBreath,
-					"Dragons~Warlock~Spell~3~Dark Skies": DarkSkies,
-					"Dragons~Warlock~Minion~3~1~1~~Dragonblight Cultist~Battlecry": DragonblightCultist,
-					"Dragons~Warlock~Spell~4~Fiendish Rites": FiendishRites,
-					"Dragons~Warlock~Minion~4~5~4~~Veiled Worshipper~Battlecry": VeiledWorshipper,
-					"Dragons~Warlock~Minion~5~5~5~Dragon~Crazed Netherwing~Battlecry": CrazedNetherwing,
-					"Dragons~Warlock~Minion~6~2~2~~Abyssal Summoner~Battlecry": AbyssalSummoner,
-					"Dragons~Warlock~Minion~1~1~1~Demon~Abyssal Destroyer~Taunt~Uncollectible": AbyssalDestroyer_Mutable_1,
-					"Dragons~Warlock~Hero Card~7~Galakrond, the Wretched~Battlecry~Legendary": GalakrondtheWretched,
-					"Dragons~Warlock~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible": GalakrondtheApocalypes_Warlock,
-					"Dragons~Warlock~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible": GalakrondAzerothsEnd_Warlock,
-					"Dragons~Warlock~Minion~1~1~1~Demon~Draconic Imp~Uncollectible": DraconicImp,
-					"Dragons~Warlock~Minion~7~4~4~~Valdris Felgorge~Battlecry~Legendary": ValdrisFelgorge,
-					"Dragons~Warlock~Minion~8~4~12~Dragon~Zzeraku the Warped~Legendary": ZzerakutheWarped,
-					"Dragons~Warlock~Minion~6~6~6~Dragon~Nether Drake~Uncollectible": NetherDrake,
-					"Dragons~Warrior~Minion~1~1~2~Pirate~Sky Raider~Battlecry": SkyRaider,
-					"Dragons~Warrior~Weapon~2~1~2~Ritual Chopper~Battlecry": RitualChopper,
-					"Dragons~Warrior~Spell~3~Awaken!": Awaken,
-					"Dragons~Warrior~Weapon~3~2~2~Ancharrr~Legendary": Ancharrr,
-					"Dragons~Warrior~Minion~3~2~3~~EVIL Quartermaster~Battlecry": EVILQuartermaster,
-					"Dragons~Warrior~Spell~3~Ramming Speed": RammingSpeed,
-					"Dragons~Warrior~Minion~4~3~2~Dragon~Scion of Ruin~Rush~Battlecry": ScionofRuin,
-					"Dragons~Warrior~Minion~3~2~5~Mech~Skybarge": Skybarge,
-					"Dragons~Warrior~Spell~4~Molten Breath": MoltenBreath,
-					"Dragons~Warrior~Hero Card~7~Galakrond, the Unbreakable~Battlecry~Legendary": GalakrondtheUnbreakable,
-					"Dragons~Warrior~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible": GalakrondtheApocalypes_Warrior,
-					"Dragons~Warrior~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible": GalakrondAzerothsEnd_Warrior,
-					"Dragons~Warrior~Minion~8~12~12~Dragon~Deathwing, Mad Aspect~Battlecry~Legendary": DeathwingMadAspect
+Dragons_Indices = {"DRAGONS~Neutral~Minion~1~2~2~~Blazing Battlemage": BlazingBattlemage,
+					"DRAGONS~Neutral~Minion~1~0~5~~Depth Charge": DepthCharge,
+					"DRAGONS~Neutral~Minion~1~1~2~Mech~Hot Air Balloon": HotAirBalloon,
+					"DRAGONS~Neutral~Minion~2~2~1~Beast~Evasive Chimaera~Poisonous": EvasiveChimaera,
+					"DRAGONS~Neutral~Minion~2~2~3~~Dragon Breeder~Battlecry": DragonBreeder,
+					"DRAGONS~Neutral~Minion~2~3~2~~Grizzled Wizard~Battlecry": GrizzledWizard,
+					"DRAGONS~Neutral~Minion~2~2~2~Pirate~Parachute Brigand": ParachuteBrigand,
+					"DRAGONS~Neutral~Minion~2~2~2~Murloc~Tasty Flyfish~Deathrattle": TastyFlyfish,
+					"DRAGONS~Neutral~Minion~2~2~3~~Transmogrifier": Transmogrifier,
+					"DRAGONS~Neutral~Minion~2~3~2~~Wyrmrest Purifier~Battlecry": WyrmrestPurifier,
+					"DRAGONS~Neutral~Minion~3~3~4~~Blowtorch Saboteur~Battlecry": BlowtorchSaboteur,
+					"DRAGONS~Neutral~Minion~3~3~4~Beast~Dread Raven": DreadRaven,
+					"DRAGONS~Neutral~Minion~3~1~3~Elemental~Fire Hawk~Battlecry": FireHawk,
+					"DRAGONS~Neutral~Minion~3~3~3~~Goboglide Tech~Battlecry": GoboglideTech,
+					"DRAGONS~Neutral~Minion~3~3~4~Elemental~Living Dragonbreath": LivingDragonbreath,
+					"DRAGONS~Neutral~Minion~3~3~3~~Scalerider~Battlecry": Scalerider,
+					"DRAGONS~Neutral~Minion~4~4~3~Beast~Bad Luck Albatross~Deathrattle": BadLuckAlbatross,
+					"DRAGONS~Neutral~Minion~1~1~1~Beast~Albatross~Uncollectible": Albatross,
+					"DRAGONS~Neutral~Minion~4~2~2~~Devoted Maniac~Rush~Battlecry": DevotedManiac,
+					"DRAGONS~Neutral~Minion~4~4~4~~Dragonmaw Poacher~Battlecry": DragonmawPoacher,
+					"DRAGONS~Neutral~Minion~4~5~4~Dragon~Evasive Feywing": EvasiveFeywing,
+					"DRAGONS~Neutral~Minion~4~5~4~~Frizz Kindleroost~Battlecry~Legendary": FrizzKindleroost,
+					"DRAGONS~Neutral~Minion~4~2~6~Beast~Hippogryph~Rush~Taunt": Hippogryph,
+					"DRAGONS~Neutral~Minion~4~4~2~Pirate~Hoard Pillager~Battlecry": HoardPillager,
+					"DRAGONS~Neutral~Minion~4~3~3~~Troll Batrider~Battlecry": TrollBatrider,
+					"DRAGONS~Neutral~Minion~4~2~5~~Wing Commander": WingCommander,
+					"DRAGONS~Neutral~Minion~4~3~9~~Zul'Drak Ritualist~Taunt~Battlecry": ZulDrakRitualist,
+					"DRAGONS~Neutral~Minion~5~5~5~Dragon~Big Ol' Whelp~Battlecry": BigOlWhelp,
+					"DRAGONS~Neutral~Minion~5~0~3~~Chromatic Egg~Battlecry~Deathrattle": ChromaticEgg,
+					"DRAGONS~Neutral~Minion~5~3~5~Dragon~Cobalt Spellkin~Battlecry": CobaltSpellkin,
+					"DRAGONS~Neutral~Minion~5~4~4~~Faceless Corruptor~Rush~Battlecry": FacelessCorruptor,
+					"DRAGONS~Neutral~Minion~5~4~4~Pirate~Kobold Stickyfinger~Battlecry": KoboldStickyfinger,
+					"DRAGONS~Neutral~Minion~5~5~5~~Platebreaker~Battlecry": Platebreaker,
+					"DRAGONS~Neutral~Minion~5~4~5~~Shield of Galakrond~Taunt~Battlecry": ShieldofGalakrond,
+					"DRAGONS~Neutral~Minion~5~3~3~Murloc~Skyfin~Battlecry": Skyfin,
+					"DRAGONS~Neutral~Minion~5~6~5~~Tentacled Menace~Battlecry": TentacledMenace,
+					"DRAGONS~Neutral~Minion~6~6~6~Mech~Camouflaged Dirigible~Battlecry": CamouflagedDirigible,
+					"DRAGONS~Neutral~Minion~6~5~3~Dragon~Evasive Wyrm~Divine Shield~Rush": EvasiveWyrm,
+					"DRAGONS~Neutral~Minion~6~4~5~Mech~Gyrocopter~Rush~Windfury": Gyrocopter,
+					"DRAGONS~Neutral~Minion~6~6~6~~Kronx Dragonhoof~Battlecry~Legendary": KronxDragonhoof,
+					"DRAGONS~Neutral~Minion~8~8~8~Dragon~Reanimated Dragon~Uncollectible": ReanimatedDragon,
+					"DRAGONS~Neutral~Minion~6~5~5~~Utgarde Grapplesniper~Battlecry": UtgardeGrapplesniper,
+					"DRAGONS~Neutral~Minion~7~7~7~Dragon~Evasive Drakonid~Taunt": EvasiveDrakonid,
+					"DRAGONS~Neutral~Minion~7~1~7~~Shu'ma~Legendary": Shuma,
+					"DRAGONS~Neutral~Minion~1~1~1~~Tentacle~Uncollectible": Tentacle_Dragons,
+					"DRAGONS~Neutral~Minion~8~4~10~Dragon~Twin Tyrant~Battlecry": TwinTyrant,
+					"DRAGONS~Neutral~Minion~9~8~8~Dragon~Dragonqueen Alexstrasza~Battlecry~Legendary": DragonqueenAlexstrasza,
+					"DRAGONS~Neutral~Minion~9~5~5~Demon~Sathrovarr~Battlecry~Legendary": Sathrovarr,
+					"DRAGONS~Druid~Spell~0~Embiggen": Embiggen,
+					"DRAGONS~Druid~Spell~1~Secure the Deck~~Quest": SecuretheDeck,
+					"DRAGONS~Druid~Spell~1~Strength in Numbers~~Quest": StrengthinNumbers,
+					"DRAGONS~Druid~Spell~1~Treenforcements~Choose One": Treenforcements,
+					"DRAGONS~Druid~Spell~1~Small Repairs~Uncollectible": SmallRepairs,
+					"DRAGONS~Druid~Spell~1~Spin 'em Up~Uncollectible": SpinemUp,
+					"DRAGONS~Druid~Spell~2~Breath of Dreams": BreathofDreams,
+					"DRAGONS~Druid~Minion~2~1~1~~Shrubadier~Battlecry": Shrubadier,
+					"DRAGONS~Druid~Minion~2~2~2~~Treant~Uncollectible": Treant_Dragons,
+					"DRAGONS~Druid~Spell~5~Aeroponics": Aeroponics,
+					"DRAGONS~Druid~Minion~6~4~8~Dragon~Emerald Explorer~Taunt~Battlecry": EmeraldExplorer,
+					"DRAGONS~Druid~Minion~7~5~10~~Goru the Mightree~Taunt~Battlecry~Legendary": GorutheMightree,
+					"DRAGONS~Druid~Minion~9~4~12~Dragon~Ysera, Unleashed~Battlecry~Legendary": YseraUnleashed,
+					"DRAGONS~Druid~Spell~9~Dream Portal~Casts When Drawn~Uncollectible": DreamPortal,
+					"DRAGONS~Hunter~Spell~1~Clear the Way~~Quest": CleartheWay,
+					"DRAGONS~Hunter~Minion~4~4~4~Beast~Gryphon~Rush~Uncollectible": Gryphon_Dragons,
+					"DRAGONS~Hunter~Minion~1~1~3~~Dwarven Sharpshooter": DwarvenSharpshooter,
+					"DRAGONS~Hunter~Spell~1~Toxic Reinforcements~~Quest": ToxicReinforcements,
+					"DRAGONS~Neutral~Minion~1~1~1~~Leper Gnome~Deathrattle~Uncollectible": LeperGnome_Dragons,
+					"DRAGONS~Hunter~Spell~2~Corrosive Breath": CorrosiveBreath,
+					"DRAGONS~Hunter~Minion~2~2~3~Beast~Phase Stalker": PhaseStalker,
+					"DRAGONS~Hunter~Minion~3~4~1~Beast~Diving Gryphon~Rush~Battlecry": DivingGryphon,
+					"DRAGONS~Hunter~Minion~3~2~3~Dragon~Primordial Explorer~Poisonous~Battlecry": PrimordialExplorer,
+					"DRAGONS~Hunter~Weapon~3~3~2~Stormhammer": Stormhammer,
+					"DRAGONS~Hunter~Minion~4~3~5~Mech~Dragonbane~Legendary": Dragonbane,
+					"DRAGONS~Hunter~Minion~6~7~6~Dragon~Veranus~Battlecry~Legendary": Veranus,
+					"DRAGONS~Mage~Spell~1~Arcane Breath": ArcaneBreath,
+					"DRAGONS~Mage~Spell~1~Elemental Allies~~Quest": ElementalAllies,
+					"DRAGONS~Mage~Spell~1~Learn Draconic~~Quest": LearnDraconic,
+					"DRAGONS~Mage~Minion~6~6~6~Dragon~Draconic Emissary~Uncollectible": DraconicEmissary,
+					"DRAGONS~Mage~Minion~1~1~1~Elemental~Violet Spellwing~Deathrattle": VioletSpellwing,
+					"DRAGONS~Mage~Minion~3~2~5~Elemental~Chenvaala~Legendary": Chenvaala,
+					"DRAGONS~Mage~Minion~5~5~5~Elemental~Snow Elemental~Uncollectible": SnowElemental,
+					"DRAGONS~Mage~Minion~4~2~3~Dragon~Azure Explorer~Spell Damage~Battlecry": AzureExplorer,
+					"DRAGONS~Mage~Spell~0~Malygos's Frostbolt~Legendary~Uncollectible": MalygossFrostbolt,
+					"DRAGONS~Mage~Spell~1~Malygos's Missiles~Legendary~Uncollectible": MalygossMissiles,
+					"DRAGONS~Mage~Spell~1~Malygos's Nova~Legendary~Uncollectible": MalygossNova,
+					"DRAGONS~Mage~Spell~1~Malygos's Polymorph~Legendary~Uncollectible": MalygossPolymorph,
+					"DRAGONS~Mage~Spell~1~Malygos's Tome~Legendary~Uncollectible": MalygossTome,
+					"DRAGONS~Mage~Spell~2~Malygos's Explosion~Legendary~Uncollectible": MalygossExplosion,
+					"DRAGONS~Mage~Spell~3~Malygos's Intellect~Legendary~Uncollectible": MalygossIntellect,
+					"DRAGONS~Mage~Spell~4~Malygos's Fireball~Legendary~Uncollectible": MalygossFireball,
+					"DRAGONS~Mage~Spell~7~Malygos's Flamestrike~Legendary~Uncollectible": MalygossFlamestrike,
+					"DRAGONS~Mage~Minion~1~1~1~Beast~Malygos's Sheep~Legendary~Uncollectible": MalygossSheep,
+					"DRAGONS~Mage~Minion~5~2~8~Dragon~Malygos, Aspect of Magic~Battlecry~Legendary": MalygosAspectofMagic,
+					"DRAGONS~Mage~Spell~5~Rolling Fireball": RollingFireball,
+					"DRAGONS~Mage~Minion~7~4~4~~Dragoncaster~Battlecry": Dragoncaster,
+					"DRAGONS~Mage~Minion~8~8~8~Elemental~Mana Giant": ManaGiant,
+					"DRAGONS~Paladin~Spell~1~Righteous Cause~~Quest": RighteousCause,
+					"DRAGONS~Paladin~Spell~1~Sand Breath": SandBreath,
+					"DRAGONS~Paladin~Spell~2~Sanctuary~~Quest": Sanctuary,
+					"DRAGONS~Paladin~Minion~4~3~6~~Indomitable Champion~Taunt~Uncollectible": IndomitableChampion,
+					"DRAGONS~Paladin~Minion~3~2~3~Dragon~Bronze Explorer~Lifesteal~Battlecry": BronzeExplorer,
+					"DRAGONS~Paladin~Minion~3~1~2~Mech~Sky Claw~Battlecry": SkyClaw,
+					"DRAGONS~Paladin~Minion~1~1~1~Mech~Microcopter~Uncollectible": Microcopter,
+					"DRAGONS~Paladin~Minion~3~3~3~~Dragonrider Talritha~Deathrattle~Legendary": DragonriderTalritha,
+					"DRAGONS~Paladin~Minion~4~4~2~~Lightforged Zealot~Battlecry": LightforgedZealot,
+					"DRAGONS~Paladin~Minion~4~8~8~Dragon~Nozdormu the Timeless~Battlecry~Legendary": NozdormutheTimeless,
+					"DRAGONS~Paladin~Minion~5~4~6~Dragon~Amber Watcher~Battlecry": AmberWatcher,
+					"DRAGONS~Paladin~Minion~7~7~7~~Lightforged Crusader~Battlecry": LightforgedCrusader,
+					"DRAGONS~Priest~Spell~0~Whispers of EVIL": WhispersofEVIL,
+					"DRAGONS~Priest~Minion~1~1~2~~Disciple of Galakrond~Battlecry": DiscipleofGalakrond,
+					"DRAGONS~Priest~Minion~2~2~2~~Envoy of Lazul~Battlecry": EnvoyofLazul,
+					"DRAGONS~Priest~Spell~3~Breath of the Infinite": BreathoftheInfinite,
+					"DRAGONS~Priest~Minion~3~3~3~~Mindflayer Kaahrj~Battlecry~Deathrattle~Legendary": MindflayerKaahrj,
+					"DRAGONS~Priest~Minion~4~3~6~Dragon~Fate Weaver~Battlecry": FateWeaver,
+					"DRAGONS~Priest~Spell~4~Grave Rune": GraveRune,
+					"DRAGONS~Priest~Minion~5~4~5~Dragon~Chronobreaker~Deathrattle": Chronobreaker,
+					"DRAGONS~Priest~Spell~5~Time Rip": TimeRip,
+					"DRAGONS~Priest~Hero Card~7~Galakrond, the Unspeakable~Battlecry~Legendary": GalakrondtheUnspeakable,
+					"DRAGONS~Priest~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible": GalakrondtheApocalypes_Priest,
+					"DRAGONS~Priest~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible": GalakrondAzerothsEnd_Priest,
+					"DRAGONS~Neutral~Weapon~5~5~2~Dragon Claw~Uncollectible": DragonClaw,
+					"DRAGONS~Priest~Minion~8~8~8~Dragon~Murozond the Infinite~Battlecry~Legendary": MurozondtheInfinite,
+					"DRAGONS~Rogue~Minion~1~1~1~Pirate~Bloodsail Flybooter~Battlecry": BloodsailFlybooter,
+					"DRAGONS~Rogue~Minion~1~1~1~Pirate~Sky Pirate~Uncollectible": SkyPirate,
+					"DRAGONS~Rogue~Spell~1~Dragon's Hoard": DragonsHoard,
+					"DRAGONS~Rogue~Spell~1~Praise Galakrond!": PraiseGalakrond,
+					"DRAGONS~Rogue~Spell~3~Seal Fate": SealFate,
+					"DRAGONS~Rogue~Minion~4~3~3~~Umbral Skulker~Battlecry": UmbralSkulker,
+					"DRAGONS~Rogue~Minion~5~2~5~~Necrium Apothecary~Combo": NecriumApothecary,
+					"DRAGONS~Rogue~Minion~5~4~4~~Stowaway~Battlecry": Stowaway,
+					"DRAGONS~Rogue~Minion~5~7~5~Dragon~Waxadred~Deathrattle~Legendary": Waxadred,
+					"DRAGONS~Rogue~Spell~5~Waxadred's Candle~Casts When Drawn~Uncollectible": WaxadredsCandle,
+					"DRAGONS~Rogue~Spell~6~Candle Breath": CandleBreath,
+					"DRAGONS~Rogue~Minion~6~4~4~~Flik Skyshiv~Battlecry~Legendary": FlikSkyshiv,
+					"DRAGONS~Rogue~Hero Card~7~Galakrond, the Nightmare~Battlecry~Legendary": GalakrondtheNightmare,
+					"DRAGONS~Rogue~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible": GalakrondtheApocalypes_Rogue,
+					"DRAGONS~Rogue~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible": GalakrondAzerothsEnd_Rogue,
+					"DRAGONS~Shaman~Spell~2~Invocation of Frost": InvocationofFrost,
+					"DRAGONS~Shaman~Minion~1~1~3~Elemental~Surging Tempest": SurgingTempest,
+					"DRAGONS~Shaman~Minion~4~5~7~Dragon~Squallhunter~Spell Damage~Overload": Squallhunter,
+					"DRAGONS~Shaman~Spell~1~Storm's Wrath~Overload": StormsWrath,
+					"DRAGONS~Shaman~Spell~3~Lightning Breath": LightningBreath,
+					"DRAGONS~Shaman~Minion~5~5~5~~Bandersmosh": Bandersmosh,
+					"DRAGONS~Shaman~Minion~5~5~5~Elemental~Cumulo-Maximus~Battlecry": CumuloMaximus,
+					"DRAGONS~Shaman~Spell~5~Dragon's Pack": DragonsPack,
+					"DRAGONS~Shaman~Minion~2~2~3~~Spirit Wolf~Taunt~Uncollectible": SpiritWolf_Dragons,
+					"DRAGONS~Shaman~Minion~6~3~3~~Corrupt Elementalist~Battlecry": CorruptElementalist,
+					"DRAGONS~Shaman~Minion~6~5~5~Dragon~Nithogg~Battlecry~Legendary": Nithogg,
+					"DRAGONS~Shaman~Minion~1~0~3~~Storm Egg~Uncollectible": StormEgg,
+					"DRAGONS~Shaman~Minion~4~4~4~Dragon~Storm Drake~Rush~Uncollectible": StormDrake,
+					"DRAGONS~Shaman~Minion~2~2~1~Elemental~Windswept Elemental~Rush~Uncollectible": WindsweptElemental,
+					"DRAGONS~Shaman~Hero Card~7~Galakrond, the Tempest~Battlecry~Legendary": GalakrondtheTempest,
+					"DRAGONS~Shaman~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible": GalakrondtheApocalypes_Shaman,
+					"DRAGONS~Shaman~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible": GalakrondAzerothsEnd_Shaman,
+					"DRAGONS~Shaman~Minion~2~2~2~Elemental~Brewing Storm~Rush~Uncollectible": BrewingStorm,
+					"DRAGONS~Shaman~Minion~4~4~4~Elemental~Living Storm~Rush~Uncollectible": LivingStorm,
+					"DRAGONS~Shaman~Minion~8~8~8~Elemental~Raging Storm~Rush~Uncollectible": RagingStorm,
+					"DRAGONS~Warlock~Spell~1~Rain of Fire": RainofFire,
+					"DRAGONS~Warlock~Spell~2~Nether Breath": NetherBreath,
+					"DRAGONS~Warlock~Spell~3~Dark Skies": DarkSkies,
+					"DRAGONS~Warlock~Minion~3~1~1~~Dragonblight Cultist~Battlecry": DragonblightCultist,
+					"DRAGONS~Warlock~Spell~4~Fiendish Rites": FiendishRites,
+					"DRAGONS~Warlock~Minion~4~5~4~~Veiled Worshipper~Battlecry": VeiledWorshipper,
+					"DRAGONS~Warlock~Minion~5~5~5~Dragon~Crazed Netherwing~Battlecry": CrazedNetherwing,
+					"DRAGONS~Warlock~Minion~6~2~2~~Abyssal Summoner~Battlecry": AbyssalSummoner,
+					"DRAGONS~Warlock~Minion~1~1~1~Demon~Abyssal Destroyer~Taunt~Uncollectible": AbyssalDestroyer_Mutable_1,
+					"DRAGONS~Warlock~Hero Card~7~Galakrond, the Wretched~Battlecry~Legendary": GalakrondtheWretched,
+					"DRAGONS~Warlock~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible": GalakrondtheApocalypes_Warlock,
+					"DRAGONS~Warlock~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible": GalakrondAzerothsEnd_Warlock,
+					"DRAGONS~Warlock~Minion~1~1~1~Demon~Draconic Imp~Uncollectible": DraconicImp,
+					"DRAGONS~Warlock~Minion~7~4~4~~Valdris Felgorge~Battlecry~Legendary": ValdrisFelgorge,
+					"DRAGONS~Warlock~Minion~8~4~12~Dragon~Zzeraku the Warped~Legendary": ZzerakutheWarped,
+					"DRAGONS~Warlock~Minion~6~6~6~Dragon~Nether Drake~Uncollectible": NetherDrake,
+					"DRAGONS~Warrior~Minion~1~1~2~Pirate~Sky Raider~Battlecry": SkyRaider,
+					"DRAGONS~Warrior~Weapon~2~1~2~Ritual Chopper~Battlecry": RitualChopper,
+					"DRAGONS~Warrior~Spell~3~Awaken!": Awaken,
+					"DRAGONS~Warrior~Weapon~3~2~2~Ancharrr~Legendary": Ancharrr,
+					"DRAGONS~Warrior~Minion~3~2~3~~EVIL Quartermaster~Battlecry": EVILQuartermaster,
+					"DRAGONS~Warrior~Spell~3~Ramming Speed": RammingSpeed,
+					"DRAGONS~Warrior~Minion~4~3~2~Dragon~Scion of Ruin~Rush~Battlecry": ScionofRuin,
+					"DRAGONS~Warrior~Minion~3~2~5~Mech~Skybarge": Skybarge,
+					"DRAGONS~Warrior~Spell~4~Molten Breath": MoltenBreath,
+					"DRAGONS~Warrior~Hero Card~7~Galakrond, the Unbreakable~Battlecry~Legendary": GalakrondtheUnbreakable,
+					"DRAGONS~Warrior~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible": GalakrondtheApocalypes_Warrior,
+					"DRAGONS~Warrior~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible": GalakrondAzerothsEnd_Warrior,
+					"DRAGONS~Warrior~Minion~8~12~12~Dragon~Deathwing, Mad Aspect~Battlecry~Legendary": DeathwingMadAspect
 					}

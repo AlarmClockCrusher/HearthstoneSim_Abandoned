@@ -14,7 +14,7 @@ from AcrossPacks import BoomBot, Lackeys
 class SkydivingInstructor(Minion):
 	Class, race, name = "Neutral", "", "Skydiving Instructor"
 	mana, attack, health = 3, 2, 2
-	index = "Galakrond~Neutral~Minion~3~2~2~~Skydiving Instructor~Battlecry"
+	index = "YEAR_OF_THE_DRAGON~Neutral~Minion~3~2~2~~Skydiving Instructor~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 1-Cost minion from your deck"
 	name_CN = "伞降教官"
 	
@@ -34,7 +34,7 @@ class SkydivingInstructor(Minion):
 class Hailbringer(Minion):
 	Class, race, name = "Neutral", "Elemental", "Hailbringer"
 	mana, attack, health = 5, 3, 4
-	index = "Galakrond~Neutral~Minion~5~3~4~Elemental~Hailbringer~Battlecry"
+	index = "YEAR_OF_THE_DRAGON~Neutral~Minion~5~3~4~Elemental~Hailbringer~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon two 1/1 Ice Shards that Freeze"
 	name_CN = "冰雹使者"
 	
@@ -46,7 +46,7 @@ class Hailbringer(Minion):
 class IceShard(Minion):
 	Class, race, name = "Neutral", "Elemental", "Ice Shard"
 	mana, attack, health = 1, 1, 1
-	index = "Galakrond~Neutral~Minion~1~1~1~Elemental~Ice Shard~Uncollectible"
+	index = "YEAR_OF_THE_DRAGON~Neutral~Minion~1~1~1~Elemental~Ice Shard~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Freeze any character damaged by this minion"
 	name_CN = "寒冰碎片"
 	def __init__(self, Game, ID):
@@ -71,7 +71,7 @@ class Trig_IceShard(TrigBoard):
 class LicensedAdventurer(Minion):
 	Class, race, name = "Neutral", "", "Licensed Adventurer"
 	mana, attack, health = 2, 3, 2
-	index = "Galakrond~Neutral~Minion~2~3~2~~Licensed Adventurer~Battlecry"
+	index = "YEAR_OF_THE_DRAGON~Neutral~Minion~2~3~2~~Licensed Adventurer~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Quest, add a Coin to your hand"
 	name_CN = "资深探险者"
 	def effCanTrig(self):
@@ -85,7 +85,7 @@ class LicensedAdventurer(Minion):
 class FrenziedFelwing(Minion):
 	Class, race, name = "Neutral", "Demon", "Frenzied Felwing"
 	mana, attack, health = 4, 3, 2
-	index = "Galakrond~Neutral~Minion~4~3~2~Demon~Frenzied Felwing"
+	index = "YEAR_OF_THE_DRAGON~Neutral~Minion~4~3~2~Demon~Frenzied Felwing"
 	requireTarget, keyWord, description = False, "", "Costs (1) less for each damage dealt to your opponent this turn"
 	name_CN = "狂暴邪翼蝠"
 	def __init__(self, Game, ID):
@@ -116,7 +116,7 @@ class Trig_FrenziedFelwing(TrigHand):
 class EscapedManasaber(Minion):
 	Class, race, name = "Neutral", "Beast", "Escaped Manasaber"
 	mana, attack, health = 4, 3, 5
-	index = "Galakrond~Neutral~Minion~4~3~5~Beast~Escaped Manasaber~Stealth"
+	index = "YEAR_OF_THE_DRAGON~Neutral~Minion~4~3~5~Beast~Escaped Manasaber~Stealth"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. Whenever this attacks, gain 1 Mana Crystal this turn only"
 	name_CN = "奔逃的魔晶豹"
 	def __init__(self, Game, ID):
@@ -141,7 +141,7 @@ class Trig_EscapedManasaber(TrigBoard):
 class BoompistolBully(Minion):
 	Class, race, name = "Neutral", "", "Boompistol Bully"
 	mana, attack, health = 5, 5, 5
-	index = "Galakrond~Neutral~Minion~5~5~5~~Boompistol Bully~Battlecry"
+	index = "YEAR_OF_THE_DRAGON~Neutral~Minion~5~5~5~~Boompistol Bully~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Enemy Battlecry cards cost (5) more next turn"
 	name_CN = "持枪恶霸"
 	
@@ -161,7 +161,7 @@ class GameManaAura_InTurnBattlecry5More(TempManaEffect):
 class GrandLackeyErkh(Minion):
 	Class, race, name = "Neutral", "", "Grand Lackey Erkh"
 	mana, attack, health = 4, 2, 3
-	index = "Galakrond~Neutral~Minion~4~2~3~~Grand Lackey Erkh~Legendary"
+	index = "YEAR_OF_THE_DRAGON~Neutral~Minion~4~2~3~~Grand Lackey Erkh~Legendary"
 	requireTarget, keyWord, description = False, "", "After you play a Lackey, add a Lackey to your hand"
 	name_CN = "高级跟班 厄尔克"
 	def __init__(self, Game, ID):
@@ -193,7 +193,7 @@ class Trig_GrandLackeyErkh(TrigBoard):
 class SkyGenralKragg(Minion):
 	Class, race, name = "Neutral", "Pirate", "Sky Gen'ral Kragg"
 	mana, attack, health = 4, 2, 3
-	index = "Galakrond~Neutral~Minion~4~2~3~Pirate~Sky Gen'ral Kragg~Taunt~Battlecry~Legendary"
+	index = "YEAR_OF_THE_DRAGON~Neutral~Minion~4~2~3~Pirate~Sky Gen'ral Kragg~Taunt~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: If you've played a Quest this game, summon a 4/2 Parrot with Rush"
 	name_CN = "天空上将 库拉格"
 	def effCanTrig(self):
@@ -207,7 +207,7 @@ class SkyGenralKragg(Minion):
 class Sharkbait(Minion):
 	Class, race, name = "Neutral", "Beast", "Sharkbait"
 	mana, attack, health = 4, 4, 2
-	index = "Galakrond~Neutral~Minion~4~4~2~Beast~Sharkbait~Rush~Legendary~Uncollectible"
+	index = "YEAR_OF_THE_DRAGON~Neutral~Minion~4~4~2~Beast~Sharkbait~Rush~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	name_CN = "鲨鱼饵"
 	
@@ -216,7 +216,7 @@ class Sharkbait(Minion):
 class RisingWinds(Spell):
 	Class, school, name = "Druid", "", "Rising Winds"
 	requireTarget, mana = False, 2
-	index = "Galakrond~Druid~Spell~2~Rising Winds~Twinspell~Choose One"
+	index = "YEAR_OF_THE_DRAGON~Druid~Spell~2~Rising Winds~Twinspell~Choose One"
 	description = "Twinspell. Choose One- Draw a card; or Summon a 3/2 Eagle"
 	name_CN = "乘风而起"
 	def __init__(self, Game, ID):
@@ -238,7 +238,7 @@ class RisingWinds(Spell):
 class RisingWinds2(Spell):
 	Class, school, name = "Druid", "", "Rising Winds"
 	requireTarget, mana = False, 2
-	index = "Galakrond~Druid~Spell~2~Rising Winds~Choose One~Uncollectible"
+	index = "YEAR_OF_THE_DRAGON~Druid~Spell~2~Rising Winds~Choose One~Uncollectible"
 	description = "Choose One- Draw a card; or Summon a 3/2 Eagle"
 	name_CN = "乘风而起"
 	def __init__(self, Game, ID):
@@ -257,18 +257,18 @@ class RisingWinds2(Spell):
 		
 class TakeFlight_Option(ChooseOneOption):
 	name, description = "Take Flight", "Draw a card"
-	index = "Galakrond~Druid~Spell~2~Take Flight~Uncollectible"
+	index = "YEAR_OF_THE_DRAGON~Druid~Spell~2~Take Flight~Uncollectible"
 	
 class SwoopIn_Option(ChooseOneOption):
 	name, description = "Swoop In", "Summon a 3/2 Eagle"
-	index = "Galakrond~Druid~Spell~2~Swoop In~Uncollectible"
+	index = "YEAR_OF_THE_DRAGON~Druid~Spell~2~Swoop In~Uncollectible"
 	def available(self):
 		return self.entity.Game.space(self.entity.ID) > 0
 		
 class TakeFlight(Spell):
 	Class, school, name = "Druid", "", "Take Flight"
 	requireTarget, mana = False, 2
-	index = "Galakrond~Druid~Spell~2~Take Flight~Uncollectible"
+	index = "YEAR_OF_THE_DRAGON~Druid~Spell~2~Take Flight~Uncollectible"
 	description = "Draw a card"
 	name_CN = "雏鹰起飞"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -278,7 +278,7 @@ class TakeFlight(Spell):
 class SwoopIn(Spell):
 	Class, school, name = "Druid", "", "Swoop In"
 	requireTarget, mana = False, 2
-	index = "Galakrond~Druid~Spell~2~Swoop In~Uncollectible"
+	index = "YEAR_OF_THE_DRAGON~Druid~Spell~2~Swoop In~Uncollectible"
 	description = "Summon a 3/2 Eagle"
 	name_CN = "猛禽飞掠"
 	def available(self):
@@ -291,7 +291,7 @@ class SwoopIn(Spell):
 class Eagle(Minion):
 	Class, race, name = "Druid", "Beast", "Eagle"
 	mana, attack, health = 2, 3, 2
-	index = "Galakrond~Druid~Minion~2~3~2~Beast~Eagle~Uncollectible"
+	index = "YEAR_OF_THE_DRAGON~Druid~Minion~2~3~2~Beast~Eagle~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "鹰"
 	
@@ -299,7 +299,7 @@ class Eagle(Minion):
 class SteelBeetle(Minion):
 	Class, race, name = "Druid", "Beast", "Steel Beetle"
 	mana, attack, health = 2, 2, 3
-	index = "Galakrond~Druid~Minion~2~2~3~Beast~Steel Beetle~Battlecry"
+	index = "YEAR_OF_THE_DRAGON~Druid~Minion~2~2~3~Beast~Steel Beetle~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a spell that costs (5) or more, gain 5 Armor"
 	name_CN = "钢铁甲虫"
 	def effCanTrig(self):
@@ -314,7 +314,7 @@ class SteelBeetle(Minion):
 class WingedGuardian(Minion):
 	Class, race, name = "Druid", "Beast", "Winged Guardian"
 	mana, attack, health = 7, 6, 8
-	index = "Galakrond~Druid~Minion~7~6~8~Beast~Winged Guardian~Taunt~Reborn"
+	index = "YEAR_OF_THE_DRAGON~Druid~Minion~7~6~8~Beast~Winged Guardian~Taunt~Reborn"
 	requireTarget, keyWord, description = False, "Taunt,Reborn", "Taunt, Reborn. Can't be targeted by spells or Hero Powers"
 	name_CN = "飞翼守护者"
 	def __init__(self, Game, ID):
@@ -326,7 +326,7 @@ class WingedGuardian(Minion):
 class FreshScent(Spell):
 	Class, school, name = "Hunter", "", "Fresh Scent"
 	requireTarget, mana = True, 2
-	index = "Galakrond~Hunter~Spell~2~Fresh Scent~Twinspell"
+	index = "YEAR_OF_THE_DRAGON~Hunter~Spell~2~Fresh Scent~Twinspell"
 	description = "Twinspell. Given a Beast +2/+2"
 	name_CN = "新鲜气息"
 	def __init__(self, Game, ID):
@@ -348,7 +348,7 @@ class FreshScent(Spell):
 class FreshScent2(Spell):
 	Class, school, name = "Hunter", "", "Fresh Scent"
 	requireTarget, mana = True, 2
-	index = "Galakrond~Hunter~Spell~2~Fresh Scent~Uncollectible"
+	index = "YEAR_OF_THE_DRAGON~Hunter~Spell~2~Fresh Scent~Uncollectible"
 	description = "Given a Beast +2/+2"
 	name_CN = "新鲜气息"
 	def available(self):
@@ -366,7 +366,7 @@ class FreshScent2(Spell):
 class ChopshopCopter(Minion):
 	Class, race, name = "Hunter", "Mech", "Chopshop Copter"
 	mana, attack, health = 3, 2, 4
-	index = "Galakrond~Hunter~Minion~3~2~4~Mech~Chopshop Copter"
+	index = "YEAR_OF_THE_DRAGON~Hunter~Minion~3~2~4~Mech~Chopshop Copter"
 	requireTarget, keyWord, description = False, "", "After a friendly Mech dies, add a random Mech to your hand"
 	name_CN = "拆件旋翼机"
 	poolIdentifier = "Mechs"
@@ -402,7 +402,7 @@ class Trig_ChopshopCopter(TrigBoard):
 class RotnestDrake(Minion):
 	Class, race, name = "Hunter", "Dragon", "Rotnest Drake"
 	mana, attack, health = 5, 6, 5
-	index = "Galakrond~Hunter~Minion~5~6~5~Dragon~Rotnest Drake~Battlecry"
+	index = "YEAR_OF_THE_DRAGON~Hunter~Minion~5~6~5~Dragon~Rotnest Drake~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, destroy a random enemy minion"
 	name_CN = "腐巢幼龙"
 	def effCanTrig(self):
@@ -427,7 +427,7 @@ class RotnestDrake(Minion):
 class ArcaneAmplifier(Minion):
 	Class, race, name = "Mage", "Elemental", "Arcane Amplifier"
 	mana, attack, health = 3, 2, 5
-	index = "Galakrond~Mage~Minion~3~2~5~Elemental~Arcane Amplifier"
+	index = "YEAR_OF_THE_DRAGON~Mage~Minion~3~2~5~Elemental~Arcane Amplifier"
 	requireTarget, keyWord, description = False, "", "Your Hero Power deals 2 extra damage"
 	name_CN = "奥术增幅体"
 	def __init__(self, Game, ID):
@@ -445,7 +445,7 @@ class GameRuleAura_ArcaneAmplifier(GameRuleAura):
 class AnimatedAvalanche(Minion):
 	Class, race, name = "Mage", "Elemental", "Animated Avalanche"
 	mana, attack, health = 7, 7, 6
-	index = "Galakrond~Mage~Minion~7~7~6~Elemental~Animated Avalanche~Battlecry"
+	index = "YEAR_OF_THE_DRAGON~Mage~Minion~7~7~6~Elemental~Animated Avalanche~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you played an Elemental last turn, summon a copy of this"
 	name_CN = "活化雪崩"
 	def effCanTrig(self):
@@ -453,7 +453,7 @@ class AnimatedAvalanche(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Counters.numElementalsPlayedLastTurn[self.ID] > 0:
-			Copy = self.selfCopy(self.ID) if self.onBoard else type(self)(self.Game, self.ID)
+			Copy = self.selfCopy(self.ID, self) if self.onBoard else type(self)(self.Game, self.ID)
 			self.Game.summon(Copy, self.pos+1, self)
 		return None
 		
@@ -500,7 +500,7 @@ class Trig_WhatDoesThisDo(TrigBoard):
 class TheAmazingReno(Hero):
 	mana, description = 10, "Battlecry: Make all minions disappear. *Poof!*"
 	Class, name, heroPower, armor = "Mage", "The Amazing Reno", WhatDoesThisDo, 5
-	index = "Galakrond~Mage~Hero Card~10~The Amazing Reno~Battlecry~Legendary"
+	index = "YEAR_OF_THE_DRAGON~Mage~Hero Card~10~The Amazing Reno~Battlecry~Legendary"
 	name_CN = "神奇的雷诺"
 	poolIdentifier = "Spells"
 	@classmethod
@@ -520,7 +520,7 @@ class TheAmazingReno(Hero):
 class Shotbot(Minion):
 	Class, race, name = "Paladin", "Mech", "Shotbot"
 	mana, attack, health = 2, 2, 2
-	index = "Galakrond~Paladin~Minion~2~2~2~Mech~Shotbot~Reborn"
+	index = "YEAR_OF_THE_DRAGON~Paladin~Minion~2~2~2~Mech~Shotbot~Reborn"
 	requireTarget, keyWord, description = False, "Reborn", "Reborn"
 	name_CN = "炮火机甲"
 	
@@ -528,7 +528,7 @@ class Shotbot(Minion):
 class AirRaid(Spell):
 	Class, school, name = "Paladin", "", "Air Raid"
 	requireTarget, mana = False, 2
-	index = "Galakrond~Paladin~Spell~2~Air Raid~Twinspell"
+	index = "YEAR_OF_THE_DRAGON~Paladin~Spell~2~Air Raid~Twinspell"
 	description = "Twinspell. Summon two 1/1 Silver Hand Recruits with Taunt"
 	name_CN = "空中团战"
 	def __init__(self, Game, ID):
@@ -545,7 +545,7 @@ class AirRaid(Spell):
 class AirRaid2(Spell):
 	Class, school, name = "Paladin", "", "Air Raid"
 	requireTarget, mana = False, 2
-	index = "Galakrond~Paladin~Spell~2~Air Raid~Uncollectible"
+	index = "YEAR_OF_THE_DRAGON~Paladin~Spell~2~Air Raid~Uncollectible"
 	description = "Summon two 1/1 Silver Hand Recruits with Taunt"
 	name_CN = "空中团战"
 	
@@ -559,7 +559,7 @@ class AirRaid2(Spell):
 class Scalelord(Minion):
 	Class, race, name = "Paladin", "Dragon", "Scalelord"
 	mana, attack, health = 5, 5, 6
-	index = "Galakrond~Paladin~Minion~5~5~6~Dragon~Scalelord~Battlecry"
+	index = "YEAR_OF_THE_DRAGON~Paladin~Minion~5~5~6~Dragon~Scalelord~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Give your Murlocs Divine Shield"
 	name_CN = "鳞甲领主"
 	
@@ -574,7 +574,7 @@ class Scalelord(Minion):
 class AeonReaver(Minion):
 	Class, race, name = "Priest", "Dragon", "Aeon Reaver"
 	mana, attack, health = 6, 4, 4
-	index = "Galakrond~Priest~Minion~6~4~4~Dragon~Aeon Reaver~Battlecry"
+	index = "YEAR_OF_THE_DRAGON~Priest~Minion~6~4~4~Dragon~Aeon Reaver~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal damage to a minion equal to its Attack"
 	name_CN = "永恒掠夺者"
 	def targetExists(self, choice=0):
@@ -592,7 +592,7 @@ class AeonReaver(Minion):
 class ClericofScales(Minion):
 	Class, race, name = "Priest", "", "Cleric of Scales"
 	mana, attack, health = 1, 1, 1
-	index = "Galakrond~Priest~Minion~1~1~1~~Cleric of Scales~Battlecry"
+	index = "YEAR_OF_THE_DRAGON~Priest~Minion~1~1~1~~Cleric of Scales~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, Discover a spell from your deck"
 	name_CN = "龙鳞祭司"
 	
@@ -633,7 +633,7 @@ class ClericofScales(Minion):
 class DarkProphecy(Spell):
 	Class, school, name = "Priest", "", "Dark Prophecy"
 	requireTarget, mana = False, 3
-	index = "Galakrond~Priest~Spell~3~Dark Prophecy"
+	index = "YEAR_OF_THE_DRAGON~Priest~Spell~3~Dark Prophecy"
 	description = "Discover a 2-Cost minion. Summon it and give it +3 Health"
 	name_CN = "黑暗预兆"
 	poolIdentifier = "2-Cost Minions as Priest"
@@ -677,7 +677,7 @@ class DarkProphecy(Spell):
 class Skyvateer(Minion):
 	Class, race, name = "Rogue", "Pirate", "Skyvateer"
 	mana, attack, health = 2, 1, 3
-	index = "Galakrond~Rogue~Minion~2~1~3~Pirate~Skyvateer~Stealth~Deathrattle"
+	index = "YEAR_OF_THE_DRAGON~Rogue~Minion~2~1~3~Pirate~Skyvateer~Stealth~Deathrattle"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. Deathrattle: Draw a card"
 	name_CN = "空中私掠者"
 	def __init__(self, Game, ID):
@@ -695,7 +695,7 @@ class DrawaCard(Deathrattle_Minion):
 class Waxmancy(Spell):
 	Class, school, name = "Rogue", "", "Waxmancy"
 	requireTarget, mana = False, 2
-	index = "Galakrond~Rogue~Spell~2~Waxmancy"
+	index = "YEAR_OF_THE_DRAGON~Rogue~Spell~2~Waxmancy"
 	description = "Discover a Battlecry minion. Reduce its Cost by (2)"
 	name_CN = "蜡烛学"
 	poolIdentifier = "Battlecry Minions as Rogue"
@@ -736,7 +736,7 @@ class Waxmancy(Spell):
 class ShadowSculptor(Minion):
 	Class, race, name = "Rogue", "", "Shadow Sculptor"
 	mana, attack, health = 5, 3, 2
-	index = "Galakrond~Rogue~Minion~5~3~2~~Shadow Sculptor~Combo"
+	index = "YEAR_OF_THE_DRAGON~Rogue~Minion~5~3~2~~Shadow Sculptor~Combo"
 	requireTarget, keyWord, description = False, "", "Combo: Draw a card for each card you've played this turn"
 	name_CN = "暗影塑形师"
 	def effCanTrig(self):
@@ -752,7 +752,7 @@ class ShadowSculptor(Minion):
 class ExplosiveEvolution(Spell):
 	Class, school, name = "Shaman", "", "Explosive Evolution"
 	requireTarget, mana = True, 2
-	index = "Galakrond~Shaman~Spell~2~Explosive Evolution"
+	index = "YEAR_OF_THE_DRAGON~Shaman~Spell~2~Explosive Evolution"
 	description = "Transform a friendly minion into a random one that costs (3) more"
 	name_CN = "惊爆异变"
 	poolIdentifier = "1-Cost Minions to Summon"
@@ -788,7 +788,7 @@ class ExplosiveEvolution(Spell):
 class EyeoftheStorm(Spell):
 	Class, school, name = "Shaman", "", "Eye of the Storm"
 	requireTarget, mana = False, 10
-	index = "Galakrond~Shaman~Spell~10~Eye of the Storm~Overload"
+	index = "YEAR_OF_THE_DRAGON~Shaman~Spell~10~Eye of the Storm~Overload"
 	description = "Summon three 5/6 Elementals with Taunt. Overload: (3)"
 	name_CN = "风暴之眼"
 	def __init__(self, Game, ID):
@@ -805,7 +805,7 @@ class EyeoftheStorm(Spell):
 class Stormblocker(Minion):
 	Class, race, name = "Shaman", "Elemental", "Stormblocker"
 	mana, attack, health = 5, 5, 6
-	index = "Galakrond~Shaman~Minion~5~5~6~Elemental~Stormblocker~Taunt~Uncollectible"
+	index = "YEAR_OF_THE_DRAGON~Shaman~Minion~5~5~6~Elemental~Stormblocker~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "拦路风暴"
 	
@@ -814,7 +814,7 @@ class Stormblocker(Minion):
 class TheFistofRaden(Weapon):
 	Class, name, description = "Shaman", "The Fist of Ra-den", "After you cast a spell, summon a Legendary minion of that Cost. Lose 1 Durability"
 	mana, attack, durability = 4, 1, 4
-	index = "Galakrond~Shaman~Weapon~4~1~4~The Fist of Ra-den~Legendary"
+	index = "YEAR_OF_THE_DRAGON~Shaman~Weapon~4~1~4~The Fist of Ra-den~Legendary"
 	name_CN = "莱登之拳"
 	poolIdentifier = "1-Cost Legendary Minions to Summon"
 	@classmethod
@@ -859,7 +859,7 @@ class Trig_TheFistofRaden(TrigBoard):
 class FiendishServant(Minion):
 	Class, race, name = "Warlock", "Demon", "Fiendish Servant"
 	mana, attack, health = 1, 2, 1
-	index = "Galakrond~Warlock~Minion~1~2~1~Demon~Fiendish Servant~Deathrattle"
+	index = "YEAR_OF_THE_DRAGON~Warlock~Minion~1~2~1~Demon~Fiendish Servant~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Give this minion's Attack to a random friendly minion"
 	name_CN = "邪魔仆人"
 	def __init__(self, Game, ID):
@@ -888,7 +888,7 @@ class GiveAttacktoaRandomFriendlyMinion(Deathrattle_Minion):
 class TwistedKnowledge(Spell):
 	Class, school, name = "Warlock", "", "Twisted Knowledge"
 	requireTarget, mana = False, 2
-	index = "Galakrond~Warlock~Spell~2~Twisted Knowledge"
+	index = "YEAR_OF_THE_DRAGON~Warlock~Spell~2~Twisted Knowledge"
 	description = "Discover 2 Warlock cards"
 	name_CN = "扭曲学识"
 	poolIdentifier = "Warlock Cards"
@@ -923,7 +923,7 @@ class TwistedKnowledge(Spell):
 class ChaosGazer(Minion):
 	Class, race, name = "Warlock", "Demon", "Chaos Gazer"
 	mana, attack, health = 3, 4, 3
-	index = "Galakrond~Warlock~Minion~3~4~3~Demon~Chaos Gazer~Battlecry"
+	index = "YEAR_OF_THE_DRAGON~Warlock~Minion~3~4~3~Demon~Chaos Gazer~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Corrupt a playable card in your opponent's hand. They have 1 turn to play it!"
 	name_CN = "混乱凝视者"
 	
@@ -966,7 +966,7 @@ class Trig_CorruptedHand(TrigHand):
 class BoomSquad(Spell):
 	Class, school, name = "Warrior", "", "Boom Squad"
 	requireTarget, mana = False, 1
-	index = "Galakrond~Warrior~Spell~1~Boom Squad"
+	index = "YEAR_OF_THE_DRAGON~Warrior~Spell~1~Boom Squad"
 	description = "Discover a Lackey, Mech, or a Dragon"
 	name_CN = "砰砰战队"
 	poolIdentifier = "Mechs as Warrior"
@@ -1013,7 +1013,7 @@ class BoomSquad(Spell):
 class RiskySkipper(Minion):
 	Class, race, name = "Warrior", "Pirate", "Risky Skipper"
 	mana, attack, health = 1, 1, 3
-	index = "Galakrond~Warrior~Minion~1~1~3~Pirate~Risky Skipper"
+	index = "YEAR_OF_THE_DRAGON~Warrior~Minion~1~1~3~Pirate~Risky Skipper"
 	requireTarget, keyWord, description = False, "", "After you play a minion, deal 1 damage to all minions"
 	name_CN = "冒进的艇长"
 	def __init__(self, Game, ID):
@@ -1039,7 +1039,7 @@ class Trig_RiskySkipper(TrigBoard):
 class BombWrangler(Minion):
 	Class, race, name = "Warrior", "", "Bomb Wrangler"
 	mana, attack, health = 3, 2, 3
-	index = "Galakrond~Warrior~Minion~3~2~3~~Bomb Wrangler"
+	index = "YEAR_OF_THE_DRAGON~Warrior~Minion~3~2~3~~Bomb Wrangler"
 	requireTarget, keyWord, description = False, "", "Whenever this minion takes damage, summon a 1/1 Boom Bot"
 	name_CN = "炸弹牛仔"
 	def __init__(self, Game, ID):
@@ -1061,48 +1061,48 @@ class Trig_BombWrangler(TrigBoard):
 		self.entity.Game.summon(BoomBot(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity)
 		
 				
-Galakrond_Indices = {"Galakrond~Neutral~Minion~3~2~2~~Skydiving Instructor~Battlecry": SkydivingInstructor,
-					"Galakrond~Neutral~Minion~5~3~4~Elemental~Hailbringer~Battlecry": Hailbringer,
-					"Galakrond~Neutral~Minion~1~1~1~Elemental~Ice Shard~Uncollectible": IceShard,
-					"Galakrond~Neutral~Minion~2~3~2~~Licensed Adventurer~Battlecry": LicensedAdventurer,
-					"Galakrond~Neutral~Minion~4~3~2~Demon~Frenzied Felwing": FrenziedFelwing,
-					"Galakrond~Neutral~Minion~4~3~5~Beast~Escaped Manasaber~Stealth": EscapedManasaber,
-					"Galakrond~Neutral~Minion~5~5~5~~Boompistol Bully~Battlecry": BoompistolBully,
-					"Galakrond~Neutral~Minion~4~2~3~~Grand Lackey Erkh~Legendary": GrandLackeyErkh,
-					"Galakrond~Neutral~Minion~4~2~3~Pirate~Sky Gen'ral Kragg~Taunt~Battlecry~Legendary": SkyGenralKragg,
-					"Galakrond~Neutral~Minion~4~4~2~Beast~Sharkbait~Rush~Legendary~Uncollectible": Sharkbait,
-					"Galakrond~Druid~Spell~2~Rising Winds~Twinspell~Choose One": RisingWinds,
-					"Galakrond~Druid~Spell~2~Rising Winds~Choose One~Uncollectible": RisingWinds2,
-					"Galakrond~Druid~Spell~2~Take Flight~Uncollectible": TakeFlight,
-					"Galakrond~Druid~Spell~2~Swoop In~Uncollectible": SwoopIn,
-					"Galakrond~Druid~Minion~2~3~2~Beast~Eagle~Uncollectible": Eagle,
-					"Galakrond~Druid~Minion~2~2~3~Beast~Steel Beetle~Battlecry": SteelBeetle,
-					"Galakrond~Druid~Minion~7~6~8~Beast~Winged Guardian~Taunt~Reborn": WingedGuardian,
-					"Galakrond~Hunter~Spell~2~Fresh Scent~Twinspell": FreshScent,
-					"Galakrond~Hunter~Spell~2~Fresh Scent~Uncollectible": FreshScent2,
-					"Galakrond~Hunter~Minion~3~2~4~Mech~Chopshop Copter": ChopshopCopter,
-					"Galakrond~Hunter~Minion~5~6~5~Dragon~Rotnest Drake~Battlecry": RotnestDrake,
-					"Galakrond~Mage~Minion~3~2~5~Elemental~Arcane Amplifier": ArcaneAmplifier,
-					"Galakrond~Mage~Minion~7~7~6~Elemental~Animated Avalanche~Battlecry": AnimatedAvalanche,
-					"Galakrond~Mage~Hero Card~10~The Amazing Reno~Battlecry~Legendary": TheAmazingReno,
-					"Galakrond~Paladin~Minion~2~2~2~Mech~Shotbot~Reborn": Shotbot,
-					"Galakrond~Paladin~Spell~2~Air Raid~Twinspell": AirRaid,
-					"Galakrond~Paladin~Spell~2~Air Raid~Uncollectible": AirRaid2,
-					"Galakrond~Paladin~Minion~5~5~6~Dragon~Scalelord~Battlecry": Scalelord,
-					"Galakrond~Priest~Minion~6~4~4~Dragon~Aeon Reaver~Battlecry": AeonReaver,
-					"Galakrond~Priest~Minion~1~1~1~~Cleric of Scales~Battlecry": ClericofScales,
-					"Galakrond~Priest~Spell~3~Dark Prophecy": DarkProphecy,
-					"Galakrond~Rogue~Minion~2~1~3~Pirate~Skyvateer~Stealth~Deathrattle": Skyvateer,
-					"Galakrond~Rogue~Spell~2~Waxmancy": Waxmancy,
-					"Galakrond~Rogue~Minion~5~3~2~~Shadow Sculptor~Combo": ShadowSculptor,
-					"Galakrond~Shaman~Spell~2~Explosive Evolution": ExplosiveEvolution,
-					"Galakrond~Shaman~Spell~10~Eye of the Storm~Overload": EyeoftheStorm,
-					"Galakrond~Shaman~Minion~5~5~6~Elemental~Stormblocker~Taunt~Uncollectible": Stormblocker,
-					"Galakrond~Shaman~Weapon~4~1~4~The Fist of Ra-den~Legendary": TheFistofRaden,
-					"Galakrond~Warlock~Minion~1~2~1~Demon~Fiendish Servant~Deathrattle": FiendishServant,
-					"Galakrond~Warlock~Spell~2~Twisted Knowledge": TwistedKnowledge,
-					"Galakrond~Warlock~Minion~3~4~3~Demon~Chaos Gazer~Battlecry": ChaosGazer,
-					"Galakrond~Warrior~Spell~1~Boom Squad": BoomSquad,
-					"Galakrond~Warrior~Minion~1~1~3~Pirate~Risky Skipper": RiskySkipper,
-					"Galakrond~Warrior~Minion~3~2~3~~Bomb Wrangler": BombWrangler,
+Galakrond_Indices = {"YEAR_OF_THE_DRAGON~Neutral~Minion~3~2~2~~Skydiving Instructor~Battlecry": SkydivingInstructor,
+					"YEAR_OF_THE_DRAGON~Neutral~Minion~5~3~4~Elemental~Hailbringer~Battlecry": Hailbringer,
+					"YEAR_OF_THE_DRAGON~Neutral~Minion~1~1~1~Elemental~Ice Shard~Uncollectible": IceShard,
+					"YEAR_OF_THE_DRAGON~Neutral~Minion~2~3~2~~Licensed Adventurer~Battlecry": LicensedAdventurer,
+					"YEAR_OF_THE_DRAGON~Neutral~Minion~4~3~2~Demon~Frenzied Felwing": FrenziedFelwing,
+					"YEAR_OF_THE_DRAGON~Neutral~Minion~4~3~5~Beast~Escaped Manasaber~Stealth": EscapedManasaber,
+					"YEAR_OF_THE_DRAGON~Neutral~Minion~5~5~5~~Boompistol Bully~Battlecry": BoompistolBully,
+					"YEAR_OF_THE_DRAGON~Neutral~Minion~4~2~3~~Grand Lackey Erkh~Legendary": GrandLackeyErkh,
+					"YEAR_OF_THE_DRAGON~Neutral~Minion~4~2~3~Pirate~Sky Gen'ral Kragg~Taunt~Battlecry~Legendary": SkyGenralKragg,
+					"YEAR_OF_THE_DRAGON~Neutral~Minion~4~4~2~Beast~Sharkbait~Rush~Legendary~Uncollectible": Sharkbait,
+					"YEAR_OF_THE_DRAGON~Druid~Spell~2~Rising Winds~Twinspell~Choose One": RisingWinds,
+					"YEAR_OF_THE_DRAGON~Druid~Spell~2~Rising Winds~Choose One~Uncollectible": RisingWinds2,
+					"YEAR_OF_THE_DRAGON~Druid~Spell~2~Take Flight~Uncollectible": TakeFlight,
+					"YEAR_OF_THE_DRAGON~Druid~Spell~2~Swoop In~Uncollectible": SwoopIn,
+					"YEAR_OF_THE_DRAGON~Druid~Minion~2~3~2~Beast~Eagle~Uncollectible": Eagle,
+					"YEAR_OF_THE_DRAGON~Druid~Minion~2~2~3~Beast~Steel Beetle~Battlecry": SteelBeetle,
+					"YEAR_OF_THE_DRAGON~Druid~Minion~7~6~8~Beast~Winged Guardian~Taunt~Reborn": WingedGuardian,
+					"YEAR_OF_THE_DRAGON~Hunter~Spell~2~Fresh Scent~Twinspell": FreshScent,
+					"YEAR_OF_THE_DRAGON~Hunter~Spell~2~Fresh Scent~Uncollectible": FreshScent2,
+					"YEAR_OF_THE_DRAGON~Hunter~Minion~3~2~4~Mech~Chopshop Copter": ChopshopCopter,
+					"YEAR_OF_THE_DRAGON~Hunter~Minion~5~6~5~Dragon~Rotnest Drake~Battlecry": RotnestDrake,
+					"YEAR_OF_THE_DRAGON~Mage~Minion~3~2~5~Elemental~Arcane Amplifier": ArcaneAmplifier,
+					"YEAR_OF_THE_DRAGON~Mage~Minion~7~7~6~Elemental~Animated Avalanche~Battlecry": AnimatedAvalanche,
+					"YEAR_OF_THE_DRAGON~Mage~Hero Card~10~The Amazing Reno~Battlecry~Legendary": TheAmazingReno,
+					"YEAR_OF_THE_DRAGON~Paladin~Minion~2~2~2~Mech~Shotbot~Reborn": Shotbot,
+					"YEAR_OF_THE_DRAGON~Paladin~Spell~2~Air Raid~Twinspell": AirRaid,
+					"YEAR_OF_THE_DRAGON~Paladin~Spell~2~Air Raid~Uncollectible": AirRaid2,
+					"YEAR_OF_THE_DRAGON~Paladin~Minion~5~5~6~Dragon~Scalelord~Battlecry": Scalelord,
+					"YEAR_OF_THE_DRAGON~Priest~Minion~6~4~4~Dragon~Aeon Reaver~Battlecry": AeonReaver,
+					"YEAR_OF_THE_DRAGON~Priest~Minion~1~1~1~~Cleric of Scales~Battlecry": ClericofScales,
+					"YEAR_OF_THE_DRAGON~Priest~Spell~3~Dark Prophecy": DarkProphecy,
+					"YEAR_OF_THE_DRAGON~Rogue~Minion~2~1~3~Pirate~Skyvateer~Stealth~Deathrattle": Skyvateer,
+					"YEAR_OF_THE_DRAGON~Rogue~Spell~2~Waxmancy": Waxmancy,
+					"YEAR_OF_THE_DRAGON~Rogue~Minion~5~3~2~~Shadow Sculptor~Combo": ShadowSculptor,
+					"YEAR_OF_THE_DRAGON~Shaman~Spell~2~Explosive Evolution": ExplosiveEvolution,
+					"YEAR_OF_THE_DRAGON~Shaman~Spell~10~Eye of the Storm~Overload": EyeoftheStorm,
+					"YEAR_OF_THE_DRAGON~Shaman~Minion~5~5~6~Elemental~Stormblocker~Taunt~Uncollectible": Stormblocker,
+					"YEAR_OF_THE_DRAGON~Shaman~Weapon~4~1~4~The Fist of Ra-den~Legendary": TheFistofRaden,
+					"YEAR_OF_THE_DRAGON~Warlock~Minion~1~2~1~Demon~Fiendish Servant~Deathrattle": FiendishServant,
+					"YEAR_OF_THE_DRAGON~Warlock~Spell~2~Twisted Knowledge": TwistedKnowledge,
+					"YEAR_OF_THE_DRAGON~Warlock~Minion~3~4~3~Demon~Chaos Gazer~Battlecry": ChaosGazer,
+					"YEAR_OF_THE_DRAGON~Warrior~Spell~1~Boom Squad": BoomSquad,
+					"YEAR_OF_THE_DRAGON~Warrior~Minion~1~1~3~Pirate~Risky Skipper": RiskySkipper,
+					"YEAR_OF_THE_DRAGON~Warrior~Minion~3~2~3~~Bomb Wrangler": BombWrangler,
 					}

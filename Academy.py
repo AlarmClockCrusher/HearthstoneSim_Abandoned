@@ -5,9 +5,8 @@ from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
 
-from Basic import Trig_Charge, HealingTotem, SearingTotem, StoneclawTotem, StrengthTotem
 from Classic import ManaWyrm
-from AcrossPacks import Lackeys
+from AcrossPacks import Lackeys, HealingTotem, SearingTotem, StoneclawTotem, StrengthTotem
 from Uldum import PlagueofDeath, PlagueofMadness, PlagueofMurlocs, PlagueofFlames, PlagueofWrath
 from Outlands import Minion_Dormantfor2turns
 
@@ -62,13 +61,13 @@ class Spellburst(TrigBoard):
 class TransferStudent(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Transfer Student"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student"
 	requireTarget, keyWord, description = False, "", "This has different effects based on which game board you're on"
 	
 class TransferStudent_Ogrimmar(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal 2 damage"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -79,19 +78,19 @@ class TransferStudent_Ogrimmar(Minion):
 class TransferStudent_Stormwind(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Transfer Student~Divine Shield"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Divine Shield"
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield"
 	
 class TransferStudent_Stranglethorn(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Transfer Student~Stealth~Poisonous"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Stealth~Poisonous"
 	requireTarget, keyWord, description = False, "Stealth,Poisonous", "Stealth, Poisonous"
 	
 class TransferStudent_FourWindValley(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion +1/+2"
 	
 	def targetExists(self, choice=0):
@@ -108,7 +107,7 @@ class TransferStudent_FourWindValley(Minion):
 class TransferStudent_Shadows(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a Lackey to your hand"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -126,13 +125,13 @@ class TransferStudent_Shadows(Minion):
 class TransferStudent_UldumDesert(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Transfer Student~Reborn"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Reborn"
 	requireTarget, keyWord, description = False, "Reborn", "Reborn"
 	
 class TransferStudent_UldumOasis(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a Uldum plague card to your hand"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -150,7 +149,7 @@ class TransferStudent_UldumOasis(Minion):
 class TransferStudent_Dragons(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a Dragon"
 	poolIdentifier = "Dragons as Druid"
 	@classmethod
@@ -186,7 +185,7 @@ class TransferStudent_Dragons(Minion):
 class TransferStudent_Outlands(Minion_Dormantfor2turns):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, deal 3 damage to 2 random enemy minions"
 	
 	def awakenEffect(self):
@@ -204,7 +203,7 @@ class TransferStudent_Outlands(Minion_Dormantfor2turns):
 class TransferStudent_Academy(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a random Dual Class card to your hand"
 	poolIdentifier = "Dual Class Cards"
 	@classmethod
@@ -229,7 +228,7 @@ class TransferStudent_Academy(Minion):
 class TransferStudent_Darkmoon(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Transfer Student"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student"
 	requireTarget, keyWord, description = False, "", "Corrupt: Gain +2/+2"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -238,7 +237,7 @@ class TransferStudent_Darkmoon(Minion):
 class TransferStudent_Darkmoon_Corrupt(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 4, 4
-	index = "Academy~Neutral~Minion~2~4~4~~Transfer Student~Corrupted~Uncollectible"
+	index = "SCHOLOMANCE~Neutral~Minion~2~4~4~~Transfer Student~Corrupted~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	
 	
@@ -246,7 +245,7 @@ class TransferStudent_Darkmoon_Corrupt(Minion):
 class DeskImp(Minion):
 	Class, race, name = "Neutral", "Demon", "Desk Imp"
 	mana, attack, health = 0, 1, 1
-	index = "Academy~Neutral~Minion~0~1~1~Demon~Desk Imp"
+	index = "SCHOLOMANCE~Neutral~Minion~0~1~1~Demon~Desk Imp"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "课桌小鬼"
 	
@@ -254,7 +253,7 @@ class DeskImp(Minion):
 class AnimatedBroomstick(Minion):
 	Class, race, name = "Neutral", "", "Animated Broomstick"
 	mana, attack, health = 1, 1, 1
-	index = "Academy~Neutral~Minion~1~1~1~~Animated Broomstick~Rush~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~1~1~1~~Animated Broomstick~Rush~Battlecry"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Battlecry: Give your other minions Rush"
 	name_CN = "活化扫帚"
 	
@@ -267,7 +266,7 @@ class AnimatedBroomstick(Minion):
 class IntrepidInitiate(Minion):
 	Class, race, name = "Neutral", "", "Intrepid Initiate"
 	mana, attack, health = 1, 1, 2
-	index = "Academy~Neutral~Minion~1~1~2~~Intrepid Initiate~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~1~1~2~~Intrepid Initiate~Battlecry"
 	requireTarget, keyWord, description = False, "", "Spellburst: Gain +2 Attack"
 	name_CN = "新生刺头"
 	def __init__(self, Game, ID):
@@ -285,7 +284,7 @@ class Trig_IntrepidInitiate(Spellburst):
 class PenFlinger(Minion):
 	Class, race, name = "Neutral", "", "Pen Flinger"
 	mana, attack, health = 1, 1, 1
-	index = "Academy~Neutral~Minion~1~1~1~~Pen Flinger~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~1~1~1~~Pen Flinger~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal 1 damage. Spellburst: Return this to your hand"
 	name_CN = "甩笔侏儒"
 	def __init__(self, Game, ID):
@@ -308,7 +307,7 @@ class Trig_PenFlinger(Spellburst):
 class SphereofSapience(Weapon):
 	Class, name, description = "Neutral", "Sphere of Sapience", "At the start of your turn, look at your top card. You can put it on the bottom and lose 1 Durability"
 	mana, attack, durability = 1, 0, 4
-	index = "Academy~Neutral~Weapon~1~0~4~Sphere of Sapience~Neutral"
+	index = "SCHOLOMANCE~Neutral~Weapon~1~0~4~Sphere of Sapience~Neutral"
 	name_CN = "感知宝珠"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -358,7 +357,7 @@ class NewFate:
 class TourGuide(Minion):
 	Class, race, name = "Neutral", "", "Tour Guide"
 	mana, attack, health = 1, 1, 1
-	index = "Academy~Neutral~Minion~1~1~1~~Tour Guide~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~1~1~1~~Tour Guide~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Your next Hero Power costs (0)"
 	name_CN = "巡游向导"
 	
@@ -380,7 +379,7 @@ class GameManaAura_NextHeroPower0(TempManaEffect_Power):
 class CultNeophyte(Minion):
 	Class, race, name = "Neutral", "", "Cult Neophyte"
 	mana, attack, health = 2, 3, 2
-	index = "Academy~Neutral~Minion~2~3~2~~Cult Neophyte~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~3~2~~Cult Neophyte~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Your opponent's spells cost (1) more next turn"
 	name_CN = "异教低阶牧师"
 	
@@ -400,7 +399,7 @@ class GameManaAura_InTurnSpell1More(TempManaEffect):
 class ManafeederPanthara(Minion):
 	Class, race, name = "Neutral", "Beast", "Manafeeder Panthara"
 	mana, attack, health = 2, 2, 3
-	index = "Academy~Neutral~Minion~2~2~3~Beast~Manafeeder Panthara~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~3~Beast~Manafeeder Panthara~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you've used your Hero Power this turn, draw a card"
 	name_CN = "食魔影豹"
 	
@@ -416,7 +415,7 @@ class ManafeederPanthara(Minion):
 class SneakyDelinquent(Minion):
 	Class, race, name = "Neutral", "", "Sneaky Delinquent"
 	mana, attack, health = 2, 3, 1
-	index = "Academy~Neutral~Minion~2~3~1~~Sneaky Delinquent~Stealth~Deathrattle"
+	index = "SCHOLOMANCE~Neutral~Minion~2~3~1~~Sneaky Delinquent~Stealth~Deathrattle"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. Deathrattle: Add a 3/1 Ghost with Stealth to your hand"
 	name_CN = "少年惯偷"
 	def __init__(self, Game, ID):
@@ -433,7 +432,7 @@ class AddaSpectralDelinquent2YourHand(Deathrattle_Minion):
 class SpectralDelinquent(Minion):
 	Class, race, name = "Neutral", "", "Spectral Delinquent"
 	mana, attack, health = 2, 3, 1
-	index = "Academy~Neutral~Minion~2~3~1~~Spectral Delinquent~Stealth~Uncollectible"
+	index = "SCHOLOMANCE~Neutral~Minion~2~3~1~~Spectral Delinquent~Stealth~Uncollectible"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth"
 	name_CN = "鬼灵惯偷"
 	
@@ -441,7 +440,7 @@ class SpectralDelinquent(Minion):
 class VoraciousReader(Minion):
 	Class, race, name = "Neutral", "", "Voracious Reader"
 	mana, attack, health = 3, 1, 3
-	index = "Academy~Neutral~Minion~3~1~3~~Voracious Reader"
+	index = "SCHOLOMANCE~Neutral~Minion~3~1~3~~Voracious Reader"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, draw until you have 3 cards"
 	name_CN = "贪婪的书虫"
 	def __init__(self, Game, ID):
@@ -469,7 +468,7 @@ class Trig_VoraciousReader(TrigBoard):
 class Wandmaker(Minion):
 	Class, race, name = "Neutral", "", "Wandmaker"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Wandmaker~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Wandmaker~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a 1-Cost spell from your class to your hand"
 	name_CN = "魔杖工匠"
 	poolIdentifier = "1-Cost Spells as Druid"
@@ -494,7 +493,7 @@ class Wandmaker(Minion):
 class EducatedElekk(Minion):
 	Class, race, name = "Neutral", "Beast", "Educated Elekk"
 	mana, attack, health = 3, 3, 4
-	index = "Academy~Neutral~Minion~3~3~4~Beast~Educated Elekk~Deathrattle"
+	index = "SCHOLOMANCE~Neutral~Minion~3~3~4~Beast~Educated Elekk~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Whenever a spell is played, this minion remembers it. Deathrattle: Shuffle the spells into your deck"
 	name_CN = "驯化的雷象"
 	def __init__(self, Game, ID):
@@ -540,7 +539,7 @@ class ShuffleRememberedSpells(Deathrattle_Minion):
 class EnchantedCauldron(Minion):
 	Class, race, name = "Neutral", "", "Enchanted Cauldron"
 	mana, attack, health = 3, 1, 6
-	index = "Academy~Neutral~Minion~3~1~6~~Enchanted Cauldron"
+	index = "SCHOLOMANCE~Neutral~Minion~3~1~6~~Enchanted Cauldron"
 	requireTarget, keyWord, description = False, "", "Spellburst: Cast a random spell of the same Cost"
 	name_CN = "魔化大锅"
 	poolIdentifier = "0-Cost Spells"
@@ -579,7 +578,7 @@ class Trig_EnchantedCauldron(Spellburst):
 class RobesofProtection(Minion):
 	Class, race, name = "Neutral", "", "Robes of Protection"
 	mana, attack, health = 3, 2, 4
-	index = "Academy~Neutral~Minion~3~2~4~~Robes of Protection"
+	index = "SCHOLOMANCE~Neutral~Minion~3~2~4~~Robes of Protection"
 	requireTarget, keyWord, description = False, "", "Your minions have 'Can't be targeted by spells or Hero Powers'"
 	name_CN = "防护长袍"
 	def __init__(self, Game, ID):
@@ -593,7 +592,7 @@ class RobesofProtection(Minion):
 class CrimsonHothead(Minion):
 	Class, race, name = "Neutral", "Dragon", "Crimson Hothead"
 	mana, attack, health = 4, 3, 6
-	index = "Academy~Neutral~Minion~4~3~6~Dragon~Crimson Hothead"
+	index = "SCHOLOMANCE~Neutral~Minion~4~3~6~Dragon~Crimson Hothead"
 	requireTarget, keyWord, description = False, "", "Spellburst: Gain +1 Attack and Taunt"
 	name_CN = "赤红急先锋"
 	def __init__(self, Game, ID):
@@ -612,7 +611,7 @@ class Trig_CrimsonHothead(Spellburst):
 class DivineRager(Minion):
 	Class, race, name = "Neutral", "Elemental", "Divine Rager"
 	mana, attack, health = 4, 5, 1
-	index = "Academy~Neutral~Minion~4~5~1~Elemental~Divine Rager~Divine Shield"
+	index = "SCHOLOMANCE~Neutral~Minion~4~5~1~Elemental~Divine Rager~Divine Shield"
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield"
 	name_CN = "神圣暴怒者"
 	
@@ -620,7 +619,7 @@ class DivineRager(Minion):
 class FishyFlyer(Minion):
 	Class, race, name = "Neutral", "Murloc", "Fishy Flyer"
 	mana, attack, health = 4, 4, 3
-	index = "Academy~Neutral~Minion~4~4~3~Murloc~Fishy Flyer~Rush~Deathrattle"
+	index = "SCHOLOMANCE~Neutral~Minion~4~4~3~Murloc~Fishy Flyer~Rush~Deathrattle"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Deathrattle: Add a 4/3 Ghost with Rush to your hand"
 	name_CN = "鱼人飞骑"
 	def __init__(self, Game, ID):
@@ -637,7 +636,7 @@ class AddaSpectralFlyer2YourHand(Deathrattle_Minion):
 class SpectralFlyer(Minion):
 	Class, race, name = "Neutral", "Murloc", "Spectral Flyer"
 	mana, attack, health = 4, 4, 3
-	index = "Academy~Neutral~Minion~4~4~3~Murloc~Spectral Flyer~Rush~Uncollectible"
+	index = "SCHOLOMANCE~Neutral~Minion~4~4~3~Murloc~Spectral Flyer~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	name_CN = "鬼灵飞骑"
 	
@@ -645,7 +644,7 @@ class SpectralFlyer(Minion):
 class LorekeeperPolkelt(Minion):
 	Class, race, name = "Neutral", "", "Lorekeeper Polkelt"
 	mana, attack, health = 5, 4, 5
-	index = "Academy~Neutral~Minion~5~4~5~~Lorekeeper Polkelt~Battlecry~Legendary"
+	index = "SCHOLOMANCE~Neutral~Minion~5~4~5~~Lorekeeper Polkelt~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Reorder your deck from the highest Cost card to the lowest Cost card"
 	name_CN = "博学者 普克尔特"
 	
@@ -663,7 +662,7 @@ class LorekeeperPolkelt(Minion):
 class WretchedTutor(Minion):
 	Class, race, name = "Neutral", "", "Wretched Tutor"
 	mana, attack, health = 4, 2, 5
-	index = "Academy~Neutral~Minion~4~2~5~~Wretched Tutor"
+	index = "SCHOLOMANCE~Neutral~Minion~4~2~5~~Wretched Tutor"
 	requireTarget, keyWord, description = False, "", "Spellburst: Deal 2 damage to all other minions"
 	name_CN = "失心辅导员"
 	def __init__(self, Game, ID):
@@ -685,7 +684,7 @@ class Trig_WretchedTutor(Spellburst):
 class HeadmasterKelThuzad(Minion):
 	Class, race, name = "Neutral", "", "Headmaster Kel'Thuzad"
 	mana, attack, health = 5, 4, 6
-	index = "Academy~Neutral~Minion~5~4~6~~Headmaster Kel'Thuzad~Legendary"
+	index = "SCHOLOMANCE~Neutral~Minion~5~4~6~~Headmaster Kel'Thuzad~Legendary"
 	requireTarget, keyWord, description = False, "", "Spellburst: If the spell destroys any minions, summon them"
 	name_CN = "校长 克尔苏加德"
 	def __init__(self, Game, ID):
@@ -722,7 +721,7 @@ class Trig_HeadmasterKelThuzad(TrigBoard):
 class LakeThresher(Minion):
 	Class, race, name = "Neutral", "Beast", "Lake Thresher"
 	mana, attack, health = 5, 4, 6
-	index = "Academy~Neutral~Minion~5~4~6~Beast~Lake Thresher"
+	index = "SCHOLOMANCE~Neutral~Minion~5~4~6~Beast~Lake Thresher"
 	requireTarget, keyWord, description = False, "", "Also damages the minions next to whomever this attacks"
 	name_CN = "止水湖蛇颈龙"
 	def __init__(self, Game, ID):
@@ -733,7 +732,7 @@ class LakeThresher(Minion):
 class Ogremancer(Minion):
 	Class, race, name = "Neutral", "", "Ogremancer"
 	mana, attack, health = 5, 3, 7
-	index = "Academy~Neutral~Minion~5~3~7~~Ogremancer"
+	index = "SCHOLOMANCE~Neutral~Minion~5~3~7~~Ogremancer"
 	requireTarget, keyWord, description = False, "", "Whenever your opponent casts a spell, summon a 2/2 Skeleton with Taunt"
 	name_CN = "食人魔巫术师"
 	def __init__(self, Game, ID):
@@ -757,7 +756,7 @@ class Trig_Ogremancer(TrigBoard):
 class RisenSkeleton(Minion):
 	Class, race, name = "Neutral", "", "Risen Skeleton"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Neutral~Minion~2~2~2~~Risen Skeleton~Taunt~Uncollectible"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Risen Skeleton~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "复活的骷髅"
 	
@@ -765,7 +764,7 @@ class RisenSkeleton(Minion):
 class StewardofScrolls(Minion):
 	Class, race, name = "Neutral", "Elemental", "Steward of Scrolls"
 	mana, attack, health = 5, 4, 4
-	index = "Academy~Neutral~Minion~5~4~4~Elemental~Steward of Scrolls~Spell Damage~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~5~4~4~Elemental~Steward of Scrolls~Spell Damage~Battlecry"
 	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1. Battlecry: Discover a spell"
 	name_CN = "卷轴管理者"
 	poolIdentifier = "Demon Hunter Spells"
@@ -800,7 +799,7 @@ class StewardofScrolls(Minion):
 class Vectus(Minion):
 	Class, race, name = "Neutral", "", "Vectus"
 	mana, attack, health = 5, 4, 4
-	index = "Academy~Neutral~Minion~5~4~4~~Vectus~Battlecry~Legendary"
+	index = "SCHOLOMANCE~Neutral~Minion~5~4~4~~Vectus~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon two 1/1 Whelps. Each gains a Deathrattle from your minions that died this game"
 	name_CN = "维克图斯"
 	
@@ -828,7 +827,7 @@ class Vectus(Minion):
 class PlaguedHatchling(Minion):
 	Class, race, name = "Neutral", "Dragon", "Plagued Hatchling"
 	mana, attack, health = 1, 1, 1
-	index = "Academy~Neutral~Minion~1~1~1~Dragon~Plagued Hatchling~Uncollectible"
+	index = "SCHOLOMANCE~Neutral~Minion~1~1~1~Dragon~Plagued Hatchling~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "魔药龙崽"
 	
@@ -837,7 +836,7 @@ class PlaguedHatchling(Minion):
 class OnyxMagescribe(Minion):
 	Class, race, name = "Neutral", "Dragon", "Onyx Magescribe"
 	mana, attack, health = 6, 4, 9
-	index = "Academy~Neutral~Minion~6~4~9~Dragon~Onyx Magescribe"
+	index = "SCHOLOMANCE~Neutral~Minion~6~4~9~Dragon~Onyx Magescribe"
 	requireTarget, keyWord, description = False, "", "Spellburst: Add 2 random spells from your class to your hand"
 	name_CN = "黑岩 法术抄写员"
 	poolIdentifier = "Druid Spells"
@@ -870,7 +869,7 @@ class Trig_OnyxMagescribe(Spellburst):
 class SmugSenior(Minion):
 	Class, race, name = "Neutral", "", "Smug Senior"
 	mana, attack, health = 6, 5, 7
-	index = "Academy~Neutral~Minion~6~5~7~~Smug Senior~Taunt~Deathrattle"
+	index = "SCHOLOMANCE~Neutral~Minion~6~5~7~~Smug Senior~Taunt~Deathrattle"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Add a 5/7 Ghost with Taunt to your hand"
 	name_CN = "浮夸的 大四学长"
 	def __init__(self, Game, ID):
@@ -887,7 +886,7 @@ class AddaSpectralSenior2YourHand(Deathrattle_Minion):
 class SpectralSenior(Minion):
 	Class, race, name = "Neutral", "", "Spectral Senior"
 	mana, attack, health = 6, 5, 7
-	index = "Academy~Neutral~Minion~6~5~7~~Spectral Senior~Taunt~Uncollectible"
+	index = "SCHOLOMANCE~Neutral~Minion~6~5~7~~Spectral Senior~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "鬼灵学长"
 	
@@ -895,7 +894,7 @@ class SpectralSenior(Minion):
 class SorcerousSubstitute(Minion):
 	Class, race, name = "Neutral", "", "Sorcerous Substitute"
 	mana, attack, health = 6, 6, 6
-	index = "Academy~Neutral~Minion~6~6~6~~Sorcerous Substitute~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~6~6~6~~Sorcerous Substitute~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you have Spell Damage, summon a copy of this"
 	name_CN = "巫术替身"
 	
@@ -904,7 +903,7 @@ class SorcerousSubstitute(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.countSpellDamage() > 0:
-			Copy = self.selfCopy(self.ID) if self.onBoard else type(self)(self.Game, self.ID)
+			Copy = self.selfCopy(self.ID, self) if self.onBoard else type(self)(self.Game, self.ID)
 			self.Game.summon(Copy, self.pos+1, self)
 		return None
 		
@@ -913,7 +912,7 @@ class SorcerousSubstitute(Minion):
 class KeymasterAlabaster(Minion):
 	Class, race, name = "Neutral", "", "Keymaster Alabaster"
 	mana, attack, health = 7, 6, 8
-	index = "Academy~Neutral~Minion~7~6~8~~Keymaster Alabaster~Legendary"
+	index = "SCHOLOMANCE~Neutral~Minion~7~6~8~~Keymaster Alabaster~Legendary"
 	requireTarget, keyWord, description = False, "", "Whenever your opponent draws a card, add a copy to your hand that costs (1)"
 	name_CN = "钥匙专家 阿拉巴斯特"
 	def __init__(self, Game, ID):
@@ -932,7 +931,7 @@ class Trig_KeymasterAlabaster(TrigBoard):
 				else "Whenever your opponent draws a card, add a copy to your hand that costs (1)"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		Copy = target[0].selfCopy(self.entity.ID)
+		Copy = target[0].selfCopy(self.entity.ID, self.entity)
 		ManaMod(Copy, changeby=0, changeto=1).applies()
 		self.entity.Game.Hand_Deck.addCardtoHand(Copy, self.entity.ID, creator=type(self.entity))
 		
@@ -940,7 +939,7 @@ class Trig_KeymasterAlabaster(TrigBoard):
 class PlaguedProtodrake(Minion):
 	Class, race, name = "Neutral", "Dragon", "Plagued Protodrake"
 	mana, attack, health = 8, 8, 8
-	index = "Academy~Neutral~Minion~8~8~8~Dragon~Plagued Protodrake~Deathrattle"
+	index = "SCHOLOMANCE~Neutral~Minion~8~8~8~Dragon~Plagued Protodrake~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Summon a random 7-Cost minion"
 	name_CN = "魔药始祖龙"
 	poolIdentifier = "7-Cost Minions to Summon"
@@ -970,7 +969,7 @@ class SummonaRandom7CostMinion(Deathrattle_Minion):
 class DemonCompanion(Spell):
 	Class, school, name = "Demon Hunter,Hunter", "", "Demon Companion"
 	requireTarget, mana = False, 1
-	index = "Academy~Demon Hunter,Hunter~Spell~1~Demon Companion"
+	index = "SCHOLOMANCE~Demon Hunter,Hunter~Spell~1~Demon Companion"
 	description = "Summon a random Demon Companion"
 	name_CN = "恶魔伙伴"
 	def available(self):
@@ -991,14 +990,14 @@ class DemonCompanion(Spell):
 class Reffuh(Minion):
 	Class, race, name = "Demon Hunter,Hunter", "Demon", "Reffuh"
 	mana, attack, health = 1, 2, 1
-	index = "Academy~Demon Hunter,Hunter~Minion~1~2~1~Demon~Reffuh~Charge~Uncollectible"
+	index = "SCHOLOMANCE~Demon Hunter,Hunter~Minion~1~2~1~Demon~Reffuh~Charge~Uncollectible"
 	requireTarget, keyWord, description = False, "Charge", "Charge"
 	name_CN = "弗霍"
 	
 class Kolek(Minion):
 	Class, race, name = "Demon Hunter,Hunter", "Demon", "Kolek"
 	mana, attack, health = 1, 1, 2
-	index = "Academy~Demon Hunter,Hunter~Minion~1~1~2~Demon~Kolek~Uncollectible"
+	index = "SCHOLOMANCE~Demon Hunter,Hunter~Minion~1~1~2~Demon~Kolek~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack"
 	name_CN = "克欧雷"
 	def __init__(self, Game, ID):
@@ -1008,7 +1007,7 @@ class Kolek(Minion):
 class Shima(Minion):
 	Class, race, name = "Demon Hunter,Hunter", "Demon", "Shima"
 	mana, attack, health = 1, 2, 2
-	index = "Academy~Demon Hunter,Hunter~Minion~1~2~2~Demon~Shima~Taunt~Uncollectible"
+	index = "SCHOLOMANCE~Demon Hunter,Hunter~Minion~1~2~2~Demon~Shima~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "莎米"
 	
@@ -1016,7 +1015,7 @@ class Shima(Minion):
 class DoubleJump(Spell):
 	Class, school, name = "Demon Hunter", "", "Double Jump"
 	requireTarget, mana = False, 1
-	index = "Academy~Demon Hunter~Spell~1~Double Jump"
+	index = "SCHOLOMANCE~Demon Hunter~Spell~1~Double Jump"
 	description = "Draw an Outcast card from your deck"
 	name_CN = "二段跳"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1036,7 +1035,7 @@ class DoubleJump(Spell):
 class TrueaimCrescent(Weapon):
 	Class, name, description = "Demon Hunter,Hunter", "Trueaim Crescent", "After your hero attacks a minion, your minions attack it too"
 	mana, attack, durability = 1, 1, 4
-	index = "Academy~Demon Hunter,Hunter~Weapon~1~1~4~Trueaim Crescent"
+	index = "SCHOLOMANCE~Demon Hunter,Hunter~Weapon~1~1~4~Trueaim Crescent"
 	name_CN = "引月长弓"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -1067,7 +1066,7 @@ class Trig_TrueaimCrescent(TrigBoard):
 class AceHunterKreen(Minion):
 	Class, race, name = "Demon Hunter,Hunter", "", "Ace Hunter Kreen"
 	mana, attack, health = 3, 2, 4
-	index = "Academy~Demon Hunter,Hunter~Minion~3~2~4~~Ace Hunter Kreen~Legendary"
+	index = "SCHOLOMANCE~Demon Hunter,Hunter~Minion~3~2~4~~Ace Hunter Kreen~Legendary"
 	requireTarget, keyWord, description = False, "", "Your other characters are Immune while attacking"
 	name_CN = "金牌猎手克里"
 	def __init__(self, Game, ID):
@@ -1087,17 +1086,13 @@ class Trig_AceHunterKreen(TrigBoard):
 	#不知道攻击具有受伤时召唤一个随从的扳机的随从时，飞刀能否对这个友方角色造成伤害
 	#目前的写法是这个战斗结束信号触发在受伤之后
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		if signal == "BattleStarted":
-			if subject.type == "Minion": subject.status["Immune"] += 1
-			else: self.entity.Game.status[self.entity.ID]["Immune"] += 1
-		else:
-			if subject.type == "Minion": subject.status["Immune"] -= 1
-			else: self.entity.Game.status[self.entity.ID]["Immune"] -= 1
+		if signal == "BattleStarted": subject.getsImmune()
+		else: subject.losesImmune()
 			
 class Magehunter(Minion):
 	Class, race, name = "Demon Hunter", "", "Magehunter"
 	mana, attack, health = 3, 2, 3
-	index = "Academy~Demon Hunter~Minion~3~2~3~~Magehunter~Rush"
+	index = "SCHOLOMANCE~Demon Hunter~Minion~3~2~3~~Magehunter~Rush"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Whenever this attacks a minion, Silence it"
 	name_CN = "法师猎手"
 	def __init__(self, Game, ID):
@@ -1121,7 +1116,7 @@ class Trig_Magehunter(TrigBoard):
 class ShardshatterMystic(Minion):
 	Class, race, name = "Demon Hunter", "", "Shardshatter Mystic"
 	mana, attack, health = 4, 3, 2
-	index = "Academy~Demon Hunter~Minion~4~3~2~~Shardshatter Mystic~Battlecry"
+	index = "SCHOLOMANCE~Demon Hunter~Minion~4~3~2~~Shardshatter Mystic~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Destroy a Soul Fragment in your deck to deal 3 damage to all other minions"
 	name_CN = "残片震爆 秘术师"
 	
@@ -1145,7 +1140,7 @@ class ShardshatterMystic(Minion):
 class Glide(Spell):
 	Class, school, name = "Demon Hunter", "", "Glide"
 	requireTarget, mana = False, 4
-	index = "Academy~Demon Hunter~Spell~4~Glide~Outcast"
+	index = "SCHOLOMANCE~Demon Hunter~Spell~4~Glide~Outcast"
 	description = "Shuffle your hand into your deck. Draw 4 cards. Outcast: Your opponent does the same"
 	name_CN = "滑翔"
 	def effCanTrig(self):
@@ -1163,7 +1158,7 @@ class Glide(Spell):
 class Marrowslicer(Weapon):
 	Class, name, description = "Demon Hunter", "Marrowslicer", "Battlecry: Shuffle 2 Soul Fragments into your deck"
 	mana, attack, durability = 4, 4, 2
-	index = "Academy~Demon Hunter~Weapon~4~4~2~Marrowslicer~Battlecry"
+	index = "SCHOLOMANCE~Demon Hunter~Weapon~4~4~2~Marrowslicer~Battlecry"
 	name_CN = "切髓之刃"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1173,7 +1168,7 @@ class Marrowslicer(Weapon):
 class SoulFragment(Spell):
 	Class, school, name = "Warlock,Demon Hunter", "", "Soul Fragment"
 	requireTarget, mana = False, 0
-	index = "Academy~Warlock,Demon Hunter~Spell~0~Soul Fragment~Casts When Drawn~Uncollectible"
+	index = "SCHOLOMANCE~Warlock,Demon Hunter~Spell~0~Soul Fragment~Casts When Drawn~Uncollectible"
 	description = "Restore 2 Health to your hero"
 	name_CN = "灵魂残片"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1185,7 +1180,7 @@ class SoulFragment(Spell):
 class StarStudentStelina(Minion):
 	Class, race, name = "Demon Hunter", "", "Star Student Stelina"
 	mana, attack, health = 4, 4, 3
-	index = "Academy~Demon Hunter~Minion~4~4~3~~Star Student Stelina~Outcast~Legendary"
+	index = "SCHOLOMANCE~Demon Hunter~Minion~4~4~3~~Star Student Stelina~Outcast~Legendary"
 	requireTarget, keyWord, description = False, "", "Outcast: Look at 3 cards in your opponent's hand. Shuffle one of them into their deck"
 	name_CN = "明星学员 斯特里娜"
 	
@@ -1217,7 +1212,7 @@ class StarStudentStelina(Minion):
 class VilefiendTrainer(Minion):
 	Class, race, name = "Demon Hunter", "", "Vilefiend Trainer"
 	mana, attack, health = 4, 5, 4
-	index = "Academy~Demon Hunter~Minion~4~5~4~~Vilefiend Trainer~Outcast"
+	index = "SCHOLOMANCE~Demon Hunter~Minion~4~5~4~~Vilefiend Trainer~Outcast"
 	requireTarget, keyWord, description = False, "", "Outcast: Summon two 1/1 Demons"
 	name_CN = "邪犬训练师"
 	
@@ -1233,7 +1228,7 @@ class VilefiendTrainer(Minion):
 class SnarlingVilefiend(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Snarling Vilefiend"
 	mana, attack, health = 1, 1, 1
-	index = "Academy~Demon Hunter~Minion~1~1~1~Demon~Snarling Vilefiend~Uncollectible"
+	index = "SCHOLOMANCE~Demon Hunter~Minion~1~1~1~Demon~Snarling Vilefiend~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "咆哮的邪犬"
 	
@@ -1241,7 +1236,7 @@ class SnarlingVilefiend(Minion):
 class BloodHerald(Minion):
 	Class, race, name = "Demon Hunter,Hunter", "", "Blood Herald"
 	mana, attack, health = 5, 1, 1
-	index = "Academy~Demon Hunter,Hunter~Minion~5~1~1~~Blood Herald"
+	index = "SCHOLOMANCE~Demon Hunter,Hunter~Minion~5~1~1~~Blood Herald"
 	requireTarget, keyWord, description = False, "", "Whenever a friendly minion dies while this is in your hand, gain +1/+1"
 	name_CN = "嗜血传令官"
 	def __init__(self, Game, ID):
@@ -1265,7 +1260,7 @@ class Trig_BloodHerald(TrigHand):
 class SoulshardLapidary(Minion):
 	Class, race, name = "Demon Hunter", "", "Soulshard Lapidary"
 	mana, attack, health = 5, 5, 5
-	index = "Academy~Demon Hunter~Minion~5~5~5~~Soulshard Lapidary~Battlecry"
+	index = "SCHOLOMANCE~Demon Hunter~Minion~5~5~5~~Soulshard Lapidary~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Destroy a Soul Fragment in your deck to give your hero +5 Attack this turn"
 	name_CN = "铸魂宝石匠"
 	
@@ -1288,7 +1283,7 @@ class SoulshardLapidary(Minion):
 class CycleofHatred(Spell):
 	Class, school, name = "Demon Hunter", "", "Cycle of Hatred"
 	requireTarget, mana = False, 7
-	index = "Academy~Demon Hunter~Spell~7~Cycle of Hatred"
+	index = "SCHOLOMANCE~Demon Hunter~Spell~7~Cycle of Hatred"
 	description = "Deal 3 damage to all minions. Summon a 3/3 Spirit for every minion killed"
 	name_CN = "仇恨之轮"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1305,7 +1300,7 @@ class CycleofHatred(Spell):
 class SpiritofVengeance(Minion):
 	Class, race, name = "Demon Hunter", "", "Spirit of Vengeance"
 	mana, attack, health = 3, 3, 3
-	index = "Academy~Demon Hunter~Minion~3~3~3~~Spirit of Vengeance~Uncollectible"
+	index = "SCHOLOMANCE~Demon Hunter~Minion~3~3~3~~Spirit of Vengeance~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "复仇之魂"
 	
@@ -1313,7 +1308,7 @@ class SpiritofVengeance(Minion):
 class FelGuardians(Spell):
 	Class, school, name = "Demon Hunter", "", "Fel Guardians"
 	requireTarget, mana = False, 7
-	index = "Academy~Demon Hunter~Spell~7~Fel Guardians"
+	index = "SCHOLOMANCE~Demon Hunter~Spell~7~Fel Guardians"
 	description = "Summon three 1/2 Demons with Taunt. Costs (1) less whenever a friendly minion dies"
 	name_CN = "邪能护卫"
 	def __init__(self, Game, ID):
@@ -1340,7 +1335,7 @@ class Trig_FelGuardians(TrigHand):
 class SoulfedFelhound(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Soulfed Felhound"
 	mana, attack, health = 1, 1, 2
-	index = "Academy~Demon Hunter~Minion~1~1~2~Demon~Soulfed Felhound~Taunt~Uncollectible"
+	index = "SCHOLOMANCE~Demon Hunter~Minion~1~1~2~Demon~Soulfed Felhound~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "食魂地狱犬"
 	
@@ -1348,7 +1343,7 @@ class SoulfedFelhound(Minion):
 class AncientVoidHound(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Ancient Void Hound"
 	mana, attack, health = 9, 10, 10
-	index = "Academy~Demon Hunter~Minion~9~10~10~Demon~Ancient Void Hound"
+	index = "SCHOLOMANCE~Demon Hunter~Minion~9~10~10~Demon~Ancient Void Hound"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, steal 1 Attack and Health from all enemy minions"
 	name_CN = "上古虚空恶犬"
 	def __init__(self, Game, ID):
@@ -1381,7 +1376,7 @@ class Trig_AncientVoidHound(TrigBoard):
 class LightningBloom(Spell):
 	Class, school, name = "Druid,Shaman", "", "Lightning Bloom"
 	requireTarget, mana = False, 0
-	index = "Academy~Druid,Shaman~Spell~0~Lightning Bloom~Overload"
+	index = "SCHOLOMANCE~Druid,Shaman~Spell~0~Lightning Bloom~Overload"
 	description = "Gain 2 Mana Crystals this turn only. Overload: (2)"
 	name_CN = "雷霆绽放"
 	def __init__(self, Game, ID):
@@ -1397,7 +1392,7 @@ class LightningBloom(Spell):
 class Gibberling(Minion):
 	Class, race, name = "Druid", "", "Gibberling"
 	mana, attack, health = 1, 1, 1
-	index = "Academy~Druid~Minion~1~1~1~~Gibberling"
+	index = "SCHOLOMANCE~Druid~Minion~1~1~1~~Gibberling"
 	requireTarget, keyWord, description = False, "", "Spellburst: Summon a Gibberling"
 	name_CN = "聒噪怪"
 	def __init__(self, Game, ID):
@@ -1416,7 +1411,7 @@ class Trig_Gibberling(Spellburst):
 class NatureStudies(Spell):
 	Class, school, name = "Druid", "", "Nature Studies"
 	requireTarget, mana = False, 1
-	index = "Academy~Druid~Spell~1~Nature Studies"
+	index = "SCHOLOMANCE~Druid~Spell~1~Nature Studies"
 	description = "Discover a spell. Your next one costs (1) less"
 	name_CN = "自然研习"
 	poolIdentifier = "Druid Spells"
@@ -1464,7 +1459,7 @@ class GameManaAura_NextSpell1Less(TempManaEffect):
 class PartnerAssignment(Spell):
 	Class, school, name = "Druid", "", "Partner Assignment"
 	requireTarget, mana = False, 1
-	index = "Academy~Druid~Spell~1~Partner Assignment"
+	index = "SCHOLOMANCE~Druid~Spell~1~Partner Assignment"
 	description = "Add a random 2-Cost and 3-Cost Beast to your hand"
 	name_CN = "分配组员"
 	poolIdentifier = "2-Cost Beasts"
@@ -1491,7 +1486,7 @@ class PartnerAssignment(Spell):
 class SpeakerGidra(Minion):
 	Class, race, name = "Druid", "", "Speaker Gidra"
 	mana, attack, health = 3, 1, 4
-	index = "Academy~Druid~Minion~3~1~4~~Speaker Gidra~Rush~Windfury"
+	index = "SCHOLOMANCE~Druid~Minion~3~1~4~~Speaker Gidra~Rush~Windfury"
 	requireTarget, keyWord, description = False, "Rush,Windfury", "Rush, Windfury. Spellburst: Gain Attack and Health equal to the spell's Cost"
 	name_CN = "演讲者吉德拉"
 	def __init__(self, Game, ID):
@@ -1509,7 +1504,7 @@ class Trig_SpeakerGidra(Spellburst):
 class Groundskeeper(Minion):
 	Class, race, name = "Druid,Shaman", "", "Groundskeeper"
 	mana, attack, health = 4, 4, 5
-	index = "Academy~Druid,Shaman~Minion~4~4~5~~Groundskeeper~Taunt~Battlecry"
+	index = "SCHOLOMANCE~Druid,Shaman~Minion~4~4~5~~Groundskeeper~Taunt~Battlecry"
 	requireTarget, keyWord, description = True, "Taunt", "Taunt. Battlecry: If you're holding a spell that costs (5) or more, restore 5 Health"
 	name_CN = "园地管理员"
 	
@@ -1529,7 +1524,7 @@ class Groundskeeper(Minion):
 class TwilightRunner(Minion):
 	Class, race, name = "Druid", "Beast", "Twilight Runner"
 	mana, attack, health = 5, 5, 4
-	index = "Academy~Druid~Minion~5~5~4~Beast~Twilight Runner~Stealth"
+	index = "SCHOLOMANCE~Druid~Minion~5~5~4~Beast~Twilight Runner~Stealth"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. Whenever this attacks, draw 2 cards"
 	name_CN = "夜行虎"
 	def __init__(self, Game, ID):
@@ -1554,7 +1549,7 @@ class Trig_TwilightRunner(TrigBoard):
 class ForestWardenOmu(Minion):
 	Class, race, name = "Druid", "", "Forest Warden Omu"
 	mana, attack, health = 6, 5, 4
-	index = "Academy~Druid~Minion~6~5~4~~Forest Warden Omu~Legendary"
+	index = "SCHOLOMANCE~Druid~Minion~6~5~4~~Forest Warden Omu~Legendary"
 	requireTarget, keyWord, description = False, "", "Spellburst: Refresh your Mana Crystals"
 	name_CN = "林地守护者 欧穆"
 	def __init__(self, Game, ID):
@@ -1572,7 +1567,7 @@ class Trig_ForestWardenOmu(Spellburst):
 class RunicCarvings(Spell):
 	Class, school, name = "Druid,Shaman", "", "Runic Carvings"
 	requireTarget, mana = False, 6
-	index = "Academy~Druid,Shaman~Spell~6~Runic Carvings~Choose One"
+	index = "SCHOLOMANCE~Druid,Shaman~Spell~6~Runic Carvings~Choose One"
 	description = "Choose One - Summon four 2/2 Treant Totems; or Overload: (2) to given them Rush"
 	name_CN = "雕琢符文"
 	def __init__(self, Game, ID):
@@ -1605,7 +1600,7 @@ class OverloadRush_Option(ChooseOneOption):
 class TreantTotem(Minion):
 	Class, race, name = "Druid,Shaman", "Totem", "Treant Totem"
 	mana, attack, health = 2, 2, 2
-	index = "Academy~Druid,Shaman~Minion~2~2~2~Totem~Treant Totem~Uncollectible"
+	index = "SCHOLOMANCE~Druid,Shaman~Minion~2~2~2~Totem~Treant Totem~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "树人图腾"
 	
@@ -1613,7 +1608,7 @@ class TreantTotem(Minion):
 class SurvivaloftheFittest(Spell):
 	Class, school, name = "Druid", "", "Survival of the Fittest"
 	requireTarget, mana = False, 10
-	index = "Academy~Druid~Spell~10~Survival of the Fittest"
+	index = "SCHOLOMANCE~Druid~Spell~10~Survival of the Fittest"
 	description = "Give +4/+4 to all minions in your hand, deck, and battlefield"
 	name_CN = "优胜劣汰"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1634,7 +1629,7 @@ class SurvivaloftheFittest(Spell):
 class AdorableInfestation(Spell):
 	Class, school, name = "Hunter,Druid", "", "Adorable Infestation"
 	requireTarget, mana = True, 1
-	index = "Academy~Hunter,Druid~Spell~1~Adorable Infestation"
+	index = "SCHOLOMANCE~Hunter,Druid~Spell~1~Adorable Infestation"
 	description = "Give a minion +1/+1. Summon a 1/1 Cub. Add a Cub to your hand"
 	name_CN = "萌物来袭"
 	def available(self):
@@ -1653,7 +1648,7 @@ class AdorableInfestation(Spell):
 class MarsuulCub(Minion):
 	Class, race, name = "Hunter,Druid", "Beast", "Marsuul Cub"
 	mana, attack, health = 1, 1, 1
-	index = "Academy~Hunter,Druid~Minion~1~1~1~Beast~Marsuul Cub~Uncollectible"
+	index = "SCHOLOMANCE~Hunter,Druid~Minion~1~1~1~Beast~Marsuul Cub~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "魔鼠宝宝"
 	
@@ -1661,7 +1656,7 @@ class MarsuulCub(Minion):
 class CarrionStudies(Spell):
 	Class, school, name = "Hunter", "", "Carrion Studies"
 	requireTarget, mana = False, 1
-	index = "Academy~Hunter~Spell~1~Carrion Studies"
+	index = "SCHOLOMANCE~Hunter~Spell~1~Carrion Studies"
 	description = "Discover a Deathrattle minion. Your next one costs (1) less"
 	name_CN = "腐食研习"
 	poolIdentifier = "Deathrattle Minions as Hunter"
@@ -1712,7 +1707,7 @@ class GameManaAura_NextDeathrattleMinion1Less(TempManaEffect):
 class Overwhelm(Spell):
 	Class, school, name = "Hunter", "", "Overwhelm"
 	requireTarget, mana = True, 1
-	index = "Academy~Hunter~Spell~1~Overwhelm"
+	index = "SCHOLOMANCE~Hunter~Spell~1~Overwhelm"
 	description = "Deal 2 damage to a minion. Deal one more damage for each Beast you control"
 	name_CN = "数量压制"
 	def available(self):
@@ -1737,12 +1732,12 @@ class Overwhelm(Spell):
 class Wolpertinger(Minion):
 	Class, race, name = "Hunter", "Beast", "Wolpertinger"
 	mana, attack, health = 1, 1, 1
-	index = "Academy~Hunter~Minion~1~1~1~Beast~Wolpertinger~Battlecry"
+	index = "SCHOLOMANCE~Hunter~Minion~1~1~1~Beast~Wolpertinger~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a copy of this"
 	name_CN = "鹿角小飞兔"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		Copy = self.selfCopy(self.ID) if self.onBoard else type(self)(self.Game, self.ID)
+		Copy = self.selfCopy(self.ID, self) if self.onBoard else type(self)(self.Game, self.ID)
 		self.Game.summon(Copy, self.pos+1, self)
 		return None
 		
@@ -1750,7 +1745,7 @@ class Wolpertinger(Minion):
 class BloatedPython(Minion):
 	Class, race, name = "Hunter", "Beast", "Bloated Python"
 	mana, attack, health = 3, 1, 2
-	index = "Academy~Hunter~Minion~3~1~2~Beast~Bloated Python~Deathrattle"
+	index = "SCHOLOMANCE~Hunter~Minion~3~1~2~Beast~Bloated Python~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Summon a 4/4 Hapless Handler"
 	name_CN = "饱腹巨蟒"
 	def __init__(self, Game, ID):
@@ -1767,7 +1762,7 @@ class SummonaHaplessHandler(Deathrattle_Minion):
 class HaplessHandler(Minion):
 	Class, race, name = "Hunter", "", "Hapless Handler"
 	mana, attack, health = 4, 4, 4
-	index = "Academy~Hunter~Minion~4~4~4~~Hapless Handler~Uncollectible"
+	index = "SCHOLOMANCE~Hunter~Minion~4~4~4~~Hapless Handler~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "倒霉的 管理员"
 	
@@ -1775,7 +1770,7 @@ class HaplessHandler(Minion):
 class ProfessorSlate(Minion):
 	Class, race, name = "Hunter", "", "Professor Slate"
 	mana, attack, health = 3, 3, 4
-	index = "Academy~Hunter~Minion~3~3~4~~Professor Slate~Legendary"
+	index = "SCHOLOMANCE~Hunter~Minion~3~3~4~~Professor Slate~Legendary"
 	requireTarget, keyWord, description = False, "", "Your spells are Poisonous"
 	name_CN = "斯雷特教授"
 	def __init__(self, Game, ID):
@@ -1793,7 +1788,7 @@ class GameRuleAura_ProfessorSlate(GameRuleAura):
 class ShandoWildclaw(Minion):
 	Class, race, name = "Hunter,Druid", "", "Shan'do Wildclaw"
 	mana, attack, health = 3, 3, 3
-	index = "Academy~Hunter,Druid~Minion~3~3~3~~Shan'do Wildclaw~Choose One~Legendary"
+	index = "SCHOLOMANCE~Hunter,Druid~Minion~3~3~3~~Shan'do Wildclaw~Choose One~Legendary"
 	requireTarget, keyWord, description = True, "", "Choose One- Give Beasts in your deck +1/+1; or Transform into a copy of a friendly Beast"
 	name_CN = "大导师野爪"
 	def __init__(self, Game, ID):
@@ -1807,9 +1802,7 @@ class ShandoWildclaw(Minion):
 		return choice != 0
 		
 	def targetExists(self, choice=1):
-		for minion in self.Game.minionsonBoard(self.ID):
-			if "Beast" in minion.race: return True
-		return False
+		return self.selectableFriendlyMinionExists()
 		
 	def targetCorrect(self, target, choice=1):
 		return target.type == "Minion" and "Beast" in target.race and target.ID == self.ID and target != self and target.onBoard
@@ -1825,7 +1818,7 @@ class ShandoWildclaw(Minion):
 					card.health_max += 1 #By default, this healthGain has to be non-negative.
 		if choice != 0 and target:
 			if target and self.dead == False and self.Game.minionPlayed == self and (self.onBoard or self.inHand): #战吼触发时自己不能死亡。
-				Copy = target.selfCopy(self.ID) if target.onBoard else type(target)(self.Game, self.ID)
+				Copy = target.selfCopy(self.ID, self) if target.onBoard else type(target)(self.Game, self.ID)
 				self.Game.transform(self, Copy)
 		return target
 		
@@ -1841,7 +1834,7 @@ class BecomeaCopyofBeast_Option(ChooseOneOption):
 class KroluskBarkstripper(Minion):
 	Class, race, name = "Hunter", "Beast", "Krolusk Barkstripper"
 	mana, attack, health = 4, 3, 5
-	index = "Academy~Hunter~Minion~4~3~5~Beast~Krolusk Barkstripper"
+	index = "SCHOLOMANCE~Hunter~Minion~4~3~5~Beast~Krolusk Barkstripper"
 	requireTarget, keyWord, description = False, "", "Spellburst: Destroy a random enemy minion"
 	name_CN = "裂树三叶虫"
 	def __init__(self, Game, ID):
@@ -1868,9 +1861,10 @@ class Trig_KroluskBarkstripper(Spellburst):
 class TeachersPet(Minion):
 	Class, race, name = "Hunter,Druid", "Beast", "Teacher's Pet"
 	mana, attack, health = 5, 4, 5
-	index = "Academy~Hunter,Druid~Minion~5~4~5~Beast~Teacher's Pet~Taunt~Deathrattle"
+	index = "SCHOLOMANCE~Hunter,Druid~Minion~5~4~5~Beast~Teacher's Pet~Taunt~Deathrattle"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Summon a 3-Cost Beast"
 	name_CN = "教师的爱宠"
+	poolIdentifier = "3-Cost Beasts to Summon"
 	@classmethod
 	def generatePool(cls, Game):
 		return "3-Cost Beasts to Summon", [value for key, value in Game.MinionswithRace["Beast"].items() if key.split('~')[3] == '3']
@@ -1897,7 +1891,7 @@ class Summona3CostBeast(Deathrattle_Minion):
 class GuardianAnimals(Spell):
 	Class, school, name = "Hunter,Druid", "", "Guardian Animals"
 	requireTarget, mana = False, 8
-	index = "Academy~Hunter,Druid~Spell~8~Guardian Animals"
+	index = "SCHOLOMANCE~Hunter,Druid~Spell~8~Guardian Animals"
 	description = "Summon two Beasts that cost (5) or less from your deck. Give them Rush"
 	name_CN = "动物保镖"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1921,7 +1915,7 @@ class GuardianAnimals(Spell):
 class BrainFreeze(Spell):
 	Class, school, name = "Mage,Rogue", "", "Brain Freeze"
 	requireTarget, mana = True, 1
-	index = "Academy~Mage,Rogue~Spell~1~Brain Freeze~Combo"
+	index = "SCHOLOMANCE~Mage,Rogue~Spell~1~Brain Freeze~Combo"
 	description = "Freeze a minion. Combo: Also deal 3 damage to it"
 	name_CN = "冰冷智慧"
 	def available(self):
@@ -1947,7 +1941,7 @@ class BrainFreeze(Spell):
 class DevolvingMissiles(Spell):
 	Class, school, name = "Shaman,Mage", "", "Devolving Missiles"
 	requireTarget, mana = False, 1
-	index = "Academy~Shaman,Mage~Spell~1~Devolving Missiles"
+	index = "SCHOLOMANCE~Shaman,Mage~Spell~1~Devolving Missiles"
 	description = "Shoot three missiles at random enemy minions that transform them into ones that cost (1) less"
 	name_CN = "衰变飞弹"
 	poolIdentifier = "0-Cost Minions to summon"
@@ -1984,7 +1978,7 @@ class DevolvingMissiles(Spell):
 class LabPartner(Minion):
 	Class, race, name = "Mage", "", "Lab Partner"
 	mana, attack, health = 1, 1, 3
-	index = "Academy~Mage~Minion~1~1~3~~Lab Partner~Spell Damage"
+	index = "SCHOLOMANCE~Mage~Minion~1~1~3~~Lab Partner~Spell Damage"
 	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage +1"
 	name_CN = "研究伙伴"
 	
@@ -1992,7 +1986,7 @@ class LabPartner(Minion):
 class WandThief(Minion):
 	Class, race, name = "Mage,Rogue", "", "Wand Thief"
 	mana, attack, health = 1, 1, 2
-	index = "Academy~Mage,Rogue~Minion~1~1~2~~Wand Thief~Combo"
+	index = "SCHOLOMANCE~Mage,Rogue~Minion~1~1~2~~Wand Thief~Combo"
 	requireTarget, keyWord, description = False, "", "Combo: Discover a Mage spell"
 	name_CN = "魔杖窃贼"
 	poolIdentifier = "Mage Spells"
@@ -2026,7 +2020,7 @@ class WandThief(Minion):
 class CramSession(Spell):
 	Class, school, name = "Mage", "", "Cram Session"
 	requireTarget, mana = False, 2
-	index = "Academy~Mage~Spell~2~Cram Session"
+	index = "SCHOLOMANCE~Mage~Spell~2~Cram Session"
 	description = "Draw 1 card (improved by Spell Damage)"
 	name_CN = "考前刷夜"
 	
@@ -2039,7 +2033,7 @@ class CramSession(Spell):
 class Combustion(Spell):
 	Class, school, name = "Mage", "", "Combustion"
 	requireTarget, mana = True, 3
-	index = "Academy~Mage~Spell~3~Combustion"
+	index = "SCHOLOMANCE~Mage~Spell~3~Combustion"
 	description = "Deal 4 damage to a minion. Any excess damages both neighbors"
 	name_CN = "燃烧"
 	def available(self):
@@ -2066,7 +2060,7 @@ class Combustion(Spell):
 class Firebrand(Minion):
 	Class, race, name = "Mage", "", "Firebrand"
 	mana, attack, health = 3, 3, 4
-	index = "Academy~Mage~Minion~3~3~4~~Firebrand"
+	index = "SCHOLOMANCE~Mage~Minion~3~3~4~~Firebrand"
 	requireTarget, keyWord, description = False, "", "Spellburst: Deal 4 damage randomly split among all enemy minions"
 	name_CN = "火印火妖"
 	def __init__(self, Game, ID):
@@ -2096,11 +2090,11 @@ class Trig_Firebrand(Spellburst):
 class PotionofIllusion(Spell):
 	Class, school, name = "Mage,Rogue", "", "Potion of Illusion"
 	requireTarget, mana = False, 4
-	index = "Academy~Mage,Rogue~Spell~4~Potion of Illusion"
+	index = "SCHOLOMANCE~Mage,Rogue~Spell~4~Potion of Illusion"
 	description = "Add 1/1 copies of your minions to your hand. They cost (1)"
 	name_CN = "幻觉药水"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		copies = [minion.selfCopy(self.ID, 1, 1, 1) for minion in self.Game.minionsonBoard(self.ID)]
+		copies = [minion.selfCopy(self.ID, self, 1, 1, 1) for minion in self.Game.minionsonBoard(self.ID)]
 		self.Game.Hand_Deck.addCardtoHand(copies, self.ID, creator=type(self))
 		return None
 		
@@ -2108,7 +2102,7 @@ class PotionofIllusion(Spell):
 class JandiceBarov(Minion):
 	Class, race, name = "Mage,Rogue", "", "Jandice Barov"
 	mana, attack, health = 5, 2, 1
-	index = "Academy~Mage,Rogue~Minion~5~2~1~~Jandice Barov~Battlecry~Legendary"
+	index = "SCHOLOMANCE~Mage,Rogue~Minion~5~2~1~~Jandice Barov~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon two random 5-Cost minions. Secretly pick one that dies when it takes damage"
 	name_CN = "詹迪斯·巴罗夫"
 	poolIdentifier = "5-Cost Minions to Summon"
@@ -2177,7 +2171,7 @@ class Trig_JandiceBarov(TrigBoard):
 class MozakiMasterDuelist(Minion):
 	Class, race, name = "Mage", "", "Mozaki, Master Duelist"
 	mana, attack, health = 5, 3, 8
-	index = "Academy~Mage~Minion~5~3~8~~Mozaki, Master Duelist~Legendary"
+	index = "SCHOLOMANCE~Mage~Minion~5~3~8~~Mozaki, Master Duelist~Legendary"
 	requireTarget, keyWord, description = False, "", "After you cast a spell, gain Spell Damage +1"
 	name_CN = "决斗大师 莫扎奇"
 	def __init__(self, Game, ID):
@@ -2200,9 +2194,9 @@ class Trig_MozakiMasterDuelist(TrigBoard):
 		
 class WyrmWeaver(Minion):
 	Class, race, name = "Mage", "", "Wyrm Weaver"
-	mana, attack, health = 5, 3, 6
-	index = "Academy~Mage~Minion~5~3~6~~Wyrm Weaver"
-	requireTarget, keyWord, description = False, "", "Spellburst: Summon two 1/3 Mana Wyrms"
+	mana, attack, health = 4, 3, 5
+	index = "SCHOLOMANCE~Mage~Minion~4~3~5~~Wyrm Weaver"
+	requireTarget, keyWord, description = False, "", "Spellburst: Summon two 1/2 Mana Wyrms"
 	name_CN = "浮龙培养师"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -2210,19 +2204,19 @@ class WyrmWeaver(Minion):
 		
 class Trig_WyrmWeaver(Spellburst):
 	def text(self, CHN):
-		return "法术迸发：召唤两个1/3的法力浮龙" if CHN else "Spellburst: Summon two 1/3 Mana Wyrms"
+		return "法术迸发：召唤两个1/2的法力浮龙" if CHN else "Spellburst: Summon two 1/2 Mana Wyrms"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
 		pos = (minion.pos, "leftandRight") if minion.onBoard else (-1, "totheRightEnd")
 		minion.Game.summon([ManaWyrm(minion.Game, minion.ID) for i in range(2)], pos, minion)
-		
-		
+
+
 """Paladin Cards"""
 class FirstDayofSchool(Spell):
 	Class, school, name = "Paladin", "", "First Day of School"
 	requireTarget, mana = False, 0
-	index = "Academy~Paladin~Spell~0~First Day of School"
+	index = "SCHOLOMANCE~Paladin~Spell~0~First Day of School"
 	description = "Add 2 random 1-Cost minions to your hand"
 	name_CN = "新生入学"
 	poolIdentifier = "1-Cost Minions"
@@ -2246,7 +2240,7 @@ class FirstDayofSchool(Spell):
 class WaveofApathy(Spell):
 	Class, school, name = "Paladin,Priest", "", "Wave of Apathy"
 	requireTarget, mana = False, 1
-	index = "Academy~Paladin,Priest~Spell~1~Wave of Apathy"
+	index = "SCHOLOMANCE~Paladin,Priest~Spell~1~Wave of Apathy"
 	description = "Set the Attack of all enemy minions to 1 until your next turn"
 	name_CN = "倦怠光波"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2259,7 +2253,7 @@ class WaveofApathy(Spell):
 class ArgentBraggart(Minion):
 	Class, race, name = "Paladin", "", "Argent Braggart"
 	mana, attack, health = 2, 1, 1
-	index = "Academy~Paladin~Minion~2~1~1~~Argent Braggart~Battlecry"
+	index = "SCHOLOMANCE~Paladin~Minion~2~1~1~~Argent Braggart~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Gain Attack and Health to match the highest in the battlefield"
 	name_CN = "银色自大狂"
 	
@@ -2275,7 +2269,7 @@ class ArgentBraggart(Minion):
 class GiftofLuminance(Spell):
 	Class, school, name = "Paladin,Priest", "", "Gift of Luminance"
 	requireTarget, mana = True, 3
-	index = "Academy~Paladin,Priest~Spell~3~Gift of Luminance"
+	index = "SCHOLOMANCE~Paladin,Priest~Spell~3~Gift of Luminance"
 	description = "Give a minion Divine Shield, then summon a 1/1 copy of it"
 	name_CN = "流光之赐"
 	def available(self):
@@ -2287,7 +2281,7 @@ class GiftofLuminance(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			target.getsKeyword("Divine Shield")
-			Copy = target.selfCopy(target.ID) if target.onBoard or target.inHand else type(target)(self.Game, target.ID)
+			Copy = target.selfCopy(target.ID, self) if target.onBoard or target.inHand else type(target)(self.Game, target.ID)
 			Copy.statReset(1, 1)
 			self.Game.summon(Copy, target.pos+1, self)
 		return target
@@ -2296,7 +2290,7 @@ class GiftofLuminance(Spell):
 class GoodyTwoShields(Minion):
 	Class, race, name = "Paladin", "", "Goody Two-Shields"
 	mana, attack, health = 3, 4, 2
-	index = "Academy~Paladin~Minion~3~4~2~~Goody Two-Shields~Divine Shield"
+	index = "SCHOLOMANCE~Paladin~Minion~3~4~2~~Goody Two-Shields~Divine Shield"
 	requireTarget, keyWord, description = False, "Divine Shield", "Spellburst: Gain Divine Shield"
 	name_CN = "双盾优等生"
 	def __init__(self, Game, ID):
@@ -2314,7 +2308,7 @@ class Trig_GoodyTwoShields(Spellburst):
 class HighAbbessAlura(Minion):
 	Class, race, name = "Paladin,Priest", "", "High Abbess Alura"
 	mana, attack, health = 4, 3, 6
-	index = "Academy~Paladin,Priest~Minion~4~3~6~~High Abbess Alura"
+	index = "SCHOLOMANCE~Paladin,Priest~Minion~4~3~6~~High Abbess Alura"
 	requireTarget, keyWord, description = False, "", "Spellburst: Cast a spell from your deck (targets this if possible)"
 	name_CN = "高阶修士 奥露拉"
 	def __init__(self, Game, ID):
@@ -2343,7 +2337,7 @@ class Trig_HighAbbessAlura(Spellburst):
 class BlessingofAuthority(Spell):
 	Class, school, name = "Paladin", "", "Blessing of Authority"
 	requireTarget, mana = True, 5
-	index = "Academy~Paladin~Spell~5~Blessing of Authority"
+	index = "SCHOLOMANCE~Paladin~Spell~5~Blessing of Authority"
 	description = "Give a minion +8/+8. It can't attack heroes this turn"
 	name_CN = "威能祝福"
 	def available(self):
@@ -2355,16 +2349,35 @@ class BlessingofAuthority(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			target.buffDebuff(8, 8)
-			trig = Trig_Charge(target)
+			trig = Trig_BlessingofAuthority(target)
 			target.trigsBoard.append(trig)
 			trig.connect()
 		return target
-		
-		
+
+class Trig_BlessingofAuthority(TrigBoard):
+	def __init__(self, entity):
+		self.blank_init(entity, ["TurnEnds"])
+		self.inherent = False
+	
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard  #Even if the current turn is not minion's owner's turn
+	
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		self.entity.marks["Can't Attack Hero"] -= 1
+		self.disconnect()
+		try:
+			self.entity.trigsBoard.remove(self)
+		except:
+			pass
+	
+	def text(self, CHN):
+		return "随从重新可以攻击英雄" if CHN else "Minion can attack heroes again"
+
+
 class DevoutPupil(Minion):
 	Class, race, name = "Paladin,Priest", "", "Devout Pupil"
 	mana, attack, health = 6, 4, 5
-	index = "Academy~Paladin,Priest~Minion~6~4~5~~Devout Pupil~Divine Shield~Taunt"
+	index = "SCHOLOMANCE~Paladin,Priest~Minion~6~4~5~~Devout Pupil~Divine Shield~Taunt"
 	requireTarget, keyWord, description = False, "Divine Shield,Taunt", "Divine Shield,Taunt. Costs (1) less for each spell you've cast on friendly characters this game"
 	name_CN = "虔诚的学徒"
 	def __init__(self, Game, ID):
@@ -2393,7 +2406,7 @@ class Trig_DevoutPupil(TrigHand):
 class JudiciousJunior(Minion):
 	Class, race, name = "Paladin", "", "Judicious Junior"
 	mana, attack, health = 6, 4, 9
-	index = "Academy~Paladin~Minion~6~4~9~~Judicious Junior~Lifesteal"
+	index = "SCHOLOMANCE~Paladin~Minion~6~4~9~~Judicious Junior~Lifesteal"
 	requireTarget, keyWord, description = False, "Lifesteal", "Lifesteal"
 	name_CN = "踏实的 大三学姐"
 	
@@ -2401,7 +2414,7 @@ class JudiciousJunior(Minion):
 class TuralyontheTenured(Minion):
 	Class, race, name = "Paladin", "", "Turalyon, the Tenured"
 	mana, attack, health = 8, 3, 12
-	index = "Academy~Paladin~Minion~8~3~12~~Turalyon, the Tenured~Rush~Legendary"
+	index = "SCHOLOMANCE~Paladin~Minion~8~3~12~~Turalyon, the Tenured~Rush~Legendary"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Whenever this attacks a minion, set the defender's Attack and Health to 3"
 	name_CN = "终身教授 图拉扬"
 	def __init__(self, Game, ID):
@@ -2427,7 +2440,7 @@ class Trig_TuralyontheTenured(TrigBoard):
 class RaiseDead(Spell):
 	Class, school, name = "Priest,Warlock", "", "Raise Dead"
 	requireTarget, mana = False, 0
-	index = "Academy~Priest,Warlock~Spell~0~Raise Dead"
+	index = "SCHOLOMANCE~Priest,Warlock~Spell~0~Raise Dead"
 	description = "Deal 3 damage to your hero. Return two friendly minions that died this game to your hand"
 	name_CN = "亡者复生"
 	
@@ -2450,7 +2463,7 @@ class RaiseDead(Spell):
 class DraconicStudies(Spell):
 	Class, school, name = "Priest", "", "Draconic Studies"
 	requireTarget, mana = False, 1
-	index = "Academy~Priest~Spell~1~Draconic Studies"
+	index = "SCHOLOMANCE~Priest~Spell~1~Draconic Studies"
 	description = "Discover a Dragon. Your next one costs (1) less"
 	name_CN = "龙族研习"
 	poolIdentifier = "Dragons as Priest"
@@ -2501,7 +2514,7 @@ class GameManaAura_NextDragon1Less(TempManaEffect):
 class FrazzledFreshman(Minion):
 	Class, race, name = "Priest", "", "Frazzled Freshman"
 	mana, attack, health = 1, 1, 4
-	index = "Academy~Priest~Minion~1~1~4~~Frazzled Freshman"
+	index = "SCHOLOMANCE~Priest~Minion~1~1~4~~Frazzled Freshman"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "疲倦的 大一新生"
 	
@@ -2509,7 +2522,7 @@ class FrazzledFreshman(Minion):
 class MindrenderIllucia(Minion):
 	Class, race, name = "Priest", "", "Mindrender Illucia"
 	mana, attack, health = 3, 1, 3
-	index = "Academy~Priest~Minion~3~1~3~~Mindrender Illucia~Battlecry~Legendary"
+	index = "SCHOLOMANCE~Priest~Minion~3~1~3~~Mindrender Illucia~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Swap hands and decks with your opponent until your next turn"
 	name_CN = "裂心者 伊露希亚"
 	
@@ -2559,7 +2572,7 @@ class SwapHandsandDecksBack:
 class PowerWordFeast(Spell):
 	Class, school, name = "Priest", "", "Power Word: Feast"
 	requireTarget, mana = True, 2
-	index = "Academy~Priest~Spell~2~Power Word: Feast"
+	index = "SCHOLOMANCE~Priest~Spell~2~Power Word: Feast"
 	description = "Give a minion +2/+2. Restore it to full health at the end of this turn"
 	name_CN = "真言术：宴"
 	def available(self):
@@ -2598,7 +2611,7 @@ class Trig_PowerWordFeast(TrigBoard):
 class BrittleboneDestroyer(Minion):
 	Class, race, name = "Priest,Warlock", "", "Brittlebone Destroyer"
 	mana, attack, health = 4, 3, 3
-	index = "Academy~Priest,Warlock~Minion~4~3~3~~Brittlebone Destroyer~Battlecry"
+	index = "SCHOLOMANCE~Priest,Warlock~Minion~4~3~3~~Brittlebone Destroyer~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: If your hero's Health changed this turn, destroy a minion"
 	name_CN = "脆骨破坏者"
 	
@@ -2625,7 +2638,7 @@ class BrittleboneDestroyer(Minion):
 class CabalAcolyte(Minion):
 	Class, race, name = "Priest", "", "Cabal Acolyte"
 	mana, attack, health = 4, 2, 4
-	index = "Academy~Priest~Minion~4~2~4~~Cabal Acolyte~Taunt"
+	index = "SCHOLOMANCE~Priest~Minion~4~2~4~~Cabal Acolyte~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Spellburst: Gain control of a random enemy minion with 2 or less Attack"
 	name_CN = "秘教侍僧"
 	def __init__(self, Game, ID):
@@ -2653,7 +2666,7 @@ class Trig_CabalAcolyte(Spellburst):
 class DisciplinarianGandling(Minion):
 	Class, race, name = "Priest,Warlock", "", "Disciplinarian Gandling"
 	mana, attack, health = 4, 3, 6
-	index = "Academy~Priest,Warlock~Minion~4~3~6~~Disciplinarian Gandling~Legendary"
+	index = "SCHOLOMANCE~Priest,Warlock~Minion~4~3~6~~Disciplinarian Gandling~Legendary"
 	requireTarget, keyWord, description = False, "", "After you play a minion, destroy it and summon a 4/4 Failed Student"
 	name_CN = "教导主任加丁"
 	def __init__(self, Game, ID):
@@ -2684,7 +2697,7 @@ class Trig_DisciplinarianGandling(TrigBoard):
 class FailedStudent(Minion):
 	Class, race, name = "Priest,Warlock", "", "Failed Student"
 	mana, attack, health = 4, 4, 4
-	index = "Academy~Priest,Warlock~Minion~4~4~4~~Failed Student~Uncollectible"
+	index = "SCHOLOMANCE~Priest,Warlock~Minion~4~4~4~~Failed Student~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "挂掉的学生"
 	
@@ -2692,7 +2705,7 @@ class FailedStudent(Minion):
 class Initiation(Spell):
 	Class, school, name = "Priest", "", "Initiation"
 	requireTarget, mana = True, 6
-	index = "Academy~Priest~Spell~6~Initiation"
+	index = "SCHOLOMANCE~Priest~Spell~6~Initiation"
 	description = "Deal 4 damage to a minion. If that kills it, summons a new copy"
 	name_CN = "通窍"
 	def available(self):
@@ -2714,7 +2727,7 @@ class Initiation(Spell):
 class FleshGiant(Minion):
 	Class, race, name = "Priest,Warlock", "", "Flesh Giant"
 	mana, attack, health = 8, 8, 8
-	index = "Academy~Priest,Warlock~Minion~8~8~8~~Flesh Giant"
+	index = "SCHOLOMANCE~Priest,Warlock~Minion~8~8~8~~Flesh Giant"
 	requireTarget, keyWord, description = False, "", "Costs (1) less for each time your Hero's Health changed during your turn"
 	name_CN = "血肉巨人"
 	def __init__(self, Game, ID):
@@ -2746,7 +2759,7 @@ class Trig_FleshGiant(TrigHand):
 class SecretPassage(Spell):
 	Class, school, name = "Rogue", "", "Secret Passage"
 	requireTarget, mana = False, 1
-	index = "Academy~Rogue~Spell~1~Secret Passage"
+	index = "SCHOLOMANCE~Rogue~Spell~1~Secret Passage"
 	description = "Replace your hand with 4 cards from your deck. Swap back next turn"
 	name_CN = "秘密通道"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2811,7 +2824,7 @@ class SecretPassageEffect:
 class Plagiarize(Secret):
 	Class, school, name = "Rogue", "", "Plagiarize"
 	requireTarget, mana = False, 2
-	index = "Academy~Rogue~Spell~2~Plagiarize~~Secret"
+	index = "SCHOLOMANCE~Rogue~Spell~2~Plagiarize~~Secret"
 	description = "Secret: At the end of your opponent's turn, add copies of the cards they played this turn"
 	name_CN = "抄袭"
 	def __init__(self, Game, ID):
@@ -2834,7 +2847,7 @@ class Trig_Plagiarize(SecretTrigger):
 class Coerce(Spell):
 	Class, school, name = "Rogue,Warrior", "", "Coerce"
 	requireTarget, mana = True, 3
-	index = "Academy~Rogue,Warrior~Spell~3~Coerce~Combo"
+	index = "SCHOLOMANCE~Rogue,Warrior~Spell~3~Coerce~Combo"
 	description = "Destroy a damaged minion. Combo: Destroy any minion"
 	name_CN = "胁迫"
 	def available(self):
@@ -2856,7 +2869,7 @@ class Coerce(Spell):
 class SelfSharpeningSword(Weapon):
 	Class, name, description = "Rogue", "Self-Sharpening Sword", "After your hero attacks, gain +1 Attack"
 	mana, attack, durability = 3, 1, 4
-	index = "Academy~Rogue~Weapon~3~1~4~Self-Sharpening Sword"
+	index = "SCHOLOMANCE~Rogue~Weapon~3~1~4~Self-Sharpening Sword"
 	name_CN = "自砺之锋"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -2879,7 +2892,7 @@ class Trig_SelfSharpeningSword(TrigBoard):
 class VulperaToxinblade(Minion):
 	Class, race, name = "Rogue", "", "Vulpera Toxinblade"
 	mana, attack, health = 3, 3, 3
-	index = "Academy~Rogue~Minion~3~3~3~~Vulpera Toxinblade"
+	index = "SCHOLOMANCE~Rogue~Minion~3~3~3~~Vulpera Toxinblade"
 	requireTarget, keyWord, description = False, "", "Your weapon has +2 Attack"
 	name_CN = "狐人淬毒师"
 	def __init__(self, Game, ID):
@@ -2941,7 +2954,7 @@ class StatAura_VulperaToxinblade:
 class InfiltratorLilian(Minion):
 	Class, race, name = "Rogue", "", "Infiltrator Lilian"
 	mana, attack, health = 4, 4, 2
-	index = "Academy~Rogue~Minion~4~4~2~~Infiltrator Lilian~Stealth~Deathrattle~Legendary"
+	index = "SCHOLOMANCE~Rogue~Minion~4~4~2~~Infiltrator Lilian~Stealth~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. Deathrattle: Summon a 4/2 Forsaken Lilian that attacks a random enemy"
 	name_CN = "渗透者莉莉安"
 	def __init__(self, Game, ID):
@@ -2974,7 +2987,7 @@ class SummonForsakenLilian(Deathrattle_Minion):
 class ForsakenLilian(Minion):
 	Class, race, name = "Rogue", "", "Forsaken Lilian"
 	mana, attack, health = 4, 4, 2
-	index = "Academy~Rogue~Minion~4~4~2~~Forsaken Lilian~Legendary~Uncollectible"
+	index = "SCHOLOMANCE~Rogue~Minion~4~4~2~~Forsaken Lilian~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "被遗忘者 莉莉安"
 	
@@ -2982,7 +2995,7 @@ class ForsakenLilian(Minion):
 class ShiftySophomore(Minion):
 	Class, race, name = "Rogue", "", "Shifty Sophomore"
 	mana, attack, health = 4, 4, 4
-	index = "Academy~Rogue~Minion~4~4~4~~Shifty Sophomore~Stealth"
+	index = "SCHOLOMANCE~Rogue~Minion~4~4~4~~Shifty Sophomore~Stealth"
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. Spellburst: Add a Combo card to your hand"
 	name_CN = "调皮的 大二学妹"
 	poolIdentifier = "Combo Cards"
@@ -3013,7 +3026,7 @@ class Trig_ShiftySophomore(Spellburst):
 class Steeldancer(Minion):
 	Class, race, name = "Rogue,Warrior", "", "Steeldancer"
 	mana, attack, health = 4, 4, 4
-	index = "Academy~Rogue,Warrior~Minion~4~4~4~~Steeldancer~Battlecry"
+	index = "SCHOLOMANCE~Rogue,Warrior~Minion~4~4~4~~Steeldancer~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a random minion with Cost equal to your weapons's Attack"
 	name_CN = "钢铁舞者"
 	poolIdentifier = "0-Cost Minions to summon"
@@ -3046,7 +3059,7 @@ class Steeldancer(Minion):
 class CuttingClass(Spell):
 	Class, school, name = "Rogue,Warrior", "", "Cutting Class"
 	requireTarget, mana = False, 5
-	index = "Academy~Rogue,Warrior~Spell~5~Cutting Class"
+	index = "SCHOLOMANCE~Rogue,Warrior~Spell~5~Cutting Class"
 	description = "Draw 2 cards. Costs (1) less per Attack of your weapon"
 	name_CN = "劈砍课程"
 	def __init__(self, Game, ID):
@@ -3081,7 +3094,7 @@ class Trig_CuttingClass(TrigHand):
 class DoctorKrastinov(Minion):
 	Class, race, name = "Rogue,Warrior", "", "Doctor Krastinov"
 	mana, attack, health = 5, 4, 4
-	index = "Academy~Rogue,Warrior~Minion~5~4~4~~Doctor Krastinov~Rush~Legendary"
+	index = "SCHOLOMANCE~Rogue,Warrior~Minion~5~4~4~~Doctor Krastinov~Rush~Legendary"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Whenever this attacks, give your weapon +1/+1"
 	name_CN = "卡斯迪诺夫 教授"
 	def __init__(self, Game, ID):
@@ -3106,7 +3119,7 @@ class Trig_DoctorKrastinov(TrigBoard):
 class PrimordialStudies(Spell):
 	Class, school, name = "Shaman,Mage", "", "Primordial Studies"
 	requireTarget, mana = False, 1
-	index = "Academy~Shaman,Mage~Spell~1~Primordial Studies"
+	index = "SCHOLOMANCE~Shaman,Mage~Spell~1~Primordial Studies"
 	description = "Discover a Spell Damage minion. Your next one costs (1) less"
 	name_CN = "始生研习"
 	poolIdentifier = "Spell Damage Minions as Mage"
@@ -3156,7 +3169,7 @@ class GameManaAura_NextSpellDamageMinion1Less(TempManaEffect):
 class DiligentNotetaker(Minion):
 	Class, race, name = "Shaman", "", "Diligent Notetaker"
 	mana, attack, health = 2, 2, 3
-	index = "Academy~Shaman~Minion~2~2~3~~Diligent Notetaker"
+	index = "SCHOLOMANCE~Shaman~Minion~2~2~3~~Diligent Notetaker"
 	requireTarget, keyWord, description = False, "", "Spellburst: Return the spell to your hand"
 	name_CN = "笔记能手"
 	def __init__(self, Game, ID):
@@ -3176,7 +3189,7 @@ class Trig_DiligentNotetaker(Spellburst):
 class RuneDagger(Weapon):
 	Class, name, description = "Shaman", "Rune Dagger", "After your hero attacks, gain Spell Damage +1 this turn"
 	mana, attack, durability = 2, 1, 3
-	index = "Academy~Shaman~Weapon~2~1~3~Rune Dagger"
+	index = "SCHOLOMANCE~Shaman~Weapon~2~1~3~Rune Dagger"
 	name_CN = "符文匕首"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3195,20 +3208,27 @@ class Trig_RuneDagger(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.Game.status[self.entity.ID]["Spell Damage"] += 1
-		self.entity.Game.turnEndTrigger.append(RuneDagger_Effect(self.entity.Game, self.entity.ID))
+		RuneDagger_Effect(self.entity.Game, self.entity.ID).connect()
 		
 class RuneDagger_Effect:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
+		self.card = RuneDagger(Game, ID)
+		
+	def connect(self):
+		self.Game.turnEndTrigger.append(self)
+		if self.Game.GUI: self.Game.GUI.heroZones[self.ID].addaTrig(self.card)
 		
 	def text(self, CHN):
 		return "在本回合结束时，符文匕首的效果(法术伤害+1)消失" if CHN else "At the end of turn, Rune Dagger's effect(Spelldamage +2) expires"
 		
 	def turnEndTrigger(self):
+		#Don't need to show the trig, as this is simply an effect expiring
 		self.Game.status[self.ID]["Spell Damage"] -= 1
 		try: self.Game.turnEndTrigger.remove(self)
 		except: pass
-		
+		if self.Game.GUI: self.Game.GUI.heroZones[self.ID].removeaTrig(self.card.btn)
+	
 	def createCopy(self, game):
 		return type(self)(game, self.ID)
 		
@@ -3216,7 +3236,7 @@ class RuneDagger_Effect:
 class TrickTotem(Minion):
 	Class, race, name = "Shaman,Mage", "Totem", "Trick Totem"
 	mana, attack, health = 2, 0, 3
-	index = "Academy~Shaman,Mage~Minion~2~0~3~Totem~Trick Totem"
+	index = "SCHOLOMANCE~Shaman,Mage~Minion~2~0~3~Totem~Trick Totem"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, cast a random spell that costs (3) or less"
 	name_CN = "戏法图腾"
 	poolIdentifier = "Spells of <=3 Cost"
@@ -3256,7 +3276,7 @@ class Trig_TrickTotem(TrigBoard):
 class InstructorFireheart(Minion):
 	Class, race, name = "Shaman", "", "Instructor Fireheart"
 	mana, attack, health = 3, 3, 3
-	index = "Academy~Shaman~Minion~3~3~3~~Instructor Fireheart~Battlecry~Legendary"
+	index = "SCHOLOMANCE~Shaman~Minion~3~3~3~~Instructor Fireheart~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a spell that costs (1) or more. If you play it this turn, repeat this effect"
 	name_CN = "导师火心"
 	poolIdentifier = "Shaman Spells with 1 or more Cost"
@@ -3267,33 +3287,36 @@ class InstructorFireheart(Minion):
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.ID == self.Game.turn:
-			trig = Fireheart_Effect(self.Game, self.ID)
+			trig = InstructorFireheart_Effect(self.Game, self.ID)
 			trig.connect()
 			trig.effect(signal='', ID=0, subject=None, target=None, number=0, comment=comment, choice=0)
 		return None
 		
-class Fireheart_Effect:
+class InstructorFireheart_Effect:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
+		self.card = InstructorFireheart(Game, ID)
 		self.spellDiscovered = None
 		
 	def connect(self):
 		try: self.Game.trigsBoard[self.ID]["SpellBeenPlayed"].append(self)
 		except: self.Game.trigsBoard[self.ID]["SpellBeenPlayed"] = [self]
 		self.Game.turnEndTrigger.append(self)
-		
+		if self.Game.GUI: self.Game.GUI.heroZones[self.ID].addaTrig(self.card)
+	
 	def disconnect(self):
 		try: self.Game.trigsBoard[self.ID]["SpellBeenPlayed"].remove(self)
 		except: pass
 		try: self.Game.turnEndTrigger.remove(self)
 		except: pass
-		
+		if self.Game.GUI: self.Game.GUI.heroZones[self.ID].removeaTrig(self.card.btn)
+	
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject.ID == self.ID and subject == self.spellDiscovered
 		
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			if self.Game.GUI: self.Game.GUI.showOffBoardTrig(InstructorFireheart(self.Game, self.ID), linger=False)
+			if self.Game.GUI: self.Game.GUI.showOffBoardTrig(self.card, linger=False)
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def text(self, CHN):
@@ -3347,7 +3370,7 @@ class Fireheart_Effect:
 class MoltenBlast(Spell):
 	Class, school, name = "Shaman", "", "Molten Blast"
 	requireTarget, mana = True, 3
-	index = "Academy~Shaman~Spell~3~Molten Blast"
+	index = "SCHOLOMANCE~Shaman~Spell~3~Molten Blast"
 	description = "Deal 2 damage. Summon that many 1/1 Elementals"
 	name_CN = "岩浆爆裂"
 	def text(self, CHN):
@@ -3365,7 +3388,7 @@ class MoltenBlast(Spell):
 class MoltenElemental(Minion):
 	Class, race, name = "Shaman", "Elemental", "Molten Elemental"
 	mana, attack, health = 1, 1, 1
-	index = "Academy~Shaman~Minion~1~1~1~Elemental~Molten Elemental~Uncollectible"
+	index = "SCHOLOMANCE~Shaman~Minion~1~1~1~Elemental~Molten Elemental~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "熔岩元素"
 	
@@ -3373,7 +3396,7 @@ class MoltenElemental(Minion):
 class RasFrostwhisper(Minion):
 	Class, race, name = "Shaman,Mage", "", "Ras Frostwhisper"
 	mana, attack, health = 5, 3, 6
-	index = "Academy~Shaman,Mage~Minion~5~3~6~~Ras Frostwhisper~Legendary"
+	index = "SCHOLOMANCE~Shaman,Mage~Minion~5~3~6~~Ras Frostwhisper~Legendary"
 	requireTarget, keyWord, description = False, "", "At the end of turn, deal 1 damage to all enemies (improved by Spell Damage)"
 	name_CN = "莱斯霜语"
 	def __init__(self, Game, ID):
@@ -3402,7 +3425,7 @@ class Trig_RasFrostwhisper(TrigBoard):
 class TotemGoliath(Minion):
 	Class, race, name = "Shaman", "Totem", "Totem Goliath"
 	mana, attack, health = 5, 5, 5
-	index = "Academy~Shaman~Minion~5~5~5~Totem~Totem Goliath~Deathrattle"
+	index = "SCHOLOMANCE~Shaman~Minion~5~5~5~Totem~Totem Goliath~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Summon all four basic totems. Overload: (1)"
 	name_CN = "图腾巨像"
 	def __init__(self, Game, ID):
@@ -3424,7 +3447,7 @@ class SummonAllBasicTotems(Deathrattle_Minion):
 class TidalWave(Spell):
 	Class, school, name = "Shaman", "", "Tidal Wave"
 	requireTarget, mana = False, 8
-	index = "Academy~Shaman~Spell~8~Tidal Wave"
+	index = "SCHOLOMANCE~Shaman~Spell~8~Tidal Wave"
 	description = "Lifesteal. Deal 3 damage to all minions"
 	name_CN = "潮汐奔涌"
 	def __init__(self, Game, ID):
@@ -3446,7 +3469,7 @@ class TidalWave(Spell):
 class DemonicStudies(Spell):
 	Class, school, name = "Warlock", "", "Demonic Studies"
 	requireTarget, mana = False, 1
-	index = "Academy~Warlock~Spell~1~Demonic Studies"
+	index = "SCHOLOMANCE~Warlock~Spell~1~Demonic Studies"
 	description = "Discover a Demon. Your next one costs (1) less"
 	name_CN = "恶魔研习"
 	poolIdentifier = "Demons as Warlock"
@@ -3497,7 +3520,7 @@ class GameManaAura_NextDemon1Less(TempManaEffect):
 class Felosophy(Spell):
 	Class, school, name = "Warlock,Demon Hunter", "", "Felosophy"
 	requireTarget, mana = False, 1
-	index = "Academy~Warlock,Demon Hunter~Spell~1~Felosophy~Outcast"
+	index = "SCHOLOMANCE~Warlock,Demon Hunter~Spell~1~Felosophy~Outcast"
 	description = "Copy the lowest Cost Demon in your hand. Outcast: Give both +1/+1"
 	name_CN = "邪能学说"
 	def effCanTrig(self):
@@ -3507,7 +3530,7 @@ class Felosophy(Spell):
 		curGame, ID = self.Game, self.ID
 		if curGame.mode == 0:
 			#需要更多思考
-			pool = tuple(possi[1][0] for possi in curGame.Hand_Deck.cards_1Possi[ID] if len(possi[1]) == 1 and "Demon" in possi[1][0].race)
+			pool = tuple(possi[1][0] for possi in curGame.Hand_Deck.cards_1Possi[ID] if len(possi[1]) == 1 and possi[1][0].type == "Minion" and "Demon" in possi[1][0].race)
 			if curGame.guides:
 				i = curGame.guides.pop(0)
 			else:
@@ -3520,7 +3543,7 @@ class Felosophy(Spell):
 				curGame.fixedGuides.append(i)
 			if i > -1:
 				demon = curGame.Hand_Deck.hands[ID][i]
-				Copy = demon.selfCopy(ID)
+				Copy = demon.selfCopy(ID, self)
 				curGame.Hand_Deck.addCardtoHand(Copy, ID, creator=type(self), possi=pool)
 				if posinHand == 0 or posinHand == -1:
 					demon.buffDebuff(1, 1)
@@ -3531,7 +3554,7 @@ class Felosophy(Spell):
 class SpiritJailer(Minion):
 	Class, race, name = "Warlock,Demon Hunter", "Demon", "Spirit Jailer"
 	mana, attack, health = 1, 1, 3
-	index = "Academy~Warlock,Demon Hunter~Minion~1~1~3~Demon~Spirit Jailer~Battlecry"
+	index = "SCHOLOMANCE~Warlock,Demon Hunter~Minion~1~1~3~Demon~Spirit Jailer~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle 2 Soul Fragments into your deck"
 	name_CN = "精魂狱卒"
 	
@@ -3543,7 +3566,7 @@ class SpiritJailer(Minion):
 class BonewebEgg(Minion):
 	Class, race, name = "Warlock", "", "Boneweb Egg"
 	mana, attack, health = 2, 0, 2
-	index = "Academy~Warlock~Minion~2~0~2~~Boneweb Egg~Deathrattle"
+	index = "SCHOLOMANCE~Warlock~Minion~2~0~2~~Boneweb Egg~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Summon two 2/1 Spiders"
 	name_CN = "骨网之卵"
 	def __init__(self, Game, ID):
@@ -3570,7 +3593,7 @@ class Summon2Spiders(Deathrattle_Minion):
 class BonewebSpider(Minion):
 	Class, race, name = "Warlock", "Beast", "Boneweb Spider"
 	mana, attack, health = 1, 2, 1
-	index = "Academy~Warlock~Minion~1~2~1~Beast~Boneweb Spider~Uncollectible"
+	index = "SCHOLOMANCE~Warlock~Minion~1~2~1~Beast~Boneweb Spider~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "骨网蜘蛛"
 	
@@ -3578,7 +3601,7 @@ class BonewebSpider(Minion):
 class SoulShear(Spell):
 	Class, school, name = "Warlock,Demon Hunter", "", "Soul Shear"
 	requireTarget, mana = True, 2
-	index = "Academy~Warlock,Demon Hunter~Spell~2~Soul Shear"
+	index = "SCHOLOMANCE~Warlock,Demon Hunter~Spell~2~Soul Shear"
 	description = "Deal 3 damage to a minion. Shuffle 2 Soul Fragments into your deck"
 	name_CN = "灵魂剥离"
 	def available(self):
@@ -3598,7 +3621,7 @@ class SoulShear(Spell):
 class SchoolSpirits(Spell):
 	Class, school, name = "Warlock", "", "School Spirits"
 	requireTarget, mana = False, 3
-	index = "Academy~Warlock~Spell~3~School Spirits"
+	index = "SCHOLOMANCE~Warlock~Spell~3~School Spirits"
 	description = "Deal 2 damage to all minions. Shuffle 2 Soul Fragments into your deck"
 	name_CN = "校园精魂"
 	def text(self, CHN):
@@ -3617,7 +3640,7 @@ class SchoolSpirits(Spell):
 class ShadowlightScholar(Minion):
 	Class, race, name = "Warlock", "", "Shadowlight Scholar"
 	mana, attack, health = 3, 3, 4
-	index = "Academy~Warlock~Minion~3~3~4~~Shadowlight Scholar~Battlecry"
+	index = "SCHOLOMANCE~Warlock~Minion~3~3~4~~Shadowlight Scholar~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Destroy a Soul Fragment in your deck to deal 3 damage"
 	name_CN = "影光学者"
 	
@@ -3645,7 +3668,7 @@ class ShadowlightScholar(Minion):
 class VoidDrinker(Minion):
 	Class, race, name = "Warlock", "Demon", "Void Drinker"
 	mana, attack, health = 5, 4, 5
-	index = "Academy~Warlock~Minion~5~4~5~Demon~Void Drinker~Taunt~Battlecry"
+	index = "SCHOLOMANCE~Warlock~Minion~5~4~5~Demon~Void Drinker~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Destroy a Soul Fragment in your deck to gain +3/+3"
 	name_CN = "虚空吸食者"
 	
@@ -3668,7 +3691,7 @@ class VoidDrinker(Minion):
 class SoulciologistMalicia(Minion):
 	Class, race, name = "Warlock,Demon Hunter", "", "Soulciologist Malicia"
 	mana, attack, health = 7, 5, 5
-	index = "Academy~Warlock,Demon Hunter~Minion~7~5~5~~Soulciologist Malicia~Battlecry~Legendary"
+	index = "SCHOLOMANCE~Warlock,Demon Hunter~Minion~7~5~5~~Soulciologist Malicia~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: For each Soul Fragment in your deck, summon a 3/3 Soul with Rush"
 	name_CN = "灵魂学家 玛丽希亚"
 	
@@ -3689,7 +3712,7 @@ class SoulciologistMalicia(Minion):
 class ReleasedSoul(Minion):
 	Class, race, name = "Warlock,Demon Hunter", "", "Released Soul"
 	mana, attack, health = 3, 3, 3
-	index = "Academy~Warlock,Demon Hunter~Minion~3~3~3~~Released Soul~Rush~Uncollectible"
+	index = "SCHOLOMANCE~Warlock,Demon Hunter~Minion~3~3~3~~Released Soul~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	name_CN = "被释放的灵魂"
 	
@@ -3697,7 +3720,7 @@ class ReleasedSoul(Minion):
 class ArchwitchWillow(Minion):
 	Class, race, name = "Warlock", "", "Archwitch Willow"
 	mana, attack, health = 8, 5, 5
-	index = "Academy~Warlock~Minion~8~5~5~~Archwitch Willow~Battlecry~Legendary"
+	index = "SCHOLOMANCE~Warlock~Minion~8~5~5~~Archwitch Willow~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Summon a random Demon from your hand and deck"
 	name_CN = "高阶女巫维洛"
 	
@@ -3727,7 +3750,7 @@ class ArchwitchWillow(Minion):
 class AthleticStudies(Spell):
 	Class, school, name = "Warrior", "", "Athletic Studies"
 	requireTarget, mana = False, 1
-	index = "Academy~Warrior~Spell~1~Athletic Studies"
+	index = "SCHOLOMANCE~Warrior~Spell~1~Athletic Studies"
 	description = "Discover a Rush minion. Your next one costs (1) less"
 	name_CN = "体能研习"
 	poolIdentifier = "Rush Minions as Warrior"
@@ -3774,7 +3797,7 @@ class GameManaAura_NextRushMinion1Less(TempManaEffect):
 class ShieldofHonor(Spell):
 	Class, school, name = "Warrior,Paladin", "", "Shield of Honor"
 	requireTarget, mana = True, 1
-	index = "Academy~Warrior,Paladin~Spell~1~Shield of Honor"
+	index = "SCHOLOMANCE~Warrior,Paladin~Spell~1~Shield of Honor"
 	description = "Give a damaged minion +3 Attack and Divine Shield"
 	name_CN = "荣誉护盾"
 	def available(self):
@@ -3793,7 +3816,7 @@ class ShieldofHonor(Spell):
 class InFormation(Spell):
 	Class, school, name = "Warrior", "", "In Formation!"
 	requireTarget, mana = False, 2
-	index = "Academy~Warrior~Spell~2~In Formation!"
+	index = "SCHOLOMANCE~Warrior~Spell~2~In Formation!"
 	description = "Add 2 random Taunt minions to your hand"
 	name_CN = "保持阵型"
 	poolIdentifier = "Taunt Minions"
@@ -3820,7 +3843,7 @@ class InFormation(Spell):
 class CeremonialMaul(Weapon):
 	Class, name, description = "Warrior,Paladin", "Ceremonial Maul", "Spellburst: Summon a student with Taunt and stats equal to the spell's Cost"
 	mana, attack, durability = 3, 2, 2
-	index = "Academy~Warrior,Paladin~Weapon~3~2~2~Ceremonial Maul"
+	index = "SCHOLOMANCE~Warrior,Paladin~Weapon~3~2~2~Ceremonial Maul"
 	name_CN = "仪式重槌"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3835,7 +3858,7 @@ class Trig_CeremonialMaul(Spellburst):
 		game, stat = self.entity.Game, number
 		if stat and game.space(self.entity.ID):
 			cost = min(stat, 10)
-			newIndex = "Academy~Warrior,Paladin~%d~%d~%d~Minion~~Honor Student~Taunt~Uncollectible"%(cost, stat, stat)
+			newIndex = "SCHOLOMANCE~Warrior,Paladin~%d~%d~%d~Minion~~Honor Student~Taunt~Uncollectible"%(cost, stat, stat)
 			subclass = type("HonorStudent_Mutable_%d"%stat, (HonorStudent_Mutable_1, ),
 							{"mana": cost, "attack": stat, "health": stat,
 							"index": newIndex}
@@ -3846,7 +3869,7 @@ class Trig_CeremonialMaul(Spellburst):
 class HonorStudent_Mutable_1(Minion):
 	Class, race, name = "Warrior,Paladin", "", "Honor Student"
 	mana, attack, health = 1, 1, 1
-	index = "Academy~Warrior,Paladin~Minion~1~1~1~~Honor Student~Taunt~Uncollectible"
+	index = "SCHOLOMANCE~Warrior,Paladin~Minion~1~1~1~~Honor Student~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "仪仗学员"
 	
@@ -3854,7 +3877,7 @@ class HonorStudent_Mutable_1(Minion):
 class LordBarov(Minion):
 	Class, race, name = "Warrior,Paladin", "", "Lord Barov"
 	mana, attack, health = 3, 3, 2
-	index = "Academy~Warrior,Paladin~Minion~3~3~2~~Lord Barov~Battlecry~Deathrattle"
+	index = "SCHOLOMANCE~Warrior,Paladin~Minion~3~3~2~~Lord Barov~Battlecry~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Battlecry: Set the Health of all other minions to 1. Deathrattle: Deal 1 damage to all other minions"
 	name_CN = "巴罗夫领主"
 	def __init__(self, Game, ID):
@@ -3878,7 +3901,7 @@ class Deal1DamagetoAllMinions(Deathrattle_Minion):
 class Playmaker(Minion):
 	Class, race, name = "Warrior", "", "Playmaker"
 	mana, attack, health = 3, 4, 3
-	index = "Academy~Warrior~Minion~3~4~3~~Playmaker"
+	index = "SCHOLOMANCE~Warrior~Minion~3~4~3~~Playmaker"
 	requireTarget, keyWord, description = False, "", "After you play a Rush minion, summon a copy with 1 Health remaining"
 	name_CN = "团队核心"
 	def __init__(self, Game, ID):
@@ -3896,7 +3919,7 @@ class Trig_Playmaker(TrigBoard):
 		return "在你使用一张突袭随从牌后，召唤一个剩余生命值为1的复制" if CHN else "After you play a Rush minion, summon a copy with 1 Health remaining"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		Copy = subject.selfCopy(self.entity.ID)
+		Copy = subject.selfCopy(self.entity.ID, self.entity)
 		Copy.health = 1
 		self.entity.Game.summon(Copy, self.entity.pos+1, self.entity)
 		
@@ -3904,7 +3927,7 @@ class Trig_Playmaker(TrigBoard):
 class ReapersScythe(Weapon):
 	Class, name, description = "Warrior", "Reaper's Scythe", "Spellburst: Also damages adjacent minions this turn"
 	mana, attack, durability = 4, 4, 2
-	index = "Academy~Warrior~Weapon~4~4~2~Reaper's Scythe"
+	index = "SCHOLOMANCE~Warrior~Weapon~4~4~2~Reaper's Scythe"
 	name_CN = "收割之镰"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3942,7 +3965,7 @@ class Trig_SweepThisTurn(TrigBoard):
 class Commencement(Spell):
 	Class, school, name = "Warrior,Paladin", "", "Commencement"
 	requireTarget, mana = False, 7
-	index = "Academy~Warrior,Paladin~Spell~7~Commencement"
+	index = "SCHOLOMANCE~Warrior,Paladin~Spell~7~Commencement"
 	description = "Summon a minion from your deck. Give it Taunt and Divine Shield"
 	name_CN = "毕业仪式"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3964,7 +3987,7 @@ class Commencement(Spell):
 class Troublemaker(Minion):
 	Class, race, name = "Warrior", "", "Troublemaker"
 	mana, attack, health = 8, 6, 8
-	index = "Academy~Warrior~Minion~8~6~8~~Troublemaker"
+	index = "SCHOLOMANCE~Warrior~Minion~8~6~8~~Troublemaker"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, summon two 3/3 Ruffians that attack random enemies"
 	name_CN = "问题学生"
 	def __init__(self, Game, ID):
@@ -4004,7 +4027,7 @@ class Trig_Troublemaker(TrigBoard):
 class Ruffian(Minion):
 	Class, race, name = "Warrior", "", "Ruffian"
 	mana, attack, health = 3, 3, 3
-	index = "Academy~Warrior~Minion~3~3~3~~Ruffian~Uncollectible"
+	index = "SCHOLOMANCE~Warrior~Minion~3~3~3~~Ruffian~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "无赖"
 	
@@ -4020,7 +4043,7 @@ class Ruffian(Minion):
 class Rattlegore(Minion):
 	Class, race, name = "Warrior", "", "Rattlegore"
 	mana, attack, health = 9, 9, 9
-	index = "Academy~Warrior~Minion~9~9~9~~Rattlegore~Deathrattle~Legendary"
+	index = "SCHOLOMANCE~Warrior~Minion~9~9~9~~Rattlegore~Deathrattle~Legendary"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Resummon this with -1/-1"
 	name_CN = "血骨傀儡"
 	
@@ -4070,171 +4093,32 @@ class Rattlegore(Minion):
 #				newMinion = minion.Game.summon(newMinion, minion.pos+1, minion)
 #
 
-Academy_Indices = {"Academy~Neutral~Minion~2~2~2~~Transfer Student": TransferStudent,
-					"Academy~Neutral~Minion~0~1~1~Demon~Desk Imp": DeskImp,
-					"Academy~Neutral~Minion~1~1~1~~Animated Broomstick~Rush~Battlecry": AnimatedBroomstick,
-					"Academy~Neutral~Minion~1~1~2~~Intrepid Initiate~Battlecry": IntrepidInitiate,
-					"Academy~Neutral~Minion~1~1~1~~Pen Flinger~Battlecry": PenFlinger,
-					"Academy~Neutral~Weapon~1~0~4~Sphere of Sapience~Neutral": SphereofSapience,
-					"Academy~Neutral~Minion~1~1~1~~Tour Guide~Battlecry": TourGuide,
-					"Academy~Neutral~Minion~2~3~2~~Cult Neophyte~Battlecry": CultNeophyte,
-					"Academy~Neutral~Minion~2~2~3~Beast~Manafeeder Panthara~Battlecry": ManafeederPanthara,
-					"Academy~Neutral~Minion~2~3~1~~Sneaky Delinquent~Stealth~Deathrattle": SneakyDelinquent,
-					"Academy~Neutral~Minion~2~3~1~~Spectral Delinquent~Stealth~Uncollectible": SpectralDelinquent,
-					"Academy~Neutral~Minion~3~1~3~~Voracious Reader": VoraciousReader,
-					"Academy~Neutral~Minion~2~2~2~~Wandmaker~Battlecry": Wandmaker,
-					"Academy~Neutral~Minion~3~3~4~Beast~Educated Elekk~Deathrattle": EducatedElekk,
-					"Academy~Neutral~Minion~3~1~6~~Enchanted Cauldron": EnchantedCauldron,
-					"Academy~Neutral~Minion~3~2~4~~Robes of Protection": RobesofProtection,
-					"Academy~Neutral~Minion~4~3~6~Dragon~Crimson Hothead": CrimsonHothead,
-					"Academy~Neutral~Minion~4~5~1~Elemental~Divine Rager~Divine Shield": DivineRager,
-					"Academy~Neutral~Minion~4~4~3~Murloc~Fishy Flyer~Rush~Deathrattle": FishyFlyer,
-					"Academy~Neutral~Minion~4~4~3~Murloc~Spectral Flyer~Rush~Uncollectible": SpectralFlyer,
-					"Academy~Neutral~Minion~5~4~5~~Lorekeeper Polkelt~Battlecry~Legendary": LorekeeperPolkelt,
-					"Academy~Neutral~Minion~4~2~5~~Wretched Tutor": WretchedTutor,
-					"Academy~Neutral~Minion~5~4~6~~Headmaster Kel'Thuzad~Legendary": HeadmasterKelThuzad,
-					"Academy~Neutral~Minion~5~4~6~Beast~Lake Thresher": LakeThresher,
-					"Academy~Neutral~Minion~5~3~7~~Ogremancer": Ogremancer,
-					"Academy~Neutral~Minion~2~2~2~~Risen Skeleton~Taunt~Uncollectible": RisenSkeleton,
-					"Academy~Neutral~Minion~5~4~4~Elemental~Steward of Scrolls~Spell Damage~Battlecry": StewardofScrolls,
-					"Academy~Neutral~Minion~5~4~4~~Vectus~Battlecry~Legendary": Vectus,
-					"Academy~Neutral~Minion~1~1~1~Dragon~Plagued Hatchling~Uncollectible": PlaguedHatchling,
-					"Academy~Neutral~Minion~6~4~9~Dragon~Onyx Magescribe": OnyxMagescribe,
-					"Academy~Neutral~Minion~6~5~7~~Smug Senior~Taunt~Deathrattle": SmugSenior,
-					"Academy~Neutral~Minion~6~5~7~~Spectral Senior~Taunt~Uncollectible": SpectralSenior,
-					"Academy~Neutral~Minion~6~6~6~~Sorcerous Substitute~Battlecry": SorcerousSubstitute,
-					"Academy~Neutral~Minion~7~6~8~~Keymaster Alabaster~Legendary": KeymasterAlabaster,
-					"Academy~Neutral~Minion~8~8~8~Dragon~Plagued Protodrake~Deathrattle": PlaguedProtodrake,
-					
-					"Academy~Demon Hunter,Hunter~Spell~1~Demon Companion": DemonCompanion,
-					"Academy~Demon Hunter,Hunter~Minion~1~2~1~Demon~Reffuh~Charge~Uncollectible": Reffuh,
-					"Academy~Demon Hunter,Hunter~Minion~1~1~2~Demon~Kolek~Uncollectible": Kolek,
-					"Academy~Demon Hunter,Hunter~Minion~1~2~2~Demon~Shima~Taunt~Uncollectible": Shima,
-					"Academy~Demon Hunter~Spell~1~Double Jump": DoubleJump,
-					"Academy~Demon Hunter,Hunter~Weapon~1~1~4~Trueaim Crescent": TrueaimCrescent,
-					"Academy~Demon Hunter,Hunter~Minion~3~2~4~~Ace Hunter Kreen~Legendary": AceHunterKreen,
-					"Academy~Demon Hunter~Minion~3~2~3~~Magehunter~Rush": Magehunter,
-					"Academy~Demon Hunter~Minion~4~3~2~~Shardshatter Mystic~Battlecry": ShardshatterMystic,
-					"Academy~Demon Hunter~Spell~4~Glide~Outcast": Glide,
-					"Academy~Demon Hunter~Weapon~4~4~2~Marrowslicer~Battlecry": Marrowslicer,
-					"Academy~Demon Hunter~Minion~4~4~3~~Star Student Stelina~Outcast~Legendary": StarStudentStelina,
-					"Academy~Demon Hunter~Minion~4~5~4~~Vilefiend Trainer~Outcast": VilefiendTrainer,
-					"Academy~Demon Hunter~Minion~1~1~1~Demon~Snarling Vilefiend~Uncollectible": SnarlingVilefiend,
-					"Academy~Demon Hunter,Hunter~Minion~5~1~1~~Blood Herald": BloodHerald,
-					"Academy~Demon Hunter~Minion~5~5~5~~Soulshard Lapidary~Battlecry": SoulshardLapidary,
-					"Academy~Demon Hunter~Spell~7~Cycle of Hatred": CycleofHatred,
-					"Academy~Demon Hunter~Minion~3~3~3~~Spirit of Vengeance~Uncollectible": SpiritofVengeance,
-					"Academy~Demon Hunter~Spell~7~Fel Guardians": FelGuardians,
-					"Academy~Demon Hunter~Minion~1~1~2~Demon~Soulfed Felhound~Taunt~Uncollectible": SoulfedFelhound,
-					"Academy~Demon Hunter~Minion~9~10~10~Demon~Ancient Void Hound": AncientVoidHound,
-					
-					"Academy~Druid,Shaman~Spell~0~Lightning Bloom~Overload": LightningBloom,
-					"Academy~Druid~Minion~1~1~1~~Gibberling": Gibberling,
-					"Academy~Druid~Spell~1~Nature Studies": NatureStudies,
-					"Academy~Druid~Spell~1~Partner Assignment": PartnerAssignment,
-					"Academy~Druid~Minion~3~1~4~~Speaker Gidra~Rush~Windfury": SpeakerGidra,
-					"Academy~Druid,Shaman~Minion~4~4~5~~Groundskeeper~Taunt~Battlecry": Groundskeeper,
-					"Academy~Druid~Minion~5~5~4~Beast~Twilight Runner~Stealth": TwilightRunner,
-					"Academy~Druid~Minion~6~5~4~~Forest Warden Omu~Legendary": ForestWardenOmu,
-					"Academy~Druid,Shaman~Spell~6~Runic Carvings~Choose One": RunicCarvings,
-					"Academy~Druid,Shaman~Minion~2~2~2~Totem~Treant Totem~Uncollectible": TreantTotem,
-					"Academy~Druid~Spell~10~Survival of the Fittest": SurvivaloftheFittest,
-					
-					"Academy~Hunter,Druid~Spell~1~Adorable Infestation": AdorableInfestation,
-					"Academy~Hunter,Druid~Minion~1~1~1~Beast~Marsuul Cub~Uncollectible": MarsuulCub,
-					"Academy~Hunter~Spell~1~Carrion Studies": CarrionStudies,
-					"Academy~Hunter~Spell~1~Overwhelm": Overwhelm,
-					"Academy~Hunter~Minion~1~1~1~Beast~Wolpertinger~Battlecry": Wolpertinger,
-					"Academy~Hunter~Minion~3~1~2~Beast~Bloated Python~Deathrattle": BloatedPython,
-					"Academy~Hunter~Minion~4~4~4~~Hapless Handler~Uncollectible": HaplessHandler,
-					"Academy~Hunter~Minion~3~3~4~~Professor Slate~Legendary": ProfessorSlate,
-					"Academy~Hunter,Druid~Minion~3~3~3~~Shan'do Wildclaw~Choose One~Legendary": ShandoWildclaw,
-					"Academy~Hunter~Minion~4~3~5~Beast~Krolusk Barkstripper": KroluskBarkstripper,
-					"Academy~Hunter,Druid~Minion~5~4~5~Beast~Teacher's Pet~Taunt~Deathrattle": TeachersPet,
-					"Academy~Hunter,Druid~Spell~8~Guardian Animals": GuardianAnimals,
-					
-					"Academy~Mage,Rogue~Spell~1~Brain Freeze~Combo": BrainFreeze,
-					"Academy~Mage~Minion~1~1~3~~Lab Partner~Spell Damage": LabPartner,
-					"Academy~Mage,Rogue~Minion~1~1~2~~Wand Thief~Combo": WandThief,
-					"Academy~Mage~Spell~2~Cram Session": CramSession,
-					"Academy~Mage~Spell~3~Combustion": Combustion,
-					"Academy~Mage~Minion~3~3~4~~Firebrand": Firebrand,
-					"Academy~Mage,Rogue~Spell~4~Potion of Illusion": PotionofIllusion,
-					"Academy~Mage,Rogue~Minion~5~2~1~~Jandice Barov~Battlecry~Legendary": JandiceBarov,
-					"Academy~Mage~Minion~5~3~8~~Mozaki, Master Duelist~Legendary": MozakiMasterDuelist,
-					"Academy~Mage~Minion~5~3~6~~Wyrm Weaver": WyrmWeaver,
-					
-					"Academy~Paladin~Spell~0~First Day of School": FirstDayofSchool,
-					"Academy~Paladin,Priest~Spell~1~Wave of Apathy": WaveofApathy,
-					"Academy~Paladin~Minion~2~1~1~~Argent Braggart~Battlecry": ArgentBraggart,
-					"Academy~Paladin,Priest~Spell~3~Gift of Luminance": GiftofLuminance,
-					"Academy~Paladin~Minion~3~4~2~~Goody Two-Shields~Divine Shield": GoodyTwoShields,
-					"Academy~Paladin,Priest~Minion~4~3~6~~High Abbess Alura": HighAbbessAlura,
-					"Academy~Paladin~Spell~5~Blessing of Authority": BlessingofAuthority,
-					"Academy~Paladin,Priest~Minion~6~4~5~~Devout Pupil~Divine Shield~Taunt": DevoutPupil,
-					"Academy~Paladin~Minion~6~4~9~~Judicious Junior~Lifesteal": JudiciousJunior,
-					"Academy~Paladin~Minion~8~3~12~~Turalyon, the Tenured~Rush~Legendary": TuralyontheTenured,
-					
-					"Academy~Priest,Warlock~Spell~0~Raise Dead": RaiseDead,
-					"Academy~Priest~Spell~1~Draconic Studies": DraconicStudies,
-					"Academy~Priest~Minion~1~1~4~~Frazzled Freshman": FrazzledFreshman,
-					"Academy~Priest~Minion~3~1~3~~Mindrender Illucia~Battlecry~Legendary": MindrenderIllucia,
-					"Academy~Priest~Spell~2~Power Word: Feast": PowerWordFeast,
-					"Academy~Priest,Warlock~Minion~4~3~3~~Brittlebone Destroyer~Battlecry": BrittleboneDestroyer,
-					"Academy~Priest~Minion~4~2~4~~Cabal Acolyte~Taunt": CabalAcolyte,
-					"Academy~Priest,Warlock~Minion~4~3~6~~Disciplinarian Gandling~Legendary": DisciplinarianGandling,
-					"Academy~Priest,Warlock~Minion~4~4~4~~Failed Student~Uncollectible": FailedStudent,
-					"Academy~Priest~Spell~6~Initiation": Initiation,
-					"Academy~Priest,Warlock~Minion~8~8~8~~Flesh Giant": FleshGiant,
-					
-					"Academy~Rogue~Spell~1~Secret Passage": SecretPassage,
-					"Academy~Rogue~Spell~2~Plagiarize~~Secret": Plagiarize,
-					"Academy~Rogue,Warrior~Spell~3~Coerce~Combo": Coerce,
-					"Academy~Rogue~Weapon~3~1~4~Self-Sharpening Sword": SelfSharpeningSword,
-					"Academy~Rogue~Minion~3~3~3~~Vulpera Toxinblade": VulperaToxinblade,
-					"Academy~Rogue~Minion~4~4~2~~Infiltrator Lilian~Stealth~Deathrattle~Legendary": InfiltratorLilian,
-					"Academy~Rogue~Minion~4~4~2~~Forsaken Lilian~Legendary~Uncollectible": ForsakenLilian,
-					"Academy~Rogue~Minion~4~4~4~~Shifty Sophomore~Stealth": ShiftySophomore,
-					"Academy~Rogue,Warrior~Minion~4~4~4~~Steeldancer~Battlecry": Steeldancer,
-					"Academy~Rogue,Warrior~Spell~5~Cutting Class": CuttingClass,
-					"Academy~Rogue,Warrior~Minion~5~4~4~~Doctor Krastinov~Rush~Legendary": DoctorKrastinov,
-					
-					"Academy~Shaman,Mage~Spell~1~Devolving Missiles": DevolvingMissiles,
-					"Academy~Shaman,Mage~Spell~1~Primordial Studies": PrimordialStudies,
-					"Academy~Shaman~Minion~2~2~3~~Diligent Notetaker": DiligentNotetaker,
-					"Academy~Shaman~Weapon~2~1~3~Rune Dagger": RuneDagger,
-					"Academy~Shaman,Mage~Minion~2~0~3~Totem~Trick Totem": TrickTotem,
-					"Academy~Shaman~Minion~3~3~3~~Instructor Fireheart~Battlecry~Legendary": InstructorFireheart,
-					"Academy~Shaman~Spell~3~Molten Blast": MoltenBlast,
-					"Academy~Shaman~Minion~1~1~1~Elemental~Molten Elemental~Uncollectible": MoltenElemental,
-					"Academy~Shaman,Mage~Minion~5~3~6~~Ras Frostwhisper~Legendary": RasFrostwhisper,
-					"Academy~Shaman~Minion~5~5~5~Totem~Totem Goliath~Deathrattle": TotemGoliath,
-					"Academy~Shaman~Spell~8~Tidal Wave": TidalWave,
-					
-					"Academy~Warlock,Demon Hunter~Spell~0~Soul Fragment~Casts When Drawn~Uncollectible": SoulFragment,
-					"Academy~Warlock~Spell~1~Demonic Studies": DemonicStudies,
-					"Academy~Warlock,Demon Hunter~Spell~1~Felosophy~Outcast": Felosophy,
-					"Academy~Warlock,Demon Hunter~Minion~1~1~3~Demon~Spirit Jailer~Battlecry": SpiritJailer,
-					"Academy~Warlock~Minion~2~0~2~~Boneweb Egg~Deathrattle": BonewebEgg,
-					"Academy~Warlock~Minion~1~2~1~Beast~Boneweb Spider~Uncollectible": BonewebSpider,
-					"Academy~Warlock,Demon Hunter~Spell~2~Soul Shear": SoulShear,
-					"Academy~Warlock~Spell~3~School Spirits": SchoolSpirits,
-					"Academy~Warlock~Minion~3~3~4~~Shadowlight Scholar~Battlecry": ShadowlightScholar,
-					"Academy~Warlock~Minion~5~4~5~Demon~Void Drinker~Taunt~Battlecry": VoidDrinker,
-					"Academy~Warlock,Demon Hunter~Minion~7~5~5~~Soulciologist Malicia~Battlecry~Legendary": SoulciologistMalicia,
-					"Academy~Warlock,Demon Hunter~Minion~3~3~3~~Released Soul~Rush~Uncollectible": ReleasedSoul,
-					"Academy~Warlock~Minion~8~5~5~~Archwitch Willow~Battlecry~Legendary": ArchwitchWillow,
-					
-					"Academy~Warrior~Spell~1~Athletic Studies": AthleticStudies,
-					"Academy~Warrior,Paladin~Spell~1~Shield of Honor": ShieldofHonor,
-					"Academy~Warrior~Spell~2~In Formation!": InFormation,
-					"Academy~Warrior,Paladin~Weapon~3~2~2~Ceremonial Maul": CeremonialMaul,
-					"Academy~Warrior,Paladin~Minion~1~1~1~~Honor Student~Taunt~Uncollectible": HonorStudent_Mutable_1,
-					"Academy~Warrior,Paladin~Minion~3~3~2~~Lord Barov~Battlecry~Deathrattle": LordBarov,
-					"Academy~Warrior~Minion~3~4~3~~Playmaker": Playmaker,
-					"Academy~Warrior~Weapon~4~4~2~Reaper's Scythe": ReapersScythe,
-					"Academy~Warrior,Paladin~Spell~7~Commencement": Commencement,
-					"Academy~Warrior~Minion~8~6~8~~Troublemaker": Troublemaker,
-					"Academy~Warrior~Minion~3~3~3~~Ruffian~Uncollectible": Ruffian,
-					"Academy~Warrior~Minion~9~9~9~~Rattlegore~Deathrattle~Legendary": Rattlegore,
-					}
+Academy_Cards = [#Neutral cards
+				#TransferStudent, TransferStudent_Ogrimmar, TransferStudent_Stormwind, TransferStudent_FourWindValley, TransferStudent_Stranglethorn,
+				#TransferStudent_Outlands, TransferStudent_Academy, TransferStudent_Darkmoon, TransferStudent_Darkmoon_Corrupt,
+				DeskImp, AnimatedBroomstick, IntrepidInitiate, PenFlinger, SphereofSapience, TourGuide, CultNeophyte, ManafeederPanthara, SneakyDelinquent, SpectralDelinquent, VoraciousReader,
+				Wandmaker, EducatedElekk, EnchantedCauldron, RobesofProtection, CrimsonHothead, DivineRager, FishyFlyer, SpectralFlyer, LorekeeperPolkelt, WretchedTutor, HeadmasterKelThuzad, LakeThresher, Ogremancer,
+				RisenSkeleton, StewardofScrolls, Vectus, PlaguedHatchling, OnyxMagescribe, SmugSenior, SpectralSenior, SorcerousSubstitute, KeymasterAlabaster, PlaguedProtodrake,
+				#Demon Hunter Cards
+				DemonCompanion, Reffuh, Kolek, Shima, DoubleJump, TrueaimCrescent, AceHunterKreen, Magehunter, ShardshatterMystic, Glide, Marrowslicer, StarStudentStelina, VilefiendTrainer, SnarlingVilefiend,
+				BloodHerald, SoulshardLapidary, CycleofHatred, SpiritofVengeance, FelGuardians, SoulfedFelhound, AncientVoidHound,
+				#Druid cards
+				LightningBloom, Gibberling, NatureStudies, PartnerAssignment, SpeakerGidra, Groundskeeper, TwilightRunner, ForestWardenOmu, RunicCarvings, TreantTotem, SurvivaloftheFittest, 
+				#Hunter cards
+				AdorableInfestation, MarsuulCub, CarrionStudies, Overwhelm, Wolpertinger, BloatedPython, HaplessHandler, ProfessorSlate, ShandoWildclaw, KroluskBarkstripper, TeachersPet, GuardianAnimals, 
+				#Mage cards
+				BrainFreeze, LabPartner, WandThief, CramSession, Combustion, Firebrand, PotionofIllusion, JandiceBarov, MozakiMasterDuelist, WyrmWeaver, 
+				#Paladin cards
+				FirstDayofSchool, WaveofApathy, ArgentBraggart, GiftofLuminance, GoodyTwoShields, HighAbbessAlura, BlessingofAuthority, DevoutPupil, JudiciousJunior, TuralyontheTenured,
+				#Priest cards
+				RaiseDead, DraconicStudies, FrazzledFreshman, MindrenderIllucia, PowerWordFeast, BrittleboneDestroyer, CabalAcolyte, DisciplinarianGandling, FailedStudent, Initiation, FleshGiant, 
+				#Rogue cards
+				SecretPassage, Plagiarize, Coerce, SelfSharpeningSword, VulperaToxinblade, InfiltratorLilian, ForsakenLilian, ShiftySophomore, Steeldancer, CuttingClass, DoctorKrastinov, 
+				#Shaman cards
+				DevolvingMissiles, PrimordialStudies, DiligentNotetaker, RuneDagger, TrickTotem, InstructorFireheart, MoltenBlast, MoltenElemental, RasFrostwhisper, TotemGoliath, TidalWave, 
+				#Warlock cards
+				SoulFragment, DemonicStudies, Felosophy, SpiritJailer, BonewebEgg, BonewebSpider, SoulShear, SchoolSpirits, ShadowlightScholar, VoidDrinker, SoulciologistMalicia, ReleasedSoul, ArchwitchWillow, 
+				#Warrior cards
+				AthleticStudies, ShieldofHonor, InFormation, CeremonialMaul, HonorStudent_Mutable_1, LordBarov, Playmaker, ReapersScythe, Commencement, Troublemaker, Ruffian, Rattlegore,
+				]
+				

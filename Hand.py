@@ -92,6 +92,7 @@ class Hand_Deck:
 				card.checkEvanescent()
 		
 		if not self.Game.heroes[2].Class in SVClasses:
+			print("Add a Coin to player 2's hand")
 			self.addCardtoHand(TheCoin(self.Game, 2), 2)
 		if self.Game.GUI:
 			self.Game.GUI.handZones[1].draw()
@@ -231,13 +232,14 @@ class Hand_Deck:
 			else: card = extractfrom(card, self.decks[ID])
 			mana = card.mana
 		card.leavesDeck()
+		game.sendSignal("DeckCheck", ID, None, None, 0, "")
 		if self.handNotFull(ID):
 			if GUI: btn = GUI.drawCardAni_1(card)
 			cardTracker = [card]  # 把这张卡放入一个列表，然后抽牌扳机可以对这个列表进行处理同时传递给其他抽牌扳机
 			game.sendSignal("CardDrawn", ID, None, cardTracker, mana, "")
 			self.Game.Counters.numCardsDrawnThisTurn[ID] += 1
 			if cardTracker[0].type == "Spell" and "Casts When Drawn" in cardTracker[0].index:
-				if GUI: btn.remove()
+				if GUI: GUI.handZones[ID].removeMultiple([btn])
 				cardTracker[0].whenEffective()
 				game.sendSignal("SpellCastWhenDrawn", ID, None, cardTracker[0], mana, "")
 				#抽到之后施放的法术如果检测到玩家处于濒死状态，则不会再抽一张。如果玩家有连续抽牌的过程，则执行下次抽牌
@@ -250,7 +252,7 @@ class Hand_Deck:
 				cardTracker[0] = cardTracker[0].entersHand()
 				self.hands[ID].append(cardTracker[0])
 				if GUI: GUI.drawCardAni_2(btn, cardTracker[0])
-				game.sendSignal("CardEntersHand", ID, None, cardTracker, mana, "")
+				game.sendSignal("CardEntersHand", ID, None, cardTracker, mana, "byDrawing")
 				game.Manas.calcMana_All()
 			return cardTracker[0], mana
 		else:
@@ -262,7 +264,7 @@ class Hand_Deck:
 	#Creator是这张/些牌的创建者，creator=None，则它们的creator继承原来的。
 	#possi是这张/些牌的可能性，possi=()说明它们都是确定的牌
 	def addCardtoHand(self, obj, ID, byType=False, byDiscover=False, pos=-1, 
-									showAni=True, creator=None, possi=()):
+									ani="fromCenter", creator=None, possi=()):
 		game, GUI = self.Game, self.Game.GUI
 		if not isinstance(obj, (list, np.ndarray, tuple)):  # if the obj is not a list, turn it into a single-element list
 			obj = [obj]
@@ -271,13 +273,17 @@ class Hand_Deck:
 			if self.handNotFull(ID):
 				if byType: card = card(game, ID)
 				card.ID = ID
-				if showAni:
-					if GUI: btn = GUI.cardEntersHandAni_1(card)
-					self.hands[ID].insert(pos + 100 * (pos < 0), card)
-					if GUI: GUI.cardEntersHandAni_2(btn, pos, steps=5 if morethan3 else 10)
-				else:
-					self.hands[ID].insert(pos + 100 * (pos < 0), card)
-					if GUI: GUI.cardReplacedinHand_Refresh(ID)
+				self.hands[ID].insert(pos + 100 * (pos < 0), card)
+				if ani == "fromCenter":
+					if GUI:
+						if card.btn:
+							print("A card btn already created", card, card.btn)
+							GUI.handZones[card.ID].draw(afterAllFinished=False)
+						else: GUI.putaNewCardinHandAni(card)
+				elif ani == "Twinspell":
+					if GUI: GUI.cardReplacedinHand_Refresh(card)
+				#None will simply pass
+				
 				card = card.entersHand()
 				#只有已经提前定义了instance的卡牌会使用creator is None的选项
 				if creator: card.creator = creator
@@ -303,7 +309,7 @@ class Hand_Deck:
 		card.leavesHand()
 		if card.tracked: self.ruleOut(card, fromHD=2)
 		self.hands[ID].pop(i)
-		self.addCardtoHand(newCard, ID, "", byDiscover=False, pos=i, showAni=False, possi=(newCard.creator, newCard.possi))
+		self.addCardtoHand(newCard, ID, "", byDiscover=False, pos=i, ani="Twinspell", possi=(newCard.creator, newCard.possi))
 		
 	#目前只有牌库中的迦拉克隆升级时会调用，对方是可以知道的
 	def replaceCardinDeck(self, card, newCard):
@@ -337,11 +343,11 @@ class Hand_Deck:
 	def shuffleintoDeck(self, obj, initiatorID=0, enemyCanSee=True, sendSig=True, creator=None, possi=()):
 		if obj:
 			curGame = self.Game
-			if curGame.GUI: curGame.GUI.shuffleintoDeckAni(obj, enemyCanSee)
 			#如果obj不是一个Iterable，则将其变成一个列表
 			if not isinstance(obj, (list, tuple, np.ndarray)):
 				obj = [obj]
 			ID = obj[0].ID
+			if curGame.GUI: curGame.GUI.shuffleintoDeckAni(obj, enemyCanSee)
 			newDeck = self.decks[ID] + obj
 			for card in obj:
 				card.entersDeck()
@@ -403,9 +409,8 @@ class Hand_Deck:
 	def discard(self, ID, card, all=False):
 		if all or isinstance(card, (list, tuple, np.ndarray)):
 			if self.hands[ID]:
-				if all: cards = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True)[0]
-				else: cards = [self.extractfromHand(None, ID=ID, enemyCanSee=True)[0] for i in card]
-				if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(cards, enemyCanSee=True)
+				if all: cards = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True, linger=True)[0]
+				else: cards = [self.extractfromHand(i, ID=ID, enemyCanSee=True, linger=True)[0] for i in card]
 				for card in cards:
 					self.ruleOut(card, fromHD=2)
 					self.Game.sendSignal("CardDiscarded", card.ID, None, card, 1, "")
@@ -421,7 +426,7 @@ class Hand_Deck:
 			card = self.hands[ID].pop(i)
 			card.leavesHand()
 			self.ruleOut(card, fromHD=2) #rule out from both hand and deck
-			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee=True)
+			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee=True, linger=True)
 			self.Game.sendSignal("CardDiscarded", card.ID, None, card, 1, "")
 			card.whenDiscarded()
 			self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
@@ -431,10 +436,12 @@ class Hand_Deck:
 			self.Game.Manas.calcMana_All()
 			
 	# 只能全部拿出手牌中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
-	def extractfromHand(self, card, ID=0, all=False, enemyCanSee=False):
+	def extractfromHand(self, card, ID=0, all=False, enemyCanSee=False, linger=False, animate=True):
 		if all:  # Extract the entire hand.
-			cardsOut = self.hands[ID]
+			cardsOut = self.hands[ID][:]
 			if cardsOut:
+				#一般全部取出手牌的时候都是直接洗入牌库，一般都不可见
+				if animate and self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(cardsOut, False, linger=linger)
 				self.hands[ID] = []
 				for card in cardsOut:
 					card.leavesHand()
@@ -442,8 +449,6 @@ class Hand_Deck:
 						#洗牌的时候一般都不会涉及修改资源牌的可能选项
 						self.ruleOut(card, fromHD=0)
 					self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
-				# 一般全部取出手牌的时候都是直接洗入牌库，一般都不可见
-				if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(cardsOut, False)
 			return cardsOut, 0, -2  # -2 means the posinHand doesn't have real meaning.
 		else:
 			if not isinstance(card, (int, np.int32, np.int64)):
@@ -461,17 +466,18 @@ class Hand_Deck:
 				#If the card is tracked, rule out from both hand and deck; otherwise only rule out from deck
 				self.ruleOut(card, fromHD=1+card.tracked)
 				
-			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee)
+			if animate and self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee, linger=linger)
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
 			return card, cost, posinHand
 
 	# 只能全部拿牌库中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
-	def extractfromDeck(self, card, ID=0, all=False, enemyCanSee=True):
+	def extractfromDeck(self, card, ID=0, all=False, enemyCanSee=True, animate=True):
 		if all:  # For replacing the entire deck or throwing it away.
 			cardsOut = self.decks[ID]
 			self.decks[ID] = []
 			for card in cardsOut: card.leavesDeck()
 			self.cards_1Possi, self.cards_XPossi = [], []
+			self.Game.sendSignal("DeckCheck", ID, None, None, 0, "")
 			return cardsOut, 0, False
 		else:
 			if not isinstance(card, (int, np.int32, np.int64)):
@@ -481,7 +487,8 @@ class Hand_Deck:
 				card = self.decks[ID].pop(card)
 			card.leavesDeck()
 			if enemyCanSee: self.ruleOut(card, fromHD=1)
-			if self.Game.GUI: self.Game.GUI.cardLeavesDeckAni(card, enemyCanSee=enemyCanSee)
+			if animate and self.Game.GUI: self.Game.GUI.cardLeavesDeckAni(card, enemyCanSee=enemyCanSee)
+			self.Game.sendSignal("DeckCheck", ID, None, None, 0, "")
 			return card, 0, False
 			
 	#所有被移除的卡牌都会被展示
@@ -509,32 +516,32 @@ class Hand_Deck:
 			return game.copiedObjs[self]
 
 from CardPools import *
-
-from CardPools import FreezingTrap, ExplosiveTrap, IceBarrier, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,\
-			RingToss, RingToss, RingToss_Corrupt, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar
-			
-# Default1 = [RivaylianBandit, RivaylianBandit,
-# 			QuixoticAdventurer, QuixoticAdventurer, QuixoticAdventurer,
-# 			WanderingChef, WanderingChef, WanderingChef,
-# 			Ramiel, Ramiel, Ramiel,
-# 			IoJourneymage, IoJourneymage, IoJourneymage,
-# 			ArchangelofRemembrance, ArchangelofRemembrance, ArchangelofRemembrance,
-# 			GabrielHeavenlyVoice, GabrielHeavenlyVoice, GabrielHeavenlyVoice,
-# 			GoblinQueen, GoblinQueen, GoblinQueen,
-# 			FieranHavensentWindGod,
-# 			RaRadianceIncarnate, RaRadianceIncarnate,
-# 			WilbertGrandKnight, WilbertGrandKnight, WilbertGrandKnight,
-# 			GoddessoftheWestWind, GoddessoftheWestWind, GoddessoftheWestWind,
-# 			Set, Set, Set,
-# 			AnveltJudgmentsCannon, AnveltJudgmentsCannon,
-# 			NoaPrimalShipwright, NoaPrimalShipwright, NoaPrimalShipwright
-# 			]
-Default1 = [FreezingTrap, ExplosiveTrap, IceBarrier, RiggedFaireGame, ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,
-			RinlingsRifle, RingToss_Corrupt, RinlingsRifle, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar, NetherwindPortal, PackTactics, MysteryWinner,
-			
+	
+Default1 = [#Mana 1 cards
+			#Hunter cardds
+			FreezingTrap, ScavengingHyena, Bearshark, DeadlyShot, DireFrenzy,
+			##Paladin cards
+			#Avenge, NobleSacrifice, Reckoning, ArgentProtector, HolyLight, PursuitofJustice, AldorPeacekeeper, Equality, WarhorseTrainer, BlessingofKings, Consecration, TruesilverChampion, StandAgainstDarkness, GuardianofKings, TirionFordring,
+			##Rogue cards
+			Preparation, TinyKnightofEvil, Hellfire, LordJaraxxus, ImprisonedSungill, ImprisonedFelmaw, ImprisonedObserver,
+			ImprisonedSungill, ImprisonedFelmaw, SigilofFlame, SigilofSilence, SigilofFlame, SigilofSilence,
 			]
 
-Default2 = [FreezingTrap, ExplosiveTrap, IceBarrier, RiggedFaireGame, ProfessorSlate, OhMyYogg, Counterspell, KirinTorMage, NatureStudies,
-			RingToss, RingToss, RingToss_Corrupt, RingToss_Corrupt, MysteryWinner, MysteryWinner, BumperCar, BumperCar,
-			
+Default2 = [#Mana 2 cards
+			YouthfulBrewmaster,
+			##Mana 4 cards
+			BigGameHunter, VioletTeacher,
+			##Mana 6~8 cards
+			#MalygostheSpellweaver, OnyxiatheBroodmother, SleepyDragon, YseratheDreamer, DeathwingtheDestroyer, ClockworkGiant,
+			#Druid cards
+			MarkoftheWild, MenagerieWarden, Nourish, AncientofWar, Cenarius,
+			##Mage cards
+			ShootingStar, FallenHero, IceBarrier, MirrorEntity, ColdarraDrake, Flamestrike,
+			##Priest cards
+			CrimsonClergy, HolySmite, ShadowWordDeath, ThriveintheShadows, Lightspawn, HolyNova, ShadowWordRuin, TempleEnforcer, NatalieSeline,
+			##Shaman cards
+			UnboundElemental, DraeneiTotemcarver, TidalSurge, Doomhammer, LightningBolt,
+			##Warrior cards
+			#BloodsailDeckhand, Whirlwind, CruelTaskmaster, Armorsmith, WarCache, WarsongOutrider, Brawl, Gorehowl, GrommashHellscream,
+			ImprisonedFelmaw, ImprisonedObserver, ImprisonedSungill, ImprisonedFelmaw, SigilofFlame, SigilofSilence,
 			]
