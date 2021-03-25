@@ -60,13 +60,13 @@ class Spellburst(TrigBoard):
 class TransferStudent(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Vanilla"
 	requireTarget, keyWord, description = False, "", "This has different effects based on which game board you're on"
 	
 class TransferStudent_Ogrimmar(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Ogrimmar~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Deal 2 damage"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -77,19 +77,19 @@ class TransferStudent_Ogrimmar(Minion):
 class TransferStudent_Stormwind(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Divine Shield"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Stormwind~Divine Shield"
 	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield"
 	
 class TransferStudent_Stranglethorn(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Stealth~Poisonous"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Stranglethorn~Stealth~Poisonous"
 	requireTarget, keyWord, description = False, "Stealth,Poisonous", "Stealth, Poisonous"
 	
 class TransferStudent_FourWindValley(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Pandaria~Battlecry"
 	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion +1/+2"
 	
 	def targetExists(self, choice=0):
@@ -106,7 +106,7 @@ class TransferStudent_FourWindValley(Minion):
 class TransferStudent_Shadows(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Shadows~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a Lackey to your hand"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -124,13 +124,13 @@ class TransferStudent_Shadows(Minion):
 class TransferStudent_UldumDesert(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Reborn"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Uldum~Reborn"
 	requireTarget, keyWord, description = False, "Reborn", "Reborn"
 	
 class TransferStudent_UldumOasis(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Uldum~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a Uldum plague card to your hand"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -148,7 +148,7 @@ class TransferStudent_UldumOasis(Minion):
 class TransferStudent_Dragons(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Dragons~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a Dragon"
 	poolIdentifier = "Dragons as Druid"
 	@classmethod
@@ -184,7 +184,7 @@ class TransferStudent_Dragons(Minion):
 class TransferStudent_Outlands(Minion_Dormantfor2turns):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Outlands"
 	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. When this awakens, deal 3 damage to 2 random enemy minions"
 	
 	def awakenEffect(self):
@@ -202,7 +202,7 @@ class TransferStudent_Outlands(Minion_Dormantfor2turns):
 class TransferStudent_Academy(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Academy~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a random Dual Class card to your hand"
 	poolIdentifier = "Dual Class Cards"
 	@classmethod
@@ -227,7 +227,7 @@ class TransferStudent_Academy(Minion):
 class TransferStudent_Darkmoon(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 2, 2
-	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student"
+	index = "SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Darkmoon~ToCorrupt"
 	requireTarget, keyWord, description = False, "", "Corrupt: Gain +2/+2"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -236,7 +236,7 @@ class TransferStudent_Darkmoon(Minion):
 class TransferStudent_Darkmoon_Corrupt(Minion):
 	Class, race, name = "Neutral", "", "Transfer Student"
 	mana, attack, health = 2, 4, 4
-	index = "SCHOLOMANCE~Neutral~Minion~2~4~4~~Transfer Student~Corrupted~Uncollectible"
+	index = "SCHOLOMANCE~Neutral~Minion~2~4~4~~Transfer Student~Darkmoon~Corrupted~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	
 	

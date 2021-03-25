@@ -327,7 +327,8 @@ class Game:
 				self.moves.append(("playMinion", subIndex, subWhere, tarIndex, tarWhere, position, choice))
 			else:
 				self.moves.append(("playMinion", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), position, choice))
-
+			print("Changing the game moves", self.moves)
+			
 	#召唤随从会成为夹杂在其他的玩家行为中，不视为一个完整的阶段。也不直接触发亡语结算等。
 	#This method can also summon minions for enemy.
 	#SUMMONING MINIONS ONLY CONSIDERS ONBOARD MINIONS. MINIONS THAT HAVE ENTERED THE tempDeads DON'T COUNT AS MINIONS.
@@ -1099,6 +1100,7 @@ class Game:
 					self.moves.append(("playSpell", subIndex, subWhere, tarIndex, tarWhere, choice))
 				else:
 					self.moves.append(("playSpell", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
+				print("Changing the game moves", self.moves)
 				self.Counters.shadows[spell.ID] += 1
 
 	def availableWeapon(self, ID):
@@ -1148,7 +1150,7 @@ class Game:
 				card.effCanTrig()
 				card.checkEvanescent()
 			self.moves.append(("playWeapon", subIndex, subWhere, tarIndex, tarWhere, 0))
-
+			print("Changing the game moves", self.moves)
 	#只是为英雄装备一把武器。结算相对简单
 	#消灭你的旧武器，新武器进场，这把新武器设置为新武器，并触发扳机。
 	def equipWeapon(self, weapon):

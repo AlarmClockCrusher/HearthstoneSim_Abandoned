@@ -40,20 +40,7 @@ from Barrens import *
 #from SV_Rivayle import *
 #from SV_Eternal import *
 
-
-def makeCardPool(board="0 Random Game Board", monk=0, SV=0):
-	cardPool, info = {}, ""
-	
-	cardPool.update(AcrossPacks_Indices) #Has the basic hero and hero power definitions.
-	info += "from AcrossPacks import *\n"
-	
-	cardPool.update({card.index: card for card in Core_2021_Cards})
-	info += "from Core_2021 import *\n"
-	
-	cardPool.update({card.index: card for card in Outlands_Cards})
-	info += "from Outlands import *\n"
-	
-	transferStudentPool = {"1 Classic Ogrimmar": TransferStudent_Ogrimmar,
+transferStudentPool = {"1 Classic Ogrimmar": TransferStudent_Ogrimmar,
 						   "2 Classic Stormwind": TransferStudent_Stormwind,
 						   "3 Classic Stranglethorn": TransferStudent_Stranglethorn,
 						   "4 Classic Four Wind Valley": TransferStudent_FourWindValley,
@@ -80,9 +67,24 @@ def makeCardPool(board="0 Random Game Board", monk=0, SV=0):
 						   "25 Scholomance Academy": TransferStudent_Academy,
 						   "26 Darkmoon Faire": TransferStudent_Darkmoon,
 						   }
+
+
+def makeCardPool(board="0 Random Game Board", monk=0, SV=0):
+	cardPool, info = {}, ""
+	
+	cardPool.update(AcrossPacks_Indices) #Has the basic hero and hero power definitions.
+	info += "from AcrossPacks import *\n"
+	
+	cardPool.update({card.index: card for card in Core_2021_Cards})
+	info += "from Core_2021 import *\n"
+	
+	cardPool.update({card.index: card for card in Outlands_Cards})
+	info += "from Outlands import *\n"
+	
 	if board == "0 Random Game Board": board = npchoice(list(transferStudentPool))
 	transferStudent = transferStudentPool[board]
 	cardPool.update({card.index: card for card in Academy_Cards})
+	print("The transferStudent in the card pool is currently", transferStudent, transferStudent.index)
 	info += "from Academy import *\n"
 	
 	cardPool.update({card.index: card for card in Darkmoon_Cards})

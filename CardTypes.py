@@ -1880,7 +1880,8 @@ class HeroPower(Card):
 				card.effCanTrig()
 				card.checkEvanescent()
 			self.Game.moves.append(("Power", subIndex, subWhere, tarIndex, tarWhere, choice))
-
+			print("Changing the game moves", self.Game.moves)
+			
 	def effect(self, target, choice=0):
 		return 0
 

@@ -1004,7 +1004,7 @@ cardPool = {
 			"Barrens~Warrior~Minion~5~4~4~~Mor'shan Elite~Taunt~Battlecry": MorshanElite,
 			"Barrens~Warrior~Minion~5~4~5~~Stonemaul Anchorman~Rush~Frenzy": StonemaulAnchorman,
 			"Barrens~Warrior~Minion~7~5~5~~Overlord Saurfang~Battlecry~Legendary": OverlordSaurfang,
-			"SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Battlecry": TransferStudent_Ogrimmar,
+			"SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Pandaria~Battlecry": TransferStudent_FourWindValley,
 		}
 
 MinionsofCost = {

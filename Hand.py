@@ -1,6 +1,6 @@
 from Academy import TransferStudent
 from SV_Basic import SVClasses
-from Basic import TheCoin
+from AcrossPacks import TheCoin
 
 import copy
 from numpy.random import choice as npchoice

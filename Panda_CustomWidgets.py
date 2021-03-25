@@ -65,7 +65,7 @@ class HandZone:
 			if btn not in self.GUI.backupCardModels[btn.card.type]:
 				self.GUI.backupCardModels[btn.card.type].append(btn)
 			if btn.card:
-				btn.card.btn = None
+				if btn.card.btn is btn: btn.card.btn = None
 				btn.card = None
 			btn.setPos(BackupModelPos) #Move the btn to backup pos anyways
 			#print("After removal, the btn is ", btn, btn.card, btn.getPos())
@@ -165,7 +165,7 @@ class HeroZone(NodePath):
 		if btn not in self.GUI.backupCardModels["HeroPlayed"]:
 			self.GUI.backupCardModels["HeroPlayed"].append(btn)
 		if btn.card:
-			btn.card.btn = None
+			if btn.card.btn is btn: btn.card.btn = None
 			btn.card = None
 		try: self.GUI.pickablesDrawn.remove(btn)
 		except: pass
@@ -175,7 +175,7 @@ class HeroZone(NodePath):
 		if btn not in self.GUI.backupCardModels["PowerPlayed"]:
 			self.GUI.backupCardModels["PowerPlayed"].append(btn)
 		if btn.card:
-			btn.card.btn = None
+			if btn.card.btn is btn: btn.card.btn = None
 			btn.card = None
 		try: self.GUI.pickablesDrawn.remove(btn)
 		except: pass
@@ -186,7 +186,7 @@ class HeroZone(NodePath):
 			self.GUI.backupCardModels["WeaponPlayed"].append(btn)
 		else: print("weapon btn false already in backupmodels")
 		if btn.card:
-			btn.card.btn = None
+			if btn.card.btn is btn: btn.card.btn = None
 			btn.card = None
 		try: self.GUI.pickablesDrawn.remove(btn)
 		except: pass
@@ -285,7 +285,7 @@ class HeroZone(NodePath):
 			
 	def rearrangeTrigs(self):
 		cards = [trig.card for trig in self.GUI.Game.turnEndTrigger + self.GUI.Game.turnStartTrigger if trig.ID == self.ID]
-		posTrigs = calc_posTrigs(len(cards), self.x, self.y-0.25, self.z-2.2)
+		posTrigs = calc_posTrigs(len(cards), self.x, self.y-0.25, self.z-2.1)
 		for i, card in enumerate(cards):
 			card.btn.setPos(posTrigs[i])
 			if card.btn not in self.trigsDrawn:
@@ -348,7 +348,7 @@ class BoardZone:
 		if btn not in self.GUI.backupCardModels["MinionPlayed"]:
 			self.GUI.backupCardModels["MinionPlayed"].append(btn)
 		if btn.card:
-			btn.card.btn = None
+			if btn.card.btn is btn: btn.card.btn = None
 			btn.card = None
 		try: self.GUI.pickablesDrawn.remove(btn)
 		except: pass
@@ -359,7 +359,7 @@ class BoardZone:
 			if btn not in self.GUI.backupCardModels["MinionPlayed"]:
 				self.GUI.backupCardModels["MinionPlayed"].append(btn)
 			if btn.card:
-				btn.card.btn = None
+				if btn.card.btn is btn: btn.card.btn = None
 				btn.card = None
 			btn.setPos(BackupModelPos)
 			try: self.GUI.pickablesDrawn.remove(btn)

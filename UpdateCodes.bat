@@ -10,6 +10,9 @@ bitsadmin /transfer job /download /priority normal https://raw.githubusercontent
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/LoadModels.py %cd%\LoadModels.py
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Panda_CustomWidgets.py %cd%\Panda_CustomWidgets.py
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Panda_Game1P.py %cd%\Panda_Game1P.py
+bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Panda_UICommonPart.py %cd%\Panda_UICommonPart.py
+bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Panda_GameOnline.py %cd%\Panda_GameOnline.py
+bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Server.py %cd%\Server.py
 
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/AcrossPacks.py %cd%\AcrossPacks.py
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Core_2021.py %cd%\Core_2021.py

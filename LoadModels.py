@@ -16,7 +16,7 @@ BoardIndex = ["0 Random Game Board",
 			#"11 Corrupted Stormwind", "12 Karazhan", "13 Gadgetzan",
 			#"14 Un'Goro", "15 Frozen Throne", "16 Kobolds",
 			#"17 Witchwood", "18 Boomsday Lab", "19 Rumble",
-			"20 Dalaran", "21 Uldum Desert", "22 Uldum Oasis", "23 Dragons",
+			#"20 Dalaran", "21 Uldum Desert", "22 Uldum Oasis", "23 Dragons",
 			"24 Outlands", "25 Scholomance Academy", "26 Darkmoon Faire",
 			]
 
