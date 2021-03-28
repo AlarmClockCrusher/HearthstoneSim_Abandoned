@@ -149,7 +149,6 @@ class Layer1Window:
 					self.gameGUI.ID = int(ID_Bytes.decode())
 					boardID_fromServer = boardID_Bytes.decode()
 					#Replace the randomly chosen transfer student type based on the boardId from the server
-					transferStudent_Old = transferStudentPool[boardID]
 					self.gameGUI.boardID = boardID_fromServer
 					
 					transferStudent_New = transferStudentPool[boardID_fromServer]
@@ -192,24 +191,7 @@ class GUI_Online(Panda_UICommon):
 		self.waiting4Server, self.timer = False, 60
 		
 	def preloadModel(self, btn_Connect, btn_Reconn):
-		#Load the models
-		game = self.Game
-		self.backupCardModels = {"Minion": deque([loadMinion(self, SilverHandRecruit(game, 1)) for i in range(30)]),
-								 "Spell": deque([loadSpell(self, LightningBolt(game, 1)) for i in range(30)]),
-								 "Weapon": deque([loadWeapon(self, FieryWarAxe(game, 1)) for i in range(30)]),
-								 "Power": deque([loadPower(self, Reinforce(game, 1)) for i in range(10)]),
-								 "Hero": deque([loadHero(self, LordJaraxxus(game, 1)) for i in range(30)]),
-								 "Dormant": deque([loadDormant(self, BurningBladePortal(game, 1)) for i in range(2)]),
-								 "MinionPlayed": deque([loadMinion_Played(self, SilverHandRecruit(game, 1)) for i in range(30)]),
-								 "WeaponPlayed": deque([loadWeapon_Played(self, FieryWarAxe(game, 1)) for i in range(6)]),
-								 "PowerPlayed": deque([loadPower_Played(self, Reinforce(game, 1)) for i in range(4)]),
-								 "HeroPlayed": deque([loadHero_Played(self, Anduin(game, 1)) for i in range(6)]),
-								 "SecretPlayed": deque([loadSecret_Played(self, FreezingTrap(game, 1)) for i in range(12)]),
-								 "DormantPlayed": deque([loadDormant_Played(self, BurningBladePortal(game, 1)) for i in range(15)]),
-								 "Mana": deque(), "EmptyMana": deque(), "LockedMana": deque(), "OverloadedMana": deque(),
-								 "Option": deque([loadChooseOption(self, Cenarius(game, 1).options[0]) for i in range(4)]),
-								 }
-		self.loading = "Start!"
+		self.prepareModels()
 		btn_Connect.config(text=txt("Finished Loading. Start!", CHN))
 		btn_Reconn.config(text=txt("Resume interrupted game", CHN))
 		btn_Connect.config(bg="green3")

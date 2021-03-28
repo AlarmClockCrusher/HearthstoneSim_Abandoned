@@ -1297,9 +1297,9 @@ class DivideandConquer_Option(ChooseOneOption):
 		
 		
 class HiddenOasis(Spell):
-	Class, school, name = "Druid", "", "Hidden Oasis"
+	Class, school, name = "Druid", "Nature", "Hidden Oasis"
 	requireTarget, mana = True, 6
-	index = "ULDUM~Druid~Spell~6~Hidden Oasis~Choose One"
+	index = "ULDUM~Druid~Spell~6~Nature~Hidden Oasis~Choose One"
 	description = "Choose One: Summon a 6/6 Ancient with Taunt; or Restore 12 Health"
 	name_CN = "隐秘绿洲"
 	def __init__(self, Game, ID):
@@ -1383,9 +1383,9 @@ class VirnaalAncient(Minion):
 	
 	
 class Overflow(Spell):
-	Class, school, name = "Druid", "", "Overflow"
+	Class, school, name = "Druid", "Nature", "Overflow"
 	requireTarget, mana = False, 7
-	index = "ULDUM~Druid~Spell~7~Overflow"
+	index = "ULDUM~Druid~Spell~7~Nature~Overflow"
 	description = "Restore 5 Health to all characters. Draw 5 cards"
 	name_CN = "溢流"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1715,9 +1715,9 @@ class AncientMysteries(Spell):
 		
 		
 class FlameWard(Secret):
-	Class, school, name = "Mage", "", "Flame Ward"
+	Class, school, name = "Mage", "Fire", "Flame Ward"
 	requireTarget, mana = False, 3
-	index = "ULDUM~Mage~Spell~3~Flame Ward~~Secret"
+	index = "ULDUM~Mage~Spell~3~Fire~Flame Ward~~Secret"
 	description = "Secret: After a minion attacks your hero, deal 3 damage to all enemy minions"
 	name_CN = "火焰结界"
 	def __init__(self, Game, ID):
@@ -2142,9 +2142,9 @@ class AncestralGuardian(Minion):
 	
 	
 class PharaohsBlessing(Spell):
-	Class, school, name = "Paladin", "", "Pharaoh's Blessing"
+	Class, school, name = "Paladin", "Holy", "Pharaoh's Blessing"
 	requireTarget, mana = True, 6
-	index = "ULDUM~Paladin~Spell~6~Pharaoh's Blessing"
+	index = "ULDUM~Paladin~Spell~6~Holy~Pharaoh's Blessing"
 	description = "Give a minion +4/+4, Divine Shield, and Taunt"
 	name_CN = "法老祝福"
 	def available(self):
@@ -2248,9 +2248,9 @@ class EmbalmingRitual(Spell):
 		
 		
 class Penance(Spell):
-	Class, school, name = "Priest", "", "Penance"
+	Class, school, name = "Priest", "Holy", "Penance"
 	requireTarget, mana = True, 2
-	index = "ULDUM~Priest~Spell~2~Penance"
+	index = "ULDUM~Priest~Spell~2~Holy~Penance~Lifesteal"
 	description = "Lifesteal. Deal 3 damage to a minion"
 	name_CN = "苦修"
 	def __init__(self, Game, ID):
@@ -2336,9 +2336,9 @@ class GiveRandomFriendlyMinionPlus1Plus1(Deathrattle_Minion):
 		
 		
 class HolyRipple(Spell):
-	Class, school, name = "Priest", "", "Holy Ripple"
+	Class, school, name = "Priest", "Holy", "Holy Ripple"
 	requireTarget, mana = False, 2
-	index = "ULDUM~Priest~Spell~2~Holy Ripple"
+	index = "ULDUM~Priest~Spell~2~Holy~Holy Ripple"
 	description = "Deal 1 damage to all enemies. Restore 1 Health to all friendly characters"
 	name_CN = "神圣涟漪"
 	def text(self, CHN):
@@ -2431,9 +2431,9 @@ class Trig_HighPriestAmet(TrigBoard):
 		
 		
 class PlagueofDeath(Spell):
-	Class, school, name = "Priest", "", "Plague of Death"
+	Class, school, name = "Priest", "Shadow", "Plague of Death"
 	requireTarget, mana = False, 9
-	index = "ULDUM~Priest~Spell~9~Plague of Death"
+	index = "ULDUM~Priest~Spell~9~Shadow~Plague of Death"
 	description = "Silence and destroy all minions"
 	name_CN = "死亡之灾祸"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2533,9 +2533,9 @@ class PharaohCat(Minion):
 		
 		
 class PlagueofMadness(Spell):
-	Class, school, name = "Rogue", "", "Plague of Madness"
+	Class, school, name = "Rogue", "Shadow", "Plague of Madness"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Rogue~Spell~1~Plague of Madness"
+	index = "ULDUM~Rogue~Spell~1~Shadow~Plague of Madness"
 	description = "Each player equips a 2/2 Knife with Poisonous"
 	name_CN = "疯狂之灾祸"
 	
@@ -2688,9 +2688,9 @@ class BazaarMugger(Minion):
 		
 		
 class ShadowofDeath(Spell):
-	Class, school, name = "Rogue", "", "Shadow of Death"
+	Class, school, name = "Rogue", "Shadow", "Shadow of Death"
 	requireTarget, mana = True, 4
-	index = "ULDUM~Rogue~Spell~4~Shadow of Death"
+	index = "ULDUM~Rogue~Spell~4~Shadow~Shadow of Death"
 	description = "Choose a minion. Shuffle 3 'Shadows' into your deck that summon a copy when drawn"
 	name_CN = "死亡之影"
 	def available(self):
@@ -2703,7 +2703,7 @@ class ShadowofDeath(Spell):
 		if target:
 			typeName = type(target).__name__
 			newIndex = "ULDUM~Rogue~4~Spell~Shadow~Casts When Drawn~Summon %s~Uncollectible"%typeName
-			subclass = type("Shadow_Mutable_"+typeName, (Shadow_Mutable, ),
+			subclass = type("Shadow__"+typeName, (Shadow, ),
 							{"index": newIndex, "description": "Casts When Drawn. Summon a "+typeName,
 							"miniontoSummon": type(target)}
 							)
@@ -2711,7 +2711,7 @@ class ShadowofDeath(Spell):
 			self.Game.Hand_Deck.shuffleintoDeck([subclass(self.Game, self.ID) for i in range(3)], creator=self)
 		return target
 		
-class Shadow_Mutable(Spell):
+class Shadow(Spell):
 	Class, school, name = "Rogue", "", "Shadow"
 	requireTarget, mana = False, 4
 	index = "ULDUM~Rogue~Spell~4~Shadow~Casts When Drawn~Uncollectible"
@@ -2796,9 +2796,9 @@ class HeartofVirnaal_Effect:
 		
 		
 class TotemicSurge(Spell):
-	Class, school, name = "Shaman", "", "Totemic Surge"
+	Class, school, name = "Shaman", "Nature", "Totemic Surge"
 	requireTarget, mana = False, 0
-	index = "ULDUM~Shaman~Spell~0~Totemic Surge"
+	index = "ULDUM~Shaman~Spell~0~Nature~Totemic Surge"
 	description = "Give your Totems +2 Attack"
 	name_CN = "图腾潮涌"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2964,9 +2964,9 @@ class StatAura_Vessina(HasAura_toMinion):
 	
 	
 class Earthquake(Spell):
-	Class, school, name = "Shaman", "", "Earthquake"
+	Class, school, name = "Shaman", "Nature", "Earthquake"
 	requireTarget, mana = False, 7
-	index = "ULDUM~Shaman~Spell~7~Earthquake"
+	index = "ULDUM~Shaman~Spell~7~Nature~Earthquake"
 	description = "Deal 5 damage to all minions, then deal 2 damage to all minions"
 	name_CN = "地震术"
 	def text(self, CHN):
@@ -3020,9 +3020,9 @@ class Trig_MoguFleshshaper(TrigHand):
 		
 """Warlock cards"""
 class PlagueofFlames(Spell):
-	Class, school, name = "Warlock", "", "Plague of Flames"
+	Class, school, name = "Warlock", "Fire", "Plague of Flames"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Warlock~Spell~1~Plague of Flames"
+	index = "ULDUM~Warlock~Spell~1~Fire~Plague of Flames"
 	description = "Destroy all your minions. For each one, destroy a random enemy minion"
 	name_CN = "火焰之灾祸"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3221,9 +3221,9 @@ class Trig_NefersetThrasher(TrigBoard):
 		
 		
 class Impbalming(Spell):
-	Class, school, name = "Warlock", "", "Impbalming"
+	Class, school, name = "Warlock", "Fel", "Impbalming"
 	requireTarget, mana = True, 4
-	index = "ULDUM~Warlock~Spell~4~Impbalming"
+	index = "ULDUM~Warlock~Spell~4~Fel~Impbalming"
 	description = "Destroy a minion. Shuffle 3 Worthless Imps into your deck"
 	name_CN = "小鬼油膏"
 	def available(self):

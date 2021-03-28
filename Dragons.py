@@ -1229,9 +1229,9 @@ class Sathrovarr(Minion):
 		
 """Druid cards"""
 class Embiggen(Spell):
-	Class, school, name = "Druid", "", "Embiggen"
+	Class, school, name = "Druid", "Nature", "Embiggen"
 	requireTarget, mana = False, 0
-	index = "DRAGONS~Druid~Spell~0~Embiggen"
+	index = "DRAGONS~Druid~Spell~0~Nature~Embiggen"
 	description = "Give all minions in your deck +2/+2. They cost (1) more (up to 10)"
 	name_CN = "森然巨化"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1308,9 +1308,9 @@ class Trig_StrengthinNumbers(QuestTrigger):
 				
 				
 class Treenforcements(Spell):
-	Class, school, name = "Druid", "", "Treenforcements"
+	Class, school, name = "Druid", "Nature", "Treenforcements"
 	requireTarget, mana = True, 1
-	index = "DRAGONS~Druid~Spell~1~Treenforcements~Choose One"
+	index = "DRAGONS~Druid~Spell~1~Nature~Treenforcements~Choose One"
 	description = "Choose One - Give a minion +2 Health and Taunt; or Summon a 2/2 Taunt"
 	name_CN = "树木增援"
 	def __init__(self, Game, ID):
@@ -1344,20 +1344,20 @@ class Treenforcements(Spell):
 		
 class SmallRepairs_Option(ChooseOneOption):
 	name, description = "Small Repairs", "Give a minion +2 Health and Taunt"
-	index = "DRAGONS~Druid~Spell~1~Small Repairs~Uncollectible"
+	index = "DRAGONS~Druid~Spell~1~Nature~Small Repairs~Uncollectible"
 	def available(self):
 		return self.entity.selectableMinionExists(0)
 		
 class SpinemUp_Option(ChooseOneOption):
 	name, description = "Spin 'em Up", "Summon a Treant"
-	index = "DRAGONS~Druid~Spell~1~Spin'em Up~Uncollectible"
+	index = "DRAGONS~Druid~Spell~1~Nature~Spin'em Up~Uncollectible"
 	def available(self):
 		return self.entity.Game.space(self.entity.ID)
 		
 class SmallRepairs(Spell):
-	Class, school, name = "Druid", "", "Small Repairs"
+	Class, school, name = "Druid", "Nature", "Small Repairs"
 	requireTarget, mana = True, 1
-	index = "DRAGONS~Druid~Spell~1~Small Repairs~Uncollectible"
+	index = "DRAGONS~Druid~Spell~1~Nature~Small Repairs~Uncollectible"
 	description = "Give a minion +2 Health and Taunt"
 	name_CN = "简单维修"
 	def available(self):
@@ -1373,9 +1373,9 @@ class SmallRepairs(Spell):
 		return target
 		
 class SpinemUp(Spell):
-	Class, school, name = "Druid", "", "Spin 'em Up"
+	Class, school, name = "Druid", "Nature", "Spin 'em Up"
 	requireTarget, mana = False, 1
-	index = "DRAGONS~Druid~Spell~1~Spin 'em Up~Uncollectible"
+	index = "DRAGONS~Druid~Spell~1~Nature~Spin 'em Up~Uncollectible"
 	description = "Summon a 2/2 Treant"
 	name_CN = "旋叶起飞"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1384,9 +1384,9 @@ class SpinemUp(Spell):
 		
 		
 class BreathofDreams(Spell):
-	Class, school, name = "Druid", "", "Breath of Dreams"
+	Class, school, name = "Druid", "Nature", "Breath of Dreams"
 	requireTarget, mana = False, 2
-	index = "DRAGONS~Druid~Spell~2~Breath of Dreams"
+	index = "DRAGONS~Druid~Spell~2~Nature~Breath of Dreams"
 	description = "Draw a card. If you're holding a Dragon, gain an empty Mana Crystal"
 	name_CN = "梦境吐息"
 	def effCanTrig(self):
@@ -1419,11 +1419,11 @@ class Treant_Dragons(Minion):
 	
 	
 class Aeroponics(Spell):
-	Class, school, name = "Druid", "", "Aeroponics"
+	Class, school, name = "Druid", "Nature", "Aeroponics"
 	requireTarget, mana = False, 5
-	index = "DRAGONS~Druid~Spell~5~Aeroponics"
+	index = "DRAGONS~Druid~Spell~5~Nature~Aeroponics"
 	description = "Draw 2 cards. Costs (2) less for each Treant you control"
-	name_CN = "空气盆栽"
+	name_CN = "空气栽培"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsHand = [Trig_Aeroponics(self)]
@@ -1696,9 +1696,9 @@ class Deal2DamagetoEnemyHero(Deathrattle_Minion):
 		
 		
 class CorrosiveBreath(Spell):
-	Class, school, name = "Hunter", "", "Corrosive Breath"
+	Class, school, name = "Hunter", "Nature", "Corrosive Breath"
 	requireTarget, mana = True, 2
-	index = "DRAGONS~Hunter~Spell~2~Corrosive Breath"
+	index = "DRAGONS~Hunter~Spell~2~Nature~Corrosive Breath"
 	description = "Deal 3 damage to a minion. If you're holding a Dragon, it also hits the enemy hero"
 	name_CN = "腐蚀吐息"
 	def effCanTrig(self):
@@ -1864,9 +1864,9 @@ class Veranus(Minion):
 		
 """Mage cards"""
 class ArcaneBreath(Spell):
-	Class, school, name = "Mage", "", "Arcane Breath"
+	Class, school, name = "Mage", "Arcane", "Arcane Breath"
 	requireTarget, mana = True, 1
-	index = "DRAGONS~Mage~Spell~1~Arcane Breath"
+	index = "DRAGONS~Mage~Spell~1~Arcane~Arcane Breath"
 	description = "Deal 2 damage to a minion. If you're holding a Dragon, Discover a spell"
 	name_CN = "奥术吐息"
 	poolIdentifier = "Mage Spells"
@@ -2301,9 +2301,9 @@ class MalygosAspectofMagic(Minion):
 		
 #火球滚滚会越过休眠物。直接打在相隔的其他随从上。圣盾随从会分担等于自己当前生命值的伤害。
 class RollingFireball(Spell):
-	Class, school, name = "Mage", "", "Rolling Fireball"
+	Class, school, name = "Mage", "Fire", "Rolling Fireball"
 	requireTarget, mana = True, 5
-	index = "DRAGONS~Mage~Spell~5~Rolling Fireball"
+	index = "DRAGONS~Mage~Spell~5~Fire~Rolling Fireball"
 	description = "Deal 8 damage to a minion. Any excess damage continues to the left or right"
 	name_CN = "火球滚滚"
 	def available(self):
@@ -3273,9 +3273,9 @@ class WaxadredsCandle(Spell):
 		
 		
 class CandleBreath(Spell):
-	Class, school, name = "Rogue", "", "Candle Breath"
+	Class, school, name = "Rogue", "Fire", "Candle Breath"
 	requireTarget, mana = False, 6
-	index = "DRAGONS~Rogue~Spell~6~Candle Breath"
+	index = "DRAGONS~Rogue~Spell~6~Fire~Candle Breath"
 	description = "Draw 3 cards. Costs (3) less while you're holding a Dragon"
 	name_CN = "烛火吐息"
 	def __init__(self, Game, ID):
@@ -3404,9 +3404,9 @@ class GalakrondAzerothsEnd_Rogue(Galakrond_Hero):
 		
 """Shaman cards"""
 class InvocationofFrost(Spell):
-	Class, school, name = "Shaman", "", "Invocation of Frost"
+	Class, school, name = "Shaman", "Frost", "Invocation of Frost"
 	requireTarget, mana = True, 2
-	index = "DRAGONS~Shaman~Spell~2~Invocation of Frost"
+	index = "DRAGONS~Shaman~Spell~2~Frost~Invocation of Frost"
 	description = "Freeze a minion. Invoke Galakrond"
 	name_CN = "霜之祈咒"
 	def available(self):
@@ -3502,9 +3502,9 @@ class Squallhunter(Minion):
 		
 		
 class StormsWrath(Spell):
-	Class, school, name = "Shaman", "", "Storm's Wrath"
+	Class, school, name = "Shaman", "Nature", "Storm's Wrath"
 	requireTarget, mana = False, 1
-	index = "DRAGONS~Shaman~Spell~1~Storm's Wrath~Overload"
+	index = "DRAGONS~Shaman~Spell~1~Nature~Storm's Wrath~Overload"
 	description = "Give your minions +1/+1. Overload: (1)"
 	name_CN = "风暴之怒"
 	def __init__(self, Game, ID):
@@ -3518,9 +3518,9 @@ class StormsWrath(Spell):
 		
 		
 class LightningBreath(Spell):
-	Class, school, name = "Shaman", "", "Lightning Breath"
+	Class, school, name = "Shaman", "Nature", "Lightning Breath"
 	requireTarget, mana = True, 3
-	index = "DRAGONS~Shaman~Spell~3~Lightning Breath"
+	index = "DRAGONS~Shaman~Spell~3~Nature~Lightning Breath"
 	description = "Deal 4 damage to a minion. If you're holding a Dragon, also damage its neighbors"
 	name_CN = "闪电吐息"
 	def effCanTrig(self):
@@ -3640,10 +3640,10 @@ class CumuloMaximus(Minion):
 		
 		
 class DragonsPack(Spell):
-	Class, school, name = "Shaman", "", "Dragon's Pack"
+	Class, school, name = "Shaman", "Nature", "Dragon's Pack"
 	requireTarget, mana = False, 5
-	index = "DRAGONS~Shaman~Spell~5~Dragon's Pack"
-	description = "Summon two 2/3 Spirit Wolves with Taunt. If you've Invoked Galakrond, give them +2/+2"
+	index = "DRAGONS~Shaman~Spell~5~Nature~Dragon's Pack"
+	description = "Summon two 2/3 Spirit Wolves with Taunt. If you've Invoked Galakrond twice, give them +2/+2"
 	name_CN = "巨龙的兽群"
 	def available(self):
 		return self.Game.space(self.ID) > 0
@@ -3807,9 +3807,9 @@ class RagingStorm(Minion):
 	
 """Warlock cards"""
 class RainofFire(Spell):
-	Class, school, name = "Warlock", "", "Rain of Fire"
+	Class, school, name = "Warlock", "Fel", "Rain of Fire"
 	requireTarget, mana = False, 1
-	index = "DRAGONS~Warlock~Spell~1~Rain of Fire"
+	index = "DRAGONS~Warlock~Spell~1~Fel~Rain of Fire"
 	description = "Deal 1 damage to all characters"
 	name_CN = "火焰之雨"
 	def text(self, CHN):
@@ -3824,9 +3824,9 @@ class RainofFire(Spell):
 		
 		
 class NetherBreath(Spell):
-	Class, school, name = "Warlock", "", "Nether Breath"
+	Class, school, name = "Warlock", "Fel", "Nether Breath"
 	requireTarget, mana = True, 2
-	index = "DRAGONS~Warlock~Spell~2~Nether Breath"
+	index = "DRAGONS~Warlock~Spell~2~Fel~Nether Breath"
 	description = "Deal 2 damage. If you're holding a Dragon, deal 4 damage with Lifesteal instead"
 	name_CN = "虚空吐息"
 	def effCanTrig(self):
@@ -3849,9 +3849,9 @@ class NetherBreath(Spell):
 		return None
 		
 class DarkSkies(Spell):
-	Class, school, name = "Warlock", "", "Dark Skies"
+	Class, school, name = "Warlock", "Fel", "Dark Skies"
 	requireTarget, mana = False, 3
-	index = "DRAGONS~Warlock~Spell~3~Dark Skies"
+	index = "DRAGONS~Warlock~Spell~3~Fel~Dark Skies"
 	description = "Deal 1 damage to a random minion. Repeat for each card in your hand"
 	name_CN = "黑暗天际"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3957,11 +3957,11 @@ class AbyssalSummoner(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		handSize = len(self.Game.Hand_Deck.hands[self.ID])
 		if handSize == 1:
-			self.Game.summon(AbyssalDestroyer_Mutable_1(self.Game, self.ID), self.pos+1, self)
+			self.Game.summon(AbyssalDestroyer(self.Game, self.ID), self.pos+1, self)
 		elif handSize > 1:
 			cost = min(handSize, 10)
 			newIndex = "DRAGONS~Warlock~Minion~%d~%d~%d~Demon~Abyssal Destroyer~Taunt~Uncollectible"%(cost, handSize, handSize)
-			subclass = type("AbyssalDestroyer_Mutable_"+str(handSize), (AbyssalDestroyer_Mutable_1, ),
+			subclass = type("AbyssalDestroyer__"+str(handSize), (AbyssalDestroyer, ),
 							{"mana": cost, "attack": handSize, "health": handSize,
 							"index": newIndex}
 							)
@@ -3969,7 +3969,7 @@ class AbyssalSummoner(Minion):
 			self.Game.summon(subclass(self.Game, self.ID), self.pos+1, self)
 		return None
 		
-class AbyssalDestroyer_Mutable_1(Minion):
+class AbyssalDestroyer(Minion):
 	Class, race, name = "Warlock", "Demon", "Abyssal Destroyer"
 	mana, attack, health = 1, 1, 1
 	index = "DRAGONS~Warlock~Minion~1~1~1~Demon~Abyssal Destroyer~Taunt~Uncollectible"
@@ -4305,9 +4305,9 @@ class Trig_Skybarge(TrigBoard):
 			
 			
 class MoltenBreath(Spell):
-	Class, school, name = "Warrior", "", "Molten Breath"
+	Class, school, name = "Warrior", "Fire", "Molten Breath"
 	requireTarget, mana = True, 4
-	index = "DRAGONS~Warrior~Spell~4~Molten Breath"
+	index = "DRAGONS~Warrior~Spell~4~Fire~Molten Breath"
 	description = "Deal 5 damage to a minion. If you're holding Dragon, gain 5 Armor"
 	name_CN = "熔火吐息"
 	def effCanTrig(self):
@@ -4622,7 +4622,7 @@ Dragons_Indices = {"DRAGONS~Neutral~Minion~1~2~2~~Blazing Battlemage": BlazingBa
 					"DRAGONS~Warlock~Minion~4~5~4~~Veiled Worshipper~Battlecry": VeiledWorshipper,
 					"DRAGONS~Warlock~Minion~5~5~5~Dragon~Crazed Netherwing~Battlecry": CrazedNetherwing,
 					"DRAGONS~Warlock~Minion~6~2~2~~Abyssal Summoner~Battlecry": AbyssalSummoner,
-					"DRAGONS~Warlock~Minion~1~1~1~Demon~Abyssal Destroyer~Taunt~Uncollectible": AbyssalDestroyer_Mutable_1,
+					"DRAGONS~Warlock~Minion~1~1~1~Demon~Abyssal Destroyer~Taunt~Uncollectible": AbyssalDestroyer,
 					"DRAGONS~Warlock~Hero Card~7~Galakrond, the Wretched~Battlecry~Legendary": GalakrondtheWretched,
 					"DRAGONS~Warlock~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible": GalakrondtheApocalypes_Warlock,
 					"DRAGONS~Warlock~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible": GalakrondAzerothsEnd_Warlock,

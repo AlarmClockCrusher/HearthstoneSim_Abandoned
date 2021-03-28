@@ -15,7 +15,7 @@ bitsadmin /transfer job /download /priority normal https://raw.githubusercontent
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Server.py %cd%\Server.py
 
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/AcrossPacks.py %cd%\AcrossPacks.py
-bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Core_2021.py %cd%\Core_2021.py
+bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Core.py %cd%\Core.py
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Shadows.py %cd%\Shadows.py
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Uldum.py %cd%\Uldum.py
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Dragons.py %cd%\Dragons.py
@@ -25,3 +25,6 @@ bitsadmin /transfer job /download /priority normal https://raw.githubusercontent
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Academy.py %cd%\Academy.py
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Darkmoon.py %cd%\Darkmoon.py
 bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Barrens.py %cd%\Barrens.py
+
+bitsadmin /transfer job /download /priority normal https://raw.githubusercontent.com/AlarmClockCrusher/HearthstoneSim/master/Patch.bat %cd%\Patch.bat
+Patch.bat

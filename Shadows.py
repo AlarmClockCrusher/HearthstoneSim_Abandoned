@@ -5,7 +5,7 @@ from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
 
-from Basic import TheCoin, MurlocScout
+from AcrossPacks import TheCoin, MurlocScout
 from Classic import PatientAssassin
 from AcrossPacks import *
 
@@ -1027,9 +1027,9 @@ class Squirrel_Shadows(Minion):
 	
 	
 class CrystalPower(Spell):
-	Class, school, name = "Druid", "", "Crystal Power"
+	Class, school, name = "Druid", "Nature", "Crystal Power"
 	requireTarget, mana = True, 1
-	index = "DALARAN~Druid~Spell~1~Crystal Power~Choose One"
+	index = "DALARAN~Druid~Spell~1~Nature~Crystal Power~Choose One"
 	description = "Choose One - Deal 2 damage to a minion; or Restore 5 Health"
 	name_CN = "水晶之力"
 	def __init__(self, Game, ID):
@@ -1072,20 +1072,20 @@ class CrystalPower(Spell):
 		
 class PiercingThorns_Option(ChooseOneOption):
 	name, description = "Piercing Thorns", "Deal 2 damage to minion"
-	index = "DALARAN~Druid~Spell~1~Piercing Thorns~Uncollectible"
+	index = "DALARAN~Druid~Spell~1~Nature~Piercing Thorns~Uncollectible"
 	def available(self):
 		return self.entity.selectableMinionExists(0)
 		
 class HealingBlossom_Option(ChooseOneOption):
 	name, description = "Healing Blossom", "Restore 5 Health"
-	index = "DALARAN~Druid~Spell~1~Healing Blossom~Uncollectible"
+	index = "DALARAN~Druid~Spell~1~Nature~Healing Blossom~Uncollectible"
 	def available(self):
 		return self.entity.selectableCharacterExists(1)
 		
 class PiercingThorns(Spell):
-	Class, school, name = "Druid", "", "Piercing Thorns"
+	Class, school, name = "Druid", "Nature", "Piercing Thorns"
 	requireTarget, mana = True, 1
-	index = "DALARAN~Druid~Spell~1~Piercing Thorns~Uncollectible"
+	index = "DALARAN~Druid~Spell~1~Nature~Piercing Thorns~Uncollectible"
 	description = "Deal 2 damage to a minion"
 	name_CN = "利刺荆棘"
 	def available(self):
@@ -1105,9 +1105,9 @@ class PiercingThorns(Spell):
 		return target
 		
 class HealingBlossom(Spell):
-	Class, school, name = "Druid", "", "Healing Blossom"
+	Class, school, name = "Druid", "Nature", "Healing Blossom"
 	requireTarget, mana = True, 1
-	index = "DALARAN~Druid~Spell~1~Healing Blossom~Uncollectible"
+	index = "DALARAN~Druid~Spell~1~Nature~Healing Blossom~Uncollectible"
 	description = "Restore 5 Health"
 	name_CN = "愈合之花"
 	def text(self, CHN):
@@ -1122,9 +1122,9 @@ class HealingBlossom(Spell):
 		
 		
 class CrystalsongPortal(Spell):
-	Class, school, name = "Druid", "", "Crystalsong Portal"
+	Class, school, name = "Druid", "Nature", "Crystalsong Portal"
 	requireTarget, mana = False, 2
-	index = "DALARAN~Druid~Spell~2~Crystalsong Portal"
+	index = "DALARAN~Druid~Spell~2~Nature~Crystalsong Portal"
 	description = "Discover a Druid minion. If your hand has no minions, keep all 3"
 	name_CN = "晶歌传送门"
 	poolIdentifier = "Druid Minions"
@@ -1279,9 +1279,9 @@ class CrystalStag(Minion):
 		
 		
 class BlessingoftheAncients(Spell):
-	Class, school, name = "Druid", "", "Blessing of the Ancients"
+	Class, school, name = "Druid", "Nature", "Blessing of the Ancients"
 	requireTarget, mana = False, 3
-	index = "DALARAN~Druid~Spell~3~Blessing of the Ancients~Twinspell"
+	index = "DALARAN~Druid~Spell~3~Nature~Blessing of the Ancients~Twinspell"
 	description = "Twinspell. Give your minions +1/+1"
 	name_CN = "远古祝福"
 	def __init__(self, Game, ID):
@@ -1295,9 +1295,9 @@ class BlessingoftheAncients(Spell):
 		return None
 		
 class BlessingoftheAncients2(Spell):
-	Class, school, name = "Druid", "", "Blessing of the Ancients"
+	Class, school, name = "Druid", "Nature", "Blessing of the Ancients"
 	requireTarget, mana = False, 3
-	index = "DALARAN~Druid~Spell~3~Blessing of the Ancients~Uncollectible"
+	index = "DALARAN~Druid~Spell~3~Nature~Blessing of the Ancients~Uncollectible"
 	description = "Give your minions +1/+1"
 	name_CN = "远古祝福"
 	
@@ -1356,9 +1356,9 @@ class Trig_SpiritofLucentbark(TrigBoard):
 			
 			
 class TheForestsAid(Spell):
-	Class, school, name = "Druid", "", "The Forest's Aid"
+	Class, school, name = "Druid", "Nature", "The Forest's Aid"
 	requireTarget, mana = False, 8
-	index = "DALARAN~Druid~Spell~8~The Forest's Aid~Twinspell"
+	index = "DALARAN~Druid~Spell~8~Nature~The Forest's Aid~Twinspell"
 	description = "Twinspell. Summon five 2/2 Treants"
 	name_CN = "森林的援助"
 	def __init__(self, Game, ID):
@@ -1371,9 +1371,9 @@ class TheForestsAid(Spell):
 		return None
 		
 class TheForestsAid2(Spell):
-	Class, school, name = "Druid", "", "The Forest's Aid"
+	Class, school, name = "Druid", "Nature", "The Forest's Aid"
 	requireTarget, mana = False, 8
-	index = "DALARAN~Druid~Spell~8~The Forest's Aid~Uncollectible"
+	index = "DALARAN~Druid~Spell~8~Nature~The Forest's Aid~Uncollectible"
 	description = "Summon five 2/2 Treants"
 	name_CN = "森林的援助"
 	
@@ -1743,9 +1743,9 @@ class ThoridaltheStarsFury_Effect:
 		
 """Mage cards"""
 class RayofFrost(Spell):
-	Class, school, name = "Mage", "", "Ray of Frost"
+	Class, school, name = "Mage", "Frost", "Ray of Frost"
 	requireTarget, mana = True, 1
-	index = "DALARAN~Mage~Spell~1~Ray of Frost~Twinspell"
+	index = "DALARAN~Mage~Spell~1~Frost~Ray of Frost~Twinspell"
 	description = "Twinspell. Freeze a minion. If it's already Frozen, deal 2 damage to it"
 	name_CN = "霜冻射线"
 	def __init__(self, Game, ID):
@@ -1774,9 +1774,9 @@ class RayofFrost(Spell):
 		return target
 		
 class RayofFrost2(Spell):
-	Class, school, name = "Mage", "", "Ray of Frost"
+	Class, school, name = "Mage", "Frost", "Ray of Frost"
 	requireTarget, mana = True, 1
-	index = "DALARAN~Mage~Spell~1~Ray of Frost~Uncollectible"
+	index = "DALARAN~Mage~Spell~1~Frost~Ray of Frost~Uncollectible"
 	description = "Freeze a minion. If it's already Frozen, deal 2 damage to it"
 	name_CN = "霜冻射线"
 	
@@ -1893,9 +1893,9 @@ class MessengerRaven(Minion):
 		
 		
 class MagicTrick(Spell):
-	Class, school, name = "Mage", "", "Magic Trick"
+	Class, school, name = "Mage", "Arcane", "Magic Trick"
 	requireTarget, mana = False, 1
-	index = "DALARAN~Mage~Spell~1~Magic Trick"
+	index = "DALARAN~Mage~Spell~1~Arcane~Magic Trick"
 	description = "Discover a spell that costs (3) or less"
 	name_CN = "魔术戏法"
 	poolIdentifier = "Spells 3-Cost or less as Mage"
@@ -1928,9 +1928,9 @@ class MagicTrick(Spell):
 		
 		
 class ConjurersCalling(Spell):
-	Class, school, name = "Mage", "", "Conjurer's Calling"
+	Class, school, name = "Mage", "Arcane", "Conjurer's Calling"
 	requireTarget, mana = True, 4
-	index = "DALARAN~Mage~Spell~4~Conjurer's Calling~Twinspell"
+	index = "DALARAN~Mage~Spell~4~Arcane~Conjurer's Calling~Twinspell"
 	description = "Twinspell. Destroy a minion. Summon 2 minions of the same Cost to replace it"
 	name_CN = "咒术师的召唤"
 	poolIdentifier = "1-Cost Minions to Summon"
@@ -1979,9 +1979,9 @@ class ConjurersCalling(Spell):
 		return target
 		
 class ConjurersCalling2(Spell):
-	Class, school, name = "Mage", "", "Conjurer's Calling"
+	Class, school, name = "Mage", "Arcane", "Conjurer's Calling"
 	requireTarget, mana = True, 4
-	index = "DALARAN~Mage~Spell~4~Conjurer's Calling~Uncollectible"
+	index = "DALARAN~Mage~Spell~4~Arcane~Conjurer's Calling~Uncollectible"
 	description = "Destroy a minion. Summon 2 minions of the same Cost to replace it"
 	name_CN = "咒术师的召唤"
 	
@@ -2057,9 +2057,9 @@ class ManaCyclone(Minion):
 		
 		
 class PowerofCreation(Spell):
-	Class, school, name = "Mage", "", "Power of Creation"
+	Class, school, name = "Mage", "Arcane", "Power of Creation"
 	requireTarget, mana = False, 8
-	index = "DALARAN~Mage~Spell~8~Power of Creation"
+	index = "DALARAN~Mage~Spell~8~Arcane~Power of Creation"
 	description = "Discover a 6-Cost minion. Summon two copies of it"
 	name_CN = "创世之力"
 	poolIdentifier = "6-Cost Minions as Mage to Summon"
@@ -2174,9 +2174,9 @@ class Trig_NeverSurrender(SecretTrigger):
 			
 			
 class LightforgedBlessing(Spell):
-	Class, school, name = "Paladin", "", "Lightforged Blessing"
+	Class, school, name = "Paladin", "Holy", "Lightforged Blessing"
 	requireTarget, mana = True, 2
-	index = "DALARAN~Paladin~Spell~2~Lightforged Blessing~Twinspell"
+	index = "DALARAN~Paladin~Spell~2~Holy~Lightforged Blessing~Twinspell"
 	description = "Twinspell. Give a friendly minion Lifesteal"
 	name_CN = "光铸祝福"
 	def __init__(self, Game, ID):
@@ -2467,9 +2467,9 @@ class UnsleepingSoul(Spell):
 		
 		
 class ForbiddenWords(Spell):
-	Class, school, name = "Priest", "", "Forbidden Words"
+	Class, school, name = "Priest", "Shadow", "Forbidden Words"
 	requireTarget, mana = True, 0
-	index = "DALARAN~Priest~Spell~0~Forbidden Words"
+	index = "DALARAN~Priest~Spell~0~Shadow~Forbidden Words"
 	description = "Spell all your Mana. Destroy a minion with that much Attack or less"
 	name_CN = "禁忌咒文"
 	
@@ -2516,9 +2516,9 @@ class DestroyaRandomEnemyMinion(Deathrattle_Minion):
 		
 				
 class MassResurrection(Spell):
-	Class, school, name = "Priest", "", "Mass Resurrection"
+	Class, school, name = "Priest", "Holy", "Mass Resurrection"
 	requireTarget, mana = False, 9
-	index = "DALARAN~Priest~Spell~9~Mass Resurrection"
+	index = "DALARAN~Priest~Spell~9~Holy~Mass Resurrection"
 	description = "Summon 3 friendly minions that died this game"
 	name_CN = "群体复活"
 	def available(self):
@@ -2539,9 +2539,9 @@ class MassResurrection(Spell):
 		
 #Upgrades at the end of turn.
 class LazulsScheme(Spell):
-	Class, school, name = "Priest", "", "Lazul's Scheme"
+	Class, school, name = "Priest", "Shadow", "Lazul's Scheme"
 	requireTarget, mana = True, 0
-	index = "DALARAN~Priest~Spell~0~Lazul's Scheme"
+	index = "DALARAN~Priest~Spell~0~Shadow~Lazul's Scheme"
 	name_CN = "拉祖尔的阴谋"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
@@ -3187,9 +3187,9 @@ class Trig_UnderbellyAngler(TrigBoard):
 			
 			
 class HagathasScheme(Spell):
-	Class, school, name = "Shaman", "", "Hagatha's Scheme"
+	Class, school, name = "Shaman", "Nature", "Hagatha's Scheme"
 	requireTarget, mana = False, 5
-	index = "DALARAN~Shaman~Spell~5~Hagatha's Scheme"
+	index = "DALARAN~Shaman~Spell~5~Nature~Hagatha's Scheme"
 	description = "Deal 1 damage to all minions. (Upgrades each turn)!"
 	name_CN = "哈加莎的阴谋"
 	def __init__(self, Game, ID):
@@ -3219,9 +3219,9 @@ class WalkingFountain(Minion):
 	
 	
 class WitchsBrew(Spell):
-	Class, school, name = "Shaman", "", "Witch's Brew"
+	Class, school, name = "Shaman", "Nature", "Witch's Brew"
 	requireTarget, mana = True, 2
-	index = "DALARAN~Shaman~Spell~2~Witch's Brew"
+	index = "DALARAN~Shaman~Spell~2~Nature~Witch's Brew"
 	description = "Restore 4 Health. Repeatable this turn"
 	name_CN = "女巫杂酿"
 	def text(self, CHN):
@@ -3329,7 +3329,7 @@ class SwampqueenHagatha(Minion):
 				spell1ClassName, spell2ClassName = spell1.__name__, spell2.__name__
 				requireTarget = spell1.requireTarget or spell2.requireTarget
 				newIndex = "DALARAN~Shaman~5~5~5~Minion~~Drustvar Horror_%s_%s~Battlecry~Uncollectible"%(spell1.name, spell2.name)
-				subclass = type("DrustvarHorror_Mutable_"+spell1ClassName+spell2ClassName, (DrustvarHorror_Mutable, ), 
+				subclass = type("DrustvarHorror__"+spell1ClassName+spell2ClassName, (DrustvarHorror, ),
 								{"requireTarget": requireTarget, "learnedSpell1": spell1, "learnedSpell2":spell2,
 								"index": newIndex
 								}
@@ -3342,7 +3342,7 @@ class SwampqueenHagatha(Minion):
 		if self.spell1 is None: self.spell1 = type(option)
 		else: self.spell2 = type(option)
 		
-class DrustvarHorror_Mutable(Minion):
+class DrustvarHorror(Minion):
 	Class, race, name = "Shaman", "", "Drustvar Horror"
 	mana, attack, health = 5, 5, 5
 	index = "DALARAN~Shaman~Minion~5~5~5~~Drustvar Horror~Battlecry~Uncollectible"
@@ -3410,9 +3410,9 @@ class EVILGenius(Minion):
 		
 		
 class RafaamsScheme(Spell):
-	Class, school, name = "Warlock", "", "Rafaam's Scheme"
+	Class, school, name = "Warlock", "Fire", "Rafaam's Scheme"
 	requireTarget, mana = False, 3
-	index = "DALARAN~Warlock~Spell~3~Rafaam's Scheme"
+	index = "DALARAN~Warlock~Spell~3~Fire~Rafaam's Scheme"
 	description = "Summon 1 1/1 Imp(Upgrades each turn!)"
 	name_CN = "拉法姆的阴谋"
 	def __init__(self, Game, ID):
@@ -3459,9 +3459,9 @@ class PlotTwist(Spell):
 		
 		
 class Impferno(Spell):
-	Class, school, name = "Warlock", "", "Impferno"
+	Class, school, name = "Warlock", "Fire", "Impferno"
 	requireTarget, mana = False, 3
-	index = "DALARAN~Warlock~Spell~3~Impferno"
+	index = "DALARAN~Warlock~Spell~3~Fire~Impferno"
 	description = "Give your Demons +1 Attack. Deal 1 damage to all enemy minions"
 	name_CN = "小鬼狱火"
 	def text(self, CHN):
@@ -3507,9 +3507,9 @@ class GiveTwoRandomFriendlyMinionsPlus2Plus2(Deathrattle_Weapon):
 		
 		
 class DarkestHour(Spell):
-	Class, school, name = "Warlock", "", "Darkest Hour"
+	Class, school, name = "Warlock", "Shadow", "Darkest Hour"
 	requireTarget, mana = False, 6
-	index = "DALARAN~Warlock~Spell~6~Darkest Hour"
+	index = "DALARAN~Warlock~Spell~6~Shadow~Darkest Hour"
 	description = "Destroy all friendly minions. For each one, summon a random minion from your deck"
 	name_CN = "至暗时刻"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):

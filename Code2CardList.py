@@ -6,8 +6,8 @@ from CardPools import *
 
 cardType2jsonType = {"Minion": "MINION", "Spell": "SPELL", "Weapon": "WEAPON", "Hero": "HERO"}
 
-j = json.loads(open("cards.collectible.json", "r", encoding="utf-8").read())
-k = json.loads(open("cards.json", "r", encoding="utf-8").read())
+json_Collectibles = json.loads(open("cards.collectible.json", "r", encoding="utf-8").read())
+json_Uncollectible = json.loads(open("cards.json", "r", encoding="utf-8").read())
 
 def typeName2Class(typename):
 	try:
@@ -46,7 +46,7 @@ def parseDeckCode(s, hero, ClassDict):
 	return deck, deckCorrect, hero
 	
 def getCardnameFromDbf(id):
-	for cardInfo in j:
+	for cardInfo in json_Uncollectible:
 		if cardInfo["dbfId"] == id:
 			return cardInfo["name"]
 			
@@ -55,7 +55,7 @@ def decode_deckstring(s, to="List"):
 	if to == "string":
 		deckList = "["
 		for each in deckTuple:
-			#print(each) #(cardID, number of cards in the deck)
+			#each is a tupel (dbfid, number of cards in the deck)
 			for i in range(each[1]):
 				cardName = getCardnameFromDbf(each[0])
 				name_withoutPunctuations = cardName.translate(str.maketrans('', '', string.punctuation))
@@ -78,15 +78,14 @@ def decode_deckstring(s, to="List"):
 		
 def getAnyCardInfofromType(cardType):
 	possibleCards = []
-	for cardInfo in k:
+	for cardInfo in json_Uncollectible:
 		words = cardType.index.split('~')
 		jsonName, cardName = cardInfo["name"], cardType.name
-		jsonSet = cardInfo["set"]
 		isCollectibleinJson, isCollectibleinType = "collectible" in cardInfo, "Uncollectible" not in cardType.index
 		jsonType, translatedType = cardInfo["type"], cardType2jsonType[words[2]]
-		if jsonName == cardName:
-			possibleCards.append((cardName, jsonSet, words[0], isCollectibleinJson, isCollectibleinType, jsonType, translatedType))
-			if jsonSet ==  words[0] and isCollectibleinJson == isCollectibleinType and jsonType == translatedType:
+		if jsonName == cardName and cardInfo["set"] == words[0]:
+			possibleCards.append((cardName, isCollectibleinJson, isCollectibleinType, jsonType, translatedType))
+			if isCollectibleinJson == isCollectibleinType and jsonType == translatedType:
 				return cardInfo
 	return possibleCards
 	
@@ -153,9 +152,9 @@ def checktheStatsofCards():
 				if not(cardInfo["attack"] == value.attack == int(words[4]) \
 						and cardInfo[""] == value.health == int(words[5])):
 					print(value, " has a wrong stat")
-			else:
-				if value.name != words[4]:
-					print(value, " has a wrong name", cardInfo["name"], value.name, words[4])
+			else: #Spell
+				if value.name != words[5]:
+					print(value, " has a wrong name", cardInfo["name"], value.name, words[5])
 					
 		except Exception as e:
 			#print("When checking ", value, e)
@@ -170,7 +169,7 @@ if __name__ == "__main__":
 	#Check if all collectible cards are matched in the json
 	for key, value in cardPool.items():
 		if "Uncollectible" not in key:
-			for each in j:
+			for each in json_Collectibles:
 				if each["name"] == value.name:
 					name_withoutPunctuations = each["name"].translate(str.maketrans('', '', string.punctuation))
 					name_NoSpace = name_withoutPunctuations.replace(' ', '')

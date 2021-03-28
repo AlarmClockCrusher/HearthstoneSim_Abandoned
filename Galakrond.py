@@ -631,9 +631,9 @@ class ClericofScales(Minion):
 		
 		
 class DarkProphecy(Spell):
-	Class, school, name = "Priest", "", "Dark Prophecy"
+	Class, school, name = "Priest", "Shadow", "Dark Prophecy"
 	requireTarget, mana = False, 3
-	index = "YEAR_OF_THE_DRAGON~Priest~Spell~3~Dark Prophecy"
+	index = "YEAR_OF_THE_DRAGON~Priest~Spell~3~Shadow~Dark Prophecy"
 	description = "Discover a 2-Cost minion. Summon it and give it +3 Health"
 	name_CN = "黑暗预兆"
 	poolIdentifier = "2-Cost Minions as Priest"
@@ -750,9 +750,9 @@ class ShadowSculptor(Minion):
 		
 """Shaman cards"""
 class ExplosiveEvolution(Spell):
-	Class, school, name = "Shaman", "", "Explosive Evolution"
+	Class, school, name = "Shaman", "Nature", "Explosive Evolution"
 	requireTarget, mana = True, 2
-	index = "YEAR_OF_THE_DRAGON~Shaman~Spell~2~Explosive Evolution"
+	index = "YEAR_OF_THE_DRAGON~Shaman~Spell~2~Nature~Explosive Evolution"
 	description = "Transform a friendly minion into a random one that costs (3) more"
 	name_CN = "惊爆异变"
 	poolIdentifier = "1-Cost Minions to Summon"
@@ -786,9 +786,9 @@ class ExplosiveEvolution(Spell):
 		
 		
 class EyeoftheStorm(Spell):
-	Class, school, name = "Shaman", "", "Eye of the Storm"
+	Class, school, name = "Shaman", "Nature", "Eye of the Storm"
 	requireTarget, mana = False, 10
-	index = "YEAR_OF_THE_DRAGON~Shaman~Spell~10~Eye of the Storm~Overload"
+	index = "YEAR_OF_THE_DRAGON~Shaman~Spell~10~Nature~Eye of the Storm~Overload"
 	description = "Summon three 5/6 Elementals with Taunt. Overload: (3)"
 	name_CN = "风暴之眼"
 	def __init__(self, Game, ID):
@@ -886,9 +886,9 @@ class GiveAttacktoaRandomFriendlyMinion(Deathrattle_Minion):
 				
 				
 class TwistedKnowledge(Spell):
-	Class, school, name = "Warlock", "", "Twisted Knowledge"
+	Class, school, name = "Warlock", "Shadow", "Twisted Knowledge"
 	requireTarget, mana = False, 2
-	index = "YEAR_OF_THE_DRAGON~Warlock~Spell~2~Twisted Knowledge"
+	index = "YEAR_OF_THE_DRAGON~Warlock~Spell~2~Shadow~Twisted Knowledge"
 	description = "Discover 2 Warlock cards"
 	name_CN = "扭曲学识"
 	poolIdentifier = "Warlock Cards"

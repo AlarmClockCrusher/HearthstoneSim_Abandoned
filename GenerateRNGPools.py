@@ -25,9 +25,8 @@ class PoolManager:
 		self.cardPool = {}
 		
 		
-from Core_2021 import *
+from Core import *
 from AcrossPacks import *
-#from DemonHunterInitiate import *
 from Outlands import *
 from Academy import *
 from Darkmoon import *
@@ -75,8 +74,8 @@ def makeCardPool(board="0 Random Game Board", monk=0, SV=0):
 	cardPool.update(AcrossPacks_Indices) #Has the basic hero and hero power definitions.
 	info += "from AcrossPacks import *\n"
 	
-	cardPool.update({card.index: card for card in Core_2021_Cards})
-	info += "from Core_2021 import *\n"
+	cardPool.update({card.index: card for card in Core_Cards})
+	info += "from Core import *\n"
 	
 	cardPool.update({card.index: card for card in Outlands_Cards})
 	info += "from Outlands import *\n"

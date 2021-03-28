@@ -519,16 +519,16 @@ from CardPools import *
 	
 Default1 = [#Mana 1 cards
 			#Hunter cardds
-			FreezingTrap, ScavengingHyena, Bearshark, DeadlyShot, DireFrenzy,
+			FreezingTrap, ScavengingHyena, ExplosiveTrap, Bearshark, DeadlyShot, DireFrenzy, QuickShot, KazakusGolemShaper,
 			##Paladin cards
-			#Avenge, NobleSacrifice, Reckoning, ArgentProtector, HolyLight, PursuitofJustice, AldorPeacekeeper, Equality, WarhorseTrainer, BlessingofKings, Consecration, TruesilverChampion, StandAgainstDarkness, GuardianofKings, TirionFordring,
+			#Avenge, NobleSacrifice, Reckoning, #ArgentProtector, HolyLight, PursuitofJustice, AldorPeacekeeper, Equality, WarhorseTrainer, BlessingofKings, Consecration, TruesilverChampion, StandAgainstDarkness, GuardianofKings, TirionFordring,
 			##Rogue cards
-			Preparation, TinyKnightofEvil, Hellfire, LordJaraxxus, ImprisonedSungill, ImprisonedFelmaw, ImprisonedObserver,
-			ImprisonedSungill, ImprisonedFelmaw, SigilofFlame, SigilofSilence, SigilofFlame, SigilofSilence,
+			#Preparation, TinyKnightofEvil, Hellfire, LordJaraxxus, LakkariFelhound,
+			#SigilofFlame, SigilofSilence,
 			]
 
 Default2 = [#Mana 2 cards
-			YouthfulBrewmaster,
+			YouthfulBrewmaster, KazakusGolemShaper,
 			##Mana 4 cards
 			BigGameHunter, VioletTeacher,
 			##Mana 6~8 cards

@@ -1,10 +1,3 @@
-import math
-
-from direct.gui.DirectGui import *
-from direct.interval.IntervalGlobal import Wait, Func
-from direct.showbase.ShowBase import ShowBase
-from direct.task import Task
-
 from Code2CardList import *
 from Game import *
 from GenerateRNGPools import *
@@ -42,7 +35,8 @@ def txt(text, CHN):
 class Layer1Window:
 	def __init__(self):
 		self.window = tk.Tk()
-		self.btn_Start = tk.Button(self.window, text=txt("Loading. Please wait", CHN), bg="red", font=("Yahei", 20, "bold"), command=self.init_ShowBase)
+		self.btn_Connect = tk.Button(self.window, text=txt("Loading. Please wait", CHN), bg="red", font=("Yahei", 20, "bold"), command=self.init_ShowBase)
+		self.btn_Reconn = None
 		
 		self.gameGUI = GUI_IP(self)
 		
@@ -72,7 +66,7 @@ class Layer1Window:
 		"""Place the widgets"""
 		lbl_SelectBoard.grid(row=0, column=0)
 		boardOpt.grid(row=1, column=0)
-		self.btn_Start.grid(row=3, column=0)
+		self.btn_Connect.grid(row=3, column=0)
 		
 		tk.Label(self.window, text="         ").grid(row=0, column=1)
 		tk.Label(self.window, text=txt("Hero 1 class", CHN),
@@ -134,75 +128,11 @@ loadPrcFileData('', configVars)
 
 
 class GUI_IP(Panda_UICommon):
-	def __init__(self, layer1Window):
-		ShowBase.__init__(self)
-		#simplepbr.init(max_lights=4)
-		self.disableMouse()
-		
-		self.layer1Window = layer1Window
-		self.UI = -2  #Starts at -2, for the mulligan stage
-		self.pickablesDrawn = []
-		self.board, self.btnTurnEnd = None, None
-		self.mulliganStatus = {1: [0, 0, 0], 2: [0, 0, 0, 0]}
-		#Attributes of the GUI
-		self.selectedSubject = ""
-		self.subject, self.target = None, None
-		self.pos, self.choice, self.UI = -1, 0, -2  #起手调换为-2
-		self.discover = None
-		self.btnBeingDragged, self.arrow = None, None
-		self.nodePath_CardSpecsDisplay = None
-		self.intervalQueue = []
-		self.intervalRunning = 0
-		self.gamePlayQueue = []
-		self.gamePlayThread = None
-		#Flag whether the game is still loading models for the cards
-		self.loading = "Loading. Please Wait"
-		
-		self.sansBold = self.loader.loadFont('Models\\OpenSans-Bold.ttf')
-		
-		self.cTrav = self.collHandler = self.raySolid = None
-		self.accept("mouse1", self.mouse1_Down)
-		self.accept("mouse1-up", self.mouse1_Up)
-		self.accept("mouse3", self.mouse3_Down)
-		self.accept("mouse3-up", self.mouse3_Up)
-		
-		thread_RunningAnimiations = threading.Thread(target=self.thread_AnimationManager, daemon=True)
-		print("thread_RunningAnimations created", thread_RunningAnimiations)
-		thread_RunningAnimiations.name = "AniManagerThread"
-		thread_RunningAnimiations.start()
-		self.gamePlayThread = threading.Thread(target=self.keepExecutingGamePlays, daemon=True)
-		self.gamePlayThread.name = "GameThread"
-		self.gamePlayThread.start()
-		self.init_CollisionSetup()
-		
-		"""Prepare models that will be used later"""
-		self.Game = Game(self)
-		self.Game.mode = 0
-		self.Game.Classes, self.Game.ClassesandNeutral = Classes, ClassesandNeutral
-		self.Game.initialize()
-		threading.Thread(target=self.preloadModel, args=(self.layer1Window.btn_Start,)).start()
-	
-	def preloadModel(self, btn_Start):
+	def preloadModel(self, btn_Connect, btn_Reconn):
 		#Load the models
-		game = self.Game
-		self.backupCardModels = {"Minion": deque([loadMinion(self, SilverHandRecruit(game, 1)) for i in range(30)]),
-								 "Spell": deque([loadSpell(self, LightningBolt(game, 1)) for i in range(30)]),
-								 "Weapon": deque([loadWeapon(self, FieryWarAxe(game, 1)) for i in range(30)]),
-								 "Power": deque([loadPower(self, Reinforce(game, 1)) for i in range(10)]),
-								 "Hero": deque([loadHero(self, LordJaraxxus(game, 1)) for i in range(30)]),
-								 "Dormant": deque([loadDormant(self, BurningBladePortal(game, 1)) for i in range(2)]),
-								 "MinionPlayed": deque([loadMinion_Played(self, SilverHandRecruit(game, 1)) for i in range(30)]),
-								 "WeaponPlayed": deque([loadWeapon_Played(self, FieryWarAxe(game, 1)) for i in range(6)]),
-								 "PowerPlayed": deque([loadPower_Played(self, Reinforce(game, 1)) for i in range(4)]),
-								 "HeroPlayed": deque([loadHero_Played(self, Anduin(game, 1)) for i in range(6)]),
-								 "SecretPlayed": deque([loadSecret_Played(self, FreezingTrap(game, 1)) for i in range(12)]),
-								 "DormantPlayed": deque([loadDormant_Played(self, BurningBladePortal(game, 1)) for i in range(15)]),
-								 "Mana": deque(), "EmptyMana": deque(), "LockedMana": deque(), "OverloadedMana": deque(),
-								 "Option": deque([loadChooseOption(self, Cenarius(game, 1).options[0]) for i in range(4)]),
-								 }
-		self.loading = "Start!"
-		btn_Start.config(text=txt("Finished Loading. Start!", CHN))
-		btn_Start.config(bg="green3")
+		self.prepareModels()
+		btn_Connect.config(text=txt("Finished Loading. Start!", CHN))
+		btn_Connect.config(bg="green3")
 	
 	def initMulliganDisplay(self):
 		self.posMulligans = {1: [(8 * (i - 1), 50, -5) for i in range(len(self.Game.mulligans[1]))],

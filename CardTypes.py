@@ -348,7 +348,8 @@ class Card:
 
 	def countSpellDamage(self):
 		return self.Game.status[self.ID]["Spell Damage"] \
-				+ sum(minion.keyWords["Spell Damage"] for minion in self.Game.minions[self.ID])
+				+ sum(minion.keyWords["Spell Damage"] or (minion.keyWords["Nature Spell Damage"] and self.school == "Nature")
+					  for minion in self.Game.minions[self.ID])
 
 	def dmgtoDeal(self, dmg, role="att"):
 		return dmg
@@ -665,7 +666,7 @@ class Dormant(Card):
 		self.enterBoardTurn = 0
 		self.seq, self.pos = -1, -2
 		self.keyWords = {"Taunt": 0, "Stealth": 0,
-						 "Divine Shield": 0, "Spell Damage": 0,
+						 "Divine Shield": 0, "Spell Damage": 0, "Nature Spell Damage": 0,
 						 "Lifesteal": 0, "Poisonous": 0,
 						 "Windfury": 0, "Mega Windfury": 0,
 						 "Charge": 0, "Rush": 0,
@@ -758,28 +759,29 @@ class Minion(Card):
 		self.btn, self.x, self.y, self.z = btn, x, y, z
 		
 	def blank_init(self, Game, ID):
+		cardType = type(self)
 		self.Game, self.ID = Game, ID
-		self.Class, self.name = type(self).Class, type(self).name
-		self.type, self.race = "Minion", type(self).race
+		self.Class, self.name = cardType.Class, cardType.name
+		self.type, self.race = "Minion", cardType.race
 		# 卡牌的费用和对于费用修改的效果列表在此处定义
-		self.mana, self.manaMods = type(self).mana, []
-		self.attack_0 = self.attack = self.attack_Enchant = type(self).attack
-		self.health_0 = self.health = self.health_max = type(self).health
+		self.mana, self.manaMods = cardType.mana, []
+		self.attack_0 = self.attack = self.attack_Enchant = cardType.attack
+		self.health_0 = self.health = self.health_max = cardType.health
 		self.tempAttChanges = []  # list of tempAttChange, expiration timepoint
 		self.attfromAura, self.healthfromAura = 0, 0
 		self.effectfromAura = {"Charge": 0, "Rush": 0, "Mega Windfury": 0,
 								"Free Evolve": 0,}
 		self.auraReceivers = []
-		self.description = type(self).description
+		self.description = cardType.description
 		# 当一个实例被创建的时候，其needTarget被强行更改为returnTrue或者是returnFalse，不论定义中如何修改needTarget(self, choice=0)这个函数，都会被绕过。需要直接对returnTrue()函数进行修改。
-		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
+		self.needTarget = self.returnTrue if cardType.requireTarget else self.returnFalse
 		self.keyWords = {"Taunt": 0, "Divine Shield": 0, "Stealth": 0,
-						 "Lifesteal": 0, "Spell Damage": 0, "Poisonous": 0,
+						 "Lifesteal": 0, "Spell Damage": 0, "Nature Spell Damage": 0, "Poisonous": 0,
 						 "Windfury": 0, "Mega Windfury": 0, "Charge": 0, "Rush": 0,
 						 "Echo": 0, "Reborn": 0, "Bane": 0, "Drain": 0
 						 }
-		if type(self).keyWord != "":
-			for key in type(self).keyWord.split(","):
+		if cardType.keyWord != "":
+			for key in cardType.keyWord.split(","):
 				self.keyWords[key.strip()] = 1
 		# Some state of the minion represented by the marks
 		self.marks = {"Cost Health Instead": 0,
@@ -820,7 +822,7 @@ class Minion(Card):
 											  }
 						}
 		#跟踪卡牌的可能性。一张牌被加入手牌时，这张牌是tracked，被洗回牌库的时候则会取消这个
-		self.creator, self.tracked, self.possi = None, False, (type(self),)
+		self.creator, self.tracked, self.possi = None, False, (cardType,)
 		
 		self.btn, self.x, self.y, self.z = None, 0, 0, 0
 	
@@ -1373,10 +1375,11 @@ class Minion(Card):
 
 
 class Spell(Card):
-	Class, name = "Neutral", "Test"
+	Class, school, name = "Neutral", "", "Test"
 	requireTarget, mana = False, 2
 	index = "None-1-Spell-Test"
 	description = ""
+	name_CN = ""
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 
@@ -1388,13 +1391,15 @@ class Spell(Card):
 		self.btn, self.x, self.y, self.z = btn, x, y, z
 	
 	def blank_init(self, Game, ID):
+		cardType = type(self)
 		self.Game, self.ID = Game, ID
-		self.Class, self.name = type(self).Class, type(self).name
+		self.Class, self.name = cardType.Class, cardType.name
 		self.type = "Spell"
-		self.index = type(self).index
-		self.mana, self.manaMods = type(self).mana, []
-		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
-		self.description = type(self).description
+		self.school = cardType.school
+		self.index = cardType.index
+		self.mana, self.manaMods = cardType.mana, []
+		self.needTarget = self.returnTrue if cardType.requireTarget else self.returnFalse
+		self.description = cardType.description
 		self.overload, self.twinSpell = 0, 0
 		#法术也设置onBoard标签，但只是placeholder而已
 		self.onBoard = self.inHand = self.inDeck = False
@@ -1406,7 +1411,7 @@ class Spell(Card):
 		self.marks = {"Cost Health Instead": 0,}
 		self.effectViable, self.evanescent = False, False
 		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possi = None, False, (type(self),)
+		self.creator, self.tracked, self.possi = None, False, (cardType,)
 		
 		self.btn, self.x, self.y, self.z = None, 0, 0, 0
 	
@@ -1607,27 +1612,8 @@ class Secret(Spell):
 		self.blank_init(Game, ID)
 
 	def blank_init(self, Game, ID):
-		self.Class = type(self).Class
-		self.name = type(self).name
-		self.index = type(self).index
-		self.mana, self.manaMods = type(self).mana, []
-		self.Game, self.ID = Game, ID
-		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
-		self.type = "Spell"
-		self.description = type(self).description
-		self.overload, self.twinSpell = 0, 0
-		# 法术也设置onBoard标签，但只是placeholder而已
-		self.onBoard = self.inHand = self.inDeck = False
-		self.enterHandTurn = 0
-		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
-		self.options = []  # For Choose One spells
-		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
-		self.marks = {"Cost Health Instead": 0, }
-		self.effectViable, self.evanescent = False, False
-		self.creator, self.tracked, self.possi = None, False, (type(self),)
+		super().blank_init(Game, ID)
 		self.dummyTrigs = []
-		
-		self.btn, self.x, self.y, self.z = None, 0, 0, 0
 		
 	def available(self):
 		return self.Game.Secrets.areaNotFull(self.ID) and not self.Game.Secrets.sameSecretExists(self, self.ID)
@@ -1675,30 +1661,7 @@ class Quest(Spell):
 	requireTarget, mana = False, 1
 	index = "Neutral-1-Spell-Vanilla--Quest"
 	description = ""
-	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-
-	def blank_init(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.Class, self.name = type(self).Class, type(self).name
-		self.type = "Spell"
-		self.index = type(self).index
-		self.mana, self.manaMods = type(self).mana, []
-		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
-		self.description = type(self).description
-		self.overload, self.twinSpell = 0, 0
-		# 法术也设置onBoard标签，但只是placeholder而已
-		self.onBoard = self.inHand = self.inDeck = False
-		self.enterHandTurn = 0
-		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
-		self.options = []  # For Choose One spells
-		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
-		self.marks = {"Cost Health Instead": 0, }
-		self.effectViable, self.evanescent = False, False
-		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possi = None, False, (type(self),)
-		self.btn, self.x, self.y, self.z = None, 0, 0, 0
-		
+	
 	#Upper limit of secrets and quests is 5. There can only be one main quest, but multiple different sidequests
 	def available(self):
 		secretZone = self.Game.Secrets
@@ -1923,24 +1886,25 @@ class Hero(Card):
 		self.btn, self.x, self.y, self.z = btn, x, y, z
 	
 	def blank_init(self, Game, ID):
+		cardType = type(self)
 		self.Game, self.ID = Game, ID
-		self.mana, self.manaMods = type(self).mana, []
+		self.mana, self.manaMods = cardType.mana, []
 		self.health_max, self.health = 30, 30
-		self.attack, self.attack_bare, self.armor = 0, 0, type(self).armor
+		self.attack, self.attack_bare, self.armor = 0, 0, cardType.armor
 		self.tempAttChanges = []
-		self.name = type(self).name
-		self.index = type(self).index
+		self.name = cardType.name
+		self.index = cardType.index
 		self.type = "Hero"
-		self.weapon = type(self).weapon
-		self.description = type(self).description
+		self.weapon = cardType.weapon
+		self.description = cardType.description
 		self.requireTarget = False
-		self.Class = type(self).Class
+		self.Class = cardType.Class
 		self.attChances_base, self.attChances_extra, self.attTimes = 1, 0, 0
 		self.onBoard = self.inHand = self.inDeck = False
 		self.enterHandTurn = 0
 		self.dead = False
 		self.pos = self.ID
-		self.heroPower = type(self).heroPower(self.Game, self.ID) if type(self).heroPower else None
+		self.heroPower = cardType.heroPower(self.Game, self.ID) if cardType.heroPower else None
 		self.keyWords = {"Windfury": 0, "Poisonous": 0}
 		self.attfromAura = 0
 		self.effectfromAura = {"Windfury": 0}
@@ -1954,7 +1918,7 @@ class Hero(Card):
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.effectViable, self.evanescent = False, False
 		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possi = None, False, (type(self),)
+		self.creator, self.tracked, self.possi = None, False, (cardType,)
 		
 		self.btn, self.x, self.y, self.z = None, 0, 0, 0
 	
@@ -2259,15 +2223,16 @@ class Weapon(Card):
 		self.btn, self.x, self.y, self.z = btn, x, y, z
 	
 	def blank_init(self, Game, ID):
+		cardType = type(self)
 		self.Game, self.ID = Game, ID
-		self.Class, self.name = type(self).Class, type(self).name
+		self.Class, self.name = cardType.Class, cardType.name
 		self.type = "Weapon"
-		self.mana, self.manaMods = type(self).mana, []
-		self.attack = type(self).attack
+		self.mana, self.manaMods = cardType.mana, []
+		self.attack = cardType.attack
 		self.attfromAura = 0
 		self.auraReceivers = []
-		self.durability = type(self).durability  # 将来会处理有buff的武器洗入牌库的问题，如弑君
-		self.description = type(self).description
+		self.durability = cardType.durability  # 将来会处理有buff的武器洗入牌库的问题，如弑君
+		self.description = cardType.description
 		self.requireTarget = False
 		self.keyWords = {"Lifesteal": 0, "Poisonous": 0, "Windfury": 0}
 		self.marks = {"Sweep": 0, "Cost Health Instead": 0,}
@@ -2282,7 +2247,7 @@ class Weapon(Card):
 		self.auras = {}
 		self.effectViable, self.evanescent = False, False
 		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possi = None, False, (type(self),)
+		self.creator, self.tracked, self.possi = None, False, (cardType,)
 		
 		self.btn, self.x, self.y, self.z = None, 0, 0, 0
 	
@@ -2464,18 +2429,22 @@ class Weapon(Card):
 
 
 class ChooseOneOption:
-	name, description = "", ""
+	name, type, description = "", "", ""
 	index = ""
-
-	def __init__(self, entity):
+	keyWord = ""
+	def __init__(self, entity=None):
 		self.entity = entity
-		self.name = type(self).name
-		self.description = type(self).description
-		if hasattr(type(self), "index"):
-			self.index = type(self).index
-		else: self.index = ""
-		self.type = "Option" #For choose one btn selection
-		
+		try: self.name = type(self).name
+		except: self.name = ""
+		try: self.description = type(self).description
+		except: pass
+		try: self.index = type(self).index
+		except: pass
+		try: self.keyWord = type(self).keyWord
+		except: pass
+		if "type" in type(self).__dict__:
+			self.type = type(self).type
+		else: self.type = "Option_Spell"
 		self.btn, self.x, self.y, self.z = None, 0, 0, 0
 	
 	def available(self):

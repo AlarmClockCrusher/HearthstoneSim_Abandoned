@@ -5,19 +5,17 @@ from direct.interval.IntervalGlobal import Wait, Func
 from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
 
-from Code2CardList import *
 from Game import *
 from LoadModels import *
 from GenerateRNGPools import *
 from Panda_CustomWidgets import *
 
 from datetime import datetime
-from collections import deque
 import pickle
-
+from collections import deque
 
 configVars = """
-win-size 1620 900
+win-size 1260 700
 window-title Single Player Hearthstone Simulator
 clock-mode limited
 clock-frame-rate 45
@@ -124,8 +122,28 @@ class Panda_UICommon(ShowBase):
 		
 		self.sock = None
 		self.waiting4Server, self.timer = False, 60
-		
-	def preloadModel(self):
+	
+	def prepareModels(self):
+		game = self.Game
+		self.backupCardModels = {"Minion": deque([loadMinion(self, SilverHandRecruit(game, 1)) for i in range(30)]),
+								 "Spell": deque([loadSpell(self, LightningBolt(game, 1)) for i in range(30)]),
+								 "Weapon": deque([loadWeapon(self, FieryWarAxe_Core(game, 1)) for i in range(30)]),
+								 "Power": deque([loadPower(self, Reinforce(game, 1)) for i in range(10)]),
+								 "Hero": deque([loadHero(self, LordJaraxxus(game, 1)) for i in range(30)]),
+								 "Dormant": deque([loadDormant(self, BurningBladePortal(game, 1)) for i in range(2)]),
+								 "MinionPlayed": deque([loadMinion_Played(self, SilverHandRecruit(game, 1)) for i in range(30)]),
+								 "WeaponPlayed": deque([loadWeapon_Played(self, FieryWarAxe_Core(game, 1)) for i in range(6)]),
+								 "PowerPlayed": deque([loadPower_Played(self, Reinforce(game, 1)) for i in range(4)]),
+								 "HeroPlayed": deque([loadHero_Played(self, Anduin(game, 1)) for i in range(6)]),
+								 "SecretPlayed": deque([loadSecret_Played(self, FreezingTrap(game, 1)) for i in range(12)]),
+								 "DormantPlayed": deque([loadDormant_Played(self, BurningBladePortal(game, 1)) for i in range(15)]),
+								 "Mana": deque(), "EmptyMana": deque(), "LockedMana": deque(), "OverloadedMana": deque(),
+								 "Option_Spell": deque([loadOption_Spell(self, Cenarius(game, 1).options[0]) for i in range(4)]),
+								 "Option_Minion": deque([loadOption_Minion(self, Wildvine_1()) for i in range(4)]),
+								 }
+		self.loading = "Start!"
+	
+	def preloadModel(self, btn_Connect, btn_Reconn):
 		pass
 	
 	def initMulliganDisplay(self):
@@ -155,7 +173,7 @@ class Panda_UICommon(ShowBase):
 		self.btnTurnEnd.setPos(14.4, self.board.get_y(), 1)
 		self.pickablesDrawn.append(self.btnTurnEnd)
 		
-		heroZone = self.heroZones[self.ID if hasattr(self, "ID") else 1]
+		heroZone = self.heroZones[max(1, self.ID)]
 		texture = self.loader.loadTexture("Models\\BoardModels\\ManaExample.png")
 		for i in range(10):
 			model = self.loader.loadModel("Models\\BoardModels\\Mana.glb")
@@ -550,8 +568,8 @@ class Panda_UICommon(ShowBase):
 	
 	def trigBlink(self, entity, blockwhilePlaying=False, color="yellow"):
 		btn = entity.btn
-		if btn and hasattr(btn, "indicatorModels"):
-			model = btn.indicatorModels["Trigger"]
+		if btn and "Trigger" in btn.models:
+			model = btn.models["Trigger"]
 			model.trigAni(blockwhilePlaying=blockwhilePlaying)
 	
 	def minionsDieAni(self, entities):
@@ -586,7 +604,8 @@ class Panda_UICommon(ShowBase):
 		heroZone = self.heroZones[secret.ID]
 		btn = secret.btn
 		if btn:
-			heroZone.removeCard(btn)
+			heroZone.removeSecret(btn)
+			self.ensureBtnMovedAway(btn)
 			heroZone.drawSecrets()
 		self.showOffBoardTrig(secret)
 	
@@ -706,6 +725,11 @@ class Panda_UICommon(ShowBase):
 			self.raySolid.setFromLens(self.camNode, mpos.getX(), mpos.getY())
 			if self.collHandler.getNumEntries() > 0:
 				self.collHandler.sortEntries()
+				#print("Collision:", self.collHandler.getNumEntries(), self.collHandler.getEntries())
+				#for entry in self.collHandler.getEntries():
+				#	nodePath = entry.getIntoNodePath()
+				#	print("collboxes:", nodePath)
+				#	print(nodePath.findAllMatches("**/*_c_node"))
 				collNode_Picked = self.collHandler.getEntry(0).getIntoNodePath()
 				pickedModel_NodePath = collNode_Picked.getParent()
 				"""Due to unknown reasons, all node paths are involved in the render hierachy
@@ -887,6 +911,8 @@ class Panda_UICommon(ShowBase):
 				if hasattr(card, "targets"): card.targets = []
 	
 	def resolveMove(self, entity, button, selectedSubject, info=None):
+		print("Resolve move", entity, button, selectedSubject)
+		print("Cur status", "subject", self.subject, "UI", self.UI, "selected", self.selectedSubject)
 		game = self.Game
 		if self.UI < 0:
 			pass
@@ -899,7 +925,7 @@ class Panda_UICommon(ShowBase):
 				self.cancelSelection()
 				self.subject, self.target = None, None
 				self.executeGamePlay(lambda: game.switchTurn(), isEndTurn=True)
-			elif entity.ID != game.turn or (hasattr(self, "ID") and entity.ID != self.ID):
+			elif entity.ID != game.turn or (0 < self.ID != entity.ID):
 				print("You can only select your own characters as subject.")
 				self.cancelSelection()
 			else:  #选择的是我方手牌、我方英雄、我方英雄技能、我方场上随从，
@@ -956,6 +982,7 @@ class Panda_UICommon(ShowBase):
 										print("The arrow is ", self.arrow)
 								self.btnBeingDragged = button
 								print("Ready for drag")
+								print(self.btnBeingDragged, button.collNode)
 				
 				#不需目标的英雄技能当即使用。需要目标的进入目标选择界面。暂时不用考虑技能的抉择
 				elif selectedSubject == "Power":

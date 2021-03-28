@@ -44,7 +44,7 @@ handScale = 0.5
 class HandZone:
 	def __init__(self, GUI, ID):
 		self.GUI, self.ID = GUI, ID
-		ownID = 1 if not hasattr(self.GUI, "ID") else self.GUI.ID  #1PGUI has virtual ID of 1
+		ownID = max(1, self.GUI.ID) #GUI_1P has UI = 0
 		self.x, self.y, self.z = 0, HandZone_Y, HandZone1_Z if self.ID == ownID else HandZone2_Z
 		
 	def addaHand(self, card, pos, hpr=Point3(), scale=0.5):
@@ -62,7 +62,7 @@ class HandZone:
 				
 	def removeMultiple(self, btns):
 		for btn in btns:
-			if btn not in self.GUI.backupCardModels[btn.card.type]:
+			if btn.card and btn not in self.GUI.backupCardModels[btn.card.type]:
 				self.GUI.backupCardModels[btn.card.type].append(btn)
 			if btn.card:
 				if btn.card.btn is btn: btn.card.btn = None
@@ -119,7 +119,7 @@ class HeroZone(NodePath):
 		super().__init__("NodePath_HeroZone")
 		self.reparentTo(GUI.render)
 		self.GUI, self.ID = GUI, ID
-		ownID = 1 if not hasattr(self.GUI, "ID") else self.GUI.ID  #1PGUI has virtual ID of 1
+		ownID = max(1, self.GUI.ID) #GUI_1P has UI = 0
 		if self.ID == ownID:
 			self.x, self.y, self.z = HeroZone1_X, HeroZone_Y, HeroZone1_Z
 		else:
@@ -160,6 +160,16 @@ class HeroZone(NodePath):
 				nodePath_Card.setPos(pos)
 				nodePath_Card.setScale(1.2)
 				
+	def removeSecret(self, btn):
+		btn.setPos(BackupModelPos)
+		if btn not in self.GUI.backupCardModels["SecretPlayed"]:
+			self.GUI.backupCardModels["SecretPlayed"].append(btn)
+		if btn.card:
+			if btn.card.btn is btn: btn.card.btn = None
+			btn.card = None
+		try: self.GUI.pickablesDrawn.remove(btn)
+		except: pass
+		
 	def removeHero(self, btn):
 		btn.setPos(BackupModelPos)
 		if btn not in self.GUI.backupCardModels["HeroPlayed"]:
@@ -317,7 +327,7 @@ minionScale = 0.58
 class BoardZone:
 	def __init__(self, GUI, ID):
 		self.GUI, self.ID = GUI, ID
-		ownID = 1 if not hasattr(self.GUI, "ID") else self.GUI.ID  #1PGUI has virtual ID of 1
+		ownID = max(1, self.GUI.ID) #GUI_1P has UI = 0
 		self.x, self.y, self.z = 0, BoardZone_Y, BoardZone1_Z if self.ID == ownID else BoardZone2_Z
 		
 	def addaMinion(self, card, pos):
@@ -369,13 +379,11 @@ class BoardZone:
 		
 	#It takes negligible time to finish calcing pos and actually start drawing
 	def draw(self, blockwhilePlaying=True):
-		#print("Start drawing minion zone", self.ID)
 		game, ownMinions = self.GUI.Game, [minion for minion in self.GUI.Game.minions[self.ID] if minion.onBoard]
 		#Pre-calculated and stored positions for the minions, based on the board location and minion number
 		posMinions = posMinionsTable[self.z][len(ownMinions)]
 		pos_4Existing = {}  #{btn: (pos, hpr)} the pos and hpr for the btn already drawn that still is in hand
 		pos_4New = {}  #{card: (pos, hpr)} the pos and hpr for the card that hasn't been drawn yet
-		print("Draw board zone, minions", ownMinions, [minion.btn for minion in ownMinions])
 		for i, card in enumerate(ownMinions):
 			if card.btn in self.GUI.pickablesDrawn:
 				pos_4Existing[card.btn] = posMinions[i]
@@ -418,6 +426,7 @@ class Board(NodePath):
 		self.attachNewNode(collNode_Board)#.show()
 		
 	def leftClick(self):
+		print("Board is clicked")
 		if -1 < self.GUI.UI < 3:  #不在发现中和动画演示中才会响应
 			self.GUI.resolveMove(None, self, "Board")
 	
@@ -474,7 +483,7 @@ deckScale = 0.5
 class DeckZone:
 	def __init__(self, GUI, ID):
 		self.GUI, self.ID = GUI, ID
-		ownID = 1 if not hasattr(self.GUI, "ID") else self.GUI.ID  #1PGUI has virtual ID of 1
+		ownID = max(1, self.GUI.ID) #GUI_1P has UI = 0
 		self.x, self.y, self.z = 16, HeroZone_Y - 0.2, -2.25 if self.ID == ownID else 4.55
 		self.decksinGame = self.GUI.Game.Hand_Deck.decks
 		self.deckModel = None
@@ -489,6 +498,8 @@ class DeckZone:
 		elif not self.deckModel and deckSize > 0:
 			self.deckModel = self.GUI.loader.loadModel("Models\\CardBack.glb")
 			self.deckModel.reparentTo(self.GUI.render)
+			self.deckModel.setTexture(self.deckModel.findTextureStage('*'),
+									  self.GUI.loader.loadTexture("Models\\CardBack.png"), 1)
 			self.deckModel.setTransparency(True)
 			self.deckModel.setPos(self.x, self.y, self.z)
 			self.deckModel.setScale(0.5, 0.5*min(15, deckSize), 0.5)

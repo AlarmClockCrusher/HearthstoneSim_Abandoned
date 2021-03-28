@@ -7,7 +7,7 @@ import numpy as np
 class TheCoin(Spell):
 	Class, school, name = "Neutral", "", "The Coin"
 	requireTarget, mana = False, 0
-	index = "CORE~Neutral~Spell~0~The Coin~Uncollectible"
+	index = "BASIC~Neutral~Spell~0~~The Coin~Uncollectible"
 	description = "Gain 1 mana crystal for this turn."
 	name_CN = "幸运币"
 	
@@ -20,7 +20,7 @@ class TheCoin(Spell):
 class SilverHandRecruit(Minion):
 	Class, race, name = "Paladin", "", "Silver Hand Recruit"
 	mana, attack, health = 1, 1, 1
-	index = "CORE~Paladin~Minion~1~1~1~~Silver Hand Recruit~Uncollectible"
+	index = "BASIC~Paladin~Minion~1~1~1~~Silver Hand Recruit~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "白银之手新兵"
 
@@ -28,21 +28,21 @@ class SilverHandRecruit(Minion):
 class WickedKnife(Weapon):
 	Class, name, description = "Rogue", "Wicked Knife", ""
 	mana, attack, durability = 1, 1, 2
-	index = "CORE~Rogue~Weapon~1~1~2~Wicked Knife~Uncollectible"
+	index = "BASIC~Rogue~Weapon~1~1~2~Wicked Knife~Uncollectible"
 	name_CN = "邪恶短刀"
 
 
 class PoisonedDagger(Weapon):
 	Class, name, description = "Rogue", "Poisoned Dagger", ""
 	mana, attack, durability = 1, 2, 2
-	index = "CORE~Rogue~Weapon~1~2~2~Poisoned Dagger~Uncollectible"
+	index = "TGT~Rogue~Weapon~1~2~2~Poisoned Dagger~Uncollectible"
 	name_CN = "浸毒匕首"
 
 
 class SearingTotem(Minion):
 	Class, race, name = "Shaman", "Totem", "Searing Totem"
 	mana, attack, health = 1, 1, 1
-	index = "CORE~Shaman~Minion~1~1~1~Totem~Searing Totem~Uncollectible"
+	index = "BASIC~Shaman~Minion~1~1~1~Totem~Searing Totem~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "灼热图腾"
 
@@ -50,7 +50,7 @@ class SearingTotem(Minion):
 class StoneclawTotem(Minion):
 	Class, race, name = "Shaman", "Totem", "Stoneclaw Totem"
 	mana, attack, health = 1, 0, 2
-	index = "CORE~Shaman~Minion~1~0~2~Totem~Stoneclaw Totem~Taunt~Uncollectible"
+	index = "BASIC~Shaman~Minion~1~0~2~Totem~Stoneclaw Totem~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "石爪图腾"
 
@@ -58,7 +58,7 @@ class StoneclawTotem(Minion):
 class HealingTotem(Minion):
 	Class, race, name = "Shaman", "Totem", "Healing Totem"
 	mana, attack, health = 1, 0, 2
-	index = "CORE~Shaman~Minion~1~0~2~Totem~Healing Totem~Uncollectible"
+	index = "BASIC~Shaman~Minion~1~0~2~Totem~Healing Totem~Uncollectible"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, restore 1 health to all friendly minions"
 	name_CN = "治疗图腾"
 	
@@ -87,7 +87,7 @@ class Trig_HealingTotem(TrigBoard):
 class StrengthTotem(Minion):
 	Class, race, name = "Shaman", "Totem", "Strength Totem"
 	mana, attack, health = 1, 0, 2
-	index = "CORE~Shaman~Minion~1~0~2~Totem~Strength Totem~Uncollectible"
+	index = "BASIC~Shaman~Minion~1~0~2~Totem~Strength Totem~Uncollectible"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, give another friendly minion +1 Attack"
 	name_CN = "力量图腾"
 	def __init__(self, Game, ID):
@@ -512,7 +512,7 @@ class Guldan(Hero):
 class IllidariInitiate(Minion):
 	Class, race, name = "Demon Hunter", "", "Illidari Initiate"
 	mana, attack, health = 1, 1, 1
-	index = "CORE~Demon Hunter~Minion~1~1~1~~Illidari Initiate~Rush~Uncollectible"
+	index = "BASIC~Demon Hunter~Minion~1~1~1~~Illidari Initiate~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	name_CN = "伊利达雷 新兵"
 
@@ -520,7 +520,7 @@ class IllidariInitiate(Minion):
 class ExcessMana(Spell):
 	Class, school, name = "Druid", "", "Excess Mana"
 	requireTarget, mana = False, 0
-	index = "CORE~Druid~Spell~0~~Excess Mana~Uncollectible"
+	index = "BASIC~Druid~Spell~0~~Excess Mana~Uncollectible"
 	description = "Draw a card"
 	name_CN = "法力过剩"
 	
@@ -529,10 +529,10 @@ class ExcessMana(Spell):
 		return None
 
 
-class WaterElemental(Minion):
+class WaterElemental_Basic(Minion):
 	Class, race, name = "Mage", "Elemental", "Water Elemental"
 	mana, attack, health = 4, 3, 6
-	index = "CORE~Mage~Minion~4~3~6~Elemental~Water Elemental"
+	index = "BASIC~Mage~Minion~4~3~6~Elemental~Water Elemental"
 	requireTarget, keyWord, description = False, "", "Freeze any character damaged by this minion"
 	name_CN = "水元素"
 	def __init__(self, Game, ID):
@@ -571,11 +571,17 @@ class Pyroblast(Spell):
 		return target
 
 
+class FieryWarAxe_Basic(Weapon):
+	Class, name, description = "Warrior", "Fiery War Axe", ""
+	mana, attack, durability = 3, 3, 2
+	index = "BASIC~Warrior~Weapon~3~3~2~Fiery War Axe"
+	name_CN = "炽炎战斧"
+	
 """EXPERT1 cards"""
 class Bananas(Spell):
 	Class, school, name = "Neutral", "", "Bananas"
 	requireTarget, mana = True, 1
-	index = "EXPERT1~Neutral~Spell~1~Bananas~Uncollectible"
+	index = "EXPERT1~Neutral~Spell~1~~Bananas~Uncollectible"
 	description = "Give a minion +1/+1"
 	name_CN = "香蕉"
 	
@@ -735,7 +741,7 @@ class EmeraldDrake(Minion):
 class LeaderofthePack(Spell):
 	Class, school, name = "Druid", "", "Leader of the Pack"
 	requireTarget, mana = False, 2
-	index = "EXPERT1~Druid~Spell~2~Leader of the Pack~Uncollectible"
+	index = "EXPERT1~Druid~Spell~2~~Leader of the Pack~Uncollectible"
 	description = "Give your minions +1/+1"
 	name_CN = "兽群领袖"
 	
@@ -750,7 +756,7 @@ class LeaderofthePack(Spell):
 class SummonaPanther(Spell):
 	Class, school, name = "Druid", "", "Summon a Panther"
 	requireTarget, mana = False, 2
-	index = "EXPERT1~Druid~Spell~2~Summon a Panther~Uncollectible"
+	index = "EXPERT1~Druid~Spell~2~~Summon a Panther~Uncollectible"
 	description = "Summon a 3/2 Panther"
 	name_CN = "召唤猎豹"
 	
@@ -871,7 +877,7 @@ class Snake(Minion):
 class Huffer(Minion):
 	Class, race, name = "Hunter", "Beast", "Huffer"
 	mana, attack, health = 3, 4, 2
-	index = "EXPERT1~Hunter~Minion~3~4~2~Beast~Huffer~Charge~Uncollectible"
+	index = "BASIC~Hunter~Minion~3~4~2~Beast~Huffer~Charge~Uncollectible"
 	requireTarget, keyWord, description = False, "Charge", "Charge"
 	name_CN = "霍弗"
 
@@ -879,7 +885,7 @@ class Huffer(Minion):
 class Leokk(Minion):
 	Class, race, name = "Hunter", "Beast", "Leokk"
 	mana, attack, health = 3, 2, 4
-	index = "EXPERT1~Hunter~Minion~3~2~4~Beast~Leokk~Uncollectible"
+	index = "BASIC~Hunter~Minion~3~2~4~Beast~Leokk~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack"
 	name_CN = "雷欧克"
 	def __init__(self, Game, ID):
@@ -890,7 +896,7 @@ class Leokk(Minion):
 class Misha(Minion):
 	Class, race, name = "Hunter", "Beast", "Misha"
 	mana, attack, health = 3, 4, 4
-	index = "EXPERT1~Hunter~Minion~3~4~4~Beast~Misha~Taunt~Uncollectible"
+	index = "BASIC~Hunter~Minion~3~4~4~Beast~Misha~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "米莎"
 
@@ -954,7 +960,7 @@ class SpiritWolf(Minion):
 class Frog(Minion):
 	Class, race, name = "Neutral", "Beast", "Frog"
 	mana, attack, health = 0, 0, 1
-	index = "CORE~Neutral~Minion~0~0~1~Beast~Frog~Taunt~Uncollectible"
+	index = "BASIC~Neutral~Minion~0~0~1~Beast~Frog~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "青蛙"
 
@@ -1054,7 +1060,7 @@ class GoldenKobold(Minion):
 class TolinsGoblet(Spell):
 	Class, school, name = "Neutral", "", "Tolin's Goblet"
 	requireTarget, mana = False, 3
-	index = "LOOTAPALOOZA~Neutral~Spell~3~Tolin's Goblet~Uncollectible"
+	index = "LOOTAPALOOZA~Neutral~Spell~3~~Tolin's Goblet~Uncollectible"
 	description = "Draw a card. Fill your hand with copies of it"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1067,7 +1073,7 @@ class TolinsGoblet(Spell):
 class WondrousWand(Spell):
 	Class, school, name = "Neutral", "", "Wondrous Wand"
 	requireTarget, mana = False, 3
-	index = "LOOTAPALOOZA~Neutral~Spell~3~Wondrous Wand~Uncollectible"
+	index = "LOOTAPALOOZA~Neutral~Spell~3~~Wondrous Wand~Uncollectible"
 	description = "Draw 3 cards. Reduce their costs to (0)"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1081,7 +1087,7 @@ class WondrousWand(Spell):
 class ZarogsCrown(Spell):
 	Class, school, name = "Neutral", "", "Zarog's Crown"
 	requireTarget, mana = False, 3
-	index = "LOOTAPALOOZA~Neutral~Spell~3~Zarog's Crown~Uncollectible"
+	index = "LOOTAPALOOZA~Neutral~Spell~3~~Zarog's Crown~Uncollectible"
 	description = "Discover a Legendary minion. Summon two copies of it"
 	poolIdentifier = "Legendary Minions as Druid to Summon"
 	@classmethod
@@ -1118,7 +1124,7 @@ class ZarogsCrown(Spell):
 class Bomb(Spell):
 	Class, school, name = "Neutral", "", "Bomb"
 	requireTarget, mana = False, 5
-	index = "BOOMSDAY~Neutral~Spell~5~Bomb~Casts When Drawn~Uncollectible"
+	index = "BOOMSDAY~Neutral~Spell~5~~Bomb~Casts When Drawn~Uncollectible"
 	description = "Casts When Drawn. Deal 5 damage to your hero"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1309,6 +1315,9 @@ class DraconicLackey(Minion):
 
 Lackeys = [DraconicLackey, EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey]
 
+
+
+
 AcrossPacks_Indices = {"Hero: Demon Hunter": Illidan, "Hero: Druid": Malfurion,
 					"Hero: Hunter": Rexxar, "Hero: Mage": Jaina,
 					"Hero: Paladin": Uther, "Hero: Priest": Anduin,
@@ -1335,17 +1344,23 @@ AcrossPacks_Indices = {"Hero: Demon Hunter": Illidan, "Hero: Druid": Malfurion,
 					"Warrior~Basic Hero Power~2~Armor Up!": ArmorUp,
 					"Warrior~Upgraded Hero Power~2~Tank Up!": TankUp,
 					
-					"CORE~Neutral~Spell~0~The Coin~Uncollectible": TheCoin,
-					"CORE~Paladin~Minion~1~1~1~~Silver Hand Recruit~Uncollectible": SilverHandRecruit,
-					"CORE~Rogue~Weapon~1~1~2~Wicked Knife~Uncollectible": WickedKnife,
-					"CORE~Rogue~Weapon~1~2~2~Poisoned Dagger~Uncollectible": PoisonedDagger,
-					"CORE~Shaman~Minion~1~1~1~Totem~Searing Totem~Uncollectible": SearingTotem,
-					"CORE~Shaman~Minion~1~0~2~Totem~Stoneclaw Totem~Taunt~Uncollectible": StoneclawTotem,
-					"CORE~Shaman~Minion~1~0~2~Totem~Healing Totem~Uncollectible": HealingTotem,
-					"CORE~Shaman~Minion~1~0~2~Totem~Strength Totem~Uncollectible": StrengthTotem,
-					"CORE~Demon Hunter~Minion~1~1~1~~Illidari Initiate~Rush~Uncollectible": IllidariInitiate,
-					"CORE~Druid~Spell~0~~Excess Mana~Uncollectible": ExcessMana,
-					"EXPERT1~Neutral~Spell~1~Bananas~Uncollectible": Bananas,
+					"BASIC~Neutral~Spell~0~~The Coin~Uncollectible": TheCoin,
+					"BASIC~Paladin~Minion~1~1~1~~Silver Hand Recruit~Uncollectible": SilverHandRecruit,
+					"BASIC~Rogue~Weapon~1~1~2~Wicked Knife~Uncollectible": WickedKnife,
+					"TGT~Rogue~Weapon~1~2~2~Poisoned Dagger~Uncollectible": PoisonedDagger,
+					"BASIC~Shaman~Minion~1~1~1~Totem~Searing Totem~Uncollectible": SearingTotem,
+					"BASIC~Shaman~Minion~1~0~2~Totem~Stoneclaw Totem~Taunt~Uncollectible": StoneclawTotem,
+					"BASIC~Shaman~Minion~1~0~2~Totem~Healing Totem~Uncollectible": HealingTotem,
+					"BASIC~Shaman~Minion~1~0~2~Totem~Strength Totem~Uncollectible": StrengthTotem,
+					"BASIC~Demon Hunter~Minion~1~1~1~~Illidari Initiate~Rush~Uncollectible": IllidariInitiate,
+					"BASIC~Druid~Spell~0~~Excess Mana~Uncollectible": ExcessMana,
+					"BASIC~Hunter~Minion~3~4~2~Beast~Huffer~Charge~Uncollectible": Huffer,
+					"BASIC~Hunter~Minion~3~2~4~Beast~Leokk~Uncollectible": Leokk,
+					"BASIC~Hunter~Minion~3~4~4~Beast~Misha~Taunt~Uncollectible": Misha,
+					"BASIC~Mage~Minion~4~3~6~Elemental~Water Elemental": WaterElemental_Basic,
+					"BASIC~Warrior~Weapon~3~3~2~Fiery War Axe": FieryWarAxe_Basic,
+					
+					"EXPERT1~Neutral~Spell~1~~Bananas~Uncollectible": Bananas,
 					"EXPERT1~Neutral~Minion~1~1~1~~Violet Apprentice~Uncollectible": VioletApprentice,
 					"EXPERT1~Neutral~Minion~1~1~1~Dragon~Whelp~Uncollectible": Whelp,
 					"EXPERT1~Neutral~Minion~5~5~5~~Baine Bloodhoof~Legendary~Uncollectible": BaineBloodhoof,
@@ -1354,8 +1369,8 @@ AcrossPacks_Indices = {"Hero: Demon Hunter": Illidan, "Hero: Druid": Malfurion,
 					"EXPERT1~DreamCard~Spell~3~Nature~Ysera Awakens~Uncollectible": YseraAwakens,
 					"EXPERT1~DreamCard~Minion~2~3~5~~Laughing Sister~Uncollectible": LaughingSister,
 					"EXPERT1~DreamCard~Minion~4~7~6~Dragon~Emerald Drake~Uncollectible": EmeraldDrake,
-					"EXPERT1~Druid~Spell~2~Leader of the Pack~Uncollectible": LeaderofthePack,
-					"EXPERT1~Druid~Spell~2~Summon a Panther~Uncollectible": SummonaPanther,
+					"EXPERT1~Druid~Spell~2~~Leader of the Pack~Uncollectible": LeaderofthePack,
+					"EXPERT1~Druid~Spell~2~~Summon a Panther~Uncollectible": SummonaPanther,
 					"EXPERT1~Druid~Minion~2~3~2~Beast~Panther~Uncollectible": Panther,
 					"EXPERT1~Druid~Minion~2~2~2~~Treant~Uncollectible": Treant_Classic,
 					"EXPERT1~Druid~Minion~2~2~2~~Treant~Taunt~Uncollectible": Treant_Classic_Taunt,
@@ -1367,26 +1382,23 @@ AcrossPacks_Indices = {"Hero: Demon Hunter": Illidan, "Hero: Druid": Malfurion,
 					"EXPERT1~Druid~Spell~6~Nature~Rampant Growth~Uncollectible": RampantGrowth,
 					"EXPERT1~Druid~Spell~6~Nature~Enrich~Uncollectible": Enrich,
 					"EXPERT1~Hunter~Minion~1~1~1~Beast~Snake~Uncollectible": Snake,
-					"EXPERT1~Hunter~Minion~3~4~2~Beast~Huffer~Charge~Uncollectible": Huffer,
-					"EXPERT1~Hunter~Minion~3~2~4~Beast~Leokk~Uncollectible": Leokk,
-					"EXPERT1~Hunter~Minion~3~4~4~Beast~Misha~Taunt~Uncollectible": Misha,
 					"EXPERT1~Hunter~Minion~2~2~2~Beast~Hyena~Uncollectible": Hyena_Classic,
 					"EXPERT1~Mage~Minion~1~1~2~~Mana Wyrm": ManaWyrm,
 					"EXPERT1~Mage~Spell~10~Fire~Pyroblast": Pyroblast,
 					"EXPERT1~Paladin~Minion~1~2~1~~Defender~Uncollectible": Defender,
 					"EXPERT1~Paladin~Weapon~5~5~3~Ashbringer~Legendary~Uncollectible": Ashbringer,
 					"EXPERT1~Shaman~Minion~2~2~3~~Spirit Wolf~Taunt~Uncollectible": SpiritWolf,
-					"CORE~Neutral~Minion~0~0~1~Beast~Frog~Taunt~Uncollectible": Frog,
+					"BASIC~Neutral~Minion~0~0~1~Beast~Frog~Taunt~Uncollectible": Frog,
 					"EXPERT1~Warlock~Minion~1~1~1~Demon~Imp~Uncollectible": Imp,
 					"EXPERT1~Warlock~Weapon~3~3~8~Blood Fury~Uncollectible": BloodFury,
 					"EXPERT1~Warlock~Minion~6~6~6~Demon~Infernal~Uncollectible": Infernal,
 					"NAXX~Neutral~Minion~4~4~4~~Nerubian~Uncollectible": Nerubian,
 					"GVG~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible": BoomBot,
 					"LOOTAPALOOZA~Neutral~Minion~3~6~6~~Golden Kobold~Taunt~Battlecry~Legendary~Uncollectible": GoldenKobold,
-					"LOOTAPALOOZA~Neutral~Spell~3~Tolin's Goblet~Uncollectible": TolinsGoblet,
-					"LOOTAPALOOZA~Neutral~Spell~3~Wondrous Wand~Uncollectible": WondrousWand,
-					"LOOTAPALOOZA~Neutral~Spell~3~Zarog's Crown~Uncollectible": ZarogsCrown,
-					"BOOMSDAY~Neutral~Spell~5~Bomb~Casts When Drawn~Uncollectible": Bomb,
+					"LOOTAPALOOZA~Neutral~Spell~3~~Tolin's Goblet~Uncollectible": TolinsGoblet,
+					"LOOTAPALOOZA~Neutral~Spell~3~~Wondrous Wand~Uncollectible": WondrousWand,
+					"LOOTAPALOOZA~Neutral~Spell~3~~Zarog's Crown~Uncollectible": ZarogsCrown,
+					"BOOMSDAY~Neutral~Spell~5~~Bomb~Casts When Drawn~Uncollectible": Bomb,
 					"DALARAN~Neutral~Minion~1~1~1~~Ethereal Lackey~Battlecry~Uncollectible": EtherealLackey,
 					"DALARAN~Neutral~Minion~1~1~1~~Faceless Lackey~Battlecry~Uncollectible": FacelessLackey,
 					"DALARAN~Neutral~Minion~1~1~1~~Goblin Lackey~Battlecry~Uncollectible": GoblinLackey,
@@ -1395,5 +1407,4 @@ AcrossPacks_Indices = {"Hero: Demon Hunter": Illidan, "Hero: Druid": Malfurion,
 					"ULDUM~Neutral~Minion~1~1~1~~Titanic Lackey~Battlecry~Uncollectible": TitanicLackey,
 					"DRAGONS~Neutral~Minion~1~1~1~~Draconic Lackey~Battlecry~Uncollectible": DraconicLackey,
 					}
-
 

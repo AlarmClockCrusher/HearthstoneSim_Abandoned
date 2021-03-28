@@ -111,9 +111,9 @@ class Trig_Battlefiend(TrigBoard):
 		
 		
 class ConsumeMagic(Spell):
-	Class, school, name = "Demon Hunter", "", "Consume Magic"
+	Class, school, name = "Demon Hunter", "Shadow", "Consume Magic"
 	requireTarget, mana = True, 1
-	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~1~Consume Magic~Outcast"
+	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~1~Shadow~Consume Magic~Outcast"
 	description = "Silence an enemy minion. Outcast: Draw a card"
 	name_CN = "吞噬魔法"
 	def available(self):
@@ -134,9 +134,9 @@ class ConsumeMagic(Spell):
 		
 		
 class ManaBurn(Spell):
-	Class, school, name = "Demon Hunter", "", "Mana Burn"
+	Class, school, name = "Demon Hunter", "Fel", "Mana Burn"
 	requireTarget, mana = False, 1
-	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~1~Mana Burn"
+	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~1~Fel~Mana Burn"
 	description = "Your opponent has 2 fewer Mana Crystals next turn"
 	name_CN = "法力燃烧"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -213,9 +213,9 @@ class BladeDance(Spell):
 		
 		
 class FeastofSouls(Spell):
-	Class, school, name = "Demon Hunter", "", "Feast of Souls"
+	Class, school, name = "Demon Hunter", "Shadow", "Feast of Souls"
 	requireTarget, mana = False, 2
-	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~2~Feast of Souls"
+	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~2~Shadow~Feast of Souls"
 	description = "Draw a card for each friendly minion that died this turn"
 	name_CN = "灵魂盛宴"
 	def effCanTrig(self):
@@ -273,9 +273,9 @@ class Trig_AltruistheOutcast(TrigBoard):
 		
 		
 class EyeBeam(Spell):
-	Class, school, name = "Demon Hunter", "", "Eye Beam"
+	Class, school, name = "Demon Hunter", "Fel", "Eye Beam"
 	requireTarget, mana = True, 3
-	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~3~Eye Beam~Outcast"
+	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~3~Fel~Eye Beam~Outcast"
 	description = "Lifesteal. Deal 3 damage to a minion. Outcast: This costs (1)"
 	name_CN = "眼棱"
 	def __init__(self, Game, ID):
@@ -378,9 +378,9 @@ class IllidariFelblade(Minion):
 
 		
 class SoulSplit(Spell):
-	Class, school, name = "Demon Hunter", "", "Soul Split"
+	Class, school, name = "Demon Hunter", "Shadow~", "Soul Split"
 	requireTarget, mana = True, 4
-	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~4~Soul Split"
+	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~4~Shadow~Soul Split"
 	description = "Choose a friendly Demon. Summon a copy of it"
 	name_CN = "灵魂分裂"
 	

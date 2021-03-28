@@ -232,11 +232,11 @@ class SecretTrigger(TrigBoard):
 		for sig in self.signals:
 			try: game.trigsBoard[ID][sig].remove(self)
 			except: pass
-		if self.dummy:
-			self.realSecret.dummyTrigs.remove(self)
-			#game.trigAuras[ID].remove(self)
-		else:
-			game.Hand_Deck.ruleOut(self.entity, fromHD=1) #只从资源中进行移除
+		#if self.dummy:
+		#	self.realSecret.dummyTrigs.remove(self)
+		#	#game.trigAuras[ID].remove(self)
+		#else:
+		#	game.Hand_Deck.ruleOut(self.entity, fromHD=1) #只从资源中进行移除
 			
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return True
@@ -249,23 +249,23 @@ class SecretTrigger(TrigBoard):
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		secret, game = self.entity, self.entity.Game
 		self.disconnect() #Handles removing dummy, too.
-		if self.dummy: #伪扳机能被触发的时候，需要移除可能性
-			#上面已经把这个伪扳机从trigsBoard和trigAuras里面移除了，下面就是把它所用来服务的那个真正的奥秘的可能范围缩小
-			self.realSecret.possi.remove(type(secret))
-			game.Hand_Deck.ruleOut(secret, fromHD=2)
-		else: #如果这个扳机是真奥秘的扳机时，它触发时需要把其从对方的资源中移除
-			try: game.Secrets.secrets[secret.ID].remove(secret)
-			except: pass
-			if game.status[secret.ID]["Secrets x2"] > 0:
-				if self.canTrig(signal, ID, subject, target, number, comment):
-					if game.GUI: game.GUI.secretTrigAni(secret)
-					self.effect(signal, ID, subject, target, number, comment)
+		#if self.dummy: #伪扳机能被触发的时候，需要移除可能性
+		#	#上面已经把这个伪扳机从trigsBoard和trigAuras里面移除了，下面就是把它所用来服务的那个真正的奥秘的可能范围缩小
+		#	self.realSecret.possi.remove(type(secret))
+		#	game.Hand_Deck.ruleOut(secret, fromHD=2)
+		#else: #如果这个扳机是真奥秘的扳机时，它触发时需要把其从对方的资源中移除
+		try: game.Secrets.secrets[secret.ID].remove(secret)
+		except: pass
+		if game.status[secret.ID]["Secrets x2"] > 0:
 			if self.canTrig(signal, ID, subject, target, number, comment):
 				if game.GUI: game.GUI.secretTrigAni(secret)
 				self.effect(signal, ID, subject, target, number, comment)
-			game.sendSignal("SecretRevealed", game.turn, secret, None, 0, "")
-			game.Counters.numSecretsTriggeredThisGame[secret.ID] += 1
-			#secret.realSecretReveal()
+		if self.canTrig(signal, ID, subject, target, number, comment):
+			if game.GUI: game.GUI.secretTrigAni(secret)
+			self.effect(signal, ID, subject, target, number, comment)
+		game.sendSignal("SecretRevealed", game.turn, secret, None, 0, "")
+		game.Counters.numSecretsTriggeredThisGame[secret.ID] += 1
+		#secret.realSecretReveal()
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		pass

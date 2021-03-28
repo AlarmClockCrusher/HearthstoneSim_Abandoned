@@ -5,8 +5,7 @@ from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
 
-from AcrossPacks import WaterElemental
-from Core_2021 import FieryWarAxe, ExcessMana
+from AcrossPacks import ExcessMana, WaterElemental_Basic, FieryWarAxe_Basic
 
 """Ashes of Outlands"""
 #休眠的随从在打出之后2回合本来时会触发你“召唤一张随从”
@@ -948,9 +947,9 @@ class FuriousFelfin(Minion):
 		
 		
 class ImmolationAura(Spell):
-	Class, school, name = "Demon Hunter", "", "Immolation Aura"
+	Class, school, name = "Demon Hunter", "Fel", "Immolation Aura"
 	requireTarget, mana = False, 2
-	index = "BLACK_TEMPLE~Demon Hunter~Spell~2~Immolation Aura"
+	index = "BLACK_TEMPLE~Demon Hunter~Spell~2~Fel~Immolation Aura"
 	description = "Deal 1 damage to all minions twice"
 	name_CN = "献祭光环"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1052,9 +1051,9 @@ class GameRuleAura_KaynSunfury(GameRuleAura):
 		
 		
 class Metamorphosis(Spell):
-	Class, school, name = "Demon Hunter", "", "Metamorphosis"
+	Class, school, name = "Demon Hunter", "Fel", "Metamorphosis"
 	requireTarget, mana = False, 5
-	index = "BLACK_TEMPLE~Demon Hunter~Spell~5~Metamorphosis~Legendary"
+	index = "BLACK_TEMPLE~Demon Hunter~Spell~5~Fel~Metamorphosis~Legendary"
 	description = "Swap your Hero Power to 'Deal 4 damage'. After 2 uses, swap it back"
 	name_CN = "恶魔变形"
 	#不知道是否只是对使用两次英雄技能计数，而不一定要是那个特定的英雄技能
@@ -1161,7 +1160,7 @@ class ImprisonedAntaen(Minion_Dormantfor2turns):
 class SkullofGuldan(Spell):
 	Class, school, name = "Demon Hunter", "", "Skull of Gul'dan"
 	requireTarget, mana = False, 6
-	index = "BLACK_TEMPLE~Demon Hunter~Spell~6~Skull of Gul'dan~Outcast"
+	index = "BLACK_TEMPLE~Demon Hunter~Spell~6~~Skull of Gul'dan~Outcast"
 	description = "Draw 3 cards. Outscast: Reduce their Cost by (3)"
 	name_CN = "古尔丹之颅"
 	def effCanTrig(self):
@@ -1277,9 +1276,9 @@ class Trig_PitCommander(TrigBoard):
 			
 """Druid cards"""
 class FungalFortunes(Spell):
-	Class, school, name = "Druid", "", "Fungal Fortunes"
+	Class, school, name = "Druid", "Nature", "Fungal Fortunes"
 	requireTarget, mana = False, 3
-	index = "BLACK_TEMPLE~Druid~Spell~3~Fungal Fortunes"
+	index = "BLACK_TEMPLE~Druid~Spell~3~Nature~Fungal Fortunes"
 	description = "Draw 3 cards. Discard any minions drawn"
 	name_CN = "真菌宝藏"
 	#The minions will be discarded immediately before drawing the next card.
@@ -1296,9 +1295,9 @@ class FungalFortunes(Spell):
 		
 		
 class Ironbark(Spell):
-	Class, school, name = "Druid", "", "Ironbark"
+	Class, school, name = "Druid", "Nature", "Ironbark"
 	requireTarget, mana = True, 2
-	index = "BLACK_TEMPLE~Druid~Spell~2~Ironbark"
+	index = "BLACK_TEMPLE~Druid~Spell~2~Nature~Ironbark"
 	description = "Give a minion +1/+3 and Taunt. Costs (0) if you have at least 7 Mana Crystals"
 	name_CN = "铁木树皮"
 	def __init__(self, Game, ID):
@@ -1475,9 +1474,9 @@ class ImprisonedSatyr(Minion_Dormantfor2turns):
 				
 				
 class Germination(Spell):
-	Class, school, name = "Druid", "", "Germination"
+	Class, school, name = "Druid", "Nature", "Germination"
 	requireTarget, mana = True, 4
-	index = "BLACK_TEMPLE~Druid~Spell~4~Germination"
+	index = "BLACK_TEMPLE~Druid~Spell~4~Nature~Germination"
 	description = "Summon a copy of a friendly minion. Give the copy Taunt"
 	name_CN = "萌芽分裂"
 	def available(self):
@@ -1495,9 +1494,9 @@ class Germination(Spell):
 		
 		
 class Overgrowth(Spell):
-	Class, school, name = "Druid", "", "Overgrowth"
+	Class, school, name = "Druid", "Nature", "Overgrowth"
 	requireTarget, mana = False, 4
-	index = "BLACK_TEMPLE~Druid~Spell~4~Overgrowth"
+	index = "BLACK_TEMPLE~Druid~Spell~4~Nature~Overgrowth"
 	description = "Gain two empty Mana Crystals"
 	name_CN = "过度生长"
 	#不知道满费用和9费时如何结算,假设不会给抽牌的衍生物
@@ -1641,7 +1640,7 @@ class ImprisonedFelmaw(Minion_Dormantfor2turns):
 class PackTactics(Secret):
 	Class, school, name = "Hunter", "", "Pack Tactics"
 	requireTarget, mana = False, 2
-	index = "BLACK_TEMPLE~Hunter~Spell~2~Pack Tactics~~Secret"
+	index = "BLACK_TEMPLE~Hunter~Spell~2~~Pack Tactics~~Secret"
 	description = "Secret: When a friendly minion is attacked, summon a 3/3 copy"
 	name_CN = "集群战术"
 	def __init__(self, Game, ID):
@@ -1867,9 +1866,9 @@ class Clefthoof(Minion):
 	
 """Mage cards"""
 class Evocation(Spell):
-	Class, school, name = "Mage", "", "Evocation"
+	Class, school, name = "Mage", "Arcane", "Evocation"
 	requireTarget, mana = False, 2
-	index = "BLACK_TEMPLE~Mage~Spell~2~Evocation~Legendary"
+	index = "BLACK_TEMPLE~Mage~Spell~2~Arcane~Evocation~Legendary"
 	description = "Fill your hand with random Mage spells. At the end of your turn, discard them"
 	name_CN = "唤醒"
 	poolIdentifier = "Mage Spells"
@@ -1912,9 +1911,9 @@ class Trig_Evocation(TrigHand):
 		
 		
 class FontofPower(Spell):
-	Class, school, name = "Mage", "", "Font of Power"
+	Class, school, name = "Mage", "Arcane", "Font of Power"
 	requireTarget, mana = False, 1
-	index = "BLACK_TEMPLE~Mage~Spell~1~Font of Power"
+	index = "BLACK_TEMPLE~Mage~Spell~1~Arcane~Font of Power"
 	description = "Discover a Mage minion. If your deck has no minions, keep all 3"
 	name_CN = "能量之泉"
 	poolIdentifier = "Mage Minions"
@@ -2044,9 +2043,9 @@ class SolarianPrime(Minion):
 		
 		
 class IncantersFlow(Spell):
-	Class, school, name = "Mage", "", "Incanter's Flow"
+	Class, school, name = "Mage", "Arcane", "Incanter's Flow"
 	requireTarget, mana = False, 2
-	index = "BLACK_TEMPLE~Mage~Spell~2~Incanter's Flow"
+	index = "BLACK_TEMPLE~Mage~Spell~2~Arcane~Incanter's Flow"
 	description = "Reduce the Cost of spells in your deck by (1)"
 	name_CN = "咒术洪流"
 	
@@ -2096,9 +2095,9 @@ class ImprisonedObserver(Minion_Dormantfor2turns):
 		
 		
 class NetherwindPortal(Secret):
-	Class, school, name = "Mage", "", "Netherwind Portal"
+	Class, school, name = "Mage", "Arcane", "Netherwind Portal"
 	requireTarget, mana = False, 3
-	index = "BLACK_TEMPLE~Mage~Spell~3~Netherwind Portal~~Secret"
+	index = "BLACK_TEMPLE~Mage~Spell~3~Arcane~Netherwind Portal~~Secret"
 	description = "Secret: After your opponent casts a spell, summon a random 4-Cost minion"
 	name_CN = "虚空之风 传送门"
 	poolIdentifier = "4-Cost Minions to Summon"
@@ -2164,9 +2163,9 @@ class ApexisBlast(Spell):
 		
 		
 class DeepFreeze(Spell):
-	Class, school, name = "Mage", "", "Deep Freeze"
+	Class, school, name = "Mage", "Frost", "Deep Freeze"
 	requireTarget, mana = True, 8
-	index = "BLACK_TEMPLE~Mage~Spell~8~Deep Freeze"
+	index = "BLACK_TEMPLE~Mage~Spell~8~FrostDeep Freeze"
 	description = "Freeze an enemy. Summon two 3/6 Water Elementals"
 	name_CN = "深度冻结"
 	def available(self):
@@ -2178,7 +2177,7 @@ class DeepFreeze(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			target.getsFrozen()
-		self.Game.summon([WaterElemental(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
+		self.Game.summon([WaterElemental_Basic(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
 		return target
 		
 """Paladin cards"""
@@ -2270,9 +2269,9 @@ class AldorAttendant(Minion):
 		
 		
 class HandofAdal(Spell):
-	Class, school, name = "Paladin", "",  "Hand of A'dal"
+	Class, school, name = "Paladin", "Holy",  "Hand of A'dal"
 	requireTarget, mana = True, 2
-	index = "BLACK_TEMPLE~Paladin~Spell~2~Hand of A'dal"
+	index = "BLACK_TEMPLE~Paladin~Spell~2~Holy~Hand of A'dal"
 	description = "Give a minion +2/+2. Draw a card"
 	name_CN = "阿达尔之手"
 	def targetExists(self, choice=0):
@@ -2408,9 +2407,9 @@ class AldorTruthseeker(Minion):
 		
 		
 class LibramofJustice(Spell):
-	Class, school, name = "Paladin", "",  "Libram of Justice"
+	Class, school, name = "Paladin", "Holy",  "Libram of Justice"
 	requireTarget, mana = False, 5
-	index = "BLACK_TEMPLE~Paladin~Spell~5~Libram of Justice"
+	index = "BLACK_TEMPLE~Paladin~Spell~5~HolyLibram of Justice"
 	description = "Equip a 1/4 weapon. Change the Health of all enemy minions to 1"
 	name_CN = "正义圣契"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2446,9 +2445,9 @@ class LadyLiadrin(Minion):
 		
 		
 class LibramofHope(Spell):
-	Class, school, name = "Paladin", "", "Libram of Hope"
+	Class, school, name = "Paladin", "Holy", "Libram of Hope"
 	requireTarget, mana = True, 9
-	index = "BLACK_TEMPLE~Paladin~Spell~9~Libram of Hope"
+	index = "BLACK_TEMPLE~Paladin~Spell~9~Holy~Libram of Hope"
 	description = "Restore 8 Health. Summon an 8/8 with Guardian with Taunt and Divine Shield"
 	name_CN = "希望圣契"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2596,9 +2595,9 @@ class Trig_SethekkVeilweaver(TrigBoard):
 			
 			
 class Apotheosis(Spell):
-	Class, school, name = "Priest", "", "Apotheosis"
+	Class, school, name = "Priest", "Holy", "Apotheosis"
 	requireTarget, mana = True, 3
-	index = "BLACK_TEMPLE~Priest~Spell~3~Apotheosis"
+	index = "BLACK_TEMPLE~Priest~Spell~3~Holy~Apotheosis"
 	description = "Give a minion +2/+3 and Lifesteal"
 	name_CN = "神圣化身"
 	def available(self):
@@ -2652,9 +2651,9 @@ class Trig_DragonmawOverseer(TrigBoard):
 				
 				
 class PsycheSplit(Spell):
-	Class, school, name = "Priest", "", "Psyche Split"
+	Class, school, name = "Priest", "Shadow", "Psyche Split"
 	requireTarget, mana = True, 5
-	index = "BLACK_TEMPLE~Priest~Spell~5~Psyche Split"
+	index = "BLACK_TEMPLE~Priest~Spell~5~Shadow~Psyche Split"
 	description = "Give a minion +1/+2. Summon a copy of it"
 	name_CN = "心灵分裂"
 	def available(self):
@@ -2710,9 +2709,9 @@ class Trig_SkeletalDragon(TrigBoard):
 			
 			
 class SoulMirror(Spell):
-	Class, school, name = "Priest", "", "Soul Mirror"
+	Class, school, name = "Priest", "Shadow", "Soul Mirror"
 	requireTarget, mana = False, 7
-	index = "BLACK_TEMPLE~Priest~Spell~7~Soul Mirror~Legendary"
+	index = "BLACK_TEMPLE~Priest~Spell~7~Shadow~Soul Mirror~Legendary"
 	description = "Summon copies of enemy minions. They attack their copies"
 	name_CN = "灵魂之镜"
 	
@@ -2771,7 +2770,7 @@ class Spymistress(Minion):
 class Ambush(Secret):
 	Class, school, name = "Rogue", "", "Ambush"
 	requireTarget, mana = False, 2
-	index = "BLACK_TEMPLE~Rogue~Spell~2~Ambush~~Secret"
+	index = "BLACK_TEMPLE~Rogue~Spell~2~~Ambush~~Secret"
 	description = "Secret: After your opponent plays a minion, summon a 2/3 Ambusher with Poisonous"
 	name_CN = "伏击"
 	def __init__(self, Game, ID):
@@ -2818,7 +2817,7 @@ class AshtongueSlayer(Minion):
 class Bamboozle(Secret):
 	Class, school, name = "Rogue", "", "Bamboozle"
 	requireTarget, mana = False, 2
-	index = "BLACK_TEMPLE~Rogue~Spell~2~Bamboozle~~Secret"
+	index = "BLACK_TEMPLE~Rogue~Spell~2~~Bamboozle~~Secret"
 	description = "Secret: When one of your minions is attacked, transform it into a random one that costs (3) more"
 	name_CN = "偷天换日"
 	poolIdentifier = "3-Cost Minions to Summon"
@@ -2859,7 +2858,7 @@ class Trig_Bamboozle(SecretTrigger):
 class DirtyTricks(Secret):
 	Class, school, name = "Rogue", "", "Dirty Tricks"
 	requireTarget, mana = False, 2
-	index = "BLACK_TEMPLE~Rogue~Spell~2~Dirty Tricks~~Secret"
+	index = "BLACK_TEMPLE~Rogue~Spell~2~~Dirty Tricks~~Secret"
 	description = "Secret: After your opponent casts a spell, draw 2 cards"
 	name_CN = "邪恶计谋"
 	def __init__(self, Game, ID):
@@ -3138,9 +3137,9 @@ class Marshspawn(Minion):
 		
 		
 class SerpentshrinePortal(Spell):
-	Class, school, name = "Shaman", "", "Serpentshrine Portal"
+	Class, school, name = "Shaman", "Nature", "Serpentshrine Portal"
 	requireTarget, mana = True, 3
-	index = "BLACK_TEMPLE~Shaman~Spell~3~Serpentshrine Portal~Overload"
+	index = "BLACK_TEMPLE~Shaman~Spell~3~Nature~Serpentshrine Portal~Overload"
 	description = "Deal 3 damage. Summon a random 3-Cost minion. Overload: (1)"
 	name_CN = "毒蛇神殿 传送门"
 	poolIdentifier = "3-Cost Minions to Summon"
@@ -3189,9 +3188,9 @@ class TotemicReflection(Spell):
 		
 		
 class Torrent(Spell):
-	Class, school, name = "Shaman", "", "Torrent"
+	Class, school, name = "Shaman", "Nature", "Torrent"
 	requireTarget, mana = True, 4
-	index = "BLACK_TEMPLE~Shaman~Spell~4~Torrent"
+	index = "BLACK_TEMPLE~Shaman~Spell~4~Nature~Torrent"
 	description = "Deal 8 damage to a minion. Costs (3) less if you cast a spell last turn"
 	name_CN = "洪流"
 	def available(self):
@@ -3216,9 +3215,9 @@ class Torrent(Spell):
 		
 		
 class VividSpores(Spell):
-	Class, school, name = "Shaman", "", "Vivid Spores"
+	Class, school, name = "Shaman", "Nature", "Vivid Spores"
 	requireTarget, mana = False, 4
-	index = "BLACK_TEMPLE~Shaman~Spell~4~Vivid Spores"
+	index = "BLACK_TEMPLE~Shaman~Spell~4~Nature~Vivid Spores"
 	description = "Give your minions 'Deathrattle: Resummon this minion'"
 	name_CN = "鲜活孢子"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3344,9 +3343,9 @@ class TheLurkerBelow(Minion):
 		
 """Warlock cards"""
 class ShadowCouncil(Spell):
-	Class, school, name = "Warlock", "", "Shadow Council"
+	Class, school, name = "Warlock", "Fel", "Shadow Council"
 	requireTarget, mana = False, 1
-	index = "BLACK_TEMPLE~Warlock~Spell~1~Shadow Council"
+	index = "BLACK_TEMPLE~Warlock~Spell~1~Fel~Shadow Council"
 	description = "Replace your hand with random Demons. Give them +2/+2"
 	name_CN = "暗影议会"
 	poolIdentifier = "Demons"
@@ -3372,9 +3371,9 @@ class ShadowCouncil(Spell):
 		
 		
 class UnstableFelbolt(Spell):
-	Class, school, name = "Warlock", "", "Unstable Felbolt"
+	Class, school, name = "Warlock", "Fel", "Unstable Felbolt"
 	requireTarget, mana = True, 1
-	index = "BLACK_TEMPLE~Warlock~Spell~1~Unstable Felbolt"
+	index = "BLACK_TEMPLE~Warlock~Spell~1~Fel~Unstable Felbolt"
 	description = "Deal 3 damage to an enemy minion and a random friendly one"
 	name_CN = "不稳定的 邪能箭"
 	def available(self):
@@ -3510,9 +3509,9 @@ class NightshadeMatron(Minion):
 		
 		
 class TheDarkPortal(Spell):
-	Class, school, name = "Warlock", "", "The Dark Portal"
+	Class, school, name = "Warlock", "Fel", "The Dark Portal"
 	requireTarget, mana = False, 4
-	index = "BLACK_TEMPLE~Warlock~Spell~4~The Dark Portal"
+	index = "BLACK_TEMPLE~Warlock~Spell~4~Fel~The Dark Portal"
 	description = "Draw a minion. If you have at least 8 cards in hand, it costs (5) less"
 	name_CN = "黑暗之门"
 	def effCanTrig(self):
@@ -3535,9 +3534,9 @@ class TheDarkPortal(Spell):
 		
 		
 class HandofGuldan(Spell):
-	Class, school, name = "Warlock", "", "Hand of Gul'dan"
+	Class, school, name = "Warlock", "Shadow", "Hand of Gul'dan"
 	requireTarget, mana = False, 6
-	index = "BLACK_TEMPLE~Warlock~Spell~6~Hand of Gul'dan"
+	index = "BLACK_TEMPLE~Warlock~Spell~6~Shadow~Hand of Gul'dan"
 	description = "When you play or discard this, draw 3 cards"
 	name_CN = "古尔丹之手"
 	def __init__(self, Game, ID):
@@ -3636,7 +3635,7 @@ class ImprisonedGanarg(Minion_Dormantfor2turns):
 	name_CN = "被禁锢的 甘尔葛"
 	
 	def awakenEffect(self):
-		self.Game.equipWeapon(FieryWarAxe(self.Game, self.ID))
+		self.Game.equipWeapon(FieryWarAxe_Basic(self.Game, self.ID))
 		
 		
 class SwordandBoard(Spell):

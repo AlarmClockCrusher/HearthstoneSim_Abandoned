@@ -73,9 +73,9 @@ class HorrendousGrowth(Minion):
 	name_CN = "恐怖增生体"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
-		self.trigsHand = [Trig_Corrupt(self, HorrendousGrowthCorrupt_Mutable_3)] #只有在手牌中才会升级
+		self.trigsHand = [Trig_Corrupt(self, HorrendousGrowthCorrupt)] #只有在手牌中才会升级
 		
-class HorrendousGrowthCorrupt_Mutable_3(Minion):
+class HorrendousGrowthCorrupt(Minion):
 	Class, race, name = "Neutral", "", "Horrendous Growth"
 	mana, attack, health = 2, 3, 3
 	index = "DARKMOON_FAIRE~Neutral~Minion~2~3~3~~Horrendous Growth~ToCorrupt~Corrupted~Uncollectible"
@@ -96,7 +96,7 @@ class Trig_EndlessCorrupt(TrigHand):
 		card = self.entity
 		stat = int(type(card).__name__.split('_')[-1]) + 1
 		newIndex = "DARKMOON_FAIRE~Neutral~2~%d~%d~Minion~~Horrendous Growth~Corrupted~Uncollectible"%(stat, stat)
-		subclass = type("HorrendousGrowthCorrupt_Mutable_"+str(stat), (HorrendousGrowthCorrupt_Mutable_3, ),
+		subclass = type("HorrendousGrowthCorrupt__"+str(stat), (HorrendousGrowthCorrupt, ),
 						{"attack": stat, "health": stat, "index": newIndex}
 						)
 		card.Game.cardPool[newIndex] = subclass
@@ -1140,9 +1140,9 @@ class ManaMod_Cost0ThisTurn:
 		
 """Demon Hunter cards"""
 class FelscreamBlast(Spell):
-	Class, school, name = "Demon Hunter", "", "Felscream Blast"
+	Class, school, name = "Demon Hunter", "Fel", "Felscream Blast"
 	requireTarget, mana = True, 1
-	index = "DARKMOON_FAIRE~Demon Hunter~Spell~1~~Felscream Blast~Lifesteal"
+	index = "DARKMOON_FAIRE~Demon Hunter~Spell~1~Fel~Felscream Blast~Lifesteal"
 	description = "Lifesteal. Deal 1 damage to a minion and its neighbors"
 	name_CN = "邪吼冲击"
 	def __init__(self, Game, ID):
@@ -1891,9 +1891,9 @@ class Trig_UmbralOwl(TrigHand):
 		
 		
 class CenarionWard(Spell):
-	Class, school, name = "Druid", "", "Cenarion Ward"
+	Class, school, name = "Druid", "Nature", "Cenarion Ward"
 	requireTarget, mana = False, 8
-	index = "DARKMOON_FAIRE~Druid~Spell~8~~Cenarion Ward"
+	index = "DARKMOON_FAIRE~Druid~Spell~8~Nature~Cenarion Ward"
 	description = "Gain 8 Armor. Summon a random 8-Cost minion"
 	name_CN = "塞纳里奥结界"
 	poolIdentifier = "8-Cost Minions to Summon"
@@ -2529,9 +2529,9 @@ class MaskofCThun(Spell):
 		
 		
 class GrandFinale(Spell):
-	Class, school, name = "Mage", "", "Grand Finale"
+	Class, school, name = "Mage", "Fire", "Grand Finale"
 	requireTarget, mana = False, 8
-	index = "DARKMOON_FAIRE~Mage~Spell~8~~Grand Finale"
+	index = "DARKMOON_FAIRE~Mage~Spell~8~Fire~Grand Finale"
 	description = "Summon an 8/8 Elemental. Repeat for each Elemental you played last turn"
 	name_CN = "华丽谢幕"
 	def effCanTrig(self):
@@ -2553,9 +2553,9 @@ class ExplodingSparkler(Minion):
 	
 """Paladin cards"""
 class OhMyYogg(Secret):
-	Class, school, name = "Paladin", "", "Oh My Yogg!"
+	Class, school, name = "Paladin", "Shadow", "Oh My Yogg!"
 	requireTarget, mana = False, 1
-	index = "DARKMOON_FAIRE~Paladin~Spell~1~~Oh My Yogg!~~Secret"
+	index = "DARKMOON_FAIRE~Paladin~Spell~1~Shadow~Oh My Yogg!~~Secret"
 	description = "Secret: When your opponent casts a spell, they instead cast a random one of the same Cost"
 	name_CN = "古神在上"
 	poolIdentifier = "0-Cost Spells"
@@ -2833,9 +2833,9 @@ class HighExarchYrel(Minion):
 		
 """Priest cards"""
 class Insight(Spell):
-	Class, school, name = "Priest", "", "Insight"
+	Class, school, name = "Priest", "Shadow", "Insight"
 	requireTarget, mana = False, 2
-	index = "DARKMOON_FAIRE~Priest~Spell~2~~Insight~ToCorrupt"
+	index = "DARKMOON_FAIRE~Priest~Spell~2~Shadow~Insight~ToCorrupt"
 	description = "Draw a minion. Corrupt: Reduce its Cost by (2)"
 	name_CN = "洞察"
 	def __init__(self, Game, ID):
@@ -2855,9 +2855,9 @@ class Insight(Spell):
 		return None
 		
 class Insight_Corrupt(Spell):
-	Class, school, name = "Priest", "", "Insight"
+	Class, school, name = "Priest", "Shadow", "Insight"
 	requireTarget, mana = False, 2
-	index = "DARKMOON_FAIRE~Priest~Spell~2~~Insight~Corrupted~Uncollectible"
+	index = "DARKMOON_FAIRE~Priest~Spell~2~Shadow~Insight~Corrupted~Uncollectible"
 	description = "Corrupted. Draw a minion. Reduce its Cost by (2)"
 	name_CN = "洞察"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2928,9 +2928,9 @@ class Trig_NazmaniBloodweaver(TrigBoard):
 				
 				
 class PalmReading(Spell):
-	Class, school, name = "Priest", "", "Palm Reading"
+	Class, school, name = "Priest", "Shadow", "Palm Reading"
 	requireTarget, mana = False, 3
-	index = "DARKMOON_FAIRE~Priest~Spell~3~~Palm Reading"
+	index = "DARKMOON_FAIRE~Priest~Spell~3~Shadow~Palm Reading"
 	description = "Discover a spell. Reduce the Cost of spells in your hand by (1)"
 	name_CN = "解读手相"
 	poolIdentifier = "Priest Spells"
@@ -2965,9 +2965,9 @@ class PalmReading(Spell):
 		
 		
 class AuspiciousSpirits(Spell):
-	Class, school, name = "Priest", "", "Auspicious Spirits"
+	Class, school, name = "Priest", "Shadow", "Auspicious Spirits"
 	requireTarget, mana = False, 4
-	index = "DARKMOON_FAIRE~Priest~Spell~4~~Auspicious Spirits~ToCorrupt"
+	index = "DARKMOON_FAIRE~Priest~Spell~4~Shadow~Auspicious Spirits~ToCorrupt"
 	description = "Summon a random 4-Cost minion. Corrupt: Summon a 7-Cost minion instead"
 	name_CN = "吉兆"
 	poolIdentifier = "4-Cost Minions to Summon"
@@ -2991,9 +2991,9 @@ class AuspiciousSpirits(Spell):
 		return None
 		
 class AuspiciousSpirits_Corrupt(Spell):
-	Class, school, name = "Priest", "", "Auspicious Spirits"
+	Class, school, name = "Priest", "Shadow", "Auspicious Spirits"
 	requireTarget, mana = False, 4
-	index = "DARKMOON_FAIRE~Priest~Spell~4~~Auspicious Spirits~Corrupted~Uncollectible"
+	index = "DARKMOON_FAIRE~Priest~Spell~4~Shadow~Auspicious Spirits~Corrupted~Uncollectible"
 	description = "Corrupted. Summon a 7-Cost minion"
 	name_CN = "吉兆"
 	poolIdentifier = "7-Cost Minions to Summon"
@@ -3167,9 +3167,9 @@ class GameManaAura_InTurnNextCombo2Less(TempManaEffect):
 		
 		
 class ShadowClone(Secret):
-	Class, school, name = "Rogue", "", "Shadow Clone"
+	Class, school, name = "Rogue", "Shadow", "Shadow Clone"
 	requireTarget, mana = False, 2
-	index = "DARKMOON_FAIRE~Rogue~Spell~2~~Shadow Clone~~Secret"
+	index = "DARKMOON_FAIRE~Rogue~Spell~2~Shadow~Shadow Clone~~Secret"
 	description = "Secret: After a minion attacks your hero, summon a copy of it with Stealth"
 	name_CN = "暗影克隆"
 	def __init__(self, Game, ID):
@@ -3288,9 +3288,9 @@ class ManaMod_Cost1LessThisTurn:
 		
 		
 class CloakofShadows(Spell):
-	Class, school, name = "Rogue", "", "Cloak of Shadows"
+	Class, school, name = "Rogue", "Shadow", "Cloak of Shadows"
 	requireTarget, mana = False, 3
-	index = "DARKMOON_FAIRE~Rogue~Spell~3~~Cloak of Shadows"
+	index = "DARKMOON_FAIRE~Rogue~Spell~3~Shadow~Cloak of Shadows"
 	description = "Give your hero Stealth for 1 turn"
 	name_CN = "暗影斗篷"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3589,9 +3589,9 @@ class PitMaster_Corrupt(Minion):
 		
 		
 class Stormstrike(Spell):
-	Class, school, name = "Shaman", "", "Stormstrike"
+	Class, school, name = "Shaman", "Nature", "Stormstrike"
 	requireTarget, mana = True, 3
-	index = "DARKMOON_FAIRE~Shaman~Spell~3~~Stormstrike"
+	index = "DARKMOON_FAIRE~Shaman~Spell~3~Nature~Stormstrike"
 	description = "Deal 3 damage to a minion. Give your hero +3 Attack this turn"
 	name_CN = "风暴打击"
 	def available(self):
@@ -3641,9 +3641,9 @@ class Trig_WhackAGnollHammer(TrigBoard):
 			
 			
 class DunkTank(Spell):
-	Class, school, name = "Shaman", "", "Dunk Tank"
+	Class, school, name = "Shaman", "Nature", "Dunk Tank"
 	requireTarget, mana = True, 4
-	index = "DARKMOON_FAIRE~Shaman~Spell~4~~Dunk Tank~ToCorrupt"
+	index = "DARKMOON_FAIRE~Shaman~Spell~4~Nature~Dunk Tank~ToCorrupt"
 	description = "Deal 4 damage. Corrupt: Then deal 2 damage to all enemy minions"
 	name_CN = "深水炸弹"
 	def __init__(self, Game, ID):
@@ -3657,9 +3657,9 @@ class DunkTank(Spell):
 		return target
 		
 class DunkTank_Corrupt(Spell):
-	Class, school, name = "Shaman", "", "Dunk Tank"
+	Class, school, name = "Shaman", "Nature", "Dunk Tank"
 	requireTarget, mana = True, 4
-	index = "DARKMOON_FAIRE~Shaman~Spell~4~~Dunk Tank~Corrupted~Uncollectible"
+	index = "DARKMOON_FAIRE~Shaman~Spell~4~Nature~Dunk Tank~Corrupted~Uncollectible"
 	description = "Corrupted. Deal 4 damage. Then deal 2 damage to all enemy minions"
 	name_CN = "深水炸弹"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3749,9 +3749,9 @@ class HasAura_InaraStormcrash:
 			
 """Warlock cards"""
 class WickedWhispers(Spell):
-	Class, school, name = "Warlock", "", "Wicked Whispers"
+	Class, school, name = "Warlock", "Shadow", "Wicked Whispers"
 	requireTarget, mana = False, 1
-	index = "DARKMOON_FAIRE~Warlock~Spell~1~~Wicked Whispers"
+	index = "DARKMOON_FAIRE~Warlock~Spell~1~Shadow~Wicked Whispers"
 	description = "Discard your lowest Cost card. Give your minions +1/+1"
 	name_CN = "邪恶低语"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3971,9 +3971,9 @@ class FireBreather(Minion):
 		
 		
 class DeckofChaos(Spell):
-	Class, school, name = "Warlock", "", "Deck of Chaos"
+	Class, school, name = "Warlock", "Shadow", "Deck of Chaos"
 	requireTarget, mana = False, 6
-	index = "DARKMOON_FAIRE~Warlock~Spell~6~~Deck of Chaos~Legendary"
+	index = "DARKMOON_FAIRE~Warlock~Spell~6~Shadow~Deck of Chaos~Legendary"
 	description = "Swap the Cost and Attack of all minions in your deck"
 	name_CN = "混乱套牌"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4397,18 +4397,13 @@ class Trig_RunawayBlackwing(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
-			enemy = None
 			if curGame.guides:
-				i, where = curGame.guides.pop(0)
-				if where: enemy = curGame.find(i, where)
+				i = curGame.guides.pop(0)
 			else:
 				targets = curGame.minionsAlive(3-self.entity.ID)
-				if targets:
-					enemy = npchoice(targets)
-					curGame.fixedGuides.append((enemy.pos, enemy.type+str(enemy.ID)))
-				else:
-					curGame.fixedGuides.append((0, ''))
-			if enemy: self.entity.dealsDamage(enemy, 9)
+				i = npchoice(targets).pos if targets else -1
+				curGame.fixedGuides.append(i)
+			if i > -1: self.entity.dealsDamage(curGame.minions[3-self.entity.ID][i], 9)
 			
 		
 """Demon Hunter Cards"""
@@ -4560,9 +4555,9 @@ class DreamingDrake_Corrupt(Minion):
 	
 	
 class ArborUp(Spell):
-	Class, school, name = "Druid", "", "Arbor Up"
+	Class, school, name = "Druid", "Nature", "Arbor Up"
 	requireTarget, mana = False, 5
-	index = "DARKMOON_FAIRE~Druid~Spell~5~~Arbor Up"
+	index = "DARKMOON_FAIRE~Druid~Spell~5~Nature~Arbor Up"
 	description = "Summon two 2/2 Treants. Give your minions +2/+1"
 	name_CN = "树木生长"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4699,9 +4694,9 @@ class Trig_GlacierRacer(Spellburst):
 		
 		
 class ConjureManaBiscuit(Spell):
-	Class, school, name = "Mage", "", "Conjure Mana Biscuit"
+	Class, school, name = "Mage", "Arcane", "Conjure Mana Biscuit"
 	requireTarget, mana = False, 2
-	index = "DARKMOON_FAIRE~Mage~Spell~2~~Conjure Mana Biscuit"
+	index = "DARKMOON_FAIRE~Mage~Spell~2~Arcane~Conjure Mana Biscuit"
 	description = "Add a Biscuit to your hand that refreshes 2 Mana Crystals"
 	name_CN = "制造法力饼干"
 	
@@ -4803,9 +4798,9 @@ class Trig_ImprisonedCelestial(Spellburst):
 			
 			
 class Rally(Spell):
-	Class, school, name = "Paladin,Priest", "", "Rally!"
+	Class, school, name = "Paladin,Priest", "Holy", "Rally!"
 	requireTarget, mana = False, 4
-	index = "DARKMOON_FAIRE~Paladin,Priest~Spell~4~~Rally!"
+	index = "DARKMOON_FAIRE~Paladin,Priest~Spell~4~Holy~Rally!"
 	description = "Resurrect a friendly 1-Cost, 2-Cost, and 3-Cost minion"
 	name_CN = "开赛集结！"
 	def available(self):
@@ -4849,9 +4844,9 @@ class LibramofJudgment_Corrupt(Weapon):
 		
 """Priest Cards"""
 class Hysteria(Spell):
-	Class, school, name = "Priest,Warlock", "", "Hysteria"
+	Class, school, name = "Priest,Warlock", "Shadow", "Hysteria"
 	requireTarget, mana = True, 3
-	index = "DARKMOON_FAIRE~Priest,Warlock~Spell~3~~Hysteria"
+	index = "DARKMOON_FAIRE~Priest,Warlock~Spell~3~Shadow~Hysteria"
 	description = "Choose a minion. It attacks random minions until it dies"
 	name_CN = "狂乱"
 	def available(self):
@@ -4928,11 +4923,11 @@ class DarkInquisitorXanesh(Minion):
 		
 """Rogue Cards"""
 class NitroboostPoison(Spell):
-	Class, school, name = "Rogue,Warrior", "", "Nitroboost Poison"
-	requireTarget, mana = True, 1
-	index = "DARKMOON_FAIRE~Rogue,Warrior~Spell~1~~Nitroboost Poison~ToCorrupt"
+	Class, school, name = "Rogue,Warrior", "Nature", "Nitroboost Poison"
+	requireTarget, mana = True, 2
+	index = "DARKMOON_FAIRE~Rogue,Warrior~Spell~2~Nature~Nitroboost Poison~ToCorrupt"
 	description = "Give a minion +2 Attack. Corrupt: And your weapon"
-	name_CN = "氮素制剂"
+	name_CN = "氮素药膏"
 	def __init__(self, Game, ID):
 		self.blank_init(Game, ID)
 		self.trigsHand = [Trig_Corrupt(self, NitroboostPoison_Corrupt)] #只有在手牌中才会升级
@@ -4949,11 +4944,11 @@ class NitroboostPoison(Spell):
 		return target
 		
 class NitroboostPoison_Corrupt(Spell):
-	Class, school, name = "Rogue,Warrior", "", "Nitroboost Poison"
-	requireTarget, mana = True, 1
-	index = "DARKMOON_FAIRE~Rogue,Warrior~Spell~1~~Nitroboost Poison~Corrupted~Uncollectible"
+	Class, school, name = "Rogue,Warrior", "Nature", "Nitroboost Poison"
+	requireTarget, mana = True, 2
+	index = "DARKMOON_FAIRE~Rogue,Warrior~Spell~2~Nature~Nitroboost Poison~Corrupted~Uncollectible"
 	description = "Corrupted: Give a minion and your weapon +2 Attack"
-	name_CN = "氮素制剂"
+	name_CN = "氮素药膏"
 	def available(self):
 		return self.selectableMinionExists()
 		
@@ -5031,11 +5026,11 @@ class ImprisonedPhoenix(Minion_Dormantfor2turns):
 		
 		
 class Landslide(Spell):
-	Class, school, name = "Shaman", "", "Landslide"
+	Class, school, name = "Shaman", "Nature", "Landslide"
 	requireTarget, mana = False, 2
-	index = "DARKMOON_FAIRE~Shaman~Spell~2~~Landslide"
+	index = "DARKMOON_FAIRE~Shaman~Spell~2~Nature~Landslide"
 	description = "Deal 1 damage to all enemy minions. If you're Overloaded, deal 1 damage again"
-	name_CN = "氮素制剂"
+	name_CN = "大地崩陷"
 	def text(self, CHN):
 		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		return "对所有敌方随从造成%d点伤害。如果你有过载的法力水晶，再次造成%d点伤害"%(damage, damage) \
@@ -5077,9 +5072,9 @@ class Mistrunner(Minion):
 		
 """Warlock Cards"""
 class Backfire(Spell):
-	Class, school, name = "Warlock", "", "Backfire"
+	Class, school, name = "Warlock", "Fire", "Backfire"
 	requireTarget, mana = False, 3
-	index = "DARKMOON_FAIRE~Warlock~Spell~3~~Backfire"
+	index = "DARKMOON_FAIRE~Warlock~Spell~3~Fire~Backfire"
 	description = "Draw 3 cards. Deal 3 damage to your hero"
 	name_CN = "赛车回火"
 	def text(self, CHN):
@@ -5239,7 +5234,7 @@ class RaceGuard(Minion):
 	
 	
 Darkmoon_Cards = [#Neutral cards
-				SafetyInspector, CostumedEntertainer, HorrendousGrowth, HorrendousGrowthCorrupt_Mutable_3, ParadeLeader, PrizeVendor, RockRager, Showstopper, WrigglingHorror, BananaVendor, DarkmoonDirigible, DarkmoonDirigible_Corrupt, DarkmoonStatue, DarkmoonStatue_Corrupt, Gyreworm, InconspicuousRider, KthirRitualist, CircusAmalgam, CircusMedic, CircusMedic_Corrupt, FantasticFirebird, KnifeVendor, DerailedCoaster, DarkmoonRider, FleethoofPearltusk, FleethoofPearltusk_Corrupt, OptimisticOgre, ClawMachine, SilasDarkmoon, Strongman, Strongman_Corrupt, CarnivalClown, CarnivalClown_Corrupt, BodyofCThun, CThunsBody, EyeofCThun, HeartofCThun, MawofCThun, CThuntheShattered, DarkmoonRabbit, NZothGodoftheDeep, YoggSaronMasterofFate, CurseofFlesh, HandofFate, YShaarjtheDefiler, 
+				SafetyInspector, CostumedEntertainer, HorrendousGrowth, HorrendousGrowthCorrupt, ParadeLeader, PrizeVendor, RockRager, Showstopper, WrigglingHorror, BananaVendor, DarkmoonDirigible, DarkmoonDirigible_Corrupt, DarkmoonStatue, DarkmoonStatue_Corrupt, Gyreworm, InconspicuousRider, KthirRitualist, CircusAmalgam, CircusMedic, CircusMedic_Corrupt, FantasticFirebird, KnifeVendor, DerailedCoaster, DarkmoonRider, FleethoofPearltusk, FleethoofPearltusk_Corrupt, OptimisticOgre, ClawMachine, SilasDarkmoon, Strongman, Strongman_Corrupt, CarnivalClown, CarnivalClown_Corrupt, BodyofCThun, CThunsBody, EyeofCThun, HeartofCThun, MawofCThun, CThuntheShattered, DarkmoonRabbit, NZothGodoftheDeep, YoggSaronMasterofFate, CurseofFlesh, HandofFate, YShaarjtheDefiler,
 				#Demon Hunter cards
 				FelscreamBlast, ThrowGlaive, RedeemedPariah, Acrobatics, DreadlordsBite, FelsteelExecutioner, FelsteelExecutioner_Corrupt, LineHopper, InsatiableFelhound, InsatiableFelhound_Corrupt, RelentlessPursuit, Stiltstepper, Ilgynoth, RenownedPerformer, PerformersAssistant, ZaitheIncredible, BladedLady, ExpendablePerformers, 
 				#Druid cards
