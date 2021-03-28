@@ -683,11 +683,10 @@ class Panda_UICommon(ShowBase):
 	
 	def manaChangeAni(self, card, mana_1):
 		btn = card.btn
-		if btn and btn.manaTextNode:
-			print("ManaTextNode", btn.manaText, btn.manaTextNode)
-			Sequence(btn.manaTextNode.scaleInterval(duration=0.15, scale=2 * statTextScale),
-					 btn.manaTextNode.scaleInterval(duration=0.15, scale=statTextScale),
-					 Func(btn.manaText.setText, str(mana_1))
+		if btn and "mana" in btn.textNodes:
+			Sequence(btn.textNodes["mana"].scaleInterval(duration=0.15, scale=2 * statTextScale),
+					 btn.textNodes["mana"].scaleInterval(duration=0.15, scale=statTextScale),
+					 Func(btn.texts["mana"].setText, str(mana_1))
 					 ).start()
 	
 	#Miscellaneous animations
