@@ -139,12 +139,12 @@ def extractfrom(target, listObj):
 	except: return None
 	
 def findPicFilepath(card):
-	if card.type == "Dormant": #休眠的随从会主动查看自己携带的prisoner的名字和index
-		index = card.prisoner.index
-		if inspect.isclass(card.prisoner):
-			name = card.prisoner.__name__
+	if card.type == "Dormant": #休眠的随从会主动查看自己携带的minionInside的名字和index
+		index = card.minionInside.index
+		if inspect.isclass(card.minionInside):
+			name = card.minionInside.__name__
 		else: #Instances don't have __name__
-			name = type(card.prisoner).__name__
+			name = type(card.minionInside).__name__
 		path = "Crops\\%s\\"%index.split('~')[0]
 	else: #type == "Weapon", "Minion", "Spell", "Hero", "Power"
 		index, name = card.index, type(card).__name__
@@ -161,12 +161,12 @@ def findPicFilepath(card):
 	return filepath
 	
 def findPicFilepath_FullImg(card):
-	if card.type == "Dormant": #休眠的随从会主动查看自己携带的prisoner的名字和index
-		index = card.prisoner.index
-		if inspect.isclass(card.prisoner):
-			name = card.prisoner.__name__
+	if card.type == "Dormant": #休眠的随从会主动查看自己携带的minionInside的名字和index
+		index = card.minionInside.index
+		if inspect.isclass(card.minionInside):
+			name = card.minionInside.__name__
 		else: #Instances don't have __name__
-			name = type(card.prisoner).__name__
+			name = type(card.minionInside).__name__
 		path = "Images\\%s\\"%index.split('~')[0]
 	else: #type == "Weapon", "Minion", "Spell", "Hero", "Power"
 		index, name = card.index, type(card).__name__

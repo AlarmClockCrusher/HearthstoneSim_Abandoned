@@ -286,7 +286,7 @@
 #	 attackAdd, healthAdd = 1, 0
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 if self.status["Evolved"] < 1:
 #			 self.deathrattles = [DeathrattleKagemitsu(self)]
 #
@@ -319,7 +319,7 @@
 #
 # class TriggerKagemitsu(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
+#		 super().__init__(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and subject == self.entity
@@ -342,7 +342,7 @@
 #
 # class TriggerSummonAEvolvedKagemitsuNextTurn(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnStarts"])
+#		 super().__init__(entity, ["TurnStarts"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -514,13 +514,13 @@
 #	 requireTarget, keyWord, description = False, "", "Whenever an enemy follower comes into play, deal 1 damage to the enemy leader."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerYuriusLevinDuke(self)]
 #
 #
 # class TriggerYuriusLevinDuke(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["MinionSummoned"])
+#		 super().__init__(entity, ["MinionSummoned"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and subject.ID != self.entity.ID and subject != self.entity
@@ -713,7 +713,7 @@
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Rally (7) - Evolve this follower. Last Words: Put a Gilded Boots into your hand."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.deathrattles = [DeathrattleHonorableThief(self)]
 #
 #	 def effCanTrig(self):
@@ -739,7 +739,7 @@
 #	 requireTarget, keyWord, description = False, "Taunt", "Ward Can't be targeted by enemy spells and effects."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.marks["Enemy Effect Evasive"] = 1
 #
 #
@@ -861,7 +861,7 @@
 #
 # class TriggerMirrorsImage(TriggeronBoard):
 #	 def __init__(self, entity, ID):
-#		 self.blank_init(entity, ["TurnStarts"])
+#		 super().__init__(entity, ["TurnStarts"])
 #		 self.temp = True
 #		 self.ID = ID
 #
@@ -887,7 +887,7 @@
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (5) - Evolve this follower.Clash: Reduce damage to this follower to 0 until the end of the turn."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerClashSteadfastSamurai(self)]
 #
 #	 def effCanTrig(self):
@@ -912,7 +912,7 @@
 #
 # class TriggerClashSteadfastSamurai(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["MinionAttackingMinion"])
+#		 super().__init__(entity, ["MinionAttackingMinion"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and (target == self.entity or subject == self.entity)
@@ -927,7 +927,7 @@
 #
 # class TriggerTurnEndSteadfastSamurai(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard
@@ -1062,7 +1062,7 @@
 #	 requireTarget, keyWord, description = False, "", "Can evolve an allied Levin follower (excluding Jeno, Levin Stalwart) each turn for 0 evolution points until this follower leaves play."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.auras["Has Aura"] = EffectAura(self, "Free Evolve")
 #
 #	 def applicable(self, target):
@@ -1137,7 +1137,7 @@
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (7) - Transform this follower into a VII. Oluon, Runaway Chariot.At the end of your turn, randomly activate 1 of the following effects.-Gain Ward.-Summon a Knight.-Deal 2 damage to the enemy leader."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerOluonTheChariot(self)]
 #
 #	 def effCanTrig(self):
@@ -1162,14 +1162,14 @@
 #	 requireTarget, keyWord, description = False, "", "Can't attack.At the end of your turn, randomly deal X damage to an enemy or another ally and then Y damage to this follower. X equals this follower's attack and Y equals the attack of the follower or leader damaged (leaders have 0 attack). Do this 2 times."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.marks["Can't Attack"] = 1
 #		 self.trigsBoard = [TriggerOluonRunawayChariot(self)]
 #
 #
 # class TriggerOluonTheChariot(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -1190,7 +1190,7 @@
 #
 # class TriggerOluonRunawayChariot(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -1221,7 +1221,7 @@
 #	 requireTarget, keyWord, description = False, "", "Fanfare: If an allied Commander card is in play, gain Rush.Last Words: At the start of your next turn, put a random Commander card from your deck into your hand."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.deathrattles = [DeathrattleGeltResoluteKnight(self)]
 #
 #	 def effCanTrig(self):
@@ -1253,7 +1253,7 @@
 #
 # class TriggerDeathrattleGeltResoluteKnight(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnStarts"])
+#		 super().__init__(entity, ["TurnStarts"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return ID == self.entity.ID
@@ -1316,7 +1316,7 @@
 #	 requireTarget, keyWord, description = True, "Rush", "Rush.Fanfare: Union Burst (10) - Gain +3/+3. Deal 5 damage to an enemy follower.At the end of your turn, gain +0/+1."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerPecorinePeckishPrincess(self)]
 #
 #	 def effCanTrig(self):
@@ -1341,7 +1341,7 @@
 #
 # class TriggerPecorinePeckishPrincess(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -1531,7 +1531,7 @@
 #	 requireTarget, keyWord, description = True, "Taunt", "Invocation: At the start of your turn, Rally (10) - Invoke this card.------Fanfare: If you have more evolution points than your opponent, gain +0/+2 and deal 2 damage to an enemy follower. (You have 0 evolution points on turns you are unable to evolve.)At the end of your turn, give +1/+1 to all allied followers."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerFieranHavensentWindGod(self), TriggerInvocationFieranHavensentWindGod(self)]
 #
 #	 def targetExists(self, choice=0):
@@ -1566,7 +1566,7 @@
 #
 # class TriggerFieranHavensentWindGod(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -1582,7 +1582,7 @@
 #
 # class TriggerInvocationFieranHavensentWindGod(TriggerinDeck):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnStarts"])
+#		 super().__init__(entity, ["TurnStarts"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
@@ -1636,7 +1636,7 @@
 #
 # class TriggerPrudentGeneral(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -1672,7 +1672,7 @@
 #
 # class TriggerShizuruSisterlySabreur(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -1703,7 +1703,7 @@
 #	 attackAdd, healthAdd = 5, 5
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.marks["Can't Evolve"] = 1
 #		 self.trigsDeck = [TriggerInvocationZelgeneaTheWorld(self)]
 #
@@ -1739,7 +1739,7 @@
 #
 # class TriggerAttackZelgeneaTheWorld(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
+#		 super().__init__(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and subject == self.entity
@@ -1755,7 +1755,7 @@
 #
 # class TriggerEndZelgeneaTheWorld(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -1769,7 +1769,7 @@
 #
 # class TriggerInvocationZelgeneaTheWorld(TriggerinDeck):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnStarts"])
+#		 super().__init__(entity, ["TurnStarts"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
@@ -1869,7 +1869,7 @@
 #
 # class TriggerAmeliaTheSilverflash(TriggerinHand):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.inHand and ID == self.entity.ID
@@ -1893,7 +1893,7 @@
 #	 requireTarget, keyWord, description = False, "Charge", "Storm.Fanfare: Enhance (9) - Randomly put different Levin followers (excluding Albert, Levin Champion) from your deck into play until your area is full.Strike: Gain +1/+0 if another allied Levin card is in play."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerAlbertLevinChampion(self)]
 #
 #	 def effCanTrig(self):
@@ -1926,7 +1926,7 @@
 #
 # class TriggerAlbertLevinChampion(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
+#		 super().__init__(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and subject == self.entity
@@ -1953,7 +1953,7 @@
 #	 evolveRequireTarget = True
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerDiamondPaladin(self)]
 #
 #	 def effCanTrig(self):
@@ -1982,7 +1982,7 @@
 #
 # class TriggerDiamondPaladin(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["MinionAttackedMinion"])
+#		 super().__init__(entity, ["MinionAttackedMinion"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return subject == self.entity and self.entity.onBoard and (target.health < 1 or target.dead == True) and \
@@ -2001,7 +2001,7 @@
 #
 # class TriggerTurnEndDiamondPaladin(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard
@@ -2073,7 +2073,7 @@
 #	 requireTarget, keyWord, description = False, "Taunt", "Ward.Last Words: Summon a Fortress Guard."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.deathrattles = [DeathrattleFrontguardGeneral(self)]
 #
 #
@@ -2091,7 +2091,7 @@
 #	 requireTarget, keyWord, description = False, "Taunt", "Ward.Can't be targeted by enemy spells and effects.Last Words: Summon a Shield Guardian, and give it +X/+X. X equals the number of times that allied followers have evolved during this match."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.deathrattles = [DeathrattleHonoredFrontguardGeneral(self)]
 #		 self.marks["Enemy Effect Evasive"] = 1
 #
@@ -2390,7 +2390,7 @@
 #	 attackAdd, healthAdd = 1, 0
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 if self.status["Evolved"] < 1:
 #			 self.deathrattles = [DeathrattleKagemitsu(self)]
 #
@@ -2423,7 +2423,7 @@
 #
 # class TriggerKagemitsu(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
+#		 super().__init__(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and subject == self.entity
@@ -2446,7 +2446,7 @@
 #
 # class TriggerSummonAEvolvedKagemitsuNextTurn(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnStarts"])
+#		 super().__init__(entity, ["TurnStarts"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -2618,13 +2618,13 @@
 #	 requireTarget, keyWord, description = False, "", "Whenever an enemy follower comes into play, deal 1 damage to the enemy leader."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerYuriusLevinDuke(self)]
 #
 #
 # class TriggerYuriusLevinDuke(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["MinionSummoned"])
+#		 super().__init__(entity, ["MinionSummoned"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and subject.ID != self.entity.ID and subject != self.entity
@@ -2817,7 +2817,7 @@
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Rally (7) - Evolve this follower. Last Words: Put a Gilded Boots into your hand."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.deathrattles = [DeathrattleHonorableThief(self)]
 #
 #	 def effCanTrig(self):
@@ -2843,7 +2843,7 @@
 #	 requireTarget, keyWord, description = False, "Taunt", "Ward Can't be targeted by enemy spells and effects."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.marks["Enemy Effect Evasive"] = 1
 #
 #
@@ -2965,7 +2965,7 @@
 #
 # class TriggerMirrorsImage(TriggeronBoard):
 #	 def __init__(self, entity, ID):
-#		 self.blank_init(entity, ["TurnStarts"])
+#		 super().__init__(entity, ["TurnStarts"])
 #		 self.temp = True
 #		 self.ID = ID
 #
@@ -2991,7 +2991,7 @@
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (5) - Evolve this follower.Clash: Reduce damage to this follower to 0 until the end of the turn."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerClashSteadfastSamurai(self)]
 #
 #	 def effCanTrig(self):
@@ -3016,7 +3016,7 @@
 #
 # class TriggerClashSteadfastSamurai(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["MinionAttackingMinion"])
+#		 super().__init__(entity, ["MinionAttackingMinion"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and (target == self.entity or subject == self.entity)
@@ -3031,7 +3031,7 @@
 #
 # class TriggerTurnEndSteadfastSamurai(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard
@@ -3166,7 +3166,7 @@
 #	 requireTarget, keyWord, description = False, "", "Can evolve an allied Levin follower (excluding Jeno, Levin Stalwart) each turn for 0 evolution points until this follower leaves play."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.auras["Has Aura"] = EffectAura(self, "Free Evolve")
 #
 #	 def applicable(self, target):
@@ -3241,7 +3241,7 @@
 #	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (7) - Transform this follower into a VII. Oluon, Runaway Chariot.At the end of your turn, randomly activate 1 of the following effects.-Gain Ward.-Summon a Knight.-Deal 2 damage to the enemy leader."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerOluonTheChariot(self)]
 #
 #	 def effCanTrig(self):
@@ -3266,14 +3266,14 @@
 #	 requireTarget, keyWord, description = False, "", "Can't attack.At the end of your turn, randomly deal X damage to an enemy or another ally and then Y damage to this follower. X equals this follower's attack and Y equals the attack of the follower or leader damaged (leaders have 0 attack). Do this 2 times."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.marks["Can't Attack"] = 1
 #		 self.trigsBoard = [TriggerOluonRunawayChariot(self)]
 #
 #
 # class TriggerOluonTheChariot(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -3294,7 +3294,7 @@
 #
 # class TriggerOluonRunawayChariot(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -3325,7 +3325,7 @@
 #	 requireTarget, keyWord, description = False, "", "Fanfare: If an allied Commander card is in play, gain Rush.Last Words: At the start of your next turn, put a random Commander card from your deck into your hand."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.deathrattles = [DeathrattleGeltResoluteKnight(self)]
 #
 #	 def effCanTrig(self):
@@ -3357,7 +3357,7 @@
 #
 # class TriggerDeathrattleGeltResoluteKnight(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnStarts"])
+#		 super().__init__(entity, ["TurnStarts"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return ID == self.entity.ID
@@ -3420,7 +3420,7 @@
 #	 requireTarget, keyWord, description = True, "Rush", "Rush.Fanfare: Union Burst (10) - Gain +3/+3. Deal 5 damage to an enemy follower.At the end of your turn, gain +0/+1."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerPecorinePeckishPrincess(self)]
 #
 #	 def effCanTrig(self):
@@ -3445,7 +3445,7 @@
 #
 # class TriggerPecorinePeckishPrincess(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -3635,7 +3635,7 @@
 #	 requireTarget, keyWord, description = True, "Taunt", "Invocation: At the start of your turn, Rally (10) - Invoke this card.------Fanfare: If you have more evolution points than your opponent, gain +0/+2 and deal 2 damage to an enemy follower. (You have 0 evolution points on turns you are unable to evolve.)At the end of your turn, give +1/+1 to all allied followers."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerFieranHavensentWindGod(self), TriggerInvocationFieranHavensentWindGod(self)]
 #
 #	 def targetExists(self, choice=0):
@@ -3670,7 +3670,7 @@
 #
 # class TriggerFieranHavensentWindGod(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -3686,7 +3686,7 @@
 #
 # class TriggerInvocationFieranHavensentWindGod(TriggerinDeck):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnStarts"])
+#		 super().__init__(entity, ["TurnStarts"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
@@ -3740,7 +3740,7 @@
 #
 # class TriggerPrudentGeneral(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -3776,7 +3776,7 @@
 #
 # class TriggerShizuruSisterlySabreur(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -3807,7 +3807,7 @@
 #	 attackAdd, healthAdd = 5, 5
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.marks["Can't Evolve"] = 1
 #		 self.trigsDeck = [TriggerInvocationZelgeneaTheWorld(self)]
 #
@@ -3843,7 +3843,7 @@
 #
 # class TriggerAttackZelgeneaTheWorld(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
+#		 super().__init__(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and subject == self.entity
@@ -3859,7 +3859,7 @@
 #
 # class TriggerEndZelgeneaTheWorld(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and ID == self.entity.ID
@@ -3873,7 +3873,7 @@
 #
 # class TriggerInvocationZelgeneaTheWorld(TriggerinDeck):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnStarts"])
+#		 super().__init__(entity, ["TurnStarts"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
@@ -3973,7 +3973,7 @@
 #
 # class TriggerAmeliaTheSilverflash(TriggerinHand):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.inHand and ID == self.entity.ID
@@ -3997,7 +3997,7 @@
 #	 requireTarget, keyWord, description = False, "Charge", "Storm.Fanfare: Enhance (9) - Randomly put different Levin followers (excluding Albert, Levin Champion) from your deck into play until your area is full.Strike: Gain +1/+0 if another allied Levin card is in play."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerAlbertLevinChampion(self)]
 #
 #	 def effCanTrig(self):
@@ -4030,7 +4030,7 @@
 #
 # class TriggerAlbertLevinChampion(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
+#		 super().__init__(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard and subject == self.entity
@@ -4057,7 +4057,7 @@
 #	 evolveRequireTarget = True
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerDiamondPaladin(self)]
 #
 #	 def effCanTrig(self):
@@ -4086,7 +4086,7 @@
 #
 # class TriggerDiamondPaladin(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["MinionAttackedMinion"])
+#		 super().__init__(entity, ["MinionAttackedMinion"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return subject == self.entity and self.entity.onBoard and (target.health < 1 or target.dead == True) and \
@@ -4105,7 +4105,7 @@
 #
 # class TriggerTurnEndDiamondPaladin(TriggeronBoard):
 #	 def __init__(self, entity):
-#		 self.blank_init(entity, ["TurnEnds"])
+#		 super().__init__(entity, ["TurnEnds"])
 #
 #	 def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 #		 return self.entity.onBoard
@@ -4177,7 +4177,7 @@
 #	 requireTarget, keyWord, description = False, "Taunt", "Ward.Last Words: Summon a Fortress Guard."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.deathrattles = [DeathrattleFrontguardGeneral(self)]
 #
 #
@@ -4195,7 +4195,7 @@
 #	 requireTarget, keyWord, description = False, "Taunt", "Ward.Can't be targeted by enemy spells and effects.Last Words: Summon a Shield Guardian, and give it +X/+X. X equals the number of times that allied followers have evolved during this match."
 #
 #	 def __init__(self, Game, ID):
-#		 self.blank_init(Game, ID)
+#		 super().__init__(Game, ID)
 #		 self.deathrattles = [DeathrattleHonoredFrontguardGeneral(self)]
 #		 self.marks["Enemy Effect Evasive"] = 1
 #

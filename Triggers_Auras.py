@@ -1,12 +1,10 @@
 #对于随从的场上扳机，其被复制的时候所有暂时和非暂时的扳机都会被复制。
 #但是随从返回其额外效果的时候，只有其非暂时场上扳机才会被返回（永恒祭司），暂时扳机需要舍弃。
 class TrigBoard:
-	def __init__(self, entity):
-		self.blank_init(entity, [])
-		
-	def blank_init(self, entity, signals):
-		self.entity, self.signals, self.inherent = entity, signals, True
-		self.blockwhilePlaying = False
+	def __init__(self, entity, signals):
+		self.entity, self.signals = entity, signals
+		self.inherent, self.changesCard, self.nextAnimWaits = True, False, False
+		self.counter = -1
 		
 	def connect(self):
 		game, ID = self.entity.Game, self.entity.ID
@@ -26,7 +24,7 @@ class TrigBoard:
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
 			if self.entity.Game.GUI:
-				self.entity.Game.GUI.trigBlink(self.entity, blockwhilePlaying=self.blockwhilePlaying)
+				self.entity.Game.GUI.trigBlink(self.entity, nextAnimWaits=self.changesCard)
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -52,7 +50,7 @@ class TrigBoard:
 		if self not in game.copiedObjs: #这个扳机没有被复制过
 			entityCopy = self.entity.createCopy(game)
 			trigCopy = self.selfCopy(entityCopy)
-			if hasattr(self, "counter"): trigCopy.counter = self.counter
+			trigCopy.counter = self.counter
 			game.copiedObjs[self] = trigCopy
 			return trigCopy
 		else: #一个扳机被复制过了，则其携带者也被复制过了
@@ -60,11 +58,10 @@ class TrigBoard:
 			
 			
 class TrigHand:
-	def __init__(self, entity):
-		self.blank_init(entity, [])
-		
-	def blank_init(self, entity, signals):
+	def __init__(self, entity, signals):
 		self.entity, self.signals, self.inherent = entity, signals, True
+		self.inherent, self.changesCard, self.nextAnimWaits = True, False, False
+		self.counter = -1
 		
 	def connect(self):
 		for sig in self.signals:
@@ -110,11 +107,9 @@ class TrigHand:
 			
 			
 class TrigDeck:
-	def __init__(self, entity):
-		self.blank_init(entity, [])
-		
-	def blank_init(self, entity, signals):
+	def __init__(self, entity, signals):
 		self.entity, self.signals, self.inherent = entity, signals, True
+		self.counter = 0
 		
 	def connect(self):
 		for sig in self.signals:
@@ -161,11 +156,7 @@ class TrigDeck:
 """Variants of TrigBoard, TrigHand, TrigDeck"""
 class Deathrattle_Minion(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity)
-		
-	def blank_init(self, entity):
-		self.entity = entity
-		self.signals = ["MinionDies", "TrigDeathrattle"]
+		self.entity, self.signals = entity, ["MinionDies", "TrigDeathrattle"]
 		self.inherent = True
 		
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -188,11 +179,7 @@ class Deathrattle_Minion(TrigBoard):
 		
 class Deathrattle_Weapon(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity)
-		
-	def blank_init(self, entity):
-		self.entity = entity
-		self.signals = ["WeaponDestroyed"]
+		self.entity, self.signals = entity, ["WeaponDestroyed"]
 		self.inherent = True
 		
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -212,12 +199,10 @@ class Deathrattle_Weapon(TrigBoard):
 		
 		
 class SecretTrigger(TrigBoard):
-	def __init__(self, entity):
-		self.blank_init(entity, [])
-		
-	def blank_init(self, entity, signals):
-		self.entity, self.signals, self.inherent = entity, signals, True
+	def __init__(self, entity, signals):
+		super().__init__(entity, signals)
 		self.dummy, self.realSecret = False, None
+		
 	#伪扳机的注册直接在Secrets.initSecretHint里面处理完毕
 	def connect(self):
 		secret = self.entity
@@ -297,8 +282,7 @@ class SecretTrigger(TrigBoard):
 #这个扳机的目标：当随从在回合结束时有多个同类扳机，只会触发第一个，这个可以通过回合ID和自身ID是否符合来决定
 class Trig_Borrow(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnEnds"])
-		self.inherent = True
+		super().__init__(entity, ["TurnEnds"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#只有当前要结束的回合的ID与自身ID相同的时候可以触发，于是即使有多个同类扳机也只有一个会触发。
@@ -315,9 +299,8 @@ class Trig_Borrow(TrigBoard):
 				
 class Trig_Echo(TrigHand):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnEnds"])
-		self.inherent = False
-		self.makesCardEvanescent = True
+		super().__init__(entity, ["TurnEnds"])
+		self.changesCard = True
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand #Echo disappearing should trigger at the end of any turn
@@ -328,7 +311,7 @@ class Trig_Echo(TrigHand):
 		
 class Trig_Corrupt(TrigHand):
 	def __init__(self, entity, corruptedType):
-		self.blank_init(entity, ["ManaPaid"])
+		super().__init__(entity, ["ManaPaid"])
 		self.corruptedType = corruptedType
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -381,7 +364,7 @@ class Trig_Corrupt(TrigHand):
 			
 class Trig_DieatEndofTurn(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnEnds"])
+		super().__init__(entity, ["TurnEnds"])
 		self.inherent = False
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -393,13 +376,8 @@ class Trig_DieatEndofTurn(TrigBoard):
 		
 class QuestTrigger(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionBeenPlayed"])
-		
-	def blank_init(self, entity, signals):
-		self.entity, self.signals = entity, signals
-		self.accomplished = False
-		self.counter = 0
-		self.inherent = True
+		super().__init__(entity, ["MinionBeenPlayed"])
+		self.counter, self.accomplished = 0, False
 		
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
@@ -669,9 +647,8 @@ class Effect_Receiver:
 		
 class EffectAura(HasAura_toMinion):
 	def __init__(self, entity, keyWord):
-		self.entity = entity
+		super().__init__(entity)
 		self.keyWord = keyWord
-		self.signals, self.auraAffected = ["MinionAppears"], [] #List of (receiver, receiver)
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and self.applicable(subject)
@@ -740,12 +717,9 @@ class ManaMod:
 #永久费用光环另行定义
 class ManaAura:
 	def __init__(self, entity, changeby=0, changeto=-1, lowerbound=0):
-		self.blank_init(entity, changeby, changeto, lowerbound)
-		
-	def blank_init(self, entity, changeby, changeto, lowerbound):
 		self.entity = entity
 		self.changeby, self.changeto, self.lowerbound = changeby, changeto, lowerbound
-		self.auraAffected = [] #A list of (card, receiver)
+		self.auraAffected = []  #A list of (card, receiver)
 		
 	def manaAuraApplicable(self, target):
 		return self.entity.manaAuraApplicable(target)
@@ -813,9 +787,6 @@ class ManaAura:
 #TempManaEffects are supposed be single-usage and expires. But they can be modified to last longer, etc.
 class TempManaEffect:
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
-		self.blank_init(Game, ID, changeby, changeto)
-		
-	def blank_init(self, Game, ID, changeby, changeto):
 		self.Game, self.ID = Game, ID
 		self.changeby, self.changeto = changeby, changeto
 		self.temporary = True
@@ -925,9 +896,6 @@ class ManaAura_1UsageEachTurn: #For Pint-sized Summoner, Kalecgos, etc
 			
 class TempManaEffect_Power:
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
-		self.blank_init(Game, ID, changeby, changeto)
-		
-	def blank_init(self, Game, ID, changeby, changeto):
 		self.Game, self.ID = Game, ID
 		self.changeby, self.changeto = changeby, changeto
 		self.temporary = True
@@ -992,13 +960,10 @@ class TempManaEffect_Power:
 			
 class ManaAura_Power:
 	def __init__(self, entity, changeby=0, changeto=-1):
-		self.blank_init(entity, changeby, changeto)
-		
-	def blank_init(self, entity, changeby, changeto):
 		self.entity = entity
 		self.changeby, self.changeto = changeby, changeto
 		self.auraAffected = []
-		
+	
 	def manaAuraApplicable(self, subject):
 		return self.entity.manaAuraApplicable(subject)
 		
@@ -1036,7 +1001,7 @@ class ManaAura_Power:
 		self.entity.Game.Manas.calcMana_Powers()
 		
 	def selfCopy(self, game):
-		return type(self)(game, self.ID, self.changeby, self.changeto)
+		return type(self)(game, self.entity.ID, self.changeby, self.changeto)
 		
 	def createCopy(self, game): #The recipient is the Game that handles the Aura.
 		if self not in game.copiedObjs:

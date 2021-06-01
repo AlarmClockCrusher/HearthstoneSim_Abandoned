@@ -1,6 +1,8 @@
 from direct.interval.FunctionInterval import Func, Wait
 from direct.interval.LerpInterval import *
 from direct.interval.MetaInterval import Sequence
+from direct.directutil import Mopath
+from direct.interval.MopathInterval import *
 from panda3d.core import *
 import inspect
 import threading
@@ -21,33 +23,20 @@ BoardIndex = ["0 Random Game Board",
 			]
 
 
-
-def findFilepath(card):
+#Not used for finding Hero Head, or Hero Power. Hero cards are included in each expansion folder
+def findFilepath(card): #card is an instance
 	if card.type == "Dormant":
-		if hasattr(card, "prisoner"):
-			index = card.prisoner.index
-			if inspect.isclass(card.prisoner):
-				name = card.prisoner.__name__
-			else:  #Instances don't have __name__
-				name = type(card.prisoner).__name__
-			path = "Images\\%s\\" % index.split('~')[0]
-		else:
-			path = "Images\\%s\\" % type(card).index.split('~')[0]
-			name = type(card).__name__
+		if card.minionInside:
+			name = card.minionInside.__name__ if inspect.isclass(card.minionInside) else type(card.minionInside).__name__
+			return "Images\\%s\\%s.png"%(card.minionInside.index.split('~')[0], name)
+		else: return "Images\\%s\\%s.png"%(card.index.split('~')[0], type(card).__name__)
 	elif "Option" in card.type:
-		name = type(card).__name__
-		path = "Images\\Options\\"
-	else:  #type == "Weapon", "Minion", "Spell", "Hero", "Power"
-		index, name = card.index, type(card).__name__
-		if card.type != "Power":
-			path = "Images\\%s\\" % index.split('~')[0]
-		else:
-			path = "Images\\HerosandPowers\\"
+		return "Images\\Options\\%s.png"%type(card).__name__
+	elif card.type in ("Minion", "Weapon", "Spell", "Hero"):  #type == "Weapon", "Minion", "Spell", "Hero", "Power"
+		return "Images\\%s\\%s.png"%(card.index.split('~')[0], type(card).__name__)
+	elif card.type == "Power":
+		return "Images\\HeroesandPowers\\%s.png"%type(card).__name__
 	
-	name = name.split("__")[0]
-	filepath = path + "%s.png" % name
-	return filepath
-
 	
 red, green, blue = Point4(1, 0, 0, 1), Point4(0.3, 1, 0.2, 1), Point4(0, 0, 1, 1)
 yellow, pink = Point4(1, 1, 0, 1), Point4(1, 0, 1, 1)
@@ -56,48 +45,42 @@ transparent, grey = Point4(1, 1, 1, 0), Point4(0.5, 0.5, 0.5, 1)
 black, white = Point4(0, 0, 0, 1), Point4(1, 1, 1, 1)
 
 
+#Can only set the color of the textNode itself to transparent. No point in setting the nodePath transparency
+def makeText(np_Parent, textName, valueText, pos, scale, color, font, wordWrap=0):
+	textNode = TextNode(textName + "_TextNode")
+	textNode.setText(valueText)
+	textNode.setAlign(TextNode.ACenter)
+	textNode.setFont(font)
+	textNode.setTextColor(color)
+	if wordWrap > 0:
+		textNode.setWordwrap(wordWrap)
+	textNodePath = np_Parent.attachNewNode(textNode)
+	textNodePath.setScale(scale)
+	textNodePath.setPos(pos)
+	return textNodePath
+
 """Subclass the NodePath, since it can be assigned attributes directly"""
-class NodePath_Card(NodePath):
-	def __init__(self, GUI, card=None, cardType=None, collBox4="Hand"):
-		if cardType: super().__init__(cardType.__name__+"_Card")
-		else: super().__init__(card.name+"_Card")
-		#These attributes will be modified by load functions below
-		self.cardType = cardType
-		self.card = card
-		self.selected = False
-		self.GUI = GUI
-		self.collNode = self.collNode_Backup = None  #collNode holds the return value of attachNewNode
+class Btn_Card:
+	def __init__(self, GUI, card, nodePath):
+		self.GUI, self.card = GUI, card
+		self.selected = self.isPlayed = False
 		
-		self.models, self.texts, self.textNodes = {}, {}, {}
+		self.np = nodePath #Load the templates, who won't carry btn and then btn will be assigned after copyTo()
+		self.cNode = self.cNode_Backup = self.cNode_Backup_Played = None  #cNode holds the return value of attachNewNode
 		self.box_Model = None
+		self.models, self.icons, self.texts, self.texCards = {}, {}, {}, {}
 		
-	def makeModel(self, loader, modelName, texture, modelPath):
-		model = loader.loadModel(modelPath)
-		model.setTransparency(True)
-		model.reparentTo(self)
-		if texture: model.setTexture(model.findTextureStage('*'), texture, 1)
-		self.models[modelName] = model
-		
-	def makeText(self, textName, valueText, pos, scale, color, font, wordWrap=0):
-		textNode = TextNode(textName+" TextNode")
-		textNode.setText(valueText)
-		textNode.setAlign(TextNode.ACenter)
-		textNode.setFont(font)
-		textNode.setTextColor(color)
-		if wordWrap > 0:
-			textNode.setWordwrap(wordWrap)
-		textNode_Attached = self.attachNewNode(textNode)
-		textNode_Attached.setScale(scale)
-		textNode_Attached.setPos(pos)
-		self.texts[textName] = textNode
-		self.textNodes[textName] = textNode_Attached
-		
+	def changeCard(self, card, isPlayed, pickable=True):
+		self.card, self.isPlayed = card, isPlayed
+		loader = self.GUI.loader
+		if pickable: card.btn = self
+		threading.Thread(target=self.reloadModels, args=(loader, findFilepath(card), pickable)).start()
+	
 	def dimDown(self):
-		self.setColor(grey)
+		self.np.setColor(grey)
 		
 	def setBoxColor(self, color):
-		if self.box_Model:
-			self.box_Model.setColor(color)
+		if self.box_Model: self.box_Model.setColor(color)
 	
 	def showStatus(self):
 		pass
@@ -107,403 +90,281 @@ class NodePath_Card(NodePath):
 		else: self.GUI.drawCardSpecsDisplay(self)
 	
 	#Control the moving, rotating and scaling of a nodePath. For color manipulate, another method is used.
-	def genMoveIntervals(self, pos=None, hpr=None, scale=None, duration=0.3, blendType="noBlend"):
-		pos = pos if pos else self.getPos()
-		hpr = hpr if hpr else self.getHpr()
-		scale = scale if scale else self.getScale()
-		if self.card:
-			self.card.x, self.card.y, self.card.z = pos
-		interval = LerpPosHprScaleInterval(self, duration=duration, pos=pos, hpr=hpr, scale=scale, blendType=blendType)
-		return interval
+	def genLerpInterval(self, pos=None, hpr=None, scale=None, duration=0.3, blendType="noBlend"):
+		pos = pos if pos else self.np.getPos()
+		hpr = hpr if hpr else self.np.getHpr()
+		scale = scale if scale else self.np.getScale()
+		return LerpPosHprScaleInterval(self.np, duration=duration, pos=pos, hpr=hpr, scale=scale, blendType=blendType)
+	
+	def genMoPathIntervals(self, curveFileName, duration=0.3):
+		moPath = Mopath.Mopath()
+		moPath.loadFile(curveFileName)
+		return MopathInterval(moPath, self.np, duration=duration)
 	
 	#For the selfCopy method, this will simply return a None
 	def selfCopy(self, Copy):
 		return None
 	
 def loadCard(base, card):
-	if card.type == "Minion": return loadMinion(base, card)
-	elif card.type == "Spell": return loadSpell(base, card)
-	elif card.type == "Weapon": return loadWeapon(base, card)
-	elif card.type == "Hero": return loadHero(base, card)
-	elif card.type == "Power": return loadPower(base, card)
-	elif card.type == "Option_Spell": return loadOption_Spell(base, card)
-	elif card.type == "Option_Minion": return loadOption_Minion(base, card)
-	elif card.type == "Dormant": return loadDormant(base, card)
+	return {"Minion": loadMinion, "Spell": loadSpell, "Weapon": loadWeapon, "Hero": loadHero,
+			"Power": loadPower, "Dormant": loadDormant,
+			"Option_Spell": loadOption_Spell, "Option_Minion": loadOption_Minion
+			}[card.type](base)
 	
 	
-class NodePath_Minion(NodePath_Card):
-	def __init__(self, GUI, card=None):
-		super().__init__(GUI, card)
-		self.name = type(card).__name__ + "_Minion"
+#Minion: cardImage y limit -0.06; nameTag -0.07; stats_Played -0.12
+table_PosScaleofTexCard_Minions = {"Aura": (0.057, (0, -0.03, 0.3)),
+							   		"Damage": (0.045, (0.15, -0.14, 0.45)),
+							   		"DamagePoisonous": (0.045, (0.15, -0.143, 0.45)),
+							   		"Divine Shield": (7.3, (0.05, -0.078, 0.2)),
+							   		"Exhausted": (5, (0.1, -0.062, 0.5)),
+							   		"Frozen": (5.2, (0, -0.08, 0.55)),
+							   		"Immune": (4.5, (0.05, -0.076, 0.5)),
+							   		"Silenced": (4, (0, -0.068, 0)),
+							   		"Spell Damage": (4, (0, -0.07, 1)),
+							   		"Stealth": (4.2, (0.1, -0.064, 0.5)),
+							   		"Taunt": (0.044, (0.05, 0, -0.05)),
+							   		}
+
+class Btn_Minion(Btn_Card):
+	def __init__(self, GUI, card, nodePath):
+		super().__init__(GUI, card, nodePath)
 		
-		self.collNode_Backup = CollisionNode("Minion_c_node")
-		self.collNode_Backup.addSolid(CollisionBox(Point3(0, 0, 0), 3.5, 0.3, 5))
-		self.collNode = self.attachNewNode(self.collNode_Backup)
-		
-	def changeCard(self, card, pickable=True):
-		loader = self.GUI.loader
-		self.card = card
-		if pickable: card.btn = self
-		self.name = type(card).__name__ + "_Minion_" + str(datetime.now().time())
-		imgPath = findFilepath(card)
-		threading.Thread(target=self.reloadModels, args=(loader, imgPath, pickable)).start()
+		self.cNode_Backup = CollisionNode("Minion_cNode_Card")
+		self.cNode_Backup.addSolid(CollisionBox(Point3(0.05, 0, -1.1), 2.2, 0.1, 3.1))
+		self.cNode_Backup_Played = CollisionNode("Minion_cNode_Played")
+		self.cNode_Backup_Played.addSolid(CollisionBox(Point3(0.07, 0, 0.35), 1.5, 0.1, 1.9))
+		#self.cNode = self.attachNewNode(self.cNode_Backup)
 		
 	def reloadModels(self, loader, imgPath, pickable):
 		card = self.card
-		if "~Legendary" in card.index:
-			self.models["box_Normal"].setColor(transparent)
-			self.box_Model = self.models["box_Legendary"]
-		else:
-			self.models["legendaryIcon"].setColor(transparent)
-			self.models["box_Legendary"].setColor(transparent)
-			self.box_Model = self.models["box_Normal"]
+		if self.isPlayed: color4Card, color4Played = transparent, white
+		else: color4Card, color4Played = white, transparent
+		isLegendary = "~Legendary" in card.index
+		self.models["legendaryIcon"].setColor(white if isLegendary else transparent)
+		self.models["box_Legendary"].setColor(transparent)
+		self.models["box_Normal"].setColor(transparent)
+		self.models["box_Legendary_Played"].setColor(transparent)
+		self.models["box_Normal_Played"].setColor(transparent)
+		if isLegendary: self.box_Model = self.models["box_Legendary_Played" if self.isPlayed else "box_Legendary"]
+		else: self.box_Model = self.models["box_Normal_Played" if self.isPlayed else "box_Normal"]
 		
-		if pickable and not self.collNode:
-			self.collNode = self.attachNewNode(self.collNode_Backup)
-		elif not pickable and self.collNode:
-			self.collNode.removeNode()
-			self.collNode = None
+		if pickable and not self.cNode:
+			self.cNode = self.np.attachNewNode(self.cNode_Backup_Played if self.isPlayed else self.cNode_Backup)
+			self.cNode.show()
+		elif not pickable and self.cNode:
+			self.cNode.removeNode()
+			self.cNode = None
 		
-		"""The card frame. The front face texture is set according to it class"""
-		cardClassPath = "Models\\MinionModels\\MinionCards\\%s.png" % card.Class
-		texture = loader.loadTexture(imgPath)
-		self.models["card"].setTexture(self.models["card"].findTextureStage('*'),
-										loader.loadTexture(cardClassPath), 1)
-		
-		for modelName in ("cardImage", "nameTag", "race"):
-			self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), texture, 1)
-			
+		cardTexture = loader.loadTexture(imgPath)
+		for modelName in ("card", "cardImage", "nameTag", "race"):
+			self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), cardTexture, 1)
+		#Change the card textNodes no matter what (non-mutable texts are empty anyways)
 		text = card.text(CHN)
-		self.texts["description"].setText(text)
-		if text:
-			self.models["description"].setTexture(self.models["description"].findTextureStage('*'),
-												  loader.loadTexture("Models\\MinionModels\\Vanilla_%s.png" % card.index.split('~')[0]), 1)
-			self.textNodes["description"].setPos(0, -0.2, -3 + 0.1 * len(text) / 12)
-		else:
-			self.models["description"].setTexture(self.models["description"].findTextureStage('*'), texture, 1)
+		textNodePath = self.texts["description"]
+		textNodePath.node().setText(text)
+		textNodePath.setPos(0, -0.2, -3 + 0.1 * len(text) / 12)
+		textNodePath.node().setTextColor(black if not self.isPlayed and text else transparent)
+		if not self.isPlayed and text:
+			model = self.models["description"]
+			model.setTexture(model.findTextureStage('*'),
+							self.GUI.textures["minion_%s" % card.index.split('~')[0]], 1)
+			model.setColor(white)
+		else: self.models["description"].setColor(transparent)
+		
+		for modelName in ("cardImage", "nameTag"):
+			self.models[modelName].setColor(white)
+		for modelName in ("stats", "cardBack", "card", "race"):
+			self.models[modelName].setColor(color4Card)
+		self.models["stats_Played"].setColor(color4Played)
 		
 		self.refresh()
 		
 	def leftClick(self):
 		self.selected = not self.selected
 		GUI, card = self.GUI, self.card
-		game = GUI.Game
-		if GUI.UI == -2:
-			self.setBoxColor(red if self.selected else green)
-			GUI.mulliganStatus[card.ID][game.mulligans[card.ID].index(card)] = 1 if self.selected else 0
-		elif GUI.UI == -1: pass #lock out any selection
-		elif GUI.UI == 1: pass
-		elif GUI.UI == 3:
-			if card in game.options:
-				GUI.resolveMove(card, None, "DiscoverOption", info=None)
-		else: GUI.resolveMove(card, self, "MinioninHand")
+		UI, game = GUI.UI, GUI.Game
+		if self.isPlayed: #When the minion is on board
+			if UI == 0 or UI == 2:
+				self.GUI.resolveMove(self.card, self, "MiniononBoard")
+		else: #When the minion is in hand
+			if UI == -2:
+				self.setBoxColor(red if self.selected else green)
+				GUI.mulliganStatus[card.ID][game.mulligans[card.ID].index(card)] = 1 if self.selected else 0
+			elif UI == -1 or UI == 1: pass #lock out any selection
+			elif UI == 3:
+				if card in game.options:
+					GUI.resolveMove(card, None, "DiscoverOption", info=None)
+			else: GUI.resolveMove(card, self, "MinioninHand")
 		
 	def refresh(self, color=False, stat=False, indicator=False, all=True):
 		#Change the box color to indicate the selectability of a card
-		if color or all:
-			self.setBoxColor(self.decideColor())
+		if color or all: self.setBoxColor(self.decideColor())
 		
 		card, GUI = self.card, self.GUI
 		cardType, game = type(card), card.Game
 		"""Reset the stats of the card"""
 		if stat or all:
 			#Refresh the mana
-			if card.mana < cardType.mana: color = green
-			elif card.mana > cardType.mana: color = red
-			else: color = white
-			self.texts["mana"].setText(str(card.mana))
-			self.texts["mana"].setTextColor(color)
+			color = white if card.mana == cardType.mana else (green if card.mana < cardType.mana else red)
+			self.texts["mana"].node().setText(str(card.mana))
+			self.texts["mana"].node().setTextColor(transparent if self.isPlayed else color)
 			#Refresh the attack
-			if card.attack > card.attack_0: color = green
-			elif card.attack < card.attack_0: color = red
-			else: color = white
-			self.texts["attack"].setText(str(card.attack))
-			self.texts["attack"].setTextColor(color)
+			color = white if card.attack <= card.attack_0 else green
+			self.texts["attack"].node().setText(str(card.attack))
+			self.texts["attack"].node().setTextColor(transparent if self.isPlayed else color)
+			self.texts["attack_Played"].node().setText(str(card.attack))
+			self.texts["attack_Played"].node().setTextColor(color if self.isPlayed else transparent)
 			#Refresh the health
-			if card.health < card.health_max: color = red
-			elif card.health_max > card.health_0: color = green
-			else: color = white
-			self.texts["health"].setText(str(card.health))
-			self.texts["health"].setTextColor(color)
-		#Refresh the description if applicable
-		self.texts["description"].setText(card.text(CHN))
-		
+			color = white if card.health == card.health_max else (green if card.health == card.health_max else red)
+			self.texts["health"].node().setText(str(card.health))
+			self.texts["health"].node().setTextColor(transparent if self.isPlayed else color)
+			self.texts["health_Played"].node().setText(str(card.health))
+			self.texts["health_Played"].node().setTextColor(color if self.isPlayed else transparent)
+			#Refresh the description if applicable
+			self.texts["description"].node().setText(card.text(CHN))
+			
 	def decideColor(self):
 		color, card = transparent, self.card
-		cardType, GUI, game = card.type, self.GUI, card.Game
-		if card == GUI.subject: color = pink
-		elif card == GUI.target: color = blue
-		else:
-			if card.evanescent: color = blue
-			elif card.ID == game.turn and game.Manas.affordable(card) and game.space(card.ID) > 0:
-				color = yellow if card.effectViable else green
-		return color
-		
-		
-class NodePath_MinionPlayed(NodePath_Card):
-	def __init__(self, GUI, card=None):
-		super().__init__(GUI, card)
-		self.name = type(card).__name__ + "_Minion"
-	
-		self.collNode_Backup = CollisionNode("MinionPlayed_c_node")
-		self.collNode_Backup.addSolid(CollisionBox(Point3(0, 0, 0), 2.4, 0.3, 3))
-		self.collNode = self.attachNewNode(self.collNode_Backup)
-		
-	def changeCard(self, card, pickable=True):
-		loader = self.GUI.loader
-		self.name = type(card).__name__ + "_MinionPlayed_" + str(datetime.now().time())
-		self.card = card
-		if pickable: card.btn = self
-		imgPath = findFilepath(card)
-		threading.Thread(target=self.reloadModels, args=(loader, imgPath, pickable)).start()
-		#print("btn for card", card, card.btn)
-	
-	def reloadModels(self, loader, imgPath, pickable):
-		card = self.card
-		self.setColor(white)
-		if "~Legendary" in card.index:
-			self.models["box_Normal"].setColor(transparent)
-			self.box_Model = self.models["box_Legendary"]
-		else:
-			self.models["legendaryIcon"].setColor(transparent)
-			self.models["box_Legendary"].setColor(transparent)
-			self.box_Model = self.models["box_Normal"]
-		
-		if pickable and not self.collNode:
-			self.collNode = self.attachNewNode(self.collNode_Backup)
-		elif not pickable and self.collNode:
-			self.collNode.removeNode()
-			self.collNode = None
-		
-		texture = loader.loadTexture(imgPath)
-		for modelName in ("cardImage", "nameTag"):
-			self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), texture, 1)
-		
-		self.refresh()
-		
-	def leftClick(self):
-		if self.GUI.UI in (0, 2):
-			self.GUI.resolveMove(self.card, self, "MiniononBoard")
-		
-	def refresh(self, color=False, stat=False, indicator=False, all=True):
-		#Change the box color to indicate the selectability of a card
-		if color or all:
-			self.setBoxColor(self.decideColor())
-		
-		card, GUI = self.card, self.GUI
-		"""Reset the stats of the card"""
-		if stat or all:
-			#Refresh the attack
-			if card.attack > card.attack_0: color = green
-			elif card.attack < card.attack_0: color = red
-			else: color = white
-			self.texts["attack"].setText(str(card.attack))
-			self.texts["attack"].setTextColor(color)
-			#Refresh the health
-			if card.health < card.health_max: color = red
-			elif card.health_max > card.health_0: color = green
-			else: color = white
-			self.texts["health"].setText(str(card.health))
-			self.texts["health"].setTextColor(color)
-		if indicator or all:
-			self.manageStatusModel()
-			
-	def manageStatusModel(self):
-		num, models = 0, []
-		if self.card.trigsBoard:
-			self.models["Trigger"].setColor(white)
-			self.models["Trigger"].updateText()
-			num += 1
-			models.append(self.models["Trigger"])
-		else: self.models["Trigger"].setColor(transparent)
-		self.models["Trigger"].updateText()
-		if self.card.deathrattles:
-			self.models["Deathrattle"].setColor(white)
-			num += 1
-			models.append(self.models["Trigger"])
-		else: self.models["Deathrattle"].setColor(transparent)
-		for keyWord in ("Lifesteal", "Poisonous"):
-			if self.card.keyWords[keyWord] > 0:
-				self.models[keyWord].setColor(white)
-				num += 1
-				models.append(self.models[keyWord])
-			else: self.models[keyWord].setColor(transparent)
-		
-		color = (1, 1, 1, 0.4) if self.card.auras else transparent
-		self.models["Aura"].setColor(color)
-		
-		color = white if self.card.keyWords["Taunt"] > 0 else transparent
-		self.models["Taunt"].setColor(color)
-		
-		color = (1, 1, 1, 0.3) if self.card.keyWords["Divine Shield"] > 0 else transparent
-		self.models["Divine Shield"].setColor(color)
-		
-		color = (0.4, 0.4, 0.4, 0.65) if self.card.keyWords["Stealth"] + self.card.status["Temp Stealth"] > 0 else transparent
-		self.models["Stealth"].setColor(color)
-		for keyWord in ("Immune", "Frozen"):
-			color = (1, 1, 1, 0.5) if self.card.status[keyWord] > 0 else transparent
-			self.models[keyWord].setColor(color)
-			
-		color = (1, 1, 1, 0.4) if self.card.silenced else transparent
-		self.models["Silenced"].setColor(color)
-		
-		separation = 1.3
-		if num:
-			leftMostPos = - separation * (num - 1) / 2
-			for i, model in enumerate(models):
-				model.setPos(leftMostPos + i * separation, 0, 0)
-		
-	def decideColor(self):
-		color, card = transparent, self.card
+		game = card.Game
 		if card == self.GUI.subject: color = pink
 		elif card == self.GUI.target: color = blue
-		elif card.canAttack(): color = green
+		else:
+			if self.isPlayed:
+				if card.ID == game.turn and game.Manas.affordable(card) and game.space(card.ID) > 0:
+					color = yellow if card.effectViable else green
+			elif card.canAttack(): color = green #If this is a minion that is on board
 		return color
 		
+	#Place the "Trigger", "Deathrattle", "Lifesteal", "Poisonous" icons at the right places
+	def placeIcons(self):
+		for name in ("Trigger", "Deathrattle", "Lifesteal", "Poisonous"):
+			self.icons[name].np.setColor(transparent)
+		if self.isPlayed:
+			icons = [] #Place the icons, depending on the number of trigs to show
+			if self.card.trigsBoard:
+				self.icons["Trigger"].updateText()
+				icons.append(self.icons["Trigger"])
+			if self.card.deathrattles:
+				icons.append(self.icons["Deathrattle"])
+			for keyWord in ("Lifesteal", "Poisonous"):
+				if self.card.keyWords[keyWord] > 0:
+					icons.append(self.icons[keyWord])
+			leftMostPos = -0.6 * (len(icons) - 1) / 2
+			for i, model in enumerate(icons):
+				model.np.setColor(white)
+				model.np.setPos(leftMostPos + i * 0.6, -0.1, -1.9)
+	
+	def manageStatusTexCards(self):
+		minion = self.card
+		if minion.auras: self.texCards["Aura"].find("+SequenceNode").node().loop(False)
+		if minion.keyWords["Divine Shield"] > 0: self.texCards["Divine Shield"].find("+SequenceNode").node().play(1, 20)
+		if minion.canAttack(): self.texCards["Exhausted"].find("+SequenceNode").node().loop(False, 1, 24)
+		if minion.status["Frozen"] > 0: self.texCards["Frozen"].find("+SequenceNode").node().loop(False, 1, 96)
+		if minion.status["Immune"] > 0: self.texCards["Immune"].find("+SequenceNode").node().loop(False, 1, 100)
+		if minion.silenced: self.texCards["Silenced"].find("+SequenceNode").node().loop(True, 1, 71)
+		if minion.keyWords["Spell Damage"] + minion.keyWords["Nature Spell Damage"] > 0:
+			seqNode = self.texCards["Spell Damage"].find("+SequenceNode").node()
+			Sequence(Func(seqNode.play, 1, 13), Func(seqNode.loop, True, 1, 71)).start()
+		if minion.keyWords["Stealth"] + minion.status["Temp Stealth"] > 0:
+			self.texCards["Stealth"].find("+SequenceNode").node().loop(False, 1, 119)
+		if minion.keyWords["Taunt"]: self.texCards["Taunt"].find("+SequenceNode").node().play(1, 13)
 		
-statTextScale = 1.7
+statTextScale = 1.05
 manaPos = Point3(-2.8, -0.15, 3.85)
 healthPos = Point3(3.1, -0.2, -4.95)
 attackPos = Point3(-2.85, -0.15, -4.95)
 
-#Either a card or cardType must be defined
-#Loading a minion card from scratch takes 30ms ~ 100ms
-def loadMinion(base, card):
-	loader = base.loader
-	sansBold = loader.loadFont('Models\\OpenSans-Bold.ttf')
-	cardImgTexture = loader.loadTexture(findFilepath(card))
-	legendaryIconTexture = loader.loadTexture("Models\\MinionModels\\LegendaryExample.png")
-	
-	root = NodePath_Minion(base, card)
-	root.reparentTo(base.render)
-	
-	cardClassPath = "Models\\MinionModels\\MinionCards\\%s.png"%card.Class
-	root.makeModel(loader, "card", loader.loadTexture(cardClassPath), "Models\\MinionModels\\Card.glb")
-	root.makeModel(loader, "cardImage", cardImgTexture, "Models\\MinionModels\\CardImage.glb")
-	root.makeModel(loader, "nameTag", cardImgTexture, "Models\\MinionModels\\NameTag.glb")
-	root.makeModel(loader, "race", cardImgTexture, "Models\\MinionModels\\Race.glb")
-	root.makeModel(loader, "legendaryIcon", legendaryIconTexture, "Models\\MinionModels\\LegendaryIcon.glb")
-	root.makeModel(loader, "box_Normal", None, "Models\\MinionModels\\Box_Normal.glb")
-	root.makeModel(loader, "box_Legendary", None, "Models\\MinionModels\\Box_Legendary.glb")
 
-	cardBack = loader.loadModel("Models\\CardBack.glb")
-	cardBack.reparentTo(root)
-	cardBack.setTexture(cardBack.findTextureStage('*'),
-						loader.loadTexture("Models\\CardBack.png"), 1)
+#loadMinion, etc will prepare all the textures and trigIcons to be ready.
+def loadMinion(base):
+	loader = base.loader
+	sansBold = base.font
+	root = loader.loadModel("Models\\MinionModels\\Minion.glb")
+	root.name = "NP_Minion"
 	
-	text = card.text(CHN)
-	if text:
-		vanillaTexture = loader.loadTexture("Models\\MinionModels\\Vanilla_%s.png"%card.index.split('~')[0])
-		root.makeModel(loader, "description", vanillaTexture, "Models\\MinionModels\\Description.glb")
-	else:
-		root.makeModel(loader, "description", cardImgTexture, "Models\\MinionModels\\Description.glb")
+	#Model names: box_Legendary, box_Legendary_Played, box_Normal, box_Normal_Played
+	# card, cardBack, cardImage, description, legendaryIcon, nameTag, race, stats, stats_Played
+	for model in root.getChildren():
+		model.setTransparency(True)
+		#Only retexture the cardBack, legendaryIcon, stats, stats_Played models.
+		#These models will be shared by all minion cards.
+		if model.name == "cardBack": texture = base.textures["cardBack"]
+		elif model.name in ("legendaryIcon", "stats", "stats_Played"): texture = base.textures["stats_Minion"]
+		else: continue
+		model.setTexture(model.findTextureStage('*'), texture, 1)
 	
-	root.makeText("mana", str(card.mana), pos=manaPos, scale=statTextScale,
-				  color=white, font=sansBold)
-	root.makeText("attack", str(card.attack), pos=attackPos, scale=statTextScale,
-				  color=white, font=sansBold)
-	root.makeText("health", str(card.health), pos=healthPos, scale=statTextScale,
-				  color=white, font=sansBold)
-	root.makeText("description", valueText=text, pos=(0, -0.2, -2.5+0.1*len(text) / 12), scale=0.4,
-				  color=black, font=sansBold, wordWrap=12)
+	makeText(root, "mana", '0', pos=(-1.8, -0.09, 1.15), scale=statTextScale,
+			 color=white, font=sansBold)
+	makeText(root, "attack", '0', pos=(-1.7, -0.09, -4.05), scale=statTextScale,
+			 color=white, font=sansBold)
+	makeText(root, "health", '0', pos=(1.8, -0.09, -4.05), scale=statTextScale,
+			 color=white, font=sansBold)
+	makeText(root, "attack_Played", '0', pos=(-1.2, -0.122, -0.74), scale=0.8,
+			 color=white, font=sansBold)
+	makeText(root, "health_Played", '0', pos=(1.32, -0.122, -0.74), scale=0.8,
+			 color=white, font=sansBold)
+	makeText(root, "description", "", pos=(0, 0, 0), scale=0.3,
+			 color=black, font=sansBold, wordWrap=12)
+	base.modelTemplates["Trigger"].copyTo(root)
+	base.modelTemplates["Deathrattle"].copyTo(root)
+	base.modelTemplates["Lifesteal"].copyTo(root)
+	base.modelTemplates["Poisonous"].copyTo(root)
 	
-	root.setPos(BackupModelPos)
+	for name, posScale in table_PosScaleofTexCard_Minions.items():
+		texCard = loader.loadModel("TexCards\\ForMinions\\%s.egg" % name)
+		texCard.name = name + "_TexCard"
+		texCard.reparentTo(root)
+		texCard.setScale(posScale[0])
+		texCard.setPos(posScale[1])
+		texCard.find("+SequenceNode").node().pose(0)
+	
+	#After the loading, the NP_Minion root tree structure is:
+	#NP_Minion/card|stats|cardImage, etc
+	#NP_Minion/mana_TextNode|attack_TextNode, etc
+	#NP_Minion/Trigger_Icon|Deathrattle_Icon, etc
+	#NP_Minion/Aura_TexCard, etc
 	return root
 
 
-def loadMinion_Played(base, card):
-	loader = base.loader
-	imgPath = findFilepath(card)
-	sansBold = loader.loadFont('Models\\OpenSans-Bold.ttf')
-	cardImgTexture = loader.loadTexture(imgPath)
-	
-	root = NodePath_MinionPlayed(base, card)
-	root.reparentTo(base.render)
-	
-	root.makeModel(loader, "cardImage", cardImgTexture, "Models\\MinionModels\\MinionImage_Played.glb")
-	root.makeModel(loader, "nameTag", cardImgTexture, "Models\\MinionModels\\NameTag_Played.glb")
-	root.makeModel(loader, "stats", None,"Models\\MinionModels\\stats.glb")
-	
-	legendaryIconTexture = loader.loadTexture("Models\\MinionModels\\LegendaryExample.png")
-	root.makeModel(loader, "legendaryIcon", legendaryIconTexture, "Models\\MinionModels\\LegendaryIcon_Played.glb")
-	
-	root.makeModel(loader, "box_Normal", None, "Models\\MinionModels\\Box_NormalPlayed.glb")
-	root.makeModel(loader, "box_Legendary", None, "Models\\MinionModels\\Box_LegendaryPlayed.glb")
-	
-	root.makeText("attack", str(card.attack), pos=(-2.05, -0.1, -1.95), scale=1.3,
-				  color=white, font=sansBold)
-	root.makeText("health", str(card.health), pos=(1.95, -0.1, -1.9), scale=1.3,
-				  color=white, font=sansBold)
-	
-	"""Define the models that indicate the keywords of the minion, for example, Taunt"""
-	trig_Model = loadTrigger(root) #TriggerModel(root, "Models\\MinionModels\\Trigger.glb")
-	trig_Model.setTransparency(True)
-	trig_Model.reparentTo(root)
-	root.models["Trigger"] = trig_Model
-	
-	root.makeModel(loader, "Deathrattle", None, "Models\\MinionModels\\Deathrattle.glb")
-	root.makeModel(loader, "Aura", None, "Models\\MinionModels\\Aura.glb")
-	
-	for keyWord in ("Lifesteal", "Poisonous", "Taunt", "Divine Shield", "Stealth", "Immune", "Frozen"):
-		if keyWord in ("Taunt", "Stealth"):
-			root.makeModel(loader, keyWord, loader.loadTexture("Models\\MinionModels\\%s.png"%keyWord),
-						   "Models\\MinionModels\\%s.glb"%keyWord)
-		else:
-			root.makeModel(loader, keyWord, None, "Models\\MinionModels\\%s.glb"%keyWord)
-	
-	root.makeModel(loader, "Silenced", None, "Models\\MinionModels\\Silenced.glb")
-	
-	root.setPos(BackupModelPos)
-	return root
-	
-	
-	
 """Load Spell Cards"""
-class NodePath_Spell(NodePath_Card):
-	def __init__(self, GUI, card=None):
-		super().__init__(GUI, card)
-		self.name = type(card).__name__ + "_Spell"
+class Btn_Spell(Btn_Card):
+	def __init__(self, GUI, card, nodePath):
+		super().__init__(GUI, card, nodePath)
 		
-		self.collNode_Backup = CollisionNode("Spell_c_node")
-		self.collNode_Backup.addSolid(CollisionBox(Point3(0, 0, 0), 3.5, 0.3, 5))
-		self.collNode = self.attachNewNode(self.collNode_Backup)
-		
-	def changeCard(self, card, pickable=True):
-		loader = self.GUI.loader
-		self.card = card
-		if pickable: card.btn = self
-		self.name = type(card).__name__ + "_Spell_" + str(datetime.now().time())
-		imgPath = findFilepath(card)
-		threading.Thread(target=self.reloadModels, args=(loader, imgPath, pickable)).start()
+		self.cNode_Backup = CollisionNode("Spell_cNode")
+		self.cNode_Backup.addSolid(CollisionBox(Point3(0.05, 0, -1.1), 2.2, 0.1, 3.1))
 		
 	def reloadModels(self, loader, imgPath, pickable):
 		card = self.card
-		if "~Legendary" in card.index:
-			self.models["box_Normal"].setColor(transparent)
-			self.box_Model = self.models["box_Legendary"]
-		else:
-			self.models["legendaryIcon"].setColor(transparent)
-			self.models["box_Legendary"].setColor(transparent)
-			self.box_Model = self.models["box_Normal"]
+		isLegendary = "~Legendary" in card.index
+		self.models["legendaryIcon"].setColor(white if isLegendary else transparent)
+		self.models["box_Normal"].setColor(transparent)
+		self.models["box_Legendary"].setColor(transparent)
+		self.box_Model = self.models["box_Legendary" if isLegendary else "box_Normal"]
 		
-		if pickable and not self.collNode:
-			self.collNode = self.attachNewNode(self.collNode_Backup)
-		elif not pickable and self.collNode:
-			self.collNode.removeNode()
-			self.collNode = None
+		if pickable and not self.cNode:
+			self.cNode = self.np.attachNewNode(self.cNode_Backup)
+			self.cNode.show()
+		elif not pickable and self.cNode:
+			self.cNode.removeNode()
+			self.cNode = None
 		
 		texture = loader.loadTexture(imgPath)
-		for modelName in ("card", "nameTag", "school"):
+		for modelName in ("card", "school"):
 			self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), texture, 1)
-		
+	
 		text = card.text(CHN)
-		self.texts["description"].setText(text)
-		if text:
-			self.models["description"].setTexture(self.models["description"].findTextureStage('*'),
-											loader.loadTexture("Models\\SpellModels\\Vanilla_%s.png" % card.index.split('~')[0]), 1)
-			self.textNodes["description"].setPos(0, -0.2, -3 + 0.1 * len(text) / 12)
-		else:
-			self.models["description"].setTexture(self.models["description"].findTextureStage('*'), texture, 1)
+		textNodePath = self.texts["description"]
+		textNodePath.node().setText(text)
+		textNodePath.setPos(0, -0.2, -3 + 0.1 * len(text) / 12)
+		textNodePath.node().setTextColor(black if not self.isPlayed and text else transparent)
+		if not self.isPlayed and text:
+			model = self.models["description"]
+			model.setTexture(model.findTextureStage('*'),
+							self.GUI.textures["spell_%s"%card.index.split('~')[0]], 1)
+			model.setColor(white)
+		else: self.models["description"].setColor(transparent)
 		
 		self.refresh()
 		
@@ -522,133 +383,119 @@ class NodePath_Spell(NodePath_Card):
 		
 	def refresh(self, color=False, stat=False, indicator=False, all=True):
 		#Change the box color to indicate the selectability of a card
-		if color or all:
-			self.setBoxColor(self.decideColor())
+		if color or all: self.setBoxColor(self.decideColor())
 		
 		card = self.card
 		cardType = type(card)
 		"""Reset the stats of the card"""
 		if stat or all:
 			#Refresh the mana
-			if card.mana < cardType.mana: color = green
-			elif card.mana > cardType.mana: color = red
-			else: color = white
-			self.texts["mana"].setText(str(card.mana))
-			self.texts["mana"].setTextColor(color)
+			color = white if card.mana == cardType.mana else (red if card.mana > cardType.mana else green)
+			self.texts["mana"].node().setText(str(card.mana))
+			self.texts["mana"].node().setTextColor(color)
 		#Refresh the description if applicable
-		self.texts["description"].setText(card.text(CHN))
+		self.texts["description"].node().setText(card.text(CHN))
 	
 	def decideColor(self):
 		color, card = transparent, self.card
 		if card == self.GUI.subject: color = pink
 		elif card == self.GUI.target: color = blue
 		else:
-			if card.evanescent: color = blue
 			if card.inHand and card.ID == card.Game.turn and card.Game.Manas.affordable(card) and card.available():
 				color = yellow if card.effectViable else green
 		return color
 		
 		
-def loadSpell(base, card):
+def loadSpell(base):
 	loader = base.loader
-	sansBold = loader.loadFont('Models\\OpenSans-Bold.ttf')
-	cardImgTexture = loader.loadTexture(findFilepath(card))
-	statsTexture = loader.loadTexture("Models\\SpellModels\\SpellStats.png")
+	sansBold = base.font
+	root = loader.loadModel("Models\\SpellModels\\Spell.glb")
+	root.name = "NP_Spell"
 	
-	root = NodePath_Spell(base, card)
-	root.reparentTo(base.render)
+	#Model names: box_Legendary, box_Normal, card, cardBack, description, legendaryIcon, mana, school
+	for model in root.getChildren():
+		model.setTransparency(True)
+		if model.name == "cardBack": texture = base.textures["cardBack"]
+		elif model.name in ("mana", "legendaryIcon"): texture = base.textures["stats_Spell"]
+		else: continue
+		model.setTexture(model.findTextureStage('*'), texture, 1)
 	
-	root.makeModel(loader, "card", cardImgTexture, "Models\\SpellModels\\Card.glb")
-	root.makeModel(loader, "nameTag", cardImgTexture, "Models\\SpellModels\\NameTag.glb")
-	root.makeModel(loader, "school", cardImgTexture, "Models\\SpellModels\\School.glb")
-	root.makeModel(loader, "mana", statsTexture, "Models\\SpellModels\\Mana.glb")
-	root.makeModel(loader, "legendaryIcon", statsTexture, "Models\\SpellModels\\LegendaryIcon.glb")
-	root.makeModel(loader, "box_Normal", None, "Models\\SpellModels\\Box_Normal.glb")
-	root.makeModel(loader, "box_Legendary", None, "Models\\SpellModels\\Box_Legendary.glb")
-	
-	cardBack = loader.loadModel("Models\\CardBack.glb")
-	cardBack.reparentTo(root)
-	cardBack.setTexture(cardBack.findTextureStage('*'),
-						loader.loadTexture("Models\\CardBack.png"), 1)
-	
-	text = card.text(CHN)
-	if text:
-		descriptionTexture = loader.loadTexture("Models\\SpellModels\\Vanilla_%s.png" % card.index.split('~')[0])
-		root.makeModel(loader, "description", descriptionTexture, "Models\\SpellModels\\Description.glb")
-	else:
-		root.makeModel(loader, "description", cardImgTexture, "Models\\SpellModels\\Description.glb")
-	root.makeText("mana", str(card.mana), pos=manaPos, scale=statTextScale,
-				  color=white, font=sansBold, wordWrap=0)
-	root.makeText("description", text, pos=(0, -0.2, -3 + 0.1 * len(text) / 12), scale=0.44,
-				  color=black, font=sansBold, wordWrap=12)
-	
-	root.setPos(BackupModelPos)
+	makeText(root, "mana", '0', pos=(-1.73, -0.09, 1.2), scale=statTextScale,
+			 color=white, font=sansBold, wordWrap=0)
+	makeText(root, "description", '', pos=(0, 0, 0), scale=0.25,
+			 color=black, font=sansBold, wordWrap=12)
+	#After the loading, the NP_Spell root tree structure is:
+	#NP_Spell/card|cardBack|legendaryIcon, etc
+	#NP_Spell/mana_TextNode|description_TextNode
 	return root
 
-
+#Weapon: cardImage y limit -0.09; nameTag -0.095; stats_Played -0.13
+table_PosScaleofTexCard_Weapons = {"Immune": (3.7, (0.1, -0.12, 0.3)),
+						   }
 
 """Load Weapon Cards"""
-class NodePath_Weapon(NodePath_Card):
-	def __init__(self, GUI, card=None):
-		super().__init__(GUI, card)
-		self.name = type(card).__name__ + "_Weapon"
+class Btn_Weapon(Btn_Card):
+	def __init__(self, GUI, card, nodePath):
+		super().__init__(GUI, card, nodePath)
 		
-		self.collNode_Backup = CollisionNode("Weapon_c_node")
-		self.collNode_Backup.addSolid(CollisionBox(Point3(0, 0, 0), 3.5, 0.3, 5))
-		self.collNode = self.attachNewNode(self.collNode_Backup)
-		
-	def changeCard(self, card, pickable=True):
-		loader = self.GUI.loader
-		self.card = card
-		if pickable: card.btn = self
-		self.name = type(card).__name__ + "_Weapon_" + str(datetime.now().time())
-		imgPath = findFilepath(card)
-		threading.Thread(target=self.reloadModels, args=(loader, imgPath, pickable)).start()
+		self.cNode_Backup = CollisionNode("Weapon_cNode_Card")
+		self.cNode_Backup.addSolid(CollisionBox(Point3(0.05, 0, -1.1), 2.2, 0.1, 3.1))
+		self.cNode_Backup_Played = CollisionNode("Weapon_cNode_Played")
+		self.cNode_Backup_Played.addSolid(CollisionBox(Point3(0.07, 0, 0.33), 1.8, 0.1, 1.8))
 		
 	def reloadModels(self, loader, imgPath, pickable):
 		card = self.card
-		if "~Legendary" in card.index:
-			self.models["box_Normal"].setColor(transparent)
-			self.box_Model = self.models["box_Legendary"]
-		else:
-			self.models["legendaryIcon"].setColor(transparent)
-			self.models["box_Legendary"].setColor(transparent)
-			self.box_Model = self.models["box_Normal"]
+		if self.isPlayed: color4Card, color4Played = transparent, white
+		else: color4Card, color4Played = white, transparent
+		isLegendary = "~Legendary" in card.index
+		self.models["legendaryIcon"].setColor(white if isLegendary else transparent)
+		self.models["box_Normal"].setColor(transparent)
+		self.models["box_Legendary"].setColor(transparent)
+		self.box_Model = None if self.isPlayed else self.models["box_Legendary" if isLegendary else "box_Normal"]
 		
-		if pickable and not self.collNode:
-			self.collNode = self.attachNewNode(self.collNode_Backup)
-		elif not pickable and self.collNode:
-			self.collNode.removeNode()
-			self.collNode = None
+		if pickable and not self.cNode:
+			self.cNode = self.np.attachNewNode(self.cNode_Backup)
+			self.cNode.show()
+		elif not pickable and self.cNode:
+			self.cNode.removeNode()
+			self.cNode = None
 		
-		"""The card frame. The front face texture is set according to it class"""
-		cardClassPath = "Models\\WeaponModels\\WeaponCards\\%s.png" % card.Class
-		texture = loader.loadTexture(imgPath)
 		self.models["card"].setTexture(self.models["card"].findTextureStage('*'),
-									   loader.loadTexture(cardClassPath), 1)
-		
+									   self.GUI.textures["weapon_"+card.Class], 1)
+	
+		cardTexture = loader.loadTexture(imgPath)
 		for modelName in ("cardImage", "nameTag", "description"):
-			self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), texture, 1)
+			self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), cardTexture, 1)
+			
+		for modelName in ("cardImage", "nameTag"):
+			self.models[modelName].setColor(white)
+		for modelName in ("stats", "cardBack", "card", "description"):
+			self.models[modelName].setColor(color4Card)
+		self.models["stats_Played"].setColor(color4Played)
+		self.texts["attack"].node().setTextColor(color4Card)
+		self.texts["durability"].node().setTextColor(color4Card)
+		self.texts["attack_Played"].node().setTextColor(color4Played)
+		self.texts["durability_Played"].node().setTextColor(color4Played)
 		
 		self.refresh()
 		
 	def leftClick(self):
-		self.selected = not self.selected
-		GUI, card = self.GUI, self.card
-		game = GUI.Game
-		if GUI.UI == -2:
-			self.setBoxColor(red if self.selected else green)
-			GUI.mulliganStatus[card.ID][game.mulligans[card.ID].index(card)] = 1 if self.selected else 0
-		elif GUI.UI == -1: pass #lock out any selection
-		elif GUI.UI == 1: pass
-		elif GUI.UI == 3:
-			if card in game.options:
-				GUI.resolveMove(card, None, "DiscoverOption", info=None)
-		else: GUI.resolveMove(card, self, "WeaponinHand")
+		if not self.isPlayed:
+			self.selected = not self.selected
+			GUI, card = self.GUI, self.card
+			game = GUI.Game
+			if GUI.UI == -2:
+				self.setBoxColor(red if self.selected else green)
+				GUI.mulliganStatus[card.ID][game.mulligans[card.ID].index(card)] = 1 if self.selected else 0
+			elif GUI.UI == -1 or GUI.UI == 1: pass #lock out any selection
+			elif GUI.UI == 3:
+				if card in game.options:
+					GUI.resolveMove(card, None, "DiscoverOption", info=None)
+			else: GUI.resolveMove(card, self, "WeaponinHand")
 		
 	def refresh(self, color=False, stat=False, indicator=False, all=True):
 		#Change the box color to indicate the selectability of a card
-		if color or all:
+		if (color or all) and not self.isPlayed:
 			self.setBoxColor(self.decideColor())
 		
 		card, GUI = self.card, self.GUI
@@ -656,483 +503,273 @@ class NodePath_Weapon(NodePath_Card):
 		"""Reset the stats of the card"""
 		if stat or all:
 			#Refresh the mana
-			if card.mana < cardType.mana: color = green
-			elif card.mana > cardType.mana: color = red
-			else: color = white
-			self.texts["mana"].setText(str(card.mana))
-			self.texts["mana"].setTextColor(color)
+			color = white if card.mana == cardType.mana else (green if card.mana < cardType.mana else red)
+			self.texts["mana"].node().setText(str(card.mana))
+			self.texts["mana"].node().setTextColor(transparent if self.isPlayed else color)
 			#Refresh the attack
-			if card.attack > cardType.attack: color = green
-			elif card.attack < cardType.attack: color = red
-			else: color = white
-			self.texts["attack"].setText(str(card.attack))
-			self.texts["attack"].setTextColor(color)
+			color = white if card.attack <= cardType.attack else green
+			self.texts["attack"].node().setText(str(card.attack))
+			self.texts["attack"].node().setTextColor(transparent if self.isPlayed else color)
+			self.texts["attack_Played"].node().setText(str(card.attack))
+			self.texts["attack_Played"].node().setTextColor(color if self.isPlayed else transparent)
 			#Weapon durability
-			if card.durability > cardType.durability: color = green
-			elif card.durability < cardType.durability: color = red
-			else: color = white
-			self.texts["durability"].setText(str(card.durability))
-			self.texts["durability"].setTextColor(color)
+			color = white if card.durability >= cardType.durability else red
+			self.texts["durability"].node().setText(str(card.durability))
+			self.texts["durability"].node().setTextColor(transparent if self.isPlayed else color)
+			self.texts["durability_Played"].node().setText(str(card.durability))
+			self.texts["durability_Played"].node().setTextColor(color if self.isPlayed else transparent)
 		
+	#Place the "Trigger", "Deathrattle", "Lifesteal", "Poisonous" icons at the right places
+	def placeIcons(self):
+		for name in ("Trigger", "Deathrattle", "Lifesteal", "Poisonous"):
+			self.icons[name].np.setColor(transparent)
+		if self.isPlayed:
+			icons = []  #Place the icons, depending on the number of trigs to show
+			if self.card.trigsBoard:
+				self.icons["Trigger"].updateText()
+				icons.append(self.icons["Trigger"])
+			if self.card.deathrattles:
+				icons.append(self.icons["Deathrattle"])
+			for keyWord in ("Lifesteal", "Poisonous"):
+				if self.card.keyWords[keyWord] > 0:
+					icons.append(self.icons[keyWord])
+			leftMostPos = -0.6 * (len(icons) - 1) / 2
+			for i, model in enumerate(icons):
+				model.np.setColor(white)
+				model.np.setPos(leftMostPos + i * 0.6, -0.1, -1.8)
+	
 	def decideColor(self):
+		if self.isPlayed: return transparent
 		color, card = transparent, self.card
 		cardType, GUI, game = card.type, self.GUI, card.Game
 		if card == GUI.subject: color = pink
 		elif card == GUI.target: color = blue
 		else:
-			if card.evanescent: color = blue
 			if card.inHand and card.ID == game.turn and game.Manas.affordable(card):
 				color = yellow if card.effectViable else green
 		return color
 		
 		
-class NodePath_WeaponPlayed(NodePath_Card):
-	def __init__(self, GUI, card=None):
-		super().__init__(GUI, card)
-		self.name = type(card).__name__ + "_WeaponPlayed"
-	
-		self.collNode_Backup = CollisionNode("WeaponPlayed_c_node")
-		self.collNode_Backup.addSolid(CollisionSphere(0, 0, 0, 2.7))
-		self.collNode = self.attachNewNode(self.collNode_Backup)
-		
-	def changeCard(self, card, pickable=True):
-		loader = self.GUI.loader
-		self.card = card
-		if pickable: card.btn = self
-		self.name = type(card).__name__ + "_WeaponPlayed_" + str(datetime.now().time())
-		imgPath = findFilepath(card)
-		threading.Thread(target=self.reloadModels, args=(loader, imgPath, pickable)).start()
-		
-	def reloadModels(self, loader, imgPath, pickable):
-		self.setColor(white)
-		self.models["legendaryIcon"].setColor(white if "~Legendary" in self.card.index else transparent)
-		
-		if pickable and not self.collNode:
-			self.collNode = self.attachNewNode(self.collNode_Backup)
-		elif not pickable and self.collNode:
-			self.collNode.removeNode()
-			self.collNode = None
-		
-		texture = loader.loadTexture(imgPath)
-		for modelName in ("cardImage", "nameTag"):
-			self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), texture, 1)
-		
-		self.refresh()
-		
-	def leftClick(self):
-		pass
-		
-	def refresh(self, color=False, stat=False, indicator=False, all=True):
-		#Change the box color to indicate the selectability of a card
-		if color or all:
-			self.setBoxColor(self.decideColor())
-		
-		card, GUI = self.card, self.GUI
-		cardType, game = type(card), card.Game
-		"""Reset the stats of the card"""
-		if stat or all:
-			#Refresh the attack
-			if card.attack > cardType.attack: color = green
-			elif card.attack < cardType.attack: color = red
-			else: color = white
-			self.texts["attack"].setText(str(card.attack))
-			self.texts["attack"].setTextColor(color)
-			#Weapon durability
-			if card.durability > cardType.durability: color = green
-			elif card.durability < cardType.durability: color = red
-			else: color = white
-			self.texts["durability"].setText(str(card.durability))
-			self.texts["durability"].setTextColor(color)
-		if indicator or all:
-			self.manageStatusModel()
-			
-	def manageStatusModel(self):
-		num, models = 0, []
-		if self.card.trigsBoard:
-			self.models["Trigger"].setColor(white)
-			self.models["Trigger"].updateText()
-			num += 1
-			models.append(self.models["Trigger"])
-		else: self.models["Trigger"].setColor(transparent)
-		#self.models["Trigger"].updateText()
-		if self.card.deathrattles:
-			self.models["Deathrattle"].setColor(white)
-			num += 1
-			models.append(self.models["Trigger"])
-		else: self.models["Deathrattle"].setColor(transparent)
-		for keyWord in ("Lifesteal", "Poisonous"):
-			if self.card.keyWords[keyWord] > 0:
-				self.models[keyWord].setColor(white)
-				num += 1
-				models.append(self.models[keyWord])
-			else: self.models[keyWord].setColor(transparent)
-		
-		separation = 1.3
-		if num:
-			leftMostPos = - separation * (num - 1) / 2
-			for i, model in enumerate(models):
-				model.setPos(leftMostPos + i * separation, 0, 0)
-		
-	def decideColor(self):
-		return transparent
-		
-		
-def loadWeapon(base, card):
+def loadWeapon(base):
 	loader = base.loader
-	imgPath = findFilepath(card)
-	sansBold = loader.loadFont('Models\\OpenSans-Bold.ttf')
-	cardImgTexture = loader.loadTexture(imgPath)
-	legendaryIconTexture = loader.loadTexture("Models\\WeaponModels\\LegendaryExample.png")
+	sansBold = base.font
+	root = loader.loadModel("Models\\WeaponModels\\Weapon.glb")
+	root.name = "NP_Weapon"
 	
-	root = NodePath_Weapon(base, card)
-	root.reparentTo(base.render)
-	
-	cardClassPath = "Models\\WeaponModels\\WeaponCards\\%s.png" % card.Class
-	root.makeModel(loader, "card", loader.loadTexture(cardClassPath), "Models\\WeaponModels\\Card.glb")
-	root.makeModel(loader, "cardImage", cardImgTexture, "Models\\WeaponModels\\CardImage.glb")
-	root.makeModel(loader, "nameTag", cardImgTexture, "Models\\WeaponModels\\NameTag.glb")
-	root.makeModel(loader, "description", cardImgTexture, "Models\\WeaponModels\\Description.glb")
-	root.makeModel(loader, "legendaryIcon", legendaryIconTexture, "Models\\WeaponModels\\LegendaryIcon.glb")
-	
-	cardBack = loader.loadModel("Models\\CardBack.glb")
-	cardBack.reparentTo(root)
-	cardBack.setTexture(cardBack.findTextureStage('*'),
-						loader.loadTexture("Models\\CardBack.png"), 1)
-	
-	root.makeText("mana", str(card.mana), pos=manaPos, scale=statTextScale,
-				  color=white, font=sansBold)
-	root.makeText("attack", str(card.attack), pos=attackPos, scale=statTextScale,
-				  color=white, font=sansBold)
-	root.makeText("durability", str(card.durability), pos=healthPos, scale=statTextScale,
+	#Model names: border, box_Legendary, box_Normal, card, cardBack, cardImage, description,
+	# legendaryIcon, nameTag, stats, stats_Played
+	for model in root.getChildren():
+		model.setTransparency(True)
+		if model.name == "cardBack": texture = base.textures["cardBack"]
+		elif model.name in ("border", "legendaryIcon", "stats", "stats_Played"): texture = base.textures["stats_Weapon"]
+		else: continue
+		model.setTexture(model.findTextureStage('*'), texture, 1)
+		
+	makeText(root, "mana", '0', pos=(-1.75, -0.11, 1.23), scale=statTextScale,
+			  color=white, font=sansBold)
+	makeText(root, "attack", '0', pos=(-1.7, -0.12, -4), scale=statTextScale,
+			  color=white, font=sansBold)
+	makeText(root, "durability", '0', pos=(1.8, -0.12, -4), scale=statTextScale,
+			  color=white, font=sansBold)
+	makeText(root, "attack_Played", '0', pos=(-1.28, -0.132, -0.8), scale=0.9,
+			  color=white, font=sansBold)
+	makeText(root, "durability_Played", '0', pos=(1.27, -0.132, -0.8), scale=0.9,
 				  color=white, font=sansBold)
 	
-	root.makeModel(loader, "box_Normal", None, "Models\\WeaponModels\\Box_Normal.glb")
-	root.makeModel(loader, "box_Legendary", None, "Models\\WeaponModels\\Box_Legendary.glb")
-
-	root.setPos(BackupModelPos)
+	base.modelTemplates["Trigger"].copyTo(root)
+	base.modelTemplates["Deathrattle"].copyTo(root)
+	base.modelTemplates["Lifesteal"].copyTo(root)
+	base.modelTemplates["Poisonous"].copyTo(root)
+	
+	for name, posScale in table_PosScaleofTexCard_Weapons.items():
+		texCard = loader.loadModel("TexCards\\ForWeapons\\%s.egg" % name)
+		texCard.name = name + "_TexCard"
+		texCard.reparentTo(root)
+		texCard.setScale(posScale[0])
+		texCard.setPos(posScale[1])
+		texCard.find("+SequenceNode").node().pose(0)#loop(False, 1, 100)
+	
+	#After the loading, the NP_Weapon root tree structure is:
+	#NP_Weapon/card|stats|cardImage, etc
+	#NP_Weapon/mana_TextNode|attack_TextNode, etc
+	#NP_Weapon/Trigger_Icon|Deathrattle_Icon, etc
 	return root
-
-
-def loadWeapon_Played(base, card):
-	loader = base.loader
-	imgPath = findFilepath(card)
-	sansBold = loader.loadFont('Models\\OpenSans-Bold.ttf')
-	cardImgTexture = loader.loadTexture(imgPath)
-	legendaryIconTexture = loader.loadTexture("Models\\WeaponModels\\LegendaryExample.png")
-	borderTexture = loader.loadTexture("Models\\WeaponModels\\ForBorder.png")
-	
-	root = NodePath_WeaponPlayed(base, card)
-	root.reparentTo(base.render)
-	
-	root.makeModel(loader, "border", borderTexture, "Models\\WeaponModels\\Border.glb")
-	root.makeModel(loader, "cardImage", cardImgTexture, "Models\\WeaponModels\\CardImage_Played.glb")
-	root.makeModel(loader, "nameTag", cardImgTexture, "Models\\WeaponModels\\NameTag_Played.glb")
-	root.makeModel(loader, "legendaryIcon", legendaryIconTexture, "Models\\WeaponModels\\LegendaryIcon_Played.glb")
-	
-	root.makeText("attack", str(card.attack), pos=(-2.25, -0.17, -1.7), scale=1.3,
-				  color=white, font=sansBold)
-	root.makeText("durability", str(card.durability), pos=(2.25, -0.17, -1.7), scale=1.3,
-				  color=white, font=sansBold)
-
-	"""Define the models that indicate the keywords of the minion, for example, Taunt"""
-	trig_Model = loadTrigger(root) #loader.loadModel("Models\\WeaponModels\\Trigger.glb")
-	trig_Model.setTransparency(True)
-	trig_Model.reparentTo(root)
-	root.models["Trigger"] = trig_Model
-	
-	root.makeModel(loader, "Deathrattle", None, "Models\\WeaponModels\\Deathrattle.glb")
-	
-	for keyWord in ("Lifesteal", "Poisonous"):
-		root.makeModel(loader, keyWord, None, "Models\\WeaponModels\\%s.glb" % keyWord)
-	
-	root.setPos(BackupModelPos)
-	return root
-
 
 
 """Load Hero Powers"""
-class NodePath_Power(NodePath_Card):
-	def __init__(self, GUI, card=None):
-		NodePath.__init__(self, card.name + "_Power")
-		#These attributes will be modified by load functions below
-		self.card = card
-		self.selected = False
-		self.GUI = GUI
+class Btn_Power(Btn_Card):
+	def __init__(self, GUI, card, nodePath):
+		super().__init__(GUI, card, nodePath)
 		
-		#Attributes that require changing constantly
-		self.manaText = self.descriptionText = self.descriptionTextNode = None
-		self.card_Model = self.description_Model = None
-		self.box_Model = None  #Indicate if the card is available for play
-		
-		self.collNode_Backup = CollisionNode("Power_c_node")
-		self.collNode_Backup.addSolid(CollisionBox(Point3(0, 0, 0), 3.5, 0.3, 5))
-		self.collNode = self.attachNewNode(self.collNode_Backup)
-		
-	def changeCard(self, card, pickable=True):
-		loader = self.GUI.loader
-		self.card = card
-		if pickable: card.btn = self
-		self.name = type(card).__name__ + "_Power_" + str(datetime.now().time())
-		imgPath = findFilepath(card)
-		threading.Thread(target=self.reloadModels, args=(loader, imgPath, pickable)).start()
+		self.cNode_Backup = CollisionNode("Power_cNode")
+		self.cNode_Backup.addSolid(CollisionBox(Point3(0, 0, -1.6), 2.3, 0.1, 3))
+		self.cNode_Backup_Played = CollisionNode("Power_cNode_Played")
+		self.cNode_Backup_Played.addSolid(CollisionBox(Point3(0, 0, 0.3), 1.6, 0.1, 1.6))
 		
 	def reloadModels(self, loader, imgPath, pickable):
 		card = self.card
-		if pickable and not self.collNode:
-			self.collNode = self.attachNewNode(self.collNode_Backup)
-		elif not pickable and self.collNode:
-			self.collNode.removeNode()
-			self.collNode = None
+		self.models["box"].setColor(transparent)
+		for modelName in ("card", "description", "nameTag"):
+			self.models[modelName].setColor(transparent if self.isPlayed else white)
+		if pickable and not self.cNode:
+			self.cNode = self.np.attachNewNode(self.cNode_Backup)
+			self.cNode.show()
+		elif not pickable and self.cNode:
+			self.cNode.removeNode()
+			self.cNode = None
 		
 		"""The card frame. The front face texture is set according to it class"""
 		texture = loader.loadTexture(imgPath)
-		self.card_Model.setTexture(self.card_Model.findTextureStage('*'),
-									texture, 1)
-		if self.descriptionText:  #If card description can change, then set the card image as the texture
-			self.description_Model.setTexture(self.description_Model.findTextureStage('*'),
-											loader.loadTexture("Models\\PowerModels\\Vanilla.png"), 1)
-			text = card.text(CHN)
-			self.descriptionText.setText(text)
-			self.descriptionTextNode.setPos(0, -0.2, -3+0.1*len(text) / 12)
+		for modelName in ("card", "cardImage", "nameTag"):
+			self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), texture, 1)
+		text = card.text(CHN)
+		textNodePath = self.texts["description"]
+		textNodePath.node().setText(text)
+		textNodePath.setPos(0, -0.2, -3 + 0.1 * len(text) / 12)
+		textNodePath.node().setTextColor(black if not self.isPlayed and text else transparent)
+		self.models["description"].setColor(white if not self.isPlayed and text else transparent)
+		
+		self.refresh()
+		
+	def leftClick(self):
+		if self.isPlayed:
+			if self.GUI.UI == 0:
+				self.GUI.resolveMove(self.card, self, "Power", info=None)
 		else:
-			self.description_Model.setTexture(self.description_Model.findTextureStage('*'),
-											texture, 1)
-		
-		self.refresh()
-		
-	def leftClick(self):
-		if self.GUI.UI == 3 and self.card in self.GUI.Game.options:
-			self.GUI.resolveMove(self.card, None, "DiscoverOption", info=None)
+			if self.GUI.UI == 3 and self.card in self.GUI.Game.options:
+				self.GUI.resolveMove(self.card, None, "DiscoverOption", info=None)
 		
 	def refresh(self, color=False, stat=False, indicator=False, all=True):
-		pass
-		
-	def decideColor(self):
-		return white
-		
-		
-class NodePath_PowerPlayed(NodePath_Card):
-	def __init__(self, GUI, card=None):
-		NodePath.__init__(self, card.name + "_PowerPlayed")
-		#These attributes will be modified by load functions below
-		self.card = card
-		self.selected = False
-		self.GUI = GUI
-		
-		#Attributes that require changing constantly
-		self.manaText = None
-		self.cardImage_Model = None
-		self.box_Model = None  #Indicate if the card is available for play
-		
-		self.collNode_Backup = CollisionNode("PowerPlayed_c_node")
-		self.collNode_Backup.addSolid(CollisionSphere(0, 0, 0, 2.3))
-		self.collNode = self.attachNewNode(self.collNode_Backup)
-		
-	def changeCard(self, card, pickable=True):
-		loader = self.GUI.loader
-		self.card = card
-		if pickable: card.btn = self
-		self.name = type(card).__name__ + "_PowerPlayed_" + str(datetime.now().time())
-		imgPath = findFilepath(card)
-		threading.Thread(target=self.reloadModels, args=(loader, imgPath, pickable)).start()
-		
-	def reloadModels(self, loader, imgPath, pickable):
-		card = self.card
-		if pickable and not self.collNode:
-			self.collNode = self.attachNewNode(self.collNode_Backup)
-		elif not pickable and self.collNode:
-			self.collNode.removeNode()
-			self.collNode = None
-		
-		"""The card frame. The front face texture is set according to it class"""
-		self.cardImage_Model.setTexture(self.cardImage_Model.findTextureStage('*'),
-									loader.loadTexture(imgPath), 1)
-		self.refresh()
-		
-	def leftClick(self):
-		if self.GUI.UI == 0:
-			self.GUI.resolveMove(self.card, self, "Power", info=None)
-		
-	def refresh(self, color=False, stat=False, indicator=False, all=True):
-		if color or all:
-			self.setBoxColor(self.decideColor())
+		if color or all: self.setBoxColor(self.decideColor())
 		if stat or all:
 			cardType = type(self.card)
 			#Refresh the mana
-			self.manaText.setText(str(self.card.mana))
-			if self.card.mana < cardType.mana: color = green
-			elif self.card.mana > cardType.mana: color = red
-			else: color = white
-			self.manaText.setTextColor(color)
+			color = white if self.card.mana == cardType.mana else (green if self.card.mana < cardType.mana else red)
+			self.texts["mana"].node().setText(str(self.card.mana))
+			self.texts["mana"].node().setTextColor(color)
 		
-		if not self.card.chancesUsedUp() and self.card.Game.turn == self.card.ID:
-			self.GUI.animate(self.genMoveIntervals(hpr=Point3(0, 0, 0)), name="Power reset", afterAllFinished=False)
+		#if not self.card.chancesUsedUp() and self.card.Game.turn == self.card.ID:
+		#	self.GUI.animate(self.genLerpInterval(hpr=Point3(0, 0, 0)), name="Power reset", afterAllFinished=False)
 	
 	def decideColor(self):
+		if not self.isPlayed: return transparent
 		color, card = transparent, self.card
 		if card.ID == card.Game.turn and card.Game.Manas.affordable(card) and card.available():
 			color = green
 		return color
 		
 		
-def loadPower(base, card):
+def loadPower(base):
 	loader = base.loader
-	sansBold = loader.loadFont('Models\\OpenSans-Bold.ttf')
-	cardImgTexture = loader.loadTexture("Images\\HerosandPowers\\%s.png"%type(card).__name__)
+	sansBold = base.font
+	root = loader.loadModel("Models\\PowerModels\\Power.glb")
+	root.name = "NP_Power"
 	
-	root = NodePath_Power(base, card)
-	root.reparentTo(base.render)
-	
-	"""The power frame"""
-	root.card_Model = loader.loadModel("Models\\PowerModels\\Power.glb")
-	root.card_Model.reparentTo(root)
-	root.card_Model.setTexture(root.card_Model.findTextureStage('*'),
-							   cardImgTexture, 1)
-	
-	"""Description of the card"""
-	root.description_Model = loader.loadModel("Models\\PowerModels\\Description.glb")
-	root.description_Model.reparentTo(root)
-	if card and card.text(CHN):  #If card description can change, then set the card image as the texture
-		root.description_Model.setTexture(root.description_Model.findTextureStage('*'),
-									 	loader.loadTexture("Models\\PowerModels\\Vanilla.png"), 1)
-		text = card.text(CHN)
-		root.descriptionText = TextNode("Description Text Node")
-		root.descriptionText.setText(text)
-		root.descriptionText.setAlign(TextNode.ACenter)
-		root.descriptionText.setFont(sansBold)
-		root.descriptionText.setTextColor(0, 0, 0, 1)
-		root.descriptionText.setWordwrap(12)
-		root.descriptionTextNode = root.attachNewNode(root.descriptionText)
-		root.descriptionTextNode.setScale(0.44)
-		root.descriptionTextNode.setPos(0, -0.15, -3+0.1*len(text) / 12)
-	else:
-		root.description_Model.setTexture(root.description_Model.findTextureStage('*'),
-									 	cardImgTexture, 1)
-		
-	"""Mana display of the power"""
-	manaValue = '%d' % card.mana
-	mana_Model = loader.loadModel("Models\\PowerModels\\Mana.glb")
-	mana_Model.reparentTo(root)
-	mana_Model.setTexture(mana_Model.findTextureStage('*'),
-								  loader.loadTexture("Models\\PowerModels\\HeroPower.png"), 1)
-	root.manaText = TextNode("mana")
-	root.manaText.setFont(sansBold)
-	root.manaText.setText(manaValue)
-	root.manaText.setAlign(TextNode.ACenter)
-	root.manaTextNode = root.attachNewNode(root.manaText)
-	root.manaTextNode.setScale(statTextScale)
-	root.manaTextNode.setPos(0, -0.25, 4)
-	
-	root.setPos(BackupModelPos)
+	#Model names: box, card, cardImage, description, nameTag, mana
+	for model in root.getChildren():
+		model.setTransparency(True)
+		if model.name in ("border", "mana"): texture = base.textures["stats_Power"]
+		else: continue
+		model.setTexture(model.findTextureStage('*'), texture, 1)
+	#y limit: mana -0.12, description -0.025
+	makeText(root, "mana", '0', pos=(0, -0.125, 1.36), scale=0.9,
+			color=white, font=sansBold)
+	makeText(root, "description", '', pos=(0, -0.027, 0), scale=0.3,
+			color=black, font=sansBold)
+	#After the loading, the NP_Minion root tree structure is:
+	#NP_Power/card|mana|cardImage, etc
+	#NP_Power/mana_TextNode|description_TextNode
 	return root
-
-
-def loadPower_Played(base, card):
-	loader = base.loader
-	imgPath = findFilepath(card)
-	sansBold = loader.loadFont('Models\\OpenSans-Bold.ttf')
-	
-	root = NodePath_PowerPlayed(base, card)
-	root.reparentTo(base.render)
-	
-	"""Power border for weapon"""
-	border = loader.loadModel("Models\\PowerModels\\Border_Played.glb")
-	border.reparentTo(root)
-	border.setTexture(border.findTextureStage('*'),
-					loader.loadTexture("Models\\PowerModels\\ForBorder.png"), 1)
-	
-	"""Mana display of the power"""
-	mana_Model = loader.loadModel("Models\\PowerModels\\Mana_Played.glb")
-	mana_Model.reparentTo(root)
-	mana_Model.setTexture(mana_Model.findTextureStage('*'),
-						  loader.loadTexture("Models\\PowerModels\\HeroPower.png"), 1)
-	root.manaText = TextNode("mana")
-	root.manaText.setFont(sansBold)
-	root.manaText.setText('%d' % card.mana)
-	root.manaText.setAlign(TextNode.ACenter)
-	root.manaTextNode = root.attachNewNode(root.manaText)
-	root.manaTextNode.setScale(statTextScale)
-	root.manaTextNode.setPos(-0.1, -0.35, 1.65)
-	
-	"""Power image based on the power type"""
-	root.cardImage_Model = loader.loadModel("Models\\PowerModels\\PowerImage_Played.glb")
-	root.cardImage_Model.reparentTo(root)
-	root.cardImage_Model.setTexture(root.cardImage_Model.findTextureStage('*'),
-						  loader.loadTexture(imgPath), 1)
-	if card:
-		root.box_Model = loader.loadModel("Models\\PowerModels\\Box_Played.glb")
-		root.box_Model.reparentTo(root)
-		root.box_Model.setTransparency(True)
-		#root.box_Model.setColor(root.decideColor())
-	
-	root.setPos(BackupModelPos)
-	return root
-
 
 
 """Load Hero Cards"""
-class NodePath_Hero(NodePath_Card):
-	def __init__(self, GUI, card=None):
-		super().__init__(GUI, card)
-		self.name = type(card).__name__ + "__ero"
+table_PosScaleofTexCard_Heroes = {"Breaking": (4.3, (0, -0.062, 0.27)),
+									"Frozen": (8, (-0.1, -0.064, 0.2)),
+									"Immune": (5.3, (0, -0.071, 0.25)),
+									"Damage": (0.055, (0, -0.14, 0.1)),
+									"Spell Damage": (4.6, (0, -0.07, 0.15)),
+									"Stealth": (5.5, (0, -0.064, 0.15)),
+								   }
+
+class Btn_Hero(Btn_Card):
+	def __init__(self, GUI, card, nodePath):
+		super().__init__(GUI, card, nodePath)
 		
-		self.collNode_Backup = CollisionNode("Hero_c_node")
-		self.collNode_Backup.addSolid(CollisionBox(Point3(0, 0, 0), 3.5, 0.3, 5))
-		self.collNode = self.attachNewNode(self.collNode_Backup)
-		
-	def changeCard(self, card, pickable=True):
-		loader = self.GUI.loader
-		self.card = card
-		if pickable: card.btn = self
-		self.name = type(card).__name__ + "_Hero_" + str(datetime.now().time())
-		imgPath = findFilepath(card)
-		threading.Thread(target=self.reloadModels, args=(loader, imgPath, pickable)).start()
+		self.cNode_Backup = CollisionNode("Hero_cNode")
+		self.cNode_Backup.addSolid(CollisionBox(Point3(0.05, 0, -1.1), 2.2, 0.1, 3.1))
+		self.cNode_Backup_Played = CollisionNode("Hero_cNode_Played")
+		self.cNode_Backup_Played.addSolid(CollisionBox(Point3(0.05, 0, 0.25), 2, 0.1, 2.2))
 		
 	def reloadModels(self, loader, imgPath, pickable):
-		if pickable and not self.collNode:
-			self.collNode = self.attachNewNode(self.collNode_Backup)
-		elif not pickable and self.collNode:
-			self.collNode.removeNode()
-			self.collNode = None
+		card = self.card
+		if self.isPlayed: color4Card, color4Played = transparent, white
+		else: color4Card, color4Played = white, transparent
+		self.models["box"].setColor(transparent)
+		self.models["box_Played"].setColor(transparent)
+		self.box_Model = self.models["box_Played" if self.isPlayed else "box"]
+		for modelName in ("frame", "cardImage"): #the attack, health and armor will be handle by refresh
+			self.models[modelName].setColor(color4Played)
+		for modelName in ("card", "cardBack", "stats", "box"):
+			self.models[modelName].setColor(color4Card)
 		
+		if pickable and not self.cNode:
+			self.cNode = self.np.attachNewNode(self.cNode_Backup)
+			self.cNode.show()
+		elif not pickable and self.cNode:
+			self.cNode.removeNode()
+			self.cNode = None
+		
+		self.models["cardImage"].setTexture(self.models["cardImage"].findTextureStage('*'),
+											loader.loadTexture("Images\\HeroesandPowers\\%s.png"%type(self.card).__name__), 1)
 		self.models["card"].setTexture(self.models["card"].findTextureStage('*'),
-									loader.loadTexture(imgPath), 1)
+									   loader.loadTexture(imgPath), 1)
 		
 		self.refresh()
 		
 	def leftClick(self):
 		self.selected = not self.selected
 		GUI, card = self.GUI, self.card
-		game = GUI.Game
-		if GUI.UI == -2:
-			self.setBoxColor(red if self.selected else green)
-			GUI.mulliganStatus[card.ID][game.mulligans[card.ID].index(card)] = 1 if self.selected else 0
-		elif GUI.UI == -1: pass #Lock out any selection
-		elif GUI.UI == 1: pass
-		elif GUI.UI == 3:
-			if card in game.options:
-				GUI.resolveMove(card, None, "DiscoverOption", info=None)
-		else: GUI.resolveMove(card, self, "HeroinHand")
+		UI, game = GUI.UI, GUI.Game
+		if self.isPlayed:
+			if UI == 0 or UI == 2:
+				self.GUI.resolveMove(self.card, self, "HeroonBoard")
+		else:
+			if UI == -2:
+				self.setBoxColor(red if self.selected else green)
+				GUI.mulliganStatus[card.ID][game.mulligans[card.ID].index(card)] = 1 if self.selected else 0
+			elif UI == -1 or UI == 1: pass #Lock out any selection
+			elif GUI.UI == 3:
+				if card in game.options:
+					GUI.resolveMove(card, None, "DiscoverOption", info=None)
+			else: GUI.resolveMove(card, self, "HeroinHand")
 		
 	def refresh(self, color=False, stat=False, indicator=False, all=True):
 		#Change the box color to indicate the selectability of a card
-		if color or all:
-			self.setBoxColor(self.decideColor())
+		if color or all: self.setBoxColor(self.decideColor())
 		
 		card = self.card
 		cardType = type(card)
 		"""Reset the stats of the card"""
 		if stat or all:
 			#Refresh the mana
-			if card.mana < cardType.mana: color = green
-			elif card.mana > cardType.mana: color = red
-			else: color = white
-			self.texts["mana"].setText(str(card.mana))
-			self.texts["mana"].setTextColor(color)
-			
+			color = white if card.mana == cardType.mana else (green if card.mana < cardType.mana else red)
+			self.texts["mana"].node().setText(str(card.mana))
+			self.texts["mana"].node().setTextColor(transparent if self.isPlayed else color)
+			#Refresh the armor the hero card has
+			self.texts["armor"].node().setText(str(card.armor))
+			self.texts["armor"].node().setTextColor(transparent if self.isPlayed else white)
+			#Refresh the attack
+			self.models["attack"].setColor(white if self.isPlayed and card.attack > 0 else transparent)
+			self.texts["attack_Played"].node().setText(str(card.attack))
+			self.texts["attack_Played"].node().setTextColor(green if card.attack > 0 and self.isPlayed else transparent)
+			#Refresh the health
+			self.models["health"].setColor(white if self.isPlayed else transparent)
+			self.texts["health_Played"].node().setText(str(card.health))
+			self.texts["health_Played"].node().setTextColor(red if card.health < card.health_max else green if self.isPlayed else transparent)
 			#Refresh the armor
-			self.texts["armor"].setText(str(card.armor))
-			self.texts["armor"].setTextColor(white)
+			self.models["armor"].setColor(white if self.isPlayed and card.armor else transparent)
+			self.texts["armor_Played"].node().setText(str(card.armor))
+			self.texts["armor_Played"].node().setTextColor(white if card.armor > 0 and self.isPlayed else transparent)
 			
 	def decideColor(self):
 		color, card = transparent, self.card
@@ -1143,60 +780,8 @@ class NodePath_Hero(NodePath_Card):
 			if card.ID == card.Game.turn and card.Game.Manas.affordable(card):
 				color = green
 		return color
-		
-		
-class NodePath_HeroPlayed(NodePath_Card):
-	def __init__(self, GUI, card=None):
-		super().__init__(GUI, card)
-		self.name = type(card).__name__ + "_HeroPlayed"
 	
-		self.collNode_Backup = CollisionNode("HeroPlayed_c_node")
-		self.collNode_Backup.addSolid(CollisionBox(Point3(0, 0, 0), 2, 0.3, 2.4))
-		self.collNode = self.attachNewNode(self.collNode_Backup)
-		
-	#Assuming the hero played changes very fast.
-	def changeCard(self, card, pickable=True):
-		self.card = card
-		if pickable: card.btn = self
-		imgPath = "Images\\HerosandPowers\\%s.png"%type(card).__name__
-		self.name = type(card).__name__ + "_HeroPlayed_" + str(datetime.now().time())
-		if pickable and not self.collNode:
-			self.collNode = self.attachNewNode(self.collNode_Backup)
-		elif not pickable and self.collNode:
-			self.collNode.removeNode()
-			self.collNode = None
-		
-		self.models["cardImage"].setTexture(self.models["cardImage"].findTextureStage('*'),
-										self.GUI.loader.loadTexture(imgPath), 1)
-		self.refresh()
-		
-	def leftClick(self):
-		if self.GUI.UI in (0, 2):
-			self.GUI.resolveMove(self.card, self, "HeroonBoard")
-		
-	def refresh(self, color=False, stat=False, indicator=False, all=True):
-		#Change the box color to indicate the selectability of a card
-		if color or all:
-			self.setBoxColor(self.decideColor())
-		
-		card, GUI = self.card, self.GUI
-		"""Reset the stats of the card"""
-		if stat or all:
-			#Refresh the attack
-			self.texts["attack"].setText(str(card.attack))
-			self.texts["attack"].setTextColor(green if card.attack > 0 else transparent)
-			self.models["attack"].setColor(white if card.attack > 0 else transparent)
-			#Refresh the health
-			self.texts["health"].setText(str(card.health))
-			self.texts["health"].setTextColor(red if card.health < card.health_max else green)
-			#Refresh the armor
-			self.texts["armor"].setText(str(card.armor))
-			self.texts["armor"].setTextColor(white if card.armor > 0 else transparent)
-			self.models["armor"].setColor(white if card.armor > 0 else transparent)
-		if indicator or all:
-			self.manageStatusModel()
-			
-	def manageStatusModel(self):
+	def manageStatusTexCards(self):
 		color = (0.6, 0.6, 0.6, 0.7) if self.card.status["Temp Stealth"] > 0 else transparent
 		self.models["Stealth"].setColor(color)
 		color = (1, 1, 1, 0.5) if self.card.status["Frozen"] > 0 else transparent
@@ -1212,437 +797,211 @@ class NodePath_HeroPlayed(NodePath_Card):
 		return color
 		
 		
-def loadHero(base, card):
+def loadHero(base):
 	loader = base.loader
-	sansBold = loader.loadFont('Models\\OpenSans-Bold.ttf')
-	cardImgTexture = loader.loadTexture(findFilepath(card))
-	statsTexture = loader.loadTexture("Models\\HeroModels\\HeroStats.png")
-	root = NodePath_Hero(base, card)
-	root.reparentTo(base.render)
+	sansBold = base.font
+	root = loader.loadModel("Models\\HeroModels\\Hero.glb")
+	root.name = "NP_Hero"
 	
-	root.makeModel(loader, "card", cardImgTexture, "Models\\HeroModels\\Card.glb")
-	root.makeModel(loader, "stats", statsTexture, "Models\\HeroModels\\Stats.glb")
-	root.makeModel(loader, "box", None, "Models\\HeroModels\\Box_Hero.glb")
-	root.box_Model = root.models["box"]  #The box of a hero won't change, so assignt it to box_Model here
-	
-	cardBack = loader.loadModel("Models\\CardBack.glb")
-	cardBack.reparentTo(root)
-	cardBack.setTexture(cardBack.findTextureStage('*'),
-						loader.loadTexture("Models\\CardBack.png"), 1)
-	
-	root.makeText("mana", str(card.mana), pos=manaPos, scale=statTextScale,
+	#Model names: armor, attack, box, box_Played, card, cardBack, cardImage, frame, health, stats
+	for model in root.getChildren():
+		model.setTransparency(True)
+		if model.name == "cardBack": texture = base.textures["cardBack"]
+		elif model.name in ("stats", "armor", "attack", "frame", "health"):
+			texture = base.textures["stats_Hero"]
+		else: continue
+		model.setTexture(model.findTextureStage('*'), texture, 1)
+		
+	makeText(root, "mana", '0', pos=(-1.73, -0.09, 1.15), scale=statTextScale,
+			  color=white, font=sansBold)
+	makeText(root, "armor", '0', pos=(1.81, -0.09, -4.02), scale=statTextScale,
+			  color=white, font=sansBold)
+	makeText(root, "attack_Played", '0', pos=(-2.15*0.88, -0.122, -2.38*0.88), scale=1.1,
+			  color=white, font=sansBold)
+	makeText(root, "health_Played", '0', pos=(2.2*0.88, -0.122, -2.38*0.88), scale=1.1,
+			  color=white, font=sansBold)
+	makeText(root, "armor_Played", '0', pos=(2.2*0.88, -0.122, -0.8*0.88), scale=1.1,
 				  color=white, font=sansBold)
-	root.makeText("armor", str(card.armor), pos=healthPos, scale=statTextScale,
-				  color=white, font=sansBold)
 	
-	root.setPos(BackupModelPos)
+	for name, posScale in table_PosScaleofTexCard_Heroes.items():
+		texCard = loader.loadModel("TexCards\\ForHeroes\\%s.egg" % name)
+		texCard.name = name + "_TexCard"
+		texCard.reparentTo(root)
+		texCard.setScale(posScale[0])
+		texCard.setPos(posScale[1])
+		texCard.find("+SequenceNode").node().pose(0)
+	
+	#After the loading, the NP_Minion root tree structure is:
+	#NP_Hero/card|stats|cardImage, etc
+	#NP_Hero/mana_TextNode|attack_TextNode, etc
+	#NP_Hero/Frozen_TexCard, etc
 	return root
 
 
-def loadHero_Played(base, card):
-	loader = base.loader
-	sansBold = loader.loadFont('Models\\OpenSans-Bold.ttf')
-	cardImgTexture = loader.loadTexture("Images\\HerosandPowers\\%s.png"%type(card).__name__)
-	
-	root = NodePath_HeroPlayed(base, card)
-	root.reparentTo(base.render)
-	
-	root.makeModel(loader, "cardImage", cardImgTexture, "Models\\HeroModels\\CardImage_Played.glb")
-	root.makeModel(loader, "attack", None, "Models\\HeroModels\\Attack.glb")
-	root.makeModel(loader, "health", None, "Models\\HeroModels\\Health.glb")
-	root.makeModel(loader, "armor", None, "Models\\HeroModels\\Armor.glb")
-	root.makeModel(loader, "box", None, "Models\\HeroModels\\Box_HeroPlayed.glb")
-	root.box_Model = root.models["box"] #The box of a hero won't change, so assignt it to box_Model here
-	
-	root.makeText("attack", str(card.attack), pos=(-2, -0.25, -2), scale=1,
-				  color=white, font=sansBold)
-	root.makeText("health", str(card.health), pos=(2.05, -0.22, -2), scale=1,
-				  color=white, font=sansBold)
-	root.makeText("armor", str(card.armor), pos=(2.05, -0.3, -0.7), scale=1,
-				  color=white, font=sansBold)
-	
-	for keyWord in ("Stealth", "Immune", "Frozen"):
-		if keyWord == "Stealth":
-			root.makeModel(loader, keyWord, loader.loadTexture("Models\\HeroModels\\%s.png" % keyWord),
-						   "Models\\MinionModels\\%s.glb" % keyWord)
-		else:
-			root.makeModel(loader, keyWord, None, "Models\\MinionModels\\%s.glb" % keyWord)
+class Btn_Dormant(Btn_Card):
+	def __init__(self, GUI, card, nodePath):
+		super().__init__(GUI, card, nodePath)
 		
-	root.setPos(BackupModelPos)
-	return root
-
-
-#Used for secrets and quests
-class NodePath_Secret(NodePath_Card):
-	def __init__(self, GUI, card=None):
-		NodePath.__init__(self, type(card).__name__ + "_Secret")
-		#These attributes will be modified by load functions below
-		self.card = card
-		self.selected = False
-		self.GUI = GUI
+		self.cNode_Backup_Played = CollisionNode("Minion_cNode_Played")
+		self.cNode_Backup_Played.addSolid(CollisionBox(Point3(0.07, 0, 0.35), 1.5, 0.1, 1.9))
 		
-		#Attributes that require changing constantly
-		self.manaText = self.attackText = self.healthText = self.durabilityText = self.armorText = None
-		self.descriptionText = None
-		self.card_Model = self.nameTag_Model = self.cardImage_Model = None
-		self.box_Model = None  #Indicate if the card is available for play
-		
-		self.collNode_Backup = CollisionNode("Secret_c_node")
-		self.collNode_Backup.addSolid(CollisionSphere(0, 0, 0, 0.4))
-		self.collNode = self.attachNewNode(self.collNode_Backup)
-		
-	#Assuming the secret icon changes very fast and doesn't need to multithread
-	def changeCard(self, card, pickable=True):
-		self.card = card
-		if pickable: card.btn = self
-		self.name = type(card).__name__ + "_Secret_" + str(datetime.now().time())
-		if pickable and not self.collNode:
-			self.collNode = self.attachNewNode(self.collNode_Backup)
-		elif not pickable and self.collNode:
-			self.collNode.removeNode()
-			self.collNode = None
-		
-		self.card_Model.removeNode()
-		self.card_Model = self.GUI.loader.loadModel("Models\\SecretIcon_%s.glb"%card.Class)
-		self.card_Model.reparentTo(self)
-		self.refresh()
-		
-	def dimDown(self):
-		self.setColor(grey)
-	
-	def setBoxColor(self, color):
-		pass
-		
-	def refresh(self, color=False, stat=False, indicator=False, all=True):
-		hpr = None
-		if self.card.ID == self.GUI.Game.turn and self.get_h() % 360 == 0:
-			hpr = Point3(180, 0, 0) #Flip to back, unusable
-		elif self.card.ID != self.GUI.Game.turn and self.get_h() % 360 == 180:
-			hpr = Point3(0, 0, 0)
-		if hpr:
-			self.GUI.animate(LerpHprInterval(self, duration=0.3, hpr=hpr), afterAllFinished=False)
-
-	def leftClick(self):
-		pass
-	
-	def rightClick(self):
-		if self.GUI.UI in (1, 2): self.GUI.cancelSelection()
-		else: self.GUI.drawCardSpecsDisplay(self)
-
-
-def loadSecret_Played(base, card):
-	loader = base.loader
-	
-	root = NodePath_Secret(base, card)
-	root.reparentTo(base.render)
-	
-	root.card_Model = loader.loadModel("Models\\SecretIcon_%s.glb"%card.Class)
-	root.card_Model.reparentTo(root)
-	
-	root.setPos(BackupModelPos)
-	return root
-
-
-
-class NodePath_TurnTrig(NodePath):
-	def __init__(self, GUI, card=None):
-		NodePath.__init__(self, card.name + "_TurnTrig")
-		#These attributes will be modified by load functions below
-		self.card = card
-		self.selected = False
-		self.GUI = GUI
-		
-		self.card_Model = None
-		collNode_Backup = CollisionNode("TurnTrig_c_node")
-		collNode_Backup.addSolid(CollisionBox(Point3(0, 0, 0), 0.45, 0.1, 0.45))
-		self.attachNewNode(collNode_Backup)
-		
-	def dimDown(self):
-		self.setColor(grey)
+	def reloadModels(self, loader, imgPath, pickable):
+		isLegendary = "~Legendary" in self.card.minionInside.index if self.card.minionInside else True
+		self.models["legendaryIcon"].setColor(white if isLegendary else transparent)
+		for modelName in ("card", "mana"):
+			self.models[modelName].setColor(transparent if self.isPlayed else white)
+		cardTexture = loader.loadTexture(imgPath)
+		for modelName in ("card", "cardImage", "nameTag"):
+			self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'),
+											cardTexture, 1)
 		
 	def leftClick(self):
 		pass
 		
-	def rightClick(self):
-		if self.GUI.UI in (1, 2): self.GUI.cancelSelection()
-		else: self.GUI.drawCardSpecsDisplay(self)
-	
 	def refresh(self, color=False, stat=False, indicator=False, all=True):
 		pass
+		
+	#Place the "Trigger", "Deathrattle", "Lifesteal", "Poisonous" icons at the right places
+	def placeIcons(self):
+		icon = self.icons["Trigger"]
+		icon.np.setColor(transparent)
+		if self.isPlayed and self.card.trigsBoard:
+			icon.updateText()
+			icon.np.setColor(white)
+			icon.np.setPos(0, -0.1, -1.9)
+		
+	def manageStatusTexCards(self):
+		pass
 	
-	def setBoxColor(self, color):
-		pass
-
-class NodePath_Dormant(NodePath_Card):
-	def __init__(self, GUI, card=None):
-		NodePath.__init__(self, card.name + "_Dormant")
-		#These attributes will be modified by load functions below
-		self.card = card
-		self.selected = False
-		self.GUI = GUI
-		
-		#Attributes that require changing constantly
-		self.descriptionText = self.descriptionTextNode = None
-		self.card_Model = self.description_Model = None
-		self.box_Model = None  #Indicate if the card is available for play
-		
-	def changeCard(self, card, pickable=False):
-		loader = self.GUI.loader
-		rarityChanged = (not hasattr(card, "prisoner") and "~Legendary" in type(card).index) != \
-							(not hasattr(self.card, "prisoner") and "~Legendary" in type(self.card).index)
-		self.card = card
-		#Dormant card is never pickable, so need to change the card.btn
-		self.name = type(card).__name__ + "_Dormant_" + str(datetime.now().time())
-		imgPath = findFilepath(card)
-		threading.Thread(target=self.reloadModels, args=(loader, imgPath, rarityChanged, False)).start()
-		
-	def reloadModels(self, loader, imgPath, rarityChanged, pickable):
-		card = self.card
-		
-		"""The card frame. The front face texture is set according to it class"""
-		if rarityChanged:
-			isLegendary = not hasattr(card, "prisoner") and "~Legendary" in type(card).index
-			self.cardImage_Model.removeNode()
-			self.cardImage_Model = loader.loadModel("Models\\MinionModels\\" + ("MinionImage_Legendary.glb" if isLegendary else "MinionImage.glb"))
-			self.cardImage_Model.reparentTo(self)
-			self.legendaryIcon.setColor(white if isLegendary else transparent)
-		
-		texture = loader.loadTexture(imgPath)
-		self.card_Model.setTexture(self.card_Model.findTextureStage('*'),
-									texture, 1)
-		text = card.text(CHN)
-		if text:
-			self.description_Model.setTexture(self.description_Model.findTextureStage('*'),
-											loader.loadTexture("Models\\MinionModels\\Vanilla_%s.png" % card.index.split('~')[0]), 1)
-			self.descriptionText.setText(text)
-			self.descriptionTextNode.setPos(0, -0.2, -3+0.1*len(text) / 12)
-		else:
-			self.description_Model.setTexture(self.description_Model.findTextureStage('*'),
-											texture, 1)
-		
-		self.refresh()
-		
-	def leftClick(self):
-		self.selected = not self.selected
-		pass
-		
-	def refresh(self, color=False, stat=False, indicator=False, all=True):
-		if self.descriptionText: self.descriptionText.setText(self.card.text(CHN))
-		
 	def decideColor(self):
 		return transparent
 		
-		
-class NodePath_DormantPlayed(NodePath_Card):
-	def __init__(self, GUI, card=None):
-		NodePath.__init__(self, card.name + "_DormantPlayed")
-		self.card = card
-		self.selected = False
-		self.GUI = GUI
-		
-		self.nameTag_Model = self.cardImage_Model = None
-		self.box_Model = None  #Indicate if the card is available for play
-		
-		self.indicatorModels = {}
-		
-		self.collNode_Backup = CollisionNode("DormantPlayed_c_node")
-		self.collNode_Backup.addSolid(CollisionBox(Point3(0, 0, 0), 2.4, 0.3, 3))
-		self.collNode = self.attachNewNode(self.collNode_Backup)
-	
-	def changeCard(self, card, pickable=True):
-		loader = self.GUI.loader
-		rarityChanged = (not hasattr(card, "prisoner") and "~Legendary" in type(card).index) != \
-						(not hasattr(self.card, "prisoner") and "~Legendary" in type(self.card).index)
-		card.btn = self
-		self.card = card
-		self.name = type(card).__name__ + "_DormantPlayed_" + str(datetime.now().time())
-		imgPath = findFilepath(card)
-		threading.Thread(target=self.reloadModels, args=(loader, imgPath, rarityChanged, True)).start()
-		#print("btn for card", card, card.btn)
-	
-	def reloadModels(self, loader, imgPath, rarityChanged, pickable):
-		card = self.card
-		if rarityChanged:
-			isLegendary = not hasattr(card, "prisoner") and "~Legendary" in type(card).index
-			self.legendaryIcon.setColor(white if isLegendary else transparent)
-		
-		if pickable and not self.collNode:
-			self.collNode = self.attachNewNode(self.collNode_Backup)
-		elif not pickable and self.collNode:
-			self.collNode.removeNode()
-			self.collNode = None
-		
-		texture = loader.loadTexture(imgPath)
-		self.cardImage_Model.setTexture(self.cardImage_Model.findTextureStage('*'),
-										texture, 1)
-		self.nameTag_Model.setTexture(self.nameTag_Model.findTextureStage('*'),
-									  texture, 1)
-		self.refresh()
-	
-	def leftClick(self):
-		pass
-		
-	def refresh(self, color=False, stat=False, indicator=False, all=True):
-		#A Dormant is never selectable
-		if indicator or all:
-			self.indicatorModels["Trigger"].setPos(0, 0, 0)
-			self.indicatorModels["Trigger"].updateText()
-			#self.indicatorModels["Trigger"].updateText()
-			#color = (1, 1, 1, 0.4) if self.card.auras else transparent
-			self.indicatorModels["Aura"].setColor(transparent)
 
-	def decideColor(self):
-		return transparent
-
-
-def loadDormant(base, card):
+def loadDormant(base):
 	loader = base.loader
-	sansBold = loader.loadFont('Models\\OpenSans-Bold.ttf')
-	cardImgTexture = loader.loadTexture(findFilepath(card))
+	root = loader.loadModel("Models\\MinionModels\\Dormant.glb")
+	root.name = "NP_Dormant"
+	#Model names: card, cardImage, legendaryIcon, mana, nameTag, Trigger
+	for model in root.getChildren():
+		model.setTransparency(True)
+		if model.name in ("mana", "legendaryIcon"): texture = base.textures["stats_Minion"]
+		else: continue
+		model.setTexture(model.findTextureStage('*'), texture, 1)
 	
-	root = NodePath_Dormant(base, card)
-	root.reparentTo(base.render)
-	
-	isLegendary = not hasattr(card, "prisoner") and "~Legendary" in type(card).index
-	"""The card frame. The front face texture is set according to it class"""
-	filePath = "Models\\MinionModels\\%s.glb" % ("Card_Legendary" if isLegendary else "Card")
-	root.card_Model = loader.loadModel(filePath)
-	root.card_Model.reparentTo(root)
-	root.card_Model.setTexture(root.card_Model.findTextureStage('*'),
-							   cardImgTexture, 1)
-	
-	"""Card image based on the card type"""
-	filePath = "Models\\MinionModels\\" + ("MinionImage_Legendary.glb" if isLegendary else "MinionImage.glb")
-	root.cardImage_Model = loader.loadModel(filePath)
-	root.cardImage_Model.reparentTo(root)
-	root.cardImage_Model.setTexture(root.cardImage_Model.findTextureStage('*'),
-									cardImgTexture, 1)
-	
-	"""Name Tag of the card, includes the model, and the nameText"""
-	root.nameTag_Model = loader.loadModel("Models\\MinionModels\\NameTag.glb")
-	root.nameTag_Model.reparentTo(root)
-	root.nameTag_Model.setTexture(root.nameTag_Model.findTextureStage('*'),
-								  cardImgTexture, 1)
-	
-	root.legendaryIcon = loader.loadModel("Models\\MinionModels\\LegendaryIcon.glb")
-	root.legendaryIcon.reparentTo(root)
-	root.legendaryIcon.setTransparency(True)
-	root.legendaryIcon.setTexture(root.legendaryIcon.findTextureStage('*'),
-								  loader.loadTexture("Models\\MinionModels\\LegendaryExample.png"), 1)
-	
-	mana_Model = loader.loadModel("Models\\MinionModels\\Mana.glb")
-	mana_Model.reparentTo(root)
-	mana_Model.setTexture(mana_Model.findTextureStage('*'),
-						  loader.loadTexture("Models\\MinionModels\\MinionStats.png"), 1)
-
-	"""Description and race of the card"""
-	root.description_Model = loader.loadModel("Models\\MinionModels\\Description.glb")
-	root.description_Model.reparentTo(root)
-	if card and card.text(CHN):
-		text = card.text(CHN)
-		root.description_Model.setTexture(root.description_Model.findTextureStage('*'),
-										  loader.loadTexture("Models\\MinionModels\\Vanilla_%s.png" % card.index.split('~')[0]), 1)
-		root.descriptionText = TextNode("Description Text Node")
-		root.descriptionText.setText(text)
-		root.descriptionText.setAlign(TextNode.ACenter)
-		root.descriptionText.setFont(sansBold)
-		root.descriptionText.setTextColor(0, 0, 0, 1)
-		root.descriptionText.setWordwrap(12)
-		root.descriptionTextNode = root.attachNewNode(root.descriptionText)
-		root.descriptionTextNode.setScale(0.4)
-		root.descriptionTextNode.setPos(0, -0.2, -2.5 + 0.1 * len(text) / 12)
-	else:
-		root.description_Model.setTexture(root.description_Model.findTextureStage('*'),
-										  cardImgTexture, 1)
-	
-	root.setPos(BackupModelPos)
+	base.modelTemplates["Trigger"].copyTo(root)
+	#After the loading, the NP_Minion root tree structure is:
+	#NP_Dromant/card|mana|cardImage, etc
+	#NP_Dormant/Trigger_Icon
 	return root
 
 
-def loadDormant_Played(base, card):
-	loader = base.loader
-	imgPath = findFilepath(card)
-	sansBold = loader.loadFont('Models\\OpenSans-Bold.ttf')
-	cardImgTexture = loader.loadTexture(imgPath)
-	
-	root = NodePath_DormantPlayed(base, card)
-	root.reparentTo(base.render)
-	
-	"""Card image based on the card type"""
-	root.cardImage_Model = loader.loadModel("Models\\MinionModels\\MinionImage_Played.glb")
-	root.cardImage_Model.reparentTo(root)
-	root.cardImage_Model.setTexture(root.cardImage_Model.findTextureStage('*'),
-						 cardImgTexture, 1)
-	
-	"""Name Tag of the card, includes the model, and the nameText"""
-	root.nameTag_Model = loader.loadModel("Models\\MinionModels\\NameTag_Played.glb")
-	root.nameTag_Model.reparentTo(root)
-	root.nameTag_Model.setTexture(root.nameTag_Model.findTextureStage('*'),
-					cardImgTexture, 1)
-	
-	root.legendaryIcon = loader.loadModel("Models\\MinionModels\\LegendaryIcon_Played.glb")
-	root.legendaryIcon.reparentTo(root)
-	root.legendaryIcon.setTransparency(True)
-	root.legendaryIcon.setTexture(root.legendaryIcon.findTextureStage('*'),
-								  loader.loadTexture("Models\\MinionModels\\LegendaryExample.png"), 1)
-	
-	"""Define the models that indicate the keywords of the minion, for example, Taunt"""
-	trig_Model = loadTrigger(root) #TriggerModel(root, "Models\\MinionModels\\Trigger.glb")
-	trig_Model.setTransparency(True)
-	trig_Model.reparentTo(root)
-	root.indicatorModels["Trigger"] = trig_Model
-	
-	model = loader.loadModel("Models\\MinionModels\\Aura.glb")
-	model.setTransparency(True)
-	model.reparentTo(root)
-	root.indicatorModels["Aura"] = model
-	
-	root.setPos(BackupModelPos)
-	return root
-
-
-class TriggerModel(NodePath):
-	def __init__(self, carrier):
-		NodePath.__init__(self, "Trig_NodePath")
-		self.carrier = carrier
-		self.model = self.counterText = self.counterTextNode = None
+class Btn_Trigger:
+	def __init__(self, carrierBtn, nodePath):
+		self.carrierBtn, self.np = carrierBtn, nodePath
+		self.counterText = nodePath.find("Trig Counter")
+		self.seqNode = nodePath.find("TexCard").find("+SequenceNode").node()
 		
-	def trigAni(self, blockwhilePlaying=False):
+	def trigAni(self, nextAnimWaits=False):
 		self.updateText()
-		pos_Orig = self.getPos()
-		seq = Sequence(LerpPosHprScaleInterval(self, pos=(0, -0.3, 12), hpr=Point3(0, 0, 0), scale=3, duration=0.15),
-				 		Wait(0.3), LerpPosHprScaleInterval(self, pos=pos_Orig, hpr=Point3(0, 0, 0), scale=1, duration=0.15)
-				 		)
-		self.carrier.GUI.animate(seq, afterAllFinished=True, blockwhilePlaying=blockwhilePlaying)
+		if self.seqNode.isPlaying():
+			self.seqNode.play(self.seqNode.getFrame(), self.seqNode.getNumFrames())
+		else:
+			self.seqNode.play(1, self.seqNode.getNumFrames())
 		
 	def updateText(self):
 		s = ""
-		#print("updating trig text for carrier", self.carrier, self.carrier.card)
-		for trig in self.carrier.card.trigsBoard:
-			if hasattr(trig, "counter"):
-				s += str(trig.counter) + ' '
-		self.counterText.setText(s)
+		for trig in self.carrierBtn.card.trigsBoard:
+			if trig.counter > -1: s += str(trig.counter) + ' '
+		self.counterText.node().setText(s)
+
+class Btn_Deathrattle:
+	def __init__(self, carrierBtn, nodePath):
+		self.carrierBtn, self.np = carrierBtn, nodePath
+		self.seqNode = nodePath.find("TexCard").find("+SequenceNode").node()
 		
-def loadTrigger(carrier):
-	loader = carrier.GUI.loader
-	card = carrier.card
-	if card.type == "Minion" or card.type == "Dormant": modelFile = "Models\\MinionModels\\Trigger.glb"
-	elif card.type == "Weapon": modelFile = "Models\\WeaponModels\\Trigger.glb"
-	root_Trig = TriggerModel(carrier)
-	root_Trig.model = loader.loadModel(modelFile)
-	root_Trig.model.reparentTo(root_Trig)
-	root_Trig.counterText = TextNode("Trig Counter")
-	root_Trig.counterText.setTextColor(white)
-	root_Trig.updateText()
-	root_Trig.counterText.setAlign(TextNode.ACenter)
-	root_Trig.counterTextNode = root_Trig.attachNewNode(root_Trig.counterText)
-	root_Trig.counterTextNode.setPos(0, -0.2, -4.7)
-	root_Trig.counterTextNode.setScale(0.9)
-	return root_Trig
+	def trigAni(self, nextAnimWaits=False):
+		if self.seqNode.isPlaying():
+			self.seqNode.play(self.seqNode.getFrame(), self.seqNode.getNumFrames())
+		else:
+			self.seqNode.play(1, self.seqNode.getNumFrames())
+
+class Btn_Lifesteal:
+	def __init__(self, carrierBtn, nodePath):
+		self.carrierBtn, self.np = carrierBtn, nodePath
+		self.seqNode = nodePath.find("TexCard").find("+SequenceNode").node()
 	
+	def trigAni(self, nextAnimWaits=False):
+		if self.seqNode.isPlaying():
+			self.seqNode.play(self.seqNode.getFrame(), self.seqNode.getNumFrames())
+		else:
+			self.seqNode.play(1, self.seqNode.getNumFrames())
+
+class Btn_Poisonous:
+	def __init__(self, carrierBtn, nodePath):
+		self.carrierBtn, self.np = carrierBtn, nodePath
+		self.seqNode = nodePath.find("TexCard").find("+SequenceNode").node()
+		
+	def trigAni(self, nextAnimWaits=False):
+		if self.seqNode.isPlaying():
+			self.seqNode.play(self.seqNode.getFrame(), self.seqNode.getNumFrames())
+		else:
+			self.seqNode.play(1, self.seqNode.getNumFrames())
+
+
+#Used for secrets and quests
+class Btn_Secret:
+	def __init__(self, GUI, card, nodePath):
+		self.GUI, self.card = GUI, card
+		self.selected = False
+		self.np = nodePath
 	
+	def dimDown(self):
+		self.np.setColor(grey)
+	
+	def setBoxColor(self, color):
+		pass
+	
+	def refresh(self, color=False, stat=False, indicator=False, all=True):
+		hpr = None
+		if self.card.ID == self.GUI.Game.turn and self.get_h() % 360 == 0:
+			hpr = Point3(180, 0, 0)  #Flip to back, unusable
+		elif self.card.ID != self.GUI.Game.turn and self.get_h() % 360 == 180:
+			hpr = Point3(0, 0, 0)
+		if hpr: LerpHprInterval(self, duration=0.3, hpr=hpr).start()
+	
+	def leftClick(self):
+		pass
+	
+	def rightClick(self):
+		if self.GUI.UI in (1, 2): self.GUI.cancelSelection()
+		else: self.GUI.drawCardSpecsDisplay(self)
+
+
+class Btn_TurnTrig:
+	def __init__(self, GUI, card, nodePath):
+		self.GUI, self.card = GUI, card
+		self.selected = False
+		self.np = nodePath
+	
+	def dimDown(self):
+		self.np.setColor(grey)
+	
+	def leftClick(self):
+		pass
+	
+	def rightClick(self):
+		if self.GUI.UI in (1, 2): self.GUI.cancelSelection()
+		else: self.GUI.drawCardSpecsDisplay(self)
+	
+	def refresh(self, color=False, stat=False, indicator=False, all=True):
+		pass
+	
+	def setBoxColor(self, color):
+		pass
+
+
 class ChooseOptionModel(NodePath):
-	def __init__(self, GUI, card=None):
+	def __init__(self, GUI, card, isPlayed):
 		NodePath.__init__(self, type(card).__name__ + "_Option")
 		#These attributes will be modified by load functions below
 		self.card = card
@@ -1650,9 +1009,9 @@ class ChooseOptionModel(NodePath):
 		self.GUI = GUI
 		self.card_Model = None
 		
-		self.collNode_Backup = CollisionNode("Option_c_node")
-		self.collNode_Backup.addSolid(CollisionBox(Point3(0, 0, 0), 3.5, 0.3, 5))
-		self.collNode = self.attachNewNode(self.collNode_Backup)
+		self.cNode_Backup = CollisionNode("Option_cNode")
+		self.cNode_Backup.addSolid(CollisionBox(Point3(0, 0, 0), 3.5, 0.3, 5))
+		self.cNode = self.attachNewNode(self.cNode_Backup)
 	
 	def changeCard(self, card, pickable=True):
 		loader = self.GUI.loader
@@ -1670,26 +1029,87 @@ class ChooseOptionModel(NodePath):
 		pass
 	
 	
-def loadOption_Spell(base, card):
+def loadOption_Spell(base, card, isPlayed=False):
 	loader = base.loader
 	texture = loader.loadTexture(findFilepath(card))
-	root = ChooseOptionModel(base, card)
-	root.reparentTo(base.render)
+	root = ChooseOptionModel(base, card, isPlayed=False)
+	#root.reparentTo(base.render)
 	root.card_Model = loader.loadModel("Models\\Option_Spell.glb")
 	root.card_Model.reparentTo(root)
 	root.card_Model.setTexture(root.card_Model.findTextureStage('*'), texture, 1)
-	
+
 	return root
 
 
-def loadOption_Minion(base, card):
+def loadOption_Minion(base, card, isPlayed=False):
 	loader = base.loader
 	texture = loader.loadTexture(findFilepath(card))
 	
-	root = ChooseOptionModel(base, card)
-	root.reparentTo(base.render)
+	root = ChooseOptionModel(base, card, isPlayed=False)
+	#root.reparentTo(base.render)
 	root.card_Model = loader.loadModel("Models\\Option_Minion.glb")
 	root.card_Model.reparentTo(root)
 	root.card_Model.setTexture(root.card_Model.findTextureStage('*'), texture, 1)
 	
 	return root
+
+
+Table_Type2Btn = {"Minion": Btn_Minion, "Spell": Btn_Spell, "Weapon": Btn_Weapon,
+				  "Hero": Btn_Hero, "Power": Btn_Power, "Dormant": Btn_Dormant,
+				  "Trigger_Icon": Btn_Trigger, "Deathrattle_Icon": Btn_Deathrattle,
+				  "Lifesteal_Icon": Btn_Lifesteal, "Poisonous_Icon": Btn_Poisonous}
+
+
+#np_Template is of type NP_Minion, etc and is kept by the GUI.
+#card: card object, which the copied nodePath needs to become
+#isPlayed: boolean, whether the card is in played form or not
+def genCard(GUI, card, isPlayed, pickable=True, pos=None, hpr=None, scale=None):
+	np = GUI.modelTemplates[card.type].copyTo(GUI.render)
+	if pos: np.setPos(pos)
+	if hpr: np.setHpr(hpr)
+	if scale: np.setScale(scale)
+	#NP_Minion root tree structure is:
+	#NP_Minion/card|stats|cardImage, etc
+	#NP_Minion/mana_TextNode|attack_TextNode, etc
+	btn_Card = Table_Type2Btn[card.type](GUI, card, np)
+	np.setPythonTag("btn", btn_Card)
+	for nodePath in np.getChildren():
+		name = nodePath.name
+		if "TextNode" in name: btn_Card.texts[name.replace("_TextNode", '')] = nodePath
+		elif "TexCard" in name: btn_Card.texCards[name.replace("_TexCard", '')] = nodePath
+		#Collision Nodes are not inserted into the template tree yet
+		elif "_Icon" in name:
+			btn_Card.icons[name.replace("_Icon", '')] = Table_Type2Btn[name](btn_Card, nodePath)
+		else: btn_Card.models[name] = nodePath
+	
+	btn_Card.changeCard(card, isPlayed=isPlayed, pickable=pickable)
+	return np, btn_Card
+
+
+def genSecretIcon(GUI, card, pos=None, hpr=None):
+	np = GUI.loader.loadModel("Models\\HeroModels\\SecretIcon.glb")
+	np.setTexture(np.findTextureStage('0'), GUI.textures["Secret_"+card.Class], 1)
+	np.reparentTo(GUI.render)
+	if pos: np.setPos(pos)
+	if hpr: np.setHpr(hpr)
+	btn_Icon = Btn_Secret(GUI, card, np)
+	np.setPythonTag("btn", btn_Icon)
+	cNode = CollisionNode("Secret_cNode")
+	cNode.addSolid(CollisionSphere(0, 0, 0, 0.5))
+	np.attachNewNode(cNode)#.show()
+	return np, btn_Icon
+
+
+def genTurnTrigIcon(GUI, card, pos=None):
+	np = GUI.loader.loadModel("Models\\HeroModels\\TurnTrig.glb")
+	icon = np.find("Icon")
+	icon.setTexture(icon.findTextureStage('0'),
+					GUI.loader.loadTexture(findFilepath(card)), 1)
+	np.reparentTo(GUI.render)
+	if pos: np.setPos(pos)
+	btn_Icon = Btn_TurnTrig(GUI, card, np)
+	np.setPythonTag("btn", btn_Icon)
+	cNode = CollisionNode("TurnTrig_cNode")
+	cNode.addSolid(CollisionSphere(0, 0, 0, 0.6))
+	np.attachNewNode(cNode)#.show()
+	return np, btn_Icon

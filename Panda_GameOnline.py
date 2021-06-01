@@ -198,6 +198,8 @@ class GUI_Online(Panda_UICommon):
 		btn_Reconn.config(bg="yellow")
 	
 	def initMulliganDisplay(self):
+		threading.Thread(target=self.initGameDisplay).start()
+		
 		if self.ID == 1: self.posMulligans = [(8 * (i - 1), 50, -5) for i in range(len(self.Game.mulligans[1]))]
 		else: self.posMulligans = [(4 + 8 * (i - 2), 50, -5) for i in range(len(self.Game.mulligans[2]))]
 		
@@ -210,7 +212,6 @@ class GUI_Online(Panda_UICommon):
 		print("1", self.sock)
 		btn_Mulligan["extraArgs"] = [mulliganBtns, btn_Mulligan]
 		btn_Mulligan.setPos(0, 0, 0)
-		threading.Thread(target=self.initGameDisplay).start()
 		self.taskMgr.add(self.mouseMove, "Task_MoveCard")
 	
 	def startMulligan(self, mulliganBtns, btn_Mulligan):
@@ -340,7 +341,7 @@ class GUI_Online(Panda_UICommon):
 		if isinstance(moves, list):
 			print("Read in move", moves)
 			self.Game.evolvewithGuide(moves, gameGuides)
-			self.drawZones(all=False, board=True, hand=True, hero=True, deck=True, secret=True, blockwhilePlaying=False)		#如果结束之后进入了玩家的回合，则不再等待对方的操作
+			self.drawZones(all=False, board=True, hand=True, hero=True, deck=True, secret=True, nextAnimWaits=False)		#如果结束之后进入了玩家的回合，则不再等待对方的操作
 		self.waiting4Server = self.ID != self.Game.turn
 		
 	def receivePiecesofGameCopy(self, tableID):

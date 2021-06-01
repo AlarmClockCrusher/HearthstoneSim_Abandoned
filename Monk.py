@@ -87,12 +87,12 @@ class CanewithaWineGourd(Weapon): #带酒葫芦的杖子
 	mana, attack, durability = 1, 0, 4
 	index = "Basic~Monk~Weapon~1~0~4~Cane with a Wine Gourd"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_CanewithaWineGourd(self)]
 		
 class Trig_CanewithaWineGourd(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
+		super().__init__(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
@@ -160,12 +160,12 @@ class SwiftBrewmaster(Minion): #迷踪的酒仙
 	index = "Basic~Monk~Minion~2~1~4~~Swift Brewmaster"
 	requireTarget, keyWord, description = False, "", "Your Hero Power also targets adjacent minions if it triggers Quaff"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_SwiftBrewmaster(self)]
 		
 class Trig_SwiftBrewmaster(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["ManaPaid", "HeroUsedAbility"])
+		super().__init__(entity, ["ManaPaid", "HeroUsedAbility"])
 		self.on = False
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -209,7 +209,7 @@ class SweepingKickFighter(Minion): #扫堂腿格斗师
 	index = "Basic~Monk~Minion~3~1~4~~Sweeping Kick Fighter~Rush"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Also damages minions next to whoever this attacks"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.marks["Sweep"] = 1
 		
 			
@@ -220,12 +220,12 @@ class ShadoPanWuKao(Minion): #影踪派悟道者
 	index = "Basic~Monk~Minion~3~3~4~~Shado-Pan Wu Kao"
 	requireTarget, keyWord, description = False, "", "After your hero attacks, gain Stealth"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_ShadoPanWuKao(self)]
 		
 class Trig_ShadoPanWuKao(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
+		super().__init__(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject == self.entity.Game.heroes[self.entity.ID]
@@ -291,12 +291,12 @@ class XuentheWhiteTiger_Mutable_1(Minion): #白虎 雪怒
 	index = "Classic~Monk~Minion~1~1~1~Beast~Xuen, the White Tiger~Rush~Legendary"
 	requireTarget, keyWord, description = False, "Rush", "Rush. After you play a card, return this to your hand and give it +2/+2 for the rest of the game. It costs (1) more(up to 10)"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_XuentheWhiteTiger(self)]
 		
 class Trig_XuentheWhiteTiger(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionBeenPlayed", "SpellBeenPlayed", "WeaponBeenPlayed", "HeroCardBeenPlayed"])
+		super().__init__(entity, ["MinionBeenPlayed", "SpellBeenPlayed", "WeaponBeenPlayed", "HeroCardBeenPlayed"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity
@@ -408,7 +408,7 @@ class Liquor(Spell): #醉酿
 		
 class Trig_Liquor(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnEnds"])
+		super().__init__(entity, ["TurnEnds"])
 		self.temp = True
 		self.counter = 2
 		
@@ -473,7 +473,7 @@ class TouchofKarma(Spell): #业报之触
 		
 class Trig_TouchofKarma(TrigBoard):
 	def __init__(self, entity, ID):
-		self.blank_init(entity, ["TurnEnds", "DmgTaker?"])
+		super().__init__(entity, ["TurnEnds", "DmgTaker?"])
 		self.ID = ID
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -509,7 +509,7 @@ class JadeTether(HeroPower):
 	index = "Monk~Hero Power~2~Jade Tether"
 	description = "Transform a minion into a 2/2 Golem with Taunt"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_JadeTether(self)]
 		self.powerReplaced = None
 		
@@ -531,7 +531,7 @@ class JadeTether(HeroPower):
 		
 class Trig_JadeTether(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroUsedAbility"])
+		super().__init__(entity, ["HeroUsedAbility"])
 		self.counter = 0
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -593,7 +593,7 @@ class DrunkenBoxing(Spell): #醉拳
 		
 class Trig_DrunkenBoxing(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
+		super().__init__(entity, ["HeroAttackedMinion", "HeroAttackedHero"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity.Game.heroes[self.entity.ID]
@@ -611,12 +611,12 @@ class OnimaActuary(Minion): #秘典宗精算师
 	requireTarget, keyWord, description = False, "Stealth", "Stealth. After this attacks, your Hero Power costs (1) for the rest of the turn"
 	#潜行。在该随从攻击后，本回合中你的英雄技能的法力值消耗为(1)点
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_OnimaActuary(self)]
 		
 class Trig_OnimaActuary(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionAttackedMinion", "MinionAttackedHero"])
+		super().__init__(entity, ["MinionAttackedMinion", "MinionAttackedHero"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject == self.entity
@@ -723,7 +723,7 @@ class ShaohaotheEmperor(Minion): #皇帝 少昊
 	index = "Classic~Monk~Minion~4~3~5~~Shaohao, the Emperor~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Other friendly characters can only be targeted by your spells or Hero Power. Battlecry: Gain Stealth until your next turn"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.auras["Has Aura"] = OtherFriendlyMinionsHaveEvasive(self)
 		
 	def applicable(self, target):
@@ -777,12 +777,12 @@ class LotusHealer(Minion): #玉莲帮医者
 	index = "Classic~Monk~Minion~6~3~7~~Lotus Healer~Taunt"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. After this is attacked, restored 1 Health to all friendly minions"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_LotusHealer(self)]
 		
 class Trig_LotusHealer(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionAttackedMinion", "HeroAttackedMinion"])
+		super().__init__(entity, ["MinionAttackedMinion", "HeroAttackedMinion"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and target == self.entity
@@ -815,12 +815,12 @@ class KunLaiSummitZenAlchemist(Minion): #昆莱山禅师
 	index = "Classic~Monk~Minion~7~7~7~~Kun-Lai Summit Zen Alchemist"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, change the Attack of a random enemy minion with 1 or more Attack to 1"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_KunLaiSummitZenAlchemist(self)]
 		
 class Trig_KunLaiSummitZenAlchemist(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnEnds"])
+		super().__init__(entity, ["TurnEnds"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
@@ -841,13 +841,13 @@ class FistsoftheHeavens(Weapon): #诸天之拳
 	mana, attack, durability = 8, 2, 4
 	index = "Classic~Monk~Weapon~8~2~4~Fists of the Heavens~Windfury"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.keyWords["Windfury"] = 1
 		self.trigsBoard = [Trig_FistsoftheHeavens(self)]
 		
 class Trig_FistsoftheHeavens(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["QuaffTriggered"])
+		super().__init__(entity, ["QuaffTriggered"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return ID == self.entity.ID and self.entity.onBoard

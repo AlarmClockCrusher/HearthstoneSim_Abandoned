@@ -168,8 +168,8 @@ class Card:
 		return ''
 
 	def checkEvanescent(self):
-		self.evanescent = any(hasattr(trig, "makesCardEvanescent") for trig in self.trigsBoard + self.trigsHand)
-
+		self.evanescent = any(trig.changesCard for trig in self.trigsBoard + self.trigsHand)
+		
 	#处理卡牌进入/离开 手牌/牌库时的扳机和各个onBoard/inHand/inDeck标签
 	def entersHand(self):
 		self.inHand = True
@@ -652,16 +652,14 @@ class Dormant(Card):
 	Class, name = "Neutral", "Vanilla"
 	description = ""
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-
-	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.Class = type(self).Class
 		self.name = type(self).name
 		self.description = type(self).description
 		self.type = "Dormant"
 		self.race = ""
-
+		self.minionInside = None
+		
 		self.onBoard = self.inHand = self.inDeck = self.dead = False
 		self.enterBoardTurn = 0
 		self.seq, self.pos = -1, -2
@@ -745,20 +743,6 @@ class Minion(Card):
 	index = "Vanilla~Neutral~2~2~2~Minion~~Vanilla~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-
-	def reset(self, ID, isKnown=True): #如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化
-		creator, possi = self.creator, type(self) if isKnown else self.possi
-		att_0, health_0 = self.attack_0, self.health_0
-		btn, x, y, z = self.btn, self.x, self.y, self.z
-		self.__init__(self.Game, ID)
-		self.attack_0 = self.attack = self.attack_Enchant = att_0
-		self.health_0 = self.health = self.health_max = health_0
-		self.creator = creator
-		self.possi = possi
-		self.btn, self.x, self.y, self.z = btn, x, y, z
-		
-	def blank_init(self, Game, ID):
 		cardType = type(self)
 		self.Game, self.ID = Game, ID
 		self.Class, self.name = cardType.Class, cardType.name
@@ -826,6 +810,17 @@ class Minion(Card):
 		
 		self.btn, self.x, self.y, self.z = None, 0, 0, 0
 	
+	def reset(self, ID, isKnown=True): #如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化
+		creator, possi = self.creator, type(self) if isKnown else self.possi
+		att_0, health_0 = self.attack_0, self.health_0
+		btn, x, y, z = self.btn, self.x, self.y, self.z
+		self.__init__(self.Game, ID)
+		self.attack_0 = self.attack = self.attack_Enchant = att_0
+		self.health_0 = self.health = self.health_max = health_0
+		self.creator = creator
+		self.possi = possi
+		self.btn, self.x, self.y, self.z = btn, x, y, z
+		
 	def applicable(self, target):
 		return target != self
 
@@ -1149,7 +1144,7 @@ class Minion(Card):
 		# 此时，随从可以开始建立光环，建立侦听，同时接受其他光环。例如： 打出暴风城勇士之后，光环在Illidan的召唤之前给随从加buff，同时之后打出的随从也是先接受光环再触发Illidan。
 		self.appears(firstTime=True)
 		GUI = self.Game.GUI
-		if GUI: GUI.boardZones[self.ID].draw(blockwhilePlaying=False)
+		if GUI: GUI.boardZones[self.ID].draw(nextAnimWaits=False)
 		# 使用阶段
 		# 使用时步骤,触发“每当你使用一张xx牌”的扳机,如伊利丹，任务达人，无羁元素和魔能机甲等
 		# 触发信号依次得到主玩家的场上，手牌和牌库的侦听器的响应，之后是副玩家的侦听器响应。
@@ -1381,16 +1376,6 @@ class Spell(Card):
 	description = ""
 	name_CN = ""
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-
-	def reset(self, ID, isKnown=True):
-		creator, possi = self.creator, type(self) if isKnown else self.possi
-		btn, x, y, z = self.btn, self.x, self.y, self.z
-		self.__init__(self.Game, ID)
-		self.creator, self.possi = creator, possi
-		self.btn, self.x, self.y, self.z = btn, x, y, z
-	
-	def blank_init(self, Game, ID):
 		cardType = type(self)
 		self.Game, self.ID = Game, ID
 		self.Class, self.name = cardType.Class, cardType.name
@@ -1414,6 +1399,13 @@ class Spell(Card):
 		self.creator, self.tracked, self.possi = None, False, (cardType,)
 		
 		self.btn, self.x, self.y, self.z = None, 0, 0, 0
+	
+	def reset(self, ID, isKnown=True):
+		creator, possi = self.creator, type(self) if isKnown else self.possi
+		btn, x, y, z = self.btn, self.x, self.y, self.z
+		self.__init__(self.Game, ID)
+		self.creator, self.possi = creator, possi
+		self.btn, self.x, self.y, self.z = btn, x, y, z
 	
 	def cardStatus(self, hideSomeTrigs=False):
 		CHN = self.Game.GUI.CHN
@@ -1609,10 +1601,7 @@ class Secret(Spell):
 	index = "Neutral~1~Spell~Vanilla~~Secret"
 	description = ""
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-
-	def blank_init(self, Game, ID):
-		super().blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.dummyTrigs = []
 		
 	def available(self):
@@ -1716,9 +1705,6 @@ class HeroPower(Card):
 	description = ""
 	name_CN = ""
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-
-	def blank_init(self, Game, ID):
 		self.Game, self.ID = Game, ID
 		self.name = type(self).name
 		self.type = "Power"
@@ -1876,16 +1862,6 @@ class Hero(Card):
 	Class, name, heroPower, armor = "Neutral", "InnKeeper", None, 0
 	index = ""
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-
-	def reset(self, ID, isKnown=True):
-		creator, possi = self.creator, type(self) if isKnown else self.possi
-		btn, x, y, z = self.btn, self.x, self.y, self.z
-		self.__init__(self.Game, ID)
-		self.creator, self.possi = creator, possi
-		self.btn, self.x, self.y, self.z = btn, x, y, z
-	
-	def blank_init(self, Game, ID):
 		cardType = type(self)
 		self.Game, self.ID = Game, ID
 		self.mana, self.manaMods = cardType.mana, []
@@ -1900,9 +1876,8 @@ class Hero(Card):
 		self.requireTarget = False
 		self.Class = cardType.Class
 		self.attChances_base, self.attChances_extra, self.attTimes = 1, 0, 0
-		self.onBoard = self.inHand = self.inDeck = False
+		self.onBoard = self.inHand = self.inDeck = self.dead = False
 		self.enterHandTurn = 0
-		self.dead = False
 		self.pos = self.ID
 		self.heroPower = cardType.heroPower(self.Game, self.ID) if cardType.heroPower else None
 		self.keyWords = {"Windfury": 0, "Poisonous": 0}
@@ -1921,6 +1896,14 @@ class Hero(Card):
 		self.creator, self.tracked, self.possi = None, False, (cardType,)
 		
 		self.btn, self.x, self.y, self.z = None, 0, 0, 0
+	
+
+	def reset(self, ID, isKnown=True):
+		creator, possi = self.creator, type(self) if isKnown else self.possi
+		btn, x, y, z = self.btn, self.x, self.y, self.z
+		self.__init__(self.Game, ID)
+		self.creator, self.possi = creator, possi
+		self.btn, self.x, self.y, self.z = btn, x, y, z
 	
 	"""Handle hero's attacks, attack chances, attack chances and frozen status."""
 	def cardStatus(self, hideSomeTrigs=False):
@@ -2211,18 +2194,7 @@ class Weapon(Card):
 	Class, name, description = "Neutral", "Vanilla", ""
 	mana, attack, durability = 2, 2, 2
 	index = "Vanillar-Neutral-2-2-2-Weapon-Vanilla"
-
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
-
-	def reset(self, ID, isKnown=True):
-		creator, possi = self.creator, type(self) if isKnown else self.possi
-		btn, x, y, z = self.btn, self.x, self.y, self.z
-		self.__init__(self.Game, ID)
-		self.creator, self.possi = creator, possi
-		self.btn, self.x, self.y, self.z = btn, x, y, z
-	
-	def blank_init(self, Game, ID):
 		cardType = type(self)
 		self.Game, self.ID = Game, ID
 		self.Class, self.name = cardType.Class, cardType.name
@@ -2237,9 +2209,8 @@ class Weapon(Card):
 		self.keyWords = {"Lifesteal": 0, "Poisonous": 0, "Windfury": 0}
 		self.marks = {"Sweep": 0, "Cost Health Instead": 0,}
 		self.overload = 0
-		self.onBoard = self.inHand = self.inDeck = False
+		self.onBoard = self.inHand = self.inDeck = self.dead = False
 		self.enterHandTurn = 0
-		self.dead = False
 		self.seq = -1
 		self.deathrattles = []
 		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
@@ -2250,6 +2221,13 @@ class Weapon(Card):
 		self.creator, self.tracked, self.possi = None, False, (cardType,)
 		
 		self.btn, self.x, self.y, self.z = None, 0, 0, 0
+	
+	def reset(self, ID, isKnown=True):
+		creator, possi = self.creator, type(self) if isKnown else self.possi
+		btn, x, y, z = self.btn, self.x, self.y, self.z
+		self.__init__(self.Game, ID)
+		self.creator, self.possi = creator, possi
+		self.btn, self.x, self.y, self.z = btn, x, y, z
 	
 	def cardStatus(self, hideSomeTrigs=False):
 		CHN = self.Game.GUI.CHN

@@ -36,7 +36,7 @@ class NaterranGreatTree(Amulet):
     requireTarget, description = False, "Fanfare: If any other allied Naterran Great Trees are in play, randomly destroy 1.Last Words: Draw a card."
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_NaterranGreatTree(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -195,7 +195,7 @@ class RomanticChanteuse(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_RomanticChanteuse(self)]
 
     def targetExists(self, choice=0):
@@ -216,7 +216,7 @@ class RomanticChanteuse(SVMinion):
 
 class Trig_RomanticChanteuse(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BattleDmgHero", "BattleDmgMinion", "AbilityDmgHero", "AbilityDmgMinion", "TurnEnds"])
+        super().__init__(entity, ["BattleDmgHero", "BattleDmgMinion", "AbilityDmgHero", "AbilityDmgMinion", "TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment,
                 choice=0):  # target here holds the actual target object
@@ -335,7 +335,7 @@ class Terrorformer(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.fusion = 1
         self.fusionMaterials = 0
         self.progress = 1
@@ -402,7 +402,7 @@ class StrokeofConviction(SVSpell):
     # 使自己的PP消耗与这张 卡牌等量的消费值，在使用这张卡牌时将其墨迹为命运抉择 所指定的卡牌
     # 爆能强化6；由原本的命运抉择转变为召唤2个迅捷的剑士到战场上。随机给予一个敌方的从者5点伤害。给予自己的从者全体+1/+1效果
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.options = [ErikasSleight_Option(self), MistolinasSwordplay_Option(self),
                         BayleyonsCommand_Option(self)]
 
@@ -527,7 +527,7 @@ class PaulaIcyWarmth(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.options = [PaulaGentalWarmth_Option(self), PaulaPassionateWarmth_Option(self)]
 
     def need2Choose(self):
@@ -700,7 +700,7 @@ class NaterranGreatTree(Amulet):
     requireTarget, description = False, "Fanfare: If any other allied Naterran Great Trees are in play, randomly destroy 1.Last Words: Draw a card."
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_NaterranGreatTree(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -859,7 +859,7 @@ class RomanticChanteuse(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_RomanticChanteuse(self)]
 
     def targetExists(self, choice=0):
@@ -880,7 +880,7 @@ class RomanticChanteuse(SVMinion):
 
 class Trig_RomanticChanteuse(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BattleDmgHero", "BattleDmgMinion", "AbilityDmgHero", "AbilityDmgMinion", "TurnEnds"])
+        super().__init__(entity, ["BattleDmgHero", "BattleDmgMinion", "AbilityDmgHero", "AbilityDmgMinion", "TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment,
                 choice=0):  # target here holds the actual target object
@@ -999,7 +999,7 @@ class Terrorformer(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.fusion = 1
         self.fusionMaterials = 0
         self.progress = 1
@@ -1066,7 +1066,7 @@ class StrokeofConviction(SVSpell):
     # 使自己的PP消耗与这张 卡牌等量的消费值，在使用这张卡牌时将其墨迹为命运抉择 所指定的卡牌
     # 爆能强化6；由原本的命运抉择转变为召唤2个迅捷的剑士到战场上。随机给予一个敌方的从者5点伤害。给予自己的从者全体+1/+1效果
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.options = [ErikasSleight_Option(self), MistolinasSwordplay_Option(self),
                         BayleyonsCommand_Option(self)]
 
@@ -1191,7 +1191,7 @@ class PaulaIcyWarmth(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.options = [PaulaGentalWarmth_Option(self), PaulaPassionateWarmth_Option(self)]
 
     def need2Choose(self):

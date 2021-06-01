@@ -2,14 +2,18 @@ import numpy as np
 from direct.interval.IntervalGlobal import Parallel, Sequence, Func
 from datetime import datetime
 import threading
+from math import ceil
 
 from LoadModels import *
 
+
+"""Hand Zone infos"""
 Separation_Hands = 5
-OpeningAngle = 50
-radius = 9.5
-HandZone_Y = 50
-HandZone1_Z, HandZone2_Z = -21.5, 22.5
+OpeningAngle = 40
+radius = 12.9
+HandZone_Y = -8
+HandZone1_Z, HandZone2_Z = -24, 25.2
+DrawnCard1_PausePos, DrawnCard2_PausePos = (7.8, -25, -0.8), (7.8, -25, 4.2)
 
 def calc_PosHprHands(num, x, y, z):
 	if num < 1: return [], []
@@ -39,391 +43,192 @@ hprHandsTable = {HandZone1_Z: {i: calc_PosHprHands(i, 0, HandZone_Y, HandZone1_Z
 				HandZone2_Z: {i: calc_PosHprHands(i, 0, HandZone_Y, HandZone2_Z)[1] for i in range(13)}
 				}
 
-handScale = 0.5
 
 class HandZone:
 	def __init__(self, GUI, ID):
 		self.GUI, self.ID = GUI, ID
-		ownID = max(1, self.GUI.ID) #GUI_1P has UI = 0
-		self.x, self.y, self.z = 0, HandZone_Y, HandZone1_Z if self.ID == ownID else HandZone2_Z
+		lowerPlayerID = max(1, self.GUI.ID) #GUI_1P has UI = 0
+		self.x, self.y, self.z = 0, HandZone_Y, HandZone1_Z if self.ID == lowerPlayerID else HandZone2_Z
 		
-	def addaHand(self, card, pos, hpr=Point3(), scale=0.5):
-		nodePath_Card = self.GUI.backupCardModels[card.type].popleft()
-		nodePath_Card.changeCard(card)
-		nodePath_Card.setPosHprScale(pos, hpr, Point3(scale, scale, scale))
-		card.x, card.y, card.z = pos
-		self.GUI.pickablesDrawn.append(nodePath_Card)
-		return nodePath_Card
-	
-	def addHands(self, ls_Card, ls_Pos, ls_Hpr):
-		if ls_Card:
-			for card, pos, hpr in zip(ls_Card, ls_Pos, ls_Hpr):
-				self.addaHand(card, pos, hpr)
-				
-	def removeMultiple(self, btns):
-		for btn in btns:
-			if btn.card and btn not in self.GUI.backupCardModels[btn.card.type]:
-				self.GUI.backupCardModels[btn.card.type].append(btn)
-			if btn.card:
-				if btn.card.btn is btn: btn.card.btn = None
-				btn.card = None
-			btn.setPos(BackupModelPos) #Move the btn to backup pos anyways
-			#print("After removal, the btn is ", btn, btn.card, btn.getPos())
-			try: self.GUI.pickablesDrawn.remove(btn)
-			except: pass
+	def addHands(self, ls_Card, ls_Pos, ls_Hpr=None, ls_Scale=None):
+		if not ls_Hpr: ls_Hpr = [None] * len(ls_Pos)
+		if not ls_Scale: ls_Scale = [None] * len(ls_Pos)
+		return [genCard(self.GUI, card, isPlayed=False, pos=pos, hpr=hpr, scale=scale)[1] \
+				for card, pos, hpr, scale in zip(ls_Card, ls_Pos, ls_Hpr, ls_Scale)]
+		
+	def removeHands(self, btns):
+		for btn in btns: #Only remove the np that represents the card. The reference shall be garbage collected automatically.
+			btn.np.removeNode()
 			
-	def draw(self, afterAllFinished=True, blockwhilePlaying=True):
-		#print("Handzone start drawing hand:", self.ID)
+	def transformHands(self, btns, newCards):
+		for btn, newCard in zip(btns, newCards):
+			isPlayed = btn.isPlayed
+			pos, hpr, scale = btn.np.getPos(), btn.np.getHpr(), btn.np.getScale()
+			btn.np.removeNode()
+			genCard(self.GUI, newCard, isPlayed=isPlayed, pos=pos, hpr=hpr, scale=scale)
+			
+	def placeCards(self):
 		game, ownHand = self.GUI.Game, self.GUI.Game.Hand_Deck.hands[self.ID]
 		posHands, hprHands = posHandsTable[self.z][len(ownHand)], hprHandsTable[self.z][len(ownHand)]
-		pos_hpr_4Existing = {}  #{btn: (pos, hpr)} the pos and hpr for the btn already drawn that still is in hand
-		pos_hpr_4New = {} #{card: (pos, hpr)} the pos and hpr for the card that hasn't been drawn yet
+		pos_hpr_btns = {}  #{btn: (pos, hpr)} the pos and hpr for the btn already drawn that still is in hand
 		for i, card in enumerate(ownHand):
-			if card.btn in self.GUI.pickablesDrawn:
-				pos_hpr_4Existing[card.btn] = (posHands[i], hprHands[i])
-			else:
-				pos_hpr_4New[card] = (posHands[i], hprHands[i])
-		self.addHands(list(pos_hpr_4New.keys()), list(pos_hpr[0] for pos_hpr in pos_hpr_4New.values()), list(pos_hpr[1] for pos_hpr in pos_hpr_4New.values()))
-		para = Parallel()
-		#if pos_hpr_4New: #If there is new card to be drawn, draw them and highlight for half a second
-		for btn, pos_hpr in pos_hpr_4Existing.items():
-			para.append(btn.genMoveIntervals(pos_hpr[0], pos_hpr[1], duration=0.25))
-		
-		self.GUI.animate(para, name="Rearrange hand cards", afterAllFinished=afterAllFinished, blockwhilePlaying=blockwhilePlaying)
-		#Multithreading takes ~2ms
-		for card in ownHand:
-			threading.Thread(target=card.btn.refresh).start()
+			if card.btn: pos_hpr_btns[card.btn] = (posHands[i], hprHands[i])
+			else: self.addHands((card, ), (posHands[i], ), (hprHands[i], ))
+		for btn, pos_hpr in pos_hpr_btns.items():
+			btn.genLerpInterval(pos_hpr[0], pos_hpr[1], duration=0.25).start()
 		
 
-HeroZone1_X, HeroZone2_X = 0.02, 0.08
-HeroZone_Y = 51.3
-HeroZone1_Z, HeroZone2_Z = -6.87, 7.84
+"""Hero Zone infos"""
+Hero1_Pos, Hero2_Pos = (0, -1.05, -7.35), (0.05, -1.05, 8.54)
+Weapon1_Pos, Weapon2_Pos = (-4.75, -1.05, -7.4), (-4.75, -1.05, 8.48)
+Power1_Pos, Power2_Pos = (4.67, -1, -7.9), (4.67, -1, 8)
+Hero2_X = Hero2_Pos[0]
+posSecretsTable = {Hero1_Pos: [( +0,    -1.15, -4.82),
+								(-1.14, -1.15, -5.43),
+								(+1.14, -1.15, -5.43),
+								(-1.83, -1.15, -6.51),
+								(+1.83, -1.15, -6.51)],
+					Hero2_Pos: [(Hero2_X+0,    -1.15, 11.05),
+								(Hero2_X-1.14, -1.15, 10.44),
+								(Hero2_X+1.14, -1.15, 10.44),
+								(Hero2_X-1.83, -1.15, 9.36),
+								(Hero2_X+1.83, -1.15, 9.36)]
+			  		}
 
-posSecretsTable = {HeroZone1_Z: [Point3(HeroZone1_X, HeroZone_Y-0.2, HeroZone1_Z+2.4),
-							Point3(HeroZone1_X-1, HeroZone_Y-0.2, HeroZone1_Z+1.8), Point3(HeroZone1_X+1, HeroZone_Y-0.2, HeroZone1_Z+1.8),
-							Point3(HeroZone1_X-1.7, HeroZone_Y-0.2, HeroZone1_Z+1), Point3(HeroZone1_X+1.7, HeroZone_Y-0.2, HeroZone1_Z+1)],
-			  HeroZone2_Z: [Point3(HeroZone2_X, HeroZone_Y-0.2, HeroZone2_Z+2),
-							Point3(HeroZone2_X-1.2, HeroZone_Y-0.2, HeroZone2_Z+0.5), Point3(HeroZone2_X-1.2, HeroZone_Y-0.2, HeroZone2_Z+0.5),
-							Point3(HeroZone2_X-1.5, HeroZone_Y-0.2, HeroZone2_Z+0.2), Point3(HeroZone2_X-1.5, HeroZone_Y-0.2, HeroZone2_Z+0.2)]
-			  }
-
-Seperation_Trigs = 1
-def calc_posTrigs(num, x, y, z): #Input the x, y, z of the HeroZone
-	leftPos = x - Seperation_Trigs * (num - 1) / 2
-	posTrigs = [Point3(leftPos + Seperation_Trigs * i, y, z) for i in range(num)]
-	return posTrigs
-
+Seperation_Trigs = 0.92
+def calc_posTrigs(num, x, y, z, firstTime=True): #Input the x, y, z of the HeroZone
+	if firstTime: z = z - 2.35
+	if num < 4:
+		leftPos = x + 0.05 - Seperation_Trigs * (num - 1) / 2
+		return [Point3(leftPos + Seperation_Trigs * i, y, z) for i in range(num)]
+	else: #num >= 4
+		if (num - 3) % 2 == 1: numLeft, numRight = int((num - 2) / 2), int((num - 4) / 2)
+		else: numLeft = numRight = int((num - 3) / 2)
+		return [(x - 2.87 - i * Seperation_Trigs, y, z) for i in range(numLeft)] \
+				+ calc_posTrigs(3, x, y, z, firstTime=False) + [(x + 2.92 + i * Seperation_Trigs, y, z) for i in range(numRight)]
 	
-class HeroZone(NodePath):
+
+ManaText1_Pos, ManaText2_Pos = (7.87, -1.01, -11.9), (6.92, -1.05, 11.65)
+
+class HeroZone:
 	def __init__(self, GUI, ID):
-		super().__init__("NodePath_HeroZone")
-		self.reparentTo(GUI.render)
 		self.GUI, self.ID = GUI, ID
-		ownID = max(1, self.GUI.ID) #GUI_1P has UI = 0
-		if self.ID == ownID:
-			self.x, self.y, self.z = HeroZone1_X, HeroZone_Y, HeroZone1_Z
-		else:
-			self.x, self.y, self.z = HeroZone2_X, HeroZone_Y, HeroZone2_Z
-		self.setPos(self.x, self.y, self.z)
-		sansBold = GUI.loader.loadFont('Models\\OpenSans-Bold.ttf')
+		lowerPlayerID = max(1, self.GUI.ID) #GUI_1P has UI = 0
+		if self.ID == lowerPlayerID: self.heroPos, self.weaponPos, self.powerPos = Hero1_Pos, Weapon1_Pos, Power1_Pos
+		else: self.heroPos, self.weaponPos, self.powerPos = Hero2_Pos, Weapon2_Pos, Power2_Pos
 		
 		self.manaHD = GUI.Game.Manas
 		#Merge the ManaZone with HeroZone
 		self.manaText = TextNode("Mana Text")
 		self.manaText.setText("0/0")
 		self.manaText.setAlign(TextNode.ACenter)
-		self.manaText.setFont(sansBold)
-		manaTextNode = self.attachNewNode(self.manaText)
+		self.manaText.setFont(self.GUI.font)
+		manaTextNode = self.GUI.render.attachNewNode(self.manaText)
 		manaTextNode.setScale(0.8)
-		if self.z < 0: manaTextNode.setPos(7.2, -0.01, -4.15)
-		else: manaTextNode.setPos(6.35, -0.01, 3.05)
+		if self.heroPos[2] < 0: manaTextNode.setPos(ManaText1_Pos)
+		else: manaTextNode.setPos(ManaText2_Pos)
 		
-		self.manasDrawn, self.secretsDrawn, self.trigsDrawn = [], [], []
+		self.secretsDrawn, self.trigsDrawn = [], []
 		
-	#Only for hero, power, weapon. Secrets will only use addSecrets
-	def addaCard(self, card, pos=Point3(0, 0, 0), hpr=Point3()):
-		scale = {"Hero": 0.95, "Power": 0.6, "Weapon": 0.5}[card.type]
-		nodePath_Card = self.GUI.backupCardModels[card.type+"Played"].popleft()
-		nodePath_Card.changeCard(card)
-		nodePath_Card.setPosHprScale(pos, hpr, scale)
-		if nodePath_Card not in self.GUI.pickablesDrawn:
-			self.GUI.pickablesDrawn.append(nodePath_Card)
-		return nodePath_Card
-		
-	def addSecrets(self, ls_Card, ls_Pos):
-		if ls_Card:
-			for card, pos in zip(ls_Card, ls_Pos):
-				nodePath_Card = self.GUI.backupCardModels["SecretPlayed"].popleft()
-				nodePath_Card.changeCard(card)
-				if nodePath_Card not in self.GUI.pickablesDrawn:
-					self.GUI.pickablesDrawn.append(nodePath_Card)
-				nodePath_Card.setPos(pos)
-				nodePath_Card.setScale(1.2)
-				
-	def removeSecret(self, btn):
-		btn.setPos(BackupModelPos)
-		if btn not in self.GUI.backupCardModels["SecretPlayed"]:
-			self.GUI.backupCardModels["SecretPlayed"].append(btn)
-		if btn.card:
-			if btn.card.btn is btn: btn.card.btn = None
-			btn.card = None
-		try: self.GUI.pickablesDrawn.remove(btn)
-		except: pass
-		
-	def removeHero(self, btn):
-		btn.setPos(BackupModelPos)
-		if btn not in self.GUI.backupCardModels["HeroPlayed"]:
-			self.GUI.backupCardModels["HeroPlayed"].append(btn)
-		if btn.card:
-			if btn.card.btn is btn: btn.card.btn = None
-			btn.card = None
-		try: self.GUI.pickablesDrawn.remove(btn)
-		except: pass
-		
-	def removePower(self, btn):
-		btn.setPos(BackupModelPos)
-		if btn not in self.GUI.backupCardModels["PowerPlayed"]:
-			self.GUI.backupCardModels["PowerPlayed"].append(btn)
-		if btn.card:
-			if btn.card.btn is btn: btn.card.btn = None
-			btn.card = None
-		try: self.GUI.pickablesDrawn.remove(btn)
-		except: pass
-	
-	def removeWeapon(self, btn):
-		btn.setPos(BackupModelPos)
-		if btn not in self.GUI.backupCardModels["WeaponPlayed"]:
-			self.GUI.backupCardModels["WeaponPlayed"].append(btn)
-		else: print("weapon btn false already in backupmodels")
-		if btn.card:
-			if btn.card.btn is btn: btn.card.btn = None
-			btn.card = None
-		try: self.GUI.pickablesDrawn.remove(btn)
-		except: pass
-	
-	def draw(self, blockwhilePlaying=True):
+	def placeCards(self):
 		#The whole func takes ~1ms
 		game = self.GUI.Game
 		hero, power, weapon = game.heroes[self.ID], game.powers[self.ID], game.availableWeapon(self.ID)
-		if hero.btn: threading.Thread(target=hero.btn.refresh).start()
-		else:
-			print("Redrawing hero", hero, hero.btn)
-			self.addaCard(hero, Point3(self.x, self.y, self.z))
-		#Changing power or drawing power for the 1st time requires the power to flip to face down
-		x, y, z = self.x + 4.5, self.y - 0.1, self.z
-		if power.btn: threading.Thread(target=power.btn.refresh).start()
-		else:
-			btn = self.addaCard(power, Point3(x, y, z))
-			btn.setHpr(0, 0, 0)
-			riseInterval = btn.genMoveIntervals(pos=Point3(x, y - 3, z), hpr=Point3(90, 0, 0), duration=0.2)
-			dropInterval = btn.genMoveIntervals(pos=Point3(x, y, z), hpr=Point3(180, 0, 0), duration=0.2)
-			flipInterval = btn.genMoveIntervals(hpr=Point3(360, 0, 0), duration=0.2)
+		if not hero.btn: genCard(self.GUI, hero, isPlayed=True, pos=self.heroPos)
+		if not power.btn:
+			np, btn = genCard(self.GUI, power, isPlayed=True, pos=self.powerPos)
+			x, y, z = self.weaponPos
+			riseInterval = btn.genLerpInterval(pos=Point3(x, y - 3, z), hpr=Point3(90, 0, 0), duration=0.2)
+			dropInterval = btn.genLerpInterval(pos=Point3(x, y, z), hpr=Point3(180, 0, 0), duration=0.2)
+			flipInterval = btn.genLerpInterval(hpr=Point3(360, 0, 0), duration=0.2)
 			#新技能出现的时候一定都是可以使用的正面向上状态
-			self.GUI.animate(Sequence(riseInterval, dropInterval, flipInterval, Func(btn.refresh)), name="Animate Power Appearing", blockwhilePlaying=False)
-		if weapon:
-			print("BEFORE DRAWING THE WEAPON BTN WHEN UPDATING, check the btns and nodePaths")
-			for nodePath in self.GUI.render.findAllMatches("**/*_NodePath_WeaponPlayed*"):
-				if nodePath.getPos() != BackupModelPos:
-					print("\t\tWeaponPlayed nodePath being displayed", nodePath.name, nodePath.getPos())
-			
-			if weapon.btn: threading.Thread(target=weapon.btn.refresh).start()
-			else: self.addaCard(weapon, Point3(self.x - 4.5, self.y - 0.2, self.z))
-			
-		for btn in self.GUI.backupCardModels["WeaponPlayed"]:
-			if not btn.card: btn.setPos(BackupModelPos)
-			
+			Sequence(riseInterval, dropInterval, flipInterval, name="Animate Power Appearing").start()
+		if weapon and not weapon.btn: genCard(self.GUI, weapon, self.weaponPos)
+		
 	def drawMana(self):
 		ID = self.ID
 		usable, upper = self.manaHD.manas[ID], self.manaHD.manasUpper[ID]
 		locked, overloaded = self.manaHD.manasLocked[ID], self.manaHD.manasOverloaded[ID]
 		#print("usable, upper", usable, upper)
 		self.manaText.setText("%d/%d"%(usable, upper))
-		if self.z < 0:
-			for btn in self.manasDrawn: btn.setPos(0, -60, 0)
-			self.manasDrawn = []
-			manas2Draw = ["Mana"] * usable + ["EmptyMana"] * (upper - usable - locked) + ["LockedMana"] * locked
-			for i, manaText in enumerate(manas2Draw):
-				model = self.GUI.backupCardModels[manaText][i]
-				model.setPos(0.8*i, 0.05, 0)
-				self.manasDrawn.append(model)
-			for i in range(locked):
-				model = self.GUI.backupCardModels["OverloadedMana"][i]
-				model.setPos(upper-0.8*i-1 , 0.05, 0)
-				self.manasDrawn.append(model)
-				
-	def drawSecrets(self, blockwhilePlaying=True):
+		manas = self.GUI.manaModels
+		if self.heroPos[2] < 0:
+			for i in range(usable): manas["Mana"][i].setPos(i * 0.82, -1, 0)
+			for i in range(usable, 10): manas["Mana"][i].setPos(0, 0, 0)
+			for j in range(upper - usable - locked): manas["EmptyMana"][j].setPos((usable+j) * 0.82, -1, 0)
+			for j in range(upper - usable - locked, 10): manas["EmptyMana"][j].setPos(0, 0, 0)
+			for k in range(locked): manas["LockedMana"][k].setPos((upper - usable - locked + k)  * 0.82, -1, 0)
+			for k in range(locked, 10): manas["LockedMana"][k].setPos(0, 0, 0)
+			for m in range(overloaded): manas["OverloadedMana"][m].setPos(m * 0.82, -1, -1.2)
+			for m in range(overloaded, 10): manas["OverloadedMana"][m].setPos(0, 0, 0)
+			
+	#Secrets and quests are treated in the same way
+	def placeSecrets(self):
 		secretHD = self.GUI.Game.Secrets
 		ownSecrets = secretHD.mainQuests[self.ID] + secretHD.sideQuests[self.ID] + secretHD.secrets[self.ID]
-		posSecrets = posSecretsTable[self.z][:len(ownSecrets)]
-		pos_4Existing, pos_4New = {}, {}
+		posSecrets = posSecretsTable[self.heroPos][:len(ownSecrets)]
 		for i, card in enumerate(ownSecrets):
-			if card.btn in self.GUI.pickablesDrawn:
-				pos_4Existing[card.btn] = posSecrets[i]
-			else:
-				pos_4New[card] = posSecrets[i]
-		self.addSecrets(list(pos_4New.keys()), list(pos_4New.values()))
-		para = Parallel()
-		for btn, pos in pos_4Existing.items():
-			para.append(btn.genMoveIntervals(pos, duration=0.15))
-		self.GUI.animate(para, name="Move secrets ani", blockwhilePlaying=blockwhilePlaying)
-		for card in ownSecrets:
-			threading.Thread(target=card.btn.refresh).start()
-			
-	def addaTrig(self, card):
-		loader = self.GUI.loader
-		imgPath = findFilepath(card)
-		root_Trig = NodePath_TurnTrig(self.GUI, card)
-		root_Trig.reparentTo(self.GUI.render)
-		card.btn = root_Trig
-		root_Trig.card_Model = loader.loadModel("Models\\HeroModels\\TurnTrig.glb")
-		root_Trig.card_Model.setTexture(root_Trig.card_Model.findTextureStage('*'),
-									loader.loadTexture(imgPath), 1)
-		root_Trig.card_Model.reparentTo(root_Trig)
-		self.rearrangeTrigs()
+			if card.btn:
+				if card.btn.np.getPos() != posSecrets[i]:
+					card.btn.np.posInterval(0.4, pos=posSecrets[i]).start()
+			else: genSecretIcon(self.GUI, card, posSecrets[i], hpr=(90, 0, 0))[0].hprInterval(0.3, hpr=(0, 0, 0)).start()
 		
-	def removeaTrig(self, btn):
-		btn.card = None
-		try: self.trigsDrawn.remove(btn)
-		except: pass
-		try: self.GUI.pickablesDrawn.remove(btn)
-		except: pass
-		btn.removeNode()
+	def placeTurnTrigs(self):
 		cards = [trig.card for trig in self.GUI.Game.turnEndTrigger + self.GUI.Game.turnStartTrigger if trig.ID == self.ID]
-		posTrigs = calc_posTrigs(len(cards), self.x, self.y, self.z)
+		posTrigs = calc_posTrigs(len(cards), self.heroPos[0], self.heroPos[1]-0.1, self.heroPos[2])
 		for i, card in enumerate(cards):
-			card.btn.setPos(posTrigs[i])
+			if card.btn: card.btn.np.posInterval(0.25, pos=posTrigs[i]).start()
+		for i, card in enumerate(cards):
+			if not card.btn: np, card.btn = genTurnTrigIcon(self.GUI, card, pos=posTrigs[i])
 			
-	def rearrangeTrigs(self):
-		cards = [trig.card for trig in self.GUI.Game.turnEndTrigger + self.GUI.Game.turnStartTrigger if trig.ID == self.ID]
-		posTrigs = calc_posTrigs(len(cards), self.x, self.y-0.25, self.z-2.1)
-		for i, card in enumerate(cards):
-			card.btn.setPos(posTrigs[i])
-			if card.btn not in self.trigsDrawn:
-				self.trigsDrawn.append(card.btn)
-			if card.btn not in self.GUI.pickablesDrawn:
-				self.GUI.pickablesDrawn.append(card.btn)
-		for btn in self.trigsDrawn[:]:
-			if btn.card not in cards:
-				btn.removeNode()
-				self.trigsDrawn.remove(btn)
-				try: self.GUI.pickablesDrawn.remove(btn)
-				except: pass
 
-Separation_Minions = 3.5
-BoardZone_Y = HeroZone_Y
-BoardZone1_Z, BoardZone2_Z = -1.05, 3.45
+Separation_Minions = 3.7
+MinionZone_Y = Hero1_Pos[1]
+MinionZone1_Z, MinionZone2_Z = -1.62, 3.2
 
 def calc_posMinions(num, x, y, z):
 	leftPos = x - Separation_Minions * (num - 1) / 2
 	posMinions = [Point3(leftPos + Separation_Minions * i, y, z) for i in range(num)]
 	return posMinions
 
-posMinionsTable = {BoardZone1_Z: {i: calc_posMinions(i, 0, BoardZone_Y, BoardZone1_Z) for i in range(15)},
-				BoardZone2_Z: {i: calc_posMinions(i, 0, BoardZone_Y, BoardZone2_Z) for i in range(15)}
+#0~14 minions
+posMinionsTable = {MinionZone1_Z: {i: calc_posMinions(i, 0, MinionZone_Y, MinionZone1_Z) for i in range(15)},
+				MinionZone2_Z: {i: calc_posMinions(i, 0, MinionZone_Y, MinionZone2_Z) for i in range(15)}
 				}
-	
-minionScale = 0.58
 
-class BoardZone:
+class MinionZone:
 	def __init__(self, GUI, ID):
 		self.GUI, self.ID = GUI, ID
-		ownID = max(1, self.GUI.ID) #GUI_1P has UI = 0
-		self.x, self.y, self.z = 0, BoardZone_Y, BoardZone1_Z if self.ID == ownID else BoardZone2_Z
+		lowerPlayerID = max(1, self.GUI.ID) #GUI_1P has UI = 0
+		self.z = MinionZone1_Z if self.ID == lowerPlayerID else MinionZone2_Z
 		
-	def addaMinion(self, card, pos):
-		nodePath_Card = self.GUI.backupCardModels[card.type+"Played"].popleft()
-		nodePath_Card.changeCard(card)
-		if nodePath_Card not in self.GUI.pickablesDrawn:
-			self.GUI.pickablesDrawn.append(nodePath_Card)
-		nodePath_Card.setPos(pos)
-		nodePath_Card.setScale(minionScale)
-		return nodePath_Card
-	
 	def addMinions(self, ls_Card, ls_Pos):
-		if ls_Card:
-			if not isinstance(ls_Card, list): ls_Card = [ls_Card]
-			if not isinstance(ls_Pos, list): ls_Pos = [ls_Pos]
-			for card, pos in zip(ls_Card, ls_Pos):
-				nodePath_Card = self.GUI.backupCardModels[card.type+"Played"].popleft()
-				nodePath_Card.changeCard(card)
-				if nodePath_Card not in self.GUI.pickablesDrawn:
-					self.GUI.pickablesDrawn.append(nodePath_Card)
-			for card, pos in zip(ls_Card, ls_Pos):
-				card.x, card.y, card.z = pos
-				card.btn.setPos(pos)
-				card.btn.setScale(minionScale)
-				
-	def removeMinion(self, btn):
-		btn.setPos(BackupModelPos)
-		if btn not in self.GUI.backupCardModels["MinionPlayed"]:
-			self.GUI.backupCardModels["MinionPlayed"].append(btn)
-		if btn.card:
-			if btn.card.btn is btn: btn.card.btn = None
-			btn.card = None
-		try: self.GUI.pickablesDrawn.remove(btn)
-		except: pass
-		
-	def removeMultiple(self, btns):
-		#print("pre removing multiple, own minion btns", [minion.btn for minion in self.GUI.Game.minions[self.ID]])
+		for card, pos in zip(ls_Card, ls_Pos):
+			genCard(self.GUI, card, isPlayed=True, pos=pos)
+			
+	def removeMinions(self, btns):
 		for btn in btns:
-			if btn not in self.GUI.backupCardModels["MinionPlayed"]:
-				self.GUI.backupCardModels["MinionPlayed"].append(btn)
-			if btn.card:
-				if btn.card.btn is btn: btn.card.btn = None
-				btn.card = None
-			btn.setPos(BackupModelPos)
-			try: self.GUI.pickablesDrawn.remove(btn)
-			except: pass
-			##except: pass
-		#print("AFter removing, own minion btns", [minion.btn for minion in self.GUI.Game.minions[self.ID]])
-		
+			btn.np.removeNode()
+			
 	#It takes negligible time to finish calcing pos and actually start drawing
-	def draw(self, blockwhilePlaying=True):
+	def placeCards(self):
 		game, ownMinions = self.GUI.Game, [minion for minion in self.GUI.Game.minions[self.ID] if minion.onBoard]
 		#Pre-calculated and stored positions for the minions, based on the board location and minion number
 		posMinions = posMinionsTable[self.z][len(ownMinions)]
-		pos_4Existing = {}  #{btn: (pos, hpr)} the pos and hpr for the btn already drawn that still is in hand
-		pos_4New = {}  #{card: (pos, hpr)} the pos and hpr for the card that hasn't been drawn yet
+		pos_4Old, pos_4New = {}, {} #pos_4Old: {btn: pos}, pos_4New {card: pos}
 		for i, card in enumerate(ownMinions):
-			if card.btn in self.GUI.pickablesDrawn:
-				pos_4Existing[card.btn] = posMinions[i]
-			else:
-				pos_4New[card] = posMinions[i]
-		self.addMinions(list(pos_4New.keys()), list(pos_4New.values()))
-		para = Parallel()
-		for btn, pos in pos_4Existing.items():
-			para.append(btn.genMoveIntervals(pos, duration=0.2, blendType="easeOut"))
-		self.GUI.animate(para, name="Move minions ani", blockwhilePlaying=blockwhilePlaying)
-		for minion in ownMinions:
-			threading.Thread(target=minion.btn.refresh).start()
+			if card.btn: pos_4Old[card.btn] = posMinions[i]
+			else: self.addMinions((card,), (posMinions[i],))
+		for btn, pos_hpr in pos_4Old.items():
+			btn.genLerpInterval(pos_hpr[0], pos_hpr[1], duration=0.25).start()
 		
 
-
-Board_Y = HeroZone_Y + 0.2
-
-class Board(NodePath):
-	def __init__(self, GUI):
-		super().__init__("Board")
-		self.reparentTo(GUI.render)
-		
-		self.setPos(0, 51.4, 0)
+class Btn_Board:
+	def __init__(self, GUI, nodePath):
 		self.GUI = GUI
 		self.selected = False
+		self.np = nodePath
 		self.card = None #Just a placeholder
-		
-		self.board_Model = GUI.loader.loadModel("Models\\BoardModels\\Background.glb")
-		self.board_Model.reparentTo(self)
-		self.board_Model.setTexture(self.board_Model.findTextureStage('*'),
-								self.GUI.loader.loadTexture("Models\\BoardModels\\%s.png"%self.GUI.boardID), 1)
-		collNode_Board = CollisionNode("Board_c_node_1")
-		collNode_Board.addSolid(CollisionBox(Point3(0, 0.3, 0.5), 12, 0.2, 4.5))
-		self.attachNewNode(collNode_Board)#.show()
-		collNode_Board = CollisionNode("Board_c_node_2")
-		collNode_Board.addSolid(CollisionBox(Point3(10.5, 0.3, 0), 4.2, 0.2, 9))
-		self.attachNewNode(collNode_Board)#.show()
-		collNode_Board = CollisionNode("Board_c_node_3")
-		collNode_Board.addSolid(CollisionBox(Point3(-10.5, 0.53, 0), 4.2, 0.2, 9))
-		self.attachNewNode(collNode_Board)#.show()
 		
 	def leftClick(self):
 		print("Board is clicked")
@@ -435,7 +240,7 @@ class Board(NodePath):
 		self.GUI.removeCardSpecsDisplay()
 		
 	def dimDown(self):
-		self.setColor(grey)
+		self.np.setColor(grey)
 	
 	def setBoxColor(self, color):
 		pass
@@ -444,32 +249,23 @@ class Board(NodePath):
 		pass
 		
 		
-class TurnEndButton(NodePath):
-	def __init__(self, GUI):
-		super().__init__("Turn_End_Button")
-		self.reparentTo(GUI.render)
+TurnEndBtn_Pos = (15.5, -1, 1.16)
+
+class Btn_TurnEnd:
+	def __init__(self, GUI, nodePath):
 		self.GUI = GUI
+		self.np = nodePath
 		self.card = None  #Just a placeholder
 		
-		self.model = GUI.loader.loadModel("Models\\BoardModels\\TurnEndButton.glb")
-		self.model.reparentTo(self)
-		self.model.setTexture(self.model.findTextureStage('*'),
-					self.GUI.loader.loadTexture("Models\\BoardModels\\TurnEndButton.png"), 1)
-	
-		collNode_TurnEndButton = CollisionNode("TurnEndButton_c_node")
-		collNode_TurnEndButton.addSolid(CollisionBox(Point3(0, 0 , 0), 1.7, 0.4, 1))
-		self.attachNewNode(collNode_TurnEndButton)#.show()
-		
 	def leftClick(self):
-		GUI = self.GUI
-		if 3 > GUI.UI > -1:
-			GUI.resolveMove(None, self, "TurnEnds")
+		if 3 > self.GUI.UI > -1:
+			self.GUI.resolveMove(None, self, "TurnEnds")
 			
 	def rightClick(self):
 		self.GUI.cancelSelection()
 	
 	def dimDown(self):
-		self.setColor(grey)
+		self.np.setColor(grey)
 	
 	def setBoxColor(self, color):
 		pass
@@ -478,35 +274,59 @@ class TurnEndButton(NodePath):
 		pass
 
 
-deckScale = 0.5
+deckScale = 0.9
+Deck1_Pos, Deck2_Pos = (16.85, -3, -2.5), (16.75, -3, 4.85)
+hpr_Deck = (90, 180, -88)
 
 class DeckZone:
 	def __init__(self, GUI, ID):
 		self.GUI, self.ID = GUI, ID
-		ownID = max(1, self.GUI.ID) #GUI_1P has UI = 0
-		self.x, self.y, self.z = 16, HeroZone_Y - 0.2, -2.25 if self.ID == ownID else 4.55
-		self.decksinGame = self.GUI.Game.Hand_Deck.decks
-		self.deckModel = None
+		lowerPlayerID = max(1, self.GUI.ID) #GUI_1P has UI = 0
+		self.pos = Deck1_Pos if self.ID == lowerPlayerID else Deck2_Pos
+		self.HD = self.GUI.Game.Hand_Deck
+		np_Deck = GUI.loader.loadModel("Models\\BoardModels\\Deck.glb")
+		np_Deck.setTexture(np_Deck.findTextureStage('*'), GUI.textures["cardBack"], 1)
+		np_Deck.reparentTo(GUI.render)
+		np_Deck.setPosHpr(self.pos, hpr_Deck)
+		for np in np_Deck.getChildren(): np.setTransparency(True)
+		np_Deck.setScale(0.9)
+		self.np_Deck = np_Deck
+		self.textNode = TextNode("Deck_TextNode")
+		self.textNode.setText("Deck: {}\nHand: {}".format(0, 0))
+		self.textNode.setFont(GUI.font)
+		#textNode.setAlign(TextNode.)
+		textNodePath = GUI.render.attachNewNode(self.textNode)
+		textNodePath.setPos(self.pos[0] + 1.5, self.pos[1], self.pos[2] + 0.4)
 		
+		#The fatigue model to show when no more card to draw
+		self.np_Fatigue = GUI.loader.loadModel("Models\\BoardModels\\Fatigue.glb")
+		self.np_Fatigue.setTexture(self.np_Fatigue.findTextureStage('0'),
+							  GUI.loader.loadTexture("Models\\BoardModels\\Fatigue.png"), 1)
+		self.np_Fatigue.reparentTo(GUI.render)
+		textNode = TextNode("Fatigue_TextNode")
+		textNode.setFont(GUI.font)
+		#textNode.setTextColor(1, 0, 0.1, 1)
+		textNode.setText('1')
+		textNode.setAlign(TextNode.ACenter)
+		textNodePath = self.np_Fatigue.attachNewNode(textNode)
+		textNodePath.setPos(-0.03, -0.04, -1.3)
+
 	def draw(self):
-		deckSize = len(self.decksinGame[self.ID])
-		if self.deckModel:
-			if deckSize < 1:
-				self.deckModel.setColor(transparent)
-			else:
-				self.deckModel.setScale(0.5, 0.5*min(15, deckSize), 0.5)
-		elif not self.deckModel and deckSize > 0:
-			self.deckModel = self.GUI.loader.loadModel("Models\\CardBack.glb")
-			self.deckModel.reparentTo(self.GUI.render)
-			self.deckModel.setTexture(self.deckModel.findTextureStage('*'),
-									  self.GUI.loader.loadTexture("Models\\CardBack.png"), 1)
-			self.deckModel.setTransparency(True)
-			self.deckModel.setPos(self.x, self.y, self.z)
-			self.deckModel.setScale(0.5, 0.5*min(15, deckSize), 0.5)
-			self.deckModel.setHpr(90, 0, 90)
-			
+		deckSize = len(self.HD.decks[self.ID])
+		i, numPairs2Draw = 1, min(10, ceil(deckSize / 3))
+		for np in self.np_Deck.getChildren():
+			np.setColor(white if i <= numPairs2Draw else transparent)
+			i += 1
+		self.textNode.setText("Deck: {}\nHand: {}".format(len(self.HD.decks[self.ID]), len(self.HD.hands[self.ID])))
+		
+	def fatigueAni(self, numFatigue):
+		self.np_Fatigue.find("Fatigue_TextNode").node().setText(str(numFatigue))
+		moPath = Mopath.Mopath()
+		moPath.loadFile("Models\\BoardModels\\FatigueCurve.egg")
+		interval = MopathInterval(moPath, self.np_Fatigue, duration=0.6)
+		self.GUI.seqHolder[0].append(Sequence(interval, Wait(1), Func(self.np_Fatigue.setPos, (0, 0, 0) ) ))
+		
 	def rightClick(self):
 		if self.GUI.UI == 0:
 			self.GUI.showTempText("Deck size: {}\nHand size: {}".format(len([self.ID]),
 																		len(self.GUI.Game.Hand_Deck.hands[self.ID])))
-

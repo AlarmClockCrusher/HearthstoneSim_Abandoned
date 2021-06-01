@@ -72,14 +72,14 @@ class SacredPlea(Amulet):
     requireTarget, description = False, "Countdown 3. Last Words: Draw 2 cards"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_SacredPlea(self)]
         self.deathrattles = [Draw2Cards(self)]
 
 
 class Trig_SacredPlea(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
         self.counter = 3
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -204,14 +204,14 @@ class RuinwebSpider_Crystallize(Amulet):
     requireTarget, description = False, "Countdown 3. Last Words: Draw 2 cards"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_RuinwebSpider_Crystallize(self)]
         self.deathrattles = [SummonaRuinwebSpider(self)]
 
 
 class Trig_RuinwebSpider_Crystallize(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts", "AmuletAppears"])
+        super().__init__(entity, ["TurnStarts", "AmuletAppears"])
         self.counter = 10
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -248,7 +248,7 @@ class RuinwebSpider(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_RuinwebSpider(self)]
         self.appearResponse = [self.enemyMinionsCantAttackThisTurn]
 
@@ -273,7 +273,7 @@ class RuinwebSpider(SVMinion):
 
 class Trig_RuinwebSpider(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionBeenPlayed"])
+        super().__init__(entity, ["MinionBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID != self.entity.ID
@@ -288,7 +288,7 @@ class Trig_RuinwebSpider(TrigBoard):
 
 class Trig_CantAttack4aTurn(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
         self.temp = True
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -312,7 +312,7 @@ class XIErntzJustice(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.appearResponse = [self.draw3Cards]
         self.disappearResponse = [self.restore8HealthtoPlayer]
 
@@ -429,14 +429,14 @@ class SacredPlea(Amulet):
     requireTarget, description = False, "Countdown 3. Last Words: Draw 2 cards"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_SacredPlea(self)]
         self.deathrattles = [Draw2Cards(self)]
 
 
 class Trig_SacredPlea(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
         self.counter = 3
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -561,14 +561,14 @@ class RuinwebSpider_Crystallize(Amulet):
     requireTarget, description = False, "Countdown 3. Last Words: Draw 2 cards"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_RuinwebSpider_Crystallize(self)]
         self.deathrattles = [SummonaRuinwebSpider(self)]
 
 
 class Trig_RuinwebSpider_Crystallize(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts", "AmuletAppears"])
+        super().__init__(entity, ["TurnStarts", "AmuletAppears"])
         self.counter = 10
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -605,7 +605,7 @@ class RuinwebSpider(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_RuinwebSpider(self)]
         self.appearResponse = [self.enemyMinionsCantAttackThisTurn]
 
@@ -630,7 +630,7 @@ class RuinwebSpider(SVMinion):
 
 class Trig_RuinwebSpider(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionBeenPlayed"])
+        super().__init__(entity, ["MinionBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID != self.entity.ID
@@ -645,7 +645,7 @@ class Trig_RuinwebSpider(TrigBoard):
 
 class Trig_CantAttack4aTurn(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
         self.temp = True
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -669,7 +669,7 @@ class XIErntzJustice(SVMinion):
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.appearResponse = [self.draw3Cards]
         self.disappearResponse = [self.restore8HealthtoPlayer]
 

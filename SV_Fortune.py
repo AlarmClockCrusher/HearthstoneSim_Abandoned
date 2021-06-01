@@ -30,7 +30,7 @@ class CloudGigas(SVMinion):
     name_CN = "腾云巨灵"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_CloudGigas(self)]
 
     def inEvolving(self):
@@ -43,7 +43,7 @@ class CloudGigas(SVMinion):
 
 class Trig_CloudGigas(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -90,7 +90,7 @@ class WingedCourier(SVMinion):
     name_CN = "翔翼信使"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_WingedCourier(self)]
 
 
@@ -108,7 +108,7 @@ class FieranHavensentWindGod(SVMinion):
     name_CN = "天霸风神·斐兰"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_FieranHavensentWindGod(self)]
         self.trigsDeck = [Trig_InvocationFieranHavensentWindGod(self)]
 
@@ -135,7 +135,7 @@ class FieranHavensentWindGod(SVMinion):
 
 class Trig_FieranHavensentWindGod(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -205,7 +205,7 @@ class XXIZelgeneaTheWorld(SVMinion):
     name_CN = "《世界》·捷尔加内亚"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.marks["Can't Evolve"] = 1
         self.trigsDeck = [Trig_InvocationXXIZelgeneaTheWorld(self)]
 
@@ -249,7 +249,7 @@ class XXIZelgeneaTheWorld(SVMinion):
 
 class Trig_AttackXXIZelgeneaTheWorld(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
+        super().__init__(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject == self.entity
@@ -265,7 +265,7 @@ class Trig_AttackXXIZelgeneaTheWorld(TrigBoard):
 
 class Trig_EndXXIZelgeneaTheWorld(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -290,7 +290,7 @@ class TitanicShowdown(Amulet):
     name_CN = "巨人的较劲"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 2
         self.trigsBoard = [Trig_Countdown(self)]
         self.deathrattles = [Deathrattle_TitanicShowdown(self)]
@@ -327,7 +327,7 @@ class Deathrattle_TitanicShowdown(Deathrattle_Minion):
 
 class Trig_TitanicShowdown(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -452,13 +452,13 @@ class BlossomingArcher(SVMinion):
     name_CN = "花绽弓箭手"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_BlossomingArcher(self)]
 
 
 class Trig_BlossomingArcher(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["AccelerateBeenPlayed"])
+        super().__init__(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard
@@ -517,7 +517,7 @@ class XIIWolfraudHangedMan(SVMinion):
     name_CN = "《倒吊人》·罗弗拉德"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.marks["Can't Break"] = 1
 
     def inHandEvolving(self, target=None):
@@ -578,7 +578,7 @@ class TreacherousReversal(SVSpell):
 
 class Trig_TreacherousReversal(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -658,7 +658,7 @@ class ChipperSkipper(SVMinion):
     name_CN = "船娘精灵"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_ChipperSkipper(self)]
 
     def getMana(self):
@@ -680,7 +680,7 @@ class ChipperSkipper(SVMinion):
 
 class Trig_ChipperSkipper(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["AccelerateBeenPlayed"])
+        super().__init__(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard
@@ -734,7 +734,7 @@ class OptimisticBeastmaster(SVMinion):
     name_CN = "赞誉之驭兽使"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_OptimisticBeastmaster(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -752,7 +752,7 @@ class OptimisticBeastmaster(SVMinion):
 
 class Trig_OptimisticBeastmaster(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["AccelerateBeenPlayed"])
+        super().__init__(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard
@@ -771,7 +771,7 @@ class Terrorformer(SVMinion):
     name_CN = "裂地异种"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.fusion = 1
         self.fusionMaterials = 0
 
@@ -838,7 +838,7 @@ class DeepwoodWolf(SVMinion):
     name_CN = "森林之狼"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_DeepwoodWolf(self)]
 
     def getMana(self):
@@ -879,7 +879,7 @@ class DeepwoodWolf(SVMinion):
 
 class Trig_DeepwoodWolf(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["AccelerateBeenPlayed"])
+        super().__init__(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard
@@ -917,7 +917,7 @@ class LionelWoodlandShadow(SVMinion):
     name_CN = "森之暗念·莱昂内尔"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_LionelWoodlandShadow(self)]
 
     def getMana(self):
@@ -965,7 +965,7 @@ class LionelWoodlandShadow(SVMinion):
 
 class Trig_LionelWoodlandShadow(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionPlayed"])
+        super().__init__(entity, ["MinionPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID != self.entity.ID
@@ -984,7 +984,7 @@ class Trig_LionelWoodlandShadow(TrigBoard):
 
 class Trig_EndLionelWoodlandShadow(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID != self.entity.ID
@@ -1158,7 +1158,7 @@ class HonorableThief(SVMinion):
     name_CN = "诚实的盗贼"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_HonorableThief(self)]
 
     def effCanTrig(self):
@@ -1204,7 +1204,7 @@ class FrontguardGeneral(SVMinion):
     name_CN = "铁卫战将"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_FrontguardGeneral(self)]
 
 
@@ -1266,7 +1266,7 @@ class VIIOluonTheChariot(SVMinion):
     name_CN = "《战车》·奥辂昂"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_VIIOluonTheChariot(self)]
 
     def getMana(self):
@@ -1289,7 +1289,7 @@ class VIIOluonTheChariot(SVMinion):
 
 class Trig_VIIOluonTheChariot(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -1322,14 +1322,14 @@ class VIIOluonRunawayChariot(SVMinion):
     name_CN = "《暴走》战车·奥辂昂"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.marks["Can't Attack"] = 1
         self.trigsBoard = [Trig_VIIOluonRunawayChariot(self)]
 
 
 class Trig_VIIOluonRunawayChariot(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -1379,7 +1379,7 @@ class PrudentGeneral(SVMinion):
 
 class Trig_PrudentGeneral(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -1423,7 +1423,7 @@ class DiamondPaladin(SVMinion):
     name_CN = "耀钻圣骑士"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_DiamondPaladin(self)]
 
     def evolveTargetExists(self, choice=0):
@@ -1462,7 +1462,7 @@ class DiamondPaladin(SVMinion):
 
 class Trig_DiamondPaladin(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionAttackedMinion"])
+        super().__init__(entity, ["MinionAttackedMinion"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject == self.entity and self.entity.onBoard and (target.health < 1 or target.dead == True) and \
@@ -1479,7 +1479,7 @@ class Trig_DiamondPaladin(TrigBoard):
 
 class Trig_EndDiamondPaladin(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard
@@ -1655,7 +1655,7 @@ class RiteoftheIgnorant(SVSpell):
 
 class Trig_RiteoftheIgnorant(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -1679,9 +1679,9 @@ class Trig_RiteoftheIgnorant(TrigBoard):
 
 class Trig_EndRiteoftheIgnorant(TrigHand):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
         self.temp = True
-        self.makesCardEvanescent = True
+        self.changesCard = True
 
     # They will be discarded at the end of any turn
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1710,7 +1710,7 @@ class ScourgeoftheOmniscient(SVSpell):
 
 class Trig_ScourgeoftheOmniscient(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -1739,7 +1739,7 @@ class AuthoringTomorrow(SVSpell):
 
 class Trig_AuthoringTomorrow(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
         self.counter = 3
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -1798,7 +1798,7 @@ class ArcaneAuteur(SVMinion):
     name_CN = "魔导书撰写者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_ArcaneAuteur(self)]
 
 
@@ -1878,7 +1878,7 @@ class EmergencySummoning(Amulet):
     name_CN = "紧急召唤"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_EmergencySummoning(self)]
         self.trigsBoard = [Trig_EmergencySummoning(self)]
 
@@ -1892,7 +1892,7 @@ class Deathrattle_EmergencySummoning(Deathrattle_Minion):
 
 class Trig_EmergencySummoning(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionPlayed"])
+        super().__init__(entity, ["MinionPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID != self.entity.ID
@@ -1910,7 +1910,7 @@ class HappyPig(SVMinion):
     name_CN = "快乐小猪"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_HappyPig(self)]
 
     def inEvolving(self):
@@ -1944,7 +1944,7 @@ class SweetspellSorcerer(SVMinion):
     name_CN = "甜品魔术师"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_SweetspellSorcerer(self)]
 
     def inHandEvolving(self, target=None):
@@ -1956,7 +1956,7 @@ class SweetspellSorcerer(SVMinion):
 
 class Trig_SweetspellSorcerer(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["SpellPlayed"])
+        super().__init__(entity, ["SpellPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID
@@ -2001,7 +2001,7 @@ class AdamantineGolem(SVMinion):
     name_CN = "精金巨像"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
 
     def effCanTrig(self):
         self.effectViable = len(self.Game.earthsonBoard(self.ID)) > 0
@@ -2116,7 +2116,7 @@ class TropicalGrouper(SVMinion):
     name_CN = "热带铠鱼"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_TropicalGrouper(self)]
 
     def getMana(self):
@@ -2139,7 +2139,7 @@ class TropicalGrouper(SVMinion):
 
 class Trig_TropicalGrouper(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionEvolved"])
+        super().__init__(entity, ["MinionEvolved"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard and subject != self.entity
@@ -2222,7 +2222,7 @@ class Heliodragon(SVMinion):
     name_CN = "日轮之龙"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_Heliodragon(self)]
 
     def whenDiscarded(self):
@@ -2234,7 +2234,7 @@ class Heliodragon(SVMinion):
 
 class Trig_Heliodragon(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["CardDiscarded", "HandDiscarded"])
+        super().__init__(entity, ["CardDiscarded", "HandDiscarded"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return ID == self.entity.ID and self.entity.onBoard and number > 0
@@ -2269,7 +2269,7 @@ class SlaughteringDragonewt(SVMinion):
 
 class Trig_TurncoatDragons(TrigHand):
     def __init__(self, entity):
-        self.blank_init(entity, ["CardDiscarded"])
+        super().__init__(entity, ["CardDiscarded"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.inHand and ID == self.entity.ID
@@ -2288,7 +2288,7 @@ class CrimsonDragonsSorrow(SVMinion):
     name_CN = "悲戚的赤龙"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsHand = [Trig_TurncoatDragons(self)]
         self.progress = 0
 
@@ -2322,7 +2322,7 @@ class AzureDragonsRage(SVMinion):
     name_CN = "盛怒的碧龙"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsHand = [Trig_TurncoatDragons(self)]
         self.progress = 0
 
@@ -2341,7 +2341,7 @@ class TurncoatDragonSummoner(SVMinion):
     name_CN = "恶极唤龙者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
 
     def whenDiscarded(self):
         self.Game.Hand_Deck.addCardtoHand(CrimsonDragonsSorrow, self.ID, byType=True)
@@ -2369,13 +2369,13 @@ class DragonsNest(Amulet):
     name_CN = "龙之卵"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_DragonsNest(self)]
 
 
 class Trig_DragonsNest(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -2458,7 +2458,7 @@ class XIErntzJustice(SVMinion):
     name_CN = "《正义》·伊兰翠"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.appearResponse = [self.whenAppears]
         self.disappearResponse = [self.whenDisppears]
 
@@ -2524,7 +2524,7 @@ class BonenanzaNecromancer(SVMinion):
     name_CN = "狂欢唤灵师"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_BonenanzaNecromancer(self)]
 
     def getMana(self):
@@ -2547,7 +2547,7 @@ class BonenanzaNecromancer(SVMinion):
 
 class Trig_BonenanzaNecromancer(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BurialRite"])
+        super().__init__(entity, ["BurialRite"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -2610,7 +2610,7 @@ class CoffinoftheUnknownSoul(Amulet):
     name_CN = "幽灵之棺"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 1
         self.trigsBoard = [Trig_Countdown(self)]
         self.deathrattles = [Deathrattle_CoffinoftheUnknownSoul(self)]
@@ -2639,7 +2639,7 @@ class CoffinoftheUnknownSoul(Amulet):
 
 class Deathrattle_CoffinoftheUnknownSoul(Deathrattle_Minion):
     def __init__(self, entity):
-        self.blank_init(entity)
+        super().__init__(entity)
         self.chosenMinionType = None
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2689,7 +2689,7 @@ class DeathFowl_Crystallize(Amulet):
     name_CN = "结晶：死之魔鸟"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 3
         self.trigsBoard = [Trig_Countdown(self)]
         self.deathrattles = [Deathrattle_DeathFowl_Crystallize(self)]
@@ -2710,7 +2710,7 @@ class DeathFowl(SVMinion):
     name_CN = "死之魔鸟"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_DeathFowl(self)]
 
     def getMana(self):
@@ -2764,7 +2764,7 @@ class VIMilteoTheLovers(SVMinion):
     name_CN = "《恋人》·米路缇欧"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_VIMilteoTheLovers(self)]
         self.marks["Can't Evolve"] = 1
 
@@ -2853,7 +2853,7 @@ class Deathrattle_VIMilteoTheLovers(Deathrattle_Minion):
 
 class Trig_VIMilteoTheLovers(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -2889,7 +2889,7 @@ class CloisteredSacristan_Crystallize(Amulet):
     name_CN = "结晶：幽暗守墓者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 4
         self.trigsBoard = [Trig_Countdown(self), Trig_CloisteredSacristan_Crystallize(self)]
         self.deathrattles = [Deathrattle_CloisteredSacristan_Crystallize(self)]
@@ -2903,7 +2903,7 @@ class Deathrattle_CloisteredSacristan_Crystallize(Deathrattle_Minion):
 
 class Trig_CloisteredSacristan_Crystallize(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BurialRite"])
+        super().__init__(entity, ["BurialRite"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -2962,7 +2962,7 @@ class ConqueringDreadlord(SVMinion):
     name_CN = "征伐的死帝"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_ConqueringDreadlord(self)]
         self.trigsDeck = [Trig_InvocationConqueringDreadlord(self)]
         self.disappearResponse = [self.whenDisppears]
@@ -2976,7 +2976,7 @@ class ConqueringDreadlord(SVMinion):
 
 class Trig_ConqueringDreadlord(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -2988,7 +2988,7 @@ class Trig_ConqueringDreadlord(TrigBoard):
 
 class Trig_InvocationConqueringDreadlord(TrigInvocation):
     def __init__(self, entity):
-        self.blank_init(entity, ["BurialRite"])
+        super().__init__(entity, ["BurialRite"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
@@ -3003,7 +3003,7 @@ class Deathbringer_Crystallize(Amulet):
     name_CN = "结晶：死灭召来者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 3
         self.trigsBoard = [Trig_Countdown(self)]
         self.deathrattles = [Deathrattle_Deathbringer_Crystallize(self)]
@@ -3055,7 +3055,7 @@ class Deathbringer(SVMinion):
     name_CN = "死灭召来者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_Deathbringer(self)]
 
     def getMana(self):
@@ -3077,7 +3077,7 @@ class Deathbringer(SVMinion):
 
 class Trig_Deathbringer(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -3114,7 +3114,7 @@ class SilverboltHunter(SVMinion):
     name_CN = "银箭狩猎者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_SilverboltHunter(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3205,7 +3205,7 @@ class ContemptousDemon(SVMinion):
     name_CN = "讥讽的恶魔"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_StartContemptousDemon(self), Trig_EndContemptousDemon(self)]
 
     def effCanTrig(self):
@@ -3224,7 +3224,7 @@ class ContemptousDemon(SVMinion):
 
 class Trig_StartContemptousDemon(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -3236,7 +3236,7 @@ class Trig_StartContemptousDemon(TrigBoard):
 
 class Trig_EndContemptousDemon(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -3247,7 +3247,7 @@ class Trig_EndContemptousDemon(TrigBoard):
 
 class Trig_EvolvedContemptousDemon(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["HeroTookDmg", "HeroTook0Dmg", "TurnEnds"])
+        super().__init__(entity, ["HeroTookDmg", "HeroTook0Dmg", "TurnEnds"])
         self.counter = 10
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -3361,7 +3361,7 @@ class DireBond(Amulet):
     name_CN = "漆黑之契"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 3
         self.trigsBoard = [Trig_Countdown(self), Trig_DireBond(self)]
 
@@ -3371,7 +3371,7 @@ class DireBond(Amulet):
 
 class Trig_DireBond(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -3507,7 +3507,7 @@ class UnselfishGrace(Amulet):
     name_CN = "无欲之恩宠"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 5
         self.trigsBoard = [Trig_Countdown(self), Trig_UnselfishGrace(self)]
         self.deathrattles = [Deathrattle_UnselfishGrace(self)]
@@ -3515,7 +3515,7 @@ class UnselfishGrace(Amulet):
 
 class Trig_UnselfishGrace(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -3552,7 +3552,7 @@ class InsatiableDesire(SVSpell):
 
 class Trig_InsatiableDesire(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -3586,7 +3586,7 @@ class XIVLuzenTemperance_Token(SVMinion):
     name_CN = "《节制》·卢泽"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.auras["Buff Aura"] = BuffAura_XIVLuzenTemperance(self)
         self.marks["Enemy Effect Evasive"] = 1
 
@@ -3601,7 +3601,7 @@ class XIVLuzenTemperance(SVMinion):
     name_CN = "《节制》·卢泽"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.auras["Buff Aura"] = BuffAura_XIVLuzenTemperance(self)
         self.marks["Enemy Effect Evasive"] = 1
 
@@ -3661,7 +3661,7 @@ class BuffAura_XIVLuzenTemperance(HasAura_toMinion):
 
 class Trig_XIVLuzenTemperance(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["HeroTookDmg", "HeroTook0Dmg"])
+        super().__init__(entity, ["HeroTookDmg", "HeroTook0Dmg"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and target == self.entity.Game.heroes[self.entity.ID]
@@ -3674,7 +3674,7 @@ class Trig_XIVLuzenTemperance(TrigBoard):
 
 class Trig_XIVLuzenTemperance_MaxDamage(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BattleDmgHero", "AbilityDmgHero"])
+        super().__init__(entity, ["BattleDmgHero", "AbilityDmgHero"])
 
     def canTrig(self, signal, ID, subject, target, number, comment,
                 choice=0):  # target here holds the actual target object
@@ -3734,7 +3734,7 @@ class PrismaplumeBird(SVMinion):
     name_CN = "优雅的丽鸟"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_PrismaplumeBird(self)]
 
 
@@ -3811,7 +3811,7 @@ class LorenaIronWilledPriest(SVMinion):
     name_CN = "传教司祭·萝蕾娜"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.progress = 0
         self.trigsBoard = [Trig_LorenaIronWilledPriest(self), Trig_EndLorenaIronWilledPriest]
 
@@ -3844,7 +3844,7 @@ class LorenaIronWilledPriest(SVMinion):
 
 class Trig_LorenaIronWilledPriest(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["HeroGetsCured", "AllCured"])
+        super().__init__(entity, ["HeroGetsCured", "AllCured"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         if signal == "HeroGetsCured":
@@ -3860,7 +3860,7 @@ class Trig_LorenaIronWilledPriest(TrigBoard):
 
 class Trig_EndLorenaIronWilledPriest(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -3878,7 +3878,7 @@ class SarissaLuxflashSpear(SVMinion):
     name_CN = "破暗煌辉·萨莉莎"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_SarissaLuxflashSpear(self)]
 
     def getMana(self):
@@ -3925,7 +3925,7 @@ class SarissaLuxflashSpear(SVMinion):
 
 class Trig_SarissaLuxflashSpear(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionDies"])
+        super().__init__(entity, ["MinionDies"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return target.ID == self.entity.ID and self.entity.onBoard and target.keyWords["Taunt"] > 0
@@ -3981,7 +3981,7 @@ class HolybrightAltar(Amulet):
     name_CN = "咏唱：纯白祭坛"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 1
         self.trigsBoard = [Trig_Countdown(self)]
         self.deathrattles = [Deathrattle_HolybrightAltar(self)]
@@ -4018,7 +4018,7 @@ class ReverendAdjudicator(SVMinion):
     name_CN = "神域的法王"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_ReverendAdjudicator(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4031,7 +4031,7 @@ class ReverendAdjudicator(SVMinion):
 
 class Trig_ReverendAdjudicator(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["HeroGetsCured", "AllCured"])
+        super().__init__(entity, ["HeroGetsCured", "AllCured"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         if signal == "HeroGetsCured":
@@ -4052,7 +4052,7 @@ class SomnolentStrength(Amulet):
     name_CN = "虚脱的刚腕"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 3
         self.trigsBoard = [Trig_Countdown(self), Trig_SomnolentStrength(self)]
         self.deathrattles = [Deathrattle_SomnolentStrength(self)]
@@ -4060,7 +4060,7 @@ class SomnolentStrength(Amulet):
 
 class Trig_SomnolentStrength(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -4125,7 +4125,7 @@ class VIIISofinaStrength(SVMinion):
     name_CN = "《力量》·索菲娜"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.auras["Buff Aura"] = BuffAura_VIIISofinaStrength(self)
 
     def getMana(self):
@@ -4185,7 +4185,7 @@ class BuffAura_VIIISofinaStrength(HasAura_toMinion):
 
 class Trig_VIIISofinaStrength_MaxDamage(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BattleDmgHero", "BattleDmgMinion", "AbilityDmgHero", "AbilityDmgMinion"])
+        super().__init__(entity, ["BattleDmgHero", "BattleDmgMinion", "AbilityDmgHero", "AbilityDmgMinion"])
 
     def canTrig(self, signal, ID, subject, target, number, comment,
                 choice=0):  # target here holds the actual target object
@@ -4296,7 +4296,7 @@ class RoboticEngineer(SVMinion):
     name_CN = "机械技师"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_RoboticEngineer(self)]
 
 
@@ -4314,7 +4314,7 @@ class MarionetteExpert(SVMinion):
     name_CN = "持偶者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_MarionetteExpert(self)]
 
 
@@ -4332,13 +4332,13 @@ class CatTuner(SVMinion):
     name_CN = "巧猫调律师"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_CatTuner(self)]
 
 
 class Trig_CatTuner(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -4388,7 +4388,7 @@ class WheelofMisfortune(Amulet):
     name_CN = "惨祸的圆环"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 3
         self.trigsBoard = [Trig_WheelofMisfortune(self), Trig_Countdown(self)]
         self.progress = 30
@@ -4396,7 +4396,7 @@ class WheelofMisfortune(Amulet):
 
 class Trig_WheelofMisfortune(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -4461,7 +4461,7 @@ class XSlausWheelofFortune(SVMinion):
     name_CN = "《命运之轮》·斯洛士"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_XSlausWheelofFortune(self)]
 
     def effCanTrig(self):
@@ -4476,7 +4476,7 @@ class XSlausWheelofFortune(SVMinion):
 
 class Trig_XSlausWheelofFortune(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID != self.entity.ID
@@ -4521,7 +4521,7 @@ class InvertedManipulation(SVSpell):
 
 class Trig_InvertedManipulation(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionSummoned", "TurnEnds"])
+        super().__init__(entity, ["MinionSummoned", "TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         if signal == "TurnEnds":
@@ -4563,7 +4563,7 @@ class PowerliftingPuppeteer(SVMinion):
     name_CN = "劲力操偶师"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_PowerliftingPuppeteer(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4572,7 +4572,7 @@ class PowerliftingPuppeteer(SVMinion):
 
 class Trig_PowerliftingPuppeteer(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -4617,7 +4617,7 @@ class DimensionDominator(SVMinion):
 
 class Trig_DimensionDominator(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionSummoned", "TurnEnds"])
+        super().__init__(entity, ["MinionSummoned", "TurnEnds"])
         self.progress = 1
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -4642,7 +4642,7 @@ class MindSplitter(SVMinion):
     name_CN = "神志分割者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_MindSplitter(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4652,7 +4652,7 @@ class MindSplitter(SVMinion):
 
 class Trig_MindSplitter(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -4756,7 +4756,7 @@ class AerinForeverBrilliant(SVMinion):
     name_CN = "恒久的光辉·艾琳"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_AerinForeverBrilliant(self)]
 
     def inHandEvolving(self, target=None):
@@ -4774,7 +4774,7 @@ class AerinForeverBrilliant(SVMinion):
 
 class Trig_AerinForeverBrilliant(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["AccelerateBeenPlayed"])
+        super().__init__(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard
@@ -4794,7 +4794,7 @@ class Trig_AerinForeverBrilliant(TrigBoard):
 
 class Trig_EndAerinForeverBrilliant(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -4819,7 +4819,7 @@ class FuriousMountainDeity(SVMinion):
     name_CN = "震怒的山神"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_FuriousMountainDeity(self)]
 
     def getMana(self):
@@ -4843,7 +4843,7 @@ class FuriousMountainDeity(SVMinion):
 
 class Trig_FuriousMountainDeity(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
+        super().__init__(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID and subject == self.entity
@@ -4861,13 +4861,13 @@ class DeepwoodAnomaly(SVMinion):
     name_CN = "森林深处的异种"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_DeepwoodAnomaly(self)]
 
 
 class Trig_DeepwoodAnomaly(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionAttackingHero"])
+        super().__init__(entity, ["MinionAttackingHero"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID and target.ID != self.entity.ID and subject == self.entity
@@ -4939,7 +4939,7 @@ class AlyaskaWarHawker(SVMinion):
     name_CN = "战争商人·阿尔亚斯卡"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_AlyaskaWarHawker(self)]
         self.marks["Enemy Effect Damage Immune"] = 1
 
@@ -4951,7 +4951,7 @@ class AlyaskaWarHawker(SVMinion):
 
 class Trig_AlyaskaWarHawker(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionSummoned"])
+        super().__init__(entity, ["MinionSummoned"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and "Officer" in subject.race
@@ -4969,7 +4969,7 @@ class ExterminusWeapon(SVMinion):
     name_CN = "终战兵器"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_ExterminusWeapon(self)]
 
     def returnTrue(self, choice=0):
@@ -5011,7 +5011,7 @@ class RunieResoluteDiviner(SVMinion):
     name_CN = "决意预言者·露妮"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsHand = [Trig_Spellboost(self)]
         self.progress = 0
 
@@ -5178,7 +5178,7 @@ class EternalWhale(SVMinion):
     name_CN = "永恒巨鲸"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.appearResponse = [self.whenAppears]
         self.disappearResponse = [self.whenDisppears]
 
@@ -5199,7 +5199,7 @@ class EternalWhale_Token(SVMinion):
     name_CN = "永恒巨鲸"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.appearResponse = [self.whenAppears]
         self.disappearResponse = [self.whenDisppears]
 
@@ -5324,7 +5324,7 @@ class Baal(SVMinion):
     name_CN = "芭力"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.fusion = 1
         self.fusionMaterials = 0
 
@@ -5455,7 +5455,7 @@ class DemonofPurgatory(SVMinion):
 
 class Trig_DemonofPurgatory(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -5481,13 +5481,13 @@ class ScionofDesire(SVMinion):
     name_CN = "欲望缠身者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_ScionofDesire]
 
 
 class Trig_ScionofDesire(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -5521,7 +5521,7 @@ class GluttonousBehemoth(SVMinion):
     name_CN = "贪食的贝希摩斯"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_GluttonousBehemoth]
 
     def inEvolving(self):
@@ -5536,7 +5536,7 @@ class GluttonousBehemoth(SVMinion):
 
 class Trig_GluttonousBehemoth(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -5547,7 +5547,7 @@ class Trig_GluttonousBehemoth(TrigBoard):
 
 class Trig_EvolvedGluttonousBehemoth(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -5823,7 +5823,7 @@ class TempleofHeresy(Amulet):
     name_CN = "邪教神殿"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 9
         self.trigsBoard = [Trig_Countdown(self), Trig_TempleofHeresy(self)]
         self.deathrattles = [Deathrattle_TempleofHeresy(self)]
@@ -5846,7 +5846,7 @@ class Deathrattle_TempleofHeresy(Deathrattle_Minion):
 
 class Trig_TempleofHeresy(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID and self.entity.Game.getEvolutionPoint(
@@ -5876,7 +5876,7 @@ class RaRadianceIncarnate(SVMinion):
 
 class Trig_RaRadianceIncarnate(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -5951,7 +5951,7 @@ class SpinariaLucilleKeepers(SVMinion):
     name_CN = "神秘的遗物·丝碧涅与璐契儿"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.appearResponse = [self.whenAppears]
         self.marks["Can't Evolve"] = 1
 
@@ -5967,7 +5967,7 @@ class SpinariaLucilleKeepers(SVMinion):
 
 class Trig_SpinariaLucilleKeepers(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
+        super().__init__(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject == self.entity and self.entity.onBoard
@@ -5991,7 +5991,7 @@ class LucilleKeeperofRelics(SVMinion):
     name_CN = "遗物守门人·璐契儿"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_LucilleKeeperofRelics(self)]
 
     def inHandEvolving(self, target=None):
@@ -6003,7 +6003,7 @@ class LucilleKeeperofRelics(SVMinion):
 
 class Trig_LucilleKeeperofRelics(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionSummoned"])
+        super().__init__(entity, ["MinionSummoned"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and "Artifact" in subject.race
@@ -6231,7 +6231,7 @@ class CloudGigas(SVMinion):
     name_CN = "腾云巨灵"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_CloudGigas(self)]
 
     def inEvolving(self):
@@ -6244,7 +6244,7 @@ class CloudGigas(SVMinion):
 
 class Trig_CloudGigas(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -6291,7 +6291,7 @@ class WingedCourier(SVMinion):
     name_CN = "翔翼信使"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_WingedCourier(self)]
 
 
@@ -6309,7 +6309,7 @@ class FieranHavensentWindGod(SVMinion):
     name_CN = "天霸风神·斐兰"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_FieranHavensentWindGod(self)]
         self.trigsDeck = [Trig_InvocationFieranHavensentWindGod(self)]
 
@@ -6336,7 +6336,7 @@ class FieranHavensentWindGod(SVMinion):
 
 class Trig_FieranHavensentWindGod(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -6406,7 +6406,7 @@ class XXIZelgeneaTheWorld(SVMinion):
     name_CN = "《世界》·捷尔加内亚"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.marks["Can't Evolve"] = 1
         self.trigsDeck = [Trig_InvocationXXIZelgeneaTheWorld(self)]
 
@@ -6450,7 +6450,7 @@ class XXIZelgeneaTheWorld(SVMinion):
 
 class Trig_AttackXXIZelgeneaTheWorld(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
+        super().__init__(entity, ["MinionAttackingHero", "MinionAttackingMinion"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject == self.entity
@@ -6466,7 +6466,7 @@ class Trig_AttackXXIZelgeneaTheWorld(TrigBoard):
 
 class Trig_EndXXIZelgeneaTheWorld(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -6491,7 +6491,7 @@ class TitanicShowdown(Amulet):
     name_CN = "巨人的较劲"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 2
         self.trigsBoard = [Trig_Countdown(self)]
         self.deathrattles = [Deathrattle_TitanicShowdown(self)]
@@ -6528,7 +6528,7 @@ class Deathrattle_TitanicShowdown(Deathrattle_Minion):
 
 class Trig_TitanicShowdown(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -6653,13 +6653,13 @@ class BlossomingArcher(SVMinion):
     name_CN = "花绽弓箭手"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_BlossomingArcher(self)]
 
 
 class Trig_BlossomingArcher(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["AccelerateBeenPlayed"])
+        super().__init__(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard
@@ -6718,7 +6718,7 @@ class XIIWolfraudHangedMan(SVMinion):
     name_CN = "《倒吊人》·罗弗拉德"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.marks["Can't Break"] = 1
 
     def inHandEvolving(self, target=None):
@@ -6779,7 +6779,7 @@ class TreacherousReversal(SVSpell):
 
 class Trig_TreacherousReversal(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -6859,7 +6859,7 @@ class ChipperSkipper(SVMinion):
     name_CN = "船娘精灵"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_ChipperSkipper(self)]
 
     def getMana(self):
@@ -6881,7 +6881,7 @@ class ChipperSkipper(SVMinion):
 
 class Trig_ChipperSkipper(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["AccelerateBeenPlayed"])
+        super().__init__(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard
@@ -6935,7 +6935,7 @@ class OptimisticBeastmaster(SVMinion):
     name_CN = "赞誉之驭兽使"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_OptimisticBeastmaster(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -6953,7 +6953,7 @@ class OptimisticBeastmaster(SVMinion):
 
 class Trig_OptimisticBeastmaster(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["AccelerateBeenPlayed"])
+        super().__init__(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard
@@ -6972,7 +6972,7 @@ class Terrorformer(SVMinion):
     name_CN = "裂地异种"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.fusion = 1
         self.fusionMaterials = 0
 
@@ -7039,7 +7039,7 @@ class DeepwoodWolf(SVMinion):
     name_CN = "森林之狼"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_DeepwoodWolf(self)]
 
     def getMana(self):
@@ -7080,7 +7080,7 @@ class DeepwoodWolf(SVMinion):
 
 class Trig_DeepwoodWolf(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["AccelerateBeenPlayed"])
+        super().__init__(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard
@@ -7118,7 +7118,7 @@ class LionelWoodlandShadow(SVMinion):
     name_CN = "森之暗念·莱昂内尔"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_LionelWoodlandShadow(self)]
 
     def getMana(self):
@@ -7166,7 +7166,7 @@ class LionelWoodlandShadow(SVMinion):
 
 class Trig_LionelWoodlandShadow(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionPlayed"])
+        super().__init__(entity, ["MinionPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID != self.entity.ID
@@ -7185,7 +7185,7 @@ class Trig_LionelWoodlandShadow(TrigBoard):
 
 class Trig_EndLionelWoodlandShadow(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID != self.entity.ID
@@ -7359,7 +7359,7 @@ class HonorableThief(SVMinion):
     name_CN = "诚实的盗贼"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_HonorableThief(self)]
 
     def effCanTrig(self):
@@ -7405,7 +7405,7 @@ class FrontguardGeneral(SVMinion):
     name_CN = "铁卫战将"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_FrontguardGeneral(self)]
 
 
@@ -7467,7 +7467,7 @@ class VIIOluonTheChariot(SVMinion):
     name_CN = "《战车》·奥辂昂"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_VIIOluonTheChariot(self)]
 
     def getMana(self):
@@ -7490,7 +7490,7 @@ class VIIOluonTheChariot(SVMinion):
 
 class Trig_VIIOluonTheChariot(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -7523,14 +7523,14 @@ class VIIOluonRunawayChariot(SVMinion):
     name_CN = "《暴走》战车·奥辂昂"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.marks["Can't Attack"] = 1
         self.trigsBoard = [Trig_VIIOluonRunawayChariot(self)]
 
 
 class Trig_VIIOluonRunawayChariot(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -7580,7 +7580,7 @@ class PrudentGeneral(SVMinion):
 
 class Trig_PrudentGeneral(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -7624,7 +7624,7 @@ class DiamondPaladin(SVMinion):
     name_CN = "耀钻圣骑士"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_DiamondPaladin(self)]
 
     def evolveTargetExists(self, choice=0):
@@ -7663,7 +7663,7 @@ class DiamondPaladin(SVMinion):
 
 class Trig_DiamondPaladin(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionAttackedMinion"])
+        super().__init__(entity, ["MinionAttackedMinion"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject == self.entity and self.entity.onBoard and (target.health < 1 or target.dead == True) and \
@@ -7680,7 +7680,7 @@ class Trig_DiamondPaladin(TrigBoard):
 
 class Trig_EndDiamondPaladin(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard
@@ -7856,7 +7856,7 @@ class RiteoftheIgnorant(SVSpell):
 
 class Trig_RiteoftheIgnorant(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -7880,9 +7880,9 @@ class Trig_RiteoftheIgnorant(TrigBoard):
 
 class Trig_EndRiteoftheIgnorant(TrigHand):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
         self.temp = True
-        self.makesCardEvanescent = True
+        self.changesCard = True
 
     # They will be discarded at the end of any turn
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -7911,7 +7911,7 @@ class ScourgeoftheOmniscient(SVSpell):
 
 class Trig_ScourgeoftheOmniscient(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -7940,7 +7940,7 @@ class AuthoringTomorrow(SVSpell):
 
 class Trig_AuthoringTomorrow(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
         self.counter = 3
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -7999,7 +7999,7 @@ class ArcaneAuteur(SVMinion):
     name_CN = "魔导书撰写者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_ArcaneAuteur(self)]
 
 
@@ -8079,7 +8079,7 @@ class EmergencySummoning(Amulet):
     name_CN = "紧急召唤"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_EmergencySummoning(self)]
         self.trigsBoard = [Trig_EmergencySummoning(self)]
 
@@ -8093,7 +8093,7 @@ class Deathrattle_EmergencySummoning(Deathrattle_Minion):
 
 class Trig_EmergencySummoning(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionPlayed"])
+        super().__init__(entity, ["MinionPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID != self.entity.ID
@@ -8111,7 +8111,7 @@ class HappyPig(SVMinion):
     name_CN = "快乐小猪"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_HappyPig(self)]
 
     def inEvolving(self):
@@ -8145,7 +8145,7 @@ class SweetspellSorcerer(SVMinion):
     name_CN = "甜品魔术师"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_SweetspellSorcerer(self)]
 
     def inHandEvolving(self, target=None):
@@ -8157,7 +8157,7 @@ class SweetspellSorcerer(SVMinion):
 
 class Trig_SweetspellSorcerer(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["SpellPlayed"])
+        super().__init__(entity, ["SpellPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID
@@ -8202,7 +8202,7 @@ class AdamantineGolem(SVMinion):
     name_CN = "精金巨像"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
 
     def effCanTrig(self):
         self.effectViable = len(self.Game.earthsonBoard(self.ID)) > 0
@@ -8317,7 +8317,7 @@ class TropicalGrouper(SVMinion):
     name_CN = "热带铠鱼"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_TropicalGrouper(self)]
 
     def getMana(self):
@@ -8340,7 +8340,7 @@ class TropicalGrouper(SVMinion):
 
 class Trig_TropicalGrouper(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionEvolved"])
+        super().__init__(entity, ["MinionEvolved"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard and subject != self.entity
@@ -8423,7 +8423,7 @@ class Heliodragon(SVMinion):
     name_CN = "日轮之龙"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_Heliodragon(self)]
 
     def whenDiscarded(self):
@@ -8435,7 +8435,7 @@ class Heliodragon(SVMinion):
 
 class Trig_Heliodragon(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["CardDiscarded", "HandDiscarded"])
+        super().__init__(entity, ["CardDiscarded", "HandDiscarded"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return ID == self.entity.ID and self.entity.onBoard and number > 0
@@ -8470,7 +8470,7 @@ class SlaughteringDragonewt(SVMinion):
 
 class Trig_TurncoatDragons(TrigHand):
     def __init__(self, entity):
-        self.blank_init(entity, ["CardDiscarded"])
+        super().__init__(entity, ["CardDiscarded"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.inHand and ID == self.entity.ID
@@ -8489,7 +8489,7 @@ class CrimsonDragonsSorrow(SVMinion):
     name_CN = "悲戚的赤龙"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsHand = [Trig_TurncoatDragons(self)]
         self.progress = 0
 
@@ -8523,7 +8523,7 @@ class AzureDragonsRage(SVMinion):
     name_CN = "盛怒的碧龙"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsHand = [Trig_TurncoatDragons(self)]
         self.progress = 0
 
@@ -8542,7 +8542,7 @@ class TurncoatDragonSummoner(SVMinion):
     name_CN = "恶极唤龙者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
 
     def whenDiscarded(self):
         self.Game.Hand_Deck.addCardtoHand(CrimsonDragonsSorrow, self.ID, byType=True)
@@ -8570,13 +8570,13 @@ class DragonsNest(Amulet):
     name_CN = "龙之卵"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_DragonsNest(self)]
 
 
 class Trig_DragonsNest(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -8659,7 +8659,7 @@ class XIErntzJustice(SVMinion):
     name_CN = "《正义》·伊兰翠"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.appearResponse = [self.whenAppears]
         self.disappearResponse = [self.whenDisppears]
 
@@ -8725,7 +8725,7 @@ class BonenanzaNecromancer(SVMinion):
     name_CN = "狂欢唤灵师"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_BonenanzaNecromancer(self)]
 
     def getMana(self):
@@ -8748,7 +8748,7 @@ class BonenanzaNecromancer(SVMinion):
 
 class Trig_BonenanzaNecromancer(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BurialRite"])
+        super().__init__(entity, ["BurialRite"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -8811,7 +8811,7 @@ class CoffinoftheUnknownSoul(Amulet):
     name_CN = "幽灵之棺"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 1
         self.trigsBoard = [Trig_Countdown(self)]
         self.deathrattles = [Deathrattle_CoffinoftheUnknownSoul(self)]
@@ -8840,7 +8840,7 @@ class CoffinoftheUnknownSoul(Amulet):
 
 class Deathrattle_CoffinoftheUnknownSoul(Deathrattle_Minion):
     def __init__(self, entity):
-        self.blank_init(entity)
+        super().__init__(entity)
         self.chosenMinionType = None
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -8890,7 +8890,7 @@ class DeathFowl_Crystallize(Amulet):
     name_CN = "结晶：死之魔鸟"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 3
         self.trigsBoard = [Trig_Countdown(self)]
         self.deathrattles = [Deathrattle_DeathFowl_Crystallize(self)]
@@ -8911,7 +8911,7 @@ class DeathFowl(SVMinion):
     name_CN = "死之魔鸟"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_DeathFowl(self)]
 
     def getMana(self):
@@ -8965,7 +8965,7 @@ class VIMilteoTheLovers(SVMinion):
     name_CN = "《恋人》·米路缇欧"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_VIMilteoTheLovers(self)]
         self.marks["Can't Evolve"] = 1
 
@@ -9054,7 +9054,7 @@ class Deathrattle_VIMilteoTheLovers(Deathrattle_Minion):
 
 class Trig_VIMilteoTheLovers(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -9090,7 +9090,7 @@ class CloisteredSacristan_Crystallize(Amulet):
     name_CN = "结晶：幽暗守墓者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 4
         self.trigsBoard = [Trig_Countdown(self), Trig_CloisteredSacristan_Crystallize(self)]
         self.deathrattles = [Deathrattle_CloisteredSacristan_Crystallize(self)]
@@ -9104,7 +9104,7 @@ class Deathrattle_CloisteredSacristan_Crystallize(Deathrattle_Minion):
 
 class Trig_CloisteredSacristan_Crystallize(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BurialRite"])
+        super().__init__(entity, ["BurialRite"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -9163,7 +9163,7 @@ class ConqueringDreadlord(SVMinion):
     name_CN = "征伐的死帝"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_ConqueringDreadlord(self)]
         self.trigsDeck = [Trig_InvocationConqueringDreadlord(self)]
         self.disappearResponse = [self.whenDisppears]
@@ -9177,7 +9177,7 @@ class ConqueringDreadlord(SVMinion):
 
 class Trig_ConqueringDreadlord(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -9189,7 +9189,7 @@ class Trig_ConqueringDreadlord(TrigBoard):
 
 class Trig_InvocationConqueringDreadlord(TrigInvocation):
     def __init__(self, entity):
-        self.blank_init(entity, ["BurialRite"])
+        super().__init__(entity, ["BurialRite"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.inDeck and ID == self.entity.ID and self.entity.Game.space(self.entity.ID) > 0 and \
@@ -9204,7 +9204,7 @@ class Deathbringer_Crystallize(Amulet):
     name_CN = "结晶：死灭召来者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 3
         self.trigsBoard = [Trig_Countdown(self)]
         self.deathrattles = [Deathrattle_Deathbringer_Crystallize(self)]
@@ -9256,7 +9256,7 @@ class Deathbringer(SVMinion):
     name_CN = "死灭召来者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_Deathbringer(self)]
 
     def getMana(self):
@@ -9278,7 +9278,7 @@ class Deathbringer(SVMinion):
 
 class Trig_Deathbringer(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -9315,7 +9315,7 @@ class SilverboltHunter(SVMinion):
     name_CN = "银箭狩猎者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_SilverboltHunter(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -9406,7 +9406,7 @@ class ContemptousDemon(SVMinion):
     name_CN = "讥讽的恶魔"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_StartContemptousDemon(self), Trig_EndContemptousDemon(self)]
 
     def effCanTrig(self):
@@ -9425,7 +9425,7 @@ class ContemptousDemon(SVMinion):
 
 class Trig_StartContemptousDemon(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -9437,7 +9437,7 @@ class Trig_StartContemptousDemon(TrigBoard):
 
 class Trig_EndContemptousDemon(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -9448,7 +9448,7 @@ class Trig_EndContemptousDemon(TrigBoard):
 
 class Trig_EvolvedContemptousDemon(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["HeroTookDmg", "HeroTook0Dmg", "TurnEnds"])
+        super().__init__(entity, ["HeroTookDmg", "HeroTook0Dmg", "TurnEnds"])
         self.counter = 10
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -9562,7 +9562,7 @@ class DireBond(Amulet):
     name_CN = "漆黑之契"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 3
         self.trigsBoard = [Trig_Countdown(self), Trig_DireBond(self)]
 
@@ -9572,7 +9572,7 @@ class DireBond(Amulet):
 
 class Trig_DireBond(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -9708,7 +9708,7 @@ class UnselfishGrace(Amulet):
     name_CN = "无欲之恩宠"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 5
         self.trigsBoard = [Trig_Countdown(self), Trig_UnselfishGrace(self)]
         self.deathrattles = [Deathrattle_UnselfishGrace(self)]
@@ -9716,7 +9716,7 @@ class UnselfishGrace(Amulet):
 
 class Trig_UnselfishGrace(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -9753,7 +9753,7 @@ class InsatiableDesire(SVSpell):
 
 class Trig_InsatiableDesire(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -9787,7 +9787,7 @@ class XIVLuzenTemperance_Token(SVMinion):
     name_CN = "《节制》·卢泽"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.auras["Buff Aura"] = BuffAura_XIVLuzenTemperance(self)
         self.marks["Enemy Effect Evasive"] = 1
 
@@ -9802,7 +9802,7 @@ class XIVLuzenTemperance(SVMinion):
     name_CN = "《节制》·卢泽"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.auras["Buff Aura"] = BuffAura_XIVLuzenTemperance(self)
         self.marks["Enemy Effect Evasive"] = 1
 
@@ -9862,7 +9862,7 @@ class BuffAura_XIVLuzenTemperance(HasAura_toMinion):
 
 class Trig_XIVLuzenTemperance(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["HeroTookDmg", "HeroTook0Dmg"])
+        super().__init__(entity, ["HeroTookDmg", "HeroTook0Dmg"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and target == self.entity.Game.heroes[self.entity.ID]
@@ -9875,7 +9875,7 @@ class Trig_XIVLuzenTemperance(TrigBoard):
 
 class Trig_XIVLuzenTemperance_MaxDamage(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BattleDmgHero", "AbilityDmgHero"])
+        super().__init__(entity, ["BattleDmgHero", "AbilityDmgHero"])
 
     def canTrig(self, signal, ID, subject, target, number, comment,
                 choice=0):  # target here holds the actual target object
@@ -9935,7 +9935,7 @@ class PrismaplumeBird(SVMinion):
     name_CN = "优雅的丽鸟"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_PrismaplumeBird(self)]
 
 
@@ -10012,7 +10012,7 @@ class LorenaIronWilledPriest(SVMinion):
     name_CN = "传教司祭·萝蕾娜"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.progress = 0
         self.trigsBoard = [Trig_LorenaIronWilledPriest(self), Trig_EndLorenaIronWilledPriest]
 
@@ -10045,7 +10045,7 @@ class LorenaIronWilledPriest(SVMinion):
 
 class Trig_LorenaIronWilledPriest(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["HeroGetsCured", "AllCured"])
+        super().__init__(entity, ["HeroGetsCured", "AllCured"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         if signal == "HeroGetsCured":
@@ -10061,7 +10061,7 @@ class Trig_LorenaIronWilledPriest(TrigBoard):
 
 class Trig_EndLorenaIronWilledPriest(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -10079,7 +10079,7 @@ class SarissaLuxflashSpear(SVMinion):
     name_CN = "破暗煌辉·萨莉莎"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_SarissaLuxflashSpear(self)]
 
     def getMana(self):
@@ -10126,7 +10126,7 @@ class SarissaLuxflashSpear(SVMinion):
 
 class Trig_SarissaLuxflashSpear(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionDies"])
+        super().__init__(entity, ["MinionDies"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return target.ID == self.entity.ID and self.entity.onBoard and target.keyWords["Taunt"] > 0
@@ -10182,7 +10182,7 @@ class HolybrightAltar(Amulet):
     name_CN = "咏唱：纯白祭坛"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 1
         self.trigsBoard = [Trig_Countdown(self)]
         self.deathrattles = [Deathrattle_HolybrightAltar(self)]
@@ -10219,7 +10219,7 @@ class ReverendAdjudicator(SVMinion):
     name_CN = "神域的法王"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_ReverendAdjudicator(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -10232,7 +10232,7 @@ class ReverendAdjudicator(SVMinion):
 
 class Trig_ReverendAdjudicator(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["HeroGetsCured", "AllCured"])
+        super().__init__(entity, ["HeroGetsCured", "AllCured"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         if signal == "HeroGetsCured":
@@ -10253,7 +10253,7 @@ class SomnolentStrength(Amulet):
     name_CN = "虚脱的刚腕"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 3
         self.trigsBoard = [Trig_Countdown(self), Trig_SomnolentStrength(self)]
         self.deathrattles = [Deathrattle_SomnolentStrength(self)]
@@ -10261,7 +10261,7 @@ class SomnolentStrength(Amulet):
 
 class Trig_SomnolentStrength(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -10326,7 +10326,7 @@ class VIIISofinaStrength(SVMinion):
     name_CN = "《力量》·索菲娜"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.auras["Buff Aura"] = BuffAura_VIIISofinaStrength(self)
 
     def getMana(self):
@@ -10386,7 +10386,7 @@ class BuffAura_VIIISofinaStrength(HasAura_toMinion):
 
 class Trig_VIIISofinaStrength_MaxDamage(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BattleDmgHero", "BattleDmgMinion", "AbilityDmgHero", "AbilityDmgMinion"])
+        super().__init__(entity, ["BattleDmgHero", "BattleDmgMinion", "AbilityDmgHero", "AbilityDmgMinion"])
 
     def canTrig(self, signal, ID, subject, target, number, comment,
                 choice=0):  # target here holds the actual target object
@@ -10497,7 +10497,7 @@ class RoboticEngineer(SVMinion):
     name_CN = "机械技师"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_RoboticEngineer(self)]
 
 
@@ -10515,7 +10515,7 @@ class MarionetteExpert(SVMinion):
     name_CN = "持偶者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_MarionetteExpert(self)]
 
 
@@ -10533,13 +10533,13 @@ class CatTuner(SVMinion):
     name_CN = "巧猫调律师"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_CatTuner(self)]
 
 
 class Trig_CatTuner(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -10589,7 +10589,7 @@ class WheelofMisfortune(Amulet):
     name_CN = "惨祸的圆环"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 3
         self.trigsBoard = [Trig_WheelofMisfortune(self), Trig_Countdown(self)]
         self.progress = 30
@@ -10597,7 +10597,7 @@ class WheelofMisfortune(Amulet):
 
 class Trig_WheelofMisfortune(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -10662,7 +10662,7 @@ class XSlausWheelofFortune(SVMinion):
     name_CN = "《命运之轮》·斯洛士"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_XSlausWheelofFortune(self)]
 
     def effCanTrig(self):
@@ -10677,7 +10677,7 @@ class XSlausWheelofFortune(SVMinion):
 
 class Trig_XSlausWheelofFortune(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID != self.entity.ID
@@ -10722,7 +10722,7 @@ class InvertedManipulation(SVSpell):
 
 class Trig_InvertedManipulation(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionSummoned", "TurnEnds"])
+        super().__init__(entity, ["MinionSummoned", "TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         if signal == "TurnEnds":
@@ -10764,7 +10764,7 @@ class PowerliftingPuppeteer(SVMinion):
     name_CN = "劲力操偶师"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_PowerliftingPuppeteer(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -10773,7 +10773,7 @@ class PowerliftingPuppeteer(SVMinion):
 
 class Trig_PowerliftingPuppeteer(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -10818,7 +10818,7 @@ class DimensionDominator(SVMinion):
 
 class Trig_DimensionDominator(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionSummoned", "TurnEnds"])
+        super().__init__(entity, ["MinionSummoned", "TurnEnds"])
         self.progress = 1
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -10843,7 +10843,7 @@ class MindSplitter(SVMinion):
     name_CN = "神志分割者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_MindSplitter(self)]
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -10853,7 +10853,7 @@ class MindSplitter(SVMinion):
 
 class Trig_MindSplitter(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -10957,7 +10957,7 @@ class AerinForeverBrilliant(SVMinion):
     name_CN = "恒久的光辉·艾琳"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_AerinForeverBrilliant(self)]
 
     def inHandEvolving(self, target=None):
@@ -10975,7 +10975,7 @@ class AerinForeverBrilliant(SVMinion):
 
 class Trig_AerinForeverBrilliant(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["AccelerateBeenPlayed"])
+        super().__init__(entity, ["AccelerateBeenPlayed"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject.ID == self.entity.ID and self.entity.onBoard
@@ -10995,7 +10995,7 @@ class Trig_AerinForeverBrilliant(TrigBoard):
 
 class Trig_EndAerinForeverBrilliant(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -11020,7 +11020,7 @@ class FuriousMountainDeity(SVMinion):
     name_CN = "震怒的山神"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_FuriousMountainDeity(self)]
 
     def getMana(self):
@@ -11044,7 +11044,7 @@ class FuriousMountainDeity(SVMinion):
 
 class Trig_FuriousMountainDeity(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
+        super().__init__(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID and subject == self.entity
@@ -11062,13 +11062,13 @@ class DeepwoodAnomaly(SVMinion):
     name_CN = "森林深处的异种"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_DeepwoodAnomaly(self)]
 
 
 class Trig_DeepwoodAnomaly(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionAttackingHero"])
+        super().__init__(entity, ["MinionAttackingHero"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID and target.ID != self.entity.ID and subject == self.entity
@@ -11140,7 +11140,7 @@ class AlyaskaWarHawker(SVMinion):
     name_CN = "战争商人·阿尔亚斯卡"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_AlyaskaWarHawker(self)]
         self.marks["Enemy Effect Damage Immune"] = 1
 
@@ -11152,7 +11152,7 @@ class AlyaskaWarHawker(SVMinion):
 
 class Trig_AlyaskaWarHawker(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionSummoned"])
+        super().__init__(entity, ["MinionSummoned"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and "Officer" in subject.race
@@ -11170,7 +11170,7 @@ class ExterminusWeapon(SVMinion):
     name_CN = "终战兵器"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_ExterminusWeapon(self)]
 
     def returnTrue(self, choice=0):
@@ -11212,7 +11212,7 @@ class RunieResoluteDiviner(SVMinion):
     name_CN = "决意预言者·露妮"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsHand = [Trig_Spellboost(self)]
         self.progress = 0
 
@@ -11379,7 +11379,7 @@ class EternalWhale(SVMinion):
     name_CN = "永恒巨鲸"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.appearResponse = [self.whenAppears]
         self.disappearResponse = [self.whenDisppears]
 
@@ -11400,7 +11400,7 @@ class EternalWhale_Token(SVMinion):
     name_CN = "永恒巨鲸"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.appearResponse = [self.whenAppears]
         self.disappearResponse = [self.whenDisppears]
 
@@ -11525,7 +11525,7 @@ class Baal(SVMinion):
     name_CN = "芭力"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.fusion = 1
         self.fusionMaterials = 0
 
@@ -11656,7 +11656,7 @@ class DemonofPurgatory(SVMinion):
 
 class Trig_DemonofPurgatory(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -11682,13 +11682,13 @@ class ScionofDesire(SVMinion):
     name_CN = "欲望缠身者"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_ScionofDesire]
 
 
 class Trig_ScionofDesire(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -11722,7 +11722,7 @@ class GluttonousBehemoth(SVMinion):
     name_CN = "贪食的贝希摩斯"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_GluttonousBehemoth]
 
     def inEvolving(self):
@@ -11737,7 +11737,7 @@ class GluttonousBehemoth(SVMinion):
 
 class Trig_GluttonousBehemoth(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -11748,7 +11748,7 @@ class Trig_GluttonousBehemoth(TrigBoard):
 
 class Trig_EvolvedGluttonousBehemoth(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -12024,7 +12024,7 @@ class TempleofHeresy(Amulet):
     name_CN = "邪教神殿"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.counter = 9
         self.trigsBoard = [Trig_Countdown(self), Trig_TempleofHeresy(self)]
         self.deathrattles = [Deathrattle_TempleofHeresy(self)]
@@ -12047,7 +12047,7 @@ class Deathrattle_TempleofHeresy(Deathrattle_Minion):
 
 class Trig_TempleofHeresy(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID and self.entity.Game.getEvolutionPoint(
@@ -12077,7 +12077,7 @@ class RaRadianceIncarnate(SVMinion):
 
 class Trig_RaRadianceIncarnate(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnEnds"])
+        super().__init__(entity, ["TurnEnds"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -12152,7 +12152,7 @@ class SpinariaLucilleKeepers(SVMinion):
     name_CN = "神秘的遗物·丝碧涅与璐契儿"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.appearResponse = [self.whenAppears]
         self.marks["Can't Evolve"] = 1
 
@@ -12168,7 +12168,7 @@ class SpinariaLucilleKeepers(SVMinion):
 
 class Trig_SpinariaLucilleKeepers(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
+        super().__init__(entity, ["MinionAttackingMinion", "MinionAttackingHero"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return subject == self.entity and self.entity.onBoard
@@ -12192,7 +12192,7 @@ class LucilleKeeperofRelics(SVMinion):
     name_CN = "遗物守门人·璐契儿"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.trigsBoard = [Trig_LucilleKeeperofRelics(self)]
 
     def inHandEvolving(self, target=None):
@@ -12204,7 +12204,7 @@ class LucilleKeeperofRelics(SVMinion):
 
 class Trig_LucilleKeeperofRelics(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["MinionSummoned"])
+        super().__init__(entity, ["MinionSummoned"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and "Artifact" in subject.race

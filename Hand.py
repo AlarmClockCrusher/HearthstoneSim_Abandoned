@@ -71,43 +71,57 @@ class Hand_Deck:
 				self.Game.mulligans[ID].append(self.decks[ID].pop())
 	
 	#Mulligan for 1P GUIs, where a single player controls all the plays.
-	def mulligan(self, indices1, indices2):
+	def mulliganBoth(self, indices1, indices2):
+		#不涉及GUI的部分
 		indices = {1: indices1, 2: indices2}  # indicesCards是要替换的手牌的列表序号，如[1, 3]
+		GUI = self.Game.GUI
 		for ID in range(1, 3):
+			print("Handle mulligpan hand ", ID)
 			cardstoReplace = []
 			# self.Game.mulligans is the cards currently in players' hands.
 			if indices[ID]:
 				for num in range(1, len(indices[ID]) + 1):
 					# 起手换牌的列表mulligans中根据要换掉的牌的序号从大到小摘掉，然后在原处补充新手牌
 					cardstoReplace.append(self.Game.mulligans[ID].pop(indices[ID][-num]))
-					self.Game.mulligans[ID].insert(indices[ID][-num], self.decks[ID].pop())
+					print("The card to replace in hand:", cardstoReplace[-1])
+					card = self.decks[ID].pop()
+					print("Replace it with", card)
+					self.Game.mulligans[ID].insert(indices[ID][-num], card)
 			self.decks[ID] += cardstoReplace
 			for card in self.decks[ID]: card.entersDeck()  # Cards in deck arm their possible trigDeck
 			npshuffle(self.decks[ID])  # Shuffle the deck after mulligan
 			# 手牌和牌库中的牌调用entersHand和entersDeck,注册手牌和牌库扳机
-			self.hands[ID] = [card.entersHand() for card in self.Game.mulligans[ID]]
-			self.Game.mulligans[ID] = []
-			for card in self.hands[1] + self.hands[2]:
-				card.effCanTrig()
-				card.checkEvanescent()
 		
+		#决定是否将硬币置入玩家手牌，同时如果手牌中有进入时会变形的牌，则需要改变
+		addCoin = False
 		if not self.Game.heroes[2].Class in SVClasses:
-			print("Add a Coin to player 2's hand")
-			self.addCardtoHand(TheCoin(self.Game, 2), 2)
-		if self.Game.GUI:
-			self.Game.GUI.handZones[1].draw()
-			self.Game.GUI.handZones[2].draw()
-		self.Game.Manas.calcMana_All()
-		for ID in range(1, 3):
-			for card in self.hands[ID] + self.decks[ID]:
-				if "Start of Game" in card.index:
-					card.startofGame()
-		self.drawCard(1)
+			self.Game.mulligans[2].append(TheCoin(self.Game, 2))
+			addCoin = True
+		if GUI:
+			#在这里生成Sequence，然后存储
+			GUI.mulligan_NewCardsfromDeckAni(addCoin)
+			#The cards are added into hands and the sequence is further extended
+			GUI.mulligan_MoveCards2Hand()
+			self.Game.Manas.calcMana_All() #Mana change will be animated
+			for ID in range(1, 3):
+				for card in self.hands[ID] + self.decks[ID]:
+					if "Start of Game" in card.index:
+						card.startofGame()
+						GUI.seqHolder[0].append(GUI.FUNC(GUI.displayCard, card))
+			self.drawCard(1)
+			GUI.seqHolder[0].append(GUI.FUNC(self.decideCardColors))
+			GUI.seqHolder[0].start()
+		else:
+			pass
+		
+	def decideCardColors(self):
 		for card in self.hands[1] + self.hands[2]:
 			card.effCanTrig()
 			card.checkEvanescent()
-		if self.Game.GUI: self.Game.GUI.update()
-
+		if self.Game.GUI:
+			for card in self.hands[1] + self.hands[2]:
+				card.btn.setBoxColor(card.btn.decideColor())
+				
 	# 双人游戏中一方很多控制自己的换牌，之后两个游戏中复制对方的手牌和牌库信息
 	def mulligan1Side(self, ID, indices):
 		cardstoReplace = []
@@ -223,7 +237,7 @@ class Hand_Deck:
 				else:
 					self.noCards[ID] += 1  # 如果在疲劳状态有卡洗入牌库，则疲劳值不会减少，在下次疲劳时，仍会从当前的非零疲劳值开始。
 					damage = self.noCards[ID]
-					if GUI: GUI.fatigueAni(ID, damage)
+					if GUI: GUI.handZones[ID].fatigueAni(damage)
 					dmgTaker = game.scapegoat4(game.heroes[ID])
 					dmgTaker.takesDamage(None, damage, damageType="Ability")  # 疲劳伤害没有来源
 					return None, -1 #假设疲劳时返回的数值是负数，从而可以区分爆牌（爆牌时仍然返回那个牌的法力值）和疲劳
@@ -234,12 +248,12 @@ class Hand_Deck:
 		card.leavesDeck()
 		game.sendSignal("DeckCheck", ID, None, None, 0, "")
 		if self.handNotFull(ID):
-			if GUI: btn = GUI.drawCardAni_1(card)
+			#Draw a card at the deckZone and move it to the pausePos
+			if GUI: GUI.drawCardAni_LeaveDeck(card)
 			cardTracker = [card]  # 把这张卡放入一个列表，然后抽牌扳机可以对这个列表进行处理同时传递给其他抽牌扳机
 			game.sendSignal("CardDrawn", ID, None, cardTracker, mana, "")
 			self.Game.Counters.numCardsDrawnThisTurn[ID] += 1
 			if cardTracker[0].type == "Spell" and "Casts When Drawn" in cardTracker[0].index:
-				if GUI: GUI.handZones[ID].removeMultiple([btn])
 				cardTracker[0].whenEffective()
 				game.sendSignal("SpellCastWhenDrawn", ID, None, cardTracker[0], mana, "")
 				#抽到之后施放的法术如果检测到玩家处于濒死状态，则不会再抽一张。如果玩家有连续抽牌的过程，则执行下次抽牌
@@ -251,7 +265,7 @@ class Hand_Deck:
 					cardTracker[0].whenDrawn()
 				cardTracker[0] = cardTracker[0].entersHand()
 				self.hands[ID].append(cardTracker[0])
-				if GUI: GUI.drawCardAni_2(btn, cardTracker[0])
+				if GUI: GUI.drawCardAni_IntoHand(card, cardTracker[0])
 				game.sendSignal("CardEntersHand", ID, None, cardTracker, mana, "byDrawing")
 				game.Manas.calcMana_All()
 			return cardTracker[0], mana
@@ -436,12 +450,14 @@ class Hand_Deck:
 			self.Game.Manas.calcMana_All()
 			
 	# 只能全部拿出手牌中的所有牌或者拿出一个张，不能一次拿出多张指定的牌
+	#丢弃手牌要用discardAll
 	def extractfromHand(self, card, ID=0, all=False, enemyCanSee=False, linger=False, animate=True):
 		if all:  # Extract the entire hand.
 			cardsOut = self.hands[ID][:]
 			if cardsOut:
 				#一般全部取出手牌的时候都是直接洗入牌库，一般都不可见
-				if animate and self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(cardsOut, False, linger=linger)
+				if animate and self.Game.GUI:
+					self.Game.GUI.cardsLeaveHandAni(list(range(len(cardsOut))), ID=ID, enemyCanSee=False, linger=linger)
 				self.hands[ID] = []
 				for card in cardsOut:
 					card.leavesHand()
@@ -517,14 +533,9 @@ class Hand_Deck:
 
 from CardPools import *
 	
-Default1 = [#Mana 1 cards
-			#Hunter cardds
-			FreezingTrap, ScavengingHyena, ExplosiveTrap, Bearshark, DeadlyShot, DireFrenzy, QuickShot, KazakusGolemShaper,
-			##Paladin cards
-			#Avenge, NobleSacrifice, Reckoning, #ArgentProtector, HolyLight, PursuitofJustice, AldorPeacekeeper, Equality, WarhorseTrainer, BlessingofKings, Consecration, TruesilverChampion, StandAgainstDarkness, GuardianofKings, TirionFordring,
-			##Rogue cards
+Default1 = [FreezingTrap, Avenge, NobleSacrifice, Reckoning, #ArgentProtector, HolyLight, PursuitofJustice, AldorPeacekeeper, Equality, WarhorseTrainer, TruesilverChampion, StandAgainstDarkness, GuardianofKings, TirionFordring,
 			#Preparation, TinyKnightofEvil, Hellfire, LordJaraxxus, LakkariFelhound,
-			#SigilofFlame, SigilofSilence,
+			SigilofFlame, SigilofSilence, NozdormutheEternal,
 			]
 
 Default2 = [#Mana 2 cards
@@ -540,7 +551,7 @@ Default2 = [#Mana 2 cards
 			##Priest cards
 			CrimsonClergy, HolySmite, ShadowWordDeath, ThriveintheShadows, Lightspawn, HolyNova, ShadowWordRuin, TempleEnforcer, NatalieSeline,
 			##Shaman cards
-			UnboundElemental, DraeneiTotemcarver, TidalSurge, Doomhammer, LightningBolt,
+			UnboundElemental, DraeneiTotemcarver, NozdormutheEternal,
 			##Warrior cards
 			#BloodsailDeckhand, Whirlwind, CruelTaskmaster, Armorsmith, WarCache, WarsongOutrider, Brawl, Gorehowl, GrommashHellscream,
 			ImprisonedFelmaw, ImprisonedObserver, ImprisonedSungill, ImprisonedFelmaw, SigilofFlame, SigilofSilence,

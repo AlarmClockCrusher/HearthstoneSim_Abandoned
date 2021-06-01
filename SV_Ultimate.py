@@ -67,7 +67,7 @@ class WilbertGrandKnight(SVMinion):
     name_CN = "尊荣骑士·维尔伯特"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_WilbertGrandKnight(self)]
 
     def getMana(self):
@@ -105,7 +105,7 @@ class Deathrattle_WilbertGrandKnight(Deathrattle_Minion):
 
 class Trig_WilbertGrandKnight(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BattleStarted"])
+        super().__init__(entity, ["BattleStarted"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return target.ID == self.entity.ID and target.type == "Minion" and target.keyWords["Taunt"] > 0
@@ -116,7 +116,7 @@ class Trig_WilbertGrandKnight(TrigBoard):
 
 class Trig_WilbertGrandKnight_TurnStarts(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID
@@ -251,7 +251,7 @@ class WilbertGrandKnight(SVMinion):
     name_CN = "尊荣骑士·维尔伯特"
 
     def __init__(self, Game, ID):
-        self.blank_init(Game, ID)
+        super().__init__(Game, ID)
         self.deathrattles = [Deathrattle_WilbertGrandKnight(self)]
 
     def getMana(self):
@@ -289,7 +289,7 @@ class Deathrattle_WilbertGrandKnight(Deathrattle_Minion):
 
 class Trig_WilbertGrandKnight(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["BattleStarted"])
+        super().__init__(entity, ["BattleStarted"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return target.ID == self.entity.ID and target.type == "Minion" and target.keyWords["Taunt"] > 0
@@ -300,7 +300,7 @@ class Trig_WilbertGrandKnight(TrigBoard):
 
 class Trig_WilbertGrandKnight_TurnStarts(TrigBoard):
     def __init__(self, entity):
-        self.blank_init(entity, ["TurnStarts"])
+        super().__init__(entity, ["TurnStarts"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
         return self.entity.onBoard and ID == self.entity.ID

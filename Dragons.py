@@ -155,12 +155,12 @@ class DepthCharge(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, deal 5 damage to all minions"
 	name_CN = "深潜炸弹"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_DepthCharge(self)]
 		
 class Trig_DepthCharge(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnStarts"])
+		super().__init__(entity, ["TurnStarts"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
@@ -180,12 +180,12 @@ class HotAirBalloon(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, gain +1 Health"
 	name_CN = "热气球"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_HotAirBalloon(self)]
 		
 class Trig_HotAirBalloon(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnStarts"])
+		super().__init__(entity, ["TurnStarts"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
@@ -204,7 +204,7 @@ class EvasiveChimaera(Minion):
 	requireTarget, keyWord, description = False, "Poisonous", "Poisonous. Can't be targeted by spells or Hero Powers"
 	name_CN = "辟法奇美拉"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.marks["Evasive"] = True
 		
 		
@@ -285,12 +285,12 @@ class ParachuteBrigand(Minion):
 	requireTarget, keyWord, description = False, "", "After you play a Pirate, summon this minion from your hand"
 	name_CN = "空降歹徒"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsHand = [Trig_ParachuteBrigand(self)]
 		
 class Trig_ParachuteBrigand(TrigHand):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionBeenPlayed"])
+		super().__init__(entity, ["MinionBeenPlayed"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and subject.ID == self.entity.ID and "Pirate" in subject.race
@@ -314,7 +314,7 @@ class TastyFlyfish(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Give a Dragon in your hand +2/+2"
 	name_CN = "美味飞鱼"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.deathrattles = [GiveaDragoninHandPlus2Plus2(self)]
 		
 class GiveaDragoninHandPlus2Plus2(Deathrattle_Minion):
@@ -352,12 +352,12 @@ class Transmogrifier(Minion):
 		return "Legendary Minions", list(Game.LegendaryMinions.values())
 		
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_Transmogrifier(self)]
 		
 class Trig_Transmogrifier(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["CardDrawn"])
+		super().__init__(entity, ["CardDrawn"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and target[0].ID == self.entity.ID
@@ -422,7 +422,7 @@ class BlowtorchSaboteur(Minion):
 		
 class GameManaAura_NextHeroPower3(TempManaEffect_Power):
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
-		self.blank_init(Game, ID, 0, 3)
+		super().__init__(Game, ID, 0, 3)
 		self.temporary = False
 		
 	def applicable(self, target):
@@ -436,7 +436,7 @@ class DreadRaven(Minion):
 	requireTarget, keyWord, description = False, "", "Has +3 Attack for each other Dread Raven you control"
 	name_CN = "恐惧渡鸦"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.auras["Has +3 Attack for each other Dread Raven you control"] = BuffAura_DreadRaven(self)
 		
 class BuffAura_DreadRaven(HasAura_toMinion):
@@ -509,7 +509,7 @@ class LivingDragonbreath(Minion):
 	requireTarget, keyWord, description = False, "", "Your minions can't be Frozen"
 	name_CN = "活化龙息"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.auras["Your minions can't be Frozen"] = GameRuleAura_LivingDragonbreath(self)
 		
 class GameRuleAura_LivingDragonbreath(GameRuleAura):
@@ -547,7 +547,7 @@ class BadLuckAlbatross(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Shuffle two 1/1 Albatross into your opponent's deck"
 	name_CN = "厄运信天翁"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.deathrattles = [ShuffleTwoAlbatrossintoOpponentsDeck(self)]
 		
 class ShuffleTwoAlbatrossintoOpponentsDeck(Deathrattle_Minion):
@@ -611,7 +611,7 @@ class EvasiveFeywing(Minion):
 	requireTarget, keyWord, description = False, "", "Can't be targeted by spells or Hero Powers"
 	name_CN = "辟法灵龙"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.marks["Evasive"] = 1
 		
 		
@@ -686,7 +686,7 @@ class WingCommander(Minion):
 	requireTarget, keyWord, description = False, "", "Has +2 Attack for each Dragon in your hand"
 	name_CN = "空军指挥官"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.auras["Has +2 Attack for each Dragon in your hand"] = BuffAura_WingCommander(self)
 		
 class BuffAura_WingCommander(HasAura_toMinion):
@@ -778,7 +778,7 @@ class ChromaticEgg(Minion):
 				[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
 				
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.deathrattles = [HatchintotheChosenDragon(self)]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -812,7 +812,7 @@ class ChromaticEgg(Minion):
 				
 class HatchintotheChosenDragon(Deathrattle_Minion):
 	def __init__(self, entity):
-		self.blank_init(entity)
+		super().__init__(entity)
 		self.dragonInside = None #This is a class
 		
 	def text(self, CHN):
@@ -993,7 +993,7 @@ class EvasiveWyrm(Minion):
 	requireTarget, keyWord, description = False, "Divine Shield,Rush", "Divine Shield, Rush. Can't be targeted by spells or Hero Powers"
 	name_CN = "辟法巨龙"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.marks["Evasive"] = 1
 		
 		
@@ -1111,7 +1111,7 @@ class EvasiveDrakonid(Minion):
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Can't be targeted by spells or Hero Powers"
 	name_CN = "辟法龙人"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.marks["Evasive"] = 1
 		
 		
@@ -1122,12 +1122,12 @@ class Shuma(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, fill your board with 1/1 Tentacles"
 	name_CN = "舒玛"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_Shuma(self)]
 		
 class Trig_Shuma(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnEnds"])
+		super().__init__(entity, ["TurnEnds"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
@@ -1253,12 +1253,12 @@ class SecuretheDeck(Quest):
 	description = "Sidequest: Attack twice with your hero. Reward: Add 3 'Claw' to your hand"
 	name_CN = "保护甲板"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_SecuretheDeck(self)]
 		
 class Trig_SecuretheDeck(QuestTrigger):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroAttackedHero", "HeroAttackedMinion"])
+		super().__init__(entity, ["HeroAttackedHero", "HeroAttackedMinion"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity.Game.heroes[self.entity.ID]
@@ -1279,12 +1279,12 @@ class StrengthinNumbers(Quest):
 	description = "Sidequest: Spend 10 Mana on minions. Rewards: Summon a minion from your deck"
 	name_CN = "人多势众"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_StrengthinNumbers(self)]
 		
 class Trig_StrengthinNumbers(QuestTrigger):
 	def __init__(self, entity): #假设人多势众是使用后扳机
-		self.blank_init(entity, ["MinionBeenPlayed"])
+		super().__init__(entity, ["MinionBeenPlayed"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject.ID == self.entity.ID
@@ -1314,7 +1314,7 @@ class Treenforcements(Spell):
 	description = "Choose One - Give a minion +2 Health and Taunt; or Summon a 2/2 Taunt"
 	name_CN = "树木增援"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.options = [SmallRepairs_Option(self), SpinemUp_Option(self)]
 		
 	def need2Choose(self):
@@ -1425,7 +1425,7 @@ class Aeroponics(Spell):
 	description = "Draw 2 cards. Costs (2) less for each Treant you control"
 	name_CN = "空气栽培"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsHand = [Trig_Aeroponics(self)]
 		
 	def selfManaChange(self):
@@ -1445,7 +1445,7 @@ class Aeroponics(Spell):
 		
 class Trig_Aeroponics(TrigHand):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionAppears", "MinionDisappears"])
+		super().__init__(entity, ["MinionAppears", "MinionDisappears"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and ((signal[6] == 'A' and subject.name == "Treant") \
@@ -1606,12 +1606,12 @@ class CleartheWay(Quest):
 	description = "Sidequest: Summon 3 Rush minions. Reward: Summon a 4/4 Gryphon with Rush"
 	name_CN = "扫清道路"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_CleartheWay(self)]
 		
 class Trig_CleartheWay(QuestTrigger):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionBeenSummoned"])
+		super().__init__(entity, ["MinionBeenSummoned"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#不知道召唤随从因为突袭光环而具有突袭是否可以算作任务进度
@@ -1641,7 +1641,7 @@ class DwarvenSharpshooter(Minion):
 	requireTarget, keyWord, description = False, "", "Your Hero Power can target minions"
 	name_CN = "矮人神射手"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.auras["Your Hero Power can target minions"] = GameRuleAura_DwarvenSharpshooter(self)
 		
 class GameRuleAura_DwarvenSharpshooter(GameRuleAura):
@@ -1659,12 +1659,12 @@ class ToxicReinforcements(Quest):
 	description = "Sidequest: Use your Hero Power three times. Reward: Summon three 1/1 Leper Gnomes"
 	name_CN = "病毒增援"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_ToxicReinforcement(self)]
 		
 class Trig_ToxicReinforcement(QuestTrigger):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroUsedAbility"])
+		super().__init__(entity, ["HeroUsedAbility"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return ID == self.entity.ID
@@ -1684,7 +1684,7 @@ class LeperGnome_Dragons(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Deal 2 damage to the enemy hero"
 	name_CN = "麻风侏儒"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.deathrattles = [Deal2DamagetoEnemyHero(self)]
 		
 class Deal2DamagetoEnemyHero(Deathrattle_Minion):
@@ -1726,12 +1726,12 @@ class PhaseStalker(Minion):
 	requireTarget, keyWord, description = False, "", "After you use your Hero Power, cast a Secret from your deck"
 	name_CN = "相位追踪者"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_PhaseStalker(self)]
 		
 class Trig_PhaseStalker(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroUsedAbility"])
+		super().__init__(entity, ["HeroUsedAbility"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
@@ -1819,12 +1819,12 @@ class Dragonbane(Minion):
 	requireTarget, keyWord, description = False, "", "After you use your Hero Power, deal 5 damage to a random enemy"
 	name_CN = "灭龙弩炮"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_Dragonbane(self)]
 		
 class Trig_Dragonbane(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroUsedAbility"])
+		super().__init__(entity, ["HeroUsedAbility"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
@@ -1922,12 +1922,12 @@ class ElementalAllies(Quest):
 	description = "Sidequest: Play an Elemental two turns in a row. Reward: Draw 3 spells from your deck"
 	name_CN = "元素盟军"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_ElementalAllies(self)]
 		
 class Trig_ElementalAllies(QuestTrigger):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionBeenPlayed", "TurnEnds"])
+		super().__init__(entity, ["MinionBeenPlayed", "TurnEnds"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		if signal == "TurnEnds": return self.entity.ID == ID
@@ -1962,12 +1962,12 @@ class LearnDraconic(Quest):
 	description = "Sidequest: Spend 8 Mana on spells. Reward: Summon a 6/6 Dragon"
 	name_CN = "学习龙语"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_LearnDraconic(self)]
 		
 class Trig_LearnDraconic(QuestTrigger):
 	def __init__(self, entity):
-		self.blank_init(entity, ["SpellBeenPlayed"]) #假设是使用后扳机
+		super().__init__(entity, ["SpellBeenPlayed"]) #假设是使用后扳机
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject.ID == self.entity.ID and self.entity != subject
@@ -1995,7 +1995,7 @@ class VioletSpellwing(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Add an 'Arcane Missile' to your hand"
 	name_CN = "紫罗兰 魔翼鸦"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.deathrattles = [Add1ArcaneMisslestoYourHand(self)]
 #这个奥术飞弹是属于基础卡（无标志）
 class Add1ArcaneMisslestoYourHand(Deathrattle_Minion):
@@ -2013,12 +2013,12 @@ class Chenvaala(Minion):
 	requireTarget, keyWord, description = False, "", "After you cast three spells in a turn, summon a 5/5 Elemental"
 	name_CN = "齐恩瓦拉"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_Chenvaala(self)]
 		
 class Trig_Chenvaala(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["SpellBeenPlayed", "TurnEnds", "TurnStarts"])
+		super().__init__(entity, ["SpellBeenPlayed", "TurnEnds", "TurnStarts"])
 		self.counter = 0
 		
 	def connect(self):
@@ -2074,7 +2074,7 @@ class AzureExplorer(Minion):
 				[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
 				
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.keyWords["Spell Damage"] = 2
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2392,7 +2392,7 @@ class Dragoncaster(Minion):
 		
 class GameManaAura_InTurnNextSpell0(TempManaEffect):
 	def __init__(self, Game, ID, changeby=0, changeto=-1):
-		self.blank_init(Game, ID, 0, 0)
+		super().__init__(Game, ID, 0, 0)
 		
 	def applicable(self, target):
 		return target.ID == self.ID and target.type == "Spell"
@@ -2408,7 +2408,7 @@ class ManaGiant(Minion):
 	requireTarget, keyWord, description = False, "", "Costs (1) less for each card you've played this game that didn't start in your deck"
 	name_CN = "法力巨人"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsHand = [Trig_ManaGiant(self)]
 		
 	def selfManaChange(self):
@@ -2419,7 +2419,7 @@ class ManaGiant(Minion):
 class Trig_ManaGiant(TrigHand):
 	def __init__(self, entity):
 		#假设这个费用改变扳机在“当你使用一张法术之后”。不需要预检测
-		self.blank_init(entity, ["SpellBeenPlayed"])
+		super().__init__(entity, ["SpellBeenPlayed"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and subject.ID == self.entity.ID and subject.creator
@@ -2440,12 +2440,12 @@ class RighteousCause(Quest):
 	description = "Sidequest: Summon 5 minions. Reward: Give your minions +1/+1"
 	name_CN = "正义感召"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_RighteousCause(self)]
 		
 class Trig_RighteousCause(QuestTrigger):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionBeenSummoned"])
+		super().__init__(entity, ["MinionBeenSummoned"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject.ID == self.entity.ID
@@ -2490,12 +2490,12 @@ class Sanctuary(Quest):
 	description = "Sidequest: Take no damage for a turn. Reward: Summon a 3/6 minion with Taunt"
 	name_CN = "庇护"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_Sanctuary(self)]
 		
 class Trig_Sanctuary(QuestTrigger):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnStarts"])
+		super().__init__(entity, ["TurnStarts"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#在我方回合开始时会触发
@@ -2561,7 +2561,7 @@ class SkyClaw(Minion):
 	requireTarget, keyWord, description = False, "", "Your other Mechs have +1 Attack. Battlecry: Summon two 1/1 Microcopters"
 	name_CN = "空中飞爪"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.auras["Your other Mechs have +1 Attack"] = StatAura_Others(self, 1, 0)
 		
 	def applicable(self, target):
@@ -2587,7 +2587,7 @@ class DragonriderTalritha(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Give a Dragon in your hand +3/+3 and this Deathrattle"
 	name_CN = "龙骑士塔瑞萨"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.deathrattles = [GiveaDragoninHandPlus3Plus3AndThisDeathrattle(self)]
 		
 class GiveaDragoninHandPlus3Plus3AndThisDeathrattle(Deathrattle_Minion):
@@ -2813,7 +2813,7 @@ class MindflayerKaahrj(Minion):
 	requireTarget, keyWord, description = True, "", "Battlecry: Choose an enemy minion. Deathrattle: Summon a new copy of it"
 	name_CN = "夺心者卡什"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.deathrattles = [SummonCopyofaChosenMinion(self)]
 		
 	def targetExists(self, choice=0):
@@ -2831,7 +2831,7 @@ class MindflayerKaahrj(Minion):
 		
 class SummonCopyofaChosenMinion(Deathrattle_Minion):
 	def __init__(self, entity):
-		self.blank_init(entity)
+		super().__init__(entity)
 		self.chosenMinionType = None
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -2904,7 +2904,7 @@ class Chronobreaker(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: If you're holding a Dragon, deal 3 damage to all enemy minions"
 	name_CN = "时空破坏者"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.deathrattles = [Deal3DamagetoAllEnemyMinions(self)]
 		
 class Deal3DamagetoAllEnemyMinions(Deathrattle_Minion):
@@ -2970,7 +2970,7 @@ class GalakrondtheUnspeakable(Galakrond_Hero):
 		return "Priest Minions", [value for key, value in Game.ClassCards["Priest"].items() if "~Minion~" in key]
 		
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondtheApocalypes_Priest
 		self.progress = 0
 		
@@ -2992,7 +2992,7 @@ class GalakrondtheApocalypes_Priest(Galakrond_Hero):
 	index = "DRAGONS~Priest~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
 	name_CN = "天降浩劫 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondAzerothsEnd_Priest
 		self.progress = 0
 		
@@ -3014,7 +3014,7 @@ class GalakrondAzerothsEnd_Priest(Galakrond_Hero):
 	index = "DRAGONS~Priest~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
 	name_CN = "世界末日 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = None
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3250,7 +3250,7 @@ class Waxadred(Minion):
 	requireTarget, keyWord, description = False, "", "Deathrattle: Shuffle a Candle into your deck that resummons Waxadred when drawn"
 	name_CN = "蜡烛巨龙"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.deathrattles = [ShuffleaCandleintoYourDeck(self)]
 		
 class ShuffleaCandleintoYourDeck(Deathrattle_Minion):
@@ -3279,7 +3279,7 @@ class CandleBreath(Spell):
 	description = "Draw 3 cards. Costs (3) less while you're holding a Dragon"
 	name_CN = "烛火吐息"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsHand = [Trig_CandleBreath(self)]
 		
 	def effCanTrig(self):
@@ -3296,7 +3296,7 @@ class CandleBreath(Spell):
 		
 class Trig_CandleBreath(TrigHand):
 	def __init__(self, entity):
-		self.blank_init(entity, ["CardLeavesHand", "CardEntersHand"])
+		super().__init__(entity, ["CardLeavesHand", "CardEntersHand"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		#Only cards with a different class than your hero class will trigger this
@@ -3358,7 +3358,7 @@ class GalakrondtheNightmare(Galakrond_Hero):
 	index = "DRAGONS~Rogue~Hero Card~7~Galakrond, the Nightmare~Battlecry~Legendary"
 	name_CN = "梦魇巨龙 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondtheApocalypes_Rogue
 		self.progress = 0
 		
@@ -3374,7 +3374,7 @@ class GalakrondtheApocalypes_Rogue(Galakrond_Hero):
 	index = "DRAGONS~Rogue~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
 	name_CN = "天降浩劫 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondAzerothsEnd_Rogue
 		self.progress = 0
 		
@@ -3391,7 +3391,7 @@ class GalakrondAzerothsEnd_Rogue(Galakrond_Hero):
 	index = "DRAGONS~Rogue~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
 	name_CN = "世界末日 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = None
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3429,7 +3429,7 @@ class SurgingTempest(Minion):
 	requireTarget, keyWord, description = False, "", "Has +1 Attack while you have Overloaded Mana Crystals"
 	name_CN = "电涌风暴"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.auras["Buff Aura"] = StatAura_SurgingTempest(self)
 		
 class StatAura_SurgingTempest:
@@ -3496,7 +3496,7 @@ class Squallhunter(Minion):
 	requireTarget, keyWord, description = False, "", "Spell Damage +2, Overload: (2)"
 	name_CN = "猎风巨龙"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.keyWords["Spell Damage"] = 2
 		self.overload = 2
 		
@@ -3508,7 +3508,7 @@ class StormsWrath(Spell):
 	description = "Give your minions +1/+1. Overload: (1)"
 	name_CN = "风暴之怒"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.overload = 2
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3560,13 +3560,13 @@ class Bandersmosh(Minion):
 		return "Legendary Minions", list(Game.LegendaryMinions.values())
 		
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsHand = [Trig_Bandersmosh_PreShifting(self)]
 		
 class Trig_Bandersmosh_PreShifting(TrigHand):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnStarts"])
-		self.makesCardEvanescent = True
+		super().__init__(entity, ["TurnStarts"])
+		self.changesCard = True
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and ID == self.entity.ID
@@ -3592,8 +3592,8 @@ class Trig_Bandersmosh_PreShifting(TrigHand):
 			
 class Trig_Bandersmosh_KeepShifting(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnStarts"])
-		self.makesCardEvanescent = True
+		super().__init__(entity, ["TurnStarts"])
+		self.changesCard = True
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.inHand and ID == self.entity.ID
@@ -3698,12 +3698,12 @@ class StormEgg(Minion):
 	requireTarget, keyWord, description = False, "", "At the start of your turn, transform into a 4/4 Storm Drake with Rush"
 	name_CN = "风暴龙卵"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_StormEgg(self)]
 		
 class Trig_StormEgg(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnStarts"])
+		super().__init__(entity, ["TurnStarts"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
@@ -3748,7 +3748,7 @@ class GalakrondtheTempest(Galakrond_Hero):
 	index = "DRAGONS~Shaman~Hero Card~7~Galakrond, the Tempest~Battlecry~Legendary"
 	name_CN = "风暴巨龙 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondtheApocalypes_Shaman
 		self.progress = 0
 		
@@ -3762,7 +3762,7 @@ class GalakrondtheApocalypes_Shaman(Galakrond_Hero):
 	index = "DRAGONS~Shaman~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
 	name_CN = "天降浩劫 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondAzerothsEnd_Shaman
 		self.progress = 0
 		
@@ -3776,7 +3776,7 @@ class GalakrondAzerothsEnd_Shaman(Galakrond_Hero):
 	index = "DRAGONS~Shaman~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
 	name_CN = "世界末日 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = None
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4000,7 +4000,7 @@ class GalakrondtheWretched(Galakrond_Hero):
 		return "Demons to Summon", list(Game.MinionswithRace["Demon"].values())
 		
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondtheApocalypes_Warlock
 		self.progress = 0
 		
@@ -4021,7 +4021,7 @@ class GalakrondtheApocalypes_Warlock(Galakrond_Hero):
 	index = "DRAGONS~Warlock~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
 	name_CN = "天降浩劫 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondAzerothsEnd_Warlock
 		self.progress = 0
 		
@@ -4042,7 +4042,7 @@ class GalakrondAzerothsEnd_Warlock(Galakrond_Hero):
 	index = "DRAGONS~Warlock~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
 	name_CN = "世界末日 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = None
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4085,12 +4085,12 @@ class ZzerakutheWarped(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever your hero takes damage, summon a 6/6 Nether Drake"
 	name_CN = "扭曲巨龙 泽拉库"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_ZzerakutheWarped(self)]
 		
 class Trig_ZzerakutheWarped(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["HeroTakesDmg"])
+		super().__init__(entity, ["HeroTakesDmg"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity.Game.heroes[self.entity.ID]
@@ -4167,12 +4167,12 @@ class Ancharrr(Weapon):
 	index = "DRAGONS~Warrior~Weapon~3~2~2~Ancharrr~Legendary"
 	name_CN = "海盗之锚"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_Ancharrr(self)]
 		
 class Trig_Ancharrr(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["BattleFinished"])
+		super().__init__(entity, ["BattleFinished"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity.Game.heroes[self.entity.ID] and self.entity.onBoard
@@ -4273,12 +4273,12 @@ class Skybarge(Minion):
 	requireTarget, keyWord, description = False, "", "After you summon a Pirate, deal 2 damage to a random enemy"
 	name_CN = "空中炮艇"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_Skybarge(self)]
 		
 class Trig_Skybarge(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionBeenSummoned"])
+		super().__init__(entity, ["MinionBeenSummoned"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and "Pirate" in subject.race
@@ -4348,7 +4348,7 @@ class GalakrondtheUnbreakable(Galakrond_Hero):
 	index = "DRAGONS~Warrior~Hero Card~7~Galakrond, the Unbreakable~Battlecry~Legendary"
 	name_CN = "无敌巨龙 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondtheApocalypes_Warrior
 		self.progress = 0
 		
@@ -4372,7 +4372,7 @@ class GalakrondtheApocalypes_Warrior(Galakrond_Hero):
 	index = "DRAGONS~Warrior~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
 	name_CN = "天降浩劫 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondAzerothsEnd_Warrior
 		self.progress = 0
 		
@@ -4398,7 +4398,7 @@ class GalakrondAzerothsEnd_Warrior(Galakrond_Hero):
 	index = "DRAGONS~Warrior~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
 	name_CN = "世界末日 迦拉克隆"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.upgradedGalakrond = None
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):

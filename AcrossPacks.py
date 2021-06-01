@@ -63,13 +63,13 @@ class HealingTotem(Minion):
 	name_CN = "治疗图腾"
 	
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_HealingTotem(self)]
 
 
 class Trig_HealingTotem(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnEnds"])
+		super().__init__(entity, ["TurnEnds"])
 	
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
@@ -91,12 +91,12 @@ class StrengthTotem(Minion):
 	requireTarget, keyWord, description = False, "", "At the end of your turn, give another friendly minion +1 Attack"
 	name_CN = "力量图腾"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_StrengthTotem(self)]
 
 class Trig_StrengthTotem(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnEnds"])
+		super().__init__(entity, ["TurnEnds"])
 	
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and ID == self.entity.ID
@@ -462,52 +462,52 @@ Upgradedpowers = [DireShapeshift, BallistaShot, FireblastRank2, TheSilverHand, H
 class Illidan(Hero):
 	Class, name, heroPower = "Demon Hunter", "Illidan", DemonClaws
 	name_CN = "伊利丹"
-
+	index = "BASIC"
 
 class Rexxar(Hero):
 	Class, name, heroPower = "Hunter", "Rexxar", SteadyShot
 	name_CN = "雷克萨"
-
+	index = "BASIC"
 
 class Valeera(Hero):
 	Class, name, heroPower = "Rogue", "Valeera", DaggerMastery
 	name_CN = "瓦莉拉"
-
+	index = "BASIC"
 
 class Malfurion(Hero):
 	Class, name, heroPower = "Druid", "Malfurion", Shapeshift
 	name_CN = "玛法里奥"
-
+	index = "BASIC"
 
 class Garrosh(Hero):
 	Class, name, heroPower = "Warrior", "Garrosh", ArmorUp
 	name_CN = "加尔鲁什"
-
+	index = "BASIC"
 
 class Uther(Hero):
 	Class, name, heroPower = "Paladin", "Uther", Reinforce
 	name_CN = "乌瑟尔"
-
+	index = "BASIC"
 
 class Thrall(Hero):
 	Class, name, heroPower = "Shaman", "Thrall", TotemicCall
 	name_CN = "萨尔"
-
+	index = "BASIC"
 
 class Jaina(Hero):
 	Class, name, heroPower = "Mage", "Jaina", Fireblast
 	name_CN = "吉安娜"
-
+	index = "BASIC"
 
 class Anduin(Hero):
 	Class, name, heroPower = "Priest", "Anduin", LesserHeal
 	name_CN = "安度因"
-
+	index = "BASIC"
 
 class Guldan(Hero):
 	Class, name, heroPower = "Warlock", "Gul'dan", LifeTap
 	name_CN = "古尔丹"
-
+	index = "BASIC"
 
 class IllidariInitiate(Minion):
 	Class, race, name = "Demon Hunter", "", "Illidari Initiate"
@@ -536,12 +536,12 @@ class WaterElemental_Basic(Minion):
 	requireTarget, keyWord, description = False, "", "Freeze any character damaged by this minion"
 	name_CN = "水元素"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_WaterElemental(self)]
 
 class Trig_WaterElemental(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["MinionTakesDmg", "HeroTakesDmg"])
+		super().__init__(entity, ["MinionTakesDmg", "HeroTakesDmg"])
 	
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return subject == self.entity
@@ -672,7 +672,7 @@ class Nightmare(Spell):
 
 class Trig_Corruption(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["TurnStarts"])
+		super().__init__(entity, ["TurnStarts"])
 		self.inherent = False
 		self.ID = 1
 	
@@ -724,9 +724,8 @@ class LaughingSister(Minion):
 	index = "EXPERT1~DreamCard~Minion~2~3~5~~Laughing Sister~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Can't targeted by spells or Hero Powers"
 	name_CN = "欢笑的姐妹"
-	
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.marks["Evasive"] = 1
 
 
@@ -889,7 +888,7 @@ class Leokk(Minion):
 	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack"
 	name_CN = "雷欧克"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.auras["Your other minions have +1 Attack"] = StatAura_Others(self, 1, 0)
 
 
@@ -916,13 +915,13 @@ class ManaWyrm(Minion):
 	requireTarget, keyWord, description = False, "", "Whenever you cast a spell, gain 1 Attack"
 	name_CN = "法力浮龙"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_ManaWyrm(self)]
 
 
 class Trig_ManaWyrm(TrigBoard):
 	def __init__(self, entity):
-		self.blank_init(entity, ["SpellPlayed"])
+		super().__init__(entity, ["SpellPlayed"])
 	
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID
@@ -1011,7 +1010,7 @@ class BoomBot(Minion):
 	index = "GVG~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Deal 1~4 damage to a random enemy"
 	def __init__(self, Game, ID):
-		self.blank_init(Game, ID)
+		super().__init__(Game, ID)
 		self.deathrattles = [Deal1to4DamagetoaRandomEnemy(self)]
 		
 class Deal1to4DamagetoaRandomEnemy(Deathrattle_Minion):
