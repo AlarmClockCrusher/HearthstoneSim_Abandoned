@@ -23,8 +23,12 @@ class TrigBoard:
 		
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			if self.entity.Game.GUI:
-				self.entity.Game.GUI.trigBlink(self.entity, nextAnimWaits=self.changesCard)
+			btn, GUI = self.entity.btn, self.entity.Game.GUI
+			if btn and "Trigger" in btn.icons:
+				icon = btn.icons["Trigger"]
+				if self.nextAnimWaits: GUI.seqHolder[-1].append(GUI.PARALLEL(GUI.FUNC(icon.trigAni), GUI.WAIT(1.5)))
+				else: GUI.seqHolder[-1].append(GUI.FUNC(icon.trigAni))
+				
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -616,7 +620,7 @@ class Effect_Receiver:
 		obj = self.recipient
 		try: obj.effectfromAura[self.keyWord] += 1
 		except: obj.effectfromAura[self.keyWord] = 1
-		try: obj.getsKeyword(self.keyWord)
+		try: obj.getsStatus(self.keyWord)
 		except: obj.marks[self.keyWord] += 1
 		obj.auraReceivers.append(self)
 		self.source.auraAffected.append((obj, self))
@@ -625,7 +629,7 @@ class Effect_Receiver:
 	def effectClear(self):
 		obj = self.recipient
 		obj.effectfromAura[self.keyWord] -= 1
-		try: obj.losesKeyword(self.keyWord)
+		try: obj.losesStatus(self.keyWord)
 		except: obj.marks[self.keyWord] -= 1
 		try: obj.auraReceivers.remove(self)
 		except: pass
@@ -637,7 +641,7 @@ class Effect_Receiver:
 	def effectDiscard(self):
 		obj = self.recipient
 		obj.effectfromAura[self.keyWord] -= 1
-		try: obj.losesKeyword(self.keyWord)
+		try: obj.losesStatus(self.keyWord)
 		except: obj.marks[self.keyWord] -= 1
 		try: obj.auraReceivers.remove(self)
 		except: pass

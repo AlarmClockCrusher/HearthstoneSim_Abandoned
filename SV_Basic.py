@@ -397,7 +397,7 @@ class ElfGuard(SVMinion):
         numCardsPlayed = self.Game.combCards(self.ID)
         if numCardsPlayed >= 2:
             self.buffDebuff(1, 1)
-            self.getsKeyword("Taunt")
+            self.getsStatus("Taunt")
         return None
 
 
@@ -686,7 +686,7 @@ class GildedBoots(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            target.getsKeyword("Rush")
+            target.getsStatus("Rush")
         return target
 
 
@@ -1680,7 +1680,7 @@ class Deathrattle_GhostlyRider(Deathrattle_Minion):
                 curGame.fixedGuides.append(i)
             if i > -1:
                 minion = curGame.minions[self.entity.ID][i]
-                minion.getsKeyword("Taunt")
+                minion.getsStatus("Taunt")
 
 
 class UndeadKing(SVMinion):
@@ -1805,7 +1805,7 @@ class DarkGeneral(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isVengeance(self.ID):
-            self.getsKeyword("Charge")
+            self.getsStatus("Charge")
         return None
 
 
@@ -2379,7 +2379,7 @@ class Puppeteer(SVMinion):
                 i = npchoice(puppets) if puppets else -1
                 curGame.fixedGuides.append(i)
             if i > -1:
-                ownHand[i].getsKeyword("Bane")
+                ownHand[i].getsStatus("Bane")
 
 
 class MechanizedServant(SVMinion):
@@ -2395,7 +2395,7 @@ class MechanizedServant(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isResonance(self.ID):
-            self.getsKeyword("Rush")
+            self.getsStatus("Rush")
         return None
 
 
@@ -3124,7 +3124,7 @@ class ElfGuard(SVMinion):
         numCardsPlayed = self.Game.combCards(self.ID)
         if numCardsPlayed >= 2:
             self.buffDebuff(1, 1)
-            self.getsKeyword("Taunt")
+            self.getsStatus("Taunt")
         return None
 
 
@@ -3413,7 +3413,7 @@ class GildedBoots(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            target.getsKeyword("Rush")
+            target.getsStatus("Rush")
         return target
 
 
@@ -4407,7 +4407,7 @@ class Deathrattle_GhostlyRider(Deathrattle_Minion):
                 curGame.fixedGuides.append(i)
             if i > -1:
                 minion = curGame.minions[self.entity.ID][i]
-                minion.getsKeyword("Taunt")
+                minion.getsStatus("Taunt")
 
 
 class UndeadKing(SVMinion):
@@ -4532,7 +4532,7 @@ class DarkGeneral(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isVengeance(self.ID):
-            self.getsKeyword("Charge")
+            self.getsStatus("Charge")
         return None
 
 
@@ -5106,7 +5106,7 @@ class Puppeteer(SVMinion):
                 i = npchoice(puppets) if puppets else -1
                 curGame.fixedGuides.append(i)
             if i > -1:
-                ownHand[i].getsKeyword("Bane")
+                ownHand[i].getsStatus("Bane")
 
 
 class MechanizedServant(SVMinion):
@@ -5122,7 +5122,7 @@ class MechanizedServant(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isResonance(self.ID):
-            self.getsKeyword("Rush")
+            self.getsStatus("Rush")
         return None
 
 

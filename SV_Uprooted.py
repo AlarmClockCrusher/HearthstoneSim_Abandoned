@@ -445,7 +445,7 @@ class StrokeofConviction(SVSpell):
         return None
 
 
-class ErikasSleight_Option(ChooseOneOption):
+class ErikasSleight_Option(Option):
     name, description = "Erika's Sleight", "Erika's Sleight"
     index = "SV_Uprooted~Swordcraft~Spell~0~Erika's Sleight"
 
@@ -453,7 +453,7 @@ class ErikasSleight_Option(ChooseOneOption):
         return True
 
 
-class MistolinasSwordplay_Option(ChooseOneOption):
+class MistolinasSwordplay_Option(Option):
     name, description = "Mistolina's Swordplay", "Mistolina's Swordplay"
     index = "SV_Uprooted~Swordcraft~Spell~0~Mistolina's Swordplay"
 
@@ -461,7 +461,7 @@ class MistolinasSwordplay_Option(ChooseOneOption):
         return True
 
 
-class BayleyonsCommand_Option(ChooseOneOption):
+class BayleyonsCommand_Option(Option):
     name, description = "Bayleyon's Command", "Bayleyon's Command"
     index = "SV_Uprooted~Swordcraft~Spell~0~Bayleyon's Command"
 
@@ -573,7 +573,7 @@ class PaulaIcyWarmth(SVMinion):
                 self.Game.returnMiniontoHand(target)
 
 
-class PaulaGentalWarmth_Option(ChooseOneOption):
+class PaulaGentalWarmth_Option(Option):
     name, description = "Paula, Gental Warmth", "Paula, Gental Warmth"
 
     # 入场曲：将战场上1个自己的其他随从或1个自己的护符收回手牌中
@@ -581,7 +581,7 @@ class PaulaGentalWarmth_Option(ChooseOneOption):
         return True
 
 
-class PaulaPassionateWarmth_Option(ChooseOneOption):
+class PaulaPassionateWarmth_Option(Option):
     name, description = "Paula, Passionate Warmth", "Paula, Passionate Warmth"
 
     # 入场曲 给予1个敌方的随从1点伤害
@@ -1109,7 +1109,7 @@ class StrokeofConviction(SVSpell):
         return None
 
 
-class ErikasSleight_Option(ChooseOneOption):
+class ErikasSleight_Option(Option):
     name, description = "Erika's Sleight", "Erika's Sleight"
     index = "SV_Uprooted~Swordcraft~Spell~0~~Erika's Sleight"
 
@@ -1117,7 +1117,7 @@ class ErikasSleight_Option(ChooseOneOption):
         return True
 
 
-class MistolinasSwordplay_Option(ChooseOneOption):
+class MistolinasSwordplay_Option(Option):
     name, description = "Mistolina's Swordplay", "Mistolina's Swordplay"
     index = "SV_Uprooted~Swordcraft~Spell~0~~Mistolina's Swordplay"
 
@@ -1125,7 +1125,7 @@ class MistolinasSwordplay_Option(ChooseOneOption):
         return True
 
 
-class BayleyonsCommand_Option(ChooseOneOption):
+class BayleyonsCommand_Option(Option):
     name, description = "Bayleyon's Command", "Bayleyon's Command"
     index = "SV_Uprooted~Swordcraft~Spell~0~~Bayleyon's Command"
 
@@ -1237,7 +1237,7 @@ class PaulaIcyWarmth(SVMinion):
                 self.Game.returnMiniontoHand(target)
 
 
-class PaulaGentalWarmth_Option(ChooseOneOption):
+class PaulaGentalWarmth_Option(Option):
     name, description = "Paula, Gental Warmth", "Paula, Gental Warmth"
 
     # 入场曲：将战场上1个自己的其他随从或1个自己的护符收回手牌中
@@ -1245,7 +1245,7 @@ class PaulaGentalWarmth_Option(ChooseOneOption):
         return True
 
 
-class PaulaPassionateWarmth_Option(ChooseOneOption):
+class PaulaPassionateWarmth_Option(Option):
     name, description = "Paula, Passionate Warmth", "Paula, Passionate Warmth"
 
     # 入场曲 给予1个敌方的随从1点伤害

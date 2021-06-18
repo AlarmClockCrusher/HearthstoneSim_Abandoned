@@ -139,8 +139,7 @@ class Evolve(HeroPower):
                     tarIndex.append(self.Game.Hand_Deck.hands[obj.ID].index(obj))
                     tarWhere.append("Hand%d" % obj.ID)
         if self.Game.GUI:
-            self.Game.GUI.displayCard(self)
-            self.Game.GUI.wait(500)
+            self.Game.GUI.showOffBoardTrig(self)
         self.effect(target, choice)
         self.Game.gathertheDead()
         self.heroPowerTimes += 1

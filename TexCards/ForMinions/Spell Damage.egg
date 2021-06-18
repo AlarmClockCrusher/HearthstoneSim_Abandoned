@@ -1,5 +1,5 @@
 <Comment> {
-  "egg-texture-cards -o SpellDamage.egg -fps 24 -p 1,1 'TexCards\ForMinions\SpellDamage_00.png' -p 128,128 'TexCards\ForMinions\SpellDamage_01.png' -p 128,128 'TexCards\ForMinions\SpellDamage_02.png' -p 128,128 'TexCards\ForMinions\SpellDamage_03.png' -p 128,128 'TexCards\ForMinions\SpellDamage_04.png' -p 128,128 'TexCards\ForMinions\SpellDamage_05.png' -p 128,128 'TexCards\ForMinions\SpellDamage_06.png' -p 128,128 'TexCards\ForMinions\SpellDamage_07.png' -p 128,128 'TexCards\ForMinions\SpellDamage_08.png' -p 128,128 'TexCards\ForMinions\SpellDamage_09.png' -p 128,128 'TexCards\ForMinions\SpellDamage_10.png' -p 128,128 'TexCards\ForMinions\SpellDamage_11.png' -p 128,128 'TexCards\ForMinions\SpellDamage_12.png' -p 128,128 'TexCards\ForMinions\SpellDamage_13.png' -p 128,128 'TexCards\ForMinions\SpellDamage_14.png' -p 128,128 'TexCards\ForMinions\SpellDamage_15.png' -p 128,128 'TexCards\ForMinions\SpellDamage_16.png' -p 128,128 'TexCards\ForMinions\SpellDamage_17.png' -p 128,128 'TexCards\ForMinions\SpellDamage_18.png' -p 128,128 'TexCards\ForMinions\SpellDamage_19.png' -p 128,128 'TexCards\ForMinions\SpellDamage_20.png' -p 128,128 'TexCards\ForMinions\SpellDamage_21.png' -p 128,128 'TexCards\ForMinions\SpellDamage_22.png' -p 128,128 'TexCards\ForMinions\SpellDamage_23.png' -p 128,128 'TexCards\ForMinions\SpellDamage_24.png' -p 128,128 'TexCards\ForMinions\SpellDamage_25.png' -p 128,128 'TexCards\ForMinions\SpellDamage_26.png' -p 128,128 'TexCards\ForMinions\SpellDamage_27.png' -p 128,128 'TexCards\ForMinions\SpellDamage_28.png' -p 128,128 'TexCards\ForMinions\SpellDamage_29.png' -p 128,128 'TexCards\ForMinions\SpellDamage_30.png' -p 128,128 'TexCards\ForMinions\SpellDamage_31.png' -p 128,128 'TexCards\ForMinions\SpellDamage_32.png' -p 128,128 'TexCards\ForMinions\SpellDamage_33.png' -p 128,128 'TexCards\ForMinions\SpellDamage_34.png' -p 128,128 'TexCards\ForMinions\SpellDamage_35.png' -p 128,128 'TexCards\ForMinions\SpellDamage_36.png' -p 128,128 'TexCards\ForMinions\SpellDamage_37.png' -p 128,128 'TexCards\ForMinions\SpellDamage_38.png' -p 128,128 'TexCards\ForMinions\SpellDamage_39.png' -p 128,128 'TexCards\ForMinions\SpellDamage_40.png' -p 128,128 'TexCards\ForMinions\SpellDamage_41.png' -p 128,128 'TexCards\ForMinions\SpellDamage_42.png' -p 128,128 'TexCards\ForMinions\SpellDamage_43.png' -p 128,128 'TexCards\ForMinions\SpellDamage_44.png' -p 128,128 'TexCards\ForMinions\SpellDamage_45.png' -p 128,128 'TexCards\ForMinions\SpellDamage_46.png' -p 128,128 'TexCards\ForMinions\SpellDamage_47.png' -p 128,128 'TexCards\ForMinions\SpellDamage_48.png' -p 128,128 'TexCards\ForMinions\SpellDamage_49.png' -p 128,128 'TexCards\ForMinions\SpellDamage_50.png' -p 128,128 'TexCards\ForMinions\SpellDamage_51.png' -p 128,128 'TexCards\ForMinions\SpellDamage_52.png' -p 128,128 'TexCards\ForMinions\SpellDamage_53.png' -p 128,128 'TexCards\ForMinions\SpellDamage_54.png' -p 128,128 'TexCards\ForMinions\SpellDamage_55.png' -p 128,128 'TexCards\ForMinions\SpellDamage_56.png' -p 128,128 'TexCards\ForMinions\SpellDamage_57.png' -p 128,128 'TexCards\ForMinions\SpellDamage_58.png' -p 128,128 'TexCards\ForMinions\SpellDamage_59.png' -p 128,128 'TexCards\ForMinions\SpellDamage_60.png' -p 128,128 'TexCards\ForMinions\SpellDamage_61.png'"
+  "egg-texture-cards -o SpellDamage.egg -fps 24 -p 1,1 'TexCards\ForMinions\SpellDamage_00.png' -p 128,128 'TexCards\ForMinions\SpellDamage_14.png' -p 128,128 'TexCards\ForMinions\SpellDamage_15.png' -p 128,128 'TexCards\ForMinions\SpellDamage_16.png' -p 128,128 'TexCards\ForMinions\SpellDamage_17.png' -p 128,128 'TexCards\ForMinions\SpellDamage_18.png' -p 128,128 'TexCards\ForMinions\SpellDamage_19.png' -p 128,128 'TexCards\ForMinions\SpellDamage_20.png' -p 128,128 'TexCards\ForMinions\SpellDamage_21.png' -p 128,128 'TexCards\ForMinions\SpellDamage_22.png' -p 128,128 'TexCards\ForMinions\SpellDamage_23.png' -p 128,128 'TexCards\ForMinions\SpellDamage_24.png' -p 128,128 'TexCards\ForMinions\SpellDamage_25.png' -p 128,128 'TexCards\ForMinions\SpellDamage_26.png' -p 128,128 'TexCards\ForMinions\SpellDamage_27.png' -p 128,128 'TexCards\ForMinions\SpellDamage_28.png' -p 128,128 'TexCards\ForMinions\SpellDamage_29.png' -p 128,128 'TexCards\ForMinions\SpellDamage_30.png' -p 128,128 'TexCards\ForMinions\SpellDamage_31.png' -p 128,128 'TexCards\ForMinions\SpellDamage_32.png' -p 128,128 'TexCards\ForMinions\SpellDamage_33.png' -p 128,128 'TexCards\ForMinions\SpellDamage_34.png' -p 128,128 'TexCards\ForMinions\SpellDamage_35.png' -p 128,128 'TexCards\ForMinions\SpellDamage_36.png' -p 128,128 'TexCards\ForMinions\SpellDamage_37.png' -p 128,128 'TexCards\ForMinions\SpellDamage_38.png' -p 128,128 'TexCards\ForMinions\SpellDamage_39.png' -p 128,128 'TexCards\ForMinions\SpellDamage_40.png' -p 128,128 'TexCards\ForMinions\SpellDamage_41.png' -p 128,128 'TexCards\ForMinions\SpellDamage_42.png' -p 128,128 'TexCards\ForMinions\SpellDamage_43.png' -p 128,128 'TexCards\ForMinions\SpellDamage_44.png' -p 128,128 'TexCards\ForMinions\SpellDamage_45.png' -p 128,128 'TexCards\ForMinions\SpellDamage_46.png' -p 128,128 'TexCards\ForMinions\SpellDamage_47.png' -p 128,128 'TexCards\ForMinions\SpellDamage_48.png' -p 128,128 'TexCards\ForMinions\SpellDamage_49.png' -p 128,128 'TexCards\ForMinions\SpellDamage_50.png' -p 128,128 'TexCards\ForMinions\SpellDamage_51.png' -p 128,128 'TexCards\ForMinions\SpellDamage_52.png' -p 128,128 'TexCards\ForMinions\SpellDamage_53.png' -p 128,128 'TexCards\ForMinions\SpellDamage_54.png' -p 128,128 'TexCards\ForMinions\SpellDamage_55.png' -p 128,128 'TexCards\ForMinions\SpellDamage_56.png' -p 128,128 'TexCards\ForMinions\SpellDamage_57.png' -p 128,128 'TexCards\ForMinions\SpellDamage_58.png' -p 128,128 'TexCards\ForMinions\SpellDamage_59.png' -p 128,128 'TexCards\ForMinions\SpellDamage_60.png' -p 128,128 'TexCards\ForMinions\SpellDamage_61.png'"
 }
 <Texture> SpellDamage_61 {
   "TexCards/ForMinions/SpellDamage_61.png"
@@ -144,45 +144,6 @@
 }
 <Texture> SpellDamage_14 {
   "TexCards/ForMinions/SpellDamage_14.png"
-}
-<Texture> SpellDamage_13 {
-  "TexCards/ForMinions/SpellDamage_13.png"
-}
-<Texture> SpellDamage_12 {
-  "TexCards/ForMinions/SpellDamage_12.png"
-}
-<Texture> SpellDamage_11 {
-  "TexCards/ForMinions/SpellDamage_11.png"
-}
-<Texture> SpellDamage_10 {
-  "TexCards/ForMinions/SpellDamage_10.png"
-}
-<Texture> SpellDamage_09 {
-  "TexCards/ForMinions/SpellDamage_09.png"
-}
-<Texture> SpellDamage_08 {
-  "TexCards/ForMinions/SpellDamage_08.png"
-}
-<Texture> SpellDamage_07 {
-  "TexCards/ForMinions/SpellDamage_07.png"
-}
-<Texture> SpellDamage_06 {
-  "TexCards/ForMinions/SpellDamage_06.png"
-}
-<Texture> SpellDamage_05 {
-  "TexCards/ForMinions/SpellDamage_05.png"
-}
-<Texture> SpellDamage_04 {
-  "TexCards/ForMinions/SpellDamage_04.png"
-}
-<Texture> SpellDamage_03 {
-  "TexCards/ForMinions/SpellDamage_03.png"
-}
-<Texture> SpellDamage_02 {
-  "TexCards/ForMinions/SpellDamage_02.png"
-}
-<Texture> SpellDamage_01 {
-  "TexCards/ForMinions/SpellDamage_01.png"
 }
 <Texture> SpellDamage_00 {
   "TexCards/ForMinions/SpellDamage_00.png"
@@ -975,214 +936,6 @@
       0.5 0.5 0
       <UV> { 1 1 }
     }
-    <Vertex> 196 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 197 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 198 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 199 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
-    <Vertex> 200 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 201 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 202 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 203 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
-    <Vertex> 204 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 205 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 206 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 207 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
-    <Vertex> 208 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 209 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 210 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 211 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
-    <Vertex> 212 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 213 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 214 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 215 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
-    <Vertex> 216 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 217 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 218 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 219 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
-    <Vertex> 220 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 221 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 222 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 223 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
-    <Vertex> 224 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 225 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 226 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 227 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
-    <Vertex> 228 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 229 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 230 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 231 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
-    <Vertex> 232 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 233 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 234 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 235 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
-    <Vertex> 236 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 237 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 238 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 239 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
-    <Vertex> 240 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 241 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 242 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 243 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
-    <Vertex> 244 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 245 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 246 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 247 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
   }
   <Group> SpellDamage_00 {
     <Polygon> {
@@ -1191,431 +944,340 @@
       <VertexRef> { 0 1 2 3 <Ref> { vpool } }
     }
   }
-  <Group> SpellDamage_01 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_01 }
-      <VertexRef> { 4 5 6 7 <Ref> { vpool } }
-    }
-  }
-  <Group> SpellDamage_02 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_02 }
-      <VertexRef> { 8 9 10 11 <Ref> { vpool } }
-    }
-  }
-  <Group> SpellDamage_03 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_03 }
-      <VertexRef> { 12 13 14 15 <Ref> { vpool } }
-    }
-  }
-  <Group> SpellDamage_04 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_04 }
-      <VertexRef> { 16 17 18 19 <Ref> { vpool } }
-    }
-  }
-  <Group> SpellDamage_05 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_05 }
-      <VertexRef> { 20 21 22 23 <Ref> { vpool } }
-    }
-  }
-  <Group> SpellDamage_06 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_06 }
-      <VertexRef> { 24 25 26 27 <Ref> { vpool } }
-    }
-  }
-  <Group> SpellDamage_07 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_07 }
-      <VertexRef> { 28 29 30 31 <Ref> { vpool } }
-    }
-  }
-  <Group> SpellDamage_08 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_08 }
-      <VertexRef> { 32 33 34 35 <Ref> { vpool } }
-    }
-  }
-  <Group> SpellDamage_09 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_09 }
-      <VertexRef> { 36 37 38 39 <Ref> { vpool } }
-    }
-  }
-  <Group> SpellDamage_10 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_10 }
-      <VertexRef> { 40 41 42 43 <Ref> { vpool } }
-    }
-  }
-  <Group> SpellDamage_11 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_11 }
-      <VertexRef> { 44 45 46 47 <Ref> { vpool } }
-    }
-  }
-  <Group> SpellDamage_12 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_12 }
-      <VertexRef> { 48 49 50 51 <Ref> { vpool } }
-    }
-  }
-  <Group> SpellDamage_13 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { SpellDamage_13 }
-      <VertexRef> { 52 53 54 55 <Ref> { vpool } }
-    }
-  }
   <Group> SpellDamage_14 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_14 }
-      <VertexRef> { 56 57 58 59 <Ref> { vpool } }
+      <VertexRef> { 4 5 6 7 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_15 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_15 }
-      <VertexRef> { 60 61 62 63 <Ref> { vpool } }
+      <VertexRef> { 8 9 10 11 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_16 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_16 }
-      <VertexRef> { 64 65 66 67 <Ref> { vpool } }
+      <VertexRef> { 12 13 14 15 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_17 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_17 }
-      <VertexRef> { 68 69 70 71 <Ref> { vpool } }
+      <VertexRef> { 16 17 18 19 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_18 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_18 }
-      <VertexRef> { 72 73 74 75 <Ref> { vpool } }
+      <VertexRef> { 20 21 22 23 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_19 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_19 }
-      <VertexRef> { 76 77 78 79 <Ref> { vpool } }
+      <VertexRef> { 24 25 26 27 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_20 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_20 }
-      <VertexRef> { 80 81 82 83 <Ref> { vpool } }
+      <VertexRef> { 28 29 30 31 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_21 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_21 }
-      <VertexRef> { 84 85 86 87 <Ref> { vpool } }
+      <VertexRef> { 32 33 34 35 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_22 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_22 }
-      <VertexRef> { 88 89 90 91 <Ref> { vpool } }
+      <VertexRef> { 36 37 38 39 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_23 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_23 }
-      <VertexRef> { 92 93 94 95 <Ref> { vpool } }
+      <VertexRef> { 40 41 42 43 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_24 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_24 }
-      <VertexRef> { 96 97 98 99 <Ref> { vpool } }
+      <VertexRef> { 44 45 46 47 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_25 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_25 }
-      <VertexRef> { 100 101 102 103 <Ref> { vpool } }
+      <VertexRef> { 48 49 50 51 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_26 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_26 }
-      <VertexRef> { 104 105 106 107 <Ref> { vpool } }
+      <VertexRef> { 52 53 54 55 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_27 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_27 }
-      <VertexRef> { 108 109 110 111 <Ref> { vpool } }
+      <VertexRef> { 56 57 58 59 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_28 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_28 }
-      <VertexRef> { 112 113 114 115 <Ref> { vpool } }
+      <VertexRef> { 60 61 62 63 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_29 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_29 }
-      <VertexRef> { 116 117 118 119 <Ref> { vpool } }
+      <VertexRef> { 64 65 66 67 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_30 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_30 }
-      <VertexRef> { 120 121 122 123 <Ref> { vpool } }
+      <VertexRef> { 68 69 70 71 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_31 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_31 }
-      <VertexRef> { 124 125 126 127 <Ref> { vpool } }
+      <VertexRef> { 72 73 74 75 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_32 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_32 }
-      <VertexRef> { 128 129 130 131 <Ref> { vpool } }
+      <VertexRef> { 76 77 78 79 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_33 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_33 }
-      <VertexRef> { 132 133 134 135 <Ref> { vpool } }
+      <VertexRef> { 80 81 82 83 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_34 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_34 }
-      <VertexRef> { 136 137 138 139 <Ref> { vpool } }
+      <VertexRef> { 84 85 86 87 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_35 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_35 }
-      <VertexRef> { 140 141 142 143 <Ref> { vpool } }
+      <VertexRef> { 88 89 90 91 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_36 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_36 }
-      <VertexRef> { 144 145 146 147 <Ref> { vpool } }
+      <VertexRef> { 92 93 94 95 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_37 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_37 }
-      <VertexRef> { 148 149 150 151 <Ref> { vpool } }
+      <VertexRef> { 96 97 98 99 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_38 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_38 }
-      <VertexRef> { 152 153 154 155 <Ref> { vpool } }
+      <VertexRef> { 100 101 102 103 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_39 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_39 }
-      <VertexRef> { 156 157 158 159 <Ref> { vpool } }
+      <VertexRef> { 104 105 106 107 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_40 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_40 }
-      <VertexRef> { 160 161 162 163 <Ref> { vpool } }
+      <VertexRef> { 108 109 110 111 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_41 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_41 }
-      <VertexRef> { 164 165 166 167 <Ref> { vpool } }
+      <VertexRef> { 112 113 114 115 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_42 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_42 }
-      <VertexRef> { 168 169 170 171 <Ref> { vpool } }
+      <VertexRef> { 116 117 118 119 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_43 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_43 }
-      <VertexRef> { 172 173 174 175 <Ref> { vpool } }
+      <VertexRef> { 120 121 122 123 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_44 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_44 }
-      <VertexRef> { 176 177 178 179 <Ref> { vpool } }
+      <VertexRef> { 124 125 126 127 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_45 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_45 }
-      <VertexRef> { 180 181 182 183 <Ref> { vpool } }
+      <VertexRef> { 128 129 130 131 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_46 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_46 }
-      <VertexRef> { 184 185 186 187 <Ref> { vpool } }
+      <VertexRef> { 132 133 134 135 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_47 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_47 }
-      <VertexRef> { 188 189 190 191 <Ref> { vpool } }
+      <VertexRef> { 136 137 138 139 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_48 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_48 }
-      <VertexRef> { 192 193 194 195 <Ref> { vpool } }
+      <VertexRef> { 140 141 142 143 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_49 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_49 }
-      <VertexRef> { 196 197 198 199 <Ref> { vpool } }
+      <VertexRef> { 144 145 146 147 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_50 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_50 }
-      <VertexRef> { 200 201 202 203 <Ref> { vpool } }
+      <VertexRef> { 148 149 150 151 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_51 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_51 }
-      <VertexRef> { 204 205 206 207 <Ref> { vpool } }
+      <VertexRef> { 152 153 154 155 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_52 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_52 }
-      <VertexRef> { 208 209 210 211 <Ref> { vpool } }
+      <VertexRef> { 156 157 158 159 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_53 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_53 }
-      <VertexRef> { 212 213 214 215 <Ref> { vpool } }
+      <VertexRef> { 160 161 162 163 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_54 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_54 }
-      <VertexRef> { 216 217 218 219 <Ref> { vpool } }
+      <VertexRef> { 164 165 166 167 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_55 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_55 }
-      <VertexRef> { 220 221 222 223 <Ref> { vpool } }
+      <VertexRef> { 168 169 170 171 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_56 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_56 }
-      <VertexRef> { 224 225 226 227 <Ref> { vpool } }
+      <VertexRef> { 172 173 174 175 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_57 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_57 }
-      <VertexRef> { 228 229 230 231 <Ref> { vpool } }
+      <VertexRef> { 176 177 178 179 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_58 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_58 }
-      <VertexRef> { 232 233 234 235 <Ref> { vpool } }
+      <VertexRef> { 180 181 182 183 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_59 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_59 }
-      <VertexRef> { 236 237 238 239 <Ref> { vpool } }
+      <VertexRef> { 184 185 186 187 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_60 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_60 }
-      <VertexRef> { 240 241 242 243 <Ref> { vpool } }
+      <VertexRef> { 188 189 190 191 <Ref> { vpool } }
     }
   }
   <Group> SpellDamage_61 {
     <Polygon> {
       <RGBA> { 1 1 1 1 }
       <TRef> { SpellDamage_61 }
-      <VertexRef> { 244 245 246 247 <Ref> { vpool } }
+      <VertexRef> { 192 193 194 195 <Ref> { vpool } }
     }
   }
 }

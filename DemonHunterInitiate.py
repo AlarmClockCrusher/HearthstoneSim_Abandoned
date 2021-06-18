@@ -5,7 +5,7 @@ from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
 
-from Basic import IllidariInitiate
+from AcrossPacks import IllidariInitiate
 
 """"Demon Hunter Yr Dragon cards"""
 
@@ -43,7 +43,7 @@ class Blur_Effect:
 		
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			if self.Game.GUI: self.Game.GUI.showOffBoardTrig(Blur(self.Game, self.ID), linger=False)
+			if self.Game.GUI: self.Game.GUI.showOffBoardTrig(Blur(self.Game, self.ID))
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -250,7 +250,7 @@ class AltruistheOutcast(Minion):
 	mana, attack, health = 4, 4, 2
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Minion~4~4~2~~Altruis the Outcast~Legendary"
 	requireTarget, keyWord, description = False, "", "After you play the left- or right-most card in your hand, deal 1 damage to all enemies"
-	name_CN = "流放者 奥图里斯"
+	name_CN = "流放者奥图里斯"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_AltruistheOutcast(self)]
@@ -269,7 +269,7 @@ class Trig_AltruistheOutcast(TrigBoard):
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		targets = [self.entity.Game.heroes[3-self.entity.ID]] + self.entity.Game.minionsonBoard(3-self.entity.ID)
-		self.entity.dealsAOE(targets, [1 for enemy in targets])
+		self.entity.dealsAOE(targets, [1] * len(targets))
 		
 		
 class EyeBeam(Spell):
@@ -365,17 +365,16 @@ class IllidariFelblade(Minion):
 	mana, attack, health = 4, 5, 3
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Minion~4~5~3~~Illidari Felblade~Rush~Outcast"
 	requireTarget, keyWord, description = False, "Rush", "Rush. Outcast: Gain Immune this turn"
-	name_CN = "伊利达雷 邪刃武士"
+	name_CN = "伊利达雷邪刃武士"
 	
 	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.outcastcanTrig(self)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if posinHand == 0 or posinHand == -1:
-			self.status["Immune"] = 1
+			self.getsStatus("Immune")
 		return None
 		
-
 		
 class SoulSplit(Spell):
 	Class, school, name = "Demon Hunter", "Shadow~", "Soul Split"
@@ -429,7 +428,7 @@ class Trig_WrathspikeBrute(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		targets = [self.entity.Game.heroes[3-self.entity.ID]] + self.entity.Game.minionsonBoard(3-self.entity.ID)
-		self.entity.dealsAOE(targets, [1 for minion in targets])
+		self.entity.dealsAOE(targets, [1] * len(targets))
 		
 """Mana 7 cards"""
 class Flamereaper(Weapon):
@@ -476,9 +475,9 @@ class Nethrandamus(Minion):
 	name_CN = "奈瑟兰达姆斯"
 	poolIdentifier = "0-Cost Minions to Summon"
 	@classmethod
-	def generatePool(cls, Game):
-		return ["%d-Cost Minions to Summon"%cost for cost in Game.MinionsofCost.keys()], \
-				[list(Game.MinionsofCost[cost].values()) for cost in Game.MinionsofCost.keys()]
+	def generatePool(cls, pools):
+		return ["%d-Cost Minions to Summon"%cost for cost in pools.MinionsofCost.keys()], \
+				[list(pools.MinionsofCost[cost].values()) for cost in pools.MinionsofCost.keys()]
 				
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -496,7 +495,7 @@ class Nethrandamus(Minion):
 				minions = curGame.guides.pop(0)
 			else:
 				cost = self.progress
-				while cost not in curGame.MinionsofCost: #假设计数过高，超出了费用范围，则取最高的可选费用
+				while "%d-Cost Minions to Summon"%cost not in curGame.RNGPools: #假设计数过高，超出了费用范围，则取最高的可选费用
 					cost -= 1
 				minions = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost), 2, replace=False)
 				curGame.fixedGuides.append(tuple(minions))

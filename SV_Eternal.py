@@ -344,7 +344,7 @@ class Trig_GranDjeetaEternalHeroes(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.marks["Next Damage 0"] = 1
         if self.entity.Game.Counters.numMinionsSummonedThisGame[self.entity.ID] >= 20:
-            self.entity.getsKeyword("Windfury")
+            self.entity.getsStatus("Windfury")
             if self.entity.Game.Counters.numMinionsSummonedThisGame[self.entity.ID] >= 40:
                 self.entity.evolve()
 
@@ -442,15 +442,15 @@ class OnWingsofTomorrow(SVSpell):
         return None
 
 
-class GransResolve_Option(ChooseOneOption):
+class GransResolve_Option(Option):
     name, description = "Gran's Resolve", "Gran's Resolve"
     index = "SV_Eternal~Neutral~Spell~0~Gran's Resolve~Legendary~Uncollectible"
-
+	mana, attack, health = 10, -1, -1
     def available(self):
         return True
 
 
-class DjeetasDetermination_Option(ChooseOneOption):
+class DjeetasDetermination_Option(Option):
     name, description = "Djeeta's Determination", "Djeeta's Determination"
     index = "SV_Eternal~Neutral~Spell~0~Djeeta's Determination~Legendary~Uncollectible"
 
@@ -652,7 +652,7 @@ class ElfSorcerer(SVMinion):
     def inHandEvolving(self, target=None):
         for card in self.Game.Hand_Deck.hands[self.ID]:
             if type(card) == Fairy:
-                card.getsKeyword("Bane")
+                card.getsStatus("Bane")
 
 
 class MimlemelFreewheelingLass(SVMinion):
@@ -713,7 +713,7 @@ class BlossomTreant(SVMinion):
         self.deathrattles = [Deathrattle_BlossomTreant(self)]
 
     def inEvolving(self):
-        self.getsKeyword("Taunt")
+        self.getsStatus("Taunt")
         for trig in self.trigsBoard:
             if type(trig) == Trig_BlossomTreant:
                 self.trigsBoard.remove(trig)
@@ -807,7 +807,7 @@ class TweyenDarkHuntress(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            target.getsFrozen()
+            target.getsStatus("Frozen")
         sa, ssa = False, False
         for trig in self.trigsHand:
             if type(trig) == Trig_SkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
@@ -1294,14 +1294,14 @@ class Trig_AgewornWeaponry(TrigBoard):
                                 self.entity)
 
 
-class Greatshield_Option(ChooseOneOption):
+class Greatshield_Option(Option):
     name, description = "Greatshield", "Greatshield"
 
     def available(self):
         return True
 
 
-class Greatsword_Option(ChooseOneOption):
+class Greatsword_Option(Option):
     name, description = "Greatsword", "Greatsword"
 
     def available(self):
@@ -1579,7 +1579,7 @@ class EahtaGodoftheBlade(SVMinion):
                     ManaMod(card, changeby=-5, changeto=-1).applies()
 
     def inEvolving(self):
-        self.getsKeyword("Windfury")
+        self.getsStatus("Windfury")
         for trig in self.trigsBoard:
             if type(trig) == Trig_EahtaGodoftheBlade:
                 self.trigsBoard.remove(trig)
@@ -1729,9 +1729,9 @@ class ElixirMixer(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            target.getsKeyword("Rush")
-            target.getsKeyword("Bane")
-            target.getsKeyword("Drain")
+            target.getsStatus("Rush")
+            target.getsStatus("Bane")
+            target.getsStatus("Drain")
 
 
 class ForceBarrier(SVSpell):
@@ -2563,11 +2563,11 @@ class NiyonMysticMusician(SVMinion):
         if sa:
             for minion in self.Game.minionsonBoard(self.ID):
                 minion.buffDebuff(1, 1)
-                minion.getsKeyword("Bane")
+                minion.getsStatus("Bane")
         if ssa:
             for minion in self.Game.minionsonBoard(3 - self.ID):
-                minion.losesKeyword("Taunt")
-                minion.getsFrozen()
+                minion.losesStatus("Taunt")
+                minion.getsStatus("Frozen")
 
 
 class Skullfish(SVMinion):
@@ -2768,7 +2768,7 @@ class Trig_SeoxHeavenlyHowl(TrigBoard):
         return self.entity.onBoard and subject == self.entity
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.getsKeyword("Charge")
+        self.entity.getsStatus("Charge")
         self.entity.marks["Next Damage 0"] = 1
         for trig in self.entity.trigsBoard:
             if trig == self:
@@ -3216,7 +3216,7 @@ class FeowerDoubleBladeFlash(SVMinion):
                         self.dealsDamage(curGame.minions[3 - self.ID][i], 4)
         if ssa:
             for minion in self.Game.minionsonBoard(self.ID):
-                minion.getsKeyword("Windfury")
+                minion.getsStatus("Windfury")
 
 
 class TienTreacherousTrigger(SVMinion):
@@ -3250,11 +3250,11 @@ class TienTreacherousTrigger(SVMinion):
                 ssa = True
         if sa:
             self.buffDebuff(2, 0)
-            self.getsKeyword("Charge")
+            self.getsStatus("Charge")
         if ssa:
             for card in self.Game.Hand_Deck.hands[self.ID]:
                 if card.type == "Minion":
-                    card.getsKeyword("Charge")
+                    card.getsStatus("Charge")
 
 
 class Trig_FeowerTien(TrigBoard):
@@ -3802,7 +3802,7 @@ class Trig_GranDjeetaEternalHeroes(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.marks["Next Damage 0"] = 1
         if self.entity.Game.Counters.numMinionsSummonedThisGame[self.entity.ID] >= 20:
-            self.entity.getsKeyword("Windfury")
+            self.entity.getsStatus("Windfury")
             if self.entity.Game.Counters.numMinionsSummonedThisGame[self.entity.ID] >= 40:
                 self.entity.evolve()
 
@@ -3900,7 +3900,7 @@ class OnWingsofTomorrow(SVSpell):
         return None
 
 
-class GransResolve_Option(ChooseOneOption):
+class GransResolve_Option(Option):
     name, description = "Gran's Resolve", "Gran's Resolve"
     index = "SV_Eternal~Neutral~Spell~0~~Gran's Resolve~Legendary~Uncollectible"
 
@@ -3908,7 +3908,7 @@ class GransResolve_Option(ChooseOneOption):
         return True
 
 
-class DjeetasDetermination_Option(ChooseOneOption):
+class DjeetasDetermination_Option(Option):
     name, description = "Djeeta's Determination", "Djeeta's Determination"
     index = "SV_Eternal~Neutral~Spell~0~~Djeeta's Determination~Legendary~Uncollectible"
 
@@ -4110,7 +4110,7 @@ class ElfSorcerer(SVMinion):
     def inHandEvolving(self, target=None):
         for card in self.Game.Hand_Deck.hands[self.ID]:
             if type(card) == Fairy:
-                card.getsKeyword("Bane")
+                card.getsStatus("Bane")
 
 
 class MimlemelFreewheelingLass(SVMinion):
@@ -4171,7 +4171,7 @@ class BlossomTreant(SVMinion):
         self.deathrattles = [Deathrattle_BlossomTreant(self)]
 
     def inEvolving(self):
-        self.getsKeyword("Taunt")
+        self.getsStatus("Taunt")
         for trig in self.trigsBoard:
             if type(trig) == Trig_BlossomTreant:
                 self.trigsBoard.remove(trig)
@@ -4265,7 +4265,7 @@ class TweyenDarkHuntress(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            target.getsFrozen()
+            target.getsStatus("Frozen")
         sa, ssa = False, False
         for trig in self.trigsHand:
             if type(trig) == Trig_SkyboundArt and trig.progress <= self.Game.Counters.turns[self.ID]:
@@ -4752,14 +4752,14 @@ class Trig_AgewornWeaponry(TrigBoard):
                                 self.entity)
 
 
-class Greatshield_Option(ChooseOneOption):
+class Greatshield_Option(Option):
     name, description = "Greatshield", "Greatshield"
 
     def available(self):
         return True
 
 
-class Greatsword_Option(ChooseOneOption):
+class Greatsword_Option(Option):
     name, description = "Greatsword", "Greatsword"
 
     def available(self):
@@ -5037,7 +5037,7 @@ class EahtaGodoftheBlade(SVMinion):
                     ManaMod(card, changeby=-5, changeto=-1).applies()
 
     def inEvolving(self):
-        self.getsKeyword("Windfury")
+        self.getsStatus("Windfury")
         for trig in self.trigsBoard:
             if type(trig) == Trig_EahtaGodoftheBlade:
                 self.trigsBoard.remove(trig)
@@ -5187,9 +5187,9 @@ class ElixirMixer(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            target.getsKeyword("Rush")
-            target.getsKeyword("Bane")
-            target.getsKeyword("Drain")
+            target.getsStatus("Rush")
+            target.getsStatus("Bane")
+            target.getsStatus("Drain")
 
 
 class ForceBarrier(SVSpell):
@@ -6021,11 +6021,11 @@ class NiyonMysticMusician(SVMinion):
         if sa:
             for minion in self.Game.minionsonBoard(self.ID):
                 minion.buffDebuff(1, 1)
-                minion.getsKeyword("Bane")
+                minion.getsStatus("Bane")
         if ssa:
             for minion in self.Game.minionsonBoard(3 - self.ID):
-                minion.losesKeyword("Taunt")
-                minion.getsFrozen()
+                minion.losesStatus("Taunt")
+                minion.getsStatus("Frozen")
 
 
 class Skullfish(SVMinion):
@@ -6226,7 +6226,7 @@ class Trig_SeoxHeavenlyHowl(TrigBoard):
         return self.entity.onBoard and subject == self.entity
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.getsKeyword("Charge")
+        self.entity.getsStatus("Charge")
         self.entity.marks["Next Damage 0"] = 1
         for trig in self.entity.trigsBoard:
             if trig == self:
@@ -6674,7 +6674,7 @@ class FeowerDoubleBladeFlash(SVMinion):
                         self.dealsDamage(curGame.minions[3 - self.ID][i], 4)
         if ssa:
             for minion in self.Game.minionsonBoard(self.ID):
-                minion.getsKeyword("Windfury")
+                minion.getsStatus("Windfury")
 
 
 class TienTreacherousTrigger(SVMinion):
@@ -6708,11 +6708,11 @@ class TienTreacherousTrigger(SVMinion):
                 ssa = True
         if sa:
             self.buffDebuff(2, 0)
-            self.getsKeyword("Charge")
+            self.getsStatus("Charge")
         if ssa:
             for card in self.Game.Hand_Deck.hands[self.ID]:
                 if card.type == "Minion":
-                    card.getsKeyword("Charge")
+                    card.getsStatus("Charge")
 
 
 class Trig_FeowerTien(TrigBoard):

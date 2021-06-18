@@ -5,9 +5,8 @@ from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
 
-from AcrossPacks import TheCoin, MurlocScout
-from Classic import PatientAssassin
-from AcrossPacks import *
+from AcrossPacks import TheCoin, Lackeys, MurlocScout, PatientAssassin, GoldenKobold, \
+						TolinsGoblet, WondrousWand, ZarogsCrown, Bomb, BoomBot
 
 import copy
 
@@ -49,7 +48,7 @@ class Toxfin(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			target.getsKeyword("Poisonous")
+			target.getsStatus("Poisonous")
 		return target
 		
 
@@ -67,7 +66,7 @@ class DalaranLibrarian(Minion):
 	mana, attack, health = 2, 2, 3
 	index = "DALARAN~Neutral~Minion~2~2~3~~Dalaran Librarian~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Silences adjacent minions"
-	name_CN = "达拉然 图书管理员"
+	name_CN = "达拉然图书管理员"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.onBoard:
@@ -271,7 +270,7 @@ class Trig_MagicCarpet(TrigBoard):
 				else "After you play a 1-Cost minion, give it +1 Attack and Rush"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		subject.getsKeyword("Rush")
+		subject.getsStatus("Rush")
 		subject.buffDebuff(1, 0)
 		
 		
@@ -527,8 +526,8 @@ class Trig_AzeriteElemental(TrigBoard):
 		return "在你的回合开始时，获得法术伤害+2" if CHN else "At the start of your turn, gain Spelldamage +2"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.getsKeyword("Spell Damage")
-		self.entity.getsKeyword("Spell Damage")
+		self.entity.getsStatus("Spell Damage")
+		self.entity.getsStatus("Spell Damage")
 		
 		
 class BaristaLynchen(Minion):
@@ -758,8 +757,8 @@ class ExoticMountseller(Minion):
 	name_CN = "特殊坐骑商人"
 	poolIdentifier = "3-Cost Beasts to Summon"
 	@classmethod
-	def generatePool(cls, Game):
-		return "3-Cost Beasts to Summon", [value for key, value in Game.MinionswithRace["Beast"].items() if key.split('~')[3] == "3"]
+	def generatePool(cls, pools):
+		return "3-Cost Beasts to Summon", [value for key, value in pools.MinionswithRace["Beast"].items() if key.split('~')[3] == "3"]
 		
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -859,7 +858,7 @@ class HeroicInnkeeper(Minion):
 	mana, attack, health = 8, 4, 4
 	index = "DALARAN~Neutral~Minion~8~4~4~~Heroic Innkeeper~Taunt~Battlecry"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Gain +2/+2 for each other friendly minion"
-	name_CN = "霸气的 旅店老板娘"
+	name_CN = "霸气的旅店老板娘"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.onBoard or self.inHand:
@@ -922,11 +921,11 @@ class ArchivistElysiana(Minion):
 	mana, attack, health = 9, 7, 7
 	index = "DALARAN~Neutral~Minion~9~7~7~~Archivist Elysiana~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover 5 cards. Replace your deck with 2 copies of each"
-	name_CN = "档案员 艾丽西娜"
+	name_CN = "档案员艾丽西娜"
 	poolIdentifier = "Cards as Druid"
 	@classmethod
-	def generatePool(cls, Game):
-		return ["Cards as "+Class for Class in Game.Classes], [list(Game.ClassCards[Class].values())+list(Game.NeutralCards.values()) for Class in Game.Classes]
+	def generatePool(cls, pools):
+		return ["Cards as "+Class for Class in pools.Classes], [list(pools.ClassCards[Class].values())+list(pools.NeutralCards.values()) for Class in pools.Classes]
 		
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -972,8 +971,8 @@ class BigBadArchmage(Minion):
 	name_CN = "恶狼大法师"
 	poolIdentifier = "6-Cost Minions to Summon"
 	@classmethod
-	def generatePool(cls, Game):
-		return "6-Cost Minions to Summon", list(Game.MinionsofCost[6].values())
+	def generatePool(cls, pools):
+		return "6-Cost Minions to Summon", list(pools.MinionsofCost[6].values())
 		
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1070,15 +1069,17 @@ class CrystalPower(Spell):
 				self.restoresHealth(target, heal)
 		return target
 		
-class PiercingThorns_Option(ChooseOneOption):
+class PiercingThorns_Option(Option):
 	name, description = "Piercing Thorns", "Deal 2 damage to minion"
 	index = "DALARAN~Druid~Spell~1~Nature~Piercing Thorns~Uncollectible"
+	mana, attack, health = 1, -1, -1
 	def available(self):
 		return self.entity.selectableMinionExists(0)
 		
-class HealingBlossom_Option(ChooseOneOption):
+class HealingBlossom_Option(Option):
 	name, description = "Healing Blossom", "Restore 5 Health"
 	index = "DALARAN~Druid~Spell~1~Nature~Healing Blossom~Uncollectible"
+	mana, attack, health = 1, -1, -1
 	def available(self):
 		return self.entity.selectableCharacterExists(1)
 		
@@ -1129,8 +1130,8 @@ class CrystalsongPortal(Spell):
 	name_CN = "晶歌传送门"
 	poolIdentifier = "Druid Minions"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Druid Minions", [value for key, value in Game.ClassCards["Druid"].items() if "~Minion~" in key]
+	def generatePool(cls, pools):
+		return "Druid Minions", [value for key, value in pools.ClassCards["Druid"].items() if "~Minion~" in key]
 		
 	def effCanTrig(self):
 		self.effectViable = True
@@ -1200,7 +1201,7 @@ class KeeperStalladris(Minion):
 	mana, attack, health = 2, 2, 3
 	index = "DALARAN~Druid~Minion~2~2~3~~Keeper Stalladris~Legendary"
 	requireTarget, keyWord, description = False, "", "After you cast a Choose One spell, add copies of both choices to your hand"
-	name_CN = "守护者 斯塔拉蒂斯"
+	name_CN = "守护者斯塔拉蒂斯"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_KeeperStalladris(self)]
@@ -1232,8 +1233,8 @@ class Lifeweaver(Minion):
 	name_CN = "织命者"
 	poolIdentifier = "Druid Spells"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Druid Spells", [value for key, value in Game.ClassCards["Druid"].items() if "~Spell~" in key]
+	def generatePool(cls, pools):
+		return "Druid Spells", [value for key, value in pools.ClassCards["Druid"].items() if "~Spell~" in key]
 		
 	def __init__(self, Game, ID,):
 		super().__init__(Game, ID)
@@ -1435,8 +1436,8 @@ class Shimmerfly(Minion):
 	name_CN = "闪光蝴蝶"
 	poolIdentifier = "Hunter Spells"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Hunter Spells", [value for key, value in Game.ClassCards["Hunter"].items() if "~Spell~" in key]
+	def generatePool(cls, pools):
+		return "Hunter Spells", [value for key, value in pools.ClassCards["Hunter"].items() if "~Spell~" in key]
 		
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1571,9 +1572,9 @@ class MarkedShot(Spell):
 	name_CN = "标记射击"
 	poolIdentifier = "Hunter Spells"
 	@classmethod
-	def generatePool(cls, Game):
-		return [Class+" Spells" for Class in Game.Classes], \
-				[[value for key, value in Game.ClassCards[Class].items() if "~Spell~" in key] for Class in Game.Classes]
+	def generatePool(cls, pools):
+		return [Class+" Spells" for Class in pools.Classes], \
+				[[value for key, value in pools.ClassCards[Class].items() if "~Spell~" in key] for Class in pools.Classes]
 				
 	def available(self):
 		return self.selectableMinionExists()
@@ -1709,7 +1710,7 @@ class ThoridaltheStarsFury(Weapon):
 	Class, name, description = "Hunter", "Thori'dal, the Stars' Fury", "After your hero attacks, gain Spell Damage +2 this turn"
 	mana, attack, durability = 3, 2, 3
 	index = "DALARAN~Hunter~Weapon~3~2~3~Thori'dal, the Stars' Fury~Legendary~Uncollectible"
-	name_CN = "索利达尔， 群星之怒"
+	name_CN = "索利达尔，群星之怒"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_ThoridaltheStarsFury(self)]
@@ -1770,7 +1771,7 @@ class RayofFrost(Spell):
 				damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 				self.dealsDamage(target, damage)
 			else:
-				target.getsFrozen()
+				target.getsStatus("Frozen")
 		return target
 		
 class RayofFrost2(Spell):
@@ -1797,7 +1798,7 @@ class RayofFrost2(Spell):
 				damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 				self.dealsDamage(target, damage)
 			else:
-				target.getsFrozen()
+				target.getsStatus("Frozen")
 		return target
 		
 		
@@ -1867,8 +1868,8 @@ class MessengerRaven(Minion):
 	name_CN = "渡鸦信使"
 	poolIdentifier = "Mage Minions"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Mage Minions", [value for key, value in Game.ClassCards["Mage"].items() if "~Minion~" in key]
+	def generatePool(cls, pools):
+		return "Mage Minions", [value for key, value in pools.ClassCards["Mage"].items() if "~Minion~" in key]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -1900,9 +1901,9 @@ class MagicTrick(Spell):
 	name_CN = "魔术戏法"
 	poolIdentifier = "Spells 3-Cost or less as Mage"
 	@classmethod
-	def generatePool(cls, Game):
-		return ["Spells 3-Cost or less as %s"%Class for Class in Game.Classes], \
-				[[value for key, value in Game.ClassCards[Class].items() if "~Spell~" in key and int(key.split('~')[3]) < 4] for Class in Game.Classes]
+	def generatePool(cls, pools):
+		return ["Spells 3-Cost or less as %s"%Class for Class in pools.Classes], \
+				[[value for key, value in pools.ClassCards[Class].items() if "~Spell~" in key and int(key.split('~')[3]) < 4] for Class in pools.Classes]
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -1935,9 +1936,9 @@ class ConjurersCalling(Spell):
 	name_CN = "咒术师的召唤"
 	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
-	def generatePool(cls, Game):
-		return ["%d-Cost Minions to Summon"%cost for cost in Game.MinionsofCost.keys()], \
-				[list(Game.MinionsofCost[cost].values()) for cost in Game.MinionsofCost.keys()]
+	def generatePool(cls, pools):
+		return ["%d-Cost Minions to Summon"%cost for cost in pools.MinionsofCost.keys()], \
+				[list(pools.MinionsofCost[cost].values()) for cost in pools.MinionsofCost.keys()]
 				
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2022,7 +2023,7 @@ class KirinTorTricaster(Minion):
 	mana, attack, health = 4, 3, 3
 	index = "DALARAN~Mage~Minion~4~3~3~~Kirin Tor Tricaster"
 	requireTarget, keyWord, description = False, "", "Spell Damage +3. Your spells cost (1) more"
-	name_CN = "肯瑞托 三修法师"
+	name_CN = "肯瑞托三修法师"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.keyWords["Spell Damage"] = 3
@@ -2040,8 +2041,8 @@ class ManaCyclone(Minion):
 	name_CN = "法力飓风"
 	poolIdentifier = "Mage Spells"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Mage Spells", [value for key, value in Game.ClassCards["Mage"].items() if "~Spell~" in key]
+	def generatePool(cls, pools):
+		return "Mage Spells", [value for key, value in pools.ClassCards["Mage"].items() if "~Spell~" in key]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -2064,13 +2065,13 @@ class PowerofCreation(Spell):
 	name_CN = "创世之力"
 	poolIdentifier = "6-Cost Minions as Mage to Summon"
 	@classmethod
-	def generatePool(cls, Game):
-		classes = ["6-Cost Minions as %s to Summon"%Class for Class in Game.Classes]
-		classCards = {s : [] for s in Game.ClassesandNeutral}
-		for key, value in Game.MinionsofCost[6].items():
+	def generatePool(cls, pools):
+		classes = ["6-Cost Minions as %s to Summon"%Class for Class in pools.Classes]
+		classCards = {s : [] for s in pools.ClassesandNeutral}
+		for key, value in pools.MinionsofCost[6].items():
 			for Class in key.split('~')[1].split(','):
 				classCards[Class].append(value)
-		return classes, [classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
+		return classes, [classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -2103,9 +2104,9 @@ class Kalecgos(Minion):
 	name_CN = "卡雷苟斯"
 	poolIdentifier = "Mage Spells"
 	@classmethod
-	def generatePool(cls, Game):
-		return [Class+" Spells" for Class in Game.Classes], \
-				[[value for key, value in Game.ClassCards[Class].items() if "~Spell~" in key] for Class in Game.Classes]
+	def generatePool(cls, pools):
+		return [Class+" Spells" for Class in pools.Classes], \
+				[[value for key, value in pools.ClassCards[Class].items() if "~Spell~" in key] for Class in pools.Classes]
 				
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2192,7 +2193,7 @@ class LightforgedBlessing(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			target.getsKeyword("Lifesteal")
+			target.getsStatus("Lifesteal")
 		return target
 		
 class LightforgedBlessing2(Spell):
@@ -2210,7 +2211,7 @@ class LightforgedBlessing2(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			target.getsKeyword("Lifesteal")
+			target.getsStatus("Lifesteal")
 		return target
 		
 		
@@ -2247,8 +2248,8 @@ class DesperateMeasures(Spell):
 	name_CN = "孤注一掷"
 	poolIdentifier = "Paladin Secrets"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Paladin Secrets", [value for key, value in Game.ClassCards["Paladin"].items() if value.description.startswith("Secret:")]
+	def generatePool(cls, pools):
+		return "Paladin Secrets", [value for key, value in pools.ClassCards["Paladin"].items() if value.description.startswith("Secret:")]
 		
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2719,9 +2720,9 @@ class HenchClanBurglar(Minion):
 	name_CN = "荆棘帮蟊贼"
 	poolIdentifier = "Druid Spells"
 	@classmethod
-	def generatePool(cls, Game):
-		return [Class+" Spells" for Class in Game.Classes], \
-				[[value for key, value in Game.ClassCards[Class].items() if "~Spell~" in key] for Class in Game.Classes]
+	def generatePool(cls, pools):
+		return [Class+" Spells" for Class in pools.Classes], \
+				[[value for key, value in pools.ClassCards[Class].items() if "~Spell~" in key] for Class in pools.Classes]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -2753,7 +2754,7 @@ class TogwagglesScheme(Spell):
 	Class, school, name = "Rogue", "", "Togwaggle's Scheme"
 	requireTarget, mana = True, 1
 	index = "DALARAN~Rogue~Spell~1~Togwaggle's Scheme"
-	name_CN = "托瓦格尔的 阴谋"
+	name_CN = "托瓦格尔的阴谋"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.progress = 1
@@ -2789,10 +2790,10 @@ class UnderbellyFence(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.inHand and self.Game.Hand_Deck.holdingCardfromAnotherClass(self.ID, self):
 			self.buffDebuff(1, 1)
-			self.getsKeyword("Rush")
+			self.getsStatus("Rush")
 		elif self.onBoard and self.Game.Hand_Deck.holdingCardfromAnotherClass(self.ID):
 			self.buffDebuff(1, 1)
-			self.getsKeyword("Rush")
+			self.getsStatus("Rush")
 		return None
 		
 		
@@ -2997,7 +2998,7 @@ class HeistbaronTogwaggle(Minion):
 	mana, attack, health = 6, 5, 5
 	index = "DALARAN~Rogue~Minion~6~5~5~~Heistbaron Togwaggle~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Lackey, choose a fantastic treasure"
-	name_CN = "劫匪之王 托瓦格尔"
+	name_CN = "劫匪之王托瓦格尔"
 	
 	def effCanTrig(self):
 		self.effectViable = False
@@ -3075,9 +3076,9 @@ class Mutate(Spell):
 	name_CN = "突变"
 	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
-	def generatePool(cls, Game):
-		return ["%d-Cost Minions to Summon"%cost for cost in Game.MinionsofCost.keys()], \
-				[list(Game.MinionsofCost[cost].values()) for cost in Game.MinionsofCost.keys()]
+	def generatePool(cls, pools):
+		return ["%d-Cost Minions to Summon"%cost for cost in pools.MinionsofCost.keys()], \
+				[list(pools.MinionsofCost[cost].values()) for cost in pools.MinionsofCost.keys()]
 		
 	def available(self):
 		return self.selectableFriendlyMinionExists()
@@ -3093,7 +3094,7 @@ class Mutate(Spell):
 					newMinion = curGame.guides.pop(0)
 				else:
 					cost = type(target).mana + 1
-					while cost not in curGame.MinionsofCost:
+					while "%d-Cost Minions to Summon"%cost not in curGame.RNGPools:
 						cost -= 1
 					newMinion = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost))
 					curGame.fixedGuides.append(newMinion)
@@ -3157,8 +3158,8 @@ class UnderbellyAngler(Minion):
 	name_CN = "下水道渔人"
 	poolIdentifier = "Murlocs"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Murlocs", list(Game.MinionswithRace["Murloc"].values())
+	def generatePool(cls, pools):
+		return "Murlocs", list(pools.MinionswithRace["Murloc"].values())
 		
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3284,12 +3285,12 @@ class SwampqueenHagatha(Minion):
 	mana, attack, health = 7, 5, 5
 	index = "DALARAN~Shaman~Minion~7~5~5~~Swampqueen Hagatha~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a 5/5 Horror to your hand. Teach it two Shaman spells"
-	name_CN = "沼泽女王 哈加莎"
+	name_CN = "沼泽女王哈加莎"
 	poolIdentifier = "Shaman Spells"
 	@classmethod
-	def generatePool(cls, Game):
+	def generatePool(cls, pools):
 		spells, targetingSpells, nontargetingSpells = [], [], []
-		for key, value in Game.ClassCards["Shaman"].items():
+		for key, value in pools.ClassCards["Shaman"].items():
 			if "~Spell~" in key:
 				spells.append(value)
 				if value.requireTarget: targetingSpells.append(value)
@@ -3569,11 +3570,11 @@ class ArchVillainRafaam(Minion):
 	mana, attack, health = 7, 7, 8
 	index = "DALARAN~Warlock~Minion~7~7~8~~Arch-Villain Rafaam~Taunt~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "Taunt", "Battlecry: Replace your hand and deck with Legendary minions"
-	name_CN = "至尊盗王 拉法姆"
+	name_CN = "至尊盗王拉法姆"
 	poolIdentifier = "Legendary Minions"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Legendary Minions", list(Game.LegendaryMinions.values())
+	def generatePool(cls, pools):
+		return "Legendary Minions", list(pools.LegendaryMinions.values())
 	#不知道拉法姆的替换手牌、牌库和迦拉克隆会有什么互动。假设不影响主迦拉克隆。
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -3597,7 +3598,7 @@ class FelLordBetrug(Minion):
 	mana, attack, health = 8, 5, 7
 	index = "DALARAN~Warlock~Minion~8~5~7~Demon~Fel Lord Betrug~Legendary"
 	requireTarget, keyWord, description = False, "", "Whenever you draw a minion, summon a copy with Rush that dies at end of turn"
-	name_CN = "邪能领主 贝图格"
+	name_CN = "邪能领主贝图格"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_FelLordBetrug(self)]
@@ -3619,7 +3620,7 @@ class Trig_FelLordBetrug(TrigBoard):
 		minion.trigsBoard.append(Trig_DieatEndofTurn(minion))
 		self.entity.Game.summon(minion, self.entity.pos+1, self.entity)
 		if minion.onBoard:
-			minion.getsKeyword("Rush")
+			minion.getsStatus("Rush")
 			
 """Warrior cards"""
 class ImproveMorale(Spell):
@@ -3685,7 +3686,7 @@ class DrBoomsScheme(Spell):
 	requireTarget, mana = False, 4
 	index = "DALARAN~Warrior~Spell~4~Dr. Boom's Scheme"
 	description = "Gain 1 Armor. (Upgrades each turn!)"
-	name_CN = "砰砰博士的 阴谋"
+	name_CN = "砰砰博士的阴谋"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.progress = 1
@@ -3836,7 +3837,7 @@ class TheBoomReaver(Minion):
 			if i > -1:
 				minion = curGame.Hand_Deck.decks[self.ID][i]
 				if curGame.summon(minion.selfCopy(self.ID), self.pos+1, self):
-					minion.getsKeyword("Rush")
+					minion.getsStatus("Rush")
 		return None
 		
 		

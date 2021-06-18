@@ -16,7 +16,7 @@ def extractfrom(target, listObj):
 	except: return None
 
 class Hand_Deck:
-	def __init__(self, Game, deck1=[], deck2=[]):  # 通过卡组列表加载卡组
+	def __init__(self, Game, deck1=None, deck2=None):  # 通过卡组列表加载卡组
 		self.Game = Game
 		self.hands = {1: [], 2: []}
 		self.decks = {1: [], 2: []}
@@ -31,15 +31,15 @@ class Hand_Deck:
 		self.cards_XPossi = {1:[], 2:[]} #只知道这张牌可能是什么的资源牌
 		self.trackedHands = {1:[], 2:[]} #可以追踪的手牌，但是它们可能明确知道是哪一张，也可能是只知道可能是什么的手牌
 		
-	def initialize(self):
-		self.initializeDecks()
+	def initialize(self, transferStudentType=None):
+		self.initializeDecks(transferStudentType)
 		self.initializeHands()
 		
-	def initializeDecks(self):
+	def initializeDecks(self, transferStudentType=None):
 		for ID in range(1, 3):
 			Class = self.Game.heroes[ID].Class  # Hero's class
 			for obj in self.initialDecks[ID]:
-				if obj.name == "Transfer Student": obj = self.Game.transferStudentType
+				if obj.name == "Transfer Student" and transferStudentType: obj = transferStudentType
 				self.cards_1Possi[ID].append((None, (obj, )))
 				card = obj(self.Game, ID)
 				if "Galakrond, " in card.name:
@@ -83,9 +83,7 @@ class Hand_Deck:
 				for num in range(1, len(indices[ID]) + 1):
 					# 起手换牌的列表mulligans中根据要换掉的牌的序号从大到小摘掉，然后在原处补充新手牌
 					cardstoReplace.append(self.Game.mulligans[ID].pop(indices[ID][-num]))
-					print("The card to replace in hand:", cardstoReplace[-1])
 					card = self.decks[ID].pop()
-					print("Replace it with", card)
 					self.Game.mulligans[ID].insert(indices[ID][-num], card)
 			self.decks[ID] += cardstoReplace
 			for card in self.decks[ID]: card.entersDeck()  # Cards in deck arm their possible trigDeck
@@ -106,21 +104,24 @@ class Hand_Deck:
 			for ID in range(1, 3):
 				for card in self.hands[ID] + self.decks[ID]:
 					if "Start of Game" in card.index:
+						GUI.seqHolder[-1].append(GUI.FUNC(GUI.showOffBoardTrig, card))
 						card.startofGame()
-						GUI.seqHolder[0].append(GUI.FUNC(GUI.displayCard, card))
 			self.drawCard(1)
-			GUI.seqHolder[0].append(GUI.FUNC(self.decideCardColors))
-			GUI.seqHolder[0].start()
-		else:
-			pass
+			self.decideCardColors()
+			GUI.seqHolder.pop(0).start()
+		else: pass
 		
 	def decideCardColors(self):
 		for card in self.hands[1] + self.hands[2]:
 			card.effCanTrig()
 			card.checkEvanescent()
 		if self.Game.GUI:
-			for card in self.hands[1] + self.hands[2]:
-				card.btn.setBoxColor(card.btn.decideColor())
+			for ID in range(1, 3):
+				for card in self.hands[ID] + self.Game.minions[ID]:
+					card.btn.setBoxColor(card.btn.decideColor())
+				hero, power = self.Game.heroes[ID], self.Game.powers[ID]
+				hero.btn.setBoxColor(hero.btn.decideColor())
+				power.btn.setBoxColor(power.btn.decideColor())
 				
 	# 双人游戏中一方很多控制自己的换牌，之后两个游戏中复制对方的手牌和牌库信息
 	def mulligan1Side(self, ID, indices):
@@ -323,7 +324,7 @@ class Hand_Deck:
 		card.leavesHand()
 		if card.tracked: self.ruleOut(card, fromHD=2)
 		self.hands[ID].pop(i)
-		self.addCardtoHand(newCard, ID, "", byDiscover=False, pos=i, ani="Twinspell", possi=(newCard.creator, newCard.possi))
+		self.addCardtoHand(newCard, ID, byType=False, byDiscover=False, pos=i, ani="Twinspell", possi=(newCard.creator, newCard.possi))
 		
 	#目前只有牌库中的迦拉克隆升级时会调用，对方是可以知道的
 	def replaceCardinDeck(self, card, newCard):
@@ -440,7 +441,7 @@ class Hand_Deck:
 			card = self.hands[ID].pop(i)
 			card.leavesHand()
 			self.ruleOut(card, fromHD=2) #rule out from both hand and deck
-			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee=True, linger=True)
+			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni([card], enemyCanSee=True, linger=True)
 			self.Game.sendSignal("CardDiscarded", card.ID, None, card, 1, "")
 			card.whenDiscarded()
 			self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
@@ -482,7 +483,7 @@ class Hand_Deck:
 				#If the card is tracked, rule out from both hand and deck; otherwise only rule out from deck
 				self.ruleOut(card, fromHD=1+card.tracked)
 				
-			if animate and self.Game.GUI: self.Game.GUI.cardsLeaveHandAni(card, enemyCanSee, linger=linger)
+			if animate and self.Game.GUI: self.Game.GUI.cardsLeaveHandAni([card], card.ID, enemyCanSee, linger=linger)
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
 			return card, cost, posinHand
 
@@ -533,9 +534,10 @@ class Hand_Deck:
 
 from CardPools import *
 	
-Default1 = [FreezingTrap, Avenge, NobleSacrifice, Reckoning, #ArgentProtector, HolyLight, PursuitofJustice, AldorPeacekeeper, Equality, WarhorseTrainer, TruesilverChampion, StandAgainstDarkness, GuardianofKings, TirionFordring,
+Default1 = [ArgentProtector, HolyLight, PursuitofJustice, ArgentSquire, Equality, WarhorseTrainer,
+			TruesilverChampion, StandAgainstDarkness, GuardianofKings, TirionFordring,
 			#Preparation, TinyKnightofEvil, Hellfire, LordJaraxxus, LakkariFelhound,
-			SigilofFlame, SigilofSilence, NozdormutheEternal,
+			StrengthTotem, SigilofSilence,
 			]
 
 Default2 = [#Mana 2 cards
@@ -547,11 +549,10 @@ Default2 = [#Mana 2 cards
 			#Druid cards
 			MarkoftheWild, MenagerieWarden, Nourish, AncientofWar, Cenarius,
 			##Mage cards
-			ShootingStar, FallenHero, IceBarrier, MirrorEntity, ColdarraDrake, Flamestrike,
+			FallenHero, IceBarrier, MirrorEntity,
 			##Priest cards
 			CrimsonClergy, HolySmite, ShadowWordDeath, ThriveintheShadows, Lightspawn, HolyNova, ShadowWordRuin, TempleEnforcer, NatalieSeline,
-			##Shaman cards
-			UnboundElemental, DraeneiTotemcarver, NozdormutheEternal,
+			
 			##Warrior cards
 			#BloodsailDeckhand, Whirlwind, CruelTaskmaster, Armorsmith, WarCache, WarsongOutrider, Brawl, Gorehowl, GrommashHellscream,
 			ImprisonedFelmaw, ImprisonedObserver, ImprisonedSungill, ImprisonedFelmaw, SigilofFlame, SigilofSilence,

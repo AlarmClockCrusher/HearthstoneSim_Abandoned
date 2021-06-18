@@ -5,8 +5,7 @@ from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
 
-from Basic import Claw, ArcaneMissiles, TruesilverChampion, TheCoin
-from AcrossPacks import Lackeys
+from AcrossPacks import Lackeys, TheCoin, Claw, ArcaneMissiles, TruesilverChampion
 
 """Descent of Dragons"""
 #迦拉克隆通常不能携带多张，但是如果起始卡组中有多张的话，则尽量选择与玩家职业一致的迦拉克隆为主迦拉克隆；如果不能如此，则第一个检测到的为主迦拉克隆
@@ -27,7 +26,7 @@ def invokeGalakrond(Game, ID):
 		Class = primaryGalakrond.Class
 		if "Priest" in Class:
 			if Game.mode == 0:
-				if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheUnbreakable(Game, ID), linger=False)
+				if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheUnbreakable(Game, ID))
 				if Game.guides:
 					minion = Game.guides.pop(0)
 				else:
@@ -36,7 +35,7 @@ def invokeGalakrond(Game, ID):
 				Game.Hand_Deck.addCardtoHand(minion, ID, byType=True)
 		elif "Rogue" in Class:
 			if Game.mode == 0:
-				if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheNightmare(Game, ID), linger=False)
+				if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheNightmare(Game, ID))
 				if Game.guides:
 					lackey = Game.guides.pop(0)
 				else:
@@ -44,13 +43,13 @@ def invokeGalakrond(Game, ID):
 					Game.fixedGuides.append(lackey)
 			Game.Hand_Deck.addCardtoHand(lackey, ID, byType=True)
 		elif "Shaman" in Class:
-			if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheTempest(Game, ID), linger=False)
+			if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheTempest(Game, ID))
 			Game.summon(WindsweptElemental(Game, ID), -1, ID, "")
 		elif "Warlock" in Class:
-			if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheWretched(Game, ID), linger=False)
+			if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheWretched(Game, ID))
 			Game.summon([DraconicImp(Game, ID) for i in range(2)], (-1, "totheRightEnd"), ID, "")
 		elif "Warrior" in Class:
-			if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheUnbreakable(Game, ID), linger=False)
+			if Game.GUI: Game.GUI.showOffBoardTrig(GalakrondtheUnbreakable(Game, ID))
 			Game.heroes[ID].gainAttack(3)
 	#invocation counter increases and upgrade the galakronds
 	Game.Counters.invokes[ID] += 1
@@ -120,9 +119,6 @@ class Galakrond_Hero(Hero):
 		#The only difference between the normal hero card being played
 		if game.Counters.primaryGalakronds[ID] is None:
 			game.Counters.primaryGalakronds[ID] = self
-		if game.GUI:
-			game.GUI.displayCard(self)
-			game.GUI.wait(500)
 		game.sendSignal("HeroCardPlayed", ID, self, None, mana, "", choice)
 		#Guaranteed to be 5 Armor gained
 		self.gainsArmor(5)
@@ -348,8 +344,8 @@ class Transmogrifier(Minion):
 	name_CN = "幻化师"
 	poolIdentifier = "Legendary Minions"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Legendary Minions", list(Game.LegendaryMinions.values())
+	def generatePool(cls, pools):
+		return "Legendary Minions", list(pools.LegendaryMinions.values())
 		
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -385,8 +381,8 @@ class WyrmrestPurifier(Minion):
 	name_CN = "龙眠净化者"
 	poolIdentifier = "Druid Cards"
 	@classmethod
-	def generatePool(cls, Game):
-		return [Class+" Cards" for Class in Game.Classes], [list(Game.ClassCards[Class].values()) for Class in Game.Classes]
+	def generatePool(cls, pools):
+		return [Class+" Cards" for Class in pools.Classes], [list(pools.ClassCards[Class].values()) for Class in pools.Classes]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -498,7 +494,7 @@ class GoboglideTech(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if any("Mech" in minion.race for minion in self.Game.minionsonBoard(self.ID)):
 			self.buffDebuff(1, 1)
-			self.getsKeyword("Rush")
+			self.getsStatus("Rush")
 		return None
 		
 		
@@ -600,7 +596,7 @@ class DragonmawPoacher(Minion):
 				break
 		if enemyControlsDragon:
 			self.buffDebuff(4, 4)
-			self.getsKeyword("Rush")
+			self.getsStatus("Rush")
 		return None
 		
 		
@@ -733,8 +729,8 @@ class ZulDrakRitualist(Minion):
 	name_CN = "祖达克仪祭师"
 	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
-	def generatePool(cls, Game):
-		return "1-Cost Minion to Summon", list(Game.MinionsofCost[1].values())
+	def generatePool(cls, pools):
+		return "1-Cost Minion to Summon", list(pools.MinionsofCost[1].values())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -769,13 +765,13 @@ class ChromaticEgg(Minion):
 	name_CN = "多彩龙蛋"
 	poolIdentifier = "Dragons as Druid to Summon"
 	@classmethod
-	def generatePool(cls, Game):
-		classCards = {s : [] for s in Game.ClassesandNeutral}
-		for key, value in Game.MinionswithRace["Dragon"].items():
+	def generatePool(cls, pools):
+		classCards = {s : [] for s in pools.ClassesandNeutral}
+		for key, value in pools.MinionswithRace["Dragon"].items():
 			for Class in key.split('~')[1].split(','):
 				classCards[Class].append(value)
-		return ["Dragons as %s to Summon"+Class for Class in Game.Classes], \
-				[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
+		return ["Dragons as %s to Summon"+Class for Class in pools.Classes], \
+				[classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 				
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -842,9 +838,9 @@ class CobaltSpellkin(Minion):
 	name_CN = "深蓝系咒师"
 	poolIdentifier = "1-Cost Spells as Druid"
 	@classmethod
-	def generatePool(cls, Game):
-		return ["1-Cost Spells as %s"%Class for Class in Game.Classes], \
-				[[value for key, value in Game.ClassCards[Class].items() if "~Spell~" in key and key.split('~')[3] == '1'] for Class in Game.Classes]
+	def generatePool(cls, pools):
+		return ["1-Cost Spells as %s"%Class for Class in pools.Classes], \
+				[[value for key, value in pools.ClassCards[Class].items() if "~Spell~" in key and key.split('~')[3] == '1'] for Class in pools.Classes]
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -933,8 +929,8 @@ class Skyfin(Minion):
 	name_CN = "飞天鱼人"
 	poolIdentifier = "Murlocs to Summon"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Murlocs to Summon", list(Game.MinionswithRace["Murloc"].values())
+	def generatePool(cls, pools):
+		return "Murlocs to Summon", list(pools.MinionswithRace["Murloc"].values())
 		
 	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
@@ -1090,7 +1086,7 @@ class UtgardeGrapplesniper(Minion):
 	mana, attack, health = 6, 5, 5
 	index = "DRAGONS~Neutral~Minion~6~5~5~~Utgarde Grapplesniper~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Both players draw a card. If it's a Dragon, summon it"
-	name_CN = "乌特加德 鱼叉射手"
+	name_CN = "乌特加德鱼叉射手"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -1173,11 +1169,11 @@ class DragonqueenAlexstrasza(Minion):
 	mana, attack, health = 9, 8, 8
 	index = "DRAGONS~Neutral~Minion~9~8~8~Dragon~Dragonqueen Alexstrasza~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no duplicates, add two Dragons to your hand. They cost (1)"
-	name_CN = "红龙女王 阿莱克丝塔萨"
+	name_CN = "红龙女王阿莱克丝塔萨"
 	poolIdentifier = "Dragons except Dragonqueen Alexstrasza"
 	@classmethod
-	def generatePool(cls, Game):
-		dragons = list(Game.MinionswithRace["Dragon"].values())
+	def generatePool(cls, pools):
+		dragons = list(pools.MinionswithRace["Dragon"].values())
 		dragons.remove(DragonqueenAlexstrasza)
 		return "Dragons except Dragonqueen Alexstrasza", dragons
 		
@@ -1337,20 +1333,22 @@ class Treenforcements(Spell):
 		if choice < 1:
 			if target:
 				target.buffDebuff(0, 2)
-				target.getsKeyword("Taunt")
+				target.getsStatus("Taunt")
 		if choice != 0:
 			self.Game.summon(Treant_Dragons(self.Game, self.ID), -1, self)
 		return target
 		
-class SmallRepairs_Option(ChooseOneOption):
+class SmallRepairs_Option(Option):
 	name, description = "Small Repairs", "Give a minion +2 Health and Taunt"
 	index = "DRAGONS~Druid~Spell~1~Nature~Small Repairs~Uncollectible"
+	mana, attack, health = 1, -1, -1
 	def available(self):
 		return self.entity.selectableMinionExists(0)
 		
-class SpinemUp_Option(ChooseOneOption):
+class SpinemUp_Option(Option):
 	name, description = "Spin 'em Up", "Summon a Treant"
 	index = "DRAGONS~Druid~Spell~1~Nature~Spin'em Up~Uncollectible"
+	mana, attack, health = 1, -1, -1
 	def available(self):
 		return self.entity.Game.space(self.entity.ID)
 		
@@ -1369,7 +1367,7 @@ class SmallRepairs(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			target.buffDebuff(0, 2)
-			target.getsKeyword("Taunt")
+			target.getsStatus("Taunt")
 		return target
 		
 class SpinemUp(Spell):
@@ -1466,12 +1464,12 @@ class EmeraldExplorer(Minion):
 	name_CN = "翡翠龙探险者"
 	poolIdentifier = "Dragons as Druid"
 	@classmethod
-	def generatePool(cls, Game):
-		classCards = {s : [] for s in Game.ClassesandNeutral}
-		for key, value in Game.MinionswithRace["Dragon"].items():
+	def generatePool(cls, pools):
+		classCards = {s : [] for s in pools.ClassesandNeutral}
+		for key, value in pools.MinionswithRace["Dragon"].items():
 			classCards[key.split('~')[1]].append(value)
-		return ["Dragons as "+Class for Class in Game.Classes], \
-				[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
+		return ["Dragons as "+Class for Class in pools.Classes], \
+				[classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -1569,11 +1567,11 @@ class YseraUnleashed(Minion):
 	mana, attack, health = 9, 4, 12
 	index = "DRAGONS~Druid~Minion~9~4~12~Dragon~Ysera, Unleashed~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle 7 Dream Portals into your deck. When drawn, summon a random Dragon"
-	name_CN = "觉醒巨龙 伊瑟拉"
+	name_CN = "觉醒巨龙伊瑟拉"
 	poolIdentifier = "Dragons to Summon"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Dragons to Summon", list(Game.MinionswithRace["Dragon"].values())
+	def generatePool(cls, pools):
+		return "Dragons to Summon", list(pools.MinionswithRace["Dragon"].values())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		portals = [DreamPortal(self.Game, self.ID) for i in range(7)]
@@ -1772,12 +1770,12 @@ class PrimordialExplorer(Minion):
 	name_CN = "始生龙探险者"
 	poolIdentifier = "Dragons as Hunter"
 	@classmethod
-	def generatePool(cls, Game):
-		classCards = {s : [] for s in Game.ClassesandNeutral}
-		for key, value in Game.MinionswithRace["Dragon"].items():
+	def generatePool(cls, pools):
+		classCards = {s : [] for s in pools.ClassesandNeutral}
+		for key, value in pools.MinionswithRace["Dragon"].items():
 			classCards[key.split('~')[1]].append(value)
-		return ["Dragons as "+Class for Class in Game.Classes], \
-				[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
+		return ["Dragons as "+Class for Class in pools.Classes], \
+				[classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -1871,9 +1869,9 @@ class ArcaneBreath(Spell):
 	name_CN = "奥术吐息"
 	poolIdentifier = "Mage Spells"
 	@classmethod
-	def generatePool(cls, Game):
-		return [Class+" Spells" for Class in Game.Classes], \
-				[[value for key, value in Game.ClassCards[Class].items() if "~Spell~" in key] for Class in Game.Classes]
+	def generatePool(cls, pools):
+		return [Class+" Spells" for Class in pools.Classes], \
+				[[value for key, value in pools.ClassCards[Class].items() if "~Spell~" in key] for Class in pools.Classes]
 				
 	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
@@ -1993,7 +1991,7 @@ class VioletSpellwing(Minion):
 	mana, attack, health = 1, 1, 1
 	index = "DRAGONS~Mage~Minion~1~1~1~Elemental~Violet Spellwing~Deathrattle"
 	requireTarget, keyWord, description = False, "", "Deathrattle: Add an 'Arcane Missile' to your hand"
-	name_CN = "紫罗兰 魔翼鸦"
+	name_CN = "紫罗兰魔翼鸦"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.deathrattles = [Add1ArcaneMisslestoYourHand(self)]
@@ -2066,12 +2064,12 @@ class AzureExplorer(Minion):
 	name_CN = "碧蓝龙探险者"
 	poolIdentifier = "Dragons as Mage"
 	@classmethod
-	def generatePool(cls, Game):
-		classCards = {s : [] for s in Game.ClassesandNeutral}
-		for key, value in Game.MinionswithRace["Dragon"].items():
+	def generatePool(cls, pools):
+		classCards = {s : [] for s in pools.ClassesandNeutral}
+		for key, value in pools.MinionswithRace["Dragon"].items():
 			classCards[key.split('~')[1]].append(value)
-		return ["Dragons as "+Class for Class in Game.Classes], \
-				[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
+		return ["Dragons as "+Class for Class in pools.Classes], \
+				[classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 				
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2105,7 +2103,7 @@ class MalygossFrostbolt(Spell):
 	requireTarget, mana = True, 0
 	index = "DRAGONS~Mage~Spell~0~Malygos's Frostbolt~Legendary~Uncollectible"
 	description = "Deal 3 damage to a character and Freeze it"
-	name_CN = "玛里苟斯的 寒冰箭"
+	name_CN = "玛里苟斯的寒冰箭"
 	def text(self, CHN):
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		return "对一个角色造成%d点伤害，并使其冻结"%damage if CHN else "Deal %d damage to a character and Freeze it"%damage
@@ -2114,7 +2112,7 @@ class MalygossFrostbolt(Spell):
 		if target:
 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			self.dealsDamage(target, damage)
-			target.getsFrozen()
+			target.getsStatus("Frozen")
 		return target
 		
 class MalygossMissiles(Spell):
@@ -2122,7 +2120,7 @@ class MalygossMissiles(Spell):
 	requireTarget, mana = False, 1
 	index = "DRAGONS~Mage~Spell~1~Malygos's Missiles~Legendary~Uncollectible"
 	description = "Deal 6 damage randomly split among all enemies"
-	name_CN = "玛里苟斯的 奥术飞弹"
+	name_CN = "玛里苟斯的奥术飞弹"
 	def text(self, CHN):
 		damage = (6 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		return "造成%d点伤害，随机分配到所有敌人身上"%damage if CHN else "Deal %d damage randomly split among all enemies"%damage
@@ -2153,10 +2151,10 @@ class MalygossNova(Spell):
 	requireTarget, mana = False, 1
 	index = "DRAGONS~Mage~Spell~1~Malygos's Nova~Legendary~Uncollectible"
 	description = "Freeze all enemy minions"
-	name_CN = "玛里苟斯的 霜冻新星"
+	name_CN = "玛里苟斯的霜冻新星"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		for minion in self.Game.minionsonBoard(3-self.ID):
-			minion.getsFrozen()
+			minion.getsStatus("Frozen")
 		return None
 		
 class MalygossPolymorph(Spell):
@@ -2164,7 +2162,7 @@ class MalygossPolymorph(Spell):
 	requireTarget, mana = True, 1
 	index = "DRAGONS~Mage~Spell~1~Malygos's Polymorph~Legendary~Uncollectible"
 	description = "Transform a minion into a 1/1 Sheep"
-	name_CN = "玛里苟斯的 变形术"
+	name_CN = "玛里苟斯的变形术"
 	def available(self):
 		return self.selectableMinionExists()
 		
@@ -2183,11 +2181,11 @@ class MalygossTome(Spell):
 	requireTarget, mana = False, 1
 	index = "DRAGONS~Mage~Spell~1~Malygos's Tome~Legendary~Uncollectible"
 	description = "Add 3 random Mage spells to your hand"
-	name_CN = "玛里苟斯的 智慧秘典"
+	name_CN = "玛里苟斯的智慧秘典"
 	poolIdentifier = "Mage Spells"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Mage Spells", [value for key, value in Game.ClassCards["Mage"].items() if "~Spell~" in key]
+	def generatePool(cls, pools):
+		return "Mage Spells", [value for key, value in pools.ClassCards["Mage"].items() if "~Spell~" in key]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -2204,7 +2202,7 @@ class MalygossExplosion(Spell):
 	requireTarget, mana = False, 2
 	index = "DRAGONS~Mage~Spell~2~Malygos's Explosion~Legendary~Uncollectible"
 	description = "Deal 2 damage to all enemy minions"
-	name_CN = "玛里苟斯的 魔爆术"
+	name_CN = "玛里苟斯的魔爆术"
 	def text(self, CHN):
 		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		return "对所有敌方随从造成%d点伤害"%damage if CHN else "Deal %d damage to all enemy minions"%damage
@@ -2220,7 +2218,7 @@ class MalygossIntellect(Spell):
 	requireTarget, mana = False, 3
 	index = "DRAGONS~Mage~Spell~3~Malygos's Intellect~Legendary~Uncollectible"
 	description = "Draw 4 cards"
-	name_CN = "玛里苟斯的 奥术智慧"
+	name_CN = "玛里苟斯的奥术智慧"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		for i in range(4): self.Game.Hand_Deck.drawCard(self.ID)
 		return None
@@ -2230,7 +2228,7 @@ class MalygossFireball(Spell):
 	requireTarget, mana = True, 4
 	index = "DRAGONS~Mage~Spell~4~Malygos's Fireball~Legendary~Uncollectible"
 	description = "Deal 8 damage"
-	name_CN = "玛里苟斯的 火球术"
+	name_CN = "玛里苟斯的火球术"
 	def text(self, CHN):
 		damage = (8 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		return "造成%d点伤害"%damage if CHN else "Deal %d damage"%damage
@@ -2246,7 +2244,7 @@ class MalygossFlamestrike(Spell):
 	requireTarget, mana = False, 7
 	index = "DRAGONS~Mage~Spell~7~Malygos's Flamestrike~Legendary~Uncollectible"
 	description = "Deal 8 damage to all enemy minions"
-	name_CN = "玛里苟斯的 烈焰风暴"
+	name_CN = "玛里苟斯的烈焰风暴"
 	def text(self, CHN):
 		damage = (8 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		return "对所有敌方随从造成%d点伤害"%damage if CHN else "Deal %d damage to all enemy minions"%damage
@@ -2262,7 +2260,7 @@ class MalygossSheep(Minion):
 	mana, attack, health = 1, 1, 1
 	index = "DRAGONS~Mage~Minion~1~1~1~Beast~Malygos's Sheep~Legendary~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
-	name_CN = "玛里苟斯的 绵羊"
+	name_CN = "玛里苟斯的绵羊"
 	
 MalygosUpgradedSpells = [MalygossFrostbolt, MalygossMissiles, MalygossNova, MalygossPolymorph, MalygossTome,
 						MalygossExplosion, MalygossIntellect, MalygossFireball, MalygossFlamestrike
@@ -2273,7 +2271,7 @@ class MalygosAspectofMagic(Minion):
 	mana, attack, health = 5, 2, 8
 	index = "DRAGONS~Mage~Minion~5~2~8~Dragon~Malygos, Aspect of Magic~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Dragon, Discover an upgraded Mage spell"
-	name_CN = "织法巨龙 玛里苟斯"
+	name_CN = "织法巨龙玛里苟斯"
 	
 	def effCanTrig(self):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID, self)
@@ -2479,7 +2477,7 @@ class SandBreath(Spell):
 		if target:
 			target.buffDebuff(1, 2)
 			if self.Game.Hand_Deck.holdingDragon(self.ID):
-				target.getsKeyword("Divine Shield")
+				target.getsStatus("Divine Shield")
 		return target	
 		
 		
@@ -2524,12 +2522,12 @@ class BronzeExplorer(Minion):
 	name_CN = "青铜龙探险者"
 	poolIdentifier = "Dragons as Paladin"
 	@classmethod
-	def generatePool(cls, Game):
-		classCards = {s : [] for s in Game.ClassesandNeutral}
-		for key, value in Game.MinionswithRace["Dragon"].items():
+	def generatePool(cls, pools):
+		classCards = {s : [] for s in pools.ClassesandNeutral}
+		for key, value in pools.MinionswithRace["Dragon"].items():
 			classCards[key.split('~')[1]].append(value)
-		return ["Dragons as "+Class for Class in Game.Classes], \
-				[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
+		return ["Dragons as "+Class for Class in pools.Classes], \
+				[classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -2631,7 +2629,7 @@ class NozdormutheTimeless(Minion):
 	mana, attack, health = 4, 8, 8
 	index = "DRAGONS~Paladin~Minion~4~8~8~Dragon~Nozdormu the Timeless~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Set each player to 10 Mana Crystals"
-	name_CN = "时光巨龙 诺兹多姆"
+	name_CN = "时光巨龙诺兹多姆"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		self.Game.Manas.setManaCrystal(10, 1)
@@ -2665,8 +2663,8 @@ class LightforgedCrusader(Minion):
 	name_CN = "光铸远征军"
 	poolIdentifier = "Paladin Cards"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Paladin Cards", list(Game.ClassCards["Paladin"].values())
+	def generatePool(cls, pools):
+		return "Paladin Cards", list(pools.ClassCards["Paladin"].values())
 		
 	def effCanTrig(self):
 		self.effectViable = True
@@ -2717,7 +2715,7 @@ class DiscipleofGalakrond(Minion):
 	mana, attack, health = 1, 1, 2
 	index = "DRAGONS~Priest~Minion~1~1~2~~Disciple of Galakrond~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Invoke Galakrond"
-	name_CN = "迦拉克隆的 信徒"
+	name_CN = "迦拉克隆的信徒"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		invokeGalakrond(self.Game, self.ID)
@@ -2943,7 +2941,7 @@ class GalakrondsWit(HeroPower):
 	mana, name, requireTarget = 2, "Galakrond's Wit", False
 	index = "Priest~Hero Power~2~Galakrond's Wit"
 	description = "Add a random Priest minion to your hand"
-	name_CN = "迦拉克隆 的智识"
+	name_CN = "迦拉克隆的智识"
 	def available(self, choice=0):
 		return not (self.chancesUsedUp() or self.Game.Hand_Deck.handNotFull(self.ID))
 		
@@ -2963,11 +2961,11 @@ class GalakrondtheUnspeakable(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Destroy a random enemy minion. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Priest", "Galakrond, the Unspeakable", GalakrondsWit, 5
 	index = "DRAGONS~Priest~Hero Card~7~Galakrond, the Unspeakable~Battlecry~Legendary"
-	name_CN = "讳言巨龙 迦拉克隆"
+	name_CN = "讳言巨龙迦拉克隆"
 	poolIdentifier = "Priest Minions"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Priest Minions", [value for key, value in Game.ClassCards["Priest"].items() if "~Minion~" in key]
+	def generatePool(cls, pools):
+		return "Priest Minions", [value for key, value in pools.ClassCards["Priest"].items() if "~Minion~" in key]
 		
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2990,7 +2988,7 @@ class GalakrondtheApocalypes_Priest(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Destroy 2 random enemy minions. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Priest", "Galakrond, the Apocalypes", GalakrondsWit, 5
 	index = "DRAGONS~Priest~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
-	name_CN = "天降浩劫 迦拉克隆"
+	name_CN = "天降浩劫迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondAzerothsEnd_Priest
@@ -3012,7 +3010,7 @@ class GalakrondAzerothsEnd_Priest(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Destroy 4 random enemy minions. Equip a 5/2 Claw"
 	Class, name, heroPower, armor = "Priest", "Galakrond, Azeroth's End", GalakrondsWit, 5
 	index = "DRAGONS~Priest~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
-	name_CN = "世界末日 迦拉克隆"
+	name_CN = "世界末日迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = None
@@ -3050,7 +3048,7 @@ class MurozondtheInfinite(Minion):
 	mana, attack, health = 8, 8, 8
 	index = "DRAGONS~Priest~Minion~8~8~8~Dragon~Murozond the Infinite~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Play all cards your opponent played last turn"
-	name_CN = "永恒巨龙 姆诺兹多"
+	name_CN = "永恒巨龙姆诺兹多"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
@@ -3106,9 +3104,9 @@ class DragonsHoard(Spell):
 	name_CN = "巨龙宝藏"
 	poolIdentifier = "Druid Legendary Minions"
 	@classmethod
-	def generatePool(cls, Game):
-		return ["%s Legendary Minions"%Class for Class in Game.Classes], \
-				[[value for key, value in Game.ClassCards[Class].items() if "~Minion~" in key and "~Legendary" in key] for Class in Game.Classes]
+	def generatePool(cls, pools):
+		return ["%s Legendary Minions"%Class for Class in pools.Classes], \
+				[[value for key, value in pools.ClassCards[Class].items() if "~Minion~" in key and "~Legendary" in key] for Class in pools.Classes]
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -3337,7 +3335,7 @@ class GalakrondsGuile(HeroPower):
 	mana, name, requireTarget = 2, "Galakrond's Guile", False
 	index = "Rogue~Hero Power~2~Galakrond's Guile"
 	description = "Add a Lackey to your hand"
-	name_CN = "迦拉克隆 的诡计"
+	name_CN = "迦拉克隆的诡计"
 	def available(self, choice=0):
 		return not (self.chancesUsedUp() or self.Game.Hand_Deck.handNotFull(self.ID))
 				
@@ -3356,7 +3354,7 @@ class GalakrondtheNightmare(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Draw a card. It costs (1). (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Rogue", "Galakrond, the Nightmare", GalakrondsGuile, 5
 	index = "DRAGONS~Rogue~Hero Card~7~Galakrond, the Nightmare~Battlecry~Legendary"
-	name_CN = "梦魇巨龙 迦拉克隆"
+	name_CN = "梦魇巨龙迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondtheApocalypes_Rogue
@@ -3372,7 +3370,7 @@ class GalakrondtheApocalypes_Rogue(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Draw 2 cards. They cost (1). (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Rogue", "Galakrond, the Apocalypes", GalakrondsGuile, 5
 	index = "DRAGONS~Rogue~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
-	name_CN = "天降浩劫 迦拉克隆"
+	name_CN = "天降浩劫迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondAzerothsEnd_Rogue
@@ -3389,7 +3387,7 @@ class GalakrondAzerothsEnd_Rogue(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Draw 4 cards. They cost (1). Equip a 5/2 Claw"
 	Class, name, heroPower, armor = "Rogue", "Galakrond, Azeroth's End", GalakrondsGuile, 5
 	index = "DRAGONS~Rogue~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
-	name_CN = "世界末日 迦拉克隆"
+	name_CN = "世界末日迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = None
@@ -3417,7 +3415,7 @@ class InvocationofFrost(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			target.getsFrozen()
+			target.getsStatus("Frozen")
 		invokeGalakrond(self.Game, self.ID)
 		return target
 		
@@ -3556,8 +3554,8 @@ class Bandersmosh(Minion):
 	name_CN = "班德斯莫什"
 	poolIdentifier = "Legendary Minions"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Legendary Minions", list(Game.LegendaryMinions.values())
+	def generatePool(cls, pools):
+		return "Legendary Minions", list(pools.LegendaryMinions.values())
 		
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3727,7 +3725,7 @@ class GalakrondsFury(HeroPower):
 	mana, name, requireTarget = 2, "Galakrond's Fury", False
 	index = "Shaman~Hero Power~2~Galakrond's Fury"
 	description = "Summon a 2/1 Elemental with Rush"
-	name_CN = "迦拉克隆 的愤怒"
+	name_CN = "迦拉克隆的愤怒"
 	def available(self):
 		return not self.chancesUsedUp() and self.Game.space(self.ID)
 		
@@ -3746,7 +3744,7 @@ class GalakrondtheTempest(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon two 2/2 Storms with Rush. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Shaman", "Galakrond, the Tempest", GalakrondsFury, 5
 	index = "DRAGONS~Shaman~Hero Card~7~Galakrond, the Tempest~Battlecry~Legendary"
-	name_CN = "风暴巨龙 迦拉克隆"
+	name_CN = "风暴巨龙迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondtheApocalypes_Shaman
@@ -3760,7 +3758,7 @@ class GalakrondtheApocalypes_Shaman(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon two 4/4 Storms with Rush. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Shaman", "Galakrond, the Apocalypes", GalakrondsFury, 5
 	index = "DRAGONS~Shaman~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
-	name_CN = "天降浩劫 迦拉克隆"
+	name_CN = "天降浩劫迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondAzerothsEnd_Shaman
@@ -3774,7 +3772,7 @@ class GalakrondAzerothsEnd_Shaman(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon two 8/8 Storms with Rush. Equip a 5/2 Claw"
 	Class, name, heroPower, armor = "Shaman", "Galakrond, Azeroth's End", GalakrondsFury, 5
 	index = "DRAGONS~Shaman~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
-	name_CN = "世界末日 迦拉克隆"
+	name_CN = "世界末日迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = None
@@ -3891,7 +3889,7 @@ class DragonblightCultist(Minion):
 	mana, attack, health = 3, 1, 1
 	index = "DRAGONS~Warlock~Minion~3~1~1~~Dragonblight Cultist~Battlecry"
 	requireTarget, keyWord, description = False, "", "Battlecry: Invoke Galakrond. Gain +1 Attack for each other friendly minion"
-	name_CN = "龙骨荒野 异教徒"
+	name_CN = "龙骨荒野异教徒"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		invokeGalakrond(self.Game, self.ID)
 		if self.onBoard or self.inHand:
@@ -3981,7 +3979,7 @@ class GalakrondsMalice(HeroPower):
 	mana, name, requireTarget = 2, "Galakrond's Malice", False
 	index = "Shaman~Hero Power~2~Galakrond's Malice"
 	description = "Summon two 1/1 Imps"
-	name_CN = "迦拉克隆 的恶意"
+	name_CN = "迦拉克隆的恶意"
 	def available(self):
 		return not self.chancesUsedUp() and self.Game.space(self.ID)
 		
@@ -3993,11 +3991,11 @@ class GalakrondtheWretched(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon a random Demon. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Warlock", "Galakrond, the Wretched", GalakrondsMalice, 5
 	index = "DRAGONS~Warlock~Hero Card~7~Galakrond, the Wretched~Battlecry~Legendary"
-	name_CN = "邪火巨龙 迦拉克隆"
+	name_CN = "邪火巨龙迦拉克隆"
 	poolIdentifier = "Demons to Summon"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Demons to Summon", list(Game.MinionswithRace["Demon"].values())
+	def generatePool(cls, pools):
+		return "Demons to Summon", list(pools.MinionswithRace["Demon"].values())
 		
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -4019,7 +4017,7 @@ class GalakrondtheApocalypes_Warlock(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon 2 random Demons. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Warlock", "Galakrond, the Apocalypes", GalakrondsMalice, 5
 	index = "DRAGONS~Warlock~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
-	name_CN = "天降浩劫 迦拉克隆"
+	name_CN = "天降浩劫迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondAzerothsEnd_Warlock
@@ -4040,7 +4038,7 @@ class GalakrondAzerothsEnd_Warlock(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Summon 4 random Demons. Equip a 5/2 Claw"
 	Class, name, heroPower, armor = "Warlock", "Galakrond, Azeroth's End", GalakrondsMalice, 5
 	index = "DRAGONS~Warlock~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
-	name_CN = "世界末日 迦拉克隆"
+	name_CN = "世界末日迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = None
@@ -4083,7 +4081,7 @@ class ZzerakutheWarped(Minion):
 	mana, attack, health = 8, 4, 12
 	index = "DRAGONS~Warlock~Minion~8~4~12~Dragon~Zzeraku the Warped~Legendary"
 	requireTarget, keyWord, description = False, "", "Whenever your hero takes damage, summon a 6/6 Nether Drake"
-	name_CN = "扭曲巨龙 泽拉库"
+	name_CN = "扭曲巨龙泽拉库"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_ZzerakutheWarped(self)]
@@ -4117,8 +4115,8 @@ class SkyRaider(Minion):
 	name_CN = "空中悍匪"
 	poolIdentifier = "Pirates"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Pirates", list(Game.MinionswithRace["Pirate"].values())
+	def generatePool(cls, pools):
+		return "Pirates", list(pools.MinionswithRace["Pirate"].values())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -4346,7 +4344,7 @@ class GalakrondtheUnbreakable(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Draw 1 minion. Give it +4/+4. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Warrior", "Galakrond, the Unbreakable", GalakrondsMight, 5
 	index = "DRAGONS~Warrior~Hero Card~7~Galakrond, the Unbreakable~Battlecry~Legendary"
-	name_CN = "无敌巨龙 迦拉克隆"
+	name_CN = "无敌巨龙迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondtheApocalypes_Warrior
@@ -4370,7 +4368,7 @@ class GalakrondtheApocalypes_Warrior(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Draw 2 minions. Give them +4/+4. (Invoke twice to upgrade)"
 	Class, name, heroPower, armor = "Warrior", "Galakrond, the Apocalypes", GalakrondsMight, 5
 	index = "DRAGONS~Warrior~Hero Card~7~Galakrond, the Apocalypes~Battlecry~Legendary~Uncollectible"
-	name_CN = "天降浩劫 迦拉克隆"
+	name_CN = "天降浩劫迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = GalakrondAzerothsEnd_Warrior
@@ -4396,7 +4394,7 @@ class GalakrondAzerothsEnd_Warrior(Galakrond_Hero):
 	mana, weapon, description = 7, None, "Battlecry: Draw 4 minions. Give them +4/+4. Equip a 5/2 Claw"
 	Class, name, heroPower, armor = "Warrior", "Galakrond, Azeroth's End", GalakrondsMight, 5
 	index = "DRAGONS~Warrior~Hero Card~7~Galakrond, Azeroth's End~Battlecry~Legendary~Uncollectible"
-	name_CN = "世界末日 迦拉克隆"
+	name_CN = "世界末日迦拉克隆"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.upgradedGalakrond = None
@@ -4429,7 +4427,7 @@ class DeathwingMadAspect(Minion):
 	mana, attack, health = 8, 12, 12
 	index = "DRAGONS~Warrior~Minion~8~12~12~Dragon~Deathwing, Mad Aspect~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "", "Battlecry: Attack ALL other minions"
-	name_CN = "疯狂巨龙 死亡之翼"
+	name_CN = "疯狂巨龙死亡之翼"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:

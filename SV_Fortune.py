@@ -439,7 +439,7 @@ class LumberingCarapace(SVMinion):
             self.buffDebuff(2, 2)
             if numCardsPlayed >= 4:
                 self.buffDebuff(2, 2)
-                self.getsKeyword("Taunt")
+                self.getsStatus("Taunt")
         return None
 
 
@@ -721,7 +721,7 @@ class FairyAssault(SVSpell):
         else:
             for minion in minions:
                 if minion.onBoard:
-                    minion.getsKeyword("Rush")
+                    minion.getsStatus("Rush")
         return None
 
 
@@ -802,7 +802,7 @@ class Terrorformer(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.fusionMaterials >= 2:
-            self.getsKeyword("Charge")
+            self.getsStatus("Charge")
             if self.fusionMaterials > 4 and target:
                 if isinstance(target, list): target = target[0]
                 self.Game.killMinion(self, target)
@@ -1305,7 +1305,7 @@ class Trig_VIIOluonTheChariot(TrigBoard):
                 e = np.random.choice(es)
                 curGame.fixedGuides.append((0, e))
         if e == "T":
-            self.entity.getsKeyword("Taunt")
+            self.entity.getsStatus("Taunt")
         elif e == "H":
             self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 2)
         elif e == "K":
@@ -1469,7 +1469,7 @@ class Trig_DiamondPaladin(TrigBoard):
                (self.entity.health > 0 and self.entity.dead == False)
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.getsKeyword("Windfury")
+        self.entity.getsStatus("Windfury")
         self.entity.Game.Manas.restoreManaCrystal(2, self.entity.ID)
         trigger = Trig_EndDiamondPaladin(self.entity)
         self.entity.trigsBoard.append(trigger)
@@ -2428,7 +2428,7 @@ class DragonImpact(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            target.getsKeyword("Rush")
+            target.getsStatus("Rush")
             target.buffDebuff(1, 1)
             curGame = self.Game
             if curGame.mode == 0:
@@ -2482,8 +2482,8 @@ class XIErntzJustice(SVMinion):
         self.restoresHealth(self.Game.heroes[self.ID], 8)
 
     def inEvolving(self):
-        self.losesKeyword("Taunt")
-        self.getsKeyword("Charge")
+        self.losesStatus("Taunt")
+        self.getsStatus("Charge")
         self.marks["Ignore Taunt"] += 1
         self.marks["Enemy Effect Evasive"] += 1
         for f in self.disappearResponse:
@@ -3159,7 +3159,7 @@ class MoonriseWerewolf(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isAvarice(self.ID):
             self.buffDebuff(0, 2)
-            self.getsKeyword("Taunt")
+            self.getsStatus("Taunt")
         if comment == 5:
             self.buffDebuff(3, 3)
         return target
@@ -3188,8 +3188,8 @@ class WhiplashImp(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isWrath(self.ID):
             self.buffDebuff(1, 4)
-            self.getsKeyword("Rush")
-            self.getsKeyword("Drain")
+            self.getsStatus("Rush")
+            self.getsStatus("Drain")
         if comment == 6:
             self.Game.summon([ImpLancer(self.Game, self.ID)], (-1, "totheRightEnd"),
                              self)
@@ -3969,7 +3969,7 @@ class PriestessofForesight(SVMinion):
                 hasTaunt = True
                 break
         if not hasTaunt:
-            self.getsKeyword("Taunt")
+            self.getsStatus("Taunt")
         return None
 
 
@@ -4147,7 +4147,7 @@ class VIIISofinaStrength(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         for minion in self.Game.minionsonBoard(self.ID, self):
             minion.buffDebuff(1, 1)
-            minion.getsKeyword("Taunt")
+            minion.getsStatus("Taunt")
         return None
 
 
@@ -4837,7 +4837,7 @@ class FuriousMountainDeity(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if comment == 7:
             self.buffDebuff(2, 2)
-            self.getsKeyword("Rush")
+            self.getsStatus("Rush")
         return target
 
 
@@ -6640,7 +6640,7 @@ class LumberingCarapace(SVMinion):
             self.buffDebuff(2, 2)
             if numCardsPlayed >= 4:
                 self.buffDebuff(2, 2)
-                self.getsKeyword("Taunt")
+                self.getsStatus("Taunt")
         return None
 
 
@@ -6922,7 +6922,7 @@ class FairyAssault(SVSpell):
         else:
             for minion in minions:
                 if minion.onBoard:
-                    minion.getsKeyword("Rush")
+                    minion.getsStatus("Rush")
         return None
 
 
@@ -7003,7 +7003,7 @@ class Terrorformer(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.fusionMaterials >= 2:
-            self.getsKeyword("Charge")
+            self.getsStatus("Charge")
             if self.fusionMaterials > 4 and target:
                 if isinstance(target, list): target = target[0]
                 self.Game.killMinion(self, target)
@@ -7506,7 +7506,7 @@ class Trig_VIIOluonTheChariot(TrigBoard):
                 e = np.random.choice(es)
                 curGame.fixedGuides.append((0, e))
         if e == "T":
-            self.entity.getsKeyword("Taunt")
+            self.entity.getsStatus("Taunt")
         elif e == "H":
             self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 2)
         elif e == "K":
@@ -7670,7 +7670,7 @@ class Trig_DiamondPaladin(TrigBoard):
                (self.entity.health > 0 and self.entity.dead == False)
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
-        self.entity.getsKeyword("Windfury")
+        self.entity.getsStatus("Windfury")
         self.entity.Game.Manas.restoreManaCrystal(2, self.entity.ID)
         trigger = Trig_EndDiamondPaladin(self.entity)
         self.entity.trigsBoard.append(trigger)
@@ -8629,7 +8629,7 @@ class DragonImpact(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            target.getsKeyword("Rush")
+            target.getsStatus("Rush")
             target.buffDebuff(1, 1)
             curGame = self.Game
             if curGame.mode == 0:
@@ -8683,8 +8683,8 @@ class XIErntzJustice(SVMinion):
         self.restoresHealth(self.Game.heroes[self.ID], 8)
 
     def inEvolving(self):
-        self.losesKeyword("Taunt")
-        self.getsKeyword("Charge")
+        self.losesStatus("Taunt")
+        self.getsStatus("Charge")
         self.marks["Ignore Taunt"] += 1
         self.marks["Enemy Effect Evasive"] += 1
         for f in self.disappearResponse:
@@ -9360,7 +9360,7 @@ class MoonriseWerewolf(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isAvarice(self.ID):
             self.buffDebuff(0, 2)
-            self.getsKeyword("Taunt")
+            self.getsStatus("Taunt")
         if comment == 5:
             self.buffDebuff(3, 3)
         return target
@@ -9389,8 +9389,8 @@ class WhiplashImp(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isWrath(self.ID):
             self.buffDebuff(1, 4)
-            self.getsKeyword("Rush")
-            self.getsKeyword("Drain")
+            self.getsStatus("Rush")
+            self.getsStatus("Drain")
         if comment == 6:
             self.Game.summon([ImpLancer(self.Game, self.ID)], (-1, "totheRightEnd"),
                              self)
@@ -10170,7 +10170,7 @@ class PriestessofForesight(SVMinion):
                 hasTaunt = True
                 break
         if not hasTaunt:
-            self.getsKeyword("Taunt")
+            self.getsStatus("Taunt")
         return None
 
 
@@ -10348,7 +10348,7 @@ class VIIISofinaStrength(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         for minion in self.Game.minionsonBoard(self.ID, self):
             minion.buffDebuff(1, 1)
-            minion.getsKeyword("Taunt")
+            minion.getsStatus("Taunt")
         return None
 
 
@@ -11038,7 +11038,7 @@ class FuriousMountainDeity(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if comment == 7:
             self.buffDebuff(2, 2)
-            self.getsKeyword("Rush")
+            self.getsStatus("Rush")
         return target
 
 

@@ -232,7 +232,7 @@ class Trig_ShadoPanWuKao(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "After friendly hero attacks, %s gains Stealth"%self.entity.name)
-		self.entity.getsKeyword("Stealth")
+		self.entity.getsStatus("Stealth")
 		
 		
 """Monk Classic Cards"""
@@ -244,12 +244,12 @@ class WiseLorewalkerCho(Minion): #睿智的游学者周卓
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a spell from another class with Cost equal to your remaining Mana Crystals"
 	poolIdentifier = "0-Cost Spells"
 	@classmethod
-	def generatePool(cls, Game):
+	def generatePool(cls, pools):
 		costs, lists = [], []
 		for cost in range(11):
 			spells, s = [], "~Spell~%d~"%cost
-			for Class in Game.Classes:
-				spells += [value for key, value in Game.ClassCards[Class].items() if s in key]
+			for Class in pools.Classes:
+				spells += [value for key, value in pools.ClassCards[Class].items() if s in key]
 			costs.append("%d-Cost Spells"%cost)
 			lists.append(spells)
 		return costs, lists
@@ -888,7 +888,7 @@ class MonkDragonKeeper(Minion): #驭龙武僧
 		if posinHand > -2 and self.Game.Manas.manas[self.ID] == 0:
 			PRINT(self.Game, "Monk Dragon Keeper's Quaff triggers and gives the minion Taunt and 'Deathrattle: Shuffle this into your deck'")
 			self.Game.sendSignal("QuaffTriggered", self.ID, None, None, 0, "")
-			self.getsKeyword("Taunt")
+			self.getsStatus("Taunt")
 			trig = ShuffleThisintoYourDeck(self)
 			self.deathrattles.append(trig)
 			trig.connect()

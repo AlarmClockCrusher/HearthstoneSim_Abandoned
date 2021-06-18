@@ -5,7 +5,7 @@ from direct.task import Task
 
 from Code2CardList import *
 from Game import *
-from GenerateRNGPools import *
+from GenPools_BuildDecks import *
 from Panda_CustomWidgets import *
 
 from datetime import datetime

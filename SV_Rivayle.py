@@ -67,7 +67,7 @@ class Trig_BulletBike(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.banishMinion(self.entity, self.entity)
         subject.buffDebuff(2, 0)
-        subject.getsKeyword("Rush")
+        subject.getsStatus("Rush")
 
 
 class ArcanePersonnelCarrier(Amulet):
@@ -92,7 +92,7 @@ class Trig_ArcanePersonnelCarrier(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.banishMinion(self.entity, self.entity)
         subject.buffDebuff(1, 3)
-        subject.getsKeyword("Taunt")
+        subject.getsStatus("Taunt")
 
 
 class RivaylianBandit(SVMinion):
@@ -146,7 +146,7 @@ class Trig_RivaylianBandit(TrigBoard):
         self.entity.trigsBoard.append(trigger)
         trigger.connect()
         self.entity.buffDebuff(1, 2)
-        self.entity.getsKeyword("Rush")
+        self.entity.getsStatus("Rush")
 
 
 class Trig_EndRivaylianBandit(TrigBoard):
@@ -555,7 +555,7 @@ class Trig_BulletBike(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.banishMinion(self.entity, self.entity)
         subject.buffDebuff(2, 0)
-        subject.getsKeyword("Rush")
+        subject.getsStatus("Rush")
 
 
 class ArcanePersonnelCarrier(Amulet):
@@ -580,7 +580,7 @@ class Trig_ArcanePersonnelCarrier(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.banishMinion(self.entity, self.entity)
         subject.buffDebuff(1, 3)
-        subject.getsKeyword("Taunt")
+        subject.getsStatus("Taunt")
 
 
 class RivaylianBandit(SVMinion):
@@ -634,7 +634,7 @@ class Trig_RivaylianBandit(TrigBoard):
         self.entity.trigsBoard.append(trigger)
         trigger.connect()
         self.entity.buffDebuff(1, 2)
-        self.entity.getsKeyword("Rush")
+        self.entity.getsStatus("Rush")
 
 
 class Trig_EndRivaylianBandit(TrigBoard):

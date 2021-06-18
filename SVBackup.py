@@ -204,7 +204,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if target is not None:
 #			 PRINT(self, f"Gilded Boots gives minion {target.name} Rush")
-#			 target.getsKeyword("Rush")
+#			 target.getsStatus("Rush")
 #		 return target
 #
 #
@@ -312,7 +312,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if choice == 3:
 #			 PRINT(self, "Levin Beastmaster's Fanfare give it +2/+0 and Rush.")
-#			 self.getsKeyword("Rush")
+#			 self.getsStatus("Rush")
 #			 self.buffDebuff(2, 0)
 #		 return None
 #
@@ -661,7 +661,7 @@
 #			 self.buffDebuff(0, levins)
 #			 PRINT(self, f"Lounes, Levin Apprentice's Fanfare give itself +1/+{levins}.")
 #		 if choice == 3:
-#			 self.getsKeyword("Windfury")
+#			 self.getsStatus("Windfury")
 #			 PRINT(self, f"Lounes, Levin Apprentice's Fanfare give itself Can attack 2 times per turn.")
 #
 #
@@ -851,7 +851,7 @@
 #			 m = type(target)(self.Game, self.ID)
 #			 PRINT(self, f"Mirror Image summon a copy of {target.name} and give it Rush.")
 #			 self.Game.summonMinion([m], (-11, "totheRightEnd"), self.ID)
-#			 m.getsKeyword("Rush")
+#			 m.getsStatus("Rush")
 #			 trigger = TriggerMirrorsImage(m, self.ID)
 #			 m.trigsBoard.append(trigger)
 #			 if m.onBoard:
@@ -905,7 +905,7 @@
 #		 return None
 #
 #	 def inEvolving(self):
-#		 self.getsKeyword("Charge")
+#		 self.getsStatus("Charge")
 #		 self.auras["Buff Aura"] = BuffAuraEvolvedSteadfastSamurai(self)
 #		 self.auras["Buff Aura"].auraAppears()
 #
@@ -988,11 +988,11 @@
 #				 controlOfficer = True
 #				 break
 #		 if controlOfficer:
-#			 self.getsKeyword("Free Evolve")
+#			 self.getsStatus("Free Evolve")
 #		 return None
 #
 #	 def inEvolving(self):
-#		 self.getsKeyword("Windfury")
+#		 self.getsStatus("Windfury")
 #
 #
 # class ValseChampionDeadeye(SVMinion):
@@ -1178,7 +1178,7 @@
 #		 es = ["T", "H", "K"]
 #		 e = np.random.choice(es)
 #		 if e == "T":
-#			 self.entity.getsKeyword("Taunt")
+#			 self.entity.getsStatus("Taunt")
 #		 elif e == "H":
 #			 self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 2)
 #		 elif e == "K":
@@ -1238,7 +1238,7 @@
 #				 controlOfficer = True
 #				 break
 #		 if controlOfficer:
-#			 self.getsKeyword("Rush")
+#			 self.getsStatus("Rush")
 #		 return None
 #
 #
@@ -1296,7 +1296,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if choice == 8:
 #			 PRINT(self, "Lady of the Lance's Fanfare give it Storm.")
-#			 self.getsKeyword("Charge")
+#			 self.getsStatus("Charge")
 #			 self.Game.Manas.manas[self.ID] += 5
 #		 commanders = 0
 #		 for card in self.Game.Hand_Deck.hands[self.ID]:
@@ -1304,7 +1304,7 @@
 #				 commanders += 1
 #		 if commanders >= 2:
 #			 PRINT(self, "Lady of the Lance's Fanfare give it Bane and reduce next damage to 0.")
-#			 self.getsKeyword("Poisonous")
+#			 self.getsStatus("Poisonous")
 #			 self.marks["Next Damage 0"] += 1
 #		 return None
 #
@@ -1658,7 +1658,7 @@
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
-#			 self.getsKeyword("Free Evolve")
+#			 self.getsStatus("Free Evolve")
 #			 PRINT(self, f"Shizuru, Sisterly Sabreur 3 damage to the enemy leader.")
 #			 self.dealsDamage(self.Game.heroes[3 - self.ID], 3)
 #		 return None
@@ -1796,7 +1796,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 1:
 #			 PRINT(self, "Luxblade Arriet gains Ward.")
-#			 self.getsKeyword("Taunt")
+#			 self.getsStatus("Taunt")
 #		 if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 3:
 #			 PRINT(self, "Luxblade Arriet restores 3 PP.")
 #			 self.Game.Manas.manas[self.ID] += 3
@@ -1849,7 +1849,7 @@
 #					 self.Game.Hand_Deck.drawCard(self.ID, card)
 #					 PRINT(self, f"Amelia, the Silverflash's Fanfare let you draw {card.name}.")
 #		 if choice == 7:
-#			 self.getsKeyword("Free Evolve")
+#			 self.getsStatus("Free Evolve")
 #			 self.marks["Next Damage 0"] = 1
 #		 return None
 #
@@ -1967,7 +1967,7 @@
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if choice == 8:
-#			 self.getsKeyword("Free Evolve")
+#			 self.getsStatus("Free Evolve")
 #		 return None
 #
 #	 def inHandEvolving(self, target=None):
@@ -1991,7 +1991,7 @@
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #		 PRINT(self,
 #			   "After %s attacks and kills minion %s, the player gains 10 Armor." % (self.entity.name, target.name))
-#		 self.entity.getsKeyword("Windfury")
+#		 self.entity.getsStatus("Windfury")
 #		 self.entity.Game.Manas.manas[self.entity.ID] += 2
 #		 trigger = TriggerTurnEndDiamondPaladin(self.entity)
 #		 self.entity.trigsBoard.append(trigger)
@@ -2007,7 +2007,7 @@
 #		 return self.entity.onBoard
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#		 self.entity.losesKeyword("Windfury")
+#		 self.entity.losesStatus("Windfury")
 #		 for t in self.entity.trigsBoard:
 #			 if type(t) == TriggerTurnEndDiamondPaladin:
 #				 t.disconnect()
@@ -2059,7 +2059,7 @@
 #		 if target is not None:
 #			 PRINT(self, f"Regal Wildcat gives minion {target.name} +2/+2 and Storm.")
 #			 target.buffDebuff(2, 2)
-#			 target.getsKeyword("Charge")
+#			 target.getsStatus("Charge")
 #		 return target
 #
 #	 def getAccelerateSpell(self):
@@ -2308,7 +2308,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if target is not None:
 #			 PRINT(self, f"Gilded Boots gives minion {target.name} Rush")
-#			 target.getsKeyword("Rush")
+#			 target.getsStatus("Rush")
 #		 return target
 #
 #
@@ -2416,7 +2416,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if choice == 3:
 #			 PRINT(self, "Levin Beastmaster's Fanfare give it +2/+0 and Rush.")
-#			 self.getsKeyword("Rush")
+#			 self.getsStatus("Rush")
 #			 self.buffDebuff(2, 0)
 #		 return None
 #
@@ -2765,7 +2765,7 @@
 #			 self.buffDebuff(0, levins)
 #			 PRINT(self, f"Lounes, Levin Apprentice's Fanfare give itself +1/+{levins}.")
 #		 if choice == 3:
-#			 self.getsKeyword("Windfury")
+#			 self.getsStatus("Windfury")
 #			 PRINT(self, f"Lounes, Levin Apprentice's Fanfare give itself Can attack 2 times per turn.")
 #
 #
@@ -2955,7 +2955,7 @@
 #			 m = type(target)(self.Game, self.ID)
 #			 PRINT(self, f"Mirror Image summon a copy of {target.name} and give it Rush.")
 #			 self.Game.summonMinion([m], (-11, "totheRightEnd"), self.ID)
-#			 m.getsKeyword("Rush")
+#			 m.getsStatus("Rush")
 #			 trigger = TriggerMirrorsImage(m, self.ID)
 #			 m.trigsBoard.append(trigger)
 #			 if m.onBoard:
@@ -3009,7 +3009,7 @@
 #		 return None
 #
 #	 def inEvolving(self):
-#		 self.getsKeyword("Charge")
+#		 self.getsStatus("Charge")
 #		 self.auras["Buff Aura"] = BuffAuraEvolvedSteadfastSamurai(self)
 #		 self.auras["Buff Aura"].auraAppears()
 #
@@ -3092,11 +3092,11 @@
 #				 controlOfficer = True
 #				 break
 #		 if controlOfficer:
-#			 self.getsKeyword("Free Evolve")
+#			 self.getsStatus("Free Evolve")
 #		 return None
 #
 #	 def inEvolving(self):
-#		 self.getsKeyword("Windfury")
+#		 self.getsStatus("Windfury")
 #
 #
 # class ValseChampionDeadeye(SVMinion):
@@ -3282,7 +3282,7 @@
 #		 es = ["T", "H", "K"]
 #		 e = np.random.choice(es)
 #		 if e == "T":
-#			 self.entity.getsKeyword("Taunt")
+#			 self.entity.getsStatus("Taunt")
 #		 elif e == "H":
 #			 self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 2)
 #		 elif e == "K":
@@ -3342,7 +3342,7 @@
 #				 controlOfficer = True
 #				 break
 #		 if controlOfficer:
-#			 self.getsKeyword("Rush")
+#			 self.getsStatus("Rush")
 #		 return None
 #
 #
@@ -3400,7 +3400,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if choice == 8:
 #			 PRINT(self, "Lady of the Lance's Fanfare give it Storm.")
-#			 self.getsKeyword("Charge")
+#			 self.getsStatus("Charge")
 #			 self.Game.Manas.manas[self.ID] += 5
 #		 commanders = 0
 #		 for card in self.Game.Hand_Deck.hands[self.ID]:
@@ -3408,7 +3408,7 @@
 #				 commanders += 1
 #		 if commanders >= 2:
 #			 PRINT(self, "Lady of the Lance's Fanfare give it Bane and reduce next damage to 0.")
-#			 self.getsKeyword("Poisonous")
+#			 self.getsStatus("Poisonous")
 #			 self.marks["Next Damage 0"] += 1
 #		 return None
 #
@@ -3762,7 +3762,7 @@
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
-#			 self.getsKeyword("Free Evolve")
+#			 self.getsStatus("Free Evolve")
 #			 PRINT(self, f"Shizuru, Sisterly Sabreur 3 damage to the enemy leader.")
 #			 self.dealsDamage(self.Game.heroes[3 - self.ID], 3)
 #		 return None
@@ -3900,7 +3900,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 1:
 #			 PRINT(self, "Luxblade Arriet gains Ward.")
-#			 self.getsKeyword("Taunt")
+#			 self.getsStatus("Taunt")
 #		 if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 3:
 #			 PRINT(self, "Luxblade Arriet restores 3 PP.")
 #			 self.Game.Manas.manas[self.ID] += 3
@@ -3953,7 +3953,7 @@
 #					 self.Game.Hand_Deck.drawCard(self.ID, card)
 #					 PRINT(self, f"Amelia, the Silverflash's Fanfare let you draw {card.name}.")
 #		 if choice == 7:
-#			 self.getsKeyword("Free Evolve")
+#			 self.getsStatus("Free Evolve")
 #			 self.marks["Next Damage 0"] = 1
 #		 return None
 #
@@ -4071,7 +4071,7 @@
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if choice == 8:
-#			 self.getsKeyword("Free Evolve")
+#			 self.getsStatus("Free Evolve")
 #		 return None
 #
 #	 def inHandEvolving(self, target=None):
@@ -4095,7 +4095,7 @@
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #		 PRINT(self,
 #			   "After %s attacks and kills minion %s, the player gains 10 Armor." % (self.entity.name, target.name))
-#		 self.entity.getsKeyword("Windfury")
+#		 self.entity.getsStatus("Windfury")
 #		 self.entity.Game.Manas.manas[self.entity.ID] += 2
 #		 trigger = TriggerTurnEndDiamondPaladin(self.entity)
 #		 self.entity.trigsBoard.append(trigger)
@@ -4111,7 +4111,7 @@
 #		 return self.entity.onBoard
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#		 self.entity.losesKeyword("Windfury")
+#		 self.entity.losesStatus("Windfury")
 #		 for t in self.entity.trigsBoard:
 #			 if type(t) == TriggerTurnEndDiamondPaladin:
 #				 t.disconnect()
@@ -4163,7 +4163,7 @@
 #		 if target is not None:
 #			 PRINT(self, f"Regal Wildcat gives minion {target.name} +2/+2 and Storm.")
 #			 target.buffDebuff(2, 2)
-#			 target.getsKeyword("Charge")
+#			 target.getsStatus("Charge")
 #		 return target
 #
 #	 def getAccelerateSpell(self):

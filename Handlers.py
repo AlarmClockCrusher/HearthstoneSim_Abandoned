@@ -46,7 +46,9 @@ class Manas:
 	must be cited again for every card in its registered list.'''
 	def overloadMana(self, num, ID):
 		self.manasOverloaded[ID] += num
-		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
+		GUI = self.Game.GUI
+		if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID], 
+												  self.manasLocked[ID], self.manasOverloaded[ID]))
 		self.Game.sendSignal("ManaOverloaded", ID, None, None, 0, "")
 		self.Game.sendSignal("OverloadCheck", ID, None, None, 0, "")
 		
@@ -55,33 +57,51 @@ class Manas:
 		self.manas[ID] = min(self.manas_UpperLimit[ID], self.manas[ID])
 		self.manasLocked[ID] = 0
 		self.manasOverloaded[ID] = 0
-		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
+		GUI = self.Game.GUI
+		if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
+												  self.manasLocked[ID], self.manasOverloaded[ID]))
 		self.Game.sendSignal("OverloadCheck", ID, None, None, 0, "")
-	
+		
 	def setManaCrystal(self, num, ID):
 		self.manasUpper[ID] = num
 		if self.manas[ID] > num:
 			self.manas[ID] = num
-		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
+		GUI = self.Game.GUI
+		if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
+												  self.manasLocked[ID], self.manasOverloaded[ID]))
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
-	
+		
+	def gainTempManaCrystal(self, num, ID):
+		self.manas[ID] += num
+		self.manas[ID] = min(self.manas_UpperLimit[ID], self.manas[ID])
+		GUI = self.Game.GUI
+		if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
+												  self.manasLocked[ID], self.manasOverloaded[ID]))
+		
 	def gainManaCrystal(self, num, ID):
 		self.manas[ID] += num
 		self.manas[ID] = min(self.manas_UpperLimit[ID], self.manas[ID])
 		self.manasUpper[ID] += num
 		self.manasUpper[ID] = min(self.manas_UpperLimit[ID], self.manasUpper[ID])
-		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
+		GUI = self.Game.GUI
+		if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
+												  self.manasLocked[ID], self.manasOverloaded[ID]))
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
-	
+		
 	def gainEmptyManaCrystal(self, num, ID):
 		before = self.manasUpper[ID]
 		if self.manasUpper[ID] + num <= self.manas_UpperLimit[ID]:
 			self.manasUpper[ID] += num
-			if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
+			GUI = self.Game.GUI
+			if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
+												  self.manasLocked[ID], self.manasOverloaded[ID]))
 			self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
 			return True
 		else: #只要获得的空水晶量高于目前缺少的空水晶量，即返回False
 			self.manasUpper[ID] = self.manas_UpperLimit[ID]
+			GUI = self.Game.GUI
+			if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
+												  self.manasLocked[ID], self.manasOverloaded[ID]))
 			self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
 			return before < self.manas_UpperLimit[ID]
 
@@ -93,7 +113,9 @@ class Manas:
 			self.manas[ID] += num
 			self.manas[ID] = min(self.manas[ID], self.manasUpper[ID] - self.manasLocked[ID])
 		after = self.manas[ID]
-		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
+		GUI = self.Game.GUI
+		if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
+												  self.manasLocked[ID], self.manasOverloaded[ID]))
 		if after-before > 0:
 			self.Game.sendSignal("ManaXtlsRestore", ID, None, None, after-before, "")
 
@@ -101,7 +123,9 @@ class Manas:
 		self.manasUpper[ID] -= num
 		self.manasUpper[ID] = max(0, self.manasUpper[ID])
 		self.manas[ID] = min(self.manas[ID], self.manasUpper[ID])
-		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
+		GUI = self.Game.GUI
+		if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
+												  self.manasLocked[ID], self.manasOverloaded[ID]))
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
 
 	def affordable(self, subject):
@@ -120,7 +144,9 @@ class Manas:
 			dmgTaker.takesDamage(None, mana, damageType="Ability")
 		else: self.manas[ID] -= mana
 		subject.marks["Cost Health Instead"] = 0 #Cleanse the "Cost Health Instead" mark on the card played
-		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
+		GUI = self.Game.GUI
+		if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
+												  self.manasLocked[ID], self.manasOverloaded[ID]))
 		self.Game.sendSignal("ManaPaid", ID, subject, None, mana, "")
 		if subject.type == "Minion":
 			self.Game.Counters.manaSpentonPlayingMinions[ID] += mana
@@ -135,7 +161,9 @@ class Manas:
 		self.manasLocked[ID] = self.manasOverloaded[ID]
 		self.manasOverloaded[ID] = 0
 		self.manas[ID] = max(0, self.manasUpper[ID] - self.manasLocked[ID] - self.manas_withheld[ID])
-		if self.Game.GUI: self.Game.GUI.heroZones[ID].drawMana()
+		GUI = self.Game.GUI
+		if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
+												  self.manasLocked[ID], self.manasOverloaded[ID]))
 		self.Game.sendSignal("OverloadCheck", ID, None, None, 0, "")
 		#卡牌的费用光环加载
 		i = 0

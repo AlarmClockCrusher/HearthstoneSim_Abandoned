@@ -1,4 +1,5 @@
 from Handlers import *
+from Hand import Hand_Deck
 from Triggers_Auras import Trig_Borrow
 
 from AcrossPacks import Illidan, Anduin
@@ -6,6 +7,7 @@ from SV_Basic import SVClasses
 
 import numpy as np
 import copy
+import threading
 
 gameStatusDict = {"Immune": "你的英雄免疫", "Immune2NextTurn": "你的英雄免疫直到你的下个回合", "ImmuneThisTurn": "你的英雄在本回合免疫",
 				"Evasive": "你的英雄无法成为法术或英雄技能的目标", "Evasive2NextTurn": "直到下回合，你的英雄无法成为法术或英雄技能的目标",
@@ -57,25 +59,18 @@ class Game:
 		
 		self.mode = 0
 		self.fixedGuides, self.guides, self.moves = [], [], []
-		self.board = "Ogrimmar"
 		
 		self.possibleSecrets = {1: [], 2: []}
 
-	def initialize_Details(self, cardPool, ClassCards, NeutralCards, MinionsofCost, RNGPools, hero1, hero2, deck1=[], deck2=[]):
-		hero1 = hero1(self, 1)
-		hero1.onBoard = True
-		self.heroes[1] = hero1
-		self.powers[1] = hero1.heroPower
-		hero2 = hero2(self, 2)
-		hero2.onBoard = True
-		self.heroes[2] = hero2
-		self.powers[2] = hero2.heroPower
+	def initialize_Details(self, cardPool, RNGPools, hero1, hero2, deck1=None, deck2=None, transferStudentType=None):
+		hero1, hero2 = hero1(self, 1), hero2(self, 2)
+		hero1.onBoard = hero2.onBoard = True
+		self.heroes = {1: hero1, 2: hero2}
+		self.powers = {1: hero1.heroPower, 2: hero2.heroPower}
 		
-		self.cardPool, self.ClassCards, self.NeutralCards = cardPool, ClassCards, NeutralCards
-		self.MinionsofCost, self.RNGPools = MinionsofCost, RNGPools
-		from Hand import Hand_Deck
+		self.cardPool, self.RNGPools = cardPool, RNGPools
 		self.Hand_Deck = Hand_Deck(self, deck1, deck2)
-		self.Hand_Deck.initialize()
+		self.Hand_Deck.initialize(transferStudentType)
 		
 	def minionsAlive(self, ID, target=None): #if target is not None, return all living minions except the target
 		if target: return [minion for minion in self.minions[ID] if minion.type == "Minion" \
@@ -129,79 +124,85 @@ class Game:
 
 	def playAmulet(self, amulet, target, position, choice=0, comment=""):
 		ID, canPlayAmulet = amulet.ID, False
-		if self.Manas.affordable(amulet) and self.space(ID) and amulet.selectionLegit(target, choice):
-			# 打出随从到所有结算完结为一个序列，序列完成之前不会进行胜负裁定。
-			# 打出随从产生的序列分为
-			# 1）使用阶段： 支付费用，随从进入战场（处理位置和刚刚召唤等），抉择变形类随从立刻提前变形，黑暗之主也在此时变形。
-			# 如果随从有回响，在此时决定其将在完成阶段结算回响
-			# 使用时阶段：使用时扳机，如伊利丹，任务达人和魔能机甲等
-			# 召唤时阶段：召唤时扳机，如鱼人招潮者，饥饿的秃鹫等
-			# 得到过载
-			###开始结算死亡事件。此时序列还没有结束，不用处理胜负问题。
-			# 2）结算阶段： 根据随从的死亡，在手牌、牌库和场上等位置来决定战吼，战吼双次的扳机等。
-			# 开始时判定是否需要触发多次战吼，连击
-			# 指向型战吼连击和抉择随机选取目标。如果此时场上没有目标，则不会触发 对应指向部分效果和它引起的效果。
-			# 抉择和磁力也在此时结算，不过抉择变形类随从已经提前结算，此时略过。
-			###开始结算死亡事件，不必处理胜负问题。
-			# 3）完成阶段
-			# 召唤后步骤：召唤后扳机触发：如飞刀杂耍者，船载火炮等
-			# 将回响牌加入打出者的手牌
-			# 使用后步骤：使用后扳机：如镜像实体，狙击，顽石元素。低语元素的状态移除结算和dk的技能刷新等。
-			###结算死亡，此时因为序列结束可以处理胜负问题。
-
-			# 在打出序列的开始阶段决定是否要产生一个回响copy
-			subIndex, subWhere = self.Hand_Deck.hands[amulet.ID].index(amulet), "Hand%d" % amulet.ID
-			if target: #因为护符是SV特有的卡牌类型，所以其目标选择一定是列表填充式的
-				tarIndex, tarWhere = [], []
-				for obj in target:
-					if obj.onBoard:
-						tarIndex.append(obj.pos)
-						tarWhere.append(obj.type+str(obj.ID))
-					else:
-						tarIndex.append(self.Hand_Deck.hands[obj.ID].index(obj))
-						tarWhere.append("Hand%d"%obj.ID)
-			else: tarIndex, tarWhere = 0, ''
-			amulet, mana, posinHand = self.Hand_Deck.extractfromHand(amulet, enemyCanSee=True)
-			amuletIndex = amulet.index
-			self.Manas.payManaCost(amulet, mana)  # 海魔钉刺者，古加尔和血色绽放的伤害生效。
-			# The new minion played will have the largest sequence.
-			# 处理随从的位置的登场顺序。
-			amulet.seq = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
-			self.minions[ID].insert(position + 100 * (position < 0), amulet)
-			self.sortPos()
-			# 使用随从牌、召唤随从牌、召唤结束信号会触发
-			# 把本回合召唤随从数的计数提前至打出随从之前，可以让小个子召唤师等“每回合第一张”光环在随从打出时正确结算。连击等结算仍依靠cardsPlayedThisTurn
-			self.amuletPlayed = amulet
-			armedTrigs = self.armedTrigs("AmuletBeenPlayed")
-			if self.GUI: self.GUI.wait(400)
-			target = amulet.played(target, choice, mana, posinHand, comment)
-			# 完成阶段
-			# 只有当打出的随从还在场上的时候，飞刀杂耍者等“在你召唤一个xx随从之后”才会触发。当大王因变形为英雄而返回None时也不会触发。
-			# 召唤后步骤，触发“每当你召唤一个xx随从之后”的扳机，如飞刀杂耍者，公正之剑和船载火炮等
-			if self.amuletPlayed and self.amuletPlayed.onBoard:
-				self.sendSignal("AmuletBeenSummoned", self.turn, self.amuletPlayed, target, mana, "")
-			self.Counters.numCardsPlayedThisTurn[self.turn] += 1
-			# 假设打出的随从被对面控制的话仍然会计为我方使用的随从。被对方变形之后仍记录打出的初始随从
-			self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(amuletIndex)
-			self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
-			self.Counters.cardsPlayedThisGame[self.turn].append(amuletIndex)
-			# 使用后步骤，触发镜像实体，狙击，顽石元素等“每当你使用一张xx牌”之后的扳机。
-			if self.amuletPlayed and self.amuletPlayed.type == "Amulet":
-				if self.amuletPlayed.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
-				# The comment here is posinHand, which records the position a card is played from hand. -1 means the rightmost, 0 means the leftmost
-				self.sendSignal("AmuletBeenPlayed", self.turn, self.amuletPlayed, target, mana, posinHand, choice,
-								armedTrigs)
-			# ............完成阶段结束，开始处理死亡情况，此时可以处理胜负问题。
-			self.gathertheDead(True)
-			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-				card.effCanTrig()
-				card.checkEvanescent()
-			if not isinstance(tarIndex, list):
-				self.moves.append(
-					("playAmulet", subIndex, subWhere, tarIndex, tarWhere, position, choice))
-			else:
-				self.moves.append(("playAmulet", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), position, choice))
-
+		if not (self.Manas.affordable(amulet) and self.space(ID) and amulet.selectionLegit(target, choice)):
+			return
+		# 打出随从到所有结算完结为一个序列，序列完成之前不会进行胜负裁定。
+		# 打出随从产生的序列分为
+		# 1）使用阶段： 支付费用，随从进入战场（处理位置和刚刚召唤等），抉择变形类随从立刻提前变形，黑暗之主也在此时变形。
+		# 如果随从有回响，在此时决定其将在完成阶段结算回响
+		# 使用时阶段：使用时扳机，如伊利丹，任务达人和魔能机甲等
+		# 召唤时阶段：召唤时扳机，如鱼人招潮者，饥饿的秃鹫等
+		# 得到过载
+		###开始结算死亡事件。此时序列还没有结束，不用处理胜负问题。
+		# 2）结算阶段： 根据随从的死亡，在手牌、牌库和场上等位置来决定战吼，战吼双次的扳机等。
+		# 开始时判定是否需要触发多次战吼，连击
+		# 指向型战吼连击和抉择随机选取目标。如果此时场上没有目标，则不会触发 对应指向部分效果和它引起的效果。
+		# 抉择和磁力也在此时结算，不过抉择变形类随从已经提前结算，此时略过。
+		###开始结算死亡事件，不必处理胜负问题。
+		# 3）完成阶段
+		# 召唤后步骤：召唤后扳机触发：如飞刀杂耍者，船载火炮等
+		# 将回响牌加入打出者的手牌
+		# 使用后步骤：使用后扳机：如镜像实体，狙击，顽石元素。低语元素的状态移除结算和dk的技能刷新等。
+		###结算死亡，此时因为序列结束可以处理胜负问题。
+		# 在打出序列的开始阶段决定是否要产生一个回响copy
+		subIndex, subWhere = self.Hand_Deck.hands[amulet.ID].index(amulet), "Hand%d" % amulet.ID
+		if target: #因为护符是SV特有的卡牌类型，所以其目标选择一定是列表填充式的
+			tarIndex, tarWhere = [], []
+			for obj in target:
+				if obj.onBoard:
+					tarIndex.append(obj.pos)
+					tarWhere.append(obj.type+str(obj.ID))
+				else:
+					tarIndex.append(self.Hand_Deck.hands[obj.ID].index(obj))
+					tarWhere.append("Hand%d"%obj.ID)
+		else: tarIndex, tarWhere = 0, ''
+		#准备游戏操作的动画
+		GUI, sequence = self.GUI, None
+		if GUI:
+			sequence = GUI.SEQUENCE()
+			GUI.seqReady = False
+			GUI.seqHolder.append(sequence)
+		
+		amulet, mana, posinHand = self.Hand_Deck.extractfromHand(amulet, enemyCanSee=True)
+		amuletIndex = amulet.index
+		self.Manas.payManaCost(amulet, mana)  # 海魔钉刺者，古加尔和血色绽放的伤害生效。
+		# The new minion played will have the largest sequence.
+		# 处理随从的位置的登场顺序。
+		amulet.seq = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
+		self.minions[ID].insert(position + 100 * (position < 0), amulet)
+		self.sortPos()
+		# 使用随从牌、召唤随从牌、召唤结束信号会触发
+		# 把本回合召唤随从数的计数提前至打出随从之前，可以让小个子召唤师等“每回合第一张”光环在随从打出时正确结算。连击等结算仍依靠cardsPlayedThisTurn
+		self.amuletPlayed = amulet
+		armedTrigs = self.armedTrigs("AmuletBeenPlayed")
+		if self.GUI: self.GUI.wait(400)
+		target = amulet.played(target, choice, mana, posinHand, comment)
+		# 完成阶段
+		# 只有当打出的随从还在场上的时候，飞刀杂耍者等“在你召唤一个xx随从之后”才会触发。当大王因变形为英雄而返回None时也不会触发。
+		# 召唤后步骤，触发“每当你召唤一个xx随从之后”的扳机，如飞刀杂耍者，公正之剑和船载火炮等
+		if self.amuletPlayed and self.amuletPlayed.onBoard:
+			self.sendSignal("AmuletBeenSummoned", self.turn, self.amuletPlayed, target, mana, "")
+		self.Counters.numCardsPlayedThisTurn[self.turn] += 1
+		# 假设打出的随从被对面控制的话仍然会计为我方使用的随从。被对方变形之后仍记录打出的初始随从
+		self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(amuletIndex)
+		self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
+		self.Counters.cardsPlayedThisGame[self.turn].append(amuletIndex)
+		# 使用后步骤，触发镜像实体，狙击，顽石元素等“每当你使用一张xx牌”之后的扳机。
+		if self.amuletPlayed and self.amuletPlayed.type == "Amulet":
+			if self.amuletPlayed.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+			# The comment here is posinHand, which records the position a card is played from hand. -1 means the rightmost, 0 means the leftmost
+			self.sendSignal("AmuletBeenPlayed", self.turn, self.amuletPlayed, target, mana, posinHand, choice,
+							armedTrigs)
+		# ............完成阶段结束，开始处理死亡情况，此时可以处理胜负问题。
+		self.gathertheDead(True)
+		self.Hand_Deck.decideCardColors()
+		if not isinstance(tarIndex, list):
+			self.moves.append(
+				("playAmulet", subIndex, subWhere, tarIndex, tarWhere, position, choice))
+		else:
+			self.moves.append(("playAmulet", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), position, choice))
+		if GUI: GUI.seqReady = True
+		
 	#There probably won't be board size limit changing effects.
 	#Minions to die will still count as a placeholder on board. Only minions that have entered the tempDeads don't occupy space.
 	def space(self, ID):
@@ -211,8 +212,9 @@ class Game:
 	def playMinion(self, minion, target, position, choice=0, comment=""):
 		ID, canPlayMinion = minion.ID, False
 		#当场上没有空位且打出的随从不是一个有Accelerate的Shadowverse随从时，不能打出
-		if self.Manas.affordable(minion) and (self.space(ID) or (minion.index.startswith("SV_") and minion.willAccelerate())) \
-				and minion.selectionLegit(target, choice):
+		if not (self.Manas.affordable(minion) and (self.space(ID) or (minion.index.startswith("SV_") and minion.willAccelerate())) \
+				and minion.selectionLegit(target, choice)):
+			return
 			#打出随从到所有结算完结为一个序列，序列完成之前不会进行胜负裁定。
 			#打出随从产生的序列分为
 				#1）使用阶段： 支付费用，随从进入战场（处理位置和刚刚召唤等），抉择变形类随从立刻提前变形，黑暗之主也在此时变形。
@@ -232,103 +234,104 @@ class Game:
 					#使用后步骤：使用后扳机：如镜像实体，狙击，顽石元素。低语元素的状态移除结算和dk的技能刷新等。
 					###结算死亡，此时因为序列结束可以处理胜负问题。
 
-			subIndex, subWhere = self.Hand_Deck.hands[minion.ID].index(minion), "Hand%d"%minion.ID
-			if target:
-				if isinstance(target, list):
-					tarIndex, tarWhere = [], []
-					for obj in target:
-						if obj.onBoard:
-							tarIndex.append(obj.pos)
-							tarWhere.append(obj.type+str(obj.ID))
-						else:
-							tarIndex.append(self.Hand_Deck.hands[obj.ID].index(obj))
-							tarWhere.append("Hand%d"%obj.ID)
-				else: #非列表状态的target一定是炉石卡指定的
-					tarIndex, tarWhere = target.pos, target.type+str(target.ID)
-			else: tarIndex, tarWhere = 0, ''
-			minion, mana, posinHand = self.Hand_Deck.extractfromHand(minion, enemyCanSee=True, animate=False)
-			print("Play minion extract from hand finished")
-			#如果打出的随从是SV中的爆能强化，激奏和结晶随从，则它们会返回自己的真正要打出的牌以及对应的费用
-			try: minion, mana = minion.becomeswhenPlayed(choice)
-			except: pass #如果随从没有爆能强化等，则无事发生。
-			self.Manas.payManaCost(minion, mana) #海魔钉刺者，古加尔和血色绽放的伤害生效。
-			#需要根据变形成的随从来进行不同的执行
-			if minion.type == "Spell": #Shadowverse Accelerate minion might become spell when played
-				self.minionPlayed, spell = None, minion
-				spellHolder, origSpell = [spell], spell
-				self.sendSignal("SpellOKtoCast?", self.turn, spellHolder, None, mana, "")
-				if not spellHolder:
-					self.Counters.numCardsPlayedThisTurn[self.turn] += 1
-				else:
-					if origSpell != spellHolder[0]: spellHolder[0].cast()
+		subIndex, subWhere = self.Hand_Deck.hands[minion.ID].index(minion), "Hand%d"%minion.ID
+		if target:
+			if isinstance(target, list):
+				tarIndex, tarWhere = [], []
+				for obj in target:
+					if obj.onBoard:
+						tarIndex.append(obj.pos)
+						tarWhere.append(obj.type+str(obj.ID))
 					else:
-						armedTrigs = self.armedTrigs("SpellBeenPlayed")
-						self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(spell.index)
-						self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
-						spell.played(target, choice, mana, posinHand, comment) #choice用于抉择选项，comment用于区分是GUI环境下使用还是AI分叉
-						self.Counters.numCardsPlayedThisTurn[self.turn] += 1
-						self.Counters.numSpellsPlayedThisTurn[self.turn] += 1
-						if "~Accelerate" in spell.index:
-							self.Counters.numAcceleratePlayedThisGame[self.turn] += 1
-							self.Counters.numAcceleratePlayedThisTurn[self.turn] += 1
-						self.Counters.cardsPlayedThisGame[self.turn].append(spell.index)
-						if "~Corrupted~" in spell.index: self.Counters.corruptedCardsPlayed[self.turn].append(spell.index)
-						#使用后步骤，触发“每当使用一张xx牌之后”的扳机，如狂野炎术士，西风灯神，星界密使的状态移除和伊莱克特拉风潮的状态移除。
-						if spell.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
-						self.sendSignal("SpellBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
-						if "~Accelerate" in spell.index:
-							self.sendSignal("AccelerateBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
-						#完成阶段结束，处理亡语，此时可以处理胜负问题。
-						self.gathertheDead(True)
-						for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-							card.effCanTrig()
-							card.checkEvanescent()
-					if not isinstance(tarIndex, list):
-						self.moves.append(("playSpell", subIndex, subWhere, tarIndex, tarWhere, choice))
-					else:
-						self.moves.append(("playSpell", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
-					self.Counters.shadows[spell.ID] += 1
-			else: #Normal or Enhance X or Crystallize X minion played
-				typewhenPlayed = minion.type
-				minionIndex = minion.index
-				minion.seq = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
-				self.minions[ID].insert(position+100*(position < 0), minion)
-				self.sortPos()
-				if typewhenPlayed == "Minion": #只有随从打出的时候会计入打出的随从数
-					self.Counters.numMinionsPlayedThisTurn[self.turn] += 1
-				self.minionPlayed = minion
-				armedTrigs = self.armedTrigs("%sBeenPlayed"%typewhenPlayed)
-				if self.GUI:
-					self.GUI.showOffBoardTrig(minion, alsoDisplayCard=True, animate=False)
-					self.GUI.hand2BoardAni(minion)
-				target = minion.played(target, choice, mana, posinHand, comment)
-				if self.minionPlayed and self.minionPlayed.onBoard:
-					self.sendSignal("%sBeenSummoned"%typewhenPlayed, self.turn, self.minionPlayed, target, mana, "")
-					if typewhenPlayed=="Minion":
-						self.Counters.numMinionsSummonedThisGame[self.minionPlayed.ID] += 1
+						tarIndex.append(self.Hand_Deck.hands[obj.ID].index(obj))
+						tarWhere.append("Hand%d"%obj.ID)
+			else: #非列表状态的target一定是炉石卡指定的
+				tarIndex, tarWhere = target.pos, target.type+str(target.ID)
+		else: tarIndex, tarWhere = 0, ''
+		#开始准备游戏操作对应的动画
+		GUI, sequence = self.GUI, None
+		if GUI:
+			sequence = GUI.SEQUENCE()
+			GUI.seqReady = False
+			GUI.seqHolder.append(sequence)
+		#支付法力值，结算血色绽放等状态
+		minion, mana, posinHand = self.Hand_Deck.extractfromHand(minion, enemyCanSee=True, animate=False)
+		#如果打出的随从是SV中的爆能强化，激奏和结晶随从，则它们会返回自己的真正要打出的牌以及对应的费用
+		try: minion, mana = minion.becomeswhenPlayed(choice)
+		except: pass #如果随从没有爆能强化等，则无事发生。
+		self.Manas.payManaCost(minion, mana) #海魔钉刺者，古加尔和血色绽放的伤害生效。
+		if GUI: GUI.showOffBoardTrig(minion, followCurve=False)
+		#需要根据变形成的随从来进行不同的执行
+		if minion.type == "Spell": #Shadowverse Accelerate minion might become spell when played
+			self.minionPlayed, spell = None, minion
+			spellHolder, origSpell = [spell], spell
+			self.sendSignal("SpellOKtoCast?", self.turn, spellHolder, None, mana, "")
+			if not spellHolder:
 				self.Counters.numCardsPlayedThisTurn[self.turn] += 1
-				#假设打出的随从被对面控制的话仍然会计为我方使用的随从。被对方变形之后仍记录打出的初始随从
-				self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(minionIndex)
-				self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
-				self.Counters.cardsPlayedThisGame[self.turn].append(minionIndex)
-				if "~Corrupted~" in minion.index: self.Counters.corruptedCardsPlayed[self.turn].append(minionIndex)
-				if minion.name.endswith("Watch Post"): self.Counters.numWatchPostSummoned[self.turn] += 1
-				#使用后步骤，触发镜像实体，狙击，顽石元素等“每当你使用一张xx牌”之后的扳机。
-				if self.minionPlayed and self.minionPlayed.type != "Dormant":
-					if self.minionPlayed.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
-					#The comment here is posinHand, which records the position a card is played from hand. -1 means the rightmost, 0 means the leftmost
-					self.sendSignal("%sBeenPlayed"%typewhenPlayed, self.turn, self.minionPlayed, target, mana, posinHand, choice, armedTrigs)
-			#............完成阶段结束，开始处理死亡情况，此时可以处理胜负问题。
-			self.gathertheDead(True)
-			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-				card.effCanTrig()
-				card.checkEvanescent()
-			if not isinstance(tarIndex, list):
-				self.moves.append(("playMinion", subIndex, subWhere, tarIndex, tarWhere, position, choice))
 			else:
-				self.moves.append(("playMinion", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), position, choice))
-			print("Changing the game moves", self.moves)
-			
+				if origSpell != spellHolder[0]: spellHolder[0].cast()
+				else:
+					armedTrigs = self.armedTrigs("SpellBeenPlayed")
+					self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(spell.index)
+					self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
+					spell.played(target, choice, mana, posinHand, comment) #choice用于抉择选项，comment用于区分是GUI环境下使用还是AI分叉
+					self.Counters.numCardsPlayedThisTurn[self.turn] += 1
+					self.Counters.numSpellsPlayedThisTurn[self.turn] += 1
+					if "~Accelerate" in spell.index:
+						self.Counters.numAcceleratePlayedThisGame[self.turn] += 1
+						self.Counters.numAcceleratePlayedThisTurn[self.turn] += 1
+					self.Counters.cardsPlayedThisGame[self.turn].append(spell.index)
+					if "~Corrupted~" in spell.index: self.Counters.corruptedCardsPlayed[self.turn].append(spell.index)
+					#使用后步骤，触发“每当使用一张xx牌之后”的扳机，如狂野炎术士，西风灯神，星界密使的状态移除和伊莱克特拉风潮的状态移除。
+					if spell.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+					self.sendSignal("SpellBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
+					if "~Accelerate" in spell.index:
+						self.sendSignal("AccelerateBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
+					#完成阶段结束，处理亡语，此时可以处理胜负问题。
+					self.gathertheDead(True)
+				if not isinstance(tarIndex, list):
+					self.moves.append(("playSpell", subIndex, subWhere, tarIndex, tarWhere, choice))
+				else:
+					self.moves.append(("playSpell", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
+				self.Counters.shadows[spell.ID] += 1
+		else: #Normal or Enhance X or Crystallize X minion played
+			typewhenPlayed = minion.type
+			minionIndex = minion.index
+			minion.seq = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
+			self.minions[ID].insert(position+100*(position < 0), minion)
+			self.sortPos()
+			if typewhenPlayed == "Minion": #只有随从打出的时候会计入打出的随从数
+				self.Counters.numMinionsPlayedThisTurn[self.turn] += 1
+			self.minionPlayed = minion
+			armedTrigs = self.armedTrigs("%sBeenPlayed"%typewhenPlayed)
+			if GUI: GUI.hand2BoardAni(minion)
+			target = minion.played(target, choice, mana, posinHand, comment)
+			if self.minionPlayed and self.minionPlayed.onBoard:
+				self.sendSignal("%sBeenSummoned"%typewhenPlayed, self.turn, self.minionPlayed, target, mana, "")
+				if typewhenPlayed=="Minion":
+					self.Counters.numMinionsSummonedThisGame[self.minionPlayed.ID] += 1
+			self.Counters.numCardsPlayedThisTurn[self.turn] += 1
+			#假设打出的随从被对面控制的话仍然会计为我方使用的随从。被对方变形之后仍记录打出的初始随从
+			self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(minionIndex)
+			self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
+			self.Counters.cardsPlayedThisGame[self.turn].append(minionIndex)
+			if "~Corrupted~" in minion.index: self.Counters.corruptedCardsPlayed[self.turn].append(minionIndex)
+			if minion.name.endswith("Watch Post"): self.Counters.numWatchPostSummoned[self.turn] += 1
+			#使用后步骤，触发镜像实体，狙击，顽石元素等“每当你使用一张xx牌”之后的扳机。
+			if self.minionPlayed and self.minionPlayed.type != "Dormant":
+				if self.minionPlayed.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+				#The comment here is posinHand, which records the position a card is played from hand. -1 means the rightmost, 0 means the leftmost
+				self.sendSignal("%sBeenPlayed"%typewhenPlayed, self.turn, self.minionPlayed, target, mana, posinHand, choice, armedTrigs)
+		#............完成阶段结束，开始处理死亡情况，此时可以处理胜负问题。
+		self.gathertheDead(True)
+		self.Hand_Deck.decideCardColors()
+		if not isinstance(tarIndex, list):
+			self.moves.append(("playMinion", subIndex, subWhere, tarIndex, tarWhere, position, choice))
+		else:
+			self.moves.append(("playMinion", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), position, choice))
+		print("Changing the game moves", self.moves)
+		if GUI: GUI.seqReady = True  #当seqHolder中最后一个sequence的准备完毕时，重置seqReady，告知GUI.mouseMove可以调用
+	
 	#召唤随从会成为夹杂在其他的玩家行为中，不视为一个完整的阶段。也不直接触发亡语结算等。
 	#This method can also summon minions for enemy.
 	#SUMMONING MINIONS ONLY CONSIDERS ONBOARD MINIONS. MINIONS THAT HAVE ENTERED THE tempDeads DON'T COUNT AS MINIONS.
@@ -386,7 +389,7 @@ class Game:
 			if self.GUI:
 				if fromHandDeck == 1: self.GUI.hand2BoardAni(subject)
 				elif fromHandDeck == 2: self.GUI.deck2BoardAni(subject)
-				else: self.GUI.minionAppearAni(subject)
+				else: self.GUI.summonAni(subject)
 			subject.appears()
 			self.Counters.numWatchPostSummoned[ID] += 1
 			if subject.type=="Minion":
@@ -494,16 +497,13 @@ class Game:
 			newMinion.seq = len(self.minions[1]) + len(self.minions[2]) + len(self.weapons[1]) + len(self.weapons[2])
 			self.minions[ID].insert(pos, newMinion)
 			self.sortPos()
-			if self.GUI:
+			GUI = self.GUI
+			if GUI:
 				if newMinion.type == target.type:
-					target.btn.changeCard(newMinion)
+					GUI.seqHolder[-1].append(GUI.FUNC(target.btn.changeCard, newMinion, True))
 				else: #主要用于随从和休眠物之间的变形
-					btn = target.btn
-					boardZone = self.GUI.boardZones[ID]
-					pos = target.btn.getPos()
-					boardZone.addaMinion(newMinion, pos)
-					boardZone.removeMinion(btn)
-					self.GUI.ensureBtnMovedAway(btn)
+					GUI.seqHolder[-1].append(GUI.FUNC(target.btn.np.removeNode))
+					self.GUI.summonAni(newMinion)
 			newMinion.appears(firstTime)
 		elif target in self.Hand_Deck.hands[target.ID]:
 			if self.minionPlayed == target: self.minionPlayed = newMinion
@@ -533,7 +533,6 @@ class Game:
 					target.disappears(deathrattlesStayArmed=False)
 					self.removeMinionorWeapon(target)
 				elif target.inHand: self.Hand_Deck.extractfromHand(target.ID, target) #如果随从在手牌中则将其丢弃
-
 
 	def isVengeance(self, ID):
 		return self.heroes[ID].health <= 10 or self.Counters.tempVengeance[ID]
@@ -609,6 +608,7 @@ class Game:
 		objs = self.weapons[1] + self.weapons[2] + self.minions[1] + self.minions[2]
 		for i, obj in zip(np.asarray([obj.seq for obj in objs]).argsort().argsort(), objs): obj.seq = i
 
+	#Return a single minion to hand
 	def returnMiniontoHand(self, target, deathrattlesStayArmed=False, manaMod=None):
 		ID = target.ID
 		if target in self.minions[ID]: #如果随从仍在随从列表中
@@ -617,14 +617,10 @@ class Game:
 				if target.onBoard: #随从存活状态下触发死亡扳机的区域移动效果时，不会注销其他扳机
 					target.disappears(deathrattlesStayArmed)
 				#如onBoard为False,则disappears已被调用过了。主要适用于触发死亡扳机中的区域移动效果
-				print("Card to move 01", target, target.btn)
 				self.removeMinionorWeapon(target, animate=False)
-				print("Card to move 02", target, target.btn)
 				if self.GUI: self.GUI.board2HandAni(target)
-				print("Card to move 1", target, target.btn)
 				target.reset(ID)
 				if manaMod: manaMod.applies()
-				print("Card to move 2", target, target.btn)
 				self.Hand_Deck.addCardtoHand(target, ID)
 				for func in target.returnResponse:
 					func()
@@ -641,6 +637,7 @@ class Game:
 		elif target.inHand: return target
 		else: return None #The target is dead and removed already
 
+	#Shuffle a single minion to deck
 	#targetDeckID decides the destination. initiatorID is for triggers, such as Trig_AugmentedElekk
 	def returnMiniontoDeck(self, target, targetDeckID, initiatorID, deathrattlesStayArmed=False):
 		if target in self.minions[target.ID]:
@@ -891,7 +888,12 @@ class Game:
 	The deaths of minions will be handled at the end of triggering, which is then followed by drawing card.
 	"""
 	def switchTurn(self):
-		if self.GUI: self.GUI.switchTurnAni()
+		GUI, sequence = self.GUI, None
+		if GUI:
+			sequence = GUI.SEQUENCE()
+			GUI.seqReady = False
+			GUI.seqHolder.append(sequence)
+			GUI.switchTurnAni()
 		for minion in self.minions[self.turn] + self.minions[3-self.turn]: #Include the Dormants.
 			minion.turnEnds(self.turn) #Handle minions' attTimes and attChances
 		for card in self.Hand_Deck.hands[self.turn]	+ self.Hand_Deck.hands[3-self.turn]:
@@ -930,19 +932,18 @@ class Game:
 		self.sendSignal("TurnStarts", self.turn, None, None, 0, "")
 		self.gathertheDead(True)
 		#抽牌阶段之后的死亡处理可以涉及胜负裁定。
+		if GUI: print("Switching turn, GUI seqHolder:", GUI.seqHolder)
 		self.Hand_Deck.drawCard(self.turn)
 		if self.turn == 2 and self.Counters.turns[2] == 1 and self.heroes[2].Class in SVClasses:
 			self.Hand_Deck.drawCard(self.turn)
 		self.gathertheDead(True) #There might be death induced by drawing cards.
-		for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-			card.effCanTrig()
-			card.checkEvanescent()
+		self.Hand_Deck.decideCardColors()
 		self.moves.append(("EndTurn", ))
-
+		if GUI: GUI.seqReady = True
+		
 	def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirTrig=True):
 		if verifySelectable and not subject.canAttackTarget(target):
-			return False
-		else:
+			return
 		#战斗阶段：
 			#攻击前步骤： 触发攻击前扳机，列队结算，如爆炸陷阱，冰冻陷阱，误导
 				#如果扳机结算完毕后，被攻击者发生了变化，则再次进行攻击前步骤的扳机触发。重复此步骤直到被攻击者没有变化为止。
@@ -957,79 +958,78 @@ class Game:
 		#如果有攻击之后的发现效果需要结算，则在此结算之后。
 
 
-			#如果一个角色被迫发起攻击，如沼泽之王爵德，野兽之心，群体狂乱等，会经历上述的战斗阶段的所有步骤，之后没有发现效果结算。同时角色的attackedTimes不会增加。
-			#之后没有阶段间步骤（因为这种强制攻击肯定是由其他序列引发的）
-			#疯狂巨龙死亡之翼的连续攻击中，只有第一次目标选择被被市长改变，但之后的不会
-			if self.GUI:
-				self.GUI.wait(275)
-				self.GUI.attackAni(subject)
-			if verifySelectable:
-				subIndex, subWhere = subject.pos, subject.type+str(subject.ID)
-				tarIndex, tarWhere = target.pos, target.type+str(target.ID)
-			#如果英雄的武器为蜡烛弓和角斗士的长弓，则优先给予攻击英雄免疫，防止一切攻击前步骤带来的伤害。
-			self.sendSignal("BattleStarted", self.turn, subject, target, 0, "") #这里的target没有什么意义，可以留为target
-			#在此，奥秘和健忘扳机会在此触发。需要记住初始的目标，然后可能会有诸多扳机可以对此初始信号响应。
-			targetHolder = [target, target] #第一个target是每轮要触发的扳机会对应的原始随从，目标重导向扳机会改变第二个
-			signal = subject.type + "Attacks" + targetHolder[0].type
-			self.sendSignal(signal, self.turn, subject, targetHolder, 0, "1stPre-attack")
-			#第一轮攻击前步骤结束之后，Game的记录的target如果相对于初始目标发生了变化，则再来一轮攻击前步骤，直到目标不再改变为止。
-			#例如，对手有游荡怪物、误导和毒蛇陷阱，则攻击英雄这个信号可以按扳机入场顺序触发误导和游荡怪物，改变了攻击目标。之后的额外攻击前步骤中毒蛇陷阱才会触发。
-			#如果对手有崇高牺牲和自动防御矩阵，那么攻击随从这个信号会将两者都触发，此时攻击目标不会因为这两个奥秘改变。
-			#健忘这个特性，如果满足触发条件，且错过了50%几率，之后再次满足条件时也不会再触发这个扳机。这个需要在每个食人魔随从上专门放上标记。
-				#如果场上有多个食人魔勇士，则这些扳机都只会在第一次信号发出时触发。
-			#如果一个攻击前步骤中，目标连续发生变化，如前面提到的游荡怪物和误导，则只会对最新的目标进行下一次攻击前步骤。
-			#如果一个攻击前步骤中，目标连续发生变化，但最终又变回与初始目标相同，则不会产生新的攻击前步骤。
-
-			#在之前的攻击前步骤中触发过的扳机不能再后续的额外攻击前步骤中再次触发，主要作用于傻子和市长，因为其他的攻击前扳机都是奥秘，触发之后即消失。
-			#只有在攻击前步骤中可能有攻击目标的改变，之后的信号可以大胆的只传递目标本体，不用targetHolder
-			while targetHolder[1] != targetHolder[0]: #这里的target只是refrence传递进来的target，赋值过程不会更改函数外原来的target
-				targetHolder[0] = targetHolder[1] #攻击前步骤改变了攻击目标，则再次进行攻击前步骤，与这个新的目标进行比对。
-				if self.GUI:
-					self.GUI.target = targetHolder[0]
-					self.GUI.wait(400)
-				signal = subject.type+"Attacks"+targetHolder[0].type #产生新的触发信号。
-				self.sendSignal(signal, self.turn, subject, targetHolder, 0, "FollowingPre-attack")
-			target = targetHolder[1] #攻击目标改向结束之后，把targetHolder里的第二个值赋给target(用于重导向扳机的那个),这个target不是函数外的target了
-			#攻击前步骤结束，开始结算攻击时步骤
-			#攻击时步骤：触发“当xx攻击时”的扳机，如真银圣剑，血吼，智慧祝福，血吼，收集者沙库尔等
-			signal = subject.type+"Attacking"+target.type
-			self.sendSignal(signal, self.turn, subject, target, 0, "")
-			#如果此时攻击者，攻击目标或者任意英雄濒死或离场所，则攻击取消，跳过伤害和攻击后步骤。
-			battleContinues = True
-			#如果目标随从变成了休眠物，则攻击会取消，但是不知道是否会浪费攻击机会。假设会浪费
-			if ((subject.type != "Minion" and subject.type != "Hero") or not subject.onBoard or subject.health < 1 or subject.dead) \
-				or ((target.type != "Minion" and target.type != "Hero") or not target.onBoard or target.health < 1 or target.dead) \
-				or (self.heroes[1].health < 1 or self.heroes[1].dead or self.heroes[2].health < 1 or self.heroes[2].dead):
-				battleContinues = False
-				if useAttChance: subject.attTimes += 1 #If this attack is canceled, the attack time still increases.
-
-			if battleContinues:
-				#伤害步骤，攻击者移除潜行，攻击者对被攻击者造成伤害，被攻击者对攻击者造成伤害。然后结算两者的伤害事件。
-				#攻击者和被攻击的血量都减少。但是此时尚不发出伤害判定。先发出攻击完成的信号，可以触发扫荡打击。
-				if self.GUI: self.GUI.attackAni(subject, target)
-				subject.attacks(target, useAttChance)
-				#巨型沙虫的获得额外攻击机会的触发在随从死亡之前结算。同理达利乌斯克罗雷的触发也在死亡结算前，但是有隐藏的条件：自己不能处于濒死状态。
-				self.sendSignal(subject.type+"Attacked"+target.type, self.turn, subject, target, 0, "")
-				if subject == self.heroes[1] or subject == self.heroes[2]:
-					self.Counters.heroAttackTimesThisTurn[subject.ID] += 1
-			elif self.GUI: self.GUI.cancelAttack(subject)
-			#重置蜡烛弓，角斗士的长弓，以及傻子和市长的trigedThisBattle标识。
-			if resetRedirTrig: #这个选项目前只有让一个随从连续攻击其他目标时才会选择关闭，不会与角斗士的长弓冲突
-				self.sendSignal("BattleFinished", self.turn, subject, None, 0, "")
-			#战斗阶段结束，处理亡语，此时可以处理胜负问题。
-			if resolveDeath:
-				self.gathertheDead(True)
-			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-				card.effCanTrig()
-				card.checkEvanescent()
-			if verifySelectable:
-				self.moves.append(("battle", subIndex, subWhere, tarIndex, tarWhere))
-			return battleContinues
-
+		#如果一个角色被迫发起攻击，如沼泽之王爵德，野兽之心，群体狂乱等，会经历上述的战斗阶段的所有步骤，之后没有发现效果结算。同时角色的attackedTimes不会增加。
+		#之后没有阶段间步骤（因为这种强制攻击肯定是由其他序列引发的）
+		#疯狂巨龙死亡之翼的连续攻击中，只有第一次目标选择被被市长改变，但之后的不会
+		print("Handling battle", subject, target)
+		GUI, sequence = self.GUI, None
+		if GUI:
+			sequence = GUI.SEQUENCE()
+			GUI.seqReady = False
+			GUI.seqHolder.append(sequence)
+			GUI.attackAni_Raise(subject)
+		if verifySelectable:
+			subIndex, subWhere = subject.pos, subject.type+str(subject.ID)
+			tarIndex, tarWhere = target.pos, target.type+str(target.ID)
+		#如果英雄的武器为蜡烛弓和角斗士的长弓，则优先给予攻击英雄免疫，防止一切攻击前步骤带来的伤害。
+		self.sendSignal("BattleStarted", self.turn, subject, target, 0, "") #这里的target没有什么意义，可以留为target
+		#在此，奥秘和健忘扳机会在此触发。需要记住初始的目标，然后可能会有诸多扳机可以对此初始信号响应。
+		targetHolder = [target, target] #第一个target是每轮要触发的扳机会对应的原始随从，目标重导向扳机会改变第二个
+		signal = subject.type + "Attacks" + targetHolder[0].type
+		self.sendSignal(signal, self.turn, subject, targetHolder, 0, "1stPre-attack")
+		#第一轮攻击前步骤结束之后，Game的记录的target如果相对于初始目标发生了变化，则再来一轮攻击前步骤，直到目标不再改变为止。
+		#例如，对手有游荡怪物、误导和毒蛇陷阱，则攻击英雄这个信号可以按扳机入场顺序触发误导和游荡怪物，改变了攻击目标。之后的额外攻击前步骤中毒蛇陷阱才会触发。
+		#如果对手有崇高牺牲和自动防御矩阵，那么攻击随从这个信号会将两者都触发，此时攻击目标不会因为这两个奥秘改变。
+		#健忘这个特性，如果满足触发条件，且错过了50%几率，之后再次满足条件时也不会再触发这个扳机。这个需要在每个食人魔随从上专门放上标记。
+			#如果场上有多个食人魔勇士，则这些扳机都只会在第一次信号发出时触发。
+		#如果一个攻击前步骤中，目标连续发生变化，如前面提到的游荡怪物和误导，则只会对最新的目标进行下一次攻击前步骤。
+		#如果一个攻击前步骤中，目标连续发生变化，但最终又变回与初始目标相同，则不会产生新的攻击前步骤。
+		#在之前的攻击前步骤中触发过的扳机不能再后续的额外攻击前步骤中再次触发，主要作用于傻子和市长，因为其他的攻击前扳机都是奥秘，触发之后即消失。
+		#只有在攻击前步骤中可能有攻击目标的改变，之后的信号可以大胆的只传递目标本体，不用targetHolder
+		while targetHolder[1] != targetHolder[0]: #这里的target只是refrence传递进来的target，赋值过程不会更改函数外原来的target
+			targetHolder[0] = targetHolder[1] #攻击前步骤改变了攻击目标，则再次进行攻击前步骤，与这个新的目标进行比对。
+			if GUI: GUI.target = targetHolder[0]
+			signal = subject.type+"Attacks"+targetHolder[0].type #产生新的触发信号。
+			self.sendSignal(signal, self.turn, subject, targetHolder, 0, "FollowingPre-attack")
+		target = targetHolder[1] #攻击目标改向结束之后，把targetHolder里的第二个值赋给target(用于重导向扳机的那个),这个target不是函数外的target了
+		#攻击前步骤结束，开始结算攻击时步骤
+		#攻击时步骤：触发“当xx攻击时”的扳机，如真银圣剑，血吼，智慧祝福，血吼，收集者沙库尔等
+		signal = subject.type+"Attacking"+target.type
+		self.sendSignal(signal, self.turn, subject, target, 0, "")
+		#如果此时攻击者，攻击目标或者任意英雄濒死或离场所，则攻击取消，跳过伤害和攻击后步骤。
+		battleContinues = True
+		#如果目标随从变成了休眠物，则攻击会取消，但是不知道是否会浪费攻击机会。假设会浪费
+		if ((subject.type != "Minion" and subject.type != "Hero") or not subject.onBoard or subject.health < 1 or subject.dead) \
+			or ((target.type != "Minion" and target.type != "Hero") or not target.onBoard or target.health < 1 or target.dead) \
+			or (self.heroes[1].health < 1 or self.heroes[1].dead or self.heroes[2].health < 1 or self.heroes[2].dead):
+			battleContinues = False
+			if useAttChance: subject.attTimes += 1 #If this attack is canceled, the attack time still increases.
+		if battleContinues:
+			#伤害步骤，攻击者移除潜行，攻击者对被攻击者造成伤害，被攻击者对攻击者造成伤害。然后结算两者的伤害事件。
+			#攻击者和被攻击的血量都减少。但是此时尚不发出伤害判定。先发出攻击完成的信号，可以触发扫荡打击。
+			if GUI: GUI.attackAni_HitandReturn(subject, target)
+			subject.attacks(target, useAttChance)
+			#巨型沙虫的获得额外攻击机会的触发在随从死亡之前结算。同理达利乌斯克罗雷的触发也在死亡结算前，但是有隐藏的条件：自己不能处于濒死状态。
+			self.sendSignal(subject.type+"Attacked"+target.type, self.turn, subject, target, 0, "")
+			if subject == self.heroes[1] or subject == self.heroes[2]:
+				self.Counters.heroAttackTimesThisTurn[subject.ID] += 1
+		elif GUI: GUI.attackAni_Cancel(subject)
+		#重置蜡烛弓，角斗士的长弓，以及傻子和市长的trigedThisBattle标识。
+		if resetRedirTrig: #这个选项目前只有让一个随从连续攻击其他目标时才会选择关闭，不会与角斗士的长弓冲突
+			self.sendSignal("BattleFinished", self.turn, subject, None, 0, "")
+		#战斗阶段结束，处理亡语，此时可以处理胜负问题。
+		if resolveDeath:
+			self.gathertheDead(True)
+		self.Hand_Deck.decideCardColors()
+		if verifySelectable: #只有需要验证攻击目标的攻击都是玩家的游戏操作
+			self.moves.append(("battle", subIndex, subWhere, tarIndex, tarWhere))
+			if GUI: GUI.seqReady = True #由其他卡牌引发的
+		
 	#comment = "InvokedbyAI", "Branching-i", ""(GUI by default)
 	def playSpell(self, spell, target, choice=0, comment=""):
 		#古加尔的费用光环需要玩家的血量加护甲大于法术的当前费用或者免疫状态下才能使用
-		if self.Manas.affordable(spell) and spell.available() and spell.selectionLegit(target, choice):
+		if not(self.Manas.affordable(spell) and spell.available() and spell.selectionLegit(target, choice)):
+			return
 			#使用阶段：
 				#支付费用，相关费用状态移除，包括血色绽放，墨水大师，卡雷苟斯以及暮陨者艾维娜。
 				#奥秘和普通法术会进入不同的区域。法术反制触发的话会提前终止整个序列。
@@ -1046,111 +1046,121 @@ class Game:
 			#获得过载，与双生法术 -> 依照版面描述结算，如有星界密使或者风潮，这个法术也会被重复或者法强增益，但是不会触发泽蒂摩。 -> 星界密使和风潮的状态移除。
 			#符文之矛和导演释放的法术也会使用风潮或者星界密使的效果。
 			#西风灯神和沃拉斯的效果仅是获得过载和双生法术 ->结算法术牌面
-
-			subIndex, subWhere = self.Hand_Deck.hands[spell.ID].index(spell), "Hand%d"%spell.ID
-			if target:
-				if isinstance(target, list):
-					tarIndex, tarWhere = [], []
-					for obj in target:
-						if obj.onBoard:
-							tarIndex.append(obj.pos)
-							tarWhere.append(obj.type+str(obj.ID))
-						else:
-							tarIndex.append(self.Hand_Deck.hands[obj.ID].index(obj))
-							tarWhere.append("Hand%d"%obj.ID)
-				else: #非列表状态的target一定是炉石卡指定的
-					tarIndex, tarWhere = target.pos, target.type+str(target.ID)
-			else: tarIndex, tarWhere = 0, ''
-			#支付法力值，结算血色绽放等状态。
-			spell, mana, posinHand = self.Hand_Deck.extractfromHand(spell, enemyCanSee=not spell.description.startswith("Secret:"))
-			try: spell, mana = spell.becomeswhenPlayed(choice)
-			except: pass #如果随从没有爆能强化等，则无事发生。
-			self.Manas.payManaCost(spell, mana)
-			#请求使用法术，如果此时对方场上有法术反制，则取消后续序列。
-			#法术反制会阻挡使用时扳机，如伊利丹和任务达人等。但是法力值消耗扳机，如血色绽放，肯瑞托法师会触发，从而失去费用光环
-			#被反制掉的法术会消耗“下一张法术减费”光环，但是卡雷苟斯除外（显然其是程序员自己后写的）
-			#被反制掉的法术不会触发巨人的减费光环，不会进入你已经打出的法术列表，不计入法力飓风的计数
-			#被反制的法术不会被导演们重复施放
-			#很特殊的是，连击机制仍然可以通过被反制的法术触发。所以需要一个本回合打出过几张牌的计数器
-			#https://www.bilibili.com/video/av51236298?zw
-			spellHolder, origSpell = [spell], spell
-			self.sendSignal("SpellOKtoCast?", self.turn, spellHolder, None, mana, "")
-			if not spellHolder:
-				self.Counters.numCardsPlayedThisTurn[self.turn] += 1
+			
+		subIndex, subWhere = self.Hand_Deck.hands[spell.ID].index(spell), "Hand%d"%spell.ID
+		if target:
+			if isinstance(target, list):
+				tarIndex, tarWhere = [], []
+				for obj in target:
+					if obj.onBoard:
+						tarIndex.append(obj.pos)
+						tarWhere.append(obj.type+str(obj.ID))
+					else:
+						tarIndex.append(self.Hand_Deck.hands[obj.ID].index(obj))
+						tarWhere.append("Hand%d"%obj.ID)
+			else: #非列表状态的target一定是炉石卡指定的
+				tarIndex, tarWhere = target.pos, target.type+str(target.ID)
+		else: tarIndex, tarWhere = 0, ''
+		GUI, sequence = self.GUI, None
+		if GUI:
+			sequence = GUI.SEQUENCE()
+			GUI.seqReady = False
+			GUI.seqHolder.append(sequence)
+		#支付法力值，结算血色绽放等状态。
+		spell, mana, posinHand = self.Hand_Deck.extractfromHand(spell, enemyCanSee=not spell.description.startswith("Secret:"))
+		try: spell, mana = spell.becomeswhenPlayed(choice)
+		except: pass #如果随从没有爆能强化等，则无事发生。
+		self.Manas.payManaCost(spell, mana)
+		#请求使用法术，如果此时对方场上有法术反制，则取消后续序列。
+		#法术反制会阻挡使用时扳机，如伊利丹和任务达人等。但是法力值消耗扳机，如血色绽放，肯瑞托法师会触发，从而失去费用光环
+		#被反制掉的法术会消耗“下一张法术减费”光环，但是卡雷苟斯除外（显然其是程序员自己后写的）
+		#被反制掉的法术不会触发巨人的减费光环，不会进入你已经打出的法术列表，不计入法力飓风的计数
+		#被反制的法术不会被导演们重复施放
+		#很特殊的是，连击机制仍然可以通过被反制的法术触发。所以需要一个本回合打出过几张牌的计数器
+		#https://www.bilibili.com/video/av51236298?zw
+		spellHolder, origSpell = [spell], spell
+		self.sendSignal("SpellOKtoCast?", self.turn, spellHolder, None, mana, "")
+		if not spellHolder:
+			self.Counters.numCardsPlayedThisTurn[self.turn] += 1
+		else:
+			if origSpell != spellHolder[0]: spellHolder[0].cast()
 			else:
-				if origSpell != spellHolder[0]: spellHolder[0].cast()
-				else:
-					armedTrigs = self.armedTrigs("SpellBeenPlayed")
-					self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(spell.index)
-					self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
-					spell.played(target, choice, mana, posinHand, comment) #choice用于抉择选项，comment用于区分是GUI环境下使用还是AI分叉
-					self.Counters.numCardsPlayedThisTurn[self.turn] += 1
-					self.Counters.numSpellsPlayedThisTurn[self.turn] += 1
-					self.Counters.cardsPlayedThisGame[self.turn].append(spell.index)
-					if "~Corrupted~" in spell.index: self.Counters.corruptedCardsPlayed[self.turn].append(spell.index)
-					#使用后步骤，触发“每当使用一张xx牌之后”的扳机，如狂野炎术士，西风灯神，星界密使的状态移除和伊莱克特拉风潮的状态移除。
-					if spell.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
-					self.sendSignal("SpellBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
-					#完成阶段结束，处理亡语，此时可以处理胜负问题。
-					self.gathertheDead(True)
-					for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-						card.effCanTrig()
-						card.checkEvanescent()
-				if not isinstance(tarIndex, list):
-					self.moves.append(("playSpell", subIndex, subWhere, tarIndex, tarWhere, choice))
-				else:
-					self.moves.append(("playSpell", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
-				print("Changing the game moves", self.moves)
-				self.Counters.shadows[spell.ID] += 1
-
+				armedTrigs = self.armedTrigs("SpellBeenPlayed")
+				self.Counters.cardsPlayedThisTurn[self.turn]["Indices"].append(spell.index)
+				self.Counters.cardsPlayedThisTurn[self.turn]["ManasPaid"].append(mana)
+				spell.played(target, choice, mana, posinHand, comment) #choice用于抉择选项，comment用于区分是GUI环境下使用还是AI分叉
+				self.Counters.numCardsPlayedThisTurn[self.turn] += 1
+				self.Counters.numSpellsPlayedThisTurn[self.turn] += 1
+				self.Counters.cardsPlayedThisGame[self.turn].append(spell.index)
+				if "~Corrupted~" in spell.index: self.Counters.corruptedCardsPlayed[self.turn].append(spell.index)
+				#使用后步骤，触发“每当使用一张xx牌之后”的扳机，如狂野炎术士，西风灯神，星界密使的状态移除和伊莱克特拉风潮的状态移除。
+				if spell.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+				self.sendSignal("SpellBeenPlayed", self.turn, spell, target, mana, posinHand, choice, armedTrigs)
+				#完成阶段结束，处理亡语，此时可以处理胜负问题。
+				self.gathertheDead(True)
+			if not isinstance(tarIndex, list):
+				self.moves.append(("playSpell", subIndex, subWhere, tarIndex, tarWhere, choice))
+			else:
+				self.moves.append(("playSpell", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
+			print("Changing the game moves", self.moves)
+			self.Counters.shadows[spell.ID] += 1
+		self.Hand_Deck.decideCardColors()
+		if GUI: GUI.seqReady = True #当seqHolder中最后一个sequence的准备完毕时，重置seqReady，告知GUI.mouseMove可以调用
+		
 	def availableWeapon(self, ID):
 		return next((weapon for weapon in self.weapons[ID] if weapon.durability > 0 and weapon.onBoard), None)
 
 	"""Weapon with target will be handle later"""
 	def playWeapon(self, weapon, target, choice=0):
 		ID = weapon.ID
-		if self.Manas.affordable(weapon):
-			#使用阶段
-				#卡牌从手中离开，支付费用，费用状态移除，但是目前没有根据武器费用支付而产生响应的效果。
-				#武器进场，此时武器自身的扳机已经可以开始触发。如公正之剑可以通过触发的伊利丹召唤的元素来触发，并给予召唤的元素buff
-				#使用时步骤，触发“每当你使用一张xx牌”的扳机”，如伊利丹，无羁元素等
-				#结算过载。
-				#结算死亡，尚不处理胜负问题。
-			#结算阶段:
-				#根据市长和铜须的存在情况决定战吼触发次数和目标（只有一个武器有指向性效果）
-				#结算战吼、连击
-				#消灭你的旧武器，将列表中前面的武器消灭，触发“每当你装备一把武器时”的扳机。
-				#结算死亡（包括武器的亡语。）
-			#完成阶段
-				#使用后步骤，触发“每当你使用一张xx牌”之后的扳机。如捕鼠陷阱和瑟拉金之种等
-				#死亡结算，可以处理胜负问题。
-			if self.GUI: self.GUI.showOffBoardTrig(weapon, alsoDisplayCard=True)
-			subIndex, subWhere = self.Hand_Deck.hands[weapon.ID].index(weapon), "Hand%d"%weapon.ID
-			if target:
-				tarIndex, tarWhere = target.pos, target.type+str(target.ID)
-			else: tarIndex, tarWhere = 0, ''
+		if not self.Manas.affordable(weapon):
+			return
+		#使用阶段
 			#卡牌从手中离开，支付费用，费用状态移除，但是目前没有根据武器费用支付而产生响应的效果。
-			weapon, mana, posinHand = self.Hand_Deck.extractfromHand(weapon, enemyCanSee=True)
-			weaponIndex = weapon.index
-			self.Manas.payManaCost(weapon, mana)
-			#使用阶段，结算阶段。
-			armedTrigs = self.armedTrigs("WeaponBeenPlayed")
-			weapon.played(target, 0, mana, posinHand, comment="") #There are no weapon with Choose One.
-			self.Counters.numCardsPlayedThisTurn[ID] += 1
-			self.Counters.cardsPlayedThisTurn[ID]["Indices"].append(weaponIndex)
-			self.Counters.cardsPlayedThisTurn[ID]["ManasPaid"].append(mana)
-			self.Counters.cardsPlayedThisGame[ID].append(weaponIndex)
-			#if "~Corrupted~" in weaponIndex: self.Counters.corruptedCardsPlayed[self.turn].append(weaponIndex)
-			#完成阶段，触发“每当你使用一张xx牌”的扳机，如捕鼠陷阱和瑟拉金之种等。
-			if weapon.creator: self.Counters.createdCardsPlayedThisGame[ID] += 1
-			self.sendSignal("WeaponBeenPlayed", self.turn, weapon, target, mana, posinHand, 0, armedTrigs)
-			#完成阶段结束，处理亡语，可以处理胜负问题。
-			self.gathertheDead(True)
-			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-				card.effCanTrig()
-				card.checkEvanescent()
-			self.moves.append(("playWeapon", subIndex, subWhere, tarIndex, tarWhere, 0))
-			print("Changing the game moves", self.moves)
+			#武器进场，此时武器自身的扳机已经可以开始触发。如公正之剑可以通过触发的伊利丹召唤的元素来触发，并给予召唤的元素buff
+			#使用时步骤，触发“每当你使用一张xx牌”的扳机”，如伊利丹，无羁元素等
+			#结算过载。
+			#结算死亡，尚不处理胜负问题。
+		#结算阶段:
+			#根据市长和铜须的存在情况决定战吼触发次数和目标（只有一个武器有指向性效果）
+			#结算战吼、连击
+			#消灭你的旧武器，将列表中前面的武器消灭，触发“每当你装备一把武器时”的扳机。
+			#结算死亡（包括武器的亡语。）
+		#完成阶段
+			#使用后步骤，触发“每当你使用一张xx牌”之后的扳机。如捕鼠陷阱和瑟拉金之种等
+			#死亡结算，可以处理胜负问题。
+		subIndex, subWhere = self.Hand_Deck.hands[weapon.ID].index(weapon), "Hand%d"%weapon.ID
+		if target:
+			tarIndex, tarWhere = target.pos, target.type+str(target.ID)
+		else: tarIndex, tarWhere = 0, ''
+		GUI, sequence = self.GUI, None
+		if GUI:
+			sequence = GUI.SEQUENCE()
+			GUI.seqReady = False
+			GUI.seqHolder.append(sequence)
+		
+		#卡牌从手中离开，支付费用，费用状态移除，但是目前没有根据武器费用支付而产生响应的效果。
+		weapon, mana, posinHand = self.Hand_Deck.extractfromHand(weapon, enemyCanSee=True)
+		weaponIndex = weapon.index
+		self.Manas.payManaCost(weapon, mana)
+		#使用阶段，结算阶段。
+		armedTrigs = self.armedTrigs("WeaponBeenPlayed")
+		weapon.played(target, 0, mana, posinHand, comment="") #There are no weapon with Choose One.
+		self.Counters.numCardsPlayedThisTurn[ID] += 1
+		self.Counters.cardsPlayedThisTurn[ID]["Indices"].append(weaponIndex)
+		self.Counters.cardsPlayedThisTurn[ID]["ManasPaid"].append(mana)
+		self.Counters.cardsPlayedThisGame[ID].append(weaponIndex)
+		#if "~Corrupted~" in weaponIndex: self.Counters.corruptedCardsPlayed[self.turn].append(weaponIndex)
+		#完成阶段，触发“每当你使用一张xx牌”的扳机，如捕鼠陷阱和瑟拉金之种等。
+		if weapon.creator: self.Counters.createdCardsPlayedThisGame[ID] += 1
+		self.sendSignal("WeaponBeenPlayed", self.turn, weapon, target, mana, posinHand, 0, armedTrigs)
+		#完成阶段结束，处理亡语，可以处理胜负问题。
+		self.gathertheDead(True)
+		self.Hand_Deck.decideCardColors()
+		self.moves.append(("playWeapon", subIndex, subWhere, tarIndex, tarWhere, 0))
+		print("Changing the game moves", self.moves)
+		if GUI: GUI.seqReady = True  #当seqHolder中最后一个sequence的准备完毕时，重置seqReady，告知GUI.mouseMove可以调用
+		
 	#只是为英雄装备一把武器。结算相对简单
 	#消灭你的旧武器，新武器进场，这把新武器设置为新武器，并触发扳机。
 	def equipWeapon(self, weapon):
@@ -1168,45 +1178,51 @@ class Game:
 
 	def playHero(self, heroCard, choice=0):
 		ID = heroCard.ID
-		if self.Manas.affordable(heroCard):
-			#使用阶段
-				#支付费用，费用状态移除
-				#英雄牌进入战场
-				#使用时步骤，触发“每当你使用一张xx牌”的扳机，如魔能机甲，伊利丹等。
-				#新英雄的最大生命值，当前生命值以及护甲被设定为与旧英雄一致。获得英雄牌上标注的额外护甲。
-				#使用阶段结束，结算死亡情况。
-			#结算阶段
-				#获得新的英雄技能
-				#确定战吼触发的次数。
-				#结算战吼和抉择。
-				#结算阶段结束，处理死亡。
-			#完成阶段
-				#使用后步骤，触发“每当你使用一张xx牌之后”的扳机。如捕鼠陷阱和瑟拉金之种等
-				#完成阶段结束，处理死亡，可以处理胜负问题。
-
-			subIndex, subWhere = self.Hand_Deck.hands[heroCard.ID].index(heroCard), "Hand%d"%heroCard.ID
-			#支付费用，以及费用状态移除
-			heroCard, mana, posinHand = self.Hand_Deck.extractfromHand(heroCard, enemyCanSee=True)
-			heroCardIndex = heroCard.index
-			self.Manas.payManaCost(heroCard, mana)
-			#使用阶段，结算阶段的处理。
-			armedTrigs = self.armedTrigs("HeroCardBeenPlayed")
-			heroCard.played(None, choice, mana, posinHand, comment="")
-			self.Counters.numCardsPlayedThisTurn[ID] += 1
-			self.Counters.cardsPlayedThisTurn[ID]["Indices"].append(heroCardIndex)
-			self.Counters.cardsPlayedThisTurn[ID]["ManasPaid"].append(mana)
-			self.Counters.cardsPlayedThisGame[ID].append(heroCardIndex)
+		if not self.Manas.affordable(heroCard):
+			return
+		#使用阶段
+			#支付费用，费用状态移除
+			#英雄牌进入战场
+			#使用时步骤，触发“每当你使用一张xx牌”的扳机，如魔能机甲，伊利丹等。
+			#新英雄的最大生命值，当前生命值以及护甲被设定为与旧英雄一致。获得英雄牌上标注的额外护甲。
+			#使用阶段结束，结算死亡情况。
+		#结算阶段
+			#获得新的英雄技能
+			#确定战吼触发的次数。
+			#结算战吼和抉择。
+			#结算阶段结束，处理死亡。
 		#完成阶段
-			#使用后步骤，触发“每当你使用一张xx牌之后”的扳机，如捕鼠陷阱等。
-			if heroCard.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
-			self.sendSignal("HeroCardBeenPlayed", self.turn, heroCard, None, mana, posinHand, choice, armedTrigs)
-			#完成阶段结束，处理亡语，可以处理胜负问题。
-			self.gathertheDead(True)
-			for card in self.Hand_Deck.hands[1] + self.Hand_Deck.hands[2]:
-				card.effCanTrig()
-				card.checkEvanescent()
-			self.moves.append(("playHero", subIndex, subWhere, 0, "", choice))
-
+			#使用后步骤，触发“每当你使用一张xx牌之后”的扳机。如捕鼠陷阱和瑟拉金之种等
+			#完成阶段结束，处理死亡，可以处理胜负问题。
+		subIndex, subWhere = self.Hand_Deck.hands[heroCard.ID].index(heroCard), "Hand%d"%heroCard.ID
+		#准备游戏操作的动画
+		GUI, sequence = self.GUI, None
+		if GUI:
+			sequence = GUI.SEQUENCE()
+			GUI.seqReady = False
+			GUI.seqHolder.append(sequence)
+		
+		#支付费用，以及费用状态移除
+		heroCard, mana, posinHand = self.Hand_Deck.extractfromHand(heroCard, enemyCanSee=True)
+		heroCardIndex = heroCard.index
+		self.Manas.payManaCost(heroCard, mana)
+		#使用阶段，结算阶段的处理。
+		armedTrigs = self.armedTrigs("HeroCardBeenPlayed")
+		heroCard.played(None, choice, mana, posinHand, comment="")
+		self.Counters.numCardsPlayedThisTurn[ID] += 1
+		self.Counters.cardsPlayedThisTurn[ID]["Indices"].append(heroCardIndex)
+		self.Counters.cardsPlayedThisTurn[ID]["ManasPaid"].append(mana)
+		self.Counters.cardsPlayedThisGame[ID].append(heroCardIndex)
+		#完成阶段
+		#使用后步骤，触发“每当你使用一张xx牌之后”的扳机，如捕鼠陷阱等。
+		if heroCard.creator: self.Counters.createdCardsPlayedThisGame[self.turn] += 1
+		self.sendSignal("HeroCardBeenPlayed", self.turn, heroCard, None, mana, posinHand, choice, armedTrigs)
+		#完成阶段结束，处理亡语，可以处理胜负问题。
+		self.gathertheDead(True)
+		self.Hand_Deck.decideCardColors()
+		self.moves.append(("playHero", subIndex, subWhere, 0, "", choice))
+		if GUI: GUI.seqReady = True  #当seqHolder中最后一个sequence的准备完毕时，重置seqReady，告知GUI.mouseMove可以调用
+	
 	def createCopy(self, game):
 		return game
 
@@ -1216,8 +1232,7 @@ class Game:
 		for Copy in copies:
 			Copy.copiedObjs = {}
 			Copy.mainPlayerID, Copy.GUI = self.mainPlayerID, self.GUI
-			Copy.cardPool, Copy.ClassCards, Copy.NeutralCards = self.cardPool, self.ClassCards, self.NeutralCards
-			Copy.MinionsofCost, Copy.RNGPools = self.MinionsofCost, self.RNGPools
+			Copy.cardPool, Copy.RNGPools = self.cardPool, self.RNGPools
 			#t1 = datetime.now()
 			Copy.heroes = {1: self.heroes[1].createCopy(Copy), 2: self.heroes[2].createCopy(Copy)}
 			Copy.powers = {1: self.powers[1].createCopy(Copy), 2: self.powers[2].createCopy(Copy)}

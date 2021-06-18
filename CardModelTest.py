@@ -54,7 +54,9 @@ class VariousTest(Panda_UICommon):
 		ShowBase.__init__(self)
 		self.boardID = "2 Classic Stormwind"
 		self.ID = 1
+		self.modelTemplates = {}
 		self.manaModels = {}
+		self.seqHolder = []
 		
 		self.loadBackground()
 		self.prepare()
@@ -65,16 +67,30 @@ class VariousTest(Panda_UICommon):
 		self.heroZones = {1: HeroZone(self, 1), 2: HeroZone(self, 2)}
 		self.deckZones = {1: DeckZone(self, 1), 2: DeckZone(self, 2)}
 		
+		self.seqHolder.append(Sequence())
+		
 		for ID in range(1, 3):
 			self.handZones[ID].placeCards()
 			self.minionZones[ID].placeCards()
 			self.heroZones[ID].placeCards()
-			self.heroZones[ID].drawMana()
+			self.heroZones[ID].drawMana(self.Game.Manas.manas[ID], self.Game.Manas.manasUpper[ID],
+										self.Game.Manas.manasLocked[ID], self.Game.Manas.manasOverloaded[ID])
 			self.heroZones[ID].placeSecrets()
 			self.heroZones[ID].placeTurnTrigs()
-			self.deckZones[ID].draw()
-		
-		Sequence(Wait(3), Func(self.deckZones[1].fatigueAni, 8)).start()
+			self.deckZones[ID].draw(15)
+			
+		for ID in range(1, 3):
+			for minion in self.Game.minions[ID]:
+				minion.btn.placeIcons()
+				minion.btn.statChangeAni()
+				minion.btn.statusChangeAni()
+			weapon = self.Game.availableWeapon(ID)
+			if weapon:
+				weapon.btn.placeIcons()
+				weapon.btn.statusChangeAni()
+				
+		self.seqHolder.pop(0).start()
+		#Sequence(Wait(3), Func(self.deckZones[1].fatigueAni, 8)).start()
 		
 	def prepare(self):
 		self.subject = self.target = None
@@ -91,7 +107,7 @@ class VariousTest(Panda_UICommon):
 		
 		game = Game()
 		game.initialize()
-		game.initialize_Details({}, {}, {}, {}, {}, Rexxar, Uther, deck1=[], deck2=[])
+		game.initialize_Details({}, {}, Rexxar, Uther)
 		game.Hand_Deck.hands = {1: [card(game, 1) for card in (SoulMirror, YseratheDreamer, BulwarkofAzzinoth,
 															   LordJaraxxus, ImprisonedFelmaw, LightningBloom)],
 								2: [card(game, 2) for card in (SoulMirror, YseratheDreamer, BulwarkofAzzinoth,
@@ -103,8 +119,8 @@ class VariousTest(Panda_UICommon):
 															   LordJaraxxus, LibramofJudgment_Corrupt, ImprisonedFelmaw, LightningBloom)]
 								}
 		game.minions = {1: [card(game, 1) for card in (YseratheDreamer, BurningBladePortal, ImprisonedFelmaw,
-													  KorvasBloodthorn, AlAkirtheWindlord, Peon, SpiderTank)],
-						2: [card(game, 2) for card in (YseratheDreamer, BurningBladePortal, ImprisonedFelmaw,
+													  KorvasBloodthorn, AlAkirtheWindlord, StoneskinBasilisk, FallenHero)],
+						2: [card(game, 2) for card in (FallenHero, BurningBladePortal, ImprisonedFelmaw,
 											  			KorvasBloodthorn, AlAkirtheWindlord, Peon, SpiderTank)]
 						}
 		for ID in range(1, 3):
@@ -136,71 +152,6 @@ class VariousTest(Panda_UICommon):
 		else:
 			for model in models: model.find("TexCard").find("+SequenceNode").node().loop(True, 1, 20)
 		
-	def testCards(self):
-		t1 = datetime.now()
-		for pos in ((0, -1.05, MinionZone1_Z), (0, -1.05, MinionZone2_Z)):
-			card = KorvasBloodthorn(self.Game, 1)
-			model, btn_Card = genCard(self, card, isPlayed=True)
-			model.setPos(pos)
-			model.getPythonTag("btn").placeIcons()
-		
-		for pos in (Weapon1_Pos, Weapon2_Pos):
-			card = RinlingsRifle(self.Game, 1)
-			model, btn_Card = genCard(self, card, isPlayed=True)
-			model.setPos(pos)
-			model.getPythonTag("btn").placeIcons()
-		
-		for pos in (Hero1_Pos, Hero2_Pos):
-			card = LordJaraxxus(self.Game, 1)
-			#card.attack = 8
-			model, btn_Card = genCard(self, card, isPlayed=True)
-			model.setPos(pos)
-		
-		for pos in (Power1_Pos, Power2_Pos):
-			card = SteadyShot(self.Game, 1)
-			model, btn_Card = genCard(self, card, isPlayed=True)
-			model.setPos(pos)
-		
-		self.cam.setPos(0, -51.5, 0)
-		
-		
-		pos_Hands_1, hpr_Hands_1 = posHandsTable[HandZone1_Z], hprHandsTable[HandZone1_Z]
-		pos_Hands_2, hpr_Hands_2 = posHandsTable[HandZone2_Z], hprHandsTable[HandZone2_Z]
-		for i in range(6):
-			card = SoulMirror(self.Game, 1)
-			pos, hpr = pos_Hands_1[6][i], hpr_Hands_1[6][i]
-			genCard(self, card, isPlayed=False, pos=pos, hpr=hpr)
-		
-		for i in range(3):
-			card = LordJaraxxus(self.Game, 1)
-			pos, hpr = pos_Hands_2[3][i], hpr_Hands_2[3][i]
-			genCard(self, card, isPlayed=False, pos=pos, hpr=hpr)
-		
-		t2 = datetime.now()
-		print("Time needed to place 4 cards", datetime.timestamp(t2) - datetime.timestamp(t1))
-		
-	def testCardArrays(self):
-		t1 = datetime.now()
-		for i, type in enumerate(Cards2Test):
-			card = type(self.Game, 1)
-			card_Model = genCard(self, card, isPlayed=True)
-			card_Model.setPos(6*(i % 4), 0, 8*int(i/4))
-			self.cam.setPos(0, Cam_PosY, 0)
-			
-		t2 = datetime.now()
-		print("Time used: ", datetime.timestamp(t2) - datetime.timestamp(t1))
-	
-	def testTrigsSecrets(self):
-		posTrigs = calc_posTrigs(6, Hero1_Pos[0], Hero1_Pos[1], Hero1_Pos[2])
-		for i in range(6):
-			trigCard = SigilofSilence(self.Game, 1)
-			genTurnTrigIcon(self, trigCard, pos=posTrigs[i])
-		
-		posTrigs = calc_posTrigs(4, Hero2_Pos[0], Hero2_Pos[1], Hero2_Pos[2])
-		for j in range(4):
-			trigCard = InstructorFireheart(self.Game, 1)
-			genTurnTrigIcon(self, trigCard, pos=posTrigs[j])
-		
 	def testCurve(self):
 		card = LightningBolt(self.Game, 1)
 		np, btn_Card = genCard(self, card, isPlayed=False, pickable=False)
@@ -209,6 +160,87 @@ class VariousTest(Panda_UICommon):
 		Sequence(Wait(2), interval_1, Wait(2), interval_2).loop()
 		
 		
-#HSModelTest().run()
+
+class TestRaySolid(ShowBase):
+	def __init__(self):
+		super().__init__()
+		plane = self.loader.loadModel("Models\\BoardModels\\Background.glb")
+		plane.reparentTo(self.render)
+		plane.setPos(0, 10, 0)
+		
+		option = self.loader.loadModel("Models\\Option.glb")
+		option.reparentTo(self.render)
+		
+		cNode = CollisionNode("CNDE")
+		cNode.addSolid(CollisionBox((0, 0, 0), (2, 2, 2)))
+		cNodePath = self.render.attachNewNode(cNode)
+		cNodePath.setPos(20, 5, 0)
+		cNodePath.show()
+		self.cTrav = CollisionTraverser()
+		self.collHandler = CollisionHandlerQueue()
+		self.raySolid = CollisionRay()
+		self.raySolid.setOrigin(0, -50, 0)
+		cNode_Picker = CollisionNode("Picker Collider c_node")
+		cNode_Picker.addSolid(self.raySolid)
+		pickerNode = self.camera.attachNewNode(cNode_Picker)
+		pickerNode.show()  #For now, show the pickerRay collision with the card models
+		self.cTrav.addCollider(pickerNode, self.collHandler)
+		self.cam.setPos(0, -51.5, 0)
+		self.camLens.setFov(51.1, 27.5)
+		
+		self.accept("mouse1", self.mouse1_Down)
+		self.accept("mouse1-up", self.mouse1_Up)
+	
+	def mouse1_Down(self):
+		if self.mouseWatcherNode.hasMouse():
+			mpos = self.mouseWatcherNode.getMouse()
+			#Reset the Collision Ray orientation, based on the mouse position
+			self.raySolid.setDirection(25*mpos.getX(), 50.5, 14*mpos.getY())
+			#self.raySolid.setFromLens(self.cam.node(), mpos.getX(), mpos.getY())
+			print("Mouse down origin", self.raySolid.getOrigin(), self.cam.getPos())
+	
+	#self.raySolid.show()
+	
+	def mouse1_Up(self):
+		if self.mouseWatcherNode.hasMouse():
+			mpos = self.mouseWatcherNode.getMouse()
+			#Reset the Collision Ray orientation, based on the mouse position
+			#self.raySolid.setDirection(51.5*mpos.getX(), 1*100, 27.5*mpos.getY())
+			self.raySolid.setDirection(25*mpos.getX(), 50.5, 14*mpos.getY())
+			
+			#self.raySolid.setFromLens(self.cam.node(), mpos.getX(), mpos.getY())
+			#self.raySolid.show()
+			print("Mouse up origin", self.raySolid.getOrigin(), self.cam.getPos(), self.raySolid.getDirection())
+			print("Clicked: Num--", self.collHandler.getNumEntries())
+			if self.collHandler.getNumEntries() > 0:
+				self.collHandler.sortEntries()
+				#print("Collision:", self.collHandler.getNumEntries(), self.collHandler.getEntries())
+				#for entry in self.collHandler.getEntries():
+				#	nodePath = entry.getIntoNodePath()
+				#	print("collboxes:", nodePath)
+				#	print(nodePath.findAllMatches("**/*_c_node"))
+				cNode_Picked = self.collHandler.getEntry(0).getIntoNodePath()
+				print("cNode clicked:", cNode_Picked, cNode_Picked.getParent().getPythonTag("btn"))
+				"""The scene graph tree is written in C. To store/read python objects, use NodePath.setPythonTag/getPythonTag()"""
+				cNode_Picked.getParent().getPythonTag("btn").leftClick()
+
+
+class TestInstancing(ShowBase):
+	def __init__(self):
+		super().__init__()
+		model = self.loader.loadModel("Models\\Deathrattle.glb")
+		model.name = "DeathrattleModel"
+		model.reparentTo(self.render)
+		
+		sequence = Sequence(Wait(1), Func(self.func, model, (1, 0, 0), name="Test ani"), Wait(1), Func(self.func, model, (-1, 0, 0), name="Test ani"))
+		sequence.ivals[-1].name = "GOod Ani"
+		sequence.start()
+		print(sequence, sequence.ivals[-1].name)
+		self.cam.setPos(0, -5, 0)
+		
+	def func(self, model, pos):
+		model.setPos(pos)
+		
 VariousTest().run()
-#TestPythonTag().run()
+#TestRaySolid().run()
+#TestInstancing().run()

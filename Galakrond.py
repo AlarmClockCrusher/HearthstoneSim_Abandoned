@@ -5,8 +5,7 @@ from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 from numpy import inf as npinf
 
-from Basic import TheCoin, SilverHandRecruit
-from AcrossPacks import BoomBot, Lackeys
+from AcrossPacks import TheCoin, SilverHandRecruit, BoomBot, Lackeys
 
 """Awakening of Galakrond"""
 
@@ -65,7 +64,7 @@ class Trig_IceShard(TrigBoard):
 				else "Freeze any character damaged by this minion"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		target.getsFrozen()
+		target.getsStatus("Frozen")
 		
 		
 class LicensedAdventurer(Minion):
@@ -163,7 +162,7 @@ class GrandLackeyErkh(Minion):
 	mana, attack, health = 4, 2, 3
 	index = "YEAR_OF_THE_DRAGON~Neutral~Minion~4~2~3~~Grand Lackey Erkh~Legendary"
 	requireTarget, keyWord, description = False, "", "After you play a Lackey, add a Lackey to your hand"
-	name_CN = "高级跟班 厄尔克"
+	name_CN = "高级跟班厄尔克"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_GrandLackeyErkh(self)]
@@ -195,7 +194,7 @@ class SkyGenralKragg(Minion):
 	mana, attack, health = 4, 2, 3
 	index = "YEAR_OF_THE_DRAGON~Neutral~Minion~4~2~3~Pirate~Sky Gen'ral Kragg~Taunt~Battlecry~Legendary"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: If you've played a Quest this game, summon a 4/2 Parrot with Rush"
-	name_CN = "天空上将 库拉格"
+	name_CN = "天空上将库拉格"
 	def effCanTrig(self):
 		self.effectViable = self.Game.Counters.hasPlayedQuestThisGame[self.ID]
 		
@@ -255,13 +254,15 @@ class RisingWinds2(Spell):
 			self.Game.summon(Eagle(self.Game, self.ID), -1, self)
 		return None
 		
-class TakeFlight_Option(ChooseOneOption):
+class TakeFlight_Option(Option):
 	name, description = "Take Flight", "Draw a card"
 	index = "YEAR_OF_THE_DRAGON~Druid~Spell~2~Take Flight~Uncollectible"
+	mana, attack, health = 2, -1, -1
 	
-class SwoopIn_Option(ChooseOneOption):
+class SwoopIn_Option(Option):
 	name, description = "Swoop In", "Summon a 3/2 Eagle"
 	index = "YEAR_OF_THE_DRAGON~Druid~Spell~2~Swoop In~Uncollectible"
+	mana, attack, health = 2, -1, -1
 	def available(self):
 		return self.entity.Game.space(self.entity.ID) > 0
 		
@@ -371,8 +372,8 @@ class ChopshopCopter(Minion):
 	name_CN = "拆件旋翼机"
 	poolIdentifier = "Mechs"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Mechs", list(Game.MinionswithRace["Mech"].values())
+	def generatePool(cls, pools):
+		return "Mechs", list(pools.MinionswithRace["Mech"].values())
 		
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -504,10 +505,10 @@ class TheAmazingReno(Hero):
 	name_CN = "神奇的雷诺"
 	poolIdentifier = "Spells"
 	@classmethod
-	def generatePool(cls, Game):
+	def generatePool(cls, pools):
 		spells = []
-		for Class in Game.Classes:
-			spells += [value for key, value in Game.ClassCards[Class].items() if "~Spell~" in key]
+		for Class in pools.Classes:
+			spells += [value for key, value in pools.ClassCards[Class].items() if "~Spell~" in key]
 		return "Spells", spells
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -566,7 +567,7 @@ class Scalelord(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		for minion in self.Game.minionsonBoard(self.ID):
 			if "Murloc" in minion.race:
-				minion.getsKeyword("Divine Shield")
+				minion.getsStatus("Divine Shield")
 		return None
 		
 		
@@ -638,13 +639,13 @@ class DarkProphecy(Spell):
 	name_CN = "黑暗预兆"
 	poolIdentifier = "2-Cost Minions as Priest"
 	@classmethod
-	def generatePool(cls, Game):
-		classCards = {s : [] for s in Game.ClassesandNeutral}
-		for key, value in Game.MinionsofCost[2].items():
+	def generatePool(cls, pools):
+		classCards = {s : [] for s in pools.ClassesandNeutral}
+		for key, value in pools.MinionsofCost[2].items():
 			for Class in key.split('~')[1].split(','):
 				classCards[Class].append(value)
-		return ["2-Cost Minions as "+Class for Class in Game.Classes], \
-			[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
+		return ["2-Cost Minions as "+Class for Class in pools.Classes], \
+			[classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 			
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -700,11 +701,11 @@ class Waxmancy(Spell):
 	name_CN = "蜡烛学"
 	poolIdentifier = "Battlecry Minions as Rogue"
 	@classmethod
-	def generatePool(cls, Game):
-		classCards = {s : [value for key, value in Game.ClassCards[s].items() if "~Minion~" in key and "~Battlecry" in key] for s in Game.Classes}
-		classCards["Neutral"] = [value for key, value in Game.NeutralCards.items() if "~Minion~" in key and "~Battlecry" in key]
-		return ["Battlecry Minions as "+Class for Class in Game.Classes], \
-			[classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
+	def generatePool(cls, pools):
+		classCards = {s : [value for key, value in pools.ClassCards[s].items() if "~Minion~" in key and "~Battlecry" in key] for s in pools.Classes}
+		classCards["Neutral"] = [value for key, value in pools.NeutralCards.items() if "~Minion~" in key and "~Battlecry" in key]
+		return ["Battlecry Minions as "+Class for Class in pools.Classes], \
+			[classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 			
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -757,9 +758,9 @@ class ExplosiveEvolution(Spell):
 	name_CN = "惊爆异变"
 	poolIdentifier = "1-Cost Minions to Summon"
 	@classmethod
-	def generatePool(cls, Game):
-		return ["%d-Cost Minions to Summon"%cost for cost in Game.MinionsofCost.keys()], \
-				[list(Game.MinionsofCost[cost].values()) for cost in Game.MinionsofCost.keys()]
+	def generatePool(cls, pools):
+		return ["%d-Cost Minions to Summon"%cost for cost in pools.MinionsofCost.keys()], \
+				[list(pools.MinionsofCost[cost].values()) for cost in pools.MinionsofCost.keys()]
 				
 	def available(self):
 		return self.selectableFriendlyMinionExists()
@@ -775,7 +776,7 @@ class ExplosiveEvolution(Spell):
 					newMinion = curGame.guides.pop(0)
 				else:
 					cost = type(target).mana + 3
-					while cost not in curGame.MinionsofCost:
+					while "%d-Cost Minions to Summon"%cost not in curGame.RNGPools:
 						cost -= 1
 					newMinion = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost))
 					curGame.fixedGuides.append(newMinion)
@@ -818,9 +819,9 @@ class TheFistofRaden(Weapon):
 	name_CN = "莱登之拳"
 	poolIdentifier = "1-Cost Legendary Minions to Summon"
 	@classmethod
-	def generatePool(cls, Game):
+	def generatePool(cls, pools):
 		minions = {}
-		for key, value in Game.LegendaryMinions.items():
+		for key, value in pools.LegendaryMinions.items():
 			s = key.split('~')[3] + "-Cost Legendary Minions to Summon"
 			try: minions[s].append(value)
 			except: minions[s] = [value]
@@ -893,8 +894,8 @@ class TwistedKnowledge(Spell):
 	name_CN = "扭曲学识"
 	poolIdentifier = "Warlock Cards"
 	@classmethod
-	def generatePool(cls, Game):
-		return "Warlock", list(Game.ClassCards["Warlock"].values())
+	def generatePool(cls, pools):
+		return "Warlock", list(pools.ClassCards["Warlock"].values())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		for num in range(2):
@@ -971,19 +972,19 @@ class BoomSquad(Spell):
 	name_CN = "砰砰战队"
 	poolIdentifier = "Mechs as Warrior"
 	@classmethod
-	def generatePool(cls, Game):
-		classes_Mech = ["Mechs as %s"+Class for Class in Game.Classes]
-		classCards = {s : [] for s in Game.ClassesandNeutral}
-		for key, value in Game.MinionswithRace["Mech"].items():
+	def generatePool(cls, pools):
+		classes_Mech = ["Mechs as %s"+Class for Class in pools.Classes]
+		classCards = {s : [] for s in pools.ClassesandNeutral}
+		for key, value in pools.MinionswithRace["Mech"].items():
 			for Class in key.split('~')[1].split(','):
 				classCards[Class].append(value)
-		mechs = [classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
-		classes_Dragon = ["Dragons as %s"+Class for Class in Game.Classes]
-		classCards = {s : [] for s in Game.ClassesandNeutral}
-		for key, value in Game.MinionswithRace["Dragon"].items():
+		mechs = [classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
+		classes_Dragon = ["Dragons as %s"+Class for Class in pools.Classes]
+		classCards = {s : [] for s in pools.ClassesandNeutral}
+		for key, value in pools.MinionswithRace["Dragon"].items():
 			for Class in key.split('~')[1].split(','):
 				classCards[Class].append(value)
-		dragons = [classCards[Class]+classCards["Neutral"] for Class in Game.Classes]
+		dragons = [classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 		return classes_Mech+classes_Dragon, mechs+dragons
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
