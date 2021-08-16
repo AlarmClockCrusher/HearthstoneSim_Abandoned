@@ -25,7 +25,7 @@ def cardName2Class(cardName):
 	print(cardName, " not found")
 	return None
 	
-def parseDeckCode(s, hero, ClassDict):
+def parseDeckCode(s, hero, Class2HeroDict):
 	deck, deckCorrect, hero = [], False, hero
 	if s:
 		try:
@@ -41,7 +41,7 @@ def parseDeckCode(s, hero, ClassDict):
 	if deckCorrect:
 		for card in deck:
 			if card.Class != "Neutral" and ',' not in card.Class:
-				hero = ClassDict[card.Class]
+				hero = Class2HeroDict[card.Class]
 				break
 	return deck, deckCorrect, hero
 	
@@ -97,10 +97,6 @@ def checktheStatsofCards():
 	for key, value in cardPool.items():
 		if key.startswith("SV_"): continue
 		try:
-			if key != value.index:
-				print(value, " has a wrong index")
-				print(key)
-				print(value.index)
 			words = key.split('~')
 			cardInfo = getAnyCardInfofromType(value) #Get the name
 			if isinstance(cardInfo, list):

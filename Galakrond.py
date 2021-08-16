@@ -26,7 +26,7 @@ class SkydivingInstructor(Minion):
 				minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if card.mana == 1]
 				i = npchoice(minions) if minions and curGame.space(self.ID) > 0 else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.summonfrom(i, self.ID, self.pos+1, self, fromHand=False)
+			if i > -1: curGame.summonfrom(i, self.ID, self.pos+1, self, source='D')
 		return None
 		
 		
@@ -93,7 +93,7 @@ class FrenziedFelwing(Minion):
 		
 	def selfManaChange(self):
 		if self.inHand:
-			manaReduction = self.Game.Counters.dmgonHero_inOppoTurn[3-self.ID]
+			manaReduction = self.Game.Counters.dmgonHeroThisTurn[3-self.ID]
 			self.mana -= manaReduction
 			self.mana = max(0, self.mana)
 			
@@ -459,7 +459,7 @@ class AnimatedAvalanche(Minion):
 		return None
 		
 		
-class WhatDoesThisDo(HeroPower):
+class WhatDoesThisDo(Power):
 	mana, name, requireTarget = 0, "What Does This Do?", False
 	index = "Mage~Hero Power~0~What Does This Do?"
 	description = "Passive Hero Power. At the start of your turn, cast a random spell"

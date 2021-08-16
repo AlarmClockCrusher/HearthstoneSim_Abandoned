@@ -18,7 +18,7 @@ def listRemove(listObj, obj):
     return l
 
 
-class Evolve(HeroPower):
+class Evolve(Power):
     mana, name, requireTarget = 0, "Evolve", True
     index = "SV_Basic~Hero Power~0~Evolve"
     description = "Evolve an unevolved friendly minion."
@@ -412,7 +412,7 @@ class Amulet(Dormant):
 		self.type, self.race = "Amulet", type(self).race
 		# 卡牌的费用和对于费用修改的效果列表在此处定义
 		self.mana, self.manaMods = type(self).mana, []
-		self.counter = -1
+		self.counter = 0
 		self.tempAttChanges = []  # list of tempAttChange, expiration timepoint
 		self.description = type(self).description
 		# 当一个实例被创建的时候，其needTarget被强行更改为returnTrue或者是returnFalse，不论定义中如何修改needTarget(self, choice=0)这个函数，都会被绕过。需要直接对returnTrue()函数进行修改。

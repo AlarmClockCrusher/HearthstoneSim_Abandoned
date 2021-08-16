@@ -579,7 +579,7 @@ class BodyWrapper(Minion):
 		curGame = self.Game
 		if self.ID == curGame.turn:
 			if curGame.mode == 0:
-				pool = tuple(curGame.cardPool[index] for index in curGame.Counters.minionsDiedThisGame[self.ID])
+				pool = [card for card in curGame.Counters.minionsDiedThisGame[self.ID]]
 				if curGame.guides:
 					minion = curGame.guides.pop(0)
 					if minion:
@@ -588,11 +588,11 @@ class BodyWrapper(Minion):
 					if pool:
 						if "byOthers" in comment:
 							inds = npChoice_inds(pool, list(range(len(pool))), 1)
-							minion = curGame.cardPool[pool[inds[0]]]
+							minion = pool[inds[0]]
 							curGame.fixedGuides.append(minion)
 							curGame.Hand_Deck.shuffleintoDeck(minion(curGame, self.ID), creator=self, possi=pool)
 						else:
-							minions = [curGame.cardPool[pool[i]] for i in npChoice_inds(pool, list(range(len(pool))), 3)]
+							minions = [pool[i] for i in npChoice_inds(pool, list(range(len(pool))), 3)]
 							curGame.options = [minion(curGame, self.ID) for minion in minions]
 							curGame.Discover.startDiscover(self, pool)
 					else: curGame.fixedGuides.append(None)
@@ -829,7 +829,7 @@ class BothPlayersSummonLowestCostMinionfromHand(Deathrattle_Minion):
 							elif card.mana == highestCost: minions.append(i)
 					i = npchoice(minions) if minions and curGame.space(ID) > 0 else -1
 					curGame.fixedGuides.append(i)
-				if i > -1: curGame.summonfrom(i, ID, -1, self.entity, fromHand=True)
+				if i > -1: curGame.summonfrom(i, ID, -1, self.entity, source='H')
 				
 	def text(self, CHN):
 		return "亡语：每个玩家从手牌中召唤法力值消耗最低的随从" if CHN \
@@ -1055,7 +1055,7 @@ class LivingMonument(Minion):
 class UntappedPotential(Quest):
 	Class, school, name = "Druid", "", "Untapped Potential"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Druid~Spell~1~Untapped Potential~~Quest~Legendary"
+	index = "ULDUM~Druid~Spell~1~~Untapped Potential~~Quest~Legendary"
 	description = "Quest: End 4 turns with any unspent Mana. Reward: Orissian Tear"
 	name_CN = "发掘潜力"
 	def __init__(self, Game, ID):
@@ -1078,7 +1078,7 @@ class Trig_UntappedPotential(QuestTrigger):
 				except: pass
 				OssirianTear(self.entity.Game, self.entity.ID).replaceHeroPower()
 				
-class OssirianTear(HeroPower):
+class OssirianTear(Power):
 	mana, name, requireTarget = 0, "Ossirian Tear", False
 	index = "Druid~Hero Power~0~Ossirian Tear"
 	description = "Passive Hero Power. Your Choose One cards have both effects combined"
@@ -1103,7 +1103,7 @@ class OssirianTear(HeroPower):
 class WorthyExpedition(Spell):
 	Class, school, name = "Druid", "", "Worthy Expedition"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Druid~Spell~1~Worthy Expedition"
+	index = "ULDUM~Druid~Spell~1~~Worthy Expedition"
 	description = "Discover a Choose One card"
 	name_CN = "不虚此行"
 	poolIdentifier = "Choose One Cards"
@@ -1161,7 +1161,7 @@ class Trig_CrystalMerchant(TrigBoard):
 class BEEEES(Spell):
 	Class, school, name = "Druid", "", "BEEEES!!!"
 	requireTarget, mana = True, 3
-	index = "ULDUM~Druid~Spell~3~BEEEES!!!"
+	index = "ULDUM~Druid~Spell~3~~BEEEES!!!"
 	description = "Choose a minion. Summon four 1/1 Bees that attack it"
 	name_CN = "蜜蜂"
 	def available(self):
@@ -1226,10 +1226,11 @@ class AnubisathDefender(Minion):
 		self.trigsHand = [Trig_AnubisathDefender(self)]
 		
 	def selfManaChange(self):
-		cardsThisTurn = self.Game.Counters.cardsPlayedThisTurn[self.ID]
-		if self.inHand and any("~Spell~" in index and mana > 4 \
-								for index, mana in zip(cardsThisTurn["Indices"], cardsThisTurn["ManasPaid"])):
-			self.mana = 0
+		if self.inHand and self.ID == self.Game.turn:
+			if any(card.type == "Spell" and mana > 4 for card, mana in \
+											zip(self.Game.Counters.cardsPlayedEachTurn[self.ID][-1], 
+												self.Game.Counters.manas4CardsEachTurn[self.ID][-1])):
+				self.mana = 0
 			
 class Trig_AnubisathDefender(TrigHand):
 	def __init__(self, entity):
@@ -1337,14 +1338,14 @@ class HiddenOasis(Spell):
 		
 class BefriendtheAncient_Option(Option):
 	name, description = "Befriend the Ancient", "Summon a 6/6 Ancient with Taunt"
-	index = "ULDUM~Druid~Spell~6~Befriend the Ancient~Uncollectible"
+	index = "ULDUM~Druid~Spell~6~Nature~Befriend the Ancient~Uncollectible"
 	mana, attack, health = 6, -1, -1
 	def available(self):
 		return self.entity.Game.space(self.entity.ID) > 0
 		
 class DrinktheWater_Option(Option):
 	name, description = "Drink the Water", "Restore 12 Health"
-	index = "ULDUM~Druid~Spell~6~Drink the Water~Uncollectible"
+	index = "ULDUM~Druid~Spell~6~Nature~Drink the Water~Uncollectible"
 	mana, attack, health = 6, -1, -1
 	def available(self):
 		return self.entity.selectableCharacterExists(1)
@@ -1352,7 +1353,7 @@ class DrinktheWater_Option(Option):
 class BefriendtheAncient(Spell):
 	Class, school, name = "Druid", "", "Befriend the Ancient"
 	requireTarget, mana = False, 6
-	index = "ULDUM~Druid~Spell~6~Befriend the Ancient~Uncollectible"
+	index = "ULDUM~Druid~Spell~6~Nature~Befriend the Ancient~Uncollectible"
 	description = "Summon a 6/6 Ancient with Taunt"
 	name_CN = "结识古树"
 	def available(self):
@@ -1365,7 +1366,7 @@ class BefriendtheAncient(Spell):
 class DrinktheWater(Spell):
 	Class, school, name = "Druid", "", "Drink the Water"
 	requireTarget, mana = True, 6
-	index = "ULDUM~Druid~Spell~6~Drink the Water~Uncollectible"
+	index = "ULDUM~Druid~Spell~6~Nature~Drink the Water~Uncollectible"
 	description = "Restore 12 Health"
 	name_CN = "饮用泉水"
 	def text(self, CHN):
@@ -1403,7 +1404,7 @@ class Overflow(Spell):
 class UnsealtheVault(Quest):
 	Class, school, name = "Hunter", "", "Unseal the Vault"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Hunter~Spell~1~Unseal the Vault~~Quest~Legendary"
+	index = "ULDUM~Hunter~Spell~1~~Unseal the Vault~~Quest~Legendary"
 	description = "Quest: Summon 20 minions. Reward: Ramkahen Roar"
 	name_CN = "打开宝库"
 	def __init__(self, Game, ID):
@@ -1425,7 +1426,7 @@ class Trig_UnsealtheVault(QuestTrigger):
 			except: pass
 			PharaohsWarmask(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
-class PharaohsWarmask(HeroPower):
+class PharaohsWarmask(Power):
 	mana, name, requireTarget = 2, "Pharaoh's Warmask", False
 	index = "Hunter~Hero Power~2~Pharaoh's Warmask"
 	description = "Give your minions +2 Attack"
@@ -1439,7 +1440,7 @@ class PharaohsWarmask(HeroPower):
 class PressurePlate(Secret):
 	Class, school, name = "Hunter", "", "Pressure Plate"
 	requireTarget, mana = False, 2
-	index = "ULDUM~Hunter~Spell~2~Pressure Plate~~Secret"
+	index = "ULDUM~Hunter~Spell~2~~Pressure Plate~~Secret"
 	description = "Secret: After your opponent casts a spell, destroy a random enemy minion"
 	name_CN = "压感陷阱"
 	def __init__(self, Game, ID):
@@ -1493,7 +1494,7 @@ class Trig_DesertSpear(TrigBoard):
 class HuntersPack(Spell):
 	Class, school, name = "Hunter", "", "Hunter's Pack"
 	requireTarget, mana = False, 3
-	index = "ULDUM~Hunter~Spell~3~Hunter's Pack"
+	index = "ULDUM~Hunter~Spell~3~~Hunter's Pack"
 	description = "Add a random Hunter Beast, Secret, and Weapon to your hand"
 	name_CN = "猎人工具包"
 	poolIdentifier = "Hunter Beasts"
@@ -1567,7 +1568,7 @@ class RamkahenWildtamer(Minion):
 class SwarmofLocusts(Spell):
 	Class, school, name = "Hunter", "", "Swarm of Locusts"
 	requireTarget, mana = False, 6
-	index = "ULDUM~Hunter~Spell~6~Swarm of Locusts"
+	index = "ULDUM~Hunter~Spell~6~~Swarm of Locusts"
 	description = "Summon seven 1/1 Locusts with Rush"
 	name_CN = "飞蝗虫群"
 	def available(self):
@@ -1618,7 +1619,7 @@ class WildBloodstinger(Minion):
 				i = npchoice(minions) if minions and curGame.space(3-self.ID) > 0 else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
-				minion = curGame.summonfrom(i, 3-self.ID, -1, self, fromHand=True)
+				minion = curGame.summonfrom(i, 3-self.ID, -1, self, source='H')
 				if minion.onBoard: curGame.battle(self, minion, verifySelectable=False, useAttChance=False, resolveDeath=False)
 		return None
 		
@@ -1650,7 +1651,7 @@ class KingKrush_Uldum(Minion):
 class RaidtheSkyTemple(Quest):
 	Class, school, name = "Mage", "", "Raid the Sky Temple"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Mage~Spell~1~Raid the Sky Temple~~Quest~Legendary"
+	index = "ULDUM~Mage~Spell~1~~Raid the Sky Temple~~Quest~Legendary"
 	description = "Quest: Cast 10 spell. Reward: Ascendant Scroll"
 	name_CN = "洗劫天空殿"
 	poolIdentifier = "Mage Spells"
@@ -1677,7 +1678,7 @@ class Trig_RaidtheSkyTemple(QuestTrigger):
 			except: pass
 			AscendantScroll(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
-class AscendantScroll(HeroPower):
+class AscendantScroll(Power):
 	mana, name, requireTarget = 2, "Ascendant Scroll", False
 	index = "Mage~Hero Power~2~Ascendant Scroll"
 	description = "Add a random Mage spell to your hand. It costs (2) less"
@@ -1697,9 +1698,9 @@ class AscendantScroll(HeroPower):
 		
 		
 class AncientMysteries(Spell):
-	Class, school, name = "Mage", "", "Ancient Mysteries"
+	Class, school, name = "Mage", "Arcane", "Ancient Mysteries"
 	requireTarget, mana = False, 2
-	index = "ULDUM~Mage~Spell~2~Ancient Mysteries"
+	index = "ULDUM~Mage~Spell~2~Arcane~Ancient Mysteries"
 	description = "Draw a Secret from your deck. It costs (0)"
 	name_CN = "远古谜团"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1910,7 +1911,7 @@ class RenotheRelicologist(Minion):
 class PuzzleBoxofYoggSaron(Spell):
 	Class, school, name = "Mage", "", "Puzzle Box of Yogg-Saron"
 	requireTarget, mana = False, 10
-	index = "ULDUM~Mage~Spell~10~Puzzle Box of Yogg-Saron"
+	index = "ULDUM~Mage~Spell~10~~Puzzle Box of Yogg-Saron"
 	description = "Cast 10 random spells (targets chosen randomly)"
 	name_CN = "尤格-萨隆的谜之匣"
 	poolIdentifier = "Spells"
@@ -1940,7 +1941,7 @@ class PuzzleBoxofYoggSaron(Spell):
 class MakingMummies(Quest):
 	Class, school, name = "Paladin", "", "Making Mummies"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Paladin~Spell~1~Making Mummies~~Quest~Legendary"
+	index = "ULDUM~Paladin~Spell~1~~Making Mummies~~Quest~Legendary"
 	description = "Quest: Play 5 Reborn minions. Reward: Emperor Wraps"
 	name_CN = "制作木乃伊"
 	def __init__(self, Game, ID):
@@ -1963,7 +1964,7 @@ class Trig_MakingMummies(QuestTrigger):
 			except: pass
 			EmperorWraps(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
-class EmperorWraps(HeroPower):
+class EmperorWraps(Power):
 	mana, name, requireTarget = 2, "Emperor Wraps", True
 	index = "Paladin~Hero Power~2~Emperor Wraps"
 	description = "Summon a 2/2 copy of a friendly minion"
@@ -2094,7 +2095,7 @@ class SirFinleyoftheSands(Minion):
 class Subdue(Spell):
 	Class, school, name = "Paladin", "", "Subdue"
 	requireTarget, mana = True, 2
-	index = "ULDUM~Paladin~Spell~2~Subdue"
+	index = "ULDUM~Paladin~Spell~2~~Subdue"
 	description = "Change a minion's Attack and Health to 1"
 	name_CN = "制伏"
 	def available(self):
@@ -2168,7 +2169,7 @@ class PharaohsBlessing(Spell):
 class TiptheScales(Spell):
 	Class, school, name = "Paladin", "", "Tip the Scales"
 	requireTarget, mana = False, 8
-	index = "ULDUM~Paladin~Spell~8~Tip the Scales"
+	index = "ULDUM~Paladin~Spell~8~~Tip the Scales"
 	description = "Summon 7 Murlocs from your deck"
 	name_CN = "鱼人为王"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2182,7 +2183,7 @@ class TiptheScales(Spell):
 					murlocs = [i for i, card in enumerate(ownDeck) if card.type == "Minion" and "Murloc" in card.race]
 					i = npchoice(murlocs) if murlocs and curGame.space(self.ID) > 0 else -1
 					curGame.fixedGuides.append(i)
-				if i > -1: curGame.summonfrom(i, self.ID, -1, self, fromHand=False)
+				if i > -1: curGame.summonfrom(i, self.ID, -1, self, source='D')
 				else: break
 		return None
 		
@@ -2191,7 +2192,7 @@ class TiptheScales(Spell):
 class ActivatetheObelisk(Quest):
 	Class, school, name = "Priest", "", "Activate the Obelisk"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Priest~Spell~1~Activate the Obelisk~~Quest~Legendary"
+	index = "ULDUM~Priest~Spell~1~~Activate the Obelisk~~Quest~Legendary"
 	description = "Quest: Restore 15 Health. Reward: Obelisk's Eye"
 	name_CN = "激活方尖碑"
 	def __init__(self, Game, ID):
@@ -2213,7 +2214,7 @@ class Trig_ActivatetheObelisk(QuestTrigger):
 			except: pass
 			ObelisksEye(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
-class ObelisksEye(HeroPower):
+class ObelisksEye(Power):
 	mana, name, requireTarget = 2, "Obelisk's Eye", True
 	index = "Priest~Hero Power~2~Obelisk's Eye"
 	description = "Restore 3 Health. If you target a minion, also give it +3/+3"
@@ -2236,7 +2237,7 @@ class ObelisksEye(HeroPower):
 class EmbalmingRitual(Spell):
 	Class, school, name = "Priest", "", "Embalming Ritual"
 	requireTarget, mana = True, 1
-	index = "ULDUM~Priest~Spell~1~Embalming Ritual"
+	index = "ULDUM~Priest~Spell~1~~Embalming Ritual"
 	description = "Give a minion Reborn"
 	name_CN = "防腐仪式"
 	def targetExists(self, choice=0):
@@ -2400,8 +2401,8 @@ class Psychopomp(Minion):
 			if curGame.guides:
 				minion = curGame.guides.pop(0)
 			else:
-				minionsDied = curGame.Counters.minionsDiedThisGame[self.ID]
-				minion = curGame.cardPool[npchoice(minionsDied)] if minionsDied else None
+				minions = curGame.Counters.minionsDiedThisGame[self.ID]
+				minion = npchoice(minions) if minions else None
 				curGame.fixedGuides.append(minion)
 			if minion:
 				minion = minion(curGame, self.ID)
@@ -2452,7 +2453,7 @@ class PlagueofDeath(Spell):
 class BazaarBurglary(Quest):
 	Class, school, name = "Rogue", "", "Bazaar Burglary"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Rogue~Spell~1~Bazaar Burglary~~Quest~Legendary"
+	index = "ULDUM~Rogue~Spell~1~~Bazaar Burglary~~Quest~Legendary"
 	description = "Quest: Add 4 cards from other classes to your hand. Reward: Ancient Blades"
 	name_CN = "劫掠集市"
 	def __init__(self, Game, ID):
@@ -2475,13 +2476,13 @@ class Trig_BazaarBurglary(QuestTrigger):
 			except: pass
 			AncientBlades(self.entity.Game, self.entity.ID).replaceHeroPower()
 				
-class AncientBlades(HeroPower):
+class AncientBlades(Power):
 	mana, name, requireTarget = 2, "Ancient Blades", False
 	index = "Rogue~Hero Power~2~Ancient Blades"
 	description = "Equip a 3/2 Blade with Immune while attacking"
 	name_CN = "远古刀锋"
 	def effect(self, target=None, choice=0):
-		self.Game.equipWeapon(MirageBlade(self.Game, self.ID))
+		self.equipWeapon(MirageBlade(self.Game, self.ID))
 		return 0
 	
 class MirageBlade(Weapon):
@@ -2542,8 +2543,8 @@ class PlagueofMadness(Spell):
 	name_CN = "疯狂之灾祸"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.equipWeapon(PlaguedKnife(self.Game, self.ID))
-		self.Game.equipWeapon(PlaguedKnife(self.Game, 3-self.ID))
+		self.equipWeapon(PlaguedKnife(self.Game, self.ID))
+		self.equipWeapon(PlaguedKnife(self.Game, 3-self.ID))
 		return None
 		
 class PlaguedKnife(Weapon):
@@ -2559,7 +2560,7 @@ class PlaguedKnife(Weapon):
 class CleverDisguise(Spell):
 	Class, school, name = "Rogue", "", "Clever Disguise"
 	requireTarget, mana = False, 2
-	index = "ULDUM~Rogue~Spell~2~Clever Disguise"
+	index = "ULDUM~Rogue~Spell~2~~Clever Disguise"
 	description = "Add 2 random spells from another Class to your hand"
 	name_CN = "聪明的伪装"
 	poolIdentifier = "Druid Spells"
@@ -2709,7 +2710,6 @@ class ShadowofDeath(Spell):
 							{"index": newIndex, "description": "Casts When Drawn. Summon a "+typeName,
 							"miniontoSummon": type(target)}
 							)
-			self.Game.cardPool[newIndex] = subclass #Create the subclass and add it to the game's cardPool.
 			self.Game.Hand_Deck.shuffleintoDeck([subclass(self.Game, self.ID) for i in range(3)], creator=self)
 		return target
 		
@@ -2752,7 +2752,7 @@ class AnkatheBuried(Minion):
 class CorrupttheWaters(Quest):
 	Class, school, name = "Shaman", "", "Corrupt the Waters"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Shaman~Spell~1~Corrupt the Waters~~Quest~Legendary"
+	index = "ULDUM~Shaman~Spell~1~~Corrupt the Waters~~Quest~Legendary"
 	description = "Quest: Play 6 Battlecry cards. Reward: Heart of Vir'naal"
 	name_CN = "腐化水源"
 	def __init__(self, Game, ID):
@@ -2774,7 +2774,7 @@ class Trig_CorrupttheWaters(QuestTrigger):
 			except: pass
 			HeartofVirnaal(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
-class HeartofVirnaal(HeroPower):
+class HeartofVirnaal(Power):
 	mana, name, requireTarget = 2, "Heart of Vir'naal", False
 	index = "Shaman~Hero Power~2~Heart of Vir'naal"
 	description = "Your Battlecries trigger twice this turn"
@@ -2859,7 +2859,7 @@ class SandstormElemental(Minion):
 class PlagueofMurlocs(Spell):
 	Class, school, name = "Shaman", "", "Plague of Murlocs"
 	requireTarget, mana = False, 3
-	index = "ULDUM~Shaman~Spell~3~Plague of Murlocs"
+	index = "ULDUM~Shaman~Spell~3~~Plague of Murlocs"
 	description = "Transform all minions into random Murlocs"
 	name_CN = "鱼人之灾祸"
 	poolIdentifier = "Murlocs"
@@ -3052,7 +3052,7 @@ class PlagueofFlames(Spell):
 class SinisterDeal(Spell):
 	Class, school, name = "Warlock", "", "Sinister Deal"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Warlock~Spell~1~Sinister Deal"
+	index = "ULDUM~Warlock~Spell~1~~Sinister Deal"
 	description = "Discover a Lackey"
 	name_CN = "邪恶交易"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3079,7 +3079,7 @@ class SinisterDeal(Spell):
 class SupremeArchaeology(Quest):
 	Class, school, name = "Warlock", "", "Supreme Archaeology"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Warlock~Spell~1~Supreme Archaeology~~Quest~Legendary"
+	index = "ULDUM~Warlock~Spell~1~~Supreme Archaeology~~Quest~Legendary"
 	description = "Quest: Draw 20 cards. Reward: Tome of Origination"
 	name_CN = "最最伟大的考古学"
 	def __init__(self, Game, ID):
@@ -3101,7 +3101,7 @@ class Trig_SupremeArchaeology(QuestTrigger):
 			except: pass
 			TomeofOrigination(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
-class TomeofOrigination(HeroPower):
+class TomeofOrigination(Power):
 	mana, name, requireTarget = 2, "Tome of Origination", False
 	index = "Warlock~Hero Power~2~Tome of Origination"
 	description = "Draw a card. It costs (0)"
@@ -3373,7 +3373,7 @@ class YourLackeysareAlways44(HasAura_toMinion):
 class HacktheSystem(Quest):
 	Class, school, name = "Warrior", "", "Hack the System"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Warrior~Spell~1~Hack the System~~Quest~Legendary"
+	index = "ULDUM~Warrior~Spell~1~~Hack the System~~Quest~Legendary"
 	description = "Quest: Attack 5 times with your hero. Reward: Anraphet's Core"
 	name_CN = "侵入系统"
 	def __init__(self, Game, ID):
@@ -3395,7 +3395,7 @@ class Trig_HacktheSystem(QuestTrigger):
 			except: pass
 			AnraphetsCore(self.entity.Game, self.entity.ID).replaceHeroPower()
 			
-class AnraphetsCore(HeroPower):
+class AnraphetsCore(Power):
 	mana, name, requireTarget = 2, "Anraphet's Core", False
 	index = "Warrior~Hero Power~2~Anraphet's Core"
 	description = "Summon a 4/3 Golem. After your hero attacks, refresh this"
@@ -3433,7 +3433,7 @@ class StoneGolem(Minion):
 class IntotheFray(Spell):
 	Class, school, name = "Warrior", "", "Into the Fray"
 	requireTarget, mana = False, 1
-	index = "ULDUM~Warrior~Spell~1~Into the Fray"
+	index = "ULDUM~Warrior~Spell~1~~Into the Fray"
 	description = "Give all Taunt minions in your hand +2/+2"
 	name_CN = "投入战斗"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3452,8 +3452,8 @@ class FrightenedFlunky(Minion):
 	poolIdentifier = "Taunt Minions as Warrior"
 	@classmethod
 	def generatePool(cls, pools):
-		classCards = {s : [value for key, value in pools.ClassCards[s].items() if "~Minion~" in key and "~Taunt" in key] for s in pools.Classes}
-		classCards["Neutral"] = [value for key, value in pools.NeutralCards.items() if "~Minion~" in key and "~Taunt" in key]
+		classCards = {s : [value for key, value in pools.ClassCards[s].items() if "~Taunt" in key] for s in pools.Classes}
+		classCards["Neutral"] = [value for key, value in pools.NeutralCards.items() if "~Taunt" in key]
 		return ["Taunt Minions as %s"%Class for Class in pools.Classes], \
 				[classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 				
@@ -3548,7 +3548,7 @@ class RestlessMummy(Minion):
 class PlagueofWrath(Spell):
 	Class, school, name = "Warrior", "", "Plague of Wrath"
 	requireTarget, mana = False, 5
-	index = "ULDUM~Warrior~Spell~5~Plague of Wrath"
+	index = "ULDUM~Warrior~Spell~5~~Plague of Wrath"
 	description = "Destroy all damaged minions"
 	name_CN = "愤怒之灾祸"
 	def available(self):
@@ -3626,164 +3626,4 @@ class TombWarden(Minion):
 		
 		
 		
-Uldum_Indices = {"ULDUM~Neutral~Minion~1~1~2~~Beaming Sidekick~Battlecry": BeamingSidekick,
-				"ULDUM~Neutral~Minion~1~1~1~~Jar Dealer~Deathrattle": JarDealer,
-				"ULDUM~Neutral~Minion~1~1~1~~Mogu Cultist~Battlecry": MoguCultist,
-				"ULDUM~Neutral~Minion~10~20~20~~Highkeeper Ra~Legendary~Uncollectible": HighkeeperRa,
-				"ULDUM~Neutral~Minion~1~1~1~Murloc~Murmy~Reborn": Murmy,
-				"ULDUM~Neutral~Minion~2~2~1~~Bug Collector~Battlecry": BugCollector,
-				"ULDUM~Neutral~Minion~1~1~1~Beast~Locust~Rush~Uncollectible": Locust,
-				"ULDUM~Neutral~Minion~2~2~3~~Dwarven Archaeologist": DwarvenArchaeologist,
-				"ULDUM~Neutral~Minion~2~3~2~Murloc~Fishflinger~Battlecry": Fishflinger,
-				"ULDUM~Neutral~Minion~2~2~6~~Injured Tol'vir~Taunt~Battlecry": InjuredTolvir,
-				"ULDUM~Neutral~Minion~2~2~1~~Kobold Sandtrooper~Deathrattle": KoboldSandtrooper,
-				"ULDUM~Neutral~Minion~2~2~3~~Neferset Ritualist~Battlecry": NefersetRitualist,
-				"ULDUM~Neutral~Minion~2~2~3~~Questing Explorer~Battlecry": QuestingExplorer,
-				"ULDUM~Neutral~Minion~2~3~2~Elemental~Quicksand Elemental~Battlecry": QuicksandElemental,
-				"ULDUM~Neutral~Minion~2~0~3~~Serpent Egg~Deathrattle": SerpentEgg,
-				"ULDUM~Neutral~Minion~3~3~4~Beast~Sea Serpent~Uncollectible": SeaSerpent,
-				"ULDUM~Neutral~Minion~2~2~4~Beast~Spitting Camel": SpittingCamel,
-				"ULDUM~Neutral~Minion~2~1~2~~Temple Berserker~Reborn": TempleBerserker,
-				"ULDUM~Neutral~Minion~2~2~2~Demon~Vilefiend~Lifesteal": Vilefiend,
-				"ULDUM~Neutral~Minion~2~3~2~Elemental~Zephrys the Great~Battlecry~Legendary": ZephrystheGreat,
-				"ULDUM~Neutral~Minion~3~3~2~~Candletaker~Reborn": Candletaker,
-				"ULDUM~Neutral~Minion~3~1~1~Beast~Desert Hare~Battlecry": DesertHare,
-				"ULDUM~Neutral~Minion~3~5~4~~Generous Mummy~Reborn": GenerousMummy,
-				"ULDUM~Neutral~Minion~3~2~2~Beast~Golden Scarab~Battlecry": GoldenScarab,
-				"ULDUM~Neutral~Minion~3~3~4~~History Buff": HistoryBuff,
-				"ULDUM~Neutral~Minion~3~2~3~~Infested Goblin~Taunt~Deathrattle": InfestedGoblin,
-				"ULDUM~Neutral~Minion~1~1~1~Beast~Scarab~Taunt~Uncollectible": Scarab_Uldum,
-				"ULDUM~Neutral~Minion~3~3~3~~Mischief Maker~Battlecry": MischiefMaker,
-				"ULDUM~Neutral~Minion~3~2~3~~Vulpera Scoundrel~Battlecry": VulperaScoundrel,
-				"ULDUM~Neutral~Minion~4~2~5~~Bone Wraith~Reborn~Taunt": BoneWraith,
-				"ULDUM~Neutral~Minion~4~4~4~~Body Wrapper~Battlecry": BodyWrapper,
-				"ULDUM~Neutral~Minion~4~3~10~~Conjured Mirage~Taunt": ConjuredMirage,
-				"ULDUM~Neutral~Minion~4~6~5~~Sunstruck Henchman": SunstruckHenchman,
-				"ULDUM~Neutral~Minion~5~3~3~~Faceless Lurker~Taunt~Battlecry": FacelessLurker,
-				"ULDUM~Neutral~Minion~5~0~5~~Desert Obelisk": DesertObelisk,
-				"ULDUM~Neutral~Minion~5~8~8~Mech~Mortuary Machine": MortuaryMachine,
-				"ULDUM~Neutral~Minion~5~4~5~~Phalanx Commander": PhalanxCommander,
-				"ULDUM~Neutral~Minion~5~4~2~~Wasteland Assassin~Stealth~Reborn": WastelandAssassin,
-				"ULDUM~Neutral~Minion~6~5~5~~Blatant Decoy~Deathrattle": BlatantDecoy,
-				"ULDUM~Neutral~Minion~6~3~4~~Khartut Defender~Taunt~Reborn~Deathrattle": KhartutDefender,
-				"ULDUM~Neutral~Minion~7~6~6~Elemental~Siamat~Battlecry~Legendary": Siamat,
-				"ULDUM~Neutral~Minion~7~3~9~Beast~Wasteland Scorpid~Poisonous": WastelandScorpid,
-				"ULDUM~Neutral~Minion~7~7~5~~Wrapped Golem~Reborn": WrappedGolem,
-				"ULDUM~Neutral~Minion~8~8~8~Beast~Octosari~Deathrattle~Legendary": Octosari,
-				"ULDUM~Neutral~Minion~8~5~6~Beast~Pit Crocolisk~Battlecry": PitCrocolisk,
-				"ULDUM~Neutral~Minion~9~9~6~~Anubisath Warbringer~Deathrattle": AnubisathWarbringer,
-				"ULDUM~Neutral~Minion~10~10~10~~Colossus of the Moon~Divine Shield~Reborn~Legendary": ColossusoftheMoon,
-				"ULDUM~Neutral~Minion~10~5~5~~King Phaoris~Battlecry~Legendary": KingPhaoris,
-				"ULDUM~Neutral~Minion~10~10~10~~Living Monument~Taunt": LivingMonument,
-				"ULDUM~Druid~Spell~1~Untapped Potential~~Quest~Legendary": UntappedPotential,
-				"ULDUM~Druid~Spell~1~Worthy Expedition": WorthyExpedition,
-				"ULDUM~Druid~Minion~2~1~4~~Crystal Merchant": CrystalMerchant,
-				"ULDUM~Druid~Spell~3~BEEEES!!!": BEEEES,
-				"ULDUM~Druid~Minion~1~1~1~Beast~Bee~Uncollectible": Bee_Uldum,
-				"ULDUM~Druid~Minion~4~2~3~~Garden Gnome~Battlecry": GardenGnome,
-				"ULDUM~Druid~Minion~2~2~2~~Treant~Uncollectible": Treant_Uldum,
-				"ULDUM~Druid~Minion~5~3~5~~Anubisath Defender~Taunt": AnubisathDefender,
-				"ULDUM~Druid~Minion~5~5~5~~Elise the Enlightened~Battlecry~Legendary": ElisetheEnlightened,
-				"ULDUM~Druid~Minion~5~3~3~Elemental~Oasis Surger~Rush~Choose One": OasisSurger,
-				"ULDUM~Druid~Spell~6~Hidden Oasis~Choose One": HiddenOasis,
-				"ULDUM~Druid~Spell~6~Befriend the Ancient~Uncollectible": BefriendtheAncient,
-				"ULDUM~Druid~Spell~6~Drink the Water~Uncollectible": DrinktheWater,
-				"ULDUM~Druid~Minion~6~6~6~~Vir'naal Ancient~Taunt~Uncollectible": VirnaalAncient,
-				"ULDUM~Druid~Spell~7~Overflow": Overflow,
-				"ULDUM~Hunter~Spell~1~Unseal the Vault~~Quest~Legendary": UnsealtheVault,
-				
-				"ULDUM~Hunter~Spell~2~Pressure Plate~~Secret": PressurePlate,
-				"ULDUM~Hunter~Weapon~3~1~3~Desert Spear": DesertSpear,
-				"ULDUM~Hunter~Spell~3~Hunter's Pack": HuntersPack,
-				"ULDUM~Hunter~Minion~4~3~3~Beast~Hyena Alpha~Battlecry": HyenaAlpha,
-				"ULDUM~Hunter~Minion~2~2~2~Beast~Hyena~Uncollectible": Hyena_Uldum,
-				"ULDUM~Hunter~Minion~3~4~3~~Ramkahen Wildtamer~Battlecry": RamkahenWildtamer,
-				"ULDUM~Hunter~Spell~6~Swarm of Locusts": SwarmofLocusts,
-				"ULDUM~Hunter~Minion~6~5~5~Beast~Scarlet Webweaver~Battlecry": ScarletWebweaver,
-				"ULDUM~Hunter~Minion~6~6~9~Beast~Wild Bloodstinger~Battlecry": WildBloodstinger,
-				"ULDUM~Hunter~Minion~7~2~4~~Dinotamer Brann~Battlecry~Legendary": DinotamerBrann,
-				"ULDUM~Hunter~Minion~9~8~8~Beast~King Krush~Charge~Legendary~Uncollectible": KingKrush_Uldum,
-				
-				"ULDUM~Mage~Spell~1~Raid the Sky Temple~~Quest~Legendary": RaidtheSkyTemple,
-				"ULDUM~Mage~Spell~2~Ancient Mysteries": AncientMysteries,
-				"ULDUM~Mage~Spell~3~Flame Ward~~Secret": FlameWard,
-				"ULDUM~Mage~Minion~5~4~4~Elemental~Cloud Prince~Battlecry": CloudPrince,
-				"ULDUM~Mage~Minion~2~3~2~~Arcane Flakmage": ArcaneFlakmage,
-				"ULDUM~Mage~Minion~3~3~3~~Dune Sculptor": DuneSculptor,
-				"ULDUM~Mage~Minion~5~5~5~~Naga Sand Witch~Battlecry": NagaSandWitch,
-				"ULDUM~Mage~Minion~8~5~5~~Tortollan Pilgrim~Battlecry": TortollanPilgrim,
-				"ULDUM~Mage~Minion~6~4~6~~Reno the Relicologist~Battlecry~Legendary": RenotheRelicologist,
-				"ULDUM~Mage~Spell~10~Puzzle Box of Yogg-Saron": PuzzleBoxofYoggSaron,
-				
-				"ULDUM~Paladin~Spell~1~Making Mummies~~Quest~Legendary": MakingMummies,
-				"ULDUM~Paladin~Minion~1~2~1~~Brazen Zealot": BrazenZealot,
-				"ULDUM~Paladin~Minion~2~1~2~Mech~Micro Mummy~Reborn": MicroMummy,
-				"ULDUM~Paladin~Minion~2~3~1~Beast~Sandwasp Queen~Battlecry": SandwaspQueen,
-				"ULDUM~Paladin~Minion~1~2~1~Beast~Sandwasp~Uncollectible": Sandwasp,
-				"ULDUM~Paladin~Minion~2~2~3~Murloc~Sir Finley of the Sands~Battlecry~Legendary": SirFinleyoftheSands,
-				"ULDUM~Paladin~Spell~2~Subdue": Subdue,
-				"ULDUM~Paladin~Minion~3~3~1~Beast~Salhet's Pride~Deathrattle": SalhetsPride,
-				"ULDUM~Paladin~Minion~4~4~2~~Ancestral Guardian~Lifesteal~Reborn": AncestralGuardian,
-				"ULDUM~Paladin~Spell~6~Pharaoh's Blessing": PharaohsBlessing,
-				"ULDUM~Paladin~Spell~8~Tip the Scales": TiptheScales,
-				
-				"ULDUM~Priest~Spell~1~Activate the Obelisk~~Quest~Legendary": ActivatetheObelisk,
-				"ULDUM~Priest~Spell~1~Embalming Ritual": EmbalmingRitual,
-				"ULDUM~Priest~Spell~2~Penance": Penance,
-				"ULDUM~Priest~Minion~5~5~5~~Sandhoof Waterbearer": SandhoofWaterbearer,
-				"ULDUM~Priest~Minion~2~1~2~~Grandmummy~Reborn~Deathrattle": Grandmummy,
-				"ULDUM~Priest~Spell~2~Holy Ripple": HolyRipple,
-				"ULDUM~Priest~Minion~3~3~3~~Wretched Reclaimer~Battlecry": WretchedReclaimer,
-				"ULDUM~Priest~Minion~4~3~1~~Psychopomp~Battlecry": Psychopomp,
-				"ULDUM~Priest~Minion~4~2~7~~High Priest Amet~Legendary": HighPriestAmet,
-				"ULDUM~Priest~Spell~9~Plague of Death": PlagueofDeath,
-				
-				"ULDUM~Rogue~Spell~1~Bazaar Burglary~~Quest~Legendary": BazaarBurglary,
-				"ULDUM~Rogue~Weapon~2~3~2~Mirage Blade~Uncollectible": MirageBlade,
-				"ULDUM~Rogue~Minion~1~1~2~Beast~Pharaoh Cat~Battlecry": PharaohCat,
-				"ULDUM~Rogue~Spell~1~Plague of Madness": PlagueofMadness,
-				"ULDUM~Rogue~Weapon~1~2~2~Plagued Knife~Poisonous~Uncollectible": PlaguedKnife,
-				"ULDUM~Rogue~Spell~2~Clever Disguise": CleverDisguise,
-				"ULDUM~Rogue~Minion~2~1~2~~Whirlkick Master": WhirlkickMaster,
-				"ULDUM~Rogue~Weapon~3~2~2~Hooked Scimitar~Combo": HookedScimitar,
-				"ULDUM~Rogue~Minion~4~4~4~Pirate~Sahket Sapper~Deathrattle": SahketSapper,
-				"ULDUM~Rogue~Minion~5~3~5~~Bazaar Mugger~Rush~Battlecry": BazaarMugger,
-				"ULDUM~Rogue~Spell~4~Shadow of Death": ShadowofDeath,
-				"ULDUM~Rogue~Minion~5~5~5~~Anka, the Buried~Battlecry~Legendary": AnkatheBuried,
-				
-				"ULDUM~Shaman~Spell~1~Corrupt the Waters~~Quest~Legendary": CorrupttheWaters,
-				"ULDUM~Shaman~Spell~0~Totemic Surge": TotemicSurge,
-				"ULDUM~Shaman~Minion~2~0~2~Totem~EVIL Totem": EVILTotem,
-				"ULDUM~Shaman~Minion~2~2~2~Elemental~Sandstorm Elemental~Overload~Battlecry": SandstormElemental,
-				"ULDUM~Shaman~Spell~3~Plague of Murlocs": PlagueofMurlocs,
-				"ULDUM~Shaman~Minion~3~3~3~Beast~Weaponized Wasp~Battlecry": WeaponizedWasp,
-				"ULDUM~Shaman~Weapon~4~3~2~Splitting Axe~Battlecry": SplittingAxe,
-				"ULDUM~Shaman~Minion~4~2~6~~Vessina~Legendary": Vessina,
-				"ULDUM~Shaman~Spell~7~Earthquake": Earthquake,
-				"ULDUM~Shaman~Minion~9~3~4~~Mogu Fleshshaper~Rush": MoguFleshshaper,
-				
-				"ULDUM~Warlock~Spell~1~Supreme Archaeology~~Quest~Legendary": SupremeArchaeology,
-				"ULDUM~Warlock~Spell~1~Plague of Flames": PlagueofFlames,
-				"ULDUM~Warlock~Spell~1~Sinister Deal": SinisterDeal,
-				"ULDUM~Warlock~Minion~2~2~1~~Expired Merchant~Battlecry~Deathrattle": ExpiredMerchant,
-				"ULDUM~Warlock~Minion~3~3~3~~EVIL Recruiter~Battlecry": EVILRecruiter,
-				"ULDUM~Warlock~Minion~5~5~5~Demon~EVIL Demon~Uncollectible": EVILDemon,
-				"ULDUM~Warlock~Minion~3~4~5~~Neferset Thrasher": NefersetThrasher,
-				"ULDUM~Warlock~Spell~4~Impbalming": Impbalming,
-				"ULDUM~Warlock~Minion~1~1~1~Demon~Worthless Imp~Uncollectible": WorthlessImp_Uldum,
-				"ULDUM~Warlock~Minion~4~3~5~Beast~Diseased Vulture": DiseasedVulture,
-				"ULDUM~Warlock~Minion~6~7~5~Demon~Riftcleaver~Battlecry": Riftcleaver,
-				"ULDUM~Warlock~Minion~5~4~4~~Dark Pharaoh Tekahn~Battlecry~Legendary": DarkPharaohTekahn,
-				
-				"ULDUM~Warrior~Spell~1~Hack the System~~Quest~Legendary": HacktheSystem,
-				"ULDUM~Warrior~Minion~3~4~3~~Stone Golem~Uncollectible": StoneGolem,
-				"ULDUM~Warrior~Spell~1~Into the Fray": IntotheFray,
-				"ULDUM~Warrior~Minion~2~2~2~~Frightened Flunky~Taunt~Battlecry": FrightenedFlunky,
-				"ULDUM~Warrior~Minion~3~2~2~~Bloodsworn Mercenary~Battlecry": BloodswornMercenary,
-				"ULDUM~Warrior~Weapon~3~2~2~Livewire Lance": LivewireLance,
-				"ULDUM~Warrior~Minion~4~3~2~~Restless Mummy~Rush~Reborn": RestlessMummy,
-				"ULDUM~Warrior~Spell~5~Plague of Wrath": PlagueofWrath,
-				"ULDUM~Warrior~Minion~6~4~7~Beast~Armagedillo~Taunt~Legendary": Armagedillo,
-				"ULDUM~Warrior~Minion~6~6~7~~Armored Goon": ArmoredGoon,
-				"ULDUM~Warrior~Minion~8~3~6~Mech~Tomb Warden~Taunt~Battlecry": TombWarden
-				}
+Uldum_Cards = []

@@ -170,9 +170,9 @@ class GoddessoftheWestWind(SVMinion):
             if i2 > -1:
                 mi2 = curGame.Hand_Deck.decks[self.ID][i2]
             if i1 > -1:
-                curGame.summonfrom(mi1, self.ID, -1, self, fromHand=False)
+                curGame.summonfrom(mi1, self.ID, -1, self, source='D')
             if i2 > -1:
-                curGame.summonfrom(mi2, self.ID, -1, self, fromHand=False)
+                curGame.summonfrom(mi2, self.ID, -1, self, source='D')
         return None
 
 
@@ -354,9 +354,9 @@ class GoddessoftheWestWind(SVMinion):
             if i2 > -1:
                 mi2 = curGame.Hand_Deck.decks[self.ID][i2]
             if i1 > -1:
-                curGame.summonfrom(mi1, self.ID, -1, self, fromHand=False)
+                curGame.summonfrom(mi1, self.ID, -1, self, source='D')
             if i2 > -1:
-                curGame.summonfrom(mi2, self.ID, -1, self, fromHand=False)
+                curGame.summonfrom(mi2, self.ID, -1, self, source='D')
         return None
 
 

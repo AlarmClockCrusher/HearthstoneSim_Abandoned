@@ -48,9 +48,9 @@ class Layer1Window:
 		
 		"""Create the hero class selection menu"""
 		self.hero1 = self.hero2 = "Demon Hunter"
-		Panel_ClassSelection(master=self.window, UI=self, ClassPool=list(ClassDict.keys()),
+		Panel_ClassSelection(master=self.window, UI=self, ClassPool=list(Class2HeroDict.keys()),
 								Class_0="Demon Hunter", varName="hero1").grid(row=0, column=3)
-		Panel_ClassSelection(master=self.window, UI=self, ClassPool=list(ClassDict.keys()),
+		Panel_ClassSelection(master=self.window, UI=self, ClassPool=list(Class2HeroDict.keys()),
 							 Class_0="Demon Hunter", varName="hero2").grid(row=0, column=6)
 		
 		self.entry_Deck1 = tk.Entry(self.window, font=("Yahei", 13), width=30)
@@ -118,19 +118,19 @@ class Layer1Window:
 	def updateDeckComp(self, event):
 		cardPool, RNGPools = makeCardPool(0, 0)
 		deckString1, deckString2 = self.entry_Deck1.get(), self.entry_Deck2.get()
-		heroes = {1: ClassDict[self.hero1], 2: ClassDict[self.hero2]}
+		heroes = {1: Class2HeroDict[self.hero1], 2: Class2HeroDict[self.hero2]}
 		if deckString1:
-			self.deck1, deckCorrect, hero = parseDeckCode(deckString1, self.hero1, ClassDict)
+			self.deck1, deckCorrect, hero = parseDeckCode(deckString1, self.hero1, Class2HeroDict)
 			if not deckCorrect: messagebox.showinfo(message=txt("Deck 1 incorrect", CHN))
 		if deckString2:
-			self.deck2, deckCorrect, hero = parseDeckCode(deckString2, self.hero2, ClassDict)
+			self.deck2, deckCorrect, hero = parseDeckCode(deckString2, self.hero2, Class2HeroDict)
 			if not deckCorrect: messagebox.showinfo(message=txt("Deck 2 incorrect", CHN))
 			
 		deckStrings = {1: self.deck1, 2: self.deck2}
 		decks, decksCorrect = {1: [], 2: []}, {1: False, 2: False}
 		
 		for ID in range(1, 3):
-			decks[ID], decksCorrect[ID], heroes[ID] = parseDeckCode(deckStrings[ID], heroes[ID], ClassDict)
+			decks[ID], decksCorrect[ID], heroes[ID] = parseDeckCode(deckStrings[ID], heroes[ID], Class2HeroDict)
 		
 		for lbl, deck, manaObjsDrawn, canvas, ls_Labels, panelDeck \
 				in zip((self.lbl_Types1, self.lbl_Types2),
@@ -187,12 +187,12 @@ class Layer1Window:
 		cardPool, RNGPools = makeCardPool(0, 0)
 		transferStudentType = transferStudentPool[self.boardID]
 		deck1, deck2 = self.entry_Deck1.get(), self.entry_Deck2.get()
-		heroes = {1: ClassDict[self.hero1], 2: ClassDict[self.hero2]}
+		heroes = {1: Class2HeroDict[self.hero1], 2: Class2HeroDict[self.hero2]}
 		deckStrings = {1: deck1, 2: deck2}
 		decks, decksCorrect = {1: [], 2: []}, {1: False, 2: False}
 		
 		for ID in range(1, 3):
-			decks[ID], decksCorrect[ID], heroes[ID] = parseDeckCode(deckStrings[ID], heroes[ID], ClassDict)
+			decks[ID], decksCorrect[ID], heroes[ID] = parseDeckCode(deckStrings[ID], heroes[ID], Class2HeroDict)
 		
 		if decksCorrect[1] and decksCorrect[2]:
 			self.gameGUI.boardID = self.boardID
@@ -248,11 +248,11 @@ class GUI_1P(Panda_UICommon):
 		btn_Mulligan = DirectButton(text=("Confirm", "Confirm", "Confirm", "Confirm"), scale=0.08,
 									command=self.mulligan_PreProcess)
 		
-		self.posMulligans = {1: [(-7, -10, -2.5), (0, -10, -2.5), (7, -10, -2.5)],
-							 2: [(-8.25, -10, 6), (-2.75, -10, 6), (2.75, -10, 6), (8.25, -10, 6)]}
+		self.posMulligans = {1: [(-7, -3.3, 10), (0, -3.3, 10), (7, -3.3, 10)],
+							 2: [(-8.25, 6, 10), (-2.75, 6, 10), (2.75, 6, 10), (8.25, 6, 10)]}
 		for ID in range(1, 3):
 			deckZone, handZone, i = self.deckZones[ID], self.handZones[ID], 0
-			pos_0, hpr_0 = deckZone.pos, (90, 0, -90)
+			pos_0, hpr_0 = deckZone.pos, (90, 90, 0)
 			cards2Mulligan = self.Game.mulligans[ID]
 			mulliganBtns = []
 			for card, pos, hpr, scale in zip(cards2Mulligan, [pos_0] * len(cards2Mulligan), [hpr_0] * len(cards2Mulligan), [1] * len(cards2Mulligan)):
@@ -280,13 +280,13 @@ class GUI_1P(Panda_UICommon):
 	#Returns a sequence to be started later
 	def mulligan_NewCardsfromDeckAni(self, addCoin=True):
 		#At this point, the Coin is added to the Game.mulligans[2]
-		if addCoin: genCard(self, card=self.Game.mulligans[2][-1], isPlayed=False, pos=(13.75, -10, 6))
+		if addCoin: genCard(self, card=self.Game.mulligans[2][-1], isPlayed=False, pos=(13.75, 6, 10))
 		
 		#开始需要生成一个Sequence，然后存储在seqHolder里面
 		para = Parallel()
 		for ID in range(1, 3):
 			deckZone, handZone = self.deckZones[ID], self.handZones[ID]
-			pos_DeckZone, hpr_0 = deckZone.pos, (90, 0, -90)
+			pos_DeckZone, hpr_0 = deckZone.pos, (90, 90, 0)
 			indices, cards2Mulligan = [], []
 			for i, card in enumerate(self.Game.mulligans[ID]):
 				if not card.btn:

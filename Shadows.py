@@ -82,14 +82,7 @@ class EVILCableRat(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Add a Lackey to your hand"
 	name_CN = "怪盗布缆鼠"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				lackey = curGame.guides.pop(0)
-			else:
-				lackey = npchoice(Lackeys)
-				curGame.fixedGuides.append(lackey)
-			curGame.Hand_Deck.addCardtoHand(lackey, self.ID, byType=True)
+		self.addCardtoHand(npchoice(Lackeys), self.ID)
 		return None
 		
 		
@@ -315,7 +308,7 @@ class Trig_ArchmageVargoth(TrigBoard):
 			if curGame.guides:
 				spell = curGame.guides.pop(0)
 			else:
-				spells = [curGame.cardPool[index] for index in curGame.Counters.cardsPlayedThisTurn[self.entity.ID]["Indices"] if "~Spell~" in index]
+				spells = [card for card in curGame.Counters.cardsPlayedEachTurn[self.entity.ID][-1] if issubclass(card, Spell)]
 				spell = npchoice(spells) if spells else None
 				curGame.fixedGuides.append(spell)
 			if spell: spell(curGame, self.entity.ID).cast()
@@ -337,7 +330,7 @@ class Hecklebot(Minion):
 				minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[3-self.ID]) if card.type == "Minion"]
 				i = npchoice(minions) if minions and curGame.space(3-self.ID) > 0 else -1
 				curGame.fixedGuides.append(i)
-			if i > -1: curGame.summonfrom(i, 3-self.ID, -1, self, fromHand=False)
+			if i > -1: curGame.summonfrom(i, 3-self.ID, -1, self, source='D')
 		return None
 		
 		
@@ -376,7 +369,7 @@ class PortalKeeper(Minion):
 class FelhoundPortal(Spell):
 	Class, school, name = "Neutral", "", "Felhound Portal"
 	requireTarget, mana = False, 2
-	index = "DALARAN~Neutral~Spell~2~Felhound Portal~Casts When Drawn~Uncollectible"
+	index = "DALARAN~Neutral~Spell~2~~Felhound Portal~Casts When Drawn~Uncollectible"
 	description = "Casts When Drawn. Summon a 2/2 Felhound with Rush"
 	name_CN = "地狱犬传送门"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -468,7 +461,7 @@ class Trig_SoldierofFortune(TrigBoard):
 				else "Whenever this minion attacks, give your opponent a coin"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.addCardtoHand(TheCoin(self.entity.Game, 3-self.entity.ID), 3-self.entity.ID)
+		self.entity.addCardtoHand(TheCoin, 3-self.entity.ID)
 		
 		
 class TravelingHealer(Minion):
@@ -538,13 +531,9 @@ class BaristaLynchen(Minion):
 	name_CN = "咖啡师林彻"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		battlecryMinions = []
-		for minion in self.Game.minions[self.ID]:
-			if "~Battlecry" in minion.index and minion != self:
-				battlecryMinions.append(minion)
-		if battlecryMinions != []:
-			for minion in battlecryMinions:
-				self.Game.Hand_Deck.addCardtoHand(type(minion)(self.Game, self.ID), self.ID)
+		battlecryMinions = [minion for minion in self.Game.minions[self.ID] if "~Battlecry" in minion.index and minion != self]
+		for minion in battlecryMinions:
+			self.addCardtoHand(type(minion), self.ID)
 		return None
 		
 		
@@ -825,7 +814,7 @@ class Trig_UnderbellyOoze(TrigBoard):
 		return "在该随从受到伤害并没有死亡后，召唤一个它的复制" if CHN else "After this minion survives damage, summon a copy of it"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		Copy = self.entity.selfCopy(self.entity.ID)
+		Copy = self.entity.selfCopy(self.entity.ID, self.entity)
 		self.entity.Game.summon(Copy, self.entity.pos+1, self.entity)
 		
 """Mana 8 cards"""
@@ -1011,7 +1000,7 @@ class Acornbearer(Minion):
 		
 class AddTwoSquirrelstoHand(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.Hand_Deck.addCardtoHand([Squirrel_Shadows, Squirrel_Shadows], self.entity.ID, byType=True)
+		self.entity.addCardtoHand([Squirrel_Shadows, Squirrel_Shadows], self.entity.ID)
 		
 	def text(self, CHN):
 		return "亡语：将两张1/1“松鼠”置入你的手牌" if CHN \
@@ -1142,23 +1131,13 @@ class CrystalsongPortal(Spell):
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
-		handHasMinion = False
-		for card in curGame.Hand_Deck.hands[self.ID]:
-			if card.type == "Minion":
-				handHasMinion = True
-				break
 		if curGame.mode == 0:
-			if not handHasMinion:
-				if curGame.guides:
-					minions = curGame.guides.pop(0)
-				else:
-					minions = npchoice(self.rngPool("Druid Minions"), 3, replace=False)
-					curGame.fixedGuides.append(tuple(minions))
-				curGame.Hand_Deck.addCardtoHand(minions, self.ID, byType=True)
+			if not any(card.type == "Minion" for card in curGame.Hand_Deck.hands[self.ID]):
+				self.addCardtoHand(npchoice(self.rngPool("Druid Minions"), 3, replace=False), self.ID)
 			else:
 				if curGame.guides:
 					minion = curGame.guides.pop(0)
-					curGame.Hand_Deck.addCardtoHand(minion, self.ID, byType=True, byDiscover=True)
+					self.addCardtoHand(minion, self.ID, byType=True, byDiscover=True)
 				else:
 					if self.ID != curGame.turn or "byOthers" in comment:
 						minion = npchoice(self.rngPool("Druid Minions"))
@@ -1178,7 +1157,7 @@ class CrystalsongPortal(Spell):
 class DreamwayGuardians(Spell):
 	Class, school, name = "Druid", "", "Dreamway Guardians"
 	requireTarget, mana = False, 2
-	index = "DALARAN~Druid~Spell~2~Dreamway Guardians"
+	index = "DALARAN~Druid~Spell~2~~Dreamway Guardians"
 	description = "Summon two 1/2 Dryads with Lifesteal"
 	name_CN = "守卫梦境之路"
 	def available(self):
@@ -1274,7 +1253,7 @@ class CrystalStag(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Counters.healthRestoredThisGame[self.ID] > 4:
-			Copy = self.selfCopy(self.ID)
+			Copy = self.selfCopy(self.ID, self)
 			self.Game.summon(Copy, self.pos+1, self)
 		return None
 		
@@ -1324,10 +1303,13 @@ class BecomeSpiritofLucentbark(Deathrattle_Minion):
 	#这个变形亡语只能触发一次。
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			if self.entity.Game.GUI:
-				self.entity.Game.GUI.deathrattleAni(self.entity)
-			dormant = SpiritofLucentbark(self.entity.Game, self.entity.ID)
-			self.entity.Game.transform(self.entity, dormant)
+			minion = self.entity
+			if minion.Game.GUI:
+				minion.Game.GUI.deathrattleAni(minion)
+			minion.Game.Counters.deathrattlesTriggered[minion.ID].append(BecomeSpiritofLucentbark)
+			dormant = SpiritofLucentbark(minion.Game, minion.ID)
+			minion.Game.transform(minion, dormant)
+			
 			
 	def text(self, CHN):
 		return "亡语：进入休眠状态。累计恢复5生命可唤醒该随从" if CHN \
@@ -1393,7 +1375,7 @@ class Treant_Shadows(Minion):
 class RapidFire(Spell):
 	Class, school, name = "Hunter", "", "Rapid Fire"
 	requireTarget, mana = True, 1
-	index = "DALARAN~Hunter~Spell~1~Rapid Fire~Twinspell"
+	index = "DALARAN~Hunter~Spell~1~~Rapid Fire~Twinspell"
 	description = "Twinspell. Deal 1 damage"
 	name_CN = "急速射击"
 	def __init__(self, Game, ID):
@@ -1414,7 +1396,7 @@ class RapidFire(Spell):
 class RapidFire2(Spell):
 	Class, school, name = "Hunter", "", "Rapid Fire"
 	requireTarget, mana = True, 1
-	index = "DALARAN~Hunter~Spell~1~Rapid Fire~Uncollectible"
+	index = "DALARAN~Hunter~Spell~1~~Rapid Fire~Uncollectible"
 	description = "Deal 1 damage"
 	name_CN = "急速射击"
 	def text(self, CHN):
@@ -1462,7 +1444,7 @@ class AddaHunterSpelltoHand(Deathrattle_Minion):
 class NineLives(Spell):
 	Class, school, name = "Hunter", "", "Nine Lives"
 	requireTarget, mana = False, 3
-	index = "DALARAN~Hunter~Spell~3~Nine Lives"
+	index = "DALARAN~Hunter~Spell~3~~Nine Lives"
 	description = "Discover a friendly Deathrattle minion that died this game. Also trigger its Deathrattle"
 	name_CN = "九命兽魂"
 	
@@ -1477,11 +1459,10 @@ class NineLives(Spell):
 					for trig in minion.deathrattles:
 						trig.trig("TrigDeathrattle", self.ID, None, minion, minion.attack, "")
 			else:
-				minions, indices = [], []
-				for index in curGame.Counters.minionsDiedThisGame[self.ID]:
-					if "~Deathrattle" in index and index not in indices:
-						minions.append(curGame.cardPool[index])
-						indices.append(index)
+				minions = []
+				for card in curGame.Counters.minionsDiedThisGame[self.ID]:
+					if "~Deathrattle" in card.index and card not in minions:
+						minions.append(card)
 				if minions:
 					if self.ID != curGame.turn or "byOthers" in comment:
 						minion = npchoice(minions)
@@ -1567,7 +1548,7 @@ class Trig_ArcaneFletcher(TrigBoard):
 class MarkedShot(Spell):
 	Class, school, name = "Hunter", "", "Marked Shot"
 	requireTarget, mana = True, 4
-	index = "DALARAN~Hunter~Spell~4~Marked Shot"
+	index = "DALARAN~Hunter~Spell~4~~Marked Shot"
 	description = "Deal 4 damage to a minion. Discover a Spell"
 	name_CN = "标记射击"
 	poolIdentifier = "Hunter Spells"
@@ -1615,7 +1596,7 @@ class MarkedShot(Spell):
 class HuntingParty(Spell):
 	Class, school, name = "Hunter", "", "Hunting Party"
 	requireTarget, mana = False, 5
-	index = "DALARAN~Hunter~Spell~5~Hunting Party"
+	index = "DALARAN~Hunter~Spell~5~~Hunting Party"
 	description = "Copy all Beasts in your hand"
 	name_CN = "狩猎盛宴"
 	
@@ -1624,7 +1605,7 @@ class HuntingParty(Spell):
 			copies = []
 			for card in self.Game.Hand_Deck.hands[self.ID]:
 				if card.type == "Minion" and "Beast" in card.race:
-					copies.append(card.selfCopy(self.ID))
+					copies.append(card.selfCopy(self.ID, self))
 					
 			for Copy in copies:
 				self.Game.Hand_Deck.addCardtoHand(Copy, self.ID)
@@ -1652,7 +1633,7 @@ class SummonMechfromHandandTriggeritsDeathrattle(Deathrattle_Minion):
 				i = npchoice(mechs) if mechs and curGame.space(minion.ID) > 0 else -1
 				curGame.fixedGuides.append(i)
 			if i > -1:
-				mech = curGame.summonfrom(i, minion.ID, minion.pos+1, minion, fromHand=True)
+				mech = curGame.summonfrom(i, minion.ID, minion.pos+1, minion, source='H')
 				for trig in mech.deathrattles:
 					trig.trig("TrigDeathrattle", minion.ID, None, mech, mech.attack, "")
 					
@@ -1664,7 +1645,7 @@ class SummonMechfromHandandTriggeritsDeathrattle(Deathrattle_Minion):
 class UnleashtheBeast(Spell):
 	Class, school, name = "Hunter", "", "Unleash the Beast"
 	requireTarget, mana = False, 6
-	index = "DALARAN~Hunter~Spell~6~Unleash the Beast~Twinspell"
+	index = "DALARAN~Hunter~Spell~6~~Unleash the Beast~Twinspell"
 	description = "Twinspell. Summon a 5/5 Wyvern with Rush"
 	name_CN = "猛兽出笼"
 	def __init__(self, Game, ID):
@@ -1679,7 +1660,7 @@ class UnleashtheBeast(Spell):
 class UnleashtheBeast2(Spell):
 	Class, school, name = "Hunter", "", "Unleash the Beast"
 	requireTarget, mana = False, 6
-	index = "DALARAN~Hunter~Spell~6~Unleash the Beast~Uncollectible"
+	index = "DALARAN~Hunter~Spell~6~~Unleash the Beast~Uncollectible"
 	description = "Summon a 5/5 Wyvern with Rush"
 	name_CN = "猛兽出笼"
 	
@@ -1703,7 +1684,7 @@ class VereesaWindrunner(Minion):
 	name_CN = "温蕾萨·风行者"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.equipWeapon(ThoridaltheStarsFury(self.Game, self.ID))
+		self.equipWeapon(ThoridaltheStarsFury(self.Game, self.ID))
 		return None
 		
 class ThoridaltheStarsFury(Weapon):
@@ -1728,19 +1709,38 @@ class Trig_ThoridaltheStarsFury(TrigBoard):
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.Game.status[self.entity.ID]["Spell Damage"] += 2
-		self.entity.Game.turnEndTrigger.append(ThoridaltheStarsFury_Effect(self.entity.Game, self.entity.ID))
+		ThoridaltheStarsFury_Effect(self.entity.Game, self.entity.ID).connect()
 		
 class ThoridaltheStarsFury_Effect:
 	def __init__(self, Game, ID):
 		self.Game, self.ID = Game, ID
+		self.card = ThoridaltheStarsFury(Game, ID)
+		self.counter = 2
+		
+	def connect(self):
+		trig = next((trig for trig in self.Game.turnEndTrigger if isinstance(trig, ThoridaltheStarsFury_Effect)), None)
+		if trig:
+			trig.counter += 2
+			if trig.card.btn: trig.card.btn.trigAni(trig.counter)
+		else:
+			self.Game.turnEndTrigger.append(self)
+			if self.Game.GUI: self.Game.GUI.heroZones[self.ID].addaTrig(self.card, text='2')
+		
+	def text(self, CHN):
+		return "在本回合结束时，索利达尔，群星之怒的效果(法术伤害+1)消失" if CHN \
+			else "At the end of turn, Thori'dal, the Stars' Fury's effect(Spelldamage +2) expires"
 		
 	def turnEndTrigger(self):
-		self.Game.status[self.ID]["Spell Damage"] -= 2
+		#Don't need to show the trig, as this is simply an effect expiring
+		self.Game.status[self.ID]["Spell Damage"] -= self.boost
 		try: self.Game.turnEndTrigger.remove(self)
 		except: pass
-		
+		if self.Game.GUI: self.Game.GUI.heroZones[self.ID].removeaTrig(self.card)
+	
 	def createCopy(self, game):
-		return type(self)(game, self.ID)
+		trig = type(self)(game, self.ID)
+		trig.counter = self.counter
+		return trig
 		
 """Mage cards"""
 class RayofFrost(Spell):
@@ -2199,7 +2199,7 @@ class LightforgedBlessing(Spell):
 class LightforgedBlessing2(Spell):
 	Class, school, name = "Paladin", "", "Lightforged Blessing"
 	requireTarget, mana = True, 2
-	index = "DALARAN~Paladin~Spell~2~Lightforged Blessing~Uncollectible"
+	index = "DALARAN~Paladin~Spell~2~Holy~Lightforged Blessing~Uncollectible"
 	description = "Give a friendly minion Lifesteal"
 	name_CN = "光铸祝福"
 	
@@ -2243,7 +2243,7 @@ class BronzeDragon(Minion):
 class DesperateMeasures(Spell):
 	Class, school, name = "Paladin", "", "Desperate Measures"
 	requireTarget, mana = False, 1
-	index = "DALARAN~Paladin~Spell~1~Desperate Measures~Twinspell"
+	index = "DALARAN~Paladin~Spell~1~~Desperate Measures~Twinspell"
 	description = "Twinspell. Cast a random Paladin Secrets"
 	name_CN = "孤注一掷"
 	poolIdentifier = "Paladin Secrets"
@@ -2271,7 +2271,7 @@ class DesperateMeasures(Spell):
 class DesperateMeasures2(Spell):
 	Class, school, name = "Paladin", "", "Desperate Measures"
 	requireTarget, mana = False, 1
-	index = "DALARAN~Paladin~Spell~1~Desperate Measures~Uncollectible"
+	index = "DALARAN~Paladin~Spell~1~~Desperate Measures~Uncollectible"
 	description = "Cast a random Paladin Secrets"
 	name_CN = "孤注一掷"
 	
@@ -2305,7 +2305,7 @@ class MysteriousBlade(Weapon):
 class CalltoAdventure(Spell):
 	Class, school, name = "Paladin", "", "Call to Adventure"
 	requireTarget, mana = False, 3
-	index = "DALARAN~Paladin~Spell~3~Call to Adventure"
+	index = "DALARAN~Paladin~Spell~3~~Call to Adventure"
 	description = "Draw the lowest Cost minion from your deck. Give it +2/+2"
 	name_CN = "冒险号角"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2345,7 +2345,7 @@ class DragonSpeaker(Minion):
 class Duel(Spell):
 	Class, school, name = "Paladin", "", "Duel!"
 	requireTarget, mana = False, 5
-	index = "DALARAN~Paladin~Spell~5~Duel!"
+	index = "DALARAN~Paladin~Spell~5~~Duel!"
 	description = "Summon a minion from each player's deck. They fight"
 	name_CN = "决斗"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2360,8 +2360,8 @@ class Duel(Spell):
 				j = npchoice(enemyMinions) if enemyMinions and curGame.space(3-self.ID) > 0 else -1
 				curGame.fixedGuides.append((i, j))
 			enemy, friendly = None, None
-			if i > -1: friendly = curGame.summonfrom(i, self.ID, -1, self, fromHand=False)
-			if j > -1: enemy = curGame.summonfrom(j, 3-self.ID, -1, self, fromHand=False)
+			if i > -1: friendly = curGame.summonfrom(i, self.ID, -1, self, source='D')
+			if j > -1: enemy = curGame.summonfrom(j, 3-self.ID, -1, self, source='D')
 			#如果我方随从有不能攻击的限制，如Ancient Watcher之类，不能攻击。
 			#攻击不消耗攻击机会
 			#需要测试有条件限制才能攻击的随从，如UnpoweredMauler
@@ -2448,9 +2448,9 @@ class Restore5HealthtoEnemyHero(Deathrattle_Minion):
 		
 #If the target minion is killed due to Teacher/Juggler combo, summon a fresh new minion without enchantment.
 class UnsleepingSoul(Spell):
-	Class, school, name = "Priest", "", "Unsleeping Soul"
+	Class, school, name = "Priest", "Shadow", "Unsleeping Soul"
 	requireTarget, mana = True, 4
-	index = "DALARAN~Priest~Spell~4~Unsleeping Soul"
+	index = "DALARAN~Priest~Spell~4~Shadow~Unsleeping Soul"
 	description = "Silence a friendly minion, then summon a copy of it"
 	name_CN = "不眠之魂"
 	def targetExists(self, choice=0):
@@ -2462,7 +2462,7 @@ class UnsleepingSoul(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			target.getsSilenced()
-			Copy = target.selfCopy(target.ID) if target.onBoard else type(target)(self.Game, target.ID)
+			Copy = target.selfCopy(target.ID, self) if target.onBoard else type(target)(self.Game, target.ID)
 			self.Game.summon(Copy, target.pos+1, self)
 		return target
 		
@@ -2532,8 +2532,7 @@ class MassResurrection(Spell):
 				minions = curGame.guides.pop(0)
 			else:
 				minionsDied = curGame.Counters.minionsDiedThisGame[self.ID]
-				indices = npchoice(minionsDied, min(3, len(minionsDied)), replace=False) if minionsDied else []
-				minions = tuple([curGame.cardPool[index] for index in indices])
+				minions = npchoice(minionsDied, min(3, len(minionsDied)), replace=False) if minionsDied else []
 				curGame.fixedGuides.append(minions)
 			if minions: curGame.summon([minion(curGame, self.ID) for minion in minions], (-1, "totheRightEnd"), self)
 		return None
@@ -2596,7 +2595,7 @@ class ShadowyFigure(Minion):
 		if target and self.dead == False and self.Game.minionPlayed == self: #战吼触发时自己不能死亡。
 			if self.onBoard or self.inHand:
 				if target.onBoard:
-					Copy = target.selfCopy(self.ID, 2, 2)
+					Copy = target.selfCopy(self.ID, self, 2, 2)
 				else: #target not on board. This Shadowy Figure becomes a base copy of it.
 					Copy = type(target)(self.Game, self.ID)
 					Copy.statReset(2, 2)
@@ -2617,7 +2616,7 @@ class MadameLazul(Minion):
 		if self.ID == curGame.turn and enemyHand:
 			if curGame.mode == 0:
 				if curGame.guides:
-					Copy = enemyHand[curGame.guides.pop(0)].selfCopy(self.ID)
+					Copy = enemyHand[curGame.guides.pop(0)].selfCopy(self.ID, self)
 					curGame.Hand_Deck.addCardtoHand(Copy, self.ID, byDiscover=True)
 				else:
 					cards, cardTypes = [], []
@@ -2628,7 +2627,7 @@ class MadameLazul(Minion):
 					if "byOthers" in comment:
 						i = npchoice(cards)
 						curGame.fixedGuides.append(i)
-						Copy = enemyHand[i].selfCopy(self.ID)
+						Copy = enemyHand[i].selfCopy(self.ID, self)
 						curGame.Hand_Deck.addCardtoHand(Copy, self.ID, byDiscover=True)
 					else:
 						indices = npchoice(cards, min(3, len(cards)), replace=False)
@@ -2641,7 +2640,7 @@ class MadameLazul(Minion):
 			if card == option:
 				self.Game.fixedGuides.append(i)
 				break
-		self.Game.Hand_Deck.addCardtoHand(option.selfCopy(self.ID), self.ID, byDiscover=True)
+		self.Game.Hand_Deck.addCardtoHand(option.selfCopy(self.ID, self), self.ID, byDiscover=True)
 		
 		
 class CatrinaMuerte(Minion):
@@ -2671,7 +2670,7 @@ class Trig_CatrinaMuerte(TrigBoard):
 				minion = curGame.guides.pop(0)
 			else:
 				minions = curGame.Counters.minionsDiedThisGame[self.entity.ID]
-				minion = curGame.cardPool[npchoice(minions)] if minions else None
+				minion = npchoice(minions) if minions else None
 				curGame.fixedGuides.append(minion)
 			if minion: curGame.summon(minion(curGame, self.entity.ID), self.entity.pos+1, self.entity)
 			
@@ -2679,7 +2678,7 @@ class Trig_CatrinaMuerte(TrigBoard):
 class DaringEscape(Spell):
 	Class, school, name = "Rogue", "", "Daring Escape"
 	requireTarget, mana = False, 1
-	index = "DALARAN~Rogue~Spell~1~Daring Escape"
+	index = "DALARAN~Rogue~Spell~1~~Daring Escape"
 	description = "Return all friendly minions to your hand"
 	name_CN = "战略转移"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2753,7 +2752,7 @@ class HenchClanBurglar(Minion):
 class TogwagglesScheme(Spell):
 	Class, school, name = "Rogue", "", "Togwaggle's Scheme"
 	requireTarget, mana = True, 1
-	index = "DALARAN~Rogue~Spell~1~Togwaggle's Scheme"
+	index = "DALARAN~Rogue~Spell~1~~Togwaggle's Scheme"
 	name_CN = "托瓦格尔的阴谋"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2800,7 +2799,7 @@ class UnderbellyFence(Minion):
 class Vendetta(Spell):
 	Class, school, name = "Rogue", "", "Vendetta"
 	requireTarget, mana = True, 4
-	index = "DALARAN~Rogue~Spell~4~Vendetta"
+	index = "DALARAN~Rogue~Spell~4~~Vendetta"
 	description = "Deal 4 damage to a minion. Costs (0) if you're holding a card from another class"
 	name_CN = "宿敌"
 	def __init__(self, Game, ID):
@@ -2879,7 +2878,7 @@ class ReturnaFriendlyMiniontoHand(Deathrattle_Weapon):
 class UnidentifiedContract(Spell):
 	Class, school, name = "Rogue", "", "Unidentified Contract"
 	requireTarget, mana = True, 6
-	index = "DALARAN~Rogue~Spell~6~Unidentified Contract"
+	index = "DALARAN~Rogue~Spell~6~~Unidentified Contract"
 	description = "Destroy a minion. Gain a bonus effect in your hand"
 	name_CN = "未鉴定的合约"
 	def entersHand(self):
@@ -2914,7 +2913,7 @@ class UnidentifiedContract(Spell):
 class AssassinsContract(Spell):
 	Class, school, name = "Rogue", "", "Assassin's Contract"
 	requireTarget, mana = True, 6
-	index = "DALARAN~Rogue~Spell~6~Assassin's Contract~Uncollectible"
+	index = "DALARAN~Rogue~Spell~6~~Assassin's Contract~Uncollectible"
 	description = "Destroy a minion. Summon a 1/1 Patient Assassin"
 	name_CN = "刺客合约"
 	
@@ -2933,7 +2932,7 @@ class AssassinsContract(Spell):
 class LucrativeContract(Spell):
 	Class, school, name = "Rogue", "", "Lucrative Contract"
 	requireTarget, mana = True, 6
-	index = "DALARAN~Rogue~Spell~6~Lucrative Contract~Uncollectible"
+	index = "DALARAN~Rogue~Spell~6~~Lucrative Contract~Uncollectible"
 	description = "Destroy a minion. Add two Coins to your hand"
 	name_CN = "赏金合约"
 	
@@ -2952,7 +2951,7 @@ class LucrativeContract(Spell):
 class RecruitmentContract(Spell):
 	Class, school, name = "Rogue", "", "Recruitment Contract"
 	requireTarget, mana = True, 6
-	index = "DALARAN~Rogue~Spell~6~Recruitment Contract~Uncollectible"
+	index = "DALARAN~Rogue~Spell~6~~Recruitment Contract~Uncollectible"
 	description = "Destroy a minion. Add a copy of it to your hand"
 	name_CN = "招募合约"
 	
@@ -2971,7 +2970,7 @@ class RecruitmentContract(Spell):
 class TurncoatContract(Spell):
 	Class, school, name = "Rogue", "", "Turncoat Contract"
 	requireTarget, mana = True, 6
-	index = "DALARAN~Rogue~Spell~6~Turncoat Contract~Uncollectible"
+	index = "DALARAN~Rogue~Spell~6~~Turncoat Contract~Uncollectible"
 	description = "Destroy a minion. It deals damage to adjacent minions"
 	name_CN = "叛变合约"
 	
@@ -3059,19 +3058,19 @@ class Trig_TakNozwhisker(TrigBoard):
 		if isinstance(target, (list, np.ndarray)):
 			for card in target:
 				if self.entity.Game.Hand_Deck.handNotFull(self.entity.ID):
-					Copy = card.selfCopy(self.entity.ID)
+					Copy = card.selfCopy(self.entity.ID, self.entity)
 					self.entity.Game.Hand_Deck.addCardtoHand(Copy, self.entity.ID)
 				else:
 					break
 		else: #A single card is shuffled.
-			Copy = target.selfCopy(self.entity.ID)
+			Copy = target.selfCopy(self.entity.ID, self.entity)
 			self.entity.Game.Hand_Deck.addCardtoHand(Copy, self.entity.ID)
 			
 """Shaman cards"""
 class Mutate(Spell):
 	Class, school, name = "Shaman", "", "Mutate"
 	requireTarget, mana = True, 0
-	index = "DALARAN~Shaman~Spell~0~Mutate"
+	index = "DALARAN~Shaman~Spell~0~~Mutate"
 	description = "Transf a friendly minion to a random one that costs (1) more"
 	name_CN = "突变"
 	poolIdentifier = "1-Cost Minions to Summon"
@@ -3129,7 +3128,7 @@ class SludgeSlurper(Minion):
 class SouloftheMurloc(Spell):
 	Class, school, name = "Shaman", "", "Soul of the Murloc"
 	requireTarget, mana = False, 2
-	index = "DALARAN~Shaman~Spell~2~Soul of the Murloc"
+	index = "DALARAN~Shaman~Spell~2~~Soul of the Murloc"
 	description = "Give your minions 'Deathrattle: Summon a 1/1 Murloc'"
 	name_CN = "鱼人之魂"
 	def available(self):
@@ -3190,7 +3189,7 @@ class Trig_UnderbellyAngler(TrigBoard):
 class HagathasScheme(Spell):
 	Class, school, name = "Shaman", "Nature", "Hagatha's Scheme"
 	requireTarget, mana = False, 5
-	index = "DALARAN~Shaman~Spell~5~Nature~Hagatha's Scheme"
+	index = "DALARAN~Shaman~Spell~5~~Nature~Hagatha's Scheme"
 	description = "Deal 1 damage to all minions. (Upgrades each turn)!"
 	name_CN = "哈加莎的阴谋"
 	def __init__(self, Game, ID):
@@ -3335,7 +3334,6 @@ class SwampqueenHagatha(Minion):
 								"index": newIndex
 								}
 								)
-				curGame.cardPool[newIndex] = subclass
 				curGame.Hand_Deck.addCardtoHand(subclass(curGame, self.ID), self.ID)
 		return None
 		
@@ -3449,7 +3447,7 @@ class AranasiBroodmother(Minion):
 class PlotTwist(Spell):
 	Class, school, name = "Warlock", "", "Plot Twist"
 	requireTarget, mana = False, 2
-	index = "DALARAN~Warlock~Spell~2~Plot Twist"
+	index = "DALARAN~Warlock~Spell~2~~Plot Twist"
 	description = "Shuffle your hand into your deck. Draw that many cards"
 	name_CN = "情势反转"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3529,7 +3527,7 @@ class DarkestHour(Spell):
 					minions = [i for i, card in enumerate(ownDeck) if card.type == "Minion"]
 					i = npchoice(minions) if minions and curGame.space(self.ID) > 0 else -1
 					curGame.fixedGuides.append(i)
-				if i > -1: curGame.summonfrom(i, self.ID, -1, self, fromHand=False)
+				if i > -1: curGame.summonfrom(i, self.ID, -1, self, source='D')
 				else: break
 		return None
 		
@@ -3616,7 +3614,7 @@ class Trig_FelLordBetrug(TrigBoard):
 				else "Whenever you draw a minion, summon a copy with Rush that dies at end of turn"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		minion = target[0].selfCopy(self.entity.ID)
+		minion = target[0].selfCopy(self.entity.ID, self.entity)
 		minion.trigsBoard.append(Trig_DieatEndofTurn(minion))
 		self.entity.Game.summon(minion, self.entity.pos+1, self.entity)
 		if minion.onBoard:
@@ -3626,7 +3624,7 @@ class Trig_FelLordBetrug(TrigBoard):
 class ImproveMorale(Spell):
 	Class, school, name = "Warrior", "", "Improve Morale"
 	requireTarget, mana = True, 1
-	index = "DALARAN~Warrior~Spell~1~Improve Morale"
+	index = "DALARAN~Warrior~Spell~1~~Improve Morale"
 	description = "Deal 1 damage to a minion. If it survives, add a Lackey to your hand"
 	name_CN = "提振士气"
 	def available(self):
@@ -3684,7 +3682,7 @@ class Trig_ViciousScraphound(TrigBoard):
 class DrBoomsScheme(Spell):
 	Class, school, name = "Warrior", "", "Dr. Boom's Scheme"
 	requireTarget, mana = False, 4
-	index = "DALARAN~Warrior~Spell~4~Dr. Boom's Scheme"
+	index = "DALARAN~Warrior~Spell~4~~Dr. Boom's Scheme"
 	description = "Gain 1 Armor. (Upgrades each turn!)"
 	name_CN = "砰砰博士的阴谋"
 	def __init__(self, Game, ID):
@@ -3700,7 +3698,7 @@ class DrBoomsScheme(Spell):
 class SweepingStrikes(Spell):
 	Class, school, name = "Warrior", "", "Sweeping Strikes"
 	requireTarget, mana = True, 2
-	index = "DALARAN~Warrior~Spell~2~Sweeping Strikes"
+	index = "DALARAN~Warrior~Spell~2~~Sweeping Strikes"
 	description = "Give a minion 'Also damages minions next to whoever this attacks'"
 	name_CN = "横扫攻击"
 	def available(self):
@@ -3799,7 +3797,7 @@ class BlastmasterBoom(Minion):
 class DimensionalRipper(Spell):
 	Class, school, name = "Warrior", "", "Dimensional Ripper"
 	requireTarget, mana = False, 10
-	index = "DALARAN~Warrior~Spell~10~Dimensional Ripper"
+	index = "DALARAN~Warrior~Spell~10~~Dimensional Ripper"
 	description = "Summon 2 copies of a minion in your deck"
 	name_CN = "空间撕裂器"
 	
@@ -3814,7 +3812,7 @@ class DimensionalRipper(Spell):
 				curGame.fixedGuides.append(i)
 			if i > -1:
 				minion = curGame.Hand_Deck.decks[self.ID][i]
-				curGame.summon([minion.selfCopy(self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
+				curGame.summon([minion.selfCopy(self.ID, self) for i in range(2)], (-1, "totheRightEnd"), self)
 		return None
 		
 		
@@ -3836,183 +3834,9 @@ class TheBoomReaver(Minion):
 				curGame.fixedGuides.append(i)
 			if i > -1:
 				minion = curGame.Hand_Deck.decks[self.ID][i]
-				if curGame.summon(minion.selfCopy(self.ID), self.pos+1, self):
+				if curGame.summon(minion.selfCopy(self.ID, self), self.pos+1, self):
 					minion.getsStatus("Rush")
 		return None
 		
 		
-Shadows_Indices = {"DALARAN~Neutral~Minion~1~1~1~~Potion Vendor~Battlecry": PotionVendor,
-					"DALARAN~Neutral~Minion~1~1~2~Murloc~Toxfin~Battlecry": Toxfin,
-					"DALARAN~Neutral~Minion~2~2~3~Elemental~Arcane Servant": ArcaneServant,
-					"DALARAN~Neutral~Minion~2~2~3~~Dalaran Librarian~Battlecry": DalaranLibrarian,
-					"DALARAN~Neutral~Minion~2~1~1~Beast~EVIL Cable Rat~Battlecry": EVILCableRat,
-					"DALARAN~Neutral~Minion~2~2~1~Beast~Hench-Clan Hogsteed~Rush~Deathrattle": HenchClanHogsteed,
-					"DALARAN~Neutral~Minion~1~1~1~Murloc~Hench-Clan Squire~Uncollectible": HenchClanSquire,
-					"DALARAN~Neutral~Minion~2~0~6~Elemental~Mana Reservoir~Spell Damage": ManaReservoir,
-					"DALARAN~Neutral~Minion~2~3~2~~Spellbook Binder~Battlecry": SpellbookBinder,
-					"DALARAN~Neutral~Minion~2~2~3~~Sunreaver Spy~Battlecry": SunreaverSpy,
-					"DALARAN~Neutral~Minion~2~3~2~~Zayle, Shadow Cloak~Legendary": ZayleShadowCloak,
-					"DALARAN~Neutral~Minion~3~5~6~~Arcane Watcher": ArcaneWatcher,
-					"DALARAN~Neutral~Minion~3~5~1~~Faceless Rager~Battlecry": FacelessRager,
-					"DALARAN~Neutral~Minion~3~3~4~~Flight Master~Battlecry": FlightMaster,
-					"DALARAN~Neutral~Minion~2~2~2~Beast~Gryphon~Uncollectible": Gryphon,
-					"DALARAN~Neutral~Minion~3~3~3~~Hench-Clan Sneak~Stealth": HenchClanSneak,
-					"DALARAN~Neutral~Minion~3~1~6~~Magic Carpet": MagicCarpet,
-					"DALARAN~Neutral~Minion~3~3~4~~Spellward Jeweler~Battlecry": SpellwardJeweler,
-					"DALARAN~Neutral~Minion~4~2~6~~Archmage Vargoth~Legendary": ArchmageVargoth,
-					"DALARAN~Neutral~Minion~4~3~8~Mech~Hecklebot~Taunt~Battlecry": Hecklebot,
-					"DALARAN~Neutral~Minion~4~3~3~~Hench-Clan Hag~Battlecry": HenchClanHag,
-					"DALARAN~Neutral~Minion~1~1~1~Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem~Amalgam~Uncollectible": Amalgam,
-					"DALARAN~Neutral~Minion~4~5~2~Demon~Portal Keeper~Battlecry": PortalKeeper,
-					"DALARAN~Neutral~Spell~2~Felhound Portal~Casts When Drawn~Uncollectible": FelhoundPortal,
-					"DALARAN~Neutral~Minion~2~2~2~Demon~Felhound~Rush~Uncollectible": Felhound,
-					"DALARAN~Neutral~Minion~4~2~6~~Proud Defender~Taunt": ProudDefender,
-					"DALARAN~Neutral~Minion~4~5~6~Elemental~Soldier of Fortune": SoldierofFortune,
-					"DALARAN~Neutral~Minion~4~3~2~~Traveling Healer~Battlecry~Divine Shield": TravelingHealer,
-					"DALARAN~Neutral~Minion~4~1~6~~Violet Spellsword~Battlecry": VioletSpellsword,
-					"DALARAN~Neutral~Minion~5~2~7~Elemental~Azerite Elemental": AzeriteElemental,
-					"DALARAN~Neutral~Minion~5~4~5~~Barista Lynchen~Battlecry~Legendary": BaristaLynchen,
-					"DALARAN~Neutral~Minion~5~5~4~~Dalaran Crusader~Divine Shield": DalaranCrusader,
-					"DALARAN~Neutral~Minion~5~3~6~~Recurring Villain~Deathrattle": RecurringVillain,
-					"DALARAN~Neutral~Minion~5~4~4~~Sunreaver Warmage~Battlecry": SunreaverWarmage,
-					"DALARAN~Neutral~Minion~6~6~4~~Eccentric Scribe~Deathrattle": EccentricScribe,
-					"DALARAN~Neutral~Minion~1~1~1~~Vengeful Scroll~Uncollectible": VengefulScroll,
-					"DALARAN~Neutral~Minion~6~4~4~Demon~Mad Summoner~Battlecry": MadSummoner,
-					"DALARAN~Neutral~Minion~1~1~1~Demon~Imp~Uncollectible": Imp_Shadows,
-					"DALARAN~Neutral~Minion~6~5~6~Demon~Portal Overfiend~Battlecry": PortalOverfiend,
-					"DALARAN~Neutral~Minion~6~4~5~Mech~Safeguard~Taunt~Deathrattle": Safeguard,
-					"DALARAN~Neutral~Minion~2~0~5~Mech~Vault Safe~Taunt~Uncollectible": VaultSafe,
-					"DALARAN~Neutral~Minion~6~5~6~~Unseen Saboteur~Battlecry": UnseenSaboteur,
-					"DALARAN~Neutral~Minion~6~4~7~~Violet Warden~Taunt~Spell Damage": VioletWarden,
-					"DALARAN~Neutral~Minion~7~6~6~~Chef Nomi~Battlecry~Legendary": ChefNomi,
-					"DALARAN~Neutral~Minion~6~6~6~Elemental~Greasefire Elemental~Uncollectible": GreasefireElemental,
-					"DALARAN~Neutral~Minion~7~5~8~~Exotic Mountseller": ExoticMountseller,
-					"DALARAN~Neutral~Minion~7~3~7~~Tunnel Blaster~Taunt~Deathrattle": TunnelBlaster,
-					"DALARAN~Neutral~Minion~7~3~5~~Underbelly Ooze": UnderbellyOoze,
-					"DALARAN~Neutral~Minion~8~3~12~~Batterhead~Rush": Batterhead,
-					"DALARAN~Neutral~Minion~8~4~4~~Heroic Innkeeper~Taunt~Battlecry": HeroicInnkeeper,
-					"DALARAN~Neutral~Minion~8~6~6~~Jepetto Joybuzz~Battlecry~Legendary": JepettoJoybuzz,
-					"DALARAN~Neutral~Minion~8~6~6~Elemental~Whirlwind Tempest": WhirlwindTempest,
-					"DALARAN~Neutral~Minion~9~9~9~~Burly Shovelfist~Rush": BurlyShovelfist,
-					"DALARAN~Neutral~Minion~9~7~7~~Archivist Elysiana~Battlecry~Legendary": ArchivistElysiana,
-					"DALARAN~Neutral~Minion~10~6~6~~Big Bad Archmage": BigBadArchmage,
-					#Druid
-					"DALARAN~Druid~Minion~1~2~1~~Acornbearer~Deathrattle": Acornbearer,
-					"DALARAN~Druid~Minion~1~1~1~Beast~Squirrel~Uncollectible": Squirrel_Shadows,
-					"DALARAN~Druid~Spell~1~Crystal Power~Choose One": CrystalPower,
-					"DALARAN~Druid~Spell~1~Piercing Thorns~Uncollectible": PiercingThorns,
-					"DALARAN~Druid~Spell~1~Healing Blossom~Uncollectible": HealingBlossom,
-					"DALARAN~Druid~Spell~2~Crystalsong Portal": CrystalsongPortal,
-					"DALARAN~Druid~Spell~2~Dreamway Guardians": DreamwayGuardians,
-					"DALARAN~Druid~Minion~1~1~2~~Crystal Dryad~Lifesteal~Uncollectible": CrystalDryad,
-					"DALARAN~Druid~Minion~2~2~3~~Keeper Stalladris~Legendary": KeeperStalladris,
-					"DALARAN~Druid~Minion~3~2~5~~Lifeweaver": Lifeweaver,
-					"DALARAN~Druid~Minion~5~4~4~Beast~Crystal Stag~Rush~Battlecry": CrystalStag,
-					"DALARAN~Druid~Spell~3~Blessing of the Ancients~Twinspell": BlessingoftheAncients,
-					"DALARAN~Druid~Spell~3~Blessing of the Ancients~Uncollectible": BlessingoftheAncients2,
-					"DALARAN~Druid~Minion~8~4~8~~Lucentbark~Taunt~Deathrattle~Legendary": Lucentbark,
-					"DALARAN~Druid~Spell~8~The Forest's Aid~Twinspell": TheForestsAid,
-					"DALARAN~Druid~Spell~8~The Forest's Aid~Uncollectible": TheForestsAid2,
-					"DALARAN~Druid~Minion~2~2~2~~Treant~Uncollectible": Treant_Shadows,
-					#Hunter
-					"DALARAN~Hunter~Spell~1~Rapid Fire~Twinspell": RapidFire,
-					"DALARAN~Hunter~Spell~1~Rapid Fire~Uncollectible": RapidFire2,
-					"DALARAN~Hunter~Minion~1~1~1~Beast~Shimmerfly~Deathrattle": Shimmerfly,
-					"DALARAN~Hunter~Spell~3~Nine Lives": NineLives,
-					"DALARAN~Hunter~Minion~3~3~3~Mech~Ursatron~Deathrattle": Ursatron,
-					"DALARAN~Hunter~Minion~4~3~3~~Arcane Fletcher": ArcaneFletcher,
-					"DALARAN~Hunter~Spell~4~Marked Shot": MarkedShot,
-					"DALARAN~Hunter~Spell~5~Hunting Party": HuntingParty,
-					"DALARAN~Hunter~Minion~6~3~4~Mech~Oblivitron~Deathrattle~Legendary": Oblivitron,
-					"DALARAN~Hunter~Spell~6~Unleash the Beast~Twinspell": UnleashtheBeast,
-					"DALARAN~Hunter~Spell~6~Unleash the Beast~Uncollectible": UnleashtheBeast2,
-					"DALARAN~Hunter~Minion~5~5~5~Beast~Wyvern~Rush~Uncollectible": Wyvern,
-					"DALARAN~Hunter~Minion~7~5~6~~Vereesa Windrunner~Battlecry~Legendary": VereesaWindrunner,
-					"DALARAN~Hunter~Weapon~3~2~3~Thori'dal, the Stars' Fury~Legendary~Uncollectible": ThoridaltheStarsFury,
-					#Mage
-					"DALARAN~Mage~Spell~1~Ray of Frost~Twinspell": RayofFrost,
-					"DALARAN~Mage~Spell~1~Ray of Frost~Uncollectible": RayofFrost2,
-					"DALARAN~Mage~Minion~2~2~2~~Khadgar~Legendary": Khadgar,
-					"DALARAN~Mage~Minion~2~1~3~Beast~Magic Dart Frog": MagicDartFrog,
-					"DALARAN~Mage~Minion~3~3~2~Beast~Messenger Raven~Battlecry": MessengerRaven,
-					"DALARAN~Mage~Spell~1~Magic Trick": MagicTrick,
-					"DALARAN~Mage~Spell~4~Conjurer's Calling~Twinspell": ConjurersCalling,
-					"DALARAN~Mage~Spell~4~Conjurer's Calling~Uncollectible": ConjurersCalling2,
-					"DALARAN~Mage~Minion~4~3~3~~Kirin Tor Tricaster": KirinTorTricaster,
-					"DALARAN~Mage~Minion~2~2~2~Elemental~Mana Cyclone~Battlecry": ManaCyclone,
-					"DALARAN~Mage~Spell~8~Power of Creation": PowerofCreation,
-					"DALARAN~Mage~Minion~10~4~12~Dragon~Kalecgos~Legendary": Kalecgos,
-					#Paladin
-					"DALARAN~Paladin~Spell~1~Never Surrender!~~Secret": NeverSurrender,
-					"DALARAN~Paladin~Spell~2~Lightforged Blessing~Twinspell": LightforgedBlessing,
-					"DALARAN~Paladin~Spell~2~Lightforged Blessing~Uncollectible": LightforgedBlessing2,
-					"DALARAN~Paladin~Minion~3~3~2~Dragon~Bronze Herald~Deathrattle": BronzeHerald,
-					"DALARAN~Paladin~Minion~4~4~4~Dragon~Bronze Dragon~Uncollectible": BronzeDragon,
-					"DALARAN~Paladin~Spell~1~Desperate Measures~Twinspell": DesperateMeasures,
-					"DALARAN~Paladin~Spell~1~Desperate Measures~Uncollectible": DesperateMeasures2,
-					"DALARAN~Paladin~Weapon~2~2~2~Mysterious Blade~Battlecry": MysteriousBlade,
-					"DALARAN~Paladin~Spell~3~Call to Adventure": CalltoAdventure,
-					"DALARAN~Paladin~Minion~5~3~5~~Dragon Speaker~Battlecry": DragonSpeaker,
-					"DALARAN~Paladin~Spell~5~Duel!": Duel,
-					"DALARAN~Paladin~Minion~3~4~3~~Commander Rhyssa~Legendary": CommanderRhyssa,
-					"DALARAN~Paladin~Minion~10~4~12~Dragon~Nozari~Battlecry~Legendary": Nozari,
-					#Priest
-					"DALARAN~Priest~Minion~2~2~2~~EVIL Conscripter~Deathrattle": EVILConscripter,
-					"DALARAN~Priest~Minion~4~4~7~~Hench-Clan Shadequill~Deathrattle": HenchClanShadequill,
-					"DALARAN~Priest~Spell~4~Unsleeping Soul": UnsleepingSoul,
-					"DALARAN~Priest~Spell~0~Forbidden Words": ForbiddenWords,
-					"DALARAN~Priest~Minion~5~2~6~~Convincing Infiltrator~Taunt~Deathrattle": ConvincingInfiltrator,
-					"DALARAN~Priest~Spell~9~Mass Resurrection": MassResurrection,
-					"DALARAN~Priest~Spell~0~Lazul's Scheme": LazulsScheme,
-					"DALARAN~Priest~Minion~2~2~2~~Shadowy Figure~Battlecry": ShadowyFigure,
-					"DALARAN~Priest~Minion~3~3~2~~Madame Lazul~Battlecry~Legendary": MadameLazul,
-					"DALARAN~Priest~Minion~8~6~8~~Catrina Muerte~Legendary": CatrinaMuerte,
-					#Rogue
-					"DALARAN~Rogue~Spell~1~Daring Escape": DaringEscape,
-					"DALARAN~Rogue~Minion~3~1~4~~EVIL Miscreant~Combo": EVILMiscreant,
-					"DALARAN~Rogue~Minion~4~4~3~Pirate~Hench-Clan Burglar~Battlecry": HenchClanBurglar,
-					"DALARAN~Rogue~Spell~1~Togwaggle's Scheme": TogwagglesScheme,
-					"DALARAN~Rogue~Minion~2~2~3~~Underbelly Fence~Battlecry": UnderbellyFence,
-					"DALARAN~Rogue~Spell~4~Vendetta": Vendetta,
-					"DALARAN~Rogue~Weapon~4~4~2~Waggle Pick~Deathrattle": WagglePick,
-					"DALARAN~Rogue~Spell~6~Unidentified Contract": UnidentifiedContract,
-					"DALARAN~Rogue~Spell~6~Assassin's Contract~Uncollectible": AssassinsContract,
-					"DALARAN~Rogue~Spell~6~Lucrative Contract~Uncollectible": LucrativeContract,
-					"DALARAN~Rogue~Spell~6~Recruitment Contract~Uncollectible": RecruitmentContract,
-					"DALARAN~Rogue~Spell~6~Turncoat Contract~Uncollectible": TurncoatContract,
-					"DALARAN~Rogue~Minion~6~5~5~~Heistbaron Togwaggle~Battlecry": HeistbaronTogwaggle,
-					"DALARAN~Rogue~Minion~7~6~6~~Tak Nozwhisker": TakNozwhisker,
-					#Shaman
-					"DALARAN~Shaman~Spell~0~Mutate": Mutate,
-					"DALARAN~Shaman~Minion~1~2~1~Murloc~Sludge Slurper~Battlecry~Overload": SludgeSlurper,
-					"DALARAN~Shaman~Spell~2~Soul of the Murloc": SouloftheMurloc,
-					"DALARAN~Shaman~Minion~2~2~3~Murloc~Underbelly Angler": UnderbellyAngler,
-					"DALARAN~Shaman~Spell~5~Hagatha's Scheme": HagathasScheme,
-					"DALARAN~Shaman~Minion~8~4~8~Elemental~Walking Fountain~Rush~Lifesteal~Windfury": WalkingFountain,
-					"DALARAN~Shaman~Spell~2~Witch's Brew": WitchsBrew,
-					"DALARAN~Shaman~Minion~5~4~4~~Muckmorpher~Battlecry": Muckmorpher,
-					"DALARAN~Shaman~Minion~4~4~4~Murloc~Scargil~Legendary": Scargil,
-					"DALARAN~Shaman~Minion~7~5~5~~Swampqueen Hagatha~Battlecry~Legendary": SwampqueenHagatha,
-					#Warlock
-					"DALARAN~Warlock~Minion~2~2~2~~EVIL Genius~Battlecry": EVILGenius,
-					"DALARAN~Warlock~Spell~3~Rafaam's Scheme": RafaamsScheme,
-					"DALARAN~Warlock~Minion~6~4~6~Demon~Aranasi Broodmother~Taunt~Triggers when Drawn": AranasiBroodmother,
-					"DALARAN~Warlock~Spell~2~Plot Twist": PlotTwist,
-					"DALARAN~Warlock~Spell~3~Impferno": Impferno,
-					"DALARAN~Warlock~Minion~4~2~2~~Eager Underling~Deathrattle": EagerUnderling,
-					"DALARAN~Warlock~Spell~6~Darkest Hour": DarkestHour,
-					"DALARAN~Warlock~Minion~10~8~8~Demon~Jumbo Imp": JumboImp,
-					"DALARAN~Warlock~Minion~7~7~8~~Arch-Villain Rafaam~Taunt~Battlecry~Legendary": ArchVillainRafaam,
-					"DALARAN~Warlock~Minion~8~5~7~Demon~Fel Lord Betrug~Legendary": FelLordBetrug,
-					#Warrior
-					"DALARAN~Warrior~Spell~1~Improve Morale": ImproveMorale,
-					"DALARAN~Warrior~Minion~2~2~2~Mech~Vicious Scraphound": ViciousScraphound,
-					"DALARAN~Warrior~Spell~4~Dr. Boom's Scheme": DrBoomsScheme,
-					"DALARAN~Warrior~Spell~2~Sweeping Strikes": SweepingStrikes,
-					"DALARAN~Warrior~Minion~3~3~3~Mech~Clockwork Goblin~Battlecry": ClockworkGoblin,
-					"DALARAN~Warrior~Spell~10~Dimensional Ripper": DimensionalRipper,
-					"DALARAN~Warrior~Minion~4~4~5~Mech~Omega Devastator~Battlecry": OmegaDevastator,
-					"DALARAN~Warrior~Weapon~4~3~2~Wrenchcalibur": Wrenchcalibur,
-					"DALARAN~Warrior~Minion~7~7~7~~Blastmaster Boom~Battlecry~Legendary": BlastmasterBoom,
-					"DALARAN~Warrior~Minion~10~7~9~Mech~The Boom Reaver~Battlecry~Legendary": TheBoomReaver,
-					}
+Shadows_Cards = []

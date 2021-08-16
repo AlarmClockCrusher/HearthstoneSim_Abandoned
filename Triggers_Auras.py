@@ -4,7 +4,8 @@ class TrigBoard:
 	def __init__(self, entity, signals):
 		self.entity, self.signals = entity, signals
 		self.inherent, self.changesCard, self.nextAnimWaits = True, False, False
-		self.counter = -1
+		self.counter = 0
+		self.oneTime = False
 		
 	def connect(self):
 		game, ID = self.entity.Game, self.entity.ID
@@ -65,7 +66,7 @@ class TrigHand:
 	def __init__(self, entity, signals):
 		self.entity, self.signals, self.inherent = entity, signals, True
 		self.inherent, self.changesCard, self.nextAnimWaits = True, False, False
-		self.counter = -1
+		self.counter = 0
 		
 	def connect(self):
 		for sig in self.signals:
@@ -171,6 +172,7 @@ class Deathrattle_Minion(TrigBoard):
 				self.effect(signal, ID, subject, target, number, comment)
 		if self.canTrig(signal, ID, subject, target, number, comment):
 			if game: game.GUI.deathrattleAni(minion, color="grey40")
+			game.Counters.deathrattlesTriggered[minion.ID].append(type(self))
 			self.effect(signal, ID, subject, target, number, comment)
 		#随从通过死亡触发的亡语扳机需要在亡语触发之后注销。同样的，如果随从在亡语触发之后不在随从列表中了，如将随从洗回牌库，则同样要注销亡语
 		#但是如果随从在由其他效果在场上触发的扳机，则这个亡语不会注销
@@ -194,6 +196,7 @@ class Deathrattle_Weapon(TrigBoard):
 				self.effect(signal, ID, subject, target, number, comment)
 		if self.canTrig(signal, ID, subject, target, number, comment):
 			if game.GUI: game.GUI.deathrattleAni(weapon, color="grey40")
+			game.Counters.deathrattlesTriggered[weapon.ID].append(type(self))
 			self.effect(signal, ID, subject, target, number, comment)
 		#目前没有触发武器亡语的效果，所以武器的亡语触发之后可以很安全地直接将其删除。
 		self.disconnect()
@@ -221,11 +224,6 @@ class SecretTrigger(TrigBoard):
 		for sig in self.signals:
 			try: game.trigsBoard[ID][sig].remove(self)
 			except: pass
-		#if self.dummy:
-		#	self.realSecret.dummyTrigs.remove(self)
-		#	#game.trigAuras[ID].remove(self)
-		#else:
-		#	game.Hand_Deck.ruleOut(self.entity, fromHD=1) #只从资源中进行移除
 			
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return True
@@ -236,6 +234,8 @@ class SecretTrigger(TrigBoard):
 			#真实的爆炸符文触发了，把随从打到了负血
 			#第二个奥秘的狙击伪扳机无法再发动了，因为随从已经是负血，所以我们无法得知那个奥秘是不是真的狙击，所以第二个奥秘的可能性是没有变化的
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if not self.canTrig(signal, ID, subject, target, number, comment):
+			return
 		secret, game = self.entity, self.entity.Game
 		self.disconnect() #Handles removing dummy, too.
 		#if self.dummy: #伪扳机能被触发的时候，需要移除可能性
@@ -243,19 +243,16 @@ class SecretTrigger(TrigBoard):
 		#	self.realSecret.possi.remove(type(secret))
 		#	game.Hand_Deck.ruleOut(secret, fromHD=2)
 		#else: #如果这个扳机是真奥秘的扳机时，它触发时需要把其从对方的资源中移除
-		try: game.Secrets.secrets[secret.ID].remove(secret)
-		except: pass
-		if game.status[secret.ID]["Secrets x2"] > 0:
-			if self.canTrig(signal, ID, subject, target, number, comment):
-				if game.GUI: game.GUI.secretTrigAni(secret)
-				self.effect(signal, ID, subject, target, number, comment)
-		if self.canTrig(signal, ID, subject, target, number, comment):
-			if game.GUI: game.GUI.secretTrigAni(secret)
+		game.Secrets.secrets[secret.ID].remove(secret)
+		if game.GUI:
+			game.GUI.secretTrigAni(secret)
+			game.GUI.heroZones[secret.ID].placeSecrets()
+		for i in range(2 if game.status[secret.ID]["Secrets x2"] > 0 else 1):
 			self.effect(signal, ID, subject, target, number, comment)
 		game.sendSignal("SecretRevealed", game.turn, secret, None, 0, "")
 		game.Counters.numSecretsTriggeredThisGame[secret.ID] += 1
 		#secret.realSecretReveal()
-			
+		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		pass
 		
@@ -458,16 +455,12 @@ class Stat_Receiver:
 		
 	def effectStart(self):
 		obj = self.recipient
-		if obj.type == "Minion":
-			obj.statChange(self.attGain, self.healthGain)
-			obj.healthfromAura += self.healthGain
-		elif obj.type == "Hero":
-			obj.gainAttack(self.attGain, '')
-		else: #For weapon
-			obj.gainStat(self.attGain, 0)
-		obj.attfromAura += self.attGain
+		if obj.type == "Minion": obj.statChange(self.attGain, self.healthGain)
+		elif obj.type == "Hero": obj.gainAttack(self.attGain, '')
+		else: obj.gainStat(self.attGain, 0, fromAura=True) #For weapon
 		obj.auraReceivers.append(self)
 		self.source.auraAffected.append((obj, self))
+		
 	#Cleanse the receiver from the receiver and delete the (receiver, receiver) from source aura's list.
 	def effectClear(self):
 		obj = self.recipient
@@ -481,20 +474,8 @@ class Stat_Receiver:
 		obj.attfromAura -= self.attGain
 		try: obj.auraReceivers.remove(self)
 		except: pass
+		#When an obj affected by the aura is copied, the following has no effect, since the copy won't be in the auraAffected list
 		try: self.source.auraAffected.remove((obj, self))
-		except: pass
-	#Invoke when the affected minion is copied and because the aura_Dealer won't have reference to this copied receiver,
-	#remove this copied receiver from copied receiver's auraReceivers.
-	#Only minion selfCopy will invoke this
-	def effectDiscard(self):
-		obj = self.recipient
-		if obj.type == "Minion":
-			obj.statChange(-self.attGain, -self.healthGain)
-			obj.healthfromAura -= self.healthGain
-		elif obj.type == "Weapon":
-			obj.gainStat(-self.attGain, 0)
-		obj.attfromAura -= self.attGain
-		try: obj.auraReceivers.remove(self)
 		except: pass
 		
 	def selfCopy(self, recipient): #The recipient of the aura is the same minion when copying it.
@@ -633,17 +614,8 @@ class Effect_Receiver:
 		except: obj.marks[self.keyWord] -= 1
 		try: obj.auraReceivers.remove(self)
 		except: pass
+		#When an obj affected by the aura is copied, the following has no effect, since the copy won't be in the auraAffected list
 		try: self.source.auraAffected.remove((obj, self))
-		except: pass
-		
-	#After a receiver is deep copied, it will also copy this receiver, simply remove it.
-	#The aura_Dealer won't have reference to this copied aura.
-	def effectDiscard(self):
-		obj = self.recipient
-		obj.effectfromAura[self.keyWord] -= 1
-		try: obj.losesStatus(self.keyWord)
-		except: obj.marks[self.keyWord] -= 1
-		try: obj.auraReceivers.remove(self)
 		except: pass
 		
 	def selfCopy(self, recipient):
@@ -664,8 +636,45 @@ class EffectAura(HasAura_toMinion):
 	def selfCopy(self, recipient):
 		return type(self)(recipient, self.keyWord)
 	#关键字光环可以通过HasAura_toMinion的createCopy方法复制
+
+
+class EffectAura_Adjacent(HasAura_toMinion):
+	def __init__(self, entity, keyWord):
+		self.entity = entity
+		self.keyWord = keyWord
+		self.signals, self.auraAffected = ["MinionAppears", "MinionDisappears"], []
 	
+	#Minions appearing/disappearing will let the minion reevaluate the aura.
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+		return self.entity.onBoard
 	
+	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		#重置对于两侧随从的光环
+		for minion, receiver in self.auraAffected[:]:
+			receiver.effectClear()
+		#Find adjacent minions to self.entity, then try to register them.
+		for minion in self.entity.Game.neighbors2(self.entity)[0]:
+			self.applies(minion)
+	
+	def applies(self, subject):
+		if subject != self.entity:
+			Effect_Receiver(subject, self, self.keyWord).effectStart()
+	
+	def auraAppears(self):
+		game = self.entity.Game
+		for minion in game.neighbors2(self.entity)[0]:
+			self.applies(minion)
+		
+		#Only need to handle minions that appear. Them leaving/silenced will be handled by the Stat_Receiver object.
+		for sig in self.signals:  #随从离场时会自己清除自己的光环
+			try: game.trigsBoard[self.entity.ID][sig].append(self)
+			except: game.trigsBoard[self.entity.ID][sig] = [self]
+	
+	def selfCopy(self, recipient):  #The recipient is the minion that deals the Aura.
+		return type(self)(recipient, self.keyWord)
+	#关键字光环可以通过HasAura_toMinion的createCopy方法复制
+
+
 class GameRuleAura:
 	def __init__(self, entity):
 		self.entity = entity
@@ -701,10 +710,7 @@ class ManaMod:
 		if self.card in self.card.Game.Hand_Deck.hands[self.card.ID] or self.card in self.card.Game.Hand_Deck.decks[self.card.ID]:
 			mana_0 = self.card.mana
 			self.card.Game.Manas.calcMana_Single(self.card)
-			mana_1 = self.card.mana
-			if mana_0 != mana_1 and self.card.Game.GUI:
-				self.card.Game.GUI.manaChangeAni(self.card, mana_1)
-				
+			
 	def getsRemoved(self):
 		try: self.card.manaMods.remove(self)
 		except: pass

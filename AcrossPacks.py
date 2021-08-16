@@ -7,7 +7,7 @@ import numpy as np
 class TheCoin(Spell):
 	Class, school, name = "Neutral", "", "The Coin"
 	requireTarget, mana = False, 0
-	index = "BASIC~Neutral~Spell~0~~The Coin~Uncollectible"
+	index = "LEGACY~Neutral~Spell~0~~The Coin~Uncollectible"
 	description = "Gain 1 mana crystal for this turn."
 	name_CN = "幸运币"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -18,7 +18,7 @@ class TheCoin(Spell):
 class SilverHandRecruit(Minion):
 	Class, race, name = "Paladin", "", "Silver Hand Recruit"
 	mana, attack, health = 1, 1, 1
-	index = "BASIC~Paladin~Minion~1~1~1~~Silver Hand Recruit~Uncollectible"
+	index = "LEGACY~Paladin~Minion~1~1~1~~Silver Hand Recruit~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "白银之手新兵"
 
@@ -26,7 +26,7 @@ class SilverHandRecruit(Minion):
 class WickedKnife(Weapon):
 	Class, name, description = "Rogue", "Wicked Knife", ""
 	mana, attack, durability = 1, 1, 2
-	index = "BASIC~Rogue~Weapon~1~1~2~Wicked Knife~Uncollectible"
+	index = "LEGACY~Rogue~Weapon~1~1~2~Wicked Knife~Uncollectible"
 	name_CN = "邪恶短刀"
 
 
@@ -40,7 +40,7 @@ class PoisonedDagger(Weapon):
 class SearingTotem(Minion):
 	Class, race, name = "Shaman", "Totem", "Searing Totem"
 	mana, attack, health = 1, 1, 1
-	index = "BASIC~Shaman~Minion~1~1~1~Totem~Searing Totem~Uncollectible"
+	index = "LEGACY~Shaman~Minion~1~1~1~Totem~Searing Totem~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "灼热图腾"
 
@@ -48,7 +48,7 @@ class SearingTotem(Minion):
 class StoneclawTotem(Minion):
 	Class, race, name = "Shaman", "Totem", "Stoneclaw Totem"
 	mana, attack, health = 1, 0, 2
-	index = "BASIC~Shaman~Minion~1~0~2~Totem~Stoneclaw Totem~Taunt~Uncollectible"
+	index = "LEGACY~Shaman~Minion~1~0~2~Totem~Stoneclaw Totem~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "石爪图腾"
 
@@ -56,7 +56,7 @@ class StoneclawTotem(Minion):
 class HealingTotem(Minion):
 	Class, race, name = "Shaman", "Totem", "Healing Totem"
 	mana, attack, health = 1, 0, 2
-	index = "BASIC~Shaman~Minion~1~0~2~Totem~Healing Totem~Uncollectible"
+	index = "LEGACY~Shaman~Minion~1~0~2~Totem~Healing Totem~Uncollectible"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, restore 1 health to all friendly minions"
 	name_CN = "治疗图腾"
 	def __init__(self, Game, ID):
@@ -83,7 +83,7 @@ class Trig_HealingTotem(TrigBoard):
 class StrengthTotem(Minion):
 	Class, race, name = "Shaman", "Totem", "Strength Totem"
 	mana, attack, health = 1, 0, 2
-	index = "BASIC~Shaman~Minion~1~0~2~Totem~Strength Totem~Uncollectible"
+	index = "LEGACY~Shaman~Minion~1~0~2~Totem~Strength Totem~Uncollectible"
 	requireTarget, keyWord, description = False, "", "At the end of your turn, give another friendly minion +1 Attack"
 	name_CN = "力量图腾"
 	def __init__(self, Game, ID):
@@ -101,20 +101,13 @@ class Trig_StrengthTotem(TrigBoard):
 		return "在你的回合结束时，为使另一个友方随从获得+1攻击力" if CHN else "At the end of your turn, give another friendly minion +1 Attack"
 	
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		curGame = self.entity.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				i = curGame.guides.pop(0)
-			else:
-				minions = curGame.minionsonBoard(self.entity.ID, self.entity)
-				i = npchoice(minions).pos if minions else -1
-				curGame.fixedGuides.append(i)
-			if i > -1: curGame.minions[self.entity.ID][i].buffDebuff(1, 0)
-
+		minions = self.entity.Game.minionsonBoard(self.entity.ID, self.entity)
+		if minions: npchoice(minions).buffDebuff(1, 0)
+		
 BasicTotems = [SearingTotem, StoneclawTotem, HealingTotem, StrengthTotem]
 
 """Basic Hero Powers"""
-class DemonClaws(HeroPower):
+class DemonClaws(Power):
 	mana, name, requireTarget = 1, "Demon Claws", False
 	index = "Demon Hunter~Basic Hero Power~1~Demon Claws"
 	description = "+1 Attack this turn"
@@ -125,7 +118,7 @@ class DemonClaws(HeroPower):
 		return 0
 
 
-class DemonsBite(HeroPower):
+class DemonsBite(Power):
 	mana, name, requireTarget = 1, "Demon's Bite", False
 	index = "Demon Hunter~Upgraded Hero Power~1~Demon's Bite"
 	description = "+2 Attack this turn"
@@ -137,7 +130,7 @@ class DemonsBite(HeroPower):
 
 
 #Druid basic and upgraded powers
-class Shapeshift(HeroPower):
+class Shapeshift(Power):
 	mana, name, requireTarget = 2, "Shapeshift", False
 	index = "Druid~Basic Hero Power~2~Shapeshift"
 	description = "+1 Attack this turn. +1 Armor"
@@ -149,7 +142,7 @@ class Shapeshift(HeroPower):
 		return 0
 
 
-class DireShapeshift(HeroPower):
+class DireShapeshift(Power):
 	mana, name, requireTarget = 2, "Dire Shapeshift", False
 	index = "Druid~Upgraded Hero Power~2~Dire Shapeshift"
 	description = "+2 Attack this turn. +2 Armor"
@@ -162,14 +155,14 @@ class DireShapeshift(HeroPower):
 
 
 #Hunter basic and upgraded powers
-class SteadyShot(HeroPower):
+class SteadyShot(Power):
 	mana, name, requireTarget = 2, "Steady Shot", False
 	index = "Hunter~Basic Hero Power~2~Steady Shot"
 	description = "Deal 2 damage to the enemy hero"
 	name_CN = "稳固射击"
 	
 	def returnFalse(self, choice=0):
-		return self.Game.status[self.ID]["Power Can Target Minions"] > 0
+		return self.marks["Can Target Minions"] > 0 or self.Game.status[self.ID]["Power Can Target Minions"] > 0
 	
 	def targetCorrect(self, target, choice=0):
 		return (target.type == "Minion" or target.type == "Hero") and target.onBoard
@@ -181,20 +174,33 @@ class SteadyShot(HeroPower):
 		else:
 			return "对敌方英雄造成%d点伤害" % damage if CHN else "Deal %d damage to the enemy hero" % damage
 	
+	def powerAni(self):
+		GUI = self.Game.GUI
+		if GUI:
+			pos_0, pos_1 = GUI.heroZones[self.ID].powerPos, GUI.heroZones[3-self.ID].heroPos
+			angle = 360 * np.arctan((pos_1[2]-pos_0[2]) / (pos_1[0]-pos_0[0])) / np.pi
+			if pos_1[2] < pos_0[2]: angle = 360 - angle
+			
+			arrow = GUI.loader.loadModel("TexCards\\ForPowers\\Arrow.glb")
+			arrow.reparentTo(GUI.render)
+			GUI.seqHolder[-1].append(GUI.LERPINTERVAL(arrow, duration=0.2, startPos=(pos_0[0], pos_0[1]-0.2, pos_0[2]),
+													  pos=(pos_1[0], pos_1[1]-0.2, pos_1[2]), startHpr=()),
+									 GUI.WAIT(0.5), GUI.FUNC(arrow.removeNode))
+			
 	def effect(self, target=None, choice=0):
 		damage = (2 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		self.dealsDamage(target if target else self.Game.heroes[3 - self.ID], damage)
 		return 0
 
 
-class BallistaShot(HeroPower):
+class BallistaShot(Power):
 	mana, name, requireTarget = 2, "Ballista Shot", False
 	index = "Hunter~Upgraded Hero Power~2~Ballista Shot"
 	description = "Deal 3 damage to the enemy hero"
 	name_CN = "弩炮射击"
 	
 	def returnFalse(self, choice=0):
-		return self.Game.status[self.ID]["Power Can Target Minions"] > 0
+		return self.marks["Can Target Minions"] > 0 or self.Game.status[self.ID]["Power Can Target Minions"] > 0
 	
 	def targetCorrect(self, target, choice=0):
 		if self.Game.status[self.ID]["Power Can Target Minions"] > 0:
@@ -216,7 +222,7 @@ class BallistaShot(HeroPower):
 
 
 #Mage basic and upgraded powers
-class Fireblast(HeroPower):
+class Fireblast(Power):
 	mana, name, requireTarget = 2, "Fireblast", True
 	index = "Mage~Basic Hero Power~2~Fireblast"
 	description = "Deal 1 damage"
@@ -233,7 +239,7 @@ class Fireblast(HeroPower):
 		return 0
 
 
-class FireblastRank2(HeroPower):
+class FireblastRank2(Power):
 	mana, name, requireTarget = 2, "Fireblast Rank 2", True
 	index = "Mage~Upgraded Hero Power~2~Fireblast Rank 2"
 	description = "Deal 2 damage"
@@ -251,7 +257,7 @@ class FireblastRank2(HeroPower):
 
 
 #Paladin basic and upgraded powers
-class Reinforce(HeroPower):
+class Reinforce(Power):
 	mana, name, requireTarget = 2, "Reinforce", False
 	index = "Paladin~Basic Hero Power~2~Reinforce"
 	description = "Summon a 1/1 Silver Hand Recruit"
@@ -262,11 +268,11 @@ class Reinforce(HeroPower):
 	
 	def effect(self, target=None, choice=0):
 		#Hero Power summoning won't be doubled by Khadgar.
-		self.Game.summon(SilverHandRecruit(self.Game, self.ID), -1, self)
+		self.summon(SilverHandRecruit(self.Game, self.ID), -1)
 		return 0
 
 
-class TheSilverHand(HeroPower):
+class TheSilverHand(Power):
 	mana, name, requireTarget = 2, "The Silver Hand", False
 	index = "Paladin~Upgraded Hero Power~2~The Silver Hand"
 	description = "Summon two 1/1 Silver Hand Recruits"
@@ -276,12 +282,12 @@ class TheSilverHand(HeroPower):
 		return not self.chancesUsedUp() and self.Game.space(self.ID)
 	
 	def effect(self, target=None, choice=0):
-		self.Game.summon([SilverHandRecruit(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
+		self.summon([SilverHandRecruit(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"))
 		return 0
 
 
 #Priest basic and upgraded powers
-class LesserHeal(HeroPower):
+class LesserHeal(Power):
 	mana, name, requireTarget = 2, "Lesser Heal", True
 	index = "Priest~Basic Hero Power~2~Lesser Heal"
 	description = "Restore 2 Health"
@@ -298,7 +304,7 @@ class LesserHeal(HeroPower):
 		return 0
 
 
-class Heal(HeroPower):
+class Heal(Power):
 	mana, name, requireTarget = 2, "Heal", True
 	index = "Priest~Upgraded Hero Power~2~Heal"
 	description = "Restore 4 Health"
@@ -316,30 +322,30 @@ class Heal(HeroPower):
 
 
 #Rogue basic and upgraded powers
-class DaggerMastery(HeroPower):
+class DaggerMastery(Power):
 	mana, name, requireTarget = 2, "Dagger Mastery", False
 	index = "Rogue~Basic Hero Power~2~Dagger Mastery"
 	description = "Equip a 1/2 Weapon"
 	name_CN = "匕首精通"
 	
 	def effect(self, target=None, choice=0):
-		self.Game.equipWeapon(WickedKnife(self.Game, self.ID))
+		self.equipWeapon(WickedKnife(self.Game, self.ID))
 		return 0
 
 
-class PoisonedDaggers(HeroPower):
+class PoisonedDaggers(Power):
 	mana, name, requireTarget = 2, "Poisoned Daggers", False
 	index = "Rogue~Upgraded Hero Power~2~Poisoned Daggers"
 	description = "Equip a 2/2 Weapon"
 	name_CN = "浸毒匕首"
 	
 	def effect(self, target=None, choice=0):
-		self.Game.equipWeapon(PoisonedDagger(self.Game, self.ID))
+		self.equipWeapon(PoisonedDagger(self.Game, self.ID))
 		return 0
 
 
 #Shaman basic and upgraded powers
-class TotemicCall(HeroPower):
+class TotemicCall(Power):
 	mana, name, requireTarget = 2, "Totemic Call", False
 	index = "Shaman~Basic Hero Power~2~Totemic Call"
 	description = "Summon a random totem"
@@ -349,28 +355,19 @@ class TotemicCall(HeroPower):
 		return not self.chancesUsedUp() and self.Game.space(self.ID) and self.viableTotems()[0]
 	
 	def effect(self, target=None, choice=0):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				totem = curGame.guides.pop(0)
-			else:
-				size, totems = self.viableTotems()
-				totem = npchoice(totems) if size else None
-				curGame.fixedGuides.append(totem)
-			if totem: curGame.summon(totem(curGame, self.ID), -1, self)
+		size, totems = self.viableTotems()
+		if size: self.summon(npchoice(totems)(self.Game, self.ID), -1)
 		return 0
 	
 	def viableTotems(self):
 		viableTotems = [SearingTotem, StoneclawTotem, HealingTotem, StrengthTotem]
 		for minion in self.Game.minionsonBoard(self.ID):
-			try:
-				viableTotems.remove(type(minion))
-			except:
-				pass
+			try: viableTotems.remove(type(minion))
+			except: pass
 		return len(viableTotems), viableTotems
 
 
-class TotemicSlam(HeroPower):
+class TotemicSlam(Power):
 	mana, name, requireTarget = 2, "Totemic Slam", False
 	index = "Shaman~Upgraded Hero Power~2~Totemic Call"
 	description = "Summon a totem of your choice"
@@ -383,7 +380,7 @@ class TotemicSlam(HeroPower):
 		curGame = self.Game
 		if curGame.mode == 0:
 			if curGame.guides:
-				curGame.summon(curGame.guides.pop(0)(curGame, self.ID), -1, self)
+				self.summon(curGame.guides.pop(0)(curGame, self.ID), -1)
 			else:
 				curGame.options = [totem(curGame, self.ID) for totem in [SearingTotem, StoneclawTotem, HealingTotem, StrengthTotem]]
 				curGame.Discover.startDiscover(self)
@@ -391,11 +388,11 @@ class TotemicSlam(HeroPower):
 	
 	def discoverDecided(self, option, pool):
 		self.Game.fixedGuides.append(type(option))
-		self.Game.summon(option, -1, self)
+		self.summon(option, -1)
 
 
 #Warloc basic and upgraded powers
-class LifeTap(HeroPower):
+class LifeTap(Power):
 	mana, name, requireTarget = 2, "Life Tap", False
 	index = "Warlock~Basic Hero Power~2~Life Tap"
 	description = "Draw a card and take 2 damage"
@@ -414,7 +411,7 @@ class LifeTap(HeroPower):
 		return 0
 
 
-class SoulTap(HeroPower):
+class SoulTap(Power):
 	mana, name, requireTarget = 2, "Soul Tap", False
 	index = "Warlock~Upgraded Hero Power~2~Soul Tap"
 	description = "Draw a card"
@@ -428,7 +425,7 @@ class SoulTap(HeroPower):
 
 
 #Warrior basic and upgraded powers
-class ArmorUp(HeroPower):
+class ArmorUp(Power):
 	mana, name, requireTarget = 2, "Armor Up!", False
 	index = "Warrior~Basic Hero Power~2~Armor Up!"
 	description = "Gain 2 Armor"
@@ -439,7 +436,7 @@ class ArmorUp(HeroPower):
 		return 0
 
 
-class TankUp(HeroPower):
+class TankUp(Power):
 	mana, name, requireTarget = 2, "Tank Up!", False
 	index = "Warrior~Upgraded Hero Power~2~Tank Up!"
 	description = "Gain 4 Armor"
@@ -450,66 +447,66 @@ class TankUp(HeroPower):
 		return 0
 
 
-Basicpowers = [Shapeshift, SteadyShot, Fireblast, Reinforce, LesserHeal, DaggerMastery, TotemicCall, LifeTap, ArmorUp]
-Upgradedpowers = [DireShapeshift, BallistaShot, FireblastRank2, TheSilverHand, Heal, PoisonedDaggers, TotemicSlam, SoulTap, TankUp]
+Basicpowers = [DemonClaws, Shapeshift, SteadyShot, Fireblast, Reinforce, LesserHeal, DaggerMastery, TotemicCall, LifeTap, ArmorUp]
+Upgradedpowers = [DemonsBite, DireShapeshift, BallistaShot, FireblastRank2, TheSilverHand, Heal, PoisonedDaggers, TotemicSlam, SoulTap, TankUp]
 """Basic Heroes"""
 
 
 class Illidan(Hero):
-	Class, name, heroPower = "Demon Hunter", "Illidan", DemonClaws
+	Class, name, heroPower, health = "Demon Hunter", "Illidan", DemonClaws, 30
 	name_CN = "伊利丹"
-	index = "BASIC"
+	index = "LEGACY"
 
 class Rexxar(Hero):
-	Class, name, heroPower = "Hunter", "Rexxar", SteadyShot
+	Class, name, heroPower, health = "Hunter", "Rexxar", SteadyShot, 30
 	name_CN = "雷克萨"
-	index = "BASIC"
+	index = "LEGACY"
 
 class Valeera(Hero):
-	Class, name, heroPower = "Rogue", "Valeera", DaggerMastery
+	Class, name, heroPower, health = "Rogue", "Valeera", DaggerMastery, 30
 	name_CN = "瓦莉拉"
-	index = "BASIC"
+	index = "LEGACY"
 
 class Malfurion(Hero):
-	Class, name, heroPower = "Druid", "Malfurion", Shapeshift
+	Class, name, heroPower, health = "Druid", "Malfurion", Shapeshift, 30
 	name_CN = "玛法里奥"
-	index = "BASIC"
+	index = "LEGACY"
 
 class Garrosh(Hero):
-	Class, name, heroPower = "Warrior", "Garrosh", ArmorUp
+	Class, name, heroPower, health = "Warrior", "Garrosh", ArmorUp, 30
 	name_CN = "加尔鲁什"
-	index = "BASIC"
+	index = "LEGACY"
 
 class Uther(Hero):
-	Class, name, heroPower = "Paladin", "Uther", Reinforce
+	Class, name, heroPower, health = "Paladin", "Uther", Reinforce, 30
 	name_CN = "乌瑟尔"
-	index = "BASIC"
+	index = "LEGACY"
 
 class Thrall(Hero):
-	Class, name, heroPower = "Shaman", "Thrall", TotemicCall
+	Class, name, heroPower, health = "Shaman", "Thrall", TotemicCall, 30
 	name_CN = "萨尔"
-	index = "BASIC"
+	index = "LEGACY"
 
 class Jaina(Hero):
-	Class, name, heroPower = "Mage", "Jaina", Fireblast
+	Class, name, heroPower, health = "Mage", "Jaina", Fireblast, 30
 	name_CN = "吉安娜"
-	index = "BASIC"
+	index = "LEGACY"
 
 class Anduin(Hero):
-	Class, name, heroPower = "Priest", "Anduin", LesserHeal
+	Class, name, heroPower, health = "Priest", "Anduin", LesserHeal, 30
 	name_CN = "安度因"
-	index = "BASIC"
+	index = "LEGACY"
 
 class Guldan(Hero):
-	Class, name, heroPower = "Warlock", "Gul'dan", LifeTap
+	Class, name, heroPower, health = "Warlock", "Gul'dan", LifeTap, 30
 	name_CN = "古尔丹"
-	index = "BASIC"
+	index = "LEGACY"
 
 
 class MurlocScout(Minion):
 	Class, race, name = "Neutral", "Murloc", "Murloc Scout"
 	mana, attack, health = 1, 1, 1
-	index = "BASIC~Neutral~Minion~1~1~1~Murloc~Murloc Scout~Uncollectible"
+	index = "LEGACY~Neutral~Minion~1~1~1~Murloc~Murloc Scout~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	name_CN = "鱼人斥侯"
 	
@@ -517,7 +514,7 @@ class MurlocScout(Minion):
 class IllidariInitiate(Minion):
 	Class, race, name = "Demon Hunter", "", "Illidari Initiate"
 	mana, attack, health = 1, 1, 1
-	index = "BASIC~Demon Hunter~Minion~1~1~1~~Illidari Initiate~Rush~Uncollectible"
+	index = "LEGACY~Demon Hunter~Minion~1~1~1~~Illidari Initiate~Rush~Uncollectible"
 	requireTarget, keyWord, description = False, "Rush", "Rush"
 	name_CN = "伊利达雷新兵"
 
@@ -525,7 +522,7 @@ class IllidariInitiate(Minion):
 class ExcessMana(Spell):
 	Class, school, name = "Druid", "", "Excess Mana"
 	requireTarget, mana = False, 0
-	index = "BASIC~Druid~Spell~0~~Excess Mana~Uncollectible"
+	index = "LEGACY~Druid~Spell~0~~Excess Mana~Uncollectible"
 	description = "Draw a card"
 	name_CN = "法力过剩"
 	
@@ -537,7 +534,7 @@ class ExcessMana(Spell):
 class Claw(Spell):
 	Class, school, name = "Druid", "", "Claw"
 	requireTarget, mana = False, 1
-	index = "BASIC~Druid~Spell~1~~Claw"
+	index = "LEGACY~Druid~Spell~1~~Claw"
 	description = "Give your hero +2 Attack this turn. Gain 2 Armor"
 	name_CN = "爪击"
 	
@@ -550,7 +547,7 @@ class Claw(Spell):
 class ArcaneMissiles(Spell):
 	Class, school, name = "Mage", "Arcane", "Arcane Missiles"
 	requireTarget, mana = False, 1
-	index = "BASIC~Mage~Spell~1~Arcane~Arcane Missiles"
+	index = "LEGACY~Mage~Spell~1~Arcane~Arcane Missiles"
 	description = "Deal 3 damage randomly split among all enemies"
 	name_CN = "奥术飞弹"
 	
@@ -560,28 +557,18 @@ class ArcaneMissiles(Spell):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		side, curGame = 3 - self.ID, self.Game
-		if curGame.mode == 0:
-			for num in range(damage):
-				char = None
-				if curGame.guides:
-					i, where = curGame.guides.pop(0)
-					if where: char = curGame.find(i, where)
-				else:
-					objs = curGame.charsAlive(side)
-					if objs:
-						char = npchoice(objs)
-						curGame.fixedGuides.append((char.pos, char.type + str(char.ID)))
-					else: curGame.fixedGuides.append((0, ''))
-				if char: self.dealsDamage(char, 1)
-				else: break
+		ID = 3- self.ID
+		for i in range(damage):
+			objs = self.Game.charsAlive(ID)
+			if objs: self.dealsDamage(npchoice(objs), 1)
+			else: break
 		return None
 
 
 class WaterElemental_Basic(Minion):
 	Class, race, name = "Mage", "Elemental", "Water Elemental"
 	mana, attack, health = 4, 3, 6
-	index = "BASIC~Mage~Minion~4~3~6~Elemental~Water Elemental"
+	index = "LEGACY~Mage~Minion~4~3~6~Elemental~Water Elemental"
 	requireTarget, keyWord, description = False, "", "Freeze any character damaged by this minion"
 	name_CN = "水元素"
 	def __init__(self, Game, ID):
@@ -620,10 +607,17 @@ class Pyroblast(Spell):
 		return target
 
 
+class LightsJustice(Weapon):
+	Class, name, description = "Paladin", "Light's Justice", ""
+	mana, attack, durability = 1, 1, 4
+	index = "LEGACY~Paladin~Weapon~1~1~4~Light's Justice"
+	name_CN = "圣光的正义"
+	
+	
 class TruesilverChampion(Weapon):
 	Class, name, description = "Paladin", "Truesilver Champion", "Whenever your hero attacks, restore 2 Health to it"
 	mana, attack, durability = 4, 4, 2
-	index = "BASIC~Paladin~Weapon~4~4~2~Truesilver Champion"
+	index = "LEGACY~Paladin~Weapon~4~4~2~Truesilver Champion"
 	name_CN = "真银圣剑"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -651,12 +645,20 @@ class PatientAssassin(Minion):
 	index = "EXPERT1~Rogue~Minion~2~1~2~~Patient Assassin~Poisonous~Stealth"
 	requireTarget, keyWord, description = False, "Stealth,Poisonous", "Stealth, Poisonous"
 	name_CN = "耐心的刺客"
-	
-	
+
+
+class Voidwalker(Minion):
+	Class, race, name = "Warlock", "", "Voidwalker"
+	mana, attack, health = 1, 1, 3
+	index = "LEGACY~Warlock~Minion~1~1~3~~Voidwalker~Taunt"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt"
+	name_CN = "虚空行者"
+
+
 class FieryWarAxe_Basic(Weapon):
 	Class, name, description = "Warrior", "Fiery War Axe", ""
 	mana, attack, durability = 3, 3, 2
-	index = "BASIC~Warrior~Weapon~3~3~2~Fiery War Axe"
+	index = "LEGACY~Warrior~Weapon~3~3~2~Fiery War Axe"
 	name_CN = "炽炎战斧"
 	
 """EXPERT1 cards"""
@@ -679,6 +681,14 @@ class Bananas(Spell):
 		return target
 
 
+class DamagedGolem(Minion):
+	Class, race, name = "Neutral", "Mech", "Damaged Golem"
+	mana, attack, health = 1, 2, 1
+	index = "EXPERT1~Neutral~Minion~1~2~1~Mech~Damaged Golem~Uncollectible"
+	requireTarget, keyWord, description = False, "", ""
+	name_CN = "损坏的傀儡"
+	
+	
 class Skeleton(Minion):
 	Class, race, name = "Neutral", "", "Skeleton"
 	mana, attack, health = 1, 1, 1
@@ -848,7 +858,7 @@ class SummonaPanther(Spell):
 		return self.Game.space(self.ID) > 0
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.summon(Panther(self.Game, self.ID), -1, self)
+		self.summon(Panther(self.Game, self.ID), -1)
 		return None
 
 
@@ -961,7 +971,7 @@ class Snake(Minion):
 class Huffer(Minion):
 	Class, race, name = "Hunter", "Beast", "Huffer"
 	mana, attack, health = 3, 4, 2
-	index = "BASIC~Hunter~Minion~3~4~2~Beast~Huffer~Charge~Uncollectible"
+	index = "LEGACY~Hunter~Minion~3~4~2~Beast~Huffer~Charge~Uncollectible"
 	requireTarget, keyWord, description = False, "Charge", "Charge"
 	name_CN = "霍弗"
 
@@ -969,7 +979,7 @@ class Huffer(Minion):
 class Leokk(Minion):
 	Class, race, name = "Hunter", "Beast", "Leokk"
 	mana, attack, health = 3, 2, 4
-	index = "BASIC~Hunter~Minion~3~2~4~Beast~Leokk~Uncollectible"
+	index = "LEGACY~Hunter~Minion~3~2~4~Beast~Leokk~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack"
 	name_CN = "雷欧克"
 	def __init__(self, Game, ID):
@@ -980,7 +990,7 @@ class Leokk(Minion):
 class Misha(Minion):
 	Class, race, name = "Hunter", "Beast", "Misha"
 	mana, attack, health = 3, 4, 4
-	index = "BASIC~Hunter~Minion~3~4~4~Beast~Misha~Taunt~Uncollectible"
+	index = "LEGACY~Hunter~Minion~3~4~4~Beast~Misha~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "米莎"
 
@@ -1044,7 +1054,7 @@ class SpiritWolf(Minion):
 class Frog(Minion):
 	Class, race, name = "Neutral", "Beast", "Frog"
 	mana, attack, health = 0, 0, 1
-	index = "BASIC~Neutral~Minion~0~0~1~Beast~Frog~Taunt~Uncollectible"
+	index = "LEGACY~Neutral~Minion~0~0~1~Beast~Frog~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "青蛙"
 
@@ -1100,24 +1110,10 @@ class BoomBot(Minion):
 		
 class Deal1to4DamagetoaRandomEnemy(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		curGame = self.entity.Game
-		if curGame.mode == 0:
-			enemy, damage = None, 0
-			if curGame.guides:
-				i, where, damage = curGame.guides.pop(0)
-				if where: enemy = curGame.find(i, where)
-			else:
-				targets = curGame.charsAlive(3-self.entity.ID)
-				if targets:
-					enemy, damage = npchoice(targets), np.random.randint(1, 5)
-					curGame.fixedGuides.append((enemy.pos, enemy.type+str(enemy.ID), damage))
-				else:
-					curGame.fixedGuides.append((0, '', 0))
-			if enemy:
-				self.entity.dealsDamage(enemy, damage)
-				
-				
-
+		objs = self.entity.Game.charsAlive(3 - self.entity.ID)
+		if objs: self.entity.dealsDamage(npchoice(objs), nprandint(1, 5))
+		
+		
 class GoldenKobold(Minion):
 	Class, race, name = "Neutral", "", "Golden Kobold"
 	mana, attack, health = 3, 6, 6
@@ -1126,19 +1122,13 @@ class GoldenKobold(Minion):
 	poolIdentifier = "Legendary Minions"
 	@classmethod
 	def generatePool(cls, pools):
-		return "Legendary Minions", list(pools.LegendaryMinions.values())
+		return "Legendary Minions", pools.LegendaryMinions
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				hand = curGame.guides.pop(0)
-			else:
-				hand = tuple(npchoice(self.rngPool("Legendary Minions"), len(curGame.Hand_Deck.hands[self.ID]), replace=True))
-				curGame.fixedGuides.append(hand)
-			if hand:
-				curGame.Hand_Deck.extractfromHand(None, self.ID, all=True)
-				curGame.Hand_Deck.addCardtoHand(hand, self.ID, "type")
+		hand = npchoice(self.rngPool("Legendary Minions"), len(self.Game.Hand_Deck.hands[self.ID]), replace=True)
+		if hand:
+			self.Game.Hand_Deck.extractfromHand(None, self.ID, all=True)
+			self.addCardtoHand(hand, self.ID)
 		return None
 		
 class TolinsGoblet(Spell):
@@ -1151,7 +1141,7 @@ class TolinsGoblet(Spell):
 		card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 		if card and self.Game.Hand_Deck.handNotFull(self.ID):
 			copies = [card.selfCopy(self.ID, self) for i in range(self.Game.Hand_Deck.spaceinHand(self.ID))]
-			self.Game.Hand_Deck.addCardtoHand(copies, self.ID)
+			self.addCardtoHand(copies, self.ID)
 		return None
 		
 class WondrousWand(Spell):
@@ -1176,8 +1166,10 @@ class ZarogsCrown(Spell):
 	poolIdentifier = "Legendary Minions as Druid to Summon"
 	@classmethod
 	def generatePool(cls, pools):
-		classCards = {s : [value for key, value in pools.ClassCards[s].items() if "~Minion~" in key and "~Legendary" in key] for s in pools.Classes}
-		classCards["Neutral"] = [value for key, value in pools.NeutralCards.items() if "~Minion~" in key and "~Legendary" in key]
+		classCards = {s : [] for s in pools.ClassesandNeutral}
+		for card in pools.LegendaryMinions:
+			for Class in card.Class.split(','):
+				classCards[Class].append(card)
 		return ["Legendary Minions as %s to Summon"%Class for Class in pools.Classes], \
 			[classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 			
@@ -1187,13 +1179,12 @@ class ZarogsCrown(Spell):
 			if curGame.mode == 0:
 				if curGame.guides:
 					minion = curGame.guides.pop(0)
-					curGame.summon([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
+					self.summon([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"))
 				else:
 					key = "Legendary Minions as %s to Summon"%classforDiscover(self)
 					if self.ID != curGame.turn or "byOthers" in comment:
 						minion = npchoice(self.rngPool(key))
-						curGame.fixedGuides.append(minion)
-						curGame.summon([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
+						self.summon([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"))
 					else:
 						minions = npchoice(self.rngPool(key), 3, replace=False)
 						curGame.options = [minion(curGame, self.ID) for minion in minions]
@@ -1202,7 +1193,7 @@ class ZarogsCrown(Spell):
 		
 	def discoverDecided(self, option, pool):
 		self.Game.fixedGuides.append(type(option))
-		self.Game.summon([option, type(option)(self.Game, self.ID)], (-1, "totheRightEnd"), self)
+		self.summon([option, type(option)(self.Game, self.ID)], (-1, "totheRightEnd"))
 		
 
 class Bomb(Spell):
@@ -1225,7 +1216,7 @@ class EtherealLackey(Minion):
 	@classmethod
 	def generatePool(cls, pools):
 		return [Class + " Spells" for Class in pools.Classes], \
-			   [[value for key, value in pools.ClassCards[Class].items() if "~Spell~" in key] for Class in pools.Classes]
+			   [[card for card in pools.ClassCards[Class] if card.type == "Spell"] for Class in pools.Classes]
 
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -1233,12 +1224,10 @@ class EtherealLackey(Minion):
 			if curGame.mode == 0:
 				pool = tuple(self.rngPool(classforDiscover(self) + " Spells"))
 				if curGame.guides:
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
+					self.addCardtoHand(curGame.guides.pop(0), self.ID, byDiscover=True)
 				else:
 					if "byOthers" in comment:
-						spell = npchoice(pool)
-						curGame.fixedGuides.append(spell)
-						curGame.Hand_Deck.addCardtoHand(spell, self.ID, byType=True, byDiscover=True, creator=type(self), possi=pool)
+						self.addCardtoHand(npchoice(pool), self.ID, byDiscover=True)
 					else:
 						spells = npchoice(pool, 3, replace=False)
 						curGame.options = [spell(curGame, self.ID) for spell in spells]
@@ -1247,7 +1236,7 @@ class EtherealLackey(Minion):
 
 	def discoverDecided(self, option, pool):
 		self.Game.fixedGuides.append(type(option))
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True, creator=type(self), possi=pool)
+		self.addCardtoHand(option, self.ID, byDiscover=True)
 
 
 class FacelessLackey(Minion):
@@ -1259,17 +1248,10 @@ class FacelessLackey(Minion):
 
 	@classmethod
 	def generatePool(cls, pools):
-		return "2-Cost Minions to Summon", list(pools.MinionsofCost[2].values())
+		return "2-Cost Minions to Summon", pools.MinionsofCost[2]
 
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				minion = curGame.guides.pop(0)
-			else:
-				minion = npchoice(self.rngPool("2-Cost Minions to Summon"))
-				curGame.fixedGuides.append(minion)
-			curGame.summon(minion(curGame, self.ID), self.pos + 1, self)
+		self.summon(npchoice(self.rngPool("2-Cost Minions to Summon"))(self.Game, self.ID), self.pos+1)
 		return None
 
 
@@ -1310,12 +1292,11 @@ class WitchyLackey(Minion):
 	index = "DALARAN~Neutral~Minion~1~1~1~~Witchy Lackey~Battlecry~Uncollectible"
 	requireTarget, keyWord, description = True, "", "Battlecry: Transform a friendly minion into one that costs (1) more"
 	poolIdentifier = "1-Cost Minions to Summon"
-
 	@classmethod
 	def generatePool(cls, pools):
 		return ["%d-Cost Minions to Summon" % cost for cost in pools.MinionsofCost], \
-			   [list(pools.MinionsofCost[cost].values()) for cost in pools.MinionsofCost]
-
+			   list(pools.MinionsofCost.values())
+	
 	def targetExists(self, choice=0):
 		return self.selectableFriendlyMinionExists()
 
@@ -1325,19 +1306,11 @@ class WitchyLackey(Minion):
 	# 不知道如果目标随从被返回我方手牌会有什么结算，可能是在手牌中被进化
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			curGame = self.Game
-			if curGame.mode == 0:
-				if curGame.guides:
-					newMinion = curGame.guides.pop(0)
-				else:
-					cost = type(target).mana + 1
-					while "%d-Cost Minions to Summon"%cost not in curGame.RNGPools:
-						cost -= 1
-					newMinion = npchoice(self.rngPool("%d-Cost Minions to Summon" % cost))
-					curGame.fixedGuides.append(newMinion)
-				newMinion = newMinion(curGame, target.ID)
-				curGame.transform(target, newMinion)
-				target = newMinion
+			cost = type(target).mana + 1
+			while "%d-Cost Minions to Summon" % cost not in self.Game.RNGPools:
+				cost -= 1
+			newMinion = npchoice(self.rngPool("%d-Cost Minions to Summon" % cost))
+			self.transform(target, newMinion)
 		return target
 
 
@@ -1366,12 +1339,12 @@ class DraconicLackey(Minion):
 	index = "DRAGONS~Neutral~Minion~1~1~1~~Draconic Lackey~Battlecry~Uncollectible"
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a Dragon"
 	poolIdentifier = "Dragons as Druid"
-
 	@classmethod
 	def generatePool(cls, pools):
 		classCards = {s: [] for s in pools.ClassesandNeutral}
-		for key, value in pools.MinionswithRace["Dragon"].items():
-			classCards[key.split('~')[1]].append(value)
+		for card in pools.MinionswithRace["Dragon"]:
+			for Class in card.Class.split(','):
+				classCards[Class].append(card)
 		return ["Dragons as " + Class for Class in pools.Classes], \
 			   [classCards[Class] + classCards["Neutral"] for Class in pools.Classes]
 
@@ -1380,13 +1353,11 @@ class DraconicLackey(Minion):
 		if self.ID == curGame.turn:
 			if curGame.mode == 0:
 				if curGame.guides:
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, "type", byDiscover=True)
+					self.addCardtoHand(curGame.guides.pop(0), self.ID, byDiscover=True)
 				else:
 					key = "Dragons as " + classforDiscover(self)
 					if "byOthers" in comment:
-						dragon = npchoice(self.rngPool(key))
-						curGame.fixedGuides.append(dragon)
-						curGame.Hand_Deck.addCardtoHand(dragon, self.ID, "type", byDiscover=True)
+						self.addCardtoHand(npchoice(self.rngPool(key)), self.ID, byDiscover=True)
 					else:
 						dragons = npchoice(self.rngPool(key), 3, replace=False)
 						curGame.options = [dragon(curGame, self.ID) for dragon in dragons]
@@ -1395,100 +1366,92 @@ class DraconicLackey(Minion):
 
 	def discoverDecided(self, option, pool):
 		self.Game.fixedGuides.append(type(option))
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
+		self.addCardtoHand(option, self.ID, byDiscover=True)
 
 Lackeys = [DraconicLackey, EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey]
 
 
+class DeadlyAdventurer(Minion):
+	Class, race, name = "Neutral", "", "Deadly Adventurer"
+	mana, attack, health = 2, 2, 2
+	index = "THE_BARRENS~Neutral~Minion~2~2~2~~Deadly Adventurer~Poisonous~Uncollectible"
+	requireTarget, keyWord, description = False, "Poisonous", "Poisonous"
+	name_CN = "致命的冒险者"
 
 
-AcrossPacks_Indices = {"Hero: Demon Hunter": Illidan, "Hero: Druid": Malfurion,
-					"Hero: Hunter": Rexxar, "Hero: Mage": Jaina,
-					"Hero: Paladin": Uther, "Hero: Priest": Anduin,
-					"Hero: Rogue": Valeera, "Hero: Shaman": Thrall,
-					"Hero: Warlock": Guldan, "Hero: Warrior": Garrosh,
-					"Demon Hunter~Basic Hero Power~1~Demon Claws": DemonClaws,
-					"Demon Hunter~Upgraded Hero Power~1~Demon's Bite": DemonsBite,
-					"Druid~Basic Hero Power~2~Shapeshift": Shapeshift,
-					"Druid~Upgraded Hero Power~2~Dire Shapeshift": DireShapeshift,
-					"Hunter~Basic Hero Power~2~Steady Shot": SteadyShot,
-					"Hunter~Upgraded Hero Power~2~Ballista Shot": BallistaShot,
-					"Mage~Basic Hero Power~2~Fireblast": Fireblast,
-					"Mage~Upgraded Hero Power~2~Fireblast Rank 2": FireblastRank2,
-					"Paladin~Basic Hero Power~2~Reinforce": Reinforce,
-					"Paladin~Upgraded Hero Power~2~The Silver Hand": TheSilverHand,
-					"Priest~Basic Hero Power~2~Lesser Heal": LesserHeal,
-					"Priest~Upgraded Hero Power~2~Heal": Heal,
-					"Rogue~Basic Hero Power~2~Dagger Mastery": DaggerMastery,
-					"Rogue~Upgraded Hero Power~2~Poisoned Daggers": PoisonedDaggers,
-					"Shaman~Basic Hero Power~2~Totemic Call": TotemicCall,
-					"Shaman~Upgraded Hero Power~2~Totemic Call": TotemicSlam,
-					"Warlock~Basic Hero Power~2~Life Tap": LifeTap,
-					"Warlock~Upgraded Hero Power~2~Soul Tap": SoulTap,
-					"Warrior~Basic Hero Power~2~Armor Up!": ArmorUp,
-					"Warrior~Upgraded Hero Power~2~Tank Up!": TankUp,
-					
-					"BASIC~Neutral~Spell~0~~The Coin~Uncollectible": TheCoin,
-					"BASIC~Paladin~Minion~1~1~1~~Silver Hand Recruit~Uncollectible": SilverHandRecruit,
-					"BASIC~Rogue~Weapon~1~1~2~Wicked Knife~Uncollectible": WickedKnife,
-					"TGT~Rogue~Weapon~1~2~2~Poisoned Dagger~Uncollectible": PoisonedDagger,
-					"BASIC~Shaman~Minion~1~1~1~Totem~Searing Totem~Uncollectible": SearingTotem,
-					"BASIC~Shaman~Minion~1~0~2~Totem~Stoneclaw Totem~Taunt~Uncollectible": StoneclawTotem,
-					"BASIC~Shaman~Minion~1~0~2~Totem~Healing Totem~Uncollectible": HealingTotem,
-					"BASIC~Shaman~Minion~1~0~2~Totem~Strength Totem~Uncollectible": StrengthTotem,
-					"BASIC~Demon Hunter~Minion~1~1~1~~Illidari Initiate~Rush~Uncollectible": IllidariInitiate,
-					"BASIC~Druid~Spell~0~~Excess Mana~Uncollectible": ExcessMana,
-					"BASIC~Hunter~Minion~3~4~2~Beast~Huffer~Charge~Uncollectible": Huffer,
-					"BASIC~Hunter~Minion~3~2~4~Beast~Leokk~Uncollectible": Leokk,
-					"BASIC~Hunter~Minion~3~4~4~Beast~Misha~Taunt~Uncollectible": Misha,
-					"BASIC~Mage~Minion~4~3~6~Elemental~Water Elemental": WaterElemental_Basic,
-					"BASIC~Warrior~Weapon~3~3~2~Fiery War Axe": FieryWarAxe_Basic,
-					
-					"EXPERT1~Neutral~Spell~1~~Bananas~Uncollectible": Bananas,
-					"EXPERT1~Neutral~Minion~1~1~1~~Violet Apprentice~Uncollectible": VioletApprentice,
-					"EXPERT1~Neutral~Minion~1~1~1~Dragon~Whelp~Uncollectible": Whelp,
-					"EXPERT1~Neutral~Minion~5~5~5~~Baine Bloodhoof~Legendary~Uncollectible": BaineBloodhoof,
-					"EXPERT1~DreamCard~Spell~1~Nature~Dream~Uncollectible": Dream,
-					"EXPERT1~DreamCard~Spell~0~Shadow~Nightmare~Uncollectible": Nightmare,
-					"EXPERT1~DreamCard~Spell~3~Nature~Ysera Awakens~Uncollectible": YseraAwakens,
-					"EXPERT1~DreamCard~Minion~2~3~5~~Laughing Sister~Uncollectible": LaughingSister,
-					"EXPERT1~DreamCard~Minion~4~7~6~Dragon~Emerald Drake~Uncollectible": EmeraldDrake,
-					"EXPERT1~Druid~Spell~2~~Leader of the Pack~Uncollectible": LeaderofthePack,
-					"EXPERT1~Druid~Spell~2~~Summon a Panther~Uncollectible": SummonaPanther,
-					"EXPERT1~Druid~Minion~2~3~2~Beast~Panther~Uncollectible": Panther,
-					"EXPERT1~Druid~Minion~2~2~2~~Treant~Uncollectible": Treant_Classic,
-					"EXPERT1~Druid~Minion~2~2~2~~Treant~Taunt~Uncollectible": Treant_Classic_Taunt,
-					"OG~Druid~Spell~3~~Evolve Spines~Uncollectible": EvolveSpines,
-					"OG~Druid~Spell~3~~Evolve Scales~Uncollectible": EvolveScales,
-					"EXPERT1~Druid~Minion~5~5~4~Beast~Druid of the Claw~Rush~Uncollectible": DruidoftheClaw_Charge,
-					"EXPERT1~Druid~Minion~5~5~6~Beast~Druid of the Claw~Taunt~Uncollectible": DruidoftheClaw_Taunt,
-					"EXPERT1~Druid~Minion~5~5~6~Beast~Druid of the Claw~Taunt~Rush~Uncollectible": DruidoftheClaw_Both,
-					"EXPERT1~Druid~Spell~6~Nature~Rampant Growth~Uncollectible": RampantGrowth,
-					"EXPERT1~Druid~Spell~6~Nature~Enrich~Uncollectible": Enrich,
-					"EXPERT1~Hunter~Minion~1~1~1~Beast~Snake~Uncollectible": Snake,
-					"EXPERT1~Hunter~Minion~2~2~2~Beast~Hyena~Uncollectible": Hyena_Classic,
-					"EXPERT1~Mage~Minion~1~1~2~~Mana Wyrm": ManaWyrm,
-					"EXPERT1~Mage~Spell~10~Fire~Pyroblast": Pyroblast,
-					"EXPERT1~Paladin~Minion~1~2~1~~Defender~Uncollectible": Defender,
-					"EXPERT1~Paladin~Weapon~5~5~3~Ashbringer~Legendary~Uncollectible": Ashbringer,
-					"EXPERT1~Shaman~Minion~2~2~3~~Spirit Wolf~Taunt~Uncollectible": SpiritWolf,
-					"BASIC~Neutral~Minion~0~0~1~Beast~Frog~Taunt~Uncollectible": Frog,
-					"EXPERT1~Warlock~Minion~1~1~1~Demon~Imp~Uncollectible": Imp,
-					"EXPERT1~Warlock~Weapon~3~3~8~Blood Fury~Uncollectible": BloodFury,
-					"EXPERT1~Warlock~Minion~6~6~6~Demon~Infernal~Uncollectible": Infernal,
-					"NAXX~Neutral~Minion~4~4~4~~Nerubian~Uncollectible": Nerubian,
-					"GVG~Neutral~Minion~1~1~1~Mech~Boom Bot~Deathrattle~Uncollectible": BoomBot,
-					"LOOTAPALOOZA~Neutral~Minion~3~6~6~~Golden Kobold~Taunt~Battlecry~Legendary~Uncollectible": GoldenKobold,
-					"LOOTAPALOOZA~Neutral~Spell~3~~Tolin's Goblet~Uncollectible": TolinsGoblet,
-					"LOOTAPALOOZA~Neutral~Spell~3~~Wondrous Wand~Uncollectible": WondrousWand,
-					"LOOTAPALOOZA~Neutral~Spell~3~~Zarog's Crown~Uncollectible": ZarogsCrown,
-					"BOOMSDAY~Neutral~Spell~5~~Bomb~Casts When Drawn~Uncollectible": Bomb,
-					"DALARAN~Neutral~Minion~1~1~1~~Ethereal Lackey~Battlecry~Uncollectible": EtherealLackey,
-					"DALARAN~Neutral~Minion~1~1~1~~Faceless Lackey~Battlecry~Uncollectible": FacelessLackey,
-					"DALARAN~Neutral~Minion~1~1~1~~Goblin Lackey~Battlecry~Uncollectible": GoblinLackey,
-					"DALARAN~Neutral~Minion~1~1~1~~Kobold Lackey~Battlecry~Uncollectible": KoboldLackey,
-					"DALARAN~Neutral~Minion~1~1~1~~Witchy Lackey~Battlecry~Uncollectible": WitchyLackey,
-					"ULDUM~Neutral~Minion~1~1~1~~Titanic Lackey~Battlecry~Uncollectible": TitanicLackey,
-					"DRAGONS~Neutral~Minion~1~1~1~~Draconic Lackey~Battlecry~Uncollectible": DraconicLackey,
-					}
+class BurlyAdventurer(Minion):
+	Class, race, name = "Neutral", "", "Burly Adventurer"
+	mana, attack, health = 2, 2, 2
+	index = "THE_BARRENS~Neutral~Minion~2~2~2~~Burly Adventurer~Taunt~Uncollectible"
+	requireTarget, keyWord, description = False, "Taunt", "Taunt"
+	name_CN = "健壮的冒险者"
 
+
+class DevoutAdventurer(Minion):
+	Class, race, name = "Neutral", "", "Devout Adventurer"
+	mana, attack, health = 2, 2, 2
+	index = "THE_BARRENS~Neutral~Minion~2~2~2~~Devout Adventurer~Divine Shield~Uncollectible"
+	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield"
+	name_CN = "虔诚的冒险者"
+
+
+class RelentlessAdventurer(Minion):
+	Class, race, name = "Neutral", "", "Relentless Adventurer"
+	mana, attack, health = 2, 2, 2
+	index = "THE_BARRENS~Neutral~Minion~2~2~2~~Relentless Adventurer~Windfury~Uncollectible"
+	requireTarget, keyWord, description = False, "Windfury", "Windfury"
+	name_CN = "无情的冒险者"
+
+
+class ArcaneAdventurer(Minion):
+	Class, race, name = "Neutral", "", "Arcane Adventurer"
+	mana, attack, health = 2, 2, 2
+	index = "THE_BARRENS~Neutral~Minion~2~2~2~~Arcane Adventurer~Spell Damage~Uncollectible"
+	requireTarget, keyWord, description = False, "Spell Damage", "Spell Damage+1"
+	name_CN = "奥术冒险者"
+
+
+class SneakyAdventurer(Minion):
+	Class, race, name = "Neutral", "", "Sneaky Adventurer"
+	mana, attack, health = 2, 2, 2
+	index = "THE_BARRENS~Neutral~Minion~2~2~2~~Sneaky Adventurer~Stealth~Uncollectible"
+	requireTarget, keyWord, description = False, "Stealth", "Stealth"
+	name_CN = "鬼祟的冒险者"
+
+
+class VitalAdventurer(Minion):
+	Class, race, name = "Neutral", "", "Vital Adventurer"
+	mana, attack, health = 2, 2, 2
+	index = "THE_BARRENS~Neutral~Minion~2~2~2~~Vital Adventurer~Lifesteal~Uncollectible"
+	requireTarget, keyWord, description = False, "Lifesteal", "Lifesteal"
+	name_CN = "活跃的冒险者"
+
+
+class SwiftAdventurer(Minion):
+	Class, race, name = "Neutral", "", "Swift Adventurer"
+	mana, attack, health = 2, 2, 2
+	index = "THE_BARRENS~Neutral~Minion~2~2~2~~Swift Adventurer~Rush~Uncollectible"
+	requireTarget, keyWord, description = False, "Rush", "Rush"
+	name_CN = "迅捷的冒险者"
+
+
+Adventurers = [DeadlyAdventurer, BurlyAdventurer, DevoutAdventurer, RelentlessAdventurer,
+			   ArcaneAdventurer, SneakyAdventurer, VitalAdventurer, SwiftAdventurer]
+
+
+AcrossPacks_Cards = [TheCoin, SilverHandRecruit, WickedKnife, PoisonedDagger, SearingTotem, StoneclawTotem, HealingTotem, StrengthTotem,
+					#Basic and Upgraded Hero Powers
+					DemonClaws, DemonsBite, Shapeshift, DireShapeshift, SteadyShot, BallistaShot, Fireblast, FireblastRank2, Reinforce, TheSilverHand,
+					LesserHeal, Heal, DaggerMastery, PoisonedDaggers, TotemicCall, TotemicSlam, LifeTap, SoulTap, ArmorUp, TankUp,
+					#Basic Heroes
+					Illidan, Rexxar, Valeera, Malfurion, Garrosh, Uther, Thrall, Jaina, Anduin, Guldan,
+					#Cards
+					MurlocScout, IllidariInitiate, ExcessMana, Claw, ArcaneMissiles, WaterElemental_Basic, Pyroblast, LightsJustice, TruesilverChampion, PatientAssassin, Voidwalker, FieryWarAxe_Basic, Bananas, DamagedGolem, Skeleton,
+					VioletApprentice, Whelp, BaineBloodhoof, Dream, Nightmare, YseraAwakens, LaughingSister, EmeraldDrake, LeaderofthePack, SummonaPanther, Panther, Treant_Classic, Treant_Classic_Taunt, EvolveSpines, EvolveScales,
+					DruidoftheClaw_Charge, DruidoftheClaw_Taunt, DruidoftheClaw_Both, RampantGrowth, Enrich, Snake, Huffer, Leokk, Misha, Hyena_Classic, ManaWyrm, Defender, Ashbringer, SpiritWolf, Frog,
+					Shadowbeast, Imp, BloodFury, Infernal, Nerubian, BoomBot, GoldenKobold, TolinsGoblet, WondrousWand, ZarogsCrown, Bomb,
+					#Year of Dragons
+					EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, WitchyLackey, TitanicLackey, DraconicLackey,
+					#Year of Gryphon
+					DeadlyAdventurer, BurlyAdventurer, DevoutAdventurer, RelentlessAdventurer, ArcaneAdventurer, SneakyAdventurer, VitalAdventurer, SwiftAdventurer,
+					]

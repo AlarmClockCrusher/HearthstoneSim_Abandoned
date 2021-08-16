@@ -26,6 +26,7 @@ class Hand_Deck:
 			self.handUpperLimit[1] = 9
 		if self.Game.heroes[2].Class in SVClasses:
 			self.handUpperLimit[2] = 9
+		self.type = ''
 		self.initialDecks = {1: deck1 if deck1 else Default1, 2: deck2 if deck2 else Default2}
 		self.cards_1Possi = {1:[], 2:[]} #可以明确知道是哪一张的全部资源牌
 		self.cards_XPossi = {1:[], 2:[]} #只知道这张牌可能是什么的资源牌
@@ -61,6 +62,7 @@ class Hand_Deck:
 		if self.Game.heroes[2].Class in SVClasses:
 			mulliganSize[2] = 3
 		for ID in range(1, 3):
+			#The legendary Quests and Questlines both have description starting with Quest
 			mainQuests[ID] = [card for card in self.decks[ID] if card.description.startswith("Quest")]
 			numQueststoDraw = min(len(mainQuests[ID]), mulliganSize[ID])
 			if numQueststoDraw > 0:
@@ -76,7 +78,6 @@ class Hand_Deck:
 		indices = {1: indices1, 2: indices2}  # indicesCards是要替换的手牌的列表序号，如[1, 3]
 		GUI = self.Game.GUI
 		for ID in range(1, 3):
-			print("Handle mulligpan hand ", ID)
 			cardstoReplace = []
 			# self.Game.mulligans is the cards currently in players' hands.
 			if indices[ID]:
@@ -96,7 +97,7 @@ class Hand_Deck:
 			self.Game.mulligans[2].append(TheCoin(self.Game, 2))
 			addCoin = True
 		if GUI:
-			#在这里生成Sequence，然后存储
+			#在这里生成Sequence，然后存储在seqHolder[-1]里面
 			GUI.mulligan_NewCardsfromDeckAni(addCoin)
 			#The cards are added into hands and the sequence is further extended
 			GUI.mulligan_MoveCards2Hand()
@@ -104,8 +105,10 @@ class Hand_Deck:
 			for ID in range(1, 3):
 				for card in self.hands[ID] + self.decks[ID]:
 					if "Start of Game" in card.index:
-						GUI.seqHolder[-1].append(GUI.FUNC(GUI.showOffBoardTrig, card))
+						GUI.seqHolder[-1].append(GUI.FUNC(GUI.showOffBoardTrig, card, "Appear"))
 						card.startofGame()
+			
+			GUI.turnStartAni()
 			self.drawCard(1)
 			self.decideCardColors()
 			GUI.seqHolder.pop(0).start()
@@ -120,8 +123,10 @@ class Hand_Deck:
 				for card in self.hands[ID] + self.Game.minions[ID]:
 					card.btn.setBoxColor(card.btn.decideColor())
 				hero, power = self.Game.heroes[ID], self.Game.powers[ID]
-				hero.btn.setBoxColor(hero.btn.decideColor())
-				power.btn.setBoxColor(power.btn.decideColor())
+				try: hero.btn.setBoxColor(hero.btn.decideColor())
+				except: pass
+				try: power.btn.setBoxColor(power.btn.decideColor())
+				except: pass
 				
 	# 双人游戏中一方很多控制自己的换牌，之后两个游戏中复制对方的手牌和牌库信息
 	def mulligan1Side(self, ID, indices):
@@ -157,31 +162,6 @@ class Hand_Deck:
 			card.checkEvanescent()
 		if self.Game.GUI: self.Game.GUI.update()
 
-	#intoHD=0: include in hand
-	#intoHD=1: include in deck
-	#intoHD=other: include in both
-	def includePossi(self, card, intoHD): #intoHD == 0, 1, other integers
-		tup, ID = (card.creator, card.possi), card.ID
-		if intoHD != 1: self.trackedHands[ID].append(tup) #possi is added to hand
-		if intoHD != 0: #possi is added to the decks
-			if len(tup[1]) == 1: self.cards_1Possi[ID].append(tup)
-			else: self.cards_XPossi[ID].append(tup)
-			
-	#fromHD=0: only rule out from hand
-	#fromHD=1: only rule out from deck
-	#fromHD=other: rule out from both
-	def ruleOut(self, card, fromHD): #fromHD = 0, 1, other integers
-		tup = (card.creator, card.possi)
-		ID = card.ID
-		if fromHD != 1: #Rule out from hand
-			try: self.trackedHands[ID].remove(tup)
-			except: pass
-		if fromHD != 0: #Also rule out from deck
-			try: self.cards_1Possi[ID].remove(tup)
-			except:
-				try: self.cards_1Possi[ID].remove(tup)
-				except: pass
-				
 	def handNotFull(self, ID):
 		return len(self.hands[ID]) < self.handUpperLimit[ID]
 
@@ -238,7 +218,7 @@ class Hand_Deck:
 				else:
 					self.noCards[ID] += 1  # 如果在疲劳状态有卡洗入牌库，则疲劳值不会减少，在下次疲劳时，仍会从当前的非零疲劳值开始。
 					damage = self.noCards[ID]
-					if GUI: GUI.handZones[ID].fatigueAni(damage)
+					if GUI: GUI.deckZones[ID].fatigueAni(damage)
 					dmgTaker = game.scapegoat4(game.heroes[ID])
 					dmgTaker.takesDamage(None, damage, damageType="Ability")  # 疲劳伤害没有来源
 					return None, -1 #假设疲劳时返回的数值是负数，从而可以区分爆牌（爆牌时仍然返回那个牌的法力值）和疲劳
@@ -255,8 +235,10 @@ class Hand_Deck:
 			game.sendSignal("CardDrawn", ID, None, cardTracker, mana, "")
 			self.Game.Counters.numCardsDrawnThisTurn[ID] += 1
 			if cardTracker[0].type == "Spell" and "Casts When Drawn" in cardTracker[0].index:
-				cardTracker[0].whenEffective()
-				game.sendSignal("SpellCastWhenDrawn", ID, None, cardTracker[0], mana, "")
+				card2Cast = cardTracker[0]
+				if GUI: GUI.seqHolder[-1].append(GUI.FUNC(card2Cast.btn.np.removeNode))
+				card2Cast.whenEffective()
+				game.sendSignal("SpellCastWhenDrawn", ID, None, card2Cast, mana, "")
 				#抽到之后施放的法术如果检测到玩家处于濒死状态，则不会再抽一张。如果玩家有连续抽牌的过程，则执行下次抽牌
 				if game.heroes[ID].health > 0 and not game.heroes[ID].dead:
 					self.drawCard(ID)
@@ -278,22 +260,20 @@ class Hand_Deck:
 	# Will force the ID of the card to change. obj can be an empty list/tuple
 	#Creator是这张/些牌的创建者，creator=None，则它们的creator继承原来的。
 	#possi是这张/些牌的可能性，possi=()说明它们都是确定的牌
-	def addCardtoHand(self, obj, ID, byType=False, byDiscover=False, pos=-1, 
-									ani="fromCenter", creator=None, possi=()):
+	def addCardtoHand(self, obj, ID, byDiscover=False, pos=-1,
+									ani="fromCenter", creator=None):
 		game, GUI = self.Game, self.Game.GUI
 		if not isinstance(obj, (list, np.ndarray, tuple)):  # if the obj is not a list, turn it into a single-element list
 			obj = [obj]
 		morethan3 = len(obj) > 2
 		for card in obj:
 			if self.handNotFull(ID):
-				if byType: card = card(game, ID)
+				if inspect.isclass(card): card = card(game, ID)
 				card.ID = ID
 				self.hands[ID].insert(pos + 100 * (pos < 0), card)
 				if ani == "fromCenter":
 					if GUI:
-						if card.btn:
-							print("A card btn already created", card, card.btn)
-							GUI.handZones[card.ID].draw(afterAllFinished=False)
+						if card.btn: GUI.handZones[card.ID].placeCards()
 						else: GUI.putaNewCardinHandAni(card)
 				elif ani == "Twinspell":
 					if GUI: GUI.cardReplacedinHand_Refresh(card)
@@ -302,60 +282,96 @@ class Hand_Deck:
 				card = card.entersHand()
 				#只有已经提前定义了instance的卡牌会使用creator is None的选项
 				if creator: card.creator = creator
-				card.possi = possi if possi else (type(card), ) #possi=()说明这张牌的可能性是确定的
-				card.tracked = True
-				self.includePossi(card, intoHD=2)
 				game.sendSignal("CardEntersHand", ID, None, [card], 0, "")
 				if byDiscover: game.sendSignal("PutinHandbyDiscover", ID, None, obj, 0, '')
 			else:
 				self.Game.Counters.shadows[ID] += 1
 		game.Manas.calcMana_All()
 		
-	def replaceCardDrawn(self, targetHolder, newCard, possi):
+	def replaceCardDrawn(self, targetHolder, newCard, creator=None):
 		ID = targetHolder[0].ID
 		isPrimaryGalakrond = targetHolder[0] == self.Game.Counters.primaryGalakronds[ID]
-		newCard.tracked, newCard.possi = True, possi
+		newCard.creator = creator
 		targetHolder[0] = newCard
 		if isPrimaryGalakrond: self.Game.Counters.primaryGalakronds[ID] = newCard
 		
-	def replaceCardinHand(self, card, newCard): #替换单张卡牌，用于在手牌中发生变形时
+	def replaceCardinHand(self, card, newCard, creator=None): #替换单张卡牌，用于在手牌中发生变形时
 		ID = card.ID
 		i = self.hands[ID].index(card)
 		card.leavesHand()
-		if card.tracked: self.ruleOut(card, fromHD=2)
 		self.hands[ID].pop(i)
-		self.addCardtoHand(newCard, ID, byType=False, byDiscover=False, pos=i, ani="Twinspell", possi=(newCard.creator, newCard.possi))
+		self.addCardtoHand(newCard, ID, byDiscover=False, pos=i, ani="Twinspell", creator=creator)
 		
 	#目前只有牌库中的迦拉克隆升级时会调用，对方是可以知道的
-	def replaceCardinDeck(self, card, newCard):
+	def replaceCardinDeck(self, card, newCard, creator=None):
 		ID = card.ID
 		try:
 			i = self.decks[ID].index(card)
 			card.leavesDeck()
-			self.ruleOut(card, fromHD=1)
 			self.decks[ID][i] = newCard
+			newCard.creator = creator
 			self.Game.sendSignal("DeckCheck", ID, None, None, 0, "")
 		except: pass
 		
-	def replaceWholeDeck(self, ID, newCards):
+	def replaceWholeDeck(self, ID, newCards, creator=None):
 		self.extractfromDeck(0, ID, all=True)
 		self.decks[ID] = newCards
-		for card in newCards: card.entersDeck()
+		for card in newCards:
+			card.entersDeck()
+			card.creator = creator
 		self.Game.sendSignal("DeckCheck", ID, None, None, 0, "")
 		
-	def replacePartofDeck(self, ID, indices, newCards):
+	def replacePartofDeck(self, ID, indices, newCards, creator=None):
 		for card in newCards: card.leavesDeck()
 		deck = self.decks[ID]
 		for i, oldCard, newCard in zip(indices, deck, newCards):
 			oldCard.leavesDeck()
 			deck[i] = newCard
+			newCard.creator = creator
 			newCard.entersDeck()
 		self.Game.sendSignal("DeckCheck", ID, None, None, 0, "")
 		
+	def tradeCard(self, subject):
+		curGame, ID = self.Game, subject.ID
+		GUI, sequence = curGame.GUI, None
+		if GUI:
+			sequence = GUI.SEQUENCE()
+			GUI.seqReady = False
+			GUI.seqHolder.append(sequence)
+		#先把手牌中的这些牌移出
+		self.hands[subject.ID].remove(subject)
+		subject.leavesHand()
+		curGame.Manas.manas[ID] -= 1
+		if GUI:
+			GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, curGame.Manas.manas[ID], curGame.Manas.manasUpper[ID],
+											  curGame.Manas.manasLocked[ID], curGame.Manas.manasOverloaded[ID]))
+			GUI.cardsLeaveHandAni([subject], ID, linger=True)
+		self.Game.sendSignal("ManaPaid", ID, subject, None, 1, "")
+		if curGame.status[ID]["Trade Discovers Instead"] > 0:
+			if curGame.mode == 0:
+				if curGame.guides:
+					i = curGame.guides.pop(0)
+					if i > -1: self.drawCard(ID, i)
+				else:
+					ownDeck = self.decks[ID]
+					types, inds = [type(card) for card in ownDeck], list(range(len(ownDeck)))
+					inds = npChoice_inds(types, inds, 3)
+					if len(inds) > 1:
+						curGame.options = [ownDeck for i in inds]
+						curGame.Discover.startDiscover(AuctioneerJaxon(curGame, ID))
+					else:
+						i = inds[0] if inds else -1  #牌库 中没有牌的时候会返回一个空的inds列表
+						curGame.fixedGuides.append(i)
+						if i > -1: curGame.Hand_Deck.drawCard(ID, i)
+		else:
+			self.drawCard(ID)
+		self.shuffleintoDeck(subject, initiatorID=ID, enemyCanSee=False)
+		self.decideCardColors()
+		if GUI: GUI.seqReady = True
 	# All the cards shuffled will be into the same deck. If necessary, invoke this function for each deck.
 	# PlotTwist把手牌洗入牌库的时候，手牌中buff的随从两次被抽上来时buff没有了。
 	# 假设洗入牌库这个动作会把一张牌初始化
-	def shuffleintoDeck(self, obj, initiatorID=0, enemyCanSee=True, sendSig=True, creator=None, possi=()):
+	def shuffleintoDeck(self, obj, initiatorID=0, enemyCanSee=True, sendSig=True, creator=None):
 		if obj:
 			curGame = self.Game
 			#如果obj不是一个Iterable，则将其变成一个列表
@@ -363,21 +379,12 @@ class Hand_Deck:
 				obj = [obj]
 			ID = obj[0].ID
 			if curGame.GUI: curGame.GUI.shuffleintoDeckAni(obj, enemyCanSee)
-			newDeck = self.decks[ID] + obj
+			self.decks[ID] += obj
 			for card in obj:
 				card.entersDeck()
-				card.possi = possi if possi else (type(card), )
-				if creator: card.creator = type(creator)
-				self.includePossi(card, intoHD=1)
-			if curGame.mode == 0:
-				if curGame.guides:
-					order = curGame.guides.pop(0)
-				else:
-					order = list(range(len(newDeck)))
-					npshuffle(order)
-					curGame.fixedGuides.append(tuple(order))
-				self.decks[ID] = [newDeck[i] for i in order]
-			if sendSig: curGame.sendSignal("CardShuffled", creator.ID if creator else initiatorID, creator, obj, 0, "")
+				card.creator = creator
+			npshuffle(self.decks[ID])
+			if sendSig: curGame.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
 			curGame.sendSignal("DeckCheck", ID, None, None, 0, "")
 	
 	#Given the index in hand. Can't shuffle multiple cards except for whole hand
@@ -397,7 +404,7 @@ class Hand_Deck:
 		if not isinstance(minions, list):
 			minions = [minions]
 		for minion in minions:
-			self.Game.summonfrom(minion, ID, -1, None, fromHand=True)
+			self.Game.summonfrom(minion, ID, -1, None, source='H')
 			minion.loseAbilityInhand()
 		for minion in minions:
 			self.Game.killMinion(minion, minion)
@@ -411,7 +418,6 @@ class Hand_Deck:
 		if self.hands[ID]:
 			cards, cost, isRightmostCardinHand = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True)
 			for card in cards:
-				self.ruleOut(card, fromHD=2)
 				card.whenDiscarded()
 				self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
 				self.Game.Counters.cardsDiscardedThisTurn[ID].append(card.index)
@@ -427,7 +433,6 @@ class Hand_Deck:
 				if all: cards = self.extractfromHand(None, ID=ID, all=True, enemyCanSee=True, linger=True)[0]
 				else: cards = [self.extractfromHand(i, ID=ID, enemyCanSee=True, linger=True)[0] for i in card]
 				for card in cards:
-					self.ruleOut(card, fromHD=2)
 					self.Game.sendSignal("CardDiscarded", card.ID, None, card, 1, "")
 					card.whenDiscarded()
 					self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
@@ -440,7 +445,6 @@ class Hand_Deck:
 			i = card if isinstance(card, (int, np.int32, np.int64)) else self.hands[ID].index(card)
 			card = self.hands[ID].pop(i)
 			card.leavesHand()
-			self.ruleOut(card, fromHD=2) #rule out from both hand and deck
 			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni([card], enemyCanSee=True, linger=True)
 			self.Game.sendSignal("CardDiscarded", card.ID, None, card, 1, "")
 			card.whenDiscarded()
@@ -462,9 +466,6 @@ class Hand_Deck:
 				self.hands[ID] = []
 				for card in cardsOut:
 					card.leavesHand()
-					if card.tracked:
-						#洗牌的时候一般都不会涉及修改资源牌的可能选项
-						self.ruleOut(card, fromHD=0)
 					self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
 			return cardsOut, 0, -2  # -2 means the posinHand doesn't have real meaning.
 		else:
@@ -478,11 +479,6 @@ class Hand_Deck:
 				card = self.hands[ID].pop(card)
 				cost = card.getMana()
 			card.leavesHand()
-			#取出单张手牌的时候，如果其可以追踪，则需要从cards_1Possi或者cards_XPossi里面排除
-			if enemyCanSee:
-				#If the card is tracked, rule out from both hand and deck; otherwise only rule out from deck
-				self.ruleOut(card, fromHD=1+card.tracked)
-				
 			if animate and self.Game.GUI: self.Game.GUI.cardsLeaveHandAni([card], card.ID, enemyCanSee, linger=linger)
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
 			return card, cost, posinHand
@@ -503,7 +499,6 @@ class Hand_Deck:
 				if not self.decks[ID]: return None, 0, False
 				card = self.decks[ID].pop(card)
 			card.leavesDeck()
-			if enemyCanSee: self.ruleOut(card, fromHD=1)
 			if animate and self.Game.GUI: self.Game.GUI.cardLeavesDeckAni(card, enemyCanSee=enemyCanSee)
 			self.Game.sendSignal("DeckCheck", ID, None, None, 0, "")
 			return card, 0, False
@@ -514,7 +509,6 @@ class Hand_Deck:
 		for i in range(num):
 			card = self.extractfromDeck(-1, ID)[0] #The cards removed from deck top can always be seen by opponent
 			if card: cards.append(card)
-			else: None
 		return cards
 		
 	def createCopy(self, game):
@@ -534,26 +528,31 @@ class Hand_Deck:
 
 from CardPools import *
 	
-Default1 = [ArgentProtector, HolyLight, PursuitofJustice, ArgentSquire, Equality, WarhorseTrainer,
-			TruesilverChampion, StandAgainstDarkness, GuardianofKings, TirionFordring,
-			#Preparation, TinyKnightofEvil, Hellfire, LordJaraxxus, LakkariFelhound,
-			StrengthTotem, SigilofSilence,
+Default1 = [AuctioneerJaxon, Florist, MailboxDancer, MailboxDancer, MailboxDancer, StockadesPrisoner, SecretPassage, SecretPassage, SecretPassage,
+			#RisetotheOccasion, PrismaticJewelKit, Peasant, SowtheSoil,
+			#Provoke, RaidtheDocks, ShiverTheirTimbers, HarborScamp, CargoGuard, HeavyPlate, StormwindFreebooter, RemoteControlledGolem, CowardlyGrunt, Lothar,
+			#KindlingElemental, SunscaleRaptor, LivingSeedRank1, SafetyInspector, CrimsonSigilRunner,
+			#MoargForgefiend, VarianKingofStormwind, GoldshireGnoll,
+			NatureStudies,
+			#Demon hunter
+			#Metamorfin, FelBarrage, FelBarrage, ChaosLeech, LionsFrenzy, Felgorger, PersistentPeddler, PersistentPeddler, PersistentPeddler, IreboundBrute, JaceDarkweaver, SkullofGuldan,
+			#Druid
+			#LostinthePark,
+			#VibrantSquirrel, Composting, Wickerclaw, OracleofElune, KodoMount, ParkPanther, BestinShell, SheldrasMoontree,
+			#Hunter
+			#DevouringSwarm, DefendtheDwarvenDistrict, LeatherworkingKit, AimedShot, RammingMount, StormwindPiper, RodentNest, ImportedTarantula, TheRatKing, RatsofExtraordinarySize,
+			AllianceBannerman, HotStreak, FirstFlame, SorcerersGambit, CelestialInkSet, #Ignite, PrestorsPyromancer, FireSale, SanctumChandler, ClumsyCourier, GrandMagusAntonidas,
+			
 			]
 
-Default2 = [#Mana 2 cards
-			YouthfulBrewmaster, KazakusGolemShaper,
-			##Mana 4 cards
-			BigGameHunter, VioletTeacher,
-			##Mana 6~8 cards
-			#MalygostheSpellweaver, OnyxiatheBroodmother, SleepyDragon, YseratheDreamer, DeathwingtheDestroyer, ClockworkGiant,
-			#Druid cards
-			MarkoftheWild, MenagerieWarden, Nourish, AncientofWar, Cenarius,
-			##Mage cards
-			FallenHero, IceBarrier, MirrorEntity,
-			##Priest cards
-			CrimsonClergy, HolySmite, ShadowWordDeath, ThriveintheShadows, Lightspawn, HolyNova, ShadowWordRuin, TempleEnforcer, NatalieSeline,
-			
-			##Warrior cards
-			#BloodsailDeckhand, Whirlwind, CruelTaskmaster, Armorsmith, WarCache, WarsongOutrider, Brawl, Gorehowl, GrommashHellscream,
-			ImprisonedFelmaw, ImprisonedObserver, ImprisonedSungill, ImprisonedFelmaw, SigilofFlame, SigilofSilence,
+Default2 = [NorthshireFarmer, PackageRunner, FlightmasterDungar,
+			Cheesemonger, StubbornSuspect, StormwindGuard, BattlegroundBattlemaster,
+			NatureStudies, ExplosiveTrap, ExplosiveTrap, ExplosiveTrap,
+			#Mage
+			#Paladin
+			BlessedGoods, PrismaticJewelKit, RisetotheOccasion, AllianceBannerman, CatacombGuard, LightbringersHammer, FirstBladeofWrynn, HighlordFordragon,
+			##Priest
+			CalloftheGrave, ShadowclothNeedle, TwilightDeceptor, Psyfiend, VoidShard, ElekkMount, ShardoftheNaaru,
+			#SeekGuidance,
+			CThuntheShattered,
 			]

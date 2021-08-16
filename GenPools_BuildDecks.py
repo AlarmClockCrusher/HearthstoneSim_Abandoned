@@ -24,6 +24,7 @@ from Outlands import *
 from Academy import *
 from Darkmoon import *
 from Barrens import *
+from Stormwind import *
 
 #from SV_Basic import *
 #from SV_Ultimate import *
@@ -36,25 +37,28 @@ from Barrens import *
 
 
 def makeCardPool(monk=0, SV=0, writetoFile=True):
-	cardPool, info = {}, ""
+	cardPool, info = [], ""
 	
-	cardPool.update(AcrossPacks_Indices) #Has the basic hero and hero power definitions.
+	cardPool += AcrossPacks_Cards #Has the basic hero and hero power definitions.
 	info += "from AcrossPacks import *\n"
 	
-	cardPool.update({card.index: card for card in Core_Cards})
+	cardPool += Core_Cards
 	info += "from Core import *\n"
 	
-	cardPool.update({card.index: card for card in Outlands_Cards})
+	cardPool += Outlands_Cards
 	info += "from Outlands import *\n"
 	
-	cardPool.update({card.index: card for card in Academy_Cards})
+	cardPool += Academy_Cards
 	info += "from Academy import *\n"
 	
-	cardPool.update({card.index: card for card in Darkmoon_Cards})
+	cardPool += Darkmoon_Cards
 	info += "from Darkmoon import *\n"
 	
-	cardPool.update({card.index: card for card in Barrens_Cards})
+	cardPool += Barrens_Cards
 	info += "from Barrens import *\n"
+	
+	cardPool += Stormwind_Cards
+	info += "from Stormwind import *\n"
 	#if monk:
 	#	print("Including Monk")
 	#	cardPool.update(Monk_Indices)
@@ -79,67 +83,57 @@ def makeCardPool(monk=0, SV=0, writetoFile=True):
 		#cardPool.update(SV_Eternal_Indices)
 		#info += "from SV_Eternal import *\n"
 	
-	BasicPowers, UpgradedPowers, Classes, ClassesandNeutral, ClassDict = [], [], [], [], {}
-	for key in list(cardPool.keys()):
-		if "Hero: " in key:
-			Class = key.split(":")[1].strip()
-			Classes.append(Class)
-			ClassesandNeutral.append(Class)
-			ClassDict[Class] = cardPool[key]
-			del cardPool[key]
-		elif " Hero Power~" in key:
-			if "~Upgraded Hero Power~" in key: UpgradedPowers.append(cardPool[key])
-			else: BasicPowers.append(cardPool[key])
-			del cardPool[key]
+	BasicPowers, UpgradedPowers, Classes, ClassesandNeutral, Class2HeroDict = [], [], [], [], {}
+	for card in cardPool[:]:
+		if card.type == "Hero" and "~" not in card.index:
+			Classes.append(card.Class)
+			ClassesandNeutral.append(card.Class)
+			Class2HeroDict[card.Class] = card
+			cardPool.remove(card)
+		elif card.type == "Power":
+			if "~Upgraded Hero Power~" in card.index: UpgradedPowers.append(card)
+			elif "~Basic Hero Power~" in card.index: BasicPowers.append(card)
+			cardPool.remove(card)
 	
 	ClassesandNeutral.append("Neutral")
 	
 	pools = Pools()
 	pools.Classes = Classes
 	pools.ClassesandNeutral = ClassesandNeutral
-	pools.ClassDict = ClassDict
+	pools.Class2HeroDict = Class2HeroDict
 	pools.basicPowers = BasicPowers
 	pools.upgradedPowers = UpgradedPowers
 	
 	#print("SV cards included in card pool:", "SV_Basic~Runecraft~4~3~3~Minion~~Vesper, Witchhunter~Accelerate~Fanfare" in cardPool)
 	#cardPool本身需要保留各种祈求牌
-	pools.MinionswithRace = {"Beast": {}, "Demon": {}, "Dragon": {}, "Elemental":{},
-							"Murloc": {}, "Mech": {}, "Pirate":{}, "Totem": {}}
+	pools.MinionsofCost = {}
+	pools.MinionswithRace = {"Beast": [], "Demon": [], "Dragon": [], "Elemental":[],
+							"Murloc": [], "Mech": [], "Pirate":[], "Quilboar": [], "Totem": []}
 	if SV:
 		SV_Races = ["Officer", "Commander", "Machina", "Natura", "Earth Sigil", "Mysteria", "Artifact", "Levin"]
 		for race in SV_Races:
-			pools.MinionswithRace[race] = {}
+			pools.MinionswithRace[race] = []
 	
-	for key, value in cardPool.items(): #Fill MinionswithRace
-		if "~Uncollectible" not in key and hasattr(value, "race") and value.race and canBeGenerated(value, SV=SV):
-			for race in value.race.split(','):
-				pools.MinionswithRace[race][key] = value
+	pools.ClassCards = {s: [] for s in pools.Classes}
+	pools.NeutralCards = []
+	pools.LegendaryMinions = []
 	
-	pools.MinionsofCost = {}
-	for key, value in cardPool.items():
-		if "~Minion~" in key and "~Uncollectible" not in key and canBeGenerated(value, SV=SV):
-			cost = int(key.split('~')[3])
-			try: pools.MinionsofCost[cost][key] = value
-			except: pools.MinionsofCost[cost] = {key: value}
-	
-	pools.ClassCards = {s:{} for s in pools.Classes}
-	pools.NeutralCards = {}
-	for key, value in cardPool.items():  #Fill NeutralCards
-		if "~Uncollectible" not in key and canBeGenerated(value, SV=SV):
-			for Class in key.split('~')[1].split(','):
-				if Class != "Neutral":
-					try: pools.ClassCards[Class][key] = value
-					except: print("Failed Class Assignment is ", Class, key, value)
-				else: pools.NeutralCards[key] = value
-	
-	pools.LegendaryMinions = {}
-	for key, value in cardPool.items():
-		if "~Legendary" in key and "~Minion~" in key and "~Uncollectible" not in key and canBeGenerated(value, SV=SV):
-			pools.LegendaryMinions[key] = value
-	
+	for card in cardPool: #Fill MinionswithRace
+		if "~Uncollectible" not in card.index and canBeGenerated(card, SV=SV):
+			if card.type == "Minion":
+				if card.race:
+					for race in card.race.split(','):
+						pools.MinionswithRace[race].append(card)
+				try: pools.MinionsofCost[card.mana].append(card)
+				except KeyError: pools.MinionsofCost[card.mana] = [card]
+				if "~Legendary" in card.index: pools.LegendaryMinions.append(card)
+			for Class in card.Class.split(','):
+				if Class != "Neutral": pools.ClassCards[Class].append(card)
+				else: pools.NeutralCards.append(card)
+				
 	#确定RNGPools
 	RNGPools = {}
-	for card in cardPool.values():
+	for card in cardPool:
 		if hasattr(card, "poolIdentifier"):
 			identifier, pool = card.generatePool(pools)
 			#发现职业法术一定会生成一个职业列表，不会因为生成某个特定职业法术的牌而被跳过
@@ -160,7 +154,7 @@ def makeCardPool(monk=0, SV=0, writetoFile=True):
 		with open("CardPools.py", "w") as out_file:
 			out_file.write(info)
 			
-			#把BasicPowers, UpgradedPowers, Classes, ClassesandNeutral, ClassDict写入python里面
+			#把BasicPowers, UpgradedPowers, Classes, ClassesandNeutral, Class2HeroDict写入python里面
 			out_file.write("\nBasicPowers = [")
 			for power in BasicPowers: out_file.write(power.__name__+", ")
 			out_file.write(']\n')
@@ -173,44 +167,53 @@ def makeCardPool(monk=0, SV=0, writetoFile=True):
 			out_file.write("ClassesandNeutral = [")
 			for s in ClassesandNeutral: out_file.write("'%s', "%s)
 			out_file.write(']\n')
-			out_file.write("ClassDict = {")
-			for key, value in ClassDict.items(): out_file.write("'%s': %s, "%(key, value.__name__))
+			out_file.write("Class2HeroDict = {")
+			for key, value in Class2HeroDict.items(): out_file.write("'%s': %s, "%(key, value.__name__))
 			out_file.write("}\n\n")
 			
 			#把cardPool写入python里面
-			out_file.write("cardPool = {\n")
-			for index, obj in cardPool.items():
-				out_file.write('\t\t\t"%s": %s,\n'%(index, obj.__name__))
-			out_file.write("\t\t}\n\n")
+			out_file.write("cardPool = [")
+			i = 1
+			for card in cardPool:
+				out_file.write('%s, '%card.__name__)
+				if i % 10 == 0: out_file.write('\n\t\t\t')
+				i += 1
+			out_file.write("\t\t]\n\n")
 			
 			#没有必要把MinionswithRace写入python里面，因为卡池生成某种种族的随从是记录在RNGPool里面的
 			
-			#把MinionsofCost写入python里面
-			out_file.write("MinionsofCost = {\n")
-			for cost, dict in pools.MinionsofCost.items():
-				out_file.write("\t\t\t%d: ["%cost)
-				i = 1
-				for obj in dict.values():
-					out_file.write(obj.__name__+", ")
-					i += 1
-					if i % 10 == 0: out_file.write("\n\t\t\t")
-				out_file.write("\t\t\t],\n")
-			out_file.write("\t\t}\n")
+			##把MinionsofCost写入python里面
+			#out_file.write("MinionsofCost = {\n")
+			#for cost, ls in pools.MinionsofCost.items():
+			#	out_file.write("\t\t\t%d: ["%cost)
+			#	i = 1
+			#	for card in ls:
+			#		out_file.write(card.__name__+", ")
+			#		i += 1
+			#		if i % 10 == 0: out_file.write("\n\t\t\t")
+			#	out_file.write("\t\t\t],\n")
+			#out_file.write("\t\t}\n")
 			
 			#把ClassCards写入python里面
-			out_file.write("ClassCards = {\n")
-			for race, dict in pools.ClassCards.items():
-				out_file.write("\t\t\t'%s': {\n"%race)
-				for index, obj in dict.items(): #value is dict
-					out_file.write('\t\t\t\t"%s": %s,\n'%(index, obj.__name__))
-				out_file.write("\t\t\t},\n")
+			out_file.write("ClassCards = {")
+			for Class, ls in pools.ClassCards.items():
+				out_file.write("\t\t\t'%s': ["%Class)
+				i = 1
+				for card in ls: #value is dict
+					out_file.write('%s, '%card.__name__)
+					if i % 10 == 0: out_file.write('\n\t\t\t\t\t')
+					i += 1
+				out_file.write("\t\t\t],\n")
 			out_file.write("\t\t\t}\n\n")
 			
 			#把NeutralCards写入python里面
-			out_file.write("NeutralCards = {\n")
-			for index, obj in pools.NeutralCards.items():
-				out_file.write('\t\t\t"%s": %s,\n'%(index, obj.__name__))
-			out_file.write("\t\t}\n\n")
+			out_file.write("NeutralCards = [\n")
+			i = 1
+			for card in pools.NeutralCards:
+				out_file.write('%s, '%card.__name__)
+				if i % 10 == 0: out_file.write('\n\t\t')
+				i += 1
+			out_file.write("\n]\n\n")
 			
 			#把RNGPool写入python里面
 			out_file.write("RNGPools = {\n")
@@ -226,8 +229,7 @@ def makeCardPool(monk=0, SV=0, writetoFile=True):
 						try: out_file.write(obj.__name__+', ')
 						except: out_file.write("'%s', "%obj)
 						i += 1
-						if i % 10 == 0:
-							out_file.write('\n\t\t\t\t')
+						if i % 10 == 0: out_file.write('\n\t\t\t\t\t\t')
 					out_file.write("],\n")
 				elif type(obj) == type({}): #专门给了不起的杰弗里斯提供的
 					out_file.write("\t\t\t'%s': {\n"%poolIdentifier)
@@ -258,7 +260,7 @@ class Label_CardinDeck(tk.Label):
 		img = PIL.Image.open("Images\\%s\\Icon.png" % card.index.split("~")[0]).resize((30, 30))
 		ph = PIL.ImageTk.PhotoImage(img)
 		super().__init__(master=master, text=self.decideText(), #"%d  " % card.mana + card.name_CN,
-						 font=("Yahei", 15, "bold") if issubclass(card, Minion) else ("Yahei", 15),
+						 font=("Yahei", 15, "bold") if card.type == "Minion" else ("Yahei", 15),
 						 image=ph, compound=tk.LEFT)
 		self.image = ph
 		if "~Legendary" in card.index: self.config(bg="gold")
@@ -411,7 +413,7 @@ class DeckBuilderWindow(tk.Tk):
 		btn_Start.destroy()
 		self.deckMax = 40 if "craft" in self.Class2Display else 30
 		self.stage = 1
-		expansions = ["All", "DIY", "Basic", "Classic", "Shadows", "Uldum", "Dragons", "Galakrond", "Initiate", "Outlands", "Academy", "Darkmoon"]
+		expansions = ["All", "DIY", "Basic", "Classic", "Shadows", "Initiate", "Outlands", "Academy", "Darkmoon", "Barrens", "Stormwind"]
 		if SV:
 			SV_expansions = ["SV_Basic", "SV_Ultimate", "SV_Uprooted", "SV_Fortune", "SV_Rivayle", "SV_Eternal"]
 			expansions.extend(SV_expansions)
@@ -445,7 +447,7 @@ class DeckBuilderWindow(tk.Tk):
 		
 		panel_Expansions = tk.Frame(self.panel_Search)
 		panel_Expansions.grid(row=1, column=0, columnspan=10)
-		for i, expansion in enumerate(("CORE", "BLACK_TEMPLE", "SCHOLOMANCE", "DARKMOON_FAIRE", "THE_BARRENS")):
+		for i, expansion in enumerate(("CORE", "BLACK_TEMPLE", "SCHOLOMANCE", "DARKMOON_FAIRE", "THE_BARRENS", "STORMWIND")):
 			Label_ExpansionSelection(panel_Expansions, self, expansion).grid(row=0, column=i)
 			
 		panel_EntrySearch = tk.Frame(self.panel_Search)
@@ -511,20 +513,20 @@ class DeckBuilderWindow(tk.Tk):
 		
 	def displayCardImg(self, card):
 		return
-		if card:
-			img = PIL.Image.open(findFilepath(card(None, 1)))
-			ph = PIL.ImageTk.PhotoImage(img)
-			if onLeft:
-				self.lbl_DisplayedCard_Right.config(image=ph)
-				self.lbl_DisplayedCard_Left.image = ph
-				#self..config(image=None)
-			else:
-				self.lbl_DisplayedCard_Right.config(image=ph)
-				self.lbl_DisplayedCard_Right.image = ph
-				self.lbl_DisplayedCard_Left.config(image=None)
-		else:
-			self.lbl_DisplayedCard_Left.config(image=None)
-			self.lbl_DisplayedCard_Right.config(image=None)
+		#if card:
+		#	img = PIL.Image.open(findFilepath(card(None, 1)))
+		#	ph = PIL.ImageTk.PhotoImage(img)
+		#	if onLeft:
+		#		self.lbl_DisplayedCard_Right.config(image=ph)
+		#		self.lbl_DisplayedCard_Left.image = ph
+		#		#self..config(image=None)
+		#	else:
+		#		self.lbl_DisplayedCard_Right.config(image=ph)
+		#		self.lbl_DisplayedCard_Right.image = ph
+		#		self.lbl_DisplayedCard_Left.config(image=None)
+		#else:
+		#	self.lbl_DisplayedCard_Left.config(image=None)
+		#	self.lbl_DisplayedCard_Right.config(image=None)
 		
 	def updateDeckLabels(self):
 		for lbl in self.ls_LabelCardsinDeck: lbl.destroy()
@@ -589,13 +591,13 @@ class DeckBuilderWindow(tk.Tk):
 		if self.Class2Display == "Neutral": cards = self.NeutralCards
 		else: cards = self.ClassCards[self.Class2Display]
 		i, j = 0, -1
-		for key, value in cards.items():
-			if self.manaCorrect(value, self.manasSelected) and self.expansionCorrect(key, self.expansionsSelected) \
-				and self.searchMatches(search, value):
+		for card in cards:
+			if self.manaCorrect(card, self.manasSelected) and self.expansionCorrect(card.index, self.expansionsSelected) \
+				and self.searchMatches(search, card):
 				if i % (2*numCardsEachRow) == 0:
 					j += 1
-					self.cards2Display[j] = [value]
-				else: self.cards2Display[j].append(value)
+					self.cards2Display[j] = [card]
+				else: self.cards2Display[j].append(card)
 				i += 1
 		if self.cards2Display: #如果查询结果不为空
 			for i, card in enumerate(self.cards2Display[0]):
@@ -647,6 +649,6 @@ if __name__ == "__main__":
 	
 	from CustomWidgets import txt, CHN
 	from CardPools import ClassCards, NeutralCards
-	NeutralCards.update({"SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Vanilla": TransferStudent})
+	#NeutralCards.update({"SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Vanilla": TransferStudent})
 	DeckBuilderWindow(ClassCards, NeutralCards, SV=SV).mainloop()
 	

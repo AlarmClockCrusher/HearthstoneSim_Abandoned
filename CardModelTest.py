@@ -57,11 +57,14 @@ class VariousTest(Panda_UICommon):
 		self.modelTemplates = {}
 		self.manaModels = {}
 		self.seqHolder = []
+		#self.disableMouse()
 		
-		self.loadBackground()
+		#self.loadBackground()
 		self.prepare()
-		self.cam.setPos(0, -51.5, 0)
 		
+		self.smallTest()
+		
+	def testEntireGameDisplay(self):
 		self.handZones = {1: HandZone(self, 1), 2: HandZone(self, 2)}
 		self.minionZones = {1: MinionZone(self, 1), 2: MinionZone(self, 2)}
 		self.heroZones = {1: HeroZone(self, 1), 2: HeroZone(self, 2)}
@@ -89,6 +92,8 @@ class VariousTest(Panda_UICommon):
 				weapon.btn.placeIcons()
 				weapon.btn.statusChangeAni()
 				
+		self.heroExplodeAni([self.Game.heroes[ID] for ID in range(1, 3)])
+		
 		self.seqHolder.pop(0).start()
 		#Sequence(Wait(3), Func(self.deckZones[1].fatigueAni, 8)).start()
 		
@@ -133,7 +138,7 @@ class VariousTest(Panda_UICommon):
 		game.turnStartTrigger = [InstructorFireheart_Effect(game, ID) for ID in (1, 1, 1, 1, 1, 1)] + [LothraxiontheRedeemed_Effect(game, ID) for ID in (2, 2, 2, 2, 2)]
 		self.Game = game
 		self.prepareTexturesandModels()
-		self.camLens.setFov(51.1, 27.5)
+		self.setCamera_RaySolid()
 		
 	def testTrigIconShining(self):
 		models = []
@@ -144,14 +149,10 @@ class VariousTest(Panda_UICommon):
 			model.setColor(white)
 			if name == "Trigger": model.find("Trig Counter").node().setText("1 3")
 			models.append(model)
-		Sequence(Wait(1), Func(self.func, models), Wait(4)).start()
-	
-	def func(self, models, hide=False):
-		if hide:
-			for model in models: model.setColor(transparent)
-		else:
-			for model in models: model.find("TexCard").find("+SequenceNode").node().loop(True, 1, 20)
 		
+	def smallTest(self):
+		pass
+	
 	def testCurve(self):
 		card = LightningBolt(self.Game, 1)
 		np, btn_Card = genCard(self, card, isPlayed=False, pickable=False)
@@ -166,7 +167,7 @@ class TestRaySolid(ShowBase):
 		super().__init__()
 		plane = self.loader.loadModel("Models\\BoardModels\\Background.glb")
 		plane.reparentTo(self.render)
-		plane.setPos(0, 10, 0)
+		plane.setPosHpr(0, 0, -10, 0, -90, 0)
 		
 		option = self.loader.loadModel("Models\\Option.glb")
 		option.reparentTo(self.render)
@@ -174,73 +175,55 @@ class TestRaySolid(ShowBase):
 		cNode = CollisionNode("CNDE")
 		cNode.addSolid(CollisionBox((0, 0, 0), (2, 2, 2)))
 		cNodePath = self.render.attachNewNode(cNode)
-		cNodePath.setPos(20, 5, 0)
+		cNodePath.setPos(20, 0, -5)
 		cNodePath.show()
+		
+		textNode = TextNode("Test")
+		textNode.setText("200000")
+		nodePath = self.render.attachNewNode(textNode)
+		nodePath.setScale(20)
+		nodePath.setHpr(0, -90, 0)
+		
 		self.cTrav = CollisionTraverser()
 		self.collHandler = CollisionHandlerQueue()
 		self.raySolid = CollisionRay()
-		self.raySolid.setOrigin(0, -50, 0)
+		self.raySolid.setOrigin(0, 0, 50)
 		cNode_Picker = CollisionNode("Picker Collider c_node")
 		cNode_Picker.addSolid(self.raySolid)
 		pickerNode = self.camera.attachNewNode(cNode_Picker)
 		pickerNode.show()  #For now, show the pickerRay collision with the card models
 		self.cTrav.addCollider(pickerNode, self.collHandler)
-		self.cam.setPos(0, -51.5, 0)
 		self.camLens.setFov(51.1, 27.5)
+		self.cam.setPosHpr(0, 0, 51.5, 0, -90, 0)
 		
 		self.accept("mouse1", self.mouse1_Down)
 		self.accept("mouse1-up", self.mouse1_Up)
 	
+	def setRaySolidDirection(self):
+		mpos = self.mouseWatcherNode.getMouse()
+		#Reset the Collision Ray orientation, based on the mouse position
+		self.raySolid.setDirection(25 * mpos.getX(), 14 * mpos.getY(), -50.5)
+	
 	def mouse1_Down(self):
 		if self.mouseWatcherNode.hasMouse():
-			mpos = self.mouseWatcherNode.getMouse()
-			#Reset the Collision Ray orientation, based on the mouse position
-			self.raySolid.setDirection(25*mpos.getX(), 50.5, 14*mpos.getY())
-			#self.raySolid.setFromLens(self.cam.node(), mpos.getX(), mpos.getY())
-			print("Mouse down origin", self.raySolid.getOrigin(), self.cam.getPos())
-	
-	#self.raySolid.show()
+			self.setRaySolidDirection()
 	
 	def mouse1_Up(self):
 		if self.mouseWatcherNode.hasMouse():
-			mpos = self.mouseWatcherNode.getMouse()
-			#Reset the Collision Ray orientation, based on the mouse position
-			#self.raySolid.setDirection(51.5*mpos.getX(), 1*100, 27.5*mpos.getY())
-			self.raySolid.setDirection(25*mpos.getX(), 50.5, 14*mpos.getY())
-			
-			#self.raySolid.setFromLens(self.cam.node(), mpos.getX(), mpos.getY())
-			#self.raySolid.show()
-			print("Mouse up origin", self.raySolid.getOrigin(), self.cam.getPos(), self.raySolid.getDirection())
-			print("Clicked: Num--", self.collHandler.getNumEntries())
+			self.setRaySolidDirection()
 			if self.collHandler.getNumEntries() > 0:
 				self.collHandler.sortEntries()
-				#print("Collision:", self.collHandler.getNumEntries(), self.collHandler.getEntries())
-				#for entry in self.collHandler.getEntries():
-				#	nodePath = entry.getIntoNodePath()
-				#	print("collboxes:", nodePath)
-				#	print(nodePath.findAllMatches("**/*_c_node"))
 				cNode_Picked = self.collHandler.getEntry(0).getIntoNodePath()
-				print("cNode clicked:", cNode_Picked, cNode_Picked.getParent().getPythonTag("btn"))
 				"""The scene graph tree is written in C. To store/read python objects, use NodePath.setPythonTag/getPythonTag()"""
 				cNode_Picked.getParent().getPythonTag("btn").leftClick()
 
 
-class TestInstancing(ShowBase):
+class SmallTest(ShowBase):
 	def __init__(self):
 		super().__init__()
-		model = self.loader.loadModel("Models\\Deathrattle.glb")
-		model.name = "DeathrattleModel"
-		model.reparentTo(self.render)
-		
-		sequence = Sequence(Wait(1), Func(self.func, model, (1, 0, 0), name="Test ani"), Wait(1), Func(self.func, model, (-1, 0, 0), name="Test ani"))
-		sequence.ivals[-1].name = "GOod Ani"
-		sequence.start()
-		print(sequence, sequence.ivals[-1].name)
-		self.cam.setPos(0, -5, 0)
-		
-	def func(self, model, pos):
-		model.setPos(pos)
-		
+		nodepath, btn = genCard(self, LostinthePark(None, 1), isPlayed=False, pickable=False)
+		Sequence(Wait(2), Func(btn.changeCard, DefendtheSquirrels(None, 1), False, False))
+	
 VariousTest().run()
 #TestRaySolid().run()
-#TestInstancing().run()
+#SmallTest().run()

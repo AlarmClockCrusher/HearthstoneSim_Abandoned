@@ -347,15 +347,7 @@ class XIErntzJustice(SVMinion):
 
 """DLC cards"""
 
-SV_Glory_Indices = {
-    "SV_Glory~Runecraft~4~3~3~Minion~~Vesper, Witchhunter~Accelerate~Fanfare": VesperWitchhunter,
-    "SV_Glory~Runecraft~Spell~2~Vesper, Witchhunter~Uncollectible": VesperWitchhunter_Accelerate,
-    "SV_Glory~Havencraft~1~Amulet~~Sacred Plea~Deathrattle": SacredPlea,
-    "SV_Glory~Bloodcraft~Minion~10~5~10~~Ruinweb Spider~Crystallize": RuinwebSpider,
-    "SV_Glory~Bloodcraft~2~Amulet~~Ruinweb Spider~Deathrattle": RuinwebSpider_Crystallize,
-    "SV_Glory~Bloodcraft~Minion~10~11~8~Dragon~XI. Erntz, Justice~Ward": XIErntzJustice,
-    "SV_Glory~Forestcraft~Spell~1~Airbound Barrage": AirboundBarrage,
-}from CardTypes import *
+from CardTypes import *
 from Triggers_Auras import *
 from SV_Basic import *
 

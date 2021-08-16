@@ -55,8 +55,7 @@ class Manas:
 	def unlockOverloadedMana(self, ID):
 		self.manas[ID] += self.manasLocked[ID]
 		self.manas[ID] = min(self.manas_UpperLimit[ID], self.manas[ID])
-		self.manasLocked[ID] = 0
-		self.manasOverloaded[ID] = 0
+		self.manasLocked[ID] = self.manasOverloaded[ID] = 0
 		GUI = self.Game.GUI
 		if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
 												  self.manasLocked[ID], self.manasOverloaded[ID]))
@@ -120,19 +119,21 @@ class Manas:
 			self.Game.sendSignal("ManaXtlsRestore", ID, None, None, after-before, "")
 
 	def destroyManaCrystal(self, num, ID):
-		self.manasUpper[ID] -= num
-		self.manasUpper[ID] = max(0, self.manasUpper[ID])
+		self.manasUpper[ID] = max(0, self.manasUpper[ID] - num)
 		self.manas[ID] = min(self.manas[ID], self.manasUpper[ID])
 		GUI = self.Game.GUI
 		if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
 												  self.manasLocked[ID], self.manasOverloaded[ID]))
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
 
-	def affordable(self, subject):
-		ID, mana = subject.ID, subject.getMana()
-		if self.cardCostsHealth(subject):
-			return mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.status[ID]["Immune"] > 0
-		else: return mana <= self.manas[ID]
+	def affordable(self, subject, forTrade=False):
+		ID = subject.ID
+		if forTrade: return self.Game.Hand_Deck.decks[ID] and self.manas[ID] > 0
+		else:
+			mana = subject.getMana()
+			if self.cardCostsHealth(subject):
+				return mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.status[ID]["Immune"] > 0
+			else: return mana <= self.manas[ID]
 		
 	def cardCostsHealth(self, subject):
 		return subject.marks["Cost Health Instead"] > 0# or (subject.type == "Spell" and self.status[subject.ID]["Spells Cost Health Instead"] > 0)
@@ -201,6 +202,7 @@ class Manas:
 		for card in cards: self.calcMana_Single(card)
 		
 	def calcMana_Single(self, card):
+		mana_0 = card.mana
 		card.mana = type(card).mana
 		for manaMod in card.manaMods: manaMod.handleMana()
 		#随从的改变自己法力值的效果在此结算。如果卡牌有回响，则其法力值不能减少至0
@@ -209,12 +211,16 @@ class Manas:
 			card.mana = 0
 		if card.mana < 1 and ((card.type == "Minion" and card.keyWords["Echo"] > 0) or (card.type == "Spell" and "Echo" in card.index)):
 			card.mana = 1
-			
+		if card.btn and card.mana != mana_0: card.btn.manaChangeAni(card.mana)
+		
 	def calcMana_Powers(self):
 		for ID in range(1, 3):
-			self.Game.powers[ID].mana = type(self.Game.powers[ID]).mana
-			for manaMod in self.Game.powers[ID].manaMods: manaMod.handleMana()
-			if self.Game.powers[ID].mana < 0: self.Game.powers[ID].mana = 0
+			power = self.Game.powers[ID]
+			mana_0 = power.mana
+			power.mana = type(power).mana
+			for manaMod in power.manaMods: manaMod.handleMana()
+			if power.mana < 0: power.mana = 0
+			if power.btn and mana_0 != power.mana: power.btn.manaChangeAni(power.mana)
 
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
@@ -349,12 +355,13 @@ class Counters:
 		self.numMinionsPlayedThisTurn = {1: 0, 2: 0}
 		self.minionsDiedThisTurn = {1: [], 2: []}
 		self.numCardsPlayedThisTurn = {1: 0, 2: 0} #Specifically for Combo. Because even Countered spells can trig Combos
-		self.cardsPlayedThisTurn = {1: {"Indices": [], "ManasPaid": []},
-									2: {"Indices": [], "ManasPaid": []}} #For Combo and Secret.
-		self.dmgonHero_inOppoTurn = {1: 0, 2: 0}
+		self.cardsPlayedEachTurn = {1: [[]], 2: []}
+		self.manas4CardsEachTurn = {1: [[]], 2: []}
+		
+		self.dmgonHeroThisTurn = {1: 0, 2: 0}
+		self.dmgonHeroLastTurn = {1: 0, 2: 0}
 		self.damageDealtbyHeroPower = {1: 0, 2: 0}
 		self.numElementalsPlayedLastTurn = {1: 0, 2: 0}
-		self.spellsPlayedLastTurn = {1: [], 2: []}
 		self.cardsPlayedLastTurn = {1: [], 2: []}
 		self.heroAttackTimesThisTurn = {1: 0, 2: 0}
 		self.primaryGalakronds = {1: None, 2: None}
@@ -367,6 +374,8 @@ class Counters:
 		self.numSecretsTriggeredThisGame = {1: 0, 2: 0}
 		self.numWatchPostSummoned = {1: 0, 2: 0}
 		self.healthRestoredThisTurn = {1: 0, 2: 0}
+		self.deathrattlesTriggered = {1: [], 2: []}
+		self.numCardsDrawnThisTurn = {1: 0, 2: 0}
 		
 		"""Shadowverse Counters"""
 		self.numEvolutionTurn = {1:5, 2:4}
@@ -380,7 +389,6 @@ class Counters:
 		self.amuletsDestroyedThisGame = {1: [], 2: []}
 		self.timesHeroTookDamage_inOwnTurn = {1: 0, 2: 0}
 		self.tempVengeance = {1: False, 2: False}
-		self.numCardsDrawnThisTurn = {1: 0, 2: 0}
 		self.numBurialRiteThisGame = {1: 0, 2: 0}
 		self.numCardsExtraPlayedThisTurn = {1: 0, 2: 0}
 		self.artifactsDiedThisGame = {1: {}, 2: {}}
@@ -388,23 +396,18 @@ class Counters:
 		self.numAcceleratePlayedThisTurn = {1: 0, 2: 0}
 		self.cardsDiscardedThisTurn = {1: [], 2: []}
 
-
+	def turnStarts(self):
+		self.cardsPlayedEachTurn[self.Game.turn].append([])
+		self.manas4CardsEachTurn[self.Game.turn].append([])
+		
 	def turnEnds(self):
-		self.numElementalsPlayedLastTurn[self.Game.turn] = 0
-		self.cardsPlayedLastTurn[self.Game.turn] = [] + self.cardsPlayedThisTurn[self.Game.turn]["Indices"]
-		for index in self.cardsPlayedThisTurn[self.Game.turn]["Indices"]:
-			if "~Elemental~" in index:
-				self.numElementalsPlayedLastTurn[self.Game.turn] += 1
-		self.spellsPlayedLastTurn[self.Game.turn] = []
-		for index in self.cardsPlayedThisTurn[self.Game.turn]["Indices"]:
-			if "~Spell~" in index:
-				self.spellsPlayedLastTurn[self.Game.turn].append(index)
-		self.cardsPlayedThisTurn = {1:{"Indices": [], "ManasPaid": []},
-									2:{"Indices": [], "ManasPaid": []}}
+		self.numElementalsPlayedLastTurn[self.Game.turn] = sum("~Elemental~" in card.index for card in \
+																self.cardsPlayedEachTurn[self.Game.turn][-1])
 		self.numCardsPlayedThisTurn = {1: 0, 2: 0}
 		self.numMinionsPlayedThisTurn = {1: 0, 2: 0}
 		self.numSpellsPlayedThisTurn = {1: 0, 2: 0}
-		self.dmgonHero_inOppoTurn[self.Game.turn] = 0
+		self.dmgonHeroLastTurn = self.dmgonHeroThisTurn
+		self.dmgonHeroThisTurn = {1: 0, 2: 0}
 		self.minionsDiedThisTurn = {1:[], 2:[]}
 		self.amuletsDestroyedThisTurn = {1:[], 2:[]}
 		self.heroAttackTimesThisTurn = {1: 0, 2: 0}
@@ -417,7 +420,7 @@ class Counters:
 		self.numAcceleratePlayedThisTurn = {1: 0, 2: 0}
 		self.cardsDiscardedThisTurn = {1:[], 2:[]}
 		self.healthRestoredThisTurn = {1: 0, 2: 0}
-
+		
 	#只有Game自己会引用Counters
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
@@ -475,7 +478,6 @@ class Discover:
 	def startDiscover(self, initiator, info=None):
 		if self.Game.GUI:
 			self.initiator = initiator
-			self.Game.GUI.update(all=False, board=True)
 			self.Game.GUI.waitforDiscover(info)
 			self.initiator, self.Game.options = None, []
 

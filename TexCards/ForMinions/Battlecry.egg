@@ -1,8 +1,5 @@
 <Comment> {
-  "egg-texture-cards -o Battlecry.egg -fps 24 -p 1,1 'TexCards\ForMinions\Battlecry_00.png' -p 128,128 'TexCards\ForMinions\Battlecry_01.png' -p 128,128 'TexCards\ForMinions\Battlecry_02.png' -p 128,128 'TexCards\ForMinions\Battlecry_03.png' -p 128,128 'TexCards\ForMinions\Battlecry_04.png' -p 128,128 'TexCards\ForMinions\Battlecry_05.png' -p 128,128 'TexCards\ForMinions\Battlecry_06.png' -p 128,128 'TexCards\ForMinions\Battlecry_07.png' -p 128,128 'TexCards\ForMinions\Battlecry_08.png' -p 128,128 'TexCards\ForMinions\Battlecry_09.png' -p 128,128 'TexCards\ForMinions\Battlecry_10.png' -p 128,128 'TexCards\ForMinions\Battlecry_11.png' -p 128,128 'TexCards\ForMinions\Battlecry_12.png' -p 128,128 'TexCards\ForMinions\Battlecry_13.png' -p 128,128 'TexCards\ForMinions\Battlecry_14.png' -p 128,128 'TexCards\ForMinions\Battlecry_15.png' -p 128,128 'TexCards\ForMinions\Battlecry_16.png' -p 128,128 'TexCards\ForMinions\Battlecry_17.png' -p 128,128 'TexCards\ForMinions\Battlecry_18.png' -p 128,128 'TexCards\ForMinions\Battlecry_19.png' -p 128,128 'TexCards\ForMinions\Battlecry_20.png' -p 128,128 'TexCards\ForMinions\Battlecry_21.png' -p 128,128 'TexCards\ForMinions\Battlecry_22.png' -p 128,128 'TexCards\ForMinions\Battlecry_23.png' -p 128,128 'TexCards\ForMinions\Battlecry_24.png' -p 128,128 'TexCards\ForMinions\Battlecry_25.png' -p 128,128 'TexCards\ForMinions\Battlecry_26.png' -p 128,128 'TexCards\ForMinions\Battlecry_27.png' -p 128,128 'TexCards\ForMinions\Battlecry_28.png' -p 128,128 'TexCards\ForMinions\Battlecry_29.png' -p 128,128 'TexCards\ForMinions\Battlecry_30.png' -p 128,128 'TexCards\ForMinions\Battlecry_31.png' -p 128,128 'TexCards\ForMinions\Battlecry_32.png'"
-}
-<Texture> Battlecry_32 {
-  "TexCards/ForMinions/Battlecry_32.png"
+  "egg-texture-cards -o Battlecry.egg -fps 30 -p 1,1 'TexCards\ForMinions\Battlecry_00.png' -p 128,128 'TexCards\ForMinions\Battlecry_01.png' -p 128,128 'TexCards\ForMinions\Battlecry_02.png' -p 128,128 'TexCards\ForMinions\Battlecry_03.png' -p 128,128 'TexCards\ForMinions\Battlecry_04.png' -p 128,128 'TexCards\ForMinions\Battlecry_05.png' -p 128,128 'TexCards\ForMinions\Battlecry_06.png' -p 128,128 'TexCards\ForMinions\Battlecry_07.png' -p 128,128 'TexCards\ForMinions\Battlecry_08.png' -p 128,128 'TexCards\ForMinions\Battlecry_09.png' -p 128,128 'TexCards\ForMinions\Battlecry_10.png' -p 128,128 'TexCards\ForMinions\Battlecry_11.png' -p 128,128 'TexCards\ForMinions\Battlecry_12.png' -p 128,128 'TexCards\ForMinions\Battlecry_13.png' -p 128,128 'TexCards\ForMinions\Battlecry_14.png' -p 128,128 'TexCards\ForMinions\Battlecry_15.png' -p 128,128 'TexCards\ForMinions\Battlecry_16.png' -p 128,128 'TexCards\ForMinions\Battlecry_17.png' -p 128,128 'TexCards\ForMinions\Battlecry_18.png' -p 128,128 'TexCards\ForMinions\Battlecry_19.png' -p 128,128 'TexCards\ForMinions\Battlecry_20.png' -p 128,128 'TexCards\ForMinions\Battlecry_21.png' -p 128,128 'TexCards\ForMinions\Battlecry_22.png' -p 128,128 'TexCards\ForMinions\Battlecry_23.png' -p 128,128 'TexCards\ForMinions\Battlecry_24.png' -p 128,128 'TexCards\ForMinions\Battlecry_25.png' -p 128,128 'TexCards\ForMinions\Battlecry_26.png' -p 128,128 'TexCards\ForMinions\Battlecry_27.png' -p 128,128 'TexCards\ForMinions\Battlecry_28.png' -p 128,128 'TexCards\ForMinions\Battlecry_29.png' -p 128,128 'TexCards\ForMinions\Battlecry_30.png' -p 128,128 'TexCards\ForMinions\Battlecry_31.png'"
 }
 <Texture> Battlecry_31 {
   "TexCards/ForMinions/Battlecry_31.png"
@@ -102,7 +99,7 @@
 }
 <Group> {
   <Switch> { 1 }
-  <Scalar> fps { 24 }
+  <Scalar> fps { 30 }
   <VertexPool> vpool {
     <Vertex> 0 {
       -0.00390625 0.00390625 0
@@ -616,22 +613,6 @@
       0.5 0.5 0
       <UV> { 1 1 }
     }
-    <Vertex> 128 {
-      -0.5 0.5 0
-      <UV> { 0 1 }
-    }
-    <Vertex> 129 {
-      -0.5 -0.5 0
-      <UV> { 0 0 }
-    }
-    <Vertex> 130 {
-      0.5 -0.5 0
-      <UV> { 1 0 }
-    }
-    <Vertex> 131 {
-      0.5 0.5 0
-      <UV> { 1 1 }
-    }
   }
   <Group> Battlecry_00 {
     <Polygon> {
@@ -855,13 +836,6 @@
       <RGBA> { 1 1 1 1 }
       <TRef> { Battlecry_31 }
       <VertexRef> { 124 125 126 127 <Ref> { vpool } }
-    }
-  }
-  <Group> Battlecry_32 {
-    <Polygon> {
-      <RGBA> { 1 1 1 1 }
-      <TRef> { Battlecry_32 }
-      <VertexRef> { 128 129 130 131 <Ref> { vpool } }
     }
   }
 }

@@ -8,7 +8,7 @@ from numpy.random import shuffle as npshuffle
 def PRINT(game, s):
 	pass
 	
-class WindWalkerMistweaver(HeroPower): #踏风织雾
+class WindWalkerMistweaver(Power): #踏风织雾
 	mana, name, requireTarget = 2, "WindWalker-Mistweaver", True
 	index = "Monk~Basic Hero Power~2~WindWalker-Mistweaver"
 	description = "Give a friendly character +1 Attack this turn; or give an enemy character -1 Attack" #在本回合中，使用一个友方角色获得+1攻击力；或者使一个敌方角色获得-1攻击力
@@ -24,7 +24,7 @@ class WindWalkerMistweaver(HeroPower): #踏风织雾
 			else: target.buffDebuff(attChange, 0, "EndofTurn")
 		return 0
 		
-class HighWindWalkerMistweaver(HeroPower): #精进踏风织雾
+class HighWindWalkerMistweaver(Power): #精进踏风织雾
 	mana, name, requireTarget = 2, "High WindWalker-Mistweaver", True
 	index = "Monk~Upgraded Hero Power~2~High WindWalker-Mistweaver"
 	description = "Give a friendly character +2 Attack this turn; or give an enemy character -2 Attack" #在本回合中，使用一个友方角色获得+1攻击力；或者使一个敌方角色获得-1攻击力
@@ -308,10 +308,9 @@ class Trig_XuentheWhiteTiger(TrigBoard):
 			cost = type(minion).mana + 1
 			stat = cost * 2 - 1
 			newIndex = "Classic~Monk~Minion~%d~%d~%d~Beast~Xuen, the White Tiger~Rush~Legendary~Uncollectible"%(cost, stat, stat)
-			subclass = type("XuentheWhiteTiger_Mutable_%d"%cost, (XuentheWhiteTiger_Mutable_1, ),
+			subclass = type("XuentheWhiteTiger__%d"%cost, (XuentheWhiteTiger_Mutable_1, ),
 						{"mana": cost, "attack": stat, "health": stat, "index": newIndex}
 						)
-			minion.Game.cardPool[newIndex] = subclass
 			minion.Game.transform(minion, subclass(minion.Game, minion.ID))
 			
 			
@@ -504,7 +503,7 @@ class SpiritTether(Spell): #魂体束缚
 		JadeTether(self.Game, self.ID).replaceHeroPower()
 		return None
 		
-class JadeTether(HeroPower):
+class JadeTether(Power):
 	mana, name, requireTarget = 2, "Jade Tether", True
 	index = "Monk~Hero Power~2~Jade Tether"
 	description = "Transform a minion into a 2/2 Golem with Taunt"
@@ -904,6 +903,7 @@ class ShuffleThisintoYourDeck(Deathrattle_Minion):
 			PRINT(self.entity.Game, "Deathrattle: Shuffle this minion into your deck triggers")
 			if self.entity.Game.GUI:
 				self.entity.Game.GUI.deathrattleAni(self.entity)
+			self.entity.Game.Counters.deathrattlesTriggered[self.entity.ID].append(ShuffleThisintoYourDeck)
 			self.entity.Game.returnMiniontoDeck(self.entity, targetDeckID=self.entity.ID, initiatorID=self.entity.ID, deathrattlesStayArmed=True)
 			
 Monk_Indices = { #Hero and standard Hero Powers

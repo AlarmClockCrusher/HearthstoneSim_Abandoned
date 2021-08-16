@@ -39,8 +39,8 @@ class Layer1Window:
 		
 		"""Create the hero class selection menu"""
 		self.hero_Var = tk.StringVar(self.window)
-		self.hero_Var.set(list(ClassDict.keys())[0])
-		hero_Opt = tk.OptionMenu(self.window, self.hero_Var, *list(ClassDict.keys()))
+		self.hero_Var.set(list(Class2HeroDict.keys())[0])
+		hero_Opt = tk.OptionMenu(self.window, self.hero_Var, *list(Class2HeroDict.keys()))
 		hero_Opt.config(width=15, font=("Yahei", 20))
 		hero_Opt["menu"].config(font=("Yahei", 20))
 		
@@ -76,9 +76,9 @@ class Layer1Window:
 			if value.name == "Transfer Student":
 				print("Search the card pool found", key, value)
 		
-		hero, deckCode = ClassDict[self.hero_Var.get()], self.deck_Entry.get()
+		hero, deckCode = Class2HeroDict[self.hero_Var.get()], self.deck_Entry.get()
 		print("Hero type and deck code:", hero, deckCode)
-		deck, deckCorrect, hero = parseDeckCode(deckCode, hero, ClassDict)
+		deck, deckCorrect, hero = parseDeckCode(deckCode, hero, Class2HeroDict)
 		if not deckCorrect:
 			messagebox.showinfo(message=txt("Deck incorrect", CHN))
 			return

@@ -119,7 +119,7 @@ class TrigInvocation(TrigDeck):
                     i = npchoice(minions) if minions and curGame.space(self.entity.ID) > 0 else -1
                     curGame.fixedGuides.append(i)
                 if i > -1:
-                    minion = curGame.summonfrom(i, self.entity.ID, -1, self, fromHand=False)
+                    minion = curGame.summonfrom(i, self.entity.ID, -1, self, source='D')
                     minion.afterInvocation(signal, ID, subject, target, number, comment)
 
 
@@ -2846,7 +2846,7 @@ class TrigInvocation(TrigDeck):
                     i = npchoice(minions) if minions and curGame.space(self.entity.ID) > 0 else -1
                     curGame.fixedGuides.append(i)
                 if i > -1:
-                    minion = curGame.summonfrom(i, self.entity.ID, -1, self, fromHand=False)
+                    minion = curGame.summonfrom(i, self.entity.ID, -1, self, source='D')
                     minion.afterInvocation(signal, ID, subject, target, number, comment)
 
 

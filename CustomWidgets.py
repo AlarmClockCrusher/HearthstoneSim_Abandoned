@@ -912,7 +912,7 @@ class HeroButton(tk.Button):
 			if hasattr(trig, "counter"): counts += trig.counter
 		return self.trigs == [type(trig) for trig in hero.trigsBoard] and self.counts == counts
 		
-class HeroPowerButton(tk.Button): #For Hero Powers that are on board
+class PowerButton(tk.Button): #For Hero Powers that are on board
 	def __init__(self, GUI, power):
 		self.decideColorOrig(GUI, power)
 		self.waiting = False

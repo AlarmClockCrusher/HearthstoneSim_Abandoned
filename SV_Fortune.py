@@ -344,7 +344,7 @@ class Trig_TitanicShowdown(TrigBoard):
                         minions.append(i)
                 i = npchoice(minions) if minions and curGame.space(ID) > 0 else -1
                 curGame.fixedGuides.append(i)
-            if i > -1: curGame.summonfrom(i, ID, -1, self.entity)
+            if i > -1: curGame.summonfrom(i, ID, -1, self.entity, source='H')
         for t in self.entity.trigsBoard:
             if type(t) == Trig_TitanicShowdown:
                 t.disconnect()
@@ -556,8 +556,7 @@ class TreacherousReversal(SVSpell):
         self.Game.Hand_Deck.extractfromDeck(None, self.ID, all=True)
         i = 0
         cards = []
-        for index in self.Game.Counters.cardsPlayedThisGame[3 - self.ID]:
-            card = self.Game.cardPool[index]
+        for card in self.Game.Counters.cardsPlayedThisGame[3 - self.ID]:
             if i >= 10:
                 break
             if card.name not in ["Treacherous Reversal", "XII. Wolfraud, Hanged Man"]:
@@ -3901,14 +3900,13 @@ class SarissaLuxflashSpear(SVMinion):
                 if self.Game.guides:
                     t = self.Game.cardPool[self.Game.guides.pop(0)]
                 else:
-                    indices = self.Game.Counters.minionsDiedThisGame[self.ID]
                     minions = {}
-                    for index in indices:
-                        if "~Taunt" in index:
+                    for minion in self.Game.Counters.minionsDiedThisGame[self.ID]:
+                        if "~Taunt" in minion.index:
                             try:
-                                minions[self.Game.cardPool[index].mana].append(self.Game.cardPool[index])
+                                minions[minion.mana].append(minion)
                             except:
-                                minions[self.Game.cardPool[index].mana] = [self.Game.cardPool[index]]
+                                minions[minion.mana] = [minion]
                     if minions:
                         for i in range(list(minions.keys())[len(minions) - 1], -1, -1):
                             if i in minions:
@@ -4351,13 +4349,12 @@ class Trig_CatTuner(TrigBoard):
             if curGame.guides:
                 t = curGame.cardPool[curGame.guides.pop(0)]
             else:
-                indices = curGame.Counters.minionsDiedThisGame[ID]
                 minions = {}
-                for index in indices:
+                for minion in curGame.Counters.minionsDiedThisGame[ID]:
                     try:
-                        minions[curGame.cardPool[index].mana].append(curGame.cardPool[index])
+                        minions[minion.mana].append(minion)
                     except:
-                        minions[curGame.cardPool[index].mana] = [curGame.cardPool[index]]
+                        minions[minion.mana] = [minion]
                 if mana in minions:
                     t = npchoice(minions[mana])
                 curGame.fixedGuides.append(t.index)
@@ -5267,7 +5264,7 @@ class NephthysGoddessofAmenta(SVMinion):
                     i = npchoice(cards) if cards and curGame.space(self.ID) > 0 else -1
                     curGame.fixedGuides.append(i)
                 if i > -1:
-                    minion = curGame.summonfrom(i, self.ID, -1, self, fromHand=False)
+                    minion = curGame.summonfrom(i, self.ID, -1, self, source='D')
                     if minion:
                         minions.append(minion)
                 else:
@@ -5276,13 +5273,12 @@ class NephthysGoddessofAmenta(SVMinion):
             self.Game.killMinion(self, minion)
         self.Game.gathertheDead()
         if comment == 10:
-            indices = self.Game.Counters.minionsDiedThisGame[self.ID]
             minions = {}
-            for index in indices:
+            for minion in self.Game.Counters.minionsDiedThisGame[self.ID]:
                 try:
-                    minions[self.Game.cardPool[index].mana].append(self.Game.cardPool[index])
+                    minions[minion.mana].append(minion)
                 except:
-                    minions[self.Game.cardPool[index].mana] = [self.Game.cardPool[index]]
+                    minions[minion.mana] = [minion]
             quest = True
             for i in range(1, 11):
                 if i not in minions:
@@ -5937,7 +5933,7 @@ class LazuliGatewayHomunculus(SVMinion):
                         i = npchoice(cards) if cards and curGame.space(self.ID) > 0 else -1
                         curGame.fixedGuides.append(i)
                     if i > -1:
-                        minion = curGame.summonfrom(i, self.ID, -1, self, fromHand=False)
+                        minion = curGame.summonfrom(i, self.ID, -1, self, source='D')
                         if minion and minion.onBoard and "~Battlecry" in minion.index and not minion.requireTarget and "~Choose" not in minion.index:
                             minion.whenEffective(target=None, comment="", choice=0, posinHand=-2)
 
@@ -6545,7 +6541,7 @@ class Trig_TitanicShowdown(TrigBoard):
                         minions.append(i)
                 i = npchoice(minions) if minions and curGame.space(ID) > 0 else -1
                 curGame.fixedGuides.append(i)
-            if i > -1: curGame.summonfrom(i, ID, -1, self.entity)
+            if i > -1: curGame.summonfrom(i, ID, -1, self.entity, source='H')
         for t in self.entity.trigsBoard:
             if type(t) == Trig_TitanicShowdown:
                 t.disconnect()
@@ -6757,8 +6753,7 @@ class TreacherousReversal(SVSpell):
         self.Game.Hand_Deck.extractfromDeck(None, self.ID, all=True)
         i = 0
         cards = []
-        for index in self.Game.Counters.cardsPlayedThisGame[3 - self.ID]:
-            card = self.Game.cardPool[index]
+        for card in self.Game.Counters.cardsPlayedThisGame[3 - self.ID]:
             if i >= 10:
                 break
             if card.name not in ["Treacherous Reversal", "XII. Wolfraud, Hanged Man"]:
@@ -10102,14 +10097,13 @@ class SarissaLuxflashSpear(SVMinion):
                 if self.Game.guides:
                     t = self.Game.cardPool[self.Game.guides.pop(0)]
                 else:
-                    indices = self.Game.Counters.minionsDiedThisGame[self.ID]
                     minions = {}
-                    for index in indices:
-                        if "~Taunt" in index:
+                    for minion in self.Game.Counters.minionsDiedThisGame[self.ID]:
+                        if "~Taunt" in minion.index:
                             try:
-                                minions[self.Game.cardPool[index].mana].append(self.Game.cardPool[index])
+                                minions[minion.mana].append(minion)
                             except:
-                                minions[self.Game.cardPool[index].mana] = [self.Game.cardPool[index]]
+                                minions[minion.mana] = [minion]
                     if minions:
                         for i in range(list(minions.keys())[len(minions) - 1], -1, -1):
                             if i in minions:
@@ -10552,13 +10546,13 @@ class Trig_CatTuner(TrigBoard):
             if curGame.guides:
                 t = curGame.cardPool[curGame.guides.pop(0)]
             else:
-                indices = curGame.Counters.minionsDiedThisGame[ID]
                 minions = {}
-                for index in indices:
-                    try:
-                        minions[curGame.cardPool[index].mana].append(curGame.cardPool[index])
-                    except:
-                        minions[curGame.cardPool[index].mana] = [curGame.cardPool[index]]
+                for minion in self.Game.Counters.minionsDiedThisGame[self.ID]:
+                    if "~Taunt" in minion.index:
+                        try:
+                            minions[minion.mana].append(minion)
+                        except:
+                            minions[minion.mana] = [minion]
                 if mana in minions:
                     t = npchoice(minions[mana])
                 curGame.fixedGuides.append(t.index)
@@ -11468,7 +11462,7 @@ class NephthysGoddessofAmenta(SVMinion):
                     i = npchoice(cards) if cards and curGame.space(self.ID) > 0 else -1
                     curGame.fixedGuides.append(i)
                 if i > -1:
-                    minion = curGame.summonfrom(i, self.ID, -1, self, fromHand=False)
+                    minion = curGame.summonfrom(i, self.ID, -1, self, source='D')
                     if minion:
                         minions.append(minion)
                 else:
@@ -11477,13 +11471,13 @@ class NephthysGoddessofAmenta(SVMinion):
             self.Game.killMinion(self, minion)
         self.Game.gathertheDead()
         if comment == 10:
-            indices = self.Game.Counters.minionsDiedThisGame[self.ID]
             minions = {}
-            for index in indices:
-                try:
-                    minions[self.Game.cardPool[index].mana].append(self.Game.cardPool[index])
-                except:
-                    minions[self.Game.cardPool[index].mana] = [self.Game.cardPool[index]]
+            for minion in self.Game.Counters.minionsDiedThisGame[self.ID]:
+                if "~Taunt" in minion.index:
+                    try:
+                        minions[minion.mana].append(minion)
+                    except:
+                        minions[minion.mana] = [minion]
             quest = True
             for i in range(1, 11):
                 if i not in minions:
@@ -12138,7 +12132,7 @@ class LazuliGatewayHomunculus(SVMinion):
                         i = npchoice(cards) if cards and curGame.space(self.ID) > 0 else -1
                         curGame.fixedGuides.append(i)
                     if i > -1:
-                        minion = curGame.summonfrom(i, self.ID, -1, self, fromHand=False)
+                        minion = curGame.summonfrom(i, self.ID, -1, self, source='D')
                         if minion and minion.onBoard and "~Battlecry" in minion.index and not minion.requireTarget and "~Choose" not in minion.index:
                             minion.whenEffective(target=None, comment="", choice=0, posinHand=-2)
 
