@@ -47,11 +47,11 @@ class NaterranGreatTree(Amulet):
         if trees:
             curGame = self.Game
             if curGame.mode == 0:
-                if curGame.guides:
-                    i = curGame.guides.pop(0)
+                if curGame.picks:
+                    i = curGame.picks.pop(0)
                 else:
                     i = npchoice(trees).pos
-                    curGame.fixedGuides.append(i)
+                    curGame.picks.append(i)
                 tree = curGame.minions[self.ID][i]
                 self.Game.killMinion(self, tree)
 
@@ -132,8 +132,8 @@ class ChangewingCherub(SVMinion):
         self.Game.options = [AssemblyDroid(self.Game, self.ID), NaterranGreatTree(self.Game, self.ID)]
         self.Game.Discover.startDiscover(self)
 
-    def discoverDecided(self, option, pool):
-        self.Game.fixedGuides.append(type(option))
+    def discoverDecided(self, option, pool=None):
+        self.Game.picks.append(type(option))
         self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 
 
@@ -170,8 +170,8 @@ class PluckyTreasureHunter(SVMinion):
             curGame = self.Game
             if curGame.mode == 0:
                 for n in range(2):
-                    if curGame.guides:
-                        i = curGame.guides.pop(0)
+                    if curGame.picks:
+                        i = curGame.picks.pop(0)
                     else:
                         cards = []
                         for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]):
@@ -182,7 +182,7 @@ class PluckyTreasureHunter(SVMinion):
                             if fit:
                                 cards.append(i)
                         i = npchoice(cards) if cards else -1
-                        curGame.fixedGuides.append(i)
+                        curGame.picks.append(i)
                     if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return target
 
@@ -371,15 +371,15 @@ class Terrorformer(SVMinion):
             curGame = self.Game
             if curGame.mode == 0:
                 for n in range(self.fusionMaterials):
-                    if curGame.guides:
-                        i = curGame.guides.pop(0)
+                    if curGame.picks:
+                        i = curGame.picks.pop(0)
                     else:
                         cards = []
                         for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]):
                             if "Natura" in card.race or "Machina" in card.race:
                                 cards.append(i)
                         i = npchoice(cards) if cards else -1
-                        curGame.fixedGuides.append(i)
+                        curGame.picks.append(i)
                     if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return target
 
@@ -431,13 +431,13 @@ class StrokeofConviction(SVSpell):
             curGame.summon([Quickblader(curGame, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
         if comment == 6 or choice == 1:
             if curGame.mode == 0:
-                if curGame.guides:
-                    i, where = curGame.guides.pop(0)
+                if curGame.picks:
+                    i, where = curGame.picks.pop(0)
                     minion = curGame.find(i, where) if i > -1 else None
                 else:
                     minions = curGame.minionsAlive(3 - self.ID)
                     minion = npchoice(minions) if minions else None
-                    curGame.fixedGuides.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
+                    curGame.picks.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
                 if minion: self.dealsDamage(minion, 5)
         if comment == 6 or choice == 2:
             for minion in curGame.minionsonBoard(self.ID):
@@ -493,13 +493,13 @@ class MistolinasSwordplay(SVSpell):
         curGame = self.Game
         if comment == 6 or choice == 1:
             if curGame.mode == 0:
-                if curGame.guides:
-                    i, where = curGame.guides.pop(0)
+                if curGame.picks:
+                    i, where = curGame.picks.pop(0)
                     minion = curGame.find(i, where) if i > -1 else None
                 else:
                     minions = curGame.minionsAlive(3 - self.ID)
                     minion = npchoice(minions) if minions else None
-                    curGame.fixedGuides.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
+                    curGame.picks.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
                 if minion: self.dealsDamage(minion, 5)
         return None
 
@@ -711,11 +711,11 @@ class NaterranGreatTree(Amulet):
         if trees:
             curGame = self.Game
             if curGame.mode == 0:
-                if curGame.guides:
-                    i = curGame.guides.pop(0)
+                if curGame.picks:
+                    i = curGame.picks.pop(0)
                 else:
                     i = npchoice(trees).pos
-                    curGame.fixedGuides.append(i)
+                    curGame.picks.append(i)
                 tree = curGame.minions[self.ID][i]
                 self.Game.killMinion(self, tree)
 
@@ -796,8 +796,8 @@ class ChangewingCherub(SVMinion):
         self.Game.options = [AssemblyDroid(self.Game, self.ID), NaterranGreatTree(self.Game, self.ID)]
         self.Game.Discover.startDiscover(self)
 
-    def discoverDecided(self, option, pool):
-        self.Game.fixedGuides.append(type(option))
+    def discoverDecided(self, option, pool=None):
+        self.Game.picks.append(type(option))
         self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 
 
@@ -834,8 +834,8 @@ class PluckyTreasureHunter(SVMinion):
             curGame = self.Game
             if curGame.mode == 0:
                 for n in range(2):
-                    if curGame.guides:
-                        i = curGame.guides.pop(0)
+                    if curGame.picks:
+                        i = curGame.picks.pop(0)
                     else:
                         cards = []
                         for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]):
@@ -846,7 +846,7 @@ class PluckyTreasureHunter(SVMinion):
                             if fit:
                                 cards.append(i)
                         i = npchoice(cards) if cards else -1
-                        curGame.fixedGuides.append(i)
+                        curGame.picks.append(i)
                     if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return target
 
@@ -1035,15 +1035,15 @@ class Terrorformer(SVMinion):
             curGame = self.Game
             if curGame.mode == 0:
                 for n in range(self.fusionMaterials):
-                    if curGame.guides:
-                        i = curGame.guides.pop(0)
+                    if curGame.picks:
+                        i = curGame.picks.pop(0)
                     else:
                         cards = []
                         for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]):
                             if "Natura" in card.race or "Machina" in card.race:
                                 cards.append(i)
                         i = npchoice(cards) if cards else -1
-                        curGame.fixedGuides.append(i)
+                        curGame.picks.append(i)
                     if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return target
 
@@ -1095,13 +1095,13 @@ class StrokeofConviction(SVSpell):
             curGame.summon([Quickblader(curGame, self.ID) for i in range(2)], (-1, "totheRightEnd"), self)
         if comment == 6 or choice == 1:
             if curGame.mode == 0:
-                if curGame.guides:
-                    i, where = curGame.guides.pop(0)
+                if curGame.picks:
+                    i, where = curGame.picks.pop(0)
                     minion = curGame.find(i, where) if i > -1 else None
                 else:
                     minions = curGame.minionsAlive(3 - self.ID)
                     minion = npchoice(minions) if minions else None
-                    curGame.fixedGuides.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
+                    curGame.picks.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
                 if minion: self.dealsDamage(minion, 5)
         if comment == 6 or choice == 2:
             for minion in curGame.minionsonBoard(self.ID):
@@ -1157,13 +1157,13 @@ class MistolinasSwordplay(SVSpell):
         curGame = self.Game
         if comment == 6 or choice == 1:
             if curGame.mode == 0:
-                if curGame.guides:
-                    i, where = curGame.guides.pop(0)
+                if curGame.picks:
+                    i, where = curGame.picks.pop(0)
                     minion = curGame.find(i, where) if i > -1 else None
                 else:
                     minions = curGame.minionsAlive(3 - self.ID)
                     minion = npchoice(minions) if minions else None
-                    curGame.fixedGuides.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
+                    curGame.picks.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
                 if minion: self.dealsDamage(minion, 5)
         return None
 

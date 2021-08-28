@@ -1231,25 +1231,15 @@ class SightlessWatcher(Minion):
 	name_CN = "盲眼观察者"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		ownDeck = curGame.Hand_Deck.decks[self.ID]
-		if curGame.turn == self.ID and ownDeck:
-			if curGame.mode == 0:
-				if curGame.guides:
-					ownDeck.append(ownDeck.pop(curGame.guides.pop(0)))
-				else:
-					if "byOthers" in comment:
-						ownDeck.append(ownDeck.pop(nprandint(len(ownDeck))))
-					else:
-						curGame.options = npchoice(ownDeck, min(3, len(ownDeck)), replace=False)
-						curGame.Discover.startDiscover(self)
+		self.discoverfromList(SightlessWatcher, comment, conditional=lambda card: True,
+							  ls=self.Game.Hand_Deck.decks[self.ID])
 		return None
-		
-	def discoverDecided(self, option, pool):
+	
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
 		ownDeck = self.Game.Hand_Deck.decks[self.ID]
-		i = ownDeck.index(option)
-		self.Game.fixedGuides.append(i)
-		ownDeck.append(ownDeck.pop(i))
+		self.handleDiscoveredCardfromList(option, case, ls=ownDeck,
+										  func=lambda index, card: ownDeck.append(ownDeck.pop(index)),
+										  info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
 		
 		
 class SpectralSight(Spell):
@@ -1845,32 +1835,14 @@ class Tracking(Spell):
 	name_CN = "追踪术"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		ownDeck = curGame.Hand_Deck.decks[self.ID]
-		if curGame.mode == 0:
-			if curGame.guides:
-				i = curGame.guides.pop(0)
-				if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
-			else:
-				types, inds = [type(card) for card in ownDeck], list(range(len(ownDeck)))
-				if "byOthers" in comment:
-					inds = npChoice_inds(types, inds, 1)
-					if inds: curGame.Hand_Deck.drawCard(self.ID, inds[0])
-				else:
-					inds = npChoice_inds(types, inds, 3)
-					if len(inds) > 1:
-						curGame.options = [ownDeck[i] for i in inds]
-						curGame.Discover.startDiscover(self)
-					else:
-						i = inds[0] if inds else -1 #牌库 中没有牌的时候会返回一个空的inds列表
-						curGame.fixedGuides.append(i)
-						if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
+		self.discoverfromList(Tracking, comment, conditional=lambda card: True,
+							  ls=self.Game.Hand_Deck.decks[self.ID])
 		return None
 		
-	def discoverDecided(self, option, pool):
-		i = self.Game.Hand_Deck.decks[self.ID].index(option)
-		self.Game.fixedGuides.append(i)
-		self.Game.Hand_Deck.drawCard(self.ID, i)
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		self.handleDiscoveredCardfromList(option, case, ls=self.Game.Hand_Deck.decks[self.ID],
+										  func=lambda index, card: self.Game.Hand_Deck.drawCard(self.ID, index),
+										  info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
 		
 		
 class Webspinner(Minion):
@@ -2018,37 +1990,14 @@ class SelectiveBreeder(Minion):
 	name_CN = "选种饲养员"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		ownDeck = curGame.Hand_Deck.decks[self.ID]
-		if curGame.mode == 0:
-			if curGame.guides:
-				i = curGame.guides.pop(0)
-				if i > -1: self.addCardtoHand(ownDeck[i].selfCopy(self.ID, self), self.ID, byDiscover=True)
-			else:
-				types, inds = [], []
-				for i, card in enumerate(ownDeck):
-					if card.type == "Minion" and "Beast" in card.race:
-						types.append(type(card))
-						inds.append(i)
-				if "byOthers" in comment:
-					inds = npChoice_inds(types, inds, 1)
-					if inds: self.addCardtoHand(ownDeck[inds[0]].selfCopy(self.ID, self), self.ID, byDiscover=True)
-				else:
-					inds = npChoice_inds(types, inds, 3)
-					if len(inds) > 1:
-						curGame.options = [ownDeck[i] for i in inds]
-						curGame.Discover.startDiscover(self)
-					else:
-						i = inds[0] if inds else -1
-						curGame.fixedGuides.append(i)
-						if i > -1: self.addCardtoHand(ownDeck[i].selfCopy(self.ID, self), self.ID, byDiscover=True)
+		self.discoverfromList(SelectiveBreeder, comment, conditional=lambda card: "Beast" in card.type,
+							  ls=self.Game.Hand_Deck.decks[self.ID])
 		return None
 		
-	def discoverDecided(self, option, pool):
-		ownDeck = self.Game.Hand_Deck.decks[self.ID]
-		i = ownDeck.index(option)
-		self.Game.fixedGuides.append(i)
-		self.addCardtoHand(ownDeck[i].selfCopy(self.ID, self), self.ID, byDiscover=True)
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		self.handleDiscoveredCardfromList(option, case, ls=self.Game.Hand_Deck.decks[self.ID],
+										  func=lambda index, card: self.addCardtoHand(card.selfCopy(self.ID, self), self.ID, byDiscover=True),
+										  info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
 		
 		
 class SnakeTrap(Secret):
@@ -2448,23 +2397,8 @@ class EtherealConjurer(Minion):
 			   [[card for card in pools.ClassCards[Class] if card.type == "Spell"] for Class in pools.Classes]
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				self.addCardtoHand(curGame.guides.pop(0), self.ID, byDiscover=True)
-			else:
-				key = classforDiscover(self)+" Spells"
-				if self.ID != curGame.turn or "byOthers" in comment:
-					self.addCardtoHand(npchoice(self.rngPool(key)), self.ID, byDiscover=True)
-				else:
-					spells = npchoice(self.rngPool(key), 3, replace=False)
-					curGame.options = [spell(curGame, self.ID) for spell in spells]
-					curGame.Discover.startDiscover(self)
-		return target
-		
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
-		self.addCardtoHand(option, self.ID, byDiscover=True)
+		self.discoverandGenerate(EtherealConjurer, comment, poolFunc=lambda : self.rngPool(classforDiscover(self)+" Spells"))
+		return False
 		
 		
 class ColdarraDrake(Minion):
@@ -2933,6 +2867,25 @@ class PsychicConjurer(Minion):
 		return None
 		
 		
+class KulTiranChaplain(Minion):
+	Class, race, name = "Priest", "", "Kul Tiran Chaplain"
+	mana, attack, health = 2, 2, 3
+	index = "CORE~Priest~Minion~2~2~3~~Kul Tiran Chaplain~Battlecry"
+	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion +2 Health"
+	name_CN = "库尔提拉斯教士"
+	
+	def targetExists(self, choice=0):
+		return self.selectableFriendlyMinionExists(choice)
+		
+	def targetCorrect(self, target, choice=0):
+		return target.type == "Minion" and target.ID == self.ID and target != self and target.onBoard
+		
+	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
+		if target:
+			target.buffDebuff(0, 2)
+		return target
+		
+		
 class ShadowWordDeath(Spell):
 	Class, school, name = "Priest", "Shadow", "Shadow Word: Death"
 	requireTarget, mana = True, 2
@@ -2958,36 +2911,14 @@ class ThriveintheShadows(Spell):
 	description = "Discover a spell from your deck"
 	name_CN = "暗中生长"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		ownDeck = curGame.Hand_Deck.decks[self.ID]
-		if curGame.mode == 0:
-			if curGame.guides:
-				i = curGame.guides.pop(0)
-				if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
-			else:
-				types, inds = [], []
-				for i, card in enumerate(ownDeck):
-					if card.type == "Spell":
-						types.append(type(card))
-						inds.append(i)
-				if "byOthers" in comment:
-					inds = npChoice_inds(types, inds, 1)
-					if inds: curGame.Hand_Deck.drawCard(self.ID, inds[0])
-				else:
-					inds = npChoice_inds(types, inds, 3)
-					if len(inds) > 1:
-						curGame.options = [ownDeck[i] for i in inds]
-						curGame.Discover.startDiscover(self)
-					else:
-						i = inds[0] if inds else -1
-						curGame.fixedGuides.append(i)
-						if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
+		self.discoverfromList(ThriveintheShadows, comment, conditional=lambda card: card.type == "Spell",
+							  ls=self.Game.Hand_Deck.decks[self.ID])
 		return None
 		
-	def discoverDecided(self, option, pool):
-		i = self.Game.Hand_Deck.decks[self.ID].index(option)
-		self.Game.fixedGuides.append(i)
-		self.Game.Hand_Deck.drawCard(self.ID, i)
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		self.handleDiscoveredCardfromList(option, case, ls=self.Game.Hand_Deck.decks[self.ID],
+										  func=lambda index, card: self.Game.Hand_Deck.drawCard(self.ID, index),
+										  info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
 		
 		
 class Lightspawn(Minion):
@@ -3071,7 +3002,7 @@ class MindSpike(Power):
 		damage = (2 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		return "造成%d点伤害"%damage if CHN else "Deal %d damage"%damage
 		
-	def effect(self, target, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		damage = (2 + self.marks["Damage Boost"] + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		dmgTaker, damageActual = self.dealsDamage(target, damage)
 		if dmgTaker.health < 1 or dmgTaker.dead: return 1
@@ -4058,7 +3989,7 @@ class INFERNO(Power):
 	def available(self, choice=0):
 		return not self.chancesUsedUp() and self.Game.space(self.ID) 
 		
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		self.summon(Infernal(self.Game, self.ID), -1)
 		return 0
 		
@@ -4363,7 +4294,7 @@ Core_Cards = [#Mana 1 cards
 			#Paladin cards
 			Avenge, NobleSacrifice, Reckoning, RighteousProtector, ArgentProtector, HolyLight, PursuitofJustice, AldorPeacekeeper, Equality, WarhorseTrainer, BlessingofKings, Consecration, TruesilverChampion, StandAgainstDarkness, GuardianofKings, TirionFordring,
 			#Priest cards
-			CrimsonClergy, FlashHeal, FocusedWill, HolySmite, PsychicConjurer, ShadowWordDeath, ThriveintheShadows, Lightspawn, Shadowform, ShadowedSpirit, HolyNova, PowerInfusion, ShadowWordRuin, TempleEnforcer, NatalieSeline,
+			CrimsonClergy, FlashHeal, FocusedWill, HolySmite, PsychicConjurer, KulTiranChaplain, ShadowWordDeath, ThriveintheShadows, Lightspawn, Shadowform, ShadowedSpirit, HolyNova, PowerInfusion, ShadowWordRuin, TempleEnforcer, NatalieSeline,
 			#Rogue cards
 			Backstab, Preparation, Shadowstep, BladedCultist, DeadlyPoison, SinisterStrike, Swashburglar, ColdBlood, PatientAssassin, VanessaVanCleef, PlagueScientist, SI7Agent, Assassinate, AssassinsBlade, TombPillager, Sprint,
 			#Shaman cards

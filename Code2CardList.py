@@ -11,38 +11,36 @@ json_Uncollectible = json.loads(open("cards.json", "r", encoding="utf-8").read()
 
 def typeName2Class(typename):
 	try:
-		if typename.startswith("TransferStudent"): value = next(value for value in cardPool.values() if value.name == "Transfer Student" and "Uncollectible" not in value.index)
-		else: value = next(value for value in cardPool.values() if value.__name__ == typename)
+		if typename.startswith("TransferStudent"): value = next(value for value in cardPool if value.name == "Transfer Student" and "Uncollectible" not in value.index)
+		else: value = next(value for value in cardPool if value.__name__ == typename)
 		return value
 	except:
 		print(typename, " not found")
 		return None
 		
 def cardName2Class(cardName):
-	for value in cardPool.values():
-		if value.name == cardName and "~Uncollectible" not in value.index:
-			return value
+	for card in cardPool:
+		if card.name == cardName and "~Uncollectible" not in card.index:
+			return card
 	print(cardName, " not found")
 	return None
 	
-def parseDeckCode(s, hero, Class2HeroDict):
-	deck, deckCorrect, hero = [], False, hero
-	if s:
+def parseDeckCode(deckString, Class, Class2HeroDict, defaultDeck=None):
+	deck, deckCorrect, hero = [], False, Class2HeroDict[Class]
+	if deckString:
 		try:
-			if s.startswith("names||"):
-				s = s.split('||')[1:]
-				deck = [cardName2Class(name.strip()) for name in s if name]
-			else: deck = decode_deckstring(s)
+			if deckString.startswith("names||"):
+				names = deckString.split('||')[1:]
+				deck = [cardName2Class(name.strip()) for name in names if name]
+			else: deck = decode_deckstring(deckString)
 			deckCorrect = all(obj is not None for obj in deck)
-		except:
-			print("Parsing encountered mistake")
-			pass
-	else: deckCorrect = True
+		except Exception as e: print("Parsing encountered error", e)
+	else:
+		deck, deckCorrect = defaultDeck, True
 	if deckCorrect:
-		for card in deck:
-			if card.Class != "Neutral" and ',' not in card.Class:
-				hero = Class2HeroDict[card.Class]
-				break
+		Class = next((card.Class for card in deck if card.Class != "Neutral" and ',' not in card.Class), None)
+		if Class: hero = Class2HeroDict[Class]
+	print("Result of parse deck code: \nDECK CORRECT? {}  HERO {}\n".format(deckCorrect, hero.name), deck)
 	return deck, deckCorrect, hero
 	
 def getCardnameFromDbf(id):
@@ -94,67 +92,67 @@ def checktheStatsofCards():
 	raceAllCapDict = {"Elemental":"ELEMENTAL", "Mech": "MECHANICAL", "Demon": "DEMON", "Murloc": "MURLOC",
 						"Dragon": "DRAGON", "Beast": "BEAST", "Pirate": "PIRATE", "Totem": "TOTEM"}
 	exceptionList = []
-	for key, value in cardPool.items():
-		if key.startswith("SV_"): continue
+	for card in cardPool:
+		if card.index.startswith("SV_"): continue
 		try:
-			words = key.split('~')
-			cardInfo = getAnyCardInfofromType(value) #Get the name
+			words = card.index.split('~')
+			cardInfo = getAnyCardInfofromType(card) #Get the name
 			if isinstance(cardInfo, list):
-				print("Didn't find a match of the card {}/{}".format(value.__name__, value.name))
+				print("Didn't find a match of the card {}/{}".format(card.__name__, card.name))
 				print("Possible matches")
 				print(cardInfo)
 				continue
-			if not (int(cardInfo["cost"]) == value.mana == int(words[3])):
-					print(value, " has a wrong mana {}|{}|{}".format(cardInfo["cost"], value.mana, int(words[3])))
+			if not (int(cardInfo["cost"]) == card.mana == int(words[3])):
+					print(card, " has a wrong mana {}|{}|{}".format(cardInfo["cost"], card.mana, int(words[3])))
 		except Exception as e:
-			print("stopped at step 1 {}".format(value, e))
+			print("stopped at step 1 {}".format(card, e))
 			continue
 		#Will check the type of the cards (Minion, Spell, etc)
 		cardType = words[2]
 		try:
 			if cardType == "Minion":
-				if value.name != words[7]:
-					print(value, " has a wrong name\njson\t\t{} \nfrom type\t{} \nfrom index\t{}".format(cardInfo["name"], value.name, words[7]))
+				if card.name != words[7]:
+					print(card, " has a wrong name\njson\t\t{} \nfrom type\t{} \nfrom index\t{}".format(cardInfo["name"], card.name, words[7]))
 				
-				if not (cardInfo["attack"] == value.attack == int(words[4]) \
-						and cardInfo["health"] == value.health == int(words[5])):
-					print(value, " has a wrong stat:")
-					print(value, "Attack: {}|{}|{} Health: {}|{}|{}".format(cardInfo["attack"], value.attack, int(words[4]), cardInfo["health"], value.health, int(words[5])))
+				if not (cardInfo["attack"] == card.attack == int(words[4]) \
+						and cardInfo["health"] == card.health == int(words[5])):
+					print(card, " has a wrong stat:")
+					print(card, "Attack: {}|{}|{} Health: {}|{}|{}".format(cardInfo["attack"], card.attack, int(words[4]), cardInfo["health"], card.health, int(words[5])))
 				if "race" in cardInfo:
-					if not(value.race and value.race == words[6]):
-						print(value, " race doesn't match index")
-						print(value.race, words[6])
+					if not(card.race and card.race == words[6]):
+						print(card, " race doesn't match index")
+						print(card.race, words[6])
 					if cardInfo["race"] == "All":
-						if value.race != "Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem":
-							print(value, " race should be 'Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem'")
-					elif raceAllCapDict[value.race] !=cardInfo["race"]:
-						print(value, " race doesn't match json")
-						print(raceAllCapDict[value.race], cardInfo["race"])
-				elif value.race or words[6]: #If card doesn't have race
-					print(value, " shouldn't have race", value.race, words[6])
-				#Check the keyWords of the minion
-				if value.keyWord:
-					keyWords = value.keyWord.split(',')
-					for word in keyWords:
+						if card.race != "Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem":
+							print(card, " race should be 'Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Totem'")
+					elif raceAllCapDict[card.race] !=cardInfo["race"]:
+						print(card, " race doesn't match json")
+						print(raceAllCapDict[card.race], cardInfo["race"])
+				elif card.race or words[6]: #If card doesn't have race
+					print(card, " shouldn't have race", card.race, words[6])
+				#Check the card.indexWords of the minion
+				if card.card.indexWord:
+					card.indexWords = card.card.indexWord.split(',')
+					for word in card.indexWords:
 						if word not in ["Taunt", "Divine Shield", "Stealth", "Lifesteal", "Spell Damage", "Windfury", "Mega Windfury", "Charge", 
 										"Poisonous", "Rush", "Echo", "Reborn",]:
-							print(value, " keyWord input is wrong {}.".format(word))
-						if word not in value.index:
-							print(value, "keyWord and index don't match")
+							print(card, " card.indexWord input is wrong {}.".format(word))
+						if word not in card.index:
+							print(card, "card.indexWord and index don't match")
 			elif cardType == "Weapon":
-				if value.name != words[6]:
-					print(value, " has a wrong name", cardInfo["name"], value.name, words[6])
+				if card.name != words[6]:
+					print(card, " has a wrong name", cardInfo["name"], card.name, words[6])
 					
-				if not(cardInfo["attack"] == value.attack == int(words[4]) \
-						and cardInfo[""] == value.health == int(words[5])):
-					print(value, " has a wrong stat")
+				if not(cardInfo["attack"] == card.attack == int(words[4]) \
+						and cardInfo[""] == card.health == int(words[5])):
+					print(card, " has a wrong stat")
 			else: #Spell
-				if value.name != words[5]:
-					print(value, " has a wrong name", cardInfo["name"], value.name, words[5])
+				if card.name != words[5]:
+					print(card, " has a wrong name", cardInfo["name"], card.name, words[5])
 					
 		except Exception as e:
-			#print("When checking ", value, e)
-			exceptionList.append((value, cardType, e))
+			#print("When checking ", card, e)
+			exceptionList.append((card, cardType, e))
 	return exceptionList
 			
 if __name__ == "__main__":

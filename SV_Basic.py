@@ -111,13 +111,13 @@ class TrigInvocation(TrigDeck):
         if self.entity.Game.space(self.entity.ID) > 0:
             curGame = self.entity.Game
             if curGame.mode == 0:
-                if curGame.guides:
-                    i = curGame.guides.pop(0)
+                if curGame.picks:
+                    i = curGame.picks.pop(0)
                 else:
                     minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
                                card.type == "Minion" and card.name == self.entity.name]
                     i = npchoice(minions) if minions and curGame.space(self.entity.ID) > 0 else -1
-                    curGame.fixedGuides.append(i)
+                    curGame.picks.append(i)
                 if i > -1:
                     minion = curGame.summonfrom(i, self.entity.ID, -1, self, source='D')
                     minion.afterInvocation(signal, ID, subject, target, number, comment)
@@ -163,8 +163,8 @@ class Trig_WellofDestiny(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         curGame = self.entity.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 minions = curGame.minionsonBoard(self.entity.ID)
                 try:
@@ -172,7 +172,7 @@ class Trig_WellofDestiny(TrigBoard):
                 except:
                     pass
                 i = npchoice(minions).pos if minions else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1:
                 minion = curGame.minions[self.entity.ID][i]
                 minion.buffDebuff(1, 1)
@@ -554,16 +554,16 @@ class ElfTracker(SVMinion):
         if curGame.mode == 0:
             for num in range(2):
                 char = None
-                if curGame.guides:
-                    i, where = curGame.guides.pop(0)
+                if curGame.picks:
+                    i, where = curGame.picks.pop(0)
                     if where: char = curGame.find(i, where)
                 else:
                     objs = curGame.minionsAlive(side)
                     if objs:
                         char = npchoice(objs)
-                        curGame.fixedGuides.append((char.pos, "Minion%d" % side))
+                        curGame.picks.append((char.pos, "Minion%d" % side))
                     else:
-                        curGame.fixedGuides.append((0, ''))
+                        curGame.picks.append((0, ''))
                 if char:
                     self.dealsDamage(char, 1)
                 else:
@@ -1672,12 +1672,12 @@ class Deathrattle_GhostlyRider(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         curGame = self.entity.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 minions = [minion.pos for minion in curGame.minionsAlive(self.entity.ID)]
                 i = npchoice(minions) if minions else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1:
                 minion = curGame.minions[self.entity.ID][i]
                 minion.getsStatus("Taunt")
@@ -2270,13 +2270,13 @@ class Deathrattle_RadiantArtifact(Deathrattle_Minion):
         if self.entity.Game.turn == self.entity.ID:
             curGame = self.entity.Game
             if curGame.mode == 0:
-                if curGame.guides:
-                    i = curGame.guides.pop(0)
+                if curGame.picks:
+                    i = curGame.picks.pop(0)
                 else:
                     artifacts = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
                                  card.type == "Minion" and "Artifact" in card.race]
                     i = npchoice(artifacts) if artifacts else -1
-                    curGame.fixedGuides.append(i)
+                    curGame.picks.append(i)
                 if i > -1: curGame.Hand_Deck.drawCard(self.entity.ID, i)
         else:
             self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
@@ -2354,8 +2354,8 @@ class ParadigmShift(SVSpell):
         self.Game.Discover.startDiscover(self)
         return None
 
-    def discoverDecided(self, option, pool):
-        self.Game.fixedGuides.append(type(option))
+    def discoverDecided(self, option, pool=None):
+        self.Game.picks.append(type(option))
         self.Game.summon([option], (-1, "totheRightEnd"), self)
 
 
@@ -2372,12 +2372,12 @@ class Puppeteer(SVMinion):
         curGame = self.Game
         ownHand = curGame.Hand_Deck.hands[self.ID]
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 puppets = [i for i, card in enumerate(ownHand) if card.type == "Minion" and card.name == "Puppet"]
                 i = npchoice(puppets) if puppets else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1:
                 ownHand[i].getsStatus("Bane")
 
@@ -2563,13 +2563,13 @@ class BlackIronSoldier(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 artifacts = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
                              card.type == "Minion" and "Artifact" in card.race]
                 i = npchoice(artifacts) if artifacts else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return None
 
@@ -2838,13 +2838,13 @@ class TrigInvocation(TrigDeck):
         if self.entity.Game.space(self.entity.ID) > 0:
             curGame = self.entity.Game
             if curGame.mode == 0:
-                if curGame.guides:
-                    i = curGame.guides.pop(0)
+                if curGame.picks:
+                    i = curGame.picks.pop(0)
                 else:
                     minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
                                card.type == "Minion" and card.name == self.entity.name]
                     i = npchoice(minions) if minions and curGame.space(self.entity.ID) > 0 else -1
-                    curGame.fixedGuides.append(i)
+                    curGame.picks.append(i)
                 if i > -1:
                     minion = curGame.summonfrom(i, self.entity.ID, -1, self, source='D')
                     minion.afterInvocation(signal, ID, subject, target, number, comment)
@@ -2890,8 +2890,8 @@ class Trig_WellofDestiny(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         curGame = self.entity.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 minions = curGame.minionsonBoard(self.entity.ID)
                 try:
@@ -2899,7 +2899,7 @@ class Trig_WellofDestiny(TrigBoard):
                 except:
                     pass
                 i = npchoice(minions).pos if minions else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1:
                 minion = curGame.minions[self.entity.ID][i]
                 minion.buffDebuff(1, 1)
@@ -3281,16 +3281,16 @@ class ElfTracker(SVMinion):
         if curGame.mode == 0:
             for num in range(2):
                 char = None
-                if curGame.guides:
-                    i, where = curGame.guides.pop(0)
+                if curGame.picks:
+                    i, where = curGame.picks.pop(0)
                     if where: char = curGame.find(i, where)
                 else:
                     objs = curGame.minionsAlive(side)
                     if objs:
                         char = npchoice(objs)
-                        curGame.fixedGuides.append((char.pos, "Minion%d" % side))
+                        curGame.picks.append((char.pos, "Minion%d" % side))
                     else:
-                        curGame.fixedGuides.append((0, ''))
+                        curGame.picks.append((0, ''))
                 if char:
                     self.dealsDamage(char, 1)
                 else:
@@ -4399,12 +4399,12 @@ class Deathrattle_GhostlyRider(Deathrattle_Minion):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         curGame = self.entity.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 minions = [minion.pos for minion in curGame.minionsAlive(self.entity.ID)]
                 i = npchoice(minions) if minions else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1:
                 minion = curGame.minions[self.entity.ID][i]
                 minion.getsStatus("Taunt")
@@ -4997,13 +4997,13 @@ class Deathrattle_RadiantArtifact(Deathrattle_Minion):
         if self.entity.Game.turn == self.entity.ID:
             curGame = self.entity.Game
             if curGame.mode == 0:
-                if curGame.guides:
-                    i = curGame.guides.pop(0)
+                if curGame.picks:
+                    i = curGame.picks.pop(0)
                 else:
                     artifacts = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
                                  card.type == "Minion" and "Artifact" in card.race]
                     i = npchoice(artifacts) if artifacts else -1
-                    curGame.fixedGuides.append(i)
+                    curGame.picks.append(i)
                 if i > -1: curGame.Hand_Deck.drawCard(self.entity.ID, i)
         else:
             self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
@@ -5081,8 +5081,8 @@ class ParadigmShift(SVSpell):
         self.Game.Discover.startDiscover(self)
         return None
 
-    def discoverDecided(self, option, pool):
-        self.Game.fixedGuides.append(type(option))
+    def discoverDecided(self, option, pool=None):
+        self.Game.picks.append(type(option))
         self.Game.summon([option], (-1, "totheRightEnd"), self)
 
 
@@ -5099,12 +5099,12 @@ class Puppeteer(SVMinion):
         curGame = self.Game
         ownHand = curGame.Hand_Deck.hands[self.ID]
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 puppets = [i for i, card in enumerate(ownHand) if card.type == "Minion" and card.name == "Puppet"]
                 i = npchoice(puppets) if puppets else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1:
                 ownHand[i].getsStatus("Bane")
 
@@ -5290,13 +5290,13 @@ class BlackIronSoldier(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 artifacts = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
                              card.type == "Minion" and "Artifact" in card.race]
                 i = npchoice(artifacts) if artifacts else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return None
 

@@ -223,12 +223,12 @@ class Trig_WanderingChef(TrigBoard):
         trigger.connect()
         curGame = self.entity.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 minions = curGame.minionsAlive(3 - self.entity.ID)
                 i = npchoice(minions).pos if minions else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1:
                 self.entity.dealsDamage(curGame.minions[3 - self.entity.ID][i], 3)
         heal = 3 * (2 ** self.entity.countHealDouble())
@@ -711,12 +711,12 @@ class Trig_WanderingChef(TrigBoard):
         trigger.connect()
         curGame = self.entity.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 minions = curGame.minionsAlive(3 - self.entity.ID)
                 i = npchoice(minions).pos if minions else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1:
                 self.entity.dealsDamage(curGame.minions[3 - self.entity.ID][i], 3)
         heal = 3 * (2 ** self.entity.countHealDouble())

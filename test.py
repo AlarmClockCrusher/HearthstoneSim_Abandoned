@@ -1,14 +1,17 @@
-from Outlands import Outlands_Cards
-from Academy import Academy_Cards
-from Darkmoon import Darkmoon_Cards
-from Barrens import Barrens_Cards
-from Stormwind import Stormwind_Cards
+import socket
+import time
 
-current_Class = ''
-for card in Barrens_Cards:
-	if "~Uncollectible" not in card.index:
-		Class = card.Class
-		if ',' not in card.Class and card.Class != current_Class:
-			print('\n#'+card.Class)
-			current_Class = card.Class
-		print(card.__name__, end=", ")
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(("127.0.0.1", 65432))
+print("Conn to query port successful")
+portInfo = sock.recv(1024)
+portAvailable = portInfo.split(b',')[1]
+print("Port available is", portAvailable)
+sock.sendall(b"200")
+sock.close()
+#Open a new socket, which is directed towards the table ports
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(("127.0.0.1", int(portAvailable)))
+while True:
+	time.sleep(1)
+	sock.sendall(b"Test constant recv")

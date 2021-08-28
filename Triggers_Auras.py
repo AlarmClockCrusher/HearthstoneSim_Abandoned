@@ -466,7 +466,6 @@ class Stat_Receiver:
 		obj = self.recipient
 		if obj.type == "Minion":
 			obj.statChange(-self.attGain, -self.healthGain)
-			obj.healthfromAura -= self.healthGain
 		elif obj.type == "Hero":
 			obj.gainAttack(-self.attGain, '')
 		else:

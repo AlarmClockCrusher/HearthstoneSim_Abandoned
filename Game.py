@@ -32,11 +32,12 @@ gameStatusDict = {"Immune": "你的英雄免疫", "Immune2NextTurn": "你的英�
 statusDict = {key: 0 for key in gameStatusDict.keys()}
 
 class Game:
-	def __init__(self, GUI=None):
+	def __init__(self, GUI=None, boardID=""):
 		self.mainPlayerID = np.random.randint(2) + 1
-		self.GUI = GUI
+		self.GUI, self.boardID = GUI, boardID
 
 	def initialize(self):
+		self.initialClasses = {1: '', 2: ''}
 		self.heroes = {1:Illidan(self, 1), 2:Anduin(self, 2)}
 		self.powers = {1:self.heroes[1].heroPower, 2:self.heroes[2].heroPower}
 		self.heroes[1].onBoard, self.heroes[2].onBoard = True, True
@@ -60,19 +61,21 @@ class Game:
 		self.trigsBoard, self.trigsHand, self.trigsDeck = {1:{}, 2:{}}, {1:{}, 2:{}}, {1:{}, 2:{}}
 		
 		self.mode = 0
-		self.fixedGuides, self.guides, self.moves = [], [], []
+		self.picks, self.moves = [], []
 		
 		self.possibleSecrets = {1: [], 2: []}
 
-	def initialize_Details(self, cardPool, RNGPools, hero1, hero2, deck1=None, deck2=None, transferStudentType=None):
+	def initialize_Details(self, boardID, seed, RNGPools, hero1, hero2, deck1=None, deck2=None):
 		hero1, hero2 = hero1(self, 1), hero2(self, 2)
 		hero1.onBoard = hero2.onBoard = True
+		self.initialClasses = {1: hero1.Class, 2: hero2.Class}
 		self.heroes = {1: hero1, 2: hero2}
 		self.powers = {1: hero1.heroPower, 2: hero2.heroPower}
 		
-		self.cardPool, self.RNGPools = cardPool, RNGPools
+		self.boardID, self.RNGPools = boardID, RNGPools
+		np.random.seed(seed)
 		self.Hand_Deck = Hand_Deck(self, deck1, deck2)
-		self.Hand_Deck.initialize(transferStudentType)
+		self.Hand_Deck.initialize()
 		
 	def minionsAlive(self, ID, exclude=None): #if exclude is not None, return all living minions except the exclude
 		return [minion for minion in self.minions[ID] if minion.type == "Minion" \
@@ -119,10 +122,22 @@ class Game:
 		if hero.health > 0 and not hero.dead and hero != exclude: objs.append(hero)
 		return objs
 
-	def playAmulet(self, amulet, target, position, choice=0, comment=""):
+	"""Handle playing cards"""
+	def prepGUI4Ani(self, GUI, newSequence=True):
+		if GUI:
+			GUI.seqReady = False
+			if newSequence: GUI.seqHolder.append(GUI.SEQUENCE())
+			
+	def wrapUpPlay(self, GUI, sendthruServer, endingTurn=False):
+		if GUI:
+			GUI.seqReady = True #当seqHolder中最后一个sequence的准备完毕时，重置seqReady，告知GUI.mouseMove可以调用
+			if GUI.sock and sendthruServer: GUI.sendOwnMovethruServer(endingTurn=endingTurn)
+		self.moves, self.picks = [], []
+		
+	def playAmulet(self, amulet, target, position, choice=0, comment="", sendthruServer=True):
 		ID, canPlayAmulet = amulet.ID, False
 		if not (self.Manas.affordable(amulet) and self.space(ID) and amulet.selectionLegit(target, choice)):
-			return
+			return False
 		# 打出随从到所有结算完结为一个序列，序列完成之前不会进行胜负裁定。
 		# 打出随从产生的序列分为
 		# 1）使用阶段： 支付费用，随从进入战场（处理位置和刚刚召唤等），抉择变形类随从立刻提前变形，黑暗之主也在此时变形。
@@ -154,11 +169,8 @@ class Game:
 					tarWhere.append("Hand%d"%obj.ID)
 		else: tarIndex, tarWhere = 0, ''
 		#准备游戏操作的动画
-		GUI, sequence = self.GUI, None
-		if GUI:
-			sequence = GUI.SEQUENCE()
-			GUI.seqReady = False
-			GUI.seqHolder.append(sequence)
+		GUI = self.GUI
+		self.prepGUI4Ani(GUI)
 		
 		amulet, mana, posinHand = self.Hand_Deck.extractfromHand(amulet, enemyCanSee=True)
 		amuletIndex = amulet.index
@@ -194,24 +206,24 @@ class Game:
 		self.gathertheDead(True)
 		self.Hand_Deck.decideCardColors()
 		if not isinstance(tarIndex, list):
-			self.moves.append(
-				("playAmulet", subIndex, subWhere, tarIndex, tarWhere, position, choice))
+			self.moves.append(("playAmulet", subIndex, subWhere, tarIndex, tarWhere, position, choice))
 		else:
 			self.moves.append(("playAmulet", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), position, choice))
-		if GUI: GUI.seqReady = True
-		
+		self.wrapUpPlay(GUI, sendthruServer)
+		return True
+	
 	#There probably won't be board size limit changing effects.
 	#Minions to die will still count as a placeholder on board. Only minions that have entered the tempDeads don't occupy space.
 	def space(self, ID):
 		#Minions and Dormants both occupy space as long as they are on board.
 		return 7 - 2 * (self.heroes[ID].Class in SVClasses) - sum(minion.onBoard for minion in self.minions[ID])
 
-	def playMinion(self, minion, target, position, choice=0, comment=""):
+	def playMinion(self, minion, target, position, choice=0, comment="", sendthruServer=True):
 		ID, canPlayMinion = minion.ID, False
 		#当场上没有空位且打出的随从不是一个有Accelerate的Shadowverse随从时，不能打出
 		if not (self.Manas.affordable(minion) and (self.space(ID) or (minion.index.startswith("SV_") and minion.willAccelerate())) \
 				and minion.selectionLegit(target, choice)):
-			return
+			return False
 			#打出随从到所有结算完结为一个序列，序列完成之前不会进行胜负裁定。
 			#打出随从产生的序列分为
 				#1）使用阶段： 支付费用，随从进入战场（处理位置和刚刚召唤等），抉择变形类随从立刻提前变形，黑暗之主也在此时变形。
@@ -246,11 +258,8 @@ class Game:
 				tarIndex, tarWhere = target.pos, target.type+str(target.ID)
 		else: tarIndex, tarWhere = 0, ''
 		#开始准备游戏操作对应的动画
-		GUI, sequence = self.GUI, None
-		if GUI:
-			sequence = GUI.SEQUENCE()
-			GUI.seqReady = False
-			GUI.seqHolder.append(sequence)
+		GUI = self.GUI
+		self.prepGUI4Ani(GUI)
 		#支付法力值，结算血色绽放等状态
 		minion, mana, posinHand = self.Hand_Deck.extractfromHand(minion, enemyCanSee=True, animate=False)
 		#如果打出的随从是SV中的爆能强化，激奏和结晶随从，则它们会返回自己的真正要打出的牌以及对应的费用
@@ -327,8 +336,8 @@ class Game:
 			self.moves.append(("playMinion", subIndex, subWhere, tarIndex, tarWhere, position, choice))
 		else:
 			self.moves.append(("playMinion", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), position, choice))
-		print("Changing the game moves", self.moves)
-		if GUI: GUI.seqReady = True  #当seqHolder中最后一个sequence的准备完毕时，重置seqReady，告知GUI.mouseMove可以调用
+		self.wrapUpPlay(GUI, sendthruServer)
+		return True
 	
 	#召唤随从会成为夹杂在其他的玩家行为中，不视为一个完整的阶段。也不直接触发亡语结算等。
 	#This method can also summon minions for enemy.
@@ -571,8 +580,8 @@ class Game:
 	def reanimate(self, ID, mana):
 		if self.mode == 0:
 			t = None
-			if self.guides:
-				t = self.cardPool[self.guides.pop(0)]
+			if self.picks:
+				t = self.cardPool[self.picks.pop(0)]
 			else:
 				cards = self.Counters.minionsDiedThisGame[ID]
 				minions = {}
@@ -583,7 +592,7 @@ class Game:
 					if i in minions:
 						t = np.random.choice(minions[i])
 						break
-				self.fixedGuides.append(t.index)
+				self.picks.append(t.index)
 			if t:
 				subject = t(self, ID)
 				self.summon([subject], (-1, "totheRightEnd"), None)
@@ -705,7 +714,8 @@ class Game:
 	#New signal processing can be interpolated during the processing of old signal
 	def sendSignal(self, signal, ID, subject, target, number, comment, choice=0, trigPool=None):
 		hasResponder = False
-		if trigPool: #主要用于打出xx牌和随从死亡时/后扳机，它们有预检测机制。
+		#即使trigPool传入的值是[]，也说明之前进行了扳机预检测，需要进入if的语句中
+		if trigPool != None: #主要用于打出xx牌和随从死亡时/后扳机，它们有预检测机制。
 			for trig in trigPool: #扳机只有仍被注册情况下才能触发，但是这个状态可以通过canTrigger来判断，而不必在所有扳机列表中再次检查。
 				if trig.canTrig(signal, ID, subject, target, number, comment, choice): #扳机能触发通常需要扳机记录的实体还在场上等。
 					hasResponder = True
@@ -768,7 +778,7 @@ class Game:
 				if self.weapons[ID][0].durability < 1 or self.weapons[ID][0].dead:
 					self.weapons[ID][0].destroyed() #武器的被摧毁函数，负责其onBoard, dead和英雄风怒，攻击力和场上扳机的移除等。
 					weapon = self.weapons[ID].pop(0)
-					self.Counters.weaponsDestroyedThisGame[weapon.ID].append(weapon.index)
+					self.Counters.weaponsDestroyedThisGame[weapon.ID].append(type(weapon))
 					self.tempDeads[0].append(weapon)
 					self.tempDeads[1].append(weapon.attack)
 				else: #If the weapon is the latest weapon to equip
@@ -852,7 +862,6 @@ class Game:
 				print("Removing dead minion/weapon before deathresolution", objtoDie, objtoDie.btn)
 				if objtoDie.type == "Minion" and objtoDie.keyWords["Reborn"] > 0: rebornMinions.append(objtoDie)
 				objtoDie.deathResolution(attackwhenDies, armedTrigs_WhenDies, armedTrigs_AfterDied)
-				print("Removing dead minion/weapon", objtoDie, objtoDie.btn)
 				self.removeMinionorWeapon(objtoDie) #结算完一个随从的亡语之后将其移除。
 				objtoDie.reset(objtoDie.ID)
 				objtoDie.dead = True
@@ -880,13 +889,20 @@ class Game:
 	Archmage casting spell will be able to target minions with health <= 0, since they are not regarded as dead yet.
 	The deaths of minions will be handled at the end of triggering, which is then followed by drawing card.
 	"""
-	def switchTurn(self):
-		GUI, sequence = self.GUI, None
-		if GUI:
-			sequence = GUI.SEQUENCE()
-			GUI.seqReady = False
-			GUI.seqHolder.append(sequence)
-			GUI.turnEndButtonAni()
+	
+	"""
+	自己和自己玩的情况下，因为没有GUI.sock，所以始终都会endTurn接startTurn
+	双人对战的情况下
+		玩家X结束回合的时候sendthruServer=True， intiatesChain=True，endTurn结尾时终止自己的动画sequence，
+			向对方发送endTurn的move，并开始等待对方的回合结束、回合开始，从而补完自己的回合切换流程
+	 	玩家Y接手玩家X的回合结束，sendthruServer=False，initiatesChain=False，endTurn结尾时接自己的回合开始
+	 	玩家Y自己的回合开始使用finallyWrapUpSwitchTurn=False。完毕时sendThruServer为True，会向对方发送startTurn的move
+	 	玩家X接到对方回传的回合开始消息，finallyWrapUpSwitchTurn=True。完毕时，sendThruServer为False，不再回传任何消息
+	"""
+	def endTurn(self, sendthruServer=True, initiatesChain=True):
+		GUI = self.GUI
+		self.prepGUI4Ani(GUI)
+		if GUI: GUI.turnEndButtonAni_FlipRegardless()
 		for minion in self.minions[self.turn] + self.minions[3-self.turn]: #Include the Dormants.
 			minion.turnEnds(self.turn) #Handle minions' attTimes and attChances
 		for card in self.Hand_Deck.hands[self.turn]	+ self.Hand_Deck.hands[3-self.turn]:
@@ -905,11 +921,28 @@ class Game:
 		
 		self.Counters.turnEnds()
 		self.Manas.turnEnds()
-
+		"""目前没有必要考虑连续进行回合的情况，以后大概不会再出类似的牌"""
 		self.turn = 3 - self.turn #Changes the turn to another hero.
-		if self.GUI and self.turn == self.GUI.ID:
-			print("Turn switch ani", self.turn, self.GUI.ID)
-			self.GUI.turnStartAni()
+		
+		#If there is an opponent, they take over the rest, and later return a "StartTurn" move
+		theresOppo2TakeOver = GUI and GUI.sock
+		#initiatesChain和theresOppo2TakeOver一般会有至少一个是真的
+		#自己和自己玩的时候总是initiatesChain，但是只有有对手并且自己在开始chain的时候才会停下来等对面走完回合结束和开始
+		if initiatesChain: self.moves.append(("EndTurn",)) #只有作为发起玩家时才会添加EndTurn到move中。
+		if initiatesChain and theresOppo2TakeOver:
+			self.wrapUpPlay(GUI, sendthruServer, endingTurn=True)
+		else: #自己和自己玩，或者，接到了对面的回合结束，自己这边需要先走完回合开始后，再传回给对面
+			self.startTurn(finallyWrapUpSwitchTurn=False, sendthruServer=False)
+		return True
+	
+	#自己和自己玩或者自己接收到对方的回合结束，需要补完的时候fromOppoMove都是False
+	#只有自己的回合结束收到了对方的回合开始补完时fromOppoMove才会是True
+	def startTurn(self, finallyWrapUpSwitchTurn, sendthruServer):
+		GUI = self.GUI
+		if GUI:
+			#如果是自己和自己玩的话，则GUI.seqReady本来也应该还是False,没有影响。从对面接收来的操作需要重开一个Sequence
+			self.prepGUI4Ani(GUI, newSequence=finallyWrapUpSwitchTurn)
+			GUI.turnStartAni()
 		self.numTurn += 1
 		self.Counters.turns[self.turn] += 1
 		self.Counters.turnStarts()
@@ -930,18 +963,22 @@ class Game:
 		self.sendSignal("TurnStarts", self.turn, None, None, 0, "")
 		self.gathertheDead(True)
 		#抽牌阶段之后的死亡处理可以涉及胜负裁定。
-		if GUI: print("Switching turn, GUI seqHolder:", GUI.seqHolder)
 		self.Hand_Deck.drawCard(self.turn)
 		if self.turn == 2 and self.Counters.turns[2] == 1 and self.heroes[2].Class in SVClasses:
 			self.Hand_Deck.drawCard(self.turn)
 		self.gathertheDead(True) #There might be death induced by drawing cards.
 		self.Hand_Deck.decideCardColors()
-		self.moves.append(("EndTurn", ))
-		if GUI: GUI.seqReady = True
 		
-	def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirTrig=True):
+		#只有在不是自己
+		if not finallyWrapUpSwitchTurn: self.moves.append(("StartTurn", ))
+		#自己和自己玩的时候发送消息与否没有影响，而自己在补完对方的回合结束时需要发送消息
+		#自己在回合结束后接收到对方发来的补完消息后，不再把己方的消息再次回传。只有此时fromOppoMove才会是True
+		self.wrapUpPlay(GUI, sendthruServer=not finallyWrapUpSwitchTurn, endingTurn=False)
+		return True
+	
+	def battle(self, subject, target, verifySelectable=True, useAttChance=True, resolveDeath=True, resetRedirTrig=True, sendthruServer=True):
 		if verifySelectable and not subject.canAttackTarget(target):
-			return
+			return False
 		#战斗阶段：
 			#攻击前步骤： 触发攻击前扳机，列队结算，如爆炸陷阱，冰冻陷阱，误导
 				#如果扳机结算完毕后，被攻击者发生了变化，则再次进行攻击前步骤的扳机触发。重复此步骤直到被攻击者没有变化为止。
@@ -960,12 +997,9 @@ class Game:
 		#之后没有阶段间步骤（因为这种强制攻击肯定是由其他序列引发的）
 		#疯狂巨龙死亡之翼的连续攻击中，只有第一次目标选择被被市长改变，但之后的不会
 		print("Handling battle", subject, target)
-		GUI, sequence = self.GUI, None
-		if GUI:
-			sequence = GUI.SEQUENCE()
-			GUI.seqReady = False
-			GUI.seqHolder.append(sequence)
-			GUI.attackAni_Raise(subject)
+		GUI = self.GUI
+		self.prepGUI4Ani(GUI)
+		if GUI: GUI.attackAni_Raise(subject)
 		if verifySelectable:
 			subIndex, subWhere = subject.pos, subject.type+str(subject.ID)
 			tarIndex, tarWhere = target.pos, target.type+str(target.ID)
@@ -1021,13 +1055,14 @@ class Game:
 		self.Hand_Deck.decideCardColors()
 		if verifySelectable: #只有需要验证攻击目标的攻击都是玩家的游戏操作
 			self.moves.append(("battle", subIndex, subWhere, tarIndex, tarWhere))
-			if GUI: GUI.seqReady = True #由其他卡牌引发的
-		
+			self.wrapUpPlay(GUI, sendthruServer)
+		return True
+	
 	#comment = "InvokedbyAI", "Branching-i", ""(GUI by default)
-	def playSpell(self, spell, target, choice=0, comment=""):
+	def playSpell(self, spell, target, choice=0, comment="", sendthruServer=True):
 		#古加尔的费用光环需要玩家的血量加护甲大于法术的当前费用或者免疫状态下才能使用
 		if not(self.Manas.affordable(spell) and spell.available() and spell.selectionLegit(target, choice)):
-			return
+			return False
 			#使用阶段：
 				#支付费用，相关费用状态移除，包括血色绽放，墨水大师，卡雷苟斯以及暮陨者艾维娜。
 				#奥秘和普通法术会进入不同的区域。法术反制触发的话会提前终止整个序列。
@@ -1059,13 +1094,11 @@ class Game:
 			else: #非列表状态的target一定是炉石卡指定的
 				tarIndex, tarWhere = target.pos, target.type+str(target.ID)
 		else: tarIndex, tarWhere = 0, ''
-		GUI, sequence = self.GUI, None
-		if GUI:
-			sequence = GUI.SEQUENCE()
-			GUI.seqReady = False
-			GUI.seqHolder.append(sequence)
+		GUI = self.GUI
+		self.prepGUI4Ani(GUI)
 		#支付法力值，结算血色绽放等状态。
-		spell, mana, posinHand = self.Hand_Deck.extractfromHand(spell, enemyCanSee=not spell.description.startswith("Secret:"))
+		isaSecret2Hide = GUI and spell.description.startswith("Secret:") and GUI.sock and spell.ID != GUI.ID and not GUI.showEnemyHand
+		spell, mana, posinHand = self.Hand_Deck.extractfromHand(spell, enemyCanSee=not isaSecret2Hide)
 		try: spell, mana = spell.becomeswhenPlayed(choice)
 		except: pass #如果随从没有爆能强化等，则无事发生。
 		self.Manas.payManaCost(spell, mana)
@@ -1100,19 +1133,19 @@ class Game:
 				self.moves.append(("playSpell", subIndex, subWhere, tarIndex, tarWhere, choice))
 			else:
 				self.moves.append(("playSpell", subIndex, subWhere, tuple(tarIndex), tuple(tarWhere), choice))
-			print("Changing the game moves", self.moves)
 			self.Counters.shadows[spell.ID] += 1
 		self.Hand_Deck.decideCardColors()
-		if GUI: GUI.seqReady = True #当seqHolder中最后一个sequence的准备完毕时，重置seqReady，告知GUI.mouseMove可以调用
-		
+		self.wrapUpPlay(GUI, sendthruServer)
+		return True
+	
 	def availableWeapon(self, ID):
 		return next((weapon for weapon in self.weapons[ID] if weapon.durability > 0 and weapon.onBoard), None)
 
 	"""Weapon with target will be handle later"""
-	def playWeapon(self, weapon, target, choice=0):
+	def playWeapon(self, weapon, target, choice=0, sendthruServer=True):
 		ID = weapon.ID
 		if not self.Manas.affordable(weapon):
-			return
+			return False
 		#使用阶段
 			#卡牌从手中离开，支付费用，费用状态移除，但是目前没有根据武器费用支付而产生响应的效果。
 			#武器进场，此时武器自身的扳机已经可以开始触发。如公正之剑可以通过触发的伊利丹召唤的元素来触发，并给予召唤的元素buff
@@ -1131,15 +1164,12 @@ class Game:
 		if target:
 			tarIndex, tarWhere = target.pos, target.type+str(target.ID)
 		else: tarIndex, tarWhere = 0, ''
-		GUI, sequence = self.GUI, None
-		if GUI:
-			sequence = GUI.SEQUENCE()
-			GUI.seqReady = False
-			GUI.seqHolder.append(sequence)
-		
+		GUI = self.GUI
+		self.prepGUI4Ani(GUI)
 		#卡牌从手中离开，支付费用，费用状态移除，但是目前没有根据武器费用支付而产生响应的效果。
 		weapon, mana, posinHand = self.Hand_Deck.extractfromHand(weapon, enemyCanSee=True, animate=False)
 		self.Manas.payManaCost(weapon, mana)
+		if GUI: GUI.showOffBoardTrig(weapon, animationType='')
 		#使用阶段，结算阶段。
 		armedTrigs = self.armedTrigs("WeaponBeenPlayed")
 		#武器进场
@@ -1158,9 +1188,9 @@ class Game:
 		self.gathertheDead(True)
 		self.Hand_Deck.decideCardColors()
 		self.moves.append(("playWeapon", subIndex, subWhere, tarIndex, tarWhere, 0))
-		print("Changing the game moves", self.moves)
-		if GUI: GUI.seqReady = True  #当seqHolder中最后一个sequence的准备完毕时，重置seqReady，告知GUI.mouseMove可以调用
-		
+		self.wrapUpPlay(GUI, sendthruServer)
+		return True
+	
 	#只是为英雄装备一把武器。结算相对简单
 	#消灭你的旧武器，新武器进场，这把新武器设置为新武器，并触发扳机。
 	def equipWeapon(self, weapon, creator=None):
@@ -1179,10 +1209,10 @@ class Game:
 		#武器被设置为英雄的新武器，触发“每当你装备一把武器时”的扳机。”
 		weapon.setasNewWeapon()
 
-	def playHero(self, heroCard, choice=0):
+	def playHero(self, heroCard, choice=0, sendthruServer=True):
 		ID = heroCard.ID
 		if not self.Manas.affordable(heroCard):
-			return
+			return False
 		#使用阶段
 			#支付费用，费用状态移除
 			#英雄牌进入战场
@@ -1199,11 +1229,8 @@ class Game:
 			#完成阶段结束，处理死亡，可以处理胜负问题。
 		subIndex, subWhere = self.Hand_Deck.hands[heroCard.ID].index(heroCard), "Hand%d"%heroCard.ID
 		#准备游戏操作的动画
-		GUI, sequence = self.GUI, None
-		if GUI:
-			sequence = GUI.SEQUENCE()
-			GUI.seqReady = False
-			GUI.seqHolder.append(sequence)
+		GUI = self.GUI
+		self.prepGUI4Ani(GUI)
 		
 		#支付费用，以及费用状态移除
 		heroCard, mana, posinHand = self.Hand_Deck.extractfromHand(heroCard, enemyCanSee=True)
@@ -1224,7 +1251,32 @@ class Game:
 		self.gathertheDead(True)
 		self.Hand_Deck.decideCardColors()
 		self.moves.append(("playHero", subIndex, subWhere, 0, "", choice))
-		if GUI: GUI.seqReady = True  #当seqHolder中最后一个sequence的准备完毕时，重置seqReady，告知GUI.mouseMove可以调用
+		self.wrapUpPlay(GUI, sendthruServer)
+		return True
+	
+	def playCard_4Trade(self, subject, sendthruServer=True):
+		HD, ID = self.Hand_Deck, subject.ID
+		subIndex, subWhere = HD.hands[ID].index(subject), "Hand%d"%ID
+		GUI = self.GUI
+		self.prepGUI4Ani(GUI)
+		#先把手牌中的这些牌移出
+		HD.hands[subject.ID].remove(subject)
+		subject.leavesHand()
+		self.Manas.manas[ID] -= 1
+		if GUI:
+			GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.Manas.manas[ID], self.Manas.manasUpper[ID],
+											  self.Manas.manasLocked[ID], self.Manas.manasOverloaded[ID]))
+			GUI.cardsLeaveHandAni([subject], ID, linger=True)
+		self.sendSignal("ManaPaid", ID, subject, None, 1, "")
+		if self.status[ID]["Trade Discovers Instead"] > 0:
+			AuctioneerJaxon(self, ID).discoverfromList(AuctioneerJaxon, '', conditional=lambda card: True,
+													   ls=HD.decks[ID])
+		else: HD.drawCard(ID)
+		HD.shuffleintoDeck(subject, initiatorID=ID, enemyCanSee=False)
+		HD.decideCardColors()
+		self.moves.append(("playCard_4Trade", subIndex, subWhere, 0, ""))
+		self.wrapUpPlay(GUI, sendthruServer)
+		return True
 	
 	def createCopy(self, game):
 		return game
@@ -1235,7 +1287,7 @@ class Game:
 		for Copy in copies:
 			Copy.copiedObjs = {}
 			Copy.mainPlayerID, Copy.GUI = self.mainPlayerID, self.GUI
-			Copy.cardPool, Copy.RNGPools = self.cardPool, self.RNGPools
+			Copy.RNGPools = self.RNGPools
 			#t1 = datetime.now()
 			Copy.heroes = {1: self.heroes[1].createCopy(Copy), 2: self.heroes[2].createCopy(Copy)}
 			Copy.powers = {1: self.powers[1].createCopy(Copy), 2: self.powers[2].createCopy(Copy)}
@@ -1270,7 +1322,7 @@ class Game:
 			#t2 = datetime.now()
 			#print("Time to copy triggers", datetime.timestamp(t2)-datetime.timestamp(t1))
 			Copy.mode = self.mode
-			Copy.moves, Copy.fixedGuides, Copy.guides = copy.deepcopy(self.moves), copy.deepcopy(self.fixedGuides), copy.deepcopy(self.guides)
+			Copy.moves, Copy.picks = copy.deepcopy(self.moves), copy.deepcopy(self.picks)
 			del Copy.copiedObjs
 
 		#finish = datetime.now()
@@ -1291,15 +1343,17 @@ class Game:
 				"Deck2": self.Hand_Deck.decks[2],
 				}[where][i]
 
-	def evolvewithGuide(self, moves, guides):
-		self.fixedGuides, self.guides = guides[:], guides[:]
-		for move in moves:
-			self.decodePlay(move)
-			if self.GUI and move[0] != "EndTurn": self.GUI.wait(600)
-		self.moves, self.fixedGuides, self.guides = [], [], []
+	def evolvewithGuide(self, moves, picks):
+		self.picks = picks[:]
+		for move in moves: self.decodePlay(move)
+		self.moves, self.picks = [], []
 
 	def decodePlay(self, move):
-		if move[0] == "EndTurn": self.switchTurn()
+		playCorrect = False
+		#接收并解读别人传来的信息时，需要把自己的回合开始先走完再说
+		if move[0] == "EndTurn": playCorrect = self.endTurn(sendthruServer=False, initiatesChain=False)
+		#只会在自己发起的回合结束得到了对方的回合开始信息之后被调用
+		elif move[0] == "StartTurn": playCorrect = self.startTurn(finallyWrapUpSwitchTurn=True, sendthruServer=False)
 		else:
 			sub = self.find(move[1], move[2])
 			if isinstance(move[3], tuple):
@@ -1307,12 +1361,41 @@ class Game:
 			else:
 				tar = self.find(move[3], move[4]) if move[4] else None
 			if self.GUI: self.GUI.subject, self.GUI.target = sub, tar
-			{"battle": lambda: self.battle(sub, tar),
-			"Power": lambda: sub.use(tar, move[5]),
-			"playMinion": lambda: self.playMinion(sub, tar, move[5], move[6]),
-			"playAmulet": lambda: self.playAmulet(sub, tar, move[5], move[6]),
-			"playWeapon": lambda: self.playWeapon(sub, tar, move[5]),
-			"playSpell": lambda: self.playSpell(sub, tar, move[5]),
-			"playHero": lambda: self.playHero(sub, move[5]),
-			}[move[0]]()
+			playCorrect = {"battle": lambda: self.battle(sub, tar, sendthruServer=False),
+							"Power": lambda: sub.use(tar, move[5], sendthruServer=False),
+							"playMinion": lambda: self.playMinion(sub, tar, move[5], move[6], sendthruServer=False),
+							"playAmulet": lambda: self.playAmulet(sub, tar, move[5], move[6], sendthruServer=False),
+							"playWeapon": lambda: self.playWeapon(sub, tar, move[5], sendthruServer=False),
+							"playSpell": lambda: self.playSpell(sub, tar, move[5], sendthruServer=False),
+							"playHero": lambda: self.playHero(sub, move[5], sendthruServer=False),
+							"playCard_4Trade": lambda: self.playCard_4Trade(sub, sendthruServer=False),
+							}[move[0]]()
 			if self.GUI: self.GUI.subject, self.GUI.target = None, None
+		if not playCorrect: print("\n\n********DESYNCED!!!********\n\n")
+		
+	def possiblePlays(self):
+		plays, curTurn, affordable = [], self.turn, self.Manas.affordable
+		hasSpaceonBoard = self.space(curTurn) > 0
+		for card in self.Hand_Deck.hands[curTurn]:
+			if affordable(card, canbeTraded="~Tradeable" in card.index) \
+						and (card.type == "Minion" and hasSpaceonBoard) or (card.type == "Spell" and card.available()) or card.type in ("Hero", "Weapon"):
+				plays.append(card)
+		plays += [minion for minion in self.minionsonBoard(curTurn) if minion.canAttack() and minion.findBattleTargets()]
+		hero = self.heroes[curTurn]
+		if hero.canAttack() and hero.findBattleTargets(): plays.append(hero)
+		if self.powers[curTurn].available(): plays.append(self.powers[curTurn])
+		return plays
+		
+	def morePlaysPossible(self):
+		plays, curTurn, affordable = [], self.turn, self.Manas.affordable
+		hasSpaceonBoard = self.space(curTurn) > 0
+		if any(affordable(card, canbeTraded="~Tradeable" in card.index) \
+					and (card.type == "Minion" and hasSpaceonBoard) or (card.type == "Spell" and card.available()) or card.type in ("Hero", "Weapon")
+			   for card in self.Hand_Deck.hands[curTurn]):
+			return True
+		if any(minion.canAttack() and minion.findBattleTargets() for minion in self.minionsonBoard(curTurn)):
+			return True
+		hero, power = self.heroes[curTurn], self.powers[curTurn]
+		if hero.canAttack() and hero.findBattleTargets(): return True
+		if affordable(power) and power.available(): return True
+		return False

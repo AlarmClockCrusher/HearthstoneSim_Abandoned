@@ -2,6 +2,7 @@ from CardTypes import *
 from Triggers_Auras import *
 
 from AcrossPacks import Frog, SilverHandRecruit, WaterElemental_Basic, DreamCards, Adventurers
+import inspect
 
 """Forged in the Barrens"""
 #假设是随从受伤时触发，不是受伤之后触发
@@ -488,23 +489,8 @@ class VenomousScorpid(Minion):
 			   [[card for card in cards if card.type == "Spell"] for cards in pools.ClassCards.values()]
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			pool = tuple(self.rngPool(classforDiscover(self) + " Spells"))
-			if curGame.guides:
-				self.addCardtoHand(curGame.guides.pop(0), self.ID, byDiscover=True)
-			else:
-				if self.ID != curGame.turn or "byOthers" in comment:
-					self.addCardtoHand(npchoice(pool), self.ID, byDiscover=True)
-				else:
-					spells = npchoice(pool, 3, replace=False)
-					curGame.options = [spell(curGame, self.ID) for spell in spells]
-					curGame.Discover.startDiscover(self, pool)
+		self.discoverandGenerate(VenomousScorpid, comment, lambda : self.rngPool(classforDiscover(self) + " Spells"))
 		return None
-
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
-		self.addCardtoHand(option, self.ID, byDiscover=True)
 
 
 """Mana 4 Cards"""
@@ -614,64 +600,89 @@ class KazakusGolemShaper(Minion):
 		self.effectViable = all(card.mana != 4 for card in self.Game.Hand_Deck.decks[self.ID])
 		
 	def createGolem(self, mana, keyWord, golem):
-		print("Creating golem with", mana, keyWord, golem)
 		name = golem.name
 		words = golem.index.split('~')
 		for i, word in enumerate(words):
-			if word == name:
-				words.insert(i+2, keyWord)
+			if word == name: words.insert(i+2, keyWord)
 		newIndex = '~'.join(words)
 		#Example: "SuperiorGolem__Mageroyal"
 		subclass = type(golem.__name__+'__'+keyWord, (golem,),
-						{"index": newIndex, "keyWord": keyWord,
-						 "description": keyWord + ". " + golem.description}
+						{"index": newIndex, "keyWord": keyWord, "description": keyWord + ". " + golem.description}
 						)
 		return subclass
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if self.ID == curGame.turn and all(card.mana != 4 for card in curGame.Hand_Deck.decks[self.ID]):
-			if curGame.mode == 0:
-				if curGame.guides:
-					mana, keyWord, golem = curGame.guides.pop(0)
-					KazakusGolemShaper.createGolem(self, mana, keyWord, golem)
+		game, ID = self.Game, self.ID
+		if ID == game.turn and all(card.mana != 4 for card in game.Hand_Deck.decks[ID]):
+			if game.mode == 0:
+				manas, keyWords = (1, 5, 10), ("Rush", "Taunt", "Divine Shield", "Lifesteal", "Stealth", "Poisonouus")
+				if game.picks:
+					info_RNGSync, info_GUISync, isRandom, golemInfo = game.picks.pop(0)
+					mana, keyWord, golem = golemInfo
+					npchoice(range(6), 3, replace=False)
+					npchoice(range(6), 3, replace=False)
+					if game.GUI:
+						i_mana, i_keyWord, i_golem = info_GUISync
+						option_mana = (LesserGolem, GreaterGolem, SuperiorGolem)[i_mana](ID=ID)
+						option_keyWord = GolemKeywordOptions[mana][keyWords.index(keyWord)](ID=ID)
+						for indexOption, option in zip((i_mana, i_keyWord, i_golem), (option_mana, option_keyWord, golem(ID=ID))):
+							game.GUI.discoverDecideAni(isRandom=isRandom, numOption=3, indexOption=indexOption, options=option)
+					KazakusGolemShaper.discoverDecided(self, (mana, keyWord, golem), case="Guided")
 				else:
+					keyWords = npchoice(keyWords, 3, replace=False)
 					if "byOthers" in comment:
-						mana, keyWord = npchoice((1, 5, 10)), npchoice(("Rush", "Taunt", "Divine Shield", "Lifesteal", "Stealth", "Poisonouus"))
-						if mana == 1: choices = (LesserGolem__Wildvine, LesserGolem__Gromsblood, LesserGolem__Icecap, LesserGolem__Firebloom, LesserGolem__Mageroyal, LesserGolem__Kingsblood)
-						elif mana == 5: choices = (GreaterGolem__Wildvine, GreaterGolem__Gromsblood, GreaterGolem__Icecap, GreaterGolem__Firebloom, GreaterGolem__Mageroyal, GreaterGolem__Kingsblood)
-						else: choices = (SuperiorGolem__Wildvine, SuperiorGolem__Gromsblood, SuperiorGolem__Icecap, SuperiorGolem__Firebloom, SuperiorGolem__Mageroyal, SuperiorGolem__Kingsblood)
-						golem = npchoice(choices)
-						KazakusGolemShaper.createGolem(self, mana, keyWord, golem)
+						microsecond = datetime.now().microsecond
+						i_mana, i_keyWord, i_golem = microsecond % 3, int(microsecond/10) % 3, int(microsecond/100) % 3
+						mana, keyWord = manas[i_mana], keyWords[i_keyWord]
+						if mana == 1: golems = (LesserGolem__Wildvine, LesserGolem__Gromsblood, LesserGolem__Icecap, LesserGolem__Firebloom, LesserGolem__Mageroyal, LesserGolem__Kingsblood)
+						elif mana == 5: golems = (GreaterGolem__Wildvine, GreaterGolem__Gromsblood, GreaterGolem__Icecap, GreaterGolem__Firebloom, GreaterGolem__Mageroyal, GreaterGolem__Kingsblood)
+						else: golems = (SuperiorGolem__Wildvine, SuperiorGolem__Gromsblood, SuperiorGolem__Icecap, SuperiorGolem__Firebloom, SuperiorGolem__Mageroyal, SuperiorGolem__Kingsblood)
+						#Another n_choose_3
+						golems = npchoice(golems, 3, replace=False)
+						golem = golems[i_golem]
+						if game.GUI:
+							option_mana = (LesserGolem, GreaterGolem, SuperiorGolem)[i_mana](ID=ID)
+							option_keyWord = GolemKeywordOptions[mana][keyWords.index(keyWord)](ID=ID)
+							for indexOption, option in zip((i_mana, i_keyWord, i_golem), (option_mana, option_keyWord, golem(ID=ID))):
+								game.GUI.discoverDecideAni(isRandom=True, numOption=3, indexOption=indexOption, options=option)
+						KazakusGolemShaper.discoverDecided(self, (mana, keyWord, golem),
+											 				case="Random", info_RNGSync=(6, 6), info_GUISync=(i_mana, i_keyWord, i_golem))
 					else:
-						info = []
-						curGame.options = [LesserGolem(), GreaterGolem(), SuperiorGolem()]
-						curGame.Discover.startDiscover(self, info)
+						info = [] #3次选择中积累出2+2+1个元素 (indexOption_mana, mana, indexOption_keyWord, keyWord, indexOption_effect)
+						game.options = [LesserGolem(ID=ID), GreaterGolem(ID=ID), SuperiorGolem(ID=ID)]
+						game.Discover.startDiscover(self, effectType=KazakusGolemShaper, info_RNGSync=(6, 6), info_GUISync=info)
 						#The first discover changes the choices and leave a mana in there
 						mana = info[0]
-						curGame.options = [choice() for choice in npchoice(GolemKeywordOptions[mana], 3, replace=False)]
-						curGame.Discover.startDiscover(self, info)
-						choices = npchoice(GolemEffectOptions[mana], 3, replace=False)
-						curGame.options = [choice() for choice in npchoice(choices, 3, replace=False)]
-						curGame.Discover.startDiscover(self, info)
+						#Whatever mana is, the keyword poolSize is always 6
+						game.options = [choice(ID=ID) for choice in npchoice(GolemKeywordOptions[mana], 3, replace=False)]
+						game.Discover.startDiscover(self, effectType=KazakusGolemShaper, info_RNGSync=(6, 6), info_GUISync=info)
+						#Whatever mana is, the keyword poolSize is always 6
+						game.options = [choice(ID=ID) for choice in npchoice(GolemEffectOptions[mana], 3, replace=False)]
+						game.Discover.startDiscover(self, effectType=KazakusGolemShaper, info_RNGSync=(6, 6), info_GUISync=info)
 		return None
 	
-	def discoverDecided(self, option, pool):
-		if option.name: #The mana option and effect options have names
-			if option.name == "Lesser Golem": pool.append(1)
-			elif option.name == "Greater Golem": pool.append(5)
-			elif option.name == "Superior Golem": pool.append(10)
-			else:
-				golem = GolemTable[option.name]
-				print("Create effet ", golem)
-				pool.append(golem)
-				self.Game.fixedGuides.append(tuple(pool))
-				mana, keyWord, golem = pool
-				newGolem = KazakusGolemShaper.createGolem(self, mana, keyWord, golem)
-				self.addCardtoHand(newGolem, self.ID)
-		else: #The keyword options don't have empty names
-			pool.append(option.keyWord)
-		
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		if case == "Discovered": #The mana option and effect options have names
+			if not option.name: #Keyword options。此时info_GUISync为[indexOption_mana, mana, indexOption_keyWord]
+				info_GUISync.append(option.keyWord)
+			else: #费用和效果选择
+				#先选择费用，发现一次之后info_GUISync变为[indexOption_mana]
+				if option.name == "Lesser Golem": info_GUISync.append(1)
+				elif option.name == "Greater Golem": info_GUISync.append(5)
+				elif option.name == "Superior Golem": info_GUISync.append(10)
+				else: #effect option。此时info_GUISync为[indexOption_mana, mana, indexOption_keyWord, keyWord, indexOption_effect]
+					#3次发现完成
+					golem = GolemTable[option.name]
+					indexOption_mana, mana, indexOption_keyWord, keyWord, indexOption_effect = info_GUISync
+					self.Game.picks.append(((6, 6), (indexOption_mana, indexOption_keyWord, indexOption_effect),
+											False, (mana, keyWord, golem)))
+					self.addCardtoHand(KazakusGolemShaper.createGolem(self, mana, keyWord, golem), self.ID)
+		else:
+			mana, keyWord, golem = option
+			if case == "Random": self.Game.picks.append((info_RNGSync, info_GUISync, True, option))
+			self.addCardtoHand(KazakusGolemShaper.createGolem(self, mana, keyWord, golem), self.ID)
+			
+			
 class LesserGolem(Option):
 	name, type = "Lesser Golem", "Option_Minion"
 	mana, attack, health = 1, -1, -1
@@ -1122,35 +1133,20 @@ class SouthseaScoundrel(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a card from your opponent's deck. They draw theirs as well"
 	name_CN = "南海恶徒"
 	
+	def getCopyfromOppoDeck_TheyDrawTheirs(self, index, card):
+		self.addCardtoHand(card.selfCopy(self.ID, self), self.ID, byDiscover=True, creator=type(self))
+		self.Game.Hand_Deck.drawCard(3 - self.ID, index)
+	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		enemyDeck = curGame.Hand_Deck.decks[3-self.ID]
-		if curGame.turn == self.ID and enemyDeck:
-			if curGame.mode == 0:
-				if curGame.guides:
-					i = curGame.guides.pop(0)
-					card = enemyDeck[i]
-					self.addCardtoHand(card.selfCopy(self.ID, self), self.ID, byDiscover=True)
-					curGame.Hand_Deck.drawCard(3-self.ID, i)
-				else:
-					types, inds = [type(card) for card in enemyDeck], list(range(len(enemyDeck)))
-					if "byOthers" in comment:
-						i = npChoice_inds(types, inds, 1)[0]
-						card = enemyDeck[i]
-						self.addCardtoHand(card.selfCopy(self.ID, self), self.ID, byDiscover=True)
-						curGame.Hand_Deck.drawCard(3 - self.ID, i)
-					else:
-						inds = npChoice_inds(types, inds, 3)
-						curGame.options = [enemyDeck[i] for i in inds]
-						curGame.Discover.startDiscover(self)
+		self.discoverfromList(SouthseaScoundrel, comment, conditional=lambda card: True,
+							  ls=self.Game.Hand_Deck.decks[3-self.ID])
 		return None
 	
-	def discoverDecided(self, option, pool):
-		i = self.Game.Hand_Deck.decks[self.ID].index(option)
-		self.Game.fixedGuides.append(i)
-		self.addCardtoHand(option.selfCopy(self.ID, self), self.ID, byDiscover=True, creator=type(self))
-		self.Game.Hand_Deck.drawCard(3-self.ID, i)
-
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		self.handleDiscoveredCardfromList(option, case, ls=self.Game.Hand_Deck.decks[3 - self.ID],
+										  func=lambda index, card: SouthseaScoundrel.getCopyfromOppoDeck_TheyDrawTheirs(self, index, card),
+										  info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
+		
 
 class SpiritHealer(Minion):
 	Class, race, name = "Neutral", "", "Spirit Healer"
@@ -1793,16 +1789,9 @@ class Trig_GuffRunetotem(TrigBoard):
 		return "在你施放一个自然法术后，使另一个友方随从获得+2/+2" if CHN else "After you cast a Nature spell, give another friendly minion +2/+2"
 	
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		curGame = self.entity.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				i = curGame.guides.pop(0)
-			else:
-				minions = curGame.minionsonBoard(self.entity.ID, self.entity)
-				i = npchoice(minions).pos if minions else -1
-				curGame.fixedGuides.append(i)
-			if i > -1: curGame.minions[self.entity.ID][i].buffDebuff(2, 2)
-
+		minions = self.entity.Game.minionsonBoard(self.entity.ID, self.entity)
+		if minions: npchoice(minions).buffDebuff(2, 2)
+		
 
 class PlaguemawtheRotting(Minion):
 	Class, race, name = "Druid", "Quilboar", "Plaguemaw the Rotting"
@@ -1896,7 +1885,7 @@ class Trig_DruidofthePlains(Frenzy):
 		
 class DruidofthePlains_Taunt(Minion):
 	Class, race, name = "Druid", "Beast", "Druid of the Plains"
-	mana, attack, health = 7, 6, 7
+	mana, attack, health = 7, 6, 6
 	index = "THE_BARRENS~Druid~Minion~7~6~7~Beast~Druid of the Plains~Taunt~Uncollectible"
 	requireTarget, keyWord, description = False, "Taunt", "Taunt"
 	name_CN = "平原德鲁伊"
@@ -1957,8 +1946,8 @@ class SwiftHyena(Minion):
 
 class KolkarPackRunner(Minion):
 	Class, race, name = "Hunter", "", "Kolkar Pack Runner"
-	mana, attack, health = 2, 2, 3
-	index = "THE_BARRENS~Hunter~Minion~2~2~3~~Kolkar Pack Runner"
+	mana, attack, health = 3, 3, 4
+	index = "THE_BARRENS~Hunter~Minion~3~3~4~~Kolkar Pack Runner"
 	requireTarget, keyWord, description = False, "", "After you cast a spell, summon a 1/1 Hyena with Rush"
 	name_CN = "科卡尔驯犬者"
 	def __init__(self, Game, ID):
@@ -2113,33 +2102,18 @@ class PackKodo(Minion):
 			ls_Pools.extend(weapons)
 		return Classes, ls_Pools
 	
+	def decideSecretPool(self):
+		HeroClass = self.Game.heroes[self.ID].Class
+		key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Mage Secrets"
+		return self.rngPool(key)
+	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if self.ID == curGame.turn:
-			if curGame.mode == 0:
-				Class = classforDiscover(self)
-				beasts = self.rngPool("Beasts as " + Class)
-				secrets = self.rngPool(Class + " Secrets")
-				if not secrets: secrets = self.rngPool("Hunter Secrets")
-				weapons = self.rngPool("Weapons as " + Class)
-				pool = beasts + secrets + weapons
-				if curGame.guides:
-					self.addCardtoHand(curGame.guides.pop(0), self.ID, byDiscover=True)
-				else:
-					if "byOthers" in comment:
-						ran = nprandint(3)
-						card = npchoice(beasts if ran == 0 else (secrets if ran == 1 else weapons))
-						curGame.fixedGuides.append(card)
-						self.addCardtoHand(card, self.ID, byDiscover=True)
-					else:
-						curGame.options = [npchoice(ls)(curGame, self.ID) for ls in (beasts, secrets, weapons)]
-						curGame.Discover.startDiscover(self, pool)
+		self.discoverandGenerate_MultiplePools(PackKodo, comment,
+											   poolFuncs=[lambda : self.rngPool("Beasts as " + classforDiscover(self)),
+														lambda : PackKodo.decideSecretPool(self),
+														lambda : self.rngPool("Weapons as " + classforDiscover(self))])
 		return None
 	
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
-		self.addCardtoHand(option, self.ID, byDiscover=True)
-
 
 class TavishStormpike(Minion):
 	Class, race, name = "Hunter", "", "Tavish Stormpike"
@@ -2204,7 +2178,7 @@ class WarsongWrangler(Minion):
 	requireTarget, keyWord, description = False, "", "Battlecry: Discover a Beast in your deck. Give all copies of it +2/+1 (wherever they are)"
 	name_CN = "战歌驯兽师"
 	
-	def drawBeastandBuffAllCopies(self, i):
+	def drawBeastandBuffAllCopies(self, i, beast):
 		beast = self.Game.Hand_Deck.decks[self.ID][i]
 		cardType = type(beast)
 		self.Game.Hand_Deck.drawCard(self.ID, i)
@@ -2216,36 +2190,20 @@ class WarsongWrangler(Minion):
 				card.buffDebuff(2, 1)
 		for card in self.Game.Hand_Deck.decks[self.ID]:
 			if isinstance(card, cardType):
-				card.attack += 1
-				card.attack_Enchant += 1
+				card.attack += 2
+				card.attack_Enchant += 2
 				card.health += 1
 				card.health_max += 1
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		ownDeck = curGame.Hand_Deck.decks[3 - self.ID]
-		if curGame.turn == self.ID and ownDeck:
-			if curGame.mode == 0:
-				if curGame.guides:
-					i = curGame.guides.pop(0)
-					if i > -1:
-						WarsongWrangler.drawBeastandBuffAllCopies(self, i)
-				else:
-					types, inds = [type(card) for card in ownDeck], list(range(len(ownDeck)))
-					if "byOthers" in comment:
-						i = npChoice_inds(types, inds, 1)[0]
-						if i > -1: WarsongWrangler.drawBeastandBuffAllCopies(self, i)
-					else:
-						inds = npChoice_inds(types, inds, 3)
-						curGame.options = [ownDeck[i] for i in inds]
-						curGame.Discover.startDiscover(self)
+		self.discoverfromList(WarsongWrangler, comment, lambda card: "Beast" in card.race)
 		return None
 	
-	def discoverDecided(self, option, pool):
-		i = self.Game.Hand_Deck.decks[self.ID].index(option)
-		self.Game.fixedGuides.append(i)
-		if i > -1: WarsongWrangler.drawBeastandBuffAllCopies(self, i)
-			
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		self.handleDiscoveredCardfromList(option, case, ls=self.Game.Hand_Deck.decks[self.ID],
+										  func=lambda index, card: WarsongWrangler.drawBeastandBuffAllCopies(self, index, card),
+										  info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
+		
 
 class BarakKodobane(Minion):
 	Class, race, name = "Hunter", "", "Barak Kodobane"
@@ -2345,23 +2303,9 @@ class RunedOrb(Spell):
 		if target:
 			damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 			self.dealsDamage(target, damage)
-			if curGame.mode == 0:
-				if curGame.guides:
-					self.addCardtoHand(curGame.guides.pop(0), self.ID, byDiscover=True)
-				else:
-					key = classforDiscover(self) + " Spells"
-					if self.ID != curGame.turn or "byOthers" in comment:
-						self.addCardtoHand(npchoice(self.rngPool(key)), self.ID, byDiscover=True)
-					else:
-						spells = npchoice(self.rngPool(key), 3, replace=False)
-						curGame.options = [spell(curGame, self.ID) for spell in spells]
-						curGame.Discover.startDiscover(self)
+			self.discoverandGenerate(RunedOrb, comment, lambda : self.rngPool(classforDiscover(self) + " Spells"))
 		return target
 	
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
-		self.addCardtoHand(option, self.ID, byDiscover=True)
-
 
 class Wildfire(Spell):
 	Class, school, name = "Mage", "Fire", "Wildfire"
@@ -2533,8 +2477,8 @@ class MordreshFireEye(Minion):
 """Paladin Cards"""
 class ConvictionRank1(Spell):
 	Class, school, name = "Paladin", "Holy", "Conviction (Rank 1)"
-	requireTarget, mana = False, 1
-	index = "THE_BARRENS~Paladin~Spell~1~Holy~Conviction (Rank 1)"
+	requireTarget, mana = False, 2
+	index = "THE_BARRENS~Paladin~Spell~2~Holy~Conviction (Rank 1)"
 	description = "Give a random friendly minion +3 Attack. (Upgrades when you have 5 mana.)"
 	name_CN = "定罪（等级1）"
 	def __init__(self, Game, ID):
@@ -2556,8 +2500,8 @@ class ConvictionRank1(Spell):
 
 class ConvictionRank2(Spell):
 	Class, school, name = "Paladin", "Holy", "Conviction (Rank 2)"
-	requireTarget, mana = False, 1
-	index = "THE_BARRENS~Paladin~Spell~1~Holy~Conviction (Rank 2)~Uncollectible"
+	requireTarget, mana = False, 2
+	index = "THE_BARRENS~Paladin~Spell~2~Holy~Conviction (Rank 2)~Uncollectible"
 	description = "Give two random friendly minions +3 Attack. (Upgrades when you have 10 mana.)"
 	name_CN = "定罪（等级2）"
 	def __init__(self, Game, ID):
@@ -2580,8 +2524,8 @@ class ConvictionRank2(Spell):
 
 class ConvictionRank3(Spell):
 	Class, school, name = "Paladin", "Holy", "Conviction (Rank 3)"
-	requireTarget, mana = False, 1
-	index = "THE_BARRENS~Paladin~Spell~1~Holy~Conviction (Rank 3)~Uncollectible"
+	requireTarget, mana = False, 2
+	index = "THE_BARRENS~Paladin~Spell~2~Holy~Conviction (Rank 3)~Uncollectible"
 	description = "Give three random friendly minions +3 Attack"
 	name_CN = "定罪（等级3）"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
@@ -3138,31 +3082,23 @@ class Yoink(Spell):
 		return "Basic Powers", pools.basicPowers
 	
 	def getaNewPowerThatSwapsBack(self, power_New, power_Orig):
-		trig = Trig_SwapBackPowerAfter2Uses(power_New, power_Orig)
-		power_New.trigBoard = [trig]
-		trig.connect()
+		power_New.getsTrig(Trig_SwapBackPowerAfter2Uses(power_New, power_Orig), trigType="TrigBoard", connect=False)
 		power_New.replaceHeroPower()
 		
+	def decidePowerPool(self):
+		pool = self.rngPool("Basic Powers")[:]
+		try: pool.remove(type(self.Game.powers[self.ID]))
+		except: pass
+		return pool
+	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				power = curGame.guides.pop(0)(curGame, self.ID)
-				Yoink.getaNewPowerThatSwapsBack(self, power, curGame.powers[self.ID])
-			else:
-				powerPool = curGame.basicPowers[:]
-				try: powerPool.remove(type(curGame.powers[self.ID]))
-				except: pass
-				if "byOthers" in comment:
-					Yoink.getaNewPowerThatSwapsBack(self, npchoice(powerPool)(curGame, self.ID), curGame.powers[self.ID])
-				else:
-					newpowers = npchoice(powerPool, 3, replace=False)
-					curGame.options = [power(curGame, self.ID) for power in newpowers]
-					curGame.Discover.startDiscover(self)
+		self.discoverandGenerate(Yoink, comment, lambda : Yoink.decidePowerPool(self))
 		return None
 	
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		if case == "Discovered" or case == "Random":
+			self.Game.picks.append((info_RNGSync, info_GUISync, case == "Random",
+									option if inspect.isclass(option) else type(option)) )
 		Yoink.getaNewPowerThatSwapsBack(self, option, self.Game.powers[self.ID])
 		
 class Trig_SwapBackPowerAfter2Uses(TrigBoard):
@@ -3912,21 +3848,12 @@ class SoulRend(Spell):
 			else "Deal %d damage to all minions. Destroy a card in your deck for each killed" % damage
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
 		damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		targets = curGame.minionsonBoard(1) + curGame.minionsonBoard(2)
+		targets = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
 		self.dealsAOE(targets, [damage]*len(targets))
 		numKilled = sum(minion.health < 1 or minion.dead for minion in targets)
 		if numKilled:
-			if curGame.mode == 0:
-				if curGame.guides:
-					inds = curGame.guides.pop(0)
-				else:
-					deckSize = len(curGame.Hand_Deck.decks[self.ID])
-					inds = npchoice(range(deckSize), min(numKilled, deckSize), replace=False)
-					curGame.fixedGuides.append(inds)
-				for i in reversed(sorted(inds)):
-					curGame.Hand_Deck.extractfromDeck(i, self.ID, enemyCanSee=False, animate=False)
+			self.Game.Hand_Deck.removeDeckTopCard(self.ID, numKilled)
 		return None
 
 
@@ -4296,6 +4223,11 @@ class ArchdruidNaralex(Minion):
 		if firstTime:  #首次出场时会进行休眠，而且休眠状态会保持之前的随从buff
 			self.Game.transform(self, SleepingNaralex(self.Game, self.ID, self), firstTime=True)
 		else:  #只有不是第一次出现在场上时才会执行这些函数
+			if self.btn:
+				self.btn.isPlayed, self.btn.card = True, self
+				self.btn.placeIcons()
+				self.btn.statChangeAni()
+				self.btn.statusChangeAni()
 			for aura in self.auras.values(): aura.auraAppears()
 			for trig in self.trigsBoard + self.deathrattles: trig.connect()
 			self.Game.sendSignal("MinionAppears", self.ID, self, None, 0, comment=firstTime)
@@ -4689,33 +4621,16 @@ class ClericofAnshe(Minion):
 		self.effectViable = self.Game.Counters.healthRestoredThisTurn[self.ID] > 0
 
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
-		curGame = self.Game
-		if curGame.Counters.healthRestoredThisTurn[self.ID] > 0 and self.ID == curGame.turn:
-			ownDeck =curGame.Hand_Deck.decks[self.ID]
-			if curGame.mode == 0:
-				if curGame.guides:
-					i = curGame.guides.pop(0)
-					if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
-				else:
-					cardTypes, p = discoverProb([type(card) for card in ownDeck])
-					if cardTypes:
-						if "byOthers" in comment:
-							cardType = npchoice(cardTypes, p=p)
-							i = npchoice([i for i, card in enumerate(ownDeck) if isinstance(card, cardType)])
-							curGame.Hand_Deck.drawCard(self.ID, i)
-						else:
-							types = npchoice(cardTypes, min(len(p), 3), p=p, replace=False)
-							curGame.options = [ownDeck[npchoice([i for i, card in enumerate(ownDeck) if isinstance(card, cardType)])]
-											   for cardType in types]
-							curGame.Discover.startDiscover(self)
-					else: curGame.fixedGuides.append(-1)
+		if self.Game.Counters.healthRestoredThisTurn[self.ID] > 0:
+			self.discoverfromList(ClericofAnshe, comment, conditional=lambda card: card.type == "Spell",
+								  ls=self.Game.Hand_Deck.decks[self.ID])
 		return None
 	
-	def discoverDecided(self, option, pool):
-		i = self.Game.Hand_Deck.decks[self.ID].index(option)
-		self.Game.fixedGuides.append(i)
-		self.Game.Hand_Deck.drawCard(self.ID, i)
-
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		self.handleDiscoveredCardfromList(option, case, ls=self.Game.Hand_Deck.decks[self.ID],
+										  func=lambda index, card: self.Game.Hand_Deck.drawCard(self.ID, index),
+										  info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
+		
 
 class DevoutDungeoneer(Minion):
 	Class, race, name = "Priest", "", "Devout Dungeoneer"

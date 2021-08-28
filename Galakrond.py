@@ -18,15 +18,8 @@ class SkydivingInstructor(Minion):
 	name_CN = "伞降教官"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				i = curGame.guides.pop(0)
-			else:
-				minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if card.mana == 1]
-				i = npchoice(minions) if minions and curGame.space(self.ID) > 0 else -1
-				curGame.fixedGuides.append(i)
-			if i > -1: curGame.summonfrom(i, self.ID, self.pos+1, self, source='D')
+		indices = [i for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]) if card.type == "Minion" and card.mana == 1]
+		if indices: self.Game.summonfrom(npchoice(indices), self.ID, self.pos+1, self, source='D')
 		return None
 		
 		
@@ -39,7 +32,7 @@ class Hailbringer(Minion):
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		pos = (self.pos, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
-		self.Game.summon([IceShard(self.Game, self.ID) for i in range(2)], pos, self)
+		self.summon([IceShard(self.Game, self.ID) for i in range(2)], pos)
 		return None
 		
 class IceShard(Minion):
@@ -78,7 +71,7 @@ class LicensedAdventurer(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Secrets.mainQuests[self.ID] != [] or self.Game.Secrets.sideQuests[self.ID] != []:
-			self.Game.Hand_Deck.addCardtoHand(TheCoin, self.ID, byType=True)
+			self.addCardtoHand(TheCoin, self.ID)
 		return None
 		
 class FrenziedFelwing(Minion):
@@ -179,16 +172,9 @@ class Trig_GrandLackeyErkh(TrigBoard):
 				else "After you play a Lackey, add a Lackey to your hand"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		curGame = self.entity.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				lackey = curGame.guides.pop(0)
-			else:
-				lackey = npchoice(Lackeys)
-				curGame.fixedGuides.append(lackey)
-			curGame.Hand_Deck.addCardtoHand(lackey, self.entity.ID, byType=True)
-			
-			
+		self.entity.addCardtoHand(npchoice(Lackeys), self.entity.ID)
+		
+		
 class SkyGenralKragg(Minion):
 	Class, race, name = "Neutral", "Pirate", "Sky Gen'ral Kragg"
 	mana, attack, health = 4, 2, 3
@@ -200,7 +186,7 @@ class SkyGenralKragg(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Counters.hasPlayedQuestThisGame[self.ID]:
-			self.Game.summon(Sharkbait(self.Game, self.ID), self.pos+1, self)
+			self.summon(Sharkbait(self.Game, self.ID), self.pos+1)
 		return None
 		
 class Sharkbait(Minion):
@@ -231,7 +217,7 @@ class RisingWinds(Spell):
 		if choice < 1:
 			self.Game.Hand_Deck.drawCard(self.ID)
 		if choice != 0:
-			self.Game.summon(Eagle(self.Game, self.ID), -1, self)
+			self.summon(Eagle(self.Game, self.ID), -1)
 		return None
 		
 class RisingWinds2(Spell):
@@ -251,7 +237,7 @@ class RisingWinds2(Spell):
 		if choice < 1:
 			self.Game.Hand_Deck.drawCard(self.ID)
 		if choice != 0:
-			self.Game.summon(Eagle(self.Game, self.ID), -1, self)
+			self.summon(Eagle(self.Game, self.ID), -1)
 		return None
 		
 class TakeFlight_Option(Option):
@@ -286,7 +272,7 @@ class SwoopIn(Spell):
 		return self.Game.space(self.ID) > 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.summon(Eagle(self.Game, self.ID), -1, self)
+		self.summon(Eagle(self.Game, self.ID), -1)
 		return None
 		
 class Eagle(Minion):
@@ -390,14 +376,7 @@ class Trig_ChopshopCopter(TrigBoard):
 		return "在一个友方机械死亡，随机将一张机械牌置入你的手牌" if CHN else "After a friendly Mech dies, add a random Mech to your hand"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		curGame = self.entity.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				mech = curGame.guides.pop(0)
-			else:
-				mech = npchoice(self.rngPool("Mechs"))
-				curGame.fixedGuides.append(mech)
-			curGame.Hand_Deck.addCardtoHand(mech, self.entity.ID, byType=True)
+		self.entity.addCardtoHand(npchoice(self.rngPool("Mechs")), self.entity.ID)
 			
 			
 class RotnestDrake(Minion):
@@ -410,17 +389,8 @@ class RotnestDrake(Minion):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID, self)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				i = curGame.guides.pop(0)
-			else:
-				minions = [minion.pos for minion in curGame.minionsAlive(3-self.ID)]
-				i = npchoice(minions) if minions else -1
-				curGame.fixedGuides.append(i)
-			if i > -1:
-				minion = curGame.minions[3-self.ID][i]
-				minion.dead = True
+		minions = self.Game.minionsAlive(3-self.ID)
+		if minions: self.Game.killMinion(self, npchoice(minions))
 		return None
 		
 		
@@ -455,7 +425,7 @@ class AnimatedAvalanche(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if self.Game.Counters.numElementalsPlayedLastTurn[self.ID] > 0:
 			Copy = self.selfCopy(self.ID, self) if self.onBoard else type(self)(self.Game, self.ID)
-			self.Game.summon(Copy, self.pos+1, self)
+			self.summon(Copy, self.pos+1)
 		return None
 		
 		
@@ -471,7 +441,7 @@ class WhatDoesThisDo(Power):
 	def available(self, choice=0):
 		return False
 		
-	def use(self, target=None, choice=0):
+	def use(self, target=None, choice=0, comment=''):
 		return 0
 		
 	def appears(self):
@@ -489,14 +459,8 @@ class Trig_WhatDoesThisDo(TrigBoard):
 		return ID == self.entity.ID
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		curGame = self.entity.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				spell = curGame.guides.pop(0)
-			else:
-				spell = npchoice(self.rngPool("Spells"))
-				curGame.fixedGuides.append(spell)
-			spell(curGame, self.entity.ID).cast()
+		npchoice(self.rngPool("Spells"))(self.entity.Game, self.entity.ID).cast()
+		
 			
 class TheAmazingReno(Hero):
 	mana, description = 10, "Battlecry: Make all minions disappear. *Poof!*"
@@ -540,7 +504,7 @@ class AirRaid(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		minions = [SilverHandRecruit(self.Game, self.ID) for i in range(2)]
 		for minion in minions: minion.keyWords["Taunt"] += 1
-		self.Game.summon(minions, (-1, "totheRightEnd"), self)
+		self.summon(minions, (-1, "totheRightEnd"), self)
 		return None
 		
 class AirRaid2(Spell):
@@ -553,7 +517,7 @@ class AirRaid2(Spell):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		minions = [SilverHandRecruit(self.Game, self.ID) for i in range(2)]
 		for minion in minions: minion.keyWords["Taunt"] += 1
-		self.Game.summon(minions, (-1, "totheRightEnd"), self)
+		self.summon(minions, (-1, "totheRightEnd"))
 		return None
 		
 		
@@ -601,34 +565,15 @@ class ClericofScales(Minion):
 		self.effectViable = self.Game.Hand_Deck.holdingDragon(self.ID)
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.Hand_Deck.holdingDragon(self.ID) and self.ID == curGame.turn:
-			if curGame.mode == 0:
-				if curGame.guides:
-					i = curGame.guides.pop(0)
-					if i > -1:
-						curGame.Hand_Deck.drawCard(self.ID, i)
-				else:
-					spells, types = [], []
-					for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]):
-						if card.type == "Spell" and type(card) not in types:
-							spells.append(i)
-							types.append(type(card))
-					if spells:
-						if "byOthers" in comment:
-							i = npchoice(spells)
-							curGame.fixedGuides.append(i)
-							curGame.Hand_Deck.drawCard(self.ID, i)
-						else:
-							curGame.options = [curGame.Hand_Deck.decks[self.ID][i] for i in npchoice(spells, min(3, len(spells)), replace=False)]
-							curGame.Discover.startDiscover(self)
-					else: curGame.fixedGuides.append(-1)
+		if self.Game.Hand_Deck.holdingDragon(self.ID):
+			self.discoverfromList(ClericofScales, comment, conditional=lambda card: card.type == "Spell",
+								  ls=self.Game.Hand_Deck.hands[self.ID])
 		return None
 		
-	def discoverDecided(self, option, pool):
-		i = self.Game.Hand_Deck.decks[self.ID].index(option)
-		self.Game.fixedGuides.append(i)
-		self.Game.Hand_Deck.drawCard(self.ID, i)
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		self.handleDiscoveredCardfromList(option, case, ls=self.Game.Hand_Deck.hands[self.ID],
+										  func=lambda index, card: self.Game.Hand_Deck.drawCard(self.ID, index),
+										  info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
 		
 		
 class DarkProphecy(Spell):
@@ -648,30 +593,16 @@ class DarkProphecy(Spell):
 			[classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 			
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				minion = curGame.guides.pop(0)(curGame, self.ID)
-				minion.buffDebuff(0, 3)
-				curGame.summon(minion, -1, self)
-			else:
-				key = "2-Cost Minions as " + classforDiscover(self)
-				if self.ID != curGame.turn or "byOthers" in comment:
-					minion = npchoice(self.rngPool(key))
-					curGame.fixedGuides.append(minion)
-					minion = minion(curGame, self.ID)
-					minion.buffDebuff(0, 3)
-					curGame.summon(minion, -1, self)
-				else:
-					minions = npchoice(self.rngPool(key), 3, replace=False)
-					curGame.options = [minion(curGame, self.ID) for minion in minions]
-					curGame.Discover.startDiscover(self)
+		self.discoverandGenerate(DarkProphecy, comment, poolFunc=lambda : self.rngPool("2-Cost Minions as "+classforDiscover(self)))
 		return None
 		
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
-		option.buffDebuff(0, 3)
-		self.Game.summon(option, -1, self)
+	def summonDiscoveredMinion(self, card):
+		card.buffDebuff(0, 3)
+		self.summon(card, -1)
+	
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		self.handleDiscoverGeneratedCard(option, case, info_RNGSync, info_GUISync,
+										 func=lambda cardType, card: DarkProphecy.summonDiscoveredMinion(self, card))
 		
 		
 """Rogue cards"""
@@ -708,30 +639,16 @@ class Waxmancy(Spell):
 			[classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 			
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				minion = curGame.guides.pop(0)(curGame, self.ID)
-				ManaMod(minion, changeby=-2, changeto=-1).applies()
-				curGame.Hand_Deck.addCardtoHand(minion, self.ID, byDiscover=True)
-			else:
-				key = "Battlecry Minions as " + classforDiscover(self)
-				if self.ID != curGame.turn or "byOthers" in comment:
-					minion = npchoice(self.rngPool(key))
-					curGame.fixedGuides.append(minion)
-					minion = minion(curGame, self.ID)
-					ManaMod(minion, changeby=-2, changeto=-1).applies()
-					curGame.Hand_Deck.addCardtoHand(minion, self.ID, byDiscover=True)
-				else:
-					minions = npchoice(self.rngPool(key), 3, replace=False)
-					curGame.options = [minion(curGame, self.ID) for minion in minions]
-					curGame.Discover.startDiscover(self)
+		self.discoverandGenerate(Waxmancy, comment, poolFunc=lambda: self.rngPool("Battlecry Minions as"+classforDiscover(self)))
 		return None
 		
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
-		ManaMod(option, changeby=-2, changeto=-1).applies()
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
+	def addCard_Cost2Less(self, card):
+		ManaMod(card, changeby=-2, changeto=-1).applies()
+		self.addCardtoHand(card, self.ID, byDiscover=True)
+	
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		self.handleDiscoverGeneratedCard(option, case, info_RNGSync, info_GUISync,
+										 func=lambda cardType, card: Waxmancy.addCard_Cost2Less(self, card))
 		
 		
 class ShadowSculptor(Minion):
@@ -770,18 +687,11 @@ class ExplosiveEvolution(Spell):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
-			curGame = self.Game
-			if curGame.mode == 0:
-				if curGame.guides:
-					newMinion = curGame.guides.pop(0)
-				else:
-					cost = type(target).mana + 3
-					while "%d-Cost Minions to Summon"%cost not in curGame.RNGPools:
-						cost -= 1
-					newMinion = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost))
-					curGame.fixedGuides.append(newMinion)
-				newMinion = newMinion(curGame, target.ID)
-				curGame.transform(target, newMinion)
+			cost = type(target).mana + 3
+			while "%d-Cost Minions to Summon" % cost not in self.Game.RNGPools:
+				cost -= 1
+			newMinion = npchoice(self.rngPool("%d-Cost Minions to Summon" % cost))(self.Game, target.ID)
+			self.transform(target, newMinion)
 			target = newMinion
 		return target
 		
@@ -800,7 +710,7 @@ class EyeoftheStorm(Spell):
 		return self.Game.space(self.ID) > 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.summon([Stormblocker(self.Game, self.ID) for i in range(3)], (-1, "totheRightEnd"), self)
+		self.summon([Stormblocker(self.Game, self.ID) for i in range(3)], (-1, "totheRightEnd"))
 		return None
 		
 class Stormblocker(Minion):
@@ -843,19 +753,12 @@ class Trig_TheFistofRaden(TrigBoard):
 				else "After you cast a spell, summon a Legendary minion of that Cost. Lose 1 Durability"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		curGame = self.entity.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				minion = curGame.guides.pop(0)
-			else:
-				key = "%d-Cost Legendary Minions to Summon"%number
-				minion = npchoice(self.rngPool(key)) if key in curGame.RNGPools and curGame.space(self.entity.ID) > 0 else None
-				curGame.fixedGuides.append(minion)
-			if minion:
-				curGame.summon(minion(curGame, self.entity.ID), -1, self.entity)
-				self.entity.loseDurability()
-				
-				
+		key = "%d-Cost Legendary Minions to Summon" % number
+		minions = npchoice(self.rngPool(key)) if key in self.rngPool(key) and self.entity.Game.space(self.entity.ID) > 0 else None
+		if minions:
+			self.entity.summon(npchoice(minions)(self.entity.Game, self.entity.ID), -1)
+			self.entity.loseDurability()
+		
 """Warlock cards"""
 class FiendishServant(Minion):
 	Class, race, name = "Warlock", "Demon", "Fiendish Servant"
@@ -869,18 +772,9 @@ class FiendishServant(Minion):
 		
 class GiveAttacktoaRandomFriendlyMinion(Deathrattle_Minion):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		curGame = self.entity.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				i = curGame.guides.pop(0)
-			else:
-				minions = [minion.pos for minion in curGame.minionsonBoard(self.entity.ID)]
-				i = npchoice(minions) if minions else -1
-				curGame.fixedGuides.append(i)
-			if i > -1:
-				minion = curGame.minions[self.entity.ID][i]
-				minion.buffDebuff(number, 0)
-				
+		minions = self.entity.Game.minionsonBoard(self.entity.ID)
+		if minions: npchoice(minions).buffDebuff(number, 0)
+		
 	def text(self, CHN):
 		return "亡语：随机使一个友方随从获得该随从的攻击力" if CHN \
 				else "Deathrattle: Give this minion's Attack to a random friendly minion"
@@ -895,28 +789,12 @@ class TwistedKnowledge(Spell):
 	poolIdentifier = "Warlock Cards"
 	@classmethod
 	def generatePool(cls, pools):
-		return "Warlock", list(pools.ClassCards["Warlock"].values())
+		return "Warlock Cards", list(pools.ClassCards["Warlock"].values())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		for num in range(2):
-			curGame = self.Game
-			if curGame.mode == 0:
-				if curGame.guides:
-					curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, byType=True, byDiscover=True)
-				else:
-					if self.ID != curGame.turn or "byOthers" in comment:
-						card = npchoice(self.rngPool("Warlock Cards"))
-						curGame.fixedGuides.append(card)
-						curGame.Hand_Deck.addCardtoHand(card, self.ID, byType=True, byDiscover=True)
-					else:
-						cards = npchoice(self.rngPool("Warlock Cards"), 3, replace=False)
-						curGame.options = [card(curGame, self.ID) for card in cards]
-						curGame.Discover.startDiscover(self)
+		self.discoverandGenerate(TwistedKnowledge, comment, poolFunc=lambda : self.rngPool("Warlock Cards"))
+		self.discoverandGenerate(TwistedKnowledge, comment, poolFunc=lambda : self.rngPool("Warlock Cards"))
 		return None
-		
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 #只会考虑当前的费用，寻找下回合法力值以下的牌。延时生效的法力值效果不会被考虑。
 #如果被战吼触发前被对方控制了，则也会根据我方下个回合的水晶进行腐化。但是这个回合结束时就会丢弃（因为也算是一个回合。）
@@ -929,21 +807,12 @@ class ChaosGazer(Minion):
 	name_CN = "混乱凝视者"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				i = curGame.guides.pop(0)
-			else:
-				manaNextTurn = max(0, min(10, curGame.Manas.manasUpper[3-self.ID] + 1) - curGame.Manas.manasOverloaded[3-self.ID])
-				cards = [i for i, card in enumerate(curGame.Hand_Deck.hands[3-self.ID]) \
-							if card.mana <= manaNextTurn and Trig_CorruptedHand not in [type(trig) for trig in card.trigsHand]]
-				i = npchoice(cards) if cards else -1
-				curGame.fixedGuides.append(i)
-			if i > -1:
-				card = curGame.Hand_Deck.hands[3-self.ID][i]
-				trig = Trig_CorruptedHand(card)
-				card.trigsHand.append(trig)
-				trig.connect()
+		manaNextTurn = max(0, min(10, self.Game.Manas.manasUpper[3 - self.ID] + 1) - self.Game.Manas.manasOverloaded[3 - self.ID])
+		cards = [card for card in self.Game.Hand_Deck.hands[3 - self.ID] \
+				 if card.mana <= manaNextTurn and not any(isinstance(trig, Trig_CorruptedHand) for trig in card.trigsHand)]
+		if cards:
+			card = npchoice(cards)
+			card.getsTrig(Trig_CorruptedHand(card), trigType="TrigHand", connect=True)
 		return None
 		
 class Trig_CorruptedHand(TrigHand):
@@ -988,27 +857,11 @@ class BoomSquad(Spell):
 		return classes_Mech+classes_Dragon, mechs+dragons
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				curGame.Hand_Deck.addCardtoHand(curGame.guides.pop(0), self.ID, byType=True, byDiscover=True)
-			else:
-				Class = classforDiscover(self)
-				key_Mech, key_Dragon = "Mechs as " + Class, "Dragons as " + Class
-				if self.ID != curGame.turn or "byOthers" in comment:
-					mixedPool = [Lackeys, self.rngPool(key_Mech), self.rngPool(key_Dragon)]
-					card = npchoice(mixedPool[nprandint(3)])
-					curGame.fixedGuides.append(card)
-					curGame.Hand_Deck.addCardtoHand(card, self.ID, byType=True, byDiscover=True)
-				else:
-					cards = [npchoice(Lackeys), npchoice(self.rngPool(key_Mech)), npchoice(self.rngPool(key_Dragon))]
-					curGame.options = [card(curGame, self.ID) for card in cards]
-					curGame.Discover.startDiscover(self)
+		self.discoverandGenerate_MultiplePools(BoomSquad, comment,
+											   poolFuncs=[lambda : Lackeys,
+														  lambda : self.rngPool("Mechs as "+classforDiscover(self)),
+														  lambda : self.rngPool("Dragons as "+classforDiscover(self))])
 		return None
-		
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
-		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
 		
 class RiskySkipper(Minion):
@@ -1059,7 +912,7 @@ class Trig_BombWrangler(TrigBoard):
 				else "Whenever this minion takes damage, summon a 1/1 Boom Bot"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.entity.Game.summon(BoomBot(self.entity.Game, self.entity.ID), self.entity.pos+1, self.entity)
+		self.entity.summon(BoomBot(self.entity.Game, self.entity.ID), self.entity.pos+1)
 		
 				
 Galakrond_Indices = {"YEAR_OF_THE_DRAGON~Neutral~Minion~3~2~2~~Skydiving Instructor~Battlecry": SkydivingInstructor,

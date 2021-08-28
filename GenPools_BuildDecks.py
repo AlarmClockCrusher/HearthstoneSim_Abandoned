@@ -11,8 +11,45 @@ def canBeGenerated(cardType, SV=0):
 	return (SV or not cardType.index.startswith("SV_")) and not cardType.description.startswith("Quest:") and \
 			not ("Galakrond" in cardType.name or "Galakrond" in cardType.description or "Invoke" in cardType.description or "invoke" in cardType.description) and \
 			not "Transfer Student" in cardType.name
-			
-			
+
+
+translateTable = {"Loading. Please wait": "正在加载模型，请等待",
+				  "Hero 1 class": "选择玩家1的职业",
+				  "Hero 2 class": "选择玩家2的职业",
+				  "Enter Deck 1 code": "输入玩家1套牌代码",
+				  "Enter Deck 2 code": "输入玩家2的套牌代码",
+				  "Deck 1 incorrect": "玩家1的套牌代码有误",
+				  "Deck 2 incorrect": "玩家2的套牌代码有误",
+				  "Deck 1&2 incorrect": "玩家1与玩家2的套牌代码均有误",
+				  "Finished Loading. Start!": "加载完成，可以开始",
+
+				  "Server IP Address": "服务器IP地址",
+				  "Query Port": "接入端口",
+				  "Table ID to join": "想要加入的牌桌ID",
+				  "Hero class": "选择你的职业",
+				  "Enter Deck code": "输入你的套牌代码",
+				  "Resume interrupted game": "返回中断的游戏",
+
+				  "Deck incorrect": "你的套牌代码不正确，请检查后重试",
+				  "Can't ping the address ": "无法ping通给出的服务器IP地址",
+				  "Can't connect to the server's query port": "无法连接到给出的服务器接入端口",
+				  "No tables left. Please wait for openings": "没有空桌子了，请等待空出",
+				  "This table ID is already taken": "本桌子目前已有两个玩家",
+				  "Successfully reserved a table": "已成功预订一张桌子",
+
+				  "Opponent disconnected. Closing": "对方断开了连接。强制关闭",
+				  "Wait for Opponent to Reconnect: ": "等待对方重新连接：",
+				  "Opponent failed to reconnect.\nClosing in 2 seconds": "对方未能重新连接\n2秒后退出",
+				  "Receiving Game Copies from Opponent: ": "正在接收对方保存的游戏当前进度：",
+				  }
+
+CHN = True
+
+def txt(text, CHN):
+	try: return translateTable[text]
+	except: return text
+	
+	
 class Pools:
 	def __init__(self):
 		self.cardPool = {}
@@ -180,20 +217,6 @@ def makeCardPool(monk=0, SV=0, writetoFile=True):
 				i += 1
 			out_file.write("\t\t]\n\n")
 			
-			#没有必要把MinionswithRace写入python里面，因为卡池生成某种种族的随从是记录在RNGPool里面的
-			
-			##把MinionsofCost写入python里面
-			#out_file.write("MinionsofCost = {\n")
-			#for cost, ls in pools.MinionsofCost.items():
-			#	out_file.write("\t\t\t%d: ["%cost)
-			#	i = 1
-			#	for card in ls:
-			#		out_file.write(card.__name__+", ")
-			#		i += 1
-			#		if i % 10 == 0: out_file.write("\n\t\t\t")
-			#	out_file.write("\t\t\t],\n")
-			#out_file.write("\t\t}\n")
-			
 			#把ClassCards写入python里面
 			out_file.write("ClassCards = {")
 			for Class, ls in pools.ClassCards.items():
@@ -274,45 +297,52 @@ class Label_CardinDeck(tk.Label):
 
 
 """A selection panel for the Class"""
+numClassIcons_perRow = 5
+dict_Class2HeroName = {'Demon Hunter': "Illidan", 'Hunter': 'Rexxar', 'Rogue': 'Valeera', 'Druid': Malfurion, 'Warrior': 'Garrosh',
+					   'Paladin': "Uther", 'Shaman': 'Thrall', 'Mage': 'Jaina', 'Priest': 'Anduin', 'Warlock': 'Guldan', }
+
 class Panel_ClassSelection(tk.Frame):
 	def __init__(self, master, UI, ClassPool, Class_0, varName):
 		super().__init__(master)
 		self.lbls_ClassSelection = []
+		self.selectedClass = Class_0
 		self.UI, self.varName = UI, varName
+		ph = PIL.ImageTk.PhotoImage(PIL.Image.open("Images\\HeroesandPowers\\%s.png"%dict_Class2HeroName[Class_0]).resize((48, int(48*395/286))))
+		self.lbl_SelectedClass = tk.Label(self, image=ph)
+		self.lbl_SelectedClass.image = ph
+		self.lbl_SelectedClass.grid(row=0, column=numClassIcons_perRow, rowspan=5)
 		for i, Class in enumerate(ClassPool):
-			lbl_ClassSelection = Label_ClassSelection(panel=self, Class=Class, selected=Class == Class_0)
-			lbl_ClassSelection.grid(row=0, column=i)
+			lbl_ClassSelection = Label_ClassSelection(panel=self, Class=Class)
+			lbl_ClassSelection.grid(row=int(i/numClassIcons_perRow), column=i%numClassIcons_perRow)
 			self.lbls_ClassSelection.append(lbl_ClassSelection)
 	
 	def handleSelection(self, Class, invoker):
-		for lbl in self.lbls_ClassSelection:
-			if lbl != invoker and lbl.selected:
-				lbl.selected = False
-				img = PIL.Image.open("Images\\Icon_%s.png" % lbl.Class).resize((48, 48) if lbl.selected else (36, 36))
-				ph = PIL.ImageTk.PhotoImage(img)
-				lbl.image = ph
-				lbl.config(image=ph)
+		self.selectedClass = Class
+		ph = PIL.ImageTk.PhotoImage(PIL.Image.open("Images\\HeroesandPowers\\%s.png"
+												   % dict_Class2HeroName[Class]).resize((96, int(96*395/286))))
+		self.lbl_SelectedClass.config(image=ph)
+		self.lbl_SelectedClass.image = ph
 		self.UI.__dict__[self.varName] = Class
 		self.UI.showCards()
 		
+	def setSelection(self, Class):
+		lbl = next((lbl for lbl in self.lbls_ClassSelection if lbl.Class == Class), None)
+		if lbl: lbl.respond(None)
+		
 class Label_ClassSelection(tk.Label):
-	def __init__(self, panel, Class, selected=False):
+	def __init__(self, panel, Class):
 		self.panel, self.Class = panel, Class
-		self.selected = selected
-		img = PIL.Image.open("Images\\Icon_%s.png"%Class).resize((48, 48) if self.selected else (36, 36))
+		img = PIL.Image.open("Images\\Icon_%s.png"%Class).resize((48, 48))
 		ph = PIL.ImageTk.PhotoImage(img)
 		self.image = ph
 		super().__init__(master=panel, image=ph)
 		self.bind("<Button-1>", self.respond)
 		
 	def respond(self, event):
-		if not self.selected:
-			self.selected = True
-			img = PIL.Image.open("Images\\Icon_%s.png"%self.Class).resize((48, 48) if self.selected else (36, 36))
-			ph = PIL.ImageTk.PhotoImage(img)
-			self.image = ph
-			self.config(image=ph)
-			self.panel.handleSelection(self.Class, invoker=self)
+		ph = PIL.ImageTk.PhotoImage(PIL.Image.open("Images\\Icon_%s.png"%self.Class).resize((48, 48)))
+		self.config(image=ph)
+		self.image = ph
+		self.panel.handleSelection(self.Class, invoker=self)
 		
 		
 class Label_ManaSelection(tk.Label):
@@ -513,20 +543,6 @@ class DeckBuilderWindow(tk.Tk):
 		
 	def displayCardImg(self, card):
 		return
-		#if card:
-		#	img = PIL.Image.open(findFilepath(card(None, 1)))
-		#	ph = PIL.ImageTk.PhotoImage(img)
-		#	if onLeft:
-		#		self.lbl_DisplayedCard_Right.config(image=ph)
-		#		self.lbl_DisplayedCard_Left.image = ph
-		#		#self..config(image=None)
-		#	else:
-		#		self.lbl_DisplayedCard_Right.config(image=ph)
-		#		self.lbl_DisplayedCard_Right.image = ph
-		#		self.lbl_DisplayedCard_Left.config(image=None)
-		#else:
-		#	self.lbl_DisplayedCard_Left.config(image=None)
-		#	self.lbl_DisplayedCard_Right.config(image=None)
 		
 	def updateDeckLabels(self):
 		for lbl in self.ls_LabelCardsinDeck: lbl.destroy()
@@ -647,7 +663,6 @@ if __name__ == "__main__":
 	SV = 1
 	makeCardPool(monk=0, SV=SV)
 	
-	from CustomWidgets import txt, CHN
 	from CardPools import ClassCards, NeutralCards
 	#NeutralCards.update({"SCHOLOMANCE~Neutral~Minion~2~2~2~~Transfer Student~Vanilla": TransferStudent})
 	DeckBuilderWindow(ClassCards, NeutralCards, SV=SV).mainloop()

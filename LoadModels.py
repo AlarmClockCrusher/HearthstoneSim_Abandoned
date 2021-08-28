@@ -62,6 +62,7 @@ class Btn_Card:
 	def __init__(self, GUI, card, nodePath):
 		self.GUI, self.card = GUI, card
 		self.selected = self.isPlayed = False
+		self.onlyCardBackShown = False
 		
 		self.np = nodePath #Load the templates, who won't carry btn and then btn will be assigned after copyTo()
 		self.cNode = self.cNode_Backup = self.cNode_Backup_Played = None  #cNode holds the return value of attachNewNode
@@ -71,11 +72,12 @@ class Btn_Card:
 	def changeCard(self, card, isPlayed, pickable=True, onlyShowCardBack=False):
 		reTexture = (self.card != card)
 		self.card, self.isPlayed = card, isPlayed
-		self.np.name = "NP_"+type(card).name+str(datetime.timestamp(datetime.now()))
+		self.np.name = "NP_{}_{}".format(type(card).__name__, datetime.now().microsecond)
 		loader = self.GUI.loader
 		if pickable: card.btn = self
 		self.reloadModels(loader, findFilepath(card), pickable, reTexture, onlyShowCardBack)
-		
+		self.onlyCardBackShown = onlyShowCardBack
+	
 	def reassignCardBtn(self, card):
 		card.btn = self
 		
@@ -110,7 +112,7 @@ class Btn_Card:
 	def manaChangeAni(self, mana_1):  #mana_1 is the value the mana changes to
 		card = self.card
 		btn, cardType = card.btn, type(card)
-		if not btn: return  #If the btn doesn't exist anymore, skip the rest
+		if not btn or btn.onlyCardBackShown: return  #If the btn doesn't exist anymore, skip the rest
 		nodePath, scale_0 = btn.texts["mana"], statTextScale if card.type != "Power" else 0.857 * statTextScale
 		color = white if card.mana == cardType.mana else (red if card.mana > cardType.mana else green)
 		sequence = Sequence(nodePath.scaleInterval(duration=0.15, scale=2 * statTextScale),
@@ -267,7 +269,7 @@ class Btn_Minion(Btn_Card):
 				self.setBoxColor(red if self.selected else green)
 				GUI.mulliganStatus[card.ID][game.mulligans[card.ID].index(card)] = 1 if self.selected else 0
 			elif UI == 0: GUI.resolveMove(card, self, "MinioninHand")
-			elif UI == 3 and card in game.options: GUI.resolveMove(card, None, "DiscoverOption", info=None)
+			elif UI == 3 and card in game.options: GUI.resolveMove(card, None, "DiscoverOption")
 			
 	def statChangeAni(self, num1=None, num2=None, action="set"):
 		card = self.card
@@ -386,9 +388,9 @@ class Btn_Minion(Btn_Card):
 		elif card == self.GUI.target: color = blue
 		elif card.ID == game.turn:
 			if card.inHand:
-				if game.Manas.affordable(card, forTrade=False) and game.space(card.ID) > 0:
+				if game.Manas.affordable(card, canbeTraded=False) and game.space(card.ID) > 0:
 					color = yellow if card.effectViable else green
-				elif "~Tradeable" in card.index and game.Manas.affordable(card, forTrade=True):
+				elif "~Tradeable" in card.index and game.Manas.affordable(card, canbeTraded=True):
 					color = green
 			elif card.canAttack(): color = green #If this is a minion that is on board
 		return color
@@ -508,11 +510,12 @@ class Btn_Spell(Btn_Card):
 			#self.cNode.show()
 			
 		texture = loader.loadTexture(imgPath)
-		if reTexture:
-			for modelName in ("card", "school"):
-				model = self.models[modelName]
-				model.setTexture(model.findTextureStage('*'), texture, 1)
-	
+		self.models["mana"].setColor(white)
+		for modelName in ("card", "school"):
+			model = self.models[modelName]
+			model.setColor(white)
+			if reTexture: model.setTexture(model.findTextureStage('*'), texture, 1)
+		
 		text = card.text(CHN)
 		textNodePath = self.texts["description"]
 		textNodePath.node().setText(text)
@@ -542,16 +545,16 @@ class Btn_Spell(Btn_Card):
 			self.setBoxColor(red if self.selected else green)
 			GUI.mulliganStatus[card.ID][GUI.Game.mulligans[card.ID].index(card)] = 1 if self.selected else 0
 		elif GUI.UI == 0: GUI.resolveMove(card, self, "SpellinHand")
-		elif GUI.UI == 3 and card in GUI.Game.options: GUI.resolveMove(card, None, "DiscoverOption", info=None)
+		elif GUI.UI == 3 and card in GUI.Game.options: GUI.resolveMove(card, None, "DiscoverOption")
 		
 	def decideColor(self):
 		color, card = transparent, self.card
 		if card == self.GUI.subject: color = pink
 		elif card == self.GUI.target: color = blue
 		elif card.ID == card.Game.turn and card.inHand:
-			if card.inHand and card.Game.Manas.affordable(card, forTrade=False) and card.available():
+			if card.inHand and card.Game.Manas.affordable(card, canbeTraded=False) and card.available():
 				color = yellow if card.effectViable else green
-			elif "~Tradeable" in card.index and card.Game.Manas.affordable(card, forTrade=True):
+			elif "~Tradeable" in card.index and card.Game.Manas.affordable(card, canbeTraded=True):
 				color = green
 		return color
 		
@@ -617,7 +620,7 @@ class Btn_Weapon(Btn_Card):
 			for modelName in ("cardImage", "nameTag", "description"):
 				self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), cardTexture, 1)
 			
-		for modelName in ("cardImage", "nameTag"):
+		for modelName in ("cardImage", "nameTag", "border"):
 			self.models[modelName].setColor(white)
 		for modelName in ("stats", "cardBack", "card", "description"):
 			self.models[modelName].setColor(color4Card)
@@ -654,7 +657,7 @@ class Btn_Weapon(Btn_Card):
 				self.setBoxColor(red if self.selected else green)
 				GUI.mulliganStatus[card.ID][game.mulligans[card.ID].index(card)] = 1 if self.selected else 0
 			elif GUI.UI == 0: GUI.resolveMove(card, self, "WeaponinHand")
-			elif GUI.UI == 3 and card in game.options: GUI.resolveMove(card, None, "DiscoverOption", info=None)
+			elif GUI.UI == 3 and card in game.options: GUI.resolveMove(card, None, "DiscoverOption")
 			
 	#Actions: buffDebuff, damage
 	def statChangeAni(self, num1=None, num2=None, action="buffDebuff"):
@@ -756,9 +759,9 @@ class Btn_Weapon(Btn_Card):
 		if card == GUI.subject: color = pink
 		elif card == GUI.target: color = blue
 		elif card.inHand and card.ID == game.turn:
-			if game.Manas.affordable(card, forTrade=False):
+			if game.Manas.affordable(card, canbeTraded=False):
 				color = yellow if card.effectViable else green
-			elif "~Tradeable" in card.index and game.Manas.affordable(card, forTrade=True):
+			elif "~Tradeable" in card.index and game.Manas.affordable(card, canbeTraded=True):
 				color = green
 		return color
 		
@@ -869,10 +872,10 @@ class Btn_Power(Btn_Card):
 			
 	def leftClick(self):
 		if self.isPlayed:
-			if self.GUI.UI == 0: self.GUI.resolveMove(self.card, self, "Power", info=None)
+			if self.GUI.UI == 0: self.GUI.resolveMove(self.card, self, "Power")
 		else: #Discover a power.
 			if self.GUI.UI == 3 and self.card in self.GUI.Game.options:
-				self.GUI.resolveMove(self.card, None, "DiscoverOption", info=None)
+				self.GUI.resolveMove(self.card, None, "DiscoverOption")
 		
 	def decideColor(self):
 		color, card = transparent, self.card
@@ -982,7 +985,7 @@ class Btn_Hero(Btn_Card):
 				self.setBoxColor(red if self.selected else green)
 				GUI.mulliganStatus[card.ID][game.mulligans[card.ID].index(card)] = 1 if self.selected else 0
 			elif UI == 0: GUI.resolveMove(card, self, "HeroinHand")
-			elif GUI.UI == 3 and card in game.options: GUI.resolveMove(card, None, "DiscoverOption", info=None)
+			elif GUI.UI == 3 and card in game.options: GUI.resolveMove(card, None, "DiscoverOption")
 			
 	#Actions: buffDebuff, damage, armorChange, heal
 	def statChangeAni(self, num1=None, num2=None, action="buffDebuff"):
@@ -1180,9 +1183,9 @@ class Btn_Poisonous:
 class Btn_Secret:
 	def __init__(self, GUI, card, nodePath):
 		self.GUI, self.card = GUI, card
-		self.selected = False
+		self.onlyCardBackShown = self.selected = False
 		self.np = nodePath
-	
+		
 	def reassignCardBtn(self, card):
 		card.btn = self
 		
@@ -1216,7 +1219,7 @@ scale_HeroZoneTrigCounter = 0.6
 class Btn_HeroZoneTrig:
 	def __init__(self, GUI, card, nodePath):
 		self.GUI, self.card = GUI, card
-		self.selected = False
+		self.onlyCardBackShown = self.selected = False
 		self.np = nodePath
 		self.counterText = nodePath.find("Trig Counter")
 		
@@ -1266,9 +1269,6 @@ class Btn_HeroZoneTrig:
 		if self.GUI.UI: self.GUI.cancelSelection() #Only responds when UI is 0
 		else: self.GUI.drawCardZoomIn(self)
 
-	def setBoxColor(self, color):
-		pass
-	
 	
 class Btn_Option:
 	def __init__(self, GUI, option, nodePath):
@@ -1295,6 +1295,7 @@ def loadOption(base):
 	nodePath.setTransparency(True)
 	nodePath.setTexture(nodePath.findTextureStage('0'), texture, 1)
 	root.find("cardImage").setTransparency(True)
+	root.find("cardBack").setTransparency(True)
 	nodePath = root.find("stats")
 	nodePath.setTransparency(True)
 	nodePath.setTexture(nodePath.findTextureStage('0'), texture, 1)
@@ -1302,11 +1303,11 @@ def loadOption(base):
 	nodePath.setTransparency(True)
 	nodePath.setTexture(nodePath.findTextureStage('0'), base.textures["stats_Spell"], 1)
 	
-	makeText(root, "mana", '0', pos=(-1.75, 1.15, 0.09), scale=statTextScale,
+	makeText(root, "mana", '', pos=(-1.75, 1.15, 0.09), scale=statTextScale,
 			 color=white, font=font)
-	makeText(root, "attack", '0', pos=(-1.7, -4.05, 0.09), scale=statTextScale,
+	makeText(root, "attack", '', pos=(-1.7, -4.05, 0.09), scale=statTextScale,
 			 color=white, font=font)
-	makeText(root, "health", '0', pos=(1.8, -4.05, 0.09), scale=statTextScale,
+	makeText(root, "health", '', pos=(1.8, -4.05, 0.09), scale=statTextScale,
 			 color=white, font=font)
 	
 	cNode_Backup = CollisionNode("Option_cNode")
@@ -1316,27 +1317,32 @@ def loadOption(base):
 	return root
 
 
-def genOption(GUI, option, pos=None):
+def genOption(GUI, option, pos=None, onlyShowCardBack=False):
 	nodePath = GUI.modelTemplates["Option"].copyTo(GUI.render)
 	if pos: nodePath.setPos(pos)
 	btn_Card = Btn_Option(GUI, option, nodePath)
 	nodePath.setPythonTag("btn", btn_Card)
 	
-	nodePath.find("mana_TextNode").node().setText(str(type(option).mana))
-	attack, health = type(option).attack, type(option).health
-	nodePath.find("attack_TextNode").node().setText('' if attack < 0 else str(attack))
-	nodePath.find("health_TextNode").node().setText('' if health < 0 else str(health))
-	if attack < 0 or health < 0:
-		nodePath.find("cardImage").setColor(transparent)
-		nodePath.find("stats").setColor(transparent)
+	if onlyShowCardBack:
+		for child in nodePath.getChildren():
+			if child.name != "cardBack" and child.name != "Option_cNode":
+				child.setColor(transparent)
 	else:
-		model = nodePath.find("cardImage")
+		mana, attack, health = type(option).mana, type(option).attack, type(option).health
+		if mana > -1: nodePath.find("mana_TextNode").node().setText(str(mana))
+		if attack > -1: nodePath.find("attack_TextNode").node().setText(str(attack))
+		if health > -1: nodePath.find("health_TextNode").node().setText(str(health))
+		if attack < 0 or health < 0:
+			nodePath.find("cardImage").setColor(transparent)
+			nodePath.find("stats").setColor(transparent)
+		else:
+			model = nodePath.find("cardImage")
+			model.setTexture(model.findTextureStage('0'),
+							 GUI.loader.loadTexture(findFilepath(option)), 1)
+		model = nodePath.find("card")
 		model.setTexture(model.findTextureStage('0'),
 						 GUI.loader.loadTexture(findFilepath(option)), 1)
-	model = nodePath.find("card")
-	model.setTexture(model.findTextureStage('0'),
-					 GUI.loader.loadTexture(findFilepath(option)), 1)
-	nodePath.find("legendaryIcon").setColor(white if option.isLegendary else transparent)
+		nodePath.find("legendaryIcon").setColor(white if option.isLegendary else transparent)
 	
 	return nodePath, btn_Card
 
@@ -1354,15 +1360,15 @@ Table_Type2Btn = {"Minion": Btn_Minion, "Spell": Btn_Spell, "Weapon": Btn_Weapon
 #isPlayed: boolean, whether the card is in played form or not
 #Only "Trigger", etc reference btn, others reference nodePath
 def genCard(GUI, card, isPlayed, pickable=True, pos=None, hpr=None, scale=None, onlyShowCardBack=False):
-	type = card.type if card.type != "Dormant" else "Minion"
-	nodepath = GUI.modelTemplates[type].copyTo(GUI.render)
+	typeofCard = card.type if card.type != "Dormant" else "Minion"
+	nodepath = GUI.modelTemplates[typeofCard].copyTo(GUI.render)
 	if pos: nodepath.setPos(pos)
 	if hpr: nodepath.setHpr(hpr)
 	if scale: nodepath.setScale(scale)
 	#NP_Minion root tree structure is:
 	#NP_Minion/card|stats|cardImage, etc
 	#NP_Minion/mana_TextNode|attack_TextNode, etc
-	btn_Card = Table_Type2Btn[type](GUI, None, nodepath)
+	btn_Card = Table_Type2Btn[typeofCard](GUI, None, nodepath)
 	nodepath.setPythonTag("btn", btn_Card)
 	for nodePath in nodepath.getChildren():
 		name = nodePath.name

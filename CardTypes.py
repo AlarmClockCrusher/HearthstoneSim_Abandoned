@@ -5,6 +5,7 @@ import numpy as np
 from numpy.random import choice as npchoice
 from numpy.random import randint as nprandint
 from collections import Counter as cnt
+from datetime import datetime
 
 from Triggers_Auras import ManaMod, Stat_Receiver
 
@@ -39,8 +40,8 @@ def wrapEng(s, wrapLength):
 def classforDiscover(initiator):
 	Class = initiator.Game.heroes[initiator.ID].Class
 	if Class != "Neutral": return Class #如果发现的发起者的职业不是中立，则返回那个职业
-	elif initiator.Class != "Neutral": return initiator.Class #如果玩家职业是中立，但卡牌职业不是中立，则发现以那个卡牌的职业进行
-	else: return npchoice(initiator.pools.Classes) #如果玩家职业和卡牌职业都是中立，则随机选取一个职业进行发现。
+	elif initiator.Class != "Neutral": return initiator.Class.split(',')[0] #如果玩家职业是中立，但卡牌职业不是中立，则发现以那个卡牌的职业进行
+	else: return initiator.Game.initialClasses[initiator.ID] #如果玩家职业和卡牌职业都是中立，则随机选取一个职业进行发现。
 
 def count(listObj):
 	count = {}
@@ -142,6 +143,41 @@ effectsDict = {"Taunt": "嘲讽", "Divine Shield": "圣盾", "Stealth": "潜行"
 				}
 
 class Card:
+	Class, name, type = '', '', ''
+	mana = 0
+	index = ''
+	requireTarget, description = False, ''
+	def __init__(self, Game, ID):
+		cardType = type(self)
+		self.Game, self.ID = Game, ID
+		self.Class, self.name = cardType.Class, cardType.name
+		self.type = cardType.type
+		self.school = self.race = ''
+		self.index = cardType.index
+		self.mana, self.manaMods = cardType.mana, []
+		# 当一个实例被创建的时候，其needTarget被强行更改为returnTrue或者是returnFalse，不论定义中如何修改needTarget(self, choice=0)这个函数，都会被绕过。需要直接对returnTrue()函数进行修改。
+		self.needTarget = self.returnTrue if cardType.requireTarget else self.returnFalse
+		self.description = cardType.description
+		self.overload = self.twinSpell = self.magnetic = 0
+		#法术也设置onBoard标签，但只是placeholder而已
+		self.onBoard = self.inHand = self.inDeck = self.dead = False
+		self.enterBoardTurn = self.enterHandTurn = 0
+		self.seq, self.pos = -1, -2
+		self.usageCount = 0
+		
+		self.trigsBoard, self.trigsHand, self.trigsDeck, self.deathrattles = [], [], [], []
+		self.auras = {}
+		self.auraReceivers = []
+		self.options = []  #For Choose One spells
+		
+		self.keyWords, self.status, self.marks = {}, {}, {}
+		self.effectViable, self.evanescent = False, False
+		#用于跟踪卡牌的可能性
+		self.creator, self.tracked, self.possi = None, False, (cardType,)
+		
+		self.btn, self.x, self.y, self.z = None, 0, 0, 0
+
+
 	def getMana(self):
 		return self.mana
 
@@ -237,7 +273,7 @@ class Card:
 		if self.onBoard and self.ID != subject.ID and self.status["Temp Stealth"] < 1:
 			if self.type == "Minion":
 				return self.status["Immune"] + self.keyWords["Stealth"] + self.marks["Can't Be Attacked"] < 1 \
-						and (self.keyWords["Taunt"] > 0 \
+						and (self.keyWords["Taunt"] > 0
 							or not any(minion.keyWords["Taunt"] > 0 and minion.status["Temp Stealth"] + minion.status["Immune"] + minion.keyWords["Stealth"] < 1 for minion in self.Game.minionsonBoard(self.ID))
 							or self.Game.status[subject.ID]["Ignore Taunt"] > 0 or (subject.type == "Minion" and subject.marks["Ignore Taunt"]))
 			elif self.type == "Hero":
@@ -370,7 +406,7 @@ class Card:
 		subjectAtt, targetAtt = [max(0, self.attack)], [max(0, target.attack)]
 		self.losesStatus("Stealth", 0)
 		self.losesStatus("Temp Stealth", 0)
-		if useAttChance: self.attTimes += 1
+		if useAttChance: self.usageCount += 1
 
 		dmgList = []
 		#如果攻击者是英雄且装备着当前回合打开着的武器，则将攻击的伤害来源视为那把武器。
@@ -622,7 +658,188 @@ class Card:
 		except: pass
 		return pool
 
-	def addCardtoHand(self, card, ID, byType=True, byDiscover=False, pos=-1, ani="fromCenter"):
+	"""Common discover handlers"""
+	#因为所有发现界面的东西才会进行picks的读取，所以即使是跳过人工发现的随机过程也需要上。
+	#即使这一个发现可能没有问题，也可能会有连续发现的情况，导致出现问题
+	
+	#默认的discoverDecided是把一张生成的卡牌加入手牌中
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		self.handleDiscoverGeneratedCard(option, case, info_RNGSync, info_GUISync)
+	
+	def discoverandGenerate(self, effectType, comment, poolFunc):
+		game, ID = self.Game, self.ID
+		if self.type == "Minion" and ID != game.turn:
+			return
+		if game.mode == 0:
+			if game.picks:
+				info_RNGSync, info_GUISync, isRandom, cardType = game.picks.pop(0) #, info_GUISync is (numOption, indexOption)
+				if not cardType: return
+				#For discoverandGenerate, info_RNGSync is simply poolSize
+				npchoice(range(info_RNGSync), info_GUISync[0], replace=False)
+				card = cardType(game, ID)
+				if game.GUI: game.GUI.discoverDecideAni(isRandom=isRandom, numOption=info_GUISync[0], indexOption=info_GUISync[1], options=card)
+				effectType.discoverDecided(self, card, case="Guided", info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
+			else:
+				pool = poolFunc()
+				if not pool: game.picks.append((None, None, None, None))
+				else:
+					numOption = min(3, len(pool))
+					options = npchoice(pool, numOption, replace=False)
+					if ID != game.turn or "byOthers" in comment:
+						i = datetime.now().microsecond % numOption
+						#info_RNGSync=poolSize, info_GUISync = [numOption, i]
+						card = options[i](game, ID)
+						if game.GUI: game.GUI.discoverDecideAni(isRandom=True, numOption=numOption, indexOption=i, options=card)
+						effectType.discoverDecided(self, card, case="Random", info_RNGSync=len(pool), info_GUISync=(numOption, i))
+					else:
+						game.options = [card(game, ID) for card in options]
+						#info_RNGSync=poolSize, info_GUISync = [numOption] #discover will add the indexOption to info_GUISync
+						game.Discover.startDiscover(self, effectType=effectType, info_RNGSync=len(pool), info_GUISync=[numOption])
+	
+	def discoverandGenerate_MultiplePools(self, effectType, comment, poolFuncs):
+		game, ID = self.Game, self.ID
+		if self.type == "Minion" and ID != game.turn:
+			return
+		if game.mode == 0:
+			if game.picks:
+				info_RNGSync, info_GUISync, isRandom, card = game.picks.pop(0)
+				for poolSize in info_RNGSync: npchoice(range(poolSize))
+				card = card(game, ID)
+				if game.GUI: game.GUI.discoverDecideAni(isRandom=isRandom, numOption=info_GUISync[0], indexOption=info_GUISync[1], options=card)
+				effectType.discoverDecided(self, card, case="Guided", info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
+			else:
+				pools = []
+				for poolFunc in poolFuncs:
+					pool = poolFunc()
+					if pool: pools.append(pool)
+				#Such pools is definitely non-empty
+				if ID != game.turn or "byOthers" in comment:
+					i = datetime.now().microsecond % len(pools)
+					card = npchoice(pools[i])(game, ID)
+					if game.GUI: game.GUI.discoverDecideAni(isRandom=True, numOption=len(pools), indexOption=i, options=card)
+					effectType.discoverDecided(self, card, case="Random", info_RNGSync=(len(pools[i]), ), info_GUISync=(len(pools), i))
+				else:
+					info_RNGSync, game.options = [], []
+					for pool in pools:
+						game.options.append(npchoice(pool)(game, ID))
+						info_RNGSync.append(len(pool))
+					game.Discover.startDiscover(self, effectType=effectType, info_RNGSync=tuple(info_RNGSync), info_GUISync=[len(pools)])
+	
+	def discoverandGenerate_Types(self, effectType, comment, typePoolFunc):
+		game, ID = self.Game, self.ID
+		if self.type == "Minion" and ID != game.turn:
+			return
+		if game.mode == 0:
+			if game.picks:
+				info_RNGSync, info_GUISync, isRandom, card = game.picks.pop(0)
+				if not card: return
+				numOption, indexOption = info_GUISync
+				if info_RNGSync: npchoice(range(info_RNGSync[0]), numOption, p=info_RNGSync[1], replace=False)
+				card = card(game, ID)
+				if game.GUI: game.GUI.discoverDecideAni(isRandom=isRandom, numOption=numOption, indexOption=indexOption, options=card)
+				effectType.discoverDecided(self, card, case="Guided", info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
+			else:
+				cardTypes, p = discoverProb(typePoolFunc())
+				if not cardTypes: game.picks.append((None, None, None, None))
+				else:
+					numOption = min(3, len(cardTypes))
+					types = npchoice(cardTypes, numOption, p=p, replace=False)
+					if numOption == 1 or ID != game.turn or "byOthers" in comment:
+						i = datetime.now().microsecond % numOption
+						card = types[i](game, ID)
+						if game.GUI: game.GUI.discoverDecideAni(isRandom=True, numOption=numOption, indexOption=i, options=card)
+						effectType.discoverDecided(self, card, case="Random", info_RNGSync=(len(cardTypes), p), info_GUISync=(numOption, i))
+					else:
+						game.options = [card(game, ID) for card in types]
+						game.Discover.startDiscover(self, effectType=effectType, info_RNGSync=(len(cardTypes), p), info_GUISync=[numOption])
+	
+	#For selections like Totemic Slam. The options are totally predictable
+	def chooseFixedOptions(self, effectType, comment, options):
+		game, ID = self.Game, self.ID
+		if self.type == "Minion" and ID != game.turn:
+			return
+		if game.mode == 0:
+			if game.picks:
+				info_RNGSync, info_GUISync, isRandom, optionType = game.picks.pop(0)  #, info_GUISync is (numOption, indexOption)
+				numOption, indexOption = info_GUISync
+				option = options[indexOption]
+				if game.GUI: game.GUI.discoverDecideAni(isRandom=isRandom, numOption=numOption, indexOption=indexOption, options=option)
+				effectType.discoverDecided(self, option, case="Guided", info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
+			else:
+				numOption = len(options)
+				if ID != game.turn or "byOthers" in comment:
+					i = datetime.now().microsecond % numOption
+					card = options[i](game, ID)
+					if game.GUI: game.GUI.discoverDecideAni(isRandom=True, numOption=numOption, indexOption=i, options=card)
+					effectType.discoverDecided(self, card, case="Random", info_RNGSync=None, info_GUISync=(numOption, i))
+				else:
+					game.options = options
+					game.Discover.startDiscover(self, effectType=effectType, info_RNGSync=None, info_GUISync=[numOption])
+	
+	#case can be "Discovered", "Guided" or "Random"
+	def handleDiscoverGeneratedCard(self, option, case, info_RNGSync, info_GUISync, func=None):
+		cardType, card = type(option), option
+		if case != "Guided": self.Game.picks.append((info_RNGSync, info_GUISync, case == "Random", cardType))
+		
+		if func: func(cardType, card) #card can be an object or None
+		else: self.addCardtoHand(card, self.ID, byDiscover=True)
+		
+	def discoverfromList(self, effectType, comment, conditional, ls):
+		game, ID = self.Game, self.ID
+		if not ls or (self.type == "Minion" and ID != game.turn): return
+		if game.mode == 0:
+			if game.picks:
+				#选哪2/3张牌的序号记录在info_GUISync里面，indexPicked就是被选中的那张牌在ls中的序号
+				info_RNGSync, info_GUISync, isRandom, indexPicked = game.picks.pop(0)
+				if not indexPicked: #indices here are the indices of the 2/3 cards to show from ls
+					return		#info_GUISync[1] is the indexOption
+				indices_from_ls, numOption, indexOption = info_GUISync
+				if info_RNGSync: #If no card to discover, then no RNG was involved
+					numPools, p = info_RNGSync[0]
+					npchoice(range(numPools), min(3, numPools), p=p, replace=False)
+					for poolSize in info_RNGSync[1:]: nprandint(poolSize)
+				if game.GUI: game.GUI.discoverDecideAni(isRandom=isRandom, numOption=numOption, indexOption=indexOption,
+														options=[ls[i] for i in indices_from_ls])
+				effectType.discoverDecided(self, indexPicked, case="Guided", info_RNGSync=info_RNGSync, info_GUISync=info_GUISync)
+			else:
+				cardTypes, p = discoverProb([type(card) for card in ls if conditional(card)])
+				if not cardTypes:
+					self.Game.picks.append((None, None, None, None))
+				else:
+					numOption = min(3, len(cardTypes))
+					types = npchoice(cardTypes, numOption, p=p, replace=False)
+					#2/3 different cards have their own indices make up indices_2Pickfrom
+					#(len(cardTypes), p) + 2/3 different cards have their own poolSizes make up info_RNGSync
+					info_RNGSync, indices_from_ls, options = [(len(cardTypes), p)], [], []
+					for cardType in types:
+						indices = [i for i, card in enumerate(ls) if isinstance(card, cardType)]
+						index = npchoice(indices) #indices is of the same-typed cards in ls
+						options.append(ls[index]) #a random card from the type is picked
+						info_RNGSync.append(len(indices)) #len(indices) is the poolSize to pick a certain type from
+						indices_from_ls.append(index)
+					if numOption == 1 or ID != game.turn or "byOthers" in comment: #如果只有一个选项则跳过手动发现过程
+						i = datetime.now().microsecond % numOption
+						if game.GUI: game.GUI.discoverDecideAni(isRandom=True, numOption=numOption, indexOption=i, options=options)
+						effectType.discoverDecided(self, indices_from_ls[i], case="Random", info_RNGSync=tuple(info_RNGSync),
+												   info_GUISync=(tuple(indices_from_ls), numOption, i))
+					else:
+						game.options = options
+						game.Discover.startDiscover(self, effectType=effectType, info_RNGSync=tuple(info_RNGSync),
+													info_GUISync=[tuple(indices_from_ls), numOption])
+						
+	def handleDiscoveredCardfromList(self, option, case, ls, func, info_RNGSync, info_GUISync):
+		if case == "Random":  #option here the index from ls
+			card, index = ls[option], option
+			self.Game.picks.append((info_RNGSync, info_GUISync, True, index))
+		elif case == "Guided": #option here is index from ls
+			card, index = ls[option], option
+		else: #case == "Discovered" #option here is a real card selected
+			card, index = option, ls.index(option)
+			self.Game.picks.append((info_RNGSync, info_GUISync, False, index) )
+		func(index, card)
+		
+	"""Common card generation handlers"""
+	def addCardtoHand(self, card, ID, byDiscover=False, pos=-1, ani="fromCenter"):
 		self.Game.Hand_Deck.addCardtoHand(card, ID, byDiscover=byDiscover, pos=pos,
 										  ani=ani, creator=type(self))
 		
@@ -632,7 +849,7 @@ class Card:
 	def summon(self, subject, position):
 		self.Game.summon(subject, position, summoner=self)
 		
-	def transform(self, target, newMinion, creator=None):
+	def transform(self, target, newMinion):
 		self.Game.transform(target, newMinion, firstTime=True, creator=type(self))
 		
 	def equipWeapon(self, weapon):
@@ -713,20 +930,10 @@ class Card:
 
 
 class Dormant(Card):
-	Class, name, type = "Neutral", "Vanilla", "Dormant"
-	description = ""
+	type = "Dormant"
 	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.Class = type(self).Class
-		self.name = type(self).name
-		self.description = type(self).description
-		self.type = "Dormant"
-		self.race = ""
+		super().__init__(Game, ID)
 		self.minionInside = None
-		
-		self.onBoard = self.inHand = self.inDeck = self.dead = False
-		self.enterBoardTurn = 0
-		self.seq, self.pos = -1, -2
 		self.keyWords = {"Taunt": 0, "Stealth": 0,
 						 "Divine Shield": 0, "Spell Damage": 0, "Nature Spell Damage": 0,
 						 "Lifesteal": 0, "Poisonous": 0,
@@ -742,17 +949,15 @@ class Dormant(Card):
 					  }
 		self.status = {"Immune": 0, "Frozen": 0, "Temp Stealth": 0, "Borrowed": 0
 					   }
-		self.auras = {}
-		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
-
-		self.btn, self.x, self.y, self.z = None, 0, 0, 0
 		
 	def appears(self, firstTime=True):
 		self.onBoard = True
 		self.inHand = self.inDeck = self.dead = False
 		self.enterBoardTurn = self.Game.numTurn
 		# 目前没有Dormant有光环
-		if self.btn: self.btn.placeIcons()
+		if self.btn:
+			self.btn.isPlayed, self.btn.card = True, self
+			self.btn.placeIcons()
 		for aura in self.auras.values(): aura.auraAppears()
 		for trig in self.trigsBoard: trig.connect()
 		
@@ -808,27 +1013,22 @@ class Minion(Card):
 	index = "Vanilla~Neutral~2~2~2~Minion~~Vanilla~Uncollectible"
 	requireTarget, keyWord, description = False, "", ""
 	def __init__(self, Game, ID):
+		super().__init__(Game, ID)
 		cardType = type(self)
-		self.Game, self.ID = Game, ID
-		self.Class, self.name = cardType.Class, cardType.name
-		self.type, self.race = "Minion", cardType.race
+		self.race = cardType.race
 		# 卡牌的费用和对于费用修改的效果列表在此处定义
-		self.mana, self.manaMods = cardType.mana, []
 		self.attack_0 = self.attack = self.attack_Enchant = cardType.attack
 		self.health_0 = self.health = self.health_max = cardType.health
 		self.tempAttChanges = []  # list of tempAttChange, expiration timepoint
 		self.effectfromAura = {"Charge": 0, "Rush": 0, "Mega Windfury": 0,
 								"Free Evolve": 0,}
 		self.auraReceivers = []
-		self.description = cardType.description
-		# 当一个实例被创建的时候，其needTarget被强行更改为returnTrue或者是returnFalse，不论定义中如何修改needTarget(self, choice=0)这个函数，都会被绕过。需要直接对returnTrue()函数进行修改。
-		self.needTarget = self.returnTrue if cardType.requireTarget else self.returnFalse
 		self.keyWords = {"Taunt": 0, "Divine Shield": 0, "Stealth": 0,
 						 "Lifesteal": 0, "Spell Damage": 0, "Nature Spell Damage": 0, "Poisonous": 0,
 						 "Windfury": 0, "Mega Windfury": 0, "Charge": 0, "Rush": 0,
 						 "Echo": 0, "Reborn": 0, "Bane": 0, "Drain": 0
 						 }
-		if cardType.keyWord != "":
+		if cardType.keyWord:
 			for key in cardType.keyWord.split(","):
 				self.keyWords[key.strip()] = 1
 		# Some state of the minion represented by the marks
@@ -848,32 +1048,18 @@ class Minion(Card):
 		self.status = {"Immune": 0, "Frozen": 0, "Temp Stealth": 0, "Borrowed": 0,
 					   "Evolved": 0,
 					   }
-		self.effectViable = self.evanescent = False
-		self.onBoard = self.inHand = self.inDeck = self.dead = False
-		self.enterHandTurn = self.enterBoardTurn = 0
 		self.silenced = False  # This mark is for minion state change, such as enrage.
 		self.appearResponse, self.disappearResponse, self.silenceResponse, self.returnResponse = [], [], [], []
 		# self.seq records the number of the minion's appearance. The first minion on board has a sequence of 0
-		self.seq, self.pos = -1, -2
-		self.attTimes = self.attChances_base = self.attChances_extra = 0
+		self.usageCount = self.attChances_base = self.attChances_extra = 0
 
-		self.auras = {}
-		self.options = []  # For Choose One minions.
-		self.overload = self.magnetic = 0
-
-		self.deathrattles = []  # 随从的亡语的触发方式与场上扳机一致，诸扳机之间与
-		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
 		self.history = {"Spells Cast on This": [],
 						"Magnetic Upgrades": {"AttackGain": 0, "HealthGain": 0,
 											  "Keywords": {}, "Marks": {},
 											  "Deathrattles": [], "Triggers": []
 											  }
 						}
-		#跟踪卡牌的可能性。一张牌被加入手牌时，这张牌是tracked，被洗回牌库的时候则会取消这个
-		self.creator, self.tracked, self.possi = None, False, (cardType,)
 		
-		self.btn, self.x, self.y, self.z = None, 0, 0, 0
-	
 	def reset(self, ID, isKnown=True): #如果一个随从被返回手牌或者死亡然后进入墓地，其上面的身材改变(buff/statReset)会被消除，但是保留其白字变化
 		creator, possi = self.creator, type(self) if isKnown else self.possi
 		att_0, health_0 = self.attack_0, self.health_0
@@ -896,6 +1082,7 @@ class Minion(Card):
 		self.mana = type(self).mana  # Restore the minion's mana to original value.
 		self.decideAttChances_base()  # Decide base att chances, given Windfury and Mega Windfury
 		if self.btn:
+			self.btn.isPlayed, self.btn.card = True, self
 			self.btn.placeIcons()
 			self.btn.statChangeAni()
 			self.btn.statusChangeAni()
@@ -937,7 +1124,7 @@ class Minion(Card):
 				self.tempAttChanges.pop(i)
 		if ID == self.ID:
 			if self.onBoard: self.losesStatus("Temp Stealth", 0) # Only minions on board lose Temp Stealth
-			self.attTimes, self.attChances_extra = 0, 0
+			self.usageCount, self.attChances_extra = 0, 0
 			self.decideAttChances_base()
 		# 影之诗中的融合随从每个回合只能进行一次融合，需要在每个回合开始时重置
 		if self.index.startswith("SV_") and hasattr(self, "fusion"):
@@ -955,9 +1142,9 @@ class Minion(Card):
 			self.losesStatus("Immune", 0)
 			# The minion can only thaw itself at the end of its turn. Not during or outside its turn
 			if self.onBoard and self.status["Frozen"] > 0:  # The minion can't defrost in hand.
-				if self.actionable() and self.attChances_base + self.attChances_extra > self.attTimes:
+				if self.actionable() and self.attChances_base + self.attChances_extra > self.usageCount:
 					self.losesStatus("Frozen", 0)
-			self.attTimes, self.attChances_extra = 0, 0
+			self.usageCount, self.attChances_extra = 0, 0
 		if self.btn: self.btn.statusChangeAni()
 		
 	# 判定随从是否处于刚在我方场上登场，以及暂时控制、冲锋、突袭等。
@@ -984,7 +1171,7 @@ class Minion(Card):
 	def canAttack(self):
 		# THE CHARGE/RUSH MINIONS WILL GAIN ATTACKCHANCES WHEN THEY APPEAR
 		return self.actionable() and self.attack > 0 and self.status["Frozen"] < 1 \
-			   and self.attChances_base + self.attChances_extra > self.attTimes \
+			   and self.attChances_base + self.attChances_extra > self.usageCount \
 			   and self.marks["Can't Attack"] < 1
 
 	def canAttackTarget(self, target):
@@ -1269,7 +1456,7 @@ class Minion(Card):
 		Copy.dead = False
 		Copy.effectViable = Copy.evanescent = False
 		Copy.seq, Copy.pos = -1, -2
-		Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = 0, 0, 0
+		Copy.usageCount, Copy.attChances_base, Copy.attChances_extra = 0, 0, 0
 		Copy.decideAttChances_base()
 		# 如果要生成一个x/x/x的复制
 		if attack or health: Copy.statReset(attack, health)
@@ -1347,7 +1534,7 @@ class Minion(Card):
 			Copy.effectViable, Copy.evanescent, Copy.silenced = self.effectViable, self.evanescent, self.silenced
 			Copy.enterHandTurn, Copy.enterBoardTurn = self.enterHandTurn, self.enterBoardTurn
 			Copy.seq, Copy.pos = self.seq, self.pos
-			Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
+			Copy.usageCount, Copy.attChances_base, Copy.attChances_extra = self.usageCount, self.attChances_base, self.attChances_extra
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			for key, value in self.auras.items():
 				Copy.auras[key] = value.createCopy(game)
@@ -1369,29 +1556,10 @@ class Spell(Card):
 	description = ""
 	name_CN = ""
 	def __init__(self, Game, ID):
-		cardType = type(self)
-		self.Game, self.ID = Game, ID
-		self.Class, self.name = cardType.Class, cardType.name
-		self.type = "Spell"
-		self.school = cardType.school
-		self.index = cardType.index
-		self.mana, self.manaMods = cardType.mana, []
-		self.needTarget = self.returnTrue if cardType.requireTarget else self.returnFalse
-		self.description = cardType.description
-		self.overload, self.twinSpell = 0, 0
-		#法术也设置onBoard标签，但只是placeholder而已
-		self.onBoard = self.inHand = self.inDeck = False
-		self.enterHandTurn = 0
-		#法术的trigsBoard只是一个placeholder
-		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
-		self.options = [] #For Choose One spells
+		super().__init__(Game, ID)
+		self.school = type(self).school
 		self.keyWords = {"Poisonous": 0, "Lifesteal": 0}
-		self.marks = {"Cost Health Instead": 0, "Can't be Played": 0,}
-		self.effectViable, self.evanescent = False, False
-		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possi = None, False, (cardType,)
-		
-		self.btn, self.x, self.y, self.z = None, 0, 0, 0
+		self.marks = {"Cost Health Instead": 0, "Can't be Played": 0, }
 	
 	def reset(self, ID, isKnown=True):
 		creator, possi = self.creator, type(self) if isKnown else self.possi
@@ -1442,8 +1610,8 @@ class Spell(Card):
 		repeatTimes = 2 if curGame.status[self.ID]["Spells x2"] > 0 else 1
 		#多次选择的法术，如分岔路口等会有自己专有的cast方法。
 		if curGame.mode == 0:
-			if curGame.guides:
-				i, where, choice = curGame.guides.pop(0)
+			if curGame.picks:
+				i, where, choice = curGame.picks.pop(0)
 				target = curGame.find(i, where) if where else None
 			else:
 				if not self.need2Choose(): choice = 0
@@ -1462,7 +1630,7 @@ class Spell(Card):
 					else: target = None
 				if target: i, where = target.pos, target.type+str(target.ID)
 				else: i, where = 0, ''
-				curGame.fixedGuides.append((i, where, choice))
+				curGame.picks.append((i, where, choice))
 		if GUI:
 			GUI.showOffBoardTrig(self)
 			GUI.subject, GUI.target = self, target
@@ -1602,13 +1770,13 @@ class Secret(Spell):
 
 	def cast(self, target=None, comment="", preferedTarget=None):
 		if self.Game.GUI:
-			self.Game.GUI.showOffBoardTrig(self)
+			self.Game.GUI.showOffBoardTrig(self, animationType='', isSecret=True)
 		self.whenEffective(None, "byOthers", choice=0, posinHand=-2)
 		self.Game.sendSignal("SpellBeenCast", self.ID, self, None, 0, "byOthers")
 
 	def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
 		if self.Game.GUI:
-			self.Game.GUI.showOffBoardTrig(self)
+			self.Game.GUI.showOffBoardTrig(self, animationType='', isSecret=True)
 		self.Game.sendSignal("SpellPlayed", self.ID, self, None, mana, "", choice)
 		self.Game.sendSignal("Spellboost", self.ID, self, None, mana, "", choice)
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
@@ -1692,24 +1860,16 @@ class Power(Card):
 	description = ""
 	name_CN = ""
 	def __init__(self, Game, ID):
-		self.Game, self.ID = Game, ID
-		self.name = type(self).name
+		super().__init__(Game, ID)
 		self.type = "Power"
-		self.description = type(self).description
-		self.heroPowerTimes = 0
+		self.usageCount = 0
 		#额外的英雄技能技能只有考达拉幼龙和要塞指挥官可以更改。
 		#技能能否使用，需要根据已使用次数和基础机会和额外机会的和相比较。
-		self.mana, self.manaMods = type(self).mana, []
-		self.needTarget = self.returnTrue if type(self).requireTarget else self.returnFalse
 		self.onBoard = True
-		self.options = [] #For Choose One
 		self.keyWords = {"Lifesteal": 0, "Poisonous": 0, }
 		self.marks = {"Damage Boost": 0, "Can Target Minions": 0,
 					  "Cost Health Instead": 0, "Can't be Played": 0,} #Damage Boost can be increased by the mage spell "Wildfire"
-		self.trigsBoard = []
 		
-		self.btn, self.x, self.y, self.z = None, 0, 0, 0
-	
 	def cardStatus(self, hideSomeTrigs=False):
 		CHN = self.Game.GUI.CHN
 		text, s = self.name if not CHN else type(self).name_CN + "\n", wrapTxt(self.text(CHN), CHN)
@@ -1737,15 +1897,15 @@ class Power(Card):
 
 	def turnStarts(self, ID):
 		if ID == self.ID:
-			self.heroPowerTimes = 0
+			self.usageCount = 0
 			if self.btn: self.btn.checkHpr()
 			
 	def turnEnds(self, ID):
 		if ID == self.ID:
-			self.heroPowerTimes = 0
+			self.usageCount = 0
 
 	def appears(self):
-		self.heroPowerTimes = 0
+		self.usageCount = 0
 		for trig in self.trigsBoard:
 			trig.connect()
 		self.Game.sendSignal("HeroPowerAcquired", self.ID, self, None, 0, "")
@@ -1771,39 +1931,37 @@ class Power(Card):
 		
 	def chancesUsedUp(self):
 		return self.Game.status[self.ID]["Power Chance Inf"] < 1 \
-				and self.heroPowerTimes >= (1 + (self.Game.status[self.ID]["Power Chance 2"] > 0) )
+				and self.usageCount >= (1 + (self.Game.status[self.ID]["Power Chance 2"] > 0) )
 				
 	def available(self): #只考虑没有抉择的技能，抉择技能需要自己定义
 		return not self.chancesUsedUp() and (not self.needTarget() or self.findTargets("")[0][0])
 
-	def use(self, target=None, choice=0):
-		if not (self.Game.Manas.affordable(self) and self.available() and self.selectionLegit(target, choice)):
-			return
+	def use(self, target=None, choice=0, sendthruServer=True):
+		game = self.Game
+		if not (game.Manas.affordable(self) and self.available() and self.selectionLegit(target, choice)):
+			return False
 		print("Using hero power", self.name)
 		#支付费用，清除费用状态。
 		subIndex, subWhere = self.ID, "Power"
 		if target: tarIndex, tarWhere = target.pos, target.type+str(target.ID)
 		else: tarIndex, tarWhere = 0, ''
 		#准备游戏操作的动画
-		GUI, sequence = self.Game.GUI, None
-		if GUI:
-			sequence = GUI.SEQUENCE()
-			GUI.seqReady = False
-			GUI.seqHolder.append(sequence)
-			GUI.showOffBoardTrig(self)
+		GUI = game.GUI
+		game.prepGUI4Ani(GUI)
+		if GUI: GUI.showOffBoardTrig(self)
 		
-		self.Game.Manas.payManaCost(self, self.mana)
+		game.Manas.payManaCost(self, self.mana)
 		#如果有指向，则触发指向扳机（目前只有市长）
 		targetHolder = [target]
-		self.Game.sendSignal("HeroPowerTargetDecision", self.ID, self, targetHolder, 0, "", choice)
-		if target != targetHolder[0] and self.Game.GUI:
+		game.sendSignal("HeroPowerTargetDecision", self.ID, self, targetHolder, 0, "", choice)
+		if target != targetHolder[0] and GUI:
 			target = targetHolder[0]
-			self.Game.GUI.target = target
+			GUI.target = target
 		else: target = targetHolder[0]
-		self.Game.GUI.usePowerAni(self)
+		game.GUI.usePowerAni(self)
 		minionsKilled = 0
-		if target and target.type == "Minion" and self.Game.status[self.ID]["Power Sweep"] > 0:
-			targets = self.Game.neighbors2(target)[0]
+		if target and target.type == "Minion" and game.status[self.ID]["Power Sweep"] > 0:
+			targets = game.neighbors2(target)[0]
 			minionsKilled += self.effect(target, choice)
 			if targets != []:
 				for minion in targets: minionsKilled += self.effect(minion, choice)
@@ -1811,19 +1969,19 @@ class Power(Card):
 		#结算阶段结束，处理死亡，此时尚不进行胜负判定。
 		#假设触发英雄技能消灭随从的扳机在死亡结算开始之前进行结算。（可能不对，但是相对比较符合逻辑。）
 		if minionsKilled > 0:
-			self.Game.sendSignal("HeroPowerKilledMinion", self.Game.turn, self, None, minionsKilled, "")
-		self.Game.gathertheDead()
-		self.heroPowerTimes += 1
+			game.sendSignal("HeroPowerKilledMinion", game.turn, self, None, minionsKilled, "")
+		game.gathertheDead()
+		self.usageCount += 1
 		#激励阶段，触发“每当你使用一次英雄技能”的扳机，如激励，虚空形态的技能刷新等。
-		self.Game.Counters.powerUsedThisTurn += 1
-		self.Game.sendSignal("HeroUsedAbility", self.ID, self, target, self.mana, "", choice)
+		game.Counters.powerUsedThisTurn += 1
+		game.sendSignal("HeroUsedAbility", self.ID, self, target, self.mana, "", choice)
 		#激励阶段结束，处理死亡。此时可以进行胜负判定。
-		self.Game.gathertheDead(True)
-		self.Game.Hand_Deck.decideCardColors()
-		self.Game.moves.append(("Power", subIndex, subWhere, tarIndex, tarWhere, choice))
-		print("Changing the game moves", self.Game.moves)
-		if GUI: GUI.seqReady = True
-		
+		game.gathertheDead(True)
+		game.Hand_Deck.decideCardColors()
+		game.moves.append(("Power", subIndex, subWhere, tarIndex, tarWhere, choice))
+		self.Game.wrapUpPlay(GUI, sendthruServer)
+		return True
+	
 	def effect(self, target, choice=0):
 		return 0
 
@@ -1841,7 +1999,7 @@ class Power(Card):
 			game.copiedObjs[self] = Copy
 			Copy.mana = self.mana
 			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
-			Copy.heroPowerTimes = self.heroPowerTimes
+			Copy.usageCount = self.usageCount
 			Copy.options = [option.selfCopy(Copy) for option in self.options]
 			Copy.keyWords = copy.deepcopy(self.keyWords)
 			Copy.trigsBoard = [trig.createCopy(game) for trig in self.trigsBoard]
@@ -1851,44 +2009,26 @@ class Power(Card):
 
 
 class Hero(Card):
-	mana, weapon, description, type = 0, None, "", "Hero"
+	weapon, type = None, "Hero"
 	Class, name, heroPower, health, armor = "Neutral", "InnKeeper", None, 30, 0
-	index = ""
 	def __init__(self, Game, ID):
+		super().__init__(Game, ID)
 		cardType = type(self)
-		self.Game, self.ID = Game, ID
-		self.mana, self.manaMods = cardType.mana, []
 		self.health_max = self.health = cardType.health
 		self.attack, self.attack_bare, self.armor = 0, 0, cardType.armor
 		self.tempAttChanges = []
-		self.name = cardType.name
-		self.index = cardType.index
-		self.type = "Hero"
 		self.weapon = cardType.weapon
-		self.description = cardType.description
 		self.requireTarget = False
-		self.Class = cardType.Class
-		self.attChances_base, self.attChances_extra, self.attTimes = 1, 0, 0
-		self.onBoard = self.inHand = self.inDeck = self.dead = False
-		self.enterHandTurn = 0
+		self.attChances_base, self.attChances_extra = 1, 0
 		self.pos = self.ID
 		self.heroPower = cardType.heroPower(self.Game, self.ID) if cardType.heroPower else None
 		self.keyWords = {"Windfury": 0, "Poisonous": 0}
 		self.effectfromAura = {"Windfury": 0}
-		self.auraReceivers = []
 		self.marks = {"Enemy Effect Evasive": 0, "Cost Health Instead": 0, "Can't be Played": 0,
 					  "Enemy Effect Damage Immune": 0, "Can't Be Attacked": 0, "Next Damage 0": 0,
 					}
 		self.status = {"Frozen": 0, "Temp Stealth": 0, "Draw to Win": 0}
-		self.options = [] #For Choose One heroes
-		self.overload = 0
-		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
-		self.effectViable, self.evanescent = False, False
-		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possi = None, False, (cardType,)
 		
-		self.btn, self.x, self.y, self.z = None, 0, 0, 0
-	
 	def reset(self, ID, isKnown=True):
 		creator, possi = self.creator, type(self) if isKnown else self.possi
 		btn, x, y, z = self.btn, self.x, self.y, self.z
@@ -1916,7 +2056,7 @@ class Hero(Card):
 				self.Game.status[self.ID]["Evasive2NextTurn"] = 0
 
 			weapon = self.Game.availableWeapon(self.ID)
-			self.bareAttack, self.attTimes, self.attChances_extra = 0, 0, 0
+			self.bareAttack, self.usageCount, self.attChances_extra = 0, 0, 0
 			self.decideAttChances_base()
 		self.calc_Attack()
 		if self.btn: self.btn.statChangeAni()
@@ -1926,10 +2066,10 @@ class Hero(Card):
 			self.losesStatus("Immune", amount=self.Game.status[self.ID]["ImmuneThisTurn"])
 			self.Game.status[self.ID]["ImmuneThisTurn"] = 0
 		#一个角色只有在自己的回合结束时有剩余的攻击机会才能解冻
-		if ID == self.ID and self.status["Frozen"] > 0 and self.attChances_base + self.attChances_extra > self.attTimes:
+		if ID == self.ID and self.status["Frozen"] > 0 and self.attChances_base + self.attChances_extra > self.usageCount:
 			self.losesStatus("Frozen", 0)
 
-		self.attTimes = 0
+		self.usageCount = 0
 		for attGain, revertTime in self.tempAttChanges:
 			self.attack_bare -= attGain
 		self.tempAttChanges = []
@@ -1970,7 +2110,7 @@ class Hero(Card):
 	"""Handle hero's being selectable by subjects or not. And hero's availability for battle."""
 	def canAttack(self):
 		return self.actionable() and self.attack > 0 and self.status["Frozen"] < 1 \
-				and self.attChances_base + self.attChances_extra > self.attTimes
+				and self.attChances_base + self.attChances_extra > self.usageCount
 
 	def canAttackTarget(self, target):
 		return self.canAttack() and target.selectablebyBattle(self)
@@ -2033,7 +2173,7 @@ class Hero(Card):
 		game, ID = self.Game, self.ID
 		oldHero = game.heroes[ID]
 		self.health, self.health_max, self.armor = oldHero.health, oldHero.health_max, oldHero.armor
-		self.attack_bare, self.tempAttChanges, self.attTimes, self.armor = oldHero.attack_bare, oldHero.tempAttChanges, oldHero.attTimes, oldHero.armor
+		self.attack_bare, self.tempAttChanges, self.usageCount, self.armor = oldHero.attack_bare, oldHero.tempAttChanges, oldHero.usageCount, oldHero.armor
 		self.onBoard, oldHero.onBoard, self.pos = True, False, ID #这个只是为了方便定义(i, where)
 		#英雄牌进入战场。（本来是应该在使用阶段临近结束时移除旧英雄和旧技能，但是为了方便，在此时执行。）
 		#继承旧英雄的生命状态和护甲值。此时英雄的被冻结和攻击次数以及攻击机会也继承旧英雄。
@@ -2081,7 +2221,7 @@ class Hero(Card):
 		#假设直接替换的英雄不会继承之前英雄获得的回合内攻击力增加。
 		game, ID = self.Game, self.ID
 		healthChanged = game.heroes[ID].health == self.health #目前只有大王和拉格纳罗斯会改变英雄的血量
-		self.onBoard, self.pos, self.attTimes = True, ID, game.heroes[ID].attTimes
+		self.onBoard, self.pos, self.usageCount = True, ID, game.heroes[ID].usageCount
 		if not fromHeroCard: self.losesArmor(0, all=True) #被大王等非英牌替换时，护甲会被摧毁
 		#旧英雄在消失前需要归还其所有的光环buff效果，目前只有Inara Stormcrash的+2攻和风怒
 		while self.auraReceivers: self.auraReceivers[0].effectClear()
@@ -2117,7 +2257,7 @@ class Hero(Card):
 			Copy.manaMods = [mod.selfCopy(Copy) for mod in self.manaMods]
 			Copy.attack, Copy.attack_bare, Copy.armor = self.attack, self.attack_bare, self.armor
 			Copy.health_max, Copy.health = self.health_max, self.health
-			Copy.attChances_base, Copy.attChances_extra, Copy.attTimes = self.attChances_base, self.attChances_extra, self.attTimes
+			Copy.attChances_base, Copy.attChances_extra, Copy.usageCount = self.attChances_base, self.attChances_extra, self.usageCount
 			Copy.tempAttChanges = copy.deepcopy(self.tempAttChanges)
 			Copy.effectfromAura = copy.deepcopy(self.effectfromAura)
 			Copy.auraReceivers = [receiver.selfCopy(Copy) for receiver in self.auraReceivers]
@@ -2144,33 +2284,15 @@ class Weapon(Card):
 	mana, attack, durability = 2, 2, 2
 	index = "Vanillar-Neutral-2-2-2-Weapon-Vanilla"
 	def __init__(self, Game, ID):
+		super().__init__(Game, ID)
 		cardType = type(self)
-		self.Game, self.ID = Game, ID
-		self.Class, self.name = cardType.Class, cardType.name
-		self.type = "Weapon"
-		self.mana, self.manaMods = cardType.mana, []
 		self.attack = self.attack_Enchant = cardType.attack
 		
-		self.auraReceivers = []
 		self.durability = cardType.durability  # 将来会处理有buff的武器洗入牌库的问题，如弑君
-		self.description = cardType.description
 		self.requireTarget = False
 		self.keyWords = {"Lifesteal": 0, "Poisonous": 0, "Windfury": 0}
 		self.marks = {"Sweep": 0, "Cost Health Instead": 0, "Can't Attack Heroes": 0, "Can't be Played": 0,}
-		self.overload = 0
-		self.onBoard = self.inHand = self.inDeck = self.dead = False
-		self.enterHandTurn = 0
-		self.seq = -1
-		self.deathrattles = []
-		self.trigsBoard, self.trigsHand, self.trigsDeck = [], [], []
-		self.options = []  # For Choose One weapon, non-existent at this point.
-		self.auras = {}
-		self.effectViable, self.evanescent = False, False
-		#用于跟踪卡牌的可能性
-		self.creator, self.tracked, self.possi = None, False, (cardType,)
 		
-		self.btn, self.x, self.y, self.z = None, 0, 0, 0
-	
 	def reset(self, ID, isKnown=True):
 		creator, possi = self.creator, type(self) if isKnown else self.possi
 		btn, x, y, z = self.btn, self.x, self.y, self.z
@@ -2328,15 +2450,12 @@ class Weapon(Card):
 
 class Option:
 	name, type, description = "", "", ""
-	def __init__(self, entity=None):
-		self.entity = entity
+	index, keyWord, isLegendary = '', '', False
+	def __init__(self, entity=None, ID=0): #ID is a placeholder.
+		self.entity, self.ID = entity, entity.ID if entity else ID
 		self.type = "Option"
-		try: self.index = type(self).index
-		except: pass
-		try: self.keyWord = type(self).keyWord
-		except: pass
-		try: self.isLegendary = type(self).isLegendary
-		except: self.isLegendary = False
+		self.index, self.keyWord = type(self).index, type(self).keyWord
+		self.isLegendary = type(self).isLegendary
 		self.btn, self.x, self.y, self.z = None, 0, 0, 0
 	
 	def available(self):

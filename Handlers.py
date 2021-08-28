@@ -126,9 +126,9 @@ class Manas:
 												  self.manasLocked[ID], self.manasOverloaded[ID]))
 		self.Game.sendSignal("ManaXtlsCheck", ID, None, None, 0, "")
 
-	def affordable(self, subject, forTrade=False):
+	def affordable(self, subject, canbeTraded=False):
 		ID = subject.ID
-		if forTrade: return self.Game.Hand_Deck.decks[ID] and self.manas[ID] > 0
+		if canbeTraded: return self.manas[ID] > subject.mana or (self.Game.Hand_Deck.decks[ID] and self.manas[ID] > 0)
 		else:
 			mana = subject.getMana()
 			if self.cardCostsHealth(subject):
@@ -279,12 +279,12 @@ class Secrets:
 		curGame = self.Game
 		for n in range(num):
 			if curGame.mode == 0:
-				if curGame.guides:
-					i = curGame.guides.pop(0)
+				if curGame.picks:
+					i = curGame.picks.pop(0)
 				else:
 					secrets = [i for i, card in enumerate(curGame.Hand_Deck.decks[ID]) if card.description.startswith("Secret:") and not self.sameSecretExists(card, ID)]
 					i = npchoice(secrets) if secrets and self.areaNotFull(ID) else -1
-					curGame.fixedGuides.append(i)
+					curGame.picks.append(i)
 				if i > -1: curGame.Hand_Deck.extractfromDeck(i, ID, enemyCanSee=False)[0].whenEffective()
 				else: break
 		if self.Game.GUI: self.Game.GUI.drawZones(all=False, secret=True)
@@ -355,8 +355,8 @@ class Counters:
 		self.numMinionsPlayedThisTurn = {1: 0, 2: 0}
 		self.minionsDiedThisTurn = {1: [], 2: []}
 		self.numCardsPlayedThisTurn = {1: 0, 2: 0} #Specifically for Combo. Because even Countered spells can trig Combos
-		self.cardsPlayedEachTurn = {1: [[]], 2: []}
-		self.manas4CardsEachTurn = {1: [[]], 2: []}
+		self.cardsPlayedEachTurn = {1: [(), (), []], 2: [(), ()]} #保证始终至少有两个回合可以用于判断。当玩家2开始回合时，会变成[(), (), []]
+		self.manas4CardsEachTurn = {1: [(), (), []], 2: [(), ()]}
 		
 		self.dmgonHeroThisTurn = {1: 0, 2: 0}
 		self.dmgonHeroLastTurn = {1: 0, 2: 0}
@@ -401,8 +401,9 @@ class Counters:
 		self.manas4CardsEachTurn[self.Game.turn].append([])
 		
 	def turnEnds(self):
+		print("cards played each Turn", self.Game.turn, self.cardsPlayedEachTurn)
 		self.numElementalsPlayedLastTurn[self.Game.turn] = sum("~Elemental~" in card.index for card in \
-																self.cardsPlayedEachTurn[self.Game.turn][-1])
+																self.cardsPlayedEachTurn[self.Game.turn][-1])# if self.cardsPlayedEachTurn[self.Game.turn] else 0
 		self.numCardsPlayedThisTurn = {1: 0, 2: 0}
 		self.numMinionsPlayedThisTurn = {1: 0, 2: 0}
 		self.numSpellsPlayedThisTurn = {1: 0, 2: 0}
@@ -475,10 +476,13 @@ class Discover:
 		self.Game = Game
 		self.initiator = None
 
-	def startDiscover(self, initiator, info=None):
+	def startDiscover(self, initiator, effectType, info_RNGSync, info_GUISync):
 		if self.Game.GUI:
 			self.initiator = initiator
-			self.Game.GUI.waitforDiscover(info)
+			discover = self.Game.GUI.waitforDiscover()
+			effectType.discoverDecided(self.initiator, discover, case="Discovered", info_RNGSync=info_RNGSync,
+										   info_GUISync=tuple(info_GUISync+[self.Game.options.index(discover)])
+										   )
 			self.initiator, self.Game.options = None, []
 
 	def startSelect(self, initiator, validTargets):

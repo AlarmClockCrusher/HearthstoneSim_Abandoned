@@ -69,7 +69,7 @@ class Evolve(Power):
             else:
                 return self.targets[0].evolveTargetCorrect(target, choice)
 
-    def effect(self, target, choice=0):
+    def effect(self, target=None, choice=0, comment=''):
         if target[0].marks["Free Evolve"] < 1:
             self.Game.Counters.numEvolutionPoint[self.ID] -= 1
         target[0].evolve()

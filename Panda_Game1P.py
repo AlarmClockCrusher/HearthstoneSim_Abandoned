@@ -42,17 +42,16 @@ class Layer1Window:
 		self.lbl_LoadingProgress = tk.Label(master=self.window, text='', font=("Yahei", 15))
 		
 		self.gameGUI = GUI_1P(self)
-		threading.Thread(target=self.gameGUI.preload).start()
-		
-		self.boardID = npchoice(list(transferStudentPool.keys()))
+		threading.Thread(target=self.gameGUI.preload, daemon=True).start()
 		
 		"""Create the hero class selection menu"""
-		self.hero1 = self.hero2 = "Demon Hunter"
-		Panel_ClassSelection(master=self.window, UI=self, ClassPool=list(Class2HeroDict.keys()),
-								Class_0="Demon Hunter", varName="hero1").grid(row=0, column=3)
-		Panel_ClassSelection(master=self.window, UI=self, ClassPool=list(Class2HeroDict.keys()),
-							 Class_0="Demon Hunter", varName="hero2").grid(row=0, column=6)
-		
+		self.hero1Class = self.hero2Class = "Demon Hunter"
+		self.panel_Class1 = Panel_ClassSelection(master=self.window, UI=self, ClassPool=list(Class2HeroDict.keys()),
+												Class_0="Demon Hunter", varName="hero1Class")
+		self.panel_Class2 = Panel_ClassSelection(master=self.window, UI=self, ClassPool=list(Class2HeroDict.keys()),
+							 Class_0="Demon Hunter", varName="hero2Class")
+		self.panel_Class1.grid(row=0, column=3)
+		self.panel_Class2.grid(row=0, column=6)
 		self.entry_Deck1 = tk.Entry(self.window, font=("Yahei", 13), width=30)
 		self.entry_Deck2 = tk.Entry(self.window, font=("Yahei", 13), width=30)
 		
@@ -108,30 +107,24 @@ class Layer1Window:
 		self.panel_Deck1.grid(row=4, column=2, rowspan=2, columnspan=2)
 		self.panel_Deck2.grid(row=4, column=5, rowspan=2, columnspan=2)
 		
-		
 		from Hand import Default1, Default2
-		self.deck1, self.deck2 = Default1, Default2
+		self.deck1_0, self.deck2_0 = Default1, Default2
+		self.deck1, self.deck2 = [], []
 		self.updateDeckComp(None)
 		
 		self.window.mainloop()
 		
 	def updateDeckComp(self, event):
 		cardPool, RNGPools = makeCardPool(0, 0)
-		deckString1, deckString2 = self.entry_Deck1.get(), self.entry_Deck2.get()
-		heroes = {1: Class2HeroDict[self.hero1], 2: Class2HeroDict[self.hero2]}
-		if deckString1:
-			self.deck1, deckCorrect, hero = parseDeckCode(deckString1, self.hero1, Class2HeroDict)
-			if not deckCorrect: messagebox.showinfo(message=txt("Deck 1 incorrect", CHN))
-		if deckString2:
-			self.deck2, deckCorrect, hero = parseDeckCode(deckString2, self.hero2, Class2HeroDict)
-			if not deckCorrect: messagebox.showinfo(message=txt("Deck 2 incorrect", CHN))
-			
-		deckStrings = {1: self.deck1, 2: self.deck2}
-		decks, decksCorrect = {1: [], 2: []}, {1: False, 2: False}
+		#deck1&2 and hero1&2 parsing
+		self.deck1, deckCorrect, hero = parseDeckCode(self.entry_Deck1.get(), self.hero1Class, Class2HeroDict, defaultDeck=self.deck1_0)
+		if not deckCorrect: messagebox.showinfo(message=txt("Deck 1 incorrect", CHN))
+		self.panel_Class1.setSelection(hero.Class)
+		self.deck2, deckCorrect, hero = parseDeckCode(self.entry_Deck2.get(), self.hero2Class, Class2HeroDict, defaultDeck=self.deck2_0)
+		if not deckCorrect: messagebox.showinfo(message=txt("Deck 2 incorrect", CHN))
+		self.panel_Class2.setSelection(hero.Class)
 		
-		for ID in range(1, 3):
-			decks[ID], decksCorrect[ID], heroes[ID] = parseDeckCode(deckStrings[ID], heroes[ID], Class2HeroDict)
-		
+		print("After parsing, the decks and heroes are:\n", self.deck1, "\n", self.deck2)
 		for lbl, deck, manaObjsDrawn, canvas, ls_Labels, panelDeck \
 				in zip((self.lbl_Types1, self.lbl_Types2),
 						(self.deck1, self.deck2),
@@ -149,11 +142,8 @@ class Layer1Window:
 				label = Label_CardinDeck(master=panelDeck, UI=self, card=card)
 				label.grid(row=i%15, column=int(i / 15))
 				ls_Labels.append(label)
-				if issubclass(card, Minion): cardTypes["Minion"] += 1
-				elif issubclass(card, Spell): cardTypes["Spell"] += 1
-				elif issubclass(card, Weapon): cardTypes["Weapon"] += 1
-				elif issubclass(card, Hero): cardTypes["Hero"] += 1
-			
+				cardTypes[card.type] += 1
+				
 			lbl["text"] = "Minion: %d\nSpell: %d\nWeapon: %d\nHero: %d\nAmulet: %d" % (
 							cardTypes["Minion"], cardTypes["Spell"], cardTypes["Weapon"], cardTypes["Hero"], cardTypes["Amulet"])
 			for objID in manaObjsDrawn: canvas.delete(objID)
@@ -161,12 +151,12 @@ class Layer1Window:
 	
 			counts = cnt((min(card.mana, 7) for card in deck))
 			most = max(list(counts.values()))
-			for key, value in counts.items():
-				if value:
-					X1, X2 = (0.1 + 0.1 * key) * manaDistriWidth, (0.15 + 0.1 * key) * manaDistriWidth
-					Y1, Y2 = (0.88 - 0.75 * (value / most)) * manaDistriHeight, 0.88 * manaDistriHeight
+			for mana, count in counts.items():
+				if count:
+					X1, X2 = (0.1 + 0.1 * mana) * manaDistriWidth, (0.15 + 0.1 * mana) * manaDistriWidth
+					Y1, Y2 = (0.88 - 0.75 * (count / most)) * manaDistriHeight, 0.88 * manaDistriHeight
 					manaObjsDrawn.append(canvas.create_rectangle(X1, Y1, X2, Y2, fill='gold', width=0))
-					manaObjsDrawn.append(canvas.create_text((X1 + X2) / 2, Y1 - 0.06 * manaDistriHeight, text=str(value), font=("Yahei", 12, "bold")))
+					manaObjsDrawn.append(canvas.create_text((X1 + X2) / 2, Y1 - 0.06 * manaDistriHeight, text=str(count), font=("Yahei", 12, "bold")))
 			
 	def displayCardImg(self, card):
 		img = PIL.Image.open(findFilepath(card(None, 1)))
@@ -185,19 +175,18 @@ class Layer1Window:
 			return
 		
 		cardPool, RNGPools = makeCardPool(0, 0)
-		transferStudentType = transferStudentPool[self.boardID]
-		deck1, deck2 = self.entry_Deck1.get(), self.entry_Deck2.get()
-		heroes = {1: Class2HeroDict[self.hero1], 2: Class2HeroDict[self.hero2]}
-		deckStrings = {1: deck1, 2: deck2}
+		heroes = {1: self.hero1Class, 2: self.hero2Class}
+		deckStrings = {1: self.entry_Deck1.get(), 2: self.entry_Deck2.get()}
 		decks, decksCorrect = {1: [], 2: []}, {1: False, 2: False}
-		
 		for ID in range(1, 3):
-			decks[ID], decksCorrect[ID], heroes[ID] = parseDeckCode(deckStrings[ID], heroes[ID], Class2HeroDict)
+			decks[ID], decksCorrect[ID], heroes[ID] = parseDeckCode(deckStrings[ID], heroes[ID], Class2HeroDict,
+																	defaultDeck=self.deck1_0 if ID == 1 else self.deck2_0)
 		
 		if decksCorrect[1] and decksCorrect[2]:
-			self.gameGUI.boardID = self.boardID
-			self.gameGUI.Game.initialize_Details(cardPool, RNGPools, heroes[1], heroes[2],
-												 deck1=decks[1], deck2=decks[2], transferStudentType=transferStudentType)
+			seed = datetime.now().microsecond
+			self.gameGUI.boardID = npchoice(boardPool)
+			self.gameGUI.Game.initialize_Details(self.gameGUI.boardID, int(seed), RNGPools, heroes[1], heroes[2],
+												 deck1=decks[1], deck2=decks[2])
 			self.window.destroy()
 			print("Before init mulligan display, threads are\n", threading.current_thread(), threading.enumerate())
 			self.gameGUI.initMulliganDisplay()
@@ -244,10 +233,10 @@ class GUI_1P(Panda_UICommon):
 		self.deckZones = {1: DeckZone(self, 1), 2: DeckZone(self, 2)}
 		
 		self.initGameDisplay()
-		#threading.Thread(target=self.initGameDisplay).start()
 		btn_Mulligan = DirectButton(text=("Confirm", "Confirm", "Confirm", "Confirm"), scale=0.08,
 									command=self.mulligan_PreProcess)
 		
+		#Draw the animation of mulligan cards coming out of the deck
 		self.posMulligans = {1: [(-7, -3.3, 10), (0, -3.3, 10), (7, -3.3, 10)],
 							 2: [(-8.25, 6, 10), (-2.75, 6, 10), (2.75, 6, 10), (8.25, 6, 10)]}
 		for ID in range(1, 3):

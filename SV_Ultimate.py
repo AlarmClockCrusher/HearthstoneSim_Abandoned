@@ -149,15 +149,15 @@ class GoddessoftheWestWind(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i1, i2 = curGame.guides.pop(0)
+            if curGame.picks:
+                i1, i2 = curGame.picks.pop(0)
             else:
                 minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
                            card.type == "Minion" and card.Class == "Havencraft" and card.attack_0 <= 2]
                 for m in minions:
                     print(curGame.Hand_Deck.decks[self.ID][m].name)
                 i1 = npchoice(minions) if minions and curGame.space(self.ID) > 0 else -1
-                curGame.fixedGuides.append(i1)
+                curGame.picks.append(i1)
                 name = curGame.Hand_Deck.decks[self.ID][i1].name
                 for minion in minions:
                     if curGame.Hand_Deck.decks[self.ID][minion].name == name:
@@ -333,15 +333,15 @@ class GoddessoftheWestWind(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i1, i2 = curGame.guides.pop(0)
+            if curGame.picks:
+                i1, i2 = curGame.picks.pop(0)
             else:
                 minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
                            card.type == "Minion" and card.Class == "Havencraft" and card.attack_0 <= 2]
                 for m in minions:
                     print(curGame.Hand_Deck.decks[self.ID][m].name)
                 i1 = npchoice(minions) if minions and curGame.space(self.ID) > 0 else -1
-                curGame.fixedGuides.append(i1)
+                curGame.picks.append(i1)
                 name = curGame.Hand_Deck.decks[self.ID][i1].name
                 for minion in minions:
                     if curGame.Hand_Deck.decks[self.ID][minion].name == name:

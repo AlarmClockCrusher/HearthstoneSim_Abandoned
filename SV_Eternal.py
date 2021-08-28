@@ -257,18 +257,18 @@ class GransResolve(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i, j = curGame.guides.pop(0)
+            if curGame.picks:
+                i, j = curGame.picks.pop(0)
             else:
                 minions = curGame.minionsAlive(3 - self.ID)
                 i = npchoice(minions).pos if minions else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
                 if len(minions) > 1:
                     minions.remove(minions[i])
                     j = npchoice(minions).pos
                 else:
                     j = -1
-                curGame.fixedGuides.append(j)
+                curGame.picks.append(j)
             if i > -1:
                 damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
                 self.dealsDamage(curGame.minions[3 - self.ID][i], damage)
@@ -276,19 +276,19 @@ class GransResolve(SVSpell):
                 damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
                 self.dealsDamage(curGame.minions[3 - self.ID][j], damage)
         if curGame.mode == 0:
-            if curGame.guides:
-                i, j = curGame.guides.pop(0)
+            if curGame.picks:
+                i, j = curGame.picks.pop(0)
             else:
                 minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
                            card.type == "Minion"]
                 i = npchoice(minions) if minions else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
                 if len(minions) > 1:
                     minions.remove(i)
                     j = npchoice(minions)
                 else:
                     j = -1
-                curGame.fixedGuides.append(j)
+                curGame.picks.append(j)
             if i > -1: mi = curGame.Hand_Deck.decks[self.ID][i]
             if j > -1: mj = curGame.Hand_Deck.decks[self.ID][j]
             if i > -1: curGame.Hand_Deck.drawCard(self.ID, mi)
@@ -306,12 +306,12 @@ class DjeetasDetermination(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 minions = curGame.minionsAlive(3 - self.ID)
                 i = npchoice(minions).pos if minions else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1:
                 damage = (10 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
                 self.dealsDamage(curGame.minions[3 - self.ID][i], damage)
@@ -389,12 +389,12 @@ class OnWingsofTomorrow(SVSpell):
             if choice == 1:
                 curGame = self.Game
                 if curGame.mode == 0:
-                    if curGame.guides:
-                        i = curGame.guides.pop(0)
+                    if curGame.picks:
+                        i = curGame.picks.pop(0)
                     else:
                         minions = curGame.minionsAlive(3 - self.ID)
                         i = npchoice(minions).pos if minions else -1
-                        curGame.fixedGuides.append(i)
+                        curGame.picks.append(i)
                     if i > -1:
                         damage = (10 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
                         self.dealsDamage(curGame.minions[3 - self.ID][i], damage)
@@ -403,18 +403,18 @@ class OnWingsofTomorrow(SVSpell):
             else:
                 curGame = self.Game
                 if curGame.mode == 0:
-                    if curGame.guides:
-                        i, j = curGame.guides.pop(0)
+                    if curGame.picks:
+                        i, j = curGame.picks.pop(0)
                     else:
                         minions = curGame.minionsAlive(3 - self.ID)
                         i = npchoice(minions).pos if minions else -1
-                        curGame.fixedGuides.append(i)
+                        curGame.picks.append(i)
                         if len(minions) > 1:
                             minions.remove(minions[i])
                             j = npchoice(minions).pos
                         else:
                             j = -1
-                        curGame.fixedGuides.append(j)
+                        curGame.picks.append(j)
                     if i > -1:
                         damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
                         self.dealsDamage(curGame.minions[3 - self.ID][i], damage)
@@ -422,19 +422,19 @@ class OnWingsofTomorrow(SVSpell):
                         damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
                         self.dealsDamage(curGame.minions[3 - self.ID][j], damage)
                 if curGame.mode == 0:
-                    if curGame.guides:
-                        i, j = curGame.guides.pop(0)
+                    if curGame.picks:
+                        i, j = curGame.picks.pop(0)
                     else:
                         minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
                                    card.type == "Minion"]
                         i = npchoice(minions) if minions else -1
-                        curGame.fixedGuides.append(i)
+                        curGame.picks.append(i)
                         if len(minions) > 1:
                             minions.remove(i)
                             j = npchoice(minions)
                         else:
                             j = -1
-                        curGame.fixedGuides.append(j)
+                        curGame.picks.append(j)
                     if i > -1: mi = curGame.Hand_Deck.decks[self.ID][i]
                     if j > -1: mj = curGame.Hand_Deck.decks[self.ID][j]
                     if i > -1: curGame.Hand_Deck.drawCard(self.ID, mi)
@@ -445,7 +445,7 @@ class OnWingsofTomorrow(SVSpell):
 class GransResolve_Option(Option):
     name, description = "Gran's Resolve", "Gran's Resolve"
     index = "SV_Eternal~Neutral~Spell~0~Gran's Resolve~Legendary~Uncollectible"
-	mana, attack, health = 10, -1, -1
+    mana, attack, health = 10, -1, -1
     def available(self):
         return True
 
@@ -1133,13 +1133,13 @@ class ProvenMethodology(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 officers = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
                             card.type == "Minion" and "Officer" in card.race]
                 i = npchoice(officers) if officers else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1:
                 card = curGame.Hand_Deck.decks[self.ID][i]
                 curGame.Hand_Deck.drawCard(self.ID, i)
@@ -1423,13 +1423,13 @@ class SeofonStarSwordSovereign(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 cards = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
                          "~SuperSkyboundArt" in card.index or "~Enhance" in card.index]
                 i = npchoice(cards) if cards else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         sa, ssa = False, False
         for trig in self.trigsHand:
@@ -1527,16 +1527,16 @@ class RampagingRhino(SVMinion):
         curGame = self.Game
         if curGame.mode == 0:
             minion = None
-            if curGame.guides:
-                i, where = curGame.guides.pop(0)
+            if curGame.picks:
+                i, where = curGame.picks.pop(0)
                 if where: minion = curGame.find(i, where)
             else:
                 minions = curGame.minionsAlive(3 - self.ID) + curGame.amuletonBoard(3 - self.ID)
                 if len(minions) > 0:
                     minion = npchoice(minions)
-                    curGame.fixedGuides.append((minion.pos, "Minion%d" % minion.ID))
+                    curGame.picks.append((minion.pos, "Minion%d" % minion.ID))
                 else:
-                    curGame.fixedGuides.append((0, ""))
+                    curGame.picks.append((0, ""))
             if minion: curGame.killMinion(self, minion)
         return None
 
@@ -1842,17 +1842,16 @@ class FifProdigiousSorcerer(SVMinion):
         if sa:
             curGame = self.Game
             if curGame.mode == 0:
-                if curGame.guides:
-                    minions = curGame.guides.pop(0)
+                if curGame.picks:
+                    minions = curGame.picks.pop(0)
                 else:
                     minions = []
-					for card in curGame.Counters.minionsDiedThisGame[self.ID]:
-						if card.mana >= 5 and card not in minions:
-							minions.append(minion)
-					minions = npchoice(minions, min(2, len(minions)), replace=False)
-                    curGame.fixedGuides.append(minions)
-                if minions: curGame.summon([minion(curGame, self.ID) for minion in minions], (-1, "totheRightEnd"),
-                                           self)
+                    for card in curGame.Counters.minionsDiedThisGame[self.ID]:
+                        if card.mana >= 5 and card not in minions:
+                            minions.append(card)
+                    minions = npchoice(minions, min(2, len(minions)), replace=False)
+                    curGame.picks.append(minions)
+                if minions: self.summon([minion(curGame, self.ID) for minion in minions], (-1, "totheRightEnd"))
         if sa:
             for minion in self.Game.minionsonBoard(self.ID):
                 minion.buffDebuff(5, 5)
@@ -2188,16 +2187,16 @@ class Trig_MermaidArcher(TrigBoard):
         curGame = self.entity.Game
         if curGame.mode == 0:
             enemy = None
-            if curGame.guides:
-                i, where = curGame.guides.pop(0)
+            if curGame.picks:
+                i, where = curGame.picks.pop(0)
                 if where: enemy = curGame.find(i, where)
             else:
                 chars = curGame.minionsAlive(3 - self.entity.ID)
                 if chars:
                     enemy = npchoice(chars)
-                    curGame.fixedGuides.append((enemy.pos, enemy.type + str(enemy.ID)))
+                    curGame.picks.append((enemy.pos, enemy.type + str(enemy.ID)))
                 else:
-                    curGame.fixedGuides.append((0, ''))
+                    curGame.picks.append((0, ''))
             if enemy:
                 self.entity.dealsDamage(enemy, 2)
 
@@ -2349,14 +2348,14 @@ class Trig_TempestDragon(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         curGame = self.entity.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
                            card.type == "Minion" and
                            type(card).mana in [2, 4, 6, 8, 10] and card.Class == "Dragoncraft"]
                 i = npchoice(minions) if minions else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1: curGame.Hand_Deck.drawCard(self.entity.ID, i)
         return None
 
@@ -3178,12 +3177,12 @@ class FeowerDoubleBladeFlash(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         curGame = self.Game
         if curGame.mode == 0:
-            if curGame.guides:
-                i = curGame.guides.pop(0)
+            if curGame.picks:
+                i = curGame.picks.pop(0)
             else:
                 minions = curGame.minionsAlive(3 - self.ID)
                 i = npchoice(minions).pos if minions else -1
-                curGame.fixedGuides.append(i)
+                curGame.picks.append(i)
             if i > -1:
                 curGame.minions[3 - self.ID][i].buffDebuff(-4, 0, "StartofTurn " + self.ID)
         sa, ssa = False, False
@@ -3196,12 +3195,12 @@ class FeowerDoubleBladeFlash(SVMinion):
             for _ in range(3):
                 curGame = self.Game
                 if curGame.mode == 0:
-                    if curGame.guides:
-                        i = curGame.guides.pop(0)
+                    if curGame.picks:
+                        i = curGame.picks.pop(0)
                     else:
                         minions = curGame.minionsAlive(3 - self.ID)
                         i = npchoice(minions).pos if minions else -1
-                        curGame.fixedGuides.append(i)
+                        curGame.picks.append(i)
                     if i > -1:
                         self.dealsDamage(curGame.minions[3 - self.ID][i], 4)
         if ssa:

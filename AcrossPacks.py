@@ -113,7 +113,7 @@ class DemonClaws(Power):
 	description = "+1 Attack this turn"
 	name_CN = "恶魔之爪"
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		self.Game.heroes[self.ID].gainAttack(1)
 		return 0
 
@@ -124,7 +124,7 @@ class DemonsBite(Power):
 	description = "+2 Attack this turn"
 	name_CN = "恶魔之咬"
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		self.Game.heroes[self.ID].gainAttack(2)
 		return 0
 
@@ -136,7 +136,7 @@ class Shapeshift(Power):
 	description = "+1 Attack this turn. +1 Armor"
 	name_CN = "变形"
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		self.Game.heroes[self.ID].gainsArmor(1)
 		self.Game.heroes[self.ID].gainAttack(1)
 		return 0
@@ -148,7 +148,7 @@ class DireShapeshift(Power):
 	description = "+2 Attack this turn. +2 Armor"
 	name_CN = "恐怖变形"
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		self.Game.heroes[self.ID].gainsArmor(2)
 		self.Game.heroes[self.ID].gainAttack(2)
 		return 0
@@ -183,11 +183,11 @@ class SteadyShot(Power):
 			
 			arrow = GUI.loader.loadModel("TexCards\\ForPowers\\Arrow.glb")
 			arrow.reparentTo(GUI.render)
-			GUI.seqHolder[-1].append(GUI.LERPINTERVAL(arrow, duration=0.2, startPos=(pos_0[0], pos_0[1]-0.2, pos_0[2]),
+			GUI.seqHolder[-1].append(GUI.LERP_PosHpr(arrow, duration=0.2, startPos=(pos_0[0], pos_0[1]-0.2, pos_0[2]),
 													  pos=(pos_1[0], pos_1[1]-0.2, pos_1[2]), startHpr=()),
 									 GUI.WAIT(0.5), GUI.FUNC(arrow.removeNode))
 			
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		damage = (2 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		self.dealsDamage(target if target else self.Game.heroes[3 - self.ID], damage)
 		return 0
@@ -215,7 +215,7 @@ class BallistaShot(Power):
 		else:
 			return "对敌方英雄造成%d点伤害" % damage if CHN else "Deal %d damage to the enemy hero" % damage
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		damage = (3 + self.marks["Damage Boost"] + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		self.dealsDamage(target if target else self.Game.heroes[3 - self.ID], damage)
 		return 0
@@ -232,7 +232,7 @@ class Fireblast(Power):
 		damage = (1 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		return "造成%d点伤害" % damage if CHN else "Deal %d damage" % damage
 	
-	def effect(self, target, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		damage = (1 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		dmgTaker, damageActual = self.dealsDamage(target, damage)
 		if dmgTaker.health < 1 or dmgTaker.dead: return 1
@@ -249,7 +249,7 @@ class FireblastRank2(Power):
 		damage = (2 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		return "造成%d点伤害" % damage if CHN else "Deal %d damage" % damage
 	
-	def effect(self, target, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		damage = (2 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		dmgTaker, damageActual = self.dealsDamage(target, damage)
 		if dmgTaker.health < 1 or dmgTaker.dead: return 1
@@ -266,7 +266,7 @@ class Reinforce(Power):
 	def available(self):
 		return not self.chancesUsedUp() and self.Game.space(self.ID)
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		#Hero Power summoning won't be doubled by Khadgar.
 		self.summon(SilverHandRecruit(self.Game, self.ID), -1)
 		return 0
@@ -281,7 +281,7 @@ class TheSilverHand(Power):
 	def available(self):
 		return not self.chancesUsedUp() and self.Game.space(self.ID)
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		self.summon([SilverHandRecruit(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"))
 		return 0
 
@@ -297,7 +297,7 @@ class LesserHeal(Power):
 		heal = 2 * (2 ** self.countHealDouble())
 		return "恢复%d点生命值" % heal if CHN else "Restore %d Health" % heal
 	
-	def effect(self, target, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		heal = 2 * (2 ** self.countHealDouble())
 		obj, targetSurvival = self.restoresHealth(target, heal)
 		if targetSurvival > 1: return 1
@@ -314,7 +314,7 @@ class Heal(Power):
 		heal = 3 * (2 ** self.countHealDouble())
 		return "恢复%d点生命值" % heal if CHN else "Restore %d Health" % heal
 	
-	def effect(self, target, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		heal = 4 * (2 ** self.countHealDouble())
 		obj, targetSurvival = self.restoresHealth(target, heal)
 		if targetSurvival > 1: return 1
@@ -328,7 +328,7 @@ class DaggerMastery(Power):
 	description = "Equip a 1/2 Weapon"
 	name_CN = "匕首精通"
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		self.equipWeapon(WickedKnife(self.Game, self.ID))
 		return 0
 
@@ -339,7 +339,7 @@ class PoisonedDaggers(Power):
 	description = "Equip a 2/2 Weapon"
 	name_CN = "浸毒匕首"
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		self.equipWeapon(PoisonedDagger(self.Game, self.ID))
 		return 0
 
@@ -354,9 +354,9 @@ class TotemicCall(Power):
 	def available(self):
 		return not self.chancesUsedUp() and self.Game.space(self.ID) and self.viableTotems()[0]
 	
-	def effect(self, target=None, choice=0):
-		size, totems = self.viableTotems()
-		if size: self.summon(npchoice(totems)(self.Game, self.ID), -1)
+	def effect(self, target=None, choice=0, comment=''):
+		totems = self.viableTotems()
+		if totems: self.summon(npchoice(totems)(self.Game, self.ID), -1)
 		return 0
 	
 	def viableTotems(self):
@@ -364,7 +364,7 @@ class TotemicCall(Power):
 		for minion in self.Game.minionsonBoard(self.ID):
 			try: viableTotems.remove(type(minion))
 			except: pass
-		return len(viableTotems), viableTotems
+		return viableTotems
 
 
 class TotemicSlam(Power):
@@ -376,19 +376,15 @@ class TotemicSlam(Power):
 	def available(self):
 		return not self.chancesUsedUp() and self.Game.space(self.ID)
 	
-	def effect(self, target=None, choice=0):
-		curGame = self.Game
-		if curGame.mode == 0:
-			if curGame.guides:
-				self.summon(curGame.guides.pop(0)(curGame, self.ID), -1)
-			else:
-				curGame.options = [totem(curGame, self.ID) for totem in [SearingTotem, StoneclawTotem, HealingTotem, StrengthTotem]]
-				curGame.Discover.startDiscover(self)
+	def effect(self, target=None, choice=0, comment=''):
+		self.chooseFixedOptions(TotemicSlam, comment, options=[SearingTotem(self.Game, self.ID), StoneclawTotem(self.Game, self.ID), 
+															   HealingTotem(self.Game, self.ID), StrengthTotem(self.Game, self.ID)])
 		return 0
 	
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
-		self.summon(option, -1)
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		self.handleDiscoverGeneratedCard(option, case, info_RNGSync, info_GUISync,
+										 func=lambda cardType, card: self.summon(card, -1))
+		
 
 
 #Warloc basic and upgraded powers
@@ -402,7 +398,7 @@ class LifeTap(Power):
 		damage = (2 + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		return "抽一张牌并受到%d点伤害" % damage if CHN else "Draw a card and take %d damage" % damage
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		damage = (2 + self.marks["Damage Boost"] + self.Game.status[self.ID]["Power Damage"]) * (2 ** self.countDamageDouble())
 		self.dealsDamage(self.Game.heroes[self.ID], damage)
 		card, mana = self.Game.Hand_Deck.drawCard(self.ID)
@@ -417,7 +413,7 @@ class SoulTap(Power):
 	description = "Draw a card"
 	name_CN = "灵魂分流"
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		card, mana = self.Game.Hand_Deck.drawCard(self.ID)
 		if card:
 			self.Game.sendSignal("CardDrawnfromHeroPower", self.ID, self, card, mana, "")
@@ -431,7 +427,7 @@ class ArmorUp(Power):
 	description = "Gain 2 Armor"
 	name_CN = "全副武装！"
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		self.Game.heroes[self.ID].gainsArmor(2)
 		return 0
 
@@ -442,7 +438,7 @@ class TankUp(Power):
 	description = "Gain 4 Armor"
 	name_CN = "铜墙铁壁！"
 	
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		self.Game.heroes[self.ID].gainsArmor(4)
 		return 0
 
@@ -1174,28 +1170,16 @@ class ZarogsCrown(Spell):
 			[classCards[Class]+classCards["Neutral"] for Class in pools.Classes]
 			
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if curGame.space(self.ID):
-			if curGame.mode == 0:
-				if curGame.guides:
-					minion = curGame.guides.pop(0)
-					self.summon([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"))
-				else:
-					key = "Legendary Minions as %s to Summon"%classforDiscover(self)
-					if self.ID != curGame.turn or "byOthers" in comment:
-						minion = npchoice(self.rngPool(key))
-						self.summon([minion(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"))
-					else:
-						minions = npchoice(self.rngPool(key), 3, replace=False)
-						curGame.options = [minion(curGame, self.ID) for minion in minions]
-						curGame.Discover.startDiscover(self)
+		if self.Game.space(self.ID) > 0:
+			self.discoverandGenerate(ZarogsCrown, comment, lambda : self.rngPool("Legendary Minions as %s to Summon" % classforDiscover(self)))
 		return None
 		
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
-		self.summon([option, type(option)(self.Game, self.ID)], (-1, "totheRightEnd"))
+	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
+		self.handleDiscoverGeneratedCard(option, case, info_RNGSync, info_GUISync,
+										 func=lambda cardType, card: self.summon([cardType(self.Game, self.ID) for i in range(2)], (-1, "totheRightEnd"))
+										 )
 		
-
+		
 class Bomb(Spell):
 	Class, school, name = "Neutral", "", "Bomb"
 	requireTarget, mana = False, 5
@@ -1219,24 +1203,8 @@ class EtherealLackey(Minion):
 			   [[card for card in pools.ClassCards[Class] if card.type == "Spell"] for Class in pools.Classes]
 
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if self.ID == curGame.turn:
-			if curGame.mode == 0:
-				pool = tuple(self.rngPool(classforDiscover(self) + " Spells"))
-				if curGame.guides:
-					self.addCardtoHand(curGame.guides.pop(0), self.ID, byDiscover=True)
-				else:
-					if "byOthers" in comment:
-						self.addCardtoHand(npchoice(pool), self.ID, byDiscover=True)
-					else:
-						spells = npchoice(pool, 3, replace=False)
-						curGame.options = [spell(curGame, self.ID) for spell in spells]
-						curGame.Discover.startDiscover(self, pool)
+		self.discoverandGenerate(EtherealLackey, comment, lambda : self.rngPool(classforDiscover(self) + " Spells"))
 		return None
-
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
-		self.addCardtoHand(option, self.ID, byDiscover=True)
 
 
 class FacelessLackey(Minion):
@@ -1349,24 +1317,8 @@ class DraconicLackey(Minion):
 			   [classCards[Class] + classCards["Neutral"] for Class in pools.Classes]
 
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		curGame = self.Game
-		if self.ID == curGame.turn:
-			if curGame.mode == 0:
-				if curGame.guides:
-					self.addCardtoHand(curGame.guides.pop(0), self.ID, byDiscover=True)
-				else:
-					key = "Dragons as " + classforDiscover(self)
-					if "byOthers" in comment:
-						self.addCardtoHand(npchoice(self.rngPool(key)), self.ID, byDiscover=True)
-					else:
-						dragons = npchoice(self.rngPool(key), 3, replace=False)
-						curGame.options = [dragon(curGame, self.ID) for dragon in dragons]
-						curGame.Discover.startDiscover(self)
+		self.discoverandGenerate(DraconicLackey, comment, lambda : self.rngPool("Dragons as " + classforDiscover(self)))
 		return None
-
-	def discoverDecided(self, option, pool):
-		self.Game.fixedGuides.append(type(option))
-		self.addCardtoHand(option, self.ID, byDiscover=True)
 
 Lackeys = [DraconicLackey, EtherealLackey, FacelessLackey, GoblinLackey, KoboldLackey, TitanicLackey, WitchyLackey]
 
@@ -1438,6 +1390,9 @@ class SwiftAdventurer(Minion):
 Adventurers = [DeadlyAdventurer, BurlyAdventurer, DevoutAdventurer, RelentlessAdventurer,
 			   ArcaneAdventurer, SneakyAdventurer, VitalAdventurer, SwiftAdventurer]
 
+
+Classes = ["Demon Hunter", "Druid", "Hunter", "Mage", "Paladin",
+		   "Priest", "Rogue", "Shaman", "Warlock", "Warrior"]
 
 AcrossPacks_Cards = [TheCoin, SilverHandRecruit, WickedKnife, PoisonedDagger, SearingTotem, StoneclawTotem, HealingTotem, StrengthTotem,
 					#Basic and Upgraded Hero Powers

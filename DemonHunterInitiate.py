@@ -203,11 +203,11 @@ class BladeDance(Spell):
 		minions = curGame.minionsAlive(3-self.ID)
 		if damage > 0 and minions:
 			if curGame.mode == 0:
-				if curGame.guides:
-					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
+				if curGame.picks:
+					minions = [curGame.minions[3-self.ID][i] for i in curGame.picks.pop(0)]
 				else:
 					minions = list(npchoice(minions, min(3, len(minions)), replace=False))
-					curGame.fixedGuides.append(tuple([minion.pos for minion in minions]))
+					curGame.picks.append(tuple([minion.pos for minion in minions]))
 				self.dealsAOE(minions, [damage]*len(minions))
 		return None
 		
@@ -347,15 +347,15 @@ class Trig_WrathscaleNaga(TrigBoard):
 		curGame = self.entity.Game
 		if curGame.mode == 0:
 			enemy = None
-			if curGame.guides:
-				i, where = curGame.guides.pop(0)
+			if curGame.picks:
+				i, where = curGame.picks.pop(0)
 				if where: enemy = curGame.find(i, where)
 			else:
 				targets = curGame.charsAlive(3-self.entity.ID)
 				if targets:
 					enemy = npchoice(targets)
-					curGame.fixedGuides.append((enemy.pos, enemy.type+str(enemy.ID)))
-				else: curGame.fixedGuides.append((0, ""))
+					curGame.picks.append((enemy.pos, enemy.type+str(enemy.ID)))
+				else: curGame.picks.append((0, ""))
 			if enemy:
 				self.entity.dealsDamage(enemy, 1)
 				
@@ -491,14 +491,14 @@ class Nethrandamus(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
 		if curGame.mode == 0:
-			if curGame.guides:
-				minions = curGame.guides.pop(0)
+			if curGame.picks:
+				minions = curGame.picks.pop(0)
 			else:
 				cost = self.progress
 				while "%d-Cost Minions to Summon"%cost not in curGame.RNGPools: #假设计数过高，超出了费用范围，则取最高的可选费用
 					cost -= 1
 				minions = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost), 2, replace=False)
-				curGame.fixedGuides.append(tuple(minions))
+				curGame.picks.append(tuple(minions))
 			pos = (self.pos, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 			curGame.summon([minion(curGame, self.ID) for minion in minions], pos, self)
 		return None

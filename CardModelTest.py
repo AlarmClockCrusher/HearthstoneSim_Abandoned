@@ -51,7 +51,7 @@ Option_Cards_Spells = (DemigodsFavor_Option, ShandosLesson_Option, RampantGrowth
 
 class VariousTest(Panda_UICommon):
 	def __init__(self):
-		ShowBase.__init__(self)
+		super().__init__()
 		self.boardID = "2 Classic Stormwind"
 		self.ID = 1
 		self.modelTemplates = {}
@@ -80,7 +80,7 @@ class VariousTest(Panda_UICommon):
 										self.Game.Manas.manasLocked[ID], self.Game.Manas.manasOverloaded[ID])
 			self.heroZones[ID].placeSecrets()
 			self.heroZones[ID].placeTurnTrigs()
-			self.deckZones[ID].draw(15)
+			self.deckZones[ID].draw(15, 0)
 			
 		for ID in range(1, 3):
 			for minion in self.Game.minions[ID]:
@@ -112,7 +112,7 @@ class VariousTest(Panda_UICommon):
 		
 		game = Game()
 		game.initialize()
-		game.initialize_Details({}, {}, Rexxar, Uther)
+		game.initialize_Details("1 Classic Ogrimmar", 42, {}, Rexxar, Uther)
 		game.Hand_Deck.hands = {1: [card(game, 1) for card in (SoulMirror, YseratheDreamer, BulwarkofAzzinoth,
 															   LordJaraxxus, ImprisonedFelmaw, LightningBloom)],
 								2: [card(game, 2) for card in (SoulMirror, YseratheDreamer, BulwarkofAzzinoth,
@@ -151,7 +151,10 @@ class VariousTest(Panda_UICommon):
 			models.append(model)
 		
 	def smallTest(self):
-		pass
+		cards = [card(self.Game, 1) for card in (ElvenArcher, TheCoin, TrueaimCrescent, LordJaraxxus)]
+		for i, card in enumerate(cards):
+			nodepath, btn = genCard(self, card, pos=(i*8, 0, 5), isPlayed=False, pickable=False, onlyShowCardBack=True)
+			Sequence(Wait(2), Func(btn.changeCard, card, False, False, False)).start()
 	
 	def testCurve(self):
 		card = LightningBolt(self.Game, 1)
@@ -221,9 +224,15 @@ class TestRaySolid(ShowBase):
 class SmallTest(ShowBase):
 	def __init__(self):
 		super().__init__()
-		nodepath, btn = genCard(self, LostinthePark(None, 1), isPlayed=False, pickable=False)
-		Sequence(Wait(2), Func(btn.changeCard, DefendtheSquirrels(None, 1), False, False))
-	
-VariousTest().run()
+		model = self.loader.loadModel("Models\\MinionModels\\Minion.glb")
+		model.reparentTo(self.render)
+		#Sequence(Wait(2), Func(print, "good"), Func(model.reparentTo, self.render), Func(model.detachNode)).start()
+		model.setPosHpr(3, 20, 0, 0, 90, 0)
+		model.find("card").setTransparency(True)
+		model.find("card").setColor(transparent)
+		Sequence(Wait(1), Func(model.detachNode), Wait(1), Func(model.reparentTo, self.render)).start()
+		
+		
+#VariousTest().run()
 #TestRaySolid().run()
-#SmallTest().run()
+SmallTest().run()

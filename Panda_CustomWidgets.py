@@ -57,25 +57,28 @@ class HandZone:
 			isPlayed = btn.isPlayed
 			pos, hpr, scale = btn.np.getPos(), btn.np.getHpr(), btn.np.getScale()
 			nodePath, btn_NewCard = genCard(self.GUI, newCard, isPlayed=isPlayed, pos=pos, hpr=hpr, scale=scale,
-											onlyShowCardBack=newCard.ID != self.GUI.ID and not self.GUI.showEnemyHand)
+											onlyShowCardBack=self.GUI.sock and newCard.ID != self.GUI.ID and not self.GUI.showEnemyHand)
 			para.append(Func(btn.np.removeNode))
 			para.append(Func(nodePath.setPosHprScale, pos, hpr, scale))
 		self.GUI.seqHolder[-1].append(para)
 		
 	def placeCards(self, add2Queue=True): #Sometimes, CardModelTest.py wants to use this without the seqHolder
-		ownHand = self.GUI.Game.Hand_Deck.hands[self.ID]
+		GUI = self.GUI
+		ownHand = GUI.Game.Hand_Deck.hands[self.ID]
 		posHands, hprHands = posHandsTable[self.y][len(ownHand)], hprHandsTable[self.y][len(ownHand)]
 		for i, card in enumerate(ownHand):
-			if not card.btn: genCard(self.GUI, card, isPlayed=False, scale=scale_Hand)
-		para = Parallel()
+			if not card.btn: genCard(GUI, card, isPlayed=False, scale=scale_Hand, 
+									 onlyShowCardBack=GUI.sock and card.ID != GUI.ID and not GUI.showEnemyHand)
+			else: card.btn.np.reparentTo(GUI.render)
+		para = Parallel(Func(GUI.deckZones[self.ID].draw, len(GUI.Game.Hand_Deck.decks[self.ID]), len(ownHand)) )
 		for i, card in enumerate(ownHand):
-			para.append(card.btn.genLerpInterval(posHands[i], hprHands[i], scale_Hand, duration=0.25))
-		if self.GUI.seqHolder:
-			if add2Queue: self.GUI.seqHolder[-1].append(para)
+			para.append(Func(card.btn.np.reparentTo, GUI.render))
+			para.append(LerpPosHprScaleInterval(card.btn.np, duration=0.25, pos=posHands[i], hpr=hprHands[i], scale=scale_Hand))
+		if GUI.seqHolder:
+			if add2Queue: GUI.seqHolder[-1].append(para)
 			else: return para
 		else: para.start()
 		
-
 """Hero Zone infos"""
 Hero1_Pos, Hero2_Pos = (0, -7.35, 1.05), (0.05, 8.54, 1.05)
 Weapon1_Pos, Weapon2_Pos = (-4.75, -7.4, 1.05), (-4.75, 7.6, 1.05)
@@ -164,8 +167,9 @@ class HeroZone:
 			for i in range(usable, 10): manas["Mana"][i].setPos(0, 0, 0)
 			for j in range(upper - usable - locked): manas["EmptyMana"][j].setPos((usable+j) * 0.82, 0, 1)
 			for j in range(upper - usable - locked, 10): manas["EmptyMana"][j].setPos(0, 0, 0)
-			for k in range(locked): manas["LockedMana"][k].setPos((upper - usable - locked + k)  * 0.82, 0, 1)
+			for k in range(locked): manas[" "][k].setPos((upper - locked + k)  * 0.82, 0, 1)
 			for k in range(locked, 10): manas["LockedMana"][k].setPos(0, 0, 0)
+			#过载了的水晶在水晶栏下方一行显示
 			for m in range(overloaded): manas["OverloadedMana"][m].setPos(m * 0.82, -1.2, 1)
 			for m in range(overloaded, 10): manas["OverloadedMana"][m].setPos(0, 0, 0)
 			
@@ -240,6 +244,7 @@ def calc_posMinions(num, x, y, z):
 posMinionsTable = {MinionZone1_Y: {i: calc_posMinions(i, 0, MinionZone1_Y, MinionZone_Z) for i in range(15)},
 				MinionZone2_Y: {i: calc_posMinions(i, 0, MinionZone2_Y, MinionZone_Z) for i in range(15)}
 				}
+scale_Minion = 1.06
 
 class MinionZone:
 	def __init__(self, GUI, ID):
@@ -249,15 +254,18 @@ class MinionZone:
 		
 	#It takes negligible time to finish calcing pos and actually start drawing
 	def placeCards(self, add2Queue=True):
+		GUI = self.GUI
 		ownMinions = self.GUI.Game.minions[self.ID]
 		posMinions = posMinionsTable[self.y][len(ownMinions)]
 		for i, card in enumerate(ownMinions):
-			if not card.btn: genCard(self.GUI, card, isPlayed=True)
+			if not card.btn: genCard(GUI, card, isPlayed=True, scale=scale_Minion)
+			else: card.btn.np.reparentTo(GUI.render)
 		para = Parallel()
 		for i, card in enumerate(ownMinions):
-			para.append(card.btn.genLerpInterval(pos=posMinions[i], hpr=(0, 0, 0), duration=0.25))
-		if self.GUI.seqHolder:
-			if add2Queue: self.GUI.seqHolder[-1].append(para)
+			para.append(Func(card.btn.np.reparentTo, GUI.render))
+			para.append(card.btn.genLerpInterval(pos=posMinions[i], hpr=(0, 0, 0), scale=scale_Minion, duration=0.25))
+		if GUI.seqHolder:
+			if add2Queue: GUI.seqHolder[-1].append(para)
 			else: return para
 		else: para.start()
 		
@@ -271,6 +279,7 @@ class Btn_Board:
 		
 	def leftClick(self):
 		print("Board is clicked")
+		self.GUI.checkCardsDisplays(checkHand=True, checkBoard=True)
 		if -1 < self.GUI.UI < 3:  #不在发现中和动画演示中才会响应
 			self.GUI.resolveMove(None, self, "Board")
 	
@@ -294,10 +303,28 @@ class Btn_TurnEnd:
 	def __init__(self, GUI, nodePath):
 		self.GUI = GUI
 		self.np = nodePath
+		self.np_button = nodePath.find("TurnEndButton")
+		self.np_box = nodePath.find("box")
+		self.np_box.setTransparency(True)
+		self.changeDisplay(jobDone=False)
 		self.card = None  #Just a placeholder
+		self.jobDone = False
 		
+	def changeDisplay(self, jobDone=False):
+		self.jobDone = jobDone
+		print("Changing display of turn end button", self.jobDone)
+		if jobDone:
+			self.np_button.setTexture(self.np_button.findTextureStage('*'),
+									  self.GUI.loader.loadTexture("Models\\BoardModels\\TurnEndBtn_JobDone.png"), 1)
+			self.np_box.setColor(green)
+		else:
+			self.np_button.setTexture(self.np_button.findTextureStage('*'),
+									  self.GUI.loader.loadTexture("Models\\BoardModels\\TurnEndBtn.png"), 1)
+			self.np_box.setColor(transparent)
+			
 	def leftClick(self):
 		if 3 > self.GUI.UI > -1:
+			print("Turn End button clicked")
 			self.GUI.resolveMove(None, self, "TurnEnds")
 			
 	def rightClick(self):
@@ -358,12 +385,12 @@ class DeckZone:
 		self.np_Deck.attachNewNode(collision)#.show()
 		self.np_Deck.setPythonTag("btn", self)
 		
-	def draw(self, deckSize):
+	def draw(self, deckSize, handSize):
 		numPairs2Draw = min(10, ceil(deckSize / 3))
 		for nodePath in self.np_Deck.getChildren():
 			if nodePath.name != "Deck_cNode":
 				nodePath.setColor(white if int(nodePath.name) <= numPairs2Draw else transparent)
-		self.textNode.setText("Deck: {}\nHand: {}".format(len(self.HD.decks[self.ID]), len(self.HD.hands[self.ID])))
+		self.textNode.setText("Deck: {}\nHand: {}".format(deckSize, handSize))
 		
 	def fatigueAni(self, numFatigue):
 		self.np_Fatigue.find("Fatigue_TextNode").node().setText(str(numFatigue))

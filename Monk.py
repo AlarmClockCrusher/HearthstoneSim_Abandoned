@@ -12,7 +12,7 @@ class WindWalkerMistweaver(Power): #踏风织雾
 	mana, name, requireTarget = 2, "WindWalker-Mistweaver", True
 	index = "Monk~Basic Hero Power~2~WindWalker-Mistweaver"
 	description = "Give a friendly character +1 Attack this turn; or give an enemy character -1 Attack" #在本回合中，使用一个友方角色获得+1攻击力；或者使一个敌方角色获得-1攻击力
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		if target:
 			if target.ID == self.ID:
 				PRINT(self.Game, "Hero Power WindWalker-Mistweaver gives friendly character %s +1 Attack this turn"%target.name)
@@ -28,7 +28,7 @@ class HighWindWalkerMistweaver(Power): #精进踏风织雾
 	mana, name, requireTarget = 2, "High WindWalker-Mistweaver", True
 	index = "Monk~Upgraded Hero Power~2~High WindWalker-Mistweaver"
 	description = "Give a friendly character +2 Attack this turn; or give an enemy character -2 Attack" #在本回合中，使用一个友方角色获得+1攻击力；或者使一个敌方角色获得-1攻击力
-	def effect(self, target=None, choice=0):
+	def effect(self, target=None, choice=0, comment=''):
 		if target:
 			if target.ID == self.ID:
 				PRINT(self.Game, "Hero Power WindWalker-Mistweaver gives friendly character %s +2 Attack this turn"%target.name)
@@ -143,11 +143,11 @@ class EffusiveMists(Spell): #流溢之雾
 		minions = curGame.minionsonBoard(3-self.ID)
 		if minions:
 			if curGame.mode == 0:
-				if curGame.guides:
-					minions = [curGame.minions[3-self.ID][i] for i in curGame.guides.pop(0)]
+				if curGame.picks:
+					minions = [curGame.minions[3-self.ID][i] for i in curGame.picks.pop(0)]
 				else:
 					minions = list(npchoice(minions, min(2, len(minions)), replace=False))
-					curGame.fixedGuides.append(tuple([minion.pos for minion in minions]))
+					curGame.picks.append(tuple([minion.pos for minion in minions]))
 				PRINT(curGame, "Effusive Mists sets the Attack of minions {} to 1".format(minions))
 				for minion in minions: minion.statReset(1, False)
 		return None
@@ -279,7 +279,7 @@ class WiseLorewalkerCho(Minion): #睿智的游学者周卓
 				self.Game.Discover.startDiscover(self)
 		return None
 		
-	def discoverDecided(self, option, pool):
+	def discoverDecided(self, option, pool=None):
 		PRINT(self.Game, "Spell %s is added to player's hand"%option.name)
 		self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 		
@@ -651,8 +651,8 @@ class SpawnofXuen(Minion): #雪怒的子嗣
 		curGame = self.Game
 		if curGame.turn == self.ID:
 			if curGame.mode == 0:
-				if curGame.guides:
-					i = curGame.guides.pop(0)
+				if curGame.picks:
+					i = curGame.picks.pop(0)
 					if i > -1:
 						PRINT(curGame, "SpawnofXuen's battlecry lets player draw a 1-Cost minion from deck")
 						curGame.Hand_Deck.drawCard(self.ID, i)
@@ -662,20 +662,20 @@ class SpawnofXuen(Minion): #雪怒的子嗣
 						if "byOthers" in comment:
 							PRINT(curGame, "Spawn of Xuen's battlecry lets player draw a random 1-Cost minion from deck")
 							i = npchoice(oneCostMinions)
-							curGame.fixedGuides.append(i)
+							curGame.picks.append(i)
 							curGame.Hand_Deck.drawCard(self.ID, i)
 						else:
 							PRINT(curGame, "Spawn of Xuen's battlecry lets player discover a 1-Cost minion from deck")
 							indices = npchoice(oneCostMinions, min(3, len(oneCostMinions)), replace=False)
 							curGame.options = [curGame.Hand_Deck.decks[self.ID][i] for i in indices]
 							curGame.Discover.startDiscover(self)
-					else: curGame.fixedGuides.append(-1)
+					else: curGame.picks.append(-1)
 		return None
 		
-	def discoverDecided(self, option, pool):
+	def discoverDecided(self, option, pool=None):
 		for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]):
 			if card == option:
-				self.Game.fixedGuides.append(i)
+				self.Game.picks.append(i)
 				self.Game.Hand_Deck.drawCard(self.ID, option)
 		
 		
@@ -702,7 +702,7 @@ class SpawnofXuen(Minion): #雪怒的子嗣
 #				self.Game.Discover.startDiscover(self)
 #		return None
 #		
-#	def discoverDecided(self, option, pool):
+#	def discoverDecided(self, option, pool=None):
 #		PRINT(self.Game, "Quick Sip puts 3 copies of card %s into player's hand"%option.name)
 #		self.Game.Hand_Deck.addCardtoHand([option.selfCopy(self.ID) for i in range(3)], self.ID)
 #		
