@@ -16,9 +16,10 @@ from datetime import datetime
 import pickle
 #from collections import deque
 
+w, h = 1440, 800
 configVars = """
-win-size 1260 700
-window-title Single Player Hearthstone Simulator
+win-size 1440 800
+window-title Hearthstone Simulator
 clock-mode limited
 clock-frame-rate 45
 text-use-harfbuzz true
@@ -47,38 +48,47 @@ CamPos_Z = 51.5
 pos_OffBoardTrig_1, pos_OffBoardTrig_2 =  (-10, -1.8, 10), (-10, 5, 10)
 
 class Panda_UICommon(ShowBase):
-	def __init__(self):
+	def __init__(self, disableMouse=True):
 		ShowBase.__init__(self)
+		self.cam.name, self.camera.name = "Model2Keep_Cam", "Model2Keep_Camera"
 		#simplepbr.init(max_lights=4)
-		self.disableMouse()
+		if disableMouse: self.disableMouse()
 		self.WAIT, self.FUNC = Wait, Func
 		self.SEQUENCE, self.PARALLEL  = Sequence, Parallel
 		self.LERP_Pos, self.LERP_PosHpr, self.LERP_PosHprScale = LerpPosInterval, LerpPosHprInterval, LerpPosHprScaleInterval
 		self.genCard = genCard
 		
 		"""Attributes to store info"""
-		self.seqHolder, self.seq2Play, self.seqReady = [], None, False
 		self.ID, self.showEnemyHand = 0, True
 		self.boardID = ''
-		self.board, self.btnTurnEnd = None, None
+		self.btnBeingDragged = self.arrow = self.np_Fatigue = self.btnBoard = self.btnTurnEnd = None
+		self.np_CardZoomIn = None
+		#Game play info related
+		self.posMulligans = None
 		self.mulliganStatus = {1: [0, 0, 0], 2: [0, 0, 0, 0]}
-		#Attributes of the GUI
 		self.selectedSubject = ""
-		self.subject, self.target = None, None
+		self.subject = self.target = None
 		self.pos = self.choice = self.UI = -1  #起手调换为-1
 		self.discover = None
-		self.btnBeingDragged, self.arrow = None, None
-		self.np_CardZoomIn = None
-		self.intervalQueue = []
-		self.intervalRunning = 0
+		self.btns2Remove = []
+		#Animation related
 		self.gamePlayQueue = []
 		self.gamePlayThread = None
+		self.seqHolder, self.seq2Play, self.seqReady = [], None, False
+		
+		self.Game = Game(self)
+		self.Game.mode = 0
+		self.Game.initialize()
+		
+		#Online Pvp related
+		self.sock = None
+		self.waiting4Server, self.msg_BacktoLayer1, self.timer = False, '', 60
+		
+		#Models
 		self.modelTemplates = {}
 		self.font = self.loader.loadFont("Models\\OpenSans-Bold.ttf")
-		
 		self.minionZones, self.heroZones, self.handZones, self.deckZones = {}, {}, {}, {}
 		self.textures, self.manaModels, self.forGameTex = {}, {}, {}
-		self.posMulligans = None
 		#Flag whether the game is still loading models for the cards
 		self.loading = "Loading. Please Wait"
 		
@@ -88,19 +98,9 @@ class Panda_UICommon(ShowBase):
 		self.accept("mouse3", self.mouse3_Down)
 		self.accept("mouse3-up", self.mouse3_Up)
 		
-		self.gamePlayThread = threading.Thread(target=self.keepExecutingGamePlays, daemon=True)
-		self.gamePlayThread.name = "GameThread"
-		self.gamePlayThread.start()
+		threading.Thread(target=self.keepExecutingGamePlays, name="GameThread", daemon=True).start()
 		self.init_CollisionSetup()
 		
-		"""Prepare models that will be used later"""
-		self.Game = Game(self)
-		self.Game.mode = 0
-		self.Game.initialize()
-		
-		self.sock = None
-		self.waiting4Server, self.timer = False, 60
-	
 	def prepareTexturesandModels(self, layer1Window=None):
 		if layer1Window: layer1Window.lbl_LoadingProgress.config(text="基础贴图加载中...", fg="brown4")
 		else: print("基础贴图加载中...")
@@ -109,19 +109,17 @@ class Panda_UICommon(ShowBase):
 						 "Lifesteal": self.loader.loadTexture("Models\\Lifesteal.png"),
 						 "Poisonous": self.loader.loadTexture("Models\\Poisonous.png"),
 						 "Trigger": self.loader.loadTexture("Models\\Trigger.png"),
-						 "SpecTrig": self.loader.loadTexture("Models\\Trigger.png"),
+						 "SpecTrig": self.loader.loadTexture("Models\\SpecTrig.png"),
+						 "Hourglass": self.loader.loadTexture("Models\\Hourglass.png"),
 						 }
-		self.forGameTex["TurnStart_Banner"] = tex_Banner = self.loader.loadModel("TexCards\\ForGame\\TurnStartBanner.egg")
-		tex_Banner.reparentTo(self.render)
-		tex_Banner.setPosHprScale(0, 0, -0.3, 0, -90, 0, 15, 1, 15*768/332)
-		tex_Banner.find("+SequenceNode").node().pose(0)
-		self.forGameTex["TurnStart_Particles"] = tex_Parts = self.loader.loadModel("TexCards\\ForGame\\TurnStartParticles.egg")
-		tex_Parts.reparentTo(self.render)
-		tex_Parts.setPosHprScale(0, 0, -1, 0, -90, 0, 16, 16, 16)
-		tex_Parts.find("+SequenceNode").node().pose(0)
+		self.forGameTex["TurnStart_Banner"] = makeTexCard(self, filePath="TexCards\\ForGame\\TurnStartBanner.egg",
+								 							pos=(0, 0, -0.3), scale=15, aspectRatio=332/768,
+															name="Tex2Keep_TurnStart_Banner")[0]
+		self.forGameTex["TurnStart_Particles"] = makeTexCard(self, filePath="TexCards\\ForGame\\TurnStartParticles.egg",
+								 							pos=(0, 0, -1), scale=18, name="Tex2Keep_TurnStart_Particles")[0]
 		for name in ("SecretHunter", "SecretMage", "SecretPaladin", "SecretRogue"):
-			self.forGameTex[name] = texCard = self.loader.loadModel("TexCards\\ForGame\\%s.egg"%name)
-			texCard.reparentTo(self.render)
+			self.forGameTex[name] = makeTexCard(self, filePath="TexCards\\ForGame\\%s.egg"%name, name="Tex2Keep_"+name, getSeqNode=False)[0]
+			
 		for cardType in ("Minion", "Spell", "Weapon", "Hero", "Power"):
 			self.textures["stats_" + cardType] = self.loader.loadTexture("Models\\%sModels\\Stats.png" % cardType)
 		for Class in ("Hunter", "Mage", "Paladin", "Rogue"):
@@ -137,27 +135,24 @@ class Panda_UICommon(ShowBase):
 		if layer1Window: layer1Window.lbl_LoadingProgress.config(text="基础特效加载中...", fg="gold")
 		else: print("基础特效加载中...")
 		t1 = datetime.now()
-		for iconName, scale, pos in zip(("Trigger", "Deathrattle", "Lifesteal", "Poisonous", "SpecTrig"),
-										(1.1, 3, 1.2, 1.3, 1.1),
-										((0, -0.08, 0), (0, -0.1, 0), (0, -0.08, -0.02), (0, -0.08, -0.05), (0, -0.08, 0))):
+		for iconName, scale in zip(("Trigger", "Deathrattle", "Lifesteal", "Poisonous", "SpecTrig", "Hourglass"),
+									(1.1, 3, 1.2, 1.3, 0.63, None),
+									):
 			np_Icon = self.loader.loadModel("Models\\%s.glb" % iconName)
-			texCard = self.loader.loadModel("TexCards\\Shared\\%s.egg" % iconName)
-			texCard.reparentTo(np_Icon)
 			np_Icon.setTexture(np_Icon.findTextureStage('0'), self.textures[iconName], 1)
-			texCard.setPosHprScale(pos, (0, -90, 0), scale)
 			self.modelTemplates[iconName] = np_Icon
-			np_Icon.name, texCard.name = iconName + "_Icon", "TexCard"
+			np_Icon.name = iconName + "_Icon"
 			np_Icon.setTransparency(True)
-			texCard.find("+SequenceNode").node().pose(0)
-			if iconName == "Trigger":
-				textNode = TextNode("Trig Counter")
-				textNode.setAlign(TextNode.ACenter)
-				textNodePath = np_Icon.attachNewNode(textNode)
-				textNodePath.setScale(0.6)
-				textNodePath.setPosHpr(0, -0.6, 2, 0, -90, 0)
 			np_Icon.setColor(transparent)
+			if iconName == "Hourglass":
+				makeText(np_Icon, "Trig Counter", '', pos=(-0.02, -0.18, 0.04), scale=0.6, font=self.font, color=white)
+			else: makeTexCard(self, "TexCards\\Shared\\%s.egg" % iconName, pos=(0, 0, 0), scale=scale, parent=np_Icon)
 			#np_Icon is now: Trigger_Icon
-								#Trigger|TexCard|Trig Counter
+								#Trigger|TexCard
+								#Trigger|Trigger
+							#Hourglass_Icon
+								#Hourglass|Trig Counter_TextNode
+								#Hourglass|Hourglass
 		#Get the templates for the cards, they will load the trig icons and status tex cards
 		if layer1Window: layer1Window.lbl_LoadingProgress.config(text="随从模型加载中...", fg="deep pink")
 		else: print("随从模型加载中...")
@@ -181,33 +176,70 @@ class Panda_UICommon(ShowBase):
 		t2 = datetime.now()
 		print("Time needed to load tex cards", datetime.timestamp(t2) - datetime.timestamp(t1))
 	
+	#Load the board, turnEndButton, manaModels and arrow
 	def loadBackground(self):
-		plane = self.loader.loadModel("Models\\BoardModels\\Background.glb")
-		plane.setTexture(plane.findTextureStage('*'),
-						 self.loader.loadTexture("Models\\BoardModels\\%s.png" % self.boardID), 1)
-		plane.reparentTo(self.render)
-		plane.setPos(0, 0, 1)
-		collNode_Board = CollisionNode("Board_c_node")
-		collNode_Board.addSolid(CollisionBox(Point3(0, 0.4, -0.2), 15, 7.5, 0.2))
-		plane.attachNewNode(collNode_Board)  #.show()
-		plane.setPythonTag("btn", Btn_Board(self, plane))
-		
+		if not self.btnBoard: #Loaded models can be reused
+			plane = self.loader.loadModel("Models\\BoardModels\\Background.glb")
+			plane.setTexture(plane.findTextureStage('*'),
+							 self.loader.loadTexture("Models\\BoardModels\\%s.png" % self.boardID), 1)
+			plane.name = "Model2Keep_Board"
+			plane.reparentTo(self.render)
+			plane.setPos(0, 0, 1)
+			collNode_Board = CollisionNode("Board_c_node")
+			collNode_Board.addSolid(CollisionBox(Point3(0, 0.4, -0.2), 15, 7.5, 0.2))
+			plane.attachNewNode(collNode_Board)  #.show()
+			self.btnBoard = Btn_Board(self, plane)
+			plane.setPythonTag("btn", self.btnBoard)
+		else:
+			self.btnBoard.np.setTexture(self.btnBoard.np.findTextureStage('*'),
+							 			self.loader.loadTexture("Models\\BoardModels\\%s.png" % self.boardID), 1)
 		#Load the turn end button
-		turnEnd = self.loader.loadModel("Models\\BoardModels\\TurnEndButton.glb")
-		turnEnd.reparentTo(self.render)
-		turnEnd.setPos(TurnEndBtn_Pos)
-		collNode_TurnEndButton = CollisionNode("TurnEndButton_c_node")
-		collNode_TurnEndButton.addSolid(CollisionBox(Point3(0, 0, 0), 2, 1, 0.2))
-		turnEnd.attachNewNode(collNode_TurnEndButton)  #.show()
-		self.btnTurnEnd = Btn_TurnEnd(self, turnEnd)
-		turnEnd.setPythonTag("btn", self.btnTurnEnd)
-	
-		self.arrow = self.loader.loadModel("Models\\Arrow.glb")
-		self.arrow.setTexture(self.arrow.findTextureStage('0'), self.loader.loadTexture("Models\\Arrow.png"), 1)
-		self.arrow.reparentTo(self.render)
-		self.arrow.stash()
+		if not self.btnTurnEnd:
+			turnEnd = self.loader.loadModel("Models\\BoardModels\\TurnEndButton.glb")
+			turnEnd.reparentTo(self.render)
+			turnEnd.name = "Model2Keep_TurnEndBtn"
+			turnEnd.setPos(TurnEndBtn_Pos)
+			collNode_TurnEndButton = CollisionNode("TurnEndButton_c_node")
+			collNode_TurnEndButton.addSolid(CollisionBox(Point3(0, 0, 0), 2, 1, 0.2))
+			turnEnd.attachNewNode(collNode_TurnEndButton)  #.show()
+			self.btnTurnEnd = Btn_TurnEnd(self, turnEnd)
+			turnEnd.setPythonTag("btn", self.btnTurnEnd)
 		
-	def initMulliganDisplay(self):
+		#The fatigue model to show when no more card to draw
+		if not self.np_Fatigue:
+			self.np_Fatigue = self.loader.loadModel("Models\\BoardModels\\Fatigue.glb")
+			self.np_Fatigue.setTexture(self.np_Fatigue.findTextureStage('0'),
+									   self.loader.loadTexture("Models\\BoardModels\\Fatigue.png"), 1)
+			self.np_Fatigue.name = "Model2Keep_Fatigue"
+			self.np_Fatigue.reparentTo(self.render)
+			self.np_Fatigue.setPos(4, 0, 0)
+			textNode = TextNode("Fatigue_TextNode")
+			textNode.setFont(self.font)
+			textNode.setTextColor(red)
+			textNode.setText('1')
+			textNode.setAlign(TextNode.ACenter)
+			textNodePath = self.np_Fatigue.attachNewNode(textNode)
+			textNodePath.setPosHpr(-0.03, -1.3, 0.04, 0, -90, 0)
+			
+		if not self.arrow:
+			self.arrow = self.loader.loadModel("Models\\Arrow.glb")
+			self.arrow.setTexture(self.arrow.findTextureStage('0'), self.loader.loadTexture("Models\\Arrow.png"), 1)
+			self.arrow.reparentTo(self.render)
+			self.arrow.name = "Model2Keep_Arrow"
+			self.arrow.stash()
+		
+		if not self.manaModels:
+			for name in ("Mana", "EmptyMana", "LockedMana", "OverloadedMana"):
+				model = self.loader.loadModel("Models\\BoardModels\\Mana.glb")
+				model.name = "Model2Keep_" + name
+				model.reparentTo(self.render)
+				model.setTexture(model.findTextureStage('*'),
+								 self.loader.loadTexture("Models\\BoardModels\\%s.png" % name), 1)
+				self.manaModels[name] = [model]
+				for i in range(9):
+					self.manaModels[name].append(model.copyTo(self.render))
+	
+	def initMulliganDisplay(self, firstTime):
 		pass
 	
 	def setCamera_RaySolid(self):
@@ -215,18 +247,13 @@ class Panda_UICommon(ShowBase):
 		self.cam.setPosHpr(0, 0, CamPos_Z, 0, -90, 0)
 		try: self.raySolid.setOrigin(0, 0, CamPos_Z)
 		except: pass
-	
+		props = WindowProperties()
+		props.setSize(w, h)
+		self.win.requestProperties(props)
+		
 	def initGameDisplay(self):
 		self.loadBackground()
 		self.setCamera_RaySolid()
-		for name in ("Mana", "EmptyMana", "LockedMana", "OverloadedMana"):
-			model = self.loader.loadModel("Models\\BoardModels\\Mana.glb")
-			model.reparentTo(self.render)
-			model.setTexture(model.findTextureStage('*'),
-							 self.loader.loadTexture("Models\\BoardModels\\%s.png"%name), 1)
-			self.manaModels[name] = [model]
-			for i in range(9):
-				self.manaModels[name].append(model.copyTo(self.render))
 		
 		for ID in range(1, 3):
 			self.deckZones[ID].draw(len(self.Game.Hand_Deck.decks[ID]), len(self.Game.Hand_Deck.hands[ID]))
@@ -245,83 +272,154 @@ class Panda_UICommon(ShowBase):
 				self.gamePlayQueue.pop(0)()
 				self.cancelSelection()
 			time.sleep(0.1)
+			
+	def highlightTargets(self, legalTargets):
+		print("Highlighting targets", [card.name for card in legalTargets])
+		game = self.Game
+		for ID in range(1, 3):
+			for card in game.minions[ID] + game.Hand_Deck.hands[ID] + [game.heroes[ID]]:
+				if card not in legalTargets: card.btn.dimDown()
 	
 	def resetCardColors(self):
 		game = self.Game
 		for ID in range(1, 3):
-			for card in game.minions[ID] + game.Hand_Deck.hands[ID] + game.Secrets.secrets[ID] \
-						+ [game.heroes[ID]]:
+			for card in game.minions[ID] + game.Hand_Deck.hands[ID] + [game.heroes[ID]]:
 				if card and card.btn and card.btn.np: card.btn.np.setColor(white)
 				else: print("Reset color fail", card, card.btn)
-		
-	def highlightTargets(self, legalTargets):
+				
+	def decideCardColors(self):
 		game = self.Game
+		for card in game.Hand_Deck.hands[1] + game.Hand_Deck.hands[2]:
+			card.effCanTrig()
+			card.checkEvanescent()
+		curTurn = game.turn
 		for ID in range(1, 3):
-			for card in game.minions[ID] + game.Hand_Deck.hands[ID] + game.Secrets.secrets[ID] \
-				+ [game.heroes[ID]]:
-				if card not in legalTargets: card.btn.dimDown()
-	
+			showCardColor = ID == curTurn and (self.showEnemyHand or not self.sock or ID == self.ID)
+			for card in game.Hand_Deck.hands[ID] + game.minions[ID]:
+				if not card.btn: print("Card doesn't have a btn", card)
+				card.btn.setBoxColor(card.btn.decideColor() if showCardColor else (1, 1, 1, 0))
+			hero, power = game.heroes[ID], game.powers[ID]
+			if hero.btn: hero.btn.setBoxColor(hero.btn.decideColor() if showCardColor else (1, 1, 1, 0))
+			if power.btn: power.btn.setBoxColor(power.btn.decideColor() if showCardColor else (1, 1, 1, 0))
+		
+		if curTurn == self.ID and not game.morePlaysPossible():
+			if not self.btnTurnEnd.jobDone: self.btnTurnEnd.changeDisplay(jobDone=True)
+		elif self.btnTurnEnd.jobDone: self.btnTurnEnd.changeDisplay(jobDone=False)
+		
 	"""Animation details"""
 	#Card/Hand animation
 	def putaNewCardinHandAni(self, card):
-		genCard(self, card, isPlayed=False, onlyShowCardBack=self.sock and card.ID != self.ID and not self.showEnemyHand)
+		genCard(self, card, isPlayed=False, onlyShowCardBack=self.need2beHidden(card))
 		self.handZones[card.ID].placeCards()
 	
 	def cardReplacedinHand_Refresh(self, card):
-		if not card.btn: genCard(self, card, isPlayed=False, onlyShowCardBack=self.sock and card.ID != self.ID and not self.showEnemyHand)
+		genCard(self, card, isPlayed=False, onlyShowCardBack=self.need2beHidden(card))
 		self.handZones[card.ID].placeCards()
 	
+	def transformAni_inHand(self, target, newCard):
+		texCard = seqNode = None
+		if not self.need2beHidden(target):
+			texCard, seqNode = makeTexCard(self, filePath="TexCards\\Shared\\TransformMist.egg",
+										   pos=(0, 0, 0.2), scale=2.3)
+		seq_Holder = self.seqHolder[-1]
+		if target.type == newCard.type:
+			newCard.btn = target.btn
+			if texCard:
+				seq_Holder.append(Sequence(Func(texCard.reparentTo, target.btn.np), Func(seqNode.play), Wait(0.05),
+										   Func(target.btn.changeCard, newCard, False)))
+				seq_Holder.append(Func(Sequence(Wait(0.75), Func(texCard.removeNode)).start))
+			else: seq_Holder.append(Func(target.btn.changeCard, newCard, False))
+			target.btn = None
+		else:
+			np_New, btn_New = genCard(self, newCard, isPlayed=False, pickable=True, onlyShowCardBack=target.btn.onlyCardBackShown)
+			np_Old = target.btn.np
+			if texCard:
+				seq_Holder.append(Sequence(Func(texCard.reparentTo, np_Old), Func(seqNode.play), Wait(0.05),
+							   		Func(np_New.reparentTo, np_Old), Wait(0.75), Func(np_New.wrtReparentTo, self.render),
+							   		Func(np_Old.removeNode))
+							)
+			else: seq_Holder.append(Func(np_New.reparentTo, np_Old), Func(np_New.wrtReparentTo, self.render), Func(np_Old.removeNode))
+		
+	def transformAni_onBoard(self, target, newCard):
+		newCard.btn = target.btn
+		texCard = seqNode = None
+		if target.type == "Minion" == newCard.type == "Minion":
+			texCard, seqNode = makeTexCard(self, filePath="TexCards\\Shared\\TransformMist.egg",
+											pos=(0, 0, 0.2), scale=1.9)
+		seq_Holder = self.seqHolder[-1]
+		if not texCard: seq_Holder.append(Func(target.btn.changeCard, newCard, True))
+		else:
+			seq_Holder.append(Sequence(Func(texCard.reparentTo, target.btn.np), Func(seqNode.play), Wait(0.05),
+									   Func(target.btn.changeCard, newCard, True)))
+			seq_Holder.append(Func(Sequence(Wait(0.65), Func(texCard.removeNode)).start))
+		target.btn = None
+			
 	#因为可以结算的时候一般都是手牌已经发生了变化，所以只能用序号来标记每个btn了
 	#linger is for when you would like to see the card longer before it vanishes
 	def cardsLeaveHandAni(self, cards, ID=0, enemyCanSee=True, linger=False):
 		handZone, para, btns2Destroy = self.handZones[ID], Parallel(), [card.btn for card in cards]
 		#此时需要离开手牌的牌已经从Game.Hand_Deck.hands里面移除,手牌列表中剩余的就是真实存在还在手牌中的
 		for btn, card in zip(btns2Destroy, cards):
-			seq = Sequence()
+			seq, nodePath = Sequence(), btn.np
 			if enemyCanSee and btn.onlyCardBackShown:
 				seq.append(Func(btn.changeCard, card, True, False))
-			seq.append(btn.genLerpInterval(pos=Point3(btn.np.get_x(), DiscardedCard1_Y if self.ID == btn.card.ID else DiscardedCard2_Y,
-														  btn.np.get_z()),
-													 hpr_AlltheWay=(0, 0, 0)))
-			seq.append(Wait(0.6))
+			x, y, z = nodePath.getPos()
+			if not -9 < y < 9:
+				y = DiscardedCard1_Y if self.ID == btn.card.ID else DiscardedCard2_Y
+				seq.append(LerpPosHprInterval(nodePath, duration=0.3, pos=(x, y, z), startHpr=(0, 0, 0), hpr=(0, 0, 0)))
+				seq.append(Wait(0.6))
 			#如果linger为True就留着这张牌的显示，到之后再处理
-			if not linger: seq.append(Func(btn.np.detachNode))
+			if not linger: seq.append(Func(nodePath.detachNode))
 			para.append(seq)
 		handZone.placeCards()
 		self.seqHolder[-1].append(para)
 		
 	def hand2BoardAni(self, card, fromDragPos=False):
 		ID = card.ID
-		#At this point, minion has been inserted into the minions list. The btn on the minion won't change. It will simply change "isPlayed"
 		handZone, minionZone = self.handZones[ID], self.minionZones[ID]
+		#At this point, minion has been inserted into the minions list. The btn on the minion won't change. It will simply change "isPlayed"
 		ownMinions = self.Game.minions[ID]
-		posMinions = posMinionsTable[minionZone.y][len(ownMinions)]
-		pos_ontoBoard = posMinions[ownMinions.index(card)]
-		#The minion must be first set to isPlayed=True, so that the later statChangeAni can correctly respond
+		x, y, z = posMinionsTable[minionZone.y][len(ownMinions)][ownMinions.index(card)]
+		#Must be first set to isPlayed=True, so that ensuing statChangeAni can correctly respond
 		card.btn.isPlayed = True
-		sequence = Sequence(card.btn.genLerpInterval(pos=(pos_ontoBoard[0], pos_ontoBoard[1], MinionZone_Z+5),
-														 hpr=(0, 0, 0), scale=scale_Minion, hpr_AlltheWay=(0, 0, 0), duration=0.25),
+		card.btn.reassignBox()
+		seq = Sequence(LerpPosHprScaleInterval(card.btn.np, duration=0.25, pos=(x, y, z+5), hpr=(0, 0, 0), scale=scale_Minion),
 							Func(card.btn.changeCard, card, True),
-							Parallel(handZone.placeCards(False), minionZone.placeCards(False)))
-		self.seqHolder[-1].append(sequence)
-		
+							Parallel(minionZone.placeCards(False), handZone.placeCards(False)),
+							name="Hand to board Ani")
+		self.seqHolder[-1].append(seq)
+	
+	def board2HandAni(self, card):
+		handZone, minionZone = self.handZones[card.ID], self.minionZones[card.ID]
+		#At this point, minion has been extracted from the minion lists
+		ownMinions, ownHands = self.Game.minions[card.ID], self.Game.Hand_Deck.hands[card.ID]
+		x, y, z = card.btn.np.getPos()
+		#Must be first set to isPlayed=True, so that ensuing statChangeAni can correctly respond
+		card.btn.isPlayed = True
+		card.btn.reassignBox()
+		seq = Sequence(LerpPosInterval(card.btn.np, duration=0.25, pos=Point3(x, y, z + 5)),
+							Wait(0.15), Func(card.btn.changeCard, card, False), Wait(0.2),
+							Func(self.deckZones[self.ID].draw, len(self.Game.Hand_Deck.decks[self.ID]), len(ownHands)),
+							Parallel(handZone.placeCards(False), minionZone.placeCards(False)),
+							name="Board 2 hand ani")
+		self.seqHolder[-1].append(seq)
+	
 	def deck2BoardAni(self, card):
 		ID = card.ID
-		if not card.btn: genCard(self, card, isPlayed=False) #place these cards at pos(0, 0, 0), to be move into proper position later
+		nodePath, btn = genCard(self, card, isPlayed=False) #place these cards at pos(0, 0, 0), to be move into proper position later
 		#At this point, minion has been inserted into the minions list. The btn on the minion won't change. It will simply change "isPlayed"
 		deckZone, minionZone = self.deckZones[ID], self.minionZones[ID]
 		ownMinions = self.Game.minions[ID]
-		posMinions = posMinionsTable[minionZone.y][len(ownMinions)]
-		pos_ontoBoard = posMinions[ownMinions.index(card)]
+		x, y, z = posMinionsTable[minionZone.y][len(ownMinions)][ownMinions.index(card)]
 		deckPos = Deck1_Pos if ID == self.ID else Deck2_Pos
 		#The minion must be first set to isPlayed=True, so that the later statChangeAni can correctly respond
-		card.btn.isPlayed = True
-		sequence = Sequence(Sequence(Func(deckZone.draw, len(card.Game.Hand_Deck.decks[ID]), len(self.Game.Hand_Deck.hands[ID])),
-									Func(card.btn.np.setPosHprScale, deckPos, hpr_Deck, (deckScale, deckScale, deckScale)),
-									card.btn.genLerpInterval(pos=(pos_ontoBoard[0], pos_ontoBoard[1], MinionZone_Z + 5),
-														  hpr=(0, 0, 0), scale=scale_Minion, duration=0.25),
-									Func(card.btn.changeCard, card, True)),
-							Func(minionZone.placeCards, False),
+		btn.isPlayed = True
+		card.btn.reassignBox()
+		sequence = Sequence(Func(deckZone.draw, len(card.Game.Hand_Deck.decks[ID]), len(self.Game.Hand_Deck.hands[ID])),
+							LerpPosHprScaleInterval(nodePath, duration=0.3, startPos=deckPos, startHpr=hpr_Deck, startScale=deckScale,
+													pos=(x, y, z + 5), hpr=(0, 0, 0), scale=scale_Minion),
+							Wait(0.2), Func(btn.changeCard, card, True),
+							minionZone.placeCards(False),
 							name="Deck to board Ani")
 		self.seqHolder[-1].append(sequence)
 		
@@ -329,11 +427,10 @@ class Panda_UICommon(ShowBase):
 		card = self.Game.Hand_Deck.decks[ID][index]
 		deckZone = self.deckZones[card.ID]
 		pos_Pause = DrawnCard1_PausePos if self.ID == card.ID else DrawnCard2_PausePos
-		nodePath, btn = genCard(self, card, isPlayed=False,
-								onlyShowCardBack=self.sock and card.ID != self.ID and not self.showEnemyHand)  #the card is preloaded and positioned at (0, 0, 0)
-		sequence = Sequence(Func(nodePath.setPosHpr, deckZone.pos, Point3(90, 90, 0)),
+		nodePath, btn = genCard(self, card, isPlayed=False)  #the card is preloaded and positioned at (0, 0, 0)
+		sequence = Sequence(Func(nodePath.setPosHpr, deckZone.pos, (90, 90, 0)),
 							Func(deckZone.draw, len(self.Game.Hand_Deck.decks[card.ID]), len(self.Game.Hand_Deck.hands[card.ID])),
-							btn.genLerpInterval(pos=pos_Pause, hpr=(0, 0, 0), scale=1, duration=0.4, blendType="easeOut"),
+							LerpPosHprScaleInterval(btn.np, duration=0.4, pos=pos_Pause, hpr=(0, 0, 0), scale=1, blendType="easeOut"),
 							Wait(0.6)
 							)
 		if bingo:
@@ -346,56 +443,24 @@ class Panda_UICommon(ShowBase):
 	
 	#Amulets and dormants also count as minions
 	def removeMinionorWeaponAni(self, card):
+		if not (card.btn and card.btn.np): return
+		#At this point, minion/dormant/weapon has left the containing list
+		self.seqHolder[-1].append(Func(card.btn.np.detachNode))
 		if card.type in ("Minion", "Dormant"):
-			minionZone = self.minionZones[card.ID]
-			#At this point, minion has left the minions list
-			ownMinions = self.Game.minions[card.ID]
-			posMinions = posMinionsTable[minionZone.y][len(ownMinions)]
-			self.seqHolder[-1].append(Func(card.btn.np.removeNode))
-			parallel = Parallel()
-			for i, minion in enumerate(ownMinions):
-				parallel.append(minion.btn.genLerpInterval(pos=posMinions[i], duration=0.2))
-			self.seqHolder[-1].append(parallel)
-		elif card.type == "Weapon":
-			self.seqHolder[-1].append(Func(card.btn.np.removeNode))
+			self.minionZones[card.ID].placeCards()
 			
 	#直接出现，而不是从手牌或者牌库中召唤出来
 	def summonAni(self, card):
-		minionZone = self.minionZones[card.ID]
 		#At this point, minion has been inserted into the minions list
-		ownMinions = self.Game.minions[card.ID]
-		posMinions = posMinionsTable[minionZone.y][len(ownMinions)]
 		genCard(self, card, isPlayed=True)
-		para = Parallel()
-		for i, minion in enumerate(ownMinions):
-			para.append(minion.btn.genLerpInterval(pos=posMinions[i], duration=0.2))
-		para.append(Wait(0.15))
-		self.seqHolder[-1].append(para)
+		self.minionZones[card.ID].placeCards()
+		self.seqHolder[-1].append(Wait(0.15))
 		
 	def weaponEquipAni(self, card):
-		if card.btn: nodePath, btn = nodePath, btn = card.btn.np, card.btn
-		else: nodePath, btn = genCard(self, card, isPlayed=True)
-		pos = self.heroZones[card.ID].weaponPos
-		sequence = Sequence(Func(nodePath.setPos, pos[0], pos[1] + 0.2, pos[2] + 5),
-							btn.genLerpInterval(pos=pos, hpr=(0, 0, 0)) )
-		if self.seqHolder: self.seqHolder[-1].append(sequence)
-		else: sequence.start()
-	
-	def board2HandAni(self, card):
-		handZone, minionZone = self.handZones[card.ID], self.minionZones[card.ID]
-		btn = card.btn
-		#At this point, minion has been extracted from the minion lists
-		ownMinions, ownHands = self.Game.minions[card.ID], self.Game.Hand_Deck.hands[card.ID]
-		posMinions = posMinionsTable[minionZone.y][len(ownMinions)]  #此时被移回手牌的随从已经离开了minions列表
-		x, y, z = btn.np.getPos()
-		btn.isPlayed = True
-		para1 = Parallel(btn.genLerpInterval(pos=Point3(x, y - 5, z), duration=0.25))
-		for i, minion in enumerate(ownMinions):
-			para1.append(minion.btn.genLerpInterval(pos=posMinions[i], duration=0.2))
-		self.seqHolder[-1].append(para1)
-		self.seqHolder[-1].append(Func(btn.changeCard, card, False))
-	#Only need to draw the btn, and the following addCardtoHand func handles moving the card
-	
+		nodePath, btn = genCard(self, card, isPlayed=True)
+		x, y, z = self.heroZones[card.ID].weaponPos
+		self.seqHolder[-1].append(LerpPosHprInterval(nodePath, duration=0.3, startPos=(x, y+0.2, z+5), pos=(x, y, z), hpr=(0, 0, 0)))
+		
 	def secretDestroyAni(self, secrets):
 		if secrets:
 			heroZone = self.heroZones[secrets[0].ID]
@@ -413,12 +478,11 @@ class Panda_UICommon(ShowBase):
 		pos_Pause = DrawnCard1_PausePos if self.ID == card.ID else DrawnCard2_PausePos
 		nodePath, btn = genCard(self, card, isPlayed=False, 
 								onlyShowCardBack=self.sock and card.ID != self.ID and not self.showEnemyHand) #the card is preloaded and positioned at (0, 0, 0)
-		sequence = Sequence(Func(nodePath.setPosHpr, deckZone.pos, Point3(90, 90, 0)),
-							Func(deckZone.draw, len(self.Game.Hand_Deck.decks[card.ID]), len(self.Game.Hand_Deck.hands[card.ID])),
-							btn.genLerpInterval(pos=pos_Pause, hpr=(0, 0, 0), scale=1, duration=0.4, blendType="easeOut"),
-							Wait(0.8)
-							)
-		self.seqHolder[-1].append(sequence)
+		self.seqHolder[-1].append(Sequence(Func(deckZone.draw, len(self.Game.Hand_Deck.decks[card.ID]), len(self.Game.Hand_Deck.hands[card.ID])),
+											LerpPosHprScaleInterval(nodePath, duration=0.4, startPos=deckZone.pos, pos=pos_Pause, 
+											startHpr=(90, 90, 0), hpr=(0, 0, 0), scale=1, blendType="easeOut"),
+											Wait(0.8))
+								)
 		
 	def drawCardAni_IntoHand(self, oldCard, newCard):
 		btn = oldCard.btn
@@ -431,39 +495,52 @@ class Panda_UICommon(ShowBase):
 									   len(self.Game.Hand_Deck.hands[newCard.ID])))
 		
 	def millCardAni(self, card):
+		deckZone = self.deckZones[card.ID]
+		
 		pos_Pause = DrawnCard1_PausePos if self.ID == card.ID else DrawnCard2_PausePos
 		nodePath, btn = genCard(self, card, isPlayed=False)
-		interval = btn.genLerpInterval(pos=pos_Pause, hpr=(0, 0, 0), duration=0.4, blendType="easeOut")
-		self.seqHolder[-1].append(Sequence(interval, Wait(0.6), Func(nodePath.removeNode)))
+		interval = LerpPosHprScaleInterval(nodePath, duration=0.4, startPos=deckZone.pos, pos=pos_Pause,
+										   startHpr=(90, 90, 0), hpr=(0, 0, 0), scale=1, blendType="easeOut")
+		texCard, seqNode = makeTexCard(self, "TexCards\\ForGame\\Mill.egg", scale=27)
+		self.seqHolder[-1].append(Sequence(interval, Func(texCard.setPos, pos_Pause[0], pos_Pause[1]-1, pos_Pause[2]+0.4),
+										   Func(seqNode.play), Wait(0.5), Func(nodePath.removeNode), Wait(0.5), Func(texCard.removeNode)))
 		
 	def cardLeavesDeckAni(self, card, enemyCanSee=True):
-		pass
-	
+		deckZone = self.deckZones[card.ID]
+		pos_Pause = DrawnCard1_PausePos if self.ID == card.ID else DrawnCard2_PausePos
+		nodePath, btn = genCard(self, card, isPlayed=False)  #the card is preloaded and positioned at (0, 0, 0)
+		sequence = Sequence(Func(nodePath.setPosHpr, deckZone.pos, (90, 90, 0)),
+							Func(deckZone.draw, len(self.Game.Hand_Deck.decks[card.ID]), len(self.Game.Hand_Deck.hands[card.ID])),
+							LerpPosHprScaleInterval(btn.np, duration=0.4, pos=pos_Pause, hpr=(0, 0, 0), scale=1, blendType="easeOut"),
+							Wait(0.6), Func(nodePath.detachNode)
+							)
+		self.seqHolder[-1].append(sequence)
+		
 	def shuffleintoDeckAni(self, cards, enemyCanSee=True):
 		ID = cards[0].ID
 		deckZone = self.deckZones[ID]
-		para_ShuffleintoDeck, btns = Parallel(), []
+		para, btns = Parallel(), []
 		leftMostPos = -(len(cards)-1) / 2 * 5
 		for i, card in enumerate(cards):
-			if card.btn:
+			num = len(cards) - i
+			if card.btn and card.btn.np:
 				nodePath, btn = card.btn.np, card.btn
-				para_ShuffleintoDeck.append(Sequence(Wait(0.4 * i + 0.6),
-													 btn.genLerpInterval(pos=deckZone.pos, hpr=Point3(90, 90, 0)),
-													 Func(nodePath.removeNode)
-													 )
-											)
+				para.append(Sequence(Wait(0.2 * num + 0.4),
+									LerpPosHprInterval(nodePath, duration=0.25, pos=deckZone.pos, hpr=(90, 90, 0)),
+									Func(nodePath.detachNode) #Can be garbage collected
+									)
+							)
 			else:
 				nodePath, btn = genCard(self, card, isPlayed=False, pickable=False, 
-										onlyShowCardBack=not enemyCanSee and self.sock and card.ID != self.ID and not self.showEnemyHand)
-				para_ShuffleintoDeck.append(Sequence(Func(nodePath.setPos, leftMostPos+5*i, 1.5, 8),
-													Wait(0.4 * i + 0.6),
-													btn.genLerpInterval(pos=deckZone.pos, hpr=Point3(90, 90, 0)),
-													Func(nodePath.removeNode)
-													 )
-											)
-		self.seqHolder[-1].append(para_ShuffleintoDeck)
-		self.seqHolder[-1].append(Func(deckZone.draw, len(self.Game.Hand_Deck.decks[ID]),
-									   len(self.Game.Hand_Deck.hands[ID])))
+										onlyShowCardBack=not enemyCanSee and self.need2beHidden(card))
+				para.append(Sequence(Func(nodePath.setPos, leftMostPos+5*i, 1.5, 8),
+									Wait(0.2 * num + 0.4),
+									LerpPosHprInterval(nodePath, duration=0.25, pos=deckZone.pos, hpr=(90, 90, 0)),
+									Func(nodePath.detachNode) #Can be garbage collected
+									)
+							)
+		self.seqHolder[-1].append(para)
+		self.seqHolder[-1].append(Func(deckZone.draw, len(self.Game.Hand_Deck.decks[ID]), len(self.Game.Hand_Deck.hands[ID])))
 	
 	def showTempText(self, text):
 		text = OnscreenText(text=text, pos=(0, 0), scale=0.1, fg=(1, 0, 0, 1),
@@ -474,80 +551,106 @@ class Panda_UICommon(ShowBase):
 	def wait(self, duration=0, showLine=False):
 		pass
 	
-	#Attack animations
-	def attackAni_Raise(self, subject):
-		btn_Subject = subject.btn
-		self.seqHolder[-1].append(btn_Subject.genLerpInterval(Point3(btn_Subject.np.get_x(), btn_Subject.np.get_y(), btn_Subject.np.get_z()+5), duration=0.3))
-		self.seqHolder[-1].append(Wait(0.15))
+	def offsetNodePath_Wait(self, nodePath, duration=0.3, dx=0, dy=0, dz=0, dh=0, dp=0, dr=0, add2Queue=True):
+		if add2Queue:
+			self.seqHolder[-1].append(Func(self.offsetNodePath, nodePath, duration, dx, dy, dz, dh, dp, dr))
+			self.seqHolder[-1].append(Wait(duration))
+		else: return Sequence(Func(self.offsetNodePath, nodePath, duration, dx, dy, dz, dh, dp, dr), Wait(duration))
+		
+	def offsetNodePath(self, nodePath, duration=0.3, dx=0, dy=0, dz=0, dh=0, dp=0, dr=0):
+		x, y, z = nodePath.getPos()
+		h, p, r = nodePath.getHpr()
+		LerpPosHprInterval(nodePath, duration=duration, pos=(x+dx, y+dy, z+dz), hpr=(h+dh, p+dp, r+dr)).start()
+	
+	def moveNodePath2_wrt_Wait(self, nodePath_2Move, nodePath_Ref, duration=0.3, dx=0, dy=0, dz=0, add2Queue=True):
+		if add2Queue:
+			self.seqHolder[-1].append(Func(self.moveNodePath2_wrt, nodePath_2Move, nodePath_Ref, duration, dx, dy, dz))
+			self.seqHolder[-1].append(Wait(duration))
+		else: return Sequence(Func(self.moveNodePath2_wrt, nodePath_2Move, nodePath_Ref, duration, dx, dy, dz), Wait(duration))
+		
+	def moveNodePath2_wrt(self, nodePath_2Move, nodePath_Ref, duration, dx, dy, dz):
+		x, y, z = nodePath_Ref.getPos()
+		LerpPosInterval(nodePath_2Move, duration=duration, pos=(x+dx, y+dy, z+dz)).start()
 	
 	def attackAni_HitandReturn(self, subject, target):
-		btn_Subject, btn_Target = subject.btn, target.btn
+		np_Subject, np_Target = subject.btn.np, target.btn.np
 		if subject.type == "Minion":
-			minionZone, ownMinions = self.minionZones[subject.ID], self.Game.minions[subject.ID]
-			pos_Orig = posMinionsTable[minionZone.y][len(ownMinions)][ownMinions.index(subject)]
-		else: pos_Orig = self.heroZones[subject.ID].heroPos
-		seq = Sequence(btn_Subject.genLerpInterval(btn_Target.np.getPos(), duration=0.17),
-					   btn_Subject.genLerpInterval((pos_Orig[0], pos_Orig[1], pos_Orig[2]+5), duration=0.17),
-					   btn_Subject.genLerpInterval(pos_Orig, duration=0.15)
+			ownMinions = self.Game.minions[subject.ID]
+			x_0, y_0, z_0 = posMinionsTable[self.minionZones[subject.ID].y][len(ownMinions)][ownMinions.index(subject)]
+		else: x_0, y_0, z_0 = self.heroZones[subject.ID].heroPos
+		seq = Sequence(self.moveNodePath2_wrt_Wait(np_Subject, np_Target, duration=0.17, add2Queue=False),
+						LerpPosInterval(np_Subject, duration=0.17, pos=(x_0, y_0, z_0+3)),
+						LerpPosInterval(np_Subject, duration=0.15, pos=(x_0, y_0, z_0)),
 					   )
 		self.seqHolder[-1].append(seq)
 		
 	def attackAni_Cancel(self, subject):
-		btn = subject.btn
-		self.seqHolder[-1].append(btn.genLerpInterval(Point3(btn.np.get_x(), btn.np.get_y(), btn.np.get_z()-5), duration=0.15))
-	
+		if subject.type == "Minion":
+			minionZone, ownMinions = self.minionZones[subject.ID], self.Game.minions[subject.ID]
+			if subject not in ownMinions: return
+			pos_Orig = posMinionsTable[minionZone.y][len(ownMinions)][ownMinions.index(subject)]
+		else: pos_Orig = self.heroZones[subject.ID].heroPos
+		
+		self.seqHolder[-1].append(LerpPosInterval(subject.btn.np, duration=0.15, pos=pos_Orig))
+		
 	def battlecryAni(self, card):
 		if card.btn:
-			texCard = self.loader.loadModel("TexCards\\For%ss\\Battlecry.egg"%card.type)
+			texCard, seqNode = makeTexCard(self, "TexCards\\For%ss\\Battlecry.egg"%card.type, pos=(0, 0.5, 0.03), scale=6)
 			texCard.reparentTo(card.btn.np)
-			node = texCard.find("+SequenceNode").node()
-			node.pose(0)
-			texCard.setPosHpr(0, 0.5, 0, 0, -90, 0)
-			texCard.setScale(6)
-			self.seqHolder[-1].append(Sequence(Func(node.play, 0, 32), Wait(20/24)))
+			self.seqHolder[-1].append(Func(Sequence(Func(seqNode.play, 0, 32), Wait(32/24), Func(texCard.removeNode)).start))
+			self.seqHolder[-1].append(Wait(20/24))
 			
 	def heroExplodeAni(self, entities):
 		for entity in entities:
 			if entity.btn:
-				texCard = self.loader.loadModel("TexCards\\ForHeroes\\Breaking.egg")
+				texCard, seqNode = makeTexCard(self, "TexCards\\ForHeroes\\Breaking.egg",
+											   pos=(0, 0.2, 0.3), scale=5)
 				texCard.reparentTo(entity.btn.np)
-				node = texCard.find("+SequenceNode").node()
-				node.pose(0)
-				texCard.setPosHpr(0, 0.2, 0.15, 0, -90, 0)
-				texCard.setScale(5.5)
-				self.seqHolder[-1].append(Sequence(Func(node.play, 0, 17), Wait(17/24), Func(texCard.removeNode)))
+				headPieces = self.loader.loadModel("Models\\HeroModels\\HeadPieces.glb")
+				headPieces.reparentTo(self.render)
+				headPieces.setTexture(headPieces.findTextureStage('*'),
+									  self.loader.loadTexture("Images\\HeroesandPowers\\%s.png"%type(entity).__name__), 1)
+				x_0, y_0, z_0 = self.heroZones[entity.ID].heroPos
+				headPieces.setPos(x_0, y_0, z_0)
+				para = Parallel()
+				for child in headPieces.getChildren():
+					x, y, z = child.getPos()
+					vec = np.array([x, y + 3 * (-1 if y_0 > 0 else 1), z_0+5])
+					x_pos, y_pos, z_pos = np.array([x_0, y_0, -5]) + vec * 60 / np.linalg.norm(vec)
+					para.append(LerpPosInterval(child, duration=0.8, pos=(x_pos, y_pos, z_pos)))
+					
+				self.seqHolder[-1].append(Sequence(Func(seqNode.play, 0, 17), Wait(17/24),
+												   Func(texCard.removeNode), Func(entity.btn.np.removeNode),
+												   Func(headPieces.setPos, x_0, y_0, z_0), para)
+										  )
 				
 	def minionsDieAni(self, entities):
 		para = Parallel()
 		for entity in entities:
-			btn = entity.btn
-			if btn:
-				btn.dimDown()
-				x, y, z = btn.np.getPos()
+			if entity.btn:
+				entity.btn.dimDown()
+				nodePath = entity.btn.np
 				dx, dy = 0.07 * np.random.rand(2)
-				para.append(Sequence(btn.genLerpInterval(pos=Point3(x+dx, y+dy, z), duration=0.1),
-									 btn.genLerpInterval(pos=Point3(x-dx, y-dy, z), duration=0.1),
-									 btn.genLerpInterval(pos=Point3(x, y, z), duration=0.1),
-									 ))
+				para.append(Sequence(Func(self.offsetNodePath, nodePath, duration=0.1, dx=dx, dy=dy),
+							   		Func(self.offsetNodePath, nodePath, duration=0.1, dx=-2*dx, dy=-2*dy),
+							   		Func(self.offsetNodePath, nodePath, duration=0.1, dx=dx, dy=dy),
+							   		Wait(0.3))
+							)
 		self.seqHolder[-1].append(para)
 		
-	def deathrattleAni(self, entity, color="grey40"):
-		pos_Start = Point3(entity.x, entity.y, entity.z)
-		print("Deathrattle pos", pos_Start)
-		deathrattle_Ani = self.loader.loadModel("TexCards\\Shared\\Deathrattle.egg")
-		seqNode = deathrattle_Ani.find("+SequenceNode").node()
-		seqNode.pose(0)
-		deathrattle_Ani.reparentTo(self.render)
-		self.seqHolder[-1].append(Func(seqNode.play))
+	def deathrattleAni(self, entity):
+		x, y, z = entity.btn.np.getPos()
+		texCard, seqNode = makeTexCard(self, "TexCards\\Shared\\Deathrattle.egg", pos=(x, y+0.4, z+0.5), scale=3.3)
+		self.seqHolder[-1].append(Sequence(Func(seqNode.play), Wait(1.2), Func(texCard.removeNode)))
 		
 	def weaponPlayedAni(self, card):
 		ID = card.ID
 		handZone = self.handZones[ID]
-		pos = self.heroZones[ID].weaponPos
-		card.btn.isPlayed = True
-		sequence = Sequence(card.btn.genLerpInterval(pos=(pos[0], pos[1]+0.2, pos[2]+5), hpr=(0, 0, 0), scale=1, duration=0.25),
+		x, y, z = self.heroZones[ID].weaponPos
+		card.btn.isPlayed = True #The minion must be first set to isPlayed=True, so that the later statChangeAni can correctly respond
+		sequence = Sequence(LerpPosHprScaleInterval(card.btn.np, duration=0.25, pos=(x, y+0.2, z+5), hpr=(0, 0, 0), scale=1),
 							Func(card.btn.changeCard, card, True),
-							Parallel(handZone.placeCards(False), card.btn.genLerpInterval(pos=pos, hpr=(0, 0, 0)) )
+							Parallel(handZone.placeCards(False), LerpPosInterval(card.btn.np, duration=0.25, pos=(x, y, z)) )
 							)
 		self.seqHolder[-1].append(sequence)
 		
@@ -557,9 +660,10 @@ class Panda_UICommon(ShowBase):
 		sequence = self.seqHolder[-1]
 		texCard = self.forGameTex["Secret%s" % card.Class]
 		
-		seq = Sequence(LerpPosInterval(nodepath, duration=0.15, pos=(x+0.1, y, z)),
-					   LerpPosInterval(nodepath, duration=0.15, pos=(x-0.1, y, z)),
-					   LerpPosInterval(nodepath, duration=0.15, pos=(x, y, z)),
+		seq = Sequence(Func(print, "secret trigger", card),
+					   Func(self.offsetNodePath_Wait, nodepath, duration=0.15, dx=0.1, add2Queue=False),
+					   Func(self.offsetNodePath_Wait, nodepath, duration=0.15, dx=-0.2, add2Queue=False),
+					   Func(self.offsetNodePath_Wait, nodepath, duration=0.15, dx=0.1, add2Queue=False),
 					   Wait(0.3), Func(nodepath.detachNode),
 					   LerpPosHprScaleInterval(texCard, duration=0.3, pos=(0, 1, 9), hpr=(0, -90, 0), scale=(25, 1, 25*600/800)),
 					   Wait(0.8), LerpPosHprScaleInterval(texCard, duration=0.3, pos=(0, 0, 0), hpr=(0, -90, 0), scale=(1, 1, 1*600/800))
@@ -609,14 +713,12 @@ class Panda_UICommon(ShowBase):
 			nodePath, btn_Card = genOption(self, card, pos=pos, onlyShowCardBack=onlyShowCardBack) #Option cards are always pickable
 		else:
 			if isUnknownSecret:
-				nodePath, btn_Card = self.loader.loadModel("TexCards\\ForGame\\%sSecretCard.egg"%card.Class), None
-				nodePath.reparentTo(self.render)
-				nodePath.setHpr(0, -90, 0)
-				nodePath.setScale(8, 1, 8*518/375)
+				btn_Card, nodePath = None, makeTexCard(self, "TexCards\\ForGame\\%sSecretCard.egg"%card.Class,
+													   scale=8, aspectRatio=518/375, getSeqNode=False)[0]
 			else:
 				btn_Orig = card.btn if card.btn and card.btn.np else None
 				nodePath, btn_Card = genCard(self, card, pos=pos, isPlayed=False, pickable=pickable,
-											 onlyShowCardBack=onlyShowCardBack)
+											 onlyShowCardBack=onlyShowCardBack, makeNewRegardless=True)
 				if btn_Orig: card.btn = btn_Orig #一张牌只允许存有其创建伊始指定的btn，不能在有一个btn的情况下再新加其他的btn
 		return nodePath, btn_Card
 	
@@ -676,8 +778,8 @@ class Panda_UICommon(ShowBase):
 		
 	def usePowerAni(self, card):
 		btn, pos = card.btn, card.btn.np.getPos()
-		sequence = Sequence(btn.genLerpInterval(pos=(pos[0], pos[1], pos[2]+2), hpr=Point3(0, 0, 90)),
-							btn.genLerpInterval(pos=pos, hpr=Point3(0, 0, 180)))
+		sequence = Sequence(LerpPosHprInterval(btn.np, duration=0.3, pos=(pos[0], pos[1], pos[2]+2), hpr=Point3(0, 0, 90)),
+							LerpPosHprInterval(btn.np, duration=0.3, pos=pos, hpr=Point3(0, 0, 180)))
 		self.seqHolder[-1].append(Func(sequence.start))
 		
 	"""Mouse click setup"""
@@ -724,13 +826,43 @@ class Panda_UICommon(ShowBase):
 				else: self.cancelSelection()
 			else: self.cancelSelection()
 	
-	def mouseMove(self, task):
-		#seqReady默认是True，只有在游戏操作结算中需要把seqReady设为False，而操作结算完成sequence的准备工作时会把seqReady再次设为True
-		#seq2Play只在第一次进行游戏操作时为None，之后都是之前最近一次的操作的sequence，不再被清除
-		if self.seqReady and self.seqHolder and (not self.seq2Play or not self.seq2Play.isPlaying()):
+	def restartLayer1Window(self):
+		pass
+	
+	def clearDrawnCards(self):
+		for child in self.render.getChildren():
+			if not (child.name.startswith("Model2Keep")
+					or child.name.startswith("Tex2Keep")
+					or child.name.startswith("Text2Keep")):
+				print("Remove", child.name, type(child))
+				child.removeNode()
+		for child in self.render.getChildren():
+			if "2Keep" not in child.name:
+				print("Kept under render (those that shouldn't):", child.name, type(child))
+		self.setCamera_RaySolid()
+		print(self.cam.getPos(), self.cam.getHpr(), self.camLens.getFov())
+		self.arrow.stash()
+		print("Done")
+		
+	def mainTaskLoop(self, task):
+		#seqReady默认是True，只在游戏结算和准备动画过程中把seqReady设为False，保证尚未完成的seq不被误读
+		#完成sequence的准备工作时会把seqReady再次设为True
+		#只有把当前正在进行的seq走完之后才会读取下一个seq
+		if self.seqReady and self.seqHolder and not (self.seq2Play and self.seq2Play.isPlaying()):
 			self.seq2Play = self.seqHolder.pop(0)
+			self.seq2Play.append(Func(self.decideCardColors))
 			self.seq2Play.start()
-			
+		#tkinter window必须在主线程中运行，所以必须在ShowBase的main loop中被执行
+		#self.msg_BacktoLayer1随机可以被设为非空值。但是一定要等到GUI中的所有seq都排空并且没有正在播放的seq了之后才会退回layer 1 window
+		#实际上就是只有当GUI处于空闲状态时才会执行
+		elif self.msg_BacktoLayer1 and self.seqReady and not self.seqHolder and not (self.seq2Play and self.seq2Play.isPlaying()):
+			#print("\n\n----------\nCheck restart layer 1 window:", self.msg_BacktoLayer1, self.seqReady, self.seqHolder, self.seq2Play, self.seq2Play and self.seq2Play.isPlaying())
+			self.seqReady, self.seq2Play = True, None
+			self.msg_BacktoLayer1 = ""
+			print("Going back to layer 1 window")
+			self.restartLayer1Window()
+			return Task.cont
+		
 		if self.mouseWatcherNode.hasMouse():
 			self.setRaySolidDirection()
 			if not self.arrow.isStashed():
@@ -741,7 +873,7 @@ class Panda_UICommon(ShowBase):
 				self.dragCard()
 			elif self.collHandler.getNumEntries() > 0:
 				self.collHandler.sortEntries()
-				if self.UI > -1:
+				if self.UI != -1: #Won't show zoom in during mulligan. But will show while waiting for enemy moves
 					cNode_Picked = self.collHandler.getEntry(0).getIntoNodePath()
 					btn_Picked = cNode_Picked.getParent().getPythonTag("btn")
 					#The board also has a btn, but its btn.card is always None
@@ -767,8 +899,8 @@ class Panda_UICommon(ShowBase):
 		else:  #btn是一个牌的按键
 			if hasattr(card, "inHand") and card.inHand:
 				pos = (btn.np.getX(), ZoomInCard1_Y if self.ID == card.ID else ZoomInCard2_Y, ZoomInCard_Z)
-			else:
-				pos = (ZoomInCard_X, ZoomInCard1_Y if self.ID == card.ID else ZoomInCard2_Y, ZoomInCard_Z)
+			else: pos = (ZoomInCard_X, ZoomInCard1_Y if self.ID == card.ID else ZoomInCard2_Y, ZoomInCard_Z)
+			
 			if self.np_CardZoomIn: self.np_CardZoomIn.removeNode()
 			if card.type == "Dormant" and card.minionInside: card = card.minionInside
 			self.np_CardZoomIn = self.addCard(card, pos, pickable=False,
@@ -828,11 +960,14 @@ class Panda_UICommon(ShowBase):
 					self.pos = -1
 				for nodePath, pos in dict_MinionNp_Pos.items(): nodePath.setPos(pos)
 	
-	def stopDraggingCard(self):
+	def stopDraggingCard(self, returnDraggedCard=True):
 		btn = self.btnBeingDragged
 		if btn:
 			print("Stop dragging card", btn)
 			btn.cNode = btn.np.attachNewNode(btn.cNode_Backup)
+			self.btnBeingDragged = None
+			if not returnDraggedCard:
+				return
 			ID = btn.card.ID
 			#Put the card back in the right pos_hpr in hand
 			handZone = self.handZones[ID]
@@ -841,31 +976,28 @@ class Panda_UICommon(ShowBase):
 			pos = posHandsTable[handZone.y][len(ownHand)][i]
 			hpr = hprHandsTable[handZone.y][len(ownHand)][i]
 			btn.np.setPosHpr(pos, hpr)
-			btn.card.x, btn.card.y, btn.card.z = pos
+			#btn.card.x, btn.card.y, btn.card.z = pos
 			#Put the minions back to right positions on board
 			ownMinions = self.Game.minions[ID]
 			posMinions = posMinionsTable[self.minionZones[ID].y][len(ownMinions)]
 			for i, minion in enumerate(ownMinions):
 				minion.btn.np.setPos(posMinions[i])
 				minion.x, minion.y, minion.z = posMinions[i]
-			self.btnBeingDragged = None
-	
+			
 	def replotArrow(self):
 		#Decide the new orientation and scale of the arrow
-		vec_X, vec_Y, vec_Z = self.raySolid.getDirection()
-		btn_Subject = self.subject.btn
-		x_0, y_0, z_0 = btn_Subject.np.getPos()
+		x_0, y_0, z_0 = self.subject.btn.np.getPos()
 		x, y = self.calcMousePos(z_0)
 		delta_x, delta_y = x - x_0, y - y_0
 		distance = max(0.1, math.sqrt(delta_x ** 2 + delta_y ** 2))
 		degree = -180 / math.pi * math.asin(delta_x / distance)
 		if delta_y < 0: degree = 180-degree
 		self.arrow.setScale(1, distance / 7.5, 1)
-		self.arrow.setHpr(degree, 0, 0)
+		self.arrow.setPosHpr(x_0, y_0, z_0, degree, 0, 0)
 	
 	"""Game resolution setup"""
-	def cancelSelection(self):
-		self.stopDraggingCard()
+	def cancelSelection(self, returnDraggedCard=True):
+		self.stopDraggingCard(returnDraggedCard)
 		self.arrow.stash()
 		
 		if 3 > self.UI > -1:  #只有非发现状态,且游戏不在结算过程中时下才能取消选择
@@ -899,7 +1031,8 @@ class Panda_UICommon(ShowBase):
 				self.subject, self.target = None, None
 				print("Resolve switch turn from GUI")
 				self.gamePlayQueue.append(lambda : game.endTurn())
-			elif entity.ID != game.turn or (self.ID > 1 and entity.ID != self.ID):
+				print("now the game play queue is", self.gamePlayQueue)
+			elif entity.ID != game.turn or (1 < self.ID != entity.ID):
 				print("You can only select your own characters as subject.")
 				self.cancelSelection()
 			else:  #选择的是我方手牌、我方英雄、我方英雄技能、我方场上随从，
@@ -913,7 +1046,7 @@ class Panda_UICommon(ShowBase):
 						self.cancelSelection()
 					else:  #除了法力值不足，然后是指向性法术没有合适目标和随从没有位置使用
 						typewhenPlayed = self.subject.getTypewhenPlayed()
-						if entity.marks["Can't be Played"] > 0:
+						if entity.effects["Can't be Played"] > 0:
 							self.cancelSelection()
 						elif typewhenPlayed == "Spell" and not entity.available():
 							#法术没有可选目标，或者是不可用的非指向性法术
@@ -926,15 +1059,15 @@ class Panda_UICommon(ShowBase):
 								print("Choose One card clicked")
 								#所选的手牌不是影之诗卡牌，且我方有抉择全选的光环
 								if not entity.index.startswith("SV_"):
-									if game.status[entity.ID]["Choose Both"] > 0:
+									if game.effects[entity.ID]["Choose Both"] > 0:
 										self.choice = -1  #跳过抉择，直接进入UI=1界面。
 										if entity.needTarget(-1):
 											self.highlightTargets(entity.findTargets("", self.choice)[0])
 									else:  #Will conduct choose one
 										self.UI = 1
+										leftMost_X = -5 * (len(entity.options) - 1) / 2
 										for i, option in enumerate(entity.options):
-											pos = (4 + 5 * (i - 1), 1.5, 10)
-											self.addCard(option, pos=pos, pickable=True)
+											self.addCard(option, pos=(leftMost_X + i * 5, 1.5, 10), pickable=True)
 								elif entity.index.startswith("SV_"):
 									self.UI = 1  #进入抉择界面，退出抉择界面的时候已经self.choice已经选好。
 									return
@@ -1051,7 +1184,7 @@ class Panda_UICommon(ShowBase):
 						if not (self.subject.needTarget(self.choice) and self.subject.targetExists(self.choice)):
 							#print("Requesting to play minion {} without target. The choice is {}".format(self.subject.name, self.choice))
 							subject, position, choice = self.subject, self.pos, self.choice
-							self.cancelSelection()
+							self.cancelSelection(returnDraggedCard=not self.Game.check_playMinion(subject, None, position, choice))
 							self.subject, self.target = subject, None
 							self.gamePlayQueue.append(lambda : game.playMinion(subject, None, position, choice))
 						else:  #随从打出后需要目标
@@ -1068,21 +1201,20 @@ class Panda_UICommon(ShowBase):
 							#选中的法术已经确定抉择选项（如果有），下面决定目标选择。
 				#选择手牌中的法术或武器的打出目标
 				elif self.selectedSubject in ("SpellinHand", "WeaponinHand"):
-					playFunc = {"Spell": game.playSpell,
-								"Weapon": game.playWeapon,
-								"Hero": game.playHero}[self.subject.type]
+					playFunc = {"Spell": game.playSpell, "Weapon": game.playWeapon, "Hero": game.playHero}[self.subject.type]
+					checkFunc = {"Spell": game.check_playSpell, "Weapon": game.check_playWeapon, "Hero": game.check_playHero}[self.subject.type]
 					if not self.subject.needTarget(self.choice):  #Non-targeting spells can only be cast by clicking the board
 						if "Board" in selectedSubject:  #打出非指向性法术时，可以把卡牌拖动到随从，英雄或者桌面上
 							print("Requesting to play {} {} without target. The choice is {}".format(self.subject.type, self.subject.name, self.choice))
 							subject, target, choice = self.subject, None, self.choice
-							self.cancelSelection()
+							self.cancelSelection(returnDraggedCard=not checkFunc(subject, target, choice))
 							self.subject, self.target = subject, target
 							self.gamePlayQueue.append(lambda: playFunc(subject, target, choice))
 					else:  #法术或者法术抉择选项需要指定目标。
 						if selectedSubject == "MiniononBoard" or selectedSubject == "HeroonBoard":
 							print("Requesting to play {} {} with target {}. The choice is {}".format(self.subject.type, self.subject.name, entity, self.choice))
 							subject, target, choice = self.subject, entity, self.choice
-							self.cancelSelection()
+							self.cancelSelection(returnDraggedCard=not checkFunc(subject, target, choice))
 							self.subject, self.target = subject, target
 							self.gamePlayQueue.append(lambda: playFunc(subject, target, choice))
 						else:
@@ -1092,7 +1224,7 @@ class Panda_UICommon(ShowBase):
 				if selectedSubject == "MiniononBoard" or selectedSubject == "HeroonBoard":
 					print("Requesting to play minion {}, targeting {} with choice: {}".format(self.subject.name, entity.name, self.choice))
 					subject, position, choice = self.subject, self.pos, self.choice
-					self.cancelSelection()
+					self.cancelSelection(returnDraggedCard=not self.Game.check_playMinion(subject, entity, position, choice))
 					self.subject, self.target = subject, entity
 					self.gamePlayQueue.append(lambda : game.playMinion(subject, entity, position, choice))
 				else:
@@ -1151,9 +1283,9 @@ class Panda_UICommon(ShowBase):
 			para.append(LerpPosHprScaleInterval(nodePath_New, duration=0.2, pos=(leftMost_x + 5 * i, 1.5, 13), hpr=(0, 0, 0), startScale=0.2, scale=1))
 		self.seqHolder[-1].append(para)
 		btn_HideOptions = DirectButton(text=("Hide", "Hide", "Hide", "Continue"), scale=.1,
-									   command=self.toggleDiscoverHide)
-		btn_HideOptions.setPos(2, 0, 2)
+									   pos=(2, 0, 2), command=self.toggleDiscoverHide)
 		btn_HideOptions["extraArgs"] = [btn_HideOptions]
+		self.btns2Remove.append(btn_HideOptions)
 		self.seqHolder[-1].append(Func(btn_HideOptions.setPos, -0.5, 0, -0.5))
 		self.seqReady = True
 		while self.discover is None:
@@ -1162,7 +1294,7 @@ class Panda_UICommon(ShowBase):
 		self.seqReady = False
 		self.seqHolder.append(Sequence())
 		for btn in btns: btn.np.detachNode()
-		btn_HideOptions.destroy()
+		for btn in self.btns2Remove: btn.destroy()
 		return self.discover #No need to reset the self.discover. Need to reset each time anyways
 		
 	#To be invoked for animation of opponent's discover decision (if PvP) or own random decisions

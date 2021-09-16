@@ -117,7 +117,7 @@ class TrigInvocation(TrigDeck):
                     minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
                                card.type == "Minion" and card.name == self.entity.name]
                     i = npchoice(minions) if minions and curGame.space(self.entity.ID) > 0 else -1
-                    curGame.picks.append(i)
+                    curGame.picks_Backup.append(i)
                 if i > -1:
                     minion = curGame.summonfrom(i, self.entity.ID, -1, self, source='D')
                     minion.afterInvocation(signal, ID, subject, target, number, comment)
@@ -127,7 +127,7 @@ class Goblin(SVMinion):
     Class, race, name = "Neutral", "", "Goblin"
     mana, attack, health = 1, 1, 2
     index = "SV_Basic~Neutral~Minion~1~1~2~~Goblin"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "哥布林"
 
@@ -136,7 +136,7 @@ class Fighter(SVMinion):
     Class, race, name = "Neutral", "", "Fighter"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Neutral~Minion~2~2~2~~Fighter"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "剑斗士"
 
@@ -172,7 +172,7 @@ class Trig_WellofDestiny(TrigBoard):
                 except:
                     pass
                 i = npchoice(minions).pos if minions else -1
-                curGame.picks.append(i)
+                curGame.picks_Backup.append(i)
             if i > -1:
                 minion = curGame.minions[self.entity.ID][i]
                 minion.buffDebuff(1, 1)
@@ -182,7 +182,7 @@ class MercenaryDrifter(SVMinion):
     Class, race, name = "Neutral", "", "Mercenary Drifter"
     mana, attack, health = 3, 3, 2
     index = "SV_Basic~Neutral~Minion~3~3~2~~Mercenary Drifter"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "流浪的佣兵"
 
@@ -191,7 +191,7 @@ class HarnessedFlame(SVMinion):
     Class, race, name = "Neutral", "", "Harnessed Flame"
     mana, attack, health = 3, 2, 1
     index = "SV_Basic~Neutral~Minion~3~2~1~~Harnessed Flame"
-    requireTarget, keyWord, description = False, "", "Strike: Deal 2 damage to the enemy leader.At the start of your turn, this follower combines with an allied Harnessed Glass to become Flame and Glass."
+    requireTarget, effects, description = False, "", "Strike: Deal 2 damage to the enemy leader.At the start of your turn, this follower combines with an allied Harnessed Glass to become Flame and Glass."
     attackAdd, healthAdd = 2, 2
     name_CN = "被封印的的双子·烈焰"
 
@@ -235,7 +235,7 @@ class HarnessedGlass(SVMinion):
     Class, race, name = "Neutral", "", "Harnessed Glass"
     mana, attack, health = 3, 1, 2
     index = "SV_Basic~Neutral~Minion~3~2~1~~Harnessed Glass"
-    requireTarget, keyWord, description = False, "", "Strike: Deal 1 damage to all enemy followers.At the start of your turn, this follower combines with an allied Harnessed Flame to become Flame and Glass."
+    requireTarget, effects, description = False, "", "Strike: Deal 1 damage to all enemy followers.At the start of your turn, this follower combines with an allied Harnessed Flame to become Flame and Glass."
     attackAdd, healthAdd = 2, 2
     name_CN = "被封印的双子·琉璃"
 
@@ -281,7 +281,7 @@ class FlameandGlass(SVMinion):
     Class, race, name = "Neutral", "", "Flame and Glass"
     mana, attack, health = 7, 7, 7
     index = "SV_Basic~Neutral~Minion~7~7~7~~Flame and Glass~Charge~Uncollectible"
-    requireTarget, keyWord, description = False, "Charge", "Storm.Strike: Deal 7 damage to all enemies."
+    requireTarget, effects, description = False, "Charge", "Storm.Strike: Deal 7 damage to all enemies."
     attackAdd, healthAdd = 2, 2
     name_CN = "烈焰·琉璃"
 
@@ -307,7 +307,7 @@ class Goliath(SVMinion):
     Class, race, name = "Neutral", "", "Goliath"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Neutral~Minion~4~3~4~~Goliath"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "歌利亚"
 
@@ -316,7 +316,7 @@ class AngelicSwordMaiden(SVMinion):
     Class, race, name = "Neutral", "", "Angelic Sword Maiden"
     mana, attack, health = 5, 2, 6
     index = "SV_Basic~Neutral~Minion~5~2~6~~Angelic Sword Maiden~Taunt"
-    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    requireTarget, effects, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "天女剑士"
 
@@ -328,7 +328,7 @@ class Fairy(SVMinion):
     Class, race, name = "Forestcraft", "", "Fairy"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Forestcraft~Minion~1~1~1~~Fairy~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "妖精"
 
@@ -337,7 +337,7 @@ class FairyWisp(SVMinion):
     Class, race, name = "Forestcraft", "", "Fairy Wisp"
     mana, attack, health = 0, 1, 1
     index = "SV_Basic~Forestcraft~Minion~0~1~1~~Fairy Wisp~Battlecry~Uncollectible"
-    requireTarget, keyWord, description = False, "", "Fanfare: Banish this follower if at least 2 other cards were played this turn."
+    requireTarget, effects, description = False, "", "Fanfare: Banish this follower if at least 2 other cards were played this turn."
     attackAdd, healthAdd = 2, 2
     name_CN = "妖精萤火"
 
@@ -355,7 +355,7 @@ class WaterFairy(SVMinion):
     Class, race, name = "Forestcraft", "", "Water Fairy"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Forestcraft~Minion~1~1~1~~Water Fairy~Deathrattle"
-    requireTarget, keyWord, description = False, "", "Last Words: Put a Fairy into your hand."
+    requireTarget, effects, description = False, "", "Last Words: Put a Fairy into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "水之妖精"
 
@@ -373,7 +373,7 @@ class FairyWhisperer(SVMinion):
     Class, race, name = "Forestcraft", "", "Fairy Whisperer"
     mana, attack, health = 2, 1, 1
     index = "SV_Basic~Forestcraft~Minion~2~1~1~~Fairy Whisperer~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Put 2 Fairies into your hand."
+    requireTarget, effects, description = False, "", "Fanfare: Put 2 Fairies into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "妖精语森林使者"
 
@@ -386,7 +386,7 @@ class ElfGuard(SVMinion):
     Class, race, name = "Forestcraft", "", "Elf Guard"
     mana, attack, health = 2, 1, 3
     index = "SV_Basic~Forestcraft~Minion~2~1~3~~Elf Guard~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Gain +1/+1 and Ward if at least 2 other cards were played this turn."
+    requireTarget, effects, description = False, "", "Fanfare: Gain +1/+1 and Ward if at least 2 other cards were played this turn."
     attackAdd, healthAdd = 2, 2
     name_CN = "精灵守卫"
 
@@ -397,7 +397,7 @@ class ElfGuard(SVMinion):
         numCardsPlayed = self.Game.combCards(self.ID)
         if numCardsPlayed >= 2:
             self.buffDebuff(1, 1)
-            self.getsStatus("Taunt")
+            self.getsEffect("Taunt")
         return None
 
 
@@ -405,7 +405,7 @@ class ElfMetallurgist(SVMinion):
     Class, race, name = "Forestcraft", "", "Elf Metallurgist"
     mana, attack, health = 2, 2, 1
     index = "SV_Basic~Forestcraft~Minion~2~2~1~~Elf Metallurgist~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Deal 2 damage to an enemy follower if at least 2 other cards were played this turn."
+    requireTarget, effects, description = True, "", "Fanfare: Deal 2 damage to an enemy follower if at least 2 other cards were played this turn."
     attackAdd, healthAdd = 2, 2
     name_CN = "金属精灵法师"
 
@@ -431,7 +431,7 @@ class ElfMetallurgist(SVMinion):
 
 class SylvanJustice(SVSpell):
     Class, school, name = "Forestcraft", "", "Sylvan Justice"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Forestcraft~Spell~2~Sylvan Justice"
     description = "Deal 2 damage to an enemy follower. Put a Fairy into your hand."
     name_CN = "森林的反扑"
@@ -456,7 +456,7 @@ class DarkElfFaure(SVMinion):
     Class, race, name = "Forestcraft", "", "Dark Elf Faure"
     mana, attack, health = 3, 2, 3
     index = "SV_Basic~Forestcraft~Minion~3~2~3~~Dark Elf Faure"
-    requireTarget, keyWord, description = False, "", "Strike: Put a Fairy into your hand."
+    requireTarget, effects, description = False, "", "Strike: Put a Fairy into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "黑暗精灵·芙蕾"
 
@@ -480,7 +480,7 @@ class Okami(SVMinion):
     Class, race, name = "Forestcraft", "", "Okami"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Forestcraft~Minion~4~3~4~~Okami"
-    requireTarget, keyWord, description = False, "", "Whenever another allied follower comes into play, gain +1/+0."
+    requireTarget, effects, description = False, "", "Whenever another allied follower comes into play, gain +1/+0."
     attackAdd, healthAdd = 2, 2
     name_CN = "巨狼"
 
@@ -504,7 +504,7 @@ class RoseGardener(SVMinion):
     Class, race, name = "Forestcraft", "", "Rose Gardener"
     mana, attack, health = 4, 4, 3
     index = "SV_Basic~Forestcraft~Minion~4~4~3~~Rose Gardener"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     evolveRequireTarget = True
     name_CN = "玫瑰花园守卫者"
@@ -520,14 +520,14 @@ class RoseGardener(SVMinion):
         if target:
             if isinstance(target, list): target = target[0]
             if target.onBoard:
-                self.Game.returnMiniontoHand(target, deathrattlesStayArmed=False)
+                self.Game.returnObj2Hand(target, deathrattlesStayArmed=False)
 
 
 class Treant(SVMinion):
     Class, race, name = "Forestcraft", "", "Treant"
     mana, attack, health = 5, 4, 4
     index = "SV_Basic~Forestcraft~Minion~5~4~4~~Treant~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Gain +2/+2 if at least 2 other cards were played this turn."
+    requireTarget, effects, description = False, "", "Fanfare: Gain +2/+2 if at least 2 other cards were played this turn."
     attackAdd, healthAdd = 2, 2
     name_CN = "树精"
 
@@ -545,7 +545,7 @@ class ElfTracker(SVMinion):
     Class, race, name = "Forestcraft", "", "Elf Tracker"
     mana, attack, health = 6, 4, 5
     index = "SV_Basic~Forestcraft~Minion~6~4~5~~Elf Tracker~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Deal 1 damage to a random enemy follower. Do this 2 times."
+    requireTarget, effects, description = False, "", "Fanfare: Deal 1 damage to a random enemy follower. Do this 2 times."
     attackAdd, healthAdd = 2, 2
     name_CN = "精灵驱逐者"
 
@@ -561,9 +561,9 @@ class ElfTracker(SVMinion):
                     objs = curGame.minionsAlive(side)
                     if objs:
                         char = npchoice(objs)
-                        curGame.picks.append((char.pos, "Minion%d" % side))
+                        curGame.picks_Backup.append((char.pos, "Minion%d" % side))
                     else:
-                        curGame.picks.append((0, ''))
+                        curGame.picks_Backup.append((0, ''))
                 if char:
                     self.dealsDamage(char, 1)
                 else:
@@ -575,7 +575,7 @@ class MagnaBotanist(SVMinion):
     Class, race, name = "Forestcraft", "", "Magna Botanist"
     mana, attack, health = 6, 5, 5
     index = "SV_Basic~Forestcraft~Minion~6~5~5~~Magna Botanist~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Give +1/+1 to all allied followers if at least 2 other cards were played this turn."
+    requireTarget, effects, description = False, "", "Fanfare: Give +1/+1 to all allied followers if at least 2 other cards were played this turn."
     attackAdd, healthAdd = 2, 2
     name_CN = "伟大的药剂师"
 
@@ -597,7 +597,7 @@ class SteelcladKnight(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Steelclad Knight"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Swordcraft~Minion~2~2~2~Officer~Steelclad Knight~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "铁甲骑士"
 
@@ -606,7 +606,7 @@ class HeavyKnight(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Heavy Knight"
     mana, attack, health = 1, 1, 2
     index = "SV_Basic~Swordcraft~Minion~1~1~2~Officer~Heavy Knight~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "重装骑士"
 
@@ -615,7 +615,7 @@ class Knight(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Knight"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Knight~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "骑士"
 
@@ -624,14 +624,14 @@ class ShieldGuardian(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Shield Guardian"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Shield Guardian~Taunt~Uncollectible"
-    requireTarget, keyWord, description = False, "Taunt", "Ward"
+    requireTarget, effects, description = False, "Taunt", "Ward"
     attackAdd, healthAdd = 2, 2
     name_CN = "战盾卫士"
 
 
 class GildedBlade(SVSpell):
     Class, school, name = "Swordcraft", "", "Gilded Blade"
-    requireTarget, mana = True, 1
+    requireTarget, mana, effects = True, 1, ""
     index = "SV_Basic~Swordcraft~Spell~1~Gilded Blade~Uncollectible"
     description = "Deal 1 damage to an enemy follower."
     name_CN = "黄金短剑"
@@ -653,7 +653,7 @@ class GildedBlade(SVSpell):
 
 class GildedGoblet(SVSpell):
     Class, school, name = "Swordcraft", "", "Gilded Goblet"
-    requireTarget, mana = True, 1
+    requireTarget, mana, effects = True, 1, ""
     index = "SV_Basic~Swordcraft~Spell~1~Gilded Goblet~Uncollectible"
     description = "Restore 2 defense to an ally."
     name_CN = "黄金之杯"
@@ -671,7 +671,7 @@ class GildedGoblet(SVSpell):
 
 class GildedBoots(SVSpell):
     Class, school, name = "Swordcraft", "", "Gilded Boots"
-    requireTarget, mana = True, 1
+    requireTarget, mana, effects = True, 1, ""
     index = "SV_Basic~Swordcraft~Spell~1~Gilded Boots~Uncollectible"
     description = "Give Rush to an allied follower."
     name_CN = "黄金之靴"
@@ -686,13 +686,13 @@ class GildedBoots(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            target.getsStatus("Rush")
+            target.getsEffect("Rush")
         return target
 
 
 class GildedNecklace(SVSpell):
     Class, school, name = "Swordcraft", "", "Gilded Necklace"
-    requireTarget, mana = True, 1
+    requireTarget, mana, effects = True, 1, ""
     index = "SV_Basic~Swordcraft~Spell~1~Gilded Necklace~Uncollectible"
     description = "Give +1/+1 to an allied follower."
     name_CN = "黄金首饰"
@@ -715,14 +715,14 @@ class Quickblader(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Quickblader"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Quickblader~Charge"
-    requireTarget, keyWord, description = False, "Charge", "Storm"
+    requireTarget, effects, description = False, "Charge", "Storm"
     attackAdd, healthAdd = 2, 2
     name_CN = "迅捷的剑士"
 
 
 class UnbridledFury(SVSpell):
     Class, school, name = "Swordcraft", "", "Unbridled Fury"
-    requireTarget, mana = True, 1
+    requireTarget, mana, effects = True, 1, ""
     index = "SV_Basic~Swordcraft~Spell~1~Unbridled Fury"
     description = "Deal X damage to an enemy follower. X equals the number of allied followers in play."
     name_CN = "疾风怒涛"
@@ -746,7 +746,7 @@ class OathlessKnight(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Oathless Knight"
     mana, attack, health = 2, 1, 1
     index = "SV_Basic~Swordcraft~Minion~2~1~1~Officer~Oathless Knight~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Summon a Knight."
+    requireTarget, effects, description = False, "", "Fanfare: Summon a Knight."
     attackAdd, healthAdd = 2, 2
     name_CN = "背水一战的骑士"
 
@@ -759,7 +759,7 @@ class KunoichiTrainee(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Kunoichi Trainee"
     mana, attack, health = 2, 2, 1
     index = "SV_Basic~Swordcraft~Minion~2~2~1~Officer~Kunoichi Trainee~Stealth"
-    requireTarget, keyWord, description = False, "Stealth", "Ambush."
+    requireTarget, effects, description = False, "Stealth", "Ambush."
     attackAdd, healthAdd = 2, 2
     name_CN = "女忍者学徒"
 
@@ -768,7 +768,7 @@ class AsceticKnight(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Ascetic Knight"
     mana, attack, health = 3, 1, 2
     index = "SV_Basic~Swordcraft~Minion~3~1~2~Officer~Ascetic Knight~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Summon a Heavy Knight."
+    requireTarget, effects, description = False, "", "Fanfare: Summon a Heavy Knight."
     attackAdd, healthAdd = 2, 2
     name_CN = "凯旋的骑士"
 
@@ -779,7 +779,7 @@ class AsceticKnight(SVMinion):
 
 class ForgeWeaponry(SVSpell):
     Class, school, name = "Swordcraft", "", "Forge Weaponry"
-    requireTarget, mana = True, 3
+    requireTarget, mana, effects = True, 3, ""
     index = "SV_Basic~Swordcraft~Spell~3~Forge Weaponry"
     description = "Give +2/+2 to an allied follower. Rally (10): Give +4/+4 instead."
     name_CN = "武装强化"
@@ -806,7 +806,7 @@ class WhiteGeneral(SVMinion):
     Class, race, name = "Swordcraft", "Commander", "White General"
     mana, attack, health = 4, 3, 3
     index = "SV_Basic~Swordcraft~Minion~4~3~3~Commander~White General~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Give +2/+0 to an allied Officer follower."
+    requireTarget, effects, description = True, "", "Fanfare: Give +2/+0 to an allied Officer follower."
     attackAdd, healthAdd = 2, 2
     name_CN = "白银将军"
 
@@ -831,7 +831,7 @@ class FloralFencer(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Floral Fencer"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Swordcraft~Minion~4~3~4~Officer~Floral Fencer"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     name_CN = "华丽的花园剑士"
 
@@ -874,7 +874,7 @@ class NinjaMaster(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Ninja Master"
     mana, attack, health = 5, 4, 4
     index = "SV_Basic~Swordcraft~Minion~5~4~4~Officer~Ninja Master~Stealth"
-    requireTarget, keyWord, description = False, "Stealth", "Ambush."
+    requireTarget, effects, description = False, "Stealth", "Ambush."
     attackAdd, healthAdd = 2, 2
     name_CN = "忍者大师"
 
@@ -883,7 +883,7 @@ class SageCommander(SVMinion):
     Class, race, name = "Swordcraft", "Commander", "Sage Commander"
     mana, attack, health = 6, 4, 6
     index = "SV_Basic~Swordcraft~Minion~6~4~6~Commander~Sage Commander~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Give +1/+1 to all other allied followers."
+    requireTarget, effects, description = False, "", "Fanfare: Give +1/+1 to all other allied followers."
     attackAdd, healthAdd = 2, 2
     name_CN = "睿智指挥官"
 
@@ -900,7 +900,7 @@ class ClayGolem(SVMinion):
     Class, race, name = "Runecraft", "", "Clay Golem"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Runecraft~Minion~2~2~2~~Clay Golem~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "泥尘巨像"
 
@@ -909,7 +909,7 @@ class Snowman(SVMinion):
     Class, race, name = "Runecraft", "", "Snowman"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Runecraft~Minion~1~1~1~~Snowman~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "雪人"
 
@@ -926,7 +926,7 @@ class GuardianGolem(SVMinion):
     Class, race, name = "Runecraft", "", "Guardian Golem"
     mana, attack, health = 4, 3, 3
     index = "SV_Basic~Runecraft~Minion~4~3~3~~Guardian Golem~Taunt~Uncollectible"
-    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    requireTarget, effects, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "守护者巨像"
 
@@ -935,14 +935,14 @@ class ScrapGolem(SVMinion):
     Class, race, name = "Runecraft", "", "Scrap Golem"
     mana, attack, health = 1, 0, 2
     index = "SV_Basic~Runecraft~Minion~1~0~2~~Scrap Golem~Taunt~Uncollectible"
-    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    requireTarget, effects, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "废铁巨像"
 
 
 class ConjureGuardian(SVSpell):
     Class, school, name = "Runecraft", "", "Conjure Guardian"
-    requireTarget, mana = False, 2
+    requireTarget, mana, effects = False, 2, ""
     index = "SV_Basic~Runecraft~Spell~2~Conjure Guardian~Uncollectible"
     description = "Summon a Guardian Golem."
     name_CN = "守护者炼成术"
@@ -966,7 +966,7 @@ class Trig_Spellboost(TrigHand):
 
 class Insight(SVSpell):
     Class, school, name = "Runecraft", "", "Insight"
-    requireTarget, mana = False, 1
+    requireTarget, mana, effects = False, 1, ""
     index = "SV_Basic~Runecraft~Spell~1~Insight"
     description = "Draw a card."
     name_CN = "智慧之光"
@@ -980,7 +980,7 @@ class SammyWizardsApprentice(SVMinion):
     Class, race, name = "Runecraft", "", "Sammy, Wizard's Apprentice"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Runecraft~Minion~2~2~2~~Sammy, Wizard's Apprentice~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Give +1/+1 to all other allied followers."
+    requireTarget, effects, description = False, "", "Fanfare: Give +1/+1 to all other allied followers."
     attackAdd, healthAdd = 2, 2
     name_CN = "新星魔术师·萨米"
 
@@ -992,7 +992,7 @@ class SammyWizardsApprentice(SVMinion):
 
 class MagicMissile(SVSpell):
     Class, school, name = "Runecraft", "", "Magic Missile"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Runecraft~Spell~2~Magic Missile"
     description = "Deal 1 damage to an enemy. Draw a card."
     name_CN = "魔导飞弹"
@@ -1015,7 +1015,7 @@ class MagicMissile(SVSpell):
 
 class ConjureGolem(SVSpell):
     Class, school, name = "Runecraft", "", "Conjure Golem"
-    requireTarget, mana = False, 2
+    requireTarget, mana, effects = False, 2, ""
     index = "SV_Basic~Runecraft~Spell~2~Conjure Golem"
     description = "Summon a Clay Golem."
     name_CN = "巨像炼成术"
@@ -1027,7 +1027,7 @@ class ConjureGolem(SVSpell):
 
 class WindBlast(SVSpell):
     Class, school, name = "Runecraft", "", "Wind Blast"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Runecraft~Spell~2~Wind Blast~Spellboost"
     description = "Deal 1 damage to an enemy follower. Spellboost: Deal 1 more."
     name_CN = "疾风喷射"
@@ -1055,7 +1055,7 @@ class WindBlast(SVSpell):
 
 class SummonSnow(SVSpell):
     Class, school, name = "Runecraft", "", "Summon Snow"
-    requireTarget, mana = False, 3
+    requireTarget, mana, effects = False, 3, ""
     index = "SV_Basic~Runecraft~Spell~2~Summon Snow~Spellboost"
     description = "Summon 1 Snowman. Spellboost: Summon 1 more."
     name_CN = "雪人召唤术"
@@ -1076,7 +1076,7 @@ class DemonflameMage(SVMinion):
     Class, race, name = "Runecraft", "", "Demonflame Mage"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Runecraft~Minion~4~3~4~~Demonflame Mage"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     name_CN = "恶魔炎术师"
 
@@ -1088,7 +1088,7 @@ class DemonflameMage(SVMinion):
 
 class ConjureTwosome(SVSpell):
     Class, school, name = "Runecraft", "", "Conjure Twosome"
-    requireTarget, mana = False, 4
+    requireTarget, mana, effects = False, 4, ""
     index = "SV_Basic~Runecraft~Spell~4~Conjure Twosome"
     description = "Summon a Clay Golem."
     name_CN = "二重炼成术"
@@ -1103,7 +1103,7 @@ class LightningShooter(SVMinion):
     Class, race, name = "Runecraft", "", "Lightning Shooter"
     mana, attack, health = 5, 3, 3
     index = "SV_Basic~Runecraft~Minion~5~3~3~~Lightning Shooter~Battlecry~Spellboost"
-    requireTarget, keyWord, description = True, "", "Fanfare: Deal 1 damage to an enemy follower. Spellboost: Deal 1 more."
+    requireTarget, effects, description = True, "", "Fanfare: Deal 1 damage to an enemy follower. Spellboost: Deal 1 more."
     attackAdd, healthAdd = 2, 2
     name_CN = "雷光射手"
 
@@ -1128,7 +1128,7 @@ class LightningShooter(SVMinion):
 
 class FieryEmbrace(SVSpell):
     Class, school, name = "Runecraft", "", "Fiery Embrace"
-    requireTarget, mana = True, 8
+    requireTarget, mana, effects = True, 8, ""
     index = "SV_Basic~Runecraft~Spell~8~Fiery Embrace~Spellboost"
     description = "Spellboost: Subtract 1 from the cost of this card. Destroy an enemy follower."
     name_CN = "火炎粉碎术"
@@ -1162,7 +1162,7 @@ class FlameDestroyer(SVMinion):
     Class, race, name = "Runecraft", "", "Flame Destroyer"
     mana, attack, health = 10, 7, 7
     index = "SV_Basic~Runecraft~Minion~10~7~7~~Flame Destroyer~Spellboost"
-    requireTarget, keyWord, description = False, "", "Spellboost: Subtract 1 from the cost of this card."
+    requireTarget, effects, description = False, "", "Spellboost: Subtract 1 from the cost of this card."
     attackAdd, healthAdd = 2, 2
     name_CN = "魔炎毁灭者"
 
@@ -1201,7 +1201,7 @@ class BuffAura_Overflow(HasAura_toMinion):
 
     def applies(self, subject):
         if subject == self.entity:
-            Stat_Receiver(subject, self, 2, 0).effectStart()
+            Aura_Receiver(subject, self, 2, 0).effectStart()
 
     def auraAppears(self):
         isOverflow = self.entity.Game.Manas.manasUpper[self.entity.ID] >= 7
@@ -1221,14 +1221,14 @@ class Megalorca(SVMinion):
     Class, race, name = "Dragoncraft", "", "Megalorca"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Dragoncraft~Minion~2~2~2~~Megalorca~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "虎鲸"
 
 
 class BlazingBreath(SVSpell):
     Class, school, name = "Dragoncraft", "", "Blazing Breath"
-    requireTarget, mana = True, 1
+    requireTarget, mana, effects = True, 1, ""
     index = "SV_Basic~Dragoncraft~Spell~1~Blazing Breath"
     description = "Deal 2 damage to an enemy follower."
     name_CN = "炽热吐息"
@@ -1252,7 +1252,7 @@ class Dragonrider(SVMinion):
     Class, race, name = "Dragoncraft", "", "Dragonrider"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Dragoncraft~Minion~2~2~2~~Dragonrider"
-    requireTarget, keyWord, description = False, "", "Gain +2/+0 if Overflow is active for you."
+    requireTarget, effects, description = False, "", "Gain +2/+0 if Overflow is active for you."
     attackAdd, healthAdd = 2, 2
     name_CN = "龙骑兵"
 
@@ -1267,12 +1267,12 @@ class Dragonrider(SVMinion):
 class BuffAura_Dragonrider(BuffAura_Overflow):
     def applies(self, subject):
         if subject == self.entity:
-            Stat_Receiver(subject, self, 2, 0).effectStart()
+            Aura_Receiver(subject, self, 2, 0).effectStart()
 
 
 class DragonOracle(SVSpell):
     Class, school, name = "Dragoncraft", "", "Dragon Oracle"
-    requireTarget, mana = False, 2
+    requireTarget, mana, effects = False, 2, ""
     index = "SV_Basic~Dragoncraft~Spell~2~Dragon Oracle"
     description = "Gain an empty play point orb. Draw a card if Overflow is active for you."
     name_CN = "龙之启示"
@@ -1291,7 +1291,7 @@ class FirstbornDragon(SVMinion):
     Class, race, name = "Dragoncraft", "", "Firstborn Dragon"
     mana, attack, health = 3, 2, 3
     index = "SV_Basic~Dragoncraft~Minion~3~2~3~~Firstborn Dragon"
-    requireTarget, keyWord, description = False, "", "Gain Ward if Overflow is active for you."
+    requireTarget, effects, description = False, "", "Gain Ward if Overflow is active for you."
     attackAdd, healthAdd = 2, 2
     name_CN = "远古飞龙"
 
@@ -1305,7 +1305,7 @@ class FirstbornDragon(SVMinion):
 
 class BuffAura_FirstbornDragon(BuffAura_Overflow):
     def applies(self, subject):
-        receiver = Effect_Receiver(subject, self, "Taunt")
+        receiver = Aura_Receiver(subject, self, effect="Taunt")
         receiver.effectStart()
 
 
@@ -1313,7 +1313,7 @@ class DeathDragon(SVMinion):
     Class, race, name = "Dragoncraft", "", "Death Dragon"
     mana, attack, health = 4, 4, 4
     index = "SV_Basic~Dragoncraft~Minion~4~4~4~~Death Dragon"
-    requireTarget, keyWord, description = False, "", " "
+    requireTarget, effects, description = False, "", " "
     attackAdd, healthAdd = 2, 2
     name_CN = "尸腐龙"
 
@@ -1322,7 +1322,7 @@ class DragonWarrior(SVMinion):
     Class, race, name = "Dragoncraft", "", "Dragon Warrior"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Dragoncraft~Minion~4~3~4~~Dragon Warrior"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     evolveRequireTarget = True
     name_CN = "龙族勇士"
@@ -1343,7 +1343,7 @@ class DragonWarrior(SVMinion):
 
 class SerpentWrath(SVSpell):
     Class, school, name = "Dragoncraft", "", "Serpent Wrath"
-    requireTarget, mana = True, 4
+    requireTarget, mana, effects = True, 4, ""
     index = "SV_Basic~Dragoncraft~Spell~4~Serpent Wrath"
     description = "Deal 6 damage to an enemy follower."
     name_CN = "龙之怒"
@@ -1367,7 +1367,7 @@ class DisasterDragon(SVMinion):
     Class, race, name = "Dragoncraft", "", "Disaster Dragon"
     mana, attack, health = 5, 4, 5
     index = "SV_Basic~Dragoncraft~Minion~5~4~5~~Disaster Dragon"
-    requireTarget, keyWord, description = False, "", "Strike: Gain +2/+0 until the end of the turn."
+    requireTarget, effects, description = False, "", "Strike: Gain +2/+0 until the end of the turn."
     attackAdd, healthAdd = 2, 2
     name_CN = "灾祸之龙"
 
@@ -1391,7 +1391,7 @@ class Dragonguard(SVMinion):
     Class, race, name = "Dragoncraft", "", "Dragonguard"
     mana, attack, health = 6, 5, 6
     index = "SV_Basic~Dragoncraft~Minion~6~5~6~~Dragonguard"
-    requireTarget, keyWord, description = False, "", "Gain Ward if Overflow is active for you."
+    requireTarget, effects, description = False, "", "Gain Ward if Overflow is active for you."
     attackAdd, healthAdd = 2, 2
     name_CN = "龙骑士守护者"
 
@@ -1402,7 +1402,7 @@ class Dragonguard(SVMinion):
 
 class BuffAura_Dragonguard(BuffAura_Overflow):
     def applies(self, subject):
-        receiver = Effect_Receiver(subject, self, "Taunt")
+        receiver = Aura_Receiver(subject, self, effect="Taunt")
         receiver.effectStart()
 
 
@@ -1410,7 +1410,7 @@ class DreadDragon(SVMinion):
     Class, race, name = "Dragoncraft", "", "Dread Dragon"
     mana, attack, health = 7, 4, 4
     index = "SV_Basic~Dragoncraft~Minion~7~4~4~~Dread Dragon~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Deal 4 damage to an enemy follower."
+    requireTarget, effects, description = True, "", "Fanfare: Deal 4 damage to an enemy follower."
     attackAdd, healthAdd = 2, 2
     name_CN = "恐惧龙兽"
 
@@ -1449,7 +1449,7 @@ class Skeleton(SVMinion):
     Class, race, name = "Shadowcraft", "", "Skeleton"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Shadowcraft~Minion~1~1~1~~Skeleton~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "骸骨士兵"
 
@@ -1458,7 +1458,7 @@ class Zombie(SVMinion):
     Class, race, name = "Shadowcraft", "", "Zombie"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Shadowcraft~Minion~2~2~2~~Zombie~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "傀儡"
 
@@ -1467,7 +1467,7 @@ class Lich(SVMinion):
     Class, race, name = "Shadowcraft", "", "Lich"
     mana, attack, health = 4, 4, 4
     index = "SV_Basic~Shadowcraft~Minion~4~4~4~~Lich~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "巫妖"
 
@@ -1476,13 +1476,11 @@ class Ghost(SVMinion):
     Class, race, name = "Shadowcraft", "", "Ghost"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Shadowcraft~Minion~1~1~1~~Ghost~Charge~Uncollectible"
-    requireTarget, keyWord, description = False, "Charge", "Storm. Banish this follower when it leaves play or when your turn ends."
+    requireTarget, effects, description = False, "Charge,Disappear When Die", "Storm. Banish this follower when it leaves play or when your turn ends."
     attackAdd, healthAdd = 2, 2
     name_CN = "怨灵"
-
     def __init__(self, Game, ID):
         super().__init__(Game, ID)
-        self.marks["Disappear When Die"] = 1
         self.trigsBoard = [Trig_Ghost(self)]
         self.progress = 0
 
@@ -1502,7 +1500,7 @@ class SpartoiSergeant(SVMinion):
     Class, race, name = "Shadowcraft", "", "Spartoi Sergeant"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Shadowcraft~Minion~2~2~2~~Spartoi Sergeant~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Gain 1 shadow."
+    requireTarget, effects, description = False, "", "Fanfare: Gain 1 shadow."
     attackAdd, healthAdd = 2, 2
     name_CN = "尸魂战士"
 
@@ -1515,14 +1513,14 @@ class Spectre(SVMinion):
     Class, race, name = "Shadowcraft", "", "Spectre"
     mana, attack, health = 2, 2, 1
     index = "SV_Basic~Shadowcraft~Minion~2~2~1~~Spectre~Bane"
-    requireTarget, keyWord, description = False, "Bane", "Bane."
+    requireTarget, effects, description = False, "Bane", "Bane."
     attackAdd, healthAdd = 2, 2
     name_CN = "幽灵"
 
 
 class UndyingResentment(SVSpell):
     Class, school, name = "Shadowcraft", "", "Undying Resentment"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Shadowcraft~Spell~2~Undying Resentment~Necromancy"
     description = "Deal 3 damage to an enemy follower. Necromancy (2): Deal 5 damage instead."
     name_CN = "不灭的怨念"
@@ -1553,7 +1551,7 @@ class ApprenticeNecromancer(SVMinion):
     Class, race, name = "Shadowcraft", "", "Apprentice Necromancer"
     mana, attack, health = 3, 2, 3
     index = "SV_Basic~Shadowcraft~Minion~3~2~3~~Apprentice Necromancer~Battlecry~Necromancy"
-    requireTarget, keyWord, description = False, "", "Fanfare: Necromancy (4) - Summon a Zombie."
+    requireTarget, effects, description = False, "", "Fanfare: Necromancy (4) - Summon a Zombie."
     attackAdd, healthAdd = 2, 2
     name_CN = "见习唤灵师"
 
@@ -1570,7 +1568,7 @@ class ElderSpartoiSoldier(SVMinion):
     Class, race, name = "Shadowcraft", "", "Elder Spartoi Soldier"
     mana, attack, health = 4, 4, 3
     index = "SV_Basic~Shadowcraft~Minion~4~4~3~~Elder Spartoi Soldier~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Gain 2 shadow."
+    requireTarget, effects, description = False, "", "Fanfare: Gain 2 shadow."
     attackAdd, healthAdd = 2, 2
     name_CN = "腐朽的骸骨兵"
 
@@ -1583,7 +1581,7 @@ class PlayfulNecromancer(SVMinion):
     Class, race, name = "Shadowcraft", "", "Playful Necromancer"
     mana, attack, health = 4, 4, 3
     index = "SV_Basic~Shadowcraft~Minion~4~4~3~~Playful Necromancer"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     name_CN = "爱捣蛋的唤灵师"
 
@@ -1595,7 +1593,7 @@ class HellsUnleasher(SVMinion):
     Class, race, name = "Shadowcraft", "", "Hell's Unleasher"
     mana, attack, health = 4, 1, 1
     index = "SV_Basic~Shadowcraft~Minion~4~1~1~~Hell's Unleasher~Deathrattle"
-    requireTarget, keyWord, description = False, "", "Last Words: Summon a Lich."
+    requireTarget, effects, description = False, "", "Last Words: Summon a Lich."
     attackAdd, healthAdd = 2, 2
     name_CN = "冥界献祭者"
 
@@ -1612,7 +1610,7 @@ class Deathrattle_HellsUnleasher(Deathrattle_Minion):
 
 class CallofVoid(SVSpell):
     Class, school, name = "Shadowcraft", "", "Call of the Void"
-    requireTarget, mana = True, 4
+    requireTarget, mana, effects = True, 4, ""
     index = "SV_Basic~Shadowcraft~Spell~4~Call of the Void"
     description = "Destroy an enemy follower. Necromancy (4): Summon a Lich."
     name_CN = "来自深渊的诱惑"
@@ -1640,7 +1638,7 @@ class Gravewaker(SVMinion):
     Class, race, name = "Shadowcraft", "", "Gravewaker"
     mana, attack, health = 5, 3, 3
     index = "SV_Basic~Shadowcraft~Minion~5~3~3~~Gravewaker~Deathrattle"
-    requireTarget, keyWord, description = False, "", "Last Words: Summon a Zombie."
+    requireTarget, effects, description = False, "", "Last Words: Summon a Zombie."
     attackAdd, healthAdd = 2, 2
     name_CN = "唤骨人"
 
@@ -1659,7 +1657,7 @@ class GhostlyRider(SVMinion):
     Class, race, name = "Shadowcraft", "", "Ghostly Rider"
     mana, attack, health = 6, 5, 5
     index = "SV_Basic~Shadowcraft~Minion~6~5~5~~Ghostly Rider~Deathrattle"
-    requireTarget, keyWord, description = False, "Taunt", "Ward. Last Words: Give Ward to a random allied follower."
+    requireTarget, effects, description = False, "Taunt", "Ward. Last Words: Give Ward to a random allied follower."
     attackAdd, healthAdd = 2, 2
     name_CN = "幽灵骑士"
 
@@ -1677,17 +1675,17 @@ class Deathrattle_GhostlyRider(Deathrattle_Minion):
             else:
                 minions = [minion.pos for minion in curGame.minionsAlive(self.entity.ID)]
                 i = npchoice(minions) if minions else -1
-                curGame.picks.append(i)
+                curGame.picks_Backup.append(i)
             if i > -1:
                 minion = curGame.minions[self.entity.ID][i]
-                minion.getsStatus("Taunt")
+                minion.getsEffect("Taunt")
 
 
 class UndeadKing(SVMinion):
     Class, race, name = "Shadowcraft", "", "Undead King"
     mana, attack, health = 7, 4, 4
     index = "SV_Basic~Shadowcraft~Minion~7~4~4~~Undead King~Deathrattle"
-    requireTarget, keyWord, description = False, "", "Last Words: Summon twi Zombies."
+    requireTarget, effects, description = False, "", "Last Words: Summon twi Zombies."
     attackAdd, healthAdd = 2, 2
     name_CN = "复活的巫王"
 
@@ -1709,7 +1707,7 @@ class ForestBat(SVMinion):
     Class, race, name = "Bloodcraft", "", "Forest Bat"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Shadowcraft~Minion~1~1~1~~Fores tBat~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "丛林蝙蝠"
 
@@ -1718,7 +1716,7 @@ class Nightmare(SVMinion):
     Class, race, name = "Bloodcraft", "", "Nightmare"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Bloodcraft~Minion~2~2~2~~Nightmare~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Gain +2/+0 if Vengeance is active for you."
+    requireTarget, effects, description = False, "", "Fanfare: Gain +2/+0 if Vengeance is active for you."
     attackAdd, healthAdd = 2, 2
     name_CN = "梦魔"
 
@@ -1735,14 +1733,14 @@ class SweetfangVampire(SVMinion):
     Class, race, name = "Bloodcraft", "", "Sweetfang Vampire"
     mana, attack, health = 2, 1, 3
     index = "SV_Basic~Bloodcraft~Minion~2~1~3~~Sweetfang Vampire~Drain"
-    requireTarget, keyWord, description = False, "Drain", "Drain."
+    requireTarget, effects, description = False, "Drain", "Drain."
     attackAdd, healthAdd = 2, 2
     name_CN = "魅惑的暗夜眷属"
 
 
 class BloodPact(SVSpell):
     Class, school, name = "Bloodcraft", "", "Blood Pact"
-    requireTarget, mana = False, 2
+    requireTarget, mana, effects = False, 2, ""
     index = "SV_Basic~Bloodcraft~Spell~2~Blood Pact"
     description = "Deal 2 damage to your leader. Draw 2 cards."
     name_CN = "血之契约"
@@ -1757,7 +1755,7 @@ class BloodPact(SVSpell):
 
 class RazoryClaw(SVSpell):
     Class, school, name = "Bloodcraft", "", "Razory Claw"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Bloodcraft~Spell~2~Razory Claw"
     description = "Deal 2 damage to your leader and 3 damage to an enemy."
     name_CN = "利爪的一击"
@@ -1783,7 +1781,7 @@ class CrazedExecutioner(SVMinion):
     Class, race, name = "Bloodcraft", "", "Crazed Executioner"
     mana, attack, health = 3, 3, 3
     index = "SV_Basic~Bloodcraft~Minion~3~3~3~~Crazed Executioner~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Deal 2 damage to your leader."
+    requireTarget, effects, description = False, "", "Fanfare: Deal 2 damage to your leader."
     attackAdd, healthAdd = 2, 2
     name_CN = "疯狂的处刑人"
 
@@ -1796,7 +1794,7 @@ class DarkGeneral(SVMinion):
     Class, race, name = "Bloodcraft", "", "Dark General"
     mana, attack, health = 4, 4, 3
     index = "SV_Basic~Bloodcraft~Minion~4~4~3~~Dark General~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Gain Storm if Vengeance is active for you."
+    requireTarget, effects, description = False, "", "Fanfare: Gain Storm if Vengeance is active for you."
     attackAdd, healthAdd = 2, 2
     name_CN = "暗魔女将"
 
@@ -1805,7 +1803,7 @@ class DarkGeneral(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isVengeance(self.ID):
-            self.getsStatus("Charge")
+            self.getsEffect("Charge")
         return None
 
 
@@ -1813,7 +1811,7 @@ class WardrobeRaider(SVMinion):
     Class, race, name = "Bloodcraft", "", "Wardrobe Raider"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Bloodcraft~Minion~4~3~4~~Wardrobe Raider"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     evolveRequireTarget = True
     name_CN = "血祭侵略者"
@@ -1836,7 +1834,7 @@ class WardrobeRaider(SVMinion):
 
 class CrimsonPurge(SVSpell):
     Class, school, name = "Bloodcraft", "", "Crimson Purge"
-    requireTarget, mana = True, 4
+    requireTarget, mana, effects = True, 4, ""
     index = "SV_Basic~Bloodcraft~Spell~4~Crimson Purge"
     description = "Deal 2 damage to your leader. Destroy an enemy follower."
     name_CN = "绯红净化"
@@ -1861,7 +1859,7 @@ class ImpLancer(SVMinion):
     Class, race, name = "Bloodcraft", "", "Imp Lancer"
     mana, attack, health = 6, 3, 6
     index = "SV_Basic~Bloodcraft~Minion~6~3~6~~Imp Lancer~Charge"
-    requireTarget, keyWord, description = False, "Charge", "Storm."
+    requireTarget, effects, description = False, "Charge", "Storm."
     attackAdd, healthAdd = 2, 2
     name_CN = "恶魔追猎者"
 
@@ -1885,7 +1883,7 @@ class AbyssBeast(SVMinion):
     Class, race, name = "Bloodcraft", "", "Abyss Beast"
     mana, attack, health = 7, 5, 6
     index = "SV_Basic~Bloodcraft~Minion~7~5~6~~Abyss Beast~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Deal 5 damage to an enemy follower if Vengeance is active for you."
+    requireTarget, effects, description = True, "", "Fanfare: Deal 5 damage to an enemy follower if Vengeance is active for you."
     attackAdd, healthAdd = 2, 2
     name_CN = "深渊巨兽"
 
@@ -1916,7 +1914,7 @@ class Pegasus(SVMinion):
     Class, race, name = "Havencraft", "", "Pegasus"
     mana, attack, health = 5, 5, 3
     index = "SV_Basic~Havencraft~Minion~5~5~3~~Pegasus~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "贝卡萨斯"
 
@@ -1925,7 +1923,7 @@ class HolyFalcon(SVMinion):
     Class, race, name = "Havencraft", "", "Holy Falcon"
     mana, attack, health = 3, 2, 1
     index = "SV_Basic~Havencraft~Minion~3~2~1~~Holy Falcon~Charge~Uncollectible"
-    requireTarget, keyWord, description = False, "Charge", "Storm."
+    requireTarget, effects, description = False, "Charge", "Storm."
     attackAdd, healthAdd = 2, 2
     name_CN = "神圣猎鹰"
 
@@ -1934,7 +1932,7 @@ class HolyflameTiger(SVMinion):
     Class, race, name = "Havencraft", "", "Holyflame Tiger"
     mana, attack, health = 4, 4, 4
     index = "SV_Basic~Havencraft~Minion~4~4~4~~Holyflame Tiger~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "圣炎猛虎"
 
@@ -1943,7 +1941,7 @@ class HolywingDragon(SVMinion):
     Class, race, name = "Havencraft", "", "Holywing Dragon"
     mana, attack, health = 6, 6, 6
     index = "SV_Basic~Havencraft~Minion~6~6~6~~Holywing Dragon~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "圣翼的白龙"
 
@@ -2004,14 +2002,14 @@ class SnakePriestess(SVMinion):
     Class, race, name = "Havencraft", "", "Snake Priestess"
     mana, attack, health = 2, 1, 3
     index = "SV_Basic~Havencraft~Minion~2~1~3~~Snake Priestess~Taunt"
-    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    requireTarget, effects, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "蛇神女祭司"
 
 
 class HallowedDogma(SVSpell):
     Class, school, name = "Havencraft", "", "Hallowed Dogma"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Havencraft~Spell~2~Hallowed Dogma"
     description = "Subtract 2 from the Countdown of an allied amulet. Draw a card."
     name_CN = "崇高的教义"
@@ -2036,7 +2034,7 @@ class HallowedDogma(SVSpell):
 
 class BlackenedScripture(SVSpell):
     Class, school, name = "Havencraft", "", "Blackened Scripture"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Havencraft~Spell~2~Blackened Scripture"
     description = "Banish an enemy follower with 3 defense or less."
     name_CN = "漆黑法典"
@@ -2102,7 +2100,7 @@ class PriestoftheCudgel(SVMinion):
     Class, race, name = "Havencraft", "", "Priest of the Cudgel"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Havencraft~Minion~4~3~4~~Priest of the Cudgel"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     evolveRequireTarget = True
     name_CN = "持矛锤的僧侣"
@@ -2127,7 +2125,7 @@ class GreaterPriestess(SVMinion):
     Class, race, name = "Havencraft", "", "Greater Priestess"
     mana, attack, health = 5, 3, 4
     index = "SV_Basic~Havencraft~Minion~5~3~4~~Greater Priestess~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Subtract 1 from the Countdown of all allied amulets."
+    requireTarget, effects, description = False, "", "Fanfare: Subtract 1 from the Countdown of all allied amulets."
     attackAdd, healthAdd = 2, 2
     name_CN = "高阶牧师"
 
@@ -2140,7 +2138,7 @@ class GreaterPriestess(SVMinion):
 
 class AcolytesLight(SVSpell):
     Class, school, name = "Havencraft", "", "Acolyte's Light"
-    requireTarget, mana = True, 5
+    requireTarget, mana, effects = True, 5, ""
     index = "SV_Basic~Havencraft~Spell~5~Acolyte's Light"
     description = "Banish an enemy follower. Restore X defense to your leader. X equals that follower's defense."
     name_CN = "破邪圣光"
@@ -2187,7 +2185,7 @@ class Curate(SVMinion):
     Class, race, name = "Havencraft", "", "Curate"
     mana, attack, health = 7, 5, 5
     index = "SV_Basic~Havencraft~Minion~7~5~5~~Curate~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Restore 5 defense to an ally."
+    requireTarget, effects, description = True, "", "Fanfare: Restore 5 defense to an ally."
     attackAdd, healthAdd = 2, 2
     name_CN = "伟大的女修士"
 
@@ -2213,7 +2211,7 @@ class Puppet(SVMinion):
     Class, race, name = "Portalcraft", "", "Puppet"
     mana, attack, health = 0, 1, 1
     index = "SV_Basic~Portalcraft~Minion~0~1~1~~Puppet~Rush~Uncollectible"
-    requireTarget, keyWord, description = False, "Rush", "Rush. At the end of your opponent's turn, destroy this follower."
+    requireTarget, effects, description = False, "Rush", "Rush. At the end of your opponent's turn, destroy this follower."
     attackAdd, healthAdd = 2, 2
     name_CN = "悬丝傀儡"
 
@@ -2238,7 +2236,7 @@ class AnalyzingArtifact(SVMinion):
     Class, race, name = "Portalcraft", "Artifact", "Analyzing Artifact"
     mana, attack, health = 1, 2, 1
     index = "SV_Basic~Portalcraft~Minion~1~2~1~Artifact~Analyzing Artifact~Deathrattle~Uncollectible"
-    requireTarget, keyWord, description = False, "", "Last Words: Draw a card."
+    requireTarget, effects, description = False, "", "Last Words: Draw a card."
     attackAdd, healthAdd = 2, 2
     name_CN = "解析的创造物"
 
@@ -2256,7 +2254,7 @@ class RadiantArtifact(SVMinion):
     Class, race, name = "Portalcraft", "Artifact", "Radiant Artifact"
     mana, attack, health = 5, 4, 3
     index = "SV_Basic~Portalcraft~Minion~5~4~3~Artifact~Radiant Artifact~Charge~Deathrattle~Uncollectible"
-    requireTarget, keyWord, description = False, "Charge", "Storm. Last Words: If it is your turn, then put a random Artifact card from your deck into your hand. If it is your opponent's turn, draw a card."
+    requireTarget, effects, description = False, "Charge", "Storm. Last Words: If it is your turn, then put a random Artifact card from your deck into your hand. If it is your opponent's turn, draw a card."
     attackAdd, healthAdd = 2, 2
     name_CN = "绚烂的创造物"
 
@@ -2276,7 +2274,7 @@ class Deathrattle_RadiantArtifact(Deathrattle_Minion):
                     artifacts = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
                                  card.type == "Minion" and "Artifact" in card.race]
                     i = npchoice(artifacts) if artifacts else -1
-                    curGame.picks.append(i)
+                    curGame.picks_Backup.append(i)
                 if i > -1: curGame.Hand_Deck.drawCard(self.entity.ID, i)
         else:
             self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
@@ -2286,7 +2284,7 @@ class BarrierArtifact(SVMinion):
     Class, race, name = "Portalcraft", "Artifact", "Barrier Artifact"
     mana, attack, health = 5, 4, 6
     index = "SV_Basic~Portalcraft~Minion~5~4~6~Artifact~Barrier Artifact~Bane~Taunt~Uncollectible"
-    requireTarget, keyWord, description = False, "Bane,Taunt", "Bane.Ward."
+    requireTarget, effects, description = False, "Bane,Taunt", "Bane.Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "守御的创造物"
 
@@ -2295,7 +2293,7 @@ class KeenedgeArtifact(SVMinion):
     Class, race, name = "Portalcraft", "Artifact", "Keenedge Artifact"
     mana, attack, health = 5, 3, 4
     index = "SV_Basic~Portalcraft~Minion~5~4~6~Artifact~Keenedge Artifact~Rush~Drain~Uncollectible"
-    requireTarget, keyWord, description = False, "Rush,Drain", "Rush.Drain."
+    requireTarget, effects, description = False, "Rush,Drain", "Rush.Drain."
     attackAdd, healthAdd = 2, 2
     name_CN = "锋锐的创造物"
 
@@ -2304,7 +2302,7 @@ class AirstrikeArtifact(SVMinion):
     Class, race, name = "Portalcraft", "Artifact", "Airstrike Artifact"
     mana, attack, health = 5, 2, 2
     index = "SV_Basic~Portalcraft~Minion~5~2~2~Artifact~Airstrike Artifact~Charge~Deathrattle~Uncollectible"
-    requireTarget, keyWord, description = False, "Charge", "Storm. Last Words: Deal 2 damage to the enemy leader."
+    requireTarget, effects, description = False, "Charge", "Storm. Last Words: Deal 2 damage to the enemy leader."
     attackAdd, healthAdd = 2, 2
     name_CN = "迅袭的创造物"
 
@@ -2332,7 +2330,7 @@ class Trig_ParadigmShift(TrigHand):
 
 class ParadigmShift(SVSpell):
     Class, school, name = "Portalcraft", "", "Paradigm Shift"
-    requireTarget, mana = False, 7
+    requireTarget, mana, effects = False, 7, ""
     index = "SV_Basic~Portalcraft~Spell~7~Paradigm Shift~Choose~Uncollectible"
     description = "Whenever an allied Artifact follower is destroyed, subtract 1 from the cost of this card. Choose: Summon a Barrier Artifact, Keenedge Artifact, or Airstrike Artifact."
     name_CN = "典范转移"
@@ -2355,7 +2353,7 @@ class ParadigmShift(SVSpell):
         return None
 
     def discoverDecided(self, option, pool=None):
-        self.Game.picks.append(type(option))
+        self.Game.picks_Backup.append(type(option))
         self.Game.summon([option], (-1, "totheRightEnd"), self)
 
 
@@ -2363,7 +2361,7 @@ class Puppeteer(SVMinion):
     Class, race, name = "Portalcraft", "", "Puppeteer"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Portalcraft~Minion~2~2~2~~Puppeteer"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 0, 0
     name_CN = "操偶师"
 
@@ -2377,16 +2375,16 @@ class Puppeteer(SVMinion):
             else:
                 puppets = [i for i, card in enumerate(ownHand) if card.type == "Minion" and card.name == "Puppet"]
                 i = npchoice(puppets) if puppets else -1
-                curGame.picks.append(i)
+                curGame.picks_Backup.append(i)
             if i > -1:
-                ownHand[i].getsStatus("Bane")
+                ownHand[i].getsEffect("Bane")
 
 
 class MechanizedServant(SVMinion):
     Class, race, name = "Portalcraft", "", "Mechanized Servant"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Portalcraft~Minion~2~2~2~~Mechanized Servant~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: If Resonance is active for you, gain Rush."
+    requireTarget, effects, description = False, "", "Fanfare: If Resonance is active for you, gain Rush."
     attackAdd, healthAdd = 2, 2
     name_CN = "机械女仆"
 
@@ -2395,7 +2393,7 @@ class MechanizedServant(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isResonance(self.ID):
-            self.getsStatus("Rush")
+            self.getsEffect("Rush")
         return None
 
 
@@ -2403,7 +2401,7 @@ class MagisteelLion(SVMinion):
     Class, race, name = "Portalcraft", "", "Magisteel Lion"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Portalcraft~Minion~2~2~2~~Magisteel Lion~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Put 2 Analyzing Artifacts into your deck."
+    requireTarget, effects, description = False, "", "Fanfare: Put 2 Analyzing Artifacts into your deck."
     attackAdd, healthAdd = 2, 2
     name_CN = "魔铁狂狮"
 
@@ -2416,7 +2414,7 @@ class MagisteelPuppet(SVMinion):
     Class, race, name = "Portalcraft", "", "Magisteel Puppet"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Portalcraft~Minion~2~2~2~~Magisteel Puppet"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     name_CN = "魔钢傀儡"
 
@@ -2426,7 +2424,7 @@ class MagisteelPuppet(SVMinion):
 
 class DimensionCut(SVSpell):
     Class, school, name = "Portalcraft", "", "Dimension Cut"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Portalcraft~Spell~2~Dimension Cut"
     description = "Deal 3 damage to an enemy follower. If Resonance is active for you, deal 5 damage instead."
     name_CN = "次元断"
@@ -2457,7 +2455,7 @@ class ToySoldier(SVMinion):
     Class, race, name = "Portalcraft", "", "Toy Soldier"
     mana, attack, health = 3, 2, 1
     index = "SV_Basic~Portalcraft~Minion~3~2~1~~Toy Soldier"
-    requireTarget, keyWord, description = False, "", "Fanfare: Put a Puppet into your hand."
+    requireTarget, effects, description = False, "", "Fanfare: Put a Puppet into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "玩具士兵"
 
@@ -2487,7 +2485,7 @@ class AutomatonKnight(SVMinion):
     Class, race, name = "Portalcraft", "", "Automaton Knight"
     mana, attack, health = 3, 3, 2
     index = "SV_Basic~Portalcraft~Minion~3~3~2~~Automaton Knight~Deathrattle"
-    requireTarget, keyWord, description = False, "", "Last Words: Put a Puppet into your hand."
+    requireTarget, effects, description = False, "", "Last Words: Put a Puppet into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "机偶骑士"
 
@@ -2505,7 +2503,7 @@ class IronforgedFighter(SVMinion):
     Class, race, name = "Portalcraft", "", "Ironforged Fighter"
     mana, attack, health = 4, 4, 3
     index = "SV_Basic~Portalcraft~Minion~4~4~3~~Ironforged Fighter~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Put 2 Radiant Artifacts into your deck."
+    requireTarget, effects, description = False, "", "Fanfare: Put 2 Radiant Artifacts into your deck."
     attackAdd, healthAdd = 2, 2
     name_CN = "钢铁拳斗士"
 
@@ -2518,7 +2516,7 @@ class RoanWingedNexx(SVMinion):
     Class, race, name = "Portalcraft", "", "Roan Winged Nexx"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Portalcraft~Minion~4~3~4~~Roan Winged Nexx"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     evolveRequireTarget = True
     name_CN = "白黑双翼·涅克丝"
@@ -2556,7 +2554,7 @@ class BlackIronSoldier(SVMinion):
     Class, race, name = "Portalcraft", "", "Black Iron Soldier"
     mana, attack, health = 6, 5, 6
     index = "SV_Basic~Portalcraft~Minion~6~5~6~~Black Iron Soldier~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Put a random Artifact card from your deck into your hand."
+    requireTarget, effects, description = False, "", "Fanfare: Put a random Artifact card from your deck into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "黑铁士兵"
 
@@ -2569,7 +2567,7 @@ class BlackIronSoldier(SVMinion):
                 artifacts = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
                              card.type == "Minion" and "Artifact" in card.race]
                 i = npchoice(artifacts) if artifacts else -1
-                curGame.picks.append(i)
+                curGame.picks_Backup.append(i)
             if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return None
 
@@ -2844,7 +2842,7 @@ class TrigInvocation(TrigDeck):
                     minions = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
                                card.type == "Minion" and card.name == self.entity.name]
                     i = npchoice(minions) if minions and curGame.space(self.entity.ID) > 0 else -1
-                    curGame.picks.append(i)
+                    curGame.picks_Backup.append(i)
                 if i > -1:
                     minion = curGame.summonfrom(i, self.entity.ID, -1, self, source='D')
                     minion.afterInvocation(signal, ID, subject, target, number, comment)
@@ -2854,7 +2852,7 @@ class Goblin(SVMinion):
     Class, race, name = "Neutral", "", "Goblin"
     mana, attack, health = 1, 1, 2
     index = "SV_Basic~Neutral~Minion~1~1~2~~Goblin"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "哥布林"
 
@@ -2863,7 +2861,7 @@ class Fighter(SVMinion):
     Class, race, name = "Neutral", "", "Fighter"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Neutral~Minion~2~2~2~~Fighter"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "剑斗士"
 
@@ -2899,7 +2897,7 @@ class Trig_WellofDestiny(TrigBoard):
                 except:
                     pass
                 i = npchoice(minions).pos if minions else -1
-                curGame.picks.append(i)
+                curGame.picks_Backup.append(i)
             if i > -1:
                 minion = curGame.minions[self.entity.ID][i]
                 minion.buffDebuff(1, 1)
@@ -2909,7 +2907,7 @@ class MercenaryDrifter(SVMinion):
     Class, race, name = "Neutral", "", "Mercenary Drifter"
     mana, attack, health = 3, 3, 2
     index = "SV_Basic~Neutral~Minion~3~3~2~~Mercenary Drifter"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "流浪的佣兵"
 
@@ -2918,7 +2916,7 @@ class HarnessedFlame(SVMinion):
     Class, race, name = "Neutral", "", "Harnessed Flame"
     mana, attack, health = 3, 2, 1
     index = "SV_Basic~Neutral~Minion~3~2~1~~Harnessed Flame"
-    requireTarget, keyWord, description = False, "", "Strike: Deal 2 damage to the enemy leader.At the start of your turn, this follower combines with an allied Harnessed Glass to become Flame and Glass."
+    requireTarget, effects, description = False, "", "Strike: Deal 2 damage to the enemy leader.At the start of your turn, this follower combines with an allied Harnessed Glass to become Flame and Glass."
     attackAdd, healthAdd = 2, 2
     name_CN = "被封印的的双子·烈焰"
 
@@ -2962,7 +2960,7 @@ class HarnessedGlass(SVMinion):
     Class, race, name = "Neutral", "", "Harnessed Glass"
     mana, attack, health = 3, 1, 2
     index = "SV_Basic~Neutral~Minion~3~2~1~~Harnessed Glass"
-    requireTarget, keyWord, description = False, "", "Strike: Deal 1 damage to all enemy followers.At the start of your turn, this follower combines with an allied Harnessed Flame to become Flame and Glass."
+    requireTarget, effects, description = False, "", "Strike: Deal 1 damage to all enemy followers.At the start of your turn, this follower combines with an allied Harnessed Flame to become Flame and Glass."
     attackAdd, healthAdd = 2, 2
     name_CN = "被封印的双子·琉璃"
 
@@ -3008,7 +3006,7 @@ class FlameandGlass(SVMinion):
     Class, race, name = "Neutral", "", "Flame and Glass"
     mana, attack, health = 7, 7, 7
     index = "SV_Basic~Neutral~Minion~7~7~7~~Flame and Glass~Charge~Uncollectible"
-    requireTarget, keyWord, description = False, "Charge", "Storm.Strike: Deal 7 damage to all enemies."
+    requireTarget, effects, description = False, "Charge", "Storm.Strike: Deal 7 damage to all enemies."
     attackAdd, healthAdd = 2, 2
     name_CN = "烈焰·琉璃"
 
@@ -3034,7 +3032,7 @@ class Goliath(SVMinion):
     Class, race, name = "Neutral", "", "Goliath"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Neutral~Minion~4~3~4~~Goliath"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "歌利亚"
 
@@ -3043,7 +3041,7 @@ class AngelicSwordMaiden(SVMinion):
     Class, race, name = "Neutral", "", "Angelic Sword Maiden"
     mana, attack, health = 5, 2, 6
     index = "SV_Basic~Neutral~Minion~5~2~6~~Angelic Sword Maiden~Taunt"
-    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    requireTarget, effects, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "天女剑士"
 
@@ -3055,7 +3053,7 @@ class Fairy(SVMinion):
     Class, race, name = "Forestcraft", "", "Fairy"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Forestcraft~Minion~1~1~1~~Fairy~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "妖精"
 
@@ -3064,7 +3062,7 @@ class FairyWisp(SVMinion):
     Class, race, name = "Forestcraft", "", "Fairy Wisp"
     mana, attack, health = 0, 1, 1
     index = "SV_Basic~Forestcraft~Minion~0~1~1~~Fairy Wisp~Battlecry~Uncollectible"
-    requireTarget, keyWord, description = False, "", "Fanfare: Banish this follower if at least 2 other cards were played this turn."
+    requireTarget, effects, description = False, "", "Fanfare: Banish this follower if at least 2 other cards were played this turn."
     attackAdd, healthAdd = 2, 2
     name_CN = "妖精萤火"
 
@@ -3082,7 +3080,7 @@ class WaterFairy(SVMinion):
     Class, race, name = "Forestcraft", "", "Water Fairy"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Forestcraft~Minion~1~1~1~~Water Fairy~Deathrattle"
-    requireTarget, keyWord, description = False, "", "Last Words: Put a Fairy into your hand."
+    requireTarget, effects, description = False, "", "Last Words: Put a Fairy into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "水之妖精"
 
@@ -3100,7 +3098,7 @@ class FairyWhisperer(SVMinion):
     Class, race, name = "Forestcraft", "", "Fairy Whisperer"
     mana, attack, health = 2, 1, 1
     index = "SV_Basic~Forestcraft~Minion~2~1~1~~Fairy Whisperer~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Put 2 Fairies into your hand."
+    requireTarget, effects, description = False, "", "Fanfare: Put 2 Fairies into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "妖精语森林使者"
 
@@ -3113,7 +3111,7 @@ class ElfGuard(SVMinion):
     Class, race, name = "Forestcraft", "", "Elf Guard"
     mana, attack, health = 2, 1, 3
     index = "SV_Basic~Forestcraft~Minion~2~1~3~~Elf Guard~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Gain +1/+1 and Ward if at least 2 other cards were played this turn."
+    requireTarget, effects, description = False, "", "Fanfare: Gain +1/+1 and Ward if at least 2 other cards were played this turn."
     attackAdd, healthAdd = 2, 2
     name_CN = "精灵守卫"
 
@@ -3124,7 +3122,7 @@ class ElfGuard(SVMinion):
         numCardsPlayed = self.Game.combCards(self.ID)
         if numCardsPlayed >= 2:
             self.buffDebuff(1, 1)
-            self.getsStatus("Taunt")
+            self.getsEffect("Taunt")
         return None
 
 
@@ -3132,7 +3130,7 @@ class ElfMetallurgist(SVMinion):
     Class, race, name = "Forestcraft", "", "Elf Metallurgist"
     mana, attack, health = 2, 2, 1
     index = "SV_Basic~Forestcraft~Minion~2~2~1~~Elf Metallurgist~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Deal 2 damage to an enemy follower if at least 2 other cards were played this turn."
+    requireTarget, effects, description = True, "", "Fanfare: Deal 2 damage to an enemy follower if at least 2 other cards were played this turn."
     attackAdd, healthAdd = 2, 2
     name_CN = "金属精灵法师"
 
@@ -3158,7 +3156,7 @@ class ElfMetallurgist(SVMinion):
 
 class SylvanJustice(SVSpell):
     Class, school, name = "Forestcraft", "", "Sylvan Justice"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Forestcraft~Spell~2~~Sylvan Justice"
     description = "Deal 2 damage to an enemy follower. Put a Fairy into your hand."
     name_CN = "森林的反扑"
@@ -3183,7 +3181,7 @@ class DarkElfFaure(SVMinion):
     Class, race, name = "Forestcraft", "", "Dark Elf Faure"
     mana, attack, health = 3, 2, 3
     index = "SV_Basic~Forestcraft~Minion~3~2~3~~Dark Elf Faure"
-    requireTarget, keyWord, description = False, "", "Strike: Put a Fairy into your hand."
+    requireTarget, effects, description = False, "", "Strike: Put a Fairy into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "黑暗精灵·芙蕾"
 
@@ -3207,7 +3205,7 @@ class Okami(SVMinion):
     Class, race, name = "Forestcraft", "", "Okami"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Forestcraft~Minion~4~3~4~~Okami"
-    requireTarget, keyWord, description = False, "", "Whenever another allied follower comes into play, gain +1/+0."
+    requireTarget, effects, description = False, "", "Whenever another allied follower comes into play, gain +1/+0."
     attackAdd, healthAdd = 2, 2
     name_CN = "巨狼"
 
@@ -3231,7 +3229,7 @@ class RoseGardener(SVMinion):
     Class, race, name = "Forestcraft", "", "Rose Gardener"
     mana, attack, health = 4, 4, 3
     index = "SV_Basic~Forestcraft~Minion~4~4~3~~Rose Gardener"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     evolveRequireTarget = True
     name_CN = "玫瑰花园守卫者"
@@ -3247,14 +3245,14 @@ class RoseGardener(SVMinion):
         if target:
             if isinstance(target, list): target = target[0]
             if target.onBoard:
-                self.Game.returnMiniontoHand(target, deathrattlesStayArmed=False)
+                self.Game.returnObj2Hand(target, deathrattlesStayArmed=False)
 
 
 class Treant(SVMinion):
     Class, race, name = "Forestcraft", "", "Treant"
     mana, attack, health = 5, 4, 4
     index = "SV_Basic~Forestcraft~Minion~5~4~4~~Treant~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Gain +2/+2 if at least 2 other cards were played this turn."
+    requireTarget, effects, description = False, "", "Fanfare: Gain +2/+2 if at least 2 other cards were played this turn."
     attackAdd, healthAdd = 2, 2
     name_CN = "树精"
 
@@ -3272,7 +3270,7 @@ class ElfTracker(SVMinion):
     Class, race, name = "Forestcraft", "", "Elf Tracker"
     mana, attack, health = 6, 4, 5
     index = "SV_Basic~Forestcraft~Minion~6~4~5~~Elf Tracker~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Deal 1 damage to a random enemy follower. Do this 2 times."
+    requireTarget, effects, description = False, "", "Fanfare: Deal 1 damage to a random enemy follower. Do this 2 times."
     attackAdd, healthAdd = 2, 2
     name_CN = "精灵驱逐者"
 
@@ -3288,9 +3286,9 @@ class ElfTracker(SVMinion):
                     objs = curGame.minionsAlive(side)
                     if objs:
                         char = npchoice(objs)
-                        curGame.picks.append((char.pos, "Minion%d" % side))
+                        curGame.picks_Backup.append((char.pos, "Minion%d" % side))
                     else:
-                        curGame.picks.append((0, ''))
+                        curGame.picks_Backup.append((0, ''))
                 if char:
                     self.dealsDamage(char, 1)
                 else:
@@ -3302,7 +3300,7 @@ class MagnaBotanist(SVMinion):
     Class, race, name = "Forestcraft", "", "Magna Botanist"
     mana, attack, health = 6, 5, 5
     index = "SV_Basic~Forestcraft~Minion~6~5~5~~Magna Botanist~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Give +1/+1 to all allied followers if at least 2 other cards were played this turn."
+    requireTarget, effects, description = False, "", "Fanfare: Give +1/+1 to all allied followers if at least 2 other cards were played this turn."
     attackAdd, healthAdd = 2, 2
     name_CN = "伟大的药剂师"
 
@@ -3324,7 +3322,7 @@ class SteelcladKnight(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Steelclad Knight"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Swordcraft~Minion~2~2~2~Officer~Steelclad Knight~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "铁甲骑士"
 
@@ -3333,7 +3331,7 @@ class HeavyKnight(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Heavy Knight"
     mana, attack, health = 1, 1, 2
     index = "SV_Basic~Swordcraft~Minion~1~1~2~Officer~Heavy Knight~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "重装骑士"
 
@@ -3342,7 +3340,7 @@ class Knight(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Knight"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Knight~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "骑士"
 
@@ -3351,14 +3349,14 @@ class ShieldGuardian(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Shield Guardian"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Shield Guardian~Taunt~Uncollectible"
-    requireTarget, keyWord, description = False, "Taunt", "Ward"
+    requireTarget, effects, description = False, "Taunt", "Ward"
     attackAdd, healthAdd = 2, 2
     name_CN = "战盾卫士"
 
 
 class GildedBlade(SVSpell):
     Class, school, name = "Swordcraft", "", "Gilded Blade"
-    requireTarget, mana = True, 1
+    requireTarget, mana, effects = True, 1, ""
     index = "SV_Basic~Swordcraft~Spell~1~~Gilded Blade~Uncollectible"
     description = "Deal 1 damage to an enemy follower."
     name_CN = "黄金短剑"
@@ -3380,7 +3378,7 @@ class GildedBlade(SVSpell):
 
 class GildedGoblet(SVSpell):
     Class, school, name = "Swordcraft", "", "Gilded Goblet"
-    requireTarget, mana = True, 1
+    requireTarget, mana, effects = True, 1, ""
     index = "SV_Basic~Swordcraft~Spell~1~~Gilded Goblet~Uncollectible"
     description = "Restore 2 defense to an ally."
     name_CN = "黄金之杯"
@@ -3398,7 +3396,7 @@ class GildedGoblet(SVSpell):
 
 class GildedBoots(SVSpell):
     Class, school, name = "Swordcraft", "", "Gilded Boots"
-    requireTarget, mana = True, 1
+    requireTarget, mana, effects = True, 1, ""
     index = "SV_Basic~Swordcraft~Spell~1~~Gilded Boots~Uncollectible"
     description = "Give Rush to an allied follower."
     name_CN = "黄金之靴"
@@ -3413,13 +3411,13 @@ class GildedBoots(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            target.getsStatus("Rush")
+            target.getsEffect("Rush")
         return target
 
 
 class GildedNecklace(SVSpell):
     Class, school, name = "Swordcraft", "", "Gilded Necklace"
-    requireTarget, mana = True, 1
+    requireTarget, mana, effects = True, 1, ""
     index = "SV_Basic~Swordcraft~Spell~1~~Gilded Necklace~Uncollectible"
     description = "Give +1/+1 to an allied follower."
     name_CN = "黄金首饰"
@@ -3442,14 +3440,14 @@ class Quickblader(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Quickblader"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Swordcraft~Minion~1~1~1~Officer~Quickblader~Charge"
-    requireTarget, keyWord, description = False, "Charge", "Storm"
+    requireTarget, effects, description = False, "Charge", "Storm"
     attackAdd, healthAdd = 2, 2
     name_CN = "迅捷的剑士"
 
 
 class UnbridledFury(SVSpell):
     Class, school, name = "Swordcraft", "", "Unbridled Fury"
-    requireTarget, mana = True, 1
+    requireTarget, mana, effects = True, 1, ""
     index = "SV_Basic~Swordcraft~Spell~1~~Unbridled Fury"
     description = "Deal X damage to an enemy follower. X equals the number of allied followers in play."
     name_CN = "疾风怒涛"
@@ -3473,7 +3471,7 @@ class OathlessKnight(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Oathless Knight"
     mana, attack, health = 2, 1, 1
     index = "SV_Basic~Swordcraft~Minion~2~1~1~Officer~Oathless Knight~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Summon a Knight."
+    requireTarget, effects, description = False, "", "Fanfare: Summon a Knight."
     attackAdd, healthAdd = 2, 2
     name_CN = "背水一战的骑士"
 
@@ -3486,7 +3484,7 @@ class KunoichiTrainee(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Kunoichi Trainee"
     mana, attack, health = 2, 2, 1
     index = "SV_Basic~Swordcraft~Minion~2~2~1~Officer~Kunoichi Trainee~Stealth"
-    requireTarget, keyWord, description = False, "Stealth", "Ambush."
+    requireTarget, effects, description = False, "Stealth", "Ambush."
     attackAdd, healthAdd = 2, 2
     name_CN = "女忍者学徒"
 
@@ -3495,7 +3493,7 @@ class AsceticKnight(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Ascetic Knight"
     mana, attack, health = 3, 1, 2
     index = "SV_Basic~Swordcraft~Minion~3~1~2~Officer~Ascetic Knight~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Summon a Heavy Knight."
+    requireTarget, effects, description = False, "", "Fanfare: Summon a Heavy Knight."
     attackAdd, healthAdd = 2, 2
     name_CN = "凯旋的骑士"
 
@@ -3506,7 +3504,7 @@ class AsceticKnight(SVMinion):
 
 class ForgeWeaponry(SVSpell):
     Class, school, name = "Swordcraft", "", "Forge Weaponry"
-    requireTarget, mana = True, 3
+    requireTarget, mana, effects = True, 3, ""
     index = "SV_Basic~Swordcraft~Spell~3~~Forge Weaponry"
     description = "Give +2/+2 to an allied follower. Rally (10): Give +4/+4 instead."
     name_CN = "武装强化"
@@ -3533,7 +3531,7 @@ class WhiteGeneral(SVMinion):
     Class, race, name = "Swordcraft", "Commander", "White General"
     mana, attack, health = 4, 3, 3
     index = "SV_Basic~Swordcraft~Minion~4~3~3~Commander~White General~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Give +2/+0 to an allied Officer follower."
+    requireTarget, effects, description = True, "", "Fanfare: Give +2/+0 to an allied Officer follower."
     attackAdd, healthAdd = 2, 2
     name_CN = "白银将军"
 
@@ -3558,7 +3556,7 @@ class FloralFencer(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Floral Fencer"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Swordcraft~Minion~4~3~4~Officer~Floral Fencer"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     name_CN = "华丽的花园剑士"
 
@@ -3601,7 +3599,7 @@ class NinjaMaster(SVMinion):
     Class, race, name = "Swordcraft", "Officer", "Ninja Master"
     mana, attack, health = 5, 4, 4
     index = "SV_Basic~Swordcraft~Minion~5~4~4~Officer~Ninja Master~Stealth"
-    requireTarget, keyWord, description = False, "Stealth", "Ambush."
+    requireTarget, effects, description = False, "Stealth", "Ambush."
     attackAdd, healthAdd = 2, 2
     name_CN = "忍者大师"
 
@@ -3610,7 +3608,7 @@ class SageCommander(SVMinion):
     Class, race, name = "Swordcraft", "Commander", "Sage Commander"
     mana, attack, health = 6, 4, 6
     index = "SV_Basic~Swordcraft~Minion~6~4~6~Commander~Sage Commander~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Give +1/+1 to all other allied followers."
+    requireTarget, effects, description = False, "", "Fanfare: Give +1/+1 to all other allied followers."
     attackAdd, healthAdd = 2, 2
     name_CN = "睿智指挥官"
 
@@ -3627,7 +3625,7 @@ class ClayGolem(SVMinion):
     Class, race, name = "Runecraft", "", "Clay Golem"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Runecraft~Minion~2~2~2~~Clay Golem~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "泥尘巨像"
 
@@ -3636,7 +3634,7 @@ class Snowman(SVMinion):
     Class, race, name = "Runecraft", "", "Snowman"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Runecraft~Minion~1~1~1~~Snowman~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "雪人"
 
@@ -3653,7 +3651,7 @@ class GuardianGolem(SVMinion):
     Class, race, name = "Runecraft", "", "Guardian Golem"
     mana, attack, health = 4, 3, 3
     index = "SV_Basic~Runecraft~Minion~4~3~3~~Guardian Golem~Taunt~Uncollectible"
-    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    requireTarget, effects, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "守护者巨像"
 
@@ -3662,14 +3660,14 @@ class ScrapGolem(SVMinion):
     Class, race, name = "Runecraft", "", "Scrap Golem"
     mana, attack, health = 1, 0, 2
     index = "SV_Basic~Runecraft~Minion~1~0~2~~Scrap Golem~Taunt~Uncollectible"
-    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    requireTarget, effects, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "废铁巨像"
 
 
 class ConjureGuardian(SVSpell):
     Class, school, name = "Runecraft", "", "Conjure Guardian"
-    requireTarget, mana = False, 2
+    requireTarget, mana, effects = False, 2, ""
     index = "SV_Basic~Runecraft~Spell~2~~Conjure Guardian~Uncollectible"
     description = "Summon a Guardian Golem."
     name_CN = "守护者炼成术"
@@ -3693,7 +3691,7 @@ class Trig_Spellboost(TrigHand):
 
 class Insight(SVSpell):
     Class, school, name = "Runecraft", "", "Insight"
-    requireTarget, mana = False, 1
+    requireTarget, mana, effects = False, 1, ""
     index = "SV_Basic~Runecraft~Spell~1~~Insight"
     description = "Draw a card."
     name_CN = "智慧之光"
@@ -3707,7 +3705,7 @@ class SammyWizardsApprentice(SVMinion):
     Class, race, name = "Runecraft", "", "Sammy, Wizard's Apprentice"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Runecraft~Minion~2~2~2~~Sammy, Wizard's Apprentice~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Give +1/+1 to all other allied followers."
+    requireTarget, effects, description = False, "", "Fanfare: Give +1/+1 to all other allied followers."
     attackAdd, healthAdd = 2, 2
     name_CN = "新星魔术师·萨米"
 
@@ -3719,7 +3717,7 @@ class SammyWizardsApprentice(SVMinion):
 
 class MagicMissile(SVSpell):
     Class, school, name = "Runecraft", "", "Magic Missile"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Runecraft~Spell~2~~Magic Missile"
     description = "Deal 1 damage to an enemy. Draw a card."
     name_CN = "魔导飞弹"
@@ -3742,7 +3740,7 @@ class MagicMissile(SVSpell):
 
 class ConjureGolem(SVSpell):
     Class, school, name = "Runecraft", "", "Conjure Golem"
-    requireTarget, mana = False, 2
+    requireTarget, mana, effects = False, 2, ""
     index = "SV_Basic~Runecraft~Spell~2~~Conjure Golem"
     description = "Summon a Clay Golem."
     name_CN = "巨像炼成术"
@@ -3754,7 +3752,7 @@ class ConjureGolem(SVSpell):
 
 class WindBlast(SVSpell):
     Class, school, name = "Runecraft", "", "Wind Blast"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Runecraft~Spell~2~~Wind Blast~Spellboost"
     description = "Deal 1 damage to an enemy follower. Spellboost: Deal 1 more."
     name_CN = "疾风喷射"
@@ -3782,7 +3780,7 @@ class WindBlast(SVSpell):
 
 class SummonSnow(SVSpell):
     Class, school, name = "Runecraft", "", "Summon Snow"
-    requireTarget, mana = False, 3
+    requireTarget, mana, effects = False, 3, ""
     index = "SV_Basic~Runecraft~Spell~2~~Summon Snow~Spellboost"
     description = "Summon 1 Snowman. Spellboost: Summon 1 more."
     name_CN = "雪人召唤术"
@@ -3803,7 +3801,7 @@ class DemonflameMage(SVMinion):
     Class, race, name = "Runecraft", "", "Demonflame Mage"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Runecraft~Minion~4~3~4~~Demonflame Mage"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     name_CN = "恶魔炎术师"
 
@@ -3815,7 +3813,7 @@ class DemonflameMage(SVMinion):
 
 class ConjureTwosome(SVSpell):
     Class, school, name = "Runecraft", "", "Conjure Twosome"
-    requireTarget, mana = False, 4
+    requireTarget, mana, effects = False, 4, ""
     index = "SV_Basic~Runecraft~Spell~4~~Conjure Twosome"
     description = "Summon a Clay Golem."
     name_CN = "二重炼成术"
@@ -3830,7 +3828,7 @@ class LightningShooter(SVMinion):
     Class, race, name = "Runecraft", "", "Lightning Shooter"
     mana, attack, health = 5, 3, 3
     index = "SV_Basic~Runecraft~Minion~5~3~3~~Lightning Shooter~Battlecry~Spellboost"
-    requireTarget, keyWord, description = True, "", "Fanfare: Deal 1 damage to an enemy follower. Spellboost: Deal 1 more."
+    requireTarget, effects, description = True, "", "Fanfare: Deal 1 damage to an enemy follower. Spellboost: Deal 1 more."
     attackAdd, healthAdd = 2, 2
     name_CN = "雷光射手"
 
@@ -3855,7 +3853,7 @@ class LightningShooter(SVMinion):
 
 class FieryEmbrace(SVSpell):
     Class, school, name = "Runecraft", "", "Fiery Embrace"
-    requireTarget, mana = True, 8
+    requireTarget, mana, effects = True, 8, ""
     index = "SV_Basic~Runecraft~Spell~8~~Fiery Embrace~Spellboost"
     description = "Spellboost: Subtract 1 from the cost of this card. Destroy an enemy follower."
     name_CN = "火炎粉碎术"
@@ -3889,7 +3887,7 @@ class FlameDestroyer(SVMinion):
     Class, race, name = "Runecraft", "", "Flame Destroyer"
     mana, attack, health = 10, 7, 7
     index = "SV_Basic~Runecraft~Minion~10~7~7~~Flame Destroyer~Spellboost"
-    requireTarget, keyWord, description = False, "", "Spellboost: Subtract 1 from the cost of this card."
+    requireTarget, effects, description = False, "", "Spellboost: Subtract 1 from the cost of this card."
     attackAdd, healthAdd = 2, 2
     name_CN = "魔炎毁灭者"
 
@@ -3928,7 +3926,7 @@ class BuffAura_Overflow(HasAura_toMinion):
 
     def applies(self, subject):
         if subject == self.entity:
-            Stat_Receiver(subject, self, 2, 0).effectStart()
+            Aura_Receiver(subject, self, 2, 0).effectStart()
 
     def auraAppears(self):
         isOverflow = self.entity.Game.Manas.manasUpper[self.entity.ID] >= 7
@@ -3948,14 +3946,14 @@ class Megalorca(SVMinion):
     Class, race, name = "Dragoncraft", "", "Megalorca"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Dragoncraft~Minion~2~2~2~~Megalorca~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "虎鲸"
 
 
 class BlazingBreath(SVSpell):
     Class, school, name = "Dragoncraft", "", "Blazing Breath"
-    requireTarget, mana = True, 1
+    requireTarget, mana, effects = True, 1, ""
     index = "SV_Basic~Dragoncraft~Spell~1~~Blazing Breath"
     description = "Deal 2 damage to an enemy follower."
     name_CN = "炽热吐息"
@@ -3979,7 +3977,7 @@ class Dragonrider(SVMinion):
     Class, race, name = "Dragoncraft", "", "Dragonrider"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Dragoncraft~Minion~2~2~2~~Dragonrider"
-    requireTarget, keyWord, description = False, "", "Gain +2/+0 if Overflow is active for you."
+    requireTarget, effects, description = False, "", "Gain +2/+0 if Overflow is active for you."
     attackAdd, healthAdd = 2, 2
     name_CN = "龙骑兵"
 
@@ -3994,12 +3992,12 @@ class Dragonrider(SVMinion):
 class BuffAura_Dragonrider(BuffAura_Overflow):
     def applies(self, subject):
         if subject == self.entity:
-            Stat_Receiver(subject, self, 2, 0).effectStart()
+            Aura_Receiver(subject, self, 2, 0).effectStart()
 
 
 class DragonOracle(SVSpell):
     Class, school, name = "Dragoncraft", "", "Dragon Oracle"
-    requireTarget, mana = False, 2
+    requireTarget, mana, effects = False, 2, ""
     index = "SV_Basic~Dragoncraft~Spell~2~~Dragon Oracle"
     description = "Gain an empty play point orb. Draw a card if Overflow is active for you."
     name_CN = "龙之启示"
@@ -4018,7 +4016,7 @@ class FirstbornDragon(SVMinion):
     Class, race, name = "Dragoncraft", "", "Firstborn Dragon"
     mana, attack, health = 3, 2, 3
     index = "SV_Basic~Dragoncraft~Minion~3~2~3~~Firstborn Dragon"
-    requireTarget, keyWord, description = False, "", "Gain Ward if Overflow is active for you."
+    requireTarget, effects, description = False, "", "Gain Ward if Overflow is active for you."
     attackAdd, healthAdd = 2, 2
     name_CN = "远古飞龙"
 
@@ -4032,7 +4030,7 @@ class FirstbornDragon(SVMinion):
 
 class BuffAura_FirstbornDragon(BuffAura_Overflow):
     def applies(self, subject):
-        receiver = Effect_Receiver(subject, self, "Taunt")
+        receiver = Aura_Receiver(subject, self, effect="Taunt")
         receiver.effectStart()
 
 
@@ -4040,7 +4038,7 @@ class DeathDragon(SVMinion):
     Class, race, name = "Dragoncraft", "", "Death Dragon"
     mana, attack, health = 4, 4, 4
     index = "SV_Basic~Dragoncraft~Minion~4~4~4~~Death Dragon"
-    requireTarget, keyWord, description = False, "", " "
+    requireTarget, effects, description = False, "", " "
     attackAdd, healthAdd = 2, 2
     name_CN = "尸腐龙"
 
@@ -4049,7 +4047,7 @@ class DragonWarrior(SVMinion):
     Class, race, name = "Dragoncraft", "", "Dragon Warrior"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Dragoncraft~Minion~4~3~4~~Dragon Warrior"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     evolveRequireTarget = True
     name_CN = "龙族勇士"
@@ -4070,7 +4068,7 @@ class DragonWarrior(SVMinion):
 
 class SerpentWrath(SVSpell):
     Class, school, name = "Dragoncraft", "", "Serpent Wrath"
-    requireTarget, mana = True, 4
+    requireTarget, mana, effects = True, 4, ""
     index = "SV_Basic~Dragoncraft~Spell~4~~Serpent Wrath"
     description = "Deal 6 damage to an enemy follower."
     name_CN = "龙之怒"
@@ -4094,7 +4092,7 @@ class DisasterDragon(SVMinion):
     Class, race, name = "Dragoncraft", "", "Disaster Dragon"
     mana, attack, health = 5, 4, 5
     index = "SV_Basic~Dragoncraft~Minion~5~4~5~~Disaster Dragon"
-    requireTarget, keyWord, description = False, "", "Strike: Gain +2/+0 until the end of the turn."
+    requireTarget, effects, description = False, "", "Strike: Gain +2/+0 until the end of the turn."
     attackAdd, healthAdd = 2, 2
     name_CN = "灾祸之龙"
 
@@ -4118,7 +4116,7 @@ class Dragonguard(SVMinion):
     Class, race, name = "Dragoncraft", "", "Dragonguard"
     mana, attack, health = 6, 5, 6
     index = "SV_Basic~Dragoncraft~Minion~6~5~6~~Dragonguard"
-    requireTarget, keyWord, description = False, "", "Gain Ward if Overflow is active for you."
+    requireTarget, effects, description = False, "", "Gain Ward if Overflow is active for you."
     attackAdd, healthAdd = 2, 2
     name_CN = "龙骑士守护者"
 
@@ -4129,7 +4127,7 @@ class Dragonguard(SVMinion):
 
 class BuffAura_Dragonguard(BuffAura_Overflow):
     def applies(self, subject):
-        receiver = Effect_Receiver(subject, self, "Taunt")
+        receiver = Aura_Receiver(subject, self, effect="Taunt")
         receiver.effectStart()
 
 
@@ -4137,7 +4135,7 @@ class DreadDragon(SVMinion):
     Class, race, name = "Dragoncraft", "", "Dread Dragon"
     mana, attack, health = 7, 4, 4
     index = "SV_Basic~Dragoncraft~Minion~7~4~4~~Dread Dragon~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Deal 4 damage to an enemy follower."
+    requireTarget, effects, description = True, "", "Fanfare: Deal 4 damage to an enemy follower."
     attackAdd, healthAdd = 2, 2
     name_CN = "恐惧龙兽"
 
@@ -4176,7 +4174,7 @@ class Skeleton(SVMinion):
     Class, race, name = "Shadowcraft", "", "Skeleton"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Shadowcraft~Minion~1~1~1~~Skeleton~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "骸骨士兵"
 
@@ -4185,7 +4183,7 @@ class Zombie(SVMinion):
     Class, race, name = "Shadowcraft", "", "Zombie"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Shadowcraft~Minion~2~2~2~~Zombie~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "傀儡"
 
@@ -4194,7 +4192,7 @@ class Lich(SVMinion):
     Class, race, name = "Shadowcraft", "", "Lich"
     mana, attack, health = 4, 4, 4
     index = "SV_Basic~Shadowcraft~Minion~4~4~4~~Lich~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "巫妖"
 
@@ -4203,13 +4201,11 @@ class Ghost(SVMinion):
     Class, race, name = "Shadowcraft", "", "Ghost"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Shadowcraft~Minion~1~1~1~~Ghost~Charge~Uncollectible"
-    requireTarget, keyWord, description = False, "Charge", "Storm. Banish this follower when it leaves play or when your turn ends."
+    requireTarget, effects, description = False, "Charge,Disappear When Die", "Storm. Banish this follower when it leaves play or when your turn ends."
     attackAdd, healthAdd = 2, 2
     name_CN = "怨灵"
-
     def __init__(self, Game, ID):
         super().__init__(Game, ID)
-        self.marks["Disappear When Die"] = 1
         self.trigsBoard = [Trig_Ghost(self)]
         self.progress = 0
 
@@ -4229,7 +4225,7 @@ class SpartoiSergeant(SVMinion):
     Class, race, name = "Shadowcraft", "", "Spartoi Sergeant"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Shadowcraft~Minion~2~2~2~~Spartoi Sergeant~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Gain 1 shadow."
+    requireTarget, effects, description = False, "", "Fanfare: Gain 1 shadow."
     attackAdd, healthAdd = 2, 2
     name_CN = "尸魂战士"
 
@@ -4242,14 +4238,14 @@ class Spectre(SVMinion):
     Class, race, name = "Shadowcraft", "", "Spectre"
     mana, attack, health = 2, 2, 1
     index = "SV_Basic~Shadowcraft~Minion~2~2~1~~Spectre~Bane"
-    requireTarget, keyWord, description = False, "Bane", "Bane."
+    requireTarget, effects, description = False, "Bane", "Bane."
     attackAdd, healthAdd = 2, 2
     name_CN = "幽灵"
 
 
 class UndyingResentment(SVSpell):
     Class, school, name = "Shadowcraft", "", "Undying Resentment"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Shadowcraft~Spell~2~~Undying Resentment~Necromancy"
     description = "Deal 3 damage to an enemy follower. Necromancy (2): Deal 5 damage instead."
     name_CN = "不灭的怨念"
@@ -4280,7 +4276,7 @@ class ApprenticeNecromancer(SVMinion):
     Class, race, name = "Shadowcraft", "", "Apprentice Necromancer"
     mana, attack, health = 3, 2, 3
     index = "SV_Basic~Shadowcraft~Minion~3~2~3~~Apprentice Necromancer~Battlecry~Necromancy"
-    requireTarget, keyWord, description = False, "", "Fanfare: Necromancy (4) - Summon a Zombie."
+    requireTarget, effects, description = False, "", "Fanfare: Necromancy (4) - Summon a Zombie."
     attackAdd, healthAdd = 2, 2
     name_CN = "见习唤灵师"
 
@@ -4297,7 +4293,7 @@ class ElderSpartoiSoldier(SVMinion):
     Class, race, name = "Shadowcraft", "", "Elder Spartoi Soldier"
     mana, attack, health = 4, 4, 3
     index = "SV_Basic~Shadowcraft~Minion~4~4~3~~Elder Spartoi Soldier~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Gain 2 shadow."
+    requireTarget, effects, description = False, "", "Fanfare: Gain 2 shadow."
     attackAdd, healthAdd = 2, 2
     name_CN = "腐朽的骸骨兵"
 
@@ -4310,7 +4306,7 @@ class PlayfulNecromancer(SVMinion):
     Class, race, name = "Shadowcraft", "", "Playful Necromancer"
     mana, attack, health = 4, 4, 3
     index = "SV_Basic~Shadowcraft~Minion~4~4~3~~Playful Necromancer"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     name_CN = "爱捣蛋的唤灵师"
 
@@ -4322,7 +4318,7 @@ class HellsUnleasher(SVMinion):
     Class, race, name = "Shadowcraft", "", "Hell's Unleasher"
     mana, attack, health = 4, 1, 1
     index = "SV_Basic~Shadowcraft~Minion~4~1~1~~Hell's Unleasher~Deathrattle"
-    requireTarget, keyWord, description = False, "", "Last Words: Summon a Lich."
+    requireTarget, effects, description = False, "", "Last Words: Summon a Lich."
     attackAdd, healthAdd = 2, 2
     name_CN = "冥界献祭者"
 
@@ -4339,7 +4335,7 @@ class Deathrattle_HellsUnleasher(Deathrattle_Minion):
 
 class CallofVoid(SVSpell):
     Class, school, name = "Shadowcraft", "", "Call of the Void"
-    requireTarget, mana = True, 4
+    requireTarget, mana, effects = True, 4, ""
     index = "SV_Basic~Shadowcraft~Spell~4~~Call of the Void"
     description = "Destroy an enemy follower. Necromancy (4): Summon a Lich."
     name_CN = "来自深渊的诱惑"
@@ -4367,7 +4363,7 @@ class Gravewaker(SVMinion):
     Class, race, name = "Shadowcraft", "", "Gravewaker"
     mana, attack, health = 5, 3, 3
     index = "SV_Basic~Shadowcraft~Minion~5~3~3~~Gravewaker~Deathrattle"
-    requireTarget, keyWord, description = False, "", "Last Words: Summon a Zombie."
+    requireTarget, effects, description = False, "", "Last Words: Summon a Zombie."
     attackAdd, healthAdd = 2, 2
     name_CN = "唤骨人"
 
@@ -4386,7 +4382,7 @@ class GhostlyRider(SVMinion):
     Class, race, name = "Shadowcraft", "", "Ghostly Rider"
     mana, attack, health = 6, 5, 5
     index = "SV_Basic~Shadowcraft~Minion~6~5~5~~Ghostly Rider~Deathrattle"
-    requireTarget, keyWord, description = False, "Taunt", "Ward. Last Words: Give Ward to a random allied follower."
+    requireTarget, effects, description = False, "Taunt", "Ward. Last Words: Give Ward to a random allied follower."
     attackAdd, healthAdd = 2, 2
     name_CN = "幽灵骑士"
 
@@ -4404,17 +4400,17 @@ class Deathrattle_GhostlyRider(Deathrattle_Minion):
             else:
                 minions = [minion.pos for minion in curGame.minionsAlive(self.entity.ID)]
                 i = npchoice(minions) if minions else -1
-                curGame.picks.append(i)
+                curGame.picks_Backup.append(i)
             if i > -1:
                 minion = curGame.minions[self.entity.ID][i]
-                minion.getsStatus("Taunt")
+                minion.getsEffect("Taunt")
 
 
 class UndeadKing(SVMinion):
     Class, race, name = "Shadowcraft", "", "Undead King"
     mana, attack, health = 7, 4, 4
     index = "SV_Basic~Shadowcraft~Minion~7~4~4~~Undead King~Deathrattle"
-    requireTarget, keyWord, description = False, "", "Last Words: Summon twi Zombies."
+    requireTarget, effects, description = False, "", "Last Words: Summon twi Zombies."
     attackAdd, healthAdd = 2, 2
     name_CN = "复活的巫王"
 
@@ -4436,7 +4432,7 @@ class ForestBat(SVMinion):
     Class, race, name = "Bloodcraft", "", "Forest Bat"
     mana, attack, health = 1, 1, 1
     index = "SV_Basic~Shadowcraft~Minion~1~1~1~~Fores tBat~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "丛林蝙蝠"
 
@@ -4445,7 +4441,7 @@ class Nightmare(SVMinion):
     Class, race, name = "Bloodcraft", "", "Nightmare"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Bloodcraft~Minion~2~2~2~~Nightmare~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Gain +2/+0 if Vengeance is active for you."
+    requireTarget, effects, description = False, "", "Fanfare: Gain +2/+0 if Vengeance is active for you."
     attackAdd, healthAdd = 2, 2
     name_CN = "梦魔"
 
@@ -4462,14 +4458,14 @@ class SweetfangVampire(SVMinion):
     Class, race, name = "Bloodcraft", "", "Sweetfang Vampire"
     mana, attack, health = 2, 1, 3
     index = "SV_Basic~Bloodcraft~Minion~2~1~3~~Sweetfang Vampire~Drain"
-    requireTarget, keyWord, description = False, "Drain", "Drain."
+    requireTarget, effects, description = False, "Drain", "Drain."
     attackAdd, healthAdd = 2, 2
     name_CN = "魅惑的暗夜眷属"
 
 
 class BloodPact(SVSpell):
     Class, school, name = "Bloodcraft", "", "Blood Pact"
-    requireTarget, mana = False, 2
+    requireTarget, mana, effects = False, 2, ""
     index = "SV_Basic~Bloodcraft~Spell~2~~Blood Pact"
     description = "Deal 2 damage to your leader. Draw 2 cards."
     name_CN = "血之契约"
@@ -4484,7 +4480,7 @@ class BloodPact(SVSpell):
 
 class RazoryClaw(SVSpell):
     Class, school, name = "Bloodcraft", "", "Razory Claw"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Bloodcraft~Spell~2~~Razory Claw"
     description = "Deal 2 damage to your leader and 3 damage to an enemy."
     name_CN = "利爪的一击"
@@ -4510,7 +4506,7 @@ class CrazedExecutioner(SVMinion):
     Class, race, name = "Bloodcraft", "", "Crazed Executioner"
     mana, attack, health = 3, 3, 3
     index = "SV_Basic~Bloodcraft~Minion~3~3~3~~Crazed Executioner~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Deal 2 damage to your leader."
+    requireTarget, effects, description = False, "", "Fanfare: Deal 2 damage to your leader."
     attackAdd, healthAdd = 2, 2
     name_CN = "疯狂的处刑人"
 
@@ -4523,7 +4519,7 @@ class DarkGeneral(SVMinion):
     Class, race, name = "Bloodcraft", "", "Dark General"
     mana, attack, health = 4, 4, 3
     index = "SV_Basic~Bloodcraft~Minion~4~4~3~~Dark General~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Gain Storm if Vengeance is active for you."
+    requireTarget, effects, description = False, "", "Fanfare: Gain Storm if Vengeance is active for you."
     attackAdd, healthAdd = 2, 2
     name_CN = "暗魔女将"
 
@@ -4532,7 +4528,7 @@ class DarkGeneral(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isVengeance(self.ID):
-            self.getsStatus("Charge")
+            self.getsEffect("Charge")
         return None
 
 
@@ -4540,7 +4536,7 @@ class WardrobeRaider(SVMinion):
     Class, race, name = "Bloodcraft", "", "Wardrobe Raider"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Bloodcraft~Minion~4~3~4~~Wardrobe Raider"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     evolveRequireTarget = True
     name_CN = "血祭侵略者"
@@ -4563,7 +4559,7 @@ class WardrobeRaider(SVMinion):
 
 class CrimsonPurge(SVSpell):
     Class, school, name = "Bloodcraft", "", "Crimson Purge"
-    requireTarget, mana = True, 4
+    requireTarget, mana, effects = True, 4, ""
     index = "SV_Basic~Bloodcraft~Spell~4~~Crimson Purge"
     description = "Deal 2 damage to your leader. Destroy an enemy follower."
     name_CN = "绯红净化"
@@ -4588,7 +4584,7 @@ class ImpLancer(SVMinion):
     Class, race, name = "Bloodcraft", "", "Imp Lancer"
     mana, attack, health = 6, 3, 6
     index = "SV_Basic~Bloodcraft~Minion~6~3~6~~Imp Lancer~Charge"
-    requireTarget, keyWord, description = False, "Charge", "Storm."
+    requireTarget, effects, description = False, "Charge", "Storm."
     attackAdd, healthAdd = 2, 2
     name_CN = "恶魔追猎者"
 
@@ -4612,7 +4608,7 @@ class AbyssBeast(SVMinion):
     Class, race, name = "Bloodcraft", "", "Abyss Beast"
     mana, attack, health = 7, 5, 6
     index = "SV_Basic~Bloodcraft~Minion~7~5~6~~Abyss Beast~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Deal 5 damage to an enemy follower if Vengeance is active for you."
+    requireTarget, effects, description = True, "", "Fanfare: Deal 5 damage to an enemy follower if Vengeance is active for you."
     attackAdd, healthAdd = 2, 2
     name_CN = "深渊巨兽"
 
@@ -4643,7 +4639,7 @@ class Pegasus(SVMinion):
     Class, race, name = "Havencraft", "", "Pegasus"
     mana, attack, health = 5, 5, 3
     index = "SV_Basic~Havencraft~Minion~5~5~3~~Pegasus~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "贝卡萨斯"
 
@@ -4652,7 +4648,7 @@ class HolyFalcon(SVMinion):
     Class, race, name = "Havencraft", "", "Holy Falcon"
     mana, attack, health = 3, 2, 1
     index = "SV_Basic~Havencraft~Minion~3~2~1~~Holy Falcon~Charge~Uncollectible"
-    requireTarget, keyWord, description = False, "Charge", "Storm."
+    requireTarget, effects, description = False, "Charge", "Storm."
     attackAdd, healthAdd = 2, 2
     name_CN = "神圣猎鹰"
 
@@ -4661,7 +4657,7 @@ class HolyflameTiger(SVMinion):
     Class, race, name = "Havencraft", "", "Holyflame Tiger"
     mana, attack, health = 4, 4, 4
     index = "SV_Basic~Havencraft~Minion~4~4~4~~Holyflame Tiger~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "圣炎猛虎"
 
@@ -4670,7 +4666,7 @@ class HolywingDragon(SVMinion):
     Class, race, name = "Havencraft", "", "Holywing Dragon"
     mana, attack, health = 6, 6, 6
     index = "SV_Basic~Havencraft~Minion~6~6~6~~Holywing Dragon~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     name_CN = "圣翼的白龙"
 
@@ -4731,14 +4727,14 @@ class SnakePriestess(SVMinion):
     Class, race, name = "Havencraft", "", "Snake Priestess"
     mana, attack, health = 2, 1, 3
     index = "SV_Basic~Havencraft~Minion~2~1~3~~Snake Priestess~Taunt"
-    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    requireTarget, effects, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "蛇神女祭司"
 
 
 class HallowedDogma(SVSpell):
     Class, school, name = "Havencraft", "", "Hallowed Dogma"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Havencraft~Spell~2~~Hallowed Dogma"
     description = "Subtract 2 from the Countdown of an allied amulet. Draw a card."
     name_CN = "崇高的教义"
@@ -4763,7 +4759,7 @@ class HallowedDogma(SVSpell):
 
 class BlackenedScripture(SVSpell):
     Class, school, name = "Havencraft", "", "Blackened Scripture"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Havencraft~Spell~2~~Blackened Scripture"
     description = "Banish an enemy follower with 3 defense or less."
     name_CN = "漆黑法典"
@@ -4829,7 +4825,7 @@ class PriestoftheCudgel(SVMinion):
     Class, race, name = "Havencraft", "", "Priest of the Cudgel"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Havencraft~Minion~4~3~4~~Priest of the Cudgel"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     evolveRequireTarget = True
     name_CN = "持矛锤的僧侣"
@@ -4854,7 +4850,7 @@ class GreaterPriestess(SVMinion):
     Class, race, name = "Havencraft", "", "Greater Priestess"
     mana, attack, health = 5, 3, 4
     index = "SV_Basic~Havencraft~Minion~5~3~4~~Greater Priestess~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Subtract 1 from the Countdown of all allied amulets."
+    requireTarget, effects, description = False, "", "Fanfare: Subtract 1 from the Countdown of all allied amulets."
     attackAdd, healthAdd = 2, 2
     name_CN = "高阶牧师"
 
@@ -4867,7 +4863,7 @@ class GreaterPriestess(SVMinion):
 
 class AcolytesLight(SVSpell):
     Class, school, name = "Havencraft", "", "Acolyte's Light"
-    requireTarget, mana = True, 5
+    requireTarget, mana, effects = True, 5, ""
     index = "SV_Basic~Havencraft~Spell~5~~Acolyte's Light"
     description = "Banish an enemy follower. Restore X defense to your leader. X equals that follower's defense."
     name_CN = "破邪圣光"
@@ -4914,7 +4910,7 @@ class Curate(SVMinion):
     Class, race, name = "Havencraft", "", "Curate"
     mana, attack, health = 7, 5, 5
     index = "SV_Basic~Havencraft~Minion~7~5~5~~Curate~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Restore 5 defense to an ally."
+    requireTarget, effects, description = True, "", "Fanfare: Restore 5 defense to an ally."
     attackAdd, healthAdd = 2, 2
     name_CN = "伟大的女修士"
 
@@ -4940,7 +4936,7 @@ class Puppet(SVMinion):
     Class, race, name = "Portalcraft", "", "Puppet"
     mana, attack, health = 0, 1, 1
     index = "SV_Basic~Portalcraft~Minion~0~1~1~~Puppet~Rush~Uncollectible"
-    requireTarget, keyWord, description = False, "Rush", "Rush. At the end of your opponent's turn, destroy this follower."
+    requireTarget, effects, description = False, "Rush", "Rush. At the end of your opponent's turn, destroy this follower."
     attackAdd, healthAdd = 2, 2
     name_CN = "悬丝傀儡"
 
@@ -4965,7 +4961,7 @@ class AnalyzingArtifact(SVMinion):
     Class, race, name = "Portalcraft", "Artifact", "Analyzing Artifact"
     mana, attack, health = 1, 2, 1
     index = "SV_Basic~Portalcraft~Minion~1~2~1~Artifact~Analyzing Artifact~Deathrattle~Uncollectible"
-    requireTarget, keyWord, description = False, "", "Last Words: Draw a card."
+    requireTarget, effects, description = False, "", "Last Words: Draw a card."
     attackAdd, healthAdd = 2, 2
     name_CN = "解析的创造物"
 
@@ -4983,7 +4979,7 @@ class RadiantArtifact(SVMinion):
     Class, race, name = "Portalcraft", "Artifact", "Radiant Artifact"
     mana, attack, health = 5, 4, 3
     index = "SV_Basic~Portalcraft~Minion~5~4~3~Artifact~Radiant Artifact~Charge~Deathrattle~Uncollectible"
-    requireTarget, keyWord, description = False, "Charge", "Storm. Last Words: If it is your turn, then put a random Artifact card from your deck into your hand. If it is your opponent's turn, draw a card."
+    requireTarget, effects, description = False, "Charge", "Storm. Last Words: If it is your turn, then put a random Artifact card from your deck into your hand. If it is your opponent's turn, draw a card."
     attackAdd, healthAdd = 2, 2
     name_CN = "绚烂的创造物"
 
@@ -5003,7 +4999,7 @@ class Deathrattle_RadiantArtifact(Deathrattle_Minion):
                     artifacts = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.entity.ID]) if
                                  card.type == "Minion" and "Artifact" in card.race]
                     i = npchoice(artifacts) if artifacts else -1
-                    curGame.picks.append(i)
+                    curGame.picks_Backup.append(i)
                 if i > -1: curGame.Hand_Deck.drawCard(self.entity.ID, i)
         else:
             self.entity.Game.Hand_Deck.drawCard(self.entity.ID)
@@ -5013,7 +5009,7 @@ class BarrierArtifact(SVMinion):
     Class, race, name = "Portalcraft", "Artifact", "Barrier Artifact"
     mana, attack, health = 5, 4, 6
     index = "SV_Basic~Portalcraft~Minion~5~4~6~Artifact~Barrier Artifact~Bane~Taunt~Uncollectible"
-    requireTarget, keyWord, description = False, "Bane,Taunt", "Bane.Ward."
+    requireTarget, effects, description = False, "Bane,Taunt", "Bane.Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "守御的创造物"
 
@@ -5022,7 +5018,7 @@ class KeenedgeArtifact(SVMinion):
     Class, race, name = "Portalcraft", "Artifact", "Keenedge Artifact"
     mana, attack, health = 5, 3, 4
     index = "SV_Basic~Portalcraft~Minion~5~4~6~Artifact~Keenedge Artifact~Rush~Drain~Uncollectible"
-    requireTarget, keyWord, description = False, "Rush,Drain", "Rush.Drain."
+    requireTarget, effects, description = False, "Rush,Drain", "Rush.Drain."
     attackAdd, healthAdd = 2, 2
     name_CN = "锋锐的创造物"
 
@@ -5031,7 +5027,7 @@ class AirstrikeArtifact(SVMinion):
     Class, race, name = "Portalcraft", "Artifact", "Airstrike Artifact"
     mana, attack, health = 5, 2, 2
     index = "SV_Basic~Portalcraft~Minion~5~2~2~Artifact~Airstrike Artifact~Charge~Deathrattle~Uncollectible"
-    requireTarget, keyWord, description = False, "Charge", "Storm. Last Words: Deal 2 damage to the enemy leader."
+    requireTarget, effects, description = False, "Charge", "Storm. Last Words: Deal 2 damage to the enemy leader."
     attackAdd, healthAdd = 2, 2
     name_CN = "迅袭的创造物"
 
@@ -5059,7 +5055,7 @@ class Trig_ParadigmShift(TrigHand):
 
 class ParadigmShift(SVSpell):
     Class, school, name = "Portalcraft", "", "Paradigm Shift"
-    requireTarget, mana = False, 7
+    requireTarget, mana, effects = False, 7, ""
     index = "SV_Basic~Portalcraft~Spell~7~~Paradigm Shift~Choose~Uncollectible"
     description = "Whenever an allied Artifact follower is destroyed, subtract 1 from the cost of this card. Choose: Summon a Barrier Artifact, Keenedge Artifact, or Airstrike Artifact."
     name_CN = "典范转移"
@@ -5082,7 +5078,7 @@ class ParadigmShift(SVSpell):
         return None
 
     def discoverDecided(self, option, pool=None):
-        self.Game.picks.append(type(option))
+        self.Game.picks_Backup.append(type(option))
         self.Game.summon([option], (-1, "totheRightEnd"), self)
 
 
@@ -5090,7 +5086,7 @@ class Puppeteer(SVMinion):
     Class, race, name = "Portalcraft", "", "Puppeteer"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Portalcraft~Minion~2~2~2~~Puppeteer"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 0, 0
     name_CN = "操偶师"
 
@@ -5104,16 +5100,16 @@ class Puppeteer(SVMinion):
             else:
                 puppets = [i for i, card in enumerate(ownHand) if card.type == "Minion" and card.name == "Puppet"]
                 i = npchoice(puppets) if puppets else -1
-                curGame.picks.append(i)
+                curGame.picks_Backup.append(i)
             if i > -1:
-                ownHand[i].getsStatus("Bane")
+                ownHand[i].getsEffect("Bane")
 
 
 class MechanizedServant(SVMinion):
     Class, race, name = "Portalcraft", "", "Mechanized Servant"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Portalcraft~Minion~2~2~2~~Mechanized Servant~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: If Resonance is active for you, gain Rush."
+    requireTarget, effects, description = False, "", "Fanfare: If Resonance is active for you, gain Rush."
     attackAdd, healthAdd = 2, 2
     name_CN = "机械女仆"
 
@@ -5122,7 +5118,7 @@ class MechanizedServant(SVMinion):
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.isResonance(self.ID):
-            self.getsStatus("Rush")
+            self.getsEffect("Rush")
         return None
 
 
@@ -5130,7 +5126,7 @@ class MagisteelLion(SVMinion):
     Class, race, name = "Portalcraft", "", "Magisteel Lion"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Portalcraft~Minion~2~2~2~~Magisteel Lion~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Put 2 Analyzing Artifacts into your deck."
+    requireTarget, effects, description = False, "", "Fanfare: Put 2 Analyzing Artifacts into your deck."
     attackAdd, healthAdd = 2, 2
     name_CN = "魔铁狂狮"
 
@@ -5143,7 +5139,7 @@ class MagisteelPuppet(SVMinion):
     Class, race, name = "Portalcraft", "", "Magisteel Puppet"
     mana, attack, health = 2, 2, 2
     index = "SV_Basic~Portalcraft~Minion~2~2~2~~Magisteel Puppet"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 1, 1
     name_CN = "魔钢傀儡"
 
@@ -5153,7 +5149,7 @@ class MagisteelPuppet(SVMinion):
 
 class DimensionCut(SVSpell):
     Class, school, name = "Portalcraft", "", "Dimension Cut"
-    requireTarget, mana = True, 2
+    requireTarget, mana, effects = True, 2, ""
     index = "SV_Basic~Portalcraft~Spell~2~~Dimension Cut"
     description = "Deal 3 damage to an enemy follower. If Resonance is active for you, deal 5 damage instead."
     name_CN = "次元断"
@@ -5184,7 +5180,7 @@ class ToySoldier(SVMinion):
     Class, race, name = "Portalcraft", "", "Toy Soldier"
     mana, attack, health = 3, 2, 1
     index = "SV_Basic~Portalcraft~Minion~3~2~1~~Toy Soldier"
-    requireTarget, keyWord, description = False, "", "Fanfare: Put a Puppet into your hand."
+    requireTarget, effects, description = False, "", "Fanfare: Put a Puppet into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "玩具士兵"
 
@@ -5214,7 +5210,7 @@ class AutomatonKnight(SVMinion):
     Class, race, name = "Portalcraft", "", "Automaton Knight"
     mana, attack, health = 3, 3, 2
     index = "SV_Basic~Portalcraft~Minion~3~3~2~~Automaton Knight~Deathrattle"
-    requireTarget, keyWord, description = False, "", "Last Words: Put a Puppet into your hand."
+    requireTarget, effects, description = False, "", "Last Words: Put a Puppet into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "机偶骑士"
 
@@ -5232,7 +5228,7 @@ class IronforgedFighter(SVMinion):
     Class, race, name = "Portalcraft", "", "Ironforged Fighter"
     mana, attack, health = 4, 4, 3
     index = "SV_Basic~Portalcraft~Minion~4~4~3~~Ironforged Fighter~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Put 2 Radiant Artifacts into your deck."
+    requireTarget, effects, description = False, "", "Fanfare: Put 2 Radiant Artifacts into your deck."
     attackAdd, healthAdd = 2, 2
     name_CN = "钢铁拳斗士"
 
@@ -5245,7 +5241,7 @@ class RoanWingedNexx(SVMinion):
     Class, race, name = "Portalcraft", "", "Roan Winged Nexx"
     mana, attack, health = 4, 3, 4
     index = "SV_Basic~Portalcraft~Minion~4~3~4~~Roan Winged Nexx"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
     evolveRequireTarget = True
     name_CN = "白黑双翼·涅克丝"
@@ -5283,7 +5279,7 @@ class BlackIronSoldier(SVMinion):
     Class, race, name = "Portalcraft", "", "Black Iron Soldier"
     mana, attack, health = 6, 5, 6
     index = "SV_Basic~Portalcraft~Minion~6~5~6~~Black Iron Soldier~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Put a random Artifact card from your deck into your hand."
+    requireTarget, effects, description = False, "", "Fanfare: Put a random Artifact card from your deck into your hand."
     attackAdd, healthAdd = 2, 2
     name_CN = "黑铁士兵"
 
@@ -5296,7 +5292,7 @@ class BlackIronSoldier(SVMinion):
                 artifacts = [i for i, card in enumerate(curGame.Hand_Deck.decks[self.ID]) if
                              card.type == "Minion" and "Artifact" in card.race]
                 i = npchoice(artifacts) if artifacts else -1
-                curGame.picks.append(i)
+                curGame.picks_Backup.append(i)
             if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return None
 

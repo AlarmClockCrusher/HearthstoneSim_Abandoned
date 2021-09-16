@@ -1,80 +1,83 @@
 <Comment> {
-  "egg-texture-cards -o SpecTrig.egg -fps 24 -p 128,128 'TexCards\\Shared\SpecTrig_00.png' -p 128,128 'TexCards\\Shared\SpecTrig_01.png' -p 128,128 'TexCards\\Shared\SpecTrig_02.png' -p 128,128 'TexCards\\Shared\SpecTrig_03.png' -p 128,128 'TexCards\\Shared\SpecTrig_04.png' -p 128,128 'TexCards\\Shared\SpecTrig_05.png' -p 128,128 'TexCards\\Shared\SpecTrig_06.png' -p 128,128 'TexCards\\Shared\SpecTrig_07.png' -p 128,128 'TexCards\\Shared\SpecTrig_08.png' -p 128,128 'TexCards\\Shared\SpecTrig_09.png' -p 128,128 'TexCards\\Shared\SpecTrig_10.png' -p 128,128 'TexCards\\Shared\SpecTrig_11.png' -p 128,128 'TexCards\\Shared\SpecTrig_12.png' -p 128,128 'TexCards\\Shared\SpecTrig_13.png' -p 128,128 'TexCards\\Shared\SpecTrig_14.png' -p 128,128 'TexCards\\Shared\SpecTrig_15.png' -p 128,128 'TexCards\\Shared\SpecTrig_16.png' -p 128,128 'TexCards\\Shared\SpecTrig_17.png' -p 128,128 'TexCards\\Shared\SpecTrig_18.png' -p 128,128 'TexCards\\Shared\SpecTrig_19.png' -p 128,128 'TexCards\\Shared\SpecTrig_20.png' -p 128,128 'TexCards\\Shared\SpecTrig_21.png' -p 128,128 'TexCards\\Shared\SpecTrig_22.png' -p 128,128 'TexCards\\Shared\SpecTrig_23.png' -p 128,128 'TexCards\\Shared\SpecTrig_24.png'"
+  "egg-texture-cards -o SpecTrig.egg -fps 24 -p 256,256 'TexCards\Shared\SpecTrig_00.png' -p 256,256 'TexCards\Shared\SpecTrig_01.png' -p 256,256 'TexCards\Shared\SpecTrig_02.png' -p 256,256 'TexCards\Shared\SpecTrig_03.png' -p 256,256 'TexCards\Shared\SpecTrig_04.png' -p 256,256 'TexCards\Shared\SpecTrig_05.png' -p 256,256 'TexCards\Shared\SpecTrig_06.png' -p 256,256 'TexCards\Shared\SpecTrig_07.png' -p 256,256 'TexCards\Shared\SpecTrig_08.png' -p 256,256 'TexCards\Shared\SpecTrig_09.png' -p 256,256 'TexCards\Shared\SpecTrig_10.png' -p 256,256 'TexCards\Shared\SpecTrig_11.png' -p 256,256 'TexCards\Shared\SpecTrig_12.png' -p 256,256 'TexCards\Shared\SpecTrig_13.png' -p 256,256 'TexCards\Shared\SpecTrig_14.png' -p 256,256 'TexCards\Shared\SpecTrig_15.png' -p 256,256 'TexCards\Shared\SpecTrig_16.png' -p 256,256 'TexCards\Shared\SpecTrig_17.png' -p 256,256 'TexCards\Shared\SpecTrig_18.png' -p 256,256 'TexCards\Shared\SpecTrig_19.png' -p 256,256 'TexCards\Shared\SpecTrig_20.png' -p 256,256 'TexCards\Shared\SpecTrig_21.png' -p 256,256 'TexCards\Shared\SpecTrig_22.png' -p 256,256 'TexCards\Shared\SpecTrig_23.png' -p 256,256 'TexCards\Shared\SpecTrig_24.png' -p 256,256 'TexCards\Shared\SpecTrig_25.png'"
+}
+<Texture> SpecTrig_25 {
+  "TexCards/Shared/SpecTrig_25.png"
 }
 <Texture> SpecTrig_24 {
-  "TexCards//Shared/SpecTrig_24.png"
+  "TexCards/Shared/SpecTrig_24.png"
 }
 <Texture> SpecTrig_23 {
-  "TexCards//Shared/SpecTrig_23.png"
+  "TexCards/Shared/SpecTrig_23.png"
 }
 <Texture> SpecTrig_22 {
-  "TexCards//Shared/SpecTrig_22.png"
+  "TexCards/Shared/SpecTrig_22.png"
 }
 <Texture> SpecTrig_21 {
-  "TexCards//Shared/SpecTrig_21.png"
+  "TexCards/Shared/SpecTrig_21.png"
 }
 <Texture> SpecTrig_20 {
-  "TexCards//Shared/SpecTrig_20.png"
+  "TexCards/Shared/SpecTrig_20.png"
 }
 <Texture> SpecTrig_19 {
-  "TexCards//Shared/SpecTrig_19.png"
+  "TexCards/Shared/SpecTrig_19.png"
 }
 <Texture> SpecTrig_18 {
-  "TexCards//Shared/SpecTrig_18.png"
+  "TexCards/Shared/SpecTrig_18.png"
 }
 <Texture> SpecTrig_17 {
-  "TexCards//Shared/SpecTrig_17.png"
+  "TexCards/Shared/SpecTrig_17.png"
 }
 <Texture> SpecTrig_16 {
-  "TexCards//Shared/SpecTrig_16.png"
+  "TexCards/Shared/SpecTrig_16.png"
 }
 <Texture> SpecTrig_15 {
-  "TexCards//Shared/SpecTrig_15.png"
+  "TexCards/Shared/SpecTrig_15.png"
 }
 <Texture> SpecTrig_14 {
-  "TexCards//Shared/SpecTrig_14.png"
+  "TexCards/Shared/SpecTrig_14.png"
 }
 <Texture> SpecTrig_13 {
-  "TexCards//Shared/SpecTrig_13.png"
+  "TexCards/Shared/SpecTrig_13.png"
 }
 <Texture> SpecTrig_12 {
-  "TexCards//Shared/SpecTrig_12.png"
+  "TexCards/Shared/SpecTrig_12.png"
 }
 <Texture> SpecTrig_11 {
-  "TexCards//Shared/SpecTrig_11.png"
+  "TexCards/Shared/SpecTrig_11.png"
 }
 <Texture> SpecTrig_10 {
-  "TexCards//Shared/SpecTrig_10.png"
+  "TexCards/Shared/SpecTrig_10.png"
 }
 <Texture> SpecTrig_09 {
-  "TexCards//Shared/SpecTrig_09.png"
+  "TexCards/Shared/SpecTrig_09.png"
 }
 <Texture> SpecTrig_08 {
-  "TexCards//Shared/SpecTrig_08.png"
+  "TexCards/Shared/SpecTrig_08.png"
 }
 <Texture> SpecTrig_07 {
-  "TexCards//Shared/SpecTrig_07.png"
+  "TexCards/Shared/SpecTrig_07.png"
 }
 <Texture> SpecTrig_06 {
-  "TexCards//Shared/SpecTrig_06.png"
+  "TexCards/Shared/SpecTrig_06.png"
 }
 <Texture> SpecTrig_05 {
-  "TexCards//Shared/SpecTrig_05.png"
+  "TexCards/Shared/SpecTrig_05.png"
 }
 <Texture> SpecTrig_04 {
-  "TexCards//Shared/SpecTrig_04.png"
+  "TexCards/Shared/SpecTrig_04.png"
 }
 <Texture> SpecTrig_03 {
-  "TexCards//Shared/SpecTrig_03.png"
+  "TexCards/Shared/SpecTrig_03.png"
 }
 <Texture> SpecTrig_02 {
-  "TexCards//Shared/SpecTrig_02.png"
+  "TexCards/Shared/SpecTrig_02.png"
 }
 <Texture> SpecTrig_01 {
-  "TexCards//Shared/SpecTrig_01.png"
+  "TexCards/Shared/SpecTrig_01.png"
 }
 <Texture> SpecTrig_00 {
-  "TexCards//Shared/SpecTrig_00.png"
+  "TexCards/Shared/SpecTrig_00.png"
 }
 <Group> {
   <Switch> { 1 }
@@ -480,6 +483,22 @@
       0.5 0.5 0
       <UV> { 1 1 }
     }
+    <Vertex> 100 {
+      -0.5 0.5 0
+      <UV> { 0 1 }
+    }
+    <Vertex> 101 {
+      -0.5 -0.5 0
+      <UV> { 0 0 }
+    }
+    <Vertex> 102 {
+      0.5 -0.5 0
+      <UV> { 1 0 }
+    }
+    <Vertex> 103 {
+      0.5 0.5 0
+      <UV> { 1 1 }
+    }
   }
   <Group> SpecTrig_00 {
     <Polygon> {
@@ -654,6 +673,13 @@
       <RGBA> { 1 1 1 1 }
       <TRef> { SpecTrig_24 }
       <VertexRef> { 96 97 98 99 <Ref> { vpool } }
+    }
+  }
+  <Group> SpecTrig_25 {
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { SpecTrig_25 }
+      <VertexRef> { 100 101 102 103 <Ref> { vpool } }
     }
   }
 }

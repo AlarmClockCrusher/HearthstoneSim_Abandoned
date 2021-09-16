@@ -14,42 +14,49 @@ def canBeGenerated(cardType, SV=0):
 
 
 translateTable = {"Loading. Please wait": "正在加载模型，请等待",
-				  "Hero 1 class": "选择玩家1的职业",
-				  "Hero 2 class": "选择玩家2的职业",
-				  "Enter Deck 1 code": "输入玩家1套牌代码",
-				  "Enter Deck 2 code": "输入玩家2的套牌代码",
-				  "Deck 1 incorrect": "玩家1的套牌代码有误",
-				  "Deck 2 incorrect": "玩家2的套牌代码有误",
-				  "Deck 1&2 incorrect": "玩家1与玩家2的套牌代码均有误",
-				  "Finished Loading. Start!": "加载完成，可以开始",
+				 	"Hero 1 class": "选择玩家1的职业",
+				 	"Hero 2 class": "选择玩家2的职业",
+				 	"Enter Deck 1 code": "输入玩家1套牌代码",
+				 	"Enter Deck 2 code": "输入玩家2的套牌代码",
+				 	"Deck 1 incorrect": "玩家1的套牌代码有误",
+				 	"Deck 2 incorrect": "玩家2的套牌代码有误",
+				 	"Deck 1&2 incorrect": "玩家1与玩家2的套牌代码均有误",
+				 	"Finished Loading. Start!": "加载完成，可以开始",
+					"Go Back to Layer 1": "返回游戏初始UI",
+				 
+					"Server IP Address": "服务器IP地址",
+					"Query Port": "接入端口",
+					"Table ID to join": "想要加入的牌桌ID",
+					"Hero class": "选择你的职业",
+					"Enter Deck code": "输入你的套牌代码",
+					"Resume interrupted game": "返回中断的游戏",
+	
+					"Deck incorrect": "你的套牌代码不正确，请检查后重试",
+					"Can't ping the address ": "无法ping通给出的服务器IP地址",
+					"Can't connect to the server's query port": "无法连接到给出的服务器接入端口",
+					"Can't connect to the server's port": "无法连接到给出的牌桌",
+					"No tables left. Please wait for openings": "没有空桌子了，请等待空出",
+					"This table ID is already taken": "本桌子目前已有两个玩家",
+					"Successfully reserved a table": "已成功预订一张桌子",
 
-				  "Server IP Address": "服务器IP地址",
-				  "Query Port": "接入端口",
-				  "Table ID to join": "想要加入的牌桌ID",
-				  "Hero class": "选择你的职业",
-				  "Enter Deck code": "输入你的套牌代码",
-				  "Resume interrupted game": "返回中断的游戏",
-
-				  "Deck incorrect": "你的套牌代码不正确，请检查后重试",
-				  "Can't ping the address ": "无法ping通给出的服务器IP地址",
-				  "Can't connect to the server's query port": "无法连接到给出的服务器接入端口",
-				  "No tables left. Please wait for openings": "没有空桌子了，请等待空出",
-				  "This table ID is already taken": "本桌子目前已有两个玩家",
-				  "Successfully reserved a table": "已成功预订一张桌子",
-
-				  "Opponent disconnected. Closing": "对方断开了连接。强制关闭",
-				  "Wait for Opponent to Reconnect: ": "等待对方重新连接：",
-				  "Opponent failed to reconnect.\nClosing in 2 seconds": "对方未能重新连接\n2秒后退出",
-				  "Receiving Game Copies from Opponent: ": "正在接收对方保存的游戏当前进度：",
+					"Connection is lost": "连接断开了",
+					"Opponent disconnected. Closing": "对方断开了连接。强制关闭",
+					"Wait for Opponent to Reconnect: ": "等待对方重新连接：",
+					"Opponent failed to reconnect.\nClosing in 2 seconds": "对方未能重新连接\n2秒后退出",
+					"Receiving Game Copies from Opponent: ": "正在接收对方保存的游戏当前进度：",
+				  
+				  	"Player 1 Conceded!": "玩家1认输了",
+				  	"Player 2 Conceded!": "玩家2认输了",
 				  }
 
 CHN = True
 
 def txt(text, CHN):
+	if CHN: return text
 	try: return translateTable[text]
 	except: return text
-	
-	
+
+
 class Pools:
 	def __init__(self):
 		self.cardPool = {}
@@ -169,16 +176,16 @@ def makeCardPool(monk=0, SV=0, writetoFile=True):
 				else: pools.NeutralCards.append(card)
 				
 	#确定RNGPools
-	RNGPools = {}
+	RNGPools = {"Classes": ['Demon Hunter', 'Hunter', 'Rogue', 'Druid', 'Warrior', 'Paladin', 'Shaman', 'Mage', 'Priest', 'Warlock', ]}
 	for card in cardPool:
 		if hasattr(card, "poolIdentifier"):
 			identifier, pool = card.generatePool(pools)
 			#发现职业法术一定会生成一个职业列表，不会因为生成某个特定职业法术的牌而被跳过
-			if isinstance(identifier, list):
+			if isinstance(identifier, (list, tuple)):
 				for key, value in zip(identifier, pool):
 					RNGPools[key] = value
 			else: RNGPools[identifier] = pool
-	
+			
 	#专门为转校生进行卡池生成
 	for card in [TransferStudent_Dragons, TransferStudent_Academy]:
 		identifier, pool = card.generatePool(pools)
@@ -192,30 +199,30 @@ def makeCardPool(monk=0, SV=0, writetoFile=True):
 			out_file.write(info)
 			
 			#把BasicPowers, UpgradedPowers, Classes, ClassesandNeutral, Class2HeroDict写入python里面
-			out_file.write("\nBasicPowers = [")
-			for power in BasicPowers: out_file.write(power.__name__+", ")
-			out_file.write(']\n')
-			out_file.write("\nUpgradedPowers = [")
-			for power in UpgradedPowers: out_file.write(power.__name__+", ")
-			out_file.write(']\n')
-			out_file.write("Classes = [")
-			for s in Classes: out_file.write("'%s', "%s)
-			out_file.write(']\n')
-			out_file.write("ClassesandNeutral = [")
-			for s in ClassesandNeutral: out_file.write("'%s', "%s)
-			out_file.write(']\n')
+			#out_file.write("\nBasicPowers = [")
+			#for power in BasicPowers: out_file.write(power.__name__+", ")
+			#out_file.write(']\n')
+			#out_file.write("\nUpgradedPowers = [")
+			#for power in UpgradedPowers: out_file.write(power.__name__+", ")
+			#out_file.write(']\n')
+			#out_file.write("Classes = [")
+			#for s in Classes: out_file.write("'%s', "%s)
+			#out_file.write(']\n')
+			#out_file.write("ClassesandNeutral = [")
+			#for s in ClassesandNeutral: out_file.write("'%s', "%s)
+			#out_file.write(']\n')
 			out_file.write("Class2HeroDict = {")
 			for key, value in Class2HeroDict.items(): out_file.write("'%s': %s, "%(key, value.__name__))
 			out_file.write("}\n\n")
 			
 			#把cardPool写入python里面
-			out_file.write("cardPool = [")
-			i = 1
-			for card in cardPool:
-				out_file.write('%s, '%card.__name__)
-				if i % 10 == 0: out_file.write('\n\t\t\t')
-				i += 1
-			out_file.write("\t\t]\n\n")
+			#out_file.write("cardPool = [")
+			#i = 1
+			#for card in cardPool:
+			#	out_file.write('%s, '%card.__name__)
+			#	if i % 10 == 0: out_file.write('\n\t\t\t')
+			#	i += 1
+			#out_file.write("\t\t]\n\n")
 			
 			#把ClassCards写入python里面
 			out_file.write("ClassCards = {")
@@ -224,7 +231,7 @@ def makeCardPool(monk=0, SV=0, writetoFile=True):
 				i = 1
 				for card in ls: #value is dict
 					out_file.write('%s, '%card.__name__)
-					if i % 10 == 0: out_file.write('\n\t\t\t\t\t')
+					if i % 10 == 0: out_file.write('\n\t\t\t\t')
 					i += 1
 				out_file.write("\t\t\t],\n")
 			out_file.write("\t\t\t}\n\n")
@@ -282,10 +289,10 @@ class Label_CardinDeck(tk.Label):
 		self.count = count  #画出这张牌的时候就有1计数
 		img = PIL.Image.open("Images\\%s\\Icon.png" % card.index.split("~")[0]).resize((30, 30))
 		ph = PIL.ImageTk.PhotoImage(img)
+		self.image = ph
 		super().__init__(master=master, text=self.decideText(), #"%d  " % card.mana + card.name_CN,
 						 font=("Yahei", 15, "bold") if card.type == "Minion" else ("Yahei", 15),
 						 image=ph, compound=tk.LEFT)
-		self.image = ph
 		if "~Legendary" in card.index: self.config(bg="gold")
 		
 		self.bind("<Button-1>", lambda event: self.UI.removeCardfromDeck(card))
@@ -298,7 +305,7 @@ class Label_CardinDeck(tk.Label):
 
 """A selection panel for the Class"""
 numClassIcons_perRow = 5
-dict_Class2HeroName = {'Demon Hunter': "Illidan", 'Hunter': 'Rexxar', 'Rogue': 'Valeera', 'Druid': Malfurion, 'Warrior': 'Garrosh',
+dict_Class2HeroName = {'Demon Hunter': "Illidan", 'Hunter': 'Rexxar', 'Rogue': 'Valeera', 'Druid': "Malfurion", 'Warrior': 'Garrosh',
 					   'Paladin': "Uther", 'Shaman': 'Thrall', 'Mage': 'Jaina', 'Priest': 'Anduin', 'Warlock': 'Guldan', }
 
 class Panel_ClassSelection(tk.Frame):
@@ -307,42 +314,36 @@ class Panel_ClassSelection(tk.Frame):
 		self.lbls_ClassSelection = []
 		self.selectedClass = Class_0
 		self.UI, self.varName = UI, varName
-		ph = PIL.ImageTk.PhotoImage(PIL.Image.open("Images\\HeroesandPowers\\%s.png"%dict_Class2HeroName[Class_0]).resize((48, int(48*395/286))))
-		self.lbl_SelectedClass = tk.Label(self, image=ph)
+		
+		img = PIL.Image.open("Images\\HeroesandPowers\\%s.png"%dict_Class2HeroName[Class_0]).resize((48, int(48*395/286)))
+		ph = PIL.ImageTk.PhotoImage(img, master=self)
+		self.lbl_SelectedClass = tk.Label(self)
 		self.lbl_SelectedClass.image = ph
+		self.lbl_SelectedClass.config(image=ph)
 		self.lbl_SelectedClass.grid(row=0, column=numClassIcons_perRow, rowspan=5)
 		for i, Class in enumerate(ClassPool):
 			lbl_ClassSelection = Label_ClassSelection(panel=self, Class=Class)
 			lbl_ClassSelection.grid(row=int(i/numClassIcons_perRow), column=i%numClassIcons_perRow)
 			self.lbls_ClassSelection.append(lbl_ClassSelection)
 	
-	def handleSelection(self, Class, invoker):
+	def setSelection(self, Class):
 		self.selectedClass = Class
-		ph = PIL.ImageTk.PhotoImage(PIL.Image.open("Images\\HeroesandPowers\\%s.png"
-												   % dict_Class2HeroName[Class]).resize((96, int(96*395/286))))
-		self.lbl_SelectedClass.config(image=ph)
+		img = PIL.Image.open("Images\\HeroesandPowers\\%s.png"%dict_Class2HeroName[Class]).resize((96, int(96 * 395 / 286)))
+		ph = PIL.ImageTk.PhotoImage(img)
 		self.lbl_SelectedClass.image = ph
+		self.lbl_SelectedClass.config(image=ph)
 		self.UI.__dict__[self.varName] = Class
 		self.UI.showCards()
 		
-	def setSelection(self, Class):
-		lbl = next((lbl for lbl in self.lbls_ClassSelection if lbl.Class == Class), None)
-		if lbl: lbl.respond(None)
-		
 class Label_ClassSelection(tk.Label):
 	def __init__(self, panel, Class):
+		super().__init__(master=panel)
 		self.panel, self.Class = panel, Class
 		img = PIL.Image.open("Images\\Icon_%s.png"%Class).resize((48, 48))
-		ph = PIL.ImageTk.PhotoImage(img)
+		ph = PIL.ImageTk.PhotoImage(img, master=panel)
 		self.image = ph
-		super().__init__(master=panel, image=ph)
-		self.bind("<Button-1>", self.respond)
-		
-	def respond(self, event):
-		ph = PIL.ImageTk.PhotoImage(PIL.Image.open("Images\\Icon_%s.png"%self.Class).resize((48, 48)))
 		self.config(image=ph)
-		self.image = ph
-		self.panel.handleSelection(self.Class, invoker=self)
+		self.bind("<Button-1>", lambda event: self.panel.setSelection(self.Class))
 		
 		
 class Label_ManaSelection(tk.Label):
@@ -391,8 +392,7 @@ class Label_ExpansionSelection(tk.Label):
 class Label_TurnPage(tk.Label):
 	def __init__(self, master, UI, toLeft=True,):
 		self.UI, self.toLeft = UI, toLeft
-		img = PIL.Image.open("Images\\%s.png"%("LeftArrow" if toLeft else "RightArrow"))#.resize((32, 32))
-		ph = PIL.ImageTk.PhotoImage(img)
+		ph = PIL.ImageTk.PhotoImage(PIL.Image.open("Images\\%s.png"%("LeftArrow" if toLeft else "RightArrow")))
 		self.image = ph
 		super().__init__(master, image=ph)
 		self.bind("<Button-1>", self.respond)
@@ -511,7 +511,7 @@ class DeckBuilderWindow(tk.Tk):
 		self.deckCode.grid(row=1, column=1, columnspan=2)
 		
 		self.lbl_Types = tk.Label(self.panel_DeckWidgets, font=("Yahei", 14),
-							text="Minion:0\nSpell:0\nWeapon:0\nHero:0\nAmulet:0" if not CHN else "随从:0\n法术:0\n武器:0\n英雄牌:0\n护符:0")
+							text="Total:0\n\nMinion:0\nSpell:0\nWeapon:0\nHero:0\nAmulet:0" if not CHN else "总计:0\n\n随从:0\n法术:0\n武器:0\n英雄牌:0\n护符:0")
 		self.canvas_ManaDistri = tk.Canvas(master=self.panel_DeckWidgets, width=manaDistriWidth, height=manaDistriHeight)
 		self.lbl_Types.grid(row=2, column=0)
 		self.canvas_ManaDistri.grid(row=2, column=1, columnspan=2)

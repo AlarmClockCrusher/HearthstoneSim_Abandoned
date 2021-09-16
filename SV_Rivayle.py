@@ -67,7 +67,7 @@ class Trig_BulletBike(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.banishMinion(self.entity, self.entity)
         subject.buffDebuff(2, 0)
-        subject.getsStatus("Rush")
+        subject.getsEffect("Rush")
 
 
 class ArcanePersonnelCarrier(Amulet):
@@ -92,14 +92,14 @@ class Trig_ArcanePersonnelCarrier(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.banishMinion(self.entity, self.entity)
         subject.buffDebuff(1, 3)
-        subject.getsStatus("Taunt")
+        subject.getsEffect("Taunt")
 
 
 class RivaylianBandit(SVMinion):
     Class, race, name = "Neutral", "", "Rivaylian Bandit"
     mana, attack, health = 1, 1, 1
     index = "SV_Rivayle~Neutral~Minion~1~1~1~~Rivaylian Bandit~Enhance~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Enhance (8) - Summon 2 Rivaylian Bandits. Then give +1/+1 to all allied Rivaylian Bandits. Once on each of your turns, when this follower's attack or defense is increased by an effect, gain +1/+2 and Rush."
+    requireTarget, effects, description = False, "", "Fanfare: Enhance (8) - Summon 2 Rivaylian Bandits. Then give +1/+1 to all allied Rivaylian Bandits. Once on each of your turns, when this follower's attack or defense is increased by an effect, gain +1/+2 and Rush."
     attackAdd, healthAdd = 2, 2
     name_CN = "勒比卢的恶徒"
 
@@ -146,7 +146,7 @@ class Trig_RivaylianBandit(TrigBoard):
         self.entity.trigsBoard.append(trigger)
         trigger.connect()
         self.entity.buffDebuff(1, 2)
-        self.entity.getsStatus("Rush")
+        self.entity.getsEffect("Rush")
 
 
 class Trig_EndRivaylianBandit(TrigBoard):
@@ -171,7 +171,7 @@ class QuixoticAdventurer(SVMinion):
     Class, race, name = "Neutral", "", "Quixotic Adventurer"
     mana, attack, health = 2, 2, 2
     index = "SV_Rivayle~Neutral~Minion~2~2~2~~Quixotic Adventurer~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Summon a Dutiful Steed. If it is your fifth turn or later, summon a Bullet Bike instead."
+    requireTarget, effects, description = False, "", "Fanfare: Summon a Dutiful Steed. If it is your fifth turn or later, summon a Bullet Bike instead."
     attackAdd, healthAdd = 2, 2
     name_CN = "自由的冒险者"
 
@@ -192,7 +192,7 @@ class WanderingChef(SVMinion):
     Class, race, name = "Neutral", "", "Wandering Chef"
     mana, attack, health = 2, 2, 2
     index = "SV_Rivayle~Neutral~Minion~2~2~2~~Wandering Chef"
-    requireTarget, keyWord, description = False, "", "Once on each of your turns, when this follower's attack or defense is increased by an effect, deal 3 damage to a random enemy follower and restore 3 defense to your leader."
+    requireTarget, effects, description = False, "", "Once on each of your turns, when this follower's attack or defense is increased by an effect, deal 3 damage to a random enemy follower and restore 3 defense to your leader."
     attackAdd, healthAdd = 2, 2
     name_CN = "浪游厨人"
 
@@ -228,7 +228,7 @@ class Trig_WanderingChef(TrigBoard):
             else:
                 minions = curGame.minionsAlive(3 - self.entity.ID)
                 i = npchoice(minions).pos if minions else -1
-                curGame.picks.append(i)
+                curGame.picks_Backup.append(i)
             if i > -1:
                 self.entity.dealsDamage(curGame.minions[3 - self.entity.ID][i], 3)
         heal = 3 * (2 ** self.entity.countHealDouble())
@@ -257,13 +257,13 @@ class Ramiel(SVMinion):
     Class, race, name = "Neutral", "", "Ramiel"
     mana, attack, health = 2, 2, 2
     index = "SV_Rivayle~Neutral~Minion~2~2~2~~Ramiel~Taunt~Legendary"
-    requireTarget, keyWord, description = False, "Taunt", "Ward. Reduce damage from effects to 0."
+    requireTarget, effects, description = False, "Taunt", "Ward. Reduce damage from effects to 0."
     attackAdd, healthAdd = 2, 2
     name_CN = "蕾米尔"
 
     def __init__(self, Game, ID):
         super().__init__(Game, ID)
-        self.marks["Enemy Effect Damage Immune"] = 1
+        self.effects["Enemy Effect Damage Immune"] = 1
 
     def inHandEvolving(self, target=None):
         trigger = Trig_Ramiel(self)
@@ -300,7 +300,7 @@ class Trig_Ramiel(TrigBoard):
 
 class Set_Accelerate(SVSpell):
     Class, school, name = "Havencraft", "", "Set"
-    requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
     index = "SV_Rivayle~Havencraft~Spell~1~Set~Accelerate~Uncollectible"
     description = "Restore 3 defense to your leader."
     name_CN = "赛特"
@@ -315,7 +315,7 @@ class Set(SVMinion):
     Class, race, name = "Havencraft", "", "Set"
     mana, attack, health = 7, 2, 8
     index = "SV_Rivayle~Havencraft~Minion~7~2~8~~Set~Bane~Taunt~Accelerate"
-    requireTarget, keyWord, description = False, "Bane,Taunt", "Accelerate (1): Restore 3 defense to your leader.Bane.Ward.Can't be targeted by enemy effects.At the end of your turn, restore 3 defense to your leader."
+    requireTarget, effects, description = False, "Bane,Taunt", "Accelerate (1): Restore 3 defense to your leader.Bane.Ward.Can't be targeted by enemy effects.At the end of your turn, restore 3 defense to your leader."
     accelerateSpell = Set_Accelerate
     attackAdd, healthAdd = 2, 2
     name_CN = "赛特"
@@ -323,7 +323,7 @@ class Set(SVMinion):
     def __init__(self, Game, ID):
         super().__init__(Game, ID)
         self.trigsBoard = [Trig_Set(self)]
-        self.marks["Enemy Effect Evasive"] = 1
+        self.effects["Enemy Effect Evasive"] = 1
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] < self.mana:
@@ -384,7 +384,7 @@ class Trig_AnveltJudgmentsCannon(TrigBoard):
         taunts = 0
         minions = self.entity.Game.minionsonBoard(self.entity.ID)
         for minion in minions:
-            if minion.keyWords["Taunt"] > 0:
+            if minion.effects["Taunt"] > 0:
                 taunts += 1
         self.entity.countdown(self.entity, taunts)
 
@@ -399,7 +399,7 @@ class AnveltJudgmentsCannon(SVMinion):
     Class, race, name = "Havencraft", "", "Anvelt, Judgment's Cannon"
     mana, attack, health = 7, 5, 6
     index = "SV_Rivayle~Havencraft~Minion~7~5~6~~Anvelt, Judgment's Cannon~Taunt~Crystallize~Legendary"
-    requireTarget, keyWord, description = False, "Taunt", "Crystallize (1): Countdown (10) At the end of your turn, subtract X from this amulet's Countdown. X equals the number of allied followers with Ward in play.Last Words: Summon an Anvelt, Judgment's Cannon.Ward.When this follower comes into play, deal 4 damage to all enemy followers and then 2 damage to the enemy leader."
+    requireTarget, effects, description = False, "Taunt", "Crystallize (1): Countdown (10) At the end of your turn, subtract X from this amulet's Countdown. X equals the number of allied followers with Ward in play.Last Words: Summon an Anvelt, Judgment's Cannon.Ward.When this follower comes into play, deal 4 damage to all enemy followers and then 2 damage to the enemy leader."
     crystallizeAmulet = AnveltJudgmentsCannon_Crystallize
     attackAdd, healthAdd = 2, 2
     name_CN = "双炮神罚·安维特"
@@ -439,7 +439,7 @@ class GoblinKing(SVMinion):
     Class, race, name = "Neutral", "", "Goblin King"
     mana, attack, health = 4, 5, 5
     index = "SV_Rivayle~Neutral~Minion~4~5~5~~Goblin King~Taunt~Uncollectible"
-    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    requireTarget, effects, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "哥布林王"
 
@@ -448,7 +448,7 @@ class GoblinQueen(SVMinion):
     Class, race, name = "Neutral", "", "Goblin Queen"
     mana, attack, health = 3, 3, 3
     index = "SV_Rivayle~Neutral~Minion~3~3~3~~Goblin Queen~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Put 2 Goblins into your hand."
+    requireTarget, effects, description = False, "", "Fanfare: Put 2 Goblins into your hand."
     attackAdd, healthAdd = 2, 2
     evolveRequireTarget = True
     name_CN = "哥布林女王"
@@ -555,7 +555,7 @@ class Trig_BulletBike(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.banishMinion(self.entity, self.entity)
         subject.buffDebuff(2, 0)
-        subject.getsStatus("Rush")
+        subject.getsEffect("Rush")
 
 
 class ArcanePersonnelCarrier(Amulet):
@@ -580,14 +580,14 @@ class Trig_ArcanePersonnelCarrier(TrigBoard):
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.Game.banishMinion(self.entity, self.entity)
         subject.buffDebuff(1, 3)
-        subject.getsStatus("Taunt")
+        subject.getsEffect("Taunt")
 
 
 class RivaylianBandit(SVMinion):
     Class, race, name = "Neutral", "", "Rivaylian Bandit"
     mana, attack, health = 1, 1, 1
     index = "SV_Rivayle~Neutral~Minion~1~1~1~~Rivaylian Bandit~Enhance~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Enhance (8) - Summon 2 Rivaylian Bandits. Then give +1/+1 to all allied Rivaylian Bandits. Once on each of your turns, when this follower's attack or defense is increased by an effect, gain +1/+2 and Rush."
+    requireTarget, effects, description = False, "", "Fanfare: Enhance (8) - Summon 2 Rivaylian Bandits. Then give +1/+1 to all allied Rivaylian Bandits. Once on each of your turns, when this follower's attack or defense is increased by an effect, gain +1/+2 and Rush."
     attackAdd, healthAdd = 2, 2
     name_CN = "勒比卢的恶徒"
 
@@ -634,7 +634,7 @@ class Trig_RivaylianBandit(TrigBoard):
         self.entity.trigsBoard.append(trigger)
         trigger.connect()
         self.entity.buffDebuff(1, 2)
-        self.entity.getsStatus("Rush")
+        self.entity.getsEffect("Rush")
 
 
 class Trig_EndRivaylianBandit(TrigBoard):
@@ -659,7 +659,7 @@ class QuixoticAdventurer(SVMinion):
     Class, race, name = "Neutral", "", "Quixotic Adventurer"
     mana, attack, health = 2, 2, 2
     index = "SV_Rivayle~Neutral~Minion~2~2~2~~Quixotic Adventurer~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Summon a Dutiful Steed. If it is your fifth turn or later, summon a Bullet Bike instead."
+    requireTarget, effects, description = False, "", "Fanfare: Summon a Dutiful Steed. If it is your fifth turn or later, summon a Bullet Bike instead."
     attackAdd, healthAdd = 2, 2
     name_CN = "自由的冒险者"
 
@@ -680,7 +680,7 @@ class WanderingChef(SVMinion):
     Class, race, name = "Neutral", "", "Wandering Chef"
     mana, attack, health = 2, 2, 2
     index = "SV_Rivayle~Neutral~Minion~2~2~2~~Wandering Chef"
-    requireTarget, keyWord, description = False, "", "Once on each of your turns, when this follower's attack or defense is increased by an effect, deal 3 damage to a random enemy follower and restore 3 defense to your leader."
+    requireTarget, effects, description = False, "", "Once on each of your turns, when this follower's attack or defense is increased by an effect, deal 3 damage to a random enemy follower and restore 3 defense to your leader."
     attackAdd, healthAdd = 2, 2
     name_CN = "浪游厨人"
 
@@ -716,7 +716,7 @@ class Trig_WanderingChef(TrigBoard):
             else:
                 minions = curGame.minionsAlive(3 - self.entity.ID)
                 i = npchoice(minions).pos if minions else -1
-                curGame.picks.append(i)
+                curGame.picks_Backup.append(i)
             if i > -1:
                 self.entity.dealsDamage(curGame.minions[3 - self.entity.ID][i], 3)
         heal = 3 * (2 ** self.entity.countHealDouble())
@@ -745,13 +745,13 @@ class Ramiel(SVMinion):
     Class, race, name = "Neutral", "", "Ramiel"
     mana, attack, health = 2, 2, 2
     index = "SV_Rivayle~Neutral~Minion~2~2~2~~Ramiel~Taunt~Legendary"
-    requireTarget, keyWord, description = False, "Taunt", "Ward. Reduce damage from effects to 0."
+    requireTarget, effects, description = False, "Taunt", "Ward. Reduce damage from effects to 0."
     attackAdd, healthAdd = 2, 2
     name_CN = "蕾米尔"
 
     def __init__(self, Game, ID):
         super().__init__(Game, ID)
-        self.marks["Enemy Effect Damage Immune"] = 1
+        self.effects["Enemy Effect Damage Immune"] = 1
 
     def inHandEvolving(self, target=None):
         trigger = Trig_Ramiel(self)
@@ -788,7 +788,7 @@ class Trig_Ramiel(TrigBoard):
 
 class Set_Accelerate(SVSpell):
     Class, school, name = "Havencraft", "", "Set"
-    requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
     index = "SV_Rivayle~Havencraft~Spell~1~~Set~Accelerate~Uncollectible"
     description = "Restore 3 defense to your leader."
     name_CN = "赛特"
@@ -803,7 +803,7 @@ class Set(SVMinion):
     Class, race, name = "Havencraft", "", "Set"
     mana, attack, health = 7, 2, 8
     index = "SV_Rivayle~Havencraft~Minion~7~2~8~~Set~Bane~Taunt~Accelerate"
-    requireTarget, keyWord, description = False, "Bane,Taunt", "Accelerate (1): Restore 3 defense to your leader.Bane.Ward.Can't be targeted by enemy effects.At the end of your turn, restore 3 defense to your leader."
+    requireTarget, effects, description = False, "Bane,Taunt", "Accelerate (1): Restore 3 defense to your leader.Bane.Ward.Can't be targeted by enemy effects.At the end of your turn, restore 3 defense to your leader."
     accelerateSpell = Set_Accelerate
     attackAdd, healthAdd = 2, 2
     name_CN = "赛特"
@@ -811,7 +811,7 @@ class Set(SVMinion):
     def __init__(self, Game, ID):
         super().__init__(Game, ID)
         self.trigsBoard = [Trig_Set(self)]
-        self.marks["Enemy Effect Evasive"] = 1
+        self.effects["Enemy Effect Evasive"] = 1
 
     def getMana(self):
         if self.Game.Manas.manas[self.ID] < self.mana:
@@ -872,7 +872,7 @@ class Trig_AnveltJudgmentsCannon(TrigBoard):
         taunts = 0
         minions = self.entity.Game.minionsonBoard(self.entity.ID)
         for minion in minions:
-            if minion.keyWords["Taunt"] > 0:
+            if minion.effects["Taunt"] > 0:
                 taunts += 1
         self.entity.countdown(self.entity, taunts)
 
@@ -887,7 +887,7 @@ class AnveltJudgmentsCannon(SVMinion):
     Class, race, name = "Havencraft", "", "Anvelt, Judgment's Cannon"
     mana, attack, health = 7, 5, 6
     index = "SV_Rivayle~Havencraft~Minion~7~5~6~~Anvelt, Judgment's Cannon~Taunt~Crystallize~Legendary"
-    requireTarget, keyWord, description = False, "Taunt", "Crystallize (1): Countdown (10) At the end of your turn, subtract X from this amulet's Countdown. X equals the number of allied followers with Ward in play.Last Words: Summon an Anvelt, Judgment's Cannon.Ward.When this follower comes into play, deal 4 damage to all enemy followers and then 2 damage to the enemy leader."
+    requireTarget, effects, description = False, "Taunt", "Crystallize (1): Countdown (10) At the end of your turn, subtract X from this amulet's Countdown. X equals the number of allied followers with Ward in play.Last Words: Summon an Anvelt, Judgment's Cannon.Ward.When this follower comes into play, deal 4 damage to all enemy followers and then 2 damage to the enemy leader."
     crystallizeAmulet = AnveltJudgmentsCannon_Crystallize
     attackAdd, healthAdd = 2, 2
     name_CN = "双炮神罚·安维特"
@@ -927,7 +927,7 @@ class GoblinKing(SVMinion):
     Class, race, name = "Neutral", "", "Goblin King"
     mana, attack, health = 4, 5, 5
     index = "SV_Rivayle~Neutral~Minion~4~5~5~~Goblin King~Taunt~Uncollectible"
-    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    requireTarget, effects, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "哥布林王"
 
@@ -936,7 +936,7 @@ class GoblinQueen(SVMinion):
     Class, race, name = "Neutral", "", "Goblin Queen"
     mana, attack, health = 3, 3, 3
     index = "SV_Rivayle~Neutral~Minion~3~3~3~~Goblin Queen~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Put 2 Goblins into your hand."
+    requireTarget, effects, description = False, "", "Fanfare: Put 2 Goblins into your hand."
     attackAdd, healthAdd = 2, 2
     evolveRequireTarget = True
     name_CN = "哥布林女王"

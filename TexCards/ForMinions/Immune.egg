@@ -1,327 +1,327 @@
 <Comment> {
-  "egg-texture-cards -o Immune.egg -fps 24 -p 1,1 'TexCards\ForMinions\Immune_0000.png' -p 128,128 'TexCards\ForMinions\Immune_0001.png' -p 128,128 'TexCards\ForMinions\Immune_0002.png' -p 128,128 'TexCards\ForMinions\Immune_0003.png' -p 128,128 'TexCards\ForMinions\Immune_0004.png' -p 128,128 'TexCards\ForMinions\Immune_0005.png' -p 128,128 'TexCards\ForMinions\Immune_0006.png' -p 128,128 'TexCards\ForMinions\Immune_0007.png' -p 128,128 'TexCards\ForMinions\Immune_0008.png' -p 128,128 'TexCards\ForMinions\Immune_0009.png' -p 128,128 'TexCards\ForMinions\Immune_0010.png' -p 128,128 'TexCards\ForMinions\Immune_0011.png' -p 128,128 'TexCards\ForMinions\Immune_0012.png' -p 128,128 'TexCards\ForMinions\Immune_0013.png' -p 128,128 'TexCards\ForMinions\Immune_0014.png' -p 128,128 'TexCards\ForMinions\Immune_0015.png' -p 128,128 'TexCards\ForMinions\Immune_0016.png' -p 128,128 'TexCards\ForMinions\Immune_0017.png' -p 128,128 'TexCards\ForMinions\Immune_0018.png' -p 128,128 'TexCards\ForMinions\Immune_0019.png' -p 128,128 'TexCards\ForMinions\Immune_0020.png' -p 128,128 'TexCards\ForMinions\Immune_0021.png' -p 128,128 'TexCards\ForMinions\Immune_0022.png' -p 128,128 'TexCards\ForMinions\Immune_0023.png' -p 128,128 'TexCards\ForMinions\Immune_0024.png' -p 128,128 'TexCards\ForMinions\Immune_0025.png' -p 128,128 'TexCards\ForMinions\Immune_0026.png' -p 128,128 'TexCards\ForMinions\Immune_0027.png' -p 128,128 'TexCards\ForMinions\Immune_0028.png' -p 128,128 'TexCards\ForMinions\Immune_0029.png' -p 128,128 'TexCards\ForMinions\Immune_0030.png' -p 128,128 'TexCards\ForMinions\Immune_0031.png' -p 128,128 'TexCards\ForMinions\Immune_0032.png' -p 128,128 'TexCards\ForMinions\Immune_0033.png' -p 128,128 'TexCards\ForMinions\Immune_0034.png' -p 128,128 'TexCards\ForMinions\Immune_0035.png' -p 128,128 'TexCards\ForMinions\Immune_0036.png' -p 128,128 'TexCards\ForMinions\Immune_0037.png' -p 128,128 'TexCards\ForMinions\Immune_0038.png' -p 128,128 'TexCards\ForMinions\Immune_0039.png' -p 128,128 'TexCards\ForMinions\Immune_0040.png' -p 128,128 'TexCards\ForMinions\Immune_0041.png' -p 128,128 'TexCards\ForMinions\Immune_0042.png' -p 128,128 'TexCards\ForMinions\Immune_0043.png' -p 128,128 'TexCards\ForMinions\Immune_0044.png' -p 128,128 'TexCards\ForMinions\Immune_0045.png' -p 128,128 'TexCards\ForMinions\Immune_0046.png' -p 128,128 'TexCards\ForMinions\Immune_0047.png' -p 128,128 'TexCards\ForMinions\Immune_0048.png' -p 128,128 'TexCards\ForMinions\Immune_0049.png' -p 128,128 'TexCards\ForMinions\Immune_0050.png' -p 128,128 'TexCards\ForMinions\Immune_0051.png' -p 128,128 'TexCards\ForMinions\Immune_0052.png' -p 128,128 'TexCards\ForMinions\Immune_0053.png' -p 128,128 'TexCards\ForMinions\Immune_0054.png' -p 128,128 'TexCards\ForMinions\Immune_0055.png' -p 128,128 'TexCards\ForMinions\Immune_0056.png' -p 128,128 'TexCards\ForMinions\Immune_0057.png' -p 128,128 'TexCards\ForMinions\Immune_0058.png' -p 128,128 'TexCards\ForMinions\Immune_0059.png' -p 128,128 'TexCards\ForMinions\Immune_0060.png' -p 128,128 'TexCards\ForMinions\Immune_0061.png' -p 128,128 'TexCards\ForMinions\Immune_0062.png' -p 128,128 'TexCards\ForMinions\Immune_0063.png' -p 128,128 'TexCards\ForMinions\Immune_0064.png' -p 128,128 'TexCards\ForMinions\Immune_0065.png' -p 128,128 'TexCards\ForMinions\Immune_0066.png' -p 128,128 'TexCards\ForMinions\Immune_0067.png' -p 128,128 'TexCards\ForMinions\Immune_0068.png' -p 128,128 'TexCards\ForMinions\Immune_0069.png' -p 128,128 'TexCards\ForMinions\Immune_0070.png' -p 128,128 'TexCards\ForMinions\Immune_0071.png' -p 128,128 'TexCards\ForMinions\Immune_0072.png' -p 128,128 'TexCards\ForMinions\Immune_0073.png' -p 128,128 'TexCards\ForMinions\Immune_0074.png' -p 128,128 'TexCards\ForMinions\Immune_0075.png' -p 128,128 'TexCards\ForMinions\Immune_0076.png' -p 128,128 'TexCards\ForMinions\Immune_0077.png' -p 128,128 'TexCards\ForMinions\Immune_0078.png' -p 128,128 'TexCards\ForMinions\Immune_0079.png' -p 128,128 'TexCards\ForMinions\Immune_0080.png' -p 128,128 'TexCards\ForMinions\Immune_0081.png' -p 128,128 'TexCards\ForMinions\Immune_0082.png' -p 128,128 'TexCards\ForMinions\Immune_0083.png' -p 128,128 'TexCards\ForMinions\Immune_0084.png' -p 128,128 'TexCards\ForMinions\Immune_0085.png' -p 128,128 'TexCards\ForMinions\Immune_0086.png' -p 128,128 'TexCards\ForMinions\Immune_0087.png' -p 128,128 'TexCards\ForMinions\Immune_0088.png' -p 128,128 'TexCards\ForMinions\Immune_0089.png' -p 128,128 'TexCards\ForMinions\Immune_0090.png' -p 128,128 'TexCards\ForMinions\Immune_0091.png' -p 128,128 'TexCards\ForMinions\Immune_0092.png' -p 128,128 'TexCards\ForMinions\Immune_0093.png' -p 128,128 'TexCards\ForMinions\Immune_0094.png' -p 128,128 'TexCards\ForMinions\Immune_0095.png' -p 128,128 'TexCards\ForMinions\Immune_0096.png' -p 128,128 'TexCards\ForMinions\Immune_0097.png' -p 128,128 'TexCards\ForMinions\Immune_0098.png' -p 128,128 'TexCards\ForMinions\Immune_0099.png' -p 128,128 'TexCards\ForMinions\Immune_0100.png'"
+  "egg-texture-cards -o Immune.egg -fps 24 -p 128,128 'TexCards\\ForMinions\Immune_0000.png' -p 128,128 'TexCards\\ForMinions\Immune_0001.png' -p 128,128 'TexCards\\ForMinions\Immune_0002.png' -p 128,128 'TexCards\\ForMinions\Immune_0003.png' -p 128,128 'TexCards\\ForMinions\Immune_0004.png' -p 128,128 'TexCards\\ForMinions\Immune_0005.png' -p 128,128 'TexCards\\ForMinions\Immune_0006.png' -p 128,128 'TexCards\\ForMinions\Immune_0007.png' -p 128,128 'TexCards\\ForMinions\Immune_0008.png' -p 128,128 'TexCards\\ForMinions\Immune_0009.png' -p 128,128 'TexCards\\ForMinions\Immune_0010.png' -p 128,128 'TexCards\\ForMinions\Immune_0011.png' -p 128,128 'TexCards\\ForMinions\Immune_0012.png' -p 128,128 'TexCards\\ForMinions\Immune_0013.png' -p 128,128 'TexCards\\ForMinions\Immune_0014.png' -p 128,128 'TexCards\\ForMinions\Immune_0015.png' -p 128,128 'TexCards\\ForMinions\Immune_0016.png' -p 128,128 'TexCards\\ForMinions\Immune_0017.png' -p 128,128 'TexCards\\ForMinions\Immune_0018.png' -p 128,128 'TexCards\\ForMinions\Immune_0019.png' -p 128,128 'TexCards\\ForMinions\Immune_0020.png' -p 128,128 'TexCards\\ForMinions\Immune_0021.png' -p 128,128 'TexCards\\ForMinions\Immune_0022.png' -p 128,128 'TexCards\\ForMinions\Immune_0023.png' -p 128,128 'TexCards\\ForMinions\Immune_0024.png' -p 128,128 'TexCards\\ForMinions\Immune_0025.png' -p 128,128 'TexCards\\ForMinions\Immune_0026.png' -p 128,128 'TexCards\\ForMinions\Immune_0027.png' -p 128,128 'TexCards\\ForMinions\Immune_0028.png' -p 128,128 'TexCards\\ForMinions\Immune_0029.png' -p 128,128 'TexCards\\ForMinions\Immune_0030.png' -p 128,128 'TexCards\\ForMinions\Immune_0031.png' -p 128,128 'TexCards\\ForMinions\Immune_0032.png' -p 128,128 'TexCards\\ForMinions\Immune_0033.png' -p 128,128 'TexCards\\ForMinions\Immune_0034.png' -p 128,128 'TexCards\\ForMinions\Immune_0035.png' -p 128,128 'TexCards\\ForMinions\Immune_0036.png' -p 128,128 'TexCards\\ForMinions\Immune_0037.png' -p 128,128 'TexCards\\ForMinions\Immune_0038.png' -p 128,128 'TexCards\\ForMinions\Immune_0039.png' -p 128,128 'TexCards\\ForMinions\Immune_0040.png' -p 128,128 'TexCards\\ForMinions\Immune_0041.png' -p 128,128 'TexCards\\ForMinions\Immune_0042.png' -p 128,128 'TexCards\\ForMinions\Immune_0043.png' -p 128,128 'TexCards\\ForMinions\Immune_0044.png' -p 128,128 'TexCards\\ForMinions\Immune_0045.png' -p 128,128 'TexCards\\ForMinions\Immune_0046.png' -p 128,128 'TexCards\\ForMinions\Immune_0047.png' -p 128,128 'TexCards\\ForMinions\Immune_0048.png' -p 128,128 'TexCards\\ForMinions\Immune_0049.png' -p 128,128 'TexCards\\ForMinions\Immune_0050.png' -p 128,128 'TexCards\\ForMinions\Immune_0051.png' -p 128,128 'TexCards\\ForMinions\Immune_0052.png' -p 128,128 'TexCards\\ForMinions\Immune_0053.png' -p 128,128 'TexCards\\ForMinions\Immune_0054.png' -p 128,128 'TexCards\\ForMinions\Immune_0055.png' -p 128,128 'TexCards\\ForMinions\Immune_0056.png' -p 128,128 'TexCards\\ForMinions\Immune_0057.png' -p 128,128 'TexCards\\ForMinions\Immune_0058.png' -p 128,128 'TexCards\\ForMinions\Immune_0059.png' -p 128,128 'TexCards\\ForMinions\Immune_0060.png' -p 128,128 'TexCards\\ForMinions\Immune_0061.png' -p 128,128 'TexCards\\ForMinions\Immune_0062.png' -p 128,128 'TexCards\\ForMinions\Immune_0063.png' -p 128,128 'TexCards\\ForMinions\Immune_0064.png' -p 128,128 'TexCards\\ForMinions\Immune_0065.png' -p 128,128 'TexCards\\ForMinions\Immune_0066.png' -p 128,128 'TexCards\\ForMinions\Immune_0067.png' -p 128,128 'TexCards\\ForMinions\Immune_0068.png' -p 128,128 'TexCards\\ForMinions\Immune_0069.png' -p 128,128 'TexCards\\ForMinions\Immune_0070.png' -p 128,128 'TexCards\\ForMinions\Immune_0071.png' -p 128,128 'TexCards\\ForMinions\Immune_0072.png' -p 128,128 'TexCards\\ForMinions\Immune_0073.png' -p 128,128 'TexCards\\ForMinions\Immune_0074.png' -p 128,128 'TexCards\\ForMinions\Immune_0075.png' -p 128,128 'TexCards\\ForMinions\Immune_0076.png' -p 128,128 'TexCards\\ForMinions\Immune_0077.png' -p 128,128 'TexCards\\ForMinions\Immune_0078.png' -p 128,128 'TexCards\\ForMinions\Immune_0079.png' -p 128,128 'TexCards\\ForMinions\Immune_0080.png' -p 128,128 'TexCards\\ForMinions\Immune_0081.png' -p 128,128 'TexCards\\ForMinions\Immune_0082.png' -p 128,128 'TexCards\\ForMinions\Immune_0083.png' -p 128,128 'TexCards\\ForMinions\Immune_0084.png' -p 128,128 'TexCards\\ForMinions\Immune_0085.png' -p 128,128 'TexCards\\ForMinions\Immune_0086.png' -p 128,128 'TexCards\\ForMinions\Immune_0087.png' -p 128,128 'TexCards\\ForMinions\Immune_0088.png' -p 128,128 'TexCards\\ForMinions\Immune_0089.png' -p 128,128 'TexCards\\ForMinions\Immune_0090.png' -p 128,128 'TexCards\\ForMinions\Immune_0091.png' -p 128,128 'TexCards\\ForMinions\Immune_0092.png' -p 128,128 'TexCards\\ForMinions\Immune_0093.png' -p 128,128 'TexCards\\ForMinions\Immune_0094.png' -p 128,128 'TexCards\\ForMinions\Immune_0095.png' -p 128,128 'TexCards\\ForMinions\Immune_0096.png' -p 128,128 'TexCards\\ForMinions\Immune_0097.png' -p 128,128 'TexCards\\ForMinions\Immune_0098.png' -p 128,128 'TexCards\\ForMinions\Immune_0099.png' -p 128,128 'TexCards\\ForMinions\Immune_0100.png'"
 }
 <Texture> Immune_0100 {
-  "TexCards/ForMinions/Immune_0100.png"
+  "TexCards//ForMinions/Immune_0100.png"
 }
 <Texture> Immune_0099 {
-  "TexCards/ForMinions/Immune_0099.png"
+  "TexCards//ForMinions/Immune_0099.png"
 }
 <Texture> Immune_0098 {
-  "TexCards/ForMinions/Immune_0098.png"
+  "TexCards//ForMinions/Immune_0098.png"
 }
 <Texture> Immune_0097 {
-  "TexCards/ForMinions/Immune_0097.png"
+  "TexCards//ForMinions/Immune_0097.png"
 }
 <Texture> Immune_0096 {
-  "TexCards/ForMinions/Immune_0096.png"
+  "TexCards//ForMinions/Immune_0096.png"
 }
 <Texture> Immune_0095 {
-  "TexCards/ForMinions/Immune_0095.png"
+  "TexCards//ForMinions/Immune_0095.png"
 }
 <Texture> Immune_0094 {
-  "TexCards/ForMinions/Immune_0094.png"
+  "TexCards//ForMinions/Immune_0094.png"
 }
 <Texture> Immune_0093 {
-  "TexCards/ForMinions/Immune_0093.png"
+  "TexCards//ForMinions/Immune_0093.png"
 }
 <Texture> Immune_0092 {
-  "TexCards/ForMinions/Immune_0092.png"
+  "TexCards//ForMinions/Immune_0092.png"
 }
 <Texture> Immune_0091 {
-  "TexCards/ForMinions/Immune_0091.png"
+  "TexCards//ForMinions/Immune_0091.png"
 }
 <Texture> Immune_0090 {
-  "TexCards/ForMinions/Immune_0090.png"
+  "TexCards//ForMinions/Immune_0090.png"
 }
 <Texture> Immune_0089 {
-  "TexCards/ForMinions/Immune_0089.png"
+  "TexCards//ForMinions/Immune_0089.png"
 }
 <Texture> Immune_0088 {
-  "TexCards/ForMinions/Immune_0088.png"
+  "TexCards//ForMinions/Immune_0088.png"
 }
 <Texture> Immune_0087 {
-  "TexCards/ForMinions/Immune_0087.png"
+  "TexCards//ForMinions/Immune_0087.png"
 }
 <Texture> Immune_0086 {
-  "TexCards/ForMinions/Immune_0086.png"
+  "TexCards//ForMinions/Immune_0086.png"
 }
 <Texture> Immune_0085 {
-  "TexCards/ForMinions/Immune_0085.png"
+  "TexCards//ForMinions/Immune_0085.png"
 }
 <Texture> Immune_0084 {
-  "TexCards/ForMinions/Immune_0084.png"
+  "TexCards//ForMinions/Immune_0084.png"
 }
 <Texture> Immune_0083 {
-  "TexCards/ForMinions/Immune_0083.png"
+  "TexCards//ForMinions/Immune_0083.png"
 }
 <Texture> Immune_0082 {
-  "TexCards/ForMinions/Immune_0082.png"
+  "TexCards//ForMinions/Immune_0082.png"
 }
 <Texture> Immune_0081 {
-  "TexCards/ForMinions/Immune_0081.png"
+  "TexCards//ForMinions/Immune_0081.png"
 }
 <Texture> Immune_0080 {
-  "TexCards/ForMinions/Immune_0080.png"
+  "TexCards//ForMinions/Immune_0080.png"
 }
 <Texture> Immune_0079 {
-  "TexCards/ForMinions/Immune_0079.png"
+  "TexCards//ForMinions/Immune_0079.png"
 }
 <Texture> Immune_0078 {
-  "TexCards/ForMinions/Immune_0078.png"
+  "TexCards//ForMinions/Immune_0078.png"
 }
 <Texture> Immune_0077 {
-  "TexCards/ForMinions/Immune_0077.png"
+  "TexCards//ForMinions/Immune_0077.png"
 }
 <Texture> Immune_0076 {
-  "TexCards/ForMinions/Immune_0076.png"
+  "TexCards//ForMinions/Immune_0076.png"
 }
 <Texture> Immune_0075 {
-  "TexCards/ForMinions/Immune_0075.png"
+  "TexCards//ForMinions/Immune_0075.png"
 }
 <Texture> Immune_0074 {
-  "TexCards/ForMinions/Immune_0074.png"
+  "TexCards//ForMinions/Immune_0074.png"
 }
 <Texture> Immune_0073 {
-  "TexCards/ForMinions/Immune_0073.png"
+  "TexCards//ForMinions/Immune_0073.png"
 }
 <Texture> Immune_0072 {
-  "TexCards/ForMinions/Immune_0072.png"
+  "TexCards//ForMinions/Immune_0072.png"
 }
 <Texture> Immune_0071 {
-  "TexCards/ForMinions/Immune_0071.png"
+  "TexCards//ForMinions/Immune_0071.png"
 }
 <Texture> Immune_0070 {
-  "TexCards/ForMinions/Immune_0070.png"
+  "TexCards//ForMinions/Immune_0070.png"
 }
 <Texture> Immune_0069 {
-  "TexCards/ForMinions/Immune_0069.png"
+  "TexCards//ForMinions/Immune_0069.png"
 }
 <Texture> Immune_0068 {
-  "TexCards/ForMinions/Immune_0068.png"
+  "TexCards//ForMinions/Immune_0068.png"
 }
 <Texture> Immune_0067 {
-  "TexCards/ForMinions/Immune_0067.png"
+  "TexCards//ForMinions/Immune_0067.png"
 }
 <Texture> Immune_0066 {
-  "TexCards/ForMinions/Immune_0066.png"
+  "TexCards//ForMinions/Immune_0066.png"
 }
 <Texture> Immune_0065 {
-  "TexCards/ForMinions/Immune_0065.png"
+  "TexCards//ForMinions/Immune_0065.png"
 }
 <Texture> Immune_0064 {
-  "TexCards/ForMinions/Immune_0064.png"
+  "TexCards//ForMinions/Immune_0064.png"
 }
 <Texture> Immune_0063 {
-  "TexCards/ForMinions/Immune_0063.png"
+  "TexCards//ForMinions/Immune_0063.png"
 }
 <Texture> Immune_0062 {
-  "TexCards/ForMinions/Immune_0062.png"
+  "TexCards//ForMinions/Immune_0062.png"
 }
 <Texture> Immune_0061 {
-  "TexCards/ForMinions/Immune_0061.png"
+  "TexCards//ForMinions/Immune_0061.png"
 }
 <Texture> Immune_0060 {
-  "TexCards/ForMinions/Immune_0060.png"
+  "TexCards//ForMinions/Immune_0060.png"
 }
 <Texture> Immune_0059 {
-  "TexCards/ForMinions/Immune_0059.png"
+  "TexCards//ForMinions/Immune_0059.png"
 }
 <Texture> Immune_0058 {
-  "TexCards/ForMinions/Immune_0058.png"
+  "TexCards//ForMinions/Immune_0058.png"
 }
 <Texture> Immune_0057 {
-  "TexCards/ForMinions/Immune_0057.png"
+  "TexCards//ForMinions/Immune_0057.png"
 }
 <Texture> Immune_0056 {
-  "TexCards/ForMinions/Immune_0056.png"
+  "TexCards//ForMinions/Immune_0056.png"
 }
 <Texture> Immune_0055 {
-  "TexCards/ForMinions/Immune_0055.png"
+  "TexCards//ForMinions/Immune_0055.png"
 }
 <Texture> Immune_0054 {
-  "TexCards/ForMinions/Immune_0054.png"
+  "TexCards//ForMinions/Immune_0054.png"
 }
 <Texture> Immune_0053 {
-  "TexCards/ForMinions/Immune_0053.png"
+  "TexCards//ForMinions/Immune_0053.png"
 }
 <Texture> Immune_0052 {
-  "TexCards/ForMinions/Immune_0052.png"
+  "TexCards//ForMinions/Immune_0052.png"
 }
 <Texture> Immune_0051 {
-  "TexCards/ForMinions/Immune_0051.png"
+  "TexCards//ForMinions/Immune_0051.png"
 }
 <Texture> Immune_0050 {
-  "TexCards/ForMinions/Immune_0050.png"
+  "TexCards//ForMinions/Immune_0050.png"
 }
 <Texture> Immune_0049 {
-  "TexCards/ForMinions/Immune_0049.png"
+  "TexCards//ForMinions/Immune_0049.png"
 }
 <Texture> Immune_0048 {
-  "TexCards/ForMinions/Immune_0048.png"
+  "TexCards//ForMinions/Immune_0048.png"
 }
 <Texture> Immune_0047 {
-  "TexCards/ForMinions/Immune_0047.png"
+  "TexCards//ForMinions/Immune_0047.png"
 }
 <Texture> Immune_0046 {
-  "TexCards/ForMinions/Immune_0046.png"
+  "TexCards//ForMinions/Immune_0046.png"
 }
 <Texture> Immune_0045 {
-  "TexCards/ForMinions/Immune_0045.png"
+  "TexCards//ForMinions/Immune_0045.png"
 }
 <Texture> Immune_0044 {
-  "TexCards/ForMinions/Immune_0044.png"
+  "TexCards//ForMinions/Immune_0044.png"
 }
 <Texture> Immune_0043 {
-  "TexCards/ForMinions/Immune_0043.png"
+  "TexCards//ForMinions/Immune_0043.png"
 }
 <Texture> Immune_0042 {
-  "TexCards/ForMinions/Immune_0042.png"
+  "TexCards//ForMinions/Immune_0042.png"
 }
 <Texture> Immune_0041 {
-  "TexCards/ForMinions/Immune_0041.png"
+  "TexCards//ForMinions/Immune_0041.png"
 }
 <Texture> Immune_0040 {
-  "TexCards/ForMinions/Immune_0040.png"
+  "TexCards//ForMinions/Immune_0040.png"
 }
 <Texture> Immune_0039 {
-  "TexCards/ForMinions/Immune_0039.png"
+  "TexCards//ForMinions/Immune_0039.png"
 }
 <Texture> Immune_0038 {
-  "TexCards/ForMinions/Immune_0038.png"
+  "TexCards//ForMinions/Immune_0038.png"
 }
 <Texture> Immune_0037 {
-  "TexCards/ForMinions/Immune_0037.png"
+  "TexCards//ForMinions/Immune_0037.png"
 }
 <Texture> Immune_0036 {
-  "TexCards/ForMinions/Immune_0036.png"
+  "TexCards//ForMinions/Immune_0036.png"
 }
 <Texture> Immune_0035 {
-  "TexCards/ForMinions/Immune_0035.png"
+  "TexCards//ForMinions/Immune_0035.png"
 }
 <Texture> Immune_0034 {
-  "TexCards/ForMinions/Immune_0034.png"
+  "TexCards//ForMinions/Immune_0034.png"
 }
 <Texture> Immune_0033 {
-  "TexCards/ForMinions/Immune_0033.png"
+  "TexCards//ForMinions/Immune_0033.png"
 }
 <Texture> Immune_0032 {
-  "TexCards/ForMinions/Immune_0032.png"
+  "TexCards//ForMinions/Immune_0032.png"
 }
 <Texture> Immune_0031 {
-  "TexCards/ForMinions/Immune_0031.png"
+  "TexCards//ForMinions/Immune_0031.png"
 }
 <Texture> Immune_0030 {
-  "TexCards/ForMinions/Immune_0030.png"
+  "TexCards//ForMinions/Immune_0030.png"
 }
 <Texture> Immune_0029 {
-  "TexCards/ForMinions/Immune_0029.png"
+  "TexCards//ForMinions/Immune_0029.png"
 }
 <Texture> Immune_0028 {
-  "TexCards/ForMinions/Immune_0028.png"
+  "TexCards//ForMinions/Immune_0028.png"
 }
 <Texture> Immune_0027 {
-  "TexCards/ForMinions/Immune_0027.png"
+  "TexCards//ForMinions/Immune_0027.png"
 }
 <Texture> Immune_0026 {
-  "TexCards/ForMinions/Immune_0026.png"
+  "TexCards//ForMinions/Immune_0026.png"
 }
 <Texture> Immune_0025 {
-  "TexCards/ForMinions/Immune_0025.png"
+  "TexCards//ForMinions/Immune_0025.png"
 }
 <Texture> Immune_0024 {
-  "TexCards/ForMinions/Immune_0024.png"
+  "TexCards//ForMinions/Immune_0024.png"
 }
 <Texture> Immune_0023 {
-  "TexCards/ForMinions/Immune_0023.png"
+  "TexCards//ForMinions/Immune_0023.png"
 }
 <Texture> Immune_0022 {
-  "TexCards/ForMinions/Immune_0022.png"
+  "TexCards//ForMinions/Immune_0022.png"
 }
 <Texture> Immune_0021 {
-  "TexCards/ForMinions/Immune_0021.png"
+  "TexCards//ForMinions/Immune_0021.png"
 }
 <Texture> Immune_0020 {
-  "TexCards/ForMinions/Immune_0020.png"
+  "TexCards//ForMinions/Immune_0020.png"
 }
 <Texture> Immune_0019 {
-  "TexCards/ForMinions/Immune_0019.png"
+  "TexCards//ForMinions/Immune_0019.png"
 }
 <Texture> Immune_0018 {
-  "TexCards/ForMinions/Immune_0018.png"
+  "TexCards//ForMinions/Immune_0018.png"
 }
 <Texture> Immune_0017 {
-  "TexCards/ForMinions/Immune_0017.png"
+  "TexCards//ForMinions/Immune_0017.png"
 }
 <Texture> Immune_0016 {
-  "TexCards/ForMinions/Immune_0016.png"
+  "TexCards//ForMinions/Immune_0016.png"
 }
 <Texture> Immune_0015 {
-  "TexCards/ForMinions/Immune_0015.png"
+  "TexCards//ForMinions/Immune_0015.png"
 }
 <Texture> Immune_0014 {
-  "TexCards/ForMinions/Immune_0014.png"
+  "TexCards//ForMinions/Immune_0014.png"
 }
 <Texture> Immune_0013 {
-  "TexCards/ForMinions/Immune_0013.png"
+  "TexCards//ForMinions/Immune_0013.png"
 }
 <Texture> Immune_0012 {
-  "TexCards/ForMinions/Immune_0012.png"
+  "TexCards//ForMinions/Immune_0012.png"
 }
 <Texture> Immune_0011 {
-  "TexCards/ForMinions/Immune_0011.png"
+  "TexCards//ForMinions/Immune_0011.png"
 }
 <Texture> Immune_0010 {
-  "TexCards/ForMinions/Immune_0010.png"
+  "TexCards//ForMinions/Immune_0010.png"
 }
 <Texture> Immune_0009 {
-  "TexCards/ForMinions/Immune_0009.png"
+  "TexCards//ForMinions/Immune_0009.png"
 }
 <Texture> Immune_0008 {
-  "TexCards/ForMinions/Immune_0008.png"
+  "TexCards//ForMinions/Immune_0008.png"
 }
 <Texture> Immune_0007 {
-  "TexCards/ForMinions/Immune_0007.png"
+  "TexCards//ForMinions/Immune_0007.png"
 }
 <Texture> Immune_0006 {
-  "TexCards/ForMinions/Immune_0006.png"
+  "TexCards//ForMinions/Immune_0006.png"
 }
 <Texture> Immune_0005 {
-  "TexCards/ForMinions/Immune_0005.png"
+  "TexCards//ForMinions/Immune_0005.png"
 }
 <Texture> Immune_0004 {
-  "TexCards/ForMinions/Immune_0004.png"
+  "TexCards//ForMinions/Immune_0004.png"
 }
 <Texture> Immune_0003 {
-  "TexCards/ForMinions/Immune_0003.png"
+  "TexCards//ForMinions/Immune_0003.png"
 }
 <Texture> Immune_0002 {
-  "TexCards/ForMinions/Immune_0002.png"
+  "TexCards//ForMinions/Immune_0002.png"
 }
 <Texture> Immune_0001 {
-  "TexCards/ForMinions/Immune_0001.png"
+  "TexCards//ForMinions/Immune_0001.png"
 }
 <Texture> Immune_0000 {
-  "TexCards/ForMinions/Immune_0000.png"
+  "TexCards//ForMinions/Immune_0000.png"
 }
 <Group> {
   <Switch> { 1 }
   <Scalar> fps { 24 }
   <VertexPool> vpool {
     <Vertex> 0 {
-      -0.00390625 0.00390625 0
+      -0.5 0.5 0
       <UV> { 0 1 }
     }
     <Vertex> 1 {
-      -0.00390625 -0.00390625 0
+      -0.5 -0.5 0
       <UV> { 0 0 }
     }
     <Vertex> 2 {
-      0.00390625 -0.00390625 0
+      0.5 -0.5 0
       <UV> { 1 0 }
     }
     <Vertex> 3 {
-      0.00390625 0.00390625 0
+      0.5 0.5 0
       <UV> { 1 1 }
     }
     <Vertex> 4 {

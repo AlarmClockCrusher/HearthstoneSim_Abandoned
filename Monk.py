@@ -46,7 +46,7 @@ class Chen(Hero):
 """Monk Basic Cards"""
 class Resuscitate(Spell): #轮回转世
 	Class, school, name = "Monk", "", "Resuscitate"
-	requireTarget, mana = True, 0
+	requireTarget, mana, effects = True, 0, ""
 	index = "Basic~Monk~Spell~0~Resuscitate"
 	description = "Return a friendly minion to your hand. Restore a Mana Crystal" #将一个友方随从移回你的手牌。复原一个法力水晶
 	def available(self):
@@ -58,7 +58,7 @@ class Resuscitate(Spell): #轮回转世
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and target.onBoard:
 			PRINT(self.Game, "Resuscitate returns friendly minion %s to player's hand and restores a Mana Crystal"%target.name)
-			self.Game.returnMiniontoHand(target, deathrattlesStayArmed=False)
+			self.Game.returnObj2Hand(target, deathrattlesStayArmed=False)
 		self.Game.Manas.restoreManaCrystal(1, self.ID)
 		return target
 		
@@ -67,7 +67,7 @@ class ArchoftheTemple(Minion): #禅院的牌坊
 	Class, race, name = "Monk", "", "Arch of the Temple"
 	mana, attack, health = 1, 0, 2
 	index = "Basic~Monk~Minion~1~0~2~~Arch of the Temple~Taunt~Battlecry"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Add two 1/1 Monks with Rush to your hand" #嘲讽。战吼：将两张1/1并具有突袭的武僧置入你的手牌
+	requireTarget, effects, description = False, "Taunt", "Taunt. Battlecry: Add two 1/1 Monks with Rush to your hand" #嘲讽。战吼：将两张1/1并具有突袭的武僧置入你的手牌
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Arch of the Templer's battlecry adds two 1/1 Monks with Rush to player's hand")
@@ -78,13 +78,13 @@ class MonkAttacker(Minion): #武僧袭击者
 	Class, race, name = "Monk", "", "Monk Attacker"
 	mana, attack, health = 1, 1, 1
 	index = "Basic~Monk~Minion~1~1~1~~Monk Attacker~Rush~Uncollectible"
-	requireTarget, keyWord, description = False, "Rush", "Rush"
+	requireTarget, effects, description = False, "Rush", "Rush"
 	
 	
 class CanewithaWineGourd(Weapon): #带酒葫芦的杖子
 	#每当你的英雄攻击后为其恢复3点生命值
 	Class, name, description = "Monk", "Cane with a Wine Gourd", "After your Hero attacks, restore 3 Health to it"
-	mana, attack, durability = 1, 0, 4
+	mana, attack, durability, effects = 1, 0, 4, ""
 	index = "Basic~Monk~Weapon~1~0~4~Cane with a Wine Gourd"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -108,12 +108,12 @@ class MonksApprentice(Minion):
 	Class, race, name = "Monk", "", "Monk's Apprentice"
 	mana, attack, health = 1, 1, 3
 	index = "Basic~Monk~Minion~1~1~3~~Monk's Apprentice"
-	requireTarget, keyWord, description = False, "", "While this minion has 2 or more Attack, it has Rush and Windfury"
+	requireTarget, effects, description = False, "", "While this minion has 2 or more Attack, it has Rush and Windfury"
 			
 class ShaohaosProtection(Spell): #少昊的保护
 	#使一个友方随从获得+2生命值且无法成为法术或英雄技能的目标
 	Class, school, name = "Monk", "", "Shaohao's Protection"
-	requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 	index = "Basic~Monk~Spell~1~Shaohao's Protection"
 	description = "Give a friendly minion +2 Health and 'Can't be targeted by spells or Hero Powers'"
 	def available(self):
@@ -126,13 +126,13 @@ class ShaohaosProtection(Spell): #少昊的保护
 		if target:
 			PRINT(self.Game, "Shaohao's Protection gives friendly minion %s +2 Health. It can't be targeted by spells or Hero Powers anymore"%target.name)
 			target.buffDebuff(0, 2)
-			target.marks["Evasive"] += 1
+			target.effects["Evasive"] += 1
 		return target
 		
 		
 class EffusiveMists(Spell): #流溢之雾
 	Class, school, name = "Monk", "", "Effusive Mists"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "Basic~Monk~Spell~2~Effusive Mists"
 	description = "Change the Attack of 2 random enemy minions to 1" #将两个随机敌方随从的攻击力变为1
 	def available(self):
@@ -147,7 +147,7 @@ class EffusiveMists(Spell): #流溢之雾
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.picks.pop(0)]
 				else:
 					minions = list(npchoice(minions, min(2, len(minions)), replace=False))
-					curGame.picks.append(tuple([minion.pos for minion in minions]))
+					curGame.picks_Backup.append(tuple([minion.pos for minion in minions]))
 				PRINT(curGame, "Effusive Mists sets the Attack of minions {} to 1".format(minions))
 				for minion in minions: minion.statReset(1, False)
 		return None
@@ -158,7 +158,7 @@ class SwiftBrewmaster(Minion): #迷踪的酒仙
 	Class, race, name = "Monk", "", "Swift Brewmaster"
 	mana, attack, health = 2, 1, 4
 	index = "Basic~Monk~Minion~2~1~4~~Swift Brewmaster"
-	requireTarget, keyWord, description = False, "", "Your Hero Power also targets adjacent minions if it triggers Quaff"
+	requireTarget, effects, description = False, "", "Your Hero Power also targets adjacent minions if it triggers Quaff"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_SwiftBrewmaster(self)]
@@ -175,17 +175,17 @@ class Trig_SwiftBrewmaster(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		if signal == "ManaPaid":
-			self.entity.Game.status[self.entity.ID]["Power Sweep"] += 1
+			self.entity.Game.effects[self.entity.ID]["Power Sweep"] += 1
 			self.on = True
 		else:
-			self.entity.Game.status[self.entity.ID]["Power Sweep"] -= 1
+			self.entity.Game.effects[self.entity.ID]["Power Sweep"] -= 1
 			self.on = False
 			
 			
 class Provoke(Spell): #嚎镇八方
 	#在本回合中，使一个友方角色获得+4攻击力；或者使一个敌方角色获得-4攻击力
 	Class, school, name = "Monk", "", "Provoke"
-	requireTarget, mana = True, 3
+	requireTarget, mana, effects = True, 3, ""
 	index = "Basic~Monk~Spell~3~Provoke"
 	description = "Give a friendly character +4 Attack this turn; or an enemy character -4 Attack this turn"
 		
@@ -207,10 +207,10 @@ class SweepingKickFighter(Minion): #扫堂腿格斗师
 	Class, race, name = "Monk", "", "Sweeping Kick Fighter"
 	mana, attack, health = 3, 1, 4
 	index = "Basic~Monk~Minion~3~1~4~~Sweeping Kick Fighter~Rush"
-	requireTarget, keyWord, description = False, "Rush", "Rush. Also damages minions next to whoever this attacks"
+	requireTarget, effects, description = False, "Rush", "Rush. Also damages minions next to whoever this attacks"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
-		self.marks["Sweep"] = 1
+		self.effects["Sweep"] = 1
 		
 			
 class ShadoPanWuKao(Minion): #影踪派悟道者
@@ -218,7 +218,7 @@ class ShadoPanWuKao(Minion): #影踪派悟道者
 	Class, race, name = "Monk", "", "Shado-Pan Wu Kao"
 	mana, attack, health = 3, 3, 4
 	index = "Basic~Monk~Minion~3~3~4~~Shado-Pan Wu Kao"
-	requireTarget, keyWord, description = False, "", "After your hero attacks, gain Stealth"
+	requireTarget, effects, description = False, "", "After your hero attacks, gain Stealth"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_ShadoPanWuKao(self)]
@@ -232,7 +232,7 @@ class Trig_ShadoPanWuKao(TrigBoard):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		PRINT(self.entity.Game, "After friendly hero attacks, %s gains Stealth"%self.entity.name)
-		self.entity.getsStatus("Stealth")
+		self.entity.getsEffect("Stealth")
 		
 		
 """Monk Classic Cards"""
@@ -241,7 +241,7 @@ class WiseLorewalkerCho(Minion): #睿智的游学者周卓
 	Class, race, name = "Monk", "", "Wise Lorewalker Cho"
 	mana, attack, health = 1, 0, 4
 	index = "Classic~Monk~Minion~1~0~4~~Wise Lorewalker Cho~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Discover a spell from another class with Cost equal to your remaining Mana Crystals"
+	requireTarget, effects, description = False, "", "Battlecry: Discover a spell from another class with Cost equal to your remaining Mana Crystals"
 	poolIdentifier = "0-Cost Spells"
 	@classmethod
 	def generatePool(cls, pools):
@@ -289,7 +289,7 @@ class XuentheWhiteTiger_Mutable_1(Minion): #白虎 雪怒
 	Class, race, name = "Monk", "Beast", "Xuen, the White Tiger"
 	mana, attack, health = 1, 1, 1
 	index = "Classic~Monk~Minion~1~1~1~Beast~Xuen, the White Tiger~Rush~Legendary"
-	requireTarget, keyWord, description = False, "Rush", "Rush. After you play a card, return this to your hand and give it +2/+2 for the rest of the game. It costs (1) more(up to 10)"
+	requireTarget, effects, description = False, "Rush", "Rush. After you play a card, return this to your hand and give it +2/+2 for the rest of the game. It costs (1) more(up to 10)"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_XuentheWhiteTiger(self)]
@@ -304,7 +304,7 @@ class Trig_XuentheWhiteTiger(TrigBoard):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
 		PRINT(minion.Game, "Player played a card and %s returns itself to player's hand. It gain +2/+2 and costs (1) more permanently."%minion.name)
-		if minion.Game.returnMiniontoHand(minion, deathrattlesStayArmed=False):
+		if minion.Game.returnObj2Hand(minion, deathrattlesStayArmed=False):
 			cost = type(minion).mana + 1
 			stat = cost * 2 - 1
 			newIndex = "Classic~Monk~Minion~%d~%d~%d~Beast~Xuen, the White Tiger~Rush~Legendary~Uncollectible"%(cost, stat, stat)
@@ -319,7 +319,7 @@ class DefenseTechniqueMaster(Minion): #御术僧师
 	Class, race, name = "Monk", "", "Defense Technique Master"
 	mana, attack, health = 2, 3, 2
 	index = "Classic~Monk~Minion~2~3~2~~Defense Technique Master~Taunt~Quaff"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Quaff: Gain 'Deathrattle: Give your hero +3 Attack this turn'"
+	requireTarget, effects, description = False, "Taunt", "Taunt. Quaff: Gain 'Deathrattle: Give your hero +3 Attack this turn'"
 	
 	def effCanTrig(self):
 		self.effectViable = (self.Game.Manas.manas[self.ID] == self.mana)
@@ -342,7 +342,7 @@ class GiveYourHeroPlus3AttackThisTurn(Deathrattle_Minion):
 		
 class PurifyingBrew(Spell): #活血酒
 	Class, school, name = "Monk", "", "Purifying Brew"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "Classic~Monk~Spell~2~Purifying Brew~Quaff"
 	description = "Draw a card. Quaff: Add a copy of it to your hand" #抽一张牌。畅饮： 复制该牌并置入你的手牌
 	def effCanTrig(self):
@@ -361,7 +361,7 @@ class PurifyingBrew(Spell): #活血酒
 class Transcendance(Spell): #魂体双分
 	#选择一个随从。将它的一个1/1复制置入你的手牌，其法力值消耗变为(1)点
 	Class, school, name = "Monk", "", "Transcendance"
-	requireTarget, mana = True, 2
+	requireTarget, mana, effects = True, 2, ""
 	index = "Classic~Monk~Spell~2~Transcendance"
 	description = "Choose a minion and add a 1/1 copy of it to your hand. It costs (1)"
 	def available(self):
@@ -379,7 +379,7 @@ class Transcendance(Spell): #魂体双分
 		
 class Liquor(Spell): #醉酿
 	Class, school, name = "Monk", "", "Liquor"
-	requireTarget, mana = True, 3
+	requireTarget, mana, effects = True, 3, ""
 	index = "Classic~Monk~Spell~3~Liquor~Quaff"
 	description = "Target a minion. It can't attack for two turns. Quaff: Destroy it" #使一个随从两个回合无法攻击。畅饮：消灭该随从
 	def effCanTrig(self):
@@ -399,7 +399,7 @@ class Liquor(Spell): #醉酿
 				self.Game.killMinion(self, target)
 			elif target.onBoard: #假设只有当目标随从还在场上的时候会生效
 				PRINT(self.Game, "Liquor gives renders minion %s unable to attack for two turns"%target.name)
-				target.marks["Can't Attack"] += 1
+				target.effects["Can't Attack"] += 1
 				trig = Trig_Liquor(target)
 				target.trigsBoard.append(trig)
 				trig.connect()
@@ -418,7 +418,7 @@ class Trig_Liquor(TrigBoard):
 		self.counter -= 1
 		if self.counter < 1:
 			PRINT(self.entity.Game, "%s can attack next turn."%self.entity.name)
-			self.entity.marks["Can't Attack"] -= 1
+			self.entity.effects["Can't Attack"] -= 1
 			self.disconnect()
 			try: self.entity.trigsBoard.remove(self)
 			except: pass
@@ -434,7 +434,7 @@ class Trig_Liquor(TrigBoard):
 		
 class StaveOff(Spell): #酒不离手
 	Class, school, name = "Monk", "", "Stave Off"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "Classic~Monk~Spell~3~Stave Off"
 	description = "Draw 2 Quaff cards from your deck"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -453,7 +453,7 @@ class StaveOff(Spell): #酒不离手
 class TouchofKarma(Spell): #业报之触
 	#选择一个敌方随从。在本回合中，你的英雄受到的伤害改为由该随从承担
 	Class, school, name = "Monk", "", "Touch of Karma"
-	requireTarget, mana = True, 3
+	requireTarget, mana, effects = True, 3, ""
 	index = "Classic~Monk~Spell~3~Touch of Karma"
 	description = "Target an enemy minion. Damage on your Hero this turn will be taken by that minion instead"
 	def available(self):
@@ -495,7 +495,7 @@ class Trig_TouchofKarma(TrigBoard):
 class SpiritTether(Spell): #魂体束缚
 	#将你的英雄技能替换为“使一个随从变形为2/2并具有嘲讽的魔像”。使用两次后，替换为原技能
 	Class, school, name = "Monk", "", "Spirit Tether"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "Classic~Monk~Spell~3~Spirit Tether"
 	description = "Swap your Hero Power to 'Transform a minion into a 2/2 Golem with Taunt'. After 2 uses, swap it back"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -550,13 +550,13 @@ class TetheredGolem(Minion): #雪怒的子嗣
 	Class, race, name = "Monk", "", "Tethered Golem"
 	mana, attack, health = 2, 2, 2
 	index = "Classic~Monk~Minion~2~2~2~Beast~Tethered Golem~Taunt~Uncollectible"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt"
+	requireTarget, effects, description = False, "Taunt", "Taunt"
 	
 	
 class DrunkenBoxing(Spell): #醉拳
 	#在本回合中，使你的英雄获得+5攻击力，随机攻击所有随从。畅饮：每次攻击后，为你的英雄恢复3点生命值
 	Class, school, name = "Monk", "", "Drunken Boxing"
-	requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 	index = "Classic~Monk~Spell~4~Drunken Boxing~Quaff"
 	description = "Your Hero gains +5 Attack this turn and randomly attacks all minions. Quaff:　Restore 3 Health to your Hero after each attack"
 	def effCanTrig(self):
@@ -607,7 +607,7 @@ class OnimaActuary(Minion): #秘典宗精算师
 	Class, race, name = "Monk", "", "Onima Actuary"
 	mana, attack, health = 4, 5, 4
 	index = "Classic~Monk~Minion~4~5~4~~Onima Actuary~Stealth"
-	requireTarget, keyWord, description = False, "Stealth", "Stealth. After this attacks, your Hero Power costs (1) for the rest of the turn"
+	requireTarget, effects, description = False, "Stealth", "Stealth. After this attacks, your Hero Power costs (1) for the rest of the turn"
 	#潜行。在该随从攻击后，本回合中你的英雄技能的法力值消耗为(1)点
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -645,7 +645,7 @@ class SpawnofXuen(Minion): #雪怒的子嗣
 	Class, race, name = "Monk", "Beast", "Spawn of Xuen"
 	mana, attack, health = 5, 3, 5
 	index = "Classic~Monk~Minion~5~3~5~Beast~Spawn of Xuen~Rush~Battlecry"
-	requireTarget, keyWord, description = False, "Rush", "Rush. Battlecry: Discover a 1-Cost minion from your deck"
+	requireTarget, effects, description = False, "Rush", "Rush. Battlecry: Discover a 1-Cost minion from your deck"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -662,27 +662,27 @@ class SpawnofXuen(Minion): #雪怒的子嗣
 						if "byOthers" in comment:
 							PRINT(curGame, "Spawn of Xuen's battlecry lets player draw a random 1-Cost minion from deck")
 							i = npchoice(oneCostMinions)
-							curGame.picks.append(i)
+							curGame.picks_Backup.append(i)
 							curGame.Hand_Deck.drawCard(self.ID, i)
 						else:
 							PRINT(curGame, "Spawn of Xuen's battlecry lets player discover a 1-Cost minion from deck")
 							indices = npchoice(oneCostMinions, min(3, len(oneCostMinions)), replace=False)
 							curGame.options = [curGame.Hand_Deck.decks[self.ID][i] for i in indices]
 							curGame.Discover.startDiscover(self)
-					else: curGame.picks.append(-1)
+					else: curGame.picks_Backup.append(-1)
 		return None
 		
 	def discoverDecided(self, option, pool=None):
 		for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]):
 			if card == option:
-				self.Game.picks.append(i)
+				self.Game.picks_Backup.append(i)
 				self.Game.Hand_Deck.drawCard(self.ID, option)
 		
 		
 #class QuickSip(Spell): #浅斟快饮
 #	#随机将你的牌库中的一张牌的3张复制置入你的手牌。畅饮：改为从你的牌库中发现这张牌
 #	Class, school, name = "Monk", "", "Quick Sip"
-#	requireTarget, mana = False, 5
+	requireTarget, mana, effects = False, 5, ""
 #	index = "Classic~Monk~Spell~5~Quick Sip~Quaff"
 #	description = "Add 3 copies of a random card in your deck to your hand. Quaff: Discover the card instead"
 #	def effCanTrig(self):
@@ -712,7 +712,7 @@ class PawnofShaohao(Minion): #少昊的禁卫
 	Class, race, name = "Monk", "", "Pawn of Shaohao"
 	mana, attack, health = 4, 5, 3
 	index = "Classic~Monk~Minion~4~5~3~~Pawn of Shaohao~Rush~Windfury"
-	requireTarget, keyWord, description = False, "Rush,Windfury", "Rush, Windfury"
+	requireTarget, effects, description = False, "Rush,Windfury", "Rush, Windfury"
 	
 	
 class ShaohaotheEmperor(Minion): #皇帝 少昊
@@ -720,7 +720,7 @@ class ShaohaotheEmperor(Minion): #皇帝 少昊
 	Class, race, name = "Monk", "", "Shaohao, the Emperor"
 	mana, attack, health = 4, 3, 5
 	index = "Classic~Monk~Minion~4~3~5~~Shaohao, the Emperor~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Other friendly characters can only be targeted by your spells or Hero Power. Battlecry: Gain Stealth until your next turn"
+	requireTarget, effects, description = False, "", "Other friendly characters can only be targeted by your spells or Hero Power. Battlecry: Gain Stealth until your next turn"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.auras["Has Aura"] = OtherFriendlyMinionsHaveEvasive(self)
@@ -730,21 +730,21 @@ class ShaohaotheEmperor(Minion): #皇帝 少昊
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		PRINT(self.Game, "Shaohao, the Emperor's battlecry give the minion Stealth until player's next turn")
-		self.status["Temp Stealth"] += 1
+		self.effects["Temp Stealth"] += 1
 		return None
 		
 class OtherFriendlyMinionsHaveEvasive(EffectAura):
 	def __init__(self, entity):
 		self.entity = entity
 		self.signals, self.auraAffected = ["MinionAppears"], []
-		self.keyWord = "Evasive"
+		self.effect = "Evasive"
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity
 		
 	def applies(self, subject):
 		if self.applicable(subject):
-			Effect_Receiver(subject, self, "Enemy Evasive").effectStart()
+			Aura_Receiver(subject, self, effect="Enemy Evasive").effectStart()
 			
 	def selfCopy(self, recipient):
 		return type(self)(recipient)
@@ -753,7 +753,7 @@ class OtherFriendlyMinionsHaveEvasive(EffectAura):
 class InnerPeace(Spell): #平常心
 #抽一张牌。如果你的生命值大于或等于15点，则为你的英雄恢复所有生命值
 	Class, school, name = "Monk", "", "Inner Peace"
-	requireTarget, mana = False, 6
+	requireTarget, mana, effects = False, 6, ""
 	index = "Classic~Monk~Spell~6~Inner Peace"
 	description = "Draw a card. If your Hero's Health is 15 or higher, fully heal your Hero"
 	def effCanTrig(self):
@@ -774,7 +774,7 @@ class LotusHealer(Minion): #玉莲帮医者
 	Class, race, name = "Monk", "", "Lotus Healer"
 	mana, attack, health = 6, 3, 7
 	index = "Classic~Monk~Minion~6~3~7~~Lotus Healer~Taunt"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. After this is attacked, restored 1 Health to all friendly minions"
+	requireTarget, effects, description = False, "Taunt", "Taunt. After this is attacked, restored 1 Health to all friendly minions"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_LotusHealer(self)]
@@ -796,7 +796,7 @@ class Trig_LotusHealer(TrigBoard):
 class RushingJadeWind(Spell): #碧玉疾风
 	#对所有敌方随从造成等于敌方随从数的伤害
 	Class, school, name = "Monk", "", "Rushing Jade Wind"
-	requireTarget, mana = False, 6
+	requireTarget, mana, effects = False, 6, ""
 	index = "Classic~Monk~Spell~6~Rushing Jade Wind"
 	description = "Deal damage to all enemy minions equal to the number of enemy minions"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -812,7 +812,7 @@ class KunLaiSummitZenAlchemist(Minion): #昆莱山禅师
 	Class, race, name = "Monk", "", "Kun-Lai Summit Zen Alchemist"
 	mana, attack, health = 7, 7, 7
 	index = "Classic~Monk~Minion~7~7~7~~Kun-Lai Summit Zen Alchemist"
-	requireTarget, keyWord, description = False, "", "At the end of your turn, change the Attack of a random enemy minion with 1 or more Attack to 1"
+	requireTarget, effects, description = False, "", "At the end of your turn, change the Attack of a random enemy minion with 1 or more Attack to 1"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
 		self.trigsBoard = [Trig_KunLaiSummitZenAlchemist(self)]
@@ -837,11 +837,11 @@ class Trig_KunLaiSummitZenAlchemist(TrigBoard):
 class FistsoftheHeavens(Weapon): #诸天之拳
 #风怒。本回合中，每当你的畅饮牌触发后，便获得+4攻击力；或者使一个敌方角色获得-4攻击力
 	Class, name, description = "Monk", "Fists of the Heavens", "Windfury. After your Quaff triggers, gain +4 Attack this turn"
-	mana, attack, durability = 8, 2, 4
+	mana, attack, durability, effects = 8, 2, 4, ""
 	index = "Classic~Monk~Weapon~8~2~4~Fists of the Heavens~Windfury"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
-		self.keyWords["Windfury"] = 1
+		self.effects["Windfury"] = 1
 		self.trigsBoard = [Trig_FistsoftheHeavens(self)]
 		
 class Trig_FistsoftheHeavens(TrigBoard):
@@ -861,7 +861,7 @@ class PandariaGuardian(Minion): #潘达利亚守护者
 	Class, race, name = "Monk", "", "Pandaria Guardian"
 	mana, attack, health = 8, 6, 10
 	index = "Classic~Monk~Minion~8~6~10~~Pandaria Guardian~Taunt~Quaff"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Quaff: Gain +2 Health and 'Can't be targeted by spells or Hero Powers'"
+	requireTarget, effects, description = False, "Taunt", "Taunt. Quaff: Gain +2 Health and 'Can't be targeted by spells or Hero Powers'"
 	def effCanTrig(self):
 		self.effectViable = (self.Game.Manas.manas[self.ID] == self.mana)
 		
@@ -870,7 +870,7 @@ class PandariaGuardian(Minion): #潘达利亚守护者
 			PRINT(self.Game, "Pandaria Guardian's Quaff triggers and gives the minion +2 Health and 'Can't be targeted by spells or Hero Powers'")
 			self.Game.sendSignal("QuaffTriggered", self.ID, None, None, 0, "")
 			self.buffDebuff(0, 2)
-			self.marks["Evasive"] += 1
+			self.effects["Evasive"] += 1
 		return None
 		
 		
@@ -879,7 +879,7 @@ class MonkDragonKeeper(Minion): #驭龙武僧
 	Class, race, name = "Monk", "", "Monk Dragon Keeper"
 	mana, attack, health = 9, 4, 12
 	index = "Classic~Monk~Minion~9~4~12~~Monk Dragon Keeper~Rush~Windfury~Quaff"
-	requireTarget, keyWord, description = False, "Rush,Windfury", "Rush, Windfury. Quaff: Gain Taunt and 'Deathrattle: Shuffle this into your deck'"
+	requireTarget, effects, description = False, "Rush,Windfury", "Rush, Windfury. Quaff: Gain Taunt and 'Deathrattle: Shuffle this into your deck'"
 	def effCanTrig(self):
 		self.effectViable = (self.Game.Manas.manas[self.ID] == self.mana)
 		
@@ -887,7 +887,7 @@ class MonkDragonKeeper(Minion): #驭龙武僧
 		if posinHand > -2 and self.Game.Manas.manas[self.ID] == 0:
 			PRINT(self.Game, "Monk Dragon Keeper's Quaff triggers and gives the minion Taunt and 'Deathrattle: Shuffle this into your deck'")
 			self.Game.sendSignal("QuaffTriggered", self.ID, None, None, 0, "")
-			self.getsStatus("Taunt")
+			self.getsEffect("Taunt")
 			trig = ShuffleThisintoYourDeck(self)
 			self.deathrattles.append(trig)
 			trig.connect()

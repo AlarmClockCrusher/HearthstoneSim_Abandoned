@@ -40,7 +40,7 @@ def parseDeckCode(deckString, Class, Class2HeroDict, defaultDeck=None):
 	if deckCorrect:
 		Class = next((card.Class for card in deck if card.Class != "Neutral" and ',' not in card.Class), None)
 		if Class: hero = Class2HeroDict[Class]
-	print("Result of parse deck code: \nDECK CORRECT? {}  HERO {}\n".format(deckCorrect, hero.name), deck)
+	#print("Result of parse deck code: \nDECK CORRECT? {}  HERO {}\n".format(deckCorrect, hero.name), deck)
 	return deck, deckCorrect, hero
 	
 def getCardnameFromDbf(id):

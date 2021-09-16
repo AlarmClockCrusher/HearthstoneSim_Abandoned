@@ -1,5 +1,5 @@
-import numpy as np
 from math import ceil
+import threading
 
 from LoadModels import *
 
@@ -12,7 +12,7 @@ HandZone_Z, ZoomInCard_Z = 2.5, 20
 HandZone1_Y, HandZone2_Y = -25, 26.2
 DrawnCard1_PausePos, DrawnCard2_PausePos = (6.5, -0.8, 25), (6.5, 4.2, 25)
 DiscardedCard1_Y, DiscardedCard2_Y = -2, 5.5
-ZoomInCard_X,  ZoomInCard1_Y, ZoomInCard2_Y = -12.3, -2.2, 4.75
+ZoomInCard_X, ZoomInCard1_Y, ZoomInCard2_Y = -12.3, -2.2, 4.75
 scale_Hand = 0.9
 
 def calc_PosHprHands(num, x, y, z):
@@ -67,13 +67,13 @@ class HandZone:
 		ownHand = GUI.Game.Hand_Deck.hands[self.ID]
 		posHands, hprHands = posHandsTable[self.y][len(ownHand)], hprHandsTable[self.y][len(ownHand)]
 		for i, card in enumerate(ownHand):
-			if not card.btn: genCard(GUI, card, isPlayed=False, scale=scale_Hand, 
-									 onlyShowCardBack=GUI.sock and card.ID != GUI.ID and not GUI.showEnemyHand)
-			else: card.btn.np.reparentTo(GUI.render)
+			genCard(GUI, card, isPlayed=False, scale=scale_Hand, onlyShowCardBack=GUI.need2beHidden(card))
 		para = Parallel(Func(GUI.deckZones[self.ID].draw, len(GUI.Game.Hand_Deck.decks[self.ID]), len(ownHand)) )
 		for i, card in enumerate(ownHand):
-			para.append(Func(card.btn.np.reparentTo, GUI.render))
-			para.append(LerpPosHprScaleInterval(card.btn.np, duration=0.25, pos=posHands[i], hpr=hprHands[i], scale=scale_Hand))
+			if card.btn != GUI.btnBeingDragged:
+				para.append(Func(card.btn.np.reparentTo, GUI.render))
+				para.append(LerpPosHprScaleInterval(card.btn.np, duration=0.25, pos=posHands[i], hpr=hprHands[i], scale=scale_Hand))
+		
 		if GUI.seqHolder:
 			if add2Queue: GUI.seqHolder[-1].append(para)
 			else: return para
@@ -81,32 +81,31 @@ class HandZone:
 		
 """Hero Zone infos"""
 Hero1_Pos, Hero2_Pos = (0, -7.35, 1.05), (0.05, 8.54, 1.05)
-Weapon1_Pos, Weapon2_Pos = (-4.75, -7.4, 1.05), (-4.75, 7.6, 1.05)
+Weapon1_Pos, Weapon2_Pos = (-4.75, -7.4, 1.05), (-4.75, 8.4, 1.05)
 Power1_Pos, Power2_Pos = (4.67, -7.9, 1.1), (4.67, 8, 1.1)
 Hero2_X = Hero2_Pos[0]
-posSecretsTable = {Hero1_Pos: [( +0,    -4.82, 1.15),
-								(-1.14, -5.43, 1.15),
-								(+1.14, -5.43, 1.15),
-								(-1.83, -6.51, 1.15),
-								(+1.83, -6.51, 1.15)],
-					Hero2_Pos: [(Hero2_X+0,    11.05, 1.15),
-								(Hero2_X-1.14, 10.44, 1.15),
-								(Hero2_X+1.14, 10.44, 1.15),
-								(Hero2_X-1.83, 9.36 , 1.15),
-								(Hero2_X+1.83, 9.36 , 1.15)]
+posSecretsTable = {Hero1_Pos: [( +0,    -4.82-0.2, 1.15),
+								(-1.14, -5.43-0.2, 1.15),
+								(+1.14, -5.43-0.2, 1.15),
+								(-1.83, -6.51-0.2, 1.15),
+								(+1.83, -6.51-0.2, 1.15)],
+					Hero2_Pos: [(Hero2_X+0,    11.05-0.2, 1.15),
+								(Hero2_X-1.14, 10.44-0.2, 1.15),
+								(Hero2_X+1.14, 10.44-0.2, 1.15),
+								(Hero2_X-1.83,  9.36-0.2, 1.15),
+								(Hero2_X+1.83,  9.36-0.2, 1.15)]
 			  		}
 
-Seperation_Trigs = 0.92
-def calc_posTrigs(num, x, y, z, firstTime=True): #Input the x, y, z of the HeroZone
-	if firstTime: y = y - 2.35
-	if num < 4:
-		leftPos = x + 0.05 - Seperation_Trigs * (num - 1) / 2
-		return [Point3(leftPos + Seperation_Trigs * i, y, z) for i in range(num)]
-	else: #num >= 4
-		if (num - 3) % 2 == 1: numLeft, numRight = int((num - 2) / 2), int((num - 4) / 2)
-		else: numLeft = numRight = int((num - 3) / 2)
-		return [(x - 2.87 - i * Seperation_Trigs, y, z) for i in range(numLeft)] \
-				+ calc_posTrigs(3, x, y, z, firstTime=False) + [(x + 2.92 + i * Seperation_Trigs, y, z) for i in range(numRight)]
+Seperation_Trigs = 1.2
+def calc_posTrigs(num, x, y, z): #Input the x, y, z of the heroPos
+	if num < 3:
+		leftPos = x - Seperation_Trigs * (num - 1) / 2
+		return [(leftPos + Seperation_Trigs * i, y, z) for i in range(num)]
+	else: #num >= 3
+		if num % 2 == 0: numLeft = numRight = int(num / 2) - 1 #8: 3 + 2 + 3
+		else: numLeft, numRight = int((num - 1) / 2), int((num - 3) / 2) #5 : 2 + 2 + 1
+		return [(x - 3.2 - i * Seperation_Trigs, y, z) for i in range(numLeft)] \
+				+ calc_posTrigs(2, x, y, z) + [(x + 3.2 + i * Seperation_Trigs, y, z) for i in range(numRight)]
 	
 
 ManaText1_Pos, ManaText2_Pos = Point3(7.87, -11.9, 1.01), Point3(6.92, 11.65, 1.01)
@@ -120,7 +119,7 @@ class HeroZone:
 		
 		self.manaHD = GUI.Game.Manas
 		#Merge the ManaZone with HeroZone
-		self.manaText = TextNode("Mana Text")
+		self.manaText = TextNode("Text_Mana")
 		self.manaText.setText("0/0")
 		self.manaText.setAlign(TextNode.ACenter)
 		self.manaText.setFont(self.GUI.font)
@@ -129,33 +128,42 @@ class HeroZone:
 		if self.heroPos[1] < 0: manaTextNode.setPosHpr(ManaText1_Pos, Point3(0, -90, 0))
 		else: manaTextNode.setPosHpr(ManaText2_Pos, Point3(0, -90, 0))
 		
-		self.secretsDrawn, self.trigsDrawn = [], []
-		
-	def placeCards(self, add2Queue=True):
+	def placeCards(self, add2Queue=True, powerFlip=True, weaponDescends=True):
 		#The whole func takes ~1ms
-		game = self.GUI.Game
+		GUI, para = self.GUI, Parallel()
+		game = GUI.Game
 		hero, power, weapon = game.heroes[self.ID], game.powers[self.ID], game.availableWeapon(self.ID)
-		if not hero.btn: genCard(self.GUI, hero, isPlayed=True, pos=self.heroPos)
-		if not power.btn:
-			nodePath, btn = genCard(self.GUI, power, isPlayed=True, pos=self.powerPos)
-			x, y, z = self.powerPos
-			riseInterval = btn.genLerpInterval(pos=Point3(x, y, z + 3), hpr=Point3(0, 0, 90), duration=0.2)
-			dropInterval = btn.genLerpInterval(pos=Point3(x, y, z), hpr=Point3(0, 0, 180), duration=0.2)
-			flipInterval = btn.genLerpInterval(hpr=Point3(0, 0, 360), duration=0.2)
-			#新技能出现的时候一定都是可以使用的正面向上状态
-			sequence = Sequence(riseInterval, dropInterval, flipInterval, name="Animate Power Appearing")
-			if self.GUI.seqHolder and add2Queue: self.GUI.seqHolder[-1].append(sequence)
-			else: sequence.start()
-		if weapon and not weapon.btn:
-			if weapon.btn: nodePath, btn = genCard(self.GUI, weapon, isPlayed=True)
-			else: nodePath, btn = weapon.btn.np, weapon.btn
-			sequence = Sequence(Func(nodePath.setPos, (self.weaponPos[0], self.weaponPos[1]+0.2, self.weaponPos[2]+5)),
-								btn.genLerpInterval(pos=self.weaponPos))
-			if self.GUI.seqHolder:
-				if add2Queue: self.GUI.seqHolder[-1].append(sequence)
-				else: return sequence
-			else: sequence.start()
+		#Place the hero
+		genCard(GUI, hero, isPlayed=True)
+		para.append(Func(hero.btn.np.reparentTo, GUI.render))
+		para.append(Func(hero.btn.np.setPos, self.heroPos))
+		
+		#Place the power
+		x, y, z = self.powerPos
+		hpr = (0, 0, 180) if power.chancesUsedUp() else (0, 0, 0)
+		genCard(GUI, power, isPlayed=True)
+		#新技能出现的时候一定都是可以使用的正面向上状态
+		if powerFlip:
+			seq = Sequence(Func(power.btn.np.reparentTo, GUI.render),
+							LerpPosHprInterval(power.btn.np, duration=0.2, startPos=(x, y, z), pos=(x, y, z + 3), hpr=(0, 0, 90)),
+							LerpPosHprInterval(power.btn.np, duration=0.2, pos=(x, y, z), hpr=(0, 0, 180)),
+						   LerpPosHprInterval(power.btn.np, duration=0.2, pos=(x, y, z), hpr=hpr))
+			para.append(seq)
+		else: para.append(LerpPosHprInterval(power.btn.np, duration=0.2, pos=(x, y, z), hpr=hpr))
+		
+		#Place the weapon
+		x, y, z = self.weaponPos
+		if weapon:
+			genCard(GUI, weapon, isPlayed=True)
+			para.append(Func(weapon.btn.np.reparentTo, GUI.render))
+			if weaponDescends: para.append(Func(weapon.btn.np.setPos, x, y+0.2, z+5))
+			para.append(LerpPosHprInterval(weapon.btn.np, duration=0.3, pos=self.weaponPos, hpr=(0, 0, 0)))
 			
+		if GUI.seqHolder:
+			if add2Queue: GUI.seqHolder[-1].append(para)
+			else: return para
+		else: para.start()
+		
 	def drawMana(self, usable, upper, locked, overloaded):
 		#usable, upper = self.manaHD.manas[ID], self.manaHD.manasUpper[ID]
 		#locked, overloaded = self.manaHD.manasLocked[ID], self.manaHD.manasOverloaded[ID]
@@ -167,7 +175,7 @@ class HeroZone:
 			for i in range(usable, 10): manas["Mana"][i].setPos(0, 0, 0)
 			for j in range(upper - usable - locked): manas["EmptyMana"][j].setPos((usable+j) * 0.82, 0, 1)
 			for j in range(upper - usable - locked, 10): manas["EmptyMana"][j].setPos(0, 0, 0)
-			for k in range(locked): manas[" "][k].setPos((upper - locked + k)  * 0.82, 0, 1)
+			for k in range(locked): manas["LockedMana"][k].setPos((upper - locked + k)  * 0.82, 0, 1)
 			for k in range(locked, 10): manas["LockedMana"][k].setPos(0, 0, 0)
 			#过载了的水晶在水晶栏下方一行显示
 			for m in range(overloaded): manas["OverloadedMana"][m].setPos(m * 0.82, -1.2, 1)
@@ -189,49 +197,37 @@ class HeroZone:
 					nodePath, btn_Secret = genSecretIcon(self.GUI, card)
 					hpr = (0, 0, 0) if self.ID != self.GUI.Game.turn else (0, 0, 180)
 					para.append(Sequence(Func(nodePath.setPosHpr, posSecrets[i], (0, 0, 90)),
-										 LerpHprInterval(nodePath, duration=0.3, hpr=hpr), Func(btn_Secret.reassignCardBtn, card))
+										 LerpHprInterval(nodePath, duration=0.3, hpr=hpr), Func(reassignBtn2Card, btn_Secret, card))
 								)
 				else:
-					nodePath, btn_Trig = genHeroZoneTrigIcon(self.GUI, card, isQuest=True)
+					nodePath, btn_Trig = genHeroZoneTrigIcon(self.GUI, card)
 					para.append(Func(nodePath.setPos, posSecrets[i]))
-					para.append(Func(btn_Trig.reassignCardBtn, card))
+					para.append(Func(reassignBtn2Card, btn_Trig, card))
 				
 		if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(para)
 		else: para.start()
 		
 	def addaTrig(self, card, text=''):
 		genHeroZoneTrigIcon(self.GUI, card, text=text) #Add the trig to (0, 0, 0)
-		if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(Func(self.placeTurnTrigs))
-		else: self.placeTurnTrigs()
+		self.GUI.seqHolder[-1].append(self.seq_PlaceTurnTrigs())
 		
 	def removeaTrig(self, card):
-		if self.GUI.seqHolder:
-			self.GUI.seqHolder[-1].append(Func(card.btn.np.removeNode))
-			self.GUI.seqHolder[-1].append(Func(self.placeTurnTrigs))
-		else:
-			card.btn.np.removeNode()
-			self.placeTurnTrigs()
-			
-	def placeTurnTrigs(self):
-		cards = [trig.card for trig in self.GUI.Game.turnEndTrigger + self.GUI.Game.turnStartTrigger if trig.ID == self.ID]
-		posTrigs = calc_posTrigs(len(cards), self.heroPos[0], self.heroPos[1], self.heroPos[2]+0.1)
-		seqHolder = self.GUI.seqHolder
-		if seqHolder:
-			para = Parallel()
-			for i, card in enumerate(cards):
-				if not card.btn: genHeroZoneTrigIcon(self.GUI, card, pos=posTrigs[i])
-			for i, card in enumerate(cards):
-				if card.btn: para.append(card.btn.np.posInterval(0.25, pos=posTrigs[i]))
-			seqHolder[-1].append(para)
-		else:
-			for i, card in enumerate(cards):
-				if not card.btn: nodePath, card.btn = genHeroZoneTrigIcon(self.GUI, card, pos=posTrigs[i])
-			for i, card in enumerate(cards):
-				if card.btn: card.btn.np.posInterval(0.25, pos=posTrigs[i]).start()
-				
+		self.GUI.seqHolder[-1].append(Func(card.btn.np.removeNode))
+		self.GUI.seqHolder[-1].append(self.seq_PlaceTurnTrigs())
+		
+	def seq_PlaceTurnTrigs(self):
+		cards = [trig.card for trig in self.GUI.Game.turnEndTrigger + self.GUI.Game.turnStartTrigger + self.GUI.Game.trigAuras[self.ID] if trig.ID == self.ID]
+		posTrigs = calc_posTrigs(len(cards), self.heroPos[0], self.heroPos[1] - 2.2, self.heroPos[2]+0.1)
+		para = Parallel()
+		for i, card in enumerate(cards):
+			if not card.btn: genHeroZoneTrigIcon(self.GUI, card, pos=posTrigs[i])
+		for i, card in enumerate(cards):
+			if card.btn: para.append(card.btn.np.posInterval(0.25, pos=posTrigs[i]))
+		return para
+	
 				
 Separation_Minions = 3.7
-MinionZone1_Y, MinionZone2_Y = -1.62, 3.2
+MinionZone1_Y, MinionZone2_Y = -1.72, 3.1
 MinionZone_Z = Hero1_Pos[2]
 
 def calc_posMinions(num, x, y, z):
@@ -258,28 +254,29 @@ class MinionZone:
 		ownMinions = self.GUI.Game.minions[self.ID]
 		posMinions = posMinionsTable[self.y][len(ownMinions)]
 		for i, card in enumerate(ownMinions):
-			if not card.btn: genCard(GUI, card, isPlayed=True, scale=scale_Minion)
-			else: card.btn.np.reparentTo(GUI.render)
+			genCard(GUI, card, isPlayed=True, scale=scale_Minion)
 		para = Parallel()
 		for i, card in enumerate(ownMinions):
 			para.append(Func(card.btn.np.reparentTo, GUI.render))
-			para.append(card.btn.genLerpInterval(pos=posMinions[i], hpr=(0, 0, 0), scale=scale_Minion, duration=0.25))
+			para.append(LerpPosHprScaleInterval(card.btn.np, duration=0.25, pos=posMinions[i], hpr=(0, 0, 0), scale=scale_Minion))
+		
 		if GUI.seqHolder:
 			if add2Queue: GUI.seqHolder[-1].append(para)
 			else: return para
 		else: para.start()
-		
 
 class Btn_Board:
 	def __init__(self, GUI, nodePath):
 		self.GUI = GUI
 		self.selected = False
 		self.np = nodePath
+		self.np.name = "Model2Keep_Board"
 		self.card = None #Just a placeholder
 		
 	def leftClick(self):
 		print("Board is clicked")
-		self.GUI.checkCardsDisplays(checkHand=True, checkBoard=True)
+		print("Threads running", threading.enumerate())
+		#self.GUI.checkCardsDisplays(checkHand=True, checkBoard=True)
 		if -1 < self.GUI.UI < 3:  #不在发现中和动画演示中才会响应
 			self.GUI.resolveMove(None, self, "Board")
 	
@@ -303,6 +300,7 @@ class Btn_TurnEnd:
 	def __init__(self, GUI, nodePath):
 		self.GUI = GUI
 		self.np = nodePath
+		#self.np_button and self.np_box are children of self.np
 		self.np_button = nodePath.find("TurnEndButton")
 		self.np_box = nodePath.find("box")
 		self.np_box.setTransparency(True)
@@ -349,41 +347,36 @@ class DeckZone:
 		self.GUI, self.ID = GUI, ID
 		lowerPlayerID = max(1, self.GUI.ID) #GUI_1P has UI = 0
 		self.pos = Deck1_Pos if self.ID == lowerPlayerID else Deck2_Pos
-		self.HD = self.GUI.Game.Hand_Deck
 		self.card = None #Only a placeholder
 		
 		np_Deck = GUI.loader.loadModel("Models\\BoardModels\\Deck.glb")
+		np_Deck.name = "Model2Keep_Deck"
 		np_Deck.setTexture(np_Deck.findTextureStage('*'), GUI.textures["cardBack"], 1)
 		np_Deck.reparentTo(GUI.render)
 		np_Deck.setPos(self.pos)
 		for nodePath in np_Deck.getChildren(): nodePath.setTransparency(True)
 		np_Deck.setScale(0.9)
 		self.np_Deck = np_Deck
-		self.textNode = TextNode("Deck_TextNode")
+		self.textNode = TextNode("Text2Keep_DeckHand")
 		self.textNode.setText("Deck: {}\nHand: {}".format(0, 0))
 		self.textNode.setFont(GUI.font)
-		#textNode.setAlign(TextNode.)
-		textNodePath = GUI.render.attachNewNode(self.textNode)
-		textNodePath.setPosHpr(self.pos[0] + 1.5, self.pos[1], self.pos[2], 0, -90, 0)
-		
-		#The fatigue model to show when no more card to draw
-		self.np_Fatigue = GUI.loader.loadModel("Models\\BoardModels\\Fatigue.glb")
-		self.np_Fatigue.setTexture(self.np_Fatigue.findTextureStage('0'),
-							  GUI.loader.loadTexture("Models\\BoardModels\\Fatigue.png"), 1)
-		self.np_Fatigue.reparentTo(GUI.render)
-		self.np_Fatigue.setPos(4, 0, 0)
-		textNode = TextNode("Fatigue_TextNode")
-		textNode.setFont(GUI.font)
-		#textNode.setTextColor(1, 0, 0.1, 1)
-		textNode.setText('1')
-		textNode.setAlign(TextNode.ACenter)
-		textNodePath = self.np_Fatigue.attachNewNode(textNode)
-		textNodePath.setPosHpr(-0.03, -1.3, 0.04, 0, -90, 0)
+		self.textNodePath = GUI.render.attachNewNode(self.textNode)
+		self.textNodePath.setPosHpr(self.pos[0] + 1.5, self.pos[1], self.pos[2], 0, -90, 0)
 		
 		collision = CollisionNode("Deck_cNode")
 		collision.addSolid(CollisionBox(Point3(0.2, 0, -1.1), 0.8, 2, 3))
 		self.np_Deck.attachNewNode(collision)#.show()
 		self.np_Deck.setPythonTag("btn", self)
+		self.texCard_EmptyDeck = GUI.loader.loadModel("TexCards\\ForGame\\EmptyDeck.egg")
+		self.texCard_EmptyDeck.reparentTo(GUI.render)
+		self.texCard_EmptyDeck.setPosHprScale(0, 0, 0, 0, -90, 0, 4, 1, 4*384/256)
+		
+	def changeSide(self, ID):
+		self.ID = ID
+		lowerPlayerID = max(1, self.GUI.ID)  #GUI_1P has UI = 0
+		self.pos = Deck1_Pos if self.ID == lowerPlayerID else Deck2_Pos
+		self.np_Deck.setPos(self.pos)
+		self.textNodePath.setPos(self.pos[0] + 1.5, self.pos[1], self.pos[2])
 		
 	def draw(self, deckSize, handSize):
 		numPairs2Draw = min(10, ceil(deckSize / 3))
@@ -391,20 +384,24 @@ class DeckZone:
 			if nodePath.name != "Deck_cNode":
 				nodePath.setColor(white if int(nodePath.name) <= numPairs2Draw else transparent)
 		self.textNode.setText("Deck: {}\nHand: {}".format(deckSize, handSize))
+		x, y, z = self.pos
+		if deckSize < 1: self.texCard_EmptyDeck.setPos(x+0.45, y, 1.1)
+		else: self.texCard_EmptyDeck.setPos(0, 0, 0)
 		
 	def fatigueAni(self, numFatigue):
-		self.np_Fatigue.find("Fatigue_TextNode").node().setText(str(numFatigue))
+		self.GUI.np_Fatigue.find("Fatigue_TextNode").node().setText(str(numFatigue))
 		moPath = Mopath.Mopath()
 		moPath.loadFile("Models\\BoardModels\\FatigueCurve.egg")
-		interval = MopathInterval(moPath, self.np_Fatigue, duration=0.6)
-		if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(Sequence(interval, Wait(1), Func(self.np_Fatigue.setPos, 0, 0, 0 ) ))
-		else: Sequence(interval, Wait(1), Func(self.np_Fatigue.setPos, 4, 0, 0) ).start()
+		interval = MopathInterval(moPath, self.GUI.np_Fatigue, duration=0.6)
+		if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(Sequence(interval, Wait(1), Func(self.GUI.np_Fatigue.setPos, 0, 0, 0 ) ))
+		else: Sequence(interval, Wait(1), Func(self.GUI.np_Fatigue.setPos, 4, 0, 0) ).start()
 		
 	def leftClick(self):
 		if self.GUI.UI == 2:
-			self.GUI.resolveMove(self.GUI.Game.Hand_Deck, None, "Deck", info=None)
+			self.GUI.resolveMove(self.GUI.Game.Hand_Deck, None, "Deck")
 			
 	def rightClick(self):
-		if self.GUI.UI == 0:
-			self.GUI.showTempText("Deck size: {}\nHand size: {}".format(len([self.ID]),
-																		len(self.GUI.Game.Hand_Deck.hands[self.ID])))
+		pass
+		#if self.GUI.UI == 0:
+		#	self.GUI.showTempText("Deck size: {}\nHand size: {}".format(len([self.ID]),
+		#																len(self.GUI.Game.Hand_Deck.hands[self.ID])))

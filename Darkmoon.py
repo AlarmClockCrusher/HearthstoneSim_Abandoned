@@ -20,7 +20,7 @@ class SafetyInspector(Minion):
 	Class, race, name = "Neutral", "", "Safety Inspector"
 	mana, attack, health = 1, 1, 3
 	index = "DARKMOON_FAIRE~Neutral~Minion~1~1~3~~Safety Inspector~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle the lowest-Cost card from your hand into your deck. Draw a card"
+	requireTarget, effects, description = False, "", "Battlecry: Shuffle the lowest-Cost card from your hand into your deck. Draw a card"
 	name_CN = "安全检查员"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -39,7 +39,7 @@ class CostumedEntertainer(Minion):
 	Class, race, name = "Neutral", "", "Costumed Entertainer"
 	mana, attack, health = 2, 1, 2
 	index = "DARKMOON_FAIRE~Neutral~Minion~2~1~2~~Costumed Entertainer~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Give a random minion in your hand +2/+2"
+	requireTarget, effects, description = False, "", "Battlecry: Give a random minion in your hand +2/+2"
 	name_CN = "盛装演员"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -52,7 +52,7 @@ class HorrendousGrowth(Minion):
 	Class, race, name = "Neutral", "", "Horrendous Growth"
 	mana, attack, health = 2, 2, 2
 	index = "DARKMOON_FAIRE~Neutral~Minion~2~2~2~~Horrendous Growth~ToCorrupt"
-	requireTarget, keyWord, description = False, "", "Corrupt: Gain +1/+1. Can be Corrupted endlessly"
+	requireTarget, effects, description = False, "", "Corrupt: Gain +1/+1. Can be Corrupted endlessly"
 	name_CN = "恐怖增生体"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -62,7 +62,7 @@ class HorrendousGrowthCorrupt(Minion):
 	Class, race, name = "Neutral", "", "Horrendous Growth"
 	mana, attack, health = 2, 3, 3
 	index = "DARKMOON_FAIRE~Neutral~Minion~2~3~3~~Horrendous Growth~ToCorrupt~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "", "Corrupt: Gain +1/+1. Can be Corrupted endlessly"
+	requireTarget, effects, description = False, "", "Corrupt: Gain +1/+1. Can be Corrupted endlessly"
 	name_CN = "恐怖增生体"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -92,9 +92,9 @@ class Trig_EndlessCorrupt(TrigHand):
 		for attGain, attRevertTime in card.tempAttChanges:
 			newCard.buffDebuff(attGain, 0, attRevertTime)
 		#Find keywords the new card doesn't have
-		keyWords = newCard.keyWords.keys()
+		keyWords = newCard.effects.keys()
 		#Since the Horrendous Growth has no predefined keywords, it can simply copy the predecessors
-		newCard.keyWords, newCard.marks = copy.deepcopy(card.keyWords), copy.deepcopy(card.marks)
+		newCard.effects, newCard.effects = copy.deepcopy(card.effects), copy.deepcopy(card.effects)
 		newCard.trigsHand += [trig for trig in card.trigsHand if not isinstance(trig, Trig_EndlessCorrupt)]
 		#There are no Corrupted cards with predefined Deathrattles
 		newCard.deathrattles = [type(deathrattle)(newCard) for deathrattle in card.deathrattles]
@@ -108,7 +108,7 @@ class ParadeLeader(Minion):
 	Class, race, name = "Neutral", "", "Parade Leader"
 	mana, attack, health = 2, 2, 3
 	index = "DARKMOON_FAIRE~Neutral~Minion~2~2~3~~Parade Leader"
-	requireTarget, keyWord, description = False, "", "After you summon a Rush minion, give it +2 Attack"
+	requireTarget, effects, description = False, "", "After you summon a Rush minion, give it +2 Attack"
 	name_CN = "巡游领队"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -119,7 +119,7 @@ class Trig_ParadeLeader(TrigBoard):
 		super().__init__(entity, ["MinionBeenSummoned"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and subject.keyWords["Rush"] > 0
+		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and subject.effects["Rush"] > 0
 		
 	def text(self, CHN):
 		return "在你召唤一个突袭随从后，使其获得+2攻击力" if CHN else "After you summon a Rush minion, give it +2 Attack"
@@ -132,7 +132,7 @@ class PrizeVendor(Minion):
 	Class, race, name = "Neutral", "Murloc", "Prize Vendor"
 	mana, attack, health = 2, 2, 3
 	index = "DARKMOON_FAIRE~Neutral~Minion~2~2~3~Murloc~Prize Vendor~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Both players draw a card"
+	requireTarget, effects, description = False, "", "Battlecry: Both players draw a card"
 	name_CN = "奖品商贩"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -145,7 +145,7 @@ class RockRager(Minion):
 	Class, race, name = "Neutral", "Elemental", "Rock Rager"
 	mana, attack, health = 2, 5, 1
 	index = "DARKMOON_FAIRE~Neutral~Minion~2~5~1~Elemental~Rock Rager~Taunt"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt"
+	requireTarget, effects, description = False, "Taunt", "Taunt"
 	name_CN = "岩石暴怒者"
 	
 	
@@ -153,7 +153,7 @@ class Showstopper(Minion):
 	Class, race, name = "Neutral", "", "Showstopper"
 	mana, attack, health = 2, 3, 2
 	index = "DARKMOON_FAIRE~Neutral~Minion~2~3~2~~Showstopper~Deathrattle"
-	requireTarget, keyWord, description = False, "", "Deathrattle: Silence all minions"
+	requireTarget, effects, description = False, "", "Deathrattle: Silence all minions"
 	name_CN = "砸场游客"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -173,7 +173,7 @@ class WrigglingHorror(Minion):
 	Class, race, name = "Neutral", "", "Wriggling Horror"
 	mana, attack, health = 2, 2, 1
 	index = "DARKMOON_FAIRE~Neutral~Minion~2~2~1~~Wriggling Horror~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Give adjacent minions +1/+1"
+	requireTarget, effects, description = False, "", "Battlecry: Give adjacent minions +1/+1"
 	name_CN = "蠕动的恐魔"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -188,7 +188,7 @@ class BananaVendor(Minion):
 	Class, race, name = "Neutral", "", "Banana Vendor"
 	mana, attack, health = 3, 2, 4
 	index = "DARKMOON_FAIRE~Neutral~Minion~3~2~4~~Banana Vendor~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Add 2 Bananas to each player's hand"
+	requireTarget, effects, description = False, "", "Battlecry: Add 2 Bananas to each player's hand"
 	name_CN = "香蕉商贩"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -201,7 +201,7 @@ class DarkmoonDirigible(Minion):
 	Class, race, name = "Neutral", "Mech", "Darkmoon Dirigible"
 	mana, attack, health = 3, 3, 2
 	index = "DARKMOON_FAIRE~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield~ToCorrupt"
-	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield. Corrupt: Gain Rush"
+	requireTarget, effects, description = False, "Divine Shield", "Divine Shield. Corrupt: Gain Rush"
 	name_CN = "暗月飞艇"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -211,7 +211,7 @@ class DarkmoonDirigible_Corrupt(Minion):
 	Class, race, name = "Paladin", "Mech", "Darkmoon Dirigible"
 	mana, attack, health = 3, 3, 2
 	index = "DARKMOON_FAIRE~Neutral~Minion~3~3~2~Mech~Darkmoon Dirigible~Divine Shield~Rush~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "Divine Shield,Rush", "Corrupted. Divine Shield, Rush"
+	requireTarget, effects, description = False, "Divine Shield,Rush", "Corrupted. Divine Shield, Rush"
 	name_CN = "暗月飞艇"
 	
 	
@@ -219,7 +219,7 @@ class DarkmoonStatue(Minion):
 	Class, race, name = "Neutral", "", "Darkmoon Statue"
 	mana, attack, health = 3, 0, 5
 	index = "DARKMOON_FAIRE~Neutral~Minion~3~0~5~~Darkmoon Statue~ToCorrupt"
-	requireTarget, keyWord, description = False, "", "Your other minions have +1 Attack. Corrupt: This gains +4 Attack"
+	requireTarget, effects, description = False, "", "Your other minions have +1 Attack. Corrupt: This gains +4 Attack"
 	name_CN = "暗月雕像"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -230,7 +230,7 @@ class DarkmoonStatue_Corrupt(Minion):
 	Class, race, name = "Paladin", "", "Darkmoon Statue"
 	mana, attack, health = 3, 4, 5
 	index = "DARKMOON_FAIRE~Neutral~Minion~3~4~5~~Darkmoon Statue~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "", "Corrupted. Your other minions have +1 Attack"
+	requireTarget, effects, description = False, "", "Corrupted. Your other minions have +1 Attack"
 	name_CN = "暗月雕像"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -241,7 +241,7 @@ class Gyreworm(Minion):
 	Class, race, name = "Neutral", "Elemental", "Gyreworm"
 	mana, attack, health = 3, 3, 2
 	index = "DARKMOON_FAIRE~Neutral~Minion~3~3~2~Elemental~Gyreworm~Battlecry"
-	requireTarget, keyWord, description = True, "", "Battlecry: If you played an Elemental last turn, deal 3 damage"
+	requireTarget, effects, description = True, "", "Battlecry: If you played an Elemental last turn, deal 3 damage"
 	name_CN = "旋岩虫"
 	def returnTrue(self, choice=0):
 		return self.Game.Counters.numElementalsPlayedLastTurn[self.ID] > 0
@@ -259,7 +259,7 @@ class InconspicuousRider(Minion):
 	Class, race, name = "Neutral", "", "Inconspicuous Rider"
 	mana, attack, health = 3, 2, 2
 	index = "DARKMOON_FAIRE~Neutral~Minion~3~2~2~~Inconspicuous Rider~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Cast a Secret from your deck"
+	requireTarget, effects, description = False, "", "Battlecry: Cast a Secret from your deck"
 	name_CN = "低调的游客"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -271,7 +271,7 @@ class KthirRitualist(Minion):
 	Class, race, name = "Neutral", "", "K'thir Ritualist"
 	mana, attack, health = 3, 4, 4
 	index = "DARKMOON_FAIRE~Neutral~Minion~3~4~4~~K'thir Ritualist~Taunt~Battlecry"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Add a random 4-Cost minion to your opponent's hand"
+	requireTarget, effects, description = False, "Taunt", "Taunt. Battlecry: Add a random 4-Cost minion to your opponent's hand"
 	name_CN = "克熙尔祭师"
 	poolIdentifier = "4-Cost Minions"
 	@classmethod
@@ -287,7 +287,7 @@ class CircusAmalgam(Minion):
 	Class, race, name = "Neutral", "Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Quilboar,Totem", "Circus Amalgam"
 	mana, attack, health = 4, 4, 5
 	index = "DARKMOON_FAIRE~Neutral~Minion~4~4~5~Elemental,Mech,Demon,Murloc,Dragon,Beast,Pirate,Quilboar,Totem~Circus Amalgam~Taunt"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. This has all minion types"
+	requireTarget, effects, description = False, "Taunt", "Taunt. This has all minion types"
 	name_CN = "马戏团融合怪"
 	
 	
@@ -295,7 +295,7 @@ class CircusMedic(Minion):
 	Class, race, name = "Neutral", "", "Circus Medic"
 	mana, attack, health = 4, 3, 4
 	index = "DARKMOON_FAIRE~Neutral~Minion~4~3~4~~Circus Medic~Battlecry~ToCorrupt"
-	requireTarget, keyWord, description = True, "", "Battlecry: Restore 4 Health. Corrupt: Deal 4 damage instead"
+	requireTarget, effects, description = True, "", "Battlecry: Restore 4 Health. Corrupt: Deal 4 damage instead"
 	name_CN = "马戏团医师"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -311,7 +311,7 @@ class CircusMedic_Corrupt(Minion):
 	Class, race, name = "Neutral", "", "Circus Medic"
 	mana, attack, health = 4, 3, 4
 	index = "DARKMOON_FAIRE~Neutral~Minion~4~3~4~~Circus Medic~Battlecry~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = True, "", "Corrupted. Battlecry: Deal 4 damage"
+	requireTarget, effects, description = True, "", "Corrupted. Battlecry: Deal 4 damage"
 	name_CN = "马戏团医师"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -324,7 +324,7 @@ class FantasticFirebird(Minion):
 	Class, race, name = "Neutral", "Elemental", "Fantastic Firebird"
 	mana, attack, health = 4, 3, 5
 	index = "DARKMOON_FAIRE~Neutral~Minion~4~3~5~Elemental~Fantastic Firebird~Windfury"
-	requireTarget, keyWord, description = False, "Windfury", "Windfury"
+	requireTarget, effects, description = False, "Windfury", "Windfury"
 	name_CN = "炫目火鸟"
 	
 	
@@ -332,7 +332,7 @@ class KnifeVendor(Minion):
 	Class, race, name = "Neutral", "", "Knife Vendor"
 	mana, attack, health = 4, 3, 4
 	index = "DARKMOON_FAIRE~Neutral~Minion~4~3~4~~Knife Vendor~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Deal 4 damage to each hero"
+	requireTarget, effects, description = False, "", "Battlecry: Deal 4 damage to each hero"
 	name_CN = "小刀商贩"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -344,7 +344,7 @@ class DerailedCoaster(Minion):
 	Class, race, name = "Neutral", "", "Derailed Coaster"
 	mana, attack, health = 5, 3, 2
 	index = "DARKMOON_FAIRE~Neutral~Minion~5~3~2~~Derailed Coaster~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 1/1 Rider with Rush for each minion in your hand"
+	requireTarget, effects, description = False, "", "Battlecry: Summon a 1/1 Rider with Rush for each minion in your hand"
 	name_CN = "脱轨过山车"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -356,7 +356,7 @@ class DarkmoonRider(Minion):
 	Class, race, name = "Neutral", "", "Darkmoon Rider"
 	mana, attack, health = 1, 1, 1
 	index = "DARKMOON_FAIRE~Neutral~Minion~1~1~1~~Darkmoon Rider~Rush~Uncollectible"
-	requireTarget, keyWord, description = False, "Rush", "Rush"
+	requireTarget, effects, description = False, "Rush", "Rush"
 	name_CN = "暗月乘客"
 	
 #Assume corrupted card don't inherit any buff/debuff
@@ -365,7 +365,7 @@ class FleethoofPearltusk(Minion):
 	Class, race, name = "Neutral", "Beast", "Fleethoof Pearltusk"
 	mana, attack, health = 5, 4, 4
 	index = "DARKMOON_FAIRE~Neutral~Minion~5~4~4~Beast~Fleethoof Pearltusk~Rush~ToCorrupt"
-	requireTarget, keyWord, description = False, "Rush", "Rush. Corrupt: Gain +4/+4"
+	requireTarget, effects, description = False, "Rush", "Rush. Corrupt: Gain +4/+4"
 	name_CN = "迅蹄珠齿象"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -375,7 +375,7 @@ class FleethoofPearltusk_Corrupt(Minion):
 	Class, race, name = "Neutral", "Beast", "Fleethoof Pearltusk"
 	mana, attack, health = 5, 8, 8
 	index = "DARKMOON_FAIRE~Neutral~Minion~5~8~8~Beast~Fleethoof Pearltusk~Rush~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "Rush", "Rush"
+	requireTarget, effects, description = False, "Rush", "Rush"
 	name_CN = "迅蹄珠齿象"
 	
 	
@@ -383,7 +383,7 @@ class OptimisticOgre(Minion):
 	Class, race, name = "Neutral", "", "Optimistic Ogre"
 	mana, attack, health = 5, 6, 7
 	index = "DARKMOON_FAIRE~Neutral~Minion~5~6~7~~Optimistic Ogre"
-	requireTarget, keyWord, description = False, "", "50% chance to attack the correct enemy"
+	requireTarget, effects, description = False, "", "50% chance to attack the correct enemy"
 	name_CN = "乐观的食人魔"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -422,7 +422,7 @@ class ClawMachine(Minion):
 	Class, race, name = "Neutral", "Mech", "Claw Machine"
 	mana, attack, health = 6, 6, 3
 	index = "DARKMOON_FAIRE~Neutral~Minion~6~6~3~Mech~Claw Machine~Rush~Deathrattle"
-	requireTarget, keyWord, description = False, "Rush", "Rush. Deathrattle: Draw a minion and give it +3/+3"
+	requireTarget, effects, description = False, "Rush", "Rush. Deathrattle: Draw a minion and give it +3/+3"
 	name_CN = "娃娃机"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -443,7 +443,7 @@ class SilasDarkmoon(Minion):
 	Class, race, name = "Neutral", "", "Silas Darkmoon"
 	mana, attack, health = 7, 4, 4
 	index = "DARKMOON_FAIRE~Neutral~Minion~7~4~4~~Silas Darkmoon~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Choose a direction to rotate all minions"
+	requireTarget, effects, description = False, "", "Battlecry: Choose a direction to rotate all minions"
 	name_CN = "希拉斯暗月"
 	
 	def prepMinionstoSwap(self, minions):
@@ -459,7 +459,7 @@ class SilasDarkmoon(Minion):
 		for minion in minions:
 			if minion:
 				minion.appears(firstTime=False) #Swapped Imprisoned minions won't go Dormant
-				minion.status["Borrowed"] = 0
+				minion.effects["Borrowed"] = 0
 				for trig in reversed(minion.trigsBoard):
 					if isinstance(trig, Trig_Borrow):
 						trig.disconnect()
@@ -493,7 +493,7 @@ class SilasDarkmoon(Minion):
 	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
 		optionType = type(option)
 		if case != "Guided":
-			self.Game.picks.append((info_RNGSync, info_GUISync, case == "Random", optionType) )
+			self.Game.picks_Backup.append((info_RNGSync, info_GUISync, case == "Random", optionType) )
 		SilasDarkmoon.rotateAllMinions(self, perspectiveID=self.ID, giveOwnLeft=optionType == RotateThisWay)
 		
 class RotateThisWay(Option):
@@ -511,7 +511,7 @@ class Strongman(Minion):
 	Class, race, name = "Neutral", "", "Strongman"
 	mana, attack, health = 7, 6, 6
 	index = "DARKMOON_FAIRE~Neutral~Minion~7~6~6~~Strongman~Taunt~ToCorrupt"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Corrupt: This costs (0)"
+	requireTarget, effects, description = False, "Taunt", "Taunt. Corrupt: This costs (0)"
 	name_CN = "大力士"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -521,7 +521,7 @@ class Strongman_Corrupt(Minion):
 	Class, race, name = "Neutral", "", "Strongman"
 	mana, attack, health = 0, 6, 6
 	index = "DARKMOON_FAIRE~Neutral~Minion~0~6~6~~Strongman~Taunt~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "Taunt", "Corrupted. Taunt"
+	requireTarget, effects, description = False, "Taunt", "Corrupted. Taunt"
 	name_CN = "大力士"
 	
 	
@@ -530,7 +530,7 @@ class CarnivalClown(Minion):
 	Class, race, name = "Neutral", "", "Carnival Clown"
 	mana, attack, health = 9, 4, 4
 	index = "DARKMOON_FAIRE~Neutral~Minion~9~4~4~~Carnival Clown~Taunt~Battlecry~ToCorrupt"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Summon 2 copies of this. Corrupted: Fill your board with copies"
+	requireTarget, effects, description = False, "Taunt", "Taunt. Battlecry: Summon 2 copies of this. Corrupted: Fill your board with copies"
 	name_CN = "狂欢小丑"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -548,7 +548,7 @@ class CarnivalClown_Corrupt(Minion):
 	Class, race, name = "Neutral", "", "Carnival Clown"
 	mana, attack, health = 9, 4, 4
 	index = "DARKMOON_FAIRE~Neutral~Minion~9~4~4~~Carnival Clown~Taunt~Battlecry~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "Taunt", "Corrupted. Taunt. Battlecry: Fill your board with copies of this"
+	requireTarget, effects, description = False, "Taunt", "Corrupted. Taunt. Battlecry: Fill your board with copies of this"
 	name_CN = "狂欢小丑"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -606,7 +606,7 @@ class Trig_CThun:
 			
 class BodyofCThun(Spell):
 	Class, school, name = "Neutral", "", "Body of C'Thun"
-	requireTarget, mana = False, 5
+	requireTarget, mana, effects = False, 5, ""
 	index = "DARKMOON_FAIRE~Neutral~Spell~5~~Body of C'Thun~Uncollectible"
 	description = "Piece of C'Thun(0/4). Summon a 6/6 C'Thun's body with Taunt"
 	name_CN = "克苏恩之躯"
@@ -616,10 +616,8 @@ class BodyofCThun(Spell):
 	def text(self, CHN):
 		trigsBoard = self.Game.trigsBoard[self.ID]
 		trig = next((trig for trig in trigsBoard if isinstance(trig, Trig_CThun)), None) if "CThunPiece" in trigsBoard else None
-		num = len(trig.pieces) if trig else 0
-		return "克苏恩碎片(%d/4)。召唤一个6/6并具有嘲讽的克苏恩残躯"%num if CHN \
-			else "Piece of C'Thun(%d/4). Summon a 6/6 C'Thun's body with Taunt"%num
-	
+		return "%d/4"%(len(trig.pieces) if trig else 0)
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		self.summon(CThunsBody(self.Game, self.ID), -1)
 		#Assume the spell effect will increase the counter
@@ -632,22 +630,20 @@ class CThunsBody(Minion):
 	Class, race, name = "Neutral", "", "C'Thun's Body"
 	mana, attack, health = 6, 6, 6
 	index = "DARKMOON_FAIRE~Neutral~Minion~6~6~6~~C'Thun's Body~Taunt~Uncollectible"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt"
+	requireTarget, effects, description = False, "Taunt", "Taunt"
 	name_CN = "克苏恩之躯"
 	
 class EyeofCThun(Spell):
 	Class, school, name = "Neutral", "", "Eye of C'Thun"
-	requireTarget, mana = False, 5
+	requireTarget, mana, effects = False, 5, ""
 	index = "DARKMOON_FAIRE~Neutral~Spell~5~~Eye of C'Thun~Uncollectible"
 	description = "Deal 7 damage randomly split among all enemies"
 	name_CN = "克苏恩之眼"
 	def text(self, CHN):
 		trigsBoard = self.Game.trigsBoard[self.ID]
 		trig = next((trig for trig in trigsBoard if isinstance(trig, Trig_CThun)), None) if "CThunPiece" in trigsBoard else None
-		num = len(trig.pieces) if trig else 0
 		damage = (7 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		return "克苏恩碎片(%d/4)。造成%d点伤害，随机分配到所有敌人身上"%(num, damage) if CHN \
-				else "Piece of C'Thun(%d/4). Deal %d damage randomly split among all enemies"%(num, damage)
+		return "%d/4, %d"%(len(trig.pieces) if trig else 0, damage)
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (7 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -663,18 +659,16 @@ class EyeofCThun(Spell):
 		
 class HeartofCThun(Spell):
 	Class, school, name = "Neutral", "", "Heart of C'Thun"
-	requireTarget, mana = False, 5
+	requireTarget, mana, effects = False, 5, ""
 	index = "DARKMOON_FAIRE~Neutral~Spell~5~~Heart of C'Thun~Uncollectible"
 	description = "Deal 3 damage to all minions"
 	name_CN = "克苏恩之心"
 	def text(self, CHN):
 		trigsBoard = self.Game.trigsBoard[self.ID]
 		trig = next((trig for trig in trigsBoard if isinstance(trig, Trig_CThun)), None) if "CThunPiece" in trigsBoard else None
-		num = len(trig.pieces) if trig else 0
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		return "克苏恩碎片(%d/4)。对所有随从造成%d点伤害" % (num, damage) if CHN \
-			else "Piece of C'Thun(%d/4). Deal %d damage to all minions" % (num, damage)
-	
+		return "%d/4, %d"%(len(trig.pieces) if trig else 0, damage)
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		targets = self.Game.minionsonBoard(1) + self.Game.minionsonBoard(2)
@@ -686,7 +680,7 @@ class HeartofCThun(Spell):
 		
 class MawofCThun(Spell):
 	Class, school, name = "Neutral", "", "Maw of C'Thun"
-	requireTarget, mana = True, 5
+	requireTarget, mana, effects = True, 5, ""
 	index = "DARKMOON_FAIRE~Neutral~Spell~5~~Maw of C'Thun~Uncollectible"
 	description = "Destroy a minion"
 	name_CN = "克苏恩之口"
@@ -699,8 +693,7 @@ class MawofCThun(Spell):
 	def text(self, CHN):
 		trigsBoard = self.Game.trigsBoard[self.ID]
 		trig = next((trig for trig in trigsBoard if isinstance(trig, Trig_CThun)), None) if "CThunPiece" in trigsBoard else None
-		num = len(trig.pieces) if trig else 0
-		return "克苏恩碎片(%d/4)。消灭一个随从"%num if CHN else "Piece of C'Thun(%d/4). Destroy a minion"%num
+		return len(trig.pieces) if trig else 0
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -721,7 +714,7 @@ class CThuntheShattered(Minion):
 	Class, race, name = "Neutral", "", "C'Thun, the Shattered"
 	mana, attack, health = 10, 6, 6
 	index = "DARKMOON_FAIRE~Neutral~Minion~10~6~6~~C'Thun, the Shattered~Battlecry~Start of Game~Legendary"
-	requireTarget, keyWord, description = False, "", "Start of Game: Break into pieces. Battlecry: Deal 30 damage randomly split among all enemies"
+	requireTarget, effects, description = False, "", "Start of Game: Break into pieces. Battlecry: Deal 30 damage randomly split among all enemies"
 	name_CN = "克苏恩，破碎之劫"
 	#WON't show up in the starting hand
 	def startofGame(self):
@@ -743,18 +736,15 @@ class DarkmoonRabbit(Minion):
 	Class, race, name = "Neutral", "Beast", "Darkmoon Rabbit"
 	mana, attack, health = 10, 1, 1
 	index = "DARKMOON_FAIRE~Neutral~Minion~10~1~1~Beast~Darkmoon Rabbit~Rush~Poisonous"
-	requireTarget, keyWord, description = False, "Rush,Poisonous", "Rush, Poisonous. Also damages the minions next to whomever this attacks"
+	requireTarget, effects, description = False, "Rush,Poisonous,Sweep", "Rush, Poisonous. Also damages the minions next to whomever this attacks"
 	name_CN = "暗月兔子"
-	def __init__(self, Game, ID):
-		super().__init__(Game, ID)
-		self.marks["Sweep"] = 1
-		
-		
+	
+	
 class NZothGodoftheDeep(Minion):
 	Class, race, name = "Neutral", "", "N'Zoth, God of the Deep"
 	mana, attack, health = 9, 5, 7
 	index = "DARKMOON_FAIRE~Neutral~Minion~9~5~7~~N'Zoth, God of the Deep~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Resurrect a friendly minion of each minion type"
+	requireTarget, effects, description = False, "", "Battlecry: Resurrect a friendly minion of each minion type"
 	name_CN = "恩佐斯，深渊之神"
 	#A single Amalgam minion won't be resurrected multiple times
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -778,7 +768,7 @@ class NZothGodoftheDeep(Minion):
 		
 class CurseofFlesh(Spell):
 	Class, school, name = "Neutral", "", "Curse of Flesh"
-	requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 	index = "DARKMOON_FAIRE~Neutral~Spell~0~~Curse of Flesh~Uncollectible"
 	description = "Fill the board with random minions, then give yours Rush"
 	name_CN = "血肉诅咒"
@@ -811,11 +801,11 @@ class CurseofFlesh(Spell):
 			enemyMinions = [minion(game, 3-self.ID) for minion in enemyMinions]
 			self.yogg.summon(enemyMinions, (-1, "totheRightEnd"))
 		for minion in ownMinions: #Give the minion you summon Rush
-			if minion.onBoard: minion.getsStatus("Rush")
+			if minion.onBoard: minion.getsEffect("Rush")
 				
 class DevouringHunger(Spell):
 	Class, school, name = "Neutral", "", "Devouring Hunger"
-	requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 	index = "DARKMOON_FAIRE~Neutral~Spell~0~~Devouring Hunger~Uncollectible"
 	description = "Destroy all other minions. Gain their Attack and Health"
 	name_CN = "吞噬之饥"
@@ -840,7 +830,7 @@ class DevouringHunger(Spell):
 		
 class HandofFate(Spell):
 	Class, school, name = "Neutral", "", "Hand of Fate"
-	requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 	index = "DARKMOON_FAIRE~Neutral~Spell~0~~Hand of Fate~Uncollectible"
 	description = "Fill your hand with random spells. They cost (0) this turn"
 	name_CN = "命运之手"
@@ -870,7 +860,7 @@ class HandofFate(Spell):
 			
 class MindflayerGoggles(Spell):
 	Class, school, name = "Neutral", "", "Mindflayer Goggles"
-	requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 	index = "DARKMOON_FAIRE~Neutral~Spell~0~~Mindflayer Goggles~Uncollectible"
 	description = "Take control of three random enemy minions"
 	name_CN = "夺心护目镜"
@@ -891,7 +881,7 @@ class MindflayerGoggles(Spell):
 		
 class Mysterybox(Spell):
 	Class, school, name = "Neutral", "", "Mysterybox"
-	requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 	index = "DARKMOON_FAIRE~Neutral~Spell~0~~Mysterybox~Uncollectible"
 	description = "Cast a random spell for each spell you've cast this game(targets chosen randomly)"
 	name_CN = "神秘魔盒"
@@ -915,7 +905,7 @@ class Mysterybox(Spell):
 #每次释放炎爆之后会进行设计胜负判定的死亡结算
 class RodofRoasting(Spell):
 	Class, school, name = "Neutral", "", "Rod of Roasting"
-	requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 	index = "DARKMOON_FAIRE~Neutral~Spell~0~~Rod of Roasting~Uncollectible"
 	description = "Cast 'Pyroblast' randomly until a player dies"
 	name_CN = "燃烧权杖"
@@ -943,7 +933,7 @@ class YoggSaronMasterofFate(Minion):
 	Class, race, name = "Neutral", "", "Yogg-Saron, Master of Fate"
 	mana, attack, health = 10, 7, 5
 	index = "DARKMOON_FAIRE~Neutral~Minion~10~7~5~~Yogg-Saron, Master of Fate~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: If you've cast 10 spells this game, spin the Wheel of Yogg-Saron"
+	requireTarget, effects, description = False, "", "Battlecry: If you've cast 10 spells this game, spin the Wheel of Yogg-Saron"
 	name_CN = "尤格-萨隆，命运主宰"
 	def effCanTrig(self):
 		self.effectViable = sum(issubclass(card, Spell) for card in self.Game.Counters.cardsPlayedThisGame[self.ID]) > 10
@@ -966,7 +956,7 @@ class YShaarjtheDefiler(Minion):
 	Class, race, name = "Neutral", "", "Y'Shaarj, the Defiler"
 	mana, attack, health = 10, 10, 10
 	index = "DARKMOON_FAIRE~Neutral~Minion~10~10~10~~Y'Shaarj, the Defiler~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Add a copy of each Corrupted card you've played this game to your hand. They cost (0) this turn"
+	requireTarget, effects, description = False, "", "Battlecry: Add a copy of each Corrupted card you've played this game to your hand. They cost (0) this turn"
 	name_CN = "亚煞极，污染之源"
 	#The mana effect should be carried by each card, since card copied to opponent should also cost (0).
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1018,14 +1008,10 @@ class ManaMod_Cost0ThisTurn:
 """Demon Hunter cards"""
 class FelscreamBlast(Spell):
 	Class, school, name = "Demon Hunter", "Fel", "Felscream Blast"
-	requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, "Lifesteal"
 	index = "DARKMOON_FAIRE~Demon Hunter~Spell~1~Fel~Felscream Blast~Lifesteal"
 	description = "Lifesteal. Deal 1 damage to a minion and its neighbors"
 	name_CN = "邪吼冲击"
-	def __init__(self, Game, ID):
-		super().__init__(Game, ID)
-		self.keyWords["Lifesteal"] = 1
-		
 	def available(self):
 		return self.selectableMinionExists()
 		
@@ -1045,7 +1031,7 @@ class FelscreamBlast(Spell):
 		
 class ThrowGlaive(Spell):
 	Class, school, name = "Demon Hunter", "", "Throw Glaive"
-	requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 	index = "DARKMOON_FAIRE~Demon Hunter~Spell~1~~Throw Glaive"
 	description = "Deal 2 damage to a minion. If it dies, add a temporary copy of this to your hand"
 	name_CN = "投掷利刃"
@@ -1056,10 +1042,8 @@ class ThrowGlaive(Spell):
 		return target.type == "Minion" and target.onBoard
 		
 	def text(self, CHN):
-		damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		return "对一个随从造成%d点伤害。如果该随从死亡，则此牌的一张临时复制置入你的手牌" % damage if CHN \
-			else "Deal %d damage to a minion. If it dies, add a temporary copy of this to your hand" % damage
-	
+		return (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -1075,7 +1059,7 @@ class RedeemedPariah(Minion):
 	Class, race, name = "Demon Hunter", "", "Redeemed Pariah"
 	mana, attack, health = 2, 2, 3
 	index = "DARKMOON_FAIRE~Demon Hunter~Minion~2~2~3~~Redeemed Pariah"
-	requireTarget, keyWord, description = False, "", "After you play an Outcast card, gain +1/+1"
+	requireTarget, effects, description = False, "", "After you play an Outcast card, gain +1/+1"
 	name_CN = "获救的流民"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1097,7 +1081,7 @@ class Trig_RedeemedPariah(TrigBoard):
 		
 class Acrobatics(Spell):
 	Class, school, name = "Demon Hunter", "", "Acrobatics"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Demon Hunter~Spell~3~~Acrobatics"
 	description = "Draw 2 cards. If you play both this turn, draw 2 more"
 	name_CN = "空翻杂技"
@@ -1136,21 +1120,20 @@ class Acrobatics_Effect:
 		
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			if self.Game.GUI: self.Game.GUI.showOffBoardTrig(self.card)
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def text(self, CHN):
 		return "如果你使用了空翻杂技抽到的两张牌，则可以再抽两张" if CHN else "If you use the two cards drawn by Acrobatics, draw 2 more"
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		try: self.cardsDrawn.remove(subject)
-		except: pass
-		self.counter = len(self.cardsDrawn)
+		self.cardsDrawn.remove(subject)
+		self.counter -= 1
 		if self.card.btn: self.card.btn.trigAni(self.counter)
-		if not self.cardsDrawn:
+		if self.counter < 1:
+			if self.Game.GUI: self.Game.GUI.showOffBoardTrig(self.card)
 			self.Game.Hand_Deck.drawCard(self.ID)
 			self.Game.Hand_Deck.drawCard(self.ID)
-		self.disconnect()
+			self.disconnect()
 		
 	def turnEndTrigger(self):
 		self.disconnect()
@@ -1168,7 +1151,7 @@ class Acrobatics_Effect:
 			
 class DreadlordsBite(Weapon):
 	Class, name, description = "Demon Hunter", "Dreadlord's Bite", "Outcast: Deal 1 damage to all enemies"
-	mana, attack, durability = 3, 2, 2
+	mana, attack, durability, effects = 3, 2, 2, ""
 	index = "DARKMOON_FAIRE~Demon Hunter~Weapon~3~2~2~Dreadlord's Bite~Outcast"
 	name_CN = "恐惧魔王之咬"
 	
@@ -1186,7 +1169,7 @@ class FelsteelExecutioner(Minion):
 	Class, race, name = "Demon Hunter", "Elemental", "Felsteel Executioner"
 	mana, attack, health = 3, 4, 3
 	index = "DARKMOON_FAIRE~Demon Hunter~Minion~3~4~3~Elemental~Felsteel Executioner~ToCorrupt"
-	requireTarget, keyWord, description = False, "", "Corrupt: Become a weapon"
+	requireTarget, effects, description = False, "", "Corrupt: Become a weapon"
 	name_CN = "魔钢处决者"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1194,7 +1177,7 @@ class FelsteelExecutioner(Minion):
 		
 class FelsteelExecutioner_Corrupt(Weapon):
 	Class, name, description = "Demon Hunter", "Felsteel Executioner", "Corrupted"
-	mana, attack, durability = 3, 4, 3
+	mana, attack, durability, effects = 3, 4, 3, ""
 	index = "DARKMOON_FAIRE~Demon Hunter~Weapon~3~4~3~Felsteel Executioner~Corrupted~Uncollectible"
 	name_CN = "魔钢处决者"
 	
@@ -1203,7 +1186,7 @@ class LineHopper(Minion):
 	Class, race, name = "Demon Hunter", "", "Line Hopper"
 	mana, attack, health = 3, 3, 4
 	index = "DARKMOON_FAIRE~Demon Hunter~Minion~3~3~4~~Line Hopper"
-	requireTarget, keyWord, description = False, "", "Your Outcast cards cost (1) less"
+	requireTarget, effects, description = False, "", "Your Outcast cards cost (1) less"
 	name_CN = "越线的游客"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1217,7 +1200,7 @@ class InsatiableFelhound(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Insatiable Felhound"
 	mana, attack, health = 3, 2, 5
 	index = "DARKMOON_FAIRE~Demon Hunter~Minion~3~2~5~Demon~Insatiable Felhound~Taunt~ToCorrupt"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Corrupt: Gain +1/+1 and Lifesteal"
+	requireTarget, effects, description = False, "Taunt", "Taunt. Corrupt: Gain +1/+1 and Lifesteal"
 	name_CN = "贪食地狱犬"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1227,20 +1210,21 @@ class InsatiableFelhound_Corrupt(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Insatiable Felhound"
 	mana, attack, health = 3, 3, 6
 	index = "DARKMOON_FAIRE~Demon Hunter~Minion~3~3~6~Demon~Insatiable Felhound~Taunt~Lifesteal~Corrupt~Uncollectible"
-	requireTarget, keyWord, description = False, "Taunt,Lifesteal", "Taunt, Lifesteal"
+	requireTarget, effects, description = False, "Taunt,Lifesteal", "Taunt, Lifesteal"
 	name_CN = "贪食地狱犬"
 	
 	
 class RelentlessPursuit(Spell):
 	Class, school, name = "Demon Hunter", "", "Relentless Pursuit"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Demon Hunter~Spell~3~~Relentless Pursuit"
 	description = "Give your hero +4 Attack and Immune this turn"
 	name_CN = "冷酷追杀"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.heroes[self.ID].gainAttack(4)
-		self.Game.status[self.ID]["Immune"] += 1
-		self.Game.status[self.ID]["ImmuneThisTurn"] += 1
+		hero = self.Game.heroes[self.ID]
+		hero.gainAttack(4)
+		hero.getsEffect("Immune")
+		self.Game.effects[self.ID]["ImmuneThisTurn"] += 1
 		return None
 		
 		
@@ -1248,7 +1232,7 @@ class Stiltstepper(Minion):
 	Class, race, name = "Demon Hunter", "", "Stiltstepper"
 	mana, attack, health = 3, 4, 1
 	index = "DARKMOON_FAIRE~Demon Hunter~Minion~3~4~1~~Stiltstepper~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Draw a card. If you play it this turn, give your hero +4 Attack this turn"
+	requireTarget, effects, description = False, "", "Battlecry: Draw a card. If you play it this turn, give your hero +4 Attack this turn"
 	name_CN = "高跷艺人"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1312,7 +1296,7 @@ class Ilgynoth(Minion):
 	Class, race, name = "Demon Hunter", "", "Il'gynoth"
 	mana, attack, health = 6, 4, 8
 	index = "DARKMOON_FAIRE~Demon Hunter~Minion~6~4~8~~Il'gynoth~Lifesteal~Legendary"
-	requireTarget, keyWord, description = False, "Lifesteal", "Lifesteal. Your Lifesteal damages the enemy hero instead of healing you"
+	requireTarget, effects, description = False, "Lifesteal", "Lifesteal. Your Lifesteal damages the enemy hero instead of healing you"
 	name_CN = "伊格诺斯"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1320,17 +1304,17 @@ class Ilgynoth(Minion):
 		
 class GameRuleAura_Ilgynoth(GameRuleAura):
 	def auraAppears(self):
-		self.entity.Game.status[self.entity.ID]["Lifesteal Damages Enemy"] += 1
+		self.entity.Game.effects[self.entity.ID]["Lifesteal Damages Enemy"] += 1
 		
 	def auraDisappears(self):
-		self.entity.Game.status[self.entity.ID]["Lifesteal Damages Enemy"] -= 1
+		self.entity.Game.effects[self.entity.ID]["Lifesteal Damages Enemy"] -= 1
 		
 		
 class RenownedPerformer(Minion):
 	Class, race, name = "Demon Hunter", "", "Renowned Performer"
 	mana, attack, health = 4, 3, 3
 	index = "DARKMOON_FAIRE~Demon Hunter~Minion~4~3~3~~Renowned Performer~Rush~Deathrattle"
-	requireTarget, keyWord, description = False, "Rush", "Rush. Deathrattle: Summon two 1/1 Assistants with Rush"
+	requireTarget, effects, description = False, "Rush", "Rush. Deathrattle: Summon two 1/1 Assistants with Rush"
 	name_CN = "知名表演者"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1350,15 +1334,15 @@ class PerformersAssistant(Minion):
 	Class, race, name = "Demon Hunter", "", "Performer's Assistant"
 	mana, attack, health = 1, 1, 1
 	index = "DARKMOON_FAIRE~Demon Hunter~Minion~1~1~1~~Performer's Assistant~Taunt~Uncollectible"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt"
+	requireTarget, effects, description = False, "Taunt", "Taunt"
 	name_CN = "演出助手"
 	
 	
 class ZaitheIncredible(Minion):
 	Class, race, name = "Demon Hunter", "", "Zai, the Incredible"
 	mana, attack, health = 5, 5, 3
-	index = "DARKMOON_FAIRE~Demon Hunter~Minion~5~5~3~~Zai, the Incredible~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Copy the left- and right-most cards in your hand"
+	index = "DARKMOON_FAIRE~Demon Hunter~Minion~5~5~3~~Zai, the Incredible~Battlecry~Legendary"
+	requireTarget, effects, description = False, "", "Battlecry: Copy the left- and right-most cards in your hand"
 	name_CN = "扎依，出彩艺人"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1375,7 +1359,7 @@ class BladedLady(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Bladed Lady"
 	mana, attack, health = 6, 6, 6
 	index = "DARKMOON_FAIRE~Demon Hunter~Minion~6~6~6~Demon~Bladed Lady~Rush"
-	requireTarget, keyWord, description = False, "Rush", "Rush. Costs (1) if your hero has 6 or more Attack"
+	requireTarget, effects, description = False, "Rush", "Rush. Costs (1) if your hero has 6 or more Attack"
 	name_CN = "刀锋舞娘"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1401,7 +1385,7 @@ class Trig_BladedLady(TrigHand):
 		
 class ExpendablePerformers(Spell):
 	Class, school, name = "Demon Hunter", "", "Expendable Performers"
-	requireTarget, mana = False, 7
+	requireTarget, mana, effects = False, 7, ""
 	index = "DARKMOON_FAIRE~Demon Hunter~Spell~7~~Expendable Performers"
 	description = "Summon seven 1/1 Illidari with Rush. If they all die this turn, summon seven more"
 	name_CN = "演员大接力"
@@ -1445,7 +1429,6 @@ class ExpendablePerformers_Effect:
 		
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			if self.Game.GUI: self.Game.GUI.showOffBoardTrig(self.card)
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def text(self, CHN):
@@ -1457,6 +1440,7 @@ class ExpendablePerformers_Effect:
 		except: pass
 		if not self.minions:
 			self.disconnect()
+			if self.Game.GUI: self.Game.GUI.showOffBoardTrig(self.card)
 			self.card.summon([IllidariInitiate(self.Game, self.ID) for i in range(7)], (-1, "totheRightEnd"))
 			
 	def turnEndTrigger(self):
@@ -1475,7 +1459,7 @@ class ExpendablePerformers_Effect:
 """Druid cards"""
 class GuesstheWeight(Spell):
 	Class, school, name = "Druid", "", "Guess the Weight"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Druid~Spell~2~~Guess the Weight"
 	description = "Draw a card. Guess if your next card costs more or less to draw it"
 	name_CN = "猜重量"
@@ -1491,10 +1475,10 @@ class GuesstheWeight(Spell):
 			return None
 			
 	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
-		if case != "Guided": self.Game.picks.append((info_RNGSync, info_GUISync, case == "Random", type(option)) )
+		if case != "Guided": self.Game.picks_Backup.append((info_RNGSync, info_GUISync, case == "Random", type(option)) )
 		bingo = (isinstance(option, NextCostsLess) and option.firstCost > option.secondCost) \
 				or (isinstance(option, NextCostsMore) and option.firstCost < option.secondCost)
-		if self.Game.GUI: self.Game.GUI.revealaCardfromDeckAni(self.ID, -1, option)
+		if self.Game.GUI: self.Game.GUI.revealaCardfromDeckAni(self.ID, -1, bingo)
 		if bingo: self.Game.Hand_Deck.drawCard(self.ID)
 		
 
@@ -1519,7 +1503,7 @@ class NextCostsLess(Option):
 		
 class LunarEclipse(Spell):
 	Class, school, name = "Druid", "", "Lunar Eclipse"
-	requireTarget, mana = True, 2
+	requireTarget, mana, effects = True, 2, ""
 	index = "DARKMOON_FAIRE~Druid~Spell~2~~Lunar Eclipse"
 	description = "Deal 3 damage to a minion. Your next spell this turn costs (2) less"
 	name_CN = "月蚀"
@@ -1530,9 +1514,7 @@ class LunarEclipse(Spell):
 		return target.type == "Minion" and target.onBoard
 		
 	def text(self, CHN):
-		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		return "对一个随从造成%d点伤害。在本回合中，你施放的下一个法术的法力值消耗减少(2)点"%damage if CHN \
-				else "Deal %d damage to a minion. Your next spell this turn costs (2) less"%damage
+		return (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
@@ -1553,12 +1535,12 @@ class GameManaAura_InTurnNextSpell2Less(TempManaEffect):
 
 class SolarEclipse(Spell):
 	Class, school, name = "Druid", "", "Solar Eclipse"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Druid~Spell~2~~Solar Eclipse"
 	description = "Your next spell this turn casts twice"
 	name_CN = "日蚀"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.status[self.ID]["Spells x2"] += 1
+		self.Game.effects[self.ID]["Spells x2"] += 1
 		SolarEclipse_Effect(self.Game, self.ID, self).connect()
 		return None
 		
@@ -1594,11 +1576,11 @@ class SolarEclipse_Effect:
 				else "After then turn ends or you play a spell, your spells will no longer cast twice"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.Game.status[self.ID]["Spells x2"] -= 1
+		self.Game.effects[self.ID]["Spells x2"] -= 1
 		self.disconnect()
 		
 	def turnEndTrigger(self):
-		self.Game.status[self.ID]["Spells x2"] -= 1
+		self.Game.effects[self.ID]["Spells x2"] -= 1
 		self.disconnect()
 		
 	def createCopy(self, game): #不是纯的只在回合结束时触发，需要完整的createCopy
@@ -1616,7 +1598,7 @@ class FaireArborist(Minion):
 	Class, race, name = "Druid", "", "Faire Arborist"
 	mana, attack, health = 3, 2, 2
 	index = "DARKMOON_FAIRE~Druid~Minion~3~2~2~~Faire Arborist~Choose One~ToCorrupt"
-	requireTarget, keyWord, description = False, "", "Choose One- Draw a card; or Summon a 2/2 Treant. Corrupt: Do both"
+	requireTarget, effects, description = False, "", "Choose One- Draw a card; or Summon a 2/2 Treant. Corrupt: Do both"
 	name_CN = "马戏团树艺师"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1639,7 +1621,7 @@ class FaireArborist_Corrupt(Minion):
 	Class, race, name = "Druid", "", "Faire Arborist"
 	mana, attack, health = 3, 2, 2
 	index = "DARKMOON_FAIRE~Druid~Minion~3~2~2~~Faire Arborist~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "", "Corrupted. Summon a 2/2 Treant. Draw a card"
+	requireTarget, effects, description = False, "", "Corrupted. Summon a 2/2 Treant. Draw a card"
 	name_CN = "马戏团树艺师"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1651,7 +1633,7 @@ class Treant_Darkmoon(Minion):
 	Class, race, name = "Druid", "", "Treant"
 	mana, attack, health = 2, 2, 2
 	index = "DARKMOON_FAIRE~Druid~Minion~2~2~2~~Treant~Uncollectible"
-	requireTarget, keyWord, description = False, "", ""
+	requireTarget, effects, description = False, "", ""
 	name_CN = "树人"
 	
 	
@@ -1668,7 +1650,7 @@ class DigItUp_Option(Option):
 		
 class MoontouchedAmulet(Spell):
 	Class, school, name = "Druid", "", "Moontouched Amulet"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Druid~Spell~3~~Moontouched Amulet~ToCorrupt"
 	description = "Give your hero +4 Attack this turn. Corrupt: And gain 6 Armor"
 	name_CN = "月触项链"
@@ -1682,7 +1664,7 @@ class MoontouchedAmulet(Spell):
 		
 class MoontouchedAmulet_Corrupt(Spell):
 	Class, school, name = "Druid", "", "Moontouched Amulet"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Druid~Spell~3~~Moontouched Amulet~Corrupted~Uncollectible"
 	description = "Corrupted. Give your hero +4 Attack this turn. And gain 6 Armor"
 	name_CN = "月触项链"
@@ -1696,7 +1678,7 @@ class KiriChosenofElune(Minion):
 	Class, race, name = "Druid", "", "Kiri, Chosen of Elune"
 	mana, attack, health = 4, 2, 2
 	index = "DARKMOON_FAIRE~Druid~Minion~4~2~2~~Kiri, Chosen of Elune~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Add a Solar Eclipse and Lunar Eclipse to your hand"
+	requireTarget, effects, description = False, "", "Battlecry: Add a Solar Eclipse and Lunar Eclipse to your hand"
 	name_CN = "基利，艾露恩之眷"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1708,7 +1690,7 @@ class Greybough(Minion):
 	Class, race, name = "Druid", "", "Greybough"
 	mana, attack, health = 5, 4, 6
 	index = "DARKMOON_FAIRE~Druid~Minion~5~4~6~~Greybough~Taunt~Deathrattle~Legendary"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Give a random friendly minion 'Deathrattle: Summon Greybough'"
+	requireTarget, effects, description = False, "Taunt", "Taunt. Deathrattle: Give a random friendly minion 'Deathrattle: Summon Greybough'"
 	name_CN = "格雷布"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1736,7 +1718,7 @@ class UmbralOwl(Minion):
 	Class, race, name = "Druid", "Beast", "Umbral Owl"
 	mana, attack, health = 7, 4, 4
 	index = "DARKMOON_FAIRE~Druid~Minion~7~4~4~Beast~Umbral Owl~Rush"
-	requireTarget, keyWord, description = False, "Rush", "Rush. Costs (1) less for each spell you've cast this game"
+	requireTarget, effects, description = False, "Rush", "Rush. Costs (1) less for each spell you've cast this game"
 	name_CN = "幽影猫头鹰"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1764,7 +1746,7 @@ class Trig_UmbralOwl(TrigHand):
 		
 class CenarionWard(Spell):
 	Class, school, name = "Druid", "Nature", "Cenarion Ward"
-	requireTarget, mana = False, 8
+	requireTarget, mana, effects = False, 8, ""
 	index = "DARKMOON_FAIRE~Druid~Spell~8~Nature~Cenarion Ward"
 	description = "Gain 8 Armor. Summon a random 8-Cost minion"
 	name_CN = "塞纳里奥结界"
@@ -1783,7 +1765,7 @@ class FizzyElemental(Minion):
 	Class, race, name = "Druid", "Elemental", "Fizzy Elemental"
 	mana, attack, health = 9, 10, 10
 	index = "DARKMOON_FAIRE~Druid~Minion~9~10~10~Elemental~Fizzy Elemental~Rush~Taunt"
-	requireTarget, keyWord, description = False, "Rush,Taunt", "Rush ,Taunt"
+	requireTarget, effects, description = False, "Rush,Taunt", "Rush, Taunt"
 	name_CN = "泡沫元素"
 	
 	
@@ -1792,7 +1774,7 @@ class MysteryWinner(Minion):
 	Class, race, name = "Hunter", "", "Mystery Winner"
 	mana, attack, health = 1, 1, 1
 	index = "DARKMOON_FAIRE~Hunter~Minion~1~1~1~~Mystery Winner~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Discover a Secret"
+	requireTarget, effects, description = False, "", "Battlecry: Discover a Secret"
 	name_CN = "神秘获奖者"
 	poolIdentifier = "Hunter Secrets"
 	@classmethod
@@ -1807,7 +1789,7 @@ class MysteryWinner(Minion):
 
 	def decideSecretPool(self):
 		HeroClass = self.Game.heroes[self.ID].Class
-		key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Mage Secrets"
+		key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Hunter Secrets"
 		return self.rngPool(key)
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -1819,7 +1801,7 @@ class DancingCobra(Minion):
 	Class, race, name = "Hunter", "Beast", "Dancing Cobra"
 	mana, attack, health = 2, 1, 5
 	index = "DARKMOON_FAIRE~Hunter~Minion~2~1~5~Beast~Dancing Cobra~ToCorrupt"
-	requireTarget, keyWord, description = False, "", "Corrupt: Gain Poisonous"
+	requireTarget, effects, description = False, "", "Corrupt: Gain Poisonous"
 	name_CN = "舞动的眼镜蛇"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1829,13 +1811,13 @@ class DancingCobra_Corrupt(Minion):
 	Class, race, name = "Hunter", "Beast", "Dancing Cobra"
 	mana, attack, health = 2, 1, 5
 	index = "DARKMOON_FAIRE~Hunter~Minion~2~1~5~Beast~Dancing Cobra~Poisonous~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "Poisonous", "Poisonous"
+	requireTarget, effects, description = False, "Poisonous", "Poisonous"
 	name_CN = "舞动的眼镜蛇"
 	
 	
 class DontFeedtheAnimals(Spell):
 	Class, school, name = "Hunter", "", "Don't Feed the Animals"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Hunter~Spell~2~~Don't Feed the Animals~ToCorrupt"
 	description = "Give all Beasts in your hand +1/+1. Corrupt: Give them +2/+2 instead"
 	name_CN = "请勿投食"
@@ -1851,7 +1833,7 @@ class DontFeedtheAnimals(Spell):
 		
 class DontFeedtheAnimals_Corrupt(Spell):
 	Class, school, name = "Hunter", "", "Don't Feed the Animals"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Hunter~Spell~2~~Don't Feed the Animals~Corrupted~Uncollectible"
 	description = "Corrupted. Give all Beasts in your hand +2/+2"
 	name_CN = "请勿投食"
@@ -1864,7 +1846,7 @@ class DontFeedtheAnimals_Corrupt(Spell):
 		
 class OpentheCages(Secret):
 	Class, school, name = "Hunter", "", "Open the Cages"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Hunter~Spell~2~~Open the Cages~~Secret"
 	description = "Secret: When your turn starts, if you control two minions, summon an Animal Companion"
 	name_CN = "打开兽笼"
@@ -1878,7 +1860,8 @@ class Trig_OpentheCages(SecretTrigger):
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0): #target here holds the actual target object
 		secret = self.entity
-		return secret.ID == ID and len(secret.Game.minionsonBoard(secret.ID)) > 1 and secret.Game.space(secret.ID) > 0
+		print("Open the cages test", secret.ID == ID, secret.Game.minionsonBoard(secret.ID), secret.Game.space(secret.ID) > 0)
+		return secret.ID == ID and secret.Game.minionsonBoard(secret.ID) and secret.Game.space(secret.ID) > 0
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		self.entity.summon(npchoice((Huffer, Leokk, Misha))(self.entity.Game, self.entity.ID), -1)
@@ -1886,7 +1869,7 @@ class Trig_OpentheCages(SecretTrigger):
 			
 class PettingZoo(Spell):
 	Class, school, name = "Hunter", "", "Petting Zoo"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Hunter~Spell~3~~Petting Zoo"
 	description = "Summon a 3/3 Strider. Repeat for each Secret you control"
 	name_CN = "宠物乐园"
@@ -1906,13 +1889,13 @@ class DarkmoonStrider(Minion):
 	Class, race, name = "Hunter", "Beast", "Darkmoon Strider"
 	mana, attack, health = 3, 3, 3
 	index = "DARKMOON_FAIRE~Hunter~Minion~3~3~3~Beast~Darkmoon Strider~Uncollectible"
-	requireTarget, keyWord, description = False, "", ""
+	requireTarget, effects, description = False, "", ""
 	name_CN = "暗月陆行鸟"
 	
 	
 class RinlingsRifle(Weapon):
 	Class, name, description = "Hunter", "Rinling's Rifle", "After your hero attacks, Discover a Secret and cast it"
-	mana, attack, durability = 4, 2, 2
+	mana, attack, durability, effects = 4, 2, 2, ""
 	index = "DARKMOON_FAIRE~Hunter~Weapon~4~2~2~Rinling's Rifle~Legendary"
 	name_CN = "瑞林的步枪"
 	poolIdentifier = "Hunter Secrets"
@@ -1932,7 +1915,7 @@ class RinlingsRifle(Weapon):
 	
 	def decideSecretPool(self):
 		HeroClass = self.Game.heroes[self.ID].Class
-		key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Mage Secrets"
+		key = HeroClass + " Secrets" if HeroClass in ["Hunter", "Mage", "Paladin", "Rogue"] else "Hunter Secrets"
 		pool = self.rngPool(key)
 		for secret in self.Game.Secrets.secrets[self.ID]:
 			try: pool.remove(type(secret))  #Deployed Secrets won't show up in the options
@@ -1941,7 +1924,7 @@ class RinlingsRifle(Weapon):
 	
 	#case here must be "Discovered" or "Guided"
 	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
-		if case != "Guided": self.Game.picks.append((info_RNGSync, info_GUISync, case == "Random", type(option)))
+		if case != "Guided": self.Game.picks_Backup.append((info_RNGSync, info_GUISync, case == "Random", type(option)))
 		option.creator = RinlingsRifle
 		option.cast()
 		
@@ -1963,7 +1946,7 @@ class TramplingRhino(Minion):
 	Class, race, name = "Hunter", "Beast", "Trampling Rhino"
 	mana, attack, health = 5, 5, 5
 	index = "DARKMOON_FAIRE~Hunter~Minion~5~5~5~Beast~Trampling Rhino~Rush"
-	requireTarget, keyWord, description = False, "Rush", "Rush. Afte this attacks and kills a minion, excess damage hits the enemy hero"
+	requireTarget, effects, description = False, "Rush", "Rush. Afte this attacks and kills a minion, excess damage hits the enemy hero"
 	name_CN = "狂踏的犀牛"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -1990,7 +1973,7 @@ class MaximaBlastenheimer(Minion):
 	Class, race, name = "Hunter", "", "Maxima Blastenheimer"
 	mana, attack, health = 6, 4, 4
 	index = "DARKMOON_FAIRE~Hunter~Minion~6~4~4~~Maxima Blastenheimer~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Summon a random minion from your deck. It attacks the enemy hero, then dies"
+	requireTarget, effects, description = False, "", "Battlecry: Summon a random minion from your deck. It attacks the enemy hero, then dies"
 	name_CN = "玛克希玛·雷管"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2008,7 +1991,7 @@ class DarkmoonTonk(Minion):
 	Class, race, name = "Hunter", "Mech", "Darkmoon Tonk"
 	mana, attack, health = 7, 8, 5
 	index = "DARKMOON_FAIRE~Hunter~Minion~7~8~5~Mech~Darkmoon Tonk~Deathrattle"
-	requireTarget, keyWord, description = False, "", "Deathrattle: Fire four missiles at random enemies that deal 2 damage each"
+	requireTarget, effects, description = False, "", "Deathrattle: Fire four missiles at random enemies that deal 2 damage each"
 	name_CN = "暗月坦克"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2028,7 +2011,7 @@ class Fire4Missiles(Deathrattle_Minion):
 		
 class JewelofNZoth(Spell):
 	Class, school, name = "Hunter", "", "Jewel of N'Zoth"
-	requireTarget, mana = False, 8
+	requireTarget, mana, effects = False, 8, ""
 	index = "DARKMOON_FAIRE~Hunter~Spell~8~~Jewel of N'Zoth"
 	description = "Summon three friendly Deathrattle minions that died this game"
 	name_CN = "恩佐斯宝石"
@@ -2049,7 +2032,7 @@ class ConfectionCyclone(Minion):
 	Class, race, name = "Mage", "Elemental", "Confection Cyclone"
 	mana, attack, health = 2, 3, 2
 	index = "DARKMOON_FAIRE~Mage~Minion~2~3~2~Elemental~Confection Cyclone~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Add two 1/2 Sugar Elementals to your hand"
+	requireTarget, effects, description = False, "", "Battlecry: Add two 1/2 Sugar Elementals to your hand"
 	name_CN = "甜点飓风"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2060,13 +2043,13 @@ class SugarElemental(Minion):
 	Class, race, name = "Mage", "Elemental", "Sugar Elemental"
 	mana, attack, health = 1, 1, 2
 	index = "DARKMOON_FAIRE~Mage~Minion~1~1~2~Elemental~Sugar Elemental~Uncollectible"
-	requireTarget, keyWord, description = False, "", ""
+	requireTarget, effects, description = False, "", ""
 	name_CN = "甜蜜元素"
 	
 	
 class DeckofLunacy(Spell):
 	Class, school, name = "Mage", "", "Deck of Lunacy"
-	requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 	index = "DARKMOON_FAIRE~Mage~Spell~4~~Deck of Lunacy~Legendary"
 	description = "Transform spells in your deck into ones that cost (3) more. (They keep their original Cost.)"
 	name_CN = "愚人套牌"
@@ -2104,7 +2087,7 @@ class GameMaster(Minion):
 	Class, race, name = "Mage", "", "Game Master"
 	mana, attack, health = 2, 2, 3
 	index = "DARKMOON_FAIRE~Mage~Minion~2~2~3~~Game Master"
-	requireTarget, keyWord, description = False, "", "The first Secret you play each turn costs (1)"
+	requireTarget, effects, description = False, "", "The first Secret you play each turn costs (1)"
 	name_CN = "游戏管理员"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2130,7 +2113,7 @@ class ManaAura_1stSecret1(ManaAura_1UsageEachTurn):
 		
 class RiggedFaireGame(Secret):
 	Class, school, name = "Mage", "", "Rigged Faire Game"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Mage~Spell~3~~Rigged Faire Game~~Secret"
 	description = "Secret: If you didn't take any damage during your opponent's turn, draw 3 cards"
 	name_CN = "非公平游戏"
@@ -2155,7 +2138,7 @@ class OccultConjurer(Minion):
 	Class, race, name = "Mage", "", "Occult Conjurer"
 	mana, attack, health = 4, 4, 4
 	index = "DARKMOON_FAIRE~Mage~Minion~4~4~4~~Occult Conjurer~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: If you control a Secret, summon a copy of this"
+	requireTarget, effects, description = False, "", "Battlecry: If you control a Secret, summon a copy of this"
 	name_CN = "隐秘咒术师"
 	
 	def effCanTrig(self):
@@ -2170,7 +2153,7 @@ class OccultConjurer(Minion):
 		
 class RingToss(Spell):
 	Class, school, name = "Mage", "", "Ring Toss"
-	requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 	index = "DARKMOON_FAIRE~Mage~Spell~4~~Ring Toss~ToCorrupt"
 	description = "Discover a Secret and cast it. Corrupt: Discover 2 instead"
 	name_CN = "套圈圈"
@@ -2203,14 +2186,14 @@ class RingToss(Spell):
 		return None
 		
 	def discoverDecided(self, option, case, info_RNGSync=None, info_GUISync=None):
-		if case != "Guided": self.Game.picks.append((info_RNGSync, info_GUISync, case == "Random", type(option)))
+		if case != "Guided": self.Game.picks_Backup.append((info_RNGSync, info_GUISync, case == "Random", type(option)))
 		option.creator = RingToss
 		option.cast()
 
 
 class RingToss_Corrupt(Spell):
 	Class, school, name = "Mage", "", "Ring Toss"
-	requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 	index = "DARKMOON_FAIRE~Mage~Spell~4~~Ring Toss~Corrupted~Uncollectible"
 	description = "Corrupted. Discover 2 Secrets and cast them"
 	name_CN = "套圈圈"
@@ -2224,7 +2207,7 @@ class FireworkElemental(Minion):
 	Class, race, name = "Mage", "Elemental", "Firework Elemental"
 	mana, attack, health = 5, 3, 5
 	index = "DARKMOON_FAIRE~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry~ToCorrupt"
-	requireTarget, keyWord, description = True, "", "Battlecry: Deal 3 damage to a minion. Corrupt: Deal 12 damage instead"
+	requireTarget, effects, description = True, "", "Battlecry: Deal 3 damage to a minion. Corrupt: Deal 12 damage instead"
 	name_CN = "焰火元素"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2242,7 +2225,7 @@ class FireworkElemental_Corrupt(Minion):
 	Class, race, name = "Mage", "Elemental", "Firework Elemental"
 	mana, attack, health = 5, 3, 5
 	index = "DARKMOON_FAIRE~Mage~Minion~5~3~5~Elemental~Firework Elemental~Battlecry~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = True, "", "Corrupted. Battlecry: Deal 12 damage to a minion"
+	requireTarget, effects, description = True, "", "Corrupted. Battlecry: Deal 12 damage to a minion"
 	name_CN = "焰火元素"
 	
 	def targetCorrect(self, target, choice=0):
@@ -2258,13 +2241,11 @@ class SaygeSeerofDarkmoon(Minion):
 	Class, race, name = "Mage", "", "Sayge, Seer of Darkmoon"
 	mana, attack, health = 6, 5, 5
 	index = "DARKMOON_FAIRE~Mage~Minion~6~5~5~~Sayge, Seer of Darkmoon~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Draw 1 card(Upgraded for each friendly Secret that has triggered this game!)"
+	requireTarget, effects, description = False, "", "Battlecry: Draw 1 card(Upgraded for each friendly Secret that has triggered this game!)"
 	name_CN = "暗月先知赛格"
 	
 	def text(self, CHN):
-		num = self.Game.Counters.numSecretsTriggeredThisGame[self.ID] + 1
-		return "战吼：抽%d张牌。(在本局对战中，每触发一个友方奥秘教会升级)"%num if CHN \
-				else "Battlecry: Draw %d card(Upgraded for each friendly Secret that has triggered this game!)"%num
+		return self.Game.Counters.numSecretsTriggeredThisGame[self.ID] + 1
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		curGame = self.Game
@@ -2276,7 +2257,7 @@ class SaygeSeerofDarkmoon(Minion):
 		
 class MaskofCThun(Spell):
 	Class, school, name = "Mage", "", "Mask of C'Thun"
-	requireTarget, mana = False, 7
+	requireTarget, mana, effects = False, 7, ""
 	index = "DARKMOON_FAIRE~Mage~Spell~7~~Mask of C'Thun"
 	description = "Deal 10 damage randomly split among all enemies"
 	name_CN = "克苏恩面具"
@@ -2293,7 +2274,7 @@ class MaskofCThun(Spell):
 		
 class GrandFinale(Spell):
 	Class, school, name = "Mage", "Fire", "Grand Finale"
-	requireTarget, mana = False, 8
+	requireTarget, mana, effects = False, 8, ""
 	index = "DARKMOON_FAIRE~Mage~Spell~8~Fire~Grand Finale"
 	description = "Summon an 8/8 Elemental. Repeat for each Elemental you played last turn"
 	name_CN = "华丽谢幕"
@@ -2311,13 +2292,13 @@ class ExplodingSparkler(Minion):
 	Class, race, name = "Mage", "Elemental", "Exploding Sparkler"
 	mana, attack, health = 8, 8, 8
 	index = "DARKMOON_FAIRE~Mage~Minion~8~8~8~Elemental~Exploding Sparkler~Uncollectible"
-	requireTarget, keyWord, description = False, "", ""
+	requireTarget, effects, description = False, "", ""
 	name_CN = "爆破烟火"
 	
 """Paladin cards"""
 class OhMyYogg(Secret):
 	Class, school, name = "Paladin", "Shadow", "Oh My Yogg!"
-	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 	index = "DARKMOON_FAIRE~Paladin~Spell~1~Shadow~Oh My Yogg!~~Secret"
 	description = "Secret: When your opponent casts a spell, they instead cast a random one of the same Cost"
 	name_CN = "古神在上"
@@ -2350,7 +2331,7 @@ class RedscaleDragontamer(Minion):
 	Class, race, name = "Paladin", "Murloc", "Redscale Dragontamer"
 	mana, attack, health = 2, 2, 3
 	index = "DARKMOON_FAIRE~Paladin~Minion~2~2~3~Murloc~Redscale Dragontamer~Battlecry"
-	requireTarget, keyWord, description = False, "", "Deathrattle: Draw a Dragon"
+	requireTarget, effects, description = False, "", "Deathrattle: Draw a Dragon"
 	name_CN = "赤鳞驯龙者"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2367,7 +2348,7 @@ class DrawaDragon(Deathrattle_Minion):
 		
 class SnackRun(Spell):
 	Class, school, name = "Paladin", "", "Snack Run"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Paladin~Spell~2~~Snack Run"
 	description = "Discover a spell. Restore Health to your hero equal to its Cost"
 	name_CN = "零食大冲关"
@@ -2391,7 +2372,7 @@ class CarnivalBarker(Minion):
 	Class, race, name = "Paladin", "", "Carnival Barker"
 	mana, attack, health = 3, 3, 2
 	index = "DARKMOON_FAIRE~Paladin~Minion~3~3~2~~Carnival Barker"
-	requireTarget, keyWord, description = False, "", "Whenever you summon a 1-Health minion, give +1/+2"
+	requireTarget, effects, description = False, "", "Whenever you summon a 1-Health minion, give +1/+2"
 	name_CN = "狂欢报幕员"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2413,7 +2394,7 @@ class Trig_CarnivalBarker(TrigBoard):
 		
 class DayattheFaire(Spell):
 	Class, school, name = "Paladin", "", "Day at the Faire"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Paladin~Spell~3~~Day at the Faire~ToCorrupt"
 	description = "Summon 3 Silver Hand Recruits. Corrupt: Summon 5"
 	name_CN = "游园日"
@@ -2430,7 +2411,7 @@ class DayattheFaire(Spell):
 		
 class DayattheFaire_Corrupt(Spell):
 	Class, school, name = "Paladin", "", "Day at the Faire"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Paladin~Spell~3~~Day at the Faire~Corrupted~Uncollectible"
 	description = "Corrupted: Summon 5 Silver Hand Recruits"
 	name_CN = "游园日"
@@ -2446,14 +2427,14 @@ class BalloonMerchant(Minion):
 	Class, race, name = "Paladin", "", "Balloon Merchant"
 	mana, attack, health = 4, 3, 5
 	index = "DARKMOON_FAIRE~Paladin~Minion~4~3~5~~Balloon Merchant~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Give your Silver Hand Recruits +1 Attack and Divine Shield"
+	requireTarget, effects, description = False, "", "Battlecry: Give your Silver Hand Recruits +1 Attack and Divine Shield"
 	name_CN = "气球商人"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		for minion in self.Game.minionsonBoard(self.ID):
 			if minion.name == "Silver Hand Recruit":
 				minion.buffDebuff(1, 0)
-				minion.getsStatus("Divine Shield")
+				minion.getsEffect("Divine Shield")
 		return None
 		
 		
@@ -2461,7 +2442,7 @@ class CarouselGryphon(Minion):
 	Class, race, name = "Paladin", "Mech", "Carousel Gryphon"
 	mana, attack, health = 5, 5, 5
 	index = "DARKMOON_FAIRE~Paladin~Minion~5~5~5~Mech~Carousel Gryphon~Divine Shield~ToCorrupt"
-	requireTarget, keyWord, description = False, "Divine Shield", "Divine Shield. Corrupt: Gain +3/+3 and Taunt"
+	requireTarget, effects, description = False, "Divine Shield", "Divine Shield. Corrupt: Gain +3/+3 and Taunt"
 	name_CN = "旋转木马"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2471,7 +2452,7 @@ class CarouselGryphon_Corrupt(Minion):
 	Class, race, name = "Paladin", "Mech", "Carousel Gryphon"
 	mana, attack, health = 5, 8, 8
 	index = "DARKMOON_FAIRE~Paladin~Minion~5~8~8~Mech~Carousel Gryphon~Divine Shield~Taunt~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "Divine Shield,Taunt", "Divine Shield, Taunt"
+	requireTarget, effects, description = False, "Divine Shield,Taunt", "Divine Shield, Taunt"
 	name_CN = "旋转木马"
 	
 	
@@ -2479,7 +2460,7 @@ class LothraxiontheRedeemed(Minion):
 	Class, race, name = "Paladin", "Demon", "Lothraxion the Redeemed"
 	mana, attack, health = 5, 5, 5
 	index = "DARKMOON_FAIRE~Paladin~Minion~5~5~5~Demon~Lothraxion the Redeemed~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: For the rest of the game, after you summon a Silver Hand Recruit, give it Divine Shield"
+	requireTarget, effects, description = False, "", "Battlecry: For the rest of the game, after you summon a Silver Hand Recruit, give it Divine Shield"
 	name_CN = "救赎者洛萨克森"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2512,7 +2493,7 @@ class LothraxiontheRedeemed_Effect:
 				else "For the rest of the game, after you summon a Silver Hand Recruit, give it Divine Shield"
 				
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		subject.getsStatus("Divine Shield")
+		subject.getsEffect("Divine Shield")
 		
 	def createCopy(self, game): #不是纯的只在回合结束时触发，需要完整的createCopy
 		if self not in game.copiedObjs: #这个扳机没有被复制过
@@ -2525,7 +2506,7 @@ class LothraxiontheRedeemed_Effect:
 			
 class HammeroftheNaaru(Weapon):
 	Class, name, description = "Paladin", "Hammer of the Naaru", "Battlecry: Summon a 6/6 Holy Elemental with Taunt"
-	mana, attack, durability = 6, 3, 3
+	mana, attack, durability, effects = 6, 3, 3, ""
 	index = "DARKMOON_FAIRE~Paladin~Weapon~6~3~3~Hammer of the Naaru~Battlecry"
 	name_CN = "纳鲁之锤"
 	
@@ -2537,7 +2518,7 @@ class HolyElemental(Minion):
 	Class, race, name = "Paladin", "Elemental", "Holy Elemental"
 	mana, attack, health = 6, 6, 6
 	index = "DARKMOON_FAIRE~Paladin~Minion~6~6~6~Elemental~Holy Elemental~Taunt~Uncollectible"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt"
+	requireTarget, effects, description = False, "Taunt", "Taunt"
 	name_CN = "神圣元素"
 	
 	
@@ -2545,7 +2526,7 @@ class HighExarchYrel(Minion):
 	Class, race, name = "Paladin", "", "High Exarch Yrel"
 	mana, attack, health = 8, 7, 5
 	index = "DARKMOON_FAIRE~Paladin~Minion~8~7~5~~High Exarch Yrel~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: If your deck has no Neutral cards, gain Rush, Lifesteal, Taunt, and Divine Shield"
+	requireTarget, effects, description = False, "", "Battlecry: If your deck has no Neutral cards, gain Rush, Lifesteal, Taunt, and Divine Shield"
 	name_CN = "大主教伊瑞尔"
 	
 	def effCanTrig(self):
@@ -2553,16 +2534,16 @@ class HighExarchYrel(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if all(card.Class != "Neutral" for card in self.Game.Hand_Deck.decks[self.ID]):
-			self.getsStatus("Rush")
-			self.getsStatus("Lifesteal")
-			self.getsStatus("Taunt")
-			self.getsStatus("Divine Shield")
+			self.getsEffect("Rush")
+			self.getsEffect("Lifesteal")
+			self.getsEffect("Taunt")
+			self.getsEffect("Divine Shield")
 		return None
 		
 """Priest cards"""
 class Insight(Spell):
 	Class, school, name = "Priest", "Shadow", "Insight"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Priest~Spell~2~Shadow~Insight~ToCorrupt"
 	description = "Draw a minion. Corrupt: Reduce its Cost by (2)"
 	name_CN = "洞察"
@@ -2577,7 +2558,7 @@ class Insight(Spell):
 		
 class Insight_Corrupt(Spell):
 	Class, school, name = "Priest", "Shadow", "Insight"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Priest~Spell~2~Shadow~Insight~Corrupted~Uncollectible"
 	description = "Corrupted. Draw a minion. Reduce its Cost by (2)"
 	name_CN = "洞察"
@@ -2593,7 +2574,7 @@ class FairgroundFool(Minion):
 	Class, race, name = "Priest", "", "Fairground Fool"
 	mana, attack, health = 3, 4, 3
 	index = "DARKMOON_FAIRE~Priest~Minion~3~4~3~~Fairground Fool~Taunt~ToCorrupt"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Corrupt: Gain +4 Health"
+	requireTarget, effects, description = False, "Taunt", "Taunt. Corrupt: Gain +4 Health"
 	name_CN = "游乐园小丑"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2603,7 +2584,7 @@ class FairgroundFool_Corrupt(Minion):
 	Class, race, name = "Priest", "", "Fairground Fool"
 	mana, attack, health = 3, 4, 7
 	index = "DARKMOON_FAIRE~Priest~Minion~3~4~7~~Fairground Fool~Taunt~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "Taunt", "Corrupted. Taunt"
+	requireTarget, effects, description = False, "Taunt", "Corrupted. Taunt"
 	name_CN = "游乐园小丑"
 	
 	
@@ -2611,7 +2592,7 @@ class NazmaniBloodweaver(Minion):
 	Class, race, name = "Priest", "", "Nazmani Bloodweaver"
 	mana, attack, health = 3, 2, 5
 	index = "DARKMOON_FAIRE~Priest~Minion~3~2~5~~Nazmani Bloodweaver"
-	requireTarget, keyWord, description = False, "", "After you cast a spell, reduce the Cost of a random card in your hand by (1)"
+	requireTarget, effects, description = False, "", "After you cast a spell, reduce the Cost of a random card in your hand by (1)"
 	name_CN = "纳兹曼尼织血者"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2642,7 +2623,7 @@ class Trig_NazmaniBloodweaver(TrigBoard):
 				
 class PalmReading(Spell):
 	Class, school, name = "Priest", "Shadow", "Palm Reading"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Priest~Spell~3~Shadow~Palm Reading"
 	description = "Discover a spell. Reduce the Cost of spells in your hand by (1)"
 	name_CN = "解读手相"
@@ -2661,7 +2642,7 @@ class PalmReading(Spell):
 		
 class AuspiciousSpirits(Spell):
 	Class, school, name = "Priest", "Shadow", "Auspicious Spirits"
-	requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 	index = "DARKMOON_FAIRE~Priest~Spell~4~Shadow~Auspicious Spirits~ToCorrupt"
 	description = "Summon a random 4-Cost minion. Corrupt: Summon a 7-Cost minion instead"
 	name_CN = "吉兆"
@@ -2680,7 +2661,7 @@ class AuspiciousSpirits(Spell):
 		
 class AuspiciousSpirits_Corrupt(Spell):
 	Class, school, name = "Priest", "Shadow", "Auspicious Spirits"
-	requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 	index = "DARKMOON_FAIRE~Priest~Spell~4~Shadow~Auspicious Spirits~Corrupted~Uncollectible"
 	description = "Corrupted. Summon a 7-Cost minion"
 	name_CN = "吉兆"
@@ -2698,7 +2679,7 @@ class TheNamelessOne(Minion):
 	Class, race, name = "Priest", "", "The Nameless One"
 	mana, attack, health = 4, 4, 4
 	index = "DARKMOON_FAIRE~Priest~Minion~4~4~4~~The Nameless One~Battlecry~Legendary"
-	requireTarget, keyWord, description = True, "", "Battlecry: Choose a minion. Become a 4/4 copy of it, then Silence it"
+	requireTarget, effects, description = True, "", "Battlecry: Choose a minion. Become a 4/4 copy of it, then Silence it"
 	name_CN = "无名者"
 	
 	def targetExists(self, choice=0):
@@ -2720,7 +2701,7 @@ class FortuneTeller(Minion):
 	Class, race, name = "Priest", "Mech", "Fortune Teller"
 	mana, attack, health = 5, 3, 3
 	index = "DARKMOON_FAIRE~Priest~Minion~5~3~3~Mech~Fortune Teller~Taunt~Battlecry"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Gain +1/+1 for each spell in your hand"
+	requireTarget, effects, description = False, "Taunt", "Taunt. Battlecry: Gain +1/+1 for each spell in your hand"
 	name_CN = "占卜机"
 	#For self buffing effects, being dead and removed before battlecry will prevent the battlecry resolution.
 	#If this minion is returned hand before battlecry, it can still buff it self according to living friendly minions.
@@ -2733,7 +2714,7 @@ class FortuneTeller(Minion):
 		
 class IdolofYShaarj(Spell):
 	Class, school, name = "Priest", "", "Idol of Y'Shaarj"
-	requireTarget, mana = False, 8
+	requireTarget, mana, effects = False, 8, ""
 	index = "DARKMOON_FAIRE~Priest~Spell~8~~Idol of Y'Shaarj"
 	description = "Summon a 10/10 copy of a minion in your deck"
 	name_CN = "亚煞极神像"
@@ -2750,14 +2731,14 @@ class GhuuntheBloodGod(Minion):
 	Class, race, name = "Priest", "", "G'huun the Blood God"
 	mana, attack, health = 8, 8, 8
 	index = "DARKMOON_FAIRE~Priest~Minion~8~8~8~~G'huun the Blood God~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Draw 2 cards. They cost Health instead of Mana"
+	requireTarget, effects, description = False, "", "Draw 2 cards. They cost Health instead of Mana"
 	name_CN = "戈霍恩，鲜血之神"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		card1 = self.Game.Hand_Deck.drawCard(self.ID)[0]
 		card2 = self.Game.Hand_Deck.drawCard(self.ID)[0]
-		if card1: card1.getsStatus("Cost Health Instead")
-		if card2: card2.getsStatus("Cost Health Instead")
+		if card1: card1.getsEffect("Cost Health Instead")
+		if card2: card2.getsEffect("Cost Health Instead")
 		return None
 		
 		
@@ -2765,7 +2746,7 @@ class BloodofGhuun(Minion):
 	Class, race, name = "Priest", "Elemental", "Blood of G'huun"
 	mana, attack, health = 9, 8, 8
 	index = "DARKMOON_FAIRE~Priest~Minion~9~8~8~Elemental~Blood of G'huun~Taunt"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. At the end of your turn, summon a 5/5 copy of a minion in your deck"
+	requireTarget, effects, description = False, "Taunt", "Taunt. At the end of your turn, summon a 5/5 copy of a minion in your deck"
 	name_CN = "戈霍恩之血"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2792,7 +2773,7 @@ class PrizePlunderer(Minion):
 	Class, race, name = "Rogue", "Pirate", "Prize Plunderer"
 	mana, attack, health = 1, 2, 1
 	index = "DARKMOON_FAIRE~Rogue~Minion~1~2~1~Pirate~Prize Plunderer~Combo"
-	requireTarget, keyWord, description = True, "", "Combo: Deal 1 damage to a minion for each other card you've played this turn"
+	requireTarget, effects, description = True, "", "Combo: Deal 1 damage to a minion for each other card you've played this turn"
 	name_CN = "奖品掠夺者"
 	
 	def returnTrue(self, choice=0):
@@ -2815,7 +2796,7 @@ class FoxyFraud(Minion):
 	Class, race, name = "Rogue", "", "Foxy Fraud"
 	mana, attack, health = 2, 3, 2
 	index = "DARKMOON_FAIRE~Rogue~Minion~2~3~2~~Foxy Fraud~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Your next Combo this turn costs (2) less"
+	requireTarget, effects, description = False, "", "Battlecry: Your next Combo this turn costs (2) less"
 	name_CN = "狐人老千"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -2834,7 +2815,7 @@ class GameManaAura_InTurnNextCombo2Less(TempManaEffect):
 		
 class ShadowClone(Secret):
 	Class, school, name = "Rogue", "Shadow", "Shadow Clone"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Rogue~Spell~2~Shadow~Shadow Clone~~Secret"
 	description = "Secret: After a minion attacks your hero, summon a copy of it with Stealth"
 	name_CN = "暗影克隆"
@@ -2858,7 +2839,7 @@ class SweetTooth(Minion):
 	Class, race, name = "Rogue", "", "Sweet Tooth"
 	mana, attack, health = 2, 3, 2
 	index = "DARKMOON_FAIRE~Rogue~Minion~2~3~2~~Sweet Tooth~ToCorrupt"
-	requireTarget, keyWord, description = False, "", "Corrupt: Gain +2 Attack and Stealth"
+	requireTarget, effects, description = False, "", "Corrupt: Gain +2 Attack and Stealth"
 	name_CN = "甜食狂"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2868,13 +2849,13 @@ class SweetTooth_Corrupt(Minion):
 	Class, race, name = "Rogue", "", "Sweet Tooth"
 	mana, attack, health = 2, 5, 2
 	index = "DARKMOON_FAIRE~Priest~Minion~2~5~2~~Sweet Tooth~Stealth~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "Stealth", "Corrupted. Stealth"
+	requireTarget, effects, description = False, "Stealth", "Corrupted. Stealth"
 	name_CN = "甜食狂"
 	
 	
 class Swindle(Spell):
 	Class, school, name = "Rogue", "", "Swindle"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Rogue~Spell~2~~Swindle~Combo"
 	description = "Draw a spell. Combo: And a minion"
 	name_CN = "行骗"
@@ -2894,7 +2875,7 @@ class TenwuoftheRedSmoke(Minion):
 	Class, race, name = "Rogue", "", "Tenwu of the Red Smoke"
 	mana, attack, health = 2, 3, 2
 	index = "DARKMOON_FAIRE~Rogue~Minion~2~3~2~~Tenwu of the Red Smoke~Battlecry~Legendary"
-	requireTarget, keyWord, description = True, "", "Battlecry: Return a friendly minion to you hand. It costs (1) less this turn"
+	requireTarget, effects, description = True, "", "Battlecry: Return a friendly minion to you hand. It costs (1) less this turn"
 	name_CN = "'赤烟'腾武"
 	
 	def targetExists(self, choice=0):
@@ -2905,7 +2886,7 @@ class TenwuoftheRedSmoke(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and target.onBoard:
-			self.Game.returnMiniontoHand(target)
+			self.Game.returnObj2Hand(target)
 			if target.inHand: ManaMod_Cost1LessThisTurn(target).applies()
 		return target
 		
@@ -2945,12 +2926,12 @@ class ManaMod_Cost1LessThisTurn:
 		
 class CloakofShadows(Spell):
 	Class, school, name = "Rogue", "Shadow", "Cloak of Shadows"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Rogue~Spell~3~Shadow~Cloak of Shadows"
 	description = "Give your hero Stealth for 1 turn"
 	name_CN = "暗影斗篷"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.Game.heroes[self.ID].status["Temp Stealth"] += 1
+		self.Game.heroes[self.ID].getsEffect("Temp Stealth")
 		return None
 		
 		
@@ -2958,7 +2939,7 @@ class TicketMaster(Minion):
 	Class, race, name = "Rogue", "", "Ticket Master"
 	mana, attack, health = 3, 4, 3
 	index = "DARKMOON_FAIRE~Rogue~Minion~3~4~3~~Ticket Master~Deathrattle"
-	requireTarget, keyWord, description = False, "", "Deathrattle: Shuffle 3 Tickets into your deck. When drawn, summon a 3/3 Plush Bear"
+	requireTarget, effects, description = False, "", "Deathrattle: Shuffle 3 Tickets into your deck. When drawn, summon a 3/3 Plush Bear"
 	name_CN = "奖券老板"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -2975,7 +2956,7 @@ class Shuffle3TicketsintoYourDeck(Deathrattle_Minion):
 		
 class Tickets(Spell):
 	Class, school, name = "Rogue", "", "Tickets"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Rogue~Spell~3~~Tickets~Casts When Drawn~Uncollectible"
 	description = "Casts When Drawn. Summon a 3/3 Plush Bear"
 	name_CN = "奖券"
@@ -2987,13 +2968,13 @@ class PlushBear(Minion):
 	Class, race, name = "Rogue", "", "Plush Bear"
 	mana, attack, health = 3, 3, 3
 	index = "DARKMOON_FAIRE~Rogue~Minion~3~3~3~~Plush Bear~Uncollectible"
-	requireTarget, keyWord, description = False, "", ""
+	requireTarget, effects, description = False, "", ""
 	name_CN = "玩具熊"
 	
 	
 class MalevolentStrike(Spell):
 	Class, school, name = "Rogue", "", "Malevolent Strike"
-	requireTarget, mana = True, 5
+	requireTarget, mana, effects = True, 5, ""
 	index = "DARKMOON_FAIRE~Rogue~Spell~5~~Malevolent Strike"
 	description = "Destroy a minion. Costs (1) less for each card in your deck that didn't start there"
 	name_CN = "致伤打击"
@@ -3035,7 +3016,7 @@ class GrandEmpressShekzara(Minion):
 	Class, race, name = "Rogue", "", "Grand Empress Shek'zara"
 	mana, attack, health = 6, 5, 7
 	index = "DARKMOON_FAIRE~Rogue~Minion~6~5~7~~Grand Empress Shek'zara~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Discover a card in your deck and draw all copies of it"
+	requireTarget, effects, description = False, "", "Battlecry: Discover a card in your deck and draw all copies of it"
 	name_CN = "大女皇夏柯扎拉"
 	
 	def drawCopiesofType(self, cardType): #info is the index of the card in player's deck
@@ -3064,7 +3045,7 @@ class GrandEmpressShekzara(Minion):
 """Shaman cards"""
 class Revolve(Spell):
 	Class, school, name = "Shaman", "", "Revolve"
-	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 	index = "DARKMOON_FAIRE~Shaman~Spell~1~~Revolve"
 	description = "Transform all minions into random ones with the same Cost"
 	name_CN = "异变轮转"
@@ -3087,7 +3068,7 @@ class CagematchCustodian(Minion):
 	Class, race, name = "Shaman", "Elemental", "Cagematch Custodian"
 	mana, attack, health = 2, 2, 2
 	index = "DARKMOON_FAIRE~Shaman~Minion~2~2~2~Elemental~Cagematch Custodian~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Draw a weapon"
+	requireTarget, effects, description = False, "", "Battlecry: Draw a weapon"
 	name_CN = "笼斗管理员"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		weapons = [i for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]) if card.type == "Weapon"]
@@ -3097,7 +3078,7 @@ class CagematchCustodian(Minion):
 		
 class DeathmatchPavilion(Spell):
 	Class, school, name = "Shaman", "", "Deathmatch Pavilion"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Shaman~Spell~2~~Deathmatch Pavilion"
 	description = "Summon a 3/2 Duelist. If your hero attacked this turn, summon another"
 	name_CN = "死斗场帐篷"
@@ -3117,7 +3098,7 @@ class PavilionDuelist(Minion):
 	Class, race, name = "Shaman", "", "Pavilion Duelist"
 	mana, attack, health = 2, 3, 2
 	index = "DARKMOON_FAIRE~Shaman~Minion~2~3~2~~Pavilion Duelist~Uncollectible"
-	requireTarget, keyWord, description = False, "", ""
+	requireTarget, effects, description = False, "", ""
 	name_CN = "大帐决斗者"
 	
 	
@@ -3125,7 +3106,7 @@ class GrandTotemEysor(Minion):
 	Class, race, name = "Shaman", "Totem", "Grand Totem Eys'or"
 	mana, attack, health = 3, 0, 4
 	index = "DARKMOON_FAIRE~Shaman~Minion~3~0~4~Totem~Grand Totem Eys'or~Legendary"
-	requireTarget, keyWord, description = False, "", "At the end of your turn, give +1/+1 to all other Totems in your hand, deck and battlefield"
+	requireTarget, effects, description = False, "", "At the end of your turn, give +1/+1 to all other Totems in your hand, deck and battlefield"
 	name_CN = "巨型图腾埃索尔"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3156,7 +3137,7 @@ class Magicfin(Minion):
 	Class, race, name = "Shaman", "Murloc", "Magicfin"
 	mana, attack, health = 3, 3, 4
 	index = "DARKMOON_FAIRE~Shaman~Minion~3~3~4~Murloc~Magicfin"
-	requireTarget, keyWord, description = False, "", "After a friendly Murloc dies, add a random Legendary minion to your hand"
+	requireTarget, effects, description = False, "", "After a friendly Murloc dies, add a random Legendary minion to your hand"
 	name_CN = "鱼人魔术师"
 	poolIdentifier = "Legendary Minions"
 	@classmethod
@@ -3185,7 +3166,7 @@ class PitMaster(Minion):
 	Class, race, name = "Shaman", "", "Pit Master"
 	mana, attack, health = 3, 1, 2
 	index = "DARKMOON_FAIRE~Shaman~Minion~3~1~2~~Pit Master~Battlecry~ToCorrupt"
-	requireTarget, keyWord, description = False, "", "Battlecry: Summon a 3/2 Duelist. Corrupt: Summon two"
+	requireTarget, effects, description = False, "", "Battlecry: Summon a 3/2 Duelist. Corrupt: Summon two"
 	name_CN = "死斗场管理者"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3199,7 +3180,7 @@ class PitMaster_Corrupt(Minion):
 	Class, race, name = "Shaman", "", "Pit Master"
 	mana, attack, health = 3, 1, 2
 	index = "DARKMOON_FAIRE~Shaman~Minion~3~1~2~~Pit Master~Battlecry~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "", "Corrupted. Battlecry: Summon two 3/2 Duelists"
+	requireTarget, effects, description = False, "", "Corrupted. Battlecry: Summon two 3/2 Duelists"
 	name_CN = "死斗场管理者"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3210,7 +3191,7 @@ class PitMaster_Corrupt(Minion):
 		
 class Stormstrike(Spell):
 	Class, school, name = "Shaman", "Nature", "Stormstrike"
-	requireTarget, mana = True, 3
+	requireTarget, mana, effects = True, 3, ""
 	index = "DARKMOON_FAIRE~Shaman~Spell~3~Nature~Stormstrike"
 	description = "Deal 3 damage to a minion. Give your hero +3 Attack this turn"
 	name_CN = "风暴打击"
@@ -3230,7 +3211,7 @@ class Stormstrike(Spell):
 		
 class WhackAGnollHammer(Weapon):
 	Class, name, description = "Shaman", "Whack-A-Gnoll Hammer", "After your hero attacks, give a random friendly minion +1/+1"
-	mana, attack, durability = 3, 3, 2
+	mana, attack, durability, effects = 3, 3, 2, ""
 	index = "DARKMOON_FAIRE~Shaman~Weapon~3~3~2~Whack-A-Gnoll Hammer"
 	name_CN = "敲狼锤"
 	def __init__(self, Game, ID):
@@ -3255,7 +3236,7 @@ class Trig_WhackAGnollHammer(TrigBoard):
 		
 class DunkTank(Spell):
 	Class, school, name = "Shaman", "Nature", "Dunk Tank"
-	requireTarget, mana = True, 4
+	requireTarget, mana, effects = True, 4, ""
 	index = "DARKMOON_FAIRE~Shaman~Spell~4~Nature~Dunk Tank~ToCorrupt"
 	description = "Deal 4 damage. Corrupt: Then deal 2 damage to all enemy minions"
 	name_CN = "深水炸弹"
@@ -3271,7 +3252,7 @@ class DunkTank(Spell):
 		
 class DunkTank_Corrupt(Spell):
 	Class, school, name = "Shaman", "Nature", "Dunk Tank"
-	requireTarget, mana = True, 4
+	requireTarget, mana, effects = True, 4, ""
 	index = "DARKMOON_FAIRE~Shaman~Spell~4~Nature~Dunk Tank~Corrupted~Uncollectible"
 	description = "Corrupted. Deal 4 damage. Then deal 2 damage to all enemy minions"
 	name_CN = "深水炸弹"
@@ -3289,7 +3270,7 @@ class InaraStormcrash(Minion):
 	Class, race, name = "Shaman", "", "Inara Stormcrash"
 	mana, attack, health = 5, 4, 5
 	index = "DARKMOON_FAIRE~Shaman~Minion~5~4~5~~Inara Stormcrash~Legendary"
-	requireTarget, keyWord, description = False, "", "On your turn, your hero has +2 Attack and Windfury"
+	requireTarget, effects, description = False, "", "On your turn, your hero has +2 Attack and Windfury"
 	name_CN = "伊纳拉·碎雷"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3318,9 +3299,9 @@ class HasAura_InaraStormcrash:
 				self.applies(subject)
 				
 	def applies(self, subject):
-		Stat_Receiver(subject, self, 2).effectStart()
+		Aura_Receiver(subject, self, 2).effectStart()
 		#随从和英雄的特效光环可以共用
-		Effect_Receiver(subject, self, "Windfury").effectStart()
+		Aura_Receiver(subject, self, effect="Windfury").effectStart()
 		
 	def auraAppears(self):
 		game, ID = self.entity.Game, self.entity.ID
@@ -3363,7 +3344,7 @@ class HasAura_InaraStormcrash:
 """Warlock cards"""
 class WickedWhispers(Spell):
 	Class, school, name = "Warlock", "Shadow", "Wicked Whispers"
-	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 	index = "DARKMOON_FAIRE~Warlock~Spell~1~Shadow~Wicked Whispers"
 	description = "Discard your lowest Cost card. Give your minions +1/+1"
 	name_CN = "邪恶低语"
@@ -3382,13 +3363,13 @@ class MidwayManiac(Minion):
 	Class, race, name = "Warlock", "Demon", "Midway Maniac"
 	mana, attack, health = 2, 1, 5
 	index = "DARKMOON_FAIRE~Warlock~Minion~2~1~5~Demon~Midway Maniac~Taunt"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt"
+	requireTarget, effects, description = False, "Taunt", "Taunt"
 	name_CN = "癫狂的游客"
 	
 	
 class FreeAdmission(Spell):
 	Class, school, name = "Warlock", "", "Free Admission"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Warlock~Spell~3~~Free Admission"
 	description = "Draw 2 minions. If they're both Demons, reduce their Cost by (2)"
 	name_CN = "免票入场"
@@ -3408,7 +3389,7 @@ class ManariMosher(Minion):
 	Class, race, name = "Warlock", "Demon", "Man'ari Mosher"
 	mana, attack, health = 3, 3, 4
 	index = "DARKMOON_FAIRE~Warlock~Minion~3~3~4~Demon~Man'ari Mosher~Battlecry"
-	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly Demon +3 Attack and Lifesteal this turn"
+	requireTarget, effects, description = True, "", "Battlecry: Give a friendly Demon +3 Attack and Lifesteal this turn"
 	name_CN = "摇滚堕落者"
 	def targetExists(self, choice=0):
 		return self.selectableMinionExists()
@@ -3419,7 +3400,7 @@ class ManariMosher(Minion):
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target and (target.onBoard or target.inHand):
 			target.buffDebuff(3, 0, "EndofTurn")
-			target.getsStatus("Lifesteal")
+			target.getsEffect("Lifesteal")
 			trig = ManariMosher_Effect(target)
 			target.trigsBoard.append(trig)
 			target.trigsHand.append(trig) #The target might be in hand. Need to reset correctly even if it's in hand
@@ -3455,7 +3436,7 @@ class ManariMosher_Effect:
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		minion = self.entity
-		minion.losesStatus("Lifesteal")
+		minion.losesEffect("Lifesteal")
 		for sig in self.signals:
 			try: minion.Game.trigsHand[minion.ID][sig].remove(self)
 			except: pass
@@ -3481,7 +3462,7 @@ class ManariMosher_Effect:
 			
 class CascadingDisaster(Spell):
 	Class, school, name = "Warlock", "", "Cascading Disaster"
-	requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 	index = "DARKMOON_FAIRE~Warlock~Spell~4~~Cascading Disaster~ToCorrupt"
 	description = "Destroy a random enemy minion. Corrupt: Destroy 2. Corrupt Again: Destroy 3"
 	name_CN = "连环灾难"
@@ -3496,7 +3477,7 @@ class CascadingDisaster(Spell):
 		
 class CascadingDisaster_Corrupt(Spell):
 	Class, school, name = "Warlock", "", "Cascading Disaster"
-	requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 	index = "DARKMOON_FAIRE~Warlock~Spell~4~~Cascading Disaster~ToCorrupt~Corrupted~Uncollectible"
 	description = "Corrupted. Destroy 2 random enemy minions. Corrupt: Destroy 3"
 	name_CN = "连环灾难"
@@ -3513,7 +3494,7 @@ class CascadingDisaster_Corrupt(Spell):
 		
 class CascadingDisaster_Corrupt2(Spell):
 	Class, school, name = "Warlock", "", "Cascading Disaster"
-	requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 	index = "DARKMOON_FAIRE~Warlock~Spell~4~~Cascading Disaster~Corrupted~Uncollectible"
 	description = "Corrupted. Destroy 3 random enemy minions"
 	name_CN = "连环灾难"
@@ -3529,7 +3510,7 @@ class RevenantRascal(Minion):
 	Class, race, name = "Warlock", "", "Revenant Rascal"
 	mana, attack, health = 3, 3, 3
 	index = "DARKMOON_FAIRE~Warlock~Minion~3~3~3~~Revenant Rascal~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Destroy a Mana Crystal for both players"
+	requireTarget, effects, description = False, "", "Battlecry: Destroy a Mana Crystal for both players"
 	name_CN = "怨灵捣蛋鬼"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3542,7 +3523,7 @@ class FireBreather(Minion):
 	Class, race, name = "Warlock", "Demon", "Fire Breather"
 	mana, attack, health = 4, 4, 3
 	index = "DARKMOON_FAIRE~Warlock~Minion~4~4~3~Demon~Fire Breather~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Deal 2 damage to all minions except Demons"
+	requireTarget, effects, description = False, "", "Battlecry: Deal 2 damage to all minions except Demons"
 	name_CN = "吐火艺人"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3553,7 +3534,7 @@ class FireBreather(Minion):
 		
 class DeckofChaos(Spell):
 	Class, school, name = "Warlock", "Shadow", "Deck of Chaos"
-	requireTarget, mana = False, 5
+	requireTarget, mana, effects = False, 5, ""
 	index = "DARKMOON_FAIRE~Warlock~Spell~5~Shadow~Deck of Chaos~Legendary"
 	description = "Swap the Cost and Attack of all minions in your deck"
 	name_CN = "混乱套牌"
@@ -3571,7 +3552,7 @@ class RingMatron(Minion):
 	Class, race, name = "Warlock", "Demon", "Ring Matron"
 	mana, attack, health = 6, 6, 4
 	index = "DARKMOON_FAIRE~Warlock~Minion~6~6~4~Demon~Ring Matron~Taunt~Deathrattle"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Deathrattle: Summon two 3/2 Imps"
+	requireTarget, effects, description = False, "Taunt", "Taunt. Deathrattle: Summon two 3/2 Imps"
 	name_CN = "火圈鬼母"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3590,7 +3571,7 @@ class FieryImp(Minion):
 	Class, race, name = "Warlock", "Demon", "Fiery Imp"
 	mana, attack, health = 2, 3, 2
 	index = "DARKMOON_FAIRE~Warlock~Minion~2~3~2~Demon~Fiery Imp~Uncollectible"
-	requireTarget, keyWord, description = False, "", ""
+	requireTarget, effects, description = False, "", ""
 	name_CN = "火焰小鬼"
 	
 	
@@ -3598,7 +3579,7 @@ class Tickatus(Minion):
 	Class, race, name = "Warlock", "Demon", "Tickatus"
 	mana, attack, health = 6, 8, 8
 	index = "DARKMOON_FAIRE~Warlock~Minion~6~8~8~Demon~Tickatus~Battlecry~ToCorrupt~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Remove the top 5 cards from your deck. Corrupt: Your opponent's instead"
+	requireTarget, effects, description = False, "", "Battlecry: Remove the top 5 cards from your deck. Corrupt: Your opponent's instead"
 	name_CN = "提克特斯"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3612,7 +3593,7 @@ class Tickatus_Corrupt(Minion):
 	Class, race, name = "Warlock", "Demon", "Tickatus"
 	mana, attack, health = 6, 8, 8
 	index = "DARKMOON_FAIRE~Warlock~Minion~6~8~8~Demon~Tickatus~Battlecry~Corrupted~Legendary~Uncollectible"
-	requireTarget, keyWord, description = False, "", "Corrupted. Battlecry: Remove the top 5 cards from your opponent's deck"
+	requireTarget, effects, description = False, "", "Corrupted. Battlecry: Remove the top 5 cards from your opponent's deck"
 	name_CN = "提克特斯"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
@@ -3622,7 +3603,7 @@ class Tickatus_Corrupt(Minion):
 """Warrior cards"""
 class StageDive(Spell):
 	Class, school, name = "Warrior", "", "Stage Dive"
-	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 	index = "DARKMOON_FAIRE~Warrior~Spell~1~~Stage Dive~ToCorrupt"
 	description = "Draw a Rush minion. Corrupt: Give it +2/+1"
 	name_CN = "舞台跳水"
@@ -3631,20 +3612,20 @@ class StageDive(Spell):
 		self.trigsHand = [Trig_Corrupt(self, StageDive_Corrupt)] #只有在手牌中才会升级
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		minions = [i for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]) if card.type == "Minion" and card.keyWords["Rush"] > 0]
-		if minions: self.Game.Hand_Deck.drawCard(self.ID, npchoice(minions))[0]
+		indices = [i for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]) if card.type == "Minion" and card.effects["Rush"] > 0]
+		if indices: self.Game.Hand_Deck.drawCard(self.ID, npchoice(indices))[0]
 		return None
 		
 class StageDive_Corrupt(Spell):
 	Class, school, name = "Warrior", "", "Stage Dive"
-	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 	index = "DARKMOON_FAIRE~Warrior~Spell~1~~Stage Dive~Corrupted~Uncollectible"
 	description = "Corrupted. Draw a Rush minion and give it +2/+1"
 	name_CN = "舞台跳水"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		minions = [i for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]) if card.type == "Minion" and card.keyWords["Rush"] > 0]
-		if minions:
-			minion = self.Game.Hand_Deck.drawCard(self.ID, npchoice(minions))[0]
+		indices = [i for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]) if card.type == "Minion" and card.effects["Rush"] > 0]
+		if indices:
+			minion = self.Game.Hand_Deck.drawCard(self.ID, npchoice(indices))[0]
 			if minion: minion.buffDebuff(2, 1)
 		return None
 		
@@ -3653,7 +3634,7 @@ class BumperCar(Minion):
 	Class, race, name = "Warrior", "Mech", "Bumper Car"
 	mana, attack, health = 2, 1, 3
 	index = "DARKMOON_FAIRE~Warrior~Minion~2~1~3~Mech~Bumper Car~Rush~Deathrattle"
-	requireTarget, keyWord, description = False, "Rush", "Rush. Deathrattle: Add two 1/1 Riders with Rush to your hand"
+	requireTarget, effects, description = False, "Rush", "Rush. Deathrattle: Add two 1/1 Riders with Rush to your hand"
 	name_CN = "碰碰车"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3671,7 +3652,7 @@ class ETCGodofMetal(Minion):
 	Class, race, name = "Warrior", "", "E.T.C., God of Metal"
 	mana, attack, health = 2, 1, 4
 	index = "DARKMOON_FAIRE~Warrior~Minion~2~1~4~~E.T.C., God of Metal~Legendary"
-	requireTarget, keyWord, description = False, "", "After a friendly Rush minion attack, deal 2 damage to the enemy hero"
+	requireTarget, effects, description = False, "", "After a friendly Rush minion attack, deal 2 damage to the enemy hero"
 	name_CN = "精英牛头人酋长，金属之神"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3682,7 +3663,7 @@ class Trig_ETCGodofMetal(TrigBoard):
 		super().__init__(entity, ["MinionAttackedMinion", "MinionAttackedHero"])
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-		return subject.ID == self.entity.ID and subject.keyWords["Rush"] > 0 and self.entity.onBoard
+		return subject.ID == self.entity.ID and subject.effects["Rush"] > 0 and self.entity.onBoard
 		
 	def text(self, CHN):
 		return "在一个友方突袭随从攻击后，对敌方英雄造成2点伤害" if CHN else "After a friendly Rush minion attack, deal 2 damage to the enemy hero"
@@ -3693,13 +3674,12 @@ class Trig_ETCGodofMetal(TrigBoard):
 		
 class Minefield(Spell):
 	Class, school, name = "Warrior", "", "Minefield"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Warrior~Spell~2~~Minefield"
 	description = "Deal 5 damage randomly split among all minions"
 	name_CN = "雷区挑战"
 	def text(self, CHN):
-		damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		return "造成%d点伤害，随机分配到所有随从身上"%damage if CHN else "Deal %d damage randomly split among all minions"%damage
+		return (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (5 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -3712,7 +3692,7 @@ class Minefield(Spell):
 		
 class RingmastersBaton(Weapon):
 	Class, name, description = "Warrior", "Ringmaster's Baton", "After your hero attacks, give a Mech, Dragon, and Pirate in your hand +1/+1"
-	mana, attack, durability = 2, 1, 3
+	mana, attack, durability, effects = 2, 1, 3, ""
 	index = "DARKMOON_FAIRE~Warrior~Weapon~2~1~3~Ringmaster's Baton"
 	name_CN = "马戏领班的节杖"
 	def __init__(self, Game, ID):
@@ -3741,7 +3721,7 @@ class StageHand(Minion):
 	Class, race, name = "Warrior", "Mech", "Stage Hand"
 	mana, attack, health = 2, 3, 2
 	index = "DARKMOON_FAIRE~Warrior~Minion~2~3~2~Mech~Stage Hand~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Give a random minion in your hand +1/+1"
+	requireTarget, effects, description = False, "", "Battlecry: Give a random minion in your hand +1/+1"
 	name_CN = "置景工"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3752,12 +3732,12 @@ class StageHand(Minion):
 		
 class FeatofStrength(Spell):
 	Class, school, name = "Warrior", "", "Feat of Strength"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Warrior~Spell~3~~Feat of Strength"
 	description = "Give a random Taunt minion in your hand +5/+5"
 	name_CN = "实力担当"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		minions = [card for card in self.Game.Hand_Deck.hands[self.ID] if card.type == "Minion" and card.keyWords["Taunt"] > 0]
+		minions = [card for card in self.Game.Hand_Deck.hands[self.ID] if card.type == "Minion" and card.effects["Taunt"] > 0]
 		if minions: npchoice(minions).buffDebuff(5, 5)
 		return None
 		
@@ -3766,7 +3746,7 @@ class SwordEater(Minion):
 	Class, race, name = "Warrior", "Pirate", "Sword Eater"
 	mana, attack, health = 4, 2, 5
 	index = "DARKMOON_FAIRE~Warrior~Minion~4~2~5~Pirate~Sword Eater~Taunt~Battlecry"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Battlecry: Equip a 3/2 Sword"
+	requireTarget, effects, description = False, "Taunt", "Taunt. Battlecry: Equip a 3/2 Sword"
 	name_CN = "吞剑艺人"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3775,7 +3755,7 @@ class SwordEater(Minion):
 		
 class Jawbreaker(Weapon):
 	Class, name, description = "Warrior", "Jawbreaker", ""
-	mana, attack, durability = 3, 3, 2
+	mana, attack, durability, effects = 3, 3, 2, ""
 	index = "DARKMOON_FAIRE~Warrior~Weapon~3~3~2~Jawbreaker~Uncollectible"
 	name_CN = "断颚之刃"
 	
@@ -3784,13 +3764,13 @@ class RingmasterWhatley(Minion):
 	Class, race, name = "Warrior", "", "Ringmaster Whatley"
 	mana, attack, health = 5, 3, 5
 	index = "DARKMOON_FAIRE~Warrior~Minion~5~3~5~~Ringmaster Whatley~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Draw a Mech, Dragon, and Pirate"
+	requireTarget, effects, description = False, "", "Battlecry: Draw a Mech, Dragon, and Pirate"
 	name_CN = "马戏领班威特利"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=0):
 		for race in ("Mech", "Dragon", "Pirate"):
-			minions = [i for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]) if card.type == "Minion" and race in card.race]
-			if minions: self.Game.Hand_Deck.drawCard(self.ID, npchoice(minions))
+			indices = [i for i, card in enumerate(self.Game.Hand_Deck.decks[self.ID]) if card.type == "Minion" and race in card.race]
+			if indices: self.Game.Hand_Deck.drawCard(self.ID, npchoice(indices))
 		return None
 		
 #All type can only count as one of the 8 races.
@@ -3798,7 +3778,7 @@ class TentTrasher(Minion):
 	Class, race, name = "Warrior", "Dragon", "Tent Trasher"
 	mana, attack, health = 5, 5, 5
 	index = "DARKMOON_FAIRE~Warrior~Minion~5~5~5~Dragon~Tent Trasher~Rush"
-	requireTarget, keyWord, description = False, "Rush", "Rush. Costs (1) less for each friendly minion with a unique minion type"
+	requireTarget, effects, description = False, "Rush", "Rush. Costs (1) less for each friendly minion with a unique minion type"
 	name_CN = "帐篷摧毁者"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3838,7 +3818,7 @@ class ArmorVendor(Minion):
 	Class, race, name = "Neutral", "", "Armor Vendor"
 	mana, attack, health = 1, 1, 3
 	index = "DARKMOON_FAIRE~Neutral~Minion~1~1~3~~Armor Vendor~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: Give 4 Armor to each hero"
+	requireTarget, effects, description = False, "", "Battlecry: Give 4 Armor to each hero"
 	name_CN = "护甲商贩"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -3851,7 +3831,7 @@ class Crabrider(Minion):
 	Class, race, name = "Neutral", "Murloc", "Crabrider"
 	mana, attack, health = 2, 1, 4
 	index = "DARKMOON_FAIRE~Neutral~Minion~2~1~4~Murloc~Crabrider~Rush~Windfury"
-	requireTarget, keyWord, description = False, "Rush,Windfury", "Rush, Windfury"
+	requireTarget, effects, description = False, "Rush,Windfury", "Rush, Windfury"
 	name_CN = "螃蟹骑士"
 	
 	
@@ -3859,7 +3839,7 @@ class Deathwarden(Minion):
 	Class, race, name = "Neutral", "", "Deathwarden"
 	mana, attack, health = 3, 2, 5
 	index = "DARKMOON_FAIRE~Neutral~Minion~3~2~5~~Deathwarden"
-	requireTarget, keyWord, description = False, "", "Deathrattles can't trigger"
+	requireTarget, effects, description = False, "", "Deathrattles can't trigger"
 	name_CN = "死亡守望者"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3868,20 +3848,20 @@ class Deathwarden(Minion):
 class GameRuleAura_Deathwarden(GameRuleAura):
 	def auraAppears(self):
 		minion = self.entity
-		minion.Game.status[minion.ID]["Deathrattles X"] += 1
-		minion.Game.status[3-minion.ID]["Deathrattles X"] += 1
+		minion.Game.effects[minion.ID]["Deathrattles X"] += 1
+		minion.Game.effects[3-minion.ID]["Deathrattles X"] += 1
 		
 	def auraDisappears(self):
 		minion = self.entity
-		minion.Game.status[minion.ID]["Deathrattles X"] -= 1
-		minion.Game.status[3-minion.ID]["Deathrattles X"] -= 1
+		minion.Game.effects[minion.ID]["Deathrattles X"] -= 1
+		minion.Game.effects[3-minion.ID]["Deathrattles X"] -= 1
 		
 		
 class Moonfang(Minion):
 	Class, race, name = "Neutral", "Beast", "Moonfang"
 	mana, attack, health = 5, 6, 3
 	index = "DARKMOON_FAIRE~Neutral~Minion~5~6~3~Beast~Moonfang~Legendary"
-	requireTarget, keyWord, description = False, "", "Can only take 1 damage at a time"
+	requireTarget, effects, description = False, "", "Can only take 1 damage at a time"
 	name_CN = "明月之牙"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3906,7 +3886,7 @@ class RunawayBlackwing(Minion):
 	Class, race, name = "Neutral", "Dragon", "Runaway Blackwing"
 	mana, attack, health = 9, 9, 9
 	index = "DARKMOON_FAIRE~Neutral~Minion~9~9~9~Dragon~Runaway Blackwing"
-	requireTarget, keyWord, description = False, "", "At the end of your turn, deal 9 damage to a random enemy minion"
+	requireTarget, effects, description = False, "", "At the end of your turn, deal 9 damage to a random enemy minion"
 	name_CN = "窜逃的黑翼龙"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3930,7 +3910,7 @@ class Trig_RunawayBlackwing(TrigBoard):
 """Demon Hunter Cards"""
 class IllidariStudies(Spell):
 	Class, school, name = "Demon Hunter", "", "Illidari Studies"
-	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 	index = "DARKMOON_FAIRE~Demon Hunter~Spell~1~~Illidari Studies"
 	description = "Discover an Outcast card. Your next one costs (1) less"
 	name_CN = "伊利达雷研习"
@@ -3962,7 +3942,7 @@ class FelfireDeadeye(Minion):
 	Class, race, name = "Demon Hunter,Hunter", "", "Felfire Deadeye"
 	mana, attack, health = 2, 2, 3
 	index = "DARKMOON_FAIRE~Demon Hunter,Hunter~Minion~2~2~3~~Felfire Deadeye"
-	requireTarget, keyWord, description = False, "", "Your Hero Power costs (1) less"
+	requireTarget, effects, description = False, "", "Your Hero Power costs (1) less"
 	name_CN = "邪火神射手"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -3976,22 +3956,79 @@ class Felsaber(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Felsaber"
 	mana, attack, health = 4, 5, 6
 	index = "DARKMOON_FAIRE~Demon Hunter~Minion~4~5~6~Demon~Felsaber"
-	requireTarget, keyWord, description = False, "", "Can only attack if your hero attacked this turn"
+	requireTarget, effects, description = False, "Can't Attack", "Can only attack if your hero attacked this turn"
 	name_CN = "邪刃豹"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
-		self.marks["Can't Attack"] = 1
+		self.auras["Can only attack if your hero attacked this turn"] = StatAura_Vessina(self)
+
+
+if signal[0] == 'H':
+	attackedThisTurn = self.entity.Game.Counters.heroAttackTimesThisTurn[self.entity.ID] > 0
+	if not attackedThisTurn and self.on:
+		self.on = False
+		self.entity.effects["Can't Attack"] += 1
+	elif attackedThisTurn and not self.on:
+		self.on = True
+		self.entity.effects["Can't Attack"] -= 1
+elif self.on:
+	self.on = False
+	self.entity.effects["Can't Attack"] += 1
+
+
+class EffectAura_Felsaber:
+	def __init__(self, entity):
+		self.entity = entity
+		self.signals, self.auraAffected = ["HeroAttackedHero", "HeroAttackedMinion", "NewTurnStarts"], []
+		self.on = False
+	
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
 		
-	def canAttack(self):
-		return self.actionable() and self.attack > 0 and self.status["Frozen"] < 1 \
-				and self.attChances_base + self.attChances_extra <= self.attTimes \
-				and (self.silenced or self.Game.Counters.heroAttackTimesThisTurn[self.ID] > 0)
-				
-				
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+		if signal[0] == 'N': return self.entity.onBoard and not self.entity.on
+		else: return self.entity.onBoard and subject.ID == self.entity.ID and not self.entity.on
+		
+	def auraAppears(self):
+		game, ID = self.entity.Game, self.entity.ID
+		attackedThisTurn = self.entity.Game.Counters.heroAttackTimesThisTurn[self.entity.ID] > 0
+		if not attackedThisTurn and self.on:
+			self.on = False
+			self.entity.effects["Can't Attack"] += 1
+		
+		for sig in self.signals:
+			try: game.trigsBoard[ID][sig].append(self)
+			except: game.trigsBoard[ID][sig] = [self]
+	
+	def selfCopy(self, recipient):
+		return type(self)(recipient)
+	
+	#这个函数会在复制场上扳机列表的时候被调用。
+	def createCopy(self, game):
+		#一个光环的注册可能需要注册多个扳机
+		if self not in game.copiedObjs:  #这个光环没有被复制过
+			entityCopy = self.entity.createCopy(game)
+			Copy = self.selfCopy(entityCopy)
+			game.copiedObjs[self] = Copy
+			#复制一个随从的时候已经复制了其携带的光环buff状态receiver
+			#这里只需要找到那个receiver的位置即可
+			##注意一个随从在复制的时候需要把它的Stat_Receiver，keyWordAura_Reciever和manaMods一次性全部复制之后才能进行光环发出者的复制
+			#相应地，这些光环receiver的来源全部被标为None，需要在之后处理它们的来源时一一补齐
+			for minion, receiver in self.auraAffected:
+				minionCopy = minion.createCopy(game)
+				index = minion.auraReceivers.index(receiver)
+				receiverCopy = minionCopy.auraReceivers[index]
+				receiverCopy.source = Copy  #补上这个receiver的source
+				Copy.auraAffected.append((minionCopy, receiverCopy))
+			return Copy
+		else:
+			return game.copiedObjs[self]
+
+
 """Druid Cards"""
 class Guidance(Spell):
 	Class, school, name = "Druid,Shaman", "", "Guidance"
-	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 	index = "DARKMOON_FAIRE~Druid,Shaman~Spell~1~~Guidance"
 	description = "Look at two spells. Add one to your hand or Overload: (1) to get both"
 	name_CN = "灵魂指引"
@@ -4030,10 +4067,10 @@ class Guidance(Spell):
 		if case == "Discovered": #option is one of the cards or SpiritPath(self.Game, self.ID)
 			card1, card2 = self.Game.options[0:2]
 			i = self.Game.options.index(option)
-			self.Game.picks.append((info_RNGSync, info_GUISync, False, (type(card1), type(card2), i)))
+			self.Game.picks_Backup.append((info_RNGSync, info_GUISync, False, (type(card1), type(card2), i)))
 		else: #option is (card1, card2, i)
 			card1, card2, i = option
-			if case == "Random": self.Game.picks.append((info_RNGSync, info_GUISync, True, (type(card1), type(card2), i)) )
+			if case == "Random": self.Game.picks_Backup.append((info_RNGSync, info_GUISync, True, (type(card1), type(card2), i)) )
 			
 		if i == 2:
 			self.addCardtoHand((card1, card2), self.ID, byDiscover=True)
@@ -4051,7 +4088,7 @@ class DreamingDrake(Minion):
 	Class, race, name = "Druid", "Dragon", "Dreaming Drake"
 	mana, attack, health = 3, 3, 4
 	index = "DARKMOON_FAIRE~Druid~Minion~3~3~4~Dragon~Dreaming Drake~Taunt~ToCorrupt"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. Corrupt: Gain +2/+2"
+	requireTarget, effects, description = False, "Taunt", "Taunt. Corrupt: Gain +2/+2"
 	name_CN = "迷梦幼龙"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -4061,13 +4098,13 @@ class DreamingDrake_Corrupt(Minion):
 	Class, race, name = "Druid", "Dragon", "Dreaming Drake"
 	mana, attack, health = 3, 5, 6
 	index = "DARKMOON_FAIRE~Druid~Minion~3~5~6~Dragon~Dreaming Drake~Taunt~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "Taunt", "Corrupted. Taunt"
+	requireTarget, effects, description = False, "Taunt", "Corrupted. Taunt"
 	name_CN = "迷梦幼龙"
 	
 	
 class ArborUp(Spell):
 	Class, school, name = "Druid", "Nature", "Arbor Up"
-	requireTarget, mana = False, 5
+	requireTarget, mana, effects = False, 5, ""
 	index = "DARKMOON_FAIRE~Druid~Spell~5~Nature~Arbor Up"
 	description = "Summon two 2/2 Treants. Give your minions +2/+1"
 	name_CN = "树木生长"
@@ -4081,7 +4118,7 @@ class ArborUp(Spell):
 """Hunter Cards"""
 class ResizingPouch(Spell):
 	Class, school, name = "Hunter,Druid", "", "Resizing Pouch"
-	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 	index = "DARKMOON_FAIRE~Hunter,Druid~Spell~1~~Resizing Pouch"
 	description = "Discover a card with Cost equal to your remaining Mana Crystals"
 	name_CN = "随心口袋"
@@ -4091,14 +4128,14 @@ class ResizingPouch(Spell):
 		return ["Cards as "+Class for Class in pools.Classes], [pools.ClassCards[Class]+pools.NeutralCards for Class in pools.Classes]
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		self.discoverandGenerate(ResizingPouch, comment, lambda : (card for card in self.rngPool("Cards as %s" % classforDiscover(self))
-														if card.mana == self.Game.manas[self.ID]))
+		self.discoverandGenerate(ResizingPouch, comment, lambda : [card for card in self.rngPool("Cards as %s" % classforDiscover(self))
+														if card.mana == self.Game.Manas.manas[self.ID]])
 		return None
 		
 		
 class BolaShot(Spell):
 	Class, school, name = "Hunter", "", "Bola Shot"
-	requireTarget, mana = True, 2
+	requireTarget, mana, effects = True, 2, ""
 	index = "DARKMOON_FAIRE~Hunter~Spell~2~~Bola Shot"
 	description = "Deal 1 damage to a minion and 2 damage to its neighbors"
 	name_CN = "套索射击"
@@ -4109,11 +4146,10 @@ class BolaShot(Spell):
 		return target.type == "Minion" and target.onBoard
 		
 	def text(self, CHN):
-		damage1 = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		damage2 = (2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		return "对一个随从造成%d点伤害，并对其相邻的随从造成%d点伤害"%(damage1, damage2) \
-				if CHN else "Deal %d damage to a minion and %d damage to its neighbors"%(damage1, damage2)
-				
+		return "%d, %d"%((1 + self.countSpellDamage()) * (2 ** self.countDamageDouble()),
+						(2 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
+						)
+		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if target:
 			damage_target = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -4132,7 +4168,7 @@ class Saddlemaster(Minion):
 	Class, race, name = "Hunter", "", "Saddlemaster"
 	mana, attack, health = 3, 3, 4
 	index = "DARKMOON_FAIRE~Hunter~Minion~3~3~4~~Saddlemaster"
-	requireTarget, keyWord, description = False, "", "After you play a Beast, add a random Beast to your hand"
+	requireTarget, effects, description = False, "", "After you play a Beast, add a random Beast to your hand"
 	name_CN = "鞍座大师"
 	poolIdentifier = "Beasts"
 	@classmethod
@@ -4161,7 +4197,7 @@ class GlacierRacer(Minion):
 	Class, race, name = "Mage", "", "Glacier Racer"
 	mana, attack, health = 1, 1, 3
 	index = "DARKMOON_FAIRE~Mage~Minion~1~1~3~~Glacier Racer"
-	requireTarget, keyWord, description = False, "", "Spellburst: Deal 3 damage to all Frozen enemies"
+	requireTarget, effects, description = False, "", "Spellburst: Deal 3 damage to all Frozen enemies"
 	name_CN = "冰川竞速者"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -4173,14 +4209,14 @@ class Trig_GlacierRacer(Spellburst):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		game, ID = self.entity.Game, self.entity.ID
-		targets = [obj for obj in game.minionsonBoard(ID) if obj.status["Frozen"]]
+		targets = [obj for obj in game.minionsonBoard(ID) if obj.effects["Frozen"]]
 		if game.heroes[3-ID].status["Frozen"] > 0: targets.append(game.heroes[3-ID])
 		if targets: self.entity.dealsAOE(targets, [3] * len(targets))
 		
 		
 class ConjureManaBiscuit(Spell):
 	Class, school, name = "Mage", "Arcane", "Conjure Mana Biscuit"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Mage~Spell~2~Arcane~Conjure Mana Biscuit"
 	description = "Add a Biscuit to your hand that refreshes 2 Mana Crystals"
 	name_CN = "制造法力饼干"
@@ -4191,7 +4227,7 @@ class ConjureManaBiscuit(Spell):
 		
 class ManaBiscuit(Spell):
 	Class, school, name = "Mage", "", "Mana Biscuit"
-	requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 	index = "DARKMOON_FAIRE~Mage~Spell~0~~Mana Biscuit~Uncollectible"
 	description = "Refresh 2 Mana Crystals"
 	name_CN = "法力饼干"
@@ -4205,7 +4241,7 @@ class KeywardenIvory(Minion):
 	Class, race, name = "Mage,Rogue", "", "Keywarden Ivory"
 	mana, attack, health = 5, 4, 5
 	index = "DARKMOON_FAIRE~Mage,Rogue~Minion~5~4~5~~Keywarden Ivory~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Discover a dual-class spell from any class. Spellburst: Get another copy"
+	requireTarget, effects, description = False, "", "Battlecry: Discover a dual-class spell from any class. Spellburst: Get another copy"
 	name_CN = "钥匙守护者艾芙瑞"
 	poolIdentifier = "Dual Class Spells"
 	@classmethod
@@ -4241,7 +4277,7 @@ class ImprisonedCelestial(Minion_Dormantfor2turns):
 	Class, race, name = "Paladin", "", "Imprisoned Celestial"
 	mana, attack, health = 3, 4, 5
 	index = "DARKMOON_FAIRE~Paladin~Minion~3~4~5~~Imprisoned Celestial"
-	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. Spellburst: Give your minions Divine Shield"
+	requireTarget, effects, description = False, "", "Dormant for 2 turns. Spellburst: Give your minions Divine Shield"
 	name_CN = "被禁锢的星骓"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -4253,12 +4289,12 @@ class Trig_ImprisonedCelestial(Spellburst):
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		for minion in self.entity.Game.minionsonBoard(self.entity.ID):
-			minion.getsStatus("Divine Shield")
+			minion.getsEffect("Divine Shield")
 			
 			
 class Rally(Spell):
 	Class, school, name = "Paladin,Priest", "Holy", "Rally!"
-	requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 	index = "DARKMOON_FAIRE~Paladin,Priest~Spell~4~Holy~Rally!"
 	description = "Resurrect a friendly 1-Cost, 2-Cost, and 3-Cost minion"
 	name_CN = "开赛集结！"
@@ -4278,7 +4314,7 @@ class Rally(Spell):
 		
 class LibramofJudgment(Weapon):
 	Class, name, description = "Paladin", "Libram of Judgment", "Corrupt: Gain Lifesteal"
-	mana, attack, durability = 7, 5, 3
+	mana, attack, durability, effects = 7, 5, 3, ""
 	index = "DARKMOON_FAIRE~Paladin~Weapon~7~5~3~Libram of Judgment~ToCorrupt"
 	name_CN = "审判圣契"
 	def __init__(self, Game, ID):
@@ -4287,17 +4323,14 @@ class LibramofJudgment(Weapon):
 		
 class LibramofJudgment_Corrupt(Weapon):
 	Class, name, description = "Paladin", "Libram of Judgment", "Corrupted. Lifesteal"
-	mana, attack, durability = 7, 5, 3
+	mana, attack, durability, effects = 7, 5, 3, "Lifesteal"
 	index = "DARKMOON_FAIRE~Paladin~Weapon~7~5~3~Libram of Judgment~Lifesteal~Corrupted~Uncollectible"
 	name_CN = "审判圣契"
-	def __init__(self, Game, ID):
-		super().__init__(Game, ID)
-		self.keyWords["Lifesteal"] = 1
 		
 """Priest Cards"""
 class Hysteria(Spell):
 	Class, school, name = "Priest,Warlock", "Shadow", "Hysteria"
-	requireTarget, mana = True, 4
+	requireTarget, mana, effects = True, 4, ""
 	index = "DARKMOON_FAIRE~Priest,Warlock~Spell~4~Shadow~Hysteria"
 	description = "Choose a minion. It attacks random minions until it dies"
 	name_CN = "狂乱"
@@ -4324,7 +4357,7 @@ class Lightsteed(Minion):
 	Class, race, name = "Priest", "Elemental", "Lightsteed"
 	mana, attack, health = 4, 3, 6
 	index = "DARKMOON_FAIRE~Priest~Minion~4~3~6~Elemental~Lightsteed"
-	requireTarget, keyWord, description = False, "", "Your healing effects also give affected minions +2 Health"
+	requireTarget, effects, description = False, "", "Your healing effects also give affected minions +2 Health"
 	name_CN = "圣光战马"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -4348,7 +4381,7 @@ class DarkInquisitorXanesh(Minion):
 	Class, race, name = "Priest", "", "Dark Inquisitor Xanesh"
 	mana, attack, health = 5, 3, 5
 	index = "DARKMOON_FAIRE~Priest~Minion~5~3~5~~Dark Inquisitor Xanesh~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Your healing effects also give affected minions +2 Health"
+	requireTarget, effects, description = False, "", "Your healing effects also give affected minions +2 Health"
 	name_CN = "黑暗审判官夏奈什"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4363,7 +4396,7 @@ class DarkInquisitorXanesh(Minion):
 """Rogue Cards"""
 class NitroboostPoison(Spell):
 	Class, school, name = "Rogue,Warrior", "Nature", "Nitroboost Poison"
-	requireTarget, mana = True, 2
+	requireTarget, mana, effects = True, 2, ""
 	index = "DARKMOON_FAIRE~Rogue,Warrior~Spell~2~Nature~Nitroboost Poison~ToCorrupt"
 	description = "Give a minion +2 Attack. Corrupt: And your weapon"
 	name_CN = "氮素药膏"
@@ -4384,7 +4417,7 @@ class NitroboostPoison(Spell):
 		
 class NitroboostPoison_Corrupt(Spell):
 	Class, school, name = "Rogue,Warrior", "Nature", "Nitroboost Poison"
-	requireTarget, mana = True, 2
+	requireTarget, mana, effects = True, 2, ""
 	index = "DARKMOON_FAIRE~Rogue,Warrior~Spell~2~Nature~Nitroboost Poison~Corrupted~Uncollectible"
 	description = "Corrupted: Give a minion and your weapon +2 Attack"
 	name_CN = "氮素药膏"
@@ -4398,12 +4431,12 @@ class NitroboostPoison_Corrupt(Spell):
 		if target:
 			target.buffDebuff(2, 0)
 			weapon = self.Game.availableWeapon(self.ID)
-			if weapon: weapon.gainStat(2, 0)
+			if weapon: weapon.buffDebuff(2, 0)
 		return target
 		
 class Shenanigans(Secret):
 	Class, school, name = "Rogue", "", "Shenanigans"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Rogue~Spell~2~~Shenanigans~~Secret"
 	description = "Secret: When your opponent draws their second card in a turn, transform it into a Banana"
 	name_CN = "蕉猾诡计"
@@ -4421,25 +4454,25 @@ class Trig_Shenanigans(SecretTrigger):
 		return self.entity.ID != self.entity.Game.turn and self.entity.ID != ID and self.entity.Game.Counters.numCardsDrawnThisTurn[ID] == 1
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		card = Bananas(self.entity.Game, self.entity.ID)
+		card = Bananas(self.entity.Game, target.ID)
 		self.entity.Game.Hand_Deck.replaceCardDrawn(target, card)
 		
 		
-class SparkjoyCheat(Minion_Dormantfor2turns):
+class SparkjoyCheat(Minion):
 	Class, race, name = "Rogue", "", "Sparkjoy Cheat"
 	mana, attack, health = 3, 3, 3
 	index = "DARKMOON_FAIRE~Rogue~Minion~3~3~3~~Sparkjoy Cheat~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: If you're holding a Secret, cast it and draw a card"
+	requireTarget, effects, description = False, "", "Battlecry: If you're holding a Secret, cast it and draw a card"
 	name_CN = "欢脱的作弊选手"
 	def effCanTrig(self):
 		self.effectViable = any(card.description.startswith("Secret:") and not self.Game.Secrets.sameSecretExists(card, self.ID) \
 									for card in self.Game.Hand_Deck.hands[self.ID])
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-		secrets = [i for i, card in enumerate(self.Game.Hand_Deck.hands[self.ID]) \
+		indices = [i for i, card in enumerate(self.Game.Hand_Deck.hands[self.ID]) \
 				   if card.description.startswith("Secret:") and not self.Game.Secrets.sameSecretExists(card, self.ID)]
-		if secrets:
-			self.Game.Hand_Deck.extractfromHand(npchoice(secrets), self.ID, enemyCanSee=False)[0].whenEffective()
+		if indices:
+			self.Game.Hand_Deck.extractfromHand(npchoice(indices), self.ID, enemyCanSee=False)[0].whenEffective()
 			self.Game.Hand_Deck.drawCard(self.ID)
 		return None
 		
@@ -4449,23 +4482,18 @@ class ImprisonedPhoenix(Minion_Dormantfor2turns):
 	Class, race, name = "Shaman,Mage", "Elemental", "Imprisoned Phoenix"
 	mana, attack, health = 2, 2, 3
 	index = "DARKMOON_FAIRE~Shaman,Mage~Minion~2~2~3~Elemental~Imprisoned Phoenix~Spell Damge"
-	requireTarget, keyWord, description = False, "", "Dormant for 2 turns. Spell Damage +2"
+	requireTarget, effects, description = False, "Spell Damage_2", "Dormant for 2 turns. Spell Damage +2"
 	name_CN = "被禁锢的凤凰"
-	def __init__(self, Game, ID):
-		super().__init__(Game, ID)
-		self.keyWords["Spell Damage"] = 2
 		
 		
 class Landslide(Spell):
 	Class, school, name = "Shaman", "Nature", "Landslide"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DARKMOON_FAIRE~Shaman~Spell~2~Nature~Landslide"
 	description = "Deal 1 damage to all enemy minions. If you're Overloaded, deal 1 damage again"
 	name_CN = "大地崩陷"
 	def text(self, CHN):
-		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		return "对所有敌方随从造成%d点伤害。如果你有过载的法力水晶，再次造成%d点伤害"%(damage, damage) \
-				if CHN else "Deal %d damage to all enemy minions. If you're Overloaded, deal %d damage again"%(damage, damage)
+		return (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 				
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (1 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -4484,7 +4512,7 @@ class Mistrunner(Minion):
 	Class, race, name = "Shaman", "", "Mistrunner"
 	mana, attack, health = 5, 4, 4
 	index = "DARKMOON_FAIRE~Shaman~Minion~5~4~4~~Mistrunner~Battlecry~Overload"
-	requireTarget, keyWord, description = True, "", "Battlecry: Give a friendly minion +3/+3. Overload: (1)"
+	requireTarget, effects, description = True, "", "Battlecry: Give a friendly minion +3/+3. Overload: (1)"
 	name_CN = "迷雾行者"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -4504,13 +4532,12 @@ class Mistrunner(Minion):
 """Warlock Cards"""
 class Backfire(Spell):
 	Class, school, name = "Warlock", "Fire", "Backfire"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DARKMOON_FAIRE~Warlock~Spell~3~Fire~Backfire"
 	description = "Draw 3 cards. Deal 3 damage to your hero"
 	name_CN = "赛车回火"
 	def text(self, CHN):
-		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
-		return "抽3张牌。对你的英雄造成%d点伤害"%damage if CHN else "Draw 3 cards. Deal %d damage to your hero"%damage
+		return (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
@@ -4524,7 +4551,7 @@ class LuckysoulHoarder(Minion):
 	Class, race, name = "Warlock,Demon Hunter", "", "Luckysoul Hoarder"
 	mana, attack, health = 3, 3, 4
 	index = "DARKMOON_FAIRE~Warlock,Demon Hunter~Minion~3~3~4~~Luckysoul Hoarder~Battlecry~ToCorrupt"
-	requireTarget, keyWord, description = False, "", "Battlecry: Shuffle 2 Soul Fragments into your deck. Corrupt: Draw a card"
+	requireTarget, effects, description = False, "", "Battlecry: Shuffle 2 Soul Fragments into your deck. Corrupt: Draw a card"
 	name_CN = "幸运之魂囤积者"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -4538,7 +4565,7 @@ class LuckysoulHoarder_Corrupt(Minion):
 	Class, race, name = "Warlock,Demon Hunter", "", "Luckysoul Hoarder"
 	mana, attack, health = 3, 3, 4
 	index = "DARKMOON_FAIRE~Warlock,Demon Hunter~Minion~3~3~4~~Luckysoul Hoarder~Battlecry~Corrupted~Uncollectible"
-	requireTarget, keyWord, description = False, "", "Corrupted. Battlecry: Shuffle 2 Soul Fragments into your deck. Draw a card"
+	requireTarget, effects, description = False, "", "Corrupted. Battlecry: Shuffle 2 Soul Fragments into your deck. Draw a card"
 	name_CN = "幸运之魂囤积者"
 	
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -4551,7 +4578,7 @@ class EnvoyRustwix(Minion):
 	Class, race, name = "Warlock", "Demon", "Envoy Rustwix"
 	mana, attack, health = 5, 5, 4
 	index = "DARKMOON_FAIRE~Warlock~Minion~5~5~4~Demon~Envoy Rustwix~Deathrattle~Legendary"
-	requireTarget, keyWord, description = False, "", "Deathrattle: Shuffle 3 random Prime Legendary minions into your deck"
+	requireTarget, effects, description = False, "", "Deathrattle: Shuffle 3 random Prime Legendary minions into your deck"
 	name_CN = "铁锈特使拉斯维克斯"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -4572,7 +4599,7 @@ class Shuffle3PrimesintoYourDeck(Deathrattle_Minion):
 """Warrior Cards"""
 class SpikedWheel(Weapon):
 	Class, name, description = "Warrior", "Spiked Wheel", "Has +3 Attack when your hero has Armor"
-	mana, attack, durability = 1, 0, 2
+	mana, attack, durability, effects = 1, 0, 2, ""
 	index = "DARKMOON_FAIRE~Warrior~Weapon~1~0~2~Spiked Wheel"
 	name_CN = "尖刺轮盘"
 	def __init__(self, Game, ID):
@@ -4595,12 +4622,12 @@ class WeaponBuffAura_SpikedWheel:
 		for weapon, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 		armor = self.weapon.Game.heroes[ID].armor
-		if armor > 0: Stat_Receiver(self.weapon, self, armor, 0).effectStart()
+		if armor > 0: Aura_Receiver(self.weapon, self, armor, 0).effectStart()
 		
 	def auraAppears(self):
 		game, ID = self.weapon.Game, self.weapon.ID
 		armor = game.heroes[ID].armor
-		if armor > 0: Stat_Receiver(self.weapon, self, armor, 0).effectStart()
+		if armor > 0: Aura_Receiver(self.weapon, self, armor, 0).effectStart()
 		
 		try: game.trigsBoard[ID]["ArmorGained"].append(self)
 		except: game.trigsBoard[ID]["ArmorGained"] = [self]
@@ -4622,7 +4649,7 @@ class Ironclad(Minion):
 	Class, race, name = "Warrior", "Mech", "Ironclad"
 	mana, attack, health = 3, 2, 4
 	index = "DARKMOON_FAIRE~Warrior~Minion~3~2~4~Mech~Ironclad~Battlecry"
-	requireTarget, keyWord, description = False, "", "Battlecry: If your hero has Armor, gain +2/+2"
+	requireTarget, effects, description = False, "", "Battlecry: If your hero has Armor, gain +2/+2"
 	name_CN = "铁甲战车"
 	
 	def effCanTrig(self):
@@ -4636,7 +4663,7 @@ class Ironclad(Minion):
 		
 class Barricade(Spell):
 	Class, school, name = "Warrior,Paladin", "", "Barricade"
-	requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 	index = "DARKMOON_FAIRE~Warrior,Paladin~Spell~4~~Barricade"
 	description = "Summon a 2/4 Guard with Taunt. If it's your only minion, summon another"
 	name_CN = "路障"
@@ -4654,7 +4681,7 @@ class RaceGuard(Minion):
 	Class, race, name = "Warrior,Paladin", "", "Race Guard"
 	mana, attack, health = 3, 2, 4
 	index = "DARKMOON_FAIRE~Warrior,Paladin~Minion~3~2~4~~Race Guard~Taunt~Uncollectible"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt"
+	requireTarget, effects, description = False, "Taunt", "Taunt"
 	name_CN = "赛道护卫"
 	
 	

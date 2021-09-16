@@ -1,5 +1,5 @@
 <Comment> {
-  "egg-texture-cards -o TurnStartParticles.egg -fps 30 -p 1,1 'TexCards\ForGame\TurnStartParticles_00.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_01.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_02.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_03.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_04.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_05.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_06.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_07.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_08.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_09.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_10.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_11.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_12.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_13.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_14.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_15.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_16.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_17.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_18.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_19.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_20.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_21.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_22.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_23.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_24.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_25.png' -p 512,512 'TexCards\ForGame\TurnStartParticles_26.png'"
+  "egg-texture-cards -o TurnStartParticles.egg -fps 24 -p 128,128 'TexCards\ForGame\TurnStartParticles_00.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_01.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_02.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_03.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_04.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_05.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_06.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_07.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_08.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_09.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_10.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_11.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_12.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_13.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_14.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_15.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_16.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_17.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_18.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_19.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_20.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_21.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_22.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_23.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_24.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_25.png' -p 128,128 'TexCards\ForGame\TurnStartParticles_26.png'"
 }
 <Texture> TurnStartParticles_26 {
   "TexCards/ForGame/TurnStartParticles_26.png"
@@ -84,22 +84,22 @@
 }
 <Group> {
   <Switch> { 1 }
-  <Scalar> fps { 30 }
+  <Scalar> fps { 24 }
   <VertexPool> vpool {
     <Vertex> 0 {
-      -0.0009765625 0.0009765625 0
+      -0.5 0.5 0
       <UV> { 0 1 }
     }
     <Vertex> 1 {
-      -0.0009765625 -0.0009765625 0
+      -0.5 -0.5 0
       <UV> { 0 0 }
     }
     <Vertex> 2 {
-      0.0009765625 -0.0009765625 0
+      0.5 -0.5 0
       <UV> { 1 0 }
     }
     <Vertex> 3 {
-      0.0009765625 0.0009765625 0
+      0.5 0.5 0
       <UV> { 1 1 }
     }
     <Vertex> 4 {

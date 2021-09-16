@@ -34,7 +34,7 @@ class Manas:
 		#对于卡牌的费用修改效果，每张卡牌自己处理。
 		self.CardAuras, self.CardAuras_Backup = [], []
 		self.PowerAuras, self.PowerAuras_Backup = [], []
-		self.status = {1: {"Spells Cost Health Instead": 0},
+		self.effects = {1: {"Spells Cost Health Instead": 0},
 						2: {"Spells Cost Health Instead": 0}
 						}
 
@@ -132,11 +132,11 @@ class Manas:
 		else:
 			mana = subject.getMana()
 			if self.cardCostsHealth(subject):
-				return mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.status[ID]["Immune"] > 0
+				return mana < self.Game.heroes[ID].health + self.Game.heroes[ID].armor or self.Game.effects[ID]["Immune"] > 0
 			else: return mana <= self.manas[ID]
 		
 	def cardCostsHealth(self, subject):
-		return subject.marks["Cost Health Instead"] > 0# or (subject.type == "Spell" and self.status[subject.ID]["Spells Cost Health Instead"] > 0)
+		return subject.effects["Cost Health Instead"] > 0# or (subject.type == "Spell" and self.effects[subject.ID]["Spells Cost Health Instead"] > 0)
 		
 	def payManaCost(self, subject, mana):
 		ID, mana = subject.ID, max(0, mana)
@@ -144,7 +144,7 @@ class Manas:
 			dmgTaker = self.Game.scapegoat4(self.Game.heroes[ID])
 			dmgTaker.takesDamage(None, mana, damageType="Ability")
 		else: self.manas[ID] -= mana
-		subject.marks["Cost Health Instead"] = 0 #Cleanse the "Cost Health Instead" mark on the card played
+		subject.effects["Cost Health Instead"] = 0 #Cleanse the "Cost Health Instead" mark on the card played
 		GUI = self.Game.GUI
 		if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.heroZones[ID].drawMana, self.manas[ID], self.manasUpper[ID],
 												  self.manasLocked[ID], self.manasOverloaded[ID]))
@@ -209,7 +209,7 @@ class Manas:
 		card.selfManaChange()
 		if card.mana < 0: #费用修改不能把卡的费用降为0
 			card.mana = 0
-		if card.mana < 1 and ((card.type == "Minion" and card.keyWords["Echo"] > 0) or (card.type == "Spell" and "Echo" in card.index)):
+		if card.mana < 1 and ((card.type == "Minion" and card.effects["Echo"] > 0) or (card.type == "Spell" and "Echo" in card.index)):
 			card.mana = 1
 		if card.btn and card.mana != mana_0: card.btn.manaChangeAni(card.mana)
 		
@@ -219,8 +219,10 @@ class Manas:
 			mana_0 = power.mana
 			power.mana = type(power).mana
 			for manaMod in power.manaMods: manaMod.handleMana()
-			if power.mana < 0: power.mana = 0
-			if power.btn and mana_0 != power.mana: power.btn.manaChangeAni(power.mana)
+			power.mana = max(0, power.mana)
+			if power.btn and mana_0 != power.mana:
+				print("Calcing mana powers", power.name, power.btn, power.mana, mana_0)
+				power.btn.manaChangeAni(power.mana)
 
 	def createCopy(self, recipientGame):
 		Copy = type(self)(recipientGame)
@@ -284,7 +286,7 @@ class Secrets:
 				else:
 					secrets = [i for i, card in enumerate(curGame.Hand_Deck.decks[ID]) if card.description.startswith("Secret:") and not self.sameSecretExists(card, ID)]
 					i = npchoice(secrets) if secrets and self.areaNotFull(ID) else -1
-					curGame.picks.append(i)
+					curGame.picks_Backup.append(i)
 				if i > -1: curGame.Hand_Deck.extractfromDeck(i, ID, enemyCanSee=False)[0].whenEffective()
 				else: break
 		if self.Game.GUI: self.Game.GUI.drawZones(all=False, secret=True)
@@ -480,6 +482,7 @@ class Discover:
 		if self.Game.GUI:
 			self.initiator = initiator
 			discover = self.Game.GUI.waitforDiscover()
+			print("Discover picked. Initiator", self.initiator)
 			effectType.discoverDecided(self.initiator, discover, case="Discovered", info_RNGSync=info_RNGSync,
 										   info_GUISync=tuple(info_GUISync+[self.Game.options.index(discover)])
 										   )

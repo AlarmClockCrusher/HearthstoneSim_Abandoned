@@ -25,7 +25,7 @@ class AssemblyDroid(SVMinion):
     Class, race, name = "Neutral", "Machina", "Assembly Droid"
     mana, attack, health = 1, 1, 1
     index = "SV_Uprooted~Neutral~Minion~1~1~1~Machina~Assembly Droid~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
 
 
@@ -51,7 +51,7 @@ class NaterranGreatTree(Amulet):
                     i = curGame.picks.pop(0)
                 else:
                     i = npchoice(trees).pos
-                    curGame.picks.append(i)
+                    curGame.picks_Backup.append(i)
                 tree = curGame.minions[self.ID][i]
                 self.Game.killMinion(self, tree)
 
@@ -65,7 +65,7 @@ class WayfaringIllustrator(SVMinion):
     Class, race, name = "Neutral", "", "Wayfaring Illustrator"
     mana, attack, health = 2, 2, 2
     index = "SV_Uprooted~Neutral~Minion~2~2~2~~Wayfaring Illustrator~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Select an allied Machina or Natura follower and put a copy of it into your hand."
+    requireTarget, effects, description = True, "", "Fanfare: Select an allied Machina or Natura follower and put a copy of it into your hand."
     attackAdd, healthAdd = 2, 2
 
     def targetExists(self, choice=0):
@@ -88,7 +88,7 @@ class ChangewingCherub(SVMinion):
     Class, race, name = "Neutral", "Machina,Natura", "Changewing Cherub"
     mana, attack, health = 2, 1, 3
     index = "SV_Uprooted~Neutral~Minion~2~1~3~Machina,Natura~Changewing Cherub~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Deal 2 damage to an enemy follower if at least 2 other cards were played this turn."
+    requireTarget, effects, description = True, "", "Fanfare: Deal 2 damage to an enemy follower if at least 2 other cards were played this turn."
     attackAdd, healthAdd = 2, 2
 
     def returnTrue(self, choice=0):
@@ -133,7 +133,7 @@ class ChangewingCherub(SVMinion):
         self.Game.Discover.startDiscover(self)
 
     def discoverDecided(self, option, pool=None):
-        self.Game.picks.append(type(option))
+        self.Game.picks_Backup.append(type(option))
         self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 
 
@@ -141,7 +141,7 @@ class PluckyTreasureHunter(SVMinion):
     Class, race, name = "Neutral", "", "Plucky Treasure Hunter"
     mana, attack, health = 3, 2, 3
     index = "SV_Uprooted~Neutral~Minion~3~2~3~~Plucky Treasure Hunter~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: If you have any Machina or Natura cards in your hand, discard 1. Then put 2 random cards that share a trait with that card from your deck into your hand."
+    requireTarget, effects, description = True, "", "Fanfare: If you have any Machina or Natura cards in your hand, discard 1. Then put 2 random cards that share a trait with that card from your deck into your hand."
     attackAdd, healthAdd = 2, 2
 
     def effCanTrig(self):
@@ -182,7 +182,7 @@ class PluckyTreasureHunter(SVMinion):
                             if fit:
                                 cards.append(i)
                         i = npchoice(cards) if cards else -1
-                        curGame.picks.append(i)
+                        curGame.picks_Backup.append(i)
                     if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return target
 
@@ -191,7 +191,7 @@ class RomanticChanteuse(SVMinion):
     Class, race, name = "Neutral", "", "Romantic Chanteuse"
     mana, attack, health = 3, 2, 3
     index = "SV_Uprooted~Neutral~Minion~3~2~3~~Romantic Chanteuse~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Give an enemy the following effect until the start of your next turn - Reduce all damage dealt to 0. (Applies to attacks and effects.)"
+    requireTarget, effects, description = True, "", "Fanfare: Give an enemy the following effect until the start of your next turn - Reduce all damage dealt to 0. (Applies to attacks and effects.)"
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
@@ -240,7 +240,7 @@ class GabrielHeavenlyVoice(SVMinion):
     Class, race, name = "Neutral", "", "Gabriel, Heavenly Voice"
     mana, attack, health = 3, 2, 3
     index = "SV_Uprooted~Neutral~Minion~3~2~3~~Gabriel, Heavenly Voice~Battlecry~Taunt~Legendary"
-    requireTarget, keyWord, description = True, "Taunt", "Ward.Fanfare: Use X play points to give +X/+X to this follower and another allied follower. X equals your remaining play points."
+    requireTarget, effects, description = True, "Taunt", "Ward.Fanfare: Use X play points to give +X/+X to this follower and another allied follower. X equals your remaining play points."
     name_CN = "神谕的大天使·加百列"
 
     def targetExists(self, choice=0):
@@ -262,7 +262,7 @@ class GabrielHeavenlyVoice(SVMinion):
 
 class GoblinWarpack(SVSpell):
     Class, school, name = "Neutral", "", "Goblin Warpack"
-    requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
     index = "SV_Uprooted~Neutral~Spell~2~Goblin Warpack~Enhance"
     description = "Summon 2 Goblins.Enhance (6): Summon 5 instead.Enhance (9): Then evolve all unevolved allied Goblins."
 
@@ -294,7 +294,7 @@ class GoblinWarpack(SVSpell):
 
 class WeveGotaCase(SVSpell):
     Class, school, name = "Neutral", "", "We've Got a Case!"
-    requireTarget, mana = True, 6
+	requireTarget, mana, effects = True, 6, ""
     index = "SV_Uprooted~Neutral~Spell~6~We've Got a Case!"
     description = "Draw 3 cards. Then deal X damage to an enemy follower. X equals the number of cards in your hand."
 
@@ -317,7 +317,7 @@ class BoomDevil(SVMinion):
     Class, race, name = "Neutral", "", "Boom Devil"
     mana, attack, health = 7, 5, 5
     index = "SV_Uprooted~Neutral~Minion~7~5~5~~Boom Devil~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Deal 5 damage to the enemy leader. If this is your tenth turn or later, deal 5 damage to all enemies instead."
+    requireTarget, effects, description = False, "", "Fanfare: Deal 5 damage to the enemy leader. If this is your tenth turn or later, deal 5 damage to all enemies instead."
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.Counters.turns[self.ID] >= 10:
@@ -331,7 +331,7 @@ class Terrorformer(SVMinion):
     Class, race, name = "Neutral", "", "Terrorformer"
     mana, attack, health = 7, 6, 6
     index = "SV_Uprooted~Neutral~Minion~7~6~6~~Terrorformer~Battlecry~Fusion~Legendary"
-    requireTarget, keyWord, description = True, "", "Fusion: Machina or Natura Fanfare: Deal X damage to an enemy follower. Put X random Machina or Natura cards from your deck into your hand. If this card is fused with a Machina and Natura card, subtract 3 from their costs. X equals the number of cards fused to this card."
+    requireTarget, effects, description = True, "", "Fusion: Machina or Natura Fanfare: Deal X damage to an enemy follower. Put X random Machina or Natura cards from your deck into your hand. If this card is fused with a Machina and Natura card, subtract 3 from their costs. X equals the number of cards fused to this card."
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
@@ -379,7 +379,7 @@ class Terrorformer(SVMinion):
                             if "Natura" in card.race or "Machina" in card.race:
                                 cards.append(i)
                         i = npchoice(cards) if cards else -1
-                        curGame.picks.append(i)
+                        curGame.picks_Backup.append(i)
                     if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return target
 
@@ -391,7 +391,7 @@ class Terrorformer(SVMinion):
 
 class StrokeofConviction(SVSpell):
     Class, school, name = "Swordcraft", "", "Stroke of Conviction"
-    requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
     index = "SV_Uprooted~Swordcraft~Spell~3~Stroke of Conviction~Enhance"
     description = ""
     name_CN = "信念之剑闪"
@@ -437,7 +437,7 @@ class StrokeofConviction(SVSpell):
                 else:
                     minions = curGame.minionsAlive(3 - self.ID)
                     minion = npchoice(minions) if minions else None
-                    curGame.picks.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
+                    curGame.picks_Backup.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
                 if minion: self.dealsDamage(minion, 5)
         if comment == 6 or choice == 2:
             for minion in curGame.minionsonBoard(self.ID):
@@ -471,7 +471,7 @@ class BayleyonsCommand_Option(Option):
 
 class ErikasSleight(SVSpell):
     Class, school, name = "Swordcraft", "", "Erika's Sleight"
-    requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
     index = "SV_Uprooted~Swordcraft~Spell~0~Erika's Sleight~Uncollectible"
     description = ""
     name_CN = "艾莉卡的战技"
@@ -484,7 +484,7 @@ class ErikasSleight(SVSpell):
 
 class MistolinasSwordplay(SVSpell):
     Class, school, name = "Swordcraft", "", "Mistolina's Swordplay"
-    requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
     index = "SV_Uprooted~Swordcraft~Spell~0~Mistolina's Swordplay~Uncollectible"
     description = ""
     name_CN = "米丝特莉娜的剑刃"
@@ -499,14 +499,14 @@ class MistolinasSwordplay(SVSpell):
                 else:
                     minions = curGame.minionsAlive(3 - self.ID)
                     minion = npchoice(minions) if minions else None
-                    curGame.picks.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
+                    curGame.picks_Backup.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
                 if minion: self.dealsDamage(minion, 5)
         return None
 
 
 class BayleyonsCommand(SVSpell):
     Class, school, name = "Swordcraft", "", "Bayleyon's Command"
-    requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
     index = "SV_Uprooted~Swordcraft~Spell~0~Bayleyon's Command~Uncollectible"
     description = ""
     name_CN = "贝里昂的号令"
@@ -522,7 +522,7 @@ class PaulaIcyWarmth(SVMinion):
     Class, race, name = "Forestcraft", "", "Paula, Icy Warmth"
     mana, attack, health = 2, 2, 2
     index = "SV_Uprooted~Forestcraft~Minion~2~2~2~~Paula, Icy Warmth~Battlecry"
-    requireTarget, keyWord, description = True, "", ""
+    requireTarget, effects, description = True, "", ""
     name_CN = "爱之妖精·宝拉"
     attackAdd, healthAdd = 2, 2
 
@@ -570,7 +570,7 @@ class PaulaIcyWarmth(SVMinion):
             if choice == 1:
                 self.dealsDamage(target, 1)
             else:
-                self.Game.returnMiniontoHand(target)
+                self.Game.returnObj2Hand(target)
 
 
 class PaulaGentalWarmth_Option(Option):
@@ -593,7 +593,7 @@ class PaulaGentalWarmth(SVMinion):
     Class, race, name = "Forestcraft", "", "Paula, Gental Warmth"
     mana, attack, health = 2, 2, 2
     index = "SV_Uprooted~Forestcraft~Minion~2~2~2~~Paula, Gental Warmth~Battlecry~Uncollectible"
-    requireTarget, keyWord, description = True, "", ""
+    requireTarget, effects, description = True, "", ""
     name_CN = "深绿真心·宝拉"
     attackAdd, healthAdd = 2, 2
 
@@ -611,14 +611,14 @@ class PaulaGentalWarmth(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.Game.returnMiniontoHand(target)
+            self.Game.returnObj2Hand(target)
 
 
 class PaulaPassionateWarmth(SVMinion):
     Class, race, name = "Forestcraft", "", "Paula, Passionate Warmth"
     mana, attack, health = 2, 2, 2
     index = "SV_Uprooted~Forestcraft~Minion~2~2~2~~Paula, Passionate Warmth~Battlecry~Uncollectible"
-    requireTarget, keyWord, description = True, "", ""
+    requireTarget, effects, description = True, "", ""
     name_CN = "真红羁绊·宝拉"
     attackAdd, healthAdd = 2, 2
 
@@ -689,7 +689,7 @@ class AssemblyDroid(SVMinion):
     Class, race, name = "Neutral", "Machina", "Assembly Droid"
     mana, attack, health = 1, 1, 1
     index = "SV_Uprooted~Neutral~Minion~1~1~1~Machina~Assembly Droid~Uncollectible"
-    requireTarget, keyWord, description = False, "", ""
+    requireTarget, effects, description = False, "", ""
     attackAdd, healthAdd = 2, 2
 
 
@@ -715,7 +715,7 @@ class NaterranGreatTree(Amulet):
                     i = curGame.picks.pop(0)
                 else:
                     i = npchoice(trees).pos
-                    curGame.picks.append(i)
+                    curGame.picks_Backup.append(i)
                 tree = curGame.minions[self.ID][i]
                 self.Game.killMinion(self, tree)
 
@@ -729,7 +729,7 @@ class WayfaringIllustrator(SVMinion):
     Class, race, name = "Neutral", "", "Wayfaring Illustrator"
     mana, attack, health = 2, 2, 2
     index = "SV_Uprooted~Neutral~Minion~2~2~2~~Wayfaring Illustrator~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Select an allied Machina or Natura follower and put a copy of it into your hand."
+    requireTarget, effects, description = True, "", "Fanfare: Select an allied Machina or Natura follower and put a copy of it into your hand."
     attackAdd, healthAdd = 2, 2
 
     def targetExists(self, choice=0):
@@ -752,7 +752,7 @@ class ChangewingCherub(SVMinion):
     Class, race, name = "Neutral", "Machina,Natura", "Changewing Cherub"
     mana, attack, health = 2, 1, 3
     index = "SV_Uprooted~Neutral~Minion~2~1~3~Machina,Natura~Changewing Cherub~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Deal 2 damage to an enemy follower if at least 2 other cards were played this turn."
+    requireTarget, effects, description = True, "", "Fanfare: Deal 2 damage to an enemy follower if at least 2 other cards were played this turn."
     attackAdd, healthAdd = 2, 2
 
     def returnTrue(self, choice=0):
@@ -797,7 +797,7 @@ class ChangewingCherub(SVMinion):
         self.Game.Discover.startDiscover(self)
 
     def discoverDecided(self, option, pool=None):
-        self.Game.picks.append(type(option))
+        self.Game.picks_Backup.append(type(option))
         self.Game.Hand_Deck.addCardtoHand(option, self.ID, byDiscover=True)
 
 
@@ -805,7 +805,7 @@ class PluckyTreasureHunter(SVMinion):
     Class, race, name = "Neutral", "", "Plucky Treasure Hunter"
     mana, attack, health = 3, 2, 3
     index = "SV_Uprooted~Neutral~Minion~3~2~3~~Plucky Treasure Hunter~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: If you have any Machina or Natura cards in your hand, discard 1. Then put 2 random cards that share a trait with that card from your deck into your hand."
+    requireTarget, effects, description = True, "", "Fanfare: If you have any Machina or Natura cards in your hand, discard 1. Then put 2 random cards that share a trait with that card from your deck into your hand."
     attackAdd, healthAdd = 2, 2
 
     def effCanTrig(self):
@@ -846,7 +846,7 @@ class PluckyTreasureHunter(SVMinion):
                             if fit:
                                 cards.append(i)
                         i = npchoice(cards) if cards else -1
-                        curGame.picks.append(i)
+                        curGame.picks_Backup.append(i)
                     if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return target
 
@@ -855,7 +855,7 @@ class RomanticChanteuse(SVMinion):
     Class, race, name = "Neutral", "", "Romantic Chanteuse"
     mana, attack, health = 3, 2, 3
     index = "SV_Uprooted~Neutral~Minion~3~2~3~~Romantic Chanteuse~Battlecry"
-    requireTarget, keyWord, description = True, "", "Fanfare: Give an enemy the following effect until the start of your next turn - Reduce all damage dealt to 0. (Applies to attacks and effects.)"
+    requireTarget, effects, description = True, "", "Fanfare: Give an enemy the following effect until the start of your next turn - Reduce all damage dealt to 0. (Applies to attacks and effects.)"
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
@@ -904,7 +904,7 @@ class GabrielHeavenlyVoice(SVMinion):
     Class, race, name = "Neutral", "", "Gabriel, Heavenly Voice"
     mana, attack, health = 3, 2, 3
     index = "SV_Uprooted~Neutral~Minion~3~2~3~~Gabriel, Heavenly Voice~Battlecry~Taunt~Legendary"
-    requireTarget, keyWord, description = True, "Taunt", "Ward.Fanfare: Use X play points to give +X/+X to this follower and another allied follower. X equals your remaining play points."
+    requireTarget, effects, description = True, "Taunt", "Ward.Fanfare: Use X play points to give +X/+X to this follower and another allied follower. X equals your remaining play points."
     name_CN = "神谕的大天使·加百列"
 
     def targetExists(self, choice=0):
@@ -926,7 +926,7 @@ class GabrielHeavenlyVoice(SVMinion):
 
 class GoblinWarpack(SVSpell):
     Class, school, name = "Neutral", "", "Goblin Warpack"
-    requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
     index = "SV_Uprooted~Neutral~Spell~2~~Goblin Warpack~Enhance"
     description = "Summon 2 Goblins.Enhance (6): Summon 5 instead.Enhance (9): Then evolve all unevolved allied Goblins."
 
@@ -958,7 +958,7 @@ class GoblinWarpack(SVSpell):
 
 class WeveGotaCase(SVSpell):
     Class, school, name = "Neutral", "", "We've Got a Case!"
-    requireTarget, mana = True, 6
+	requireTarget, mana, effects = True, 6, ""
     index = "SV_Uprooted~Neutral~Spell~6~~We've Got a Case!"
     description = "Draw 3 cards. Then deal X damage to an enemy follower. X equals the number of cards in your hand."
 
@@ -981,7 +981,7 @@ class BoomDevil(SVMinion):
     Class, race, name = "Neutral", "", "Boom Devil"
     mana, attack, health = 7, 5, 5
     index = "SV_Uprooted~Neutral~Minion~7~5~5~~Boom Devil~Battlecry"
-    requireTarget, keyWord, description = False, "", "Fanfare: Deal 5 damage to the enemy leader. If this is your tenth turn or later, deal 5 damage to all enemies instead."
+    requireTarget, effects, description = False, "", "Fanfare: Deal 5 damage to the enemy leader. If this is your tenth turn or later, deal 5 damage to all enemies instead."
 
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if self.Game.Counters.turns[self.ID] >= 10:
@@ -995,7 +995,7 @@ class Terrorformer(SVMinion):
     Class, race, name = "Neutral", "", "Terrorformer"
     mana, attack, health = 7, 6, 6
     index = "SV_Uprooted~Neutral~Minion~7~6~6~~Terrorformer~Battlecry~Fusion~Legendary"
-    requireTarget, keyWord, description = True, "", "Fusion: Machina or Natura Fanfare: Deal X damage to an enemy follower. Put X random Machina or Natura cards from your deck into your hand. If this card is fused with a Machina and Natura card, subtract 3 from their costs. X equals the number of cards fused to this card."
+    requireTarget, effects, description = True, "", "Fusion: Machina or Natura Fanfare: Deal X damage to an enemy follower. Put X random Machina or Natura cards from your deck into your hand. If this card is fused with a Machina and Natura card, subtract 3 from their costs. X equals the number of cards fused to this card."
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
@@ -1043,7 +1043,7 @@ class Terrorformer(SVMinion):
                             if "Natura" in card.race or "Machina" in card.race:
                                 cards.append(i)
                         i = npchoice(cards) if cards else -1
-                        curGame.picks.append(i)
+                        curGame.picks_Backup.append(i)
                     if i > -1: curGame.Hand_Deck.drawCard(self.ID, i)
         return target
 
@@ -1055,7 +1055,7 @@ class Terrorformer(SVMinion):
 
 class StrokeofConviction(SVSpell):
     Class, school, name = "Swordcraft", "", "Stroke of Conviction"
-    requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
     index = "SV_Uprooted~Swordcraft~Spell~3~~Stroke of Conviction~Enhance"
     description = ""
     name_CN = "信念之剑闪"
@@ -1101,7 +1101,7 @@ class StrokeofConviction(SVSpell):
                 else:
                     minions = curGame.minionsAlive(3 - self.ID)
                     minion = npchoice(minions) if minions else None
-                    curGame.picks.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
+                    curGame.picks_Backup.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
                 if minion: self.dealsDamage(minion, 5)
         if comment == 6 or choice == 2:
             for minion in curGame.minionsonBoard(self.ID):
@@ -1135,7 +1135,7 @@ class BayleyonsCommand_Option(Option):
 
 class ErikasSleight(SVSpell):
     Class, school, name = "Swordcraft", "", "Erika's Sleight"
-    requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
     index = "SV_Uprooted~Swordcraft~Spell~0~~Erika's Sleight~Uncollectible"
     description = ""
     name_CN = "艾莉卡的战技"
@@ -1148,7 +1148,7 @@ class ErikasSleight(SVSpell):
 
 class MistolinasSwordplay(SVSpell):
     Class, school, name = "Swordcraft", "", "Mistolina's Swordplay"
-    requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
     index = "SV_Uprooted~Swordcraft~Spell~0~~Mistolina's Swordplay~Uncollectible"
     description = ""
     name_CN = "米丝特莉娜的剑刃"
@@ -1163,14 +1163,14 @@ class MistolinasSwordplay(SVSpell):
                 else:
                     minions = curGame.minionsAlive(3 - self.ID)
                     minion = npchoice(minions) if minions else None
-                    curGame.picks.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
+                    curGame.picks_Backup.append((minion.pos, "Minion%d" % (3 - self.ID)) if minion else (-1, ''))
                 if minion: self.dealsDamage(minion, 5)
         return None
 
 
 class BayleyonsCommand(SVSpell):
     Class, school, name = "Swordcraft", "", "Bayleyon's Command"
-    requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
     index = "SV_Uprooted~Swordcraft~Spell~0~~Bayleyon's Command~Uncollectible"
     description = ""
     name_CN = "贝里昂的号令"
@@ -1186,7 +1186,7 @@ class PaulaIcyWarmth(SVMinion):
     Class, race, name = "Forestcraft", "", "Paula, Icy Warmth"
     mana, attack, health = 2, 2, 2
     index = "SV_Uprooted~Forestcraft~Minion~2~2~2~~Paula, Icy Warmth~Battlecry"
-    requireTarget, keyWord, description = True, "", ""
+    requireTarget, effects, description = True, "", ""
     name_CN = "爱之妖精·宝拉"
     attackAdd, healthAdd = 2, 2
 
@@ -1234,7 +1234,7 @@ class PaulaIcyWarmth(SVMinion):
             if choice == 1:
                 self.dealsDamage(target, 1)
             else:
-                self.Game.returnMiniontoHand(target)
+                self.Game.returnObj2Hand(target)
 
 
 class PaulaGentalWarmth_Option(Option):
@@ -1257,7 +1257,7 @@ class PaulaGentalWarmth(SVMinion):
     Class, race, name = "Forestcraft", "", "Paula, Gental Warmth"
     mana, attack, health = 2, 2, 2
     index = "SV_Uprooted~Forestcraft~Minion~2~2~2~~Paula, Gental Warmth~Battlecry~Uncollectible"
-    requireTarget, keyWord, description = True, "", ""
+    requireTarget, effects, description = True, "", ""
     name_CN = "深绿真心·宝拉"
     attackAdd, healthAdd = 2, 2
 
@@ -1275,14 +1275,14 @@ class PaulaGentalWarmth(SVMinion):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             if isinstance(target, list): target = target[0]
-            self.Game.returnMiniontoHand(target)
+            self.Game.returnObj2Hand(target)
 
 
 class PaulaPassionateWarmth(SVMinion):
     Class, race, name = "Forestcraft", "", "Paula, Passionate Warmth"
     mana, attack, health = 2, 2, 2
     index = "SV_Uprooted~Forestcraft~Minion~2~2~2~~Paula, Passionate Warmth~Battlecry~Uncollectible"
-    requireTarget, keyWord, description = True, "", ""
+    requireTarget, effects, description = True, "", ""
     name_CN = "真红羁绊·宝拉"
     attackAdd, healthAdd = 2, 2
 

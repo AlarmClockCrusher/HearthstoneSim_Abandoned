@@ -6,7 +6,8 @@ from direct.interval.MopathInterval import *
 from panda3d.core import *
 import inspect
 from datetime import datetime
-
+import numpy as np
+import os
 
 CHN = False
 
@@ -36,27 +37,58 @@ def findFilepath(card): #card is an instance
 		return "Images\\HeroesandPowers\\%s.png"%type(card).__name__
 	
 	
-red, green, blue = Point4(1, 0, 0, 1), Point4(0.3, 1, 0.2, 1), Point4(0, 0, 1, 1)
-yellow, pink = Point4(1, 1, 0, 1), Point4(1, 0, 1, 1)
+red, green, blue = (1, 0, 0, 1), (0.3, 1, 0.2, 1), (0, 0, 1, 1)
+yellow, pink = (1, 1, 0, 1), (1, 0, 1, 1)
+darkGreen = (0.3, 0.8, 0.2, 1)
+transparent, grey = (1, 1, 1, 0), (0.5, 0.5, 0.5, 1)
+black, white = (0, 0, 0, 1), (1, 1, 1, 1)
 
-transparent, grey = Point4(1, 1, 1, 0), Point4(0.5, 0.5, 0.5, 1)
-black, white = Point4(0, 0, 0, 1), Point4(1, 1, 1, 1)
 
+#If poseFrame is negative, then the texCard keeps playing
+def makeTexCard(GUI, filePath, pos=(0, 0, 0), scale=1.0, aspectRatio=1,
+				name='', getSeqNode=True, poseFrame=0, parent=None):
+	texCard = GUI.loader.loadModel(filePath)
+	texCard.name = name + "_TexCard" if name else "TexCard"
+	if aspectRatio == 1: texCard.setScale(scale)
+	else: texCard.setScale(scale, 1, scale*aspectRatio)
+	texCard.setPosHpr(pos, (0, -90, 0))
+	texCard.reparentTo(parent if parent else GUI.render)
+	if getSeqNode:
+		seqNode = texCard.find("+SequenceNode").node()
+		if poseFrame > -1: seqNode.pose(poseFrame)
+	else: seqNode = None
+	return texCard, seqNode
 
 #Can only set the color of the textNode itself to transparent. No point in setting the nodePath transparency
-def makeText(np_Parent, textName, valueText, pos, scale, color, font, wordWrap=0):
+def makeText(np_Parent, textName, valueText, pos, scale, color, font, wordWrap=0, cardColor=None):
 	textNode = TextNode(textName + "_TextNode")
 	textNode.setText(valueText)
 	textNode.setAlign(TextNode.ACenter)
 	textNode.setFont(font)
 	textNode.setTextColor(color)
-	if wordWrap > 0:
-		textNode.setWordwrap(wordWrap)
+	if wordWrap > 0: textNode.setWordwrap(wordWrap)
+	if cardColor:
+		textNode.setCardColor(cardColor)
+		textNode.setCardAsMargin(0, 0.1, 0, -0.10)
+		textNode.setCardDecal(True)
 	textNodePath = np_Parent.attachNewNode(textNode)
 	textNodePath.setScale(scale)
 	textNodePath.setPosHpr(pos, Point3(0, -90, 0))
-	return textNodePath
+	return textNodePath, textNode
 
+def textNode_ExpandSetShrink(textNodePath, textNode, scale_0, scale_1, s, color, duration=0.15):
+	return Sequence(textNodePath.scaleInterval(duration=duration, scale=scale_1),
+					Func(textNode.setText, s), Func(textNode.setTextColor, color),
+					textNodePath.scaleInterval(duration=duration, scale=scale_0)
+					)
+
+def textNode_setTextandColor(textNode, text, color):
+	textNode.setText(text)
+	textNode.setTextColor(color)
+	
+def reassignBtn2Card(btn, card):
+	card.btn = btn
+	
 """Subclass the NodePath, since it can be assigned attributes directly"""
 class Btn_Card:
 	def __init__(self, GUI, card, nodePath):
@@ -66,21 +98,39 @@ class Btn_Card:
 		
 		self.np = nodePath #Load the templates, who won't carry btn and then btn will be assigned after copyTo()
 		self.cNode = self.cNode_Backup = self.cNode_Backup_Played = None  #cNode holds the return value of attachNewNode
-		self.box_Model = None
+		self.box = None
 		self.models, self.icons, self.texts, self.texCards = {}, {}, {}, {}
+		self.texCards_Dyna = []
 		
 	def changeCard(self, card, isPlayed, pickable=True, onlyShowCardBack=False):
-		reTexture = (self.card != card)
 		self.card, self.isPlayed = card, isPlayed
 		self.np.name = "NP_{}_{}".format(type(card).__name__, datetime.now().microsecond)
 		loader = self.GUI.loader
 		if pickable: card.btn = self
-		self.reloadModels(loader, findFilepath(card), pickable, reTexture, onlyShowCardBack)
+		while self.texCards_Dyna:
+			self.texCards_Dyna.pop().removeNode()
+		self.reloadModels(loader, findFilepath(card), pickable, onlyShowCardBack)
+		self.np.reparentTo(self.GUI.render)
 		self.onlyCardBackShown = onlyShowCardBack
 	
-	def reassignCardBtn(self, card):
-		card.btn = self
-		
+	def reassignBox(self):
+		card = self.card
+		isLegendary = "~Legendary" in card.index
+		if card.type == "Minion":
+			for name in ("box_Legendary", "box_Normal", "box_Legendary_Played", "box_Normal_Played"):
+				self.models[name].setColor(transparent)
+			if isLegendary: self.box = self.models["box_Legendary_Played" if self.isPlayed else "box_Legendary"]
+			else: self.box = self.models["box_Normal_Played" if self.isPlayed else "box_Normal"]
+		elif card.type == "Weapon":
+			self.box = None if self.isPlayed else self.models["box_Legendary" if isLegendary else "box_Normal"]
+		elif card.type == "Hero":
+			self.box = self.models["box_Played" if self.isPlayed else "box"]
+		elif card.type == "Dormant":
+			self.box = None
+			
+	def reloadModels(self, loader, imgPath, pickable, onlyShowCardBack):
+		pass
+	
 	def texCardAni_LoopPose(self, name, start=True):
 		seqNode = self.texCards[name].find("+SequenceNode").node()
 		if start: seqNode.loop(False, 1, seqNode.getNumFrames()-1)
@@ -96,11 +146,28 @@ class Btn_Card:
 		if gain: seqNode.loop(False, 1, end_Gain)
 		elif not gain and 0 < seqNode.getFrame() <= end_Gain: seqNode.play(start_Lose, end_Lose)
 	
+	def addaStatusTexCard2Top(self, texCard_New, seqNode_New, num_0, num_1, playorLoop, x_New, y_New):
+		i = 0
+		for texCard in self.texCards_Dyna[:]:
+			seqNode = texCard.find("+SequenceNode").node()
+			if seqNode.isPlaying() or seqNode.getFrame() != seqNode.getNumFrames() - 1:
+				x, y, z = texCard.getPos()
+				texCard.setPos(x, y, 0.17+i*0.03)
+				i += 1
+			else: #If the texCard is not playing anymore or not waiting at the start, remove it
+				self.texCards_Dyna.remove(texCard)
+				texCard.removeNode()
+		texCard_New.setPos(x_New, y_New, 0.17+i*0.03)
+		texCard_New.reparentTo(self.np)
+		if playorLoop:
+			Sequence(Func(seqNode_New.play, num_0, num_1), Wait(seqNode_New.getNumFrames()/24), Func(texCard_New.removeNode)).start()
+		else: seqNode_New.loop(num_0, num_1)
+		
 	def dimDown(self):
 		self.np.setColor(grey)
 		
 	def setBoxColor(self, color):
-		if self.box_Model: self.box_Model.setColor(color)
+		if self.box: self.box.setColor(color)
 	
 	def showStatus(self):
 		pass
@@ -121,20 +188,83 @@ class Btn_Card:
 							Func(nodePath.node().setTextColor, color))
 		self.GUI.seqHolder[-1].append(Func(sequence.start))
 	
-	def statusChangeAni(self, name=''):
-		pass
-	
+	#Minion actions: "set"|"buffDebuff"|"damage"|"heal"
+	#Weapon actions: "buffDebuff"|"damage"
+	#Hero actions:
+	def statChangeAni(self, num1=None, num2=None, action="set"):
+		card = self.card
+		#只有是在场上的英雄或手牌中/场上的随从/武器才能够进行
+		if not ((card.type == "Hero" and card.onBoard) or
+				(card.type in ("Minion", "Weapon") and (card.inHand or card.onBoard))):
+			return
+		cardType = type(card)
+		#Decide all the values, text colors, npTexts and nodeTexts
+		attack, health = card.attack, card.health
+		if card.type == "Weapon": color_Health = red if health < card.health_max else (white if card.health_max <= cardType.durability else green)
+		else: color_Health = red if health < card.health_max else (white if card.health_max <= cardType.health else green)
+		seq_Holder = self.GUI.seqHolder[-1]
+		
+		npText_Health_Played, nodeText_Health_Played = self.texts["health_Played"], self.texts["health_Played"].node()
+		if action in ("set", "buffDebuff"):  #一般的攻击力和耐久度重置计算也可以用set，只是需要把num1和num2设为0
+			if card.type == "Hero" and not self.isPlayed: return
+			
+			color_Attack = white if card.attack <= cardType.attack else green
+			scale_0 = {"Hero": 1.1, "Weapon": 0.9, "Minion": 0.8}[card.type] if self.isPlayed else statTextScale
+			
+			para = Parallel()
+			if not self.isPlayed and action == "buffDebuff":
+				scale = self.np.getScale()[0]
+				para.append(Sequence(Func(print, "buffDebuff scale", scale), LerpScaleInterval(self.np, duration=0.17, scale=1.2*scale), LerpScaleInterval(self.np, duration=0.17, scale=scale)))
+			
+			if self.isPlayed: npText, nodeText = self.texts["attack_Played"], self.texts["attack_Played"].node()
+			else: npText, nodeText = self.texts["attack"], self.texts["attack"].node()
+			s = '' if card.type == "Hero" and attack < 1 else str(attack)
+			if num1: para.append(Func(textNode_ExpandSetShrink(npText, nodeText, scale_0, 2 * scale_0, s, color_Attack).start))
+			else: para.append(Func(textNode_setTextandColor, nodeText, s, color_Attack))
+			
+			if self.isPlayed: npText, nodeText = npText_Health_Played, nodeText_Health_Played
+			else: npText, nodeText = self.texts["health"], self.texts["health"].node()
+			if num2: para.append(Func(textNode_ExpandSetShrink(npText, nodeText, scale_0, 2 * scale_0, str(health), color_Health).start))
+			else: para.append(Func(textNode_setTextandColor, nodeText, str(health), color_Health))
+				
+			if card.type == "Hero": para.append(Func(self.models["attack"].setColor, white if attack > 0 else transparent))
+			seq_Holder.append(para)
+		else: #damage|healing|armorChange
+			if not self.isPlayed: return
+			if card.type == "Weapon": #"damage"
+				seq_Holder.append(Func(textNode_setTextandColor, nodeText_Health_Played, str(health), color_Health))
+			elif card.type == "Minion": #"damage" or "healing"
+				if action == "poisonousDamage": s, color, texCardName, num = '', white, "DamagePoisonous", 48
+				elif action == "damage": s, color, texCardName, num = str(num2), red, "Damage", 48
+				else: s, color, texCardName, num = '+' + str(num2), black, "Healing", 32
+				
+				texCard, seqNode = makeTexCard(self.GUI, "TexCards\\Shared\\%s.egg"%texCardName, scale=3)
+				if s:
+					textNodePath, textNode = makeText(np_Parent=texCard, textName='', valueText=s, pos=(0, -0.01, -0.05), scale=0.25, color=color, font=self.GUI.font)
+					textNodePath.setHpr(0, 0, 0)
+				seq_Holder.append(Func(textNode_setTextandColor, nodeText_Health_Played, str(health), color_Health))
+				seq_Holder.append(Func(self.addaStatusTexCard2Top, texCard, seqNode, 1, num, True, 0.15, 0.45))
+			else: #Hero
+				armor, npText_Armor_Played, nodeText_Armor_Played, model_Armor_Played = card.armor, self.texts["armor_Played"], self.texts["armor_Played"].node(), self.models["armor"]
+				color_Armor, s_Armor = transparent if armor < 1 else white, '' if armor < 1 else str(armor)
+				if action == "armorChange":  #For hero
+					seq_Holder.append(Func(model_Armor_Played.setColor, color_Armor))
+					seq_Holder.append(Func(textNode_ExpandSetShrink(npText_Armor_Played, nodeText_Armor_Played, 1.1, 2*1.1, s_Armor, white).start))
+				else:
+					if action == "damage": s, color, texCardName, num = str(num2), red, "Damage", 48
+					else: s, color, texCardName, num = '+' + str(num2), black, "Healing", 32
+					
+					texCard, seqNode = makeTexCard(self.GUI, "TexCards\\Shared\\%s.egg"%texCardName, scale=4)
+					textNodePath, textNode = makeText(np_Parent=texCard, textName='', valueText=s, pos=(0, -0.01, -0.05), scale=0.25, color=color, font=self.GUI.font)
+					textNodePath.setHpr(0, 0, 0)
+					
+					seq_Holder.append(Func(textNode_setTextandColor, nodeText_Health_Played, str(health), color_Health))
+					seq_Holder.append(Func(model_Armor_Played.setColor, color_Armor))
+					seq_Holder.append(Func(nodeText_Armor_Played.setText, s_Armor))
+					seq_Holder.append(Func(self.addaStatusTexCard2Top, texCard, seqNode, 1, num, True, 0.15, 0.25))
+					
 	def placeIcons(self):
 		pass
-	
-	#Control the moving, rotating and scaling of a nodePath. For color manipulate, another method is used.
-	def genLerpInterval(self, pos=None, hpr=None, scale=None, duration=0.3, hpr_AlltheWay=None, blendType="noBlend"):
-		pos = pos if pos else self.np.getPos()
-		if hpr_AlltheWay: hpr = hpr_AlltheWay
-		else: hpr = hpr if hpr else self.np.getHpr()
-		scale = scale if scale else self.np.getScale()
-		return LerpPosHprScaleInterval(self.np, duration=duration, pos=pos, hpr=hpr, scale=scale,
-									   startHpr=hpr_AlltheWay, blendType=blendType)
 	
 	def genMoPathIntervals(self, curveFileName, duration=0.3):
 		moPath = Mopath.Mopath()
@@ -150,20 +280,31 @@ def loadCard(base, card):
 			"Power": loadPower, "Dormant": loadMinion, "Option": loadOption,
 			}[card.type](base)
 	
+tableTexCards_Minions = {"Aura": (7.2, (0, 0.3, -0.03)),
+						"Taunt": (5.5, (0.05, -0.05, 0)),
+						"Frozen": (5.2, (0, 0.55, 0.07)),
+						"Immune": (4.5, (0.05, 0.5, 0.08)),
+						"Stealth": (4.2, (0.1, 0.5, 0.09)),
+						"Divine Shield": (7.3, (0.05, 0.2, 0.10)),
+						"Silenced": (4, (0, 0, 0.11)),
+						"Exhausted": (5, (0.1, 0.5, 0.12)),
+						"Spell Damage": (4, (0, 1, 0.13)),
+						
+						#"Damage": (3.5, (0.15, 0.45, 0.17)),
+						#"DamagePoisonous": (3.5, (0.15, 0.45, 0.18)),
+						#"Healing": (3.5, (0.1, 0.5, 0.19)),
+						}
 	
 #Minion: cardImage y limit -0.06; nameTag -0.07; stats_Played -0.12
-table_PosScaleofTexCard_Minions = {"Aura": (0.057, (0, 0.3, -0.03)),
-							   		"Damage": (0.05, (0.15, 0.45, 0.14)),
-							   		"DamagePoisonous": (0.05, (0.15, 0.45, 0.143)),
-							   		"Divine Shield": (7.3, (0.05, 0.2, 0.078)),
-							   		"Exhausted": (5, (0.1, 0.5, 0.062)),
-							   		"Frozen": (5.2, (0, 0.55, 0.08)),
-							   		"Immune": (4.5, (0.05, 0.5, 0.076)),
-							   		"Silenced": (4, (0, 0, 0.068)),
-							   		"Spell Damage": (4, (0, 1, 0.07)),
-							   		"Stealth": (4.4, (0.1, 0.5, 0.0645)),
-							   		"Taunt": (0.044, (0.05, -0.05, 0)),
-							   		}
+
+#Need to calculate the curve in order to align the trig icons with the name tag
+arr_x = np.array([-1, -0.44, 0.12, 1.24])
+arr_y = np.array([-1.37, -1.26, -1.17, -1.12])
+arr = np.array([[x**3, x**2, x**1, 1] for x in arr_x])
+coeffs_Curve = np.linalg.solve(arr, arr_y)
+
+def x2y_MinionNameTagCurve(x, coeffs):
+	return coeffs[0] * x ** 3 + coeffs[1] * x ** 2 + coeffs[2] * x + coeffs[3]
 
 class Btn_Minion(Btn_Card):
 	def __init__(self, GUI, card, nodePath):
@@ -175,21 +316,14 @@ class Btn_Minion(Btn_Card):
 		self.cNode_Backup_Played.addSolid(CollisionBox(Point3(0.07, 0.35, 0), 1.5, 1.9, 0.1))
 		#self.cNode = self.attachNewNode(self.cNode_Backup)
 		
-	def reloadModels(self, loader, imgPath, pickable, reTexture, onlyShowCardBack):
+	def reloadModels(self, loader, imgPath, pickable, onlyShowCardBack):
 		card = self.card
 		if self.isPlayed: color4Card, color4Played = transparent, white
 		else: color4Card, color4Played = white, transparent
-		if card.type == "Minion":
-			isLegendary = "~Legendary" in card.index
-			for name in ("box_Legendary", "box_Normal", "box_Legendary_Played", "box_Normal_Played"):
-				self.models[name].setColor(transparent)
-			if isLegendary: self.box_Model = self.models["box_Legendary_Played" if self.isPlayed else "box_Legendary"]
-			else: self.box_Model = self.models["box_Normal_Played" if self.isPlayed else "box_Normal"]
-		else:
-			isLegendary = "~Legendary" in card.minionInside.index if card.minionInside else True #Is dormant
-			for name in ("box_Legendary", "box_Normal", "box_Legendary_Played", "box_Normal_Played"):
-				self.models[name].setColor(transparent)
+		isLegendary = "~Legendary" in card.index if card.type == "Minion" else \
+						("~Legendary" in card.minionInside.index if card.minionInside else True) #Is dormant
 		self.models["legendaryIcon"].setColor(white if isLegendary else transparent)
+		self.reassignBox()
 		
 		if self.cNode:
 			self.cNode.removeNode()
@@ -199,26 +333,15 @@ class Btn_Minion(Btn_Card):
 												   if self.isPlayed or card.type != "Minion" else self.cNode_Backup)
 			#self.cNode.show()
 		cardTexture = loader.loadTexture(imgPath)
-		if reTexture:
-			for modelName in ("card", "cardImage", "nameTag", "race"):
-				self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), cardTexture, 1)
-				
+		for modelName in ("card", "cardImage", "nameTag"):
+			self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), cardTexture, 1)
+			
 		#Change the card textNodes no matter what (non-mutable texts are empty anyways)
-		text = card.text(CHN)
-		textNodePath = self.texts["description"]
-		textNodePath.node().setText(text)
-		textNodePath.setPos(0, -3 + 0.1 * len(text) / 12, 0.2)
-		textNodePath.node().setTextColor(black if not self.isPlayed and text else transparent)
-		if not self.isPlayed and text:
-			model = self.models["description"]
-			model.setTexture(model.findTextureStage('*'),
-							self.GUI.textures["minion_%s" % card.index.split('~')[0]], 1)
-			model.setColor(white)
-		else: self.models["description"].setColor(transparent)
+		self.texts["description"].node().setText('' if self.isPlayed else '{}'.format(card.text(CHN)))
 		
 		for modelName in ("cardImage", "nameTag"):
 			self.models[modelName].setColor(white)
-		for modelName in ("mana", "stats", "cardBack", "card", "race"):
+		for modelName in ("mana", "stats", "cardBack", "card"):
 			self.models[modelName].setColor(color4Card)
 		self.models["stats_Played"].setColor(color4Played if card.type == "Minion" else transparent)
 		self.models["stats"].setColor(color4Card if card.type == "Minion" else transparent)
@@ -227,19 +350,18 @@ class Btn_Minion(Btn_Card):
 			cardType = type(card)
 			#Refresh the mana
 			color = white if card.mana == cardType.mana else (green if card.mana < cardType.mana else red)
-			self.texts["mana"].node().setText(str(card.mana))
+			self.texts["mana"].node().setText(str(card.mana) if card.mana > -1 else '')
 			self.texts["mana"].node().setTextColor(transparent if self.isPlayed else color)
 			#Refresh the attack
 			color = white if card.attack <= card.attack_0 else green
 			color_Attack = transparent if self.isPlayed else color
 			color_Attack_Played = color if self.isPlayed else transparent
-			#print("Changing minion attack:", card.name, color_Attack, color_Attack_Played)
 			self.texts["attack"].node().setText(str(card.attack))
 			self.texts["attack"].node().setTextColor(color_Attack)
 			self.texts["attack_Played"].node().setText(str(card.attack))
 			self.texts["attack_Played"].node().setTextColor(color_Attack_Played)
 			#Refresh the health
-			color = white if card.health == card.health_max else (green if card.health > card.health_max else red)
+			color = red if card.health < card.health_max else (white if card.health_max <= cardType.health else green)
 			color_Health = transparent if self.isPlayed else color
 			color_Health_Played = color if self.isPlayed else transparent
 			#print("Changing minion health:", card.name, color_Attack, color_Attack_Played)
@@ -271,110 +393,33 @@ class Btn_Minion(Btn_Card):
 			elif UI == 0: GUI.resolveMove(card, self, "MinioninHand")
 			elif UI == 3 and card in game.options: GUI.resolveMove(card, None, "DiscoverOption")
 			
-	def statChangeAni(self, num1=None, num2=None, action="set"):
-		card = self.card
-		#Skip cards not inHand/onBoard or are dormants
-		if not (card.inHand or card.onBoard or card.type != "Minion"): return
-		color_Health = red if card.health < card.health_max else (green if card.health_max > type(card).health else white)
-		if action == "set" or action == "buffDebuff": #一般的攻击力和生命值重置计算也可以用set，只是需要把num1和num2设为0
-			parallel = Parallel(name="Stat Change Ani")
-			color_Attack = white if card.attack <= card.attack_0 else green
-			np_Text_Attack, np_Text_Attack_Played = self.texts["attack"], self.texts["attack_Played"]
-			np_Text_Health, np_Text_Health_Played = self.texts["health"], self.texts["health_Played"]
-			if num1:
-				seq_Attack = Sequence(np_Text_Attack.scaleInterval(duration=0.15, scale=2*0.8 if self.isPlayed else (2*statTextScale)),
-									  Func(np_Text_Attack.node().setText, str(card.attack)),
-									  Func(np_Text_Attack.node().setTextColor, transparent if self.isPlayed else color_Attack),
-									  np_Text_Attack.scaleInterval(duration=0.15, scale=0.8 if self.isPlayed else statTextScale)
-									  )
-				seq_Attack_Played = Sequence(np_Text_Attack_Played.scaleInterval(duration=0.15, scale=2*0.8 if self.isPlayed else 2*statTextScale),
-											 Func(np_Text_Attack_Played.node().setText, str(card.attack)),
-											 Func(np_Text_Attack_Played.node().setTextColor, color_Attack if self.isPlayed else transparent),
-											 np_Text_Attack_Played.scaleInterval(duration=0.15, scale=0.8 if self.isPlayed else statTextScale)
-											 )
-				parallel.append(Func(seq_Attack.start))
-				parallel.append(Func(seq_Attack_Played.start))
-			else:
-				parallel.append(Func(np_Text_Attack.node().setText, str(card.attack)))
-				parallel.append(Func(np_Text_Attack.node().setTextColor, transparent if self.isPlayed else color_Attack))
-				parallel.append(Func(np_Text_Attack_Played.node().setText, str(card.attack)))
-				parallel.append(Func(np_Text_Attack_Played.node().setTextColor, color_Attack if self.isPlayed else transparent))
-				
-			if num2:
-				seq_Health = Sequence(np_Text_Health.scaleInterval(duration=0.15, scale=2*0.8 if self.isPlayed else 2*statTextScale),
-									  Func(np_Text_Health.node().setText, str(card.health)),
-									  Func(np_Text_Health.node().setTextColor, transparent if self.isPlayed else color_Health),
-									  np_Text_Health.scaleInterval(duration=0.15, scale=0.8 if self.isPlayed else statTextScale)
-									  )
-				seq_Health_Played = Sequence(np_Text_Health_Played.scaleInterval(duration=0.15, scale=2*0.8 if self.isPlayed else 2*statTextScale),
-											 Func(np_Text_Health_Played.node().setText, str(card.health)),
-											 Func(np_Text_Health_Played.node().setTextColor, color_Health if self.isPlayed else transparent),
-											 np_Text_Health_Played.scaleInterval(duration=0.15, scale=0.8 if self.isPlayed else statTextScale)
-											 )
-				parallel.append(Func(seq_Health.start))
-				parallel.append(Func(seq_Health_Played.start))
-			else: #Only reset the value and color
-				parallel.append(Func(np_Text_Health.node().setText, str(card.health)))
-				parallel.append(Func(np_Text_Health.node().setTextColor, transparent if self.isPlayed else color_Health))
-				parallel.append(Func(np_Text_Health_Played.node().setText, str(card.health)))
-				parallel.append(Func(np_Text_Health_Played.node().setTextColor, color_Health if self.isPlayed else transparent))
-			
-			self.GUI.seqHolder[-1].append(parallel)
-		elif action == "damage": #需要显示动画
-			if card.inHand: return
-			textNode = TextNode("Damage Text Node")
-			textNode.setText(str(num2))
-			textNode.setTextColor(red)
-			textNode.setAlign(TextNode.ACenter)
-			textNodePath = self.np.attachNewNode(textNode)
-			textNodePath.setPosHprScale(0, 0, 0, 0, -90, 0, 1.6, 1.6, 1.6)
-			#Total # of frames: 47. frame 48 will be the first frame
-			sequence = Sequence(Func(self.texts["health_Played"].node().setText, str(card.health)),
-								Func(self.texts["health_Played"].node().setTextColor, color_Health if self.isPlayed else transparent),
-								Func(self.texCards["Damage"].find("+SequenceNode").node().play, 1, 48), Func(textNodePath.setPos, 0, 0.1, 0.15),
-								Wait(1.5), Func(textNodePath.removeNode))
-			self.GUI.seqHolder[-1].append(Func(sequence.start, name="Damage Ani"))
-		elif action == "heal":
-			if card.inHand: return
-			textNode = TextNode("Heal Text Node")
-			textNode.setText('+'+str(num2))
-			textNode.setTextColor(yellow)
-			textNode.setAlign(TextNode.ACenter)
-			textNodePath = self.np.attachNewNode(textNode)
-			textNodePath.setPosHprScale(0, 0, 0, 0, -90, 0, 1.6, 1.6, 1.6)
-			sequence = Sequence(Func(self.texts["health_Played"].node().setText, str(card.health)),
-								Func(self.texts["health_Played"].node().setTextColor, color_Health if self.isPlayed else transparent),
-								Func(textNodePath.setPos, 0, 0.1, 0.0145),
-								Wait(1.5), Func(textNodePath.removeNode))
-			self.GUI.seqHolder[-1].append(Func(sequence.start, name="Heal Ani"))
-		
 	#需要用inverval.start
-	def statusChangeAni(self, name=''):
+	def effectChangeAni(self, name=''):
 		if self.card.type != "Minion": return
 		card, para = self.card, Parallel(name="Status Change Ani")
 		#Handle the loop(False)/pose(0) type of texCards: Aura, Immune, Stealth, Exhausted, Silenced
 		if not name or name == "Aura":  #Check the Aura animation
 			para.append(Func(self.texCardAni_LoopPose, "Aura", card.onBoard and card.auras != {}))
 		if not name or name == "Immune":
-			para.append(Func(self.texCardAni_LoopPose, "Immune", card.onBoard and card.status["Immune"] > 0))
+			para.append(Func(self.texCardAni_LoopPose, "Immune", card.onBoard and card.effects["Immune"] > 0))
 		if not name or name == "Spell Damage":
-			para.append(Func(self.texCardAni_LoopPose, "Spell Damage", card.onBoard and card.keyWords["Spell Damage"] + card.keyWords["Nature Spell Damage"] > 0))
+			para.append(Func(self.texCardAni_LoopPose, "Spell Damage", card.onBoard and card.effects["Spell Damage"] + card.effects["Nature Spell Damage"] > 0))
 		if not name or name == "Stealth":
-			para.append(Func(self.texCardAni_LoopPose, "Stealth", card.onBoard and card.keyWords["Stealth"] + card.status["Temp Stealth"] > 0))
+			para.append(Func(self.texCardAni_LoopPose, "Stealth", card.onBoard and card.effects["Stealth"] + card.effects["Temp Stealth"] > 0))
 		if not name or name in ("Exhausted", "Rush", "Charge"):
 			para.append(Func(self.texCardAni_LoopPose, "Exhausted", card.onBoard and not card.actionable()))
 		if not name or name == "Silenced":
 			para.append(Func(self.texCardAni_LoopPose, "Silenced", card.onBoard and card.silenced))
 		#Handle the play(num1, num2)/play(num1, num2) type of texCards: Divine Shield, Taunt
 		if not name or name == "Divine Shield":
-			if card.onBoard: para.append(Func(self.texCardAni_PlayPlay, "Divine Shield", 23, 24, 29, card.keyWords["Divine Shield"] > 0))
+			if card.onBoard: para.append(Func(self.texCardAni_PlayPlay, "Divine Shield", 23, 24, 29, card.effects["Divine Shield"] > 0))
 			else: para.append(Func(self.texCardAni_LoopPose, "Divine Shield", False))
 		if not name or name == "Taunt":
-			if card.onBoard: para.append(Func(self.texCardAni_PlayPlay, "Taunt", 13, 14, 28, card.keyWords["Taunt"] > 0))
+			if card.onBoard: para.append(Func(self.texCardAni_PlayPlay, "Taunt", 13, 14, 28, card.effects["Taunt"] > 0))
 			else: para.append(Func(self.texCardAni_LoopPose, "Taunt", False))
 		#Handle the loop(False, num1, num2)/play(num1, num2) type of texCards: Frozen
 		if not name or name == "Frozen":
-			if card.onBoard: para.append(Func(self.texCardAni_LoopPlay, "Frozen", 96, 97, 105, card.status["Frozen"] > 0))
+			if card.onBoard: para.append(Func(self.texCardAni_LoopPlay, "Frozen", 96, 97, 105, card.effects["Frozen"] > 0))
 			else: para.append(Func(self.texCardAni_LoopPose, "Frozen", False))
 			
 		if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(para)
@@ -392,44 +437,59 @@ class Btn_Minion(Btn_Card):
 					color = yellow if card.effectViable else green
 				elif "~Tradeable" in card.index and game.Manas.affordable(card, canbeTraded=True):
 					color = green
-			elif card.canAttack(): color = green #If this is a minion that is on board
+			elif card.canAttack():
+				if card.effects["Can't Attack Hero"] > 0 or (card.enterBoardTurn == game.numTurn and card.effects["Rush"] > 0 and
+															 card.effects["Borrowed"] + card.effects["Charge"] < 1):
+					color = darkGreen #如果随从可以攻击但是不能攻击对方英雄，即有“不能直接攻击英雄”或者是没有冲锋或暗影狂乱的突袭随从
+				else: color = green #If this is a minion that is on board
 		return color
 		
 	#Place the "Trigger", "Deathrattle", "Lifesteal", "Poisonous" icons at the right places
 	def placeIcons(self):
-		para, icons = Parallel(name="Icon Placing Ani"), []
-		if self.isPlayed and self.card.trigsBoard:
-			para.append(Func(self.icons["Trigger"].updateText))
+		card, para, icons = self.card, Parallel(name="Icon Placing Ani"), []
+		#Both dormants and minions can have hourglass and trigger
+		if self.isPlayed and any(trig.counter > -1 for trig in card.trigsBoard):
+			btn_Icon = self.icons["Hourglass"]
+			para.append(btn_Icon.seqUpdateText(s='', animate=False))
+			icons.append(btn_Icon)
+		else: para.append(Func(self.icons["Hourglass"].np.setColor, transparent))
+		
+		if self.isPlayed and any(trig.counter < 0 and not trig.oneTime for trig in card.trigsBoard):
 			icons.append(self.icons["Trigger"])
 		else: para.append(Func(self.icons["Trigger"].np.setColor, transparent))
 		
-		if self.card.type == "Minion":
+		if card.type == "Minion" and self.isPlayed and any(trig.oneTime for trig in card.trigsBoard):
 			para.append(Func(self.icons["SpecTrig"].np.find("SpecTrig").setColor, white))
-			if self.isPlayed and any(trig.oneTime for trig in self.card.trigsBoard):
-				icons.append(self.icons["SpecTrig"])
-			else: para.append(Func(self.icons["SpecTrig"].np.setColor, transparent))
+			icons.append(self.icons["SpecTrig"])
+		else: para.append(Func(self.icons["SpecTrig"].np.setColor, transparent))
+		
+		if card.type == "Minion" and self.isPlayed and card.deathrattles: icons.append(self.icons["Deathrattle"])
+		else: para.append(Func(self.icons["Deathrattle"].np.setColor, transparent))
+		
+		for keyWord in ("Lifesteal", "Poisonous"):
+			if card.type == "Minion" and self.isPlayed and card.effects[keyWord]: icons.append(self.icons[keyWord])
+			else: para.append(Func(self.icons[keyWord].np.setColor, transparent))
 			
-			if self.isPlayed and self.card.deathrattles:
-				icons.append(self.icons["Deathrattle"])
-			else: para.append(Func(self.icons["Deathrattle"].np.setColor, transparent))
-			
-			for keyWord in ("Lifesteal", "Poisonous"):
-				if self.isPlayed and self.card.keyWords[keyWord]: icons.append(self.icons[keyWord])
-				else: para.append(Func(self.icons[keyWord].np.setColor, transparent))
-			
-		leftMostPos = -0.6 * (len(icons) - 1) / 2
-		for i, model in enumerate(icons):
-			para.append(Func(model.np.setColor, white))
-			para.append(Func(model.np.setPos, leftMostPos + i * 0.6, -1.9, 0.01))
-			
+		nameTagModel = self.models["nameTag"]
+		if icons:
+			para.append(Func(nameTagModel.setTexture, nameTagModel.findTextureStage('0'),
+							self.GUI.loader.loadTexture("Models\\MinionModels\\DarkNameTag.png"), 1))
+			leftMostPos = 0.12 - 0.6 * (len(icons) - 1) / 2
+			for i, model in enumerate(icons):
+				para.append(Func(model.np.setColor, white))
+				x = leftMostPos + i * 0.6
+				para.append(Func(model.np.setPos, x, x2y_MinionNameTagCurve(x, coeffs_Curve), 0.115))
+		else:
+			para.append(Func(nameTagModel.setTexture, nameTagModel.findTextureStage('*'),
+							 self.GUI.loader.loadTexture(findFilepath(card)), 1))
 		if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(para)
 		else: para.start()
+		
 		
 statTextScale = 1.05
 manaPos = Point3(-2.8, 3.85, -0.15)
 healthPos = Point3(3.1, -4.95, -0.2)
 attackPos = Point3(-2.85, -4.95, -0.15)
-
 
 #loadMinion, etc will prepare all the textures and trigIcons to be ready.
 def loadMinion(base):
@@ -439,7 +499,7 @@ def loadMinion(base):
 	root.name = "NP_Minion"
 	
 	#Model names: box_Legendary, box_Legendary_Played, box_Normal, box_Normal_Played
-	# card, cardBack, cardImage, description, legendaryIcon, nameTag, race, stats, stats_Played
+	# card, cardBack, cardImage, legendaryIcon, nameTag, stats, stats_Played
 	for model in root.getChildren():
 		model.setTransparency(True)
 		#Only retexture the cardBack, legendaryIcon, stats, stats_Played models.
@@ -449,35 +509,29 @@ def loadMinion(base):
 		else: continue
 		model.setTexture(model.findTextureStage('*'), texture, 1)
 	
-	makeText(root, "mana", '0', pos=(-1.8, 1.15, 0.09), scale=statTextScale,
+	makeText(root, "mana", '0', pos=(-1.78, 1.15, 0.09), scale=statTextScale,
 			 color=white, font=font)
-	makeText(root, "attack", '0', pos=(-1.7, -4.05, 0.09), scale=statTextScale,
+	makeText(root, "attack", '0', pos=(-1.63, -4.05, 0.09), scale=statTextScale,
 			 color=white, font=font)
-	makeText(root, "health", '0', pos=(1.8, -4.05, 0.09), scale=statTextScale,
+	makeText(root, "health", '0', pos=(1.85, -4.05, 0.09), scale=statTextScale,
 			 color=white, font=font)
 	makeText(root, "attack_Played", '0', pos=(-1.2, -0.74, 0.122), scale=0.8,
 			 color=white, font=font)
 	makeText(root, "health_Played", '0', pos=(1.32, -0.74, 0.122), scale=0.8,
 			 color=white, font=font)
-	makeText(root, "description", "", pos=(0, 0, 0), scale=0.3,
-			 color=black, font=font, wordWrap=12)
-	base.modelTemplates["Trigger"].copyTo(root)
-	base.modelTemplates["SpecTrig"].copyTo(root)
-	base.modelTemplates["Deathrattle"].copyTo(root)
-	base.modelTemplates["Lifesteal"].copyTo(root)
-	base.modelTemplates["Poisonous"].copyTo(root)
+	makeText(root, "description", "", pos=(0.7, -2, 0.1), scale=0.5,
+			 color=black, font=font, wordWrap=12, cardColor=yellow)
+	
+	for name in ("Hourglass", "Trigger", "SpecTrig", "Deathrattle", "Lifesteal", "Poisonous"):
+		base.modelTemplates[name].copyTo(root)
 	
 	#print("Check minion loading:")
 	#for child in root.getChildren():
 	#	print(child)
-	for name, posScale in table_PosScaleofTexCard_Minions.items():
-		texCard = loader.loadModel("TexCards\\ForMinions\\%s.egg" % name)
-		texCard.name = name + "_TexCard"
-		texCard.reparentTo(root)
-		texCard.setScale(posScale[0])
-		texCard.setPosHpr(posScale[1], Point3(0, -90, 0))
-		texCard.find("+SequenceNode").node().pose(0)
-	
+	for name, posScale in tableTexCards_Minions.items():
+		makeTexCard(base, "TexCards\\ForMinions\\%s.egg" % name,
+					pos=posScale[1], scale=posScale[0], name=name)[0].reparentTo(root)
+		
 	#After the loading, the NP_Minion root tree structure is:
 	#NP_Minion/card|stats|cardImage, etc
 	#NP_Minion/mana_TextNode|attack_TextNode, etc
@@ -494,13 +548,13 @@ class Btn_Spell(Btn_Card):
 		self.cNode_Backup = CollisionNode("Spell_cNode")
 		self.cNode_Backup.addSolid(CollisionBox(Point3(0.05, -1.1, 0), 2.2, 3.1, 0.1))
 		
-	def reloadModels(self, loader, imgPath, pickable, reTexture, onlyShowCardBack):
+	def reloadModels(self, loader, imgPath, pickable, onlyShowCardBack):
 		card = self.card
 		isLegendary = "~Legendary" in card.index
 		self.models["legendaryIcon"].setColor(white if isLegendary else transparent)
 		self.models["box_Normal"].setColor(transparent)
 		self.models["box_Legendary"].setColor(transparent)
-		self.box_Model = self.models["box_Legendary" if isLegendary else "box_Normal"]
+		self.box = self.models["box_Legendary" if isLegendary else "box_Normal"]
 		
 		if self.cNode:
 			self.cNode.removeNode()
@@ -511,26 +565,15 @@ class Btn_Spell(Btn_Card):
 			
 		texture = loader.loadTexture(imgPath)
 		self.models["mana"].setColor(white)
-		for modelName in ("card", "school"):
-			model = self.models[modelName]
-			model.setColor(white)
-			if reTexture: model.setTexture(model.findTextureStage('*'), texture, 1)
+		model = self.models["card"]
+		model.setColor(white)
+		model.setTexture(model.findTextureStage('*'), texture, 1)
 		
-		text = card.text(CHN)
-		textNodePath = self.texts["description"]
-		textNodePath.node().setText(text)
-		textNodePath.setPos(0, -3 + 0.1 * len(text) / 12, 0.2)
-		textNodePath.node().setTextColor(black if not self.isPlayed and text else transparent)
-		if not self.isPlayed and text:
-			model = self.models["description"]
-			model.setTexture(model.findTextureStage('*'),
-							self.GUI.textures["spell_%s"%card.index.split('~')[0]], 1)
-			model.setColor(white)
-		else: self.models["description"].setColor(transparent)
+		self.texts["description"].node().setText("{}".format(card.text(CHN)))
 		
 		cardType = type(card)
 		color = white if card.mana == cardType.mana else (red if card.mana > cardType.mana else green)
-		self.texts["mana"].node().setText(str(card.mana))
+		self.texts["mana"].node().setText(str(card.mana) if card.mana > -1 else '')
 		self.texts["mana"].node().setTextColor(color)
 		
 		if onlyShowCardBack:
@@ -565,7 +608,7 @@ def loadSpell(base):
 	root = loader.loadModel("Models\\SpellModels\\Spell.glb")
 	root.name = "NP_Spell"
 	
-	#Model names: box_Legendary, box_Normal, card, cardBack, description, legendaryIcon, mana, school
+	#Model names: box_Legendary, box_Normal, card, cardBack, legendaryIcon, mana
 	for model in root.getChildren():
 		model.setTransparency(True)
 		if model.name == "cardBack": texture = base.textures["cardBack"]
@@ -573,18 +616,18 @@ def loadSpell(base):
 		else: continue
 		model.setTexture(model.findTextureStage('*'), texture, 1)
 	
-	makeText(root, "mana", '0', pos=(-1.73, 1.2, 0.09), scale=statTextScale,
+	makeText(root, "mana", '0', pos=(-1.8, 1.2, 0.09), scale=statTextScale,
 			 color=white, font=font, wordWrap=0)
-	makeText(root, "description", '', pos=(0, 0, 0), scale=0.25,
-			 color=black, font=font, wordWrap=12)
+	makeText(root, "description", '', pos=(0.7, -2, 0.1), scale=0.5,
+			 color=black, font=font, wordWrap=12, cardColor=yellow)
 	#After the loading, the NP_Spell root tree structure is:
 	#NP_Spell/card|cardBack|legendaryIcon, etc
 	#NP_Spell/mana_TextNode|description_TextNode
 	return root
 
 #Weapon: cardImage y limit -0.09; nameTag -0.095; stats_Played -0.13
-table_PosScaleofTexCard_Weapons = {"Immune": (3.7, (0.1, 0.3, 0.12)),
-						   }
+tableTexCards_Weapons = {"Immune": (3.7, (0.1, 0.3, 0.12)),
+						}
 
 """Load Weapon Cards"""
 class Btn_Weapon(Btn_Card):
@@ -596,7 +639,7 @@ class Btn_Weapon(Btn_Card):
 		self.cNode_Backup_Played = CollisionNode("Weapon_cNode_Played")
 		self.cNode_Backup_Played.addSolid(CollisionBox(Point3(0.07, 0.33, 0), 1.8, 1.8, 0.1))
 		
-	def reloadModels(self, loader, imgPath, pickable, reTexture, onlyShowCardBack):
+	def reloadModels(self, loader, imgPath, pickable, onlyShowCardBack):
 		card = self.card
 		if self.isPlayed: color4Card, color4Played = transparent, white
 		else: color4Card, color4Played = white, transparent
@@ -604,7 +647,7 @@ class Btn_Weapon(Btn_Card):
 		self.models["legendaryIcon"].setColor(white if isLegendary else transparent)
 		self.models["box_Normal"].setColor(transparent)
 		self.models["box_Legendary"].setColor(transparent)
-		self.box_Model = None if self.isPlayed else self.models["box_Legendary" if isLegendary else "box_Normal"]
+		self.reassignBox()
 		
 		if self.cNode:
 			self.cNode.removeNode()
@@ -612,13 +655,12 @@ class Btn_Weapon(Btn_Card):
 		if pickable:
 			self.cNode = self.np.attachNewNode(self.cNode_Backup_Played if self.isPlayed else self.cNode_Backup)
 			#self.cNode.show()
-		if reTexture:
-			self.models["card"].setTexture(self.models["card"].findTextureStage('*'),
-										   self.GUI.textures["weapon_"+card.Class], 1)
-			
-			cardTexture = loader.loadTexture(imgPath)
-			for modelName in ("cardImage", "nameTag", "description"):
-				self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), cardTexture, 1)
+		self.models["card"].setTexture(self.models["card"].findTextureStage('*'),
+										self.GUI.textures["weapon_"+card.Class], 1)
+		
+		cardTexture = loader.loadTexture(imgPath)
+		for modelName in ("cardImage", "nameTag", "description"):
+			self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), cardTexture, 1)
 			
 		for modelName in ("cardImage", "nameTag", "border"):
 			self.models[modelName].setColor(white)
@@ -628,7 +670,7 @@ class Btn_Weapon(Btn_Card):
 		
 		cardType = type(card)
 		color = white if card.mana == cardType.mana else (green if card.mana < cardType.mana else red)
-		self.texts["mana"].node().setText(str(card.mana))
+		self.texts["mana"].node().setText(str(card.mana) if card.mana > -1 else '')
 		self.texts["mana"].node().setTextColor(transparent if self.isPlayed else color)
 		#Refresh the attack
 		color = white if card.attack <= cardType.attack else green
@@ -636,12 +678,12 @@ class Btn_Weapon(Btn_Card):
 		self.texts["attack"].node().setTextColor(transparent if self.isPlayed else color)
 		self.texts["attack_Played"].node().setText(str(card.attack))
 		self.texts["attack_Played"].node().setTextColor(color if self.isPlayed else transparent)
-		#Weapon durability
-		color = white if card.durability >= cardType.durability else red
-		self.texts["durability"].node().setText(str(card.durability))
-		self.texts["durability"].node().setTextColor(transparent if self.isPlayed else color)
-		self.texts["durability_Played"].node().setText(str(card.durability))
-		self.texts["durability_Played"].node().setTextColor(color if self.isPlayed else transparent)
+		#Weapon health
+		color = red if card.health < card.health_max else (white if card.health_max <= cardType.durability else green)
+		self.texts["health"].node().setText(str(card.health))
+		self.texts["health"].node().setTextColor(transparent if self.isPlayed else color)
+		self.texts["health_Played"].node().setText(str(card.health))
+		self.texts["health_Played"].node().setTextColor(color if self.isPlayed else transparent)
 		
 		if onlyShowCardBack:
 			for model in self.models.values(): model.setColor(transparent)
@@ -659,82 +701,30 @@ class Btn_Weapon(Btn_Card):
 			elif GUI.UI == 0: GUI.resolveMove(card, self, "WeaponinHand")
 			elif GUI.UI == 3 and card in game.options: GUI.resolveMove(card, None, "DiscoverOption")
 			
-	#Actions: buffDebuff, damage
-	def statChangeAni(self, num1=None, num2=None, action="buffDebuff"):
-		card = self.card
-		if not (card.inHand or card.onBoard): return
-		cardType = type(card)
-		color_Durability = red if card.durability < cardType.durability else white
-		if action == "buffDebuff": #一般的攻击力和耐久度重置计算也可以用set，只是需要把num1和num2设为0
-			parallel = Parallel(name="Stat Change Ani")
-			color_Attack = white if card.attack <= cardType.attack else green
-			np_Text_Attack, np_Text_Attack_Played = self.texts["attack"], self.texts["attack_Played"]
-			np_Text_Durability, np_Text_Durability_Played = self.texts["durability"], self.texts["durability_Played"]
-			if num1:
-				seq_Attack = Sequence(np_Text_Attack.scaleInterval(duration=0.15, scale=2 * 0.9 if self.isPlayed else (2 * statTextScale)),
-									  Func(np_Text_Attack.node().setText, str(card.attack)),
-									  Func(np_Text_Attack.node().setTextColor, transparent if self.isPlayed else color_Attack),
-									  np_Text_Attack.scaleInterval(duration=0.15, scale=0.9 if self.isPlayed else statTextScale)
-									  )
-				seq_Attack_Played = Sequence(np_Text_Attack_Played.scaleInterval(duration=0.15, scale=2 * 0.9 if self.isPlayed else 2 * statTextScale),
-											 Func(np_Text_Attack_Played.node().setText, str(card.attack)),
-											 Func(np_Text_Attack_Played.node().setTextColor, color_Attack if self.isPlayed else transparent),
-											 np_Text_Attack_Played.scaleInterval(duration=0.15, scale=0.9 if self.isPlayed else statTextScale)
-											 )
-				parallel.append(Func(seq_Attack.start))
-				parallel.append(Func(seq_Attack_Played.start))
-			else:
-				parallel.append(Func(np_Text_Attack.node().setText, str(card.attack)))
-				parallel.append(Func(np_Text_Attack.node().setTextColor, transparent if self.isPlayed else color_Attack))
-				parallel.append(Func(np_Text_Attack_Played.node().setText, str(card.attack)))
-				parallel.append(Func(np_Text_Attack_Played.node().setTextColor, color_Attack if self.isPlayed else transparent))
-			
-			if num2:
-				seq_Health = Sequence(np_Text_Durability.scaleInterval(duration=0.15, scale=2 * 0.9 if self.isPlayed else 2 * statTextScale),
-									  Func(np_Text_Durability.node().setText, str(card.durability)),
-									  Func(np_Text_Durability.node().setTextColor, transparent if self.isPlayed else color_Durability),
-									  np_Text_Durability.scaleInterval(duration=0.15, scale=0.9 if self.isPlayed else statTextScale)
-									  )
-				seq_Health_Played = Sequence(np_Text_Durability_Played.scaleInterval(duration=0.15, scale=2 * 0.9 if self.isPlayed else 2 * statTextScale),
-											 Func(np_Text_Durability_Played.node().setText, str(card.durability)),
-											 Func(np_Text_Durability_Played.node().setTextColor, color_Durability if self.isPlayed else transparent),
-											 np_Text_Durability_Played.scaleInterval(duration=0.15, scale=0.9 if self.isPlayed else statTextScale)
-											 )
-				parallel.append(Func(seq_Health.start))
-				parallel.append(Func(seq_Health_Played.start))
-			else:
-				parallel.append(Func(np_Text_Durability.node().setText, str(card.durability)))
-				parallel.append(Func(np_Text_Durability.node().setTextColor, transparent if self.isPlayed else color_Durability))
-				parallel.append(Func(np_Text_Durability_Played.node().setText, str(card.durability)))
-				parallel.append(Func(np_Text_Durability_Played.node().setTextColor, color_Durability if self.isPlayed else transparent))
-			
-			self.GUI.seqHolder[-1].append(parallel)
-		elif action == "damage":  #不需要动画
-			np_Text_Durability_Played = self.texts["durability_Played"]
-			para = Parallel(Func(np_Text_Durability_Played.node().setText, str(card.durability)),
-							Func(np_Text_Durability_Played.node().setTextColor, color_Durability if self.isPlayed else transparent),
-							name="Damage Ani")
-			self.GUI.seqHolder[-1].append(para)
-		
 	#需要用inverval.start
-	def statusChangeAni(self, name=''):
+	def effectChangeAni(self, name=''):
 		card, para = self.card, Parallel(name="Status Change Ani")
 		if not name or name == "Immune":
-			para.append(Func(self.texCardAni_LoopPose, "Immune", card.status["Immune"] > 0))
+			para.append(Func(self.texCardAni_LoopPose, "Immune", card.effects["Immune"] > 0))
 		
 		if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(para)
 		else: para.start()
 			
 	#Place the "Trigger", "Deathrattle", "Lifesteal", "Poisonous" icons at the right places
 	def placeIcons(self):
-		para, icons = Parallel(name="Icon Placing Ani"), []
-		if self.isPlayed and any(not trig.oneTime for trig in self.card.trigsBoard):
-			para.append(Func(self.icons["Trigger"].updateText))
+		card, para, icons = self.card, Parallel(name="Icon Placing Ani"), []
+		if self.isPlayed and any(trig.counter > -1 for trig in self.card.trigsBoard):
+			btn_Icon = self.icons["Hourglass"]
+			para.append(btn_Icon.seqUpdateText(s='', animate=False))
+			icons.append(btn_Icon)
+		else: para.append(Func(self.icons["Hourglass"].np.setColor, transparent))
+		
+		if self.isPlayed and any(trig.counter < 0 and not trig.oneTime for trig in self.card.trigsBoard):
 			icons.append(self.icons["Trigger"])
 		else: para.append(Func(self.icons["Trigger"].np.setColor, transparent))
 		
-		para.append(Func(self.icons["SpecTrig"].np.find("SpecTrig").setColor, white))
 		if self.isPlayed and any(trig.oneTime for trig in self.card.trigsBoard):
+			para.append(Func(self.icons["SpecTrig"].np.find("SpecTrig").setColor, white))
 			icons.append(self.icons["SpecTrig"])
 		else: para.append(Func(self.icons["SpecTrig"].np.setColor, transparent))
 		
@@ -742,14 +732,20 @@ class Btn_Weapon(Btn_Card):
 		else: para.append(Func(self.icons["Deathrattle"].np.setColor, transparent))
 		
 		for keyWord in ("Lifesteal", "Poisonous"):
-			if self.isPlayed and self.card.keyWords[keyWord]: icons.append(self.icons[keyWord])
+			if self.isPlayed and self.card.effects[keyWord]: icons.append(self.icons[keyWord])
 			else: para.append(Func(self.icons[keyWord].np.setColor, transparent))
-			
-		leftMostPos = -0.6 * (len(icons) - 1) / 2
-		for i, model in enumerate(icons):
-			para.append(Func(model.np.setColor, white))
-			para.append(Func(model.np.setPos, leftMostPos + i * 0.6, -1.8, 0.02))
 		
+		nameTagModel = self.models["nameTag"]
+		if icons:
+			para.append(Func(nameTagModel.setTexture, nameTagModel.findTextureStage("*"),
+							self.GUI.loader.loadTexture("Models\\WeaponModels\\DarkNameTag.png"), 1))
+			leftMostPos = -0.6 * (len(icons) - 1) / 2
+			for i, model in enumerate(icons):
+				para.append(Func(model.np.setColor, white))
+				para.append(Func(model.np.setPos, leftMostPos + i * 0.6, -1.13, 0.125))
+		else:
+			para.append(Func(nameTagModel.setTexture, nameTagModel.findTextureStage("*"),
+							self.GUI.loader.loadTexture(findFilepath(self.card)), 1))
 		self.GUI.seqHolder[-1].append(para)
 		
 	def decideColor(self):
@@ -785,27 +781,20 @@ def loadWeapon(base):
 			  color=white, font=font)
 	makeText(root, "attack", '0', pos=(-1.7, -4, 0.12), scale=statTextScale,
 			  color=white, font=font)
-	makeText(root, "durability", '0', pos=(1.8, -4, 0.12), scale=statTextScale,
+	makeText(root, "health", '0', pos=(1.8, -4, 0.12), scale=statTextScale,
 			  color=white, font=font)
 	makeText(root, "attack_Played", '0', pos=(-1.28, -0.8, 0.132), scale=0.9,
 			  color=white, font=font)
-	makeText(root, "durability_Played", '0', pos=(1.27, -0.8, 0.132), scale=0.9,
+	makeText(root, "health_Played", '0', pos=(1.27, -0.8, 0.132), scale=0.9,
 				  color=white, font=font)
 	
-	base.modelTemplates["Trigger"].copyTo(root)
-	base.modelTemplates["SpecTrig"].copyTo(root)
-	base.modelTemplates["Deathrattle"].copyTo(root)
-	base.modelTemplates["Lifesteal"].copyTo(root)
-	base.modelTemplates["Poisonous"].copyTo(root)
-	
-	for name, posScale in table_PosScaleofTexCard_Weapons.items():
-		texCard = loader.loadModel("TexCards\\ForWeapons\\%s.egg" % name)
-		texCard.name = name + "_TexCard"
-		texCard.reparentTo(root)
-		texCard.setScale(posScale[0])
-		texCard.setPosHpr(posScale[1], Point3(0, -90, 0))
-		texCard.find("+SequenceNode").node().pose(0)#loop(False, 1, 100)
-	
+	for name in ("Hourglass", "Trigger", "SpecTrig", "Deathrattle", "Lifesteal", "Poisonous"):
+		base.modelTemplates[name].copyTo(root)
+		
+	for name, posScale in tableTexCards_Weapons.items():
+		makeTexCard(base, "TexCards\\ForWeapons\\%s.egg" % name,
+					pos=posScale[1], scale=posScale[0], name=name)[0].reparentTo(root)
+		
 	#After the loading, the NP_Weapon root tree structure is:
 	#NP_Weapon/card|stats|cardImage, etc
 	#NP_Weapon/mana_TextNode|attack_TextNode, etc
@@ -814,6 +803,10 @@ def loadWeapon(base):
 
 
 """Load Hero Powers"""
+tableTexCards_Powers = {"Power Damage": (3.5, (0, 0.25, 0.13)),
+						"Can Target Minions": (2, (0, 0.25, 0.11)),
+						}
+
 class Btn_Power(Btn_Card):
 	def __init__(self, GUI, card, nodePath):
 		super().__init__(GUI, card, nodePath)
@@ -823,12 +816,12 @@ class Btn_Power(Btn_Card):
 		self.cNode_Backup_Played = CollisionNode("Power_cNode_Played")
 		self.cNode_Backup_Played.addSolid(CollisionBox(Point3(0, 0.3, 0), 1.6, 1.6, 0.1))
 		
-	def reloadModels(self, loader, imgPath, pickable, reTexture, onlyShowCard=True):
+	def reloadModels(self, loader, imgPath, pickable, onlyShowCard=True):
 		card = self.card
-		self.box_Model = self.models["box"] if self.isPlayed else None
+		self.box = self.models["box"] if self.isPlayed else None
 		self.models["box"].setColor(transparent)
 		
-		for modelName in ("card", "description", "nameTag"):
+		for modelName in ("card", "nameTag"):
 			self.models[modelName].setColor(transparent if self.isPlayed else white)
 		if self.cNode:
 			self.cNode.removeNode()
@@ -837,39 +830,47 @@ class Btn_Power(Btn_Card):
 			self.cNode = self.np.attachNewNode(self.cNode_Backup_Played if self.isPlayed else self.cNode_Backup)
 			#self.cNode.show()
 		"""The card frame. The front face texture is set according to it class"""
-		if reTexture:
-			texture = loader.loadTexture(imgPath)
-			for modelName in ("card", "cardImage", "nameTag"):
-				self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), texture, 1)
-		text = card.text(CHN)
-		textNodePath = self.texts["description"]
-		textNodePath.node().setText(text)
-		textNodePath.setPos(0, -3 + 0.1 * len(text) / 12, 0.2)
-		textNodePath.node().setTextColor(black if not self.isPlayed and text else transparent)
-		self.models["description"].setColor(white if not self.isPlayed and text else transparent)
+		texture = loader.loadTexture(imgPath)
+		for modelName in ("card", "cardImage", "nameTag"):
+			self.models[modelName].setTexture(self.models[modelName].findTextureStage('*'), texture, 1)
+		self.texts["description"].node().setText('' if self.isPlayed else "{}".format(card.text(CHN)))
 		
-		cardType = type(self.card)
+		cardType = type(card)
 		#Refresh the mana
-		color = white if self.card.mana == cardType.mana else (green if self.card.mana < cardType.mana else red)
-		self.texts["mana"].node().setText(str(self.card.mana))
+		color = white if card.mana == cardType.mana else (green if card.mana < cardType.mana else red)
+		self.texts["mana"].node().setText(str(card.mana) if card.mana > -1 else '')
 		self.texts["mana"].node().setTextColor(color)
 	
+		if onlyShowCard:
+			for model in self.models.values(): model.setColor(transparent)
+			for textNodePath in self.texts.values(): textNodePath.node().setTextColor(transparent)
+		self.models["cardBack"].setColor(white if onlyShowCard else transparent)
+		
 	def checkHpr(self):
-		card, hprFinal = self.card, None
-		if card.ID == self.GUI.Game.turn:
-			if card.chancesUsedUp() and self.np.get_r() % 360 == 0:
-				hprFinal = Point3(0, 0, 180)  #Flip to back, power unusable
-			elif not card.chancesUsedUp() and self.np.get_r() % 360 == 180:
-				hprFinal = Point3(0, 0, 0) #Flip to front
+		hprFinal = None
+		if self.card.ID == self.GUI.Game.turn:
+			if self.card.chancesUsedUp() and self.np.get_r() < 180:
+				hprFinal = (0, 0, 180)  #Flip to back, power unusable
+			elif not self.card.chancesUsedUp() and self.np.get_r() > 0:
+				hprFinal = (0, 0, 0) #Flip to front
 		if hprFinal:
-			heroZone = self.GUI.heroZones[self.card.ID]
-			interval = Sequence(self.genLerpInterval(pos=(heroZone.powerPos[0], heroZone.powerPos[1], heroZone.powerPos[2]+3),
-													 hpr=Point3(0, 0, 90), duration=0.2),
-								self.genLerpInterval(pos=heroZone.powerPos, hpr=hprFinal, duration=0.2)
+			x, y, z = self.GUI.heroZones[self.card.ID].powerPos
+			interval = Sequence(LerpPosHprInterval(self.np, duration=0.17, pos=(x, y, z+3), hpr=(0, 0, 90)),
+								LerpPosHprInterval(self.np, duration=0.17, pos=(x, y, z), hpr=hprFinal)
 								)
-			if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(Func(interval.start))
-			else: interval.start()
+			self.GUI.seqHolder[-1].append(Func(interval.start))
 			
+	def effectChangeAni(self, name=''):
+		card, para = self.card, Parallel(name="Status Change Ani")
+		#Handle the loop(False)/pose(0) type of texCards: Power Damage
+		if not name or name in ("Damage Boost", "Power Damage"):
+			para.append(Func(self.texCardAni_LoopPose, "Power Damage", card.onBoard and card.effects["Damage Boost"] + card.Game.effects[card.ID]["Power Damage"] > 0))
+		if not name or name in ("Can Target Minions", "Power Can Target Minions"):
+			para.append(Func(self.texCardAni_LoopPose, "Can Target Minions", card.onBoard and card.effects["Can Target Minions"] + card.Game.effects[card.ID]["Power Can Target Minions"] > 0))
+		print("Power status change", name in ("Can Target Minions", "Power Can Target Minions"), card.onBoard, card.effects["Can Target Minions"] > 0, card.Game.effects[card.ID]["Power Can Target Minions"] > 0)
+		if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(para)
+		else: para.start()
+		
 	def leftClick(self):
 		if self.isPlayed:
 			if self.GUI.UI == 0: self.GUI.resolveMove(self.card, self, "Power")
@@ -882,7 +883,33 @@ class Btn_Power(Btn_Card):
 		if self.isPlayed and card.ID == card.Game.turn and card.Game.Manas.affordable(card) and card.available():
 			color = green
 		return color
+	
+	def placeIcons(self):
+		para, icons = Parallel(name="Icon Placing Ani"), []
+		#Both dormants and minions can have hourglass and trigger
+		if self.isPlayed and any(trig.counter > -1 for trig in self.card.trigsBoard):
+			btn_Icon = self.icons["Hourglass"]
+			para.append(btn_Icon.seqUpdateText(s='', animate=False))
+			icons.append(btn_Icon)
+		else: para.append(Func(self.icons["Hourglass"].np.setColor, transparent))
+		#Power doesn't have oneTime triggers
+		if self.isPlayed and any(trig.counter < 0 for trig in self.card.trigsBoard):
+			icons.append(self.icons["Trigger"])
+		else: para.append(Func(self.icons["Trigger"].np.setColor, transparent))
 		
+		if self.isPlayed and self.card.effects["Lifesteal"]:
+			icons.append(self.icons["Lifesteal"])
+		else: para.append(Func(self.icons["Lifesteal"].np.setColor, transparent))
+		
+		if icons:
+			leftMostPos = 0.12 - 0.6 * (len(icons) - 1) / 2
+			for i, model in enumerate(icons):
+				para.append(Func(model.np.setColor, white))
+				x = leftMostPos + i * 0.6
+				para.append(Func(model.np.setPos, x, -1, 0.11))
+		
+		if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(para)
+		else: para.start()
 		
 def loadPower(base):
 	loader = base.loader
@@ -894,27 +921,39 @@ def loadPower(base):
 	for model in root.getChildren():
 		model.setTransparency(True)
 		if model.name in ("border", "mana"): texture = base.textures["stats_Power"]
+		elif model.name == "cardBack": texture = base.textures["cardBack"]
 		else: continue
 		model.setTexture(model.findTextureStage('*'), texture, 1)
 	#y limit: mana -0.12, description -0.025
 	makeText(root, "mana", '0', pos=(0, 1.36, 0.125), scale=0.857*statTextScale, #0.9,
 			color=white, font=font)
-	makeText(root, "description", '', pos=(0, 0, 0.027), scale=0.3,
-			color=black, font=font)
+	makeText(root, "description", '', pos=(1, -2.5, 0.027), scale=0.5,
+			color=black, font=font, wordWrap=10, cardColor=yellow)
+	
+	for name, posScale in tableTexCards_Powers.items():
+		makeTexCard(base, "TexCards\\ForPowers\\%s.egg" % name,
+					pos=posScale[1], scale=posScale[0], name=name)[0].reparentTo(root)
+		
+	for name in ("Hourglass", "Trigger", "Lifesteal"):
+		base.modelTemplates[name].copyTo(root)
+	
 	#After the loading, the NP_Minion root tree structure is:
 	#NP_Power/card|mana|cardImage, etc
 	#NP_Power/mana_TextNode|description_TextNode
+	#NP_Power/Trigger
 	return root
 
 
 """Load Hero Cards"""
-table_PosScaleofTexCard_Heroes = {"Breaking": (4.3,   Point3(0, 0.27, 0.062)),
-									"Frozen": (8, 	  Point3(-0.1, 0.2, 0.064)),
-									"Immune": (5.3,   Point3(0, 0.25), 0.071),
-									"Damage": (0.07,  Point3(0, 0.1, 0.14)),
-								"Spell Damage": (4.6, Point3(0, 0.15, 0.07)),
-									"Stealth": (5.5,  Point3(0, 0.15, 0.064)),
-								   }
+tableTexCards_Heroes = {"Breaking": (4.3, Point3(0, 0.27, 0.01)),
+						"Frozen": (8, 	  Point3(-0.1, 0.2, 0.06)),
+						"Immune": (5.2,   Point3(0, 0.3, 0.07)),
+						"Stealth": (5.5,  Point3(0, 0.15, 0.08)),
+						"Spell Damage": (4.8, Point3(0, 0.2, 0.09)),
+						
+						#"Damage": (4, Point3(0, 0.1, 0.10)),
+						#"Healing": (4, Point3(0, 0.1, 0.11)),
+						}
 
 class Btn_Hero(Btn_Card):
 	def __init__(self, GUI, card, nodePath):
@@ -925,12 +964,12 @@ class Btn_Hero(Btn_Card):
 		self.cNode_Backup_Played = CollisionNode("Hero_cNode_Played")
 		self.cNode_Backup_Played.addSolid(CollisionBox(Point3(0.05, 0.25, 0), 2, 2.2, 0.1))
 		
-	def reloadModels(self, loader, imgPath, pickable, reTexture, onlyShowCardBack):
+	def reloadModels(self, loader, imgPath, pickable, onlyShowCardBack):
 		if self.isPlayed: color4Card, color4Played = transparent, white
 		else: color4Card, color4Played = white, transparent
 		self.models["box"].setColor(transparent)
 		self.models["box_Played"].setColor(transparent)
-		self.box_Model = self.models["box_Played" if self.isPlayed else "box"]
+		self.reassignBox()
 		for modelName in ("frame", "cardImage"): #the attack, health and armor will be handle by refresh
 			self.models[modelName].setColor(color4Played)
 		for modelName in ("card", "cardBack", "stats", "box"):
@@ -942,11 +981,10 @@ class Btn_Hero(Btn_Card):
 		if pickable:
 			self.cNode = self.np.attachNewNode(self.cNode_Backup_Played if self.isPlayed else self.cNode_Backup)
 			#self.cNode.show()
-		if reTexture:
-			self.models["cardImage"].setTexture(self.models["cardImage"].findTextureStage('*'),
-												loader.loadTexture("Images\\HeroesandPowers\\%s.png"%type(self.card).__name__), 1)
-			self.models["card"].setTexture(self.models["card"].findTextureStage('*'),
-										   loader.loadTexture(imgPath), 1)
+		self.models["cardImage"].setTexture(self.models["cardImage"].findTextureStage('*'),
+											loader.loadTexture("Images\\HeroesandPowers\\%s.png"%type(self.card).__name__), 1)
+		self.models["card"].setTexture(self.models["card"].findTextureStage('*'),
+									   loader.loadTexture(imgPath), 1)
 		
 		card, cardType = self.card, type(self.card)
 		self.models["attack"].setColor(white if self.isPlayed and card.attack > 0 else transparent)
@@ -954,7 +992,7 @@ class Btn_Hero(Btn_Card):
 		self.models["armor"].setColor(white if self.isPlayed and card.armor > 0 else transparent)
 		
 		color = white if card.mana == cardType.mana else (green if card.mana < cardType.mana else red)
-		self.texts["mana"].node().setText(str(card.mana))
+		self.texts["mana"].node().setText(str(card.mana) if card.mana > -1 else '')
 		self.texts["mana"].node().setTextColor(transparent if self.isPlayed else color)
 		#Refresh the attack
 		self.texts["attack_Played"].node().setText(str(card.attack))
@@ -986,81 +1024,19 @@ class Btn_Hero(Btn_Card):
 				GUI.mulliganStatus[card.ID][game.mulligans[card.ID].index(card)] = 1 if self.selected else 0
 			elif UI == 0: GUI.resolveMove(card, self, "HeroinHand")
 			elif GUI.UI == 3 and card in game.options: GUI.resolveMove(card, None, "DiscoverOption")
-			
-	#Actions: buffDebuff, damage, armorChange, heal
-	def statChangeAni(self, num1=None, num2=None, action="buffDebuff"):
-		card = self.card
-		if not (card.inHand or card.onBoard): return
-		color_Attack = green if card.attack > 0 and self.isPlayed else transparent
-		color_Health = red if card.health < card.health_max else (white if card.health_max <= type(card).health else red)
-		color_Armor = white if card.armor > 0 and self.isPlayed else transparent
-		np_Text_Attack_Played = self.texts["attack_Played"]
-		np_Text_Health_Played = self.texts["health_Played"]
-		np_Text_Armor_Played = self.texts["armor_Played"]
-		if action == "buffDebuff": #buffDebuff can only change attack
-			parallel = Parallel(name="Stat Change Ani")
-			if num1:
-				seq_Attack_Played = Sequence(Func(self.models["attack"].setColor, white if card.attack > 0 and self.isPlayed else transparent),
-											 np_Text_Attack_Played.scaleInterval(duration=0.15, scale=2 * 1.1),
-											 Func(np_Text_Attack_Played.node().setText, str(card.attack)),
-											 Func(np_Text_Attack_Played.node().setTextColor, color_Attack if self.isPlayed else transparent),
-											 np_Text_Attack_Played.scaleInterval(duration=0.15, scale=1.1)
-											 )
-				parallel.append(Func(seq_Attack_Played.start))
-			else: #This is simply refreshing the display without any animation
-				parallel.append(Func(np_Text_Attack_Played.node().setText, str(card.attack)))
-				parallel.append(Func(np_Text_Attack_Played.node().setTextColor, color_Attack))
-				parallel.append(Func(np_Text_Health_Played.node().setText, str(card.health)))
-				parallel.append(Func(np_Text_Health_Played.node().setTextColor, color_Health if self.isPlayed else transparent))
-				parallel.append(Func(np_Text_Armor_Played.node().setText, str(card.armor)))
-				parallel.append(Func(np_Text_Armor_Played.node().setTextColor, color_Armor))
-				parallel.append(Func(self.models["attack"].setColor, white if card.attack > 0 and self.isPlayed else transparent))
-				parallel.append(Func(self.models["armor"].setColor, white if card.armor > 0 and self.isPlayed else transparent))
-			self.GUI.seqHolder[-1].append(parallel)
-		elif action == "damage":  #需要显示动画
-			color_Health = green if card.health == card.health_max else red
-			textNode = TextNode("Damage Text Node")
-			textNode.setText(str(num2))
-			textNode.setTextColor(red)
-			textNode.setAlign(TextNode.ACenter)
-			textNodePath = self.np.attachNewNode(textNode)
-			textNodePath.setPosHprScale(0, 0, 0, 0, -90, 0, 1.5, 1.5, 1.5)
-			#Total # of frames: 47. frame 48 will be the first frame
-			sequence = Sequence(Func(np_Text_Health_Played.node().setText, str(card.health)), Func(np_Text_Health_Played.node().setTextColor, color_Health),
-								Func(np_Text_Armor_Played.node().setText, str(card.armor)), Func(np_Text_Armor_Played.node().setTextColor, color_Armor),
-								Func(self.models["armor"].setColor, white if card.armor > 0 and self.isPlayed else transparent),
-								Func(self.texCards["Damage"].find("+SequenceNode").node().play, 1, 48), Func(textNodePath.setPos, 0, -0.1, 0.15),
-								Wait(1.5), Func(textNodePath.removeNode))
-			self.GUI.seqHolder[-1].append(Func(sequence.start, name="Damage Ani"))
-		elif action == "heal":
-			textNode = TextNode("Heal Text Node")
-			textNode.setText('+'+str(num2))
-			textNode.setTextColor(yellow)
-			textNode.setAlign(TextNode.ACenter)
-			textNodePath = self.np.attachNewNode(textNode)
-			textNodePath.setPosHprScale(0, 0, 0, 0, -90, 0, 1.5, 1.5, 1.5)
-			sequence = Sequence(Func(np_Text_Health_Played.node().setText, str(card.health)), Func(np_Text_Health_Played.node().setTextColor, color_Health),
-								Func(textNodePath.setPos, 0, 0.2, 0.0145), Wait(1.5), Func(textNodePath.removeNode))
-			self.GUI.seqHolder[-1].append(Func(sequence.start, name="Heal Ani"))
-		elif action == "armorChange":
-			parallel = Parallel(Func(self.models["armor"].setColor, color_Armor),
-								Func(self.texts["armor_Played"].node().setText, str(card.armor)),
-								Func(self.texts["armor_Played"].node().setTextColor, color_Armor),
-								name="Armor Change Ani")
-			self.GUI.seqHolder[-1].append(parallel)
-			
-	def statusChangeAni(self, name=''):
+	
+	def effectChangeAni(self, name=''):
 		card, para = self.card, Parallel(name="Status Change Ani")
 		#Handle the loop(False)/pose(0) type of texCards: Immune, Stealth, Spell Damage
 		if not name or name == "Immune":
-			para.append(Func(self.texCardAni_LoopPose, "Immune", card.Game.status[card.ID]["Immune"] > 0))
+			para.append(Func(self.texCardAni_LoopPose, "Immune", card.Game.effects[card.ID]["Immune"] > 0))
 		if not name or name == "Spell Damage":
-			para.append(Func(self.texCardAni_LoopPose, "Spell Damage", card.Game.status[card.ID]["Spell Damage"] > 0))
-		if not name or name == "Stealth":
-			para.append(Func(self.texCardAni_LoopPose, "Stealth", card.status["Temp Stealth"] > 0))
+			para.append(Func(self.texCardAni_LoopPose, "Spell Damage", card.Game.effects[card.ID]["Spell Damage"] > 0))
+		if not name or name == "Temp Stealth":
+			para.append(Func(self.texCardAni_LoopPose, "Stealth", card.effects["Temp Stealth"] > 0))
 		##Handle the loop(False, num1, num2)/play(num1, num2) type of texCards: Frozen
 		if not name or name == "Frozen":
-			para.append(Func(self.texCardAni_LoopPlay, "Frozen", 96, 97, 105, card.status["Frozen"] > 0))
+			para.append(Func(self.texCardAni_LoopPlay, "Frozen", 96, 97, 105, card.effects["Frozen"] > 0))
 			
 		if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(para)
 		else: para.start()
@@ -1101,14 +1077,11 @@ def loadHero(base):
 	makeText(root, "armor_Played", '0', pos=(2.2*0.88, -0.8*0.88, 0.122), scale=1.1,
 				  color=white, font=font)
 	
-	for name, posScale in table_PosScaleofTexCard_Heroes.items():
-		texCard = loader.loadModel("TexCards\\ForHeroes\\%s.egg" % name)
-		texCard.name = name + "_TexCard"
-		texCard.reparentTo(root)
-		texCard.setScale(posScale[0])
-		texCard.setPosHpr(posScale[1], Point3(0, -90, 0))
-		texCard.find("+SequenceNode").node().pose(0)
-	
+	for name, posScale in tableTexCards_Heroes.items():
+		filePath = "TexCards\\ForHeroes\\%s.egg" % name
+		if not os.path.isfile(filePath): filePath = "TexCards\\ForMinions\\%s.egg" % name
+		makeTexCard(base, filePath, pos=posScale[1], scale=posScale[0], name=name, parent=root)
+		
 	#After the loading, the NP_Minion root tree structure is:
 	#NP_Hero/card|stats|cardImage, etc
 	#NP_Hero/mana_TextNode|attack_TextNode, etc
@@ -1119,49 +1092,57 @@ def loadHero(base):
 class Btn_Trigger:
 	def __init__(self, carrierBtn, nodePath):
 		self.carrierBtn, self.np = carrierBtn, nodePath
-		self.counterText = nodePath.find("Trig Counter")
 		self.seqNode = nodePath.find("TexCard").find("+SequenceNode").node()
 		
 	def trigAni(self): #Index of last frame is 47
 		if self.seqNode.isPlaying(): self.seqNode.play(self.seqNode.getFrame(), 48)
 		else: self.seqNode.play(1, 48)
 		
-	def updateText(self):
-		s = ""
-		for trig in self.carrierBtn.card.trigsBoard:
-			if trig.counter > 0: s += str(trig.counter) + ' '
-		Sequence(LerpScaleInterval(self.counterText, duration=0.25, scale=1),
-				 Func(self.counterText.node().setText, s),
-				 LerpScaleInterval(self.counterText, duration=0.25, scale=0.6)).start()
-		
 class Btn_SpecTrig:
 	def __init__(self, carrierBtn, nodePath):
 		self.carrierBtn, self.np = carrierBtn, nodePath
 		self.seqNode = nodePath.find("TexCard").find("+SequenceNode").node()
 	
-	def trigAni_1stHalf(self):
-		self.seqNode.play(1, 13)
+	def trigAni(self):
+		sequence = Sequence(Func(self.seqNode.play), Wait(0.4),
+							Func(self.np.find("SpecTrig").setColor, transparent),
+							Wait(0.7))
+		self.carrierBtn.GUI.seqHolder[-1].append(sequence)
 		
-	def trigAni_2ndHalf(self):
-		self.seqNode.play(14, 24)
+class Btn_Hourglass:
+	#nodePath has following structure: Hourglass/Hourglass
+											   #/Trig Counter
+	def __init__(self, carrierBtn, nodePath):
+		self.carrierBtn, self.np = carrierBtn, nodePath
+		self.i = 0
 		
+	def seqUpdateText(self, s='', animate=True):
+		model, counterText = self.np.find("Hourglass"), self.np.find("Trig Counter_TextNode")
+		counterTextNode = counterText.node()
+		if not s:
+			s = ""
+			for trig in self.carrierBtn.card.trigsBoard:
+				if (animate and trig.counter > -1) or (not animate and trig.counter> 0):
+					s += str(trig.counter) + ' '
+		if animate:
+			self.i += 1
+			return Sequence(LerpHprInterval(model, duration=0.5, hpr=(self.i*360, 0, 0)),
+							LerpScaleInterval(counterText, duration=0.25, scale=1.2),
+					 		Func(counterTextNode.setText, s),
+					 		LerpScaleInterval(counterText, duration=0.25, scale=0.6)
+							)
+		else: return Func(counterTextNode.setText, s)
+
 class Btn_Deathrattle:
 	def __init__(self, carrierBtn, nodePath):
 		self.carrierBtn, self.np = carrierBtn, nodePath
-		self.seqNode = nodePath.find("TexCard").find("+SequenceNode").node()
 		
-	def trigAni(self, nextAnimWaits=False):
-		if self.seqNode.isPlaying():
-			self.seqNode.play(self.seqNode.getFrame(), self.seqNode.getNumFrames())
-		else:
-			self.seqNode.play(1, self.seqNode.getNumFrames())
-
 class Btn_Lifesteal:
 	def __init__(self, carrierBtn, nodePath):
 		self.carrierBtn, self.np = carrierBtn, nodePath
 		self.seqNode = nodePath.find("TexCard").find("+SequenceNode").node()
 	
-	def trigAni(self, nextAnimWaits=False):
+	def trigAni(self):
 		if self.seqNode.isPlaying():
 			self.seqNode.play(self.seqNode.getFrame(), self.seqNode.getNumFrames())
 		else:
@@ -1172,7 +1153,7 @@ class Btn_Poisonous:
 		self.carrierBtn, self.np = carrierBtn, nodePath
 		self.seqNode = nodePath.find("TexCard").find("+SequenceNode").node()
 		
-	def trigAni(self, nextAnimWaits=False):
+	def trigAni(self):
 		if self.seqNode.isPlaying():
 			self.seqNode.play(self.seqNode.getFrame(), self.seqNode.getNumFrames())
 		else:
@@ -1186,25 +1167,19 @@ class Btn_Secret:
 		self.onlyCardBackShown = self.selected = False
 		self.np = nodePath
 		
-	def reassignCardBtn(self, card):
-		card.btn = self
-		
 	def dimDown(self):
 		self.np.setColor(grey)
 	
 	def setBoxColor(self, color):
 		pass
 	
-	def checkHpr(self, color=False, stat=False, indicator=False, all=True):
+	def checkHpr(self):
 		hpr = None
-		if self.card.ID == self.GUI.Game.turn and self.np.get_r() % 360 == 0:
-			hpr = Point3(0, 0, 180)  #Flip to back, unusable
-		elif self.card.ID != self.GUI.Game.turn and self.np.get_r() % 360 == 180:
-			hpr = Point3(0, 0, 0)
-		if hpr:
-			interval = LerpHprInterval(self.np, duration=0.3, hpr=hpr)
-			if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(Func(interval.start))
-			else: interval.start()
+		if self.card.ID == self.GUI.Game.turn and self.np.get_r() < 180:
+			hpr = (0, 0, 180)  #Flip to back, unusable
+		elif self.card.ID != self.GUI.Game.turn and self.np.get_r() > 0:
+			hpr = (0, 0, 0)
+		if hpr: self.GUI.seqHolder[-1].append(Func(LerpHprInterval(self.np, duration=0.3, hpr=hpr).start))
 			
 	def leftClick(self):
 		pass
@@ -1221,7 +1196,7 @@ class Btn_HeroZoneTrig:
 		self.GUI, self.card = GUI, card
 		self.onlyCardBackShown = self.selected = False
 		self.np = nodePath
-		self.counterText = nodePath.find("Trig Counter")
+		self.counterText = nodePath.find("Trig Counter_TextNode")
 		
 	def reassignCardBtn(self, card):
 		card.btn = self
@@ -1240,11 +1215,11 @@ class Btn_HeroZoneTrig:
 		if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(sequence)
 		else: sequence.start()
 		
-	def finishAni(self, newQuest):
+	def finishAni(self, newQuest=None, reward=None):
 		card, pos_0 = self.card, self.np.getPos()
-		nodePath, btn = genCard(self.GUI, card, isPlayed=False, pickable=False, scale=0.1)
-		sequence = Sequence(Func(self.np.removeNode), Func(nodePath.setPos, pos_0),
-							btn.genLerpInterval(pos=pos_QuestFinish, scale=1, duration=0.5), Wait(0.5)
+		nodePath, btn = genCard(self.GUI, card, isPlayed=False, pickable=False, scale=0.1, makeNewRegardless=True)
+		sequence = Sequence(Func(self.np.removeNode),
+							LerpPosHprScaleInterval(nodePath, duration=0.5, startPos=pos_0, pos=pos_QuestFinish, hpr=(0, 0, 0), scale=(1, 1, 1)), Wait(0.5)
 							)
 		if newQuest:
 			sequence.append(LerpHprInterval(nodePath, duration=0.3, hpr=(0, 0, 180)) )
@@ -1253,14 +1228,21 @@ class Btn_HeroZoneTrig:
 			sequence.append(Wait(0.7))
 			sequence.append(LerpPosHprScaleInterval(btn.np, duration=0.5, pos=pos_0, hpr=(0, 0, 360), scale=0.1))
 			sequence.append(Func(nodePath.removeNode))
-			nodePath_New, btn_New = genHeroZoneTrigIcon(self.GUI, newQuest, isQuest=True)
+			nodePath_New, btn_New = genHeroZoneTrigIcon(self.GUI, newQuest)
 			sequence.append(Func(nodePath_New.setPos, pos_0))
-		else:
+		elif reward:
+			nodePath_Reward, btn_Reward = genCard(self.GUI, reward, isPlayed=False, pickable=True, pos=(0, 0, 0.2))
+			sequence.append(LerpHprInterval(nodePath, duration=0.3, hpr=(0, 0, 180)))
+			sequence.append(Func(nodePath_Reward.reparentTo, nodePath))
+			sequence.append(LerpHprInterval(nodePath, duration=0.3, hpr=(0, 0, 360)))
+			sequence.append(Wait(0.7))
+			sequence.append(Func(nodePath_Reward.wrtReparentTo, self.GUI.render))
+			sequence.append(Func(nodePath.removeNode))
+		else: #No new quest or reward to add to hand.
 			sequence.append(Func(nodePath.removeNode))
 		sequence.append(Func(self.GUI.heroZones[card.ID].placeSecrets))
 		
-		if self.GUI.seqHolder: self.GUI.seqHolder[-1].append(sequence)
-		else: sequence.start()
+		self.GUI.seqHolder[-1].append(sequence)
 		
 	def leftClick(self):
 		pass
@@ -1352,14 +1334,25 @@ Table_Type2Btn = {"Minion": Btn_Minion, "Spell": Btn_Spell, "Weapon": Btn_Weapon
 				  "Hero": Btn_Hero, "Power": Btn_Power, "Dormant": Btn_Minion,
 				  "Trigger_Icon": Btn_Trigger, "Deathrattle_Icon": Btn_Deathrattle,
 				  "Lifesteal_Icon": Btn_Lifesteal, "Poisonous_Icon": Btn_Poisonous,
-				  "SpecTrig_Icon": Btn_SpecTrig, }
+				  "SpecTrig_Icon": Btn_SpecTrig, "Hourglass_Icon": Btn_Hourglass,
+				  }
 
 
 #np_Template is of type NP_Minion, etc and is kept by the GUI.
 #card: card object, which the copied nodePath needs to become
 #isPlayed: boolean, whether the card is in played form or not
 #Only "Trigger", etc reference btn, others reference nodePath
-def genCard(GUI, card, isPlayed, pickable=True, pos=None, hpr=None, scale=None, onlyShowCardBack=False):
+
+#There are situations where new cards must always be made, like questline popping up from a Trig button
+def genCard(GUI, card, isPlayed, pickable=True, pos=None, hpr=None, scale=None,
+			onlyShowCardBack=False, makeNewRegardless=False):
+	btn = card.btn
+	if not makeNewRegardless and btn and btn.np:
+		btn.np.reparentTo(GUI.render)
+		if btn.isPlayed != isPlayed or btn.onlyCardBackShown != onlyShowCardBack:
+			btn.changeCard(card, isPlayed=isPlayed, pickable=pickable, onlyShowCardBack=onlyShowCardBack)
+		return btn.np, btn
+	
 	typeofCard = card.type if card.type != "Dormant" else "Minion"
 	nodepath = GUI.modelTemplates[typeofCard].copyTo(GUI.render)
 	if pos: nodepath.setPos(pos)
@@ -1396,13 +1389,13 @@ def genSecretIcon(GUI, card, pos=None, hpr=None):
 	return nodepath, btn_Icon
 
 
-def genHeroZoneTrigIcon(GUI, card, pos=None, text='', isQuest=False):
+def genHeroZoneTrigIcon(GUI, card, pos=None, text=''):
 	nodepath = GUI.loader.loadModel("Models\\HeroModels\\TurnTrig.glb")
 	icon = nodepath.find("Icon")
 	icon.setTexture(icon.findTextureStage('0'),
 					GUI.loader.loadTexture(findFilepath(card)), 1)
 	nodepath.reparentTo(GUI.render)
-	textNode = TextNode("Trig Counter")
+	textNode = TextNode("Trig Counter_TextNode")
 	textNode.setText(text)
 	textNode.setAlign(TextNode.ACenter)
 	textNode.setTextColor(white)
@@ -1416,5 +1409,7 @@ def genHeroZoneTrigIcon(GUI, card, pos=None, text='', isQuest=False):
 	cNode = CollisionNode("HeroZoneTrig_cNode")
 	cNode.addSolid(CollisionSphere(0, 0, 0, 0.6))
 	nodepath.attachNewNode(cNode)  #.show()
-	if isQuest: nodepath.setScale(1.3)
+	nodepath.setScale(1.2)
 	return nodepath, btn_Icon
+
+

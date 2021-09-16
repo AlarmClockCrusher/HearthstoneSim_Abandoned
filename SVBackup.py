@@ -1,6 +1,6 @@
 # class AirboundBarrage(Spell):
 # 	Class, school, name = "Warrior", "", "Airbound Barrage"
-# 	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 # 	index = "Shadowverse~Warrior~Spell~1~Airbound Barrage"
 # 	description = "Choose a friendly minion and then an enemy minion. Return the friendly minion to your hand and deal 3 damage to the enemy minion"
 # 	def available(self):
@@ -14,7 +14,7 @@
 # 			self.Game.Discover.startSelectBoard(self, ownMinions)
 # 			self.Game.Discover.startSelectBoard(self, enemyMinions)
 # 			PRINT(self.Game, "Airbound Barrage returns friendly minion %s to player's hand"%self.ownMinion.name)
-# 			self.Game.returnMiniontoHand(self.ownMinion, deathrattlesStayArmed=False)
+# 			self.Game.returnObj2Hand(self.ownMinion, deathrattlesStayArmed=False)
 # 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 # 			PRINT(self.Game, "Airbound Barrage deals %d damage to enemy minion %s"%(damage, self.enemyMinion.name))
 # 			self.dealsDamage(self.enemyMinion, damage)
@@ -27,7 +27,7 @@
 #
 # class EntrancingBlow(Spell):
 # 	Class, school, name = "Warrior", "", "Entrancing Blow"
-# 	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 # 	index = "Shadowverse~Warrior~Spell~2~Entrancing Blow"
 # 	description = "fefwsfe"
 # 	def available(self):
@@ -52,7 +52,7 @@
 #
 # class SavoringSlash(Spell):
 # 	Class, school, name = "Warrior", "", "Savoring Slash"
-# 	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 # 	index = "Shadowverse~Warrior~Spell~2~Savoring Slash"
 # 	description = "fefwsfe"
 # 	def available(self):
@@ -85,7 +85,7 @@
 # 	Class, race, name = "Warrior", "", "Panther Scout"
 # 	mana, attack, health = 2, 2, 2
 # 	index = "Shadowverse~Warrior~Minion~2~2~2~~Panther Scout~Fanfare"
-# 	requireTarget, keyWord, description = False, "", "Fanfare: Restore 1 Mana. Enhance 8: Gain +3/+3 and restore 7 Mana instead"
+# 	requireTarget, effects, description = False, "", "Fanfare: Restore 1 Mana. Enhance 8: Gain +3/+3 and restore 7 Mana instead"
 #
 # 	def effCanTrig(self):
 # 		self.effectViable = self.Game.Manas.manas[self.ID] > 7
@@ -105,13 +105,13 @@
 # 	Class, race, name = "Warrior", "", "Roan Winged Nexx"
 # 	mana, attack, health = 4, 3, 4
 # 	index = "Shadowverse~Warrior~Minion~4~3~3~~Reclusive Ponderer~Ambush~Accelerate"
-# 	requireTarget, keyWord, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
+# 	requireTarget, effects, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
 #
 # class ReclusivePonderer(SVMinion):
 # 	Class, race, name = "Warrior", "", "Reclusive Ponderer"
 # 	mana, attack, health = 4, 3, 3
 # 	index = "Shadowverse~Warrior~Minion~4~3~3~~Reclusive Ponderer~Ambush~Accelerate"
-# 	requireTarget, keyWord, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
+# 	requireTarget, effects, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
 #
 #
 
@@ -122,40 +122,40 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Steelclad Knight"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer~Steelclad Knight~Uncollectible"
-#	 requireTarget, keyWord, description = False, "", ""
+#	 requireTarget, effects, description = False, "", ""
 #
 #
 # class HeavyKnight(SVMinion):
 #	 Class, race, name = "Swordcraft", "Officer", "Heavy Knight"
 #	 mana, attack, health = 1, 1, 2
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~2~Officer~Heavy Knight~Uncollectible"
-#	 requireTarget, keyWord, description = False, "", ""
+#	 requireTarget, effects, description = False, "", ""
 #
 #
 # class Knight(SVMinion):
 #	 Class, race, name = "Swordcraft", "Officer", "Knight"
 #	 mana, attack, health = 1, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~1~Officer~Knight~Uncollectible"
-#	 requireTarget, keyWord, description = False, "", ""
+#	 requireTarget, effects, description = False, "", ""
 #
 #
 # class ShieldGuardian(SVMinion):
 #	 Class, race, name = "Swordcraft", "Officer", "Shield Guardian"
 #	 mana, attack, health = 1, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~1~Officer~Shield Guardian~Taunt~Uncollectible"
-#	 requireTarget, keyWord, description = False, "Taunt", "Ward"
+#	 requireTarget, effects, description = False, "Taunt", "Ward"
 #
 #
 # class FortressGuard(SVMinion):
 #	 Class, race, name = "Swordcraft", "Officer", "Fortress Guard"
 #	 mana, attack, health = 3, 2, 3
 #	 index = "Shadowverse~Swordcraft~Minion~3~2~3~Officer~Fortress Guard~Taunt~Uncollectible"
-#	 requireTarget, keyWord, description = False, "Taunt", "Ward"
+#	 requireTarget, effects, description = False, "Taunt", "Ward"
 #
 #
 # class GildedBlade(Spell):
 #	 Class, school, name = "Swordcraft", "", "Gilded Blade"
-#	 requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~Gilded Blade~Uncollectible"
 #	 description = "Deal 1 damage to an enemy follower."
 #
@@ -175,7 +175,7 @@
 #
 # class GildedGoblet(Spell):
 #	 Class, school, name = "Swordcraft", "", "Gilded Goblet"
-#	 requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~Gilded Goblet~Uncollectible"
 #	 description = "Restore 2 defense to an ally."
 #
@@ -191,7 +191,7 @@
 #
 # class GildedBoots(Spell):
 #	 Class, school, name = "Swordcraft", "", "Gilded Boots"
-#	 requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~Gilded Boots~Uncollectible"
 #	 description = "Give Rush to an allied follower."
 #
@@ -204,13 +204,13 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if target is not None:
 #			 PRINT(self, f"Gilded Boots gives minion {target.name} Rush")
-#			 target.getsStatus("Rush")
+#			 target.getsEffect("Rush")
 #		 return target
 #
 #
 # class GildedNecklace(Spell):
 #	 Class, school, name = "Swordcraft", "", "Gilded Necklace"
-#	 requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~Gilded Necklace~Uncollectible"
 #	 description = "Give +1/+1 to an allied follower."
 #
@@ -232,7 +232,7 @@
 #
 # class GrandAcquisition(Spell):
 #	 Class, school, name = "Swordcraft", "", "Grand Acquisition"
-#	 requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~Grand Acquisition"
 #	 description = "Choose: Put 1 of the following cards into your hand. -Gilded Blade -Gilded Goblet -Gilded Boots -Gilded Necklace Enhance (6): Put 1 of each into your hand instead and recover 6 play points."
 #
@@ -274,20 +274,20 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Quickblader"
 #	 mana, attack, health = 1, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~1~Officer~Quickblader~Charge"
-#	 requireTarget, keyWord, description = False, "Charge", "Storm"
+#	 requireTarget, effects, description = False, "Charge", "Storm"
 #
 #
 # class Kagemitsu(SVMinion):
 #	 Class, race, name = "Swordcraft", "Officer", "Kagemitsu, Matchless Blade"
 #	 mana, attack, health = 1, 0, 1
 #	 index = "Shadowverse~Swordcraft~Minion~1~0~1~Officer~Kagemitsu, Matchless Blade~Battlecry~Deathrattle"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (3) - Gain +2/+0 and Rush.Last Words: If it is your turn, give your leader the following effect - At the start of your turn, summon a Kagemitsu, Matchless Blade, evolve it, then remove this effect."
+#	 requireTarget, effects, description = False, "", "Fanfare: Enhance (3) - Gain +2/+0 and Rush.Last Words: If it is your turn, give your leader the following effect - At the start of your turn, summon a Kagemitsu, Matchless Blade, evolve it, then remove this effect."
 #
 #	 attackAdd, healthAdd = 1, 0
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
-#		 if self.status["Evolved"] < 1:
+#		 if self.effects["Evolved"] < 1:
 #			 self.deathrattles = [DeathrattleKagemitsu(self)]
 #
 #	 def inEvolving(self):
@@ -312,7 +312,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if choice == 3:
 #			 PRINT(self, "Levin Beastmaster's Fanfare give it +2/+0 and Rush.")
-#			 self.getsStatus("Rush")
+#			 self.getsEffect("Rush")
 #			 self.buffDebuff(2, 0)
 #		 return None
 #
@@ -362,7 +362,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Ernesta, Weapons Hawker"
 #	 mana, attack, health = 1, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~1~Officer~Ernesta, Weapons Hawker~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Rally (10) - Put a Dread Hound into your hand."
+#	 requireTarget, effects, description = False, "", "Fanfare: Rally (10) - Put a Dread Hound into your hand."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 10
@@ -378,7 +378,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Dread Hound"
 #	 mana, attack, health = 1, 4, 4
 #	 index = "Shadowverse~Swordcraft~Minion~1~4~4~Officer~Dread Hound~Battlecry~Poisonous~Taunt~Uncollectable"
-#	 requireTarget, keyWord, description = False, "Poisonous,Taunt", "Bane.Ward.Fanfare: Give a random allied Ernesta, Weapons Hawker Last Words - Deal 4 damage to a random enemy follower."
+#	 requireTarget, effects, description = False, "Poisonous,Taunt", "Bane.Ward.Fanfare: Give a random allied Ernesta, Weapons Hawker Last Words - Deal 4 damage to a random enemy follower."
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 ts = self.Game.minionsAlive(self.ID)
@@ -409,7 +409,7 @@
 #
 # class DecisiveStrike(Spell):
 #	 Class, school, name = "Swordcraft", "", "Decisive Strike"
-#	 requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~Decisive Strike"
 #	 description = "Deal X damage to an enemy follower. X equals the attack of the highest-attack Commander follower in your hand.Enhance (5): Deal X damage to all enemy followers instead."
 #
@@ -452,7 +452,7 @@
 #
 # class PompousSummons(Spell):
 #	 Class, school, name = "Swordcraft", "", "Pompous Summons"
-#	 requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~Pompous Summons"
 #	 description = "Put a random Swordcraft follower from your deck into your hand.Rally (10): Put 2 random Swordcraft followers into your hand instead."
 #
@@ -482,7 +482,7 @@
 #
 # class LevinJustice(Spell):
 #	 Class, school, name = "Swordcraft", "", "Levin Justice"
-#	 requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~Levin Justice"
 #	 description = "Put a Yurius, Levin Duke into your hand. Then deal X damage to an enemy follower. X equals the number of Levin cards in your hand."
 #
@@ -511,7 +511,7 @@
 #	 Class, race, name = "Bloodcraft", "Levin", "Yurius, Levin Duke"
 #	 mana, attack, health = 2, 1, 3
 #	 index = "Shadowverse~Bloodcraft~Minion~2~1~3~Levin~Yurius, Levin Duke"
-#	 requireTarget, keyWord, description = False, "", "Whenever an enemy follower comes into play, deal 1 damage to the enemy leader."
+#	 requireTarget, effects, description = False, "", "Whenever an enemy follower comes into play, deal 1 damage to the enemy leader."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -532,7 +532,7 @@
 #
 # class MeetTheLevinSisters(Spell):
 #	 Class, school, name = "Swordcraft", "", "Meet the Levin Sisters!"
-#	 requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~Meet the Levin Sisters!"
 #	 description = "Choose: Put 1 of the following cards into your hand.-Mina, Levin Vice Leader-Mona, Levin Mage-Mena, Levin DuelistEnhance (7): Put 1 of each into your hand instead, and recover 6 play points."
 #
@@ -572,7 +572,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Mina, Levin Vice Leader"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Levin~Mina, Levin Vice Leader~Battlecry~Uncollectable"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Put a random Levin follower from your deck into your hand."
+#	 requireTarget, effects, description = False, "", "Fanfare: Put a random Levin follower from your deck into your hand."
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #		 levins = []
@@ -589,7 +589,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Mona, Levin Mage"
 #	 mana, attack, health = 4, 3, 3
 #	 index = "Shadowverse~Swordcraft~Minion~4~3~3~Levin~Mona, Levin Mage~Battlecry~Uncollectable"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Recover 2 play points. If another allied Levin card is in play, recover 3 instead."
+#	 requireTarget, effects, description = False, "", "Fanfare: Recover 2 play points. If another allied Levin card is in play, recover 3 instead."
 #
 #	 def effCanTrig(self):
 #		 controlLevin = False
@@ -616,7 +616,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Mena, Levin Duelist"
 #	 mana, attack, health = 3, 3, 2
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~2~Levin~Mena, Levin Duelist~Battlecry~Rush~Uncollectable"
-#	 requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: If another allied Levin card is in play, gain +1/+1."
+#	 requireTarget, effects, description = False, "Rush", "Rush.Fanfare: If another allied Levin card is in play, gain +1/+1."
 #
 #	 def effCanTrig(self):
 #		 controlLevin = False
@@ -641,7 +641,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Lounes, Levin Apprentice"
 #	 mana, attack, health = 1, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~1~Levin~Lounes, Levin Apprentice~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Gain +0/+1 for each Levin card in your hand.Enhance (3): Can attack 2 times per turn."
+#	 requireTarget, effects, description = False, "", "Fanfare: Gain +0/+1 for each Levin card in your hand.Enhance (3): Can attack 2 times per turn."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
@@ -661,7 +661,7 @@
 #			 self.buffDebuff(0, levins)
 #			 PRINT(self, f"Lounes, Levin Apprentice's Fanfare give itself +1/+{levins}.")
 #		 if choice == 3:
-#			 self.getsStatus("Windfury")
+#			 self.getsEffect("Windfury")
 #			 PRINT(self, f"Lounes, Levin Apprentice's Fanfare give itself Can attack 2 times per turn.")
 #
 #
@@ -672,7 +672,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Oathless Knight"
 #	 mana, attack, health = 2, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~2~1~1~Officer~Oathless Knight~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Summon a Knight."
+#	 requireTarget, effects, description = False, "", "Fanfare: Summon a Knight."
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 PRINT(self, "Oathless Knight's Fanfare summons a 1/1 Knight.")
@@ -684,7 +684,7 @@
 #	 Class, race, name = "Swordcraft", "Officer,Natura", "Panther Scout"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer,Natura~Panther Scout~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Recover 1 play point.Enhance (8): Gain +3/+3 and recover 7 play points instead."
+#	 requireTarget, effects, description = False, "", "Fanfare: Recover 1 play point.Enhance (8): Gain +3/+3 and recover 7 play points instead."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
@@ -710,7 +710,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Honorable Thief"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer~Honorable Thief~Battlecry~Deathrattle"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Rally (7) - Evolve this follower. Last Words: Put a Gilded Boots into your hand."
+#	 requireTarget, effects, description = False, "", "Fanfare: Rally (7) - Evolve this follower. Last Words: Put a Gilded Boots into your hand."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -736,11 +736,11 @@
 #	 Class, race, name = "Havencraft", "", "White Tiger"
 #	 mana, attack, health = 3, 3, 2
 #	 index = "Shadowverse~Havencraft~Minion~3~3~2~~White Tiger~Taunt"
-#	 requireTarget, keyWord, description = False, "Taunt", "Ward Can't be targeted by enemy spells and effects."
+#	 requireTarget, effects, description = False, "Taunt", "Ward Can't be targeted by enemy spells and effects."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
-#		 self.marks["Enemy Effect Evasive"] = 1
+#		 self.effects["Enemy Effect Evasive"] = 1
 #
 #
 # class LevinWhiteTiger(WhiteTiger):
@@ -752,7 +752,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Levin Beastmaster"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Levin~Levin Beastmaster~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (6) - Summon 2 White Tigers and change them into Levin followers."
+#	 requireTarget, effects, description = False, "", "Fanfare: Enhance (6) - Summon 2 White Tigers and change them into Levin followers."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
@@ -778,7 +778,7 @@
 #
 # class EleganceInAction(Spell):
 #	 Class, school, name = "Swordcraft", "", "Elegance in Action"
-#	 requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 #	 index = "Shadowverse~Swordcraft~Spell~2~Elegance in Action"
 #	 description = "Draw a card. Summon a Heavy Knight for each follower drawn. Deal 3 damage to a random enemy follower for each non-follower drawn.Enhance (5): Draw 3 cards instead."
 #
@@ -812,7 +812,7 @@
 #
 # class ShieldPhalanx(Spell):
 #	 Class, school, name = "Swordcraft", "", "Shield Phalanx"
-#	 requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 #	 index = "Shadowverse~Swordcraft~Spell~2~Shield Phalanx"
 #	 description = "Summon a Shield Guardian and Knight.Rally (15): Summon a Frontguard General instead of a Shield Guardian."
 #
@@ -836,7 +836,7 @@
 #
 # class MirrorsImage(Spell):
 #	 Class, school, name = "Swordcraft", "", "Mirror Image"
-#	 requireTarget, mana = True, 2
+	requireTarget, mana, effects = True, 2, ""
 #	 index = "Shadowverse~Swordcraft~Spell~2~Mirror Image"
 #	 description = "Choose an allied follower in play and summon a copy of it. Give it Rush, and banish it at the start of your next turn."
 #
@@ -851,7 +851,7 @@
 #			 m = type(target)(self.Game, self.ID)
 #			 PRINT(self, f"Mirror Image summon a copy of {target.name} and give it Rush.")
 #			 self.Game.summonMinion([m], (-11, "totheRightEnd"), self.ID)
-#			 m.getsStatus("Rush")
+#			 m.getsEffect("Rush")
 #			 trigger = TriggerMirrorsImage(m, self.ID)
 #			 m.trigsBoard.append(trigger)
 #			 if m.onBoard:
@@ -884,7 +884,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Steadfast Samurai"
 #	 mana, attack, health = 2, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~2~1~1~Officer~Steadfast Samurai"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (5) - Evolve this follower.Clash: Reduce damage to this follower to 0 until the end of the turn."
+#	 requireTarget, effects, description = False, "", "Fanfare: Enhance (5) - Evolve this follower.Clash: Reduce damage to this follower to 0 until the end of the turn."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -905,7 +905,7 @@
 #		 return None
 #
 #	 def inEvolving(self):
-#		 self.getsStatus("Charge")
+#		 self.getsEffect("Charge")
 #		 self.auras["Buff Aura"] = BuffAuraEvolvedSteadfastSamurai(self)
 #		 self.auras["Buff Aura"].auraAppears()
 #
@@ -918,7 +918,7 @@
 #		 return self.entity.onBoard and (target == self.entity or subject == self.entity)
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#		 self.entity.marks["Damage Immune"] += 1
+#		 self.entity.effects["Damage Immune"] += 1
 #		 trigger = TriggerTurnEndSteadfastSamurai(self.entity)
 #		 self.entity.trigsBoard.append(trigger)
 #		 if self.entity.onBoard:
@@ -933,7 +933,7 @@
 #		 return self.entity.onBoard
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#		 self.entity.marks["Damage Immune"] -= 1
+#		 self.entity.effects["Damage Immune"] -= 1
 #		 for t in self.entity.trigsBoard:
 #			 if type(t) == TriggerTurnEndSteadfastSamurai:
 #				 t.disconnect()
@@ -954,13 +954,13 @@
 #		 self.applies(self.entity.Game.heroes[self.entity.ID])
 #
 #	 def applies(self, subject):
-#		 subject.marks["Enemy Effect Damage Immune"] += 1
+#		 subject.effects["Enemy Effect Damage Immune"] += 1
 #
 #	 def auraAppears(self):
 #		 self.applies(self.entity.Game.heroes[self.entity.ID])
 #
 #	 def auraDisappears(self):
-#		 self.entity.Game.heroes[self.entity.ID].marks["Enemy Effect Damage Immune"] -= 1
+#		 self.entity.Game.heroes[self.entity.ID].effects["Enemy Effect Damage Immune"] -= 1
 #
 #	 def selfCopy(self, recipientMinion):  # The recipientMinion is the minion that deals the Aura.
 #		 return type(self)(recipientMinion)
@@ -970,7 +970,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Twinsword Master"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer~Twinsword Master~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: If an allied Commander card is in play, gain the ability to evolve for 0 evolution points."
+#	 requireTarget, effects, description = False, "", "Fanfare: If an allied Commander card is in play, gain the ability to evolve for 0 evolution points."
 #
 #	 attackAdd, healthAdd = 1, 1
 #
@@ -988,18 +988,18 @@
 #				 controlOfficer = True
 #				 break
 #		 if controlOfficer:
-#			 self.getsStatus("Free Evolve")
+#			 self.getsEffect("Free Evolve")
 #		 return None
 #
 #	 def inEvolving(self):
-#		 self.getsStatus("Windfury")
+#		 self.getsEffect("Windfury")
 #
 #
 # class ValseChampionDeadeye(SVMinion):
 #	 Class, race, name = "Swordcraft", "Officer", "Valse, Champion Deadeye"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer~Valse, Champion Deadeye~Battlecry"
-#	 requireTarget, keyWord, description = True, "", "Fanfare: Enhance (6) - Banish an enemy follower or amulet."
+#	 requireTarget, effects, description = True, "", "Fanfare: Enhance (6) - Banish an enemy follower or amulet."
 #	 evolveRequireTarget = True
 #
 #	 def effCanTrig(self):
@@ -1038,7 +1038,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Levin Archer"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Levin~Levin Archer"
-#	 requireTarget, keyWord, description = False, "", ""
+#	 requireTarget, effects, description = False, "", ""
 #	 evolveRequireTarget = True
 #
 #	 def inHandEvolving(self, target=None):
@@ -1059,7 +1059,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Jeno, Levin Stalwart"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Levin~Jeno, Levin Stalwart"
-#	 requireTarget, keyWord, description = False, "", "Can evolve an allied Levin follower (excluding Jeno, Levin Stalwart) each turn for 0 evolution points until this follower leaves play."
+#	 requireTarget, effects, description = False, "", "Can evolve an allied Levin follower (excluding Jeno, Levin Stalwart) each turn for 0 evolution points until this follower leaves play."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -1076,7 +1076,7 @@
 #	 Class, race, name = "Neutral", "", "Gabriel, Heavenly Voice"
 #	 mana, attack, health = 3, 2, 3
 #	 index = "Shadowverse~Neutral~Minion~3~2~3~~Gabriel, Heavenly Voice~Battlecry~Taunt"
-#	 requireTarget, keyWord, description = True, "Taunt", "Ward.Fanfare: Use X play points to give +X/+X to this follower and another allied follower. X equals your remaining play points."
+#	 requireTarget, effects, description = True, "Taunt", "Ward.Fanfare: Use X play points to give +X/+X to this follower and another allied follower. X equals your remaining play points."
 #
 #	 def targetExists(self, choice=0):
 #		 return self.selectableFriendlyMinionExists(choice)
@@ -1098,7 +1098,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Empress of Serenity"
 #	 mana, attack, health = 3, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~3~2~2~Commander~Empress of Serenity~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Summon a Shield Guardian.Enhance (5): Summon 3 instead.Enhance (10): Give +3/+3 to all allied Shield Guardians."
+#	 requireTarget, effects, description = False, "", "Fanfare: Summon a Shield Guardian.Enhance (5): Summon 3 instead.Enhance (10): Give +3/+3 to all allied Shield Guardians."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
@@ -1134,7 +1134,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "VII. Oluon, The Chariot"
 #	 mana, attack, health = 3, 3, 3
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~3~Commander~VII. Oluon, The Chariot~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (7) - Transform this follower into a VII. Oluon, Runaway Chariot.At the end of your turn, randomly activate 1 of the following effects.-Gain Ward.-Summon a Knight.-Deal 2 damage to the enemy leader."
+#	 requireTarget, effects, description = False, "", "Fanfare: Enhance (7) - Transform this follower into a VII. Oluon, Runaway Chariot.At the end of your turn, randomly activate 1 of the following effects.-Gain Ward.-Summon a Knight.-Deal 2 damage to the enemy leader."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -1159,11 +1159,11 @@
 #	 Class, race, name = "Swordcraft", "Commander", "VII. Oluon, Runaway Chariot"
 #	 mana, attack, health = 7, 8, 16
 #	 index = "Shadowverse~Swordcraft~Minion~7~8~16~Commander~VII. Oluon, Runaway Chariot~Uncollectable"
-#	 requireTarget, keyWord, description = False, "", "Can't attack.At the end of your turn, randomly deal X damage to an enemy or another ally and then Y damage to this follower. X equals this follower's attack and Y equals the attack of the follower or leader damaged (leaders have 0 attack). Do this 2 times."
+#	 requireTarget, effects, description = False, "", "Can't attack.At the end of your turn, randomly deal X damage to an enemy or another ally and then Y damage to this follower. X equals this follower's attack and Y equals the attack of the follower or leader damaged (leaders have 0 attack). Do this 2 times."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
-#		 self.marks["Can't Attack"] = 1
+#		 self.effects["Can't Attack"] = 1
 #		 self.trigsBoard = [TriggerOluonRunawayChariot(self)]
 #
 #
@@ -1178,7 +1178,7 @@
 #		 es = ["T", "H", "K"]
 #		 e = np.random.choice(es)
 #		 if e == "T":
-#			 self.entity.getsStatus("Taunt")
+#			 self.entity.getsEffect("Taunt")
 #		 elif e == "H":
 #			 self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 2)
 #		 elif e == "K":
@@ -1218,7 +1218,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Gelt, Resolute Knight"
 #	 mana, attack, health = 3, 3, 3
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~3~Officer~Gelt, Resolute Knight~Battlecry~Deathrattle"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: If an allied Commander card is in play, gain Rush.Last Words: At the start of your next turn, put a random Commander card from your deck into your hand."
+#	 requireTarget, effects, description = False, "", "Fanfare: If an allied Commander card is in play, gain Rush.Last Words: At the start of your next turn, put a random Commander card from your deck into your hand."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -1238,7 +1238,7 @@
 #				 controlOfficer = True
 #				 break
 #		 if controlOfficer:
-#			 self.getsStatus("Rush")
+#			 self.getsEffect("Rush")
 #		 return None
 #
 #
@@ -1278,7 +1278,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Lady of the Lance"
 #	 mana, attack, health = 3, 3, 2
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~2~Officer~Lady of the Lance~Battlecry~Rush"
-#	 requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: If you have at least 2 Commander cards in your hand, gain Bane and the following effect - The next time this follower takes damage, reduce that damage to 0.Fanfare: Enhance (8) - Gain Storm. Recover 5 play points."
+#	 requireTarget, effects, description = False, "Rush", "Rush.Fanfare: If you have at least 2 Commander cards in your hand, gain Bane and the following effect - The next time this follower takes damage, reduce that damage to 0.Fanfare: Enhance (8) - Gain Storm. Recover 5 play points."
 #
 #	 def getMana(self):
 #		 if self.Game.Manas.manas[self.ID] >= 8:
@@ -1296,7 +1296,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if choice == 8:
 #			 PRINT(self, "Lady of the Lance's Fanfare give it Storm.")
-#			 self.getsStatus("Charge")
+#			 self.getsEffect("Charge")
 #			 self.Game.Manas.manas[self.ID] += 5
 #		 commanders = 0
 #		 for card in self.Game.Hand_Deck.hands[self.ID]:
@@ -1304,8 +1304,8 @@
 #				 commanders += 1
 #		 if commanders >= 2:
 #			 PRINT(self, "Lady of the Lance's Fanfare give it Bane and reduce next damage to 0.")
-#			 self.getsStatus("Poisonous")
-#			 self.marks["Next Damage 0"] += 1
+#			 self.getsEffect("Poisonous")
+#			 self.effects["Next Damage 0"] += 1
 #		 return None
 #
 #
@@ -1313,17 +1313,17 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Pecorine, Peckish Princess"
 #	 mana, attack, health = 3, 3, 2
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~2~Commander~Pecorine, Peckish Princess~Battlecry~Rush"
-#	 requireTarget, keyWord, description = True, "Rush", "Rush.Fanfare: Union Burst (10) - Gain +3/+3. Deal 5 damage to an enemy follower.At the end of your turn, gain +0/+1."
+#	 requireTarget, effects, description = True, "Rush", "Rush.Fanfare: Union Burst (10) - Gain +3/+3. Deal 5 damage to an enemy follower.At the end of your turn, gain +0/+1."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerPecorinePeckishPrincess(self)]
 #
 #	 def effCanTrig(self):
-#		 self.effectViable = self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]
+#		 self.effectViable = self.effects["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]
 #
 #	 def targetExists(self, choice=0):
-#		 if self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
+#		 if self.effects["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
 #			 return self.selectableEnemyMinionExists(choice)
 #		 return False
 #
@@ -1331,7 +1331,7 @@
 #		 return target.cardType == "Minion" and target.ID != self.ID and target.onBoard
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-#		 if self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
+#		 if self.effects["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
 #			 self.buffDebuff(3, 3)
 #			 if target:
 #				 PRINT(self, f"Pecorine, Peckish Princess deals 5 damage to minion {target.name}")
@@ -1355,7 +1355,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Tsubaki of the Demon Blade"
 #	 mana, attack, health = 3, 3, 2
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~2~Officer~Tsubaki of the Demon Blade~Battlecry~Stealth"
-#	 requireTarget, keyWord, description = False, "Stealth", "Ambush.Fanfare: If at least 10 allied followers have been destroyed this match, gain +1/+1 and randomly destroy 1 of the enemy followers with the highest attack in play."
+#	 requireTarget, effects, description = False, "Stealth", "Ambush.Fanfare: If at least 10 allied followers have been destroyed this match, gain +1/+1 and randomly destroy 1 of the enemy followers with the highest attack in play."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.Game.Counters.numMinionsDiedThisGame[self.ID] >= 10
@@ -1382,7 +1382,7 @@
 #
 # class StrokeOfConviction(Spell):
 #	 Class, school, name = "Swordcraft", "", "Stroke of Conviction"
-#	 requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 #	 index = "Shadowverse~Swordcraft~Spell~3~Stroke of Conviction"
 #	 description = "Choose: Use play points equal to this card's cost and play this card as an Erika's Sleight, Mistolina's Swordplay, or Bayleon's Command."
 #
@@ -1424,7 +1424,7 @@
 #
 # class ErikasSleight(Spell):
 #	 Class, school, name = "Swordcraft", "", "Erika's Sleight"
-#	 requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 #	 index = "Shadowverse~Swordcraft~Spell~0~Erika's Sleight~Uncollectible"
 #	 description = "Summon 2 Quickbladers."
 #
@@ -1437,7 +1437,7 @@
 #
 # class MistolinasSwordplay(Spell):
 #	 Class, school, name = "Swordcraft", "", "Mistolina's Swordplay"
-#	 requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 #	 index = "Shadowverse~Swordcraft~Spell~0~Mistolina's Swordplay~Uncollectible"
 #	 description = "Deal 5 damage to a random enemy follower."
 #
@@ -1455,7 +1455,7 @@
 #
 # class BayleonsCommand(Spell):
 #	 Class, school, name = "Swordcraft", "", "Bayleon's Command"
-#	 requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 #	 index = "Shadowverse~Swordcraft~Spell~0~Bayleon's Command~Uncollectible"
 #	 description = "Give +1/+1 to all allied followers."
 #
@@ -1468,7 +1468,7 @@
 #
 # class CourtlyDance(Spell):
 #	 Class, school, name = "Swordcraft", "", "Courtly Dance"
-#	 requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 #	 index = "Shadowverse~Swordcraft~Spell~3~Courtly Dance"
 #	 description = "Put a random 1-play point and 2-play point Swordcraft follower from your deck into play.Enhance (8): Then, put a random 3-play point Swordcraft follower from your deck into play and evolve them. Evolve effects will not activate for those followers."
 #
@@ -1528,7 +1528,7 @@
 #	 Class, race, name = "Neutral", "", "Fieran, Havensent Wind God"
 #	 mana, attack, health = 4, 1, 1
 #	 index = "Shadowverse~Neutral~Minion~4~1~1~~Fieran, Havensent Wind God~Battlecry"
-#	 requireTarget, keyWord, description = True, "Taunt", "Invocation: At the start of your turn, Rally (10) - Invoke this card.------Fanfare: If you have more evolution points than your opponent, gain +0/+2 and deal 2 damage to an enemy follower. (You have 0 evolution points on turns you are unable to evolve.)At the end of your turn, give +1/+1 to all allied followers."
+#	 requireTarget, effects, description = True, "Taunt", "Invocation: At the start of your turn, Rally (10) - Invoke this card.------Fanfare: If you have more evolution points than your opponent, gain +0/+2 and deal 2 damage to an enemy follower. (You have 0 evolution points on turns you are unable to evolve.)At the end of your turn, give +1/+1 to all allied followers."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -1598,7 +1598,7 @@
 #
 # class ResolveOfTheFallen(Spell):
 #	 Class, school, name = "Neutral", "", "Resolve of the Fallen"
-#	 requireTarget, mana = True, 4
+	requireTarget, mana, effects = True, 4, ""
 #	 index = "Shadowverse~Neutral~Spell~4~Resolve of the Fallen"
 #	 description = "Destroy an enemy follower or amulet.If at least 3 allied followers have evolved this match, recover 3 play points.Then, if at least 5 have evolved, draw 2 cards."
 #
@@ -1623,7 +1623,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "PrudentGeneral"
 #	 mana, attack, health = 4, 3, 4
 #	 index = "Shadowverse~Swordcraft~Minion~4~3~4~Commander~Prudent General"
-#	 requireTarget, keyWord, description = False, "", ""
+#	 requireTarget, effects, description = False, "", ""
 #
 #	 def inEvolving(self):
 #		 trigger = TriggerPrudentGeneral(self.Game.heroes[self.ID])
@@ -1651,14 +1651,14 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Shizuru, Sisterly Sabreur"
 #	 mana, attack, health = 4, 3, 5
 #	 index = "Shadowverse~Swordcraft~Minion~4~3~5~Officer~Shizuru, Sisterly Sabreur~Battlecry~Taunt"
-#	 requireTarget, keyWord, description = False, "Taunt", "Ward.Fanfare: Union Burst (10) - Deal 3 damage to the enemy leader. Gain the ability to evolve for 0 evolution points."
+#	 requireTarget, effects, description = False, "Taunt", "Ward.Fanfare: Union Burst (10) - Deal 3 damage to the enemy leader. Gain the ability to evolve for 0 evolution points."
 #
 #	 def effCanTrig(self):
-#		 self.effectViable = self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]
+#		 self.effectViable = self.effects["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-#		 if self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
-#			 self.getsStatus("Free Evolve")
+#		 if self.effects["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
+#			 self.getsEffect("Free Evolve")
 #			 PRINT(self, f"Shizuru, Sisterly Sabreur 3 damage to the enemy leader.")
 #			 self.dealsDamage(self.Game.heroes[3 - self.ID], 3)
 #		 return None
@@ -1698,13 +1698,13 @@
 #	 Class, race, name = "Neutral", "", "XXI. Zelgenea, The World"
 #	 mana, attack, health = 5, 5, 5
 #	 index = "Shadowverse~Neutral~Minion~5~5~5~~XXI. Zelgenea, The World~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Invocation: At the start of your tenth turn, invoke this card. Then, evolve it.----------Fanfare: Restore 5 defense to your leader. If your leader had 14 defense or less before defense was restored, draw 2 cards and randomly destroy 1 of the enemy followers with the highest attack in play.Can't be evolved using evolution points. (Can be evolved using card effects.)"
+#	 requireTarget, effects, description = False, "", "Invocation: At the start of your tenth turn, invoke this card. Then, evolve it.----------Fanfare: Restore 5 defense to your leader. If your leader had 14 defense or less before defense was restored, draw 2 cards and randomly destroy 1 of the enemy followers with the highest attack in play.Can't be evolved using evolution points. (Can be evolved using card effects.)"
 #
 #	 attackAdd, healthAdd = 5, 5
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
-#		 self.marks["Can't Evolve"] = 1
+#		 self.effects["Can't Evolve"] = 1
 #		 self.trigsDeck = [TriggerInvocationZelgeneaTheWorld(self)]
 #
 #	 def effCanTrig(self):
@@ -1788,7 +1788,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Luxblade Arriet"
 #	 mana, attack, health = 5, 4, 5
 #	 index = "Shadowverse~Swordcraft~Minion~5~4~5~Officer~Luxblade Arriet~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: If at least 1 allied follower has evolved this match, gain Ward.Then, if at least 3 have evolved, recover 3 play points.Then, if at least 5 have evolved, restore 5 defense to your leader.Then, if at least 7 have evolved, draw cards until there are 7 cards in your hand."
+#	 requireTarget, effects, description = False, "", "Fanfare: If at least 1 allied follower has evolved this match, gain Ward.Then, if at least 3 have evolved, recover 3 play points.Then, if at least 5 have evolved, restore 5 defense to your leader.Then, if at least 7 have evolved, draw cards until there are 7 cards in your hand."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 1
@@ -1796,7 +1796,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 1:
 #			 PRINT(self, "Luxblade Arriet gains Ward.")
-#			 self.getsStatus("Taunt")
+#			 self.getsEffect("Taunt")
 #		 if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 3:
 #			 PRINT(self, "Luxblade Arriet restores 3 PP.")
 #			 self.Game.Manas.manas[self.ID] += 3
@@ -1818,7 +1818,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Amelia, the Silverflash"
 #	 mana, attack, health = 5, 4, 4
 #	 index = "Shadowverse~Swordcraft~Minion~5~4~4~Commander~Amelia, the Silverflash~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Randomly put 2 different Officer followers from your deck into your hand.Enhance (7): Gain the ability to evolve for 0 evolution points and the following effect - The next time this follower takes damage, reduce that damage to 0."
+#	 requireTarget, effects, description = False, "", "Fanfare: Randomly put 2 different Officer followers from your deck into your hand.Enhance (7): Gain the ability to evolve for 0 evolution points and the following effect - The next time this follower takes damage, reduce that damage to 0."
 #	 evolveRequireTarget = True
 #
 #	 def effCanTrig(self):
@@ -1849,8 +1849,8 @@
 #					 self.Game.Hand_Deck.drawCard(self.ID, card)
 #					 PRINT(self, f"Amelia, the Silverflash's Fanfare let you draw {card.name}.")
 #		 if choice == 7:
-#			 self.getsStatus("Free Evolve")
-#			 self.marks["Next Damage 0"] = 1
+#			 self.getsEffect("Free Evolve")
+#			 self.effects["Next Damage 0"] = 1
 #		 return None
 #
 #	 def inHandEvolving(self, target=None):
@@ -1890,7 +1890,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Albert, Levin Champion"
 #	 mana, attack, health = 5, 3, 5
 #	 index = "Shadowverse~Swordcraft~Minion~5~3~5~Levin~Albert, Levin Champion~Battlecry"
-#	 requireTarget, keyWord, description = False, "Charge", "Storm.Fanfare: Enhance (9) - Randomly put different Levin followers (excluding Albert, Levin Champion) from your deck into play until your area is full.Strike: Gain +1/+0 if another allied Levin card is in play."
+#	 requireTarget, effects, description = False, "Charge", "Storm.Fanfare: Enhance (9) - Randomly put different Levin followers (excluding Albert, Levin Champion) from your deck into play until your area is full.Strike: Gain +1/+0 if another allied Levin card is in play."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -1949,7 +1949,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Diamond Paladin"
 #	 mana, attack, health = 6, 4, 5
 #	 index = "Shadowverse~Swordcraft~Minion~6~4~5~Commander~Diamond Paladin~Battlecry~Rush"
-#	 requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: Enhance (8) - Gain the ability to evolve for 0 evolution points.During your turn, whenever this follower attacks and destroys an enemy follower, if this follower is not destroyed, recover 2 play points and gain the ability to attack 2 times this turn."
+#	 requireTarget, effects, description = False, "Rush", "Rush.Fanfare: Enhance (8) - Gain the ability to evolve for 0 evolution points.During your turn, whenever this follower attacks and destroys an enemy follower, if this follower is not destroyed, recover 2 play points and gain the ability to attack 2 times this turn."
 #	 evolveRequireTarget = True
 #
 #	 def __init__(self, Game, ID):
@@ -1967,7 +1967,7 @@
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if choice == 8:
-#			 self.getsStatus("Free Evolve")
+#			 self.getsEffect("Free Evolve")
 #		 return None
 #
 #	 def inHandEvolving(self, target=None):
@@ -1991,7 +1991,7 @@
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #		 PRINT(self,
 #			   "After %s attacks and kills minion %s, the player gains 10 Armor." % (self.entity.name, target.name))
-#		 self.entity.getsStatus("Windfury")
+#		 self.entity.getsEffect("Windfury")
 #		 self.entity.Game.Manas.manas[self.entity.ID] += 2
 #		 trigger = TriggerTurnEndDiamondPaladin(self.entity)
 #		 self.entity.trigsBoard.append(trigger)
@@ -2007,7 +2007,7 @@
 #		 return self.entity.onBoard
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#		 self.entity.losesStatus("Windfury")
+#		 self.entity.losesEffect("Windfury")
 #		 for t in self.entity.trigsBoard:
 #			 if type(t) == TriggerTurnEndDiamondPaladin:
 #				 t.disconnect()
@@ -2020,7 +2020,7 @@
 #
 # class AccelerateRegalWildcat(AccelerateSpell):
 #	 Class, school, name = "Swordcraft", "", "Regal Wildcat"
-#	 requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 #	 index = "Shadowverse~Swordcraft~Spell~4~Regal Wildcat~Uncollectible"
 #	 description = "Summon a Steelclad Knight, a Heavy Knight, and a Knight."
 #
@@ -2035,7 +2035,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Regal Wildcat"
 #	 mana, attack, health = 7, 4, 4
 #	 index = "Shadowverse~Swordcraft~Minion~7~4~4~Commander~Regal Wildcat~Battlecry~Charge"
-#	 requireTarget, keyWord, description = True, "Charge", "Accelerate (4): Summon a Steelclad Knight, a Heavy Knight, and a Knight.----------Storm.Fanfare: If at least 10 allied followers have been destroyed this match, give another allied follower +2/+2 and Storm."
+#	 requireTarget, effects, description = True, "Charge", "Accelerate (4): Summon a Steelclad Knight, a Heavy Knight, and a Knight.----------Storm.Fanfare: If at least 10 allied followers have been destroyed this match, give another allied follower +2/+2 and Storm."
 #	 accelerate = 4
 #
 #	 def __init__(self, Game, ID):
@@ -2059,7 +2059,7 @@
 #		 if target is not None:
 #			 PRINT(self, f"Regal Wildcat gives minion {target.name} +2/+2 and Storm.")
 #			 target.buffDebuff(2, 2)
-#			 target.getsStatus("Charge")
+#			 target.getsEffect("Charge")
 #		 return target
 #
 #	 def getAccelerateSpell(self):
@@ -2070,7 +2070,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Frontguard General"
 #	 mana, attack, health = 7, 5, 6
 #	 index = "Shadowverse~Swordcraft~Minion~7~5~6~Commander~Fortress Guard~Taunt~Deathrattle"
-#	 requireTarget, keyWord, description = False, "Taunt", "Ward.Last Words: Summon a Fortress Guard."
+#	 requireTarget, effects, description = False, "Taunt", "Ward.Last Words: Summon a Fortress Guard."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -2088,12 +2088,12 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Honored Frontguard General"
 #	 mana, attack, health = 7, 5, 6
 #	 index = "Shadowverse~Swordcraft~Minion~7~5~6~Commander~Honored Fortress Guard~Taunt~Deathrattle"
-#	 requireTarget, keyWord, description = False, "Taunt", "Ward.Can't be targeted by enemy spells and effects.Last Words: Summon a Shield Guardian, and give it +X/+X. X equals the number of times that allied followers have evolved during this match."
+#	 requireTarget, effects, description = False, "Taunt", "Ward.Can't be targeted by enemy spells and effects.Last Words: Summon a Shield Guardian, and give it +X/+X. X equals the number of times that allied followers have evolved during this match."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
 #		 self.deathrattles = [DeathrattleHonoredFrontguardGeneral(self)]
-#		 self.marks["Enemy Effect Evasive"] = 1
+#		 self.effects["Enemy Effect Evasive"] = 1
 #
 #
 # class DeathrattleHonoredFrontguardGeneral(Deathrattle_Minion):
@@ -2104,7 +2104,7 @@
 #		 self.entity.Game.summonMinion([s], (-11, "totheRightEnd"), self.entity.ID)
 #		 s.buffDebuff(evolved, evolved)# class AirboundBarrage(Spell):
 # 	Class, school, name = "Warrior", "", "Airbound Barrage"
-# 	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 # 	index = "Shadowverse~Warrior~Spell~1~~Airbound Barrage"
 # 	description = "Choose a friendly minion and then an enemy minion. Return the friendly minion to your hand and deal 3 damage to the enemy minion"
 # 	def available(self):
@@ -2118,7 +2118,7 @@
 # 			self.Game.Discover.startSelectBoard(self, ownMinions)
 # 			self.Game.Discover.startSelectBoard(self, enemyMinions)
 # 			PRINT(self.Game, "Airbound Barrage returns friendly minion %s to player's hand"%self.ownMinion.name)
-# 			self.Game.returnMiniontoHand(self.ownMinion, deathrattlesStayArmed=False)
+# 			self.Game.returnObj2Hand(self.ownMinion, deathrattlesStayArmed=False)
 # 			damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
 # 			PRINT(self.Game, "Airbound Barrage deals %d damage to enemy minion %s"%(damage, self.enemyMinion.name))
 # 			self.dealsDamage(self.enemyMinion, damage)
@@ -2131,7 +2131,7 @@
 #
 # class EntrancingBlow(Spell):
 # 	Class, school, name = "Warrior", "", "Entrancing Blow"
-# 	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 # 	index = "Shadowverse~Warrior~Spell~2~~Entrancing Blow"
 # 	description = "fefwsfe"
 # 	def available(self):
@@ -2156,7 +2156,7 @@
 #
 # class SavoringSlash(Spell):
 # 	Class, school, name = "Warrior", "", "Savoring Slash"
-# 	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 # 	index = "Shadowverse~Warrior~Spell~2~~Savoring Slash"
 # 	description = "fefwsfe"
 # 	def available(self):
@@ -2189,7 +2189,7 @@
 # 	Class, race, name = "Warrior", "", "Panther Scout"
 # 	mana, attack, health = 2, 2, 2
 # 	index = "Shadowverse~Warrior~Minion~2~2~2~~Panther Scout~Fanfare"
-# 	requireTarget, keyWord, description = False, "", "Fanfare: Restore 1 Mana. Enhance 8: Gain +3/+3 and restore 7 Mana instead"
+# 	requireTarget, effects, description = False, "", "Fanfare: Restore 1 Mana. Enhance 8: Gain +3/+3 and restore 7 Mana instead"
 #
 # 	def effCanTrig(self):
 # 		self.effectViable = self.Game.Manas.manas[self.ID] > 7
@@ -2209,13 +2209,13 @@
 # 	Class, race, name = "Warrior", "", "Roan Winged Nexx"
 # 	mana, attack, health = 4, 3, 4
 # 	index = "Shadowverse~Warrior~Minion~4~3~3~~Reclusive Ponderer~Ambush~Accelerate"
-# 	requireTarget, keyWord, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
+# 	requireTarget, effects, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
 #
 # class ReclusivePonderer(SVMinion):
 # 	Class, race, name = "Warrior", "", "Reclusive Ponderer"
 # 	mana, attack, health = 4, 3, 3
 # 	index = "Shadowverse~Warrior~Minion~4~3~3~~Reclusive Ponderer~Ambush~Accelerate"
-# 	requireTarget, keyWord, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
+# 	requireTarget, effects, description = False, "Ambush", "Ambush. Accelerate 1: Draw a card"
 #
 #
 
@@ -2226,40 +2226,40 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Steelclad Knight"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer~Steelclad Knight~Uncollectible"
-#	 requireTarget, keyWord, description = False, "", ""
+#	 requireTarget, effects, description = False, "", ""
 #
 #
 # class HeavyKnight(SVMinion):
 #	 Class, race, name = "Swordcraft", "Officer", "Heavy Knight"
 #	 mana, attack, health = 1, 1, 2
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~2~Officer~Heavy Knight~Uncollectible"
-#	 requireTarget, keyWord, description = False, "", ""
+#	 requireTarget, effects, description = False, "", ""
 #
 #
 # class Knight(SVMinion):
 #	 Class, race, name = "Swordcraft", "Officer", "Knight"
 #	 mana, attack, health = 1, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~1~Officer~Knight~Uncollectible"
-#	 requireTarget, keyWord, description = False, "", ""
+#	 requireTarget, effects, description = False, "", ""
 #
 #
 # class ShieldGuardian(SVMinion):
 #	 Class, race, name = "Swordcraft", "Officer", "Shield Guardian"
 #	 mana, attack, health = 1, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~1~Officer~Shield Guardian~Taunt~Uncollectible"
-#	 requireTarget, keyWord, description = False, "Taunt", "Ward"
+#	 requireTarget, effects, description = False, "Taunt", "Ward"
 #
 #
 # class FortressGuard(SVMinion):
 #	 Class, race, name = "Swordcraft", "Officer", "Fortress Guard"
 #	 mana, attack, health = 3, 2, 3
 #	 index = "Shadowverse~Swordcraft~Minion~3~2~3~Officer~Fortress Guard~Taunt~Uncollectible"
-#	 requireTarget, keyWord, description = False, "Taunt", "Ward"
+#	 requireTarget, effects, description = False, "Taunt", "Ward"
 #
 #
 # class GildedBlade(Spell):
 #	 Class, school, name = "Swordcraft", "", "Gilded Blade"
-#	 requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~~Gilded Blade~Uncollectible"
 #	 description = "Deal 1 damage to an enemy follower."
 #
@@ -2279,7 +2279,7 @@
 #
 # class GildedGoblet(Spell):
 #	 Class, school, name = "Swordcraft", "", "Gilded Goblet"
-#	 requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~~Gilded Goblet~Uncollectible"
 #	 description = "Restore 2 defense to an ally."
 #
@@ -2295,7 +2295,7 @@
 #
 # class GildedBoots(Spell):
 #	 Class, school, name = "Swordcraft", "", "Gilded Boots"
-#	 requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~~Gilded Boots~Uncollectible"
 #	 description = "Give Rush to an allied follower."
 #
@@ -2308,13 +2308,13 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if target is not None:
 #			 PRINT(self, f"Gilded Boots gives minion {target.name} Rush")
-#			 target.getsStatus("Rush")
+#			 target.getsEffect("Rush")
 #		 return target
 #
 #
 # class GildedNecklace(Spell):
 #	 Class, school, name = "Swordcraft", "", "Gilded Necklace"
-#	 requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~~Gilded Necklace~Uncollectible"
 #	 description = "Give +1/+1 to an allied follower."
 #
@@ -2336,7 +2336,7 @@
 #
 # class GrandAcquisition(Spell):
 #	 Class, school, name = "Swordcraft", "", "Grand Acquisition"
-#	 requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~~Grand Acquisition"
 #	 description = "Choose: Put 1 of the following cards into your hand. -Gilded Blade -Gilded Goblet -Gilded Boots -Gilded Necklace Enhance (6): Put 1 of each into your hand instead and recover 6 play points."
 #
@@ -2378,20 +2378,20 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Quickblader"
 #	 mana, attack, health = 1, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~1~Officer~Quickblader~Charge"
-#	 requireTarget, keyWord, description = False, "Charge", "Storm"
+#	 requireTarget, effects, description = False, "Charge", "Storm"
 #
 #
 # class Kagemitsu(SVMinion):
 #	 Class, race, name = "Swordcraft", "Officer", "Kagemitsu, Matchless Blade"
 #	 mana, attack, health = 1, 0, 1
 #	 index = "Shadowverse~Swordcraft~Minion~1~0~1~Officer~Kagemitsu, Matchless Blade~Battlecry~Deathrattle"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (3) - Gain +2/+0 and Rush.Last Words: If it is your turn, give your leader the following effect - At the start of your turn, summon a Kagemitsu, Matchless Blade, evolve it, then remove this effect."
+#	 requireTarget, effects, description = False, "", "Fanfare: Enhance (3) - Gain +2/+0 and Rush.Last Words: If it is your turn, give your leader the following effect - At the start of your turn, summon a Kagemitsu, Matchless Blade, evolve it, then remove this effect."
 #
 #	 attackAdd, healthAdd = 1, 0
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
-#		 if self.status["Evolved"] < 1:
+#		 if self.effects["Evolved"] < 1:
 #			 self.deathrattles = [DeathrattleKagemitsu(self)]
 #
 #	 def inEvolving(self):
@@ -2416,7 +2416,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if choice == 3:
 #			 PRINT(self, "Levin Beastmaster's Fanfare give it +2/+0 and Rush.")
-#			 self.getsStatus("Rush")
+#			 self.getsEffect("Rush")
 #			 self.buffDebuff(2, 0)
 #		 return None
 #
@@ -2466,7 +2466,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Ernesta, Weapons Hawker"
 #	 mana, attack, health = 1, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~1~Officer~Ernesta, Weapons Hawker~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Rally (10) - Put a Dread Hound into your hand."
+#	 requireTarget, effects, description = False, "", "Fanfare: Rally (10) - Put a Dread Hound into your hand."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.Game.Counters.numMinionsSummonThisGame[self.ID] >= 10
@@ -2482,7 +2482,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Dread Hound"
 #	 mana, attack, health = 1, 4, 4
 #	 index = "Shadowverse~Swordcraft~Minion~1~4~4~Officer~Dread Hound~Battlecry~Poisonous~Taunt~Uncollectable"
-#	 requireTarget, keyWord, description = False, "Poisonous,Taunt", "Bane.Ward.Fanfare: Give a random allied Ernesta, Weapons Hawker Last Words - Deal 4 damage to a random enemy follower."
+#	 requireTarget, effects, description = False, "Poisonous,Taunt", "Bane.Ward.Fanfare: Give a random allied Ernesta, Weapons Hawker Last Words - Deal 4 damage to a random enemy follower."
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 ts = self.Game.minionsAlive(self.ID)
@@ -2513,7 +2513,7 @@
 #
 # class DecisiveStrike(Spell):
 #	 Class, school, name = "Swordcraft", "", "Decisive Strike"
-#	 requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~~Decisive Strike"
 #	 description = "Deal X damage to an enemy follower. X equals the attack of the highest-attack Commander follower in your hand.Enhance (5): Deal X damage to all enemy followers instead."
 #
@@ -2556,7 +2556,7 @@
 #
 # class PompousSummons(Spell):
 #	 Class, school, name = "Swordcraft", "", "Pompous Summons"
-#	 requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~~Pompous Summons"
 #	 description = "Put a random Swordcraft follower from your deck into your hand.Rally (10): Put 2 random Swordcraft followers into your hand instead."
 #
@@ -2586,7 +2586,7 @@
 #
 # class LevinJustice(Spell):
 #	 Class, school, name = "Swordcraft", "", "Levin Justice"
-#	 requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~~Levin Justice"
 #	 description = "Put a Yurius, Levin Duke into your hand. Then deal X damage to an enemy follower. X equals the number of Levin cards in your hand."
 #
@@ -2615,7 +2615,7 @@
 #	 Class, race, name = "Bloodcraft", "Levin", "Yurius, Levin Duke"
 #	 mana, attack, health = 2, 1, 3
 #	 index = "Shadowverse~Bloodcraft~Minion~2~1~3~Levin~Yurius, Levin Duke"
-#	 requireTarget, keyWord, description = False, "", "Whenever an enemy follower comes into play, deal 1 damage to the enemy leader."
+#	 requireTarget, effects, description = False, "", "Whenever an enemy follower comes into play, deal 1 damage to the enemy leader."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -2636,7 +2636,7 @@
 #
 # class MeetTheLevinSisters(Spell):
 #	 Class, school, name = "Swordcraft", "", "Meet the Levin Sisters!"
-#	 requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 #	 index = "Shadowverse~Swordcraft~Spell~1~~Meet the Levin Sisters!"
 #	 description = "Choose: Put 1 of the following cards into your hand.-Mina, Levin Vice Leader-Mona, Levin Mage-Mena, Levin DuelistEnhance (7): Put 1 of each into your hand instead, and recover 6 play points."
 #
@@ -2676,7 +2676,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Mina, Levin Vice Leader"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Levin~Mina, Levin Vice Leader~Battlecry~Uncollectable"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Put a random Levin follower from your deck into your hand."
+#	 requireTarget, effects, description = False, "", "Fanfare: Put a random Levin follower from your deck into your hand."
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #		 levins = []
@@ -2693,7 +2693,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Mona, Levin Mage"
 #	 mana, attack, health = 4, 3, 3
 #	 index = "Shadowverse~Swordcraft~Minion~4~3~3~Levin~Mona, Levin Mage~Battlecry~Uncollectable"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Recover 2 play points. If another allied Levin card is in play, recover 3 instead."
+#	 requireTarget, effects, description = False, "", "Fanfare: Recover 2 play points. If another allied Levin card is in play, recover 3 instead."
 #
 #	 def effCanTrig(self):
 #		 controlLevin = False
@@ -2720,7 +2720,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Mena, Levin Duelist"
 #	 mana, attack, health = 3, 3, 2
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~2~Levin~Mena, Levin Duelist~Battlecry~Rush~Uncollectable"
-#	 requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: If another allied Levin card is in play, gain +1/+1."
+#	 requireTarget, effects, description = False, "Rush", "Rush.Fanfare: If another allied Levin card is in play, gain +1/+1."
 #
 #	 def effCanTrig(self):
 #		 controlLevin = False
@@ -2745,7 +2745,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Lounes, Levin Apprentice"
 #	 mana, attack, health = 1, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~1~1~1~Levin~Lounes, Levin Apprentice~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Gain +0/+1 for each Levin card in your hand.Enhance (3): Can attack 2 times per turn."
+#	 requireTarget, effects, description = False, "", "Fanfare: Gain +0/+1 for each Levin card in your hand.Enhance (3): Can attack 2 times per turn."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
@@ -2765,7 +2765,7 @@
 #			 self.buffDebuff(0, levins)
 #			 PRINT(self, f"Lounes, Levin Apprentice's Fanfare give itself +1/+{levins}.")
 #		 if choice == 3:
-#			 self.getsStatus("Windfury")
+#			 self.getsEffect("Windfury")
 #			 PRINT(self, f"Lounes, Levin Apprentice's Fanfare give itself Can attack 2 times per turn.")
 #
 #
@@ -2776,7 +2776,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Oathless Knight"
 #	 mana, attack, health = 2, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~2~1~1~Officer~Oathless Knight~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Summon a Knight."
+#	 requireTarget, effects, description = False, "", "Fanfare: Summon a Knight."
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 PRINT(self, "Oathless Knight's Fanfare summons a 1/1 Knight.")
@@ -2788,7 +2788,7 @@
 #	 Class, race, name = "Swordcraft", "Officer,Natura", "Panther Scout"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer,Natura~Panther Scout~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Recover 1 play point.Enhance (8): Gain +3/+3 and recover 7 play points instead."
+#	 requireTarget, effects, description = False, "", "Fanfare: Recover 1 play point.Enhance (8): Gain +3/+3 and recover 7 play points instead."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
@@ -2814,7 +2814,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Honorable Thief"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer~Honorable Thief~Battlecry~Deathrattle"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Rally (7) - Evolve this follower. Last Words: Put a Gilded Boots into your hand."
+#	 requireTarget, effects, description = False, "", "Fanfare: Rally (7) - Evolve this follower. Last Words: Put a Gilded Boots into your hand."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -2840,11 +2840,11 @@
 #	 Class, race, name = "Havencraft", "", "White Tiger"
 #	 mana, attack, health = 3, 3, 2
 #	 index = "Shadowverse~Havencraft~Minion~3~3~2~~White Tiger~Taunt"
-#	 requireTarget, keyWord, description = False, "Taunt", "Ward Can't be targeted by enemy spells and effects."
+#	 requireTarget, effects, description = False, "Taunt", "Ward Can't be targeted by enemy spells and effects."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
-#		 self.marks["Enemy Effect Evasive"] = 1
+#		 self.effects["Enemy Effect Evasive"] = 1
 #
 #
 # class LevinWhiteTiger(WhiteTiger):
@@ -2856,7 +2856,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Levin Beastmaster"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Levin~Levin Beastmaster~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (6) - Summon 2 White Tigers and change them into Levin followers."
+#	 requireTarget, effects, description = False, "", "Fanfare: Enhance (6) - Summon 2 White Tigers and change them into Levin followers."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
@@ -2882,7 +2882,7 @@
 #
 # class EleganceInAction(Spell):
 #	 Class, school, name = "Swordcraft", "", "Elegance in Action"
-#	 requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 #	 index = "Shadowverse~Swordcraft~Spell~2~~Elegance in Action"
 #	 description = "Draw a card. Summon a Heavy Knight for each follower drawn. Deal 3 damage to a random enemy follower for each non-follower drawn.Enhance (5): Draw 3 cards instead."
 #
@@ -2916,7 +2916,7 @@
 #
 # class ShieldPhalanx(Spell):
 #	 Class, school, name = "Swordcraft", "", "Shield Phalanx"
-#	 requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 #	 index = "Shadowverse~Swordcraft~Spell~2~~Shield Phalanx"
 #	 description = "Summon a Shield Guardian and Knight.Rally (15): Summon a Frontguard General instead of a Shield Guardian."
 #
@@ -2940,7 +2940,7 @@
 #
 # class MirrorsImage(Spell):
 #	 Class, school, name = "Swordcraft", "", "Mirror Image"
-#	 requireTarget, mana = True, 2
+	requireTarget, mana, effects = True, 2, ""
 #	 index = "Shadowverse~Swordcraft~Spell~2~~Mirror Image"
 #	 description = "Choose an allied follower in play and summon a copy of it. Give it Rush, and banish it at the start of your next turn."
 #
@@ -2955,7 +2955,7 @@
 #			 m = type(target)(self.Game, self.ID)
 #			 PRINT(self, f"Mirror Image summon a copy of {target.name} and give it Rush.")
 #			 self.Game.summonMinion([m], (-11, "totheRightEnd"), self.ID)
-#			 m.getsStatus("Rush")
+#			 m.getsEffect("Rush")
 #			 trigger = TriggerMirrorsImage(m, self.ID)
 #			 m.trigsBoard.append(trigger)
 #			 if m.onBoard:
@@ -2988,7 +2988,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Steadfast Samurai"
 #	 mana, attack, health = 2, 1, 1
 #	 index = "Shadowverse~Swordcraft~Minion~2~1~1~Officer~Steadfast Samurai"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (5) - Evolve this follower.Clash: Reduce damage to this follower to 0 until the end of the turn."
+#	 requireTarget, effects, description = False, "", "Fanfare: Enhance (5) - Evolve this follower.Clash: Reduce damage to this follower to 0 until the end of the turn."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -3009,7 +3009,7 @@
 #		 return None
 #
 #	 def inEvolving(self):
-#		 self.getsStatus("Charge")
+#		 self.getsEffect("Charge")
 #		 self.auras["Buff Aura"] = BuffAuraEvolvedSteadfastSamurai(self)
 #		 self.auras["Buff Aura"].auraAppears()
 #
@@ -3022,7 +3022,7 @@
 #		 return self.entity.onBoard and (target == self.entity or subject == self.entity)
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#		 self.entity.marks["Damage Immune"] += 1
+#		 self.entity.effects["Damage Immune"] += 1
 #		 trigger = TriggerTurnEndSteadfastSamurai(self.entity)
 #		 self.entity.trigsBoard.append(trigger)
 #		 if self.entity.onBoard:
@@ -3037,7 +3037,7 @@
 #		 return self.entity.onBoard
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#		 self.entity.marks["Damage Immune"] -= 1
+#		 self.entity.effects["Damage Immune"] -= 1
 #		 for t in self.entity.trigsBoard:
 #			 if type(t) == TriggerTurnEndSteadfastSamurai:
 #				 t.disconnect()
@@ -3058,13 +3058,13 @@
 #		 self.applies(self.entity.Game.heroes[self.entity.ID])
 #
 #	 def applies(self, subject):
-#		 subject.marks["Enemy Effect Damage Immune"] += 1
+#		 subject.effects["Enemy Effect Damage Immune"] += 1
 #
 #	 def auraAppears(self):
 #		 self.applies(self.entity.Game.heroes[self.entity.ID])
 #
 #	 def auraDisappears(self):
-#		 self.entity.Game.heroes[self.entity.ID].marks["Enemy Effect Damage Immune"] -= 1
+#		 self.entity.Game.heroes[self.entity.ID].effects["Enemy Effect Damage Immune"] -= 1
 #
 #	 def selfCopy(self, recipientMinion):  # The recipientMinion is the minion that deals the Aura.
 #		 return type(self)(recipientMinion)
@@ -3074,7 +3074,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Twinsword Master"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer~Twinsword Master~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: If an allied Commander card is in play, gain the ability to evolve for 0 evolution points."
+#	 requireTarget, effects, description = False, "", "Fanfare: If an allied Commander card is in play, gain the ability to evolve for 0 evolution points."
 #
 #	 attackAdd, healthAdd = 1, 1
 #
@@ -3092,18 +3092,18 @@
 #				 controlOfficer = True
 #				 break
 #		 if controlOfficer:
-#			 self.getsStatus("Free Evolve")
+#			 self.getsEffect("Free Evolve")
 #		 return None
 #
 #	 def inEvolving(self):
-#		 self.getsStatus("Windfury")
+#		 self.getsEffect("Windfury")
 #
 #
 # class ValseChampionDeadeye(SVMinion):
 #	 Class, race, name = "Swordcraft", "Officer", "Valse, Champion Deadeye"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Officer~Valse, Champion Deadeye~Battlecry"
-#	 requireTarget, keyWord, description = True, "", "Fanfare: Enhance (6) - Banish an enemy follower or amulet."
+#	 requireTarget, effects, description = True, "", "Fanfare: Enhance (6) - Banish an enemy follower or amulet."
 #	 evolveRequireTarget = True
 #
 #	 def effCanTrig(self):
@@ -3142,7 +3142,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Levin Archer"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Levin~Levin Archer"
-#	 requireTarget, keyWord, description = False, "", ""
+#	 requireTarget, effects, description = False, "", ""
 #	 evolveRequireTarget = True
 #
 #	 def inHandEvolving(self, target=None):
@@ -3163,7 +3163,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Jeno, Levin Stalwart"
 #	 mana, attack, health = 2, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~2~2~2~Levin~Jeno, Levin Stalwart"
-#	 requireTarget, keyWord, description = False, "", "Can evolve an allied Levin follower (excluding Jeno, Levin Stalwart) each turn for 0 evolution points until this follower leaves play."
+#	 requireTarget, effects, description = False, "", "Can evolve an allied Levin follower (excluding Jeno, Levin Stalwart) each turn for 0 evolution points until this follower leaves play."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -3180,7 +3180,7 @@
 #	 Class, race, name = "Neutral", "", "Gabriel, Heavenly Voice"
 #	 mana, attack, health = 3, 2, 3
 #	 index = "Shadowverse~Neutral~Minion~3~2~3~~Gabriel, Heavenly Voice~Battlecry~Taunt"
-#	 requireTarget, keyWord, description = True, "Taunt", "Ward.Fanfare: Use X play points to give +X/+X to this follower and another allied follower. X equals your remaining play points."
+#	 requireTarget, effects, description = True, "Taunt", "Ward.Fanfare: Use X play points to give +X/+X to this follower and another allied follower. X equals your remaining play points."
 #
 #	 def targetExists(self, choice=0):
 #		 return self.selectableFriendlyMinionExists(choice)
@@ -3202,7 +3202,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Empress of Serenity"
 #	 mana, attack, health = 3, 2, 2
 #	 index = "Shadowverse~Swordcraft~Minion~3~2~2~Commander~Empress of Serenity~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Summon a Shield Guardian.Enhance (5): Summon 3 instead.Enhance (10): Give +3/+3 to all allied Shield Guardians."
+#	 requireTarget, effects, description = False, "", "Fanfare: Summon a Shield Guardian.Enhance (5): Summon 3 instead.Enhance (10): Give +3/+3 to all allied Shield Guardians."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.getMana() != self.mana
@@ -3238,7 +3238,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "VII. Oluon, The Chariot"
 #	 mana, attack, health = 3, 3, 3
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~3~Commander~VII. Oluon, The Chariot~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Enhance (7) - Transform this follower into a VII. Oluon, Runaway Chariot.At the end of your turn, randomly activate 1 of the following effects.-Gain Ward.-Summon a Knight.-Deal 2 damage to the enemy leader."
+#	 requireTarget, effects, description = False, "", "Fanfare: Enhance (7) - Transform this follower into a VII. Oluon, Runaway Chariot.At the end of your turn, randomly activate 1 of the following effects.-Gain Ward.-Summon a Knight.-Deal 2 damage to the enemy leader."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -3263,11 +3263,11 @@
 #	 Class, race, name = "Swordcraft", "Commander", "VII. Oluon, Runaway Chariot"
 #	 mana, attack, health = 7, 8, 16
 #	 index = "Shadowverse~Swordcraft~Minion~7~8~16~Commander~VII. Oluon, Runaway Chariot~Uncollectable"
-#	 requireTarget, keyWord, description = False, "", "Can't attack.At the end of your turn, randomly deal X damage to an enemy or another ally and then Y damage to this follower. X equals this follower's attack and Y equals the attack of the follower or leader damaged (leaders have 0 attack). Do this 2 times."
+#	 requireTarget, effects, description = False, "", "Can't attack.At the end of your turn, randomly deal X damage to an enemy or another ally and then Y damage to this follower. X equals this follower's attack and Y equals the attack of the follower or leader damaged (leaders have 0 attack). Do this 2 times."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
-#		 self.marks["Can't Attack"] = 1
+#		 self.effects["Can't Attack"] = 1
 #		 self.trigsBoard = [TriggerOluonRunawayChariot(self)]
 #
 #
@@ -3282,7 +3282,7 @@
 #		 es = ["T", "H", "K"]
 #		 e = np.random.choice(es)
 #		 if e == "T":
-#			 self.entity.getsStatus("Taunt")
+#			 self.entity.getsEffect("Taunt")
 #		 elif e == "H":
 #			 self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 2)
 #		 elif e == "K":
@@ -3322,7 +3322,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Gelt, Resolute Knight"
 #	 mana, attack, health = 3, 3, 3
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~3~Officer~Gelt, Resolute Knight~Battlecry~Deathrattle"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: If an allied Commander card is in play, gain Rush.Last Words: At the start of your next turn, put a random Commander card from your deck into your hand."
+#	 requireTarget, effects, description = False, "", "Fanfare: If an allied Commander card is in play, gain Rush.Last Words: At the start of your next turn, put a random Commander card from your deck into your hand."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -3342,7 +3342,7 @@
 #				 controlOfficer = True
 #				 break
 #		 if controlOfficer:
-#			 self.getsStatus("Rush")
+#			 self.getsEffect("Rush")
 #		 return None
 #
 #
@@ -3382,7 +3382,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Lady of the Lance"
 #	 mana, attack, health = 3, 3, 2
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~2~Officer~Lady of the Lance~Battlecry~Rush"
-#	 requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: If you have at least 2 Commander cards in your hand, gain Bane and the following effect - The next time this follower takes damage, reduce that damage to 0.Fanfare: Enhance (8) - Gain Storm. Recover 5 play points."
+#	 requireTarget, effects, description = False, "Rush", "Rush.Fanfare: If you have at least 2 Commander cards in your hand, gain Bane and the following effect - The next time this follower takes damage, reduce that damage to 0.Fanfare: Enhance (8) - Gain Storm. Recover 5 play points."
 #
 #	 def getMana(self):
 #		 if self.Game.Manas.manas[self.ID] >= 8:
@@ -3400,7 +3400,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if choice == 8:
 #			 PRINT(self, "Lady of the Lance's Fanfare give it Storm.")
-#			 self.getsStatus("Charge")
+#			 self.getsEffect("Charge")
 #			 self.Game.Manas.manas[self.ID] += 5
 #		 commanders = 0
 #		 for card in self.Game.Hand_Deck.hands[self.ID]:
@@ -3408,8 +3408,8 @@
 #				 commanders += 1
 #		 if commanders >= 2:
 #			 PRINT(self, "Lady of the Lance's Fanfare give it Bane and reduce next damage to 0.")
-#			 self.getsStatus("Poisonous")
-#			 self.marks["Next Damage 0"] += 1
+#			 self.getsEffect("Poisonous")
+#			 self.effects["Next Damage 0"] += 1
 #		 return None
 #
 #
@@ -3417,17 +3417,17 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Pecorine, Peckish Princess"
 #	 mana, attack, health = 3, 3, 2
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~2~Commander~Pecorine, Peckish Princess~Battlecry~Rush"
-#	 requireTarget, keyWord, description = True, "Rush", "Rush.Fanfare: Union Burst (10) - Gain +3/+3. Deal 5 damage to an enemy follower.At the end of your turn, gain +0/+1."
+#	 requireTarget, effects, description = True, "Rush", "Rush.Fanfare: Union Burst (10) - Gain +3/+3. Deal 5 damage to an enemy follower.At the end of your turn, gain +0/+1."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
 #		 self.trigsBoard = [TriggerPecorinePeckishPrincess(self)]
 #
 #	 def effCanTrig(self):
-#		 self.effectViable = self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]
+#		 self.effectViable = self.effects["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]
 #
 #	 def targetExists(self, choice=0):
-#		 if self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
+#		 if self.effects["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
 #			 return self.selectableEnemyMinionExists(choice)
 #		 return False
 #
@@ -3435,7 +3435,7 @@
 #		 return target.cardType == "Minion" and target.ID != self.ID and target.onBoard
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-#		 if self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
+#		 if self.effects["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
 #			 self.buffDebuff(3, 3)
 #			 if target:
 #				 PRINT(self, f"Pecorine, Peckish Princess deals 5 damage to minion {target.name}")
@@ -3459,7 +3459,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Tsubaki of the Demon Blade"
 #	 mana, attack, health = 3, 3, 2
 #	 index = "Shadowverse~Swordcraft~Minion~3~3~2~Officer~Tsubaki of the Demon Blade~Battlecry~Stealth"
-#	 requireTarget, keyWord, description = False, "Stealth", "Ambush.Fanfare: If at least 10 allied followers have been destroyed this match, gain +1/+1 and randomly destroy 1 of the enemy followers with the highest attack in play."
+#	 requireTarget, effects, description = False, "Stealth", "Ambush.Fanfare: If at least 10 allied followers have been destroyed this match, gain +1/+1 and randomly destroy 1 of the enemy followers with the highest attack in play."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.Game.Counters.numMinionsDiedThisGame[self.ID] >= 10
@@ -3486,7 +3486,7 @@
 #
 # class StrokeOfConviction(Spell):
 #	 Class, school, name = "Swordcraft", "", "Stroke of Conviction"
-#	 requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 #	 index = "Shadowverse~Swordcraft~Spell~3~~Stroke of Conviction"
 #	 description = "Choose: Use play points equal to this card's cost and play this card as an Erika's Sleight, Mistolina's Swordplay, or Bayleon's Command."
 #
@@ -3528,7 +3528,7 @@
 #
 # class ErikasSleight(Spell):
 #	 Class, school, name = "Swordcraft", "", "Erika's Sleight"
-#	 requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 #	 index = "Shadowverse~Swordcraft~Spell~0~~Erika's Sleight~Uncollectible"
 #	 description = "Summon 2 Quickbladers."
 #
@@ -3541,7 +3541,7 @@
 #
 # class MistolinasSwordplay(Spell):
 #	 Class, school, name = "Swordcraft", "", "Mistolina's Swordplay"
-#	 requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 #	 index = "Shadowverse~Swordcraft~Spell~0~~Mistolina's Swordplay~Uncollectible"
 #	 description = "Deal 5 damage to a random enemy follower."
 #
@@ -3559,7 +3559,7 @@
 #
 # class BayleonsCommand(Spell):
 #	 Class, school, name = "Swordcraft", "", "Bayleon's Command"
-#	 requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 #	 index = "Shadowverse~Swordcraft~Spell~0~~Bayleon's Command~Uncollectible"
 #	 description = "Give +1/+1 to all allied followers."
 #
@@ -3572,7 +3572,7 @@
 #
 # class CourtlyDance(Spell):
 #	 Class, school, name = "Swordcraft", "", "Courtly Dance"
-#	 requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 #	 index = "Shadowverse~Swordcraft~Spell~3~~Courtly Dance"
 #	 description = "Put a random 1-play point and 2-play point Swordcraft follower from your deck into play.Enhance (8): Then, put a random 3-play point Swordcraft follower from your deck into play and evolve them. Evolve effects will not activate for those followers."
 #
@@ -3632,7 +3632,7 @@
 #	 Class, race, name = "Neutral", "", "Fieran, Havensent Wind God"
 #	 mana, attack, health = 4, 1, 1
 #	 index = "Shadowverse~Neutral~Minion~4~1~1~~Fieran, Havensent Wind God~Battlecry"
-#	 requireTarget, keyWord, description = True, "Taunt", "Invocation: At the start of your turn, Rally (10) - Invoke this card.------Fanfare: If you have more evolution points than your opponent, gain +0/+2 and deal 2 damage to an enemy follower. (You have 0 evolution points on turns you are unable to evolve.)At the end of your turn, give +1/+1 to all allied followers."
+#	 requireTarget, effects, description = True, "Taunt", "Invocation: At the start of your turn, Rally (10) - Invoke this card.------Fanfare: If you have more evolution points than your opponent, gain +0/+2 and deal 2 damage to an enemy follower. (You have 0 evolution points on turns you are unable to evolve.)At the end of your turn, give +1/+1 to all allied followers."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -3702,7 +3702,7 @@
 #
 # class ResolveOfTheFallen(Spell):
 #	 Class, school, name = "Neutral", "", "Resolve of the Fallen"
-#	 requireTarget, mana = True, 4
+	requireTarget, mana, effects = True, 4, ""
 #	 index = "Shadowverse~Neutral~Spell~4~~Resolve of the Fallen"
 #	 description = "Destroy an enemy follower or amulet.If at least 3 allied followers have evolved this match, recover 3 play points.Then, if at least 5 have evolved, draw 2 cards."
 #
@@ -3727,7 +3727,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "PrudentGeneral"
 #	 mana, attack, health = 4, 3, 4
 #	 index = "Shadowverse~Swordcraft~Minion~4~3~4~Commander~Prudent General"
-#	 requireTarget, keyWord, description = False, "", ""
+#	 requireTarget, effects, description = False, "", ""
 #
 #	 def inEvolving(self):
 #		 trigger = TriggerPrudentGeneral(self.Game.heroes[self.ID])
@@ -3755,14 +3755,14 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Shizuru, Sisterly Sabreur"
 #	 mana, attack, health = 4, 3, 5
 #	 index = "Shadowverse~Swordcraft~Minion~4~3~5~Officer~Shizuru, Sisterly Sabreur~Battlecry~Taunt"
-#	 requireTarget, keyWord, description = False, "Taunt", "Ward.Fanfare: Union Burst (10) - Deal 3 damage to the enemy leader. Gain the ability to evolve for 0 evolution points."
+#	 requireTarget, effects, description = False, "Taunt", "Ward.Fanfare: Union Burst (10) - Deal 3 damage to the enemy leader. Gain the ability to evolve for 0 evolution points."
 #
 #	 def effCanTrig(self):
-#		 self.effectViable = self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]
+#		 self.effectViable = self.effects["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
-#		 if self.marks["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
-#			 self.getsStatus("Free Evolve")
+#		 if self.effects["UB"] <= self.Game.Counters.numTurnPassedThisGame[self.ID]:
+#			 self.getsEffect("Free Evolve")
 #			 PRINT(self, f"Shizuru, Sisterly Sabreur 3 damage to the enemy leader.")
 #			 self.dealsDamage(self.Game.heroes[3 - self.ID], 3)
 #		 return None
@@ -3802,13 +3802,13 @@
 #	 Class, race, name = "Neutral", "", "XXI. Zelgenea, The World"
 #	 mana, attack, health = 5, 5, 5
 #	 index = "Shadowverse~Neutral~Minion~5~5~5~~XXI. Zelgenea, The World~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Invocation: At the start of your tenth turn, invoke this card. Then, evolve it.----------Fanfare: Restore 5 defense to your leader. If your leader had 14 defense or less before defense was restored, draw 2 cards and randomly destroy 1 of the enemy followers with the highest attack in play.Can't be evolved using evolution points. (Can be evolved using card effects.)"
+#	 requireTarget, effects, description = False, "", "Invocation: At the start of your tenth turn, invoke this card. Then, evolve it.----------Fanfare: Restore 5 defense to your leader. If your leader had 14 defense or less before defense was restored, draw 2 cards and randomly destroy 1 of the enemy followers with the highest attack in play.Can't be evolved using evolution points. (Can be evolved using card effects.)"
 #
 #	 attackAdd, healthAdd = 5, 5
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
-#		 self.marks["Can't Evolve"] = 1
+#		 self.effects["Can't Evolve"] = 1
 #		 self.trigsDeck = [TriggerInvocationZelgeneaTheWorld(self)]
 #
 #	 def effCanTrig(self):
@@ -3892,7 +3892,7 @@
 #	 Class, race, name = "Swordcraft", "Officer", "Luxblade Arriet"
 #	 mana, attack, health = 5, 4, 5
 #	 index = "Shadowverse~Swordcraft~Minion~5~4~5~Officer~Luxblade Arriet~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: If at least 1 allied follower has evolved this match, gain Ward.Then, if at least 3 have evolved, recover 3 play points.Then, if at least 5 have evolved, restore 5 defense to your leader.Then, if at least 7 have evolved, draw cards until there are 7 cards in your hand."
+#	 requireTarget, effects, description = False, "", "Fanfare: If at least 1 allied follower has evolved this match, gain Ward.Then, if at least 3 have evolved, recover 3 play points.Then, if at least 5 have evolved, restore 5 defense to your leader.Then, if at least 7 have evolved, draw cards until there are 7 cards in your hand."
 #
 #	 def effCanTrig(self):
 #		 self.effectViable = self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 1
@@ -3900,7 +3900,7 @@
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 1:
 #			 PRINT(self, "Luxblade Arriet gains Ward.")
-#			 self.getsStatus("Taunt")
+#			 self.getsEffect("Taunt")
 #		 if self.Game.Counters.numMinionsEvolvedThisGame[self.ID] >= 3:
 #			 PRINT(self, "Luxblade Arriet restores 3 PP.")
 #			 self.Game.Manas.manas[self.ID] += 3
@@ -3922,7 +3922,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Amelia, the Silverflash"
 #	 mana, attack, health = 5, 4, 4
 #	 index = "Shadowverse~Swordcraft~Minion~5~4~4~Commander~Amelia, the Silverflash~Battlecry"
-#	 requireTarget, keyWord, description = False, "", "Fanfare: Randomly put 2 different Officer followers from your deck into your hand.Enhance (7): Gain the ability to evolve for 0 evolution points and the following effect - The next time this follower takes damage, reduce that damage to 0."
+#	 requireTarget, effects, description = False, "", "Fanfare: Randomly put 2 different Officer followers from your deck into your hand.Enhance (7): Gain the ability to evolve for 0 evolution points and the following effect - The next time this follower takes damage, reduce that damage to 0."
 #	 evolveRequireTarget = True
 #
 #	 def effCanTrig(self):
@@ -3953,8 +3953,8 @@
 #					 self.Game.Hand_Deck.drawCard(self.ID, card)
 #					 PRINT(self, f"Amelia, the Silverflash's Fanfare let you draw {card.name}.")
 #		 if choice == 7:
-#			 self.getsStatus("Free Evolve")
-#			 self.marks["Next Damage 0"] = 1
+#			 self.getsEffect("Free Evolve")
+#			 self.effects["Next Damage 0"] = 1
 #		 return None
 #
 #	 def inHandEvolving(self, target=None):
@@ -3994,7 +3994,7 @@
 #	 Class, race, name = "Swordcraft", "Levin", "Albert, Levin Champion"
 #	 mana, attack, health = 5, 3, 5
 #	 index = "Shadowverse~Swordcraft~Minion~5~3~5~Levin~Albert, Levin Champion~Battlecry"
-#	 requireTarget, keyWord, description = False, "Charge", "Storm.Fanfare: Enhance (9) - Randomly put different Levin followers (excluding Albert, Levin Champion) from your deck into play until your area is full.Strike: Gain +1/+0 if another allied Levin card is in play."
+#	 requireTarget, effects, description = False, "Charge", "Storm.Fanfare: Enhance (9) - Randomly put different Levin followers (excluding Albert, Levin Champion) from your deck into play until your area is full.Strike: Gain +1/+0 if another allied Levin card is in play."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -4053,7 +4053,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Diamond Paladin"
 #	 mana, attack, health = 6, 4, 5
 #	 index = "Shadowverse~Swordcraft~Minion~6~4~5~Commander~Diamond Paladin~Battlecry~Rush"
-#	 requireTarget, keyWord, description = False, "Rush", "Rush.Fanfare: Enhance (8) - Gain the ability to evolve for 0 evolution points.During your turn, whenever this follower attacks and destroys an enemy follower, if this follower is not destroyed, recover 2 play points and gain the ability to attack 2 times this turn."
+#	 requireTarget, effects, description = False, "Rush", "Rush.Fanfare: Enhance (8) - Gain the ability to evolve for 0 evolution points.During your turn, whenever this follower attacks and destroys an enemy follower, if this follower is not destroyed, recover 2 play points and gain the ability to attack 2 times this turn."
 #	 evolveRequireTarget = True
 #
 #	 def __init__(self, Game, ID):
@@ -4071,7 +4071,7 @@
 #
 #	 def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 #		 if choice == 8:
-#			 self.getsStatus("Free Evolve")
+#			 self.getsEffect("Free Evolve")
 #		 return None
 #
 #	 def inHandEvolving(self, target=None):
@@ -4095,7 +4095,7 @@
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
 #		 PRINT(self,
 #			   "After %s attacks and kills minion %s, the player gains 10 Armor." % (self.entity.name, target.name))
-#		 self.entity.getsStatus("Windfury")
+#		 self.entity.getsEffect("Windfury")
 #		 self.entity.Game.Manas.manas[self.entity.ID] += 2
 #		 trigger = TriggerTurnEndDiamondPaladin(self.entity)
 #		 self.entity.trigsBoard.append(trigger)
@@ -4111,7 +4111,7 @@
 #		 return self.entity.onBoard
 #
 #	 def effect(self, signal, ID, subject, target, number, comment, choice=0):
-#		 self.entity.losesStatus("Windfury")
+#		 self.entity.losesEffect("Windfury")
 #		 for t in self.entity.trigsBoard:
 #			 if type(t) == TriggerTurnEndDiamondPaladin:
 #				 t.disconnect()
@@ -4124,7 +4124,7 @@
 #
 # class AccelerateRegalWildcat(AccelerateSpell):
 #	 Class, school, name = "Swordcraft", "", "Regal Wildcat"
-#	 requireTarget, mana = False, 4
+	requireTarget, mana, effects = False, 4, ""
 #	 index = "Shadowverse~Swordcraft~Spell~4~~Regal Wildcat~Uncollectible"
 #	 description = "Summon a Steelclad Knight, a Heavy Knight, and a Knight."
 #
@@ -4139,7 +4139,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Regal Wildcat"
 #	 mana, attack, health = 7, 4, 4
 #	 index = "Shadowverse~Swordcraft~Minion~7~4~4~Commander~Regal Wildcat~Battlecry~Charge"
-#	 requireTarget, keyWord, description = True, "Charge", "Accelerate (4): Summon a Steelclad Knight, a Heavy Knight, and a Knight.----------Storm.Fanfare: If at least 10 allied followers have been destroyed this match, give another allied follower +2/+2 and Storm."
+#	 requireTarget, effects, description = True, "Charge", "Accelerate (4): Summon a Steelclad Knight, a Heavy Knight, and a Knight.----------Storm.Fanfare: If at least 10 allied followers have been destroyed this match, give another allied follower +2/+2 and Storm."
 #	 accelerate = 4
 #
 #	 def __init__(self, Game, ID):
@@ -4163,7 +4163,7 @@
 #		 if target is not None:
 #			 PRINT(self, f"Regal Wildcat gives minion {target.name} +2/+2 and Storm.")
 #			 target.buffDebuff(2, 2)
-#			 target.getsStatus("Charge")
+#			 target.getsEffect("Charge")
 #		 return target
 #
 #	 def getAccelerateSpell(self):
@@ -4174,7 +4174,7 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Frontguard General"
 #	 mana, attack, health = 7, 5, 6
 #	 index = "Shadowverse~Swordcraft~Minion~7~5~6~Commander~Fortress Guard~Taunt~Deathrattle"
-#	 requireTarget, keyWord, description = False, "Taunt", "Ward.Last Words: Summon a Fortress Guard."
+#	 requireTarget, effects, description = False, "Taunt", "Ward.Last Words: Summon a Fortress Guard."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
@@ -4192,12 +4192,12 @@
 #	 Class, race, name = "Swordcraft", "Commander", "Honored Frontguard General"
 #	 mana, attack, health = 7, 5, 6
 #	 index = "Shadowverse~Swordcraft~Minion~7~5~6~Commander~Honored Fortress Guard~Taunt~Deathrattle"
-#	 requireTarget, keyWord, description = False, "Taunt", "Ward.Can't be targeted by enemy spells and effects.Last Words: Summon a Shield Guardian, and give it +X/+X. X equals the number of times that allied followers have evolved during this match."
+#	 requireTarget, effects, description = False, "Taunt", "Ward.Can't be targeted by enemy spells and effects.Last Words: Summon a Shield Guardian, and give it +X/+X. X equals the number of times that allied followers have evolved during this match."
 #
 #	 def __init__(self, Game, ID):
 #		 super().__init__(Game, ID)
 #		 self.deathrattles = [DeathrattleHonoredFrontguardGeneral(self)]
-#		 self.marks["Enemy Effect Evasive"] = 1
+#		 self.effects["Enemy Effect Evasive"] = 1
 #
 #
 # class DeathrattleHonoredFrontguardGeneral(Deathrattle_Minion):

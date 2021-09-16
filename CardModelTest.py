@@ -49,20 +49,33 @@ Option_Cards_Spells = (DemigodsFavor_Option, ShandosLesson_Option, RampantGrowth
 						Rooted_Option, Uproot_Option,
 						)
 
+class Btn_Fake:
+	def __init__(self, GUI):
+		self.GUI = GUI
+		
 class VariousTest(Panda_UICommon):
 	def __init__(self):
-		super().__init__()
+		super().__init__(disableMouse=False)
 		self.boardID = "2 Classic Stormwind"
 		self.ID = 1
 		self.modelTemplates = {}
 		self.manaModels = {}
 		self.seqHolder = []
-		#self.disableMouse()
 		
-		#self.loadBackground()
-		self.prepare()
+		self.loadBackground()
+		self.prepareGameandTextures()
 		
-		self.smallTest()
+		self.testEntireGameDisplay()
+		
+	def testMillAni(self):
+		self.handZones = {1: HandZone(self, 1), 2: HandZone(self, 2)}
+		self.minionZones = {1: MinionZone(self, 1), 2: MinionZone(self, 2)}
+		self.heroZones = {1: HeroZone(self, 1), 2: HeroZone(self, 2)}
+		self.deckZones = {1: DeckZone(self, 1), 2: DeckZone(self, 2)}
+		
+		self.seqHolder.append(Sequence(Wait(2), Func(print, "Start mill")))
+		self.millCardAni(TheCoin(self.Game, 1))
+		self.seqHolder.pop(0).start()
 		
 	def testEntireGameDisplay(self):
 		self.handZones = {1: HandZone(self, 1), 2: HandZone(self, 2)}
@@ -86,18 +99,47 @@ class VariousTest(Panda_UICommon):
 			for minion in self.Game.minions[ID]:
 				minion.btn.placeIcons()
 				minion.btn.statChangeAni()
-				minion.btn.statusChangeAni()
+				minion.btn.effectChangeAni()
 			weapon = self.Game.availableWeapon(ID)
 			if weapon:
 				weapon.btn.placeIcons()
-				weapon.btn.statusChangeAni()
+				weapon.btn.effectChangeAni()
 				
-		self.heroExplodeAni([self.Game.heroes[ID] for ID in range(1, 3)])
-		
+		minion = self.Game.minions[1][0]
+		minion.getsEffect("Frozen")
+		minion.getsEffect("Immune")
+		minion = self.Game.minions[2][6]
+		minion.silenced = True
+		minion.getsEffect("Silenced")
+		minion = self.Game.minions[1][6]
+		minion.btn.texCards["Damage"].find("+SequenceNode").node().pose(27)
+		minion.btn.texts["statChange"].node().setText('7')
+		minion = self.Game.minions[2][5]
+		minion.btn.texCards["Healing"].find("+SequenceNode").node().pose(22)
+		minion.btn.texts["statChange"].node().setText('+4')
+		minion.btn.texts["statChange"].node().setTextColor(black)
+		hero = self.Game.heroes[1]
+		hero.btn.texCards["Damage"].find("+SequenceNode").node().pose(27)
+		hero.btn.texts["statChange"].node().setText('7')
+		#hero.getsEffect("Frozen")
+		hero.getsEffect("Temp Stealth")
+		#hero.getsEffect("Spell Damage")
+		hero = self.Game.heroes[2]
+		hero.btn.texCards["Healing"].find("+SequenceNode").node().pose(22)
+		hero.btn.texts["statChange"].node().setText('+4')
+		hero.getsEffect("Immune")
+		#hero.getsEffect("Spell Damage")
+		power = self.Game.powers[1]
+		power.getsEffect("Damage Boost")
+		power.getsEffect("Can Target Minions")
+		#self.heroExplodeAni([self.Game.heroes[ID] for ID in range(1, 3)])
+		self.Game.transform(self.Game.Hand_Deck.hands[1][3], SilverHandRecruit(self.Game, 1))
+		self.Game.transform(self.Game.minions[1][6], KorvasBloodthorn(self.Game, 1))
+		self.Game.transform(self.Game.minions[2][4], VarianKingofStormwind(self.Game, 2))
 		self.seqHolder.pop(0).start()
 		#Sequence(Wait(3), Func(self.deckZones[1].fatigueAni, 8)).start()
 		
-	def prepare(self):
+	def prepareGameandTextures(self):
 		self.subject = self.target = None
 		self.font = self.loader.loadFont("Models\\OpenSans-Bold.ttf")
 		
@@ -110,7 +152,7 @@ class VariousTest(Panda_UICommon):
 			for i in range(9):
 				self.manaModels[name].append(model.copyTo(self.render))
 		
-		game = Game()
+		game = Game(GUI=self)
 		game.initialize()
 		game.initialize_Details("1 Classic Ogrimmar", 42, {}, Rexxar, Uther)
 		game.Hand_Deck.hands = {1: [card(game, 1) for card in (SoulMirror, YseratheDreamer, BulwarkofAzzinoth,
@@ -123,21 +165,23 @@ class VariousTest(Panda_UICommon):
 								2: [card(game, 2) for card in (SoulMirror, YseratheDreamer, BulwarkofAzzinoth,
 															   LordJaraxxus, LibramofJudgment_Corrupt, ImprisonedFelmaw, LightningBloom)]
 								}
-		game.minions = {1: [card(game, 1) for card in (YseratheDreamer, BurningBladePortal, ImprisonedFelmaw,
-													  KorvasBloodthorn, AlAkirtheWindlord, StoneskinBasilisk, FallenHero)],
+		game.minions = {1: [card(game, 1) for card in (YseratheDreamer, BurningBladePortal, StranglethornTiger,
+													  NoviceZapper, AlAkirtheWindlord, StoneskinBasilisk, FallenHero)],
 						2: [card(game, 2) for card in (FallenHero, BurningBladePortal, ImprisonedFelmaw,
-											  			KorvasBloodthorn, AlAkirtheWindlord, Peon, SpiderTank)]
+											  			KorvasBloodthorn, StockadesPrisoner, Peon, SpiderTank)]
 						}
+		game.weapons = {1: [BulwarkofAzzinoth(game, 1)], 2: [LibramofJudgment_Corrupt(game, 1)]}
 		for ID in range(1, 3):
 			for minion in game.minions[ID]: minion.onBoard = True
-		game.weapons = {1: [BulwarkofAzzinoth(game, 1)], 2: [LibramofJudgment_Corrupt(game, 1)]}
-		game.weapons[1][0].onBoard = True
-		game.weapons[2][0].onBoard = True
+			game.heroes[ID].onBoard = True
+			game.heroes[ID].attack = ID
+			game.weapons[ID][0].onBoard = True
 		game.Secrets.secrets = {1: [card(Game, 1) for card in (FreezingTrap, Bamboozle)],
 								2: [card(Game, 2) for card in (Counterspell, Avenge, Shenanigans)]}
 		game.turnStartTrigger = [InstructorFireheart_Effect(game, ID) for ID in (1, 1, 1, 1, 1, 1)] + [LothraxiontheRedeemed_Effect(game, ID) for ID in (2, 2, 2, 2, 2)]
 		self.Game = game
 		self.prepareTexturesandModels()
+		
 		self.setCamera_RaySolid()
 		
 	def testTrigIconShining(self):
@@ -147,7 +191,7 @@ class VariousTest(Panda_UICommon):
 			model.setPos(i * 2, 0, 2)
 			model.reparentTo(self.render)
 			model.setColor(white)
-			if name == "Trigger": model.find("Trig Counter").node().setText("1 3")
+			if name == "Trigger": model.find("Trig Counter_TextNode").node().setText("1 3")
 			models.append(model)
 		
 	def smallTest(self):
@@ -220,19 +264,64 @@ class TestRaySolid(ShowBase):
 				"""The scene graph tree is written in C. To store/read python objects, use NodePath.setPythonTag/getPythonTag()"""
 				cNode_Picked.getParent().getPythonTag("btn").leftClick()
 
+class Layer1Window:
+	def __init__(self, gameGUI=None):
+		self.window = tk.Tk()
+		print("Has a gameGUI", gameGUI, not gameGUI and 1)
+		tk.Button(self.window, text=".Start", bg="green3", font=("Yahei", 15),
+				  command=lambda : self.initShowBase(run=not gameGUI and 1)).pack()
+		if gameGUI:
+			gameGUI.layer1Window = self
+			self.gameGUI = gameGUI
+		else: self.gameGUI = tkinterTest(self)
+		self.window.mainloop()
+		
+	def initShowBase(self, run):
+		print("Init?", run)
+		self.window.destroy()
+		if run:
+			self.gameGUI.run()
+		
+class tkinterTest(ShowBase):
+	def __init__(self, layer1Window=None):
+		super().__init__()
+		self.layer1Window = layer1Window
+		self.btn = self.loader.loadModel("Models\\BoardModels\\TurnEndButton.glb")
+		self.btn.reparentTo(self.render)
+		self.btn.setPos(0, 5, 0)
+		
+		self.deg = 0
+		self.flag = True
+		self.goBack = False
+		self.taskMgr.add(self.mainLoopTask, "MainLoopTask")
+		DirectButton(text=("Back", "Back", "Back", "Back"), scale=0.08,
+										pos=(0, 0, 0), command=self.back2Layer1)
+		
+	def back2Layer1(self):
+		self.goBack = True
+		
+	def mainLoopTask(self, task):
+		if self.flag:
+			self.deg += 1
+			self.btn.setHpr(0, 0, self.deg)
+		if self.goBack:
+			self.goBack = False
+			Layer1Window(self)
+		return Task.cont
+
+import os
 
 class SmallTest(ShowBase):
 	def __init__(self):
 		super().__init__()
-		model = self.loader.loadModel("Models\\MinionModels\\Minion.glb")
-		model.reparentTo(self.render)
-		#Sequence(Wait(2), Func(print, "good"), Func(model.reparentTo, self.render), Func(model.detachNode)).start()
-		model.setPosHpr(3, 20, 0, 0, 90, 0)
-		model.find("card").setTransparency(True)
-		model.find("card").setColor(transparent)
-		Sequence(Wait(1), Func(model.detachNode), Wait(1), Func(model.reparentTo, self.render)).start()
-		
+		btn = self.loader.loadModel("Models\\BoardModels\\TurnEndButton.glb")
+		btn.reparentTo(self.render)
+		self.cam.setPos(0, -10, 0)
+		Sequence(Wait(2), LerpPosInterval(btn, duration=1, startPos=(3, 0, 0), pos=(-3, 0, 0))).start()
 		
 #VariousTest().run()
 #TestRaySolid().run()
 SmallTest().run()
+#if __name__ == "__main__":
+	#Layer1Window()
+	#SmallTest().run()

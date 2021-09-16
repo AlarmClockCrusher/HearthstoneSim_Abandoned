@@ -1,13 +1,10 @@
-from Academy import TransferStudent
 from SV_Basic import SVClasses
 from AcrossPacks import TheCoin
 
 import copy
 from numpy.random import choice as npchoice
-from numpy.random import randint as nprandint
 from numpy.random import shuffle as npshuffle
 import numpy as np
-from collections import Counter as cnt
 
 import inspect
 
@@ -109,28 +106,16 @@ class Hand_Deck:
 			
 			GUI.turnStartAni()
 			self.drawCard(1)
-			self.decideCardColors()
-			GUI.seqHolder.pop(0).start()
-		else: pass
-		
-	def decideCardColors(self):
-		for card in self.hands[1] + self.hands[2]:
-			card.effCanTrig()
-			card.checkEvanescent()
-		GUI = self.Game.GUI
-		if GUI:
-			curTurn = self.Game.turn
+			GUI.decideCardColors()
+			GUI.seqReady = True
+		else:
+			self.Game.Manas.calcMana_All()  #Mana change will be animated
 			for ID in range(1, 3):
-				for card in self.hands[ID] + self.Game.minions[ID]:
-					card.btn.setBoxColor(card.btn.decideColor() if ID == curTurn == GUI.ID else (1, 1, 1, 0))
-				hero, power = self.Game.heroes[ID], self.Game.powers[ID]
-				if hero.btn: hero.btn.setBoxColor(hero.btn.decideColor() if ID == curTurn == GUI.ID else (1, 1, 1, 0))
-				if power.btn: power.btn.setBoxColor(power.btn.decideColor() if ID == curTurn == GUI.ID else (1, 1, 1, 0))
-			
-			if curTurn == GUI.ID and not self.Game.morePlaysPossible():
-				if not GUI.btnTurnEnd.jobDone: GUI.btnTurnEnd.changeDisplay(jobDone=True)
-			elif GUI.btnTurnEnd.jobDone: GUI.btnTurnEnd.changeDisplay(jobDone=False)
-			
+				for card in self.hands[ID] + self.decks[ID]:
+					if "Start of Game" in card.index:
+						card.startofGame()
+			self.drawCard(1)
+		
 	# 双人游戏中一方很多控制自己的换牌，之后两个游戏中复制对方的手牌和牌库信息
 	def mulligan1Side(self, ID, indices):
 		GUI = self.Game.GUI
@@ -162,6 +147,7 @@ class Hand_Deck:
 		
 		GUI = self.Game.GUI
 		if GUI:
+			GUI.seqReady = False
 			GUI.seqHolder = [GUI.SEQUENCE(GUI.FUNC(GUI.deckZones[1].draw, len(self.decks[1]), len(self.hands[1])),
 										  GUI.FUNC(GUI.deckZones[2].draw, len(self.decks[2]), len(self.hands[2])),
 										  )]
@@ -173,12 +159,13 @@ class Hand_Deck:
 		for ID in range(1, 3):
 			for card in self.hands[ID] + self.decks[ID]:
 				if "Start of Game" in card.index:
-					GUI.seqHolder[-1].append(GUI.FUNC(GUI.showOffBoardTrig, card, "Appear"))
+					if GUI: GUI.seqHolder[-1].append(GUI.FUNC(GUI.showOffBoardTrig, card, "Appear"))
 					card.startofGame()
-		if GUI.ID == 1: GUI.turnStartAni()
+		if GUI and GUI.ID == 1: GUI.turnStartAni()
 		self.drawCard(1)
-		self.decideCardColors()
-		GUI.seqHolder.pop(0).start()
+		if GUI:
+			GUI.decideCardColors()
+			GUI.seqReady = True
 		
 	def handNotFull(self, ID):
 		return len(self.hands[ID]) < self.handUpperLimit[ID]
@@ -191,8 +178,6 @@ class Hand_Deck:
 		return posinHand == 0 or posinHand == len(self.hands[card.ID]) - 1
 
 	def noDuplicatesinDeck(self, ID):
-		#typeCounter = cnt((type(card) for card in self.decks[ID]))
-		#return all(typeCounter.values())
 		record = []
 		for card in self.decks[ID]:
 			if type(card) not in record: record.append(type(card))
@@ -264,10 +249,13 @@ class Hand_Deck:
 			else:  # 抽到的牌可以加入手牌。
 				if cardTracker[0].type == "Minion" or cardTracker[0].type == "Amulet":
 					cardTracker[0].whenDrawn()
-				cardTracker[0] = cardTracker[0].entersHand()
+				card_Final = cardTracker[0].entersHand()
 				self.hands[ID].append(cardTracker[0])
 				if GUI: GUI.drawCardAni_IntoHand(card, cardTracker[0])
 				game.sendSignal("CardEntersHand", ID, None, cardTracker, mana, "byDrawing")
+				if cardTracker[0] != card_Final:
+					card_Final.inheritEnchantmentsfrom(cardTracker[0])
+					self.replaceCardinHand(cardTracker[0], card_Final, cardTracker[0].creator, calcMana=False)
 				game.Manas.calcMana_All()
 			return cardTracker[0], mana
 		else:
@@ -285,29 +273,24 @@ class Hand_Deck:
 		for card in obj:
 			if self.handNotFull(ID):
 				if inspect.isclass(card): card = card(game, ID)
-				card.ID = ID
+				card.ID, card.creator = ID, creator
 				self.hands[ID].insert(pos + 100 * (pos < 0), card)
 				if GUI:
 					if ani == "fromCenter":
-						if card.btn:
-							GUI.seqHolder[-1].append(GUI.FUNC(print, "Starting animation of adding card to hand"))
-							GUI.seqHolder[-1].append(GUI.handZones[card.ID].placeCards(add2Queue=False))
+						if card.btn: GUI.seqHolder[-1].append(GUI.handZones[card.ID].placeCards(add2Queue=False))
 						else: GUI.putaNewCardinHandAni(card)
 					elif ani == "Twinspell":
 						if GUI: GUI.cardReplacedinHand_Refresh(card)
-				#None will simply pass
-				card = card.entersHand()
-				#只有已经提前定义了instance的卡牌会使用creator is None的选项
-				if creator: card.creator = creator
+				card_Final = card.entersHand()
 				game.sendSignal("CardEntersHand", ID, None, [card], 0, "")
 				if byDiscover: game.sendSignal("PutinHandbyDiscover", ID, None, obj, 0, '')
+				if card != card_Final:
+					card_Final.inheritEnchantmentsfrom(card)
+					self.replaceCardinHand(card, card_Final, creator, calcMana=False)
 			else:
 				self.Game.Counters.shadows[ID] += 1
 		game.Manas.calcMana_All()
-		#if GUI:
-		#	print("After adding card to hand:")
-		#	GUI.checkCardsDisplays(checkHand=True)
-			
+		
 	def replaceCardDrawn(self, targetHolder, newCard, creator=None):
 		ID = targetHolder[0].ID
 		isPrimaryGalakrond = targetHolder[0] == self.Game.Counters.primaryGalakronds[ID]
@@ -315,12 +298,24 @@ class Hand_Deck:
 		targetHolder[0] = newCard
 		if isPrimaryGalakrond: self.Game.Counters.primaryGalakronds[ID] = newCard
 		
-	def replaceCardinHand(self, card, newCard, creator=None): #替换单张卡牌，用于在手牌中发生变形时
+	#newCard must be an instance
+	def replaceCardinHand(self, card, newCard, creator=None, calcMana=True): #替换单张卡牌，用于在手牌中发生变形时
 		ID = card.ID
-		i = self.hands[ID].index(card)
 		card.leavesHand()
-		self.hands[ID].pop(i)
-		self.addCardtoHand(newCard, ID, byDiscover=False, pos=i, ani="Twinspell", creator=creator)
+		self.hands[ID][self.hands[ID].index(card)] = newCard
+		newCard.ID, newCard.creator = ID, creator
+		#加入手牌的牌可能会变化
+		newCard_Final = newCard.entersHand()
+		
+		if self.Game.GUI: self.Game.GUI.transformAni_inHand(card, newCard)
+		
+		self.Game.sendSignal("CardLeavesHand", ID, None, card, 0, '')
+		self.Game.sendSignal("CardEntersHand", ID, None, [newCard], 0, "")
+		
+		if newCard != newCard_Final:
+			newCard_Final.inheritEnchantmentsfrom(newCard)
+			self.replaceCardinHand(newCard, newCard_Final, creator=newCard.creator)
+		if calcMana: self.Game.Manas.calcMana_All()
 		
 	#目前只有牌库中的迦拉克隆升级时会调用，对方是可以知道的
 	def replaceCardinDeck(self, card, newCard, creator=None):
@@ -351,38 +346,37 @@ class Hand_Deck:
 			newCard.entersDeck()
 		self.Game.sendSignal("DeckCheck", ID, None, None, 0, "")
 		
+	#Given the index in hand. Can't shuffle multiple cards except for whole hand
+	#ID here is the target deck ID, it can be initiated by cards from a different side
+	def shuffle_Hand2Deck(self, i, ID, initiatorID, all=True):
+		if all:
+			hand = self.extractfromHand(None, ID, all, enemyCanSee=False, linger=True)[0]
+			for card in hand:
+				card.reset(ID, isKnown=False)
+				self.shuffleintoDeck(card, initiatorID=initiatorID, enemyCanSee=False, sendSig=True)
+		else:
+			card = self.extractfromHand(i, ID, all, enemyCanSee=False, linger=True)[0]
+			card.reset(ID, isKnown=False)
+			self.shuffleintoDeck(card, initiatorID=initiatorID, enemyCanSee=False, sendSig=True)
+
 	# All the cards shuffled will be into the same deck. If necessary, invoke this function for each deck.
 	# PlotTwist把手牌洗入牌库的时候，手牌中buff的随从两次被抽上来时buff没有了。
 	# 假设洗入牌库这个动作会把一张牌初始化
 	def shuffleintoDeck(self, obj, initiatorID=0, enemyCanSee=True, sendSig=True, creator=None):
 		if obj:
-			curGame = self.Game
 			#如果obj不是一个Iterable，则将其变成一个列表
 			if not isinstance(obj, (list, tuple, np.ndarray)):
 				obj = [obj]
 			ID = obj[0].ID
-			if curGame.GUI: curGame.GUI.shuffleintoDeckAni(obj, enemyCanSee)
 			self.decks[ID] += obj
 			for card in obj:
 				card.entersDeck()
 				card.creator = creator
+			if self.Game.GUI: self.Game.GUI.shuffleintoDeckAni(obj, enemyCanSee)
 			npshuffle(self.decks[ID])
-			if sendSig: curGame.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
-			curGame.sendSignal("DeckCheck", ID, None, None, 0, "")
+			if sendSig: self.Game.sendSignal("CardShuffled", initiatorID, None, obj, 0, "")
+			self.Game.sendSignal("DeckCheck", ID, None, None, 0, "")
 	
-	#Given the index in hand. Can't shuffle multiple cards except for whole hand
-	#ID here is the target deck ID, it can be initiated by cards from a different side 
-	def shuffle_Hand2Deck(self, i, ID, initiatorID, all=True):
-		if all:
-			hand = self.extractfromHand(None, ID, all, enemyCanSee=False)[0]
-			for card in hand:
-				card.reset(ID, isKnown=False)
-				self.shuffleintoDeck(card, initiatorID=initiatorID, enemyCanSee=False, sendSig=True, possi=card.possi)
-		elif i:
-			card = self.extractfromHand(i, ID, all, enemyCanSee=False)[0]
-			card.reset(ID, isKnown=False)
-			self.shuffleintoDeck(card, initiatorID=initiatorID, enemyCanSee=False, sendSig=True, possi=card.possi)
-			
 	def burialRite(self, ID, minions, noSignal=False):
 		if not isinstance(minions, list):
 			minions = [minions]
@@ -428,7 +422,7 @@ class Hand_Deck:
 			i = card if isinstance(card, (int, np.int32, np.int64)) else self.hands[ID].index(card)
 			card = self.hands[ID].pop(i)
 			card.leavesHand()
-			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni([card], enemyCanSee=True, linger=True)
+			if self.Game.GUI: self.Game.GUI.cardsLeaveHandAni([card], ID=ID, enemyCanSee=True, linger=True)
 			self.Game.sendSignal("CardDiscarded", card.ID, None, card, 1, "")
 			card.whenDiscarded()
 			self.Game.Counters.cardsDiscardedThisGame[ID].append(card.index)
@@ -445,7 +439,7 @@ class Hand_Deck:
 			if cardsOut:
 				#一般全部取出手牌的时候都是直接洗入牌库，一般都不可见
 				if animate and self.Game.GUI:
-					self.Game.GUI.cardsLeaveHandAni(list(range(len(cardsOut))), ID=ID, enemyCanSee=True, linger=linger)
+					self.Game.GUI.cardsLeaveHandAni(cardsOut, ID=ID, enemyCanSee=True, linger=linger)
 				self.hands[ID] = []
 				for card in cardsOut:
 					card.leavesHand()
@@ -462,7 +456,8 @@ class Hand_Deck:
 				card = self.hands[ID].pop(card)
 				cost = card.getMana()
 			card.leavesHand()
-			if animate and self.Game.GUI: self.Game.GUI.cardsLeaveHandAni([card], card.ID, enemyCanSee, linger=linger)
+			if animate and self.Game.GUI:
+				self.Game.GUI.cardsLeaveHandAni([card], card.ID, enemyCanSee, linger=linger)
 			self.Game.sendSignal("CardLeavesHand", card.ID, None, card, 0, '')
 			return card, cost, posinHand
 
@@ -506,21 +501,24 @@ class Hand_Deck:
 			Copy.hands = {1: [card.createCopy(game) for card in self.hands[1]],
 						  2: [card.createCopy(game) for card in self.hands[2]]}
 			return Copy
-		else:
-			return game.copiedObjs[self]
+		else: return game.copiedObjs[self]
 
 from CardPools import *
 
-Default1 = [LightningBolt, SightlessWatcher, Tracking, SelectiveBreeder, ThriveintheShadows,
-			SphereofSapience, SphereofSapience, ApexisSmuggler, RiggedFaireGame, ShadowjewelerHanar,
-			Marshspawn, OhMyYogg, PrimordialStudies, WandThief, JandiceBarov,
-			InstructorFireheart, SilasDarkmoon, MysteryWinner, RinlingsRifle, GuesstheWeight, RingToss, SnackRun,
-			#PalmReading, GrandEmpressShekzara, Guidance, ResizingPouch,
-			#KeywardenIvory, VenomousScorpid, KazakusGolemShaper, SouthseaScoundrel,
-			#PackKodo, WarsongWrangler, RuneOrb, Yoink, ClericofAnshe
+Default1 = [Equality, BlessingofKings, Consecration, StandAgainstDarkness, GuardianofKings, TirionFordring, ImprisonedSungill, AldorAttendant,
+		   #Felsaber, GrandEmpressShekzara, Shenanigans, SparkjoyCheat, EfficientOctobot, WickedStabRank1,
+			#ApothecaryHelbrim, OilRigAmbusher, ScabbsCutterbutter, SavoryDeviateDelight,
+			#MurgurMurgurgle, LibramofWisdom, UnderlightAnglingRod, AldorTruthseeker, LibramofJustice, LadyLiadrin, LibramofHope,
 			]
 
-Default2 = [LightningBolt, SightlessWatcher, Tracking, SelectiveBreeder, ThriveintheShadows,
-			SphereofSapience, ApexisSmuggler, RiggedFaireGame, Renew, ShadowjewelerHanar,
-			
+Default2 = [SecretPassage, SheldrasMoontree, FoxyFraud, CloakofShadows, CounterfeitBlade, SketchyInformation,
+			#TruesilverChampion, Reckoning, RighteousProtector, PursuitofJustice,
+			ArgentBraggart, GiftofLuminance, HighAbbessAlura, BlessingofAuthority, DevoutPupil, JudiciousJunior, TuralyontheTenured, ShieldofHonor, CeremonialMaul,
 			]
+
+[
+
+LordBarov, Commencement, OhMyYogg, RedscaleDragontamer, SnackRun, CarnivalBarker, DayattheFaire, BalloonMerchant, CarouselGryphon, LothraxiontheRedeemed,
+HammeroftheNaaru, HighExarchYrel, ImprisonedCelestial, Rally, LibramofJudgment, Barricade, ConvictionRank1, GallopingSavior, KnightofAnointment, SoldiersCaravan,
+SwordoftheFallen, NorthwatchCommander, CarielRoame, VeteranWarmedic, InvigoratingSermon, CannonmasterSmythe, JudgmentofJustice, SeedcloudBuckler, PartyUp, BlessedGoods,
+PrismaticJewelKit, RisetotheOccasion, NobleMount, CityTax, AllianceBannerman, CatacombGuard, LightbringersHammer, FirstBladeofWrynn, HighlordFordragon, ]

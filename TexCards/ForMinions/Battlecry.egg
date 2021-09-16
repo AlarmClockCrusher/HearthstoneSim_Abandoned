@@ -1,120 +1,120 @@
 <Comment> {
-  "egg-texture-cards -o Battlecry.egg -fps 30 -p 1,1 'TexCards\ForMinions\Battlecry_00.png' -p 128,128 'TexCards\ForMinions\Battlecry_01.png' -p 128,128 'TexCards\ForMinions\Battlecry_02.png' -p 128,128 'TexCards\ForMinions\Battlecry_03.png' -p 128,128 'TexCards\ForMinions\Battlecry_04.png' -p 128,128 'TexCards\ForMinions\Battlecry_05.png' -p 128,128 'TexCards\ForMinions\Battlecry_06.png' -p 128,128 'TexCards\ForMinions\Battlecry_07.png' -p 128,128 'TexCards\ForMinions\Battlecry_08.png' -p 128,128 'TexCards\ForMinions\Battlecry_09.png' -p 128,128 'TexCards\ForMinions\Battlecry_10.png' -p 128,128 'TexCards\ForMinions\Battlecry_11.png' -p 128,128 'TexCards\ForMinions\Battlecry_12.png' -p 128,128 'TexCards\ForMinions\Battlecry_13.png' -p 128,128 'TexCards\ForMinions\Battlecry_14.png' -p 128,128 'TexCards\ForMinions\Battlecry_15.png' -p 128,128 'TexCards\ForMinions\Battlecry_16.png' -p 128,128 'TexCards\ForMinions\Battlecry_17.png' -p 128,128 'TexCards\ForMinions\Battlecry_18.png' -p 128,128 'TexCards\ForMinions\Battlecry_19.png' -p 128,128 'TexCards\ForMinions\Battlecry_20.png' -p 128,128 'TexCards\ForMinions\Battlecry_21.png' -p 128,128 'TexCards\ForMinions\Battlecry_22.png' -p 128,128 'TexCards\ForMinions\Battlecry_23.png' -p 128,128 'TexCards\ForMinions\Battlecry_24.png' -p 128,128 'TexCards\ForMinions\Battlecry_25.png' -p 128,128 'TexCards\ForMinions\Battlecry_26.png' -p 128,128 'TexCards\ForMinions\Battlecry_27.png' -p 128,128 'TexCards\ForMinions\Battlecry_28.png' -p 128,128 'TexCards\ForMinions\Battlecry_29.png' -p 128,128 'TexCards\ForMinions\Battlecry_30.png' -p 128,128 'TexCards\ForMinions\Battlecry_31.png'"
+  "egg-texture-cards -o Battlecry.egg -fps 24 -p 128,128 'TexCards\\ForMinions\Battlecry_00.png' -p 128,128 'TexCards\\ForMinions\Battlecry_01.png' -p 128,128 'TexCards\\ForMinions\Battlecry_02.png' -p 128,128 'TexCards\\ForMinions\Battlecry_03.png' -p 128,128 'TexCards\\ForMinions\Battlecry_04.png' -p 128,128 'TexCards\\ForMinions\Battlecry_05.png' -p 128,128 'TexCards\\ForMinions\Battlecry_06.png' -p 128,128 'TexCards\\ForMinions\Battlecry_07.png' -p 128,128 'TexCards\\ForMinions\Battlecry_08.png' -p 128,128 'TexCards\\ForMinions\Battlecry_09.png' -p 128,128 'TexCards\\ForMinions\Battlecry_10.png' -p 128,128 'TexCards\\ForMinions\Battlecry_11.png' -p 128,128 'TexCards\\ForMinions\Battlecry_12.png' -p 128,128 'TexCards\\ForMinions\Battlecry_13.png' -p 128,128 'TexCards\\ForMinions\Battlecry_14.png' -p 128,128 'TexCards\\ForMinions\Battlecry_15.png' -p 128,128 'TexCards\\ForMinions\Battlecry_16.png' -p 128,128 'TexCards\\ForMinions\Battlecry_17.png' -p 128,128 'TexCards\\ForMinions\Battlecry_18.png' -p 128,128 'TexCards\\ForMinions\Battlecry_19.png' -p 128,128 'TexCards\\ForMinions\Battlecry_20.png' -p 128,128 'TexCards\\ForMinions\Battlecry_21.png' -p 128,128 'TexCards\\ForMinions\Battlecry_22.png' -p 128,128 'TexCards\\ForMinions\Battlecry_23.png' -p 128,128 'TexCards\\ForMinions\Battlecry_24.png' -p 128,128 'TexCards\\ForMinions\Battlecry_25.png' -p 128,128 'TexCards\\ForMinions\Battlecry_26.png' -p 128,128 'TexCards\\ForMinions\Battlecry_27.png' -p 128,128 'TexCards\\ForMinions\Battlecry_28.png' -p 128,128 'TexCards\\ForMinions\Battlecry_29.png' -p 128,128 'TexCards\\ForMinions\Battlecry_30.png' -p 128,128 'TexCards\\ForMinions\Battlecry_31.png'"
 }
 <Texture> Battlecry_31 {
-  "TexCards/ForMinions/Battlecry_31.png"
+  "TexCards//ForMinions/Battlecry_31.png"
 }
 <Texture> Battlecry_30 {
-  "TexCards/ForMinions/Battlecry_30.png"
+  "TexCards//ForMinions/Battlecry_30.png"
 }
 <Texture> Battlecry_29 {
-  "TexCards/ForMinions/Battlecry_29.png"
+  "TexCards//ForMinions/Battlecry_29.png"
 }
 <Texture> Battlecry_28 {
-  "TexCards/ForMinions/Battlecry_28.png"
+  "TexCards//ForMinions/Battlecry_28.png"
 }
 <Texture> Battlecry_27 {
-  "TexCards/ForMinions/Battlecry_27.png"
+  "TexCards//ForMinions/Battlecry_27.png"
 }
 <Texture> Battlecry_26 {
-  "TexCards/ForMinions/Battlecry_26.png"
+  "TexCards//ForMinions/Battlecry_26.png"
 }
 <Texture> Battlecry_25 {
-  "TexCards/ForMinions/Battlecry_25.png"
+  "TexCards//ForMinions/Battlecry_25.png"
 }
 <Texture> Battlecry_24 {
-  "TexCards/ForMinions/Battlecry_24.png"
+  "TexCards//ForMinions/Battlecry_24.png"
 }
 <Texture> Battlecry_23 {
-  "TexCards/ForMinions/Battlecry_23.png"
+  "TexCards//ForMinions/Battlecry_23.png"
 }
 <Texture> Battlecry_22 {
-  "TexCards/ForMinions/Battlecry_22.png"
+  "TexCards//ForMinions/Battlecry_22.png"
 }
 <Texture> Battlecry_21 {
-  "TexCards/ForMinions/Battlecry_21.png"
+  "TexCards//ForMinions/Battlecry_21.png"
 }
 <Texture> Battlecry_20 {
-  "TexCards/ForMinions/Battlecry_20.png"
+  "TexCards//ForMinions/Battlecry_20.png"
 }
 <Texture> Battlecry_19 {
-  "TexCards/ForMinions/Battlecry_19.png"
+  "TexCards//ForMinions/Battlecry_19.png"
 }
 <Texture> Battlecry_18 {
-  "TexCards/ForMinions/Battlecry_18.png"
+  "TexCards//ForMinions/Battlecry_18.png"
 }
 <Texture> Battlecry_17 {
-  "TexCards/ForMinions/Battlecry_17.png"
+  "TexCards//ForMinions/Battlecry_17.png"
 }
 <Texture> Battlecry_16 {
-  "TexCards/ForMinions/Battlecry_16.png"
+  "TexCards//ForMinions/Battlecry_16.png"
 }
 <Texture> Battlecry_15 {
-  "TexCards/ForMinions/Battlecry_15.png"
+  "TexCards//ForMinions/Battlecry_15.png"
 }
 <Texture> Battlecry_14 {
-  "TexCards/ForMinions/Battlecry_14.png"
+  "TexCards//ForMinions/Battlecry_14.png"
 }
 <Texture> Battlecry_13 {
-  "TexCards/ForMinions/Battlecry_13.png"
+  "TexCards//ForMinions/Battlecry_13.png"
 }
 <Texture> Battlecry_12 {
-  "TexCards/ForMinions/Battlecry_12.png"
+  "TexCards//ForMinions/Battlecry_12.png"
 }
 <Texture> Battlecry_11 {
-  "TexCards/ForMinions/Battlecry_11.png"
+  "TexCards//ForMinions/Battlecry_11.png"
 }
 <Texture> Battlecry_10 {
-  "TexCards/ForMinions/Battlecry_10.png"
+  "TexCards//ForMinions/Battlecry_10.png"
 }
 <Texture> Battlecry_09 {
-  "TexCards/ForMinions/Battlecry_09.png"
+  "TexCards//ForMinions/Battlecry_09.png"
 }
 <Texture> Battlecry_08 {
-  "TexCards/ForMinions/Battlecry_08.png"
+  "TexCards//ForMinions/Battlecry_08.png"
 }
 <Texture> Battlecry_07 {
-  "TexCards/ForMinions/Battlecry_07.png"
+  "TexCards//ForMinions/Battlecry_07.png"
 }
 <Texture> Battlecry_06 {
-  "TexCards/ForMinions/Battlecry_06.png"
+  "TexCards//ForMinions/Battlecry_06.png"
 }
 <Texture> Battlecry_05 {
-  "TexCards/ForMinions/Battlecry_05.png"
+  "TexCards//ForMinions/Battlecry_05.png"
 }
 <Texture> Battlecry_04 {
-  "TexCards/ForMinions/Battlecry_04.png"
+  "TexCards//ForMinions/Battlecry_04.png"
 }
 <Texture> Battlecry_03 {
-  "TexCards/ForMinions/Battlecry_03.png"
+  "TexCards//ForMinions/Battlecry_03.png"
 }
 <Texture> Battlecry_02 {
-  "TexCards/ForMinions/Battlecry_02.png"
+  "TexCards//ForMinions/Battlecry_02.png"
 }
 <Texture> Battlecry_01 {
-  "TexCards/ForMinions/Battlecry_01.png"
+  "TexCards//ForMinions/Battlecry_01.png"
 }
 <Texture> Battlecry_00 {
-  "TexCards/ForMinions/Battlecry_00.png"
+  "TexCards//ForMinions/Battlecry_00.png"
 }
 <Group> {
   <Switch> { 1 }
-  <Scalar> fps { 30 }
+  <Scalar> fps { 24 }
   <VertexPool> vpool {
     <Vertex> 0 {
-      -0.00390625 0.00390625 0
+      -0.5 0.5 0
       <UV> { 0 1 }
     }
     <Vertex> 1 {
-      -0.00390625 -0.00390625 0
+      -0.5 -0.5 0
       <UV> { 0 0 }
     }
     <Vertex> 2 {
-      0.00390625 -0.00390625 0
+      0.5 -0.5 0
       <UV> { 1 0 }
     }
     <Vertex> 3 {
-      0.00390625 0.00390625 0
+      0.5 0.5 0
       <UV> { 1 1 }
     }
     <Vertex> 4 {

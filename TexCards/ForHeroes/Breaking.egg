@@ -1,78 +1,78 @@
 <Comment> {
-  "egg-texture-cards -o Breaking.egg -fps 24 -p 1,1 'TexCards\ForHeroes\Breaking_00.png' -p 170,170 'TexCards\ForHeroes\Breaking_01.png' -p 170,170 'TexCards\ForHeroes\Breaking_02.png' -p 170,170 'TexCards\ForHeroes\Breaking_03.png' -p 170,170 'TexCards\ForHeroes\Breaking_04.png' -p 170,170 'TexCards\ForHeroes\Breaking_05.png' -p 170,170 'TexCards\ForHeroes\Breaking_06.png' -p 170,170 'TexCards\ForHeroes\Breaking_07.png' -p 170,170 'TexCards\ForHeroes\Breaking_08.png' -p 170,170 'TexCards\ForHeroes\Breaking_09.png' -p 170,170 'TexCards\ForHeroes\Breaking_10.png' -p 170,170 'TexCards\ForHeroes\Breaking_11.png' -p 170,170 'TexCards\ForHeroes\Breaking_12.png' -p 170,170 'TexCards\ForHeroes\Breaking_13.png' -p 170,170 'TexCards\ForHeroes\Breaking_14.png' -p 170,170 'TexCards\ForHeroes\Breaking_15.png' -p 170,170 'TexCards\ForHeroes\Breaking_16.png' -p 170,170 'TexCards\ForHeroes\Breaking_17.png'"
+  "egg-texture-cards -o Breaking.egg -fps 24 -p 170,170 'TexCards\\ForHeroes\Breaking_00.png' -p 170,170 'TexCards\\ForHeroes\Breaking_01.png' -p 170,170 'TexCards\\ForHeroes\Breaking_02.png' -p 170,170 'TexCards\\ForHeroes\Breaking_03.png' -p 170,170 'TexCards\\ForHeroes\Breaking_04.png' -p 170,170 'TexCards\\ForHeroes\Breaking_05.png' -p 170,170 'TexCards\\ForHeroes\Breaking_06.png' -p 170,170 'TexCards\\ForHeroes\Breaking_07.png' -p 170,170 'TexCards\\ForHeroes\Breaking_08.png' -p 170,170 'TexCards\\ForHeroes\Breaking_09.png' -p 170,170 'TexCards\\ForHeroes\Breaking_10.png' -p 170,170 'TexCards\\ForHeroes\Breaking_11.png' -p 170,170 'TexCards\\ForHeroes\Breaking_12.png' -p 170,170 'TexCards\\ForHeroes\Breaking_13.png' -p 170,170 'TexCards\\ForHeroes\Breaking_14.png' -p 170,170 'TexCards\\ForHeroes\Breaking_15.png' -p 170,170 'TexCards\\ForHeroes\Breaking_16.png' -p 170,170 'TexCards\\ForHeroes\Breaking_17.png'"
 }
 <Texture> Breaking_17 {
-  "TexCards/ForHeroes/Breaking_17.png"
+  "TexCards//ForHeroes/Breaking_17.png"
 }
 <Texture> Breaking_16 {
-  "TexCards/ForHeroes/Breaking_16.png"
+  "TexCards//ForHeroes/Breaking_16.png"
 }
 <Texture> Breaking_15 {
-  "TexCards/ForHeroes/Breaking_15.png"
+  "TexCards//ForHeroes/Breaking_15.png"
 }
 <Texture> Breaking_14 {
-  "TexCards/ForHeroes/Breaking_14.png"
+  "TexCards//ForHeroes/Breaking_14.png"
 }
 <Texture> Breaking_13 {
-  "TexCards/ForHeroes/Breaking_13.png"
+  "TexCards//ForHeroes/Breaking_13.png"
 }
 <Texture> Breaking_12 {
-  "TexCards/ForHeroes/Breaking_12.png"
+  "TexCards//ForHeroes/Breaking_12.png"
 }
 <Texture> Breaking_11 {
-  "TexCards/ForHeroes/Breaking_11.png"
+  "TexCards//ForHeroes/Breaking_11.png"
 }
 <Texture> Breaking_10 {
-  "TexCards/ForHeroes/Breaking_10.png"
+  "TexCards//ForHeroes/Breaking_10.png"
 }
 <Texture> Breaking_09 {
-  "TexCards/ForHeroes/Breaking_09.png"
+  "TexCards//ForHeroes/Breaking_09.png"
 }
 <Texture> Breaking_08 {
-  "TexCards/ForHeroes/Breaking_08.png"
+  "TexCards//ForHeroes/Breaking_08.png"
 }
 <Texture> Breaking_07 {
-  "TexCards/ForHeroes/Breaking_07.png"
+  "TexCards//ForHeroes/Breaking_07.png"
 }
 <Texture> Breaking_06 {
-  "TexCards/ForHeroes/Breaking_06.png"
+  "TexCards//ForHeroes/Breaking_06.png"
 }
 <Texture> Breaking_05 {
-  "TexCards/ForHeroes/Breaking_05.png"
+  "TexCards//ForHeroes/Breaking_05.png"
 }
 <Texture> Breaking_04 {
-  "TexCards/ForHeroes/Breaking_04.png"
+  "TexCards//ForHeroes/Breaking_04.png"
 }
 <Texture> Breaking_03 {
-  "TexCards/ForHeroes/Breaking_03.png"
+  "TexCards//ForHeroes/Breaking_03.png"
 }
 <Texture> Breaking_02 {
-  "TexCards/ForHeroes/Breaking_02.png"
+  "TexCards//ForHeroes/Breaking_02.png"
 }
 <Texture> Breaking_01 {
-  "TexCards/ForHeroes/Breaking_01.png"
+  "TexCards//ForHeroes/Breaking_01.png"
 }
 <Texture> Breaking_00 {
-  "TexCards/ForHeroes/Breaking_00.png"
+  "TexCards//ForHeroes/Breaking_00.png"
 }
 <Group> {
   <Switch> { 1 }
   <Scalar> fps { 24 }
   <VertexPool> vpool {
     <Vertex> 0 {
-      -0.00294117647058824 0.00294117647058824 0
+      -0.5 0.5 0
       <UV> { 0 1 }
     }
     <Vertex> 1 {
-      -0.00294117647058824 -0.00294117647058824 0
+      -0.5 -0.5 0
       <UV> { 0 0 }
     }
     <Vertex> 2 {
-      0.00294117647058824 -0.00294117647058824 0
+      0.5 -0.5 0
       <UV> { 1 0 }
     }
     <Vertex> 3 {
-      0.00294117647058824 0.00294117647058824 0
+      0.5 0.5 0
       <UV> { 1 1 }
     }
     <Vertex> 4 {

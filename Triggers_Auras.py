@@ -3,9 +3,10 @@
 class TrigBoard:
 	def __init__(self, entity, signals):
 		self.entity, self.signals = entity, signals
-		self.inherent, self.changesCard, self.nextAnimWaits = True, False, False
-		self.counter = 0
+		self.inherent, self.changesCard = True, False
+		self.counter = -1
 		self.oneTime = False
+		self.nextAniWaits = False
 		
 	def connect(self):
 		game, ID = self.entity.Game, self.entity.ID
@@ -17,7 +18,7 @@ class TrigBoard:
 		game, ID = self.entity.Game, self.entity.ID
 		for sig in self.signals:
 			try: game.trigsBoard[ID][sig].remove(self)
-			except: pass
+			except ValueError: pass
 			
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return True
@@ -26,10 +27,8 @@ class TrigBoard:
 		if self.canTrig(signal, ID, subject, target, number, comment):
 			btn, GUI = self.entity.btn, self.entity.Game.GUI
 			if btn and "Trigger" in btn.icons:
-				icon = btn.icons["Trigger"]
-				if self.nextAnimWaits: GUI.seqHolder[-1].append(GUI.PARALLEL(GUI.FUNC(icon.trigAni), GUI.WAIT(1.5)))
-				else: GUI.seqHolder[-1].append(GUI.FUNC(icon.trigAni))
-				
+				GUI.seqHolder[-1].append(GUI.FUNC(btn.icons["Trigger"].trigAni))
+				if self.nextAniWaits: GUI.seqHolder[-1].append(GUI.WAIT(0.7))
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
@@ -41,7 +40,7 @@ class TrigBoard:
 	def rngPool(self, identifier):
 		pool = self.entity.Game.RNGPools[identifier]
 		try: pool.remove(type(self.entity))
-		except: pass
+		except ValueError: pass
 		return pool
 		
 	#一般只有需要额外定义ID的回合开始和结束扳机需要有自己的selfCopy函数
@@ -62,11 +61,27 @@ class TrigBoard:
 			return game.copiedObjs[self]
 			
 			
+class Trig_Countdown(TrigBoard):
+	def increment(self, number):
+		return 1
+	
+	def trig(self, signal, ID, subject, target, number, comment, choice=0):
+		if self.canTrig(signal, ID, subject, target, number, comment):
+			self.counter -= self.increment(number)
+			self.counter = max(self.counter, 0)
+			counter_0 = self.counter
+			btn = self.entity.btn
+			animate = btn and "Hourglass" in btn.icons
+			if animate: btn.GUI.seqHolder[-1].append(btn.icons["Hourglass"].seqUpdateText())
+			self.effect(signal, ID, subject, target, number, comment)
+			if animate: btn.GUI.seqHolder[-1].append(btn.icons["Hourglass"].seqUpdateText(animate=counter_0 != self.counter))
+			
+
 class TrigHand:
 	def __init__(self, entity, signals):
 		self.entity, self.signals, self.inherent = entity, signals, True
-		self.inherent, self.changesCard, self.nextAnimWaits = True, False, False
-		self.counter = 0
+		self.inherent, self.changesCard = True, False
+		self.counter = -1
 		
 	def connect(self):
 		for sig in self.signals:
@@ -76,11 +91,10 @@ class TrigHand:
 	def disconnect(self):
 		for sig in self.signals:
 			try: self.entity.Game.trigsHand[self.entity.ID][sig].remove(self)
-			except: pass
+			except ValueError: pass
 			
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			if self.entity.Game.GUI: self.entity.Game.GUI.trigBlink(self.entity)
 			self.effect(signal, ID, subject, target, number, comment)
 			
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -95,7 +109,7 @@ class TrigHand:
 	def rngPool(self, identifier):
 		pool = self.entity.Game.RNGPools[identifier]
 		try: pool.remove(type(self.entity))
-		except: pass
+		except ValueError: pass
 		return pool
 		
 	def selfCopy(self, recipient):
@@ -124,7 +138,7 @@ class TrigDeck:
 	def disconnect(self):
 		for sig in self.signals:
 			try: self.entity.Game.trigsDeck[self.entity.ID][sig].remove(self)
-			except: pass
+			except ValueError: pass
 			
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
@@ -142,7 +156,7 @@ class TrigDeck:
 	def rngPool(self, identifier):
 		pool = self.entity.Game.RNGPools[identifier]
 		try: pool.remove(type(self.entity))
-		except: pass
+		except ValueError: pass
 		return pool
 		
 	def selfCopy(self, recipient):
@@ -166,13 +180,12 @@ class Deathrattle_Minion(TrigBoard):
 		
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		minion, game = self.entity, self.entity.Game
-		if game.status[minion.ID]["Deathrattle x2"] > 0:
-			if self.canTrig(signal, ID, subject, target, number, comment):
-				if game.GUI: game.GUI.deathrattleAni(minion, color="grey40")
-				self.effect(signal, ID, subject, target, number, comment)
+		trigTwice = game.effects[minion.ID]["Deathrattle x2"] > 0
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			if game: game.GUI.deathrattleAni(minion, color="grey40")
+			if game.GUI: game.GUI.deathrattleAni(minion)
 			game.Counters.deathrattlesTriggered[minion.ID].append(type(self))
+			self.effect(signal, ID, subject, target, number, comment)
+		if trigTwice and self.canTrig(signal, ID, subject, target, number, comment):
 			self.effect(signal, ID, subject, target, number, comment)
 		#随从通过死亡触发的亡语扳机需要在亡语触发之后注销。同样的，如果随从在亡语触发之后不在随从列表中了，如将随从洗回牌库，则同样要注销亡语
 		#但是如果随从在由其他效果在场上触发的扳机，则这个亡语不会注销
@@ -180,7 +193,7 @@ class Deathrattle_Minion(TrigBoard):
 			self.disconnect()
 			
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.Game.status[self.entity.ID]["Deathrattle X"] < 1 and target == self.entity
+		return self.entity.Game.effects[self.entity.ID]["Deathrattle X"] < 1 and target == self.entity
 		
 		
 class Deathrattle_Weapon(TrigBoard):
@@ -190,19 +203,18 @@ class Deathrattle_Weapon(TrigBoard):
 		
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		weapon, game = self.entity, self.entity.Game
-		if game.status[weapon.ID]["Weapon Deathrattle x2"] > 0:
-			if self.canTrig(signal, ID, subject, target, number, comment):
-				if game.GUI: game.GUI.deathrattleAni(weapon, color="grey40")
-				self.effect(signal, ID, subject, target, number, comment)
+		trigTwice = game.effects[weapon.ID]["Weapon Deathrattle x2"] > 0
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			if game.GUI: game.GUI.deathrattleAni(weapon, color="grey40")
+			if game.GUI: game.GUI.deathrattleAni(weapon)
 			game.Counters.deathrattlesTriggered[weapon.ID].append(type(self))
+			self.effect(signal, ID, subject, target, number, comment)
+		if trigTwice and self.canTrig(signal, ID, subject, target, number, comment):
 			self.effect(signal, ID, subject, target, number, comment)
 		#目前没有触发武器亡语的效果，所以武器的亡语触发之后可以很安全地直接将其删除。
 		self.disconnect()
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-		return self.entity.Game.status[self.entity.ID]["Deathrattle X"] < 1 and target == self.entity
+		return self.entity.Game.effects[self.entity.ID]["Deathrattle X"] < 1 and target == self.entity
 		
 		
 class SecretTrigger(TrigBoard):
@@ -223,7 +235,7 @@ class SecretTrigger(TrigBoard):
 		game, ID = self.entity.Game, self.entity.ID
 		for sig in self.signals:
 			try: game.trigsBoard[ID][sig].remove(self)
-			except: pass
+			except ValueError: pass
 			
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return True
@@ -247,7 +259,7 @@ class SecretTrigger(TrigBoard):
 		if game.GUI:
 			game.GUI.secretTrigAni(secret)
 			game.GUI.heroZones[secret.ID].placeSecrets()
-		for i in range(2 if game.status[secret.ID]["Secrets x2"] > 0 else 1):
+		for i in range(2 if game.effects[secret.ID]["Secrets x2"] > 0 else 1):
 			self.effect(signal, ID, subject, target, number, comment)
 		game.sendSignal("SecretRevealed", game.turn, secret, None, 0, "")
 		game.Counters.numSecretsTriggeredThisGame[secret.ID] += 1
@@ -260,9 +272,8 @@ class SecretTrigger(TrigBoard):
 		return ''
 		
 	def rngPool(self, identifier):
-		pool = self.entity.Game.RNGPools[identifier]
-		try: pool.remove(type(self.entity))
-		except: pass
+		pool, cardType = self.entity.Game.RNGPools[identifier], type(self.entity)
+		if cardType in pool: pool.remove()
 		return pool
 		
 	def selfCopy(self, recipient):
@@ -307,12 +318,13 @@ class Trig_Echo(TrigHand):
 		return self.entity.inHand #Echo disappearing should trigger at the end of any turn
 		
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
+		print("Echo triggers")
 		self.entity.Game.Hand_Deck.extractfromHand(self.entity)
 		
 		
 class Trig_Corrupt(TrigHand):
 	def __init__(self, entity, corruptedType):
-		super().__init__(entity, ["ManaPaid"])
+		super().__init__(entity, ["MinionBeenPlayed", "SpellBeenPlayed", "WeaponBeenPlayed", "HeroBeenPlayed"])
 		self.corruptedType = corruptedType
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
@@ -321,34 +333,8 @@ class Trig_Corrupt(TrigHand):
 	def effect(self, signal, ID, subject, target, number, comment, choice=0):
 		card = self.entity
 		newCard = self.corruptedType(card.Game, card.ID)
-		try:
-			#Buff and mana effects, etc, will be preserved
-			#Buff to cards in hand will always be permanent or temporary, not from Auras
-			if newCard.type == "Minion":
-				#Temporary attack changes on minions are NOT included in attack_Enchant
-				attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_max - card.health_0
-				newCard.buffDebuff(attBuff, healthBuff)
-				for attGain, attRevertTime in card.tempAttChanges:
-					newCard.buffDebuff(attGain, 0, attRevertTime)
-				#There are no Corrupted cards with predefined Deathrattles, and given Deathrattles are very simple
-				newCard.deathrattles = [type(deathrattle)(newCard) for deathrattle in card.deathrattles]
-			elif newCard.type == "Weapon": #Only applicable to Felsteel Executioner
-				attBuff, healthBuff = card.attack_Enchant - card.attack_0, card.health_max - card.health_0
-				#Assume temporary attack changes applied on a minion won't carry over to the weapon
-				newCard.gainStat(attBuff, healthBuff)
-			#Keep the keywords and marks consistent
-			for key, value in newCard.keyWords.items(): #Find keywords the new card doesn't have
-				if value < 1 and card.keyWords[key] > 0: newCard.keyWords[key] = 1
-			for key, value in newCard.marks.items():
-				try:
-					if value < 1 and card.marks[key] > 0: newCard.marks[key] = 1
-				except: pass
-			#Inhand triggers and mana modifications
-			newCard.trigsHand += [trig for trig in card.trigsHand if not isinstance(trig, Trig_Corrupt)]
-			newCard.manaMods = [manaMod.selfCopy(newCard) for manaMod in card.manaMods]
-		except Exception as e:
-			print(e, card, newCard)
-		card.Game.Hand_Deck.replaceCardinHand(card, newCard)
+		newCard.inheritEnchantmentsfrom(self.entity)
+		card.Game.Hand_Deck.replaceCardinHand(card, newCard, calcMana=True)
 		
 	def selfCopy(self, recipient):
 		return type(self)(recipient, self.corruptedType)
@@ -375,51 +361,79 @@ class Trig_DieatEndofTurn(TrigBoard):
 		self.entity.Game.killMinion(None, self.entity)
 		
 		
-class QuestTrigger(TrigBoard):
-	def __init__(self, entity):
-		super().__init__(entity, ["MinionBeenPlayed"])
-		self.counter, self.accomplished = 0, False
+class Trig_Quest(TrigBoard):
+	def __init__(self, entity, signals):
+		super().__init__(entity, signals)
+		self.counter = 0
+		self.numNeeded, self.newQuest, self.reward = 1, None, None
 		
+	def handleCounter(self, signal, ID, subject, target, number, comment, choice=0):
+		self.counter += 1
+	
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			if self.entity.Game.GUI: self.entity.Game.GUI.trigBlink(self.entity)
-			self.effect(signal, ID, subject, target, number, comment)
-			
+			self.handleCounter(signal, ID, subject, target, number, comment, choice)
+			quest = self.entity
+			if quest.btn: quest.btn.trigAni(self.counter)
+			if self.counter >= self.numNeeded:
+				self.disconnect()
+				try: quest.Game.Secrets.mainQuests[quest.ID].remove(quest)
+				except: quest.Game.Secrets.sideQuests[quest.ID].remove(quest)
+				if self.newQuest:
+					newQuest = self.newQuest(quest.Game, quest.ID)
+					if quest.btn: quest.btn.finishAni(newQuest=newQuest)
+					newQuest.whenEffective()
+					self.questEffect(quest, quest.Game, quest.ID)
+				else:
+					card = self.reward(quest.Game, ID)
+					if quest.btn: quest.btn.finishAni(reward=card)
+					quest.addCardtoHand(card, ID)
+	
+	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
+		return True
+	
+	def questEffect(self, quest, game, ID):
+		pass
+	
+
 			
 			
 """Auras"""
-class HasAura_toMinion:
-	def __init__(self):
-		self.entity = None
+class HasAura_toMinion: #targets = "Others"/"All"/"Neighbors"/"Self"
+	def __init__(self, entity=None, signals=None, attGain=0, healthGain=0, effect='', targets="Others"):
+		self.entity = entity
+		self.signals, self.auraAffected = signals if signals else ("MinionAppears", ), []
+		self.targets, self.on = targets, False
+		self.attack, self.health, self.effect = attGain, healthGain, effect
 		
 	def applicable(self, target):
 		return self.entity.applicable(target)
 		
+	#By default, all other minions showing on the same side are subject to the aura.
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-		return True
+		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and self.applicable(subject)
 	
 	def trig(self, signal, ID, subject, target, number, comment, choice=0):
 		if self.canTrig(signal, ID, subject, target, number, comment):
-			self.effect(signal, ID, subject, target, number, comment)
-			
-	def effect(self, signal, ID, subject, target, number, comment, choice=0):
-		self.applies(subject)
-		
+			Aura_Receiver(subject, self, self.attack, self.health).effectStart()
+	
 	def auraAppears(self):
-		for minion in self.entity.Game.minionsonBoard(self.entity.ID):
-			self.applies(minion)
+		keeper = self.entity
+		if self.targets == "Neighbors": minions = keeper.Game.neighbors2(keeper)[0]
+		elif self.targets == "Self": minions = (keeper, )
+		else: minions = keeper.Game.minionsonBoard(keeper.ID, exclude=keeper if self.targets == "Others" else None) #"Others" / "All"
+		for minion in minions: Aura_Receiver(minion, self, self.attack, self.health, self.effect).effectStart()
 		#Only need to handle minions that appear. Them leaving/silenced will be handled by the Stat_Receiver object.
 		for sig in self.signals:
-			try: self.entity.Game.trigsBoard[self.entity.ID][sig].append(self)
-			except: self.entity.Game.trigsBoard[self.entity.ID][sig] = [self]
+			try: keeper.Game.trigsBoard[keeper.ID][sig].append(self)
+			except: keeper.Game.trigsBoard[keeper.ID][sig] = [self]
 			
 	def auraDisappears(self):
-		for minion, receiver in self.auraAffected[:]:
-			receiver.effectClear()
+		for minion, receiver in self.auraAffected[:]: receiver.effectClear()
 		self.auraAffected = []
 		for sig in self.signals:
 			try: self.entity.Game.trigsBoard[self.entity.ID][sig].remove(self)
-			except: pass
+			except ValueError: pass
 			
 	def selfCopy(self, recipient):
 		return type(self)()
@@ -445,41 +459,41 @@ class HasAura_toMinion:
 		else:
 			return game.copiedObjs[self]
 			
-class Stat_Receiver:
-	#Source is the Aura not the entity that creates the aura.
-	def __init__(self, recipient, source, attGain, healthGain=0):
-		self.source = source
-		self.attGain = attGain #Positive by default.
-		self.healthGain = healthGain
-		self.recipient = recipient
+class Aura_Receiver:
+	#Source is the Aura, not the entity that creates the aura.
+	#Recipient is the minion/weapon/hero that receive the buff
+	def __init__(self, recipient, source, attGain, healthGain=0, effect=''):
+		self.source, self.recipient = source, recipient
+		self.attGain, self.healthGain = attGain, healthGain #Positive by default.
+		self.effect = effect
 		
 	def effectStart(self):
 		obj = self.recipient
-		if obj.type == "Minion": obj.statChange(self.attGain, self.healthGain)
-		elif obj.type == "Hero": obj.gainAttack(self.attGain, '')
-		else: obj.gainStat(self.attGain, 0, fromAura=True) #For weapon
+		#Hero, Minion or Weapon
+		if self.effect: obj.getsEffect(self.effect)
+		elif self.attGain or self.healthGain:
+			if obj.type == "Hero": obj.gainAttack(self.attGain, '')
+			else: obj.statChange(self.attGain, self.healthGain)
 		obj.auraReceivers.append(self)
 		self.source.auraAffected.append((obj, self))
 		
 	#Cleanse the receiver from the receiver and delete the (receiver, receiver) from source aura's list.
 	def effectClear(self):
 		obj = self.recipient
-		if obj.type == "Minion":
-			obj.statChange(-self.attGain, -self.healthGain)
-		elif obj.type == "Hero":
-			obj.gainAttack(-self.attGain, '')
-		else:
-			obj.gainStat(-self.attGain, 0)
-		obj.attfromAura -= self.attGain
+		#Hero, Minion or Weapon
+		if self.effect: obj.losesEffect(self.effect)
+		elif self.attGain or self.healthGain:
+			if obj.type == "Hero": obj.gainAttack(-self.attGain, '')
+			else: obj.statChange(-self.attGain, -self.healthGain)
 		try: obj.auraReceivers.remove(self)
-		except: pass
+		except ValueError: pass
 		#When an obj affected by the aura is copied, the following has no effect, since the copy won't be in the auraAffected list
 		try: self.source.auraAffected.remove((obj, self))
-		except: pass
+		except ValueError: pass
 		
 	def selfCopy(self, recipient): #The recipient of the aura is the same minion when copying it.
 		#Source won't change.
-		return type(self)(recipient, self.source, self.attGain, self.healthGain)
+		return type(self)(recipient, self.source, self.attGain, self.healthGain, self.keyWord)
 	#receiver一定是附属于一个随从的，在复制游戏的过程中，优先会createCopy光环本体，之后是光环影响的随从，
 	#随从createCopy过程中会复制出没有source的receiver，所以receiver本身没有必要有createCopy
 	
@@ -496,7 +510,7 @@ class StatAura_Others(HasAura_toMinion):
 		
 	def applies(self, subject):
 		if self.applicable(subject) and subject != self.entity:
-			Stat_Receiver(subject, self, self.attack, self.health).effectStart()
+			Aura_Receiver(subject, self, self.attack, self.health).effectStart()
 			
 	def selfCopy(self, recipient): #The recipient is the entity that deals the Aura.
 		#func that checks if subject is applicable will be the new copy's function
@@ -523,7 +537,7 @@ class StatAura_Adjacent(HasAura_toMinion):
 			
 	def applies(self, subject):
 		if subject != self.entity:
-			Stat_Receiver(subject, self, self.attack, self.health).effectStart()
+			Aura_Receiver(subject, self, self.attack, self.health).effectStart()
 			
 	def auraAppears(self):
 		game = self.entity.Game
@@ -559,14 +573,14 @@ class StatAura_Enrage(HasAura_toMinion):
 	def auraDisappears(self):
 		self.on = False
 		try: self.entity.Game.trigsBoard[self.entity.ID]["MinionStatCheck"].remove(self)
-		except: pass
+		except ValueError: pass
 		for minion, receiver in self.auraAffected[:]:
 			receiver.effectClear()
 		self.auraAffected = []
 		
 	#To be overridden by other more unique enrage minions
 	def applies(self, target):
-		Stat_Receiver(target, self, self.attack, 0).effectStart()
+		Aura_Receiver(target, self, self.attack, 0).effectStart()
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return target == self.entity and target.onBoard
@@ -590,57 +604,27 @@ class StatAura_Enrage(HasAura_toMinion):
 		return type(self)(recipient, self.attack)
 	#激怒的光环仍然可以通过HasAura_toMinion的createCopy复制
 	
-class Effect_Receiver:
-	def __init__(self, recipient, source, keyWord):
-		self.source = source #The aura.
-		self.recipient = recipient
-		self.keyWord = keyWord
-		
-	def effectStart(self):
-		obj = self.recipient
-		try: obj.effectfromAura[self.keyWord] += 1
-		except: obj.effectfromAura[self.keyWord] = 1
-		try: obj.getsStatus(self.keyWord)
-		except: obj.marks[self.keyWord] += 1
-		obj.auraReceivers.append(self)
-		self.source.auraAffected.append((obj, self))
-		
-	#The aura on the receiver is cleared and the source will remove this receiver and receiver from it's list.
-	def effectClear(self):
-		obj = self.recipient
-		obj.effectfromAura[self.keyWord] -= 1
-		try: obj.losesStatus(self.keyWord)
-		except: obj.marks[self.keyWord] -= 1
-		try: obj.auraReceivers.remove(self)
-		except: pass
-		#When an obj affected by the aura is copied, the following has no effect, since the copy won't be in the auraAffected list
-		try: self.source.auraAffected.remove((obj, self))
-		except: pass
-		
-	def selfCopy(self, recipient):
-		return type(self)(recipient, self.source, self.keyWord)
-		
 class EffectAura(HasAura_toMinion):
-	def __init__(self, entity, keyWord):
+	def __init__(self, entity, effect):
 		super().__init__(entity)
-		self.keyWord = keyWord
+		self.effect = effect
 		
 	def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
 		return self.entity.onBoard and subject.ID == self.entity.ID and subject != self.entity and self.applicable(subject)
 		
 	def applies(self, subject):
 		if self.applicable(subject):
-			Effect_Receiver(subject, self, self.keyWord).effectStart()
+			Aura_Receiver(subject, self, effect=self.effect).effectStart()
 			
 	def selfCopy(self, recipient):
-		return type(self)(recipient, self.keyWord)
+		return type(self)(recipient, self.effect)
 	#关键字光环可以通过HasAura_toMinion的createCopy方法复制
 
 
 class EffectAura_Adjacent(HasAura_toMinion):
 	def __init__(self, entity, keyWord):
 		self.entity = entity
-		self.keyWord = keyWord
+		self.effect = keyWord
 		self.signals, self.auraAffected = ["MinionAppears", "MinionDisappears"], []
 	
 	#Minions appearing/disappearing will let the minion reevaluate the aura.
@@ -657,7 +641,7 @@ class EffectAura_Adjacent(HasAura_toMinion):
 	
 	def applies(self, subject):
 		if subject != self.entity:
-			Effect_Receiver(subject, self, self.keyWord).effectStart()
+			Aura_Receiver(subject, self, effect=self.effect).effectStart()
 	
 	def auraAppears(self):
 		game = self.entity.Game
@@ -670,7 +654,7 @@ class EffectAura_Adjacent(HasAura_toMinion):
 			except: game.trigsBoard[self.entity.ID][sig] = [self]
 	
 	def selfCopy(self, recipient):  #The recipient is the minion that deals the Aura.
-		return type(self)(recipient, self.keyWord)
+		return type(self)(recipient, self.effect)
 	#关键字光环可以通过HasAura_toMinion的createCopy方法复制
 
 
@@ -705,17 +689,18 @@ class ManaMod:
 		elif self.changeto >= 0: self.card.mana = self.changeto
 		
 	def applies(self):
-		self.card.manaMods.append(self) #需要让卡牌自己也带有一个检测的光环，离开手牌或者牌库中需要清除。
-		if self.card in self.card.Game.Hand_Deck.hands[self.card.ID] or self.card in self.card.Game.Hand_Deck.decks[self.card.ID]:
-			mana_0 = self.card.mana
-			self.card.Game.Manas.calcMana_Single(self.card)
+		card = self.card
+		card.manaMods.append(self) #需要让卡牌自己也带有一个检测的光环，离开手牌或者牌库中需要清除。
+		if card.type == "Power" or card in card.Game.Hand_Deck.hands[card.ID] \
+				or card in card.Game.Hand_Deck.decks[card.ID]:
+			card.Game.Manas.calcMana_Single(card)
 			
 	def getsRemoved(self):
 		try: self.card.manaMods.remove(self)
-		except: pass
+		except ValueError: pass
 		if self.source:
 			try: self.source.auraAffected.remove((self.card, self))
-			except: pass
+			except ValueError: pass
 			
 	def selfCopy(self, recipient):
 		return ManaMod(recipient, self.changeby, self.changeto, self.source, self.lowerbound)
@@ -768,7 +753,7 @@ class ManaAura:
 			
 		self.auraAffected = []
 		try: minion.Game.trigsBoard[minion.ID]["CardEntersHand"].remove(self)
-		except: pass
+		except ValueError: pass
 		minion.Game.Manas.calcMana_All()
 		
 	def selfCopy(self, recipient): #The recipient is the entity that deals the Aura.
@@ -835,12 +820,12 @@ class TempManaEffect:
 			manaMod.getsRemoved()
 		self.auraAffected = []
 		try: game.Manas.CardAuras.remove(self)
-		except: pass
+		except ValueError: pass
 		for sig in self.signals:
 			try: game.trigsBoard[self.ID][sig].remove(self)
-			except: pass
+			except ValueError: pass
 		try: game.trigAuras[self.ID].remove(self)
-		except: pass
+		except ValueError: pass
 		game.Manas.calcMana_All()
 		
 	def selfCopy(self, game):
@@ -888,7 +873,7 @@ class ManaAura_1UsageEachTurn: #For Pint-sized Summoner, Kalecgos, etc
 			self.aura.auraDisappears() #这个光环只负责（尝试）关掉它的TempManaEffect
 			self.aura = None
 		try: self.entity.Game.trigsBoard[self.entity.ID]["TurnStarts"].remove(self)
-		except: pass
+		except ValueError: pass
 		
 	def selfCopy(self, recipient): #The recipient is the entity that deals the Aura.
 		return type(self)(recipient)
@@ -943,10 +928,10 @@ class TempManaEffect_Power:
 			manaMod.getsRemoved()
 		self.auraAffected = []
 		try: self.Game.Manas.PowerAuras.remove(self)
-		except: pass
+		except ValueError: pass
 		for sig in self.signals:
 			try: self.Game.trigsBoard[self.ID][sig].remove(self)
-			except: pass
+			except ValueError: pass
 		self.Game.Manas.calcMana_Powers()
 		
 	def selfCopy(self, game):
@@ -1006,7 +991,7 @@ class ManaAura_Power:
 			manaMod.getsRemoved()
 		self.auraAffected = []
 		try: self.entity.Game.trigsBoard[self.entity.ID]["HeroPowerAcquired"].remove(self)
-		except: pass
+		except ValueError: pass
 		self.entity.Game.Manas.calcMana_Powers()
 		
 	def selfCopy(self, game):

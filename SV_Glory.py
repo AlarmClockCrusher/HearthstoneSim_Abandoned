@@ -30,7 +30,7 @@ def PRINT(game, string, *args):
 
 class AirboundBarrage(SVSpell):
     Class, school, name = "Forestcraft", "", "Airbound Barrage"
-    requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
     index = "SV_Glory~Forestcraft~Spell~1~Airbound Barrage"
     description = "Return an allied follower or amulet to your hand. Then deal 3 damage to an enemy follower.(Can be played only when both a targetable allied card and enemy card are in play.)"
 
@@ -58,7 +58,7 @@ class AirboundBarrage(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             allied, enemy = target[0], target[1]
-            self.Game.returnMiniontoHand(allied, deathrattlesStayArmed=False)
+            self.Game.returnObj2Hand(allied, deathrattlesStayArmed=False)
             damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
             PRINT(self.Game, "Airbound Barrage deals %d damage to enemy %s." % (damage, enemy.name))
             self.dealsDamage(enemy, damage)
@@ -104,7 +104,7 @@ class SellswordLucius(SVMinion):
     Class, race, name = "Swordcraft", "", "Sellsword Lucius"
     mana, attack, health = 1, 1, 1
     index = "SV_Glory~Swordcraft~1~1~1~Minion~~Sellsword Lucius~Enhance~Fanfare"
-    requireTarget, keyWord, description = True, "", "Fanfare: Enhance 5. Destroy an enemy follower"
+    requireTarget, effects, description = True, "", "Fanfare: Enhance 5. Destroy an enemy follower"
 
     def getMana(self):
         return max(5, self.mana) if self.Game.Manas.manas[self.ID] >= 5 else self.mana
@@ -137,7 +137,7 @@ class SellswordLucius(SVMinion):
 
 class VesperWitchhunter_Accelerate(SVSpell):
     Class, school, name = "Runecraft", "", "Vesper, Witchhunter"
-    requireTarget, mana = True, 2
+	requireTarget, mana, effects = True, 2, ""
     index = "SV_Glory~Runecraft~Spell~2~Vesper, Witchhunter~Uncollectible"
     description = "Deal 1 damage to an enemy"
 
@@ -157,7 +157,7 @@ class VesperWitchhunter(SVMinion):
     Class, race, name = "Runecraft", "", "Vesper, Witchhunter"
     mana, attack, health = 4, 3, 3
     index = "SV_Glory~Runecraft~4~3~3~Minion~~Vesper, Witchhunter~Accelerate~Fanfare"
-    requireTarget, keyWord, description = True, "", "Accelerate 2: Deal 1 damage to an enemy. Fanfare: xxx. Deal 3 damage to an enemy minion, and deal 1 damage to the enemy hero"
+    requireTarget, effects, description = True, "", "Accelerate 2: Deal 1 damage to an enemy. Fanfare: xxx. Deal 3 damage to an enemy minion, and deal 1 damage to the enemy hero"
     accelerateSpell = VesperWitchhunter_Accelerate
 
     def getMana(self):
@@ -243,7 +243,7 @@ class RuinwebSpider(SVMinion):
     Class, race, name = "Bloodcraft", "", "Ruinweb Spider"
     mana, attack, health = 10, 5, 10
     index = "SV_Glory~Bloodcraft~Minion~10~5~10~~Ruinweb Spider~Crystallize"
-    requireTarget, keyWord, description = False, "", "Crystallize 2; Countdown 10 During you turn, whenever an Amulet enters your board, reduce this Amulets countdown by 1. Last Words: Summon a Ruinweb Spider"
+    requireTarget, effects, description = False, "", "Crystallize 2; Countdown 10 During you turn, whenever an Amulet enters your board, reduce this Amulets countdown by 1. Last Words: Summon a Ruinweb Spider"
     crystallizeAmulet = RuinwebSpider_Crystallize
     attackAdd, healthAdd = 2, 2
 
@@ -265,7 +265,7 @@ class RuinwebSpider(SVMinion):
     def enemyMinionsCantAttackThisTurn(self):
         PRINT(self.Game, "Ruinweb Spider appears and enemy minions can't attack until the end of opponent's turn")
         for minion in self.Game.minionsonBoard(3 - self.ID):
-            minion.marks["Can't Attack"] += 1
+            minion.effects["Can't Attack"] += 1
             trig = Trig_CantAttack4aTurn(minion)
             trig.connect()
             minion.trigsBoard.append(trig)
@@ -296,7 +296,7 @@ class Trig_CantAttack4aTurn(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "At the end of turn, minion %s can attack again." % self.entity.name)
-        self.entity.marks["Can't Attack"] -= 1
+        self.entity.effects["Can't Attack"] -= 1
         self.disconnect()
         try:
             self.entity.trigsBoard.remove(self)
@@ -308,7 +308,7 @@ class XIErntzJustice(SVMinion):
     Class, race, name = "Bloodcraft", "Dragon", "XI. Erntz, Justice"
     mana, attack, health = 10, 11, 8
     index = "SV_Glory~Bloodcraft~Minion~10~11~8~Dragon~XI. Erntz, Justice~Ward"
-    requireTarget, keyWord, description = False, "Taunt", ""
+    requireTarget, effects, description = False, "Taunt", ""
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):
@@ -379,7 +379,7 @@ def PRINT(game, string, *args):
 
 class AirboundBarrage(SVSpell):
     Class, school, name = "Forestcraft", "", "Airbound Barrage"
-    requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
     index = "SV_Glory~Forestcraft~Spell~1~~Airbound Barrage"
     description = "Return an allied follower or amulet to your hand. Then deal 3 damage to an enemy follower.(Can be played only when both a targetable allied card and enemy card are in play.)"
 
@@ -407,7 +407,7 @@ class AirboundBarrage(SVSpell):
     def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
         if target:
             allied, enemy = target[0], target[1]
-            self.Game.returnMiniontoHand(allied, deathrattlesStayArmed=False)
+            self.Game.returnObj2Hand(allied, deathrattlesStayArmed=False)
             damage = (3 + self.countSpellDamage()) * (2 ** self.countDamageDouble())
             PRINT(self.Game, "Airbound Barrage deals %d damage to enemy %s." % (damage, enemy.name))
             self.dealsDamage(enemy, damage)
@@ -453,7 +453,7 @@ class SellswordLucius(SVMinion):
     Class, race, name = "Swordcraft", "", "Sellsword Lucius"
     mana, attack, health = 1, 1, 1
     index = "SV_Glory~Swordcraft~1~1~1~Minion~~Sellsword Lucius~Enhance~Fanfare"
-    requireTarget, keyWord, description = True, "", "Fanfare: Enhance 5. Destroy an enemy follower"
+    requireTarget, effects, description = True, "", "Fanfare: Enhance 5. Destroy an enemy follower"
 
     def getMana(self):
         return max(5, self.mana) if self.Game.Manas.manas[self.ID] >= 5 else self.mana
@@ -486,7 +486,7 @@ class SellswordLucius(SVMinion):
 
 class VesperWitchhunter_Accelerate(SVSpell):
     Class, school, name = "Runecraft", "", "Vesper, Witchhunter"
-    requireTarget, mana = True, 2
+	requireTarget, mana, effects = True, 2, ""
     index = "SV_Glory~Runecraft~Spell~2~~Vesper, Witchhunter~Uncollectible"
     description = "Deal 1 damage to an enemy"
 
@@ -506,7 +506,7 @@ class VesperWitchhunter(SVMinion):
     Class, race, name = "Runecraft", "", "Vesper, Witchhunter"
     mana, attack, health = 4, 3, 3
     index = "SV_Glory~Runecraft~4~3~3~Minion~~Vesper, Witchhunter~Accelerate~Fanfare"
-    requireTarget, keyWord, description = True, "", "Accelerate 2: Deal 1 damage to an enemy. Fanfare: xxx. Deal 3 damage to an enemy minion, and deal 1 damage to the enemy hero"
+    requireTarget, effects, description = True, "", "Accelerate 2: Deal 1 damage to an enemy. Fanfare: xxx. Deal 3 damage to an enemy minion, and deal 1 damage to the enemy hero"
     accelerateSpell = VesperWitchhunter_Accelerate
 
     def getMana(self):
@@ -592,7 +592,7 @@ class RuinwebSpider(SVMinion):
     Class, race, name = "Bloodcraft", "", "Ruinweb Spider"
     mana, attack, health = 10, 5, 10
     index = "SV_Glory~Bloodcraft~Minion~10~5~10~~Ruinweb Spider~Crystallize"
-    requireTarget, keyWord, description = False, "", "Crystallize 2; Countdown 10 During you turn, whenever an Amulet enters your board, reduce this Amulets countdown by 1. Last Words: Summon a Ruinweb Spider"
+    requireTarget, effects, description = False, "", "Crystallize 2; Countdown 10 During you turn, whenever an Amulet enters your board, reduce this Amulets countdown by 1. Last Words: Summon a Ruinweb Spider"
     crystallizeAmulet = RuinwebSpider_Crystallize
     attackAdd, healthAdd = 2, 2
 
@@ -614,7 +614,7 @@ class RuinwebSpider(SVMinion):
     def enemyMinionsCantAttackThisTurn(self):
         PRINT(self.Game, "Ruinweb Spider appears and enemy minions can't attack until the end of opponent's turn")
         for minion in self.Game.minionsonBoard(3 - self.ID):
-            minion.marks["Can't Attack"] += 1
+            minion.effects["Can't Attack"] += 1
             trig = Trig_CantAttack4aTurn(minion)
             trig.connect()
             minion.trigsBoard.append(trig)
@@ -645,7 +645,7 @@ class Trig_CantAttack4aTurn(TrigBoard):
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         PRINT(self.entity.Game, "At the end of turn, minion %s can attack again." % self.entity.name)
-        self.entity.marks["Can't Attack"] -= 1
+        self.entity.effects["Can't Attack"] -= 1
         self.disconnect()
         try:
             self.entity.trigsBoard.remove(self)
@@ -657,7 +657,7 @@ class XIErntzJustice(SVMinion):
     Class, race, name = "Bloodcraft", "Dragon", "XI. Erntz, Justice"
     mana, attack, health = 10, 11, 8
     index = "SV_Glory~Bloodcraft~Minion~10~11~8~Dragon~XI. Erntz, Justice~Ward"
-    requireTarget, keyWord, description = False, "Taunt", ""
+    requireTarget, effects, description = False, "Taunt", ""
     attackAdd, healthAdd = 2, 2
 
     def __init__(self, Game, ID):

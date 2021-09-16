@@ -1,384 +1,384 @@
 <Comment> {
-  "egg-texture-cards -o Stealth.egg -fps 20 -p 1,1 'TexCards\ForHeroes\Stealth_000.png' -p 128,128 'TexCards\ForHeroes\Stealth_001.png' -p 128,128 'TexCards\ForHeroes\Stealth_002.png' -p 128,128 'TexCards\ForHeroes\Stealth_003.png' -p 128,128 'TexCards\ForHeroes\Stealth_004.png' -p 128,128 'TexCards\ForHeroes\Stealth_005.png' -p 128,128 'TexCards\ForHeroes\Stealth_006.png' -p 128,128 'TexCards\ForHeroes\Stealth_007.png' -p 128,128 'TexCards\ForHeroes\Stealth_008.png' -p 128,128 'TexCards\ForHeroes\Stealth_009.png' -p 128,128 'TexCards\ForHeroes\Stealth_010.png' -p 128,128 'TexCards\ForHeroes\Stealth_011.png' -p 128,128 'TexCards\ForHeroes\Stealth_012.png' -p 128,128 'TexCards\ForHeroes\Stealth_013.png' -p 128,128 'TexCards\ForHeroes\Stealth_014.png' -p 128,128 'TexCards\ForHeroes\Stealth_015.png' -p 128,128 'TexCards\ForHeroes\Stealth_016.png' -p 128,128 'TexCards\ForHeroes\Stealth_017.png' -p 128,128 'TexCards\ForHeroes\Stealth_018.png' -p 128,128 'TexCards\ForHeroes\Stealth_019.png' -p 128,128 'TexCards\ForHeroes\Stealth_020.png' -p 128,128 'TexCards\ForHeroes\Stealth_021.png' -p 128,128 'TexCards\ForHeroes\Stealth_022.png' -p 128,128 'TexCards\ForHeroes\Stealth_023.png' -p 128,128 'TexCards\ForHeroes\Stealth_024.png' -p 128,128 'TexCards\ForHeroes\Stealth_025.png' -p 128,128 'TexCards\ForHeroes\Stealth_026.png' -p 128,128 'TexCards\ForHeroes\Stealth_027.png' -p 128,128 'TexCards\ForHeroes\Stealth_028.png' -p 128,128 'TexCards\ForHeroes\Stealth_029.png' -p 128,128 'TexCards\ForHeroes\Stealth_030.png' -p 128,128 'TexCards\ForHeroes\Stealth_031.png' -p 128,128 'TexCards\ForHeroes\Stealth_032.png' -p 128,128 'TexCards\ForHeroes\Stealth_033.png' -p 128,128 'TexCards\ForHeroes\Stealth_034.png' -p 128,128 'TexCards\ForHeroes\Stealth_035.png' -p 128,128 'TexCards\ForHeroes\Stealth_036.png' -p 128,128 'TexCards\ForHeroes\Stealth_037.png' -p 128,128 'TexCards\ForHeroes\Stealth_038.png' -p 128,128 'TexCards\ForHeroes\Stealth_039.png' -p 128,128 'TexCards\ForHeroes\Stealth_040.png' -p 128,128 'TexCards\ForHeroes\Stealth_041.png' -p 128,128 'TexCards\ForHeroes\Stealth_042.png' -p 128,128 'TexCards\ForHeroes\Stealth_043.png' -p 128,128 'TexCards\ForHeroes\Stealth_044.png' -p 128,128 'TexCards\ForHeroes\Stealth_045.png' -p 128,128 'TexCards\ForHeroes\Stealth_046.png' -p 128,128 'TexCards\ForHeroes\Stealth_047.png' -p 128,128 'TexCards\ForHeroes\Stealth_048.png' -p 128,128 'TexCards\ForHeroes\Stealth_049.png' -p 128,128 'TexCards\ForHeroes\Stealth_050.png' -p 128,128 'TexCards\ForHeroes\Stealth_051.png' -p 128,128 'TexCards\ForHeroes\Stealth_052.png' -p 128,128 'TexCards\ForHeroes\Stealth_053.png' -p 128,128 'TexCards\ForHeroes\Stealth_054.png' -p 128,128 'TexCards\ForHeroes\Stealth_055.png' -p 128,128 'TexCards\ForHeroes\Stealth_056.png' -p 128,128 'TexCards\ForHeroes\Stealth_057.png' -p 128,128 'TexCards\ForHeroes\Stealth_058.png' -p 128,128 'TexCards\ForHeroes\Stealth_059.png' -p 128,128 'TexCards\ForHeroes\Stealth_060.png' -p 128,128 'TexCards\ForHeroes\Stealth_061.png' -p 128,128 'TexCards\ForHeroes\Stealth_062.png' -p 128,128 'TexCards\ForHeroes\Stealth_063.png' -p 128,128 'TexCards\ForHeroes\Stealth_064.png' -p 128,128 'TexCards\ForHeroes\Stealth_065.png' -p 128,128 'TexCards\ForHeroes\Stealth_066.png' -p 128,128 'TexCards\ForHeroes\Stealth_067.png' -p 128,128 'TexCards\ForHeroes\Stealth_068.png' -p 128,128 'TexCards\ForHeroes\Stealth_069.png' -p 128,128 'TexCards\ForHeroes\Stealth_070.png' -p 128,128 'TexCards\ForHeroes\Stealth_071.png' -p 128,128 'TexCards\ForHeroes\Stealth_072.png' -p 128,128 'TexCards\ForHeroes\Stealth_073.png' -p 128,128 'TexCards\ForHeroes\Stealth_074.png' -p 128,128 'TexCards\ForHeroes\Stealth_075.png' -p 128,128 'TexCards\ForHeroes\Stealth_076.png' -p 128,128 'TexCards\ForHeroes\Stealth_077.png' -p 128,128 'TexCards\ForHeroes\Stealth_078.png' -p 128,128 'TexCards\ForHeroes\Stealth_079.png' -p 128,128 'TexCards\ForHeroes\Stealth_080.png' -p 128,128 'TexCards\ForHeroes\Stealth_081.png' -p 128,128 'TexCards\ForHeroes\Stealth_082.png' -p 128,128 'TexCards\ForHeroes\Stealth_083.png' -p 128,128 'TexCards\ForHeroes\Stealth_084.png' -p 128,128 'TexCards\ForHeroes\Stealth_085.png' -p 128,128 'TexCards\ForHeroes\Stealth_086.png' -p 128,128 'TexCards\ForHeroes\Stealth_087.png' -p 128,128 'TexCards\ForHeroes\Stealth_088.png' -p 128,128 'TexCards\ForHeroes\Stealth_089.png' -p 128,128 'TexCards\ForHeroes\Stealth_090.png' -p 128,128 'TexCards\ForHeroes\Stealth_091.png' -p 128,128 'TexCards\ForHeroes\Stealth_092.png' -p 128,128 'TexCards\ForHeroes\Stealth_093.png' -p 128,128 'TexCards\ForHeroes\Stealth_094.png' -p 128,128 'TexCards\ForHeroes\Stealth_095.png' -p 128,128 'TexCards\ForHeroes\Stealth_096.png' -p 128,128 'TexCards\ForHeroes\Stealth_097.png' -p 128,128 'TexCards\ForHeroes\Stealth_098.png' -p 128,128 'TexCards\ForHeroes\Stealth_099.png' -p 128,128 'TexCards\ForHeroes\Stealth_100.png' -p 128,128 'TexCards\ForHeroes\Stealth_101.png' -p 128,128 'TexCards\ForHeroes\Stealth_102.png' -p 128,128 'TexCards\ForHeroes\Stealth_103.png' -p 128,128 'TexCards\ForHeroes\Stealth_104.png' -p 128,128 'TexCards\ForHeroes\Stealth_105.png' -p 128,128 'TexCards\ForHeroes\Stealth_106.png' -p 128,128 'TexCards\ForHeroes\Stealth_107.png' -p 128,128 'TexCards\ForHeroes\Stealth_108.png' -p 128,128 'TexCards\ForHeroes\Stealth_109.png' -p 128,128 'TexCards\ForHeroes\Stealth_110.png' -p 128,128 'TexCards\ForHeroes\Stealth_111.png' -p 128,128 'TexCards\ForHeroes\Stealth_112.png' -p 128,128 'TexCards\ForHeroes\Stealth_113.png' -p 128,128 'TexCards\ForHeroes\Stealth_114.png' -p 128,128 'TexCards\ForHeroes\Stealth_115.png' -p 128,128 'TexCards\ForHeroes\Stealth_116.png' -p 128,128 'TexCards\ForHeroes\Stealth_117.png' -p 128,128 'TexCards\ForHeroes\Stealth_118.png' -p 128,128 'TexCards\ForHeroes\Stealth_119.png'"
+  "egg-texture-cards -o Stealth.egg -fps 24 -p 128,128 'TexCards\\ForHeroes\Stealth_000.png' -p 128,128 'TexCards\\ForHeroes\Stealth_001.png' -p 128,128 'TexCards\\ForHeroes\Stealth_002.png' -p 128,128 'TexCards\\ForHeroes\Stealth_003.png' -p 128,128 'TexCards\\ForHeroes\Stealth_004.png' -p 128,128 'TexCards\\ForHeroes\Stealth_005.png' -p 128,128 'TexCards\\ForHeroes\Stealth_006.png' -p 128,128 'TexCards\\ForHeroes\Stealth_007.png' -p 128,128 'TexCards\\ForHeroes\Stealth_008.png' -p 128,128 'TexCards\\ForHeroes\Stealth_009.png' -p 128,128 'TexCards\\ForHeroes\Stealth_010.png' -p 128,128 'TexCards\\ForHeroes\Stealth_011.png' -p 128,128 'TexCards\\ForHeroes\Stealth_012.png' -p 128,128 'TexCards\\ForHeroes\Stealth_013.png' -p 128,128 'TexCards\\ForHeroes\Stealth_014.png' -p 128,128 'TexCards\\ForHeroes\Stealth_015.png' -p 128,128 'TexCards\\ForHeroes\Stealth_016.png' -p 128,128 'TexCards\\ForHeroes\Stealth_017.png' -p 128,128 'TexCards\\ForHeroes\Stealth_018.png' -p 128,128 'TexCards\\ForHeroes\Stealth_019.png' -p 128,128 'TexCards\\ForHeroes\Stealth_020.png' -p 128,128 'TexCards\\ForHeroes\Stealth_021.png' -p 128,128 'TexCards\\ForHeroes\Stealth_022.png' -p 128,128 'TexCards\\ForHeroes\Stealth_023.png' -p 128,128 'TexCards\\ForHeroes\Stealth_024.png' -p 128,128 'TexCards\\ForHeroes\Stealth_025.png' -p 128,128 'TexCards\\ForHeroes\Stealth_026.png' -p 128,128 'TexCards\\ForHeroes\Stealth_027.png' -p 128,128 'TexCards\\ForHeroes\Stealth_028.png' -p 128,128 'TexCards\\ForHeroes\Stealth_029.png' -p 128,128 'TexCards\\ForHeroes\Stealth_030.png' -p 128,128 'TexCards\\ForHeroes\Stealth_031.png' -p 128,128 'TexCards\\ForHeroes\Stealth_032.png' -p 128,128 'TexCards\\ForHeroes\Stealth_033.png' -p 128,128 'TexCards\\ForHeroes\Stealth_034.png' -p 128,128 'TexCards\\ForHeroes\Stealth_035.png' -p 128,128 'TexCards\\ForHeroes\Stealth_036.png' -p 128,128 'TexCards\\ForHeroes\Stealth_037.png' -p 128,128 'TexCards\\ForHeroes\Stealth_038.png' -p 128,128 'TexCards\\ForHeroes\Stealth_039.png' -p 128,128 'TexCards\\ForHeroes\Stealth_040.png' -p 128,128 'TexCards\\ForHeroes\Stealth_041.png' -p 128,128 'TexCards\\ForHeroes\Stealth_042.png' -p 128,128 'TexCards\\ForHeroes\Stealth_043.png' -p 128,128 'TexCards\\ForHeroes\Stealth_044.png' -p 128,128 'TexCards\\ForHeroes\Stealth_045.png' -p 128,128 'TexCards\\ForHeroes\Stealth_046.png' -p 128,128 'TexCards\\ForHeroes\Stealth_047.png' -p 128,128 'TexCards\\ForHeroes\Stealth_048.png' -p 128,128 'TexCards\\ForHeroes\Stealth_049.png' -p 128,128 'TexCards\\ForHeroes\Stealth_050.png' -p 128,128 'TexCards\\ForHeroes\Stealth_051.png' -p 128,128 'TexCards\\ForHeroes\Stealth_052.png' -p 128,128 'TexCards\\ForHeroes\Stealth_053.png' -p 128,128 'TexCards\\ForHeroes\Stealth_054.png' -p 128,128 'TexCards\\ForHeroes\Stealth_055.png' -p 128,128 'TexCards\\ForHeroes\Stealth_056.png' -p 128,128 'TexCards\\ForHeroes\Stealth_057.png' -p 128,128 'TexCards\\ForHeroes\Stealth_058.png' -p 128,128 'TexCards\\ForHeroes\Stealth_059.png' -p 128,128 'TexCards\\ForHeroes\Stealth_060.png' -p 128,128 'TexCards\\ForHeroes\Stealth_061.png' -p 128,128 'TexCards\\ForHeroes\Stealth_062.png' -p 128,128 'TexCards\\ForHeroes\Stealth_063.png' -p 128,128 'TexCards\\ForHeroes\Stealth_064.png' -p 128,128 'TexCards\\ForHeroes\Stealth_065.png' -p 128,128 'TexCards\\ForHeroes\Stealth_066.png' -p 128,128 'TexCards\\ForHeroes\Stealth_067.png' -p 128,128 'TexCards\\ForHeroes\Stealth_068.png' -p 128,128 'TexCards\\ForHeroes\Stealth_069.png' -p 128,128 'TexCards\\ForHeroes\Stealth_070.png' -p 128,128 'TexCards\\ForHeroes\Stealth_071.png' -p 128,128 'TexCards\\ForHeroes\Stealth_072.png' -p 128,128 'TexCards\\ForHeroes\Stealth_073.png' -p 128,128 'TexCards\\ForHeroes\Stealth_074.png' -p 128,128 'TexCards\\ForHeroes\Stealth_075.png' -p 128,128 'TexCards\\ForHeroes\Stealth_076.png' -p 128,128 'TexCards\\ForHeroes\Stealth_077.png' -p 128,128 'TexCards\\ForHeroes\Stealth_078.png' -p 128,128 'TexCards\\ForHeroes\Stealth_079.png' -p 128,128 'TexCards\\ForHeroes\Stealth_080.png' -p 128,128 'TexCards\\ForHeroes\Stealth_081.png' -p 128,128 'TexCards\\ForHeroes\Stealth_082.png' -p 128,128 'TexCards\\ForHeroes\Stealth_083.png' -p 128,128 'TexCards\\ForHeroes\Stealth_084.png' -p 128,128 'TexCards\\ForHeroes\Stealth_085.png' -p 128,128 'TexCards\\ForHeroes\Stealth_086.png' -p 128,128 'TexCards\\ForHeroes\Stealth_087.png' -p 128,128 'TexCards\\ForHeroes\Stealth_088.png' -p 128,128 'TexCards\\ForHeroes\Stealth_089.png' -p 128,128 'TexCards\\ForHeroes\Stealth_090.png' -p 128,128 'TexCards\\ForHeroes\Stealth_091.png' -p 128,128 'TexCards\\ForHeroes\Stealth_092.png' -p 128,128 'TexCards\\ForHeroes\Stealth_093.png' -p 128,128 'TexCards\\ForHeroes\Stealth_094.png' -p 128,128 'TexCards\\ForHeroes\Stealth_095.png' -p 128,128 'TexCards\\ForHeroes\Stealth_096.png' -p 128,128 'TexCards\\ForHeroes\Stealth_097.png' -p 128,128 'TexCards\\ForHeroes\Stealth_098.png' -p 128,128 'TexCards\\ForHeroes\Stealth_099.png' -p 128,128 'TexCards\\ForHeroes\Stealth_100.png' -p 128,128 'TexCards\\ForHeroes\Stealth_101.png' -p 128,128 'TexCards\\ForHeroes\Stealth_102.png' -p 128,128 'TexCards\\ForHeroes\Stealth_103.png' -p 128,128 'TexCards\\ForHeroes\Stealth_104.png' -p 128,128 'TexCards\\ForHeroes\Stealth_105.png' -p 128,128 'TexCards\\ForHeroes\Stealth_106.png' -p 128,128 'TexCards\\ForHeroes\Stealth_107.png' -p 128,128 'TexCards\\ForHeroes\Stealth_108.png' -p 128,128 'TexCards\\ForHeroes\Stealth_109.png' -p 128,128 'TexCards\\ForHeroes\Stealth_110.png' -p 128,128 'TexCards\\ForHeroes\Stealth_111.png' -p 128,128 'TexCards\\ForHeroes\Stealth_112.png' -p 128,128 'TexCards\\ForHeroes\Stealth_113.png' -p 128,128 'TexCards\\ForHeroes\Stealth_114.png' -p 128,128 'TexCards\\ForHeroes\Stealth_115.png' -p 128,128 'TexCards\\ForHeroes\Stealth_116.png' -p 128,128 'TexCards\\ForHeroes\Stealth_117.png' -p 128,128 'TexCards\\ForHeroes\Stealth_118.png' -p 128,128 'TexCards\\ForHeroes\Stealth_119.png'"
 }
 <Texture> Stealth_119 {
-  "TexCards/ForHeroes/Stealth_119.png"
+  "TexCards//ForHeroes/Stealth_119.png"
 }
 <Texture> Stealth_118 {
-  "TexCards/ForHeroes/Stealth_118.png"
+  "TexCards//ForHeroes/Stealth_118.png"
 }
 <Texture> Stealth_117 {
-  "TexCards/ForHeroes/Stealth_117.png"
+  "TexCards//ForHeroes/Stealth_117.png"
 }
 <Texture> Stealth_116 {
-  "TexCards/ForHeroes/Stealth_116.png"
+  "TexCards//ForHeroes/Stealth_116.png"
 }
 <Texture> Stealth_115 {
-  "TexCards/ForHeroes/Stealth_115.png"
+  "TexCards//ForHeroes/Stealth_115.png"
 }
 <Texture> Stealth_114 {
-  "TexCards/ForHeroes/Stealth_114.png"
+  "TexCards//ForHeroes/Stealth_114.png"
 }
 <Texture> Stealth_113 {
-  "TexCards/ForHeroes/Stealth_113.png"
+  "TexCards//ForHeroes/Stealth_113.png"
 }
 <Texture> Stealth_112 {
-  "TexCards/ForHeroes/Stealth_112.png"
+  "TexCards//ForHeroes/Stealth_112.png"
 }
 <Texture> Stealth_111 {
-  "TexCards/ForHeroes/Stealth_111.png"
+  "TexCards//ForHeroes/Stealth_111.png"
 }
 <Texture> Stealth_110 {
-  "TexCards/ForHeroes/Stealth_110.png"
+  "TexCards//ForHeroes/Stealth_110.png"
 }
 <Texture> Stealth_109 {
-  "TexCards/ForHeroes/Stealth_109.png"
+  "TexCards//ForHeroes/Stealth_109.png"
 }
 <Texture> Stealth_108 {
-  "TexCards/ForHeroes/Stealth_108.png"
+  "TexCards//ForHeroes/Stealth_108.png"
 }
 <Texture> Stealth_107 {
-  "TexCards/ForHeroes/Stealth_107.png"
+  "TexCards//ForHeroes/Stealth_107.png"
 }
 <Texture> Stealth_106 {
-  "TexCards/ForHeroes/Stealth_106.png"
+  "TexCards//ForHeroes/Stealth_106.png"
 }
 <Texture> Stealth_105 {
-  "TexCards/ForHeroes/Stealth_105.png"
+  "TexCards//ForHeroes/Stealth_105.png"
 }
 <Texture> Stealth_104 {
-  "TexCards/ForHeroes/Stealth_104.png"
+  "TexCards//ForHeroes/Stealth_104.png"
 }
 <Texture> Stealth_103 {
-  "TexCards/ForHeroes/Stealth_103.png"
+  "TexCards//ForHeroes/Stealth_103.png"
 }
 <Texture> Stealth_102 {
-  "TexCards/ForHeroes/Stealth_102.png"
+  "TexCards//ForHeroes/Stealth_102.png"
 }
 <Texture> Stealth_101 {
-  "TexCards/ForHeroes/Stealth_101.png"
+  "TexCards//ForHeroes/Stealth_101.png"
 }
 <Texture> Stealth_100 {
-  "TexCards/ForHeroes/Stealth_100.png"
+  "TexCards//ForHeroes/Stealth_100.png"
 }
 <Texture> Stealth_099 {
-  "TexCards/ForHeroes/Stealth_099.png"
+  "TexCards//ForHeroes/Stealth_099.png"
 }
 <Texture> Stealth_098 {
-  "TexCards/ForHeroes/Stealth_098.png"
+  "TexCards//ForHeroes/Stealth_098.png"
 }
 <Texture> Stealth_097 {
-  "TexCards/ForHeroes/Stealth_097.png"
+  "TexCards//ForHeroes/Stealth_097.png"
 }
 <Texture> Stealth_096 {
-  "TexCards/ForHeroes/Stealth_096.png"
+  "TexCards//ForHeroes/Stealth_096.png"
 }
 <Texture> Stealth_095 {
-  "TexCards/ForHeroes/Stealth_095.png"
+  "TexCards//ForHeroes/Stealth_095.png"
 }
 <Texture> Stealth_094 {
-  "TexCards/ForHeroes/Stealth_094.png"
+  "TexCards//ForHeroes/Stealth_094.png"
 }
 <Texture> Stealth_093 {
-  "TexCards/ForHeroes/Stealth_093.png"
+  "TexCards//ForHeroes/Stealth_093.png"
 }
 <Texture> Stealth_092 {
-  "TexCards/ForHeroes/Stealth_092.png"
+  "TexCards//ForHeroes/Stealth_092.png"
 }
 <Texture> Stealth_091 {
-  "TexCards/ForHeroes/Stealth_091.png"
+  "TexCards//ForHeroes/Stealth_091.png"
 }
 <Texture> Stealth_090 {
-  "TexCards/ForHeroes/Stealth_090.png"
+  "TexCards//ForHeroes/Stealth_090.png"
 }
 <Texture> Stealth_089 {
-  "TexCards/ForHeroes/Stealth_089.png"
+  "TexCards//ForHeroes/Stealth_089.png"
 }
 <Texture> Stealth_088 {
-  "TexCards/ForHeroes/Stealth_088.png"
+  "TexCards//ForHeroes/Stealth_088.png"
 }
 <Texture> Stealth_087 {
-  "TexCards/ForHeroes/Stealth_087.png"
+  "TexCards//ForHeroes/Stealth_087.png"
 }
 <Texture> Stealth_086 {
-  "TexCards/ForHeroes/Stealth_086.png"
+  "TexCards//ForHeroes/Stealth_086.png"
 }
 <Texture> Stealth_085 {
-  "TexCards/ForHeroes/Stealth_085.png"
+  "TexCards//ForHeroes/Stealth_085.png"
 }
 <Texture> Stealth_084 {
-  "TexCards/ForHeroes/Stealth_084.png"
+  "TexCards//ForHeroes/Stealth_084.png"
 }
 <Texture> Stealth_083 {
-  "TexCards/ForHeroes/Stealth_083.png"
+  "TexCards//ForHeroes/Stealth_083.png"
 }
 <Texture> Stealth_082 {
-  "TexCards/ForHeroes/Stealth_082.png"
+  "TexCards//ForHeroes/Stealth_082.png"
 }
 <Texture> Stealth_081 {
-  "TexCards/ForHeroes/Stealth_081.png"
+  "TexCards//ForHeroes/Stealth_081.png"
 }
 <Texture> Stealth_080 {
-  "TexCards/ForHeroes/Stealth_080.png"
+  "TexCards//ForHeroes/Stealth_080.png"
 }
 <Texture> Stealth_079 {
-  "TexCards/ForHeroes/Stealth_079.png"
+  "TexCards//ForHeroes/Stealth_079.png"
 }
 <Texture> Stealth_078 {
-  "TexCards/ForHeroes/Stealth_078.png"
+  "TexCards//ForHeroes/Stealth_078.png"
 }
 <Texture> Stealth_077 {
-  "TexCards/ForHeroes/Stealth_077.png"
+  "TexCards//ForHeroes/Stealth_077.png"
 }
 <Texture> Stealth_076 {
-  "TexCards/ForHeroes/Stealth_076.png"
+  "TexCards//ForHeroes/Stealth_076.png"
 }
 <Texture> Stealth_075 {
-  "TexCards/ForHeroes/Stealth_075.png"
+  "TexCards//ForHeroes/Stealth_075.png"
 }
 <Texture> Stealth_074 {
-  "TexCards/ForHeroes/Stealth_074.png"
+  "TexCards//ForHeroes/Stealth_074.png"
 }
 <Texture> Stealth_073 {
-  "TexCards/ForHeroes/Stealth_073.png"
+  "TexCards//ForHeroes/Stealth_073.png"
 }
 <Texture> Stealth_072 {
-  "TexCards/ForHeroes/Stealth_072.png"
+  "TexCards//ForHeroes/Stealth_072.png"
 }
 <Texture> Stealth_071 {
-  "TexCards/ForHeroes/Stealth_071.png"
+  "TexCards//ForHeroes/Stealth_071.png"
 }
 <Texture> Stealth_070 {
-  "TexCards/ForHeroes/Stealth_070.png"
+  "TexCards//ForHeroes/Stealth_070.png"
 }
 <Texture> Stealth_069 {
-  "TexCards/ForHeroes/Stealth_069.png"
+  "TexCards//ForHeroes/Stealth_069.png"
 }
 <Texture> Stealth_068 {
-  "TexCards/ForHeroes/Stealth_068.png"
+  "TexCards//ForHeroes/Stealth_068.png"
 }
 <Texture> Stealth_067 {
-  "TexCards/ForHeroes/Stealth_067.png"
+  "TexCards//ForHeroes/Stealth_067.png"
 }
 <Texture> Stealth_066 {
-  "TexCards/ForHeroes/Stealth_066.png"
+  "TexCards//ForHeroes/Stealth_066.png"
 }
 <Texture> Stealth_065 {
-  "TexCards/ForHeroes/Stealth_065.png"
+  "TexCards//ForHeroes/Stealth_065.png"
 }
 <Texture> Stealth_064 {
-  "TexCards/ForHeroes/Stealth_064.png"
+  "TexCards//ForHeroes/Stealth_064.png"
 }
 <Texture> Stealth_063 {
-  "TexCards/ForHeroes/Stealth_063.png"
+  "TexCards//ForHeroes/Stealth_063.png"
 }
 <Texture> Stealth_062 {
-  "TexCards/ForHeroes/Stealth_062.png"
+  "TexCards//ForHeroes/Stealth_062.png"
 }
 <Texture> Stealth_061 {
-  "TexCards/ForHeroes/Stealth_061.png"
+  "TexCards//ForHeroes/Stealth_061.png"
 }
 <Texture> Stealth_060 {
-  "TexCards/ForHeroes/Stealth_060.png"
+  "TexCards//ForHeroes/Stealth_060.png"
 }
 <Texture> Stealth_059 {
-  "TexCards/ForHeroes/Stealth_059.png"
+  "TexCards//ForHeroes/Stealth_059.png"
 }
 <Texture> Stealth_058 {
-  "TexCards/ForHeroes/Stealth_058.png"
+  "TexCards//ForHeroes/Stealth_058.png"
 }
 <Texture> Stealth_057 {
-  "TexCards/ForHeroes/Stealth_057.png"
+  "TexCards//ForHeroes/Stealth_057.png"
 }
 <Texture> Stealth_056 {
-  "TexCards/ForHeroes/Stealth_056.png"
+  "TexCards//ForHeroes/Stealth_056.png"
 }
 <Texture> Stealth_055 {
-  "TexCards/ForHeroes/Stealth_055.png"
+  "TexCards//ForHeroes/Stealth_055.png"
 }
 <Texture> Stealth_054 {
-  "TexCards/ForHeroes/Stealth_054.png"
+  "TexCards//ForHeroes/Stealth_054.png"
 }
 <Texture> Stealth_053 {
-  "TexCards/ForHeroes/Stealth_053.png"
+  "TexCards//ForHeroes/Stealth_053.png"
 }
 <Texture> Stealth_052 {
-  "TexCards/ForHeroes/Stealth_052.png"
+  "TexCards//ForHeroes/Stealth_052.png"
 }
 <Texture> Stealth_051 {
-  "TexCards/ForHeroes/Stealth_051.png"
+  "TexCards//ForHeroes/Stealth_051.png"
 }
 <Texture> Stealth_050 {
-  "TexCards/ForHeroes/Stealth_050.png"
+  "TexCards//ForHeroes/Stealth_050.png"
 }
 <Texture> Stealth_049 {
-  "TexCards/ForHeroes/Stealth_049.png"
+  "TexCards//ForHeroes/Stealth_049.png"
 }
 <Texture> Stealth_048 {
-  "TexCards/ForHeroes/Stealth_048.png"
+  "TexCards//ForHeroes/Stealth_048.png"
 }
 <Texture> Stealth_047 {
-  "TexCards/ForHeroes/Stealth_047.png"
+  "TexCards//ForHeroes/Stealth_047.png"
 }
 <Texture> Stealth_046 {
-  "TexCards/ForHeroes/Stealth_046.png"
+  "TexCards//ForHeroes/Stealth_046.png"
 }
 <Texture> Stealth_045 {
-  "TexCards/ForHeroes/Stealth_045.png"
+  "TexCards//ForHeroes/Stealth_045.png"
 }
 <Texture> Stealth_044 {
-  "TexCards/ForHeroes/Stealth_044.png"
+  "TexCards//ForHeroes/Stealth_044.png"
 }
 <Texture> Stealth_043 {
-  "TexCards/ForHeroes/Stealth_043.png"
+  "TexCards//ForHeroes/Stealth_043.png"
 }
 <Texture> Stealth_042 {
-  "TexCards/ForHeroes/Stealth_042.png"
+  "TexCards//ForHeroes/Stealth_042.png"
 }
 <Texture> Stealth_041 {
-  "TexCards/ForHeroes/Stealth_041.png"
+  "TexCards//ForHeroes/Stealth_041.png"
 }
 <Texture> Stealth_040 {
-  "TexCards/ForHeroes/Stealth_040.png"
+  "TexCards//ForHeroes/Stealth_040.png"
 }
 <Texture> Stealth_039 {
-  "TexCards/ForHeroes/Stealth_039.png"
+  "TexCards//ForHeroes/Stealth_039.png"
 }
 <Texture> Stealth_038 {
-  "TexCards/ForHeroes/Stealth_038.png"
+  "TexCards//ForHeroes/Stealth_038.png"
 }
 <Texture> Stealth_037 {
-  "TexCards/ForHeroes/Stealth_037.png"
+  "TexCards//ForHeroes/Stealth_037.png"
 }
 <Texture> Stealth_036 {
-  "TexCards/ForHeroes/Stealth_036.png"
+  "TexCards//ForHeroes/Stealth_036.png"
 }
 <Texture> Stealth_035 {
-  "TexCards/ForHeroes/Stealth_035.png"
+  "TexCards//ForHeroes/Stealth_035.png"
 }
 <Texture> Stealth_034 {
-  "TexCards/ForHeroes/Stealth_034.png"
+  "TexCards//ForHeroes/Stealth_034.png"
 }
 <Texture> Stealth_033 {
-  "TexCards/ForHeroes/Stealth_033.png"
+  "TexCards//ForHeroes/Stealth_033.png"
 }
 <Texture> Stealth_032 {
-  "TexCards/ForHeroes/Stealth_032.png"
+  "TexCards//ForHeroes/Stealth_032.png"
 }
 <Texture> Stealth_031 {
-  "TexCards/ForHeroes/Stealth_031.png"
+  "TexCards//ForHeroes/Stealth_031.png"
 }
 <Texture> Stealth_030 {
-  "TexCards/ForHeroes/Stealth_030.png"
+  "TexCards//ForHeroes/Stealth_030.png"
 }
 <Texture> Stealth_029 {
-  "TexCards/ForHeroes/Stealth_029.png"
+  "TexCards//ForHeroes/Stealth_029.png"
 }
 <Texture> Stealth_028 {
-  "TexCards/ForHeroes/Stealth_028.png"
+  "TexCards//ForHeroes/Stealth_028.png"
 }
 <Texture> Stealth_027 {
-  "TexCards/ForHeroes/Stealth_027.png"
+  "TexCards//ForHeroes/Stealth_027.png"
 }
 <Texture> Stealth_026 {
-  "TexCards/ForHeroes/Stealth_026.png"
+  "TexCards//ForHeroes/Stealth_026.png"
 }
 <Texture> Stealth_025 {
-  "TexCards/ForHeroes/Stealth_025.png"
+  "TexCards//ForHeroes/Stealth_025.png"
 }
 <Texture> Stealth_024 {
-  "TexCards/ForHeroes/Stealth_024.png"
+  "TexCards//ForHeroes/Stealth_024.png"
 }
 <Texture> Stealth_023 {
-  "TexCards/ForHeroes/Stealth_023.png"
+  "TexCards//ForHeroes/Stealth_023.png"
 }
 <Texture> Stealth_022 {
-  "TexCards/ForHeroes/Stealth_022.png"
+  "TexCards//ForHeroes/Stealth_022.png"
 }
 <Texture> Stealth_021 {
-  "TexCards/ForHeroes/Stealth_021.png"
+  "TexCards//ForHeroes/Stealth_021.png"
 }
 <Texture> Stealth_020 {
-  "TexCards/ForHeroes/Stealth_020.png"
+  "TexCards//ForHeroes/Stealth_020.png"
 }
 <Texture> Stealth_019 {
-  "TexCards/ForHeroes/Stealth_019.png"
+  "TexCards//ForHeroes/Stealth_019.png"
 }
 <Texture> Stealth_018 {
-  "TexCards/ForHeroes/Stealth_018.png"
+  "TexCards//ForHeroes/Stealth_018.png"
 }
 <Texture> Stealth_017 {
-  "TexCards/ForHeroes/Stealth_017.png"
+  "TexCards//ForHeroes/Stealth_017.png"
 }
 <Texture> Stealth_016 {
-  "TexCards/ForHeroes/Stealth_016.png"
+  "TexCards//ForHeroes/Stealth_016.png"
 }
 <Texture> Stealth_015 {
-  "TexCards/ForHeroes/Stealth_015.png"
+  "TexCards//ForHeroes/Stealth_015.png"
 }
 <Texture> Stealth_014 {
-  "TexCards/ForHeroes/Stealth_014.png"
+  "TexCards//ForHeroes/Stealth_014.png"
 }
 <Texture> Stealth_013 {
-  "TexCards/ForHeroes/Stealth_013.png"
+  "TexCards//ForHeroes/Stealth_013.png"
 }
 <Texture> Stealth_012 {
-  "TexCards/ForHeroes/Stealth_012.png"
+  "TexCards//ForHeroes/Stealth_012.png"
 }
 <Texture> Stealth_011 {
-  "TexCards/ForHeroes/Stealth_011.png"
+  "TexCards//ForHeroes/Stealth_011.png"
 }
 <Texture> Stealth_010 {
-  "TexCards/ForHeroes/Stealth_010.png"
+  "TexCards//ForHeroes/Stealth_010.png"
 }
 <Texture> Stealth_009 {
-  "TexCards/ForHeroes/Stealth_009.png"
+  "TexCards//ForHeroes/Stealth_009.png"
 }
 <Texture> Stealth_008 {
-  "TexCards/ForHeroes/Stealth_008.png"
+  "TexCards//ForHeroes/Stealth_008.png"
 }
 <Texture> Stealth_007 {
-  "TexCards/ForHeroes/Stealth_007.png"
+  "TexCards//ForHeroes/Stealth_007.png"
 }
 <Texture> Stealth_006 {
-  "TexCards/ForHeroes/Stealth_006.png"
+  "TexCards//ForHeroes/Stealth_006.png"
 }
 <Texture> Stealth_005 {
-  "TexCards/ForHeroes/Stealth_005.png"
+  "TexCards//ForHeroes/Stealth_005.png"
 }
 <Texture> Stealth_004 {
-  "TexCards/ForHeroes/Stealth_004.png"
+  "TexCards//ForHeroes/Stealth_004.png"
 }
 <Texture> Stealth_003 {
-  "TexCards/ForHeroes/Stealth_003.png"
+  "TexCards//ForHeroes/Stealth_003.png"
 }
 <Texture> Stealth_002 {
-  "TexCards/ForHeroes/Stealth_002.png"
+  "TexCards//ForHeroes/Stealth_002.png"
 }
 <Texture> Stealth_001 {
-  "TexCards/ForHeroes/Stealth_001.png"
+  "TexCards//ForHeroes/Stealth_001.png"
 }
 <Texture> Stealth_000 {
-  "TexCards/ForHeroes/Stealth_000.png"
+  "TexCards//ForHeroes/Stealth_000.png"
 }
 <Group> {
   <Switch> { 1 }
-  <Scalar> fps { 20 }
+  <Scalar> fps { 24 }
   <VertexPool> vpool {
     <Vertex> 0 {
-      -0.00390625 0.00390625 0
+      -0.5 0.5 0
       <UV> { 0 1 }
     }
     <Vertex> 1 {
-      -0.00390625 -0.00390625 0
+      -0.5 -0.5 0
       <UV> { 0 0 }
     }
     <Vertex> 2 {
-      0.00390625 -0.00390625 0
+      0.5 -0.5 0
       <UV> { 1 0 }
     }
     <Vertex> 3 {
-      0.00390625 0.00390625 0
+      0.5 0.5 0
       <UV> { 1 1 }
     }
     <Vertex> 4 {

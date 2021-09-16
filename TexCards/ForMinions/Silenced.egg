@@ -1,240 +1,240 @@
 <Comment> {
-  "egg-texture-cards -o Silenced.egg -fps 24 -p 1,1 'TexCards\ForMinions\Silenced_00.png' -p 128,128 'TexCards\ForMinions\Silenced_01.png' -p 128,128 'TexCards\ForMinions\Silenced_02.png' -p 128,128 'TexCards\ForMinions\Silenced_03.png' -p 128,128 'TexCards\ForMinions\Silenced_04.png' -p 128,128 'TexCards\ForMinions\Silenced_05.png' -p 128,128 'TexCards\ForMinions\Silenced_06.png' -p 128,128 'TexCards\ForMinions\Silenced_07.png' -p 128,128 'TexCards\ForMinions\Silenced_08.png' -p 128,128 'TexCards\ForMinions\Silenced_09.png' -p 128,128 'TexCards\ForMinions\Silenced_10.png' -p 128,128 'TexCards\ForMinions\Silenced_11.png' -p 128,128 'TexCards\ForMinions\Silenced_12.png' -p 128,128 'TexCards\ForMinions\Silenced_13.png' -p 128,128 'TexCards\ForMinions\Silenced_14.png' -p 128,128 'TexCards\ForMinions\Silenced_15.png' -p 128,128 'TexCards\ForMinions\Silenced_16.png' -p 128,128 'TexCards\ForMinions\Silenced_17.png' -p 128,128 'TexCards\ForMinions\Silenced_18.png' -p 128,128 'TexCards\ForMinions\Silenced_19.png' -p 128,128 'TexCards\ForMinions\Silenced_20.png' -p 128,128 'TexCards\ForMinions\Silenced_21.png' -p 128,128 'TexCards\ForMinions\Silenced_22.png' -p 128,128 'TexCards\ForMinions\Silenced_23.png' -p 128,128 'TexCards\ForMinions\Silenced_24.png' -p 128,128 'TexCards\ForMinions\Silenced_25.png' -p 128,128 'TexCards\ForMinions\Silenced_26.png' -p 128,128 'TexCards\ForMinions\Silenced_27.png' -p 128,128 'TexCards\ForMinions\Silenced_28.png' -p 128,128 'TexCards\ForMinions\Silenced_29.png' -p 128,128 'TexCards\ForMinions\Silenced_30.png' -p 128,128 'TexCards\ForMinions\Silenced_31.png' -p 128,128 'TexCards\ForMinions\Silenced_32.png' -p 128,128 'TexCards\ForMinions\Silenced_33.png' -p 128,128 'TexCards\ForMinions\Silenced_34.png' -p 128,128 'TexCards\ForMinions\Silenced_35.png' -p 128,128 'TexCards\ForMinions\Silenced_36.png' -p 128,128 'TexCards\ForMinions\Silenced_37.png' -p 128,128 'TexCards\ForMinions\Silenced_38.png' -p 128,128 'TexCards\ForMinions\Silenced_39.png' -p 128,128 'TexCards\ForMinions\Silenced_40.png' -p 128,128 'TexCards\ForMinions\Silenced_41.png' -p 128,128 'TexCards\ForMinions\Silenced_42.png' -p 128,128 'TexCards\ForMinions\Silenced_43.png' -p 128,128 'TexCards\ForMinions\Silenced_44.png' -p 128,128 'TexCards\ForMinions\Silenced_45.png' -p 128,128 'TexCards\ForMinions\Silenced_46.png' -p 128,128 'TexCards\ForMinions\Silenced_47.png' -p 128,128 'TexCards\ForMinions\Silenced_48.png' -p 128,128 'TexCards\ForMinions\Silenced_49.png' -p 128,128 'TexCards\ForMinions\Silenced_50.png' -p 128,128 'TexCards\ForMinions\Silenced_51.png' -p 128,128 'TexCards\ForMinions\Silenced_52.png' -p 128,128 'TexCards\ForMinions\Silenced_53.png' -p 128,128 'TexCards\ForMinions\Silenced_54.png' -p 128,128 'TexCards\ForMinions\Silenced_55.png' -p 128,128 'TexCards\ForMinions\Silenced_56.png' -p 128,128 'TexCards\ForMinions\Silenced_57.png' -p 128,128 'TexCards\ForMinions\Silenced_58.png' -p 128,128 'TexCards\ForMinions\Silenced_59.png' -p 128,128 'TexCards\ForMinions\Silenced_60.png' -p 128,128 'TexCards\ForMinions\Silenced_61.png' -p 128,128 'TexCards\ForMinions\Silenced_62.png' -p 128,128 'TexCards\ForMinions\Silenced_63.png' -p 128,128 'TexCards\ForMinions\Silenced_64.png' -p 128,128 'TexCards\ForMinions\Silenced_65.png' -p 128,128 'TexCards\ForMinions\Silenced_66.png' -p 128,128 'TexCards\ForMinions\Silenced_67.png' -p 128,128 'TexCards\ForMinions\Silenced_68.png' -p 128,128 'TexCards\ForMinions\Silenced_69.png' -p 128,128 'TexCards\ForMinions\Silenced_70.png' -p 128,128 'TexCards\ForMinions\Silenced_71.png'"
+  "egg-texture-cards -o Silenced.egg -fps 24 -p 128,128 'TexCards\\ForMinions\Silenced_00.png' -p 128,128 'TexCards\\ForMinions\Silenced_01.png' -p 128,128 'TexCards\\ForMinions\Silenced_02.png' -p 128,128 'TexCards\\ForMinions\Silenced_03.png' -p 128,128 'TexCards\\ForMinions\Silenced_04.png' -p 128,128 'TexCards\\ForMinions\Silenced_05.png' -p 128,128 'TexCards\\ForMinions\Silenced_06.png' -p 128,128 'TexCards\\ForMinions\Silenced_07.png' -p 128,128 'TexCards\\ForMinions\Silenced_08.png' -p 128,128 'TexCards\\ForMinions\Silenced_09.png' -p 128,128 'TexCards\\ForMinions\Silenced_10.png' -p 128,128 'TexCards\\ForMinions\Silenced_11.png' -p 128,128 'TexCards\\ForMinions\Silenced_12.png' -p 128,128 'TexCards\\ForMinions\Silenced_13.png' -p 128,128 'TexCards\\ForMinions\Silenced_14.png' -p 128,128 'TexCards\\ForMinions\Silenced_15.png' -p 128,128 'TexCards\\ForMinions\Silenced_16.png' -p 128,128 'TexCards\\ForMinions\Silenced_17.png' -p 128,128 'TexCards\\ForMinions\Silenced_18.png' -p 128,128 'TexCards\\ForMinions\Silenced_19.png' -p 128,128 'TexCards\\ForMinions\Silenced_20.png' -p 128,128 'TexCards\\ForMinions\Silenced_21.png' -p 128,128 'TexCards\\ForMinions\Silenced_22.png' -p 128,128 'TexCards\\ForMinions\Silenced_23.png' -p 128,128 'TexCards\\ForMinions\Silenced_24.png' -p 128,128 'TexCards\\ForMinions\Silenced_25.png' -p 128,128 'TexCards\\ForMinions\Silenced_26.png' -p 128,128 'TexCards\\ForMinions\Silenced_27.png' -p 128,128 'TexCards\\ForMinions\Silenced_28.png' -p 128,128 'TexCards\\ForMinions\Silenced_29.png' -p 128,128 'TexCards\\ForMinions\Silenced_30.png' -p 128,128 'TexCards\\ForMinions\Silenced_31.png' -p 128,128 'TexCards\\ForMinions\Silenced_32.png' -p 128,128 'TexCards\\ForMinions\Silenced_33.png' -p 128,128 'TexCards\\ForMinions\Silenced_34.png' -p 128,128 'TexCards\\ForMinions\Silenced_35.png' -p 128,128 'TexCards\\ForMinions\Silenced_36.png' -p 128,128 'TexCards\\ForMinions\Silenced_37.png' -p 128,128 'TexCards\\ForMinions\Silenced_38.png' -p 128,128 'TexCards\\ForMinions\Silenced_39.png' -p 128,128 'TexCards\\ForMinions\Silenced_40.png' -p 128,128 'TexCards\\ForMinions\Silenced_41.png' -p 128,128 'TexCards\\ForMinions\Silenced_42.png' -p 128,128 'TexCards\\ForMinions\Silenced_43.png' -p 128,128 'TexCards\\ForMinions\Silenced_44.png' -p 128,128 'TexCards\\ForMinions\Silenced_45.png' -p 128,128 'TexCards\\ForMinions\Silenced_46.png' -p 128,128 'TexCards\\ForMinions\Silenced_47.png' -p 128,128 'TexCards\\ForMinions\Silenced_48.png' -p 128,128 'TexCards\\ForMinions\Silenced_49.png' -p 128,128 'TexCards\\ForMinions\Silenced_50.png' -p 128,128 'TexCards\\ForMinions\Silenced_51.png' -p 128,128 'TexCards\\ForMinions\Silenced_52.png' -p 128,128 'TexCards\\ForMinions\Silenced_53.png' -p 128,128 'TexCards\\ForMinions\Silenced_54.png' -p 128,128 'TexCards\\ForMinions\Silenced_55.png' -p 128,128 'TexCards\\ForMinions\Silenced_56.png' -p 128,128 'TexCards\\ForMinions\Silenced_57.png' -p 128,128 'TexCards\\ForMinions\Silenced_58.png' -p 128,128 'TexCards\\ForMinions\Silenced_59.png' -p 128,128 'TexCards\\ForMinions\Silenced_60.png' -p 128,128 'TexCards\\ForMinions\Silenced_61.png' -p 128,128 'TexCards\\ForMinions\Silenced_62.png' -p 128,128 'TexCards\\ForMinions\Silenced_63.png' -p 128,128 'TexCards\\ForMinions\Silenced_64.png' -p 128,128 'TexCards\\ForMinions\Silenced_65.png' -p 128,128 'TexCards\\ForMinions\Silenced_66.png' -p 128,128 'TexCards\\ForMinions\Silenced_67.png' -p 128,128 'TexCards\\ForMinions\Silenced_68.png' -p 128,128 'TexCards\\ForMinions\Silenced_69.png' -p 128,128 'TexCards\\ForMinions\Silenced_70.png' -p 128,128 'TexCards\\ForMinions\Silenced_71.png'"
 }
 <Texture> Silenced_71 {
-  "TexCards/ForMinions/Silenced_71.png"
+  "TexCards//ForMinions/Silenced_71.png"
 }
 <Texture> Silenced_70 {
-  "TexCards/ForMinions/Silenced_70.png"
+  "TexCards//ForMinions/Silenced_70.png"
 }
 <Texture> Silenced_69 {
-  "TexCards/ForMinions/Silenced_69.png"
+  "TexCards//ForMinions/Silenced_69.png"
 }
 <Texture> Silenced_68 {
-  "TexCards/ForMinions/Silenced_68.png"
+  "TexCards//ForMinions/Silenced_68.png"
 }
 <Texture> Silenced_67 {
-  "TexCards/ForMinions/Silenced_67.png"
+  "TexCards//ForMinions/Silenced_67.png"
 }
 <Texture> Silenced_66 {
-  "TexCards/ForMinions/Silenced_66.png"
+  "TexCards//ForMinions/Silenced_66.png"
 }
 <Texture> Silenced_65 {
-  "TexCards/ForMinions/Silenced_65.png"
+  "TexCards//ForMinions/Silenced_65.png"
 }
 <Texture> Silenced_64 {
-  "TexCards/ForMinions/Silenced_64.png"
+  "TexCards//ForMinions/Silenced_64.png"
 }
 <Texture> Silenced_63 {
-  "TexCards/ForMinions/Silenced_63.png"
+  "TexCards//ForMinions/Silenced_63.png"
 }
 <Texture> Silenced_62 {
-  "TexCards/ForMinions/Silenced_62.png"
+  "TexCards//ForMinions/Silenced_62.png"
 }
 <Texture> Silenced_61 {
-  "TexCards/ForMinions/Silenced_61.png"
+  "TexCards//ForMinions/Silenced_61.png"
 }
 <Texture> Silenced_60 {
-  "TexCards/ForMinions/Silenced_60.png"
+  "TexCards//ForMinions/Silenced_60.png"
 }
 <Texture> Silenced_59 {
-  "TexCards/ForMinions/Silenced_59.png"
+  "TexCards//ForMinions/Silenced_59.png"
 }
 <Texture> Silenced_58 {
-  "TexCards/ForMinions/Silenced_58.png"
+  "TexCards//ForMinions/Silenced_58.png"
 }
 <Texture> Silenced_57 {
-  "TexCards/ForMinions/Silenced_57.png"
+  "TexCards//ForMinions/Silenced_57.png"
 }
 <Texture> Silenced_56 {
-  "TexCards/ForMinions/Silenced_56.png"
+  "TexCards//ForMinions/Silenced_56.png"
 }
 <Texture> Silenced_55 {
-  "TexCards/ForMinions/Silenced_55.png"
+  "TexCards//ForMinions/Silenced_55.png"
 }
 <Texture> Silenced_54 {
-  "TexCards/ForMinions/Silenced_54.png"
+  "TexCards//ForMinions/Silenced_54.png"
 }
 <Texture> Silenced_53 {
-  "TexCards/ForMinions/Silenced_53.png"
+  "TexCards//ForMinions/Silenced_53.png"
 }
 <Texture> Silenced_52 {
-  "TexCards/ForMinions/Silenced_52.png"
+  "TexCards//ForMinions/Silenced_52.png"
 }
 <Texture> Silenced_51 {
-  "TexCards/ForMinions/Silenced_51.png"
+  "TexCards//ForMinions/Silenced_51.png"
 }
 <Texture> Silenced_50 {
-  "TexCards/ForMinions/Silenced_50.png"
+  "TexCards//ForMinions/Silenced_50.png"
 }
 <Texture> Silenced_49 {
-  "TexCards/ForMinions/Silenced_49.png"
+  "TexCards//ForMinions/Silenced_49.png"
 }
 <Texture> Silenced_48 {
-  "TexCards/ForMinions/Silenced_48.png"
+  "TexCards//ForMinions/Silenced_48.png"
 }
 <Texture> Silenced_47 {
-  "TexCards/ForMinions/Silenced_47.png"
+  "TexCards//ForMinions/Silenced_47.png"
 }
 <Texture> Silenced_46 {
-  "TexCards/ForMinions/Silenced_46.png"
+  "TexCards//ForMinions/Silenced_46.png"
 }
 <Texture> Silenced_45 {
-  "TexCards/ForMinions/Silenced_45.png"
+  "TexCards//ForMinions/Silenced_45.png"
 }
 <Texture> Silenced_44 {
-  "TexCards/ForMinions/Silenced_44.png"
+  "TexCards//ForMinions/Silenced_44.png"
 }
 <Texture> Silenced_43 {
-  "TexCards/ForMinions/Silenced_43.png"
+  "TexCards//ForMinions/Silenced_43.png"
 }
 <Texture> Silenced_42 {
-  "TexCards/ForMinions/Silenced_42.png"
+  "TexCards//ForMinions/Silenced_42.png"
 }
 <Texture> Silenced_41 {
-  "TexCards/ForMinions/Silenced_41.png"
+  "TexCards//ForMinions/Silenced_41.png"
 }
 <Texture> Silenced_40 {
-  "TexCards/ForMinions/Silenced_40.png"
+  "TexCards//ForMinions/Silenced_40.png"
 }
 <Texture> Silenced_39 {
-  "TexCards/ForMinions/Silenced_39.png"
+  "TexCards//ForMinions/Silenced_39.png"
 }
 <Texture> Silenced_38 {
-  "TexCards/ForMinions/Silenced_38.png"
+  "TexCards//ForMinions/Silenced_38.png"
 }
 <Texture> Silenced_37 {
-  "TexCards/ForMinions/Silenced_37.png"
+  "TexCards//ForMinions/Silenced_37.png"
 }
 <Texture> Silenced_36 {
-  "TexCards/ForMinions/Silenced_36.png"
+  "TexCards//ForMinions/Silenced_36.png"
 }
 <Texture> Silenced_35 {
-  "TexCards/ForMinions/Silenced_35.png"
+  "TexCards//ForMinions/Silenced_35.png"
 }
 <Texture> Silenced_34 {
-  "TexCards/ForMinions/Silenced_34.png"
+  "TexCards//ForMinions/Silenced_34.png"
 }
 <Texture> Silenced_33 {
-  "TexCards/ForMinions/Silenced_33.png"
+  "TexCards//ForMinions/Silenced_33.png"
 }
 <Texture> Silenced_32 {
-  "TexCards/ForMinions/Silenced_32.png"
+  "TexCards//ForMinions/Silenced_32.png"
 }
 <Texture> Silenced_31 {
-  "TexCards/ForMinions/Silenced_31.png"
+  "TexCards//ForMinions/Silenced_31.png"
 }
 <Texture> Silenced_30 {
-  "TexCards/ForMinions/Silenced_30.png"
+  "TexCards//ForMinions/Silenced_30.png"
 }
 <Texture> Silenced_29 {
-  "TexCards/ForMinions/Silenced_29.png"
+  "TexCards//ForMinions/Silenced_29.png"
 }
 <Texture> Silenced_28 {
-  "TexCards/ForMinions/Silenced_28.png"
+  "TexCards//ForMinions/Silenced_28.png"
 }
 <Texture> Silenced_27 {
-  "TexCards/ForMinions/Silenced_27.png"
+  "TexCards//ForMinions/Silenced_27.png"
 }
 <Texture> Silenced_26 {
-  "TexCards/ForMinions/Silenced_26.png"
+  "TexCards//ForMinions/Silenced_26.png"
 }
 <Texture> Silenced_25 {
-  "TexCards/ForMinions/Silenced_25.png"
+  "TexCards//ForMinions/Silenced_25.png"
 }
 <Texture> Silenced_24 {
-  "TexCards/ForMinions/Silenced_24.png"
+  "TexCards//ForMinions/Silenced_24.png"
 }
 <Texture> Silenced_23 {
-  "TexCards/ForMinions/Silenced_23.png"
+  "TexCards//ForMinions/Silenced_23.png"
 }
 <Texture> Silenced_22 {
-  "TexCards/ForMinions/Silenced_22.png"
+  "TexCards//ForMinions/Silenced_22.png"
 }
 <Texture> Silenced_21 {
-  "TexCards/ForMinions/Silenced_21.png"
+  "TexCards//ForMinions/Silenced_21.png"
 }
 <Texture> Silenced_20 {
-  "TexCards/ForMinions/Silenced_20.png"
+  "TexCards//ForMinions/Silenced_20.png"
 }
 <Texture> Silenced_19 {
-  "TexCards/ForMinions/Silenced_19.png"
+  "TexCards//ForMinions/Silenced_19.png"
 }
 <Texture> Silenced_18 {
-  "TexCards/ForMinions/Silenced_18.png"
+  "TexCards//ForMinions/Silenced_18.png"
 }
 <Texture> Silenced_17 {
-  "TexCards/ForMinions/Silenced_17.png"
+  "TexCards//ForMinions/Silenced_17.png"
 }
 <Texture> Silenced_16 {
-  "TexCards/ForMinions/Silenced_16.png"
+  "TexCards//ForMinions/Silenced_16.png"
 }
 <Texture> Silenced_15 {
-  "TexCards/ForMinions/Silenced_15.png"
+  "TexCards//ForMinions/Silenced_15.png"
 }
 <Texture> Silenced_14 {
-  "TexCards/ForMinions/Silenced_14.png"
+  "TexCards//ForMinions/Silenced_14.png"
 }
 <Texture> Silenced_13 {
-  "TexCards/ForMinions/Silenced_13.png"
+  "TexCards//ForMinions/Silenced_13.png"
 }
 <Texture> Silenced_12 {
-  "TexCards/ForMinions/Silenced_12.png"
+  "TexCards//ForMinions/Silenced_12.png"
 }
 <Texture> Silenced_11 {
-  "TexCards/ForMinions/Silenced_11.png"
+  "TexCards//ForMinions/Silenced_11.png"
 }
 <Texture> Silenced_10 {
-  "TexCards/ForMinions/Silenced_10.png"
+  "TexCards//ForMinions/Silenced_10.png"
 }
 <Texture> Silenced_09 {
-  "TexCards/ForMinions/Silenced_09.png"
+  "TexCards//ForMinions/Silenced_09.png"
 }
 <Texture> Silenced_08 {
-  "TexCards/ForMinions/Silenced_08.png"
+  "TexCards//ForMinions/Silenced_08.png"
 }
 <Texture> Silenced_07 {
-  "TexCards/ForMinions/Silenced_07.png"
+  "TexCards//ForMinions/Silenced_07.png"
 }
 <Texture> Silenced_06 {
-  "TexCards/ForMinions/Silenced_06.png"
+  "TexCards//ForMinions/Silenced_06.png"
 }
 <Texture> Silenced_05 {
-  "TexCards/ForMinions/Silenced_05.png"
+  "TexCards//ForMinions/Silenced_05.png"
 }
 <Texture> Silenced_04 {
-  "TexCards/ForMinions/Silenced_04.png"
+  "TexCards//ForMinions/Silenced_04.png"
 }
 <Texture> Silenced_03 {
-  "TexCards/ForMinions/Silenced_03.png"
+  "TexCards//ForMinions/Silenced_03.png"
 }
 <Texture> Silenced_02 {
-  "TexCards/ForMinions/Silenced_02.png"
+  "TexCards//ForMinions/Silenced_02.png"
 }
 <Texture> Silenced_01 {
-  "TexCards/ForMinions/Silenced_01.png"
+  "TexCards//ForMinions/Silenced_01.png"
 }
 <Texture> Silenced_00 {
-  "TexCards/ForMinions/Silenced_00.png"
+  "TexCards//ForMinions/Silenced_00.png"
 }
 <Group> {
   <Switch> { 1 }
   <Scalar> fps { 24 }
   <VertexPool> vpool {
     <Vertex> 0 {
-      -0.00390625 0.00390625 0
+      -0.5 0.5 0
       <UV> { 0 1 }
     }
     <Vertex> 1 {
-      -0.00390625 -0.00390625 0
+      -0.5 -0.5 0
       <UV> { 0 0 }
     }
     <Vertex> 2 {
-      0.00390625 -0.00390625 0
+      0.5 -0.5 0
       <UV> { 1 0 }
     }
     <Vertex> 3 {
-      0.00390625 0.00390625 0
+      0.5 0.5 0
       <UV> { 1 1 }
     }
     <Vertex> 4 {

@@ -39,14 +39,14 @@ class HolyCavalier(SVMinion):
     Class, race, name = "Havencraft", "", "Holy Cavalier"
     mana, attack, health = 2, 1, 2
     index = "SV_Ultimate~Havencraft~Minion~2~1~2~~Holy Cavalier~Taunt~Legendary~Uncollectible"
-    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    requireTarget, effects, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "圣骑兵"
 
 
 class WilbertGrandKnight_Accelerate(SVSpell):
     Class, school, name = "Havencraft", "", "Wilbert, Grand Knight"
-    requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
     index = "SV_Ultimate~Havencraft~Spell~3~Wilbert, Grand Knight~Accelerate~Legendary~Uncollectible"
     description = "Summon 2 Holy Cavaliers."
     name_CN = "尊荣骑士·维尔伯特"
@@ -61,7 +61,7 @@ class WilbertGrandKnight(SVMinion):
     Class, race, name = "Havencraft", "", "Wilbert, Grand Knight"
     mana, attack, health = 6, 4, 6
     index = "SV_Ultimate~Havencraft~Minion~6~4~6~~Wilbert, Grand Knight~Battlecry~Deathrattle~Accelerate~Legendary"
-    requireTarget, keyWord, description = False, "", "Accelerate (3): Summon 2 Holy Cavaliers.Ward.Fanfare: Give your leader the following effect - Whenever an enemy follower attacks an allied follower with Ward, deal 2 damage to the enemy leader. (This effect is not stackable and lasts for the rest of the match.)Last Words: Give your leader the following effect - At the start of your turn, summon 2 Holy Cavaliers, then remove this effect."
+    requireTarget, effects, description = False, "", "Accelerate (3): Summon 2 Holy Cavaliers.Ward.Fanfare: Give your leader the following effect - Whenever an enemy follower attacks an allied follower with Ward, deal 2 damage to the enemy leader. (This effect is not stackable and lasts for the rest of the match.)Last Words: Give your leader the following effect - At the start of your turn, summon 2 Holy Cavaliers, then remove this effect."
     accelerateSpell = WilbertGrandKnight_Accelerate
     attackAdd, healthAdd = 2, 2
     name_CN = "尊荣骑士·维尔伯特"
@@ -108,7 +108,7 @@ class Trig_WilbertGrandKnight(TrigBoard):
         super().__init__(entity, ["BattleStarted"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-        return target.ID == self.entity.ID and target.type == "Minion" and target.keyWords["Taunt"] > 0
+        return target.ID == self.entity.ID and target.type == "Minion" and target.effects["Taunt"] > 0
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 2)
@@ -141,7 +141,7 @@ class GoddessoftheWestWind(SVMinion):
     Class, race, name = "Havencraft", "", "Goddess of the West Wind"
     mana, attack, health = 6, 3, 3
     index = "SV_Ultimate~Havencraft~Minion~6~3~3~~Goddess of the West Wind~Battlecry~Legendary"
-    requireTarget, keyWord, description = False, "", "Fanfare: Randomly put 2 different Havencraft followers with an original attack of 2 or less from your deck into play."
+    requireTarget, effects, description = False, "", "Fanfare: Randomly put 2 different Havencraft followers with an original attack of 2 or less from your deck into play."
     accelerateSpell = WilbertGrandKnight_Accelerate
     attackAdd, healthAdd = 2, 2
     name_CN = "丰饶的西风神"
@@ -157,7 +157,7 @@ class GoddessoftheWestWind(SVMinion):
                 for m in minions:
                     print(curGame.Hand_Deck.decks[self.ID][m].name)
                 i1 = npchoice(minions) if minions and curGame.space(self.ID) > 0 else -1
-                curGame.picks.append(i1)
+                curGame.picks_Backup.append(i1)
                 name = curGame.Hand_Deck.decks[self.ID][i1].name
                 for minion in minions:
                     if curGame.Hand_Deck.decks[self.ID][minion].name == name:
@@ -223,14 +223,14 @@ class HolyCavalier(SVMinion):
     Class, race, name = "Havencraft", "", "Holy Cavalier"
     mana, attack, health = 2, 1, 2
     index = "SV_Ultimate~Havencraft~Minion~2~1~2~~Holy Cavalier~Taunt~Legendary~Uncollectible"
-    requireTarget, keyWord, description = False, "Taunt", "Ward."
+    requireTarget, effects, description = False, "Taunt", "Ward."
     attackAdd, healthAdd = 2, 2
     name_CN = "圣骑兵"
 
 
 class WilbertGrandKnight_Accelerate(SVSpell):
     Class, school, name = "Havencraft", "", "Wilbert, Grand Knight"
-    requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
     index = "SV_Ultimate~Havencraft~Spell~3~~Wilbert, Grand Knight~Accelerate~Legendary~Uncollectible"
     description = "Summon 2 Holy Cavaliers."
     name_CN = "尊荣骑士·维尔伯特"
@@ -245,7 +245,7 @@ class WilbertGrandKnight(SVMinion):
     Class, race, name = "Havencraft", "", "Wilbert, Grand Knight"
     mana, attack, health = 6, 4, 6
     index = "SV_Ultimate~Havencraft~Minion~6~4~6~~Wilbert, Grand Knight~Battlecry~Deathrattle~Accelerate~Legendary"
-    requireTarget, keyWord, description = False, "", "Accelerate (3): Summon 2 Holy Cavaliers.Ward.Fanfare: Give your leader the following effect - Whenever an enemy follower attacks an allied follower with Ward, deal 2 damage to the enemy leader. (This effect is not stackable and lasts for the rest of the match.)Last Words: Give your leader the following effect - At the start of your turn, summon 2 Holy Cavaliers, then remove this effect."
+    requireTarget, effects, description = False, "", "Accelerate (3): Summon 2 Holy Cavaliers.Ward.Fanfare: Give your leader the following effect - Whenever an enemy follower attacks an allied follower with Ward, deal 2 damage to the enemy leader. (This effect is not stackable and lasts for the rest of the match.)Last Words: Give your leader the following effect - At the start of your turn, summon 2 Holy Cavaliers, then remove this effect."
     accelerateSpell = WilbertGrandKnight_Accelerate
     attackAdd, healthAdd = 2, 2
     name_CN = "尊荣骑士·维尔伯特"
@@ -292,7 +292,7 @@ class Trig_WilbertGrandKnight(TrigBoard):
         super().__init__(entity, ["BattleStarted"])
 
     def canTrig(self, signal, ID, subject, target, number, comment, choice=0):
-        return target.ID == self.entity.ID and target.type == "Minion" and target.keyWords["Taunt"] > 0
+        return target.ID == self.entity.ID and target.type == "Minion" and target.effects["Taunt"] > 0
 
     def effect(self, signal, ID, subject, target, number, comment, choice=0):
         self.entity.dealsDamage(self.entity.Game.heroes[3 - self.entity.ID], 2)
@@ -325,7 +325,7 @@ class GoddessoftheWestWind(SVMinion):
     Class, race, name = "Havencraft", "", "Goddess of the West Wind"
     mana, attack, health = 6, 3, 3
     index = "SV_Ultimate~Havencraft~Minion~6~3~3~~Goddess of the West Wind~Battlecry~Legendary"
-    requireTarget, keyWord, description = False, "", "Fanfare: Randomly put 2 different Havencraft followers with an original attack of 2 or less from your deck into play."
+    requireTarget, effects, description = False, "", "Fanfare: Randomly put 2 different Havencraft followers with an original attack of 2 or less from your deck into play."
     accelerateSpell = WilbertGrandKnight_Accelerate
     attackAdd, healthAdd = 2, 2
     name_CN = "丰饶的西风神"
@@ -341,7 +341,7 @@ class GoddessoftheWestWind(SVMinion):
                 for m in minions:
                     print(curGame.Hand_Deck.decks[self.ID][m].name)
                 i1 = npchoice(minions) if minions and curGame.space(self.ID) > 0 else -1
-                curGame.picks.append(i1)
+                curGame.picks_Backup.append(i1)
                 name = curGame.Hand_Deck.decks[self.ID][i1].name
                 for minion in minions:
                     if curGame.Hand_Deck.decks[self.ID][minion].name == name:

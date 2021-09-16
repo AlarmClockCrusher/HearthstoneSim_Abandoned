@@ -1,339 +1,339 @@
 <Comment> {
-  "egg-texture-cards -o Frozen.egg -fps 24 -p 1,1 'TexCards\ForHeroes\Frozen_000.png' -p 128,128 'TexCards\ForHeroes\Frozen_001.png' -p 128,128 'TexCards\ForHeroes\Frozen_002.png' -p 128,128 'TexCards\ForHeroes\Frozen_003.png' -p 128,128 'TexCards\ForHeroes\Frozen_004.png' -p 128,128 'TexCards\ForHeroes\Frozen_005.png' -p 128,128 'TexCards\ForHeroes\Frozen_006.png' -p 128,128 'TexCards\ForHeroes\Frozen_007.png' -p 128,128 'TexCards\ForHeroes\Frozen_008.png' -p 128,128 'TexCards\ForHeroes\Frozen_009.png' -p 128,128 'TexCards\ForHeroes\Frozen_010.png' -p 128,128 'TexCards\ForHeroes\Frozen_011.png' -p 128,128 'TexCards\ForHeroes\Frozen_012.png' -p 128,128 'TexCards\ForHeroes\Frozen_013.png' -p 128,128 'TexCards\ForHeroes\Frozen_014.png' -p 128,128 'TexCards\ForHeroes\Frozen_015.png' -p 128,128 'TexCards\ForHeroes\Frozen_016.png' -p 128,128 'TexCards\ForHeroes\Frozen_017.png' -p 128,128 'TexCards\ForHeroes\Frozen_018.png' -p 128,128 'TexCards\ForHeroes\Frozen_019.png' -p 128,128 'TexCards\ForHeroes\Frozen_020.png' -p 128,128 'TexCards\ForHeroes\Frozen_021.png' -p 128,128 'TexCards\ForHeroes\Frozen_022.png' -p 128,128 'TexCards\ForHeroes\Frozen_023.png' -p 128,128 'TexCards\ForHeroes\Frozen_024.png' -p 128,128 'TexCards\ForHeroes\Frozen_025.png' -p 128,128 'TexCards\ForHeroes\Frozen_026.png' -p 128,128 'TexCards\ForHeroes\Frozen_027.png' -p 128,128 'TexCards\ForHeroes\Frozen_028.png' -p 128,128 'TexCards\ForHeroes\Frozen_029.png' -p 128,128 'TexCards\ForHeroes\Frozen_030.png' -p 128,128 'TexCards\ForHeroes\Frozen_031.png' -p 128,128 'TexCards\ForHeroes\Frozen_032.png' -p 128,128 'TexCards\ForHeroes\Frozen_033.png' -p 128,128 'TexCards\ForHeroes\Frozen_034.png' -p 128,128 'TexCards\ForHeroes\Frozen_035.png' -p 128,128 'TexCards\ForHeroes\Frozen_036.png' -p 128,128 'TexCards\ForHeroes\Frozen_037.png' -p 128,128 'TexCards\ForHeroes\Frozen_038.png' -p 128,128 'TexCards\ForHeroes\Frozen_039.png' -p 128,128 'TexCards\ForHeroes\Frozen_040.png' -p 128,128 'TexCards\ForHeroes\Frozen_041.png' -p 128,128 'TexCards\ForHeroes\Frozen_042.png' -p 128,128 'TexCards\ForHeroes\Frozen_043.png' -p 128,128 'TexCards\ForHeroes\Frozen_044.png' -p 128,128 'TexCards\ForHeroes\Frozen_045.png' -p 128,128 'TexCards\ForHeroes\Frozen_046.png' -p 128,128 'TexCards\ForHeroes\Frozen_047.png' -p 128,128 'TexCards\ForHeroes\Frozen_048.png' -p 128,128 'TexCards\ForHeroes\Frozen_049.png' -p 128,128 'TexCards\ForHeroes\Frozen_050.png' -p 128,128 'TexCards\ForHeroes\Frozen_051.png' -p 128,128 'TexCards\ForHeroes\Frozen_052.png' -p 128,128 'TexCards\ForHeroes\Frozen_053.png' -p 128,128 'TexCards\ForHeroes\Frozen_054.png' -p 128,128 'TexCards\ForHeroes\Frozen_055.png' -p 128,128 'TexCards\ForHeroes\Frozen_056.png' -p 128,128 'TexCards\ForHeroes\Frozen_057.png' -p 128,128 'TexCards\ForHeroes\Frozen_058.png' -p 128,128 'TexCards\ForHeroes\Frozen_059.png' -p 128,128 'TexCards\ForHeroes\Frozen_060.png' -p 128,128 'TexCards\ForHeroes\Frozen_061.png' -p 128,128 'TexCards\ForHeroes\Frozen_062.png' -p 128,128 'TexCards\ForHeroes\Frozen_063.png' -p 128,128 'TexCards\ForHeroes\Frozen_064.png' -p 128,128 'TexCards\ForHeroes\Frozen_065.png' -p 128,128 'TexCards\ForHeroes\Frozen_066.png' -p 128,128 'TexCards\ForHeroes\Frozen_067.png' -p 128,128 'TexCards\ForHeroes\Frozen_068.png' -p 128,128 'TexCards\ForHeroes\Frozen_069.png' -p 128,128 'TexCards\ForHeroes\Frozen_070.png' -p 128,128 'TexCards\ForHeroes\Frozen_071.png' -p 128,128 'TexCards\ForHeroes\Frozen_072.png' -p 128,128 'TexCards\ForHeroes\Frozen_073.png' -p 128,128 'TexCards\ForHeroes\Frozen_074.png' -p 128,128 'TexCards\ForHeroes\Frozen_075.png' -p 128,128 'TexCards\ForHeroes\Frozen_076.png' -p 128,128 'TexCards\ForHeroes\Frozen_077.png' -p 128,128 'TexCards\ForHeroes\Frozen_078.png' -p 128,128 'TexCards\ForHeroes\Frozen_079.png' -p 128,128 'TexCards\ForHeroes\Frozen_080.png' -p 128,128 'TexCards\ForHeroes\Frozen_081.png' -p 128,128 'TexCards\ForHeroes\Frozen_082.png' -p 128,128 'TexCards\ForHeroes\Frozen_083.png' -p 128,128 'TexCards\ForHeroes\Frozen_084.png' -p 128,128 'TexCards\ForHeroes\Frozen_085.png' -p 128,128 'TexCards\ForHeroes\Frozen_086.png' -p 128,128 'TexCards\ForHeroes\Frozen_087.png' -p 128,128 'TexCards\ForHeroes\Frozen_088.png' -p 128,128 'TexCards\ForHeroes\Frozen_089.png' -p 128,128 'TexCards\ForHeroes\Frozen_090.png' -p 128,128 'TexCards\ForHeroes\Frozen_091.png' -p 128,128 'TexCards\ForHeroes\Frozen_092.png' -p 128,128 'TexCards\ForHeroes\Frozen_093.png' -p 128,128 'TexCards\ForHeroes\Frozen_094.png' -p 128,128 'TexCards\ForHeroes\Frozen_095.png' -p 128,128 'TexCards\ForHeroes\Frozen_096.png' -p 128,128 'TexCards\ForHeroes\Frozen_097.png' -p 128,128 'TexCards\ForHeroes\Frozen_098.png' -p 128,128 'TexCards\ForHeroes\Frozen_099.png' -p 128,128 'TexCards\ForHeroes\Frozen_100.png' -p 128,128 'TexCards\ForHeroes\Frozen_101.png' -p 128,128 'TexCards\ForHeroes\Frozen_102.png' -p 128,128 'TexCards\ForHeroes\Frozen_103.png' -p 128,128 'TexCards\ForHeroes\Frozen_104.png'"
+  "egg-texture-cards -o Frozen.egg -fps 24 -p 128,128 'TexCards\\ForHeroes\Frozen_000.png' -p 128,128 'TexCards\\ForHeroes\Frozen_001.png' -p 128,128 'TexCards\\ForHeroes\Frozen_002.png' -p 128,128 'TexCards\\ForHeroes\Frozen_003.png' -p 128,128 'TexCards\\ForHeroes\Frozen_004.png' -p 128,128 'TexCards\\ForHeroes\Frozen_005.png' -p 128,128 'TexCards\\ForHeroes\Frozen_006.png' -p 128,128 'TexCards\\ForHeroes\Frozen_007.png' -p 128,128 'TexCards\\ForHeroes\Frozen_008.png' -p 128,128 'TexCards\\ForHeroes\Frozen_009.png' -p 128,128 'TexCards\\ForHeroes\Frozen_010.png' -p 128,128 'TexCards\\ForHeroes\Frozen_011.png' -p 128,128 'TexCards\\ForHeroes\Frozen_012.png' -p 128,128 'TexCards\\ForHeroes\Frozen_013.png' -p 128,128 'TexCards\\ForHeroes\Frozen_014.png' -p 128,128 'TexCards\\ForHeroes\Frozen_015.png' -p 128,128 'TexCards\\ForHeroes\Frozen_016.png' -p 128,128 'TexCards\\ForHeroes\Frozen_017.png' -p 128,128 'TexCards\\ForHeroes\Frozen_018.png' -p 128,128 'TexCards\\ForHeroes\Frozen_019.png' -p 128,128 'TexCards\\ForHeroes\Frozen_020.png' -p 128,128 'TexCards\\ForHeroes\Frozen_021.png' -p 128,128 'TexCards\\ForHeroes\Frozen_022.png' -p 128,128 'TexCards\\ForHeroes\Frozen_023.png' -p 128,128 'TexCards\\ForHeroes\Frozen_024.png' -p 128,128 'TexCards\\ForHeroes\Frozen_025.png' -p 128,128 'TexCards\\ForHeroes\Frozen_026.png' -p 128,128 'TexCards\\ForHeroes\Frozen_027.png' -p 128,128 'TexCards\\ForHeroes\Frozen_028.png' -p 128,128 'TexCards\\ForHeroes\Frozen_029.png' -p 128,128 'TexCards\\ForHeroes\Frozen_030.png' -p 128,128 'TexCards\\ForHeroes\Frozen_031.png' -p 128,128 'TexCards\\ForHeroes\Frozen_032.png' -p 128,128 'TexCards\\ForHeroes\Frozen_033.png' -p 128,128 'TexCards\\ForHeroes\Frozen_034.png' -p 128,128 'TexCards\\ForHeroes\Frozen_035.png' -p 128,128 'TexCards\\ForHeroes\Frozen_036.png' -p 128,128 'TexCards\\ForHeroes\Frozen_037.png' -p 128,128 'TexCards\\ForHeroes\Frozen_038.png' -p 128,128 'TexCards\\ForHeroes\Frozen_039.png' -p 128,128 'TexCards\\ForHeroes\Frozen_040.png' -p 128,128 'TexCards\\ForHeroes\Frozen_041.png' -p 128,128 'TexCards\\ForHeroes\Frozen_042.png' -p 128,128 'TexCards\\ForHeroes\Frozen_043.png' -p 128,128 'TexCards\\ForHeroes\Frozen_044.png' -p 128,128 'TexCards\\ForHeroes\Frozen_045.png' -p 128,128 'TexCards\\ForHeroes\Frozen_046.png' -p 128,128 'TexCards\\ForHeroes\Frozen_047.png' -p 128,128 'TexCards\\ForHeroes\Frozen_048.png' -p 128,128 'TexCards\\ForHeroes\Frozen_049.png' -p 128,128 'TexCards\\ForHeroes\Frozen_050.png' -p 128,128 'TexCards\\ForHeroes\Frozen_051.png' -p 128,128 'TexCards\\ForHeroes\Frozen_052.png' -p 128,128 'TexCards\\ForHeroes\Frozen_053.png' -p 128,128 'TexCards\\ForHeroes\Frozen_054.png' -p 128,128 'TexCards\\ForHeroes\Frozen_055.png' -p 128,128 'TexCards\\ForHeroes\Frozen_056.png' -p 128,128 'TexCards\\ForHeroes\Frozen_057.png' -p 128,128 'TexCards\\ForHeroes\Frozen_058.png' -p 128,128 'TexCards\\ForHeroes\Frozen_059.png' -p 128,128 'TexCards\\ForHeroes\Frozen_060.png' -p 128,128 'TexCards\\ForHeroes\Frozen_061.png' -p 128,128 'TexCards\\ForHeroes\Frozen_062.png' -p 128,128 'TexCards\\ForHeroes\Frozen_063.png' -p 128,128 'TexCards\\ForHeroes\Frozen_064.png' -p 128,128 'TexCards\\ForHeroes\Frozen_065.png' -p 128,128 'TexCards\\ForHeroes\Frozen_066.png' -p 128,128 'TexCards\\ForHeroes\Frozen_067.png' -p 128,128 'TexCards\\ForHeroes\Frozen_068.png' -p 128,128 'TexCards\\ForHeroes\Frozen_069.png' -p 128,128 'TexCards\\ForHeroes\Frozen_070.png' -p 128,128 'TexCards\\ForHeroes\Frozen_071.png' -p 128,128 'TexCards\\ForHeroes\Frozen_072.png' -p 128,128 'TexCards\\ForHeroes\Frozen_073.png' -p 128,128 'TexCards\\ForHeroes\Frozen_074.png' -p 128,128 'TexCards\\ForHeroes\Frozen_075.png' -p 128,128 'TexCards\\ForHeroes\Frozen_076.png' -p 128,128 'TexCards\\ForHeroes\Frozen_077.png' -p 128,128 'TexCards\\ForHeroes\Frozen_078.png' -p 128,128 'TexCards\\ForHeroes\Frozen_079.png' -p 128,128 'TexCards\\ForHeroes\Frozen_080.png' -p 128,128 'TexCards\\ForHeroes\Frozen_081.png' -p 128,128 'TexCards\\ForHeroes\Frozen_082.png' -p 128,128 'TexCards\\ForHeroes\Frozen_083.png' -p 128,128 'TexCards\\ForHeroes\Frozen_084.png' -p 128,128 'TexCards\\ForHeroes\Frozen_085.png' -p 128,128 'TexCards\\ForHeroes\Frozen_086.png' -p 128,128 'TexCards\\ForHeroes\Frozen_087.png' -p 128,128 'TexCards\\ForHeroes\Frozen_088.png' -p 128,128 'TexCards\\ForHeroes\Frozen_089.png' -p 128,128 'TexCards\\ForHeroes\Frozen_090.png' -p 128,128 'TexCards\\ForHeroes\Frozen_091.png' -p 128,128 'TexCards\\ForHeroes\Frozen_092.png' -p 128,128 'TexCards\\ForHeroes\Frozen_093.png' -p 128,128 'TexCards\\ForHeroes\Frozen_094.png' -p 128,128 'TexCards\\ForHeroes\Frozen_095.png' -p 128,128 'TexCards\\ForHeroes\Frozen_096.png' -p 128,128 'TexCards\\ForHeroes\Frozen_097.png' -p 128,128 'TexCards\\ForHeroes\Frozen_098.png' -p 128,128 'TexCards\\ForHeroes\Frozen_099.png' -p 128,128 'TexCards\\ForHeroes\Frozen_100.png' -p 128,128 'TexCards\\ForHeroes\Frozen_101.png' -p 128,128 'TexCards\\ForHeroes\Frozen_102.png' -p 128,128 'TexCards\\ForHeroes\Frozen_103.png' -p 128,128 'TexCards\\ForHeroes\Frozen_104.png'"
 }
 <Texture> Frozen_104 {
-  "TexCards/ForHeroes/Frozen_104.png"
+  "TexCards//ForHeroes/Frozen_104.png"
 }
 <Texture> Frozen_103 {
-  "TexCards/ForHeroes/Frozen_103.png"
+  "TexCards//ForHeroes/Frozen_103.png"
 }
 <Texture> Frozen_102 {
-  "TexCards/ForHeroes/Frozen_102.png"
+  "TexCards//ForHeroes/Frozen_102.png"
 }
 <Texture> Frozen_101 {
-  "TexCards/ForHeroes/Frozen_101.png"
+  "TexCards//ForHeroes/Frozen_101.png"
 }
 <Texture> Frozen_100 {
-  "TexCards/ForHeroes/Frozen_100.png"
+  "TexCards//ForHeroes/Frozen_100.png"
 }
 <Texture> Frozen_099 {
-  "TexCards/ForHeroes/Frozen_099.png"
+  "TexCards//ForHeroes/Frozen_099.png"
 }
 <Texture> Frozen_098 {
-  "TexCards/ForHeroes/Frozen_098.png"
+  "TexCards//ForHeroes/Frozen_098.png"
 }
 <Texture> Frozen_097 {
-  "TexCards/ForHeroes/Frozen_097.png"
+  "TexCards//ForHeroes/Frozen_097.png"
 }
 <Texture> Frozen_096 {
-  "TexCards/ForHeroes/Frozen_096.png"
+  "TexCards//ForHeroes/Frozen_096.png"
 }
 <Texture> Frozen_095 {
-  "TexCards/ForHeroes/Frozen_095.png"
+  "TexCards//ForHeroes/Frozen_095.png"
 }
 <Texture> Frozen_094 {
-  "TexCards/ForHeroes/Frozen_094.png"
+  "TexCards//ForHeroes/Frozen_094.png"
 }
 <Texture> Frozen_093 {
-  "TexCards/ForHeroes/Frozen_093.png"
+  "TexCards//ForHeroes/Frozen_093.png"
 }
 <Texture> Frozen_092 {
-  "TexCards/ForHeroes/Frozen_092.png"
+  "TexCards//ForHeroes/Frozen_092.png"
 }
 <Texture> Frozen_091 {
-  "TexCards/ForHeroes/Frozen_091.png"
+  "TexCards//ForHeroes/Frozen_091.png"
 }
 <Texture> Frozen_090 {
-  "TexCards/ForHeroes/Frozen_090.png"
+  "TexCards//ForHeroes/Frozen_090.png"
 }
 <Texture> Frozen_089 {
-  "TexCards/ForHeroes/Frozen_089.png"
+  "TexCards//ForHeroes/Frozen_089.png"
 }
 <Texture> Frozen_088 {
-  "TexCards/ForHeroes/Frozen_088.png"
+  "TexCards//ForHeroes/Frozen_088.png"
 }
 <Texture> Frozen_087 {
-  "TexCards/ForHeroes/Frozen_087.png"
+  "TexCards//ForHeroes/Frozen_087.png"
 }
 <Texture> Frozen_086 {
-  "TexCards/ForHeroes/Frozen_086.png"
+  "TexCards//ForHeroes/Frozen_086.png"
 }
 <Texture> Frozen_085 {
-  "TexCards/ForHeroes/Frozen_085.png"
+  "TexCards//ForHeroes/Frozen_085.png"
 }
 <Texture> Frozen_084 {
-  "TexCards/ForHeroes/Frozen_084.png"
+  "TexCards//ForHeroes/Frozen_084.png"
 }
 <Texture> Frozen_083 {
-  "TexCards/ForHeroes/Frozen_083.png"
+  "TexCards//ForHeroes/Frozen_083.png"
 }
 <Texture> Frozen_082 {
-  "TexCards/ForHeroes/Frozen_082.png"
+  "TexCards//ForHeroes/Frozen_082.png"
 }
 <Texture> Frozen_081 {
-  "TexCards/ForHeroes/Frozen_081.png"
+  "TexCards//ForHeroes/Frozen_081.png"
 }
 <Texture> Frozen_080 {
-  "TexCards/ForHeroes/Frozen_080.png"
+  "TexCards//ForHeroes/Frozen_080.png"
 }
 <Texture> Frozen_079 {
-  "TexCards/ForHeroes/Frozen_079.png"
+  "TexCards//ForHeroes/Frozen_079.png"
 }
 <Texture> Frozen_078 {
-  "TexCards/ForHeroes/Frozen_078.png"
+  "TexCards//ForHeroes/Frozen_078.png"
 }
 <Texture> Frozen_077 {
-  "TexCards/ForHeroes/Frozen_077.png"
+  "TexCards//ForHeroes/Frozen_077.png"
 }
 <Texture> Frozen_076 {
-  "TexCards/ForHeroes/Frozen_076.png"
+  "TexCards//ForHeroes/Frozen_076.png"
 }
 <Texture> Frozen_075 {
-  "TexCards/ForHeroes/Frozen_075.png"
+  "TexCards//ForHeroes/Frozen_075.png"
 }
 <Texture> Frozen_074 {
-  "TexCards/ForHeroes/Frozen_074.png"
+  "TexCards//ForHeroes/Frozen_074.png"
 }
 <Texture> Frozen_073 {
-  "TexCards/ForHeroes/Frozen_073.png"
+  "TexCards//ForHeroes/Frozen_073.png"
 }
 <Texture> Frozen_072 {
-  "TexCards/ForHeroes/Frozen_072.png"
+  "TexCards//ForHeroes/Frozen_072.png"
 }
 <Texture> Frozen_071 {
-  "TexCards/ForHeroes/Frozen_071.png"
+  "TexCards//ForHeroes/Frozen_071.png"
 }
 <Texture> Frozen_070 {
-  "TexCards/ForHeroes/Frozen_070.png"
+  "TexCards//ForHeroes/Frozen_070.png"
 }
 <Texture> Frozen_069 {
-  "TexCards/ForHeroes/Frozen_069.png"
+  "TexCards//ForHeroes/Frozen_069.png"
 }
 <Texture> Frozen_068 {
-  "TexCards/ForHeroes/Frozen_068.png"
+  "TexCards//ForHeroes/Frozen_068.png"
 }
 <Texture> Frozen_067 {
-  "TexCards/ForHeroes/Frozen_067.png"
+  "TexCards//ForHeroes/Frozen_067.png"
 }
 <Texture> Frozen_066 {
-  "TexCards/ForHeroes/Frozen_066.png"
+  "TexCards//ForHeroes/Frozen_066.png"
 }
 <Texture> Frozen_065 {
-  "TexCards/ForHeroes/Frozen_065.png"
+  "TexCards//ForHeroes/Frozen_065.png"
 }
 <Texture> Frozen_064 {
-  "TexCards/ForHeroes/Frozen_064.png"
+  "TexCards//ForHeroes/Frozen_064.png"
 }
 <Texture> Frozen_063 {
-  "TexCards/ForHeroes/Frozen_063.png"
+  "TexCards//ForHeroes/Frozen_063.png"
 }
 <Texture> Frozen_062 {
-  "TexCards/ForHeroes/Frozen_062.png"
+  "TexCards//ForHeroes/Frozen_062.png"
 }
 <Texture> Frozen_061 {
-  "TexCards/ForHeroes/Frozen_061.png"
+  "TexCards//ForHeroes/Frozen_061.png"
 }
 <Texture> Frozen_060 {
-  "TexCards/ForHeroes/Frozen_060.png"
+  "TexCards//ForHeroes/Frozen_060.png"
 }
 <Texture> Frozen_059 {
-  "TexCards/ForHeroes/Frozen_059.png"
+  "TexCards//ForHeroes/Frozen_059.png"
 }
 <Texture> Frozen_058 {
-  "TexCards/ForHeroes/Frozen_058.png"
+  "TexCards//ForHeroes/Frozen_058.png"
 }
 <Texture> Frozen_057 {
-  "TexCards/ForHeroes/Frozen_057.png"
+  "TexCards//ForHeroes/Frozen_057.png"
 }
 <Texture> Frozen_056 {
-  "TexCards/ForHeroes/Frozen_056.png"
+  "TexCards//ForHeroes/Frozen_056.png"
 }
 <Texture> Frozen_055 {
-  "TexCards/ForHeroes/Frozen_055.png"
+  "TexCards//ForHeroes/Frozen_055.png"
 }
 <Texture> Frozen_054 {
-  "TexCards/ForHeroes/Frozen_054.png"
+  "TexCards//ForHeroes/Frozen_054.png"
 }
 <Texture> Frozen_053 {
-  "TexCards/ForHeroes/Frozen_053.png"
+  "TexCards//ForHeroes/Frozen_053.png"
 }
 <Texture> Frozen_052 {
-  "TexCards/ForHeroes/Frozen_052.png"
+  "TexCards//ForHeroes/Frozen_052.png"
 }
 <Texture> Frozen_051 {
-  "TexCards/ForHeroes/Frozen_051.png"
+  "TexCards//ForHeroes/Frozen_051.png"
 }
 <Texture> Frozen_050 {
-  "TexCards/ForHeroes/Frozen_050.png"
+  "TexCards//ForHeroes/Frozen_050.png"
 }
 <Texture> Frozen_049 {
-  "TexCards/ForHeroes/Frozen_049.png"
+  "TexCards//ForHeroes/Frozen_049.png"
 }
 <Texture> Frozen_048 {
-  "TexCards/ForHeroes/Frozen_048.png"
+  "TexCards//ForHeroes/Frozen_048.png"
 }
 <Texture> Frozen_047 {
-  "TexCards/ForHeroes/Frozen_047.png"
+  "TexCards//ForHeroes/Frozen_047.png"
 }
 <Texture> Frozen_046 {
-  "TexCards/ForHeroes/Frozen_046.png"
+  "TexCards//ForHeroes/Frozen_046.png"
 }
 <Texture> Frozen_045 {
-  "TexCards/ForHeroes/Frozen_045.png"
+  "TexCards//ForHeroes/Frozen_045.png"
 }
 <Texture> Frozen_044 {
-  "TexCards/ForHeroes/Frozen_044.png"
+  "TexCards//ForHeroes/Frozen_044.png"
 }
 <Texture> Frozen_043 {
-  "TexCards/ForHeroes/Frozen_043.png"
+  "TexCards//ForHeroes/Frozen_043.png"
 }
 <Texture> Frozen_042 {
-  "TexCards/ForHeroes/Frozen_042.png"
+  "TexCards//ForHeroes/Frozen_042.png"
 }
 <Texture> Frozen_041 {
-  "TexCards/ForHeroes/Frozen_041.png"
+  "TexCards//ForHeroes/Frozen_041.png"
 }
 <Texture> Frozen_040 {
-  "TexCards/ForHeroes/Frozen_040.png"
+  "TexCards//ForHeroes/Frozen_040.png"
 }
 <Texture> Frozen_039 {
-  "TexCards/ForHeroes/Frozen_039.png"
+  "TexCards//ForHeroes/Frozen_039.png"
 }
 <Texture> Frozen_038 {
-  "TexCards/ForHeroes/Frozen_038.png"
+  "TexCards//ForHeroes/Frozen_038.png"
 }
 <Texture> Frozen_037 {
-  "TexCards/ForHeroes/Frozen_037.png"
+  "TexCards//ForHeroes/Frozen_037.png"
 }
 <Texture> Frozen_036 {
-  "TexCards/ForHeroes/Frozen_036.png"
+  "TexCards//ForHeroes/Frozen_036.png"
 }
 <Texture> Frozen_035 {
-  "TexCards/ForHeroes/Frozen_035.png"
+  "TexCards//ForHeroes/Frozen_035.png"
 }
 <Texture> Frozen_034 {
-  "TexCards/ForHeroes/Frozen_034.png"
+  "TexCards//ForHeroes/Frozen_034.png"
 }
 <Texture> Frozen_033 {
-  "TexCards/ForHeroes/Frozen_033.png"
+  "TexCards//ForHeroes/Frozen_033.png"
 }
 <Texture> Frozen_032 {
-  "TexCards/ForHeroes/Frozen_032.png"
+  "TexCards//ForHeroes/Frozen_032.png"
 }
 <Texture> Frozen_031 {
-  "TexCards/ForHeroes/Frozen_031.png"
+  "TexCards//ForHeroes/Frozen_031.png"
 }
 <Texture> Frozen_030 {
-  "TexCards/ForHeroes/Frozen_030.png"
+  "TexCards//ForHeroes/Frozen_030.png"
 }
 <Texture> Frozen_029 {
-  "TexCards/ForHeroes/Frozen_029.png"
+  "TexCards//ForHeroes/Frozen_029.png"
 }
 <Texture> Frozen_028 {
-  "TexCards/ForHeroes/Frozen_028.png"
+  "TexCards//ForHeroes/Frozen_028.png"
 }
 <Texture> Frozen_027 {
-  "TexCards/ForHeroes/Frozen_027.png"
+  "TexCards//ForHeroes/Frozen_027.png"
 }
 <Texture> Frozen_026 {
-  "TexCards/ForHeroes/Frozen_026.png"
+  "TexCards//ForHeroes/Frozen_026.png"
 }
 <Texture> Frozen_025 {
-  "TexCards/ForHeroes/Frozen_025.png"
+  "TexCards//ForHeroes/Frozen_025.png"
 }
 <Texture> Frozen_024 {
-  "TexCards/ForHeroes/Frozen_024.png"
+  "TexCards//ForHeroes/Frozen_024.png"
 }
 <Texture> Frozen_023 {
-  "TexCards/ForHeroes/Frozen_023.png"
+  "TexCards//ForHeroes/Frozen_023.png"
 }
 <Texture> Frozen_022 {
-  "TexCards/ForHeroes/Frozen_022.png"
+  "TexCards//ForHeroes/Frozen_022.png"
 }
 <Texture> Frozen_021 {
-  "TexCards/ForHeroes/Frozen_021.png"
+  "TexCards//ForHeroes/Frozen_021.png"
 }
 <Texture> Frozen_020 {
-  "TexCards/ForHeroes/Frozen_020.png"
+  "TexCards//ForHeroes/Frozen_020.png"
 }
 <Texture> Frozen_019 {
-  "TexCards/ForHeroes/Frozen_019.png"
+  "TexCards//ForHeroes/Frozen_019.png"
 }
 <Texture> Frozen_018 {
-  "TexCards/ForHeroes/Frozen_018.png"
+  "TexCards//ForHeroes/Frozen_018.png"
 }
 <Texture> Frozen_017 {
-  "TexCards/ForHeroes/Frozen_017.png"
+  "TexCards//ForHeroes/Frozen_017.png"
 }
 <Texture> Frozen_016 {
-  "TexCards/ForHeroes/Frozen_016.png"
+  "TexCards//ForHeroes/Frozen_016.png"
 }
 <Texture> Frozen_015 {
-  "TexCards/ForHeroes/Frozen_015.png"
+  "TexCards//ForHeroes/Frozen_015.png"
 }
 <Texture> Frozen_014 {
-  "TexCards/ForHeroes/Frozen_014.png"
+  "TexCards//ForHeroes/Frozen_014.png"
 }
 <Texture> Frozen_013 {
-  "TexCards/ForHeroes/Frozen_013.png"
+  "TexCards//ForHeroes/Frozen_013.png"
 }
 <Texture> Frozen_012 {
-  "TexCards/ForHeroes/Frozen_012.png"
+  "TexCards//ForHeroes/Frozen_012.png"
 }
 <Texture> Frozen_011 {
-  "TexCards/ForHeroes/Frozen_011.png"
+  "TexCards//ForHeroes/Frozen_011.png"
 }
 <Texture> Frozen_010 {
-  "TexCards/ForHeroes/Frozen_010.png"
+  "TexCards//ForHeroes/Frozen_010.png"
 }
 <Texture> Frozen_009 {
-  "TexCards/ForHeroes/Frozen_009.png"
+  "TexCards//ForHeroes/Frozen_009.png"
 }
 <Texture> Frozen_008 {
-  "TexCards/ForHeroes/Frozen_008.png"
+  "TexCards//ForHeroes/Frozen_008.png"
 }
 <Texture> Frozen_007 {
-  "TexCards/ForHeroes/Frozen_007.png"
+  "TexCards//ForHeroes/Frozen_007.png"
 }
 <Texture> Frozen_006 {
-  "TexCards/ForHeroes/Frozen_006.png"
+  "TexCards//ForHeroes/Frozen_006.png"
 }
 <Texture> Frozen_005 {
-  "TexCards/ForHeroes/Frozen_005.png"
+  "TexCards//ForHeroes/Frozen_005.png"
 }
 <Texture> Frozen_004 {
-  "TexCards/ForHeroes/Frozen_004.png"
+  "TexCards//ForHeroes/Frozen_004.png"
 }
 <Texture> Frozen_003 {
-  "TexCards/ForHeroes/Frozen_003.png"
+  "TexCards//ForHeroes/Frozen_003.png"
 }
 <Texture> Frozen_002 {
-  "TexCards/ForHeroes/Frozen_002.png"
+  "TexCards//ForHeroes/Frozen_002.png"
 }
 <Texture> Frozen_001 {
-  "TexCards/ForHeroes/Frozen_001.png"
+  "TexCards//ForHeroes/Frozen_001.png"
 }
 <Texture> Frozen_000 {
-  "TexCards/ForHeroes/Frozen_000.png"
+  "TexCards//ForHeroes/Frozen_000.png"
 }
 <Group> {
   <Switch> { 1 }
   <Scalar> fps { 24 }
   <VertexPool> vpool {
     <Vertex> 0 {
-      -0.00390625 0.00390625 0
+      -0.5 0.5 0
       <UV> { 0 1 }
     }
     <Vertex> 1 {
-      -0.00390625 -0.00390625 0
+      -0.5 -0.5 0
       <UV> { 0 0 }
     }
     <Vertex> 2 {
-      0.00390625 -0.00390625 0
+      0.5 -0.5 0
       <UV> { 1 0 }
     }
     <Vertex> 3 {
-      0.00390625 0.00390625 0
+      0.5 0.5 0
       <UV> { 1 1 }
     }
     <Vertex> 4 {

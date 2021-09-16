@@ -1,5 +1,5 @@
 <Comment> {
-  "egg-texture-cards -o TurnStartBanner.egg -fps 24 -p 1,1 'TexCards\ForGame\TurnStartBanner_00.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_01.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_02.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_03.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_04.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_05.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_06.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_07.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_08.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_09.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_10.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_11.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_12.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_13.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_14.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_15.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_16.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_17.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_18.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_19.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_20.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_21.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_22.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_23.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_24.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_25.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_26.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_27.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_28.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_29.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_30.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_31.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_32.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_33.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_34.png' -p 768,512 'TexCards\ForGame\TurnStartBanner_35.png'"
+  "egg-texture-cards -o TurnStartBanner.egg -fps 24 -p 768,332 'TexCards\ForGame\TurnStartBanner_00.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_01.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_02.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_03.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_04.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_05.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_06.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_07.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_08.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_09.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_10.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_11.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_12.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_13.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_14.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_15.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_16.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_17.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_18.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_19.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_20.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_21.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_22.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_23.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_24.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_25.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_26.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_27.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_28.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_29.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_30.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_31.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_32.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_33.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_34.png' -p 768,332 'TexCards\ForGame\TurnStartBanner_35.png'"
 }
 <Texture> TurnStartBanner_35 {
   "TexCards/ForGame/TurnStartBanner_35.png"
@@ -114,19 +114,19 @@
   <Scalar> fps { 24 }
   <VertexPool> vpool {
     <Vertex> 0 {
-      -0.000651041666666667 0.0009765625 0
+      -0.5 0.5 0
       <UV> { 0 1 }
     }
     <Vertex> 1 {
-      -0.000651041666666667 -0.0009765625 0
+      -0.5 -0.5 0
       <UV> { 0 0 }
     }
     <Vertex> 2 {
-      0.000651041666666667 -0.0009765625 0
+      0.5 -0.5 0
       <UV> { 1 0 }
     }
     <Vertex> 3 {
-      0.000651041666666667 0.0009765625 0
+      0.5 0.5 0
       <UV> { 1 1 }
     }
     <Vertex> 4 {

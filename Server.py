@@ -1,16 +1,13 @@
 import socket
 from datetime import datetime
-import time
 import threading
-import types
 from numpy.random import choice as npchoice
 from Code2CardList import *
 
-import sys
 import tkinter as tk
 import PIL.Image, PIL.ImageTk
-from LoadModels import findFilepath
 from Panda_UICommonPart import unpickleBytes2Obj
+from Panda_OnlineGame import send_PossiblePadding, recv_PossibleLongData
 
 """
 selectors.EVENT_READ = 1; selectors.EVENT_WRITE = 2
@@ -33,25 +30,24 @@ class Table(tk.Frame):
 		self.innKeeper = innKeeper
 		self.socks2Players = {1: None, 2: None}
 		self.conns2Players = {1: None, 2: None}
-		self.infos4Players = {1: b'', 2: b''}
 		self.boardID = npchoice(BoardIndex)
 		self.decksHandsHeroes  = {1: b'', 2: b''}
 		self.mainPlayerID = npchoice([1, 2])
 		self.noResponseTime = 0 #如果超过2分钟则尝试断开连接，并保存当前进度
 		self.heroes = {1: b'', 2: b''}
+		self.buffers = {1: b'', 2: b''}
 		self.handsDecks = {1: b'', 2: b''}
-		self.curTurn = 1
+		#self.curTurn = 1
 		self.seed = datetime.now().microsecond
 		self.keepRunning = True
+		self.infoSegmentHeader = b""
 		
 		"""Put the hero image and address info in the frame"""
 		filepath_Blank = "Images\\HeroesandPowers\\Unknown.png"
-		img = PIL.Image.open(filepath_Blank).resize((int(143/2), int(197/2)))
-		ph = PIL.ImageTk.PhotoImage(img)
+		ph = PIL.ImageTk.PhotoImage(PIL.Image.open(filepath_Blank).resize((int(143/2), int(197/2))))
 		self.lbl_Hero1Img = tk.Label(self, image=ph)
 		self.lbl_Hero1Img.image = ph
-		img = PIL.Image.open(filepath_Blank).resize((int(143/2), int(197/2)))
-		ph = PIL.ImageTk.PhotoImage(img)
+		ph = PIL.ImageTk.PhotoImage(PIL.Image.open(filepath_Blank).resize((int(143/2), int(197/2))))
 		self.lbl_Hero2Img = tk.Label(self, image=ph)
 		self.lbl_Hero2Img.image = ph
 		self.lbl_Player1 = tk.Label(self, text="玩家1:  ", font=("Yahei", 14))
@@ -86,29 +82,33 @@ class Table(tk.Frame):
 		
 		while self.keepRunning:
 			try:
-				data = self.conns2Players[ID].recv(1024)
-				print("Table received data:", data)
-				if data.startswith(b"Hero Picked"):
-					header, self.heroes[ID] = data.split(b"||")
+				totalData = recv_PossibleLongData(self, self.conns2Players[ID])
+				if not totalData:
+					print("Table receives no data. Free a table")
+					self.innKeeper.freeaTable(self)
+				print("Table received data:", totalData)
+				if totalData.startswith(b"Hero Picked"):
+					header, self.heroes[ID] = totalData.split(b"||")
 					self.updatePlayersInfo()
 					#If both players have submitted their game info, then they can start mulligan
 					#Give each player their opponent's info
 					if self.heroes[1] and self.heroes[2]:
-						print("Telling each player the opponent hero picked")
-						self.conns2Players[1].sendall(b"Enemy Hero Picked||"+self.heroes[2])
-						self.conns2Players[2].sendall(b"Enemy Hero Picked||"+self.heroes[1])
+						print("Telling each player the opponent hero picked", self.heroes[1], self.heroes[2])
+						send_PossiblePadding(self, self.conns2Players[1], b"Enemy Hero Picked||"+self.heroes[2])
+						send_PossiblePadding(self, self.conns2Players[2], b"Enemy Hero Picked||"+self.heroes[1])
 				#一个玩家自己的换牌结束，向这里递交自己的手牌和牌库情况
-				elif data.startswith(b"Exchange Deck&Hand"):
-					header, self.handsDecks[ID] = data.split(b"||")
+				elif totalData.startswith(b"Exchange Deck&Hand"):
+					header, self.handsDecks[ID] = totalData.split(b"||")
 					if self.handsDecks[1] and self.handsDecks[2]:
 						print("Both finished mulligan. Tell each player the opponent hand deck")
-						self.conns2Players[1].sendall(b"Start Game with Oppo Hand_Deck||" + self.handsDecks[2])
-						self.conns2Players[2].sendall(b"Start Game with Oppo Hand_Deck||" + self.handsDecks[1])
-				elif data.startswith(b"Game Move"):
-					print("Received game move from client {}. Return b'Move Received' to it, and send game move to opponent".format(ID))
-					self.conns2Players[ID].sendall(b"Move Received")
-					self.conns2Players[3-ID].sendall(data)
-					
+						send_PossiblePadding(self, self.conns2Players[1], b"Start Game with Oppo Hand_Deck||"+self.handsDecks[2])
+						send_PossiblePadding(self, self.conns2Players[2], b"Start Game with Oppo Hand_Deck||"+self.handsDecks[1])
+				elif totalData.startswith(b"Game Move"):
+					print("Game move from client {}. Pass it to oppo, and return b'Move Received'".format(ID))
+					send_PossiblePadding(self, self.conns2Players[ID], b"Info Received")
+					send_PossiblePadding(self, self.conns2Players[3-ID], totalData)
+					if b"concede" in totalData:
+						self.innKeeper.freeaTable(self)
 			except ConnectionResetError as e: #If the connection to client is lost
 				print("Table {}'s connection to client {} is lost".format(self, ID))
 				try: self.conns2Players[3-ID].sendall(b"Opponent Disconnected")
@@ -118,8 +118,11 @@ class Table(tk.Frame):
 				print("While port is running, exception is", e)
 				
 		print("Thread of port stopping")
-		
-		
+	
+	def handleConnectionLost(self, msg=''):
+		raise ConnectionResetError
+	
+	
 class InnKeeper:
 	def __init__(self):
 		#Attributes of the server
@@ -192,37 +195,42 @@ class InnKeeper:
 			
 			#The guest return the table ID it wants to reserve. Need to reserve a table for the guest.
 			tableID_Requested = conn.recv(1024) #Any byte string
-			print("Received table ID from guest", tableID_Requested)
-			tableID_Requested = tableID_Requested.split(b',')[1]
-			print("Guest wants tableID:", tableID_Requested)
-			if tableID_Requested in self.tables:
-				table = self.tables[tableID_Requested]
-				conns2Players = table.conns2Players
-				if conns2Players[1] and conns2Players[2]: #If the table has two connections, that means two players playing at that table
-					conn.sendall(b"Use another Table ID")
-					conn.close()
-				#There is one guest waiting at the table. Do some modifications
-				elif conns2Players[1] or conns2Players[2]:
-					sockfor2ndGuest = table.socks2Players[2] if conns2Players[1] else table.socks2Players[1]
-					addr, port = sockfor2ndGuest.getsockname()
-					conn.sendall(b"Join Reserved Table via Port||%d"%port)
-			#No one has reserved this table yet. Assign sockets to a table
-			else:#The table ID reserved is available.
-				self.tables[tableID_Requested] = table = Table(self)
-				self.tablesShown.append(table)
-				self.placeTables()
-				#Assign two sockets for the table
-				table.socks2Players = {1: sock1, 2: sock2} if np.random.randint(2) else {1: sock2, 2: sock1}
-				print("Table assigned with sockets 1: {}, 2: {}".format(table.socks2Players[1].fileno(), table.socks2Players[2].fileno()))
-				threading.Thread(target=table.portStart, args=(1,), daemon=True).start()
-				threading.Thread(target=table.portStart, args=(2,), daemon=True).start()
-				conn.sendall(b"Table can be Reserved")
+			if tableID_Requested.startswith(b"Request to Reserver/Join Table ID"):
+				print("Received table ID from guest", tableID_Requested)
+				tableID_Requested = tableID_Requested.split(b',')[1]
+				print("Guest wants tableID:", tableID_Requested)
+				if tableID_Requested in self.tables:
+					table = self.tables[tableID_Requested]
+					conns2Players = table.conns2Players
+					if conns2Players[1] and conns2Players[2]: #If the table has two connections, that means two players playing at that table
+						conn.sendall(b"Use another Table ID")
+						conn.close()
+					#There is one guest waiting at the table. Do some modifications
+					elif conns2Players[1] or conns2Players[2]:
+						sockfor2ndGuest = table.socks2Players[2] if conns2Players[1] else table.socks2Players[1]
+						addr, port = sockfor2ndGuest.getsockname()
+						conn.sendall(b"Join Reserved Table via Port||%d"%port)
+				#No one has reserved this table yet. Assign sockets to a table
+				else:#The table ID reserved is available.
+					self.tables[tableID_Requested] = table = Table(self)
+					self.tablesShown.append(table)
+					self.placeTables()
+					#Assign two sockets for the table
+					if np.random.randint(2):
+						table.socks2Players, name1, name2 = {1: sock1, 2: sock2}, "Port %d Thread"%port1, "Port %d Thread"%port2
+					else:
+						table.socks2Players, name1, name2 = {1: sock2, 2: sock1}, "Port %d Thread"%port2, "Port %d Thread"%port1
+					threading.Thread(target=table.portStart, args=(1,), name=name1, daemon=True).start()
+					threading.Thread(target=table.portStart, args=(2,), name=name2, daemon=True).start()
+					print("Table assigned with sockets 1: {}, 2: {}".format(table.socks2Players[1].fileno(), table.socks2Players[2].fileno()))
+					conn.sendall(b"Table can be Reserved")
 		else:
 			print("Has no available tables left")
 			conn.sendall(b"No Ports Left")
 		
 		conn.close()
 		
+	#Whenever a socket connects to this query port, server tells it the availability of table ports
 	def openBusiness(self):
 		self.prepare4Business(int(self.entry_NumTables.get()))
 		self.lbl_SocketsAvailable["text"] = "可用端口数：%d" % len(self.socketsAvailable)
@@ -231,20 +239,28 @@ class InnKeeper:
 			conn, addr = self.sock4PortQuery.accept()
 			print("Got a request to connect", conn, addr)
 			self.tellGuestAvailableTables(conn)
-		
+			
 	def stopRunning(self):
 		self.window.destroy()
 		quit()
 		
 	def freeaTable(self, table):
+		print("Freeing a table", table)
 		for tableID, t in self.tables.items():
 			if t == table:
 				table.keepRunning = False
-				del self.tables[tableID]
 				for sock in table.socks2Players.values():
-					if sock: self.socketsAvailable.append((sock.getsockname()[1], sock))
+					if sock:
+						port = sock.getsockname()[1]
+						sock.close()
+						sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+						sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+						sock.bind((self.address, port))
+						sock.listen()
+						self.socketsAvailable.append((port, sock))
 				self.tablesShown.remove(table)
 				table.destroy()
+				del self.tables[tableID]
 				self.placeTables()
 				break
 				

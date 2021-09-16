@@ -36,7 +36,7 @@ class Evolve(Power):
                 return True
             else:
                 return any(
-                    isinstance(minion, SVMinion) and minion.marks["Free Evolve"] > 0 and minion.status["Evolved"] < 1 \
+                    isinstance(minion, SVMinion) and minion.effects["Free Evolve"] > 0 and minion.effects["Evolved"] < 1 \
                     for minion in self.Game.minionsAlive(self.ID))
         return False
 
@@ -50,19 +50,19 @@ class Evolve(Power):
         if isinstance(target, list):
             if target[0].type == "Minion" and target[0].ID == self.ID and target[0].onBoard \
                     and isinstance(target[0], SVMinion) and target[0].status["Evolved"] < 1 \
-                    and target[0].marks["Can't Evolve"] == 0:
+                    and target[0].effects["Can't Evolve"] == 0:
                 if self.Game.Counters.numEvolutionPoint[self.ID] == 0:
-                    return target[0].marks["Free Evolve"] > 0
+                    return target[0].effects["Free Evolve"] > 0
                 else:
                     return target[0].evolveTargetCorrect(listRemove(target, target[0]), choice)
             return False
         else:
             if not self.targets and not choice:
                 if target.type == "Minion" and target.ID == self.ID and target.onBoard \
-                        and isinstance(target, SVMinion) and target.status["Evolved"] < 1 \
-                        and target.marks["Can't Evolve"] == 0:
+                        and isinstance(target, SVMinion) and target.effects["Evolved"] < 1 \
+                        and target.effects["Can't Evolve"] == 0:
                     if self.Game.Counters.numEvolutionPoint[self.ID] == 0:
-                        return target.marks["Free Evolve"] > 0
+                        return target.effects["Free Evolve"] > 0
                     else:
                         return True
                 return False
@@ -70,7 +70,7 @@ class Evolve(Power):
                 return self.targets[0].evolveTargetCorrect(target, choice)
 
     def effect(self, target=None, choice=0, comment=''):
-        if target[0].marks["Free Evolve"] < 1:
+        if target[0].effects["Free Evolve"] < 1:
             self.Game.Counters.numEvolutionPoint[self.ID] -= 1
         target[0].evolve()
         target[0].inHandEvolving(listRemove(target, target[0]))
@@ -83,20 +83,20 @@ class Evolve(Power):
             selectable = target.inHand or not (
                     not target.onBoard or not (targetType != "Dormant") or not (targetType != "Power") or not (
                     not (not (not (not (targetType == "Hero") or not (
-                            target.ID == self.ID or self.Game.status[target.ID]["Immune"] +
-                            target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) or (
+                            target.ID == self.ID or self.Game.effects[target.ID]["Immune"] +
+                            target.effects["Temp Stealth"] + target.effects["Enemy Effect Evasive"] < 1) or (
                                            (self.type == "Power" or self.type == "Spell") and
-                                           self.Game.status[target.ID]["Evasive"] > 1))) and not (
+                                           self.Game.effects[target.ID]["Evasive"] > 1))) and not (
                             targetType == "Minion" and (
-                            target.ID == self.ID or target.status["Immune"] + target.keyWords[
+                            target.ID == self.ID or target.effects["Immune"] + target.effects[
                         "Stealth"] +
-                            target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1)
+                            target.effects["Temp Stealth"] + target.effects["Enemy Effect Evasive"] < 1)
                             and not ((self.type == "Power" or self.type == "Spell") and (
-                            target.marks["Evasive"] > 1 or (
-                            target.ID != self.ID and target.marks["Enemy Evasive"] > 1)))))
+                            target.effects["Evasive"] > 1 or (
+                            target.ID != self.ID and target.effects["Enemy Evasive"] > 1)))))
                     or (targetType == "Amulet" and (
-                    target.ID == self.ID or target.marks["Enemy Effect Evasive"] < 1)
-                        and not (self.type == "Spell" and target.marks["Evasive"] > 1))
+                    target.ID == self.ID or target.effects["Enemy Effect Evasive"] < 1)
+                        and not (self.type == "Spell" and target.effects["Evasive"] > 1))
             ))
             if not selectable: return False
         return True
@@ -173,11 +173,11 @@ class SVMinion(Minion):
         self.targets = []
 
     def evolve(self):
-        if self.onBoard and self.status["Evolved"] < 1:
+        if self.onBoard and self.effects["Evolved"] < 1:
             self.attack_0 += self.attackAdd
             self.health_0 += self.healthAdd
             self.statReset(self.attack + self.attackAdd, self.health + self.healthAdd)
-            self.status["Evolved"] += 1
+            self.effects["Evolved"] += 1
             self.Game.Counters.evolvedThisGame[self.ID] += 1
             self.Game.Counters.evolvedThisTurn[self.ID] += 1
             self.inEvolving()
@@ -231,7 +231,7 @@ class SVMinion(Minion):
 
     def statReset(self, newAttack=False, newHealth=False, attRevertTime=""):
         if not self.inDeck and not self.dead:
-            stat_Receivers = [receiver for receiver in self.auraReceivers if isinstance(receiver, Stat_Receiver)]
+            stat_Receivers = [receiver for receiver in self.auraReceivers if isinstance(receiver, Aura_Receiver)]
             # 将随从上的全部buffAura清除，因为部分光环的适用条件可能会因为随从被沉默而变化，如战歌指挥官
             for receiver in stat_Receivers:
                 receiver.effectClear()
@@ -258,20 +258,20 @@ class SVMinion(Minion):
             selectable = target.inHand or target.onBoard and targetType != "Dormant" and targetType != "Power" and \
                          (
                                  (targetType == "Hero" and (
-                                         target.ID == self.ID or self.Game.status[target.ID]["Immune"] +
-                                         target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
+                                         target.ID == self.ID or self.Game.effects[target.ID]["Immune"] +
+                                         target.effects["Temp Stealth"] + target.effects["Enemy Effect Evasive"] < 1) \
                                   and not ((self.type == "Power" or self.type == "Spell") and
-                                           self.Game.status[target.ID]["Evasive"] > 1)) \
+                                           self.Game.effects[target.ID]["Evasive"] > 1)) \
                                  # 不能被法术或者英雄技能选择的随从是： 魔免随从 或者 是对敌方魔免且法术或英雄技能是敌方的
                                  or (targetType == "Minion" and (
-                                 target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] +
-                                 target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
+                                 target.ID == self.ID or target.effects["Immune"] + target.effects["Stealth"] +
+                                 target.effects["Temp Stealth"] + target.effects["Enemy Effect Evasive"] < 1) \
                                      and not ((self.type == "Power" or self.type == "Spell") and (
-                                         target.marks["Evasive"] > 1 or (
-                                         target.ID != self.ID and target.marks["Enemy Evasive"] > 1)))) \
+                                         target.effects["Evasive"] > 1 or (
+                                         target.ID != self.ID and target.effects["Enemy Evasive"] > 1)))) \
                                  or (targetType == "Amulet" and (
-                                 target.ID == self.ID or target.marks["Enemy Effect Evasive"] < 1) \
-                                     and not (self.type == "Spell" and target.marks["Evasive"] > 1)) \
+                                 target.ID == self.ID or target.effects["Enemy Effect Evasive"] < 1) \
+                                     and not (self.type == "Spell" and target.effects["Evasive"] > 1)) \
  \
                              )
             if not selectable: return False
@@ -306,13 +306,13 @@ class SVMinion(Minion):
     def actionable(self):
         return self.ID == self.Game.turn and \
                (not self.newonthisSide or (
-                       self.status["Borrowed"] > 0 or self.keyWords["Charge"] > 0 or self.keyWords["Rush"] > 0 or
-                       self.status["Evolved"] > 0))
+                       self.effects["Borrowed"] > 0 or self.effects["Charge"] > 0 or self.effects["Rush"] > 0 or
+                       self.effects["Evolved"] > 0))
 
     def canAttack(self):
-        return self.actionable() and self.status["Frozen"] < 1 \
-               and self.attChances_base + self.attChances_extra > self.attTimes \
-               and self.marks["Can't Attack"] < 1
+        return self.actionable() and self.effects["Frozen"] < 1 \
+               and self.attChances_base + self.attChances_extra > self.usageCount \
+               and self.effects["Can't Attack"] < 1
 
     # Minions that initiates discover or transforms self will be different.
     # For minion that transform before arriving on board, there's no need in setting its onBoard to be True.
@@ -337,10 +337,10 @@ class SVMinion(Minion):
         # 结算阶段
         # 在随从战吼/连击开始触发前，检测是否有战吼/连击翻倍的情况。如果有且战吼可以进行，则强行执行战吼至两次循环结束。无论那个随从是死亡，在手牌中还是牌库
         num = 1
-        if "~Battlecry" in self.index and self.Game.status[self.ID]["Battlecry x2"] + self.Game.status[self.ID][
+        if "~Battlecry" in self.index and self.Game.effects[self.ID]["Battlecry x2"] + self.Game.effects[self.ID][
             "Shark Battlecry x2"] > 0:
             num = 2
-        if "~Combo" in self.index and self.Game.status[self.ID]["Shark Battlecry x2"] > 0:
+        if "~Combo" in self.index and self.Game.effects[self.ID]["Shark Battlecry x2"] > 0:
             num = 2
         # 不同的随从会根据目标和自己的位置和状态来决定effectwhenPlayed()产生体积效果。
         # 可以变形的随从，如无面操纵者，会有自己的played（） 方法。 大王同理。
@@ -369,15 +369,15 @@ class SVMinion(Minion):
             Copy.effectfromAura = copy.deepcopy(self.effectfromAura)
             Copy.auraReceivers = [receiver.selfCopy(Copy) for receiver in self.auraReceivers]
 
-            Copy.keyWords = copy.deepcopy(self.keyWords)
-            Copy.marks = copy.deepcopy(self.marks)
-            Copy.status = copy.deepcopy(self.status)
+            Copy.effects = copy.deepcopy(self.effects)
+            Copy.effects = copy.deepcopy(self.effects)
+            Copy.effects = copy.deepcopy(self.effects)
             Copy.onBoard, Copy.inHand, Copy.inDeck, Copy.dead = self.onBoard, self.inHand, self.inDeck, self.dead
             if hasattr(self, "progress"): Copy.progress = self.progress
             Copy.effectViable, Copy.evanescent, Copy.silenced = self.effectViable, self.evanescent, self.silenced
             Copy.newonthisSide = self.newonthisSide
             Copy.seq, Copy.pos = self.seq, self.pos
-            Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = self.attTimes, self.attChances_base, self.attChances_extra
+            Copy.usageCount, Copy.attChances_base, Copy.attChances_extra = self.usageCount, self.attChances_base, self.attChances_extra
             Copy.options = [option.selfCopy(Copy) for option in self.options]
             for key, value in self.auras.items():
                 Copy.auras[key] = value.createCopy(game)
@@ -427,23 +427,23 @@ class Amulet(Dormant):
 		self.onBoard = self.inHand = self.inDeck = False
 		# self.seq records the number of the minion's appearance. The first minion on board has a sequence of 0
 		self.seq, self.pos = -1, -2
-		self.keyWords = {"Taunt": 0, "Stealth": 0,
-						 "Divine Shield": 0, "Spell Damage": 0,
-						 "Lifesteal": 0, "Poisonous": 0,
-						 "Windfury": 0, "Mega Windfury": 0,
-						 "Charge": 0, "Rush": 0,
-						 "Echo": 0
+		self.effects = {"Taunt": 0, "Stealth": 0,
+						"Divine Shield": 0, "Spell Damage": 0,
+						"Lifesteal": 0, "Poisonous": 0,
+						"Windfury": 0, "Mega Windfury": 0,
+						"Charge": 0, "Rush": 0,
+						"Echo": 0,
+						
+						"Sweep": 0, "Cost Health Instead": 0,
+					  	"Evasive": 0, "Enemy Evasive": 0,
+					  	"Can't Attack": 0, "Can't Attack Hero": 0,
+					  	"Heal x2": 0,  # Crystalsmith Kangor
+					  	"Power Heal&Dmg x2": 0,  # Prophet Velen, Clockwork Automation
+					  	"Spell Heal&Dmg x2": 0,
+					  	"Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
+					  	"Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0, "Disappear When Die": 0,
+					  	"Next Damage 0": 0, "Ignore Taunt": 0, "Can't Evolve": 0, "Free Evolve": 0,
 						 }
-		self.marks = {"Sweep": 0, "Cost Health Instead": 0,
-					  "Evasive": 0, "Enemy Evasive": 0,
-					  "Can't Attack": 0, "Can't Attack Hero": 0,
-					  "Heal x2": 0,  # Crystalsmith Kangor
-					  "Power Heal&Dmg x2": 0,  # Prophet Velen, Clockwork Automation
-					  "Spell Heal&Dmg x2": 0,
-					  "Enemy Effect Evasive": 0, "Enemy Effect Damage Immune": 0,
-					  "Can't Break": 0, "Can't Disappear": 0, "Can't Be Attacked": 0, "Disappear When Die": 0,
-					  "Next Damage 0": 0, "Ignore Taunt": 0, "Can't Evolve": 0, "Free Evolve": 0,}
-		self.status = {}
 		self.auras = {}
 		self.options = []  # For Choose One minions.
 		self.overload, self.magnetic = 0, 0
@@ -556,7 +556,7 @@ class Amulet(Dormant):
 		self.Game.gathertheDead()  # At this point, the minion might be removed/controlled by Illidan/Juggler combo.
 		# 假设不触发重导向扳机
 		num = 1
-		if "~Battlecry" in self.index and self.Game.status[self.ID]["Battlecry x2"] + self.Game.status[self.ID][
+		if "~Battlecry" in self.index and self.Game.effects[self.ID]["Battlecry x2"] + self.Game.effects[self.ID][
 			"Shark Battlecry x2"] > 0:
 			num = 2
 		for i in range(num):
@@ -584,20 +584,20 @@ class Amulet(Dormant):
 			selectable = target.inHand or target.onBoard and targetType != "Dormant" and targetType != "Power" and \
 						 (
 								 (targetType == "Hero" and (
-										 target.ID == self.ID or self.Game.status[target.ID]["Immune"] +
-										 target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
+										 target.ID == self.ID or self.Game.effects[target.ID]["Immune"] +
+										 target.effects["Temp Stealth"] + target.effects["Enemy Effect Evasive"] < 1) \
 								  and not ((self.type == "Power" or self.type == "Spell") and
-										   self.Game.status[target.ID]["Evasive"] > 1)) \
+										   self.Game.effects[target.ID]["Evasive"] > 1)) \
 								 # 不能被法术或者英雄技能选择的随从是： 魔免随从 或者 是对敌方魔免且法术或英雄技能是敌方的
 								 or (targetType == "Minion" and (
-								 target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] +
-								 target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
+								 target.ID == self.ID or target.effects["Immune"] + target.effects["Stealth"] +
+								 target.effects["Temp Stealth"] + target.effects["Enemy Effect Evasive"] < 1) \
 									 and not ((self.type == "Power" or self.type == "Spell") and (
-										 target.marks["Evasive"] > 1 or (
-										 target.ID != self.ID and target.marks["Enemy Evasive"] > 1)))) \
+										 target.effects["Evasive"] > 1 or (
+										 target.ID != self.ID and target.effects["Enemy Evasive"] > 1)))) \
 								 or (targetType == "Amulet" and (
-								 target.ID == self.ID or target.marks["Enemy Effect Evasive"] < 1) \
-									 and not (self.type == "Spell" and target.marks["Evasive"] > 1))
+								 target.ID == self.ID or target.effects["Enemy Effect Evasive"] < 1) \
+									 and not (self.type == "Spell" and target.effects["Evasive"] > 1))
 						 )
 			if not selectable: return False
 		return True
@@ -619,7 +619,7 @@ class Amulet(Dormant):
 		Copy.newonthisSide = True
 		Copy.onBoard, Copy.inHand, Copy.inDeck = False, False, False
 		Copy.seq, Copy.pos = -1, -2
-		Copy.attTimes, Copy.attChances_base, Copy.attChances_extra = 0, 0, 0
+		Copy.usageCount, Copy.attChances_base, Copy.attChances_extra = 0, 0, 0
 		Copy.tracked, Copy.creator, Copy.possi = self.tracked, self.creator, self.possi
 		return Copy
 
@@ -673,7 +673,7 @@ class SVSpell(Spell):
             return [None], [0], ['']
 
     def played(self, target=None, choice=0, mana=0, posinHand=-2, comment=""):
-        repeatTimes = 2 if self.Game.status[self.ID]["Spells x2"] > 0 else 1
+        repeatTimes = 2 if self.Game.effects[self.ID]["Spells x2"] > 0 else 1
         if self.Game.GUI:
             self.Game.GUI.showOffBoardTrig(self)
             self.Game.GUI.wait(500)
@@ -704,20 +704,20 @@ class SVSpell(Spell):
             selectable = target.inHand or target.onBoard and targetType != "Dormant" and targetType != "Power" and \
                          (
                                  (targetType == "Hero" and (
-                                         target.ID == self.ID or self.Game.status[target.ID]["Immune"] +
-                                         target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
+                                         target.ID == self.ID or self.Game.effects[target.ID]["Immune"] +
+                                         target.effects["Temp Stealth"] + target.effects["Enemy Effect Evasive"] < 1) \
                                   and not ((self.type == "Power" or self.type == "Spell") and
-                                           self.Game.status[target.ID]["Evasive"] > 1)) \
+                                           self.Game.effects[target.ID]["Evasive"] > 1)) \
                                  # 不能被法术或者英雄技能选择的随从是： 魔免随从 或者 是对敌方魔免且法术或英雄技能是敌方的
                                  or (targetType == "Minion" and (
-                                 target.ID == self.ID or target.status["Immune"] + target.keyWords["Stealth"] +
-                                 target.status["Temp Stealth"] + target.marks["Enemy Effect Evasive"] < 1) \
+                                 target.ID == self.ID or target.effects["Immune"] + target.effects["Stealth"] +
+                                 target.effects["Temp Stealth"] + target.effects["Enemy Effect Evasive"] < 1) \
                                      and not ((self.type == "Power" or self.type == "Spell") and (
-                                         target.marks["Evasive"] > 1 or (
-                                         target.ID != self.ID and target.marks["Enemy Evasive"] > 1)))) \
+                                         target.effects["Evasive"] > 1 or (
+                                         target.ID != self.ID and target.effects["Enemy Evasive"] > 1)))) \
                                  or (targetType == "Amulet" and (
-                                 target.ID == self.ID or target.marks["Enemy Effect Evasive"] < 1) \
-                                     and not (self.type == "Spell" and target.marks["Evasive"] > 1))
+                                 target.ID == self.ID or target.effects["Enemy Effect Evasive"] < 1) \
+                                     and not (self.type == "Spell" and target.effects["Evasive"] > 1))
                          )
             if not selectable: return False
         return True

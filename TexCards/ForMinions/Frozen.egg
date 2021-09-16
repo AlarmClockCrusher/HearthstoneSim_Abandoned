@@ -1,339 +1,339 @@
 <Comment> {
-  "egg-texture-cards -o Frozen.egg -fps 24 -p 1,1 'TexCards\ForMinions\Frozen_000.png' -p 128,128 'TexCards\ForMinions\Frozen_001.png' -p 128,128 'TexCards\ForMinions\Frozen_002.png' -p 128,128 'TexCards\ForMinions\Frozen_003.png' -p 128,128 'TexCards\ForMinions\Frozen_004.png' -p 128,128 'TexCards\ForMinions\Frozen_005.png' -p 128,128 'TexCards\ForMinions\Frozen_006.png' -p 128,128 'TexCards\ForMinions\Frozen_007.png' -p 128,128 'TexCards\ForMinions\Frozen_008.png' -p 128,128 'TexCards\ForMinions\Frozen_009.png' -p 128,128 'TexCards\ForMinions\Frozen_010.png' -p 128,128 'TexCards\ForMinions\Frozen_011.png' -p 128,128 'TexCards\ForMinions\Frozen_012.png' -p 128,128 'TexCards\ForMinions\Frozen_013.png' -p 128,128 'TexCards\ForMinions\Frozen_014.png' -p 128,128 'TexCards\ForMinions\Frozen_015.png' -p 128,128 'TexCards\ForMinions\Frozen_016.png' -p 128,128 'TexCards\ForMinions\Frozen_017.png' -p 128,128 'TexCards\ForMinions\Frozen_018.png' -p 128,128 'TexCards\ForMinions\Frozen_019.png' -p 128,128 'TexCards\ForMinions\Frozen_020.png' -p 128,128 'TexCards\ForMinions\Frozen_021.png' -p 128,128 'TexCards\ForMinions\Frozen_022.png' -p 128,128 'TexCards\ForMinions\Frozen_023.png' -p 128,128 'TexCards\ForMinions\Frozen_024.png' -p 128,128 'TexCards\ForMinions\Frozen_025.png' -p 128,128 'TexCards\ForMinions\Frozen_026.png' -p 128,128 'TexCards\ForMinions\Frozen_027.png' -p 128,128 'TexCards\ForMinions\Frozen_028.png' -p 128,128 'TexCards\ForMinions\Frozen_029.png' -p 128,128 'TexCards\ForMinions\Frozen_030.png' -p 128,128 'TexCards\ForMinions\Frozen_031.png' -p 128,128 'TexCards\ForMinions\Frozen_032.png' -p 128,128 'TexCards\ForMinions\Frozen_033.png' -p 128,128 'TexCards\ForMinions\Frozen_034.png' -p 128,128 'TexCards\ForMinions\Frozen_035.png' -p 128,128 'TexCards\ForMinions\Frozen_036.png' -p 128,128 'TexCards\ForMinions\Frozen_037.png' -p 128,128 'TexCards\ForMinions\Frozen_038.png' -p 128,128 'TexCards\ForMinions\Frozen_039.png' -p 128,128 'TexCards\ForMinions\Frozen_040.png' -p 128,128 'TexCards\ForMinions\Frozen_041.png' -p 128,128 'TexCards\ForMinions\Frozen_042.png' -p 128,128 'TexCards\ForMinions\Frozen_043.png' -p 128,128 'TexCards\ForMinions\Frozen_044.png' -p 128,128 'TexCards\ForMinions\Frozen_045.png' -p 128,128 'TexCards\ForMinions\Frozen_046.png' -p 128,128 'TexCards\ForMinions\Frozen_047.png' -p 128,128 'TexCards\ForMinions\Frozen_048.png' -p 128,128 'TexCards\ForMinions\Frozen_049.png' -p 128,128 'TexCards\ForMinions\Frozen_050.png' -p 128,128 'TexCards\ForMinions\Frozen_051.png' -p 128,128 'TexCards\ForMinions\Frozen_052.png' -p 128,128 'TexCards\ForMinions\Frozen_053.png' -p 128,128 'TexCards\ForMinions\Frozen_054.png' -p 128,128 'TexCards\ForMinions\Frozen_055.png' -p 128,128 'TexCards\ForMinions\Frozen_056.png' -p 128,128 'TexCards\ForMinions\Frozen_057.png' -p 128,128 'TexCards\ForMinions\Frozen_058.png' -p 128,128 'TexCards\ForMinions\Frozen_059.png' -p 128,128 'TexCards\ForMinions\Frozen_060.png' -p 128,128 'TexCards\ForMinions\Frozen_061.png' -p 128,128 'TexCards\ForMinions\Frozen_062.png' -p 128,128 'TexCards\ForMinions\Frozen_063.png' -p 128,128 'TexCards\ForMinions\Frozen_064.png' -p 128,128 'TexCards\ForMinions\Frozen_065.png' -p 128,128 'TexCards\ForMinions\Frozen_066.png' -p 128,128 'TexCards\ForMinions\Frozen_067.png' -p 128,128 'TexCards\ForMinions\Frozen_068.png' -p 128,128 'TexCards\ForMinions\Frozen_069.png' -p 128,128 'TexCards\ForMinions\Frozen_070.png' -p 128,128 'TexCards\ForMinions\Frozen_071.png' -p 128,128 'TexCards\ForMinions\Frozen_072.png' -p 128,128 'TexCards\ForMinions\Frozen_073.png' -p 128,128 'TexCards\ForMinions\Frozen_074.png' -p 128,128 'TexCards\ForMinions\Frozen_075.png' -p 128,128 'TexCards\ForMinions\Frozen_076.png' -p 128,128 'TexCards\ForMinions\Frozen_077.png' -p 128,128 'TexCards\ForMinions\Frozen_078.png' -p 128,128 'TexCards\ForMinions\Frozen_079.png' -p 128,128 'TexCards\ForMinions\Frozen_080.png' -p 128,128 'TexCards\ForMinions\Frozen_081.png' -p 128,128 'TexCards\ForMinions\Frozen_082.png' -p 128,128 'TexCards\ForMinions\Frozen_083.png' -p 128,128 'TexCards\ForMinions\Frozen_084.png' -p 128,128 'TexCards\ForMinions\Frozen_085.png' -p 128,128 'TexCards\ForMinions\Frozen_086.png' -p 128,128 'TexCards\ForMinions\Frozen_087.png' -p 128,128 'TexCards\ForMinions\Frozen_088.png' -p 128,128 'TexCards\ForMinions\Frozen_089.png' -p 128,128 'TexCards\ForMinions\Frozen_090.png' -p 128,128 'TexCards\ForMinions\Frozen_091.png' -p 128,128 'TexCards\ForMinions\Frozen_092.png' -p 128,128 'TexCards\ForMinions\Frozen_093.png' -p 128,128 'TexCards\ForMinions\Frozen_094.png' -p 128,128 'TexCards\ForMinions\Frozen_095.png' -p 128,128 'TexCards\ForMinions\Frozen_096.png' -p 128,128 'TexCards\ForMinions\Frozen_097.png' -p 128,128 'TexCards\ForMinions\Frozen_098.png' -p 128,128 'TexCards\ForMinions\Frozen_099.png' -p 128,128 'TexCards\ForMinions\Frozen_100.png' -p 128,128 'TexCards\ForMinions\Frozen_101.png' -p 128,128 'TexCards\ForMinions\Frozen_102.png' -p 128,128 'TexCards\ForMinions\Frozen_103.png' -p 128,128 'TexCards\ForMinions\Frozen_104.png'"
+  "egg-texture-cards -o Frozen.egg -fps 24 -p 128,128 'TexCards\\ForMinions\Frozen_000.png' -p 128,128 'TexCards\\ForMinions\Frozen_001.png' -p 128,128 'TexCards\\ForMinions\Frozen_002.png' -p 128,128 'TexCards\\ForMinions\Frozen_003.png' -p 128,128 'TexCards\\ForMinions\Frozen_004.png' -p 128,128 'TexCards\\ForMinions\Frozen_005.png' -p 128,128 'TexCards\\ForMinions\Frozen_006.png' -p 128,128 'TexCards\\ForMinions\Frozen_007.png' -p 128,128 'TexCards\\ForMinions\Frozen_008.png' -p 128,128 'TexCards\\ForMinions\Frozen_009.png' -p 128,128 'TexCards\\ForMinions\Frozen_010.png' -p 128,128 'TexCards\\ForMinions\Frozen_011.png' -p 128,128 'TexCards\\ForMinions\Frozen_012.png' -p 128,128 'TexCards\\ForMinions\Frozen_013.png' -p 128,128 'TexCards\\ForMinions\Frozen_014.png' -p 128,128 'TexCards\\ForMinions\Frozen_015.png' -p 128,128 'TexCards\\ForMinions\Frozen_016.png' -p 128,128 'TexCards\\ForMinions\Frozen_017.png' -p 128,128 'TexCards\\ForMinions\Frozen_018.png' -p 128,128 'TexCards\\ForMinions\Frozen_019.png' -p 128,128 'TexCards\\ForMinions\Frozen_020.png' -p 128,128 'TexCards\\ForMinions\Frozen_021.png' -p 128,128 'TexCards\\ForMinions\Frozen_022.png' -p 128,128 'TexCards\\ForMinions\Frozen_023.png' -p 128,128 'TexCards\\ForMinions\Frozen_024.png' -p 128,128 'TexCards\\ForMinions\Frozen_025.png' -p 128,128 'TexCards\\ForMinions\Frozen_026.png' -p 128,128 'TexCards\\ForMinions\Frozen_027.png' -p 128,128 'TexCards\\ForMinions\Frozen_028.png' -p 128,128 'TexCards\\ForMinions\Frozen_029.png' -p 128,128 'TexCards\\ForMinions\Frozen_030.png' -p 128,128 'TexCards\\ForMinions\Frozen_031.png' -p 128,128 'TexCards\\ForMinions\Frozen_032.png' -p 128,128 'TexCards\\ForMinions\Frozen_033.png' -p 128,128 'TexCards\\ForMinions\Frozen_034.png' -p 128,128 'TexCards\\ForMinions\Frozen_035.png' -p 128,128 'TexCards\\ForMinions\Frozen_036.png' -p 128,128 'TexCards\\ForMinions\Frozen_037.png' -p 128,128 'TexCards\\ForMinions\Frozen_038.png' -p 128,128 'TexCards\\ForMinions\Frozen_039.png' -p 128,128 'TexCards\\ForMinions\Frozen_040.png' -p 128,128 'TexCards\\ForMinions\Frozen_041.png' -p 128,128 'TexCards\\ForMinions\Frozen_042.png' -p 128,128 'TexCards\\ForMinions\Frozen_043.png' -p 128,128 'TexCards\\ForMinions\Frozen_044.png' -p 128,128 'TexCards\\ForMinions\Frozen_045.png' -p 128,128 'TexCards\\ForMinions\Frozen_046.png' -p 128,128 'TexCards\\ForMinions\Frozen_047.png' -p 128,128 'TexCards\\ForMinions\Frozen_048.png' -p 128,128 'TexCards\\ForMinions\Frozen_049.png' -p 128,128 'TexCards\\ForMinions\Frozen_050.png' -p 128,128 'TexCards\\ForMinions\Frozen_051.png' -p 128,128 'TexCards\\ForMinions\Frozen_052.png' -p 128,128 'TexCards\\ForMinions\Frozen_053.png' -p 128,128 'TexCards\\ForMinions\Frozen_054.png' -p 128,128 'TexCards\\ForMinions\Frozen_055.png' -p 128,128 'TexCards\\ForMinions\Frozen_056.png' -p 128,128 'TexCards\\ForMinions\Frozen_057.png' -p 128,128 'TexCards\\ForMinions\Frozen_058.png' -p 128,128 'TexCards\\ForMinions\Frozen_059.png' -p 128,128 'TexCards\\ForMinions\Frozen_060.png' -p 128,128 'TexCards\\ForMinions\Frozen_061.png' -p 128,128 'TexCards\\ForMinions\Frozen_062.png' -p 128,128 'TexCards\\ForMinions\Frozen_063.png' -p 128,128 'TexCards\\ForMinions\Frozen_064.png' -p 128,128 'TexCards\\ForMinions\Frozen_065.png' -p 128,128 'TexCards\\ForMinions\Frozen_066.png' -p 128,128 'TexCards\\ForMinions\Frozen_067.png' -p 128,128 'TexCards\\ForMinions\Frozen_068.png' -p 128,128 'TexCards\\ForMinions\Frozen_069.png' -p 128,128 'TexCards\\ForMinions\Frozen_070.png' -p 128,128 'TexCards\\ForMinions\Frozen_071.png' -p 128,128 'TexCards\\ForMinions\Frozen_072.png' -p 128,128 'TexCards\\ForMinions\Frozen_073.png' -p 128,128 'TexCards\\ForMinions\Frozen_074.png' -p 128,128 'TexCards\\ForMinions\Frozen_075.png' -p 128,128 'TexCards\\ForMinions\Frozen_076.png' -p 128,128 'TexCards\\ForMinions\Frozen_077.png' -p 128,128 'TexCards\\ForMinions\Frozen_078.png' -p 128,128 'TexCards\\ForMinions\Frozen_079.png' -p 128,128 'TexCards\\ForMinions\Frozen_080.png' -p 128,128 'TexCards\\ForMinions\Frozen_081.png' -p 128,128 'TexCards\\ForMinions\Frozen_082.png' -p 128,128 'TexCards\\ForMinions\Frozen_083.png' -p 128,128 'TexCards\\ForMinions\Frozen_084.png' -p 128,128 'TexCards\\ForMinions\Frozen_085.png' -p 128,128 'TexCards\\ForMinions\Frozen_086.png' -p 128,128 'TexCards\\ForMinions\Frozen_087.png' -p 128,128 'TexCards\\ForMinions\Frozen_088.png' -p 128,128 'TexCards\\ForMinions\Frozen_089.png' -p 128,128 'TexCards\\ForMinions\Frozen_090.png' -p 128,128 'TexCards\\ForMinions\Frozen_091.png' -p 128,128 'TexCards\\ForMinions\Frozen_092.png' -p 128,128 'TexCards\\ForMinions\Frozen_093.png' -p 128,128 'TexCards\\ForMinions\Frozen_094.png' -p 128,128 'TexCards\\ForMinions\Frozen_095.png' -p 128,128 'TexCards\\ForMinions\Frozen_096.png' -p 128,128 'TexCards\\ForMinions\Frozen_097.png' -p 128,128 'TexCards\\ForMinions\Frozen_098.png' -p 128,128 'TexCards\\ForMinions\Frozen_099.png' -p 128,128 'TexCards\\ForMinions\Frozen_100.png' -p 128,128 'TexCards\\ForMinions\Frozen_101.png' -p 128,128 'TexCards\\ForMinions\Frozen_102.png' -p 128,128 'TexCards\\ForMinions\Frozen_103.png' -p 128,128 'TexCards\\ForMinions\Frozen_104.png'"
 }
 <Texture> Frozen_104 {
-  "TexCards/ForMinions/Frozen_104.png"
+  "TexCards//ForMinions/Frozen_104.png"
 }
 <Texture> Frozen_103 {
-  "TexCards/ForMinions/Frozen_103.png"
+  "TexCards//ForMinions/Frozen_103.png"
 }
 <Texture> Frozen_102 {
-  "TexCards/ForMinions/Frozen_102.png"
+  "TexCards//ForMinions/Frozen_102.png"
 }
 <Texture> Frozen_101 {
-  "TexCards/ForMinions/Frozen_101.png"
+  "TexCards//ForMinions/Frozen_101.png"
 }
 <Texture> Frozen_100 {
-  "TexCards/ForMinions/Frozen_100.png"
+  "TexCards//ForMinions/Frozen_100.png"
 }
 <Texture> Frozen_099 {
-  "TexCards/ForMinions/Frozen_099.png"
+  "TexCards//ForMinions/Frozen_099.png"
 }
 <Texture> Frozen_098 {
-  "TexCards/ForMinions/Frozen_098.png"
+  "TexCards//ForMinions/Frozen_098.png"
 }
 <Texture> Frozen_097 {
-  "TexCards/ForMinions/Frozen_097.png"
+  "TexCards//ForMinions/Frozen_097.png"
 }
 <Texture> Frozen_096 {
-  "TexCards/ForMinions/Frozen_096.png"
+  "TexCards//ForMinions/Frozen_096.png"
 }
 <Texture> Frozen_095 {
-  "TexCards/ForMinions/Frozen_095.png"
+  "TexCards//ForMinions/Frozen_095.png"
 }
 <Texture> Frozen_094 {
-  "TexCards/ForMinions/Frozen_094.png"
+  "TexCards//ForMinions/Frozen_094.png"
 }
 <Texture> Frozen_093 {
-  "TexCards/ForMinions/Frozen_093.png"
+  "TexCards//ForMinions/Frozen_093.png"
 }
 <Texture> Frozen_092 {
-  "TexCards/ForMinions/Frozen_092.png"
+  "TexCards//ForMinions/Frozen_092.png"
 }
 <Texture> Frozen_091 {
-  "TexCards/ForMinions/Frozen_091.png"
+  "TexCards//ForMinions/Frozen_091.png"
 }
 <Texture> Frozen_090 {
-  "TexCards/ForMinions/Frozen_090.png"
+  "TexCards//ForMinions/Frozen_090.png"
 }
 <Texture> Frozen_089 {
-  "TexCards/ForMinions/Frozen_089.png"
+  "TexCards//ForMinions/Frozen_089.png"
 }
 <Texture> Frozen_088 {
-  "TexCards/ForMinions/Frozen_088.png"
+  "TexCards//ForMinions/Frozen_088.png"
 }
 <Texture> Frozen_087 {
-  "TexCards/ForMinions/Frozen_087.png"
+  "TexCards//ForMinions/Frozen_087.png"
 }
 <Texture> Frozen_086 {
-  "TexCards/ForMinions/Frozen_086.png"
+  "TexCards//ForMinions/Frozen_086.png"
 }
 <Texture> Frozen_085 {
-  "TexCards/ForMinions/Frozen_085.png"
+  "TexCards//ForMinions/Frozen_085.png"
 }
 <Texture> Frozen_084 {
-  "TexCards/ForMinions/Frozen_084.png"
+  "TexCards//ForMinions/Frozen_084.png"
 }
 <Texture> Frozen_083 {
-  "TexCards/ForMinions/Frozen_083.png"
+  "TexCards//ForMinions/Frozen_083.png"
 }
 <Texture> Frozen_082 {
-  "TexCards/ForMinions/Frozen_082.png"
+  "TexCards//ForMinions/Frozen_082.png"
 }
 <Texture> Frozen_081 {
-  "TexCards/ForMinions/Frozen_081.png"
+  "TexCards//ForMinions/Frozen_081.png"
 }
 <Texture> Frozen_080 {
-  "TexCards/ForMinions/Frozen_080.png"
+  "TexCards//ForMinions/Frozen_080.png"
 }
 <Texture> Frozen_079 {
-  "TexCards/ForMinions/Frozen_079.png"
+  "TexCards//ForMinions/Frozen_079.png"
 }
 <Texture> Frozen_078 {
-  "TexCards/ForMinions/Frozen_078.png"
+  "TexCards//ForMinions/Frozen_078.png"
 }
 <Texture> Frozen_077 {
-  "TexCards/ForMinions/Frozen_077.png"
+  "TexCards//ForMinions/Frozen_077.png"
 }
 <Texture> Frozen_076 {
-  "TexCards/ForMinions/Frozen_076.png"
+  "TexCards//ForMinions/Frozen_076.png"
 }
 <Texture> Frozen_075 {
-  "TexCards/ForMinions/Frozen_075.png"
+  "TexCards//ForMinions/Frozen_075.png"
 }
 <Texture> Frozen_074 {
-  "TexCards/ForMinions/Frozen_074.png"
+  "TexCards//ForMinions/Frozen_074.png"
 }
 <Texture> Frozen_073 {
-  "TexCards/ForMinions/Frozen_073.png"
+  "TexCards//ForMinions/Frozen_073.png"
 }
 <Texture> Frozen_072 {
-  "TexCards/ForMinions/Frozen_072.png"
+  "TexCards//ForMinions/Frozen_072.png"
 }
 <Texture> Frozen_071 {
-  "TexCards/ForMinions/Frozen_071.png"
+  "TexCards//ForMinions/Frozen_071.png"
 }
 <Texture> Frozen_070 {
-  "TexCards/ForMinions/Frozen_070.png"
+  "TexCards//ForMinions/Frozen_070.png"
 }
 <Texture> Frozen_069 {
-  "TexCards/ForMinions/Frozen_069.png"
+  "TexCards//ForMinions/Frozen_069.png"
 }
 <Texture> Frozen_068 {
-  "TexCards/ForMinions/Frozen_068.png"
+  "TexCards//ForMinions/Frozen_068.png"
 }
 <Texture> Frozen_067 {
-  "TexCards/ForMinions/Frozen_067.png"
+  "TexCards//ForMinions/Frozen_067.png"
 }
 <Texture> Frozen_066 {
-  "TexCards/ForMinions/Frozen_066.png"
+  "TexCards//ForMinions/Frozen_066.png"
 }
 <Texture> Frozen_065 {
-  "TexCards/ForMinions/Frozen_065.png"
+  "TexCards//ForMinions/Frozen_065.png"
 }
 <Texture> Frozen_064 {
-  "TexCards/ForMinions/Frozen_064.png"
+  "TexCards//ForMinions/Frozen_064.png"
 }
 <Texture> Frozen_063 {
-  "TexCards/ForMinions/Frozen_063.png"
+  "TexCards//ForMinions/Frozen_063.png"
 }
 <Texture> Frozen_062 {
-  "TexCards/ForMinions/Frozen_062.png"
+  "TexCards//ForMinions/Frozen_062.png"
 }
 <Texture> Frozen_061 {
-  "TexCards/ForMinions/Frozen_061.png"
+  "TexCards//ForMinions/Frozen_061.png"
 }
 <Texture> Frozen_060 {
-  "TexCards/ForMinions/Frozen_060.png"
+  "TexCards//ForMinions/Frozen_060.png"
 }
 <Texture> Frozen_059 {
-  "TexCards/ForMinions/Frozen_059.png"
+  "TexCards//ForMinions/Frozen_059.png"
 }
 <Texture> Frozen_058 {
-  "TexCards/ForMinions/Frozen_058.png"
+  "TexCards//ForMinions/Frozen_058.png"
 }
 <Texture> Frozen_057 {
-  "TexCards/ForMinions/Frozen_057.png"
+  "TexCards//ForMinions/Frozen_057.png"
 }
 <Texture> Frozen_056 {
-  "TexCards/ForMinions/Frozen_056.png"
+  "TexCards//ForMinions/Frozen_056.png"
 }
 <Texture> Frozen_055 {
-  "TexCards/ForMinions/Frozen_055.png"
+  "TexCards//ForMinions/Frozen_055.png"
 }
 <Texture> Frozen_054 {
-  "TexCards/ForMinions/Frozen_054.png"
+  "TexCards//ForMinions/Frozen_054.png"
 }
 <Texture> Frozen_053 {
-  "TexCards/ForMinions/Frozen_053.png"
+  "TexCards//ForMinions/Frozen_053.png"
 }
 <Texture> Frozen_052 {
-  "TexCards/ForMinions/Frozen_052.png"
+  "TexCards//ForMinions/Frozen_052.png"
 }
 <Texture> Frozen_051 {
-  "TexCards/ForMinions/Frozen_051.png"
+  "TexCards//ForMinions/Frozen_051.png"
 }
 <Texture> Frozen_050 {
-  "TexCards/ForMinions/Frozen_050.png"
+  "TexCards//ForMinions/Frozen_050.png"
 }
 <Texture> Frozen_049 {
-  "TexCards/ForMinions/Frozen_049.png"
+  "TexCards//ForMinions/Frozen_049.png"
 }
 <Texture> Frozen_048 {
-  "TexCards/ForMinions/Frozen_048.png"
+  "TexCards//ForMinions/Frozen_048.png"
 }
 <Texture> Frozen_047 {
-  "TexCards/ForMinions/Frozen_047.png"
+  "TexCards//ForMinions/Frozen_047.png"
 }
 <Texture> Frozen_046 {
-  "TexCards/ForMinions/Frozen_046.png"
+  "TexCards//ForMinions/Frozen_046.png"
 }
 <Texture> Frozen_045 {
-  "TexCards/ForMinions/Frozen_045.png"
+  "TexCards//ForMinions/Frozen_045.png"
 }
 <Texture> Frozen_044 {
-  "TexCards/ForMinions/Frozen_044.png"
+  "TexCards//ForMinions/Frozen_044.png"
 }
 <Texture> Frozen_043 {
-  "TexCards/ForMinions/Frozen_043.png"
+  "TexCards//ForMinions/Frozen_043.png"
 }
 <Texture> Frozen_042 {
-  "TexCards/ForMinions/Frozen_042.png"
+  "TexCards//ForMinions/Frozen_042.png"
 }
 <Texture> Frozen_041 {
-  "TexCards/ForMinions/Frozen_041.png"
+  "TexCards//ForMinions/Frozen_041.png"
 }
 <Texture> Frozen_040 {
-  "TexCards/ForMinions/Frozen_040.png"
+  "TexCards//ForMinions/Frozen_040.png"
 }
 <Texture> Frozen_039 {
-  "TexCards/ForMinions/Frozen_039.png"
+  "TexCards//ForMinions/Frozen_039.png"
 }
 <Texture> Frozen_038 {
-  "TexCards/ForMinions/Frozen_038.png"
+  "TexCards//ForMinions/Frozen_038.png"
 }
 <Texture> Frozen_037 {
-  "TexCards/ForMinions/Frozen_037.png"
+  "TexCards//ForMinions/Frozen_037.png"
 }
 <Texture> Frozen_036 {
-  "TexCards/ForMinions/Frozen_036.png"
+  "TexCards//ForMinions/Frozen_036.png"
 }
 <Texture> Frozen_035 {
-  "TexCards/ForMinions/Frozen_035.png"
+  "TexCards//ForMinions/Frozen_035.png"
 }
 <Texture> Frozen_034 {
-  "TexCards/ForMinions/Frozen_034.png"
+  "TexCards//ForMinions/Frozen_034.png"
 }
 <Texture> Frozen_033 {
-  "TexCards/ForMinions/Frozen_033.png"
+  "TexCards//ForMinions/Frozen_033.png"
 }
 <Texture> Frozen_032 {
-  "TexCards/ForMinions/Frozen_032.png"
+  "TexCards//ForMinions/Frozen_032.png"
 }
 <Texture> Frozen_031 {
-  "TexCards/ForMinions/Frozen_031.png"
+  "TexCards//ForMinions/Frozen_031.png"
 }
 <Texture> Frozen_030 {
-  "TexCards/ForMinions/Frozen_030.png"
+  "TexCards//ForMinions/Frozen_030.png"
 }
 <Texture> Frozen_029 {
-  "TexCards/ForMinions/Frozen_029.png"
+  "TexCards//ForMinions/Frozen_029.png"
 }
 <Texture> Frozen_028 {
-  "TexCards/ForMinions/Frozen_028.png"
+  "TexCards//ForMinions/Frozen_028.png"
 }
 <Texture> Frozen_027 {
-  "TexCards/ForMinions/Frozen_027.png"
+  "TexCards//ForMinions/Frozen_027.png"
 }
 <Texture> Frozen_026 {
-  "TexCards/ForMinions/Frozen_026.png"
+  "TexCards//ForMinions/Frozen_026.png"
 }
 <Texture> Frozen_025 {
-  "TexCards/ForMinions/Frozen_025.png"
+  "TexCards//ForMinions/Frozen_025.png"
 }
 <Texture> Frozen_024 {
-  "TexCards/ForMinions/Frozen_024.png"
+  "TexCards//ForMinions/Frozen_024.png"
 }
 <Texture> Frozen_023 {
-  "TexCards/ForMinions/Frozen_023.png"
+  "TexCards//ForMinions/Frozen_023.png"
 }
 <Texture> Frozen_022 {
-  "TexCards/ForMinions/Frozen_022.png"
+  "TexCards//ForMinions/Frozen_022.png"
 }
 <Texture> Frozen_021 {
-  "TexCards/ForMinions/Frozen_021.png"
+  "TexCards//ForMinions/Frozen_021.png"
 }
 <Texture> Frozen_020 {
-  "TexCards/ForMinions/Frozen_020.png"
+  "TexCards//ForMinions/Frozen_020.png"
 }
 <Texture> Frozen_019 {
-  "TexCards/ForMinions/Frozen_019.png"
+  "TexCards//ForMinions/Frozen_019.png"
 }
 <Texture> Frozen_018 {
-  "TexCards/ForMinions/Frozen_018.png"
+  "TexCards//ForMinions/Frozen_018.png"
 }
 <Texture> Frozen_017 {
-  "TexCards/ForMinions/Frozen_017.png"
+  "TexCards//ForMinions/Frozen_017.png"
 }
 <Texture> Frozen_016 {
-  "TexCards/ForMinions/Frozen_016.png"
+  "TexCards//ForMinions/Frozen_016.png"
 }
 <Texture> Frozen_015 {
-  "TexCards/ForMinions/Frozen_015.png"
+  "TexCards//ForMinions/Frozen_015.png"
 }
 <Texture> Frozen_014 {
-  "TexCards/ForMinions/Frozen_014.png"
+  "TexCards//ForMinions/Frozen_014.png"
 }
 <Texture> Frozen_013 {
-  "TexCards/ForMinions/Frozen_013.png"
+  "TexCards//ForMinions/Frozen_013.png"
 }
 <Texture> Frozen_012 {
-  "TexCards/ForMinions/Frozen_012.png"
+  "TexCards//ForMinions/Frozen_012.png"
 }
 <Texture> Frozen_011 {
-  "TexCards/ForMinions/Frozen_011.png"
+  "TexCards//ForMinions/Frozen_011.png"
 }
 <Texture> Frozen_010 {
-  "TexCards/ForMinions/Frozen_010.png"
+  "TexCards//ForMinions/Frozen_010.png"
 }
 <Texture> Frozen_009 {
-  "TexCards/ForMinions/Frozen_009.png"
+  "TexCards//ForMinions/Frozen_009.png"
 }
 <Texture> Frozen_008 {
-  "TexCards/ForMinions/Frozen_008.png"
+  "TexCards//ForMinions/Frozen_008.png"
 }
 <Texture> Frozen_007 {
-  "TexCards/ForMinions/Frozen_007.png"
+  "TexCards//ForMinions/Frozen_007.png"
 }
 <Texture> Frozen_006 {
-  "TexCards/ForMinions/Frozen_006.png"
+  "TexCards//ForMinions/Frozen_006.png"
 }
 <Texture> Frozen_005 {
-  "TexCards/ForMinions/Frozen_005.png"
+  "TexCards//ForMinions/Frozen_005.png"
 }
 <Texture> Frozen_004 {
-  "TexCards/ForMinions/Frozen_004.png"
+  "TexCards//ForMinions/Frozen_004.png"
 }
 <Texture> Frozen_003 {
-  "TexCards/ForMinions/Frozen_003.png"
+  "TexCards//ForMinions/Frozen_003.png"
 }
 <Texture> Frozen_002 {
-  "TexCards/ForMinions/Frozen_002.png"
+  "TexCards//ForMinions/Frozen_002.png"
 }
 <Texture> Frozen_001 {
-  "TexCards/ForMinions/Frozen_001.png"
+  "TexCards//ForMinions/Frozen_001.png"
 }
 <Texture> Frozen_000 {
-  "TexCards/ForMinions/Frozen_000.png"
+  "TexCards//ForMinions/Frozen_000.png"
 }
 <Group> {
   <Switch> { 1 }
   <Scalar> fps { 24 }
   <VertexPool> vpool {
     <Vertex> 0 {
-      -0.00390625 0.00390625 0
+      -0.5 0.5 0
       <UV> { 0 1 }
     }
     <Vertex> 1 {
-      -0.00390625 -0.00390625 0
+      -0.5 -0.5 0
       <UV> { 0 0 }
     }
     <Vertex> 2 {
-      0.00390625 -0.00390625 0
+      0.5 -0.5 0
       <UV> { 1 0 }
     }
     <Vertex> 3 {
-      0.00390625 0.00390625 0
+      0.5 0.5 0
       <UV> { 1 1 }
     }
     <Vertex> 4 {

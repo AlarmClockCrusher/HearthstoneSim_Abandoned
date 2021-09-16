@@ -1,99 +1,99 @@
 <Comment> {
-  "egg-texture-cards -o Exhausted.egg -fps 24 -p 1,1 'TexCards\ForMinions\Exhausted_00.png' -p 128,128 'TexCards\ForMinions\Exhausted_01.png' -p 128,128 'TexCards\ForMinions\Exhausted_02.png' -p 128,128 'TexCards\ForMinions\Exhausted_03.png' -p 128,128 'TexCards\ForMinions\Exhausted_04.png' -p 128,128 'TexCards\ForMinions\Exhausted_05.png' -p 128,128 'TexCards\ForMinions\Exhausted_06.png' -p 128,128 'TexCards\ForMinions\Exhausted_07.png' -p 128,128 'TexCards\ForMinions\Exhausted_08.png' -p 128,128 'TexCards\ForMinions\Exhausted_09.png' -p 128,128 'TexCards\ForMinions\Exhausted_10.png' -p 128,128 'TexCards\ForMinions\Exhausted_11.png' -p 128,128 'TexCards\ForMinions\Exhausted_12.png' -p 128,128 'TexCards\ForMinions\Exhausted_13.png' -p 128,128 'TexCards\ForMinions\Exhausted_14.png' -p 128,128 'TexCards\ForMinions\Exhausted_15.png' -p 128,128 'TexCards\ForMinions\Exhausted_16.png' -p 128,128 'TexCards\ForMinions\Exhausted_17.png' -p 128,128 'TexCards\ForMinions\Exhausted_18.png' -p 128,128 'TexCards\ForMinions\Exhausted_19.png' -p 128,128 'TexCards\ForMinions\Exhausted_20.png' -p 128,128 'TexCards\ForMinions\Exhausted_21.png' -p 128,128 'TexCards\ForMinions\Exhausted_22.png' -p 128,128 'TexCards\ForMinions\Exhausted_23.png' -p 128,128 'TexCards\ForMinions\Exhausted_24.png'"
+  "egg-texture-cards -o Exhausted.egg -fps 24 -p 128,128 'TexCards\\ForMinions\Exhausted_00.png' -p 128,128 'TexCards\\ForMinions\Exhausted_01.png' -p 128,128 'TexCards\\ForMinions\Exhausted_02.png' -p 128,128 'TexCards\\ForMinions\Exhausted_03.png' -p 128,128 'TexCards\\ForMinions\Exhausted_04.png' -p 128,128 'TexCards\\ForMinions\Exhausted_05.png' -p 128,128 'TexCards\\ForMinions\Exhausted_06.png' -p 128,128 'TexCards\\ForMinions\Exhausted_07.png' -p 128,128 'TexCards\\ForMinions\Exhausted_08.png' -p 128,128 'TexCards\\ForMinions\Exhausted_09.png' -p 128,128 'TexCards\\ForMinions\Exhausted_10.png' -p 128,128 'TexCards\\ForMinions\Exhausted_11.png' -p 128,128 'TexCards\\ForMinions\Exhausted_12.png' -p 128,128 'TexCards\\ForMinions\Exhausted_13.png' -p 128,128 'TexCards\\ForMinions\Exhausted_14.png' -p 128,128 'TexCards\\ForMinions\Exhausted_15.png' -p 128,128 'TexCards\\ForMinions\Exhausted_16.png' -p 128,128 'TexCards\\ForMinions\Exhausted_17.png' -p 128,128 'TexCards\\ForMinions\Exhausted_18.png' -p 128,128 'TexCards\\ForMinions\Exhausted_19.png' -p 128,128 'TexCards\\ForMinions\Exhausted_20.png' -p 128,128 'TexCards\\ForMinions\Exhausted_21.png' -p 128,128 'TexCards\\ForMinions\Exhausted_22.png' -p 128,128 'TexCards\\ForMinions\Exhausted_23.png' -p 128,128 'TexCards\\ForMinions\Exhausted_24.png'"
 }
 <Texture> Exhausted_24 {
-  "TexCards/ForMinions/Exhausted_24.png"
+  "TexCards//ForMinions/Exhausted_24.png"
 }
 <Texture> Exhausted_23 {
-  "TexCards/ForMinions/Exhausted_23.png"
+  "TexCards//ForMinions/Exhausted_23.png"
 }
 <Texture> Exhausted_22 {
-  "TexCards/ForMinions/Exhausted_22.png"
+  "TexCards//ForMinions/Exhausted_22.png"
 }
 <Texture> Exhausted_21 {
-  "TexCards/ForMinions/Exhausted_21.png"
+  "TexCards//ForMinions/Exhausted_21.png"
 }
 <Texture> Exhausted_20 {
-  "TexCards/ForMinions/Exhausted_20.png"
+  "TexCards//ForMinions/Exhausted_20.png"
 }
 <Texture> Exhausted_19 {
-  "TexCards/ForMinions/Exhausted_19.png"
+  "TexCards//ForMinions/Exhausted_19.png"
 }
 <Texture> Exhausted_18 {
-  "TexCards/ForMinions/Exhausted_18.png"
+  "TexCards//ForMinions/Exhausted_18.png"
 }
 <Texture> Exhausted_17 {
-  "TexCards/ForMinions/Exhausted_17.png"
+  "TexCards//ForMinions/Exhausted_17.png"
 }
 <Texture> Exhausted_16 {
-  "TexCards/ForMinions/Exhausted_16.png"
+  "TexCards//ForMinions/Exhausted_16.png"
 }
 <Texture> Exhausted_15 {
-  "TexCards/ForMinions/Exhausted_15.png"
+  "TexCards//ForMinions/Exhausted_15.png"
 }
 <Texture> Exhausted_14 {
-  "TexCards/ForMinions/Exhausted_14.png"
+  "TexCards//ForMinions/Exhausted_14.png"
 }
 <Texture> Exhausted_13 {
-  "TexCards/ForMinions/Exhausted_13.png"
+  "TexCards//ForMinions/Exhausted_13.png"
 }
 <Texture> Exhausted_12 {
-  "TexCards/ForMinions/Exhausted_12.png"
+  "TexCards//ForMinions/Exhausted_12.png"
 }
 <Texture> Exhausted_11 {
-  "TexCards/ForMinions/Exhausted_11.png"
+  "TexCards//ForMinions/Exhausted_11.png"
 }
 <Texture> Exhausted_10 {
-  "TexCards/ForMinions/Exhausted_10.png"
+  "TexCards//ForMinions/Exhausted_10.png"
 }
 <Texture> Exhausted_09 {
-  "TexCards/ForMinions/Exhausted_09.png"
+  "TexCards//ForMinions/Exhausted_09.png"
 }
 <Texture> Exhausted_08 {
-  "TexCards/ForMinions/Exhausted_08.png"
+  "TexCards//ForMinions/Exhausted_08.png"
 }
 <Texture> Exhausted_07 {
-  "TexCards/ForMinions/Exhausted_07.png"
+  "TexCards//ForMinions/Exhausted_07.png"
 }
 <Texture> Exhausted_06 {
-  "TexCards/ForMinions/Exhausted_06.png"
+  "TexCards//ForMinions/Exhausted_06.png"
 }
 <Texture> Exhausted_05 {
-  "TexCards/ForMinions/Exhausted_05.png"
+  "TexCards//ForMinions/Exhausted_05.png"
 }
 <Texture> Exhausted_04 {
-  "TexCards/ForMinions/Exhausted_04.png"
+  "TexCards//ForMinions/Exhausted_04.png"
 }
 <Texture> Exhausted_03 {
-  "TexCards/ForMinions/Exhausted_03.png"
+  "TexCards//ForMinions/Exhausted_03.png"
 }
 <Texture> Exhausted_02 {
-  "TexCards/ForMinions/Exhausted_02.png"
+  "TexCards//ForMinions/Exhausted_02.png"
 }
 <Texture> Exhausted_01 {
-  "TexCards/ForMinions/Exhausted_01.png"
+  "TexCards//ForMinions/Exhausted_01.png"
 }
 <Texture> Exhausted_00 {
-  "TexCards/ForMinions/Exhausted_00.png"
+  "TexCards//ForMinions/Exhausted_00.png"
 }
 <Group> {
   <Switch> { 1 }
   <Scalar> fps { 24 }
   <VertexPool> vpool {
     <Vertex> 0 {
-      -0.00390625 0.00390625 0
+      -0.5 0.5 0
       <UV> { 0 1 }
     }
     <Vertex> 1 {
-      -0.00390625 -0.00390625 0
+      -0.5 -0.5 0
       <UV> { 0 0 }
     }
     <Vertex> 2 {
-      0.00390625 -0.00390625 0
+      0.5 -0.5 0
       <UV> { 1 0 }
     }
     <Vertex> 3 {
-      0.00390625 0.00390625 0
+      0.5 0.5 0
       <UV> { 1 1 }
     }
     <Vertex> 4 {

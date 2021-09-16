@@ -1,384 +1,384 @@
 <Comment> {
-  "egg-texture-cards -o Stealth.egg -fps 20 -p 1,1 'TexCards\ForMinions\Stealth_000.png' -p 128,128 'TexCards\ForMinions\Stealth_001.png' -p 128,128 'TexCards\ForMinions\Stealth_002.png' -p 128,128 'TexCards\ForMinions\Stealth_003.png' -p 128,128 'TexCards\ForMinions\Stealth_004.png' -p 128,128 'TexCards\ForMinions\Stealth_005.png' -p 128,128 'TexCards\ForMinions\Stealth_006.png' -p 128,128 'TexCards\ForMinions\Stealth_007.png' -p 128,128 'TexCards\ForMinions\Stealth_008.png' -p 128,128 'TexCards\ForMinions\Stealth_009.png' -p 128,128 'TexCards\ForMinions\Stealth_010.png' -p 128,128 'TexCards\ForMinions\Stealth_011.png' -p 128,128 'TexCards\ForMinions\Stealth_012.png' -p 128,128 'TexCards\ForMinions\Stealth_013.png' -p 128,128 'TexCards\ForMinions\Stealth_014.png' -p 128,128 'TexCards\ForMinions\Stealth_015.png' -p 128,128 'TexCards\ForMinions\Stealth_016.png' -p 128,128 'TexCards\ForMinions\Stealth_017.png' -p 128,128 'TexCards\ForMinions\Stealth_018.png' -p 128,128 'TexCards\ForMinions\Stealth_019.png' -p 128,128 'TexCards\ForMinions\Stealth_020.png' -p 128,128 'TexCards\ForMinions\Stealth_021.png' -p 128,128 'TexCards\ForMinions\Stealth_022.png' -p 128,128 'TexCards\ForMinions\Stealth_023.png' -p 128,128 'TexCards\ForMinions\Stealth_024.png' -p 128,128 'TexCards\ForMinions\Stealth_025.png' -p 128,128 'TexCards\ForMinions\Stealth_026.png' -p 128,128 'TexCards\ForMinions\Stealth_027.png' -p 128,128 'TexCards\ForMinions\Stealth_028.png' -p 128,128 'TexCards\ForMinions\Stealth_029.png' -p 128,128 'TexCards\ForMinions\Stealth_030.png' -p 128,128 'TexCards\ForMinions\Stealth_031.png' -p 128,128 'TexCards\ForMinions\Stealth_032.png' -p 128,128 'TexCards\ForMinions\Stealth_033.png' -p 128,128 'TexCards\ForMinions\Stealth_034.png' -p 128,128 'TexCards\ForMinions\Stealth_035.png' -p 128,128 'TexCards\ForMinions\Stealth_036.png' -p 128,128 'TexCards\ForMinions\Stealth_037.png' -p 128,128 'TexCards\ForMinions\Stealth_038.png' -p 128,128 'TexCards\ForMinions\Stealth_039.png' -p 128,128 'TexCards\ForMinions\Stealth_040.png' -p 128,128 'TexCards\ForMinions\Stealth_041.png' -p 128,128 'TexCards\ForMinions\Stealth_042.png' -p 128,128 'TexCards\ForMinions\Stealth_043.png' -p 128,128 'TexCards\ForMinions\Stealth_044.png' -p 128,128 'TexCards\ForMinions\Stealth_045.png' -p 128,128 'TexCards\ForMinions\Stealth_046.png' -p 128,128 'TexCards\ForMinions\Stealth_047.png' -p 128,128 'TexCards\ForMinions\Stealth_048.png' -p 128,128 'TexCards\ForMinions\Stealth_049.png' -p 128,128 'TexCards\ForMinions\Stealth_050.png' -p 128,128 'TexCards\ForMinions\Stealth_051.png' -p 128,128 'TexCards\ForMinions\Stealth_052.png' -p 128,128 'TexCards\ForMinions\Stealth_053.png' -p 128,128 'TexCards\ForMinions\Stealth_054.png' -p 128,128 'TexCards\ForMinions\Stealth_055.png' -p 128,128 'TexCards\ForMinions\Stealth_056.png' -p 128,128 'TexCards\ForMinions\Stealth_057.png' -p 128,128 'TexCards\ForMinions\Stealth_058.png' -p 128,128 'TexCards\ForMinions\Stealth_059.png' -p 128,128 'TexCards\ForMinions\Stealth_060.png' -p 128,128 'TexCards\ForMinions\Stealth_061.png' -p 128,128 'TexCards\ForMinions\Stealth_062.png' -p 128,128 'TexCards\ForMinions\Stealth_063.png' -p 128,128 'TexCards\ForMinions\Stealth_064.png' -p 128,128 'TexCards\ForMinions\Stealth_065.png' -p 128,128 'TexCards\ForMinions\Stealth_066.png' -p 128,128 'TexCards\ForMinions\Stealth_067.png' -p 128,128 'TexCards\ForMinions\Stealth_068.png' -p 128,128 'TexCards\ForMinions\Stealth_069.png' -p 128,128 'TexCards\ForMinions\Stealth_070.png' -p 128,128 'TexCards\ForMinions\Stealth_071.png' -p 128,128 'TexCards\ForMinions\Stealth_072.png' -p 128,128 'TexCards\ForMinions\Stealth_073.png' -p 128,128 'TexCards\ForMinions\Stealth_074.png' -p 128,128 'TexCards\ForMinions\Stealth_075.png' -p 128,128 'TexCards\ForMinions\Stealth_076.png' -p 128,128 'TexCards\ForMinions\Stealth_077.png' -p 128,128 'TexCards\ForMinions\Stealth_078.png' -p 128,128 'TexCards\ForMinions\Stealth_079.png' -p 128,128 'TexCards\ForMinions\Stealth_080.png' -p 128,128 'TexCards\ForMinions\Stealth_081.png' -p 128,128 'TexCards\ForMinions\Stealth_082.png' -p 128,128 'TexCards\ForMinions\Stealth_083.png' -p 128,128 'TexCards\ForMinions\Stealth_084.png' -p 128,128 'TexCards\ForMinions\Stealth_085.png' -p 128,128 'TexCards\ForMinions\Stealth_086.png' -p 128,128 'TexCards\ForMinions\Stealth_087.png' -p 128,128 'TexCards\ForMinions\Stealth_088.png' -p 128,128 'TexCards\ForMinions\Stealth_089.png' -p 128,128 'TexCards\ForMinions\Stealth_090.png' -p 128,128 'TexCards\ForMinions\Stealth_091.png' -p 128,128 'TexCards\ForMinions\Stealth_092.png' -p 128,128 'TexCards\ForMinions\Stealth_093.png' -p 128,128 'TexCards\ForMinions\Stealth_094.png' -p 128,128 'TexCards\ForMinions\Stealth_095.png' -p 128,128 'TexCards\ForMinions\Stealth_096.png' -p 128,128 'TexCards\ForMinions\Stealth_097.png' -p 128,128 'TexCards\ForMinions\Stealth_098.png' -p 128,128 'TexCards\ForMinions\Stealth_099.png' -p 128,128 'TexCards\ForMinions\Stealth_100.png' -p 128,128 'TexCards\ForMinions\Stealth_101.png' -p 128,128 'TexCards\ForMinions\Stealth_102.png' -p 128,128 'TexCards\ForMinions\Stealth_103.png' -p 128,128 'TexCards\ForMinions\Stealth_104.png' -p 128,128 'TexCards\ForMinions\Stealth_105.png' -p 128,128 'TexCards\ForMinions\Stealth_106.png' -p 128,128 'TexCards\ForMinions\Stealth_107.png' -p 128,128 'TexCards\ForMinions\Stealth_108.png' -p 128,128 'TexCards\ForMinions\Stealth_109.png' -p 128,128 'TexCards\ForMinions\Stealth_110.png' -p 128,128 'TexCards\ForMinions\Stealth_111.png' -p 128,128 'TexCards\ForMinions\Stealth_112.png' -p 128,128 'TexCards\ForMinions\Stealth_113.png' -p 128,128 'TexCards\ForMinions\Stealth_114.png' -p 128,128 'TexCards\ForMinions\Stealth_115.png' -p 128,128 'TexCards\ForMinions\Stealth_116.png' -p 128,128 'TexCards\ForMinions\Stealth_117.png' -p 128,128 'TexCards\ForMinions\Stealth_118.png' -p 128,128 'TexCards\ForMinions\Stealth_119.png'"
+  "egg-texture-cards -o Stealth.egg -fps 24 -p 128,128 'TexCards\\ForMinions\Stealth_000.png' -p 128,128 'TexCards\\ForMinions\Stealth_001.png' -p 128,128 'TexCards\\ForMinions\Stealth_002.png' -p 128,128 'TexCards\\ForMinions\Stealth_003.png' -p 128,128 'TexCards\\ForMinions\Stealth_004.png' -p 128,128 'TexCards\\ForMinions\Stealth_005.png' -p 128,128 'TexCards\\ForMinions\Stealth_006.png' -p 128,128 'TexCards\\ForMinions\Stealth_007.png' -p 128,128 'TexCards\\ForMinions\Stealth_008.png' -p 128,128 'TexCards\\ForMinions\Stealth_009.png' -p 128,128 'TexCards\\ForMinions\Stealth_010.png' -p 128,128 'TexCards\\ForMinions\Stealth_011.png' -p 128,128 'TexCards\\ForMinions\Stealth_012.png' -p 128,128 'TexCards\\ForMinions\Stealth_013.png' -p 128,128 'TexCards\\ForMinions\Stealth_014.png' -p 128,128 'TexCards\\ForMinions\Stealth_015.png' -p 128,128 'TexCards\\ForMinions\Stealth_016.png' -p 128,128 'TexCards\\ForMinions\Stealth_017.png' -p 128,128 'TexCards\\ForMinions\Stealth_018.png' -p 128,128 'TexCards\\ForMinions\Stealth_019.png' -p 128,128 'TexCards\\ForMinions\Stealth_020.png' -p 128,128 'TexCards\\ForMinions\Stealth_021.png' -p 128,128 'TexCards\\ForMinions\Stealth_022.png' -p 128,128 'TexCards\\ForMinions\Stealth_023.png' -p 128,128 'TexCards\\ForMinions\Stealth_024.png' -p 128,128 'TexCards\\ForMinions\Stealth_025.png' -p 128,128 'TexCards\\ForMinions\Stealth_026.png' -p 128,128 'TexCards\\ForMinions\Stealth_027.png' -p 128,128 'TexCards\\ForMinions\Stealth_028.png' -p 128,128 'TexCards\\ForMinions\Stealth_029.png' -p 128,128 'TexCards\\ForMinions\Stealth_030.png' -p 128,128 'TexCards\\ForMinions\Stealth_031.png' -p 128,128 'TexCards\\ForMinions\Stealth_032.png' -p 128,128 'TexCards\\ForMinions\Stealth_033.png' -p 128,128 'TexCards\\ForMinions\Stealth_034.png' -p 128,128 'TexCards\\ForMinions\Stealth_035.png' -p 128,128 'TexCards\\ForMinions\Stealth_036.png' -p 128,128 'TexCards\\ForMinions\Stealth_037.png' -p 128,128 'TexCards\\ForMinions\Stealth_038.png' -p 128,128 'TexCards\\ForMinions\Stealth_039.png' -p 128,128 'TexCards\\ForMinions\Stealth_040.png' -p 128,128 'TexCards\\ForMinions\Stealth_041.png' -p 128,128 'TexCards\\ForMinions\Stealth_042.png' -p 128,128 'TexCards\\ForMinions\Stealth_043.png' -p 128,128 'TexCards\\ForMinions\Stealth_044.png' -p 128,128 'TexCards\\ForMinions\Stealth_045.png' -p 128,128 'TexCards\\ForMinions\Stealth_046.png' -p 128,128 'TexCards\\ForMinions\Stealth_047.png' -p 128,128 'TexCards\\ForMinions\Stealth_048.png' -p 128,128 'TexCards\\ForMinions\Stealth_049.png' -p 128,128 'TexCards\\ForMinions\Stealth_050.png' -p 128,128 'TexCards\\ForMinions\Stealth_051.png' -p 128,128 'TexCards\\ForMinions\Stealth_052.png' -p 128,128 'TexCards\\ForMinions\Stealth_053.png' -p 128,128 'TexCards\\ForMinions\Stealth_054.png' -p 128,128 'TexCards\\ForMinions\Stealth_055.png' -p 128,128 'TexCards\\ForMinions\Stealth_056.png' -p 128,128 'TexCards\\ForMinions\Stealth_057.png' -p 128,128 'TexCards\\ForMinions\Stealth_058.png' -p 128,128 'TexCards\\ForMinions\Stealth_059.png' -p 128,128 'TexCards\\ForMinions\Stealth_060.png' -p 128,128 'TexCards\\ForMinions\Stealth_061.png' -p 128,128 'TexCards\\ForMinions\Stealth_062.png' -p 128,128 'TexCards\\ForMinions\Stealth_063.png' -p 128,128 'TexCards\\ForMinions\Stealth_064.png' -p 128,128 'TexCards\\ForMinions\Stealth_065.png' -p 128,128 'TexCards\\ForMinions\Stealth_066.png' -p 128,128 'TexCards\\ForMinions\Stealth_067.png' -p 128,128 'TexCards\\ForMinions\Stealth_068.png' -p 128,128 'TexCards\\ForMinions\Stealth_069.png' -p 128,128 'TexCards\\ForMinions\Stealth_070.png' -p 128,128 'TexCards\\ForMinions\Stealth_071.png' -p 128,128 'TexCards\\ForMinions\Stealth_072.png' -p 128,128 'TexCards\\ForMinions\Stealth_073.png' -p 128,128 'TexCards\\ForMinions\Stealth_074.png' -p 128,128 'TexCards\\ForMinions\Stealth_075.png' -p 128,128 'TexCards\\ForMinions\Stealth_076.png' -p 128,128 'TexCards\\ForMinions\Stealth_077.png' -p 128,128 'TexCards\\ForMinions\Stealth_078.png' -p 128,128 'TexCards\\ForMinions\Stealth_079.png' -p 128,128 'TexCards\\ForMinions\Stealth_080.png' -p 128,128 'TexCards\\ForMinions\Stealth_081.png' -p 128,128 'TexCards\\ForMinions\Stealth_082.png' -p 128,128 'TexCards\\ForMinions\Stealth_083.png' -p 128,128 'TexCards\\ForMinions\Stealth_084.png' -p 128,128 'TexCards\\ForMinions\Stealth_085.png' -p 128,128 'TexCards\\ForMinions\Stealth_086.png' -p 128,128 'TexCards\\ForMinions\Stealth_087.png' -p 128,128 'TexCards\\ForMinions\Stealth_088.png' -p 128,128 'TexCards\\ForMinions\Stealth_089.png' -p 128,128 'TexCards\\ForMinions\Stealth_090.png' -p 128,128 'TexCards\\ForMinions\Stealth_091.png' -p 128,128 'TexCards\\ForMinions\Stealth_092.png' -p 128,128 'TexCards\\ForMinions\Stealth_093.png' -p 128,128 'TexCards\\ForMinions\Stealth_094.png' -p 128,128 'TexCards\\ForMinions\Stealth_095.png' -p 128,128 'TexCards\\ForMinions\Stealth_096.png' -p 128,128 'TexCards\\ForMinions\Stealth_097.png' -p 128,128 'TexCards\\ForMinions\Stealth_098.png' -p 128,128 'TexCards\\ForMinions\Stealth_099.png' -p 128,128 'TexCards\\ForMinions\Stealth_100.png' -p 128,128 'TexCards\\ForMinions\Stealth_101.png' -p 128,128 'TexCards\\ForMinions\Stealth_102.png' -p 128,128 'TexCards\\ForMinions\Stealth_103.png' -p 128,128 'TexCards\\ForMinions\Stealth_104.png' -p 128,128 'TexCards\\ForMinions\Stealth_105.png' -p 128,128 'TexCards\\ForMinions\Stealth_106.png' -p 128,128 'TexCards\\ForMinions\Stealth_107.png' -p 128,128 'TexCards\\ForMinions\Stealth_108.png' -p 128,128 'TexCards\\ForMinions\Stealth_109.png' -p 128,128 'TexCards\\ForMinions\Stealth_110.png' -p 128,128 'TexCards\\ForMinions\Stealth_111.png' -p 128,128 'TexCards\\ForMinions\Stealth_112.png' -p 128,128 'TexCards\\ForMinions\Stealth_113.png' -p 128,128 'TexCards\\ForMinions\Stealth_114.png' -p 128,128 'TexCards\\ForMinions\Stealth_115.png' -p 128,128 'TexCards\\ForMinions\Stealth_116.png' -p 128,128 'TexCards\\ForMinions\Stealth_117.png' -p 128,128 'TexCards\\ForMinions\Stealth_118.png' -p 128,128 'TexCards\\ForMinions\Stealth_119.png'"
 }
 <Texture> Stealth_119 {
-  "TexCards/ForMinions/Stealth_119.png"
+  "TexCards//ForMinions/Stealth_119.png"
 }
 <Texture> Stealth_118 {
-  "TexCards/ForMinions/Stealth_118.png"
+  "TexCards//ForMinions/Stealth_118.png"
 }
 <Texture> Stealth_117 {
-  "TexCards/ForMinions/Stealth_117.png"
+  "TexCards//ForMinions/Stealth_117.png"
 }
 <Texture> Stealth_116 {
-  "TexCards/ForMinions/Stealth_116.png"
+  "TexCards//ForMinions/Stealth_116.png"
 }
 <Texture> Stealth_115 {
-  "TexCards/ForMinions/Stealth_115.png"
+  "TexCards//ForMinions/Stealth_115.png"
 }
 <Texture> Stealth_114 {
-  "TexCards/ForMinions/Stealth_114.png"
+  "TexCards//ForMinions/Stealth_114.png"
 }
 <Texture> Stealth_113 {
-  "TexCards/ForMinions/Stealth_113.png"
+  "TexCards//ForMinions/Stealth_113.png"
 }
 <Texture> Stealth_112 {
-  "TexCards/ForMinions/Stealth_112.png"
+  "TexCards//ForMinions/Stealth_112.png"
 }
 <Texture> Stealth_111 {
-  "TexCards/ForMinions/Stealth_111.png"
+  "TexCards//ForMinions/Stealth_111.png"
 }
 <Texture> Stealth_110 {
-  "TexCards/ForMinions/Stealth_110.png"
+  "TexCards//ForMinions/Stealth_110.png"
 }
 <Texture> Stealth_109 {
-  "TexCards/ForMinions/Stealth_109.png"
+  "TexCards//ForMinions/Stealth_109.png"
 }
 <Texture> Stealth_108 {
-  "TexCards/ForMinions/Stealth_108.png"
+  "TexCards//ForMinions/Stealth_108.png"
 }
 <Texture> Stealth_107 {
-  "TexCards/ForMinions/Stealth_107.png"
+  "TexCards//ForMinions/Stealth_107.png"
 }
 <Texture> Stealth_106 {
-  "TexCards/ForMinions/Stealth_106.png"
+  "TexCards//ForMinions/Stealth_106.png"
 }
 <Texture> Stealth_105 {
-  "TexCards/ForMinions/Stealth_105.png"
+  "TexCards//ForMinions/Stealth_105.png"
 }
 <Texture> Stealth_104 {
-  "TexCards/ForMinions/Stealth_104.png"
+  "TexCards//ForMinions/Stealth_104.png"
 }
 <Texture> Stealth_103 {
-  "TexCards/ForMinions/Stealth_103.png"
+  "TexCards//ForMinions/Stealth_103.png"
 }
 <Texture> Stealth_102 {
-  "TexCards/ForMinions/Stealth_102.png"
+  "TexCards//ForMinions/Stealth_102.png"
 }
 <Texture> Stealth_101 {
-  "TexCards/ForMinions/Stealth_101.png"
+  "TexCards//ForMinions/Stealth_101.png"
 }
 <Texture> Stealth_100 {
-  "TexCards/ForMinions/Stealth_100.png"
+  "TexCards//ForMinions/Stealth_100.png"
 }
 <Texture> Stealth_099 {
-  "TexCards/ForMinions/Stealth_099.png"
+  "TexCards//ForMinions/Stealth_099.png"
 }
 <Texture> Stealth_098 {
-  "TexCards/ForMinions/Stealth_098.png"
+  "TexCards//ForMinions/Stealth_098.png"
 }
 <Texture> Stealth_097 {
-  "TexCards/ForMinions/Stealth_097.png"
+  "TexCards//ForMinions/Stealth_097.png"
 }
 <Texture> Stealth_096 {
-  "TexCards/ForMinions/Stealth_096.png"
+  "TexCards//ForMinions/Stealth_096.png"
 }
 <Texture> Stealth_095 {
-  "TexCards/ForMinions/Stealth_095.png"
+  "TexCards//ForMinions/Stealth_095.png"
 }
 <Texture> Stealth_094 {
-  "TexCards/ForMinions/Stealth_094.png"
+  "TexCards//ForMinions/Stealth_094.png"
 }
 <Texture> Stealth_093 {
-  "TexCards/ForMinions/Stealth_093.png"
+  "TexCards//ForMinions/Stealth_093.png"
 }
 <Texture> Stealth_092 {
-  "TexCards/ForMinions/Stealth_092.png"
+  "TexCards//ForMinions/Stealth_092.png"
 }
 <Texture> Stealth_091 {
-  "TexCards/ForMinions/Stealth_091.png"
+  "TexCards//ForMinions/Stealth_091.png"
 }
 <Texture> Stealth_090 {
-  "TexCards/ForMinions/Stealth_090.png"
+  "TexCards//ForMinions/Stealth_090.png"
 }
 <Texture> Stealth_089 {
-  "TexCards/ForMinions/Stealth_089.png"
+  "TexCards//ForMinions/Stealth_089.png"
 }
 <Texture> Stealth_088 {
-  "TexCards/ForMinions/Stealth_088.png"
+  "TexCards//ForMinions/Stealth_088.png"
 }
 <Texture> Stealth_087 {
-  "TexCards/ForMinions/Stealth_087.png"
+  "TexCards//ForMinions/Stealth_087.png"
 }
 <Texture> Stealth_086 {
-  "TexCards/ForMinions/Stealth_086.png"
+  "TexCards//ForMinions/Stealth_086.png"
 }
 <Texture> Stealth_085 {
-  "TexCards/ForMinions/Stealth_085.png"
+  "TexCards//ForMinions/Stealth_085.png"
 }
 <Texture> Stealth_084 {
-  "TexCards/ForMinions/Stealth_084.png"
+  "TexCards//ForMinions/Stealth_084.png"
 }
 <Texture> Stealth_083 {
-  "TexCards/ForMinions/Stealth_083.png"
+  "TexCards//ForMinions/Stealth_083.png"
 }
 <Texture> Stealth_082 {
-  "TexCards/ForMinions/Stealth_082.png"
+  "TexCards//ForMinions/Stealth_082.png"
 }
 <Texture> Stealth_081 {
-  "TexCards/ForMinions/Stealth_081.png"
+  "TexCards//ForMinions/Stealth_081.png"
 }
 <Texture> Stealth_080 {
-  "TexCards/ForMinions/Stealth_080.png"
+  "TexCards//ForMinions/Stealth_080.png"
 }
 <Texture> Stealth_079 {
-  "TexCards/ForMinions/Stealth_079.png"
+  "TexCards//ForMinions/Stealth_079.png"
 }
 <Texture> Stealth_078 {
-  "TexCards/ForMinions/Stealth_078.png"
+  "TexCards//ForMinions/Stealth_078.png"
 }
 <Texture> Stealth_077 {
-  "TexCards/ForMinions/Stealth_077.png"
+  "TexCards//ForMinions/Stealth_077.png"
 }
 <Texture> Stealth_076 {
-  "TexCards/ForMinions/Stealth_076.png"
+  "TexCards//ForMinions/Stealth_076.png"
 }
 <Texture> Stealth_075 {
-  "TexCards/ForMinions/Stealth_075.png"
+  "TexCards//ForMinions/Stealth_075.png"
 }
 <Texture> Stealth_074 {
-  "TexCards/ForMinions/Stealth_074.png"
+  "TexCards//ForMinions/Stealth_074.png"
 }
 <Texture> Stealth_073 {
-  "TexCards/ForMinions/Stealth_073.png"
+  "TexCards//ForMinions/Stealth_073.png"
 }
 <Texture> Stealth_072 {
-  "TexCards/ForMinions/Stealth_072.png"
+  "TexCards//ForMinions/Stealth_072.png"
 }
 <Texture> Stealth_071 {
-  "TexCards/ForMinions/Stealth_071.png"
+  "TexCards//ForMinions/Stealth_071.png"
 }
 <Texture> Stealth_070 {
-  "TexCards/ForMinions/Stealth_070.png"
+  "TexCards//ForMinions/Stealth_070.png"
 }
 <Texture> Stealth_069 {
-  "TexCards/ForMinions/Stealth_069.png"
+  "TexCards//ForMinions/Stealth_069.png"
 }
 <Texture> Stealth_068 {
-  "TexCards/ForMinions/Stealth_068.png"
+  "TexCards//ForMinions/Stealth_068.png"
 }
 <Texture> Stealth_067 {
-  "TexCards/ForMinions/Stealth_067.png"
+  "TexCards//ForMinions/Stealth_067.png"
 }
 <Texture> Stealth_066 {
-  "TexCards/ForMinions/Stealth_066.png"
+  "TexCards//ForMinions/Stealth_066.png"
 }
 <Texture> Stealth_065 {
-  "TexCards/ForMinions/Stealth_065.png"
+  "TexCards//ForMinions/Stealth_065.png"
 }
 <Texture> Stealth_064 {
-  "TexCards/ForMinions/Stealth_064.png"
+  "TexCards//ForMinions/Stealth_064.png"
 }
 <Texture> Stealth_063 {
-  "TexCards/ForMinions/Stealth_063.png"
+  "TexCards//ForMinions/Stealth_063.png"
 }
 <Texture> Stealth_062 {
-  "TexCards/ForMinions/Stealth_062.png"
+  "TexCards//ForMinions/Stealth_062.png"
 }
 <Texture> Stealth_061 {
-  "TexCards/ForMinions/Stealth_061.png"
+  "TexCards//ForMinions/Stealth_061.png"
 }
 <Texture> Stealth_060 {
-  "TexCards/ForMinions/Stealth_060.png"
+  "TexCards//ForMinions/Stealth_060.png"
 }
 <Texture> Stealth_059 {
-  "TexCards/ForMinions/Stealth_059.png"
+  "TexCards//ForMinions/Stealth_059.png"
 }
 <Texture> Stealth_058 {
-  "TexCards/ForMinions/Stealth_058.png"
+  "TexCards//ForMinions/Stealth_058.png"
 }
 <Texture> Stealth_057 {
-  "TexCards/ForMinions/Stealth_057.png"
+  "TexCards//ForMinions/Stealth_057.png"
 }
 <Texture> Stealth_056 {
-  "TexCards/ForMinions/Stealth_056.png"
+  "TexCards//ForMinions/Stealth_056.png"
 }
 <Texture> Stealth_055 {
-  "TexCards/ForMinions/Stealth_055.png"
+  "TexCards//ForMinions/Stealth_055.png"
 }
 <Texture> Stealth_054 {
-  "TexCards/ForMinions/Stealth_054.png"
+  "TexCards//ForMinions/Stealth_054.png"
 }
 <Texture> Stealth_053 {
-  "TexCards/ForMinions/Stealth_053.png"
+  "TexCards//ForMinions/Stealth_053.png"
 }
 <Texture> Stealth_052 {
-  "TexCards/ForMinions/Stealth_052.png"
+  "TexCards//ForMinions/Stealth_052.png"
 }
 <Texture> Stealth_051 {
-  "TexCards/ForMinions/Stealth_051.png"
+  "TexCards//ForMinions/Stealth_051.png"
 }
 <Texture> Stealth_050 {
-  "TexCards/ForMinions/Stealth_050.png"
+  "TexCards//ForMinions/Stealth_050.png"
 }
 <Texture> Stealth_049 {
-  "TexCards/ForMinions/Stealth_049.png"
+  "TexCards//ForMinions/Stealth_049.png"
 }
 <Texture> Stealth_048 {
-  "TexCards/ForMinions/Stealth_048.png"
+  "TexCards//ForMinions/Stealth_048.png"
 }
 <Texture> Stealth_047 {
-  "TexCards/ForMinions/Stealth_047.png"
+  "TexCards//ForMinions/Stealth_047.png"
 }
 <Texture> Stealth_046 {
-  "TexCards/ForMinions/Stealth_046.png"
+  "TexCards//ForMinions/Stealth_046.png"
 }
 <Texture> Stealth_045 {
-  "TexCards/ForMinions/Stealth_045.png"
+  "TexCards//ForMinions/Stealth_045.png"
 }
 <Texture> Stealth_044 {
-  "TexCards/ForMinions/Stealth_044.png"
+  "TexCards//ForMinions/Stealth_044.png"
 }
 <Texture> Stealth_043 {
-  "TexCards/ForMinions/Stealth_043.png"
+  "TexCards//ForMinions/Stealth_043.png"
 }
 <Texture> Stealth_042 {
-  "TexCards/ForMinions/Stealth_042.png"
+  "TexCards//ForMinions/Stealth_042.png"
 }
 <Texture> Stealth_041 {
-  "TexCards/ForMinions/Stealth_041.png"
+  "TexCards//ForMinions/Stealth_041.png"
 }
 <Texture> Stealth_040 {
-  "TexCards/ForMinions/Stealth_040.png"
+  "TexCards//ForMinions/Stealth_040.png"
 }
 <Texture> Stealth_039 {
-  "TexCards/ForMinions/Stealth_039.png"
+  "TexCards//ForMinions/Stealth_039.png"
 }
 <Texture> Stealth_038 {
-  "TexCards/ForMinions/Stealth_038.png"
+  "TexCards//ForMinions/Stealth_038.png"
 }
 <Texture> Stealth_037 {
-  "TexCards/ForMinions/Stealth_037.png"
+  "TexCards//ForMinions/Stealth_037.png"
 }
 <Texture> Stealth_036 {
-  "TexCards/ForMinions/Stealth_036.png"
+  "TexCards//ForMinions/Stealth_036.png"
 }
 <Texture> Stealth_035 {
-  "TexCards/ForMinions/Stealth_035.png"
+  "TexCards//ForMinions/Stealth_035.png"
 }
 <Texture> Stealth_034 {
-  "TexCards/ForMinions/Stealth_034.png"
+  "TexCards//ForMinions/Stealth_034.png"
 }
 <Texture> Stealth_033 {
-  "TexCards/ForMinions/Stealth_033.png"
+  "TexCards//ForMinions/Stealth_033.png"
 }
 <Texture> Stealth_032 {
-  "TexCards/ForMinions/Stealth_032.png"
+  "TexCards//ForMinions/Stealth_032.png"
 }
 <Texture> Stealth_031 {
-  "TexCards/ForMinions/Stealth_031.png"
+  "TexCards//ForMinions/Stealth_031.png"
 }
 <Texture> Stealth_030 {
-  "TexCards/ForMinions/Stealth_030.png"
+  "TexCards//ForMinions/Stealth_030.png"
 }
 <Texture> Stealth_029 {
-  "TexCards/ForMinions/Stealth_029.png"
+  "TexCards//ForMinions/Stealth_029.png"
 }
 <Texture> Stealth_028 {
-  "TexCards/ForMinions/Stealth_028.png"
+  "TexCards//ForMinions/Stealth_028.png"
 }
 <Texture> Stealth_027 {
-  "TexCards/ForMinions/Stealth_027.png"
+  "TexCards//ForMinions/Stealth_027.png"
 }
 <Texture> Stealth_026 {
-  "TexCards/ForMinions/Stealth_026.png"
+  "TexCards//ForMinions/Stealth_026.png"
 }
 <Texture> Stealth_025 {
-  "TexCards/ForMinions/Stealth_025.png"
+  "TexCards//ForMinions/Stealth_025.png"
 }
 <Texture> Stealth_024 {
-  "TexCards/ForMinions/Stealth_024.png"
+  "TexCards//ForMinions/Stealth_024.png"
 }
 <Texture> Stealth_023 {
-  "TexCards/ForMinions/Stealth_023.png"
+  "TexCards//ForMinions/Stealth_023.png"
 }
 <Texture> Stealth_022 {
-  "TexCards/ForMinions/Stealth_022.png"
+  "TexCards//ForMinions/Stealth_022.png"
 }
 <Texture> Stealth_021 {
-  "TexCards/ForMinions/Stealth_021.png"
+  "TexCards//ForMinions/Stealth_021.png"
 }
 <Texture> Stealth_020 {
-  "TexCards/ForMinions/Stealth_020.png"
+  "TexCards//ForMinions/Stealth_020.png"
 }
 <Texture> Stealth_019 {
-  "TexCards/ForMinions/Stealth_019.png"
+  "TexCards//ForMinions/Stealth_019.png"
 }
 <Texture> Stealth_018 {
-  "TexCards/ForMinions/Stealth_018.png"
+  "TexCards//ForMinions/Stealth_018.png"
 }
 <Texture> Stealth_017 {
-  "TexCards/ForMinions/Stealth_017.png"
+  "TexCards//ForMinions/Stealth_017.png"
 }
 <Texture> Stealth_016 {
-  "TexCards/ForMinions/Stealth_016.png"
+  "TexCards//ForMinions/Stealth_016.png"
 }
 <Texture> Stealth_015 {
-  "TexCards/ForMinions/Stealth_015.png"
+  "TexCards//ForMinions/Stealth_015.png"
 }
 <Texture> Stealth_014 {
-  "TexCards/ForMinions/Stealth_014.png"
+  "TexCards//ForMinions/Stealth_014.png"
 }
 <Texture> Stealth_013 {
-  "TexCards/ForMinions/Stealth_013.png"
+  "TexCards//ForMinions/Stealth_013.png"
 }
 <Texture> Stealth_012 {
-  "TexCards/ForMinions/Stealth_012.png"
+  "TexCards//ForMinions/Stealth_012.png"
 }
 <Texture> Stealth_011 {
-  "TexCards/ForMinions/Stealth_011.png"
+  "TexCards//ForMinions/Stealth_011.png"
 }
 <Texture> Stealth_010 {
-  "TexCards/ForMinions/Stealth_010.png"
+  "TexCards//ForMinions/Stealth_010.png"
 }
 <Texture> Stealth_009 {
-  "TexCards/ForMinions/Stealth_009.png"
+  "TexCards//ForMinions/Stealth_009.png"
 }
 <Texture> Stealth_008 {
-  "TexCards/ForMinions/Stealth_008.png"
+  "TexCards//ForMinions/Stealth_008.png"
 }
 <Texture> Stealth_007 {
-  "TexCards/ForMinions/Stealth_007.png"
+  "TexCards//ForMinions/Stealth_007.png"
 }
 <Texture> Stealth_006 {
-  "TexCards/ForMinions/Stealth_006.png"
+  "TexCards//ForMinions/Stealth_006.png"
 }
 <Texture> Stealth_005 {
-  "TexCards/ForMinions/Stealth_005.png"
+  "TexCards//ForMinions/Stealth_005.png"
 }
 <Texture> Stealth_004 {
-  "TexCards/ForMinions/Stealth_004.png"
+  "TexCards//ForMinions/Stealth_004.png"
 }
 <Texture> Stealth_003 {
-  "TexCards/ForMinions/Stealth_003.png"
+  "TexCards//ForMinions/Stealth_003.png"
 }
 <Texture> Stealth_002 {
-  "TexCards/ForMinions/Stealth_002.png"
+  "TexCards//ForMinions/Stealth_002.png"
 }
 <Texture> Stealth_001 {
-  "TexCards/ForMinions/Stealth_001.png"
+  "TexCards//ForMinions/Stealth_001.png"
 }
 <Texture> Stealth_000 {
-  "TexCards/ForMinions/Stealth_000.png"
+  "TexCards//ForMinions/Stealth_000.png"
 }
 <Group> {
   <Switch> { 1 }
-  <Scalar> fps { 20 }
+  <Scalar> fps { 24 }
   <VertexPool> vpool {
     <Vertex> 0 {
-      -0.00390625 0.00390625 0
+      -0.5 0.5 0
       <UV> { 0 1 }
     }
     <Vertex> 1 {
-      -0.00390625 -0.00390625 0
+      -0.5 -0.5 0
       <UV> { 0 0 }
     }
     <Vertex> 2 {
-      0.00390625 -0.00390625 0
+      0.5 -0.5 0
       <UV> { 1 0 }
     }
     <Vertex> 3 {
-      0.00390625 0.00390625 0
+      0.5 0.5 0
       <UV> { 1 1 }
     }
     <Vertex> 4 {

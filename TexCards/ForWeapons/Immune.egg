@@ -1,327 +1,327 @@
 <Comment> {
-  "egg-texture-cards -o Immune.egg -fps 24 -p 1,1 'TexCards\ForWeapons\Immune_000.png' -p 128,128 'TexCards\ForWeapons\Immune_001.png' -p 128,128 'TexCards\ForWeapons\Immune_002.png' -p 128,128 'TexCards\ForWeapons\Immune_003.png' -p 128,128 'TexCards\ForWeapons\Immune_004.png' -p 128,128 'TexCards\ForWeapons\Immune_005.png' -p 128,128 'TexCards\ForWeapons\Immune_006.png' -p 128,128 'TexCards\ForWeapons\Immune_007.png' -p 128,128 'TexCards\ForWeapons\Immune_008.png' -p 128,128 'TexCards\ForWeapons\Immune_009.png' -p 128,128 'TexCards\ForWeapons\Immune_010.png' -p 128,128 'TexCards\ForWeapons\Immune_011.png' -p 128,128 'TexCards\ForWeapons\Immune_012.png' -p 128,128 'TexCards\ForWeapons\Immune_013.png' -p 128,128 'TexCards\ForWeapons\Immune_014.png' -p 128,128 'TexCards\ForWeapons\Immune_015.png' -p 128,128 'TexCards\ForWeapons\Immune_016.png' -p 128,128 'TexCards\ForWeapons\Immune_017.png' -p 128,128 'TexCards\ForWeapons\Immune_018.png' -p 128,128 'TexCards\ForWeapons\Immune_019.png' -p 128,128 'TexCards\ForWeapons\Immune_020.png' -p 128,128 'TexCards\ForWeapons\Immune_021.png' -p 128,128 'TexCards\ForWeapons\Immune_022.png' -p 128,128 'TexCards\ForWeapons\Immune_023.png' -p 128,128 'TexCards\ForWeapons\Immune_024.png' -p 128,128 'TexCards\ForWeapons\Immune_025.png' -p 128,128 'TexCards\ForWeapons\Immune_026.png' -p 128,128 'TexCards\ForWeapons\Immune_027.png' -p 128,128 'TexCards\ForWeapons\Immune_028.png' -p 128,128 'TexCards\ForWeapons\Immune_029.png' -p 128,128 'TexCards\ForWeapons\Immune_030.png' -p 128,128 'TexCards\ForWeapons\Immune_031.png' -p 128,128 'TexCards\ForWeapons\Immune_032.png' -p 128,128 'TexCards\ForWeapons\Immune_033.png' -p 128,128 'TexCards\ForWeapons\Immune_034.png' -p 128,128 'TexCards\ForWeapons\Immune_035.png' -p 128,128 'TexCards\ForWeapons\Immune_036.png' -p 128,128 'TexCards\ForWeapons\Immune_037.png' -p 128,128 'TexCards\ForWeapons\Immune_038.png' -p 128,128 'TexCards\ForWeapons\Immune_039.png' -p 128,128 'TexCards\ForWeapons\Immune_040.png' -p 128,128 'TexCards\ForWeapons\Immune_041.png' -p 128,128 'TexCards\ForWeapons\Immune_042.png' -p 128,128 'TexCards\ForWeapons\Immune_043.png' -p 128,128 'TexCards\ForWeapons\Immune_044.png' -p 128,128 'TexCards\ForWeapons\Immune_045.png' -p 128,128 'TexCards\ForWeapons\Immune_046.png' -p 128,128 'TexCards\ForWeapons\Immune_047.png' -p 128,128 'TexCards\ForWeapons\Immune_048.png' -p 128,128 'TexCards\ForWeapons\Immune_049.png' -p 128,128 'TexCards\ForWeapons\Immune_050.png' -p 128,128 'TexCards\ForWeapons\Immune_051.png' -p 128,128 'TexCards\ForWeapons\Immune_052.png' -p 128,128 'TexCards\ForWeapons\Immune_053.png' -p 128,128 'TexCards\ForWeapons\Immune_054.png' -p 128,128 'TexCards\ForWeapons\Immune_055.png' -p 128,128 'TexCards\ForWeapons\Immune_056.png' -p 128,128 'TexCards\ForWeapons\Immune_057.png' -p 128,128 'TexCards\ForWeapons\Immune_058.png' -p 128,128 'TexCards\ForWeapons\Immune_059.png' -p 128,128 'TexCards\ForWeapons\Immune_060.png' -p 128,128 'TexCards\ForWeapons\Immune_061.png' -p 128,128 'TexCards\ForWeapons\Immune_062.png' -p 128,128 'TexCards\ForWeapons\Immune_063.png' -p 128,128 'TexCards\ForWeapons\Immune_064.png' -p 128,128 'TexCards\ForWeapons\Immune_065.png' -p 128,128 'TexCards\ForWeapons\Immune_066.png' -p 128,128 'TexCards\ForWeapons\Immune_067.png' -p 128,128 'TexCards\ForWeapons\Immune_068.png' -p 128,128 'TexCards\ForWeapons\Immune_069.png' -p 128,128 'TexCards\ForWeapons\Immune_070.png' -p 128,128 'TexCards\ForWeapons\Immune_071.png' -p 128,128 'TexCards\ForWeapons\Immune_072.png' -p 128,128 'TexCards\ForWeapons\Immune_073.png' -p 128,128 'TexCards\ForWeapons\Immune_074.png' -p 128,128 'TexCards\ForWeapons\Immune_075.png' -p 128,128 'TexCards\ForWeapons\Immune_076.png' -p 128,128 'TexCards\ForWeapons\Immune_077.png' -p 128,128 'TexCards\ForWeapons\Immune_078.png' -p 128,128 'TexCards\ForWeapons\Immune_079.png' -p 128,128 'TexCards\ForWeapons\Immune_080.png' -p 128,128 'TexCards\ForWeapons\Immune_081.png' -p 128,128 'TexCards\ForWeapons\Immune_082.png' -p 128,128 'TexCards\ForWeapons\Immune_083.png' -p 128,128 'TexCards\ForWeapons\Immune_084.png' -p 128,128 'TexCards\ForWeapons\Immune_085.png' -p 128,128 'TexCards\ForWeapons\Immune_086.png' -p 128,128 'TexCards\ForWeapons\Immune_087.png' -p 128,128 'TexCards\ForWeapons\Immune_088.png' -p 128,128 'TexCards\ForWeapons\Immune_089.png' -p 128,128 'TexCards\ForWeapons\Immune_090.png' -p 128,128 'TexCards\ForWeapons\Immune_091.png' -p 128,128 'TexCards\ForWeapons\Immune_092.png' -p 128,128 'TexCards\ForWeapons\Immune_093.png' -p 128,128 'TexCards\ForWeapons\Immune_094.png' -p 128,128 'TexCards\ForWeapons\Immune_095.png' -p 128,128 'TexCards\ForWeapons\Immune_096.png' -p 128,128 'TexCards\ForWeapons\Immune_097.png' -p 128,128 'TexCards\ForWeapons\Immune_098.png' -p 128,128 'TexCards\ForWeapons\Immune_099.png' -p 128,128 'TexCards\ForWeapons\Immune_100.png'"
+  "egg-texture-cards -o Immune.egg -fps 24 -p 128,128 'TexCards\\ForWeapons\Immune_000.png' -p 128,128 'TexCards\\ForWeapons\Immune_001.png' -p 128,128 'TexCards\\ForWeapons\Immune_002.png' -p 128,128 'TexCards\\ForWeapons\Immune_003.png' -p 128,128 'TexCards\\ForWeapons\Immune_004.png' -p 128,128 'TexCards\\ForWeapons\Immune_005.png' -p 128,128 'TexCards\\ForWeapons\Immune_006.png' -p 128,128 'TexCards\\ForWeapons\Immune_007.png' -p 128,128 'TexCards\\ForWeapons\Immune_008.png' -p 128,128 'TexCards\\ForWeapons\Immune_009.png' -p 128,128 'TexCards\\ForWeapons\Immune_010.png' -p 128,128 'TexCards\\ForWeapons\Immune_011.png' -p 128,128 'TexCards\\ForWeapons\Immune_012.png' -p 128,128 'TexCards\\ForWeapons\Immune_013.png' -p 128,128 'TexCards\\ForWeapons\Immune_014.png' -p 128,128 'TexCards\\ForWeapons\Immune_015.png' -p 128,128 'TexCards\\ForWeapons\Immune_016.png' -p 128,128 'TexCards\\ForWeapons\Immune_017.png' -p 128,128 'TexCards\\ForWeapons\Immune_018.png' -p 128,128 'TexCards\\ForWeapons\Immune_019.png' -p 128,128 'TexCards\\ForWeapons\Immune_020.png' -p 128,128 'TexCards\\ForWeapons\Immune_021.png' -p 128,128 'TexCards\\ForWeapons\Immune_022.png' -p 128,128 'TexCards\\ForWeapons\Immune_023.png' -p 128,128 'TexCards\\ForWeapons\Immune_024.png' -p 128,128 'TexCards\\ForWeapons\Immune_025.png' -p 128,128 'TexCards\\ForWeapons\Immune_026.png' -p 128,128 'TexCards\\ForWeapons\Immune_027.png' -p 128,128 'TexCards\\ForWeapons\Immune_028.png' -p 128,128 'TexCards\\ForWeapons\Immune_029.png' -p 128,128 'TexCards\\ForWeapons\Immune_030.png' -p 128,128 'TexCards\\ForWeapons\Immune_031.png' -p 128,128 'TexCards\\ForWeapons\Immune_032.png' -p 128,128 'TexCards\\ForWeapons\Immune_033.png' -p 128,128 'TexCards\\ForWeapons\Immune_034.png' -p 128,128 'TexCards\\ForWeapons\Immune_035.png' -p 128,128 'TexCards\\ForWeapons\Immune_036.png' -p 128,128 'TexCards\\ForWeapons\Immune_037.png' -p 128,128 'TexCards\\ForWeapons\Immune_038.png' -p 128,128 'TexCards\\ForWeapons\Immune_039.png' -p 128,128 'TexCards\\ForWeapons\Immune_040.png' -p 128,128 'TexCards\\ForWeapons\Immune_041.png' -p 128,128 'TexCards\\ForWeapons\Immune_042.png' -p 128,128 'TexCards\\ForWeapons\Immune_043.png' -p 128,128 'TexCards\\ForWeapons\Immune_044.png' -p 128,128 'TexCards\\ForWeapons\Immune_045.png' -p 128,128 'TexCards\\ForWeapons\Immune_046.png' -p 128,128 'TexCards\\ForWeapons\Immune_047.png' -p 128,128 'TexCards\\ForWeapons\Immune_048.png' -p 128,128 'TexCards\\ForWeapons\Immune_049.png' -p 128,128 'TexCards\\ForWeapons\Immune_050.png' -p 128,128 'TexCards\\ForWeapons\Immune_051.png' -p 128,128 'TexCards\\ForWeapons\Immune_052.png' -p 128,128 'TexCards\\ForWeapons\Immune_053.png' -p 128,128 'TexCards\\ForWeapons\Immune_054.png' -p 128,128 'TexCards\\ForWeapons\Immune_055.png' -p 128,128 'TexCards\\ForWeapons\Immune_056.png' -p 128,128 'TexCards\\ForWeapons\Immune_057.png' -p 128,128 'TexCards\\ForWeapons\Immune_058.png' -p 128,128 'TexCards\\ForWeapons\Immune_059.png' -p 128,128 'TexCards\\ForWeapons\Immune_060.png' -p 128,128 'TexCards\\ForWeapons\Immune_061.png' -p 128,128 'TexCards\\ForWeapons\Immune_062.png' -p 128,128 'TexCards\\ForWeapons\Immune_063.png' -p 128,128 'TexCards\\ForWeapons\Immune_064.png' -p 128,128 'TexCards\\ForWeapons\Immune_065.png' -p 128,128 'TexCards\\ForWeapons\Immune_066.png' -p 128,128 'TexCards\\ForWeapons\Immune_067.png' -p 128,128 'TexCards\\ForWeapons\Immune_068.png' -p 128,128 'TexCards\\ForWeapons\Immune_069.png' -p 128,128 'TexCards\\ForWeapons\Immune_070.png' -p 128,128 'TexCards\\ForWeapons\Immune_071.png' -p 128,128 'TexCards\\ForWeapons\Immune_072.png' -p 128,128 'TexCards\\ForWeapons\Immune_073.png' -p 128,128 'TexCards\\ForWeapons\Immune_074.png' -p 128,128 'TexCards\\ForWeapons\Immune_075.png' -p 128,128 'TexCards\\ForWeapons\Immune_076.png' -p 128,128 'TexCards\\ForWeapons\Immune_077.png' -p 128,128 'TexCards\\ForWeapons\Immune_078.png' -p 128,128 'TexCards\\ForWeapons\Immune_079.png' -p 128,128 'TexCards\\ForWeapons\Immune_080.png' -p 128,128 'TexCards\\ForWeapons\Immune_081.png' -p 128,128 'TexCards\\ForWeapons\Immune_082.png' -p 128,128 'TexCards\\ForWeapons\Immune_083.png' -p 128,128 'TexCards\\ForWeapons\Immune_084.png' -p 128,128 'TexCards\\ForWeapons\Immune_085.png' -p 128,128 'TexCards\\ForWeapons\Immune_086.png' -p 128,128 'TexCards\\ForWeapons\Immune_087.png' -p 128,128 'TexCards\\ForWeapons\Immune_088.png' -p 128,128 'TexCards\\ForWeapons\Immune_089.png' -p 128,128 'TexCards\\ForWeapons\Immune_090.png' -p 128,128 'TexCards\\ForWeapons\Immune_091.png' -p 128,128 'TexCards\\ForWeapons\Immune_092.png' -p 128,128 'TexCards\\ForWeapons\Immune_093.png' -p 128,128 'TexCards\\ForWeapons\Immune_094.png' -p 128,128 'TexCards\\ForWeapons\Immune_095.png' -p 128,128 'TexCards\\ForWeapons\Immune_096.png' -p 128,128 'TexCards\\ForWeapons\Immune_097.png' -p 128,128 'TexCards\\ForWeapons\Immune_098.png' -p 128,128 'TexCards\\ForWeapons\Immune_099.png' -p 128,128 'TexCards\\ForWeapons\Immune_100.png'"
 }
 <Texture> Immune_100 {
-  "TexCards/ForWeapons/Immune_100.png"
+  "TexCards//ForWeapons/Immune_100.png"
 }
 <Texture> Immune_099 {
-  "TexCards/ForWeapons/Immune_099.png"
+  "TexCards//ForWeapons/Immune_099.png"
 }
 <Texture> Immune_098 {
-  "TexCards/ForWeapons/Immune_098.png"
+  "TexCards//ForWeapons/Immune_098.png"
 }
 <Texture> Immune_097 {
-  "TexCards/ForWeapons/Immune_097.png"
+  "TexCards//ForWeapons/Immune_097.png"
 }
 <Texture> Immune_096 {
-  "TexCards/ForWeapons/Immune_096.png"
+  "TexCards//ForWeapons/Immune_096.png"
 }
 <Texture> Immune_095 {
-  "TexCards/ForWeapons/Immune_095.png"
+  "TexCards//ForWeapons/Immune_095.png"
 }
 <Texture> Immune_094 {
-  "TexCards/ForWeapons/Immune_094.png"
+  "TexCards//ForWeapons/Immune_094.png"
 }
 <Texture> Immune_093 {
-  "TexCards/ForWeapons/Immune_093.png"
+  "TexCards//ForWeapons/Immune_093.png"
 }
 <Texture> Immune_092 {
-  "TexCards/ForWeapons/Immune_092.png"
+  "TexCards//ForWeapons/Immune_092.png"
 }
 <Texture> Immune_091 {
-  "TexCards/ForWeapons/Immune_091.png"
+  "TexCards//ForWeapons/Immune_091.png"
 }
 <Texture> Immune_090 {
-  "TexCards/ForWeapons/Immune_090.png"
+  "TexCards//ForWeapons/Immune_090.png"
 }
 <Texture> Immune_089 {
-  "TexCards/ForWeapons/Immune_089.png"
+  "TexCards//ForWeapons/Immune_089.png"
 }
 <Texture> Immune_088 {
-  "TexCards/ForWeapons/Immune_088.png"
+  "TexCards//ForWeapons/Immune_088.png"
 }
 <Texture> Immune_087 {
-  "TexCards/ForWeapons/Immune_087.png"
+  "TexCards//ForWeapons/Immune_087.png"
 }
 <Texture> Immune_086 {
-  "TexCards/ForWeapons/Immune_086.png"
+  "TexCards//ForWeapons/Immune_086.png"
 }
 <Texture> Immune_085 {
-  "TexCards/ForWeapons/Immune_085.png"
+  "TexCards//ForWeapons/Immune_085.png"
 }
 <Texture> Immune_084 {
-  "TexCards/ForWeapons/Immune_084.png"
+  "TexCards//ForWeapons/Immune_084.png"
 }
 <Texture> Immune_083 {
-  "TexCards/ForWeapons/Immune_083.png"
+  "TexCards//ForWeapons/Immune_083.png"
 }
 <Texture> Immune_082 {
-  "TexCards/ForWeapons/Immune_082.png"
+  "TexCards//ForWeapons/Immune_082.png"
 }
 <Texture> Immune_081 {
-  "TexCards/ForWeapons/Immune_081.png"
+  "TexCards//ForWeapons/Immune_081.png"
 }
 <Texture> Immune_080 {
-  "TexCards/ForWeapons/Immune_080.png"
+  "TexCards//ForWeapons/Immune_080.png"
 }
 <Texture> Immune_079 {
-  "TexCards/ForWeapons/Immune_079.png"
+  "TexCards//ForWeapons/Immune_079.png"
 }
 <Texture> Immune_078 {
-  "TexCards/ForWeapons/Immune_078.png"
+  "TexCards//ForWeapons/Immune_078.png"
 }
 <Texture> Immune_077 {
-  "TexCards/ForWeapons/Immune_077.png"
+  "TexCards//ForWeapons/Immune_077.png"
 }
 <Texture> Immune_076 {
-  "TexCards/ForWeapons/Immune_076.png"
+  "TexCards//ForWeapons/Immune_076.png"
 }
 <Texture> Immune_075 {
-  "TexCards/ForWeapons/Immune_075.png"
+  "TexCards//ForWeapons/Immune_075.png"
 }
 <Texture> Immune_074 {
-  "TexCards/ForWeapons/Immune_074.png"
+  "TexCards//ForWeapons/Immune_074.png"
 }
 <Texture> Immune_073 {
-  "TexCards/ForWeapons/Immune_073.png"
+  "TexCards//ForWeapons/Immune_073.png"
 }
 <Texture> Immune_072 {
-  "TexCards/ForWeapons/Immune_072.png"
+  "TexCards//ForWeapons/Immune_072.png"
 }
 <Texture> Immune_071 {
-  "TexCards/ForWeapons/Immune_071.png"
+  "TexCards//ForWeapons/Immune_071.png"
 }
 <Texture> Immune_070 {
-  "TexCards/ForWeapons/Immune_070.png"
+  "TexCards//ForWeapons/Immune_070.png"
 }
 <Texture> Immune_069 {
-  "TexCards/ForWeapons/Immune_069.png"
+  "TexCards//ForWeapons/Immune_069.png"
 }
 <Texture> Immune_068 {
-  "TexCards/ForWeapons/Immune_068.png"
+  "TexCards//ForWeapons/Immune_068.png"
 }
 <Texture> Immune_067 {
-  "TexCards/ForWeapons/Immune_067.png"
+  "TexCards//ForWeapons/Immune_067.png"
 }
 <Texture> Immune_066 {
-  "TexCards/ForWeapons/Immune_066.png"
+  "TexCards//ForWeapons/Immune_066.png"
 }
 <Texture> Immune_065 {
-  "TexCards/ForWeapons/Immune_065.png"
+  "TexCards//ForWeapons/Immune_065.png"
 }
 <Texture> Immune_064 {
-  "TexCards/ForWeapons/Immune_064.png"
+  "TexCards//ForWeapons/Immune_064.png"
 }
 <Texture> Immune_063 {
-  "TexCards/ForWeapons/Immune_063.png"
+  "TexCards//ForWeapons/Immune_063.png"
 }
 <Texture> Immune_062 {
-  "TexCards/ForWeapons/Immune_062.png"
+  "TexCards//ForWeapons/Immune_062.png"
 }
 <Texture> Immune_061 {
-  "TexCards/ForWeapons/Immune_061.png"
+  "TexCards//ForWeapons/Immune_061.png"
 }
 <Texture> Immune_060 {
-  "TexCards/ForWeapons/Immune_060.png"
+  "TexCards//ForWeapons/Immune_060.png"
 }
 <Texture> Immune_059 {
-  "TexCards/ForWeapons/Immune_059.png"
+  "TexCards//ForWeapons/Immune_059.png"
 }
 <Texture> Immune_058 {
-  "TexCards/ForWeapons/Immune_058.png"
+  "TexCards//ForWeapons/Immune_058.png"
 }
 <Texture> Immune_057 {
-  "TexCards/ForWeapons/Immune_057.png"
+  "TexCards//ForWeapons/Immune_057.png"
 }
 <Texture> Immune_056 {
-  "TexCards/ForWeapons/Immune_056.png"
+  "TexCards//ForWeapons/Immune_056.png"
 }
 <Texture> Immune_055 {
-  "TexCards/ForWeapons/Immune_055.png"
+  "TexCards//ForWeapons/Immune_055.png"
 }
 <Texture> Immune_054 {
-  "TexCards/ForWeapons/Immune_054.png"
+  "TexCards//ForWeapons/Immune_054.png"
 }
 <Texture> Immune_053 {
-  "TexCards/ForWeapons/Immune_053.png"
+  "TexCards//ForWeapons/Immune_053.png"
 }
 <Texture> Immune_052 {
-  "TexCards/ForWeapons/Immune_052.png"
+  "TexCards//ForWeapons/Immune_052.png"
 }
 <Texture> Immune_051 {
-  "TexCards/ForWeapons/Immune_051.png"
+  "TexCards//ForWeapons/Immune_051.png"
 }
 <Texture> Immune_050 {
-  "TexCards/ForWeapons/Immune_050.png"
+  "TexCards//ForWeapons/Immune_050.png"
 }
 <Texture> Immune_049 {
-  "TexCards/ForWeapons/Immune_049.png"
+  "TexCards//ForWeapons/Immune_049.png"
 }
 <Texture> Immune_048 {
-  "TexCards/ForWeapons/Immune_048.png"
+  "TexCards//ForWeapons/Immune_048.png"
 }
 <Texture> Immune_047 {
-  "TexCards/ForWeapons/Immune_047.png"
+  "TexCards//ForWeapons/Immune_047.png"
 }
 <Texture> Immune_046 {
-  "TexCards/ForWeapons/Immune_046.png"
+  "TexCards//ForWeapons/Immune_046.png"
 }
 <Texture> Immune_045 {
-  "TexCards/ForWeapons/Immune_045.png"
+  "TexCards//ForWeapons/Immune_045.png"
 }
 <Texture> Immune_044 {
-  "TexCards/ForWeapons/Immune_044.png"
+  "TexCards//ForWeapons/Immune_044.png"
 }
 <Texture> Immune_043 {
-  "TexCards/ForWeapons/Immune_043.png"
+  "TexCards//ForWeapons/Immune_043.png"
 }
 <Texture> Immune_042 {
-  "TexCards/ForWeapons/Immune_042.png"
+  "TexCards//ForWeapons/Immune_042.png"
 }
 <Texture> Immune_041 {
-  "TexCards/ForWeapons/Immune_041.png"
+  "TexCards//ForWeapons/Immune_041.png"
 }
 <Texture> Immune_040 {
-  "TexCards/ForWeapons/Immune_040.png"
+  "TexCards//ForWeapons/Immune_040.png"
 }
 <Texture> Immune_039 {
-  "TexCards/ForWeapons/Immune_039.png"
+  "TexCards//ForWeapons/Immune_039.png"
 }
 <Texture> Immune_038 {
-  "TexCards/ForWeapons/Immune_038.png"
+  "TexCards//ForWeapons/Immune_038.png"
 }
 <Texture> Immune_037 {
-  "TexCards/ForWeapons/Immune_037.png"
+  "TexCards//ForWeapons/Immune_037.png"
 }
 <Texture> Immune_036 {
-  "TexCards/ForWeapons/Immune_036.png"
+  "TexCards//ForWeapons/Immune_036.png"
 }
 <Texture> Immune_035 {
-  "TexCards/ForWeapons/Immune_035.png"
+  "TexCards//ForWeapons/Immune_035.png"
 }
 <Texture> Immune_034 {
-  "TexCards/ForWeapons/Immune_034.png"
+  "TexCards//ForWeapons/Immune_034.png"
 }
 <Texture> Immune_033 {
-  "TexCards/ForWeapons/Immune_033.png"
+  "TexCards//ForWeapons/Immune_033.png"
 }
 <Texture> Immune_032 {
-  "TexCards/ForWeapons/Immune_032.png"
+  "TexCards//ForWeapons/Immune_032.png"
 }
 <Texture> Immune_031 {
-  "TexCards/ForWeapons/Immune_031.png"
+  "TexCards//ForWeapons/Immune_031.png"
 }
 <Texture> Immune_030 {
-  "TexCards/ForWeapons/Immune_030.png"
+  "TexCards//ForWeapons/Immune_030.png"
 }
 <Texture> Immune_029 {
-  "TexCards/ForWeapons/Immune_029.png"
+  "TexCards//ForWeapons/Immune_029.png"
 }
 <Texture> Immune_028 {
-  "TexCards/ForWeapons/Immune_028.png"
+  "TexCards//ForWeapons/Immune_028.png"
 }
 <Texture> Immune_027 {
-  "TexCards/ForWeapons/Immune_027.png"
+  "TexCards//ForWeapons/Immune_027.png"
 }
 <Texture> Immune_026 {
-  "TexCards/ForWeapons/Immune_026.png"
+  "TexCards//ForWeapons/Immune_026.png"
 }
 <Texture> Immune_025 {
-  "TexCards/ForWeapons/Immune_025.png"
+  "TexCards//ForWeapons/Immune_025.png"
 }
 <Texture> Immune_024 {
-  "TexCards/ForWeapons/Immune_024.png"
+  "TexCards//ForWeapons/Immune_024.png"
 }
 <Texture> Immune_023 {
-  "TexCards/ForWeapons/Immune_023.png"
+  "TexCards//ForWeapons/Immune_023.png"
 }
 <Texture> Immune_022 {
-  "TexCards/ForWeapons/Immune_022.png"
+  "TexCards//ForWeapons/Immune_022.png"
 }
 <Texture> Immune_021 {
-  "TexCards/ForWeapons/Immune_021.png"
+  "TexCards//ForWeapons/Immune_021.png"
 }
 <Texture> Immune_020 {
-  "TexCards/ForWeapons/Immune_020.png"
+  "TexCards//ForWeapons/Immune_020.png"
 }
 <Texture> Immune_019 {
-  "TexCards/ForWeapons/Immune_019.png"
+  "TexCards//ForWeapons/Immune_019.png"
 }
 <Texture> Immune_018 {
-  "TexCards/ForWeapons/Immune_018.png"
+  "TexCards//ForWeapons/Immune_018.png"
 }
 <Texture> Immune_017 {
-  "TexCards/ForWeapons/Immune_017.png"
+  "TexCards//ForWeapons/Immune_017.png"
 }
 <Texture> Immune_016 {
-  "TexCards/ForWeapons/Immune_016.png"
+  "TexCards//ForWeapons/Immune_016.png"
 }
 <Texture> Immune_015 {
-  "TexCards/ForWeapons/Immune_015.png"
+  "TexCards//ForWeapons/Immune_015.png"
 }
 <Texture> Immune_014 {
-  "TexCards/ForWeapons/Immune_014.png"
+  "TexCards//ForWeapons/Immune_014.png"
 }
 <Texture> Immune_013 {
-  "TexCards/ForWeapons/Immune_013.png"
+  "TexCards//ForWeapons/Immune_013.png"
 }
 <Texture> Immune_012 {
-  "TexCards/ForWeapons/Immune_012.png"
+  "TexCards//ForWeapons/Immune_012.png"
 }
 <Texture> Immune_011 {
-  "TexCards/ForWeapons/Immune_011.png"
+  "TexCards//ForWeapons/Immune_011.png"
 }
 <Texture> Immune_010 {
-  "TexCards/ForWeapons/Immune_010.png"
+  "TexCards//ForWeapons/Immune_010.png"
 }
 <Texture> Immune_009 {
-  "TexCards/ForWeapons/Immune_009.png"
+  "TexCards//ForWeapons/Immune_009.png"
 }
 <Texture> Immune_008 {
-  "TexCards/ForWeapons/Immune_008.png"
+  "TexCards//ForWeapons/Immune_008.png"
 }
 <Texture> Immune_007 {
-  "TexCards/ForWeapons/Immune_007.png"
+  "TexCards//ForWeapons/Immune_007.png"
 }
 <Texture> Immune_006 {
-  "TexCards/ForWeapons/Immune_006.png"
+  "TexCards//ForWeapons/Immune_006.png"
 }
 <Texture> Immune_005 {
-  "TexCards/ForWeapons/Immune_005.png"
+  "TexCards//ForWeapons/Immune_005.png"
 }
 <Texture> Immune_004 {
-  "TexCards/ForWeapons/Immune_004.png"
+  "TexCards//ForWeapons/Immune_004.png"
 }
 <Texture> Immune_003 {
-  "TexCards/ForWeapons/Immune_003.png"
+  "TexCards//ForWeapons/Immune_003.png"
 }
 <Texture> Immune_002 {
-  "TexCards/ForWeapons/Immune_002.png"
+  "TexCards//ForWeapons/Immune_002.png"
 }
 <Texture> Immune_001 {
-  "TexCards/ForWeapons/Immune_001.png"
+  "TexCards//ForWeapons/Immune_001.png"
 }
 <Texture> Immune_000 {
-  "TexCards/ForWeapons/Immune_000.png"
+  "TexCards//ForWeapons/Immune_000.png"
 }
 <Group> {
   <Switch> { 1 }
   <Scalar> fps { 24 }
   <VertexPool> vpool {
     <Vertex> 0 {
-      -0.00390625 0.00390625 0
+      -0.5 0.5 0
       <UV> { 0 1 }
     }
     <Vertex> 1 {
-      -0.00390625 -0.00390625 0
+      -0.5 -0.5 0
       <UV> { 0 0 }
     }
     <Vertex> 2 {
-      0.00390625 -0.00390625 0
+      0.5 -0.5 0
       <UV> { 1 0 }
     }
     <Vertex> 3 {
-      0.00390625 0.00390625 0
+      0.5 0.5 0
       <UV> { 1 1 }
     }
     <Vertex> 4 {

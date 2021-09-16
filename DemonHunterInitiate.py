@@ -12,7 +12,7 @@ from AcrossPacks import IllidariInitiate
 """Mana 0 cards"""
 class Blur(Spell):
 	Class, school, name = "Demon Hunter", "", "Blur"
-	requireTarget, mana = False, 0
+	requireTarget, mana, effects = False, 0, ""
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~0~~Blur"
 	description = "Your hero can't take damage this turn"
 	name_CN = "疾影"
@@ -63,7 +63,7 @@ class Blur_Effect:
 			
 class TwinSlice(Spell):
 	Class, school, name = "Demon Hunter", "", "Twin Slice"
-	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~1~~Twin Slice"
 	description = "Give your hero +2 Attack this turn. Add 'Second Slice' to your hand"
 	name_CN = "双刃斩击"
@@ -75,7 +75,7 @@ class TwinSlice(Spell):
 		
 class SecondSlice(Spell):
 	Class, school, name = "Demon Hunter", "", "Second Slice"
-	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~1~~Second Slice~Uncollectible"
 	description = "Give your hero +2 Attack this turn"
 	name_CN = "二次斩击"
@@ -90,7 +90,7 @@ class Battlefiend(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Battlefiend"
 	mana, attack, health = 1, 1, 2
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Minion~1~1~2~Demon~Battlefiend"
-	requireTarget, keyWord, description = False, "", "After your hero attacks, gain +1 Attack"
+	requireTarget, effects, description = False, "", "After your hero attacks, gain +1 Attack"
 	name_CN = "战斗邪犬"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -112,7 +112,7 @@ class Trig_Battlefiend(TrigBoard):
 		
 class ConsumeMagic(Spell):
 	Class, school, name = "Demon Hunter", "Shadow", "Consume Magic"
-	requireTarget, mana = True, 1
+	requireTarget, mana, effects = True, 1, ""
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~1~Shadow~Consume Magic~Outcast"
 	description = "Silence an enemy minion. Outcast: Draw a card"
 	name_CN = "吞噬魔法"
@@ -135,7 +135,7 @@ class ConsumeMagic(Spell):
 		
 class ManaBurn(Spell):
 	Class, school, name = "Demon Hunter", "Fel", "Mana Burn"
-	requireTarget, mana = False, 1
+	requireTarget, mana, effects = False, 1, ""
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~1~Fel~Mana Burn"
 	description = "Your opponent has 2 fewer Mana Crystals next turn"
 	name_CN = "法力燃烧"
@@ -166,7 +166,7 @@ class UrzulHorror(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Ur'zul Horror"
 	mana, attack, health = 1, 2, 1
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Minion~1~2~1~Demon~Ur'zul Horror~Deathrattle"
-	requireTarget, keyWord, description = False, "", "Deathrattle: Add a 2/1 Lost Soul to your hand"
+	requireTarget, effects, description = False, "", "Deathrattle: Add a 2/1 Lost Soul to your hand"
 	name_CN = "乌祖尔恐魔"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -183,14 +183,14 @@ class LostSoul(Minion):
 	Class, race, name = "Demon Hunter", "", "Lost Soul"
 	mana, attack, health = 1, 2, 1
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Minion~1~2~1~~Lost Soul~Uncollectible"
-	requireTarget, keyWord, description = False, "", ""
+	requireTarget, effects, description = False, "", ""
 	name_CN = "迷失之魂"
 	
 	
 """Mana 2 cards"""
 class BladeDance(Spell):
 	Class, school, name = "Demon Hunter", "", "Blade Dance"
-	requireTarget, mana = False, 3
+	requireTarget, mana, effects = False, 3, ""
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~3~~Blade Dance"
 	description = "Deal damage equal to your hero's Attack to 3 random enemy minions"
 	name_CN = "刃舞"
@@ -207,14 +207,14 @@ class BladeDance(Spell):
 					minions = [curGame.minions[3-self.ID][i] for i in curGame.picks.pop(0)]
 				else:
 					minions = list(npchoice(minions, min(3, len(minions)), replace=False))
-					curGame.picks.append(tuple([minion.pos for minion in minions]))
+					curGame.picks_Backup.append(tuple([minion.pos for minion in minions]))
 				self.dealsAOE(minions, [damage]*len(minions))
 		return None
 		
 		
 class FeastofSouls(Spell):
 	Class, school, name = "Demon Hunter", "Shadow", "Feast of Souls"
-	requireTarget, mana = False, 2
+	requireTarget, mana, effects = False, 2, ""
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~2~Shadow~Feast of Souls"
 	description = "Draw a card for each friendly minion that died this turn"
 	name_CN = "灵魂盛宴"
@@ -229,7 +229,7 @@ class FeastofSouls(Spell):
 		
 class Umberwing(Weapon):
 	Class, name, description = "Demon Hunter", "Umberwing", "Battlecry: Summon two 1/1 Felwings"
-	mana, attack, durability = 2, 1, 2
+	mana, attack, durability, effects = 2, 1, 2, ""
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Weapon~2~1~2~Umberwing~Battlecry"
 	name_CN = "棕红之翼"
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
@@ -240,7 +240,7 @@ class Felwing(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Felwing"
 	mana, attack, health = 1, 1, 1
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Minion~1~1~1~Demon~Felwing~Uncollectible"
-	requireTarget, keyWord, description = False, "", ""
+	requireTarget, effects, description = False, "", ""
 	name_CN = "邪翼蝠"
 	
 	
@@ -249,7 +249,7 @@ class AltruistheOutcast(Minion):
 	Class, race, name = "Demon Hunter", "", "Altruis the Outcast"
 	mana, attack, health = 4, 4, 2
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Minion~4~4~2~~Altruis the Outcast~Legendary"
-	requireTarget, keyWord, description = False, "", "After you play the left- or right-most card in your hand, deal 1 damage to all enemies"
+	requireTarget, effects, description = False, "", "After you play the left- or right-most card in your hand, deal 1 damage to all enemies"
 	name_CN = "流放者奥图里斯"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -274,13 +274,12 @@ class Trig_AltruistheOutcast(TrigBoard):
 		
 class EyeBeam(Spell):
 	Class, school, name = "Demon Hunter", "Fel", "Eye Beam"
-	requireTarget, mana = True, 3
+	requireTarget, mana, effects = True, 3, "Lifesteal"
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~3~Fel~Eye Beam~Outcast"
 	description = "Lifesteal. Deal 3 damage to a minion. Outcast: This costs (1)"
 	name_CN = "眼棱"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
-		self.keyWords["Lifesteal"] = 1
 		self.trigsHand = [Trig_EyeBeam(self)]
 		
 	def available(self):
@@ -327,7 +326,7 @@ class WrathscaleNaga(Minion):
 	Class, race, name = "Demon Hunter", "", "Wrathscale Naga"
 	mana, attack, health = 3, 3, 1
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Minion~3~3~1~~Wrathscale Naga"
-	requireTarget, keyWord, description = False, "", "After a friendly minion dies, deal 3 damage to a random enemy"
+	requireTarget, effects, description = False, "", "After a friendly minion dies, deal 3 damage to a random enemy"
 	name_CN = "怒鳞纳迦"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -354,8 +353,8 @@ class Trig_WrathscaleNaga(TrigBoard):
 				targets = curGame.charsAlive(3-self.entity.ID)
 				if targets:
 					enemy = npchoice(targets)
-					curGame.picks.append((enemy.pos, enemy.type+str(enemy.ID)))
-				else: curGame.picks.append((0, ""))
+					curGame.picks_Backup.append((enemy.pos, enemy.type+str(enemy.ID)))
+				else: curGame.picks_Backup.append((0, ""))
 			if enemy:
 				self.entity.dealsDamage(enemy, 1)
 				
@@ -364,7 +363,7 @@ class IllidariFelblade(Minion):
 	Class, race, name = "Demon Hunter", "", "Illidari Felblade"
 	mana, attack, health = 4, 5, 3
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Minion~4~5~3~~Illidari Felblade~Rush~Outcast"
-	requireTarget, keyWord, description = False, "Rush", "Rush. Outcast: Gain Immune this turn"
+	requireTarget, effects, description = False, "Rush", "Rush. Outcast: Gain Immune this turn"
 	name_CN = "伊利达雷邪刃武士"
 	
 	def effCanTrig(self):
@@ -372,13 +371,13 @@ class IllidariFelblade(Minion):
 		
 	def whenEffective(self, target=None, comment="", choice=0, posinHand=-2):
 		if posinHand == 0 or posinHand == -1:
-			self.getsStatus("Immune")
+			self.getsEffect("Immune")
 		return None
 		
 		
 class SoulSplit(Spell):
 	Class, school, name = "Demon Hunter", "Shadow~", "Soul Split"
-	requireTarget, mana = True, 4
+	requireTarget, mana, effects = True, 4, ""
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~4~Shadow~Soul Split"
 	description = "Choose a friendly Demon. Summon a copy of it"
 	name_CN = "灵魂分裂"
@@ -398,7 +397,7 @@ class SoulSplit(Spell):
 """Mana 5 cards"""
 class CommandtheIllidari(Spell):
 	Class, school, name = "Demon Hunter", "", "Command the Illidari"
-	requireTarget, mana = False, 5
+	requireTarget, mana, effects = False, 5, ""
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Spell~5~~Command the Illidari"
 	description = "Summon six 1/1 Illidari with Rush"
 	name_CN = "统率伊利达雷"
@@ -410,7 +409,7 @@ class WrathspikeBrute(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Wrathspike Brute"
 	mana, attack, health = 5, 2, 6
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Minion~5~2~6~Demon~Wrathspike Brute~Taunt"
-	requireTarget, keyWord, description = False, "Taunt", "Taunt. After this is attacked, deal 1 damage to all enemies"
+	requireTarget, effects, description = False, "Taunt", "Taunt. After this is attacked, deal 1 damage to all enemies"
 	name_CN = "怒刺蛮兵"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -433,19 +432,16 @@ class Trig_WrathspikeBrute(TrigBoard):
 """Mana 7 cards"""
 class Flamereaper(Weapon):
 	Class, name, description = "Demon Hunter", "Flamereaper", "Also damages the minions next to whomever your hero attacks"
-	mana, attack, durability = 7, 4 ,3
+	mana, attack, durability, effects = 7, 4 ,3, "Sweep"
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Weapon~7~4~3~Flamereaper"
 	name_CN = "斩炎"
-	def __init__(self, Game, ID):
-		super().__init__(Game, ID)
-		self.marks["Sweep"] = 1
 		
 """Mana 8 cards"""
 class HulkingOverfiend(Minion):
 	Class, race, name = "Demon Hunter", "Demon", "Hulking Overfiend"
 	mana, attack, health = 8, 5, 10
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Minion~8~5~10~Demon~Hulking Overfiend~Rush"
-	requireTarget, keyWord, description = False, "Rush", "Rush. After this attacks and kills a minion, it may attack again"
+	requireTarget, effects, description = False, "Rush", "Rush. After this attacks and kills a minion, it may attack again"
 	name_CN = "巨型大恶魔"
 	def __init__(self, Game, ID):
 		super().__init__(Game, ID)
@@ -471,7 +467,7 @@ class Nethrandamus(Minion):
 	Class, race, name = "Demon Hunter", "Dragon", "Nethrandamus"
 	mana, attack, health = 9, 8, 8
 	index = "DEMON_HUNTER_INITIATE~Demon Hunter~Minion~9~8~8~Dragon~Nethrandamus~Battlecry~Legendary"
-	requireTarget, keyWord, description = False, "", "Battlecry: Summon two random 0-Cost minions. (Upgrades each time a friendly minion dies!)"
+	requireTarget, effects, description = False, "", "Battlecry: Summon two random 0-Cost minions. (Upgrades each time a friendly minion dies!)"
 	name_CN = "奈瑟兰达姆斯"
 	poolIdentifier = "0-Cost Minions to Summon"
 	@classmethod
@@ -498,7 +494,7 @@ class Nethrandamus(Minion):
 				while "%d-Cost Minions to Summon"%cost not in curGame.RNGPools: #假设计数过高，超出了费用范围，则取最高的可选费用
 					cost -= 1
 				minions = npchoice(self.rngPool("%d-Cost Minions to Summon"%cost), 2, replace=False)
-				curGame.picks.append(tuple(minions))
+				curGame.picks_Backup.append(tuple(minions))
 			pos = (self.pos, "leftandRight") if self.onBoard else (-1, "totheRightEnd")
 			curGame.summon([minion(curGame, self.ID) for minion in minions], pos, self)
 		return None
