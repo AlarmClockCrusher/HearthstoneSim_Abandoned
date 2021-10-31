@@ -1,9 +1,0 @@
-*.pyc
-*.p
-*.db
-*.zip
-*.iml
-*.xml
-venv/
-.idea/
-*.py~
